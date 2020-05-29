@@ -1,3 +1,66 @@
+# AlphaBeta
+
+<details>
+
+* Version: 1.2.0
+* Source code: https://github.com/cran/AlphaBeta
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 89
+
+Run `revdep_details(,"AlphaBeta")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    Running examples in ‘AlphaBeta-Ex.R’ failed
+    The error most likely occurred in:
+    
+    > ### Name: buildPedigree
+    > ### Title: Building Pedigree
+    > ### Aliases: buildPedigree
+    > 
+    > ### ** Examples
+    > 
+    > # Get some toy data
+    > file <- system.file("extdata/dm/","nodelist.fn", package="AlphaBeta")
+    > df<-read.csv(file)
+    > df$filename <- gsub("^", paste0(dirname(dirname(file)),"/"), df$filename )
+    > write.csv(df, file = paste0(dirname(file),"/", "tmp_nodelist.fn"), row.names=FALSE, quote=FALSE)
+    > file <- system.file("extdata/dm/","tmp_nodelist.fn", package="AlphaBeta")
+    > file2 <- system.file("extdata/dm/","edgelist.fn", package="AlphaBeta")
+    > buildPedigree(nodelist = file, edgelist=file2, cytosine="CG", posteriorMaxFilter=0.99)
+    constracting pedigree ...
+    Error in .subset2(x, i, exact = exact) : subscript out of bounds
+    Calls: buildPedigree ... cat -> paste0 -> [[ -> [[.data.frame -> <Anonymous>
+    Execution halted
+    ```
+
+## In both
+
+*   checking top-level files ... NOTE
+    ```
+    File
+      LICENSE
+    is not mentioned in the DESCRIPTION file.
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    ABplot: no visible binding for global variable ‘delta.t’
+    ABplot: no visible binding for global variable ‘div.obs’
+    BOOTmodel: multiple local function definitions for ‘divergence’ with
+      different formal arguments
+    plotPedigree: no visible binding for global variable ‘meth’
+    plotPedigree: no visible binding for global variable ‘V1’
+    plotPedigree: no visible binding for global variable ‘V2’
+    Undefined global functions or variables:
+      V1 V2 delta.t div.obs meth
+    ```
+
 # amt
 
 <details>
@@ -8,15 +71,15 @@
 * Date/Publication: 2020-04-28 12:10:02 UTC
 * Number of recursive dependencies: 167
 
-Run `cloud_details(, "amt")` for more info
+Run `revdep_details(,"amt")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘tinytest.R’
+     ERROR
     Running the tests in ‘tests/tinytest.R’ failed.
     Last 13 lines of output:
       Running test_track.R..................   56 tests [0;32mOK[0m 
@@ -36,147 +99,50 @@ Run `cloud_details(, "amt")` for more info
       Execution halted
     ```
 
-# anomalize
+# BMSC
 
 <details>
 
 * Version: 0.2.0
-* Source code: https://github.com/cran/anomalize
-* URL: https://github.com/business-science/anomalize
-* BugReports: https://github.com/business-science/anomalize/issues
-* Date/Publication: 2019-09-21 04:10:03 UTC
-* Number of recursive dependencies: 162
+* Source code: https://github.com/cran/BMSC
+* Date/Publication: 2019-04-16 15:25:42 UTC
+* Number of recursive dependencies: 85
 
-Run `cloud_details(, "anomalize")` for more info
+Run `revdep_details(,"BMSC")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking examples ... ERROR
+*   checking tests ...
     ```
-    ...
-    
-    Attaching package: ‘dplyr’
-    
-    The following objects are masked from ‘package:stats’:
-    
-        filter, lag
-    
-    The following objects are masked from ‘package:base’:
-    
-        intersect, setdiff, setequal, union
-    
-    > 
-    > tidyverse_cran_downloads %>%
-    +     ungroup() %>%
-    +     filter(package == "tidyquant") %>%
-    +     decompose_stl(count)
-    Error in time_frequency(data, period = frequency, message = message) : 
-      Error time_frequency(): Cannot use on a grouped data frame.
-    Frequency should be performed on a single time series.
-    Calls: %>% ... withVisible -> <Anonymous> -> decompose_stl -> time_frequency
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
+      ── 2. Error: predict inserts NA values at correct positions (not all variables i
+      argument is of length zero
+      Backtrace:
+       1. testthat::expect_true(...)
+       4. dplyr::all_equal(...)
+       5. dplyr:::equal_data_frame(...)
+       6. dplyr:::is_compatible_data_frame(...)
+      
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 53 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 14 ]
-      1. Error: returns a ggplot (@test-plot_anomalies.R#8) 
-      2. Error: returns a ggplot (@test-plot_anomaly_decomposition.R#10) 
-      3. Error: grouped_tbl_time works (@test-time_apply.R#11) 
-      4. Error: tbl_time works (@test-time_apply.R#17) 
-      5. Failure: single tbl_df (@test-time_decompose.R#20) 
-      6. Error: time_frequency works: period = 'auto' (@test-time_frequency.R#26) 
-      7. Error: time_frequency works: period = '1 month' (@test-time_frequency.R#35) 
-      8. Error: time_frequency works: period = 5 (@test-time_frequency.R#44) 
-      9. Error: time_trend works: period = 'auto' (@test-time_frequency.R#55) 
-      1. ...
+      [ OK: 57 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 2 ]
+      1. Error: predict inserts NA values at correct positions (@test-predict.R#58) 
+      2. Error: predict inserts NA values at correct positions (not all variables in model) (@test-predict.R#74) 
       
       Error: testthat unit tests failed
       Execution halted
     ```
 
-# applicable
+## In both
 
-<details>
-
-* Version: 0.0.1
-* Source code: https://github.com/cran/applicable
-* URL: https://github.com/tidymodels/applicable
-* Date/Publication: 2020-05-25 14:00:02 UTC
-* Number of recursive dependencies: 98
-
-Run `cloud_details(, "applicable")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
+*   checking installed package size ... NOTE
     ```
-      Running ‘spelling.R’
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      `actual_output` not equivalent to `expected`.
-      current is not list-like
-      
-      ── 3. Failure: `score_apd_pca_bridge` output is correct (@test-pca-score.R#84)  
-      `actual_output` not equivalent to `expected`.
-      current is not list-like
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 106 | SKIPPED: 0 | WARNINGS: 1 | FAILED: 3 ]
-      1. Failure: `score_apd_pca_numeric` pcs output matches `stats::predict` output (@test-pca-score.R#48) 
-      2. Failure: `score` pcs output matches `stats::predict` output (@test-pca-score.R#66) 
-      3. Failure: `score_apd_pca_bridge` output is correct (@test-pca-score.R#84) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# bdl
-
-<details>
-
-* Version: 1.0.2
-* Source code: https://github.com/cran/bdl
-* URL: https://github.com/statisticspoland/R_Package_to_API_BDL
-* BugReports: https://github.com/statisticspoland/R_Package_to_API_BDL/issues
-* Date/Publication: 2020-04-01 13:40:03 UTC
-* Number of recursive dependencies: 155
-
-Run `cloud_details(, "bdl")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Component 4: Modes: numeric, character
-      Component 4: target is numeric, current is character
-      Component 5: Mean relative difference: 2.2
-      Component 6: Modes: character, numeric
-      ...
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 34 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 4 ]
-      1. Failure: Proper data (@test-requests.R#72) 
-      2. Failure: Proper data (@test-requests.R#127) 
-      3. Failure: Proper data (@test-requests.R#179) 
-      4. Failure: Proper data (@test-requests.R#244) 
-      
-      Error: testthat unit tests failed
-      Execution halted
+      installed size is  6.7Mb
+      sub-directories of 1Mb or more:
+        libs   6.2Mb
     ```
 
 # cattonum
@@ -190,15 +156,15 @@ Run `cloud_details(, "bdl")` for more info
 * Date/Publication: 2020-02-09 12:30:06 UTC
 * Number of recursive dependencies: 71
 
-Run `cloud_details(, "cattonum")` for more info
+Run `revdep_details(,"cattonum")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
@@ -218,18 +184,18 @@ Run `cloud_details(, "cattonum")` for more info
       Execution halted
     ```
 
-# codebook
+# circRNAprofiler
 
 <details>
 
-* Version: 0.8.2
-* Source code: https://github.com/cran/codebook
-* URL: https://github.com/rubenarslan/codebook
-* BugReports: https://github.com/rubenarslan/codebook/issues
-* Date/Publication: 2020-01-09 16:20:07 UTC
-* Number of recursive dependencies: 179
+* Version: 1.2.0
+* Source code: https://github.com/cran/circRNAprofiler
+* URL: https://github.com/Aufiero/circRNAprofiler
+* BugReports: https://github.com/Aufiero/circRNAprofiler/issues
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 214
 
-Run `cloud_details(, "codebook")` for more info
+Run `revdep_details(,"circRNAprofiler")` for more info
 
 </details>
 
@@ -238,41 +204,57 @@ Run `cloud_details(, "codebook")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    > 
-    > ### ** Examples
-    > 
-    > # will generate figures in a temporary directory
-    > old_base_dir <- knitr::opts_knit$get("base.dir")
-    > knitr::opts_knit$set(base.dir = tempdir())
-    > on.exit(knitr::opts_knit$set(base.dir = old_base_dir))
-    > data("bfi")
-    > bfi <- bfi[, c("BFIK_open_1", "BFIK_open_1")]
-    > md <- codebook(bfi, survey_repetition = "single", metadata_table = FALSE)
-    No missing values.
-    Error: Argument 1 must be a data frame or a named atomic vector.
+    +     width = 6,
+    +     species = "Hsapiens",
+    +     rbp = TRUE,
+    +     reverse = FALSE)
+    trying URL 'https://attract.cnic.es/attract/static/ATtRACT.zip'
+    downloaded 113 KB
+    
+    motifs.txt is empty or absent. Only
+                ATtRACT motifs will be analyzedError: Can't combine `..1$id` <logical> and `..2$id` <character>.
     Backtrace:
         █
-     1. └─codebook::codebook(bfi, survey_repetition = "single", metadata_table = FALSE)
-     2.   └─codebook::metadata_jsonld(results)
-     3.     └─codebook::metadata_list(results)
-     4.       └─codebook::codebook_table(results)
-     5.         └─codebook:::skim_to_wide_labelled(results)
-     6.           └─dplyr::bind_rows(...)
+     1. ├─circRNAprofiler::getMotifs(...)
+     2. │ └─circRNAprofiler:::.filterMotifs(...)
+     3. │   └─circRNAprofiler:::.getUserAttractMotifs(species, reverse, pathToMotifs)
+     4. │     └─dplyr::bind_rows(newMotifsFromFile[, c(1, 2)], newAttractRBPmotifs)
+     5. │       └─vctrs::vec_rbind(!!!dots, .names_to = .id)
+     6. └─vctrs::vec_default_ptype2(...)
+     7.   └─vctrs::stop_incompatible_type(...)
+     8.     └─vctrs:::stop_incompatible(...)
+     9.       └─vctrs:::stop_vctrs(...)
     Execution halted
     ```
 
 ## In both
 
-*   checking dependencies in R code ... NOTE
+*   checking tests ...
     ```
-    Namespaces in Imports field not imported from:
-      ‘graphics’ ‘jsonlite’ ‘pander’
-      All declared Imports should be used.
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      1. Error: annotateBSJs() generates the correct data structure (@test_annotateBSJs.R#10) 
+      2. Error: annotateBSJs() generates a data frame with the correct content (@test_annotateBSJs.R#33) 
+      3. Error: annotateBSJs() generates the correct data structure
+          when using random back-spliced junctions (@test_annotateBSJs.R#80) 
+      4. Error: annotateBSJs() generates a data frame with the correct content when using
+          random back-spliced junctions (@test_annotateBSJs.R#102) 
+      5. Error: annotateRepeats() generates the correct data structure (@test_annotateRepeats.R#8) 
+      6. Error: filterCirc() filters the data frame containing circRNA counts (@test_filterBSJs.R#13) 
+      7. Error: getBackSplicedJunctions() generates the correct data structure (@test_getBackSplicedJunctions.R#14) 
+      8. Error: mergeBSJunctions() generates a data frame with the correct content (@test_getBackSplicedJunctions.R#43) 
+      9. Error: getCircSeqs() generate the correct data structure (@test_getCircSeqs.R#9) 
+      1. ...
+      
+      Error: testthat unit tests failed
+      Execution halted
     ```
 
-*   checking data for non-ASCII characters ... NOTE
+*   checking package dependencies ... NOTE
     ```
-      Note: found 65 marked UTF-8 strings
+    Packages suggested but not available for checking:
+      'BSgenome.Mmusculus.UCSC.mm9', 'BSgenome.Mmusculus.UCSC.mm10'
     ```
 
 # CollapseLevels
@@ -284,7 +266,7 @@ Run `cloud_details(, "codebook")` for more info
 * Date/Publication: 2017-12-04 10:30:12 UTC
 * Number of recursive dependencies: 65
 
-Run `cloud_details(, "CollapseLevels")` for more info
+Run `revdep_details(,"CollapseLevels")` for more info
 
 </details>
 
@@ -316,95 +298,40 @@ Run `cloud_details(, "CollapseLevels")` for more info
     Execution halted
     ```
 
-# correlationfunnel
+# cvms
 
 <details>
 
-* Version: 0.1.0
-* Source code: https://github.com/cran/correlationfunnel
-* URL: https://github.com/business-science/correlationfunnel
-* BugReports: https://github.com/business-science/correlationfunnel/issues
-* Date/Publication: 2019-08-06 09:30:09 UTC
-* Number of recursive dependencies: 97
+* Version: 1.0.1
+* Source code: https://github.com/cran/cvms
+* URL: https://github.com/ludvigolsen/cvms
+* BugReports: https://github.com/ludvigolsen/cvms/issues
+* Date/Publication: 2020-04-19 09:30:02 UTC
+* Number of recursive dependencies: 120
 
-Run `cloud_details(, "correlationfunnel")` for more info
+Run `revdep_details(,"cvms")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      
-      ── 4. Failure: Check correlation (@test-correlate.R#61)  ───────────────────────
-      nrow(marketing_correlated_tbl) not equal to 74.
-      1/1 mismatches
-      [1] 65 - 74 == -9
-      
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 12 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 4 ]
-      1. Error: Check binarize - numeric (@test-binarize.R#47) 
-      2. Error: Check binarize - numeric (@test-binarize.R#45) 
-      3. Error: (unknown) (@test-binarize.R#45) 
-      4. Failure: Check correlation (@test-correlate.R#61) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.4Mb
-      sub-directories of 1Mb or more:
-        doc    3.0Mb
-        help   1.6Mb
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘utils’
-      All declared Imports should be used.
-    ```
-
-# cutpointr
-
-<details>
-
-* Version: 1.0.2
-* Source code: https://github.com/cran/cutpointr
-* URL: https://github.com/thie1e/cutpointr
-* BugReports: https://github.com/thie1e/cutpointr/issues
-* Date/Publication: 2020-04-14 08:50:10 UTC
-* Number of recursive dependencies: 78
-
-Run `cloud_details(, "cutpointr")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      names for target but not for current
-      
-      ── 4. Failure: boot_test works correctly (@test-cutpointr.R#1428)  ─────────────
-      round(bt$p_adj, 3) not equal to c(1, 0.647, 0.731).
-      names for target but not for current
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 499 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 4 ]
-      1. Failure: boot_ci works correctly (@test-cutpointr.R#1394) 
-      2. Failure: boot_test works correctly (@test-cutpointr.R#1425) 
-      3. Failure: boot_test works correctly (@test-cutpointr.R#1426) 
-      4. Failure: boot_test works correctly (@test-cutpointr.R#1428) 
+      [ OK: 3757 | SKIPPED: 61 | WARNINGS: 5 | FAILED: 12 ]
+      1. Failure: the grid order is as expected with create_computation_grid() (@test_compational_grid.R#260) 
+      2. Failure: multinomial evaluations with one predicted class column is correctly unpacked in evaluate() (@test_evaluate.R#1361) 
+      3. Failure: multinomial evaluations with one predicted class column is correctly unpacked in evaluate() (@test_evaluate.R#1369) 
+      4. Failure: multinomial evaluations with one predicted class column is correctly unpacked in evaluate() (@test_evaluate.R#1377) 
+      5. Failure: multinomial evaluations with one predicted class column is correctly unpacked in evaluate() (@test_evaluate.R#1385) 
+      6. Failure: multinomial evaluations with one predicted class column is correctly unpacked in evaluate() (@test_evaluate.R#1393) 
+      7. Failure: evaluate() and confusion_matrix() has same metric values (@test_evaluate.R#4015) 
+      8. Failure: evaluate() and confusion_matrix() has same metric values (@test_evaluate.R#4054) 
+      9. Failure: evaluate() and evaluate_residuals() has same metric values (@test_evaluate.R#4104) 
+      1. ...
       
       Error: testthat unit tests failed
       Execution halted
@@ -421,7 +348,7 @@ Run `cloud_details(, "cutpointr")` for more info
 * Date/Publication: 2020-03-23 18:00:06 UTC
 * Number of recursive dependencies: 88
 
-Run `cloud_details(, "ddpcr")` for more info
+Run `revdep_details(,"ddpcr")` for more info
 
 </details>
 
@@ -432,7 +359,113 @@ Run `cloud_details(, "ddpcr")` for more info
     Found the following significant warnings:
       Warning: `mutate_()` is deprecated as of dplyr 0.7.0.
       Warning: `select_()` is deprecated as of dplyr 0.7.0.
-    See ‘/tmp/workdir/ddpcr/new/ddpcr.Rcheck/00install.out’ for details.
+    See ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/ddpcr/new/ddpcr.Rcheck/00install.out’ for details.
+    ```
+
+# DEGreport
+
+<details>
+
+* Version: 1.24.0
+* Source code: https://github.com/cran/DEGreport
+* URL: http://lpantano.github.io/DEGreport/
+* BugReports: https://github.com/lpantano/DEGreport/issues
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 132
+
+Run `revdep_details(,"DEGreport")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    Error: Problem with `summarise()` input `n_genes`.
+    ✖ could not find function "n"
+    ℹ Input `n_genes` is `n()`.
+    ℹ The error occured in group 1: merge = "aFemale", cluster = 1, group = "Female", other = "a".
+    Backtrace:
+         █
+      1. └─DEGreport::degPatterns(ma, des, time = "group", col = "other")
+      2.   └─`%>%`(...)
+      3.     ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      4.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      5.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      6.         └─DEGreport:::`_fseq`(`_lhs`)
+      7.           └─magrittr::freduce(value, `_function_list`)
+      8.             └─function_list[[i]](value)
+      9.               ├─dplyr::summarise(., abundance = median(value), n_genes = n())
+     10.               └─dplyr:::summarise.grouped_df(., abundance = median(value), n_genes = n())
+     11.                 └─dplyr:::summarise_cols(.data, ...)
+    <parent: error/simpleError>
+    Backtrace:
+    █
+    Execution halted
+    ```
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ✖ could not find function "n"
+      ℹ Input `n_genes` is `n()`.
+      ℹ The error occured in group 1: merge = "aFemale", cluster = 1, group = "Female", other = "a".
+      Backtrace:
+        1. DEGreport::degPatterns(...)
+        2. dplyr::group_by(...)
+        9. dplyr::summarise(., abundance = median(value), n_genes = n())
+       11. dplyr:::summarise_cols(.data, ...)
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 50 | SKIPPED: 0 | WARNINGS: 2 | FAILED: 1 ]
+      1. Error: (unknown) (@test_cluster.R#13) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+## In both
+
+*   checking for hidden files and directories ... NOTE
+    ```
+    Found the following hidden files and directories:
+      .travis.yml
+    These were most likely included in error. See section ‘Package
+    structure’ in the ‘Writing R Extensions’ manual.
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    ...
+    degMV: no visible binding for global variable ‘max_sd’
+    degPatterns: no visible global function definition for ‘rowMedians’
+    degPatterns: no visible binding for global variable ‘genes’
+    degPatterns: no visible global function definition for ‘n’
+    degPlotCluster: no visible binding for global variable ‘genes’
+    degPlotCluster: no visible binding for global variable ‘cluster’
+    degPlotWide : <anonymous>: no visible binding for global variable
+      ‘count’
+    significants,TopTags: no visible binding for global variable ‘FDR’
+    significants,TopTags: no visible binding for global variable ‘logFC’
+    significants,list : <anonymous>: no visible binding for global variable
+      ‘gene’
+    Undefined global functions or variables:
+      .x FDR base_mean boxplot cluster comp compare count counts covar
+      cutoff desc enrichGO fdr fdrtool gene genes itemConsensus k keys lm
+      log2FoldChange log2fc logFC max_sd min_median n p.value r ratios
+      rowMedians score simplify value_fc value_fdr x xend y yend
+    Consider adding
+      importFrom("graphics", "boxplot")
+      importFrom("stats", "lm")
+    to your NAMESPACE file.
+    ```
+
+*   checking Rd cross-references ... NOTE
+    ```
+    Package unavailable to check Rd xrefs: ‘fdrtool’
     ```
 
 # disk.frame
@@ -446,7 +479,7 @@ Run `cloud_details(, "ddpcr")` for more info
 * Date/Publication: 2020-05-08 13:10:10 UTC
 * Number of recursive dependencies: 105
 
-Run `cloud_details(, "disk.frame")` for more info
+Run `revdep_details(,"disk.frame")` for more info
 
 </details>
 
@@ -484,17 +517,18 @@ Run `cloud_details(, "disk.frame")` for more info
     Extensions’ manual.
     ```
 
-# distrr
+# DLMtool
 
 <details>
 
-* Version: 0.0.5
-* Source code: https://github.com/cran/distrr
-* URL: https://gibonet.github.io/distrr, https://github.com/gibonet/distrr
-* Date/Publication: 2019-01-03 10:50:06 UTC
-* Number of recursive dependencies: 24
+* Version: 5.4.3
+* Source code: https://github.com/cran/DLMtool
+* URL: http://www.datalimitedtoolkit.org/
+* BugReports: https://github.com/DLMtool/DLMtool/issues
+* Date/Publication: 2020-04-16 21:20:10 UTC
+* Number of recursive dependencies: 128
 
-Run `cloud_details(, "distrr")` for more info
+Run `revdep_details(,"DLMtool")` for more info
 
 </details>
 
@@ -503,27 +537,37 @@ Run `cloud_details(, "distrr")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    > str(invented_wages)
-    tibble [1,000 × 5] (S3: tbl_df/data.frame)
-     $ gender        : Factor w/ 2 levels "men","women": 1 2 1 2 1 1 1 2 2 2 ...
-     $ sector        : Factor w/ 2 levels "secondary","tertiary": 2 1 2 2 1 1 2 1 2 1 ...
-     $ education     : Factor w/ 3 levels "I","II","III": 3 2 2 2 2 1 3 1 2 2 ...
-     $ wage          : num [1:1000] 8400 4200 5100 7400 4300 4900 5400 2900 4500 3000 ...
-     $ sample_weights: num [1:1000] 105 32 36 12 21 46 79 113 34 32 ...
-    > tmp <- dcc(.data = invented_wages, 
-    +            .variables = c("gender", "sector"), .fun = jointfun_)
-    Error: `vec_ptype2.tbl_df.tbl_df()` is implemented at C level.
-    This R function is purely indicative and should never be called.
-    Backtrace:
-        █
-     1. ├─distrr::dcc(...)
-     2. │ └─distrr::dcc5(...)
-     3. │   └─distrr:::prepare_data(...)
-     4. │     └─dplyr::bind_cols(data_vars, data_others)
-     5. │       └─vctrs::vec_cbind(!!!dots)
-     6. └─vctrs:::vec_ptype2.tbl_df.tbl_df(...)
-     7.   └─vctrs:::stop_native_implementation("vec_ptype2.tbl_df.tbl_df")
-    Execution halted
+    > 
+    > DCACs(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+    TAC (median) 
+        5.885724 
+    > 
+    > DCAC(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+    TAC (median) 
+        5.299291 
+    > 
+    > DCAC_40(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+    TAC (median) 
+        6.860386 
+    > 
+    > Data <- DLMtool::Atlantic_mackerel
+    > Data@LHYear <- 2005
+    > DCAC4010(1, Data, plot=TRUE) 
+    TAC (median) 
+        1.576309 
+    > 
+    > DCAC_ML(1, DLMtool::SimulatedData, plot=TRUE) 
+    libc++abi.dylib: __cxa_guard_acquire detected deadlock
+    ```
+
+## In both
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is  5.6Mb
+      sub-directories of 1Mb or more:
+        R      2.0Mb
+        data   2.1Mb
     ```
 
 # docxtools
@@ -537,7 +581,7 @@ Run `cloud_details(, "distrr")` for more info
 * Date/Publication: 2019-02-09 18:43:13 UTC
 * Number of recursive dependencies: 75
 
-Run `cloud_details(, "docxtools")` for more info
+Run `revdep_details(,"docxtools")` for more info
 
 </details>
 
@@ -569,9 +613,9 @@ Run `cloud_details(, "docxtools")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
         6. dplyr:::mutate_cols(.data, ...)
@@ -602,15 +646,15 @@ Run `cloud_details(, "docxtools")` for more info
 * Date/Publication: 2018-06-13 22:03:03 UTC
 * Number of recursive dependencies: 69
 
-Run `cloud_details(, "driftR")` for more info
+Run `revdep_details(,"driftR")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Attributes: < Component "class": Lengths (3, 1) differ (string compare on first 1) >
@@ -630,6 +674,58 @@ Run `cloud_details(, "driftR")` for more info
       Execution halted
     ```
 
+# DuoClustering2018
+
+<details>
+
+* Version: 1.6.0
+* Source code: https://github.com/cran/DuoClustering2018
+* Date/Publication: 2020-05-07
+* Number of recursive dependencies: 158
+
+Run `revdep_details(,"DuoClustering2018")` for more info
+
+</details>
+
+## Newly broken
+
+*   R CMD check timed out
+    
+
+*   checking R code for possible problems ... NOTE
+    ```
+    ...
+    plot_timing: no visible binding for global variable ‘dataset’
+    plot_timing: no visible binding for global variable ‘method’
+    plot_timing: no visible binding for global variable ‘run’
+    plot_timing: no visible binding for global variable ‘k’
+    plot_timing: no visible binding for global variable ‘cluster’
+    plot_timing: no visible binding for global variable ‘trueclass’
+    plot_timing: no visible binding for global variable ‘est_k’
+    plot_timing: no visible binding for global variable ‘elapsed’
+    plot_timing: no visible binding for global variable ‘sce’
+    plot_timing: no visible binding for global variable ‘filtering’
+    plot_timing: no visible binding for global variable ‘truenclust’
+    plot_timing: no visible binding for global variable ‘median.elapsed’
+    plot_timing: no visible binding for global variable ‘med.t’
+    plot_timing: no visible binding for global variable ‘norm.time’
+    plot_timing: no visible binding for global variable ‘medianelapsed’
+    Undefined global functions or variables:
+      ARI ari.stab cell cluster data.wide dataset ds ds.norm elapsed
+      entropy est_k estnclust filtering k k_diff med.t medARI
+      median.elapsed median.stability medianARI medianelapsed method
+      norm.time run s s.norm s.true s.true.norm sce stability trueclass
+      truenclust
+    ```
+
+## Newly fixed
+
+*   checking whether package ‘DuoClustering2018’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/DuoClustering2018/old/DuoClustering2018.Rcheck/00install.out’ for details.
+    ```
+
 # easyr
 
 <details>
@@ -641,25 +737,25 @@ Run `cloud_details(, "driftR")` for more info
 * Date/Publication: 2020-03-20 18:10:05 UTC
 * Number of recursive dependencies: 92
 
-Run `cloud_details(, "easyr")` for more info
+Run `revdep_details(,"easyr")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      ** installing vignettes
-      ** testing if installed package can be loaded from temporary location
-      ** testing if installed package can be loaded from final location
-      ** testing if installed package keeps a record of temporary installation path
-      * DONE (doParallel)
+      trying URL 'https://cloud.r-project.org/bin/macosx/contrib/4.0/plyr_1.8.6.tgz'
+      Content type 'application/x-gzip' length 1010994 bytes (987 KB)
+      ==================================================
+      downloaded 987 KB
       
-      The downloaded source packages are in
-      	'/tmp/Rtmp9m7il2/downloaded_packages'
+      
+      The downloaded binary packages are in
+      	/var/folders/4b/hn4fq98s6810s4ccv2f9hm2h0000gn/T//RtmpZ3Qqhi/downloaded_packages
       ══ testthat results  ═══════════════════════════════════════════════════════════
       [ OK: 286 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 2 ]
       1. Failure: works as expected (@test_bindf-joinf.R#57) 
@@ -679,7 +775,7 @@ Run `cloud_details(, "easyr")` for more info
 * Date/Publication: 2018-02-04 19:06:12 UTC
 * Number of recursive dependencies: 108
 
-Run `cloud_details(, "eda4treeR")` for more info
+Run `revdep_details(,"eda4treeR")` for more info
 
 </details>
 
@@ -731,7 +827,7 @@ Run `cloud_details(, "eda4treeR")` for more info
 * Date/Publication: 2020-03-03 00:20:02 UTC
 * Number of recursive dependencies: 73
 
-Run `cloud_details(, "egor")` for more info
+Run `revdep_details(,"egor")` for more info
 
 </details>
 
@@ -764,7 +860,7 @@ Run `cloud_details(, "egor")` for more info
 * Date/Publication: 2019-01-23 20:30:03 UTC
 * Number of recursive dependencies: 65
 
-Run `cloud_details(, "episheet")` for more info
+Run `revdep_details(,"episheet")` for more info
 
 </details>
 
@@ -796,9 +892,9 @@ Run `cloud_details(, "episheet")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       
@@ -827,15 +923,15 @@ Run `cloud_details(, "episheet")` for more info
 * Date/Publication: 2019-06-14 11:20:03 UTC
 * Number of recursive dependencies: 53
 
-Run `cloud_details(, "expstudies")` for more info
+Run `revdep_details(,"expstudies")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ══ testthat results  ═══════════════════════════════════════════════════════════
@@ -855,71 +951,6 @@ Run `cloud_details(, "expstudies")` for more info
       Execution halted
     ```
 
-# fable
-
-<details>
-
-* Version: 0.2.0
-* Source code: https://github.com/cran/fable
-* URL: https://fable.tidyverts.org, https://github.com/tidyverts/fable
-* BugReports: https://github.com/tidyverts/fable/issues
-* Date/Publication: 2020-04-22 13:12:08 UTC
-* Number of recursive dependencies: 99
-
-Run `cloud_details(, "fable")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    ✖ `vars` must be a character vector.
-    ℹ Input `cmp` is `map(.fit, components)`.
-    Backtrace:
-         █
-      1. └─`%>%`(...)
-      2.   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3.   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5.       └─`_fseq`(`_lhs`)
-      6.         └─magrittr::freduce(value, `_function_list`)
-      7.           ├─base::withVisible(function_list[[k]](value))
-      8.           └─function_list[[k]](value)
-      9.             ├─generics::components(.)
-     10.             └─fabletools:::components.mdl_df(.)
-     11.               ├─dplyr::transmute(...)
-     12.               └─dplyr:::transmute.data.frame(...)
-     13.                 ├─dplyr::mutate(.data, ..., .keep = "none")
-     14.                 └─dplyr:::mutate.data.frame(.data, ..., .keep = "none")
-     15.                   └─dplyr:::mutate_cols(.data, ...)
-    <parent: err
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Backtrace:
-        1. testthat::expect_warning(...)
-        2. tsibbledata::vic_elec
-        2. tsibble::index_by(., date = as.Date(Time))
-        2. dplyr::summarise(., demand = mean(Demand))
-       10. fabletools::model(., SNAIVE(demand ~ lag("year")))
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 90 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 3 ]
-      1. Error: Manual ETS selection (@test-ets.R#44) 
-      2. Error: Automatic NNETAR selection (@test-nnetar.R#13) 
-      3. Error: SNAIVE (@test-rw.R#105) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 # fabletools
 
 <details>
@@ -931,7 +962,7 @@ Run `cloud_details(, "fable")` for more info
 * Date/Publication: 2020-03-24 07:10:02 UTC
 * Number of recursive dependencies: 92
 
-Run `cloud_details(, "fabletools")` for more info
+Run `revdep_details(,"fabletools")` for more info
 
 </details>
 
@@ -963,9 +994,9 @@ Run `cloud_details(, "fabletools")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
        21. tsibble:::retain_tsibble(mut_data, key(.data), index(.data))
@@ -985,18 +1016,17 @@ Run `cloud_details(, "fabletools")` for more info
       Execution halted
     ```
 
-# finalfit
+# fingertipscharts
 
 <details>
 
-* Version: 1.0.1
-* Source code: https://github.com/cran/finalfit
-* URL: https://github.com/ewenharrison/finalfit
-* BugReports: https://github.com/ewenharrison/finalfit/issues
-* Date/Publication: 2020-04-21 11:50:02 UTC
-* Number of recursive dependencies: 135
+* Version: 0.0.10
+* Source code: https://github.com/cran/fingertipscharts
+* BugReports: https://github.com/PublicHealthEngland/fingertipscharts/issues
+* Date/Publication: 2019-10-07 15:00:03 UTC
+* Number of recursive dependencies: 142
 
-Run `cloud_details(, "finalfit")` for more info
+Run `revdep_details(,"fingertipscharts")` for more info
 
 </details>
 
@@ -1005,27 +1035,58 @@ Run `cloud_details(, "finalfit")` for more info
 *   checking examples ... ERROR
     ```
     ...
-      mort_5yr mort_5yr.num   n
-    1    Alive            1 511
-    2     Died            2 404
-    3     <NA>           NA  14
-    
-    $counts[[19]]
-      sex.factor2 age.factor2   n
-    1           M   <60 years 204
-    2           M   60+ years 241
-    3           F   <60 years 210
-    4           F   60+ years 274
-    
-    
-    > 
-    > # Select a tibble and expand
-    > out$counts[[9]] %>%
-    +   print(n = Inf)
-    Error in print.default(m, ..., quote = quote, right = right, max = max) : 
-      invalid 'na.print' specification
-    Calls: %>% ... print -> print.data.frame -> print -> print.default
+    +                                              -0.15, -0.05, 1.08),
+    +                         dps = NA)
+    Error: Column 5 must be named.
+    Backtrace:
+         █
+      1. └─fingertipscharts::area_profiles(...)
+      2.   └─fingertipscharts:::spine_rescaler(...)
+      3.     └─`%>%`(...)
+      4.       ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      5.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      6.         └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      7.           └─fingertipscharts:::`_fseq`(`_lhs`)
+      8.             └─magrittr::freduce(value, `_function_list`)
+      9.               └─function_list[[i]](value)
+     10.                 └─tibble::rownames_to_column(., var = rlang::quo_text(indicator))
+     11.                   └─tibble:::repaired_names(c(unique(names2(df)), var))
+     12.                     └─tibble:::subclass_name_repair_errors(...)
+     13.                       └─base::tryCatch(...)
+     14.                         └─base:::tryCatchList(expr, classes, parentenv, handlers)
+     15.                           ├─base:::tryCatchOne(...
     Execution halted
+    ```
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/a-l.R’ failed.
+    Last 13 lines of output:
+       12. tibble:::subclass_name_repair_errors(...)
+       13. base::tryCatch(...)
+       14. base:::tryCatchList(expr, classes, parentenv, handlers)
+       17. base:::tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
+       20. base:::tryCatchList(expr, names[-nh], parentenv, handlers[-nh])
+       21. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
+       22. value[[3L]](cond)
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 1 | SKIPPED: 15 | WARNINGS: 0 | FAILED: 2 ]
+      1. Error: (unknown) (@test-area-profiles.R#25) 
+      2. Error: (unknown) (@test-examples.R#141) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+## In both
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Namespaces in Imports field not imported from:
+      ‘curl’ ‘mapproj’
+      All declared Imports should be used.
     ```
 
 # foieGras
@@ -1039,7 +1100,7 @@ Run `cloud_details(, "finalfit")` for more info
 * Date/Publication: 2019-10-07 22:10:03 UTC
 * Number of recursive dependencies: 100
 
-Run `cloud_details(, "foieGras")` for more info
+Run `revdep_details(,"foieGras")` for more info
 
 </details>
 
@@ -1071,16 +1132,16 @@ Run `cloud_details(, "foieGras")` for more info
     New names:
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ── 2. Error: (unknown) (@test-plot.R#7)  ───────────────────────────────────────
       Can't subset columns that don't exist.
       ✖ Column `shut.up` doesn't exist.
       Backtrace:
-        1. graphics::plot(fssm, what = "fitted")
+        1. base::plot(fssm, what = "fitted")
        31. vctrs:::stop_subscript_oob(...)
        32. vctrs:::stop_subscript(...)
       
@@ -1097,9 +1158,9 @@ Run `cloud_details(, "foieGras")` for more info
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 35.2Mb
+      installed size is 13.7Mb
       sub-directories of 1Mb or more:
-        libs  34.0Mb
+        libs  12.4Mb
     ```
 
 # geometr
@@ -1113,15 +1174,15 @@ Run `cloud_details(, "foieGras")` for more info
 * Date/Publication: 2020-03-30 10:20:02 UTC
 * Number of recursive dependencies: 86
 
-Run `cloud_details(, "geometr")` for more info
+Run `revdep_details(,"geometr")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Simple feature collection with 100 features and 14 fields
@@ -1149,6 +1210,49 @@ Run `cloud_details(, "geometr")` for more info
       All declared Imports should be used.
     ```
 
+# geomnet
+
+<details>
+
+* Version: 0.2.0
+* Source code: https://github.com/cran/geomnet
+* URL: http://github.com/sctyner/geomnet
+* BugReports: https://github.com/sctyner/geomnet/issues
+* Date/Publication: 2016-12-08 20:38:18
+* Number of recursive dependencies: 93
+
+Run `revdep_details(,"geomnet")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    ℹ Input `wt` is `n()`.
+    ℹ The error occured in group 1: from_id = "A-", to_id = "A+".
+    Backtrace:
+         █
+      1. ├─(function (x, ...) ...
+      2. └─ggplot2:::print.ggplot(x)
+      3.   ├─ggplot2::ggplot_build(x)
+      4.   └─ggplot2:::ggplot_build.ggplot(x)
+      5.     └─ggplot2:::by_layer(function(l, d) l$compute_statistic(d, layout))
+      6.       └─ggplot2:::f(l = layers[[i]], d = data[[i]])
+      7.         └─l$compute_statistic(d, layout)
+      8.           └─ggplot2:::f(..., self = self)
+      9.             └─self$stat$compute_layer(data, params, layout)
+     10.               └─geomnet:::f(..., self = self)
+     11.                 └─self$compute_panel(...)
+     12.                   └─geomnet:::f(..., self = self)
+     13.                     └─self$compute_network(...)
+     14.                       └─geomnet:::f(...)
+     15.                         ├─dplyr::summarise(edges, wt = n())
+     16.
+    Execution halted
+    ```
+
 # getTBinR
 
 <details>
@@ -1160,56 +1264,29 @@ Run `cloud_details(, "geometr")` for more info
 * Date/Publication: 2019-09-03 13:50:06 UTC
 * Number of recursive dependencies: 149
 
-Run `cloud_details(, "getTBinR")` for more info
+Run `revdep_details(,"getTBinR")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking examples ... ERROR
+*   checking tests ...
     ```
-    ...
-      cannot open URL 'https://extranet.who.int/tme/generateCSV.asp?ds=estimates': HTTP status was '500 Internal Server Error'
-    Warning in file(file, "rt") :
-      cannot open file '/tmp/RtmpEV62pw/file98ef3ddbb71': No such file or directory
-    Downloading data has failed after 2 tries.
-    Attempting data download in 1.4 seconds.
-    Downloading data from: https://extranet.who.int/tme/generateCSV.asp?ds=estimates
-    Warning in file(file, "rt") :
-      cannot open URL 'https://extranet.who.int/tme/generateCSV.asp?ds=estimates': HTTP status was '500 Internal Server Error'
-    Downloading the data using utils::read.csv has failed trying a 
-                      direct download instead.
-    trying URL 'https://extranet.who.int/tme/generateCSV.asp?ds=estimates'
-    Warning in download.file(url, destfile = tmp_loc) :
-      cannot open URL 'https://extranet.who.int/tme/generateCSV.asp?ds=estimates': HTTP status was '500 Internal Server Error'
-    Warning in file(file, "rt") :
-      cannot open file '/tmp/RtmpEV62pw/file98ef33847fd2': No such file or directory
-    Downloading data has failed after 3 tries.
-    Attempting data download in 1.9 seconds.
-    Error in get_data(url = "https://extranet.who.int/tme/generateCSV.asp?ds=estimates",  : 
-      Data downloading has failed, check your internet connection.
-               If this issue is not resolved, contact the package author.
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘spelling.R’
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      [ OK: 3 | SKIPPED: 3 | WARNINGS: 352 | FAILED: 43 ]
-      1. Error: get_data retrieves the specified data when download_data is TRUE (@test-get_data.R#12) 
-      2. Error: get_data saves a local copy of the data which can then be successfully retrieved (@test-get_data.R#22) 
-      3. Error: (unknown) (@test-get_data_dict.R#4) 
-      4. Error: (unknown) (@test-get_tb_burden.R#4) 
-      5. Error: map_tb_burden produces a plot (@test-map_tb_burden.R#6) 
-      6. Error: map_tb_burden produces a plot when a log transform is used (@test-map_tb_burden.R#16) 
-      7. Error: map_tb_burden produces a plot with annual change (@test-map_tb_burden.R#26) 
-      8. Error: map_tb_burden produces when no year is specified (@test-map_tb_burden.R#36) 
-      9. Error: map_tb_burden produces a map when fill type is 
-                manually specified and fails when it is misspecifed (@test-map_tb_burden.R#47) 
-      1. ...
+      Attributes: < Names: 2 string mismatches >
+      Attributes: < Length mismatch: comparison on first 2 components >
+      Attributes: < Component 1: Modes: character, externalptr >
+      Attributes: < Component 1: Lengths: 3, 1 >
+      Attributes: < Component 1: target is character, current is externalptr >
+      Attributes: < Component 2: Modes: numeric, character >
+      Attributes: < Component 2: Lengths: 1, 3 >
+      Attributes: < Component 2: target is numeric, current is character >
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 95 | SKIPPED: 50 | WARNINGS: 2 | FAILED: 1 ]
+      1. Failure: Variable search for a known variable returns expected results (@test-search_data_dict.R#28) 
       
       Error: testthat unit tests failed
       Execution halted
@@ -1226,7 +1303,7 @@ Run `cloud_details(, "getTBinR")` for more info
 * Date/Publication: 2018-07-03 21:50:02 UTC
 * Number of recursive dependencies: 79
 
-Run `cloud_details(, "ggedit")` for more info
+Run `revdep_details(,"ggedit")` for more info
 
 </details>
 
@@ -1277,15 +1354,15 @@ Run `cloud_details(, "ggedit")` for more info
 * Date/Publication: 2020-03-29 18:30:05 UTC
 * Number of recursive dependencies: 111
 
-Run `cloud_details(, "gratia")` for more info
+Run `revdep_details(,"gratia")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘test-all.R’
+     ERROR
     Running the tests in ‘tests/test-all.R’ failed.
     Last 13 lines of output:
       Backtrace:
@@ -1305,46 +1382,6 @@ Run `cloud_details(, "gratia")` for more info
       Execution halted
     ```
 
-# groupedstats
-
-<details>
-
-* Version: 1.0.0
-* Source code: https://github.com/cran/groupedstats
-* URL: https://indrajeetpatil.github.io/groupedstats/, https://github.com/IndrajeetPatil/groupedstats/
-* BugReports: https://github.com/IndrajeetPatil/groupedstats/issues/
-* Date/Publication: 2020-05-05 16:20:03 UTC
-* Number of recursive dependencies: 120
-
-Run `cloud_details(, "groupedstats")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘spelling.R’
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      
-      ── 5. Failure: grouped_proptest works - with NAs (@test-grouped_proptest.R#111) 
-      df2$statistic not equal to c(...).
-      names for target but not for current
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 30 | SKIPPED: 4 | WARNINGS: 0 | FAILED: 5 ]
-      1. Failure: grouped_proptest works - without NAs (@test-grouped_proptest.R#37) 
-      2. Failure: grouped_proptest works - without NAs (@test-grouped_proptest.R#49) 
-      3. Failure: grouped_proptest works - without NAs (@test-grouped_proptest.R#52) 
-      4. Failure: grouped_proptest works - with NAs (@test-grouped_proptest.R#87) 
-      5. Failure: grouped_proptest works - with NAs (@test-grouped_proptest.R#111) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 # HaDeX
 
 <details>
@@ -1354,7 +1391,7 @@ Run `cloud_details(, "groupedstats")` for more info
 * Date/Publication: 2020-02-06 13:50:02 UTC
 * Number of recursive dependencies: 127
 
-Run `cloud_details(, "HaDeX")` for more info
+Run `revdep_details(,"HaDeX")` for more info
 
 </details>
 
@@ -1386,10 +1423,9 @@ Run `cloud_details(, "HaDeX")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘spelling.R’
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       
@@ -1418,6 +1454,49 @@ Run `cloud_details(, "HaDeX")` for more info
       All declared Imports should be used.
     ```
 
+# healthcareai
+
+<details>
+
+* Version: 2.4.0
+* Source code: https://github.com/cran/healthcareai
+* URL: http://docs.healthcare.ai
+* BugReports: https://github.com/HealthCatalyst/healthcareai-r/issues
+* Date/Publication: 2020-02-28 18:00:05 UTC
+* Number of recursive dependencies: 119
+
+Run `revdep_details(,"healthcareai")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    Error: Problem with `filter()` input `..1`.
+    ✖ object 'patient' not found
+    ℹ Input `..1` is `n_distinct(patient) >= min_obs`.
+    ℹ The error occured in group 1: drug = "Dexamethasone".
+    Backtrace:
+         █
+      1. └─healthcareai::get_best_levels(...)
+      2.   └─`%>%`(...)
+      3.     ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      4.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      5.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      6.         └─healthcareai:::`_fseq`(`_lhs`)
+      7.           └─magrittr::freduce(value, `_function_list`)
+      8.             └─function_list[[i]](value)
+      9.               ├─dplyr::filter(., n_distinct(!!id) >= min_obs)
+     10.               └─dplyr:::filter.data.frame(., n_distinct(!!id) >= min_obs)
+     11.                 └─dplyr:::filter_rows(.data, ...)
+     12.                   └─base::tryCatch(...)
+     13.                     └─base:::tryCatchList(expr, classes, parentenv, handlers)
+     14.            
+    Execution halted
+    ```
+
 # idmodelr
 
 <details>
@@ -1429,15 +1508,15 @@ Run `cloud_details(, "HaDeX")` for more info
 * Date/Publication: 2019-09-10 22:50:10 UTC
 * Number of recursive dependencies: 126
 
-Run `cloud_details(, "idmodelr")` for more info
+Run `revdep_details(,"idmodelr")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ── 4. Failure: generate_parameter_permutations can use a single parameter sample
@@ -1457,501 +1536,187 @@ Run `cloud_details(, "idmodelr")` for more info
       Execution halted
     ```
 
-# immunarch
+# isomiRs
 
 <details>
 
-* Version: 0.6.4
-* Source code: https://github.com/cran/immunarch
-* URL: https://immunarch.com/, https://github.com/immunomind/immunarch
-* BugReports: https://github.com/immunomind/immunarch/issues
-* Date/Publication: 2020-05-13 08:00:02 UTC
-* Number of recursive dependencies: 167
+* Version: 1.16.1
+* Source code: https://github.com/cran/isomiRs
+* BugReports: https://github.com/lpantano/isomiRs/issues
+* Date/Publication: 2020-05-26
+* Number of recursive dependencies: 148
 
-Run `cloud_details(, "immunarch")` for more info
+Run `revdep_details(,"isomiRs")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking examples ... ERROR
+*   checking tests ...
     ```
-    Running examples in ‘immunarch-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: pubRep
-    > ### Title: Create a repertoire of public clonotypes
-    > ### Aliases: pubRep publicRepertoire
-    > 
-    > ### ** Examples
-    > 
-    > # Subset the data to make the example faster to run
-    > immdata$data <- lapply(immdata$data, head, 2000)
-    > pr <- pubRep(immdata$data, .verbose=FALSE)
-    > vis(pr, "clonotypes", 1, 2)
-    Warning: You are using a dplyr method on a raw data.table, which will call the
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  7.8Mb
-      sub-directories of 1Mb or more:
-        data   2.1Mb
-        doc    4.2Mb
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘dbplyr’
-      All declared Imports should be used.
-    ```
-
-# IncucyteDRC
-
-<details>
-
-* Version: 0.5.4
-* Source code: https://github.com/cran/IncucyteDRC
-* URL: https://github.com/chapmandu2/IncucyteDRC
-* BugReports: https://github.com/chapmandu2/IncucyteDRC/issues
-* Date/Publication: 2016-04-23 14:21:03
-* Number of recursive dependencies: 119
-
-Run `cloud_details(, "IncucyteDRC")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    ✖ could not find function "row_number"
-    ℹ Input `idx` is `row_number()`.
-    ℹ The error occured in group 1: sampleid = "PDD00017273", conc = 0.3703704.
-    Backtrace:
-         █
-      1. └─IncucyteDRC::fitDoseResponseCurve(test_idrc_set)
-      2.   └─IncucyteDRC::exportDRCDataToDataFrame(idrc_set, include_control)
-      3.     └─`%>%`(...)
-      4.       ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      5.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      6.         └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      7.           └─IncucyteDRC:::`_fseq`(`_lhs`)
-      8.             └─magrittr::freduce(value, `_function_list`)
-      9.               └─function_list[[i]](value)
-     10.                 ├─dplyr::mutate(., idx = row_number())
-     11.                 └─dplyr:::mutate.data.frame(., idx = row_number())
-     12.                   └─dplyr:::mutate_cols(.data, ...)
-    <parent: error/simpleError>
-    Backtrace:
-    █
-    Execution halted
-    ```
-
-# infer
-
-<details>
-
-* Version: 0.5.1
-* Source code: https://github.com/cran/infer
-* URL: https://github.com/tidymodels/infer, https://infer.netlify.com/
-* BugReports: https://github.com/tidymodels/infer/issues
-* Date/Publication: 2019-11-19 10:30:02 UTC
-* Number of recursive dependencies: 115
-
-Run `cloud_details(, "infer")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      gen_iris12 %>% calculate(stat = "count") not equal to `%>%`(...).
-      Attributes: < Names: 1 string mismatch >
-      Attributes: < Length mismatch: comparison on first 2 components >
-      Attributes: < Component 2: Modes: logical, numeric >
-      Attributes: < Component 2: Lengths: 1, 10 >
-      Attributes: < Component 2: target is logical, current is numeric >
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 339 | SKIPPED: 60 | WARNINGS: 21 | FAILED: 3 ]
-      1. Failure: chi-square matches chisq.test value (@test-calculate.R#219) 
-      2. Failure: chi-square matches chisq.test value (@test-calculate.R#236) 
-      3. Failure: calc_impl.count works (@test-calculate.R#473) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘lifecycle’
-      All declared Imports should be used.
-    ```
-
-# iRF
-
-<details>
-
-* Version: 2.0.0
-* Source code: https://github.com/cran/iRF
-* URL: https://arxiv.org/abs/1706.08457
-* Date/Publication: 2017-07-26 04:57:45 UTC
-* Number of recursive dependencies: 61
-
-Run `cloud_details(, "iRF")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking whether package ‘iRF’ can be installed ... WARNING
-    ```
-    Found the following significant warnings:
-      Warning: 'rgl.init' failed, running with 'rgl.useNULL = TRUE'.
-    See ‘/tmp/workdir/iRF/new/iRF.Rcheck/00install.out’ for details.
-    ```
-
-# jpndistrict
-
-<details>
-
-* Version: 0.3.6
-* Source code: https://github.com/cran/jpndistrict
-* URL: https://uribo.github.io/jpndistrict
-* BugReports: https://github.com/uribo/jpndistrict/issues
-* Date/Publication: 2020-04-20 07:50:07 UTC
-* Number of recursive dependencies: 101
-
-Run `cloud_details(, "jpndistrict")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      downloaded 9427 bytes
-      
-      options:        ENCODING=cp932 
-      Reading layer `P34-14_47' from data source `/tmp/Rtmp263d1v/P34-14_47_GML/P34-14_47.shp' using driver `ESRI Shapefile'
-      Simple feature collection with 65 features and 4 fields
-      geometry type:  POINT
-      dimension:      XY
-      bbox:           xmin: 123.0045 ymin: 24.06092 xmax: 131.2989 ymax: 27.03917
-      CRS:            EPSG:4612
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 93 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 1 ]
-      1. Error: (unknown) (@test-export.R#3) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 188 marked UTF-8 strings
-    ```
-
-# keyATM
-
-<details>
-
-* Version: 0.2.0
-* Source code: https://github.com/cran/keyATM
-* URL: https://keyatm.github.io/keyATM/
-* BugReports: https://github.com/keyATM/keyATM/issues
-* Date/Publication: 2020-05-23 12:30:02 UTC
-* Number of recursive dependencies: 108
-
-Run `cloud_details(, "keyATM")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      0%   10   20   30   40   50   60   70   80   90   100%
-      [----|----|----|----|----|----|----|----|----|----|
-      **************************************************|
-      0%   10   20   30   40   50   60   70   80   90   100%
-      [----|----|----|----|----|----|----|----|----|----|
-      **************************************************|
-      0%   10   20   30   40   50   60   70   80   90   100%
-      [----|----|----|----|----|----|----|----|----|----|
-      **************************************************|
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 38 | SKIPPED: 19 | WARNINGS: 0 | FAILED: 1 ]
-      1. Error: Visualizing keywords (@test-Initialization.R#17) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is 16.5Mb
-      sub-directories of 1Mb or more:
-        libs  16.1Mb
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘quanteda’
-      All declared Imports should be used.
-    ```
-
-# kiwisR
-
-<details>
-
-* Version: 0.1.8
-* Source code: https://github.com/cran/kiwisR
-* URL: https://github.com/rywhale/kiwisR
-* BugReports: https://github.com/rywhale/kiwisR/issues
-* Date/Publication: 2019-12-15 16:10:02 UTC
-* Number of recursive dependencies: 71
-
-Run `cloud_details(, "kiwisR")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      > library(testthat)
-      > library(kiwisR)
-      > 
-      > test_check("kiwisR")
-      ── 1. Failure: ki_station_list accepts custom return fields (vector or string) (
-      `stn_cust_retr` not equal to `stn_cust_retr2`.
-      Component "station_id": 96 string mismatches
-      Component "station_no": 96 string mismatches
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 54 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 1 ]
-      1. Failure: ki_station_list accepts custom return fields (vector or string) (@test_ki_station_list.R#71) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# lpirfs
-
-<details>
-
-* Version: 0.1.7
-* Source code: https://github.com/cran/lpirfs
-* BugReports: https://github.com/adaemmerp/lpirfs/issues
-* Date/Publication: 2019-11-25 09:20:06 UTC
-* Number of recursive dependencies: 135
-
-Run `cloud_details(, "lpirfs")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
+      ℹ The error occured in group 1: merge = "one_groupcontrol_1", cluster = 1, xaxis = "control_1", colored = "one_group".
       Backtrace:
-        1. lpirfs::lp_nl_panel(...)
-        6. plm:::model.frame.pdata.frame(...)
-        8. Formula:::model.frame.Formula(...)
-       10. stats::model.frame.default(...)
-       11. [ base::eval(...) ] with 1 more call
+        1. testthat::expect_equal(unique(.cluster_exp(gene)), c(1, 2))
+        5. isomiRs:::.cluster_exp(gene)
+        6. DEGreport::degPatterns(ma, meta, time = "xaxis", minc = 0, plot = FALSE)
+        4. dplyr::group_by(...)
+       11. dplyr::summarise(., abundance = median(value), n_genes = n())
+       16. dplyr:::summarise_cols(.data, ...)
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 168 | SKIPPED: 0 | WARNINGS: 1 | FAILED: 3 ]
-      1. Failure: Test that data is correctly computed. (@test-lp_lin_panel.R#737) 
-      2. Failure: Test that data is correctly computed. (@test-lp_lin_panel.R#783) 
-      3. Error: Check output of switching variable I (@test-lp_nl_panel.R#948) 
+      [ OK: 27 | SKIPPED: 0 | WARNINGS: 2 | FAILED: 1 ]
+      1. Error: matrix (@test_calculus.R#23) 
       
       Error: testthat unit tests failed
       Execution halted
     ```
 
 ## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  8.4Mb
-      sub-directories of 1Mb or more:
-        libs   6.9Mb
-    ```
-
-# mason
-
-<details>
-
-* Version: 0.2.6
-* Source code: https://github.com/cran/mason
-* URL: https://github.com/lwjohnst86/mason
-* BugReports: https://github.com/lwjohnst86/mason/issues
-* Date/Publication: 2018-07-05 12:20:02 UTC
-* Number of recursive dependencies: 67
-
-Run `cloud_details(, "mason")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Component "estimate": Mean relative difference: 1.999997
-      Component "std.error": Mean relative difference: 0.2627753
-      Component "statistic": Mean relative difference: 1.789258
-      Component "p.value": Mean relative difference: 1.333262
-      Component "conf.low": Mean relative difference: 1.751052
-      Component "conf.high": Mean relative difference: 1.316709
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 76 | SKIPPED: 1 | WARNINGS: 7 | FAILED: 3 ]
-      1. Failure: (for glm bi) results are equal to real results (no covar) (@test-glm-binomial.R#59) 
-      2. Failure: (for glm bi) results are equal to real results (with covar) (@test-glm-binomial.R#73) 
-      3. Failure: (for glm) results are equal to real results (with covar + int) (@test-glm-binomial.R#88) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking Rd cross-references ... NOTE
-    ```
-    Packages unavailable to check Rd xrefs: ‘ggplot2’, ‘pander’, ‘pixiedust’
-    ```
-
-# mcp
-
-<details>
-
-* Version: 0.2.0
-* Source code: https://github.com/cran/mcp
-* URL: http://lindeloev.github.io/mcp/, https://github.com/lindeloev/mcp
-* BugReports: https://github.com/lindeloev/mcp/issues
-* Date/Publication: 2020-01-09 16:30:02 UTC
-* Number of recursive dependencies: 94
-
-Run `cloud_details(, "mcp")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 1719 | SKIPPED: 1 | WARNINGS: 1 | FAILED: 5 ]
-      1. Failure: Good variance:
-          y ~ 1 + sigma(x + I(x^2)) (@test-runs.R#277) 
-      2. Failure: Good variance:
-          y ~ 1 + sigma(x + I(x^2)) (@test-runs.R#277) 
-      3. Failure: Good variance:
-          y ~ 1, 1 + (1 | id) ~ rel(1) + I(x^2) + sigma(rel(1) + x) (@test-runs.R#277) 
-      4. Failure: Good Poisson:
-          y ~ 1 + x, y ~ 1 ~ rel(1) + rel(x), rel(1) ~ 0 (@test-runs.R#277) 
-      5. Failure: Good Poisson:
-          y ~ 1, 1 + (1 | id) ~ 1 (@test-runs.R#277) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘bayesplot’ ‘methods’ ‘purrr’
-      All declared Imports should be used.
-    ```
-
-# metamicrobiomeR
-
-<details>
-
-* Version: 1.1
-* Source code: https://github.com/cran/metamicrobiomeR
-* URL: https://github.com/nhanhocu/metamicrobiomeR
-* BugReports: https://github.com/nhanhocu/metamicrobiomeR/issues
-* Date/Publication: 2019-09-03 07:20:02 UTC
-* Number of recursive dependencies: 131
-
-Run `cloud_details(, "metamicrobiomeR")` for more info
-
-</details>
-
-## Newly broken
 
 *   checking examples ... ERROR
     ```
     ...
-    > tl<-colnames(taxtab6)[grep("k__bacteria.p__fusobacteria",colnames(taxtab6))]
-    > taxacom.ex<-taxa.compare(taxtab=taxtab6[,c("personid","x.sampleid","bf","age.sample",tl)],
-    + propmed.rel="gamlss",comvar="bf",adjustvar="age.sample",
-    + longitudinal="yes",p.adjust.method="fdr")
-    Error: Corrupt `grouped_df` using old (< 0.8.0) format.
-    ℹ Strip off old grouping with `ungroup()`.
+    Joining, by = "merge"
+    Error: Problem with `summarise()` input `n_genes`.
+    ✖ could not find function "n"
+    ℹ Input `n_genes` is `n()`.
+    ℹ The error occured in group 1: merge = "one_groupcontrol", cluster = 1, xaxis = "control", colored = "one_group".
     Backtrace:
          █
-      1. ├─metamicrobiomeR::taxa.compare(...)
-      2. │ └─base::as.data.frame(taxtab)
-      3. ├─taxtab6[, c("personid", "x.sampleid", "bf", "age.sample", tl)]
-      4. └─dplyr:::`[.grouped_df`(...)
-      5.   └─dplyr:::group_intersect(x, out)
-      6.     ├─generics::intersect(group_vars(x), names(new))
-      7.     ├─dplyr::group_vars(x)
-      8.     └─dplyr:::group_vars.data.frame(x)
-      9.       ├─generics::setdiff(names(group_data(x)), ".rows")
-     10.       ├─dplyr::group_data(x)
-     11.       └─dplyr:::group_data.grouped_df(x)
-     12.         └─dplyr::validate_grouped_df(.data)
+      1. └─isomiRs::isoNetwork(...)
+      2.   └─isomiRs:::.viz_mirna_gene_enrichment(...)
+      3.     └─isomiRs:::.cluster_exp(...)
+      4.       └─DEGreport::degPatterns(ma, meta, time = "xaxis", minc = 0, plot = FALSE)
+      5.         └─`%>%`(...)
+      6.           ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      7.           └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      8.             └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      9.               └─DEGreport:::`_fseq`(`_lhs`)
+     10.                 └─magrittr::freduce(value, `_function_list`)
+     11.                   └─function_list[[i]](value)
+     12.                     ├─dplyr::summarise(., abundance = median(value), n_genes = n())
+     13.       
     Execution halted
     ```
 
-## In both
-
-*   checking dependencies in R code ... NOTE
+*   checking package dependencies ... NOTE
     ```
-    Namespaces in Imports field not imported from:
-      ‘RCurl’ ‘foreign’ ‘gplots’ ‘httr’ ‘jsonlite’ ‘knitr’ ‘lmerTest’
-      ‘magrittr’ ‘mgcv’ ‘repmis’ ‘reshape2’ ‘rmarkdown’
-      All declared Imports should be used.
+    Package suggested but not available for checking: ‘targetscan.Hs.eg.db’
+    ```
+
+*   checking for hidden files and directories ... NOTE
+    ```
+    Found the following hidden files and directories:
+      .travis.yml
+    These were most likely included in error. See section ‘Package
+    structure’ in the ‘Writing R Extensions’ manual.
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    ...
+      ‘targetscan.Hs.egMIRNA’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Hs.egMIRBASE2FAMILY’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Hs.egTARGETS’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Hs.egTARGETSFULL’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Mm.egMIRNA’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Mm.egMIRBASE2FAMILY’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Mm.egTARGETS’
+    mirna2targetscan: no visible binding for global variable
+      ‘targetscan.Mm.egTARGETSFULL’
+    Undefined global functions or variables:
+      as.tibble changes hits iso_sample pct targetscan.Hs.egMIRBASE2FAMILY
+      targetscan.Hs.egMIRNA targetscan.Hs.egTARGETS
+      targetscan.Hs.egTARGETSFULL targetscan.Mm.egMIRBASE2FAMILY
+      targetscan.Mm.egMIRNA targetscan.Mm.egTARGETS
+      targetscan.Mm.egTARGETSFULL total
+    ```
+
+# lans2r
+
+<details>
+
+* Version: 1.0.5
+* Source code: https://github.com/cran/lans2r
+* URL: https://github.com/KopfLab/lans2r
+* BugReports: https://github.com/KopfLab/lans2r/issues
+* Date/Publication: 2017-05-24 04:25:53 UTC
+* Number of recursive dependencies: 79
+
+Run `revdep_details(,"lans2r")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      `... <- NULL` produced warnings.
+      
+      ── 2. Failure: test that transformation safety checks are in place (@test-transf
+      spread_data(bind_rows(a, b)) not equal to full_join(...).
+      Names: 2 string mismatches
+      Component 3: Mean relative difference: 0.9281371
+      Component 4: Mean relative difference: 7.749237
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 142 | SKIPPED: 0 | WARNINGS: 7 | FAILED: 2 ]
+      1. Failure: test that it is possible to load LANS maps (@test-load-data.R#81) 
+      2. Failure: test that transformation safety checks are in place (@test-transformations.R#13) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+# LexisNexisTools
+
+<details>
+
+* Version: 0.3.0
+* Source code: https://github.com/cran/LexisNexisTools
+* URL: https://github.com/JBGruber/LexisNexisTools
+* BugReports: https://github.com/JBGruber/LexisNexisTools/issues
+* Date/Publication: 2020-01-09 23:00:03 UTC
+* Number of recursive dependencies: 134
+
+Run `revdep_details(,"LexisNexisTools")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+        |++++++++++                                        | 20% ~00s          
+        |+++++++++++++++                                   | 30% ~00s          
+        |++++++++++++++++++++                              | 40% ~00s          
+        |+++++++++++++++++++++++++                         | 50% ~00s          
+        |++++++++++++++++++++++++++++++                    | 60% ~00s          
+        |+++++++++++++++++++++++++++++++++++               | 70% ~00s          
+        |++++++++++++++++++++++++++++++++++++++++          | 80% ~00s          
+        |+++++++++++++++++++++++++++++++++++++++++++++     | 90% ~00s          
+        |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 97 | SKIPPED: 2 | WARNINGS: 0 | FAILED: 1 ]
+      1. Failure: Convert LNToutput to tidytext (@test-lnt_convert.R#102) 
+      
+      Error: testthat unit tests failed
+      Execution halted
     ```
 
 # mmetrics
@@ -1965,15 +1730,15 @@ Run `cloud_details(, "metamicrobiomeR")` for more info
 * Date/Publication: 2019-07-26 08:50:02 UTC
 * Number of recursive dependencies: 96
 
-Run `cloud_details(, "mmetrics")` for more info
+Run `revdep_details(,"mmetrics")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       
@@ -2002,6 +1767,69 @@ Run `cloud_details(, "mmetrics")` for more info
       All declared Imports should be used.
     ```
 
+# MSstatsTMT
+
+<details>
+
+* Version: 1.6.1
+* Source code: https://github.com/cran/MSstatsTMT
+* URL: http://msstats.org/msstatstmt/
+* BugReports: https://groups.google.com/forum/#!forum/msstats
+* Date/Publication: 2020-05-12
+* Number of recursive dependencies: 101
+
+Run `revdep_details(,"MSstatsTMT")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    Running examples in ‘MSstatsTMT-Ex.R’ failed
+    The error most likely occurred in:
+    
+    > ### Name: dataProcessPlotsTMT
+    > ### Title: Visualization for explanatory data analysis - TMT experiment
+    > ### Aliases: dataProcessPlotsTMT
+    > 
+    > ### ** Examples
+    > 
+    > data(input.pd)
+    > quant.msstats <- proteinSummarization(input.pd,
+    +                                       method="msstats",
+    +                                       global_norm=TRUE,
+    +                                       reference_norm=TRUE)
+    Joining, by = c("Run", "Channel")
+    Summarizing for Run : 161117_SILAC_HeLa_UPS1_TMT10_Mixture1_01.raw ( 1  of  15 )
+    Error in `[.data.table`(raw, , require.col) : 
+      j (the 2nd argument inside [...]) is a single symbol but column name 'require.col' is not found. Perhaps you intended DT[, ..require.col]. This difference to data.frame is deliberate and explained in FAQ 1.1.
+    Calls: proteinSummarization ... .protein.summarization.function -> dataProcess -> [ -> [.data.table
+    Execution halted
+    ```
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      > test_check("MSstatsTMT")
+      ── 1. Error: proteinSummarization works (@test-proteinSummarization.R#5)  ──────
+      j (the 2nd argument inside [...]) is a single symbol but column name 'require.col' is not found. Perhaps you intended DT[, ..require.col]. This difference to data.frame is deliberate and explained in FAQ 1.1.
+      Backtrace:
+       1. MSstatsTMT::proteinSummarization(...)
+       2. MSstatsTMT:::.protein.summarization.function(...)
+       3. MSstats::dataProcess(...)
+       5. data.table:::`[.data.table`(raw, , require.col)
+      
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 32 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 1 ]
+      1. Error: proteinSummarization works (@test-proteinSummarization.R#5) 
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
 # neuropsychology
 
 <details>
@@ -2013,7 +1841,7 @@ Run `cloud_details(, "mmetrics")` for more info
 * Date/Publication: 2017-03-22 19:17:18 UTC
 * Number of recursive dependencies: 154
 
-Run `cloud_details(, "neuropsychology")` for more info
+Run `revdep_details(,"neuropsychology")` for more info
 
 </details>
 
@@ -2054,6 +1882,59 @@ Run `cloud_details(, "neuropsychology")` for more info
       All declared Imports should be used.
     ```
 
+# ngsReports
+
+<details>
+
+* Version: 1.4.1
+* Source code: https://github.com/cran/ngsReports
+* URL: https://github.com/steveped/ngsReports
+* BugReports: https://github.com/steveped/ngsReports/issues
+* Date/Publication: 2020-05-21
+* Number of recursive dependencies: 157
+
+Run `revdep_details(,"ngsReports")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    > # Load the FASTQC data as a FastqcDataList object
+    > fdl <- FastqcDataList(fl)
+    > 
+    > # Export the top10 Overrepresented Sequences as a single fasta file
+    > faOut <- file.path(tempdir(), "top10.fa")
+    > overRep2Fasta(fdl, path = faOut)
+    Error: Problem with `summarise()` input `nFiles`.
+    ✖ could not find function "n"
+    ℹ Input `nFiles` is `n()`.
+    ℹ The error occured in group 1: Sequence = "AAAAATATGGAACGCTTCACGAATTTGCGTCATCCTTGCGCAGGGGCCAT".
+    Backtrace:
+        █
+     1. ├─ngsReports::overRep2Fasta(fdl, path = faOut)
+     2. └─ngsReports::overRep2Fasta(fdl, path = faOut)
+     3.   ├─dplyr::summarise(...)
+     4.   └─dplyr:::summarise.grouped_df(...)
+     5.     └─dplyr:::summarise_cols(.data, ...)
+    <parent: error/simpleError>
+    Backtrace:
+    █
+    Execution halted
+    ```
+
+## In both
+
+*   checking installed package size ... NOTE
+    ```
+      installed size is  6.2Mb
+      sub-directories of 1Mb or more:
+        R     2.0Mb
+        doc   3.0Mb
+    ```
+
 # opentripplanner
 
 <details>
@@ -2065,15 +1946,15 @@ Run `cloud_details(, "neuropsychology")` for more info
 * Date/Publication: 2020-04-14 17:20:03 UTC
 * Number of recursive dependencies: 69
 
-Run `cloud_details(, "opentripplanner")` for more info
+Run `revdep_details(,"opentripplanner")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Content type 'application/octet-stream' length 126976 bytes (124 KB)
@@ -2111,7 +1992,7 @@ Run `cloud_details(, "opentripplanner")` for more info
 * Date/Publication: 2020-05-27 10:00:03 UTC
 * Number of recursive dependencies: 101
 
-Run `cloud_details(, "pammtools")` for more info
+Run `revdep_details(,"pammtools")` for more info
 
 </details>
 
@@ -2140,18 +2021,18 @@ Run `cloud_details(, "pammtools")` for more info
         Position: 3 Code: .add Docs: add
     ```
 
-# panelr
+# PAST
 
 <details>
 
-* Version: 0.7.2
-* Source code: https://github.com/cran/panelr
-* URL: https://panelr.jacob-long.com
-* BugReports: https://github.com/jacob-long/panelr
-* Date/Publication: 2020-03-08 22:10:02 UTC
-* Number of recursive dependencies: 169
+* Version: 1.4.1
+* Source code: https://github.com/cran/PAST
+* URL: https://github.com/IGBB/past
+* BugReports: https://github.com/IGBB/past/issues
+* Date/Publication: 2020-04-30
+* Number of recursive dependencies: 97
 
-Run `cloud_details(, "panelr")` for more info
+Run `revdep_details(,"PAST")` for more info
 
 </details>
 
@@ -2159,55 +2040,74 @@ Run `cloud_details(, "panelr")` for more info
 
 *   checking examples ... ERROR
     ```
-    Running examples in ‘panelr-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: are_varying
-    > ### Title: Check if variables are constant or variable over time.
-    > ### Aliases: are_varying
-    > 
-    > ### ** Examples
-    > 
-    > 
-    > wages <- panel_data(WageData, id = id, wave = t)
-    Warning: The `add` argument of `group_by()` is deprecated as of dplyr 1.0.0.
-    Please use the `.add` argument instead.
-    This warning is displayed once every 8 hours.
-    Call `lifecycle::last_warnings()` to see where this warning was generated.
-    > wages %>% are_varying(occ, ind, fem, blk)
-    Error in if (get_wave(data) %in% dots) NULL else get_wave(data) : 
-      argument is of length zero
-    Calls: %>% ... freduce -> withVisible -> <Anonymous> -> are_varying
+    ...
+    Error: Problem with `mutate()` input `..1`.
+    ✖ Input `..1` must be a vector, not a `rlang_data_pronoun` object.
+    ℹ Input `..1` is `.data`.
+    Backtrace:
+         █
+      1. ├─utils::example("load_GWAS_data")
+      2. │ └─base::source(...)
+      3. │   ├─base::withVisible(eval(ei, envir))
+      4. │   └─base::eval(ei, envir)
+      5. │     └─base::eval(ei, envir)
+      6. └─PAST::load_GWAS_data(demo_association_file, demo_effects_file) /var/folders/4b/hn4fq98s6810s4ccv2f9hm2h0000gn/T//Rtmpo6QVx8/Rex350b4cf16ce3:11:0
+      7.   └─`%>%`(...)
+      8.     ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      9.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+     10.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+     11.         └─PAST:::`_fseq`(`_lhs`)
+     12.           └─magrittr::freduce(value, `_function_list`)
+     13.             └─function_list[[i]](value)
+     14.               ├─dplyr::mutate(...)
+     15.               └─dplyr:::mutate.data.frame(...)
     Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 22 | SKIPPED: 0 | WARNINGS: 1 | FAILED: 17 ]
-      1. Failure: dplyr functions return panel_data objects (@test-utils.R#29) 
-      2. Error: widen_panel works (@test-utils.R#46) 
-      3. Error: long_panel works (basic case) (@test-utils.R#72) 
-      4. Error: long_panel works (unbalanced data) (@test-utils.R#96) 
-      5. Error: long_panel works (unbalanced data, numeric waves not begin w/ 1) (@test-utils.R#120) 
-      6. Error: long_panel works (character periods) (@test-utils.R#146) 
-      7. Error: long_panel works (beginning label) (@test-utils.R#171) 
-      8. Error: long_panel works (beginning label/character periods) (@test-utils.R#198) 
-      9. Error: long_panel works (prefix and suffix/character periods) (@test-utils.R#225) 
-      1. ...
-      
-      Error: testthat unit tests failed
-      Execution halted
     ```
 
 ## In both
 
-*   checking Rd cross-references ... NOTE
+*   checking whether package ‘PAST’ can be installed ... WARNING
     ```
-    Package unavailable to check Rd xrefs: ‘AER’
+    Found the following significant warnings:
+      Warning: replacing previous import ‘S4Vectors::union’ by ‘dplyr::union’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::intersect’ by ‘dplyr::intersect’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::setdiff’ by ‘dplyr::setdiff’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::first’ by ‘dplyr::first’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::setequal’ by ‘dplyr::setequal’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::rename’ by ‘dplyr::rename’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::tail’ by ‘utils::tail’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::head’ by ‘utils::head’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::complete.cases’ by ‘stats::complete.cases’ when loading ‘PAST’
+      Warning: replacing previous import ‘S4Vectors::sd’ by ‘stats::sd’ when loading ‘PAST’
+    See ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/PAST/new/PAST.Rcheck/00install.out’ for details.
+    ```
+
+*   checking Rd \usage sections ... WARNING
+    ```
+    Undocumented arguments in documentation object 'assign_SNPs_to_genes'
+      ‘filter_type’
+    
+    Functions with \usage entries need to have the appropriate \alias
+    entries, and all their arguments documented.
+    The \usage entries must correspond to syntactically valid R code.
+    See chapter ‘Writing R documentation files’ in the ‘Writing R
+    Extensions’ manual.
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    assign_chunk: no visible binding for global variable ‘chromosome’
+    assign_chunk: no visible global function definition for ‘IRanges’
+    assign_chunk: no visible binding for global variable ‘position’
+    assign_chunk: no visible binding for global variable ‘seqid’
+    assign_chunk: no visible binding for global variable ‘Name’
+    find_pathway_significance: no visible binding for global variable
+      ‘gene_id’
+    plot_pathways: no visible binding for global variable
+      ‘running_enrichment_score’
+    Undefined global functions or variables:
+      IRanges Name chromosome gene_id position running_enrichment_score
+      seqid
     ```
 
 # photosynthesis
@@ -2219,7 +2119,7 @@ Run `cloud_details(, "panelr")` for more info
 * Date/Publication: 2019-05-09 15:10:03 UTC
 * Number of recursive dependencies: 73
 
-Run `cloud_details(, "photosynthesis")` for more info
+Run `revdep_details(,"photosynthesis")` for more info
 
 </details>
 
@@ -2270,7 +2170,7 @@ Run `cloud_details(, "photosynthesis")` for more info
 * Date/Publication: 2020-05-15 08:47:17 UTC
 * Number of recursive dependencies: 106
 
-Run `cloud_details(, "pmdplyr")` for more info
+Run `revdep_details(,"pmdplyr")` for more info
 
 </details>
 
@@ -2302,9 +2202,9 @@ Run `cloud_details(, "pmdplyr")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ℹ The error occured in group 1: i = 1.
@@ -2320,7 +2220,7 @@ Run `cloud_details(, "pmdplyr")` for more info
        21. dplyr:::stop_mutate_recycle_incompatible_size(e, index = i, dots = dots)
        22. dplyr:::stop_dplyr(...)
       
-      Error: C stack usage  7969508 is too close to the limit
+      Error: C stack usage  7971360 is too close to the limit
       Execution halted
     ```
 
@@ -2330,101 +2230,6 @@ Run `cloud_details(, "pmdplyr")` for more info
       ‘[dplyr]{join.tbl_df}’
     
     See section 'Cross-references' in the 'Writing R Extensions' manual.
-    ```
-
-# ptstem
-
-<details>
-
-* Version: 0.0.7
-* Source code: https://github.com/cran/ptstem
-* URL: https://github.com/dfalbel/ptstem
-* Date/Publication: 2020-05-12 23:40:03 UTC
-* Number of recursive dependencies: 63
-
-Run `cloud_details(, "ptstem")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      y[4]: "gostou"
-      
-      x[5]: "gostaram"
-      y[5]: "gostou"
-      
-      x[6]: "gostaram"
-      y[6]: "gostou"
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 17 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 2 ]
-      1. Failure: Stemming Hunspell Works (@test-ptstem.R#15) 
-      2. Failure: Stemming Hunspell Works (@test-ptstem.R#19) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  5.3Mb
-      sub-directories of 1Mb or more:
-        dict   5.1Mb
-    ```
-
-# purrrogress
-
-<details>
-
-* Version: 0.1.1
-* Source code: https://github.com/cran/purrrogress
-* URL: https://github.com/halpo/purrrogress
-* BugReports: https://github.com/halpo/purrrogress/issues
-* Date/Publication: 2019-07-22 21:10:08 UTC
-* Number of recursive dependencies: 48
-
-Run `cloud_details(, "purrrogress")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      > library(purrrogress)
-      > 
-      > test_check("purrrogress")
-      ── 1. Error: with_progress_group_map (@group_map.R#56)  ────────────────────────
-      object '.tbl' not found
-      Backtrace:
-        1. dplyr::group_map(...)
-       13. dplyr::count(.tbl)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 224 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 1 ]
-      1. Error: with_progress_group_map (@group_map.R#56) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘R6’ ‘hms’
-      All declared Imports should be used.
     ```
 
 # rabhit
@@ -2438,7 +2243,7 @@ Run `cloud_details(, "purrrogress")` for more info
 * Date/Publication: 2020-01-29 20:20:02 UTC
 * Number of recursive dependencies: 109
 
-Run `cloud_details(, "rabhit")` for more info
+Run `revdep_details(,"rabhit")` for more info
 
 </details>
 
@@ -2470,84 +2275,102 @@ Run `cloud_details(, "rabhit")` for more info
     Execution halted
     ```
 
-# radiant.data
+# Rariant
 
 <details>
 
-* Version: 1.3.4
-* Source code: https://github.com/cran/radiant.data
-* URL: https://github.com/radiant-rstats/radiant.data, https://radiant-rstats.github.io/radiant.data, https://radiant-rstats.github.io/docs
-* BugReports: https://github.com/radiant-rstats/radiant.data/issues
-* Date/Publication: 2020-03-23 15:50:05 UTC
-* Number of recursive dependencies: 144
+* Version: 1.24.0
+* Source code: https://github.com/cran/Rariant
+* URL: https://github.com/juliangehring/Rariant
+* BugReports: https://support.bioconductor.org
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 167
 
-Run `cloud_details(, "radiant.data")` for more info
+Run `revdep_details(,"Rariant")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking whether package ‘Rariant’ can be installed ... ERROR
     ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ── 1. Failure: transform ts (@test_funs.R#166)  ────────────────────────────────
-      dat$mpg not equal to ts(mtcars$mpg, start = c(1971, 1), frequency = 52).
-      Classes differ: numeric is not ts
-      
-      ── 2. Failure: transform ts (@test_funs.R#167)  ────────────────────────────────
-      dat$cyl not equal to ts(mtcars$cyl, start = c(1971, 1), frequency = 52).
-      Classes differ: numeric is not ts
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 32 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 2 ]
-      1. Failure: transform ts (@test_funs.R#166) 
-      2. Failure: transform ts (@test_funs.R#167) 
-      
-      Error: testthat unit tests failed
-      Execution halted
+    Installation failed.
+    See ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/Rariant/new/Rariant.Rcheck/00install.out’ for details.
     ```
 
-# rainette
+## Newly fixed
 
-<details>
-
-* Version: 0.1.1
-* Source code: https://github.com/cran/rainette
-* URL: https://juba.github.io/rainette/
-* BugReports: https://github.com/juba/rainette/issues
-* Date/Publication: 2020-05-09 12:00:03 UTC
-* Number of recursive dependencies: 155
-
-Run `cloud_details(, "rainette")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
+*   checking examples ... WARNING
     ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        3. rainette:::filter_crosstab(...)
-        3. dplyr::filter(., chi2 > min_chi2, n_both > min_members)
-        3. dplyr::select(., g1, g2, level1, level2, n_both, chi2)
-       10. dplyr::mutate(...)
-       13. dplyr:::mutate_cols(.data, ...)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 106 | SKIPPED: 1 | WARNINGS: 0 | FAILED: 2 ]
-      1. Error: rainette2_complete_groups (@test_cutree.R#28) 
-      2. Error: (unknown) (@test_rainette2.R#12) 
-      
-      Error: testthat unit tests failed
-      In addition: Warning message:
-      In for (elt in name) { : closing unused connection 4 (doesnt/exist.txtt)
-      Execution halted
+    Found the following significant warnings:
+    
+      Warning: 'rbind_all' is deprecated.
+    Deprecated functions may be defunct as soon as of the next release of
+    R.
+    See ?Deprecated.
     ```
 
+*   checking installed package size ... NOTE
+    ```
+      installed size is  7.7Mb
+      sub-directories of 1Mb or more:
+        doc       2.2Mb
+        extdata   5.2Mb
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    tallyBamRegion: no visible global function definition for 'PileupParam'
+    tallyBamRegion: no visible global function definition for
+      'ScanBamParam'
+    tallyBamRegion: no visible global function definition for 'pileup'
+    Undefined global functions or variables:
+      PileupParam ScanBamParam pileup
+    ```
+
+*   checking installed files from ‘inst/doc’ ... NOTE
+    ```
+    The following files should probably not be installed:
+      ‘rariant-inspect-ci.png’, ‘rariant-inspect-shift.png’
+    
+    Consider the use of a .Rinstignore file: see ‘Writing R Extensions’,
+    or move the vignette sources from ‘inst/doc’ to ‘vignettes’.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘Rariant’ ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error: object 'rbind_all' is not exported by 'namespace:dplyr'
+Execution halted
+ERROR: lazy loading failed for package ‘Rariant’
+* removing ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/Rariant/new/Rariant.Rcheck/Rariant’
+
+```
+### CRAN
+
+```
+* installing *source* package ‘Rariant’ ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (Rariant)
+
+```
 # ratPASTA
 
 <details>
@@ -2559,15 +2382,15 @@ Run `cloud_details(, "rainette")` for more info
 * Date/Publication: 2020-04-28 11:40:02 UTC
 * Number of recursive dependencies: 118
 
-Run `cloud_details(, "ratPASTA")` for more info
+Run `revdep_details(,"ratPASTA")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Attributes: < Length mismatch: comparison on first 2 components >
@@ -2604,15 +2427,15 @@ Run `cloud_details(, "ratPASTA")` for more info
 * Date/Publication: 2016-07-30 18:53:27
 * Number of recursive dependencies: 61
 
-Run `cloud_details(, "RCMIP5")` for more info
+Run `revdep_details(,"RCMIP5")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Component 4: target is logical, current is numeric
@@ -2632,96 +2455,6 @@ Run `cloud_details(, "RCMIP5")` for more info
       Execution halted
     ```
 
-# rcv
-
-<details>
-
-* Version: 0.2.1
-* Source code: https://github.com/cran/rcv
-* URL: https://github.com/ds-elections/rcv
-* BugReports: https://github.com/ds-elections/rcv/issues
-* Date/Publication: 2017-08-11 08:11:33 UTC
-* Number of recursive dependencies: 46
-
-Run `cloud_details(, "rcv")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    Error: Problem with `summarise()` input `total`.
-    ✖ could not find function "n"
-    ℹ Input `total` is `n()`.
-    ℹ The error occured in group 1: candidate = "BEN MATRANGA".
-    Backtrace:
-         █
-      1. └─rcv::rcv_tally(image = sf_bos_clean, rcvcontest = "Board of Supervisors, District 7")
-      2.   └─`%>%`(...)
-      3.     ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      4.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      6.         └─rcv:::`_fseq`(`_lhs`)
-      7.           └─magrittr::freduce(value, `_function_list`)
-      8.             └─function_list[[i]](value)
-      9.               ├─dplyr::summarise(., total = n())
-     10.               └─dplyr:::summarise.grouped_df(., total = n())
-     11.                 └─dplyr:::summarise_cols(.data, ...)
-    <parent: error/simpleError>
-    Backtrace:
-    █
-    Execution halted
-    ```
-
-## In both
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 6543 marked UTF-8 strings
-    ```
-
-# RNeXML
-
-<details>
-
-* Version: 2.4.4
-* Source code: https://github.com/cran/RNeXML
-* URL: https://docs.ropensci.org/RNeXML, https://github.com/ropensci/RNeXML
-* BugReports: https://github.com/ropensci/RNeXML/issues
-* Date/Publication: 2020-05-10 07:20:06 UTC
-* Number of recursive dependencies: 135
-
-Run `cloud_details(, "RNeXML")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘spelling.R’
-      Running ‘test-all.R’
-    Running the tests in ‘tests/test-all.R’ failed.
-    Last 13 lines of output:
-      Loading required package: ape
-      ── 1. Failure: coalesce_() works correctly (@test_01_utils.R#129)  ─────────────
-      `dplyr::coalesce(dta$col1, dta$col3, last)` did not throw an error.
-      
-      ── 2. Failure: coalesce_() works correctly (@test_01_utils.R#130)  ─────────────
-      `dplyr::coalesce(dta$col3, last)` did not throw an error.
-      
-      Done simulation(s).
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 300 | SKIPPED: 45 | WARNINGS: 2 | FAILED: 2 ]
-      1. Failure: coalesce_() works correctly (@test_01_utils.R#129) 
-      2. Failure: coalesce_() works correctly (@test_01_utils.R#130) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 # rsample
 
 <details>
@@ -2733,15 +2466,15 @@ Run `cloud_details(, "RNeXML")` for more info
 * Date/Publication: 2020-03-31 19:50:02 UTC
 * Number of recursive dependencies: 98
 
-Run `cloud_details(, "rsample")` for more info
+Run `revdep_details(,"rsample")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Attributes: < Component 2: Numeric: lengths (40, 1) differ >
@@ -2761,97 +2494,6 @@ Run `cloud_details(, "rsample")` for more info
       Execution halted
     ```
 
-# RTL
-
-<details>
-
-* Version: 0.1.1
-* Source code: https://github.com/cran/RTL
-* URL: https://github.com/risktoollib/RTL
-* Date/Publication: 2020-02-23 18:50:02 UTC
-* Number of recursive dependencies: 136
-
-Run `cloud_details(, "RTL")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘RTL-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: chart_zscore
-    > ### Title: 'chart_zscore'
-    > ### Aliases: chart_zscore
-    > 
-    > ### ** Examples
-    > 
-    > chart_zscore(df = ng_storage, title = "NG Storage Z Score",
-    + per = "yearweek", output = "stl", chart = "seasons")
-    Warning: The `add` argument of `group_by()` is deprecated as of dplyr 1.0.0.
-    Please use the `.add` argument instead.
-    This warning is displayed once every 8 hours.
-    Call `lifecycle::last_warnings()` to see where this warning was generated.
-    Error in UseMethod("model") : 
-      no applicable method for 'model' applied to an object of class "c('grouped_df', 'tbl_df', 'tbl', 'data.frame')"
-    Calls: chart_zscore ... eval -> _fseq -> freduce -> <Anonymous> -> <Anonymous>
-    Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘quantmod’
-      All declared Imports should be used.
-    ```
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 15456 marked UTF-8 strings
-    ```
-
-# rules
-
-<details>
-
-* Version: 0.0.1
-* Source code: https://github.com/cran/rules
-* URL: https://github.com/tidymodels/rules, https://rules.tidymodels.org
-* Date/Publication: 2020-05-20 15:00:02 UTC
-* Number of recursive dependencies: 96
-
-Run `cloud_details(, "rules")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘spelling.R’
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ── 7. Error: non-formula method  ───────────────────────────────────────────────
-      object 'rf_m_pred' not found
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 55 | SKIPPED: 12 | WARNINGS: 4 | FAILED: 7 ]
-      1. Error: mulit-predict 
-      2. Failure: formula method (@test-rule-fit-binomial.R#52) 
-      3. Failure: formula method (@test-rule-fit-binomial.R#56) 
-      4. Error: formula method 
-      5. Failure: non-formula method (@test-rule-fit-binomial.R#131) 
-      6. Failure: non-formula method (@test-rule-fit-binomial.R#135) 
-      7. Error: non-formula method 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 # saotd
 
 <details>
@@ -2862,27 +2504,32 @@ Run `cloud_details(, "rules")` for more info
 * Date/Publication: 2019-04-04 16:30:03 UTC
 * Number of recursive dependencies: 118
 
-Run `cloud_details(, "saotd")` for more info
+Run `revdep_details(,"saotd")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
-    Complete output:
-      > library(testthat)
-      > library(saotd)
-      > 
-      > test_check("saotd")
-      ── 1. Failure: bigrams are computed properly (@test_bigram.R#19)  ──────────────
-      saotd::bigram(DataFrame = test_bigram_df) not equal to `correct_bigram_df`.
+    Last 13 lines of output:
+      ── 5. Failure: unigrams are computed properly (@test_unigram.R#18)  ────────────
+      saotd::unigram(DataFrame = test_unigram_df) not equal to `correct_unigram_df`.
       Attributes: < Component "class": Lengths (1, 3) differ (string compare on first 1) >
       Attributes: < Component "class": 1 string mismatch >
       
-      Killed
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 63 | SKIPPED: 0 | WARNINGS: 7 | FAILED: 5 ]
+      1. Failure: bigrams are computed properly (@test_bigram.R#19) 
+      2. Error: (unknown) (@test_number_topics.R#12) 
+      3. Failure: Trigrams are computed properly (@test_trigram.R#21) 
+      4. Error: (unknown) (@test_tweet_topics.R#12) 
+      5. Failure: unigrams are computed properly (@test_unigram.R#18) 
+      
+      Error: testthat unit tests failed
+      Execution halted
     ```
 
 ## In both
@@ -2892,6 +2539,70 @@ Run `cloud_details(, "saotd")` for more info
       Note: found 826 marked UTF-8 strings
     ```
 
+# SCORPIUS
+
+<details>
+
+* Version: 1.0.6
+* Source code: https://github.com/cran/SCORPIUS
+* URL: http://github.com/rcannood/SCORPIUS
+* BugReports: https://github.com/rcannood/SCORPIUS/issues
+* Date/Publication: 2020-03-16 16:20:02 UTC
+* Number of recursive dependencies: 116
+
+Run `revdep_details(,"SCORPIUS")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking whether package ‘SCORPIUS’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/SCORPIUS/new/SCORPIUS.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘SCORPIUS’ ...
+** package ‘SCORPIUS’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error: object ‘as.tbl_cube’ is not exported by 'namespace:dplyr'
+Execution halted
+ERROR: lazy loading failed for package ‘SCORPIUS’
+* removing ‘/Users/romainfrancois/git/revdep/dplyr/revdep/checks.noindex/SCORPIUS/new/SCORPIUS.Rcheck/SCORPIUS’
+
+```
+### CRAN
+
+```
+* installing *source* package ‘SCORPIUS’ ...
+** package ‘SCORPIUS’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (SCORPIUS)
+
+```
 # sergeant
 
 <details>
@@ -2903,7 +2614,7 @@ Run `cloud_details(, "saotd")` for more info
 * Date/Publication: 2017-07-17 22:36:26 UTC
 * Number of recursive dependencies: 63
 
-Run `cloud_details(, "sergeant")` for more info
+Run `revdep_details(,"sergeant")` for more info
 
 </details>
 
@@ -2920,18 +2631,18 @@ Run `cloud_details(, "sergeant")` for more info
     Extensions’ manual.
     ```
 
-# sf
+# sevenbridges
 
 <details>
 
-* Version: 0.9-3
-* Source code: https://github.com/cran/sf
-* URL: https://r-spatial.github.io/sf/, https://github.com/r-spatial/sf/
-* BugReports: https://github.com/r-spatial/sf/issues/
-* Date/Publication: 2020-05-04 17:40:02 UTC
-* Number of recursive dependencies: 145
+* Version: 1.18.0
+* Source code: https://github.com/cran/sevenbridges
+* URL: https://www.sevenbridges.com, https://sbg.github.io/sevenbridges-r/, https://github.com/sbg/sevenbridges-r
+* BugReports: https://github.com/sbg/sevenbridges-r/issues
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 63
 
-Run `cloud_details(, "sf")` for more info
+Run `revdep_details(,"sevenbridges")` for more info
 
 </details>
 
@@ -2940,64 +2651,37 @@ Run `cloud_details(, "sf")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    geometry type:  POINT
-    dimension:      XY
-    bbox:           xmin: 0 ymin: 1 xmax: 0 ymax: 1
-    CRS:            EPSG:3857
-      a a.1 a.2        geom                geom.1                       geom.2
-    1 1   1   4 POINT (0 1) LINESTRING (1 3, 2 4) MULTILINESTRING ((1 3, 2 4))
-    > if (require(dplyr))
-    +   dplyr::bind_cols(a,b)
-    Loading required package: dplyr
-    
-    Attaching package: ‘dplyr’
-    
-    The following objects are masked from ‘package:stats’:
-    
-        filter, lag
-    
-    The following objects are masked from ‘package:base’:
-    
-        intersect, setdiff, setequal, union
-    
-    New names:
-    ```
-
-*   checking tests ... ERROR
-    ```
-    ...
-    < CRS:            GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4267"]]
-    ---
-    > geographic CRS: NAD27
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       7. vctrs:::stop_incompatible(...)
-       8. vctrs:::stop_vctrs(...)
-      
-      Failed to create feature 1 in x
-      Failed to create feature 1 in x
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 702 | SKIPPED: 55 | WARNINGS: 6 | FAILED: 5 ]
-      1. Failure: filter to sfc works (@test_tidy.R#17) 
-      2. Failure: filter to sfc works (@test_tidy.R#19) 
-      3. Failure: `precision` and `crs` attributes of `sfc` vectors are combined (@test_vctrs.R#48) 
-      4. Failure: `precision` and `crs` attributes of `sfc` vectors are combined (@test_vctrs.R#51) 
-      5. Error: `sfc` vectors have a common type (@test_vctrs.R#59) 
-      
-      Error: testthat unit tests failed
-      Execution halted
+    > 
+    > f1 <- system.file("extdata/app", "flow_star.json", package = "sevenbridges")
+    > f1 <- convert_app(f1)
+    > # input matrix
+    > f1$input_matrix()
+    Error: Can't combine `..1$category` <character> and `..4$category` <scalar>.
+    Backtrace:
+         █
+      1. ├─f1$input_matrix()
+      2. │ ├─base::suppressWarnings(as(inputs, "data.frame"))
+      3. │ │ └─base::withCallingHandlers(...)
+      4. │ └─methods::as(inputs, "data.frame")
+      5. │   └─sevenbridges:::asMethod(object)
+      6. │     ├─base::do.call("bind_rows", lst)
+      7. │     └─dplyr::bind_rows(...)
+      8. │       └─vctrs::vec_rbind(!!!dots, .names_to = .id)
+      9. └─vctrs::vec_default_ptype2(...)
+     10.   └─vctrs::stop_incompatible_type(...)
+     11.     └─vctrs:::stop_incompatible(...)
+     12.       └─vctrs:::stop_vctrs(...)
+    Execution halted
     ```
 
 ## In both
 
 *   checking installed package size ... NOTE
     ```
-      installed size is 26.7Mb
+      installed size is 12.3Mb
       sub-directories of 1Mb or more:
-        doc     11.9Mb
-        libs    10.3Mb
-        sqlite   1.5Mb
+        R     2.0Mb
+        doc   9.5Mb
     ```
 
 # simglm
@@ -3009,15 +2693,15 @@ Run `cloud_details(, "sf")` for more info
 * Date/Publication: 2019-05-31 17:10:03 UTC
 * Number of recursive dependencies: 90
 
-Run `cloud_details(, "simglm")` for more info
+Run `revdep_details(,"simglm")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ── 1. Failure: interupt TS (@test_knots.r#69)  ─────────────────────────────────
@@ -3029,64 +2713,12 @@ Run `cloud_details(, "simglm")` for more info
       Numeric: lengths (2, 0) differ
       
       ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 129 | SKIPPED: 0 | WARNINGS: 2 | FAILED: 2 ]
+      [ OK: 129 | SKIPPED: 0 | WARNINGS: 1 | FAILED: 2 ]
       1. Failure: interupt TS (@test_knots.r#69) 
       2. Failure: interupt TS (@test_knots.r#96) 
       
       Error: testthat unit tests failed
       Execution halted
-    ```
-
-# simplevis
-
-<details>
-
-* Version: 1.1.3
-* Source code: https://github.com/cran/simplevis
-* URL: https://statisticsnz.github.io/simplevis, https://github.com/statisticsnz/simplevis
-* BugReports: https://github.com/statisticsNZ/simplevis/issues
-* Date/Publication: 2020-05-14 19:30:02 UTC
-* Number of recursive dependencies: 118
-
-Run `cloud_details(, "simplevis")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-     2 02          Auckland Region   (((175.44 -36.26242, 175.4375 -36.25857, 175.4…
-     3 03          Waikato Region    (((174.7847 -38.13349, 174.7865 -38.13396, 174…
-     4 04          Bay of Plenty Re… (((176.1715 -37.68738, 176.1707 -37.68717, 176…
-     5 05          Gisborne Region   (((177.876 -38.0767, 177.9723 -37.84501, 178.0…
-     6 06          Hawke's Bay Regi… (((177.9018 -39.07296, 177.908 -39.07566, 177.…
-     7 07          Taranaki Region   (((174.2067 -39.59022, 174.2015 -39.58808, 174…
-     8 08          Manawatu-Wanganu… (((175.5606 -38.49023, 175.5655 -38.49453, 175…
-     9 09          Wellington Region (((174.8099 -41.34305, 174.8109 -41.34476, 174…
-    10 12          West Coast Region (((170.3303 -43.09979, 170.3268 -43.10285, 170…
-    11 13          Canterbury Region (((172.6917 -42.10662, 172.7017 -42.1013, 172.…
-    12 14          Otago Region      (((169.7051 -46.47425, 169.7035 -46.47368, 169…
-    13 15          Southland Region  (((167.7202 -47.04975, 167.7135 -47.04868, 167…
-    14 16          Tasman Region     (((172.4941 -41.04557, 172.4961 -41.04071, 172…
-    15 17          Nelson Region     (((173.3167 -41.24106, 173.3154 -41.23618, 173…
-    16 18          Marlborough Regi… (((173.3044 -41.507, 173.2889 -41.49327, 173.2…
-    > 
-    > ggplot_sf(nz_region)
-    Error in UseMethod("st_agr<-") : 
-      no applicable method for 'st_agr<-' applied to an object of class "c('grouped_df', 'tbl_df', 'tbl', 'data.frame')"
-    Calls: ggplot_sf ... fortify.grouped_df -> $<- -> $<-.sf -> [[<- -> [[<-.sf -> st_agr<-
-    Execution halted
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘DT’ ‘readr’ ‘rmarkdown’ ‘shinycssloaders’
-      All declared Imports should be used.
     ```
 
 # SIRItoGTFS
@@ -3100,7 +2732,7 @@ Run `cloud_details(, "simplevis")` for more info
 * Date/Publication: 2018-05-21 18:36:10 UTC
 * Number of recursive dependencies: 32
 
-Run `cloud_details(, "SIRItoGTFS")` for more info
+Run `revdep_details(,"SIRItoGTFS")` for more info
 
 </details>
 
@@ -3132,49 +2764,6 @@ Run `cloud_details(, "SIRItoGTFS")` for more info
     Execution halted
     ```
 
-# sistec
-
-<details>
-
-* Version: 0.0.2
-* Source code: https://github.com/cran/sistec
-* URL: https://github.com/r-ifpe/sistec
-* BugReports: https://github.com/r-ifpe/sistec/issues
-* Date/Publication: 2020-05-11 12:50:03 UTC
-* Number of recursive dependencies: 50
-
-Run `cloud_details(, "sistec")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    +                                   package = "sistec"))
-    >                                   
-    > compare_sistec(sistec, qacademico)                                   
-    Error: Input must be a vector, not a `data.frame/sistec_data_frame` object.
-    Backtrace:
-         █
-      1. ├─sistec::compare_sistec(sistec, qacademico)
-      2. ├─sistec:::compare_sistec.qacademico_data_frame(sistec, qacademico)
-      3. │ └─sistec:::compare_sistec_qacademico(sistec, student_registration)
-      4. │   └─sistec:::filter_cpf_sistec(sistec)
-      5. │     ├─dplyr::filter(x, !!sym("NU_CPF") == "")
-      6. │     └─dplyr:::filter.data.frame(x, !!sym("NU_CPF") == "")
-      7. │       ├─dplyr::dplyr_row_slice(.data, loc, preserve = .preserve)
-      8. │       └─dplyr:::dplyr_row_slice.data.frame(.data, loc, preserve = .preserve)
-      9. │         ├─dplyr::dplyr_reconstruct(vec_slice(data, i), data)
-     10. │         │ └─dplyr:::dplyr_new_data_frame(data)
-     11. │         │   ├─row.names %||% .row_names_info(x, type = 0L)
-     12. │         │   └─base::.row_names_info(x, type = 0L)
-     13. │         └─vctrs::vec_slice(data, i)
-     14. └─vctrs::
-    Execution halted
-    ```
-
 # skynet
 
 <details>
@@ -3186,15 +2775,15 @@ Run `cloud_details(, "sistec")` for more info
 * Date/Publication: 2018-12-12 10:20:03 UTC
 * Number of recursive dependencies: 84
 
-Run `cloud_details(, "skynet")` for more info
+Run `revdep_details(,"skynet")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       > library(testthat)
@@ -3232,18 +2821,18 @@ Run `cloud_details(, "skynet")` for more info
 * Date/Publication: 2019-09-20 04:50:02 UTC
 * Number of recursive dependencies: 64
 
-Run `cloud_details(, "strapgod")` for more info
+Run `revdep_details(,"strapgod")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      Component 4: Mean relative difference: 0.6849706
+      Component 4: Mean relative difference: 0.6802195
       Component 5: Attributes: < target is NULL, current is list >
       Component 5: target is numeric, current is factor
       
@@ -3269,7 +2858,7 @@ Run `cloud_details(, "strapgod")` for more info
 * Date/Publication: 2020-03-20 13:50:06 UTC
 * Number of recursive dependencies: 124
 
-Run `cloud_details(, "StratigrapheR")` for more info
+Run `revdep_details(,"StratigrapheR")` for more info
 
 </details>
 
@@ -3301,56 +2890,6 @@ Run `cloud_details(, "StratigrapheR")` for more info
     Execution halted
     ```
 
-# sugarbag
-
-<details>
-
-* Version: 0.1.2
-* Source code: https://github.com/cran/sugarbag
-* URL: https://srkobakian.github.io/sugarbag/, https://github.com/srkobakian/sugarbag
-* Date/Publication: 2020-01-08 20:40:02 UTC
-* Number of recursive dependencies: 108
-
-Run `cloud_details(, "sugarbag")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    > 
-    > 
-    > data(tas_sa2)
-    > data(capital_cities)
-    > hexmap <- create_hexmap(
-    +   shp = tas_lga,
-    +   sf_id = "LGA_CODE16",
-    +   focal_points = capital_cities, verbose = TRUE
-    + )
-    Warning in st_centroid.sf(., of_largest_polygon = largest) :
-      st_centroid assumes attributes are constant over geometries of x
-    Warning in st_centroid.sfc(st_geometry(x), of_largest_polygon = of_largest_polygon) :
-      st_centroid does not give correct centroids for longitude/latitude data
-    Warning: st_crs<- : replacing crs does not reproject data; use st_transform for that
-    Warning: st_crs<- : replacing crs does not reproject data; use st_transform for that
-    Buffer set to 1.224 degrees.
-    Converted hexagon size to 0.1205 degrees.
-    Filter set to 1.2047 degrees.
-    Finding closest point in focal_points data set.
-    Closest points found.
-    New names:
-    ```
-
-## In both
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘lwgeom’
-      All declared Imports should be used.
-    ```
-
 # tidyjson
 
 <details>
@@ -3362,7 +2901,7 @@ Run `cloud_details(, "sugarbag")` for more info
 * Date/Publication: 2020-05-28 13:40:02 UTC
 * Number of recursive dependencies: 89
 
-Run `cloud_details(, "tidyjson")` for more info
+Run `revdep_details(,"tidyjson")` for more info
 
 </details>
 
@@ -3394,9 +2933,9 @@ Run `cloud_details(, "tidyjson")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
        16. dplyr:::mutate.data.frame(.data, ..., .keep = "none")
@@ -3427,15 +2966,15 @@ Run `cloud_details(, "tidyjson")` for more info
 * Date/Publication: 2020-03-07 16:00:02 UTC
 * Number of recursive dependencies: 60
 
-Run `cloud_details(, "tidyRSS")` for more info
+Run `revdep_details(,"tidyRSS")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       ── 2. Error: df is cleaned properly (@test_general.R#84)  ──────────────────────
@@ -3464,7 +3003,7 @@ Run `cloud_details(, "tidyRSS")` for more info
 * Date/Publication: 2019-09-12 07:20:02 UTC
 * Number of recursive dependencies: 29
 
-Run `cloud_details(, "tidystats")` for more info
+Run `revdep_details(,"tidystats")` for more info
 
 </details>
 
@@ -3473,7 +3012,6 @@ Run `cloud_details(, "tidystats")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    +   group_by(source) %>%
     +   describe_data(response)
     Error: `x` must be a vector, not a `grouped_df/tbl_df/tbl/data.frame/tidystats_descriptives` object.
     Backtrace:
@@ -3488,11 +3026,12 @@ Run `cloud_details(, "tidystats")` for more info
       8.       ├─base::as.data.frame(head(x, n))
       9.       ├─utils::head(x, n)
      10.       └─utils:::head.data.frame(x, n)
-     11.         ├─x[seq_len(n), , drop = FALSE]
-     12.         └─dplyr:::`[.grouped_df`(x, seq_len(n), , drop = FALSE)
-     13.           └─dplyr::grouped_df(out, groups, group_by_drop_default(x))
-     14.             └─dplyr:::compute_groups(data, vars, drop = drop)
-     15.               ├─tibble::as_tib
+     11.         ├─base::do.call("[", args)
+     12.         ├─x[1:2, , drop = FALSE]
+     13.         └─dplyr:::`[.grouped_df`(x, 1:2, , drop = FALSE)
+     14.           └─dplyr::grouped_df(out, groups, group_by_drop_default(x))
+     15.             └─dplyr:::compute_groups(data, vars, drop = drop)
+     16.     
     Execution halted
     ```
 
@@ -3518,7 +3057,7 @@ Run `cloud_details(, "tidystats")` for more info
 * Date/Publication: 2019-02-12 17:20:02 UTC
 * Number of recursive dependencies: 36
 
-Run `cloud_details(, "tidystopwords")` for more info
+Run `revdep_details(,"tidystopwords")` for more info
 
 </details>
 
@@ -3557,18 +3096,17 @@ Run `cloud_details(, "tidystopwords")` for more info
       Note: found 229801 marked UTF-8 strings
     ```
 
-# timetk
+# timeOmics
 
 <details>
 
 * Version: 1.0.0
-* Source code: https://github.com/cran/timetk
-* URL: https://github.com/business-science/timetk
-* BugReports: https://github.com/business-science/timetk/issues
-* Date/Publication: 2020-04-19 17:50:02 UTC
-* Number of recursive dependencies: 151
+* Source code: https://github.com/cran/timeOmics
+* BugReports: https://github.com/abodein/timeOmics/issues
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 121
 
-Run `cloud_details(, "timetk")` for more info
+Run `revdep_details(,"timeOmics")` for more info
 
 </details>
 
@@ -3577,41 +3115,191 @@ Run `cloud_details(, "timetk")` for more info
 *   checking examples ... ERROR
     ```
     ...
-    Error: Problem with `mutate()` input `nested.col`.
-    ✖ Can't recycle `..1` (size 169) to match `..2` (size 0).
-    ℹ Input `nested.col` is `purrr::map(...)`.
-    ℹ The error occured in group 1: id = "H10".
+    > block.pls.cluster <- getCluster(demo$block.pls)
+    Error: Join columns must be unique.
+    ✖ Problem at position 2.
     Backtrace:
          █
-      1. └─`%>%`(...)
-      2.   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3.   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5.       └─`_fseq`(`_lhs`)
-      6.         └─magrittr::freduce(value, `_function_list`)
-      7.           ├─base::withVisible(function_list[[k]](value))
-      8.           └─function_list[[k]](value)
-      9.             ├─timetk::plot_acf_diagnostics(...)
-     10.             └─timetk:::plot_acf_diagnostics.grouped_df(...)
-     11.               ├─timetk::tk_acf_diagnostics(...)
-     12.               └─timetk:::tk_acf_diagnostics.grouped_df(...)
-     13.                 └─`%>%`(...)
-     14.                   ├─base::withVisible(eval(quote(`_fseq`(`_
+      1. ├─timeOmics::getCluster(demo$block.pls)
+      2. └─timeOmics:::getCluster.block.pls(demo$block.pls)
+      3.   └─`%>%`(...)
+      4.     ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
+      5.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      6.       └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
+      7.         └─timeOmics:::`_fseq`(`_lhs`)
+      8.           └─magrittr::freduce(value, `_function_list`)
+      9.             └─function_list[[i]](value)
+     10.               ├─dplyr::left_join(., block.info, by = c("molecule", "molecule"))
+     11.               └─dplyr:::left_join.data.frame(...)
+     12.                 └─dplyr:::join_mutate(...)
+     13.                   └─dplyr:::join_cols(...)
+     14.                     └─dplyr:::standardise_join_by(by, x_names = x_names, y_names = y_names)
+     15.                       └─dplyr:::check_join_vars(by$x, x_names)
     Execution halted
+    ```
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 174 | SKIPPED: 0 | WARNINGS: 0 | FAILED: 17 ]
+      1. Error: getCluster works and return a valid output (@test-getCluster.R#19) 
+      2. Error: getNcomp works (@test-getNcomp.R#57) 
+      3. Error: getNcomp plot works (@test-getNcomp.R#69) 
+      4. Error: getSilhouette works (@test-getSilhouette.R#20) 
+      5. Error: lmms.filter.lines works (@test-lmms.filter.lines.R#57) 
+      6. Failure: plotLong failed on invalid - time (@test-plotLong.R#41) 
+      7. Failure: plotLong failed on invalid - time (@test-plotLong.R#42) 
+      8. Failure: plotLong failed on invalid - time (@test-plotLong.R#43) 
+      9. Failure: plotLong failed on invalid - time (@test-plotLong.R#44) 
+      1. ...
+      
+      Error: testthat unit tests failed
+      Execution halted
+    ```
+
+## In both
+
+*   checking for hidden files and directories ... NOTE
+    ```
+    Found the following hidden files and directories:
+      .travis.yml
+    These were most likely included in error. See section ‘Package
+    structure’ in the ‘Writing R Extensions’ manual.
+    ```
+
+*   checking dependencies in R code ... NOTE
+    ```
+    Package in Depends field not imported from: ‘lmms’
+      These packages need to be imported from (in the NAMESPACE file)
+      for when this namespace is loaded but not attached.
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    ...
+    tune.silhouette.get_slopes: no visible binding for global variable
+      ‘Z_score.neg’
+    tuneCluster.block.spls: no visible binding for global variable
+      ‘silhouette.coef’
+    tuneCluster.spca: no visible binding for global variable
+      ‘silhouette.coef’
+    tuneCluster.spls: no visible binding for global variable
+      ‘silhouette.coef’
+    unscale: no visible global function definition for ‘is’
+    Undefined global functions or variables:
+      . BP.test MSE Pval.dir Pval.neg Pval.pos Pval.value Pvalue X Y_hat
+      Y_i Z_score.neg Z_score.pos block cluster cluster1 cluster2 comp
+      contrib contrib.max cor destination direction distance_from_origin
+      error feature feature1 feature2 insideout is median molecule na.omit
+      ncomp origin pnorm sd silhouette.coef slope.neg slope.pos slot val
+      value
+    Consider adding
+      importFrom("methods", "is", "slot")
+      importFrom("stats", "cor", "median", "na.omit", "pnorm", "sd")
+    to your NAMESPACE file (and ensure that your DESCRIPTION Imports field
+    contains 'methods').
+    ```
+
+# TPP
+
+<details>
+
+* Version: 3.16.0
+* Source code: https://github.com/cran/TPP
+* Date/Publication: 2020-04-27
+* Number of recursive dependencies: 95
+
+Run `revdep_details(,"TPP")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking examples ... ERROR
+    ```
+    ...
+    Normalization successfully completed!
+    
+    Warning: `as.tbl()` is deprecated as of dplyr 1.0.0.
+    Please use `tibble::as_tibble()` instead.
+    This warning is displayed once every 8 hours.
+    Call `lifecycle::last_warnings()` to see where this warning was generated.
+    Fitting smoothing splines and AICc values for the following degrees of freedom: 3, 4, 5, 6, 7
+    Fitting null models to 510 proteins (using 3 degrees of freedom)
+    Fitting alternative models to 510 proteins (using 3 degrees of freedom)
+    Fitting null models to 510 proteins (using 4 degrees of freedom)
+    Fitting alternative models to 510 proteins (using 4 degrees of freedom)
+    Fitting null models to 510 proteins (using 5 degrees of freedom)
+    Fitting alternative models to 510 proteins (using 5 degrees of freedom)
+    Fitting null models to 510 proteins (using 6 degrees of freedom)
+    Fitting alternative models to 510 proteins (using 6 degrees of freedom)
+    Fitting null models to 510 proteins (using 7 degrees of freedom)
+    Fitting alternative models to 510 proteins (using 7 degrees of freedom)
+    Error in { : 
+      task 1 failed - "Can't recycle input of size 510 to size 1020."
+    Calls: analyzeTPPTR ... tpptrSplineFitAndTest -> tpptrFitSplines -> %dopar% -> <Anonymous>
+    Execution halted
+    ```
+
+*   checking tests ...
+    ```
+     ERROR
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ══ testthat results  ═══════════════════════════════════════════════════════════
+      [ OK: 167 | SKIPPED: 1 | WARNINGS: 255 | FAILED: 26 ]
+      1. Error: NPARC_allok (@test_analyzeTPPTR.R#14) 
+      2. Error: NPARC_allok_output (@test_analyzeTPPTR.R#34) 
+      3. Error: NPARC_allok_plot (@test_analyzeTPPTR.R#61) 
+      4. Error: NPARC_allok_files (@test_analyzeTPPTR.R#94) 
+      5. Error: (unknown) (@test_compute_spline_auc.R#12) 
+      6. Error: (unknown) (@test_create_spline_plots.R#12) 
+      7. Error: (unknown) (@test_evalSplineModel.R#12) 
+      8. Error: (unknown) (@test_extract_fit_factors.R#12) 
+      9. Error: (unknown) (@test_invoke_spline_prediction.R#11) 
+      1. ...
+      
+      Error: testthat unit tests failed
+      Execution halted
     ```
 
 ## In both
 
 *   checking installed package size ... NOTE
     ```
-      installed size is  6.5Mb
+      installed size is 13.5Mb
       sub-directories of 1Mb or more:
-        doc   5.1Mb
+        data           1.9Mb
+        example_data   8.0Mb
+        test_data      1.9Mb
     ```
 
-*   checking data for non-ASCII characters ... NOTE
+*   checking dependencies in R code ... NOTE
     ```
-      Note: found 2750 marked UTF-8 strings
+    Namespace in Imports field not imported from: ‘broom’
+      All declared Imports should be used.
+    Unexported objects imported by ':::' calls:
+      ‘doParallel:::.options’ ‘mefa:::rep.data.frame’
+      See the note in ?`:::` about the use of this operator.
+    ```
+
+*   checking R code for possible problems ... NOTE
+    ```
+    File ‘TPP/R/TPP.R’:
+      .onLoad calls:
+        packageStartupMessage(msgText, "\n")
+    
+    See section ‘Good practice’ in '?.onAttach'.
+    
+    plot_fSta_distribution: no visible binding for global variable
+      ‘..density..’
+    plot_pVal_distribution: no visible binding for global variable
+      ‘..density..’
+    Undefined global functions or variables:
+      ..density..
     ```
 
 # tree.bins
@@ -3623,15 +3311,15 @@ Run `cloud_details(, "timetk")` for more info
 * Date/Publication: 2018-06-14 05:33:53 UTC
 * Number of recursive dependencies: 69
 
-Run `cloud_details(, "tree.bins")` for more info
+Run `revdep_details(,"tree.bins")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Items of 'old' not found in column names: [Categories]. Consider skip_absent=TRUE.
@@ -3669,7 +3357,7 @@ Run `cloud_details(, "tree.bins")` for more info
 * Date/Publication: 2019-07-25 22:50:02 UTC
 * Number of recursive dependencies: 52
 
-Run `cloud_details(, "treeplyr")` for more info
+Run `revdep_details(,"treeplyr")` for more info
 
 </details>
 
@@ -3701,79 +3389,6 @@ Run `cloud_details(, "treeplyr")` for more info
     Execution halted
     ```
 
-# tsibble
-
-<details>
-
-* Version: 0.8.6
-* Source code: https://github.com/cran/tsibble
-* URL: https://tsibble.tidyverts.org
-* BugReports: https://github.com/tidyverts/tsibble/issues
-* Date/Publication: 2020-01-31 06:20:11 UTC
-* Number of recursive dependencies: 93
-
-Run `cloud_details(, "tsibble")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    ...
-    +   group_by_key() %>%
-    +   fill_gaps(kilo = sum(kilo))
-    Error: `vars` must be a character vector.
-    Backtrace:
-         █
-      1. └─harvest %>% group_by_key() %>% fill_gaps(kilo = sum(kilo))
-      2.   ├─base::withVisible(eval(quote(`_fseq`(`_lhs`)), env, env))
-      3.   └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      4.     └─base::eval(quote(`_fseq`(`_lhs`)), env, env)
-      5.       └─`_fseq`(`_lhs`)
-      6.         └─magrittr::freduce(value, `_function_list`)
-      7.           ├─base::withVisible(function_list[[k]](value))
-      8.           └─function_list[[k]](value)
-      9.             ├─tsibble::fill_gaps(., kilo = sum(kilo))
-     10.             └─tsibble:::fill_gaps.tbl_ts(., kilo = sum(kilo))
-     11.               ├─dplyr::left_join(gap_data, replaced_df, by = by_name)
-     12.               └─tsibble:::left_join.tbl_ts(gap_data, replaced_df, by = by_name)
-     13.                 └─tsibble:::update_meta(...)
-     14.                   └─tsibble:::retain_tsibble(new, key = key(old), index = index(old))
-     15.               
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘spelling.R’
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 545 | SKIPPED: 2 | WARNINGS: 4 | FAILED: 35 ]
-      1. Failure: 4 day interval (@test-append.R#27) 
-      2. Error: (unknown) (@test-append.R#31) 
-      3. Error: (unknown) (@test-bind.R#11) 
-      4. Error: (unknown) (@test-dplyr.R#5) 
-      5. Error: (unknown) (@test-empty.R#32) 
-      6. Error: (unknown) (@test-gaps.R#93) 
-      7. Error: (unknown) (@test-groups.R#3) 
-      8. Error: From Date to year-week, year-month, year-quarter and year (@test-indexby.R#84) 
-      9. Failure: index_by() with group_by() (@test-indexby.R#106) 
-      1. ...
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-## In both
-
-*   checking Rd cross-references ... NOTE
-    ```
-    Packages unavailable to check Rd xrefs: ‘dtplyr’, ‘dbplyr’
-    ```
-
 # vcfR
 
 <details>
@@ -3784,7 +3399,7 @@ Run `cloud_details(, "tsibble")` for more info
 * Date/Publication: 2020-02-06 09:50:02 UTC
 * Number of recursive dependencies: 111
 
-Run `cloud_details(, "vcfR")` for more info
+Run `revdep_details(,"vcfR")` for more info
 
 </details>
 
@@ -3816,9 +3431,9 @@ Run `cloud_details(, "vcfR")` for more info
     Execution halted
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-      Running ‘testthat.R’
+     ERROR
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
       Backtrace:
@@ -3838,54 +3453,6 @@ Run `cloud_details(, "vcfR")` for more info
       Execution halted
     ```
 
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is 10.3Mb
-      sub-directories of 1Mb or more:
-        libs   8.4Mb
-    ```
-
-# vctrs
-
-<details>
-
-* Version: 0.3.0
-* Source code: https://github.com/cran/vctrs
-* URL: https://vctrs.r-lib.org/
-* BugReports: https://github.com/r-lib/vctrs/issues
-* Date/Publication: 2020-05-11 23:20:02 UTC
-* Number of recursive dependencies: 68
-
-Run `cloud_details(, "vctrs")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 3578 | SKIPPED: 27 | WARNINGS: 0 | FAILED: 12 ]
-      1. Error: grouped-df is proxied and restored (@test-type-dplyr.R#7) 
-      2. Error: can take the common type of grouped tibbles and tibbles (@test-type-dplyr.R#22) 
-      3. Error: the common type of grouped tibbles includes the union of grouping variables (@test-type-dplyr.R#36) 
-      4. Error: can cast to and from `grouped_df` (@test-type-dplyr.R#45) 
-      5. Error: casting to `grouped_df` doesn't require grouping variables (@test-type-dplyr.R#75) 
-      6. Error: casting to `grouped_df` handles `drop` (@test-type-dplyr.R#82) 
-      7. Error: can cbind grouped data frames (@test-type-dplyr.R#87) 
-      8. Error: rowwise can be proxied and restored (@test-type-dplyr.R#107) 
-      9. Error: can take the common type of rowwise tibbles and tibbles (@test-type-dplyr.R#116) 
-      1. ...
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
 # vpc
 
 <details>
@@ -3896,7 +3463,7 @@ Run `cloud_details(, "vctrs")` for more info
 * Date/Publication: 2020-05-07 15:10:02 UTC
 * Number of recursive dependencies: 70
 
-Run `cloud_details(, "vpc")` for more info
+Run `revdep_details(,"vpc")` for more info
 
 </details>
 
@@ -3928,13 +3495,9 @@ Run `cloud_details(, "vpc")` for more info
     New names:
     ```
 
-*   checking tests ... ERROR
+*   checking tests ...
     ```
-    ...
-      Running ‘test-softwaretype.R’
-      Running ‘test-strat-col-detection.R’
-      Running ‘test-vpc.R’
-      Running ‘test-vpc_cat.R’
+     ERROR
     Running the tests in ‘tests/test-vpc_cat.R’ failed.
     Last 13 lines of output:
       * `fact_perc(dv, lev[i])` -> `fact_perc(dv, lev[i])...3`
@@ -3942,14 +3505,14 @@ Run `cloud_details(, "vpc")` for more info
       * bin -> bin...5
       * ...
       New names:
-      * NA -> ...1
-      * NA -> ...2
-      * NA -> ...3
-      * NA -> ...4
-      * NA -> ...5
+      * strat -> strat...1
+      * bin -> bin...2
+      * strat -> strat...4
+      * bin -> bin...5
+      * strat -> strat...7
       * ...
       Error in names(x) <- value : 
-        'names' attribute [6] must be the same length as the vector [0]
+        'names' attribute [6] must be the same length as the vector [4]
       Calls: vpc_cat -> colnames<-
       Execution halted
     ```
@@ -3963,7 +3526,7 @@ Run `cloud_details(, "vpc")` for more info
 * Date/Publication: 2020-05-18 17:50:02 UTC
 * Number of recursive dependencies: 70
 
-Run `cloud_details(, "yamlet")` for more info
+Run `revdep_details(,"yamlet")` for more info
 
 </details>
 
