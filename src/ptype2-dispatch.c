@@ -6,10 +6,10 @@
 #include "utils.h"
 
 // [[ include("ptype2.h") ]]
-SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
-                         enum vctrs_type x_type,
-                         enum vctrs_type y_type,
-                         int* left) {
+SEXP vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
+                                enum vctrs_type x_type,
+                                enum vctrs_type y_type,
+                                int* left) {
   SEXP x = opts->x;
   SEXP y = opts->y;
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);

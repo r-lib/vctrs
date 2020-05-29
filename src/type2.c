@@ -64,7 +64,7 @@ SEXP vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   }
 
   if (x_type == vctrs_type_s3 || y_type == vctrs_type_s3) {
-    SEXP out = vec_ptype2_dispatch(opts, x_type, y_type, left);
+    SEXP out = vec_ptype2_dispatch_native(opts, x_type, y_type, left);
     if (out != R_NilValue) {
       return out;
     }

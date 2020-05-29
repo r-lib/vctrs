@@ -34,10 +34,10 @@ struct ptype2_opts {
   struct fallback_opts fallback;
 };
 
-SEXP vec_ptype2_dispatch(const struct ptype2_opts* opts,
-                         enum vctrs_type x_type,
-                         enum vctrs_type y_type,
-                         int* left);
+SEXP vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
+                                enum vctrs_type x_type,
+                                enum vctrs_type y_type,
+                                int* left);
 
 SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
                      int* left);
