@@ -1,83 +1,26 @@
 # Revdeps
 
-## Failed to check (72)
+## Failed to check (15)
 
-|package                            |version |error  |warning |note |
-|:----------------------------------|:-------|:------|:-------|:----|
-|accept                             |?       |       |        |     |
-|afmToolkit                         |?       |       |        |     |
-|anomaly                            |?       |       |        |     |
-|ANOVAShiny                         |?       |       |        |     |
-|archivist                          |?       |       |        |     |
-|arena2r                            |?       |       |        |     |
-|arkdb                              |?       |       |        |     |
-|asremlPlus                         |?       |       |        |     |
-|auctestr                           |?       |       |        |     |
-|bayesplot                          |?       |       |        |     |
-|beats                              |?       |       |        |     |
-|bestSDP                            |?       |       |        |     |
-|bfw                                |?       |       |        |     |
-|bggum                              |?       |       |        |     |
-|BGPhazard                          |?       |       |        |     |
-|bioinactivation                    |?       |       |        |     |
-|butcher                            |?       |       |        |     |
-|CB2                                |?       |       |        |     |
-|cbar                               |?       |       |        |     |
-|[CCAMLRGIS](failures.md#ccamlrgis) |3.0.3   |__+1__ |        |     |
-|CLUSTShiny                         |?       |       |        |     |
-|CollapsABEL                        |?       |       |        |     |
-|DemografixeR                       |?       |       |        |     |
-|DepthProc                          |?       |       |        |     |
-|diceR                              |?       |       |        |     |
-|Distance                           |1.0.0   |1      |        |     |
-|DiversityOccupancy                 |?       |       |        |     |
-|ESTER                              |?       |       |        |     |
-|EstimateGroupNetwork               |?       |       |        |     |
-|EventStudy                         |0.36    |1      |        |     |
-|FedData                            |?       |       |        |     |
-|fingertipscharts                   |0.0.10  |1      |        |     |
-|gastempt                           |0.5.0   |1      |        |     |
-|GeneBook                           |1.0     |1      |        |     |
-|GenomicMating                      |?       |       |        |     |
-|GetLattesData                      |?       |       |        |     |
-|GetQuandlData                      |?       |       |        |     |
-|GPSCDF                             |?       |       |        |     |
-|HURDAT                             |?       |       |        |     |
-|IETD                               |?       |       |        |     |
-|IncucyteDRC                        |?       |       |        |     |
-|JacobiEigen                        |?       |       |        |     |
-|jstor                              |?       |       |        |     |
-|MarketMatching                     |?       |       |        |     |
-|MazamaSpatialUtils                 |?       |       |        |     |
-|MBNMAtime                          |?       |       |        |     |
-|MetaboList                         |?       |       |        |     |
-|MixMatrix                          |?       |       |        |     |
-|MLRShiny                           |?       |       |        |     |
-|nesRdata                           |0.3.1   |1      |        |     |
-|NetworkExtinction                  |?       |       |        |     |
-|OncoBayes2                         |?       |       |        |     |
-|PAutilities                        |?       |       |        |     |
-|PKNCA                              |?       |       |        |     |
-|PKPDmisc                           |?       |       |        |     |
-|PML                                |?       |       |        |     |
-|PupilPre                           |?       |       |        |     |
-|R2019nCoV                          |?       |       |        |     |
-|RClickhouse                        |?       |       |        |     |
-|RCzechia                           |?       |       |        |     |
-|rdflib                             |0.2.3   |1      |        |     |
-|RDML                               |1.0     |1      |        |     |
-|SDLfilter                          |2.0.0   |1      |        |     |
-|SimDesign                          |?       |       |        |     |
-|SupMZ                              |?       |       |        |     |
-|Tcomp                              |?       |       |        |     |
-|trackdf                            |?       |       |        |     |
-|trackr                             |?       |       |        |     |
-|TrafficBDE                         |?       |       |        |     |
-|UniprotR                           |?       |       |        |     |
-|VarSelLCM                          |?       |       |        |     |
-|wrswoR                             |?       |       |        |     |
+|package          |version |error |warning |note |
+|:----------------|:-------|:-----|:-------|:----|
+|butcher          |?       |      |        |     |
+|CausalImpact     |?       |      |        |     |
+|CB2              |?       |      |        |     |
+|cbar             |?       |      |        |     |
+|diceR            |?       |      |        |     |
+|fingertipscharts |0.0.10  |1     |        |     |
+|gastempt         |0.5.0   |1     |        |     |
+|MarketMatching   |?       |      |        |     |
+|MonetDB.R        |?       |      |        |     |
+|nesRdata         |0.3.1   |1     |        |     |
+|rdflib           |0.2.3   |1     |        |     |
+|SimDesign        |?       |      |        |     |
+|trackdf          |?       |      |        |     |
+|trackr           |?       |      |        |     |
+|wrswoR           |?       |      |        |     |
 
-## New problems (79)
+## New problems (87)
 
 |package                                            |version |error  |warning |note |
 |:--------------------------------------------------|:-------|:------|:-------|:----|
@@ -85,21 +28,22 @@
 |[anomalize](problems.md#anomalize)                 |0.2.0   |__+2__ |        |     |
 |[applicable](problems.md#applicable)               |0.0.1   |__+1__ |        |     |
 |[bdl](problems.md#bdl)                             |1.0.2   |__+1__ |        |     |
-|[BMRSr](problems.md#bmrsr)                         |1.0.1   |__+1__ |        |     |
 |[cattonum](problems.md#cattonum)                   |0.0.4   |__+1__ |        |     |
 |[codebook](problems.md#codebook)                   |0.8.2   |__+1__ |        |2    |
+|[collapse](problems.md#collapse)                   |1.2.1   |__+1__ |        |1    |
 |[CollapseLevels](problems.md#collapselevels)       |0.2.0   |__+1__ |        |     |
 |[correlationfunnel](problems.md#correlationfunnel) |0.1.0   |__+1__ |        |2    |
 |[cutpointr](problems.md#cutpointr)                 |1.0.2   |__+1__ |        |     |
 |[ddpcr](problems.md#ddpcr)                         |1.14    |       |__+1__  |     |
 |[disk.frame](problems.md#diskframe)                |0.3.5   |__+1__ |__+1__  |     |
+|[distrr](problems.md#distrr)                       |0.0.5   |__+1__ |        |     |
 |[docxtools](problems.md#docxtools)                 |0.2.1   |__+2__ |        |     |
 |[driftR](problems.md#driftr)                       |1.1.0   |__+1__ |        |     |
-|[DSpoty](problems.md#dspoty)                       |0.1.0   |       |__+1__  |     |
 |[easyr](problems.md#easyr)                         |0.3-1   |__+1__ |        |     |
 |[eda4treeR](problems.md#eda4treer)                 |0.2.0   |__+1__ |        |1    |
 |[egor](problems.md#egor)                           |0.20.03 |       |__+1__  |     |
 |[episheet](problems.md#episheet)                   |0.4.0   |__+2__ |        |     |
+|[europepmc](problems.md#europepmc)                 |0.3     |__+1__ |        |     |
 |[expstudies](problems.md#expstudies)               |0.0.5   |__+1__ |        |     |
 |[fable](problems.md#fable)                         |0.2.0   |__+2__ |        |     |
 |[fabletools](problems.md#fabletools)               |0.1.3   |__+2__ |        |     |
@@ -109,31 +53,38 @@
 |[getTBinR](problems.md#gettbinr)                   |0.7.0   |__+1__ |        |     |
 |[ggedit](problems.md#ggedit)                       |0.3.0   |__+1__ |        |1    |
 |[gratia](problems.md#gratia)                       |0.3.1   |__+1__ |        |     |
+|[groupedstats](problems.md#groupedstats)           |1.0.0   |__+1__ |        |     |
+|[HaDeX](problems.md#hadex)                         |1.1     |__+2__ |        |1    |
 |[healthcareai](problems.md#healthcareai)           |2.4.0   |__+1__ |        |     |
 |[idmodelr](problems.md#idmodelr)                   |0.3.1   |__+1__ |        |     |
 |[immunarch](problems.md#immunarch)                 |0.6.4   |__+1__ |        |2    |
+|[IncucyteDRC](problems.md#incucytedrc)             |0.5.4   |__+1__ |        |     |
 |[infer](problems.md#infer)                         |0.5.1   |__+1__ |        |1    |
+|[iRF](problems.md#irf)                             |2.0.0   |       |__+1__  |     |
 |[jpndistrict](problems.md#jpndistrict)             |0.3.6   |__+1__ |        |1    |
 |[keyATM](problems.md#keyatm)                       |0.2.0   |__+1__ |        |2    |
+|[kiwisR](problems.md#kiwisr)                       |0.1.8   |__+1__ |        |     |
 |[lpirfs](problems.md#lpirfs)                       |0.1.7   |__+1__ |        |1    |
 |[mason](problems.md#mason)                         |0.2.6   |__+1__ |        |1    |
 |[mcp](problems.md#mcp)                             |0.2.0   |__+1__ |        |1    |
+|[metabolighteR](problems.md#metabolighter)         |0.1.0   |__+2__ |        |     |
 |[metamicrobiomeR](problems.md#metamicrobiomer)     |1.1     |__+1__ |        |1    |
 |[mmetrics](problems.md#mmetrics)                   |0.3.0   |__+1__ |        |1    |
 |[neuropsychology](problems.md#neuropsychology)     |0.5.0   |__+1__ |        |1    |
 |[opentripplanner](problems.md#opentripplanner)     |0.2.1.0 |__+1__ |        |1    |
 |[pammtools](problems.md#pammtools)                 |0.2.3   |       |__+1__  |     |
 |[panelr](problems.md#panelr)                       |0.7.2   |__+2__ |        |1    |
-|[patternize](problems.md#patternize)               |0.0.2   |       |__+1__  |     |
 |[photosynthesis](problems.md#photosynthesis)       |1.0.0   |__+1__ |        |1    |
 |[pmdplyr](problems.md#pmdplyr)                     |0.3.1.1 |__+2__ |__+1__  |     |
 |[ptstem](problems.md#ptstem)                       |0.0.7   |__+1__ |        |1    |
 |[purrrogress](problems.md#purrrogress)             |0.1.1   |__+1__ |        |1    |
 |[rabhit](problems.md#rabhit)                       |0.1.4   |__+1__ |        |     |
+|[radiant.data](problems.md#radiantdata)            |1.3.4   |__+1__ |        |     |
 |[rainette](problems.md#rainette)                   |0.1.1   |__+1__ |        |     |
 |[ratPASTA](problems.md#ratpasta)                   |0.1.0   |__+1__ |        |1    |
 |[RCMIP5](problems.md#rcmip5)                       |1.2.0   |__+1__ |        |     |
 |[rcv](problems.md#rcv)                             |0.2.1   |__+1__ |        |1    |
+|[RNeXML](problems.md#rnexml)                       |2.4.4   |__+1__ |        |     |
 |[rsample](problems.md#rsample)                     |0.0.6   |__+1__ |        |     |
 |[RTL](problems.md#rtl)                             |0.1.1   |__+1__ |        |2    |
 |[rules](problems.md#rules)                         |0.0.1   |__+1__ |        |     |
@@ -156,8 +107,8 @@
 |[tree.bins](problems.md#treebins)                  |0.1.1   |__+1__ |        |1    |
 |[treeplyr](problems.md#treeplyr)                   |0.1.7   |__+1__ |        |     |
 |[tsibble](problems.md#tsibble)                     |0.8.6   |__+2__ |        |1    |
-|[TSstudio](problems.md#tsstudio)                   |0.1.6   |__+1__ |        |1    |
 |[vcfR](problems.md#vcfr)                           |1.10.0  |__+2__ |        |1    |
+|[vctrs](problems.md#vctrs)                         |0.3.0   |__+1__ |        |     |
 |[vpc](problems.md#vpc)                             |1.2.0   |__+2__ |        |     |
 |[yamlet](problems.md#yamlet)                       |0.4.7   |       |__+1__  |-1   |
 
