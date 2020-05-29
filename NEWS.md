@@ -1,6 +1,10 @@
 
 # vctrs 0.3.1
 
+* `vec_slice()` no longer restores attributes of foreign objects for
+  which a `[` method exist. This fixes an issue with `ts` objects
+  which were previously incorrectly restored.
+
 * The `as.list()` method for `vctrs_rcrd` objects has been removed in favor
   of directly using the method for `vctrs_vctr`, which calls `vec_chop()`.
 
