@@ -128,9 +128,9 @@ SEXP vec_cast_switch_native(const struct cast_opts* opts,
 
 static SEXP syms_vec_cast_default = NULL;
 
-static inline
+// [[ include("cast.h") ]]
 SEXP vec_cast_default(SEXP x,
-                      SEXP y,
+                      SEXP to,
                       SEXP x_arg,
                       SEXP to_arg,
                       const struct fallback_opts* opts) {
@@ -138,7 +138,7 @@ SEXP vec_cast_default(SEXP x,
   SEXP s3_fallback = PROTECT(r_int(opts->s3));
   SEXP out = vctrs_eval_mask7(syms_vec_cast_default,
                               syms_x, x,
-                              syms_to, y,
+                              syms_to, to,
                               syms_x_arg, x_arg,
                               syms_to_arg, to_arg,
                               syms_from_dispatch, vctrs_shared_true,

@@ -39,11 +39,11 @@ vec_ptype2.data.frame.tbl_df <- function(x, y, ...) {
 }
 
 vec_cast.tbl_df.tbl_df <- function(x, to, ...) {
-  stop_native_implementation("vec_ptype2.tbl_df.tbl_df")
+  vec_cast_dispatch_native(x, to, ...)
 }
 vec_cast.data.frame.tbl_df <- function(x, to, ...) {
-  stop_native_implementation("vec_cast.data.frame.tbl_df")
+  vec_cast_dispatch_native(x, to, ...)
 }
 vec_cast.tbl_df.data.frame <- function(x, to, ...) {
-  stop_native_implementation("vec_cast.tbl_df.data.frame")
+  vec_cast_dispatch_native(x, to, ...)
 }

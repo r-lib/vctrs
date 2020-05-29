@@ -69,6 +69,12 @@ SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
 SEXP vec_cast_e(const struct cast_opts* opts,
                 ERR* err);
 
+SEXP vec_cast_default(SEXP x,
+                      SEXP y,
+                      SEXP x_arg,
+                      SEXP to_arg,
+                      const struct fallback_opts* opts);
+
 // Defined in cast-bare.c
 SEXP int_as_double(SEXP x, bool* lossy);
 SEXP lgl_as_double(SEXP x, bool* lossy);
