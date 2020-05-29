@@ -5,10 +5,10 @@
 #include "utils.h"
 
 // [[ include("cast.h") ]]
-SEXP vec_cast_dispatch(const struct cast_opts* opts,
-                       enum vctrs_type x_type,
-                       enum vctrs_type to_type,
-                       bool* lossy) {
+SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
+                              enum vctrs_type x_type,
+                              enum vctrs_type to_type,
+                              bool* lossy) {
   SEXP x = opts->x;
   SEXP to = opts->to;
   struct vctrs_arg* x_arg = opts->x_arg;

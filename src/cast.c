@@ -64,7 +64,7 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
   bool lossy = false;
 
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
-    out = vec_cast_dispatch(opts, x_type, to_type, &lossy);
+    out = vec_cast_dispatch_native(opts, x_type, to_type, &lossy);
   } else {
     out = vec_cast_switch_native(opts, x_type, to_type, &lossy);
   }

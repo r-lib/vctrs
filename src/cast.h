@@ -61,10 +61,10 @@ struct cast_opts new_cast_opts(SEXP x,
                                struct vctrs_arg* y_arg,
                                SEXP opts);
 
-SEXP vec_cast_dispatch(const struct cast_opts* opts,
-                       enum vctrs_type x_type,
-                       enum vctrs_type to_type,
-                       bool* lossy);
+SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
+                              enum vctrs_type x_type,
+                              enum vctrs_type to_type,
+                              bool* lossy);
 
 SEXP vec_cast_e(const struct cast_opts* opts,
                 ERR* err);
