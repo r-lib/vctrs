@@ -30,6 +30,7 @@
 ## CRAN results
 
 * Fixed type declaration mismatches revealed by LTO build.
+* Fixed r-devel issue with new `c.factor()` method.
 
 
 # vctrs 0.3.0
