@@ -1,5 +1,5 @@
 
-This is a resubmission to fix the SAN error.
+LTO mismatch is fixed.
 
 
 ## Test environments
@@ -17,23 +17,6 @@ This is a resubmission to fix the SAN error.
 
 ## Revdep checks
 
-We ran revdep checks on 33 revdeps of vctrs: https://github.com/r-lib/vctrs/tree/master/revdep/vctrs. Maintainers of packages with failures were notified on April 26.
+We ran revdep checks on 39 revdeps of vctrs: https://github.com/r-lib/vctrs/tree/master/revdep/vctrs.
 
-There are 6 remaining failures:
-
-- glue
-- hardhat
-- ipaddress
-- probably
-- projects
-- slider
-
-We will send corrective versions of glue, hardhat, probably, and slider shortly after release.
-
-We also ran revdep checks on 865 revdeps of tidyr: https://github.com/r-lib/vctrs/tree/master/revdep/tidyr. Notifications were sent on April 26.
-
-There are 3 remaining failures:
-
-- biclustermd
-- simTool
-- tidyjson
+There were two failures. The maintainer of sf was notified. We'll send a new version of haven shortly.
