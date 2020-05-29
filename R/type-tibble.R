@@ -29,13 +29,13 @@ df_as_tibble <- function(df) {
 # Conditionally registered in .onLoad()
 
 vec_ptype2.tbl_df.tbl_df <- function(x, y, ...) {
-  stop_native_implementation("vec_ptype2.tbl_df.tbl_df")
+  vec_ptype2_dispatch_native(x, y, ...)
 }
 vec_ptype2.tbl_df.data.frame <- function(x, y, ...) {
-  stop_native_implementation("vec_ptype2.tbl_df.data.frame")
+  vec_ptype2_dispatch_native(x, y, ...)
 }
 vec_ptype2.data.frame.tbl_df <- function(x, y, ...) {
-  stop_native_implementation("vec_ptype2.data.frame.tbl_df")
+  vec_ptype2_dispatch_native(x, y, ...)
 }
 
 vec_cast.tbl_df.tbl_df <- function(x, to, ...) {

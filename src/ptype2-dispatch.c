@@ -173,6 +173,28 @@ SEXP vec_invoke_coerce_method(SEXP method_sym, SEXP method,
   }
 }
 
+// [[ register() ]]
+SEXP vctrs_ptype2_dispatch_native(SEXP x,
+                                  SEXP y,
+                                  SEXP fallback_opts,
+                                  SEXP x_arg,
+                                  SEXP y_arg) {
+  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
+  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
+
+  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, fallback_opts);
+
+  int _left;
+
+  SEXP out = vec_ptype2_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(y), &_left);
+
+  if (out == R_NilValue) {
+    return vec_ptype2_default(x, y, x_arg, y_arg, &c_opts.fallback);
+  } else {
+    return out;
+  }
+}
+
 
 void vctrs_init_ptype2_dispatch(SEXP ns) {
   syms_vec_ptype2_default = Rf_install("vec_default_ptype2");

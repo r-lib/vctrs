@@ -71,3 +71,24 @@ test_that("vec_ptype_finalise() can handle tibble df columns", {
 
   expect_identical(vec_ptype_finalise(df), expect)
 })
+
+test_that("can use ptype2 with tibble that has incorrect class vector", {
+  tib1 <- structure(data.frame(x = 1), class = c("tbl_df", "data.frame"))
+  tib2 <- structure(data.frame(y = 2), class = c("tbl_df", "data.frame"))
+  exp <- structure(data.frame(x = dbl(), y = dbl()), class = c("tbl_df", "data.frame"))
+
+  requireNamespace("tibble")
+
+  expect_identical(
+    vec_ptype_common(tib1, tib2),
+    exp
+  )
+  expect_identical(
+    vec_ptype_common(tib1, data.frame(y = 2)),
+    tibble::new_tibble(exp, nrow = nrow(exp))
+  )
+  expect_identical(
+    vec_ptype_common(data.frame(x = 1), tib2),
+    tibble::new_tibble(exp, nrow = nrow(exp))
+  )
+})

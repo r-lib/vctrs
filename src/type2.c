@@ -71,7 +71,7 @@ SEXP vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   }
 
   // Try native dispatch again with prototypes, in case the prototype
-  // is another type
+  // is another type. FIXME: Use R-level callback instead.
   if (first_pass) {
     struct ptype2_opts mut_opts = *opts;
     mut_opts.x = PROTECT(vec_ptype(x, x_arg));
