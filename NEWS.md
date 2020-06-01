@@ -16,6 +16,8 @@
 * `vec_rbind()` now internally calls `vec_proxy()` and `vec_restore()` on
   the data frame common type that is used to create the output (#1109).
 
+* `vec_as_location2("0")` now works correctly (#1131).
+
 * `?reference-faq-compatibility` is a new reference guide on vctrs
   primitives. It includes an overview of the fallbacks to base R
   generics implemented in vctrs for compatibility with existing
