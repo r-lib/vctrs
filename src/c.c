@@ -134,7 +134,7 @@ SEXP vec_c_opts(SEXP xs,
     init_compact_seq(idx_ptr, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = vec_proxy_assign_opts(out, idx, x, vctrs_ownership_total, &c_assign_opts);
+    out = vec_proxy_assign_opts(out, idx, x, VCTRS_OWNERSHIP_total, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_names) {
@@ -143,7 +143,7 @@ SEXP vec_c_opts(SEXP xs,
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms, vctrs_ownership_total);
+        out_names = chr_assign(out_names, idx, x_nms, VCTRS_OWNERSHIP_total);
         REPROTECT(out_names, out_names_pi);
       }
 
@@ -153,7 +153,7 @@ SEXP vec_c_opts(SEXP xs,
     counter += size;
   }
 
-  out = PROTECT(vec_restore(out, ptype, R_NilValue, vctrs_ownership_total));
+  out = PROTECT(vec_restore(out, ptype, R_NilValue, VCTRS_OWNERSHIP_total));
 
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair));

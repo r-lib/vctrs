@@ -339,7 +339,7 @@ SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
   // Total ownership because `map()` generates a fresh list
-  out = vec_bare_df_restore(out, df, vctrs_shared_zero_int, vctrs_ownership_total);
+  out = vec_bare_df_restore(out, df, vctrs_shared_zero_int, VCTRS_OWNERSHIP_total);
 
   UNPROTECT(1);
   return out;
@@ -350,7 +350,7 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
   // Total ownership because `map()` generates a fresh list
-  out = vec_df_restore(out, df, vctrs_shared_zero_int, vctrs_ownership_total);
+  out = vec_df_restore(out, df, vctrs_shared_zero_int, VCTRS_OWNERSHIP_total);
 
   UNPROTECT(1);
   return out;

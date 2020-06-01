@@ -6,7 +6,7 @@
 
 #define ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF)   \
   SEXP out;                                              \
-  if (ownership == vctrs_ownership_total) {              \
+  if (ownership == VCTRS_OWNERSHIP_total) {              \
     out = PROTECT(r_clone_shared(proxy));                \
   } else {                                               \
     out = PROTECT(r_clone_referenced(proxy));            \
@@ -44,7 +44,7 @@
 
 #define ASSIGN_SHAPED_COMPACT(CTYPE, DEREF, CONST_DEREF) \
   SEXP out;                                              \
-  if (ownership == vctrs_ownership_total) {              \
+  if (ownership == VCTRS_OWNERSHIP_total) {              \
     out = PROTECT(r_clone_shared(proxy));                \
   } else {                                               \
     out = PROTECT(r_clone_referenced(proxy));            \
@@ -126,7 +126,7 @@ static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
 
 #define ASSIGN_BARRIER_SHAPED_INDEX(GET, SET)            \
   SEXP out;                                              \
-  if (ownership == vctrs_ownership_total) {              \
+  if (ownership == VCTRS_OWNERSHIP_total) {              \
     out = PROTECT(r_clone_shared(proxy));                \
   } else {                                               \
     out = PROTECT(r_clone_referenced(proxy));            \
@@ -162,7 +162,7 @@ static inline SEXP raw_assign_shaped(SEXP proxy, SEXP index, SEXP value,
 
 #define ASSIGN_BARRIER_SHAPED_COMPACT(GET, SET)         \
   SEXP out;                                             \
-  if (ownership == vctrs_ownership_total) {             \
+  if (ownership == VCTRS_OWNERSHIP_total) {             \
     out = PROTECT(r_clone_shared(proxy));               \
   } else {                                              \
     out = PROTECT(r_clone_referenced(proxy));           \

@@ -512,7 +512,7 @@ static SEXP vec_unchop(SEXP x,
     SEXP index = VECTOR_ELT(indices, i);
 
     // Total ownership of `proxy` because it was freshly created with `vec_init()`
-    proxy = vec_proxy_assign_opts(proxy, index, elt, vctrs_ownership_total, &unchop_assign_opts);
+    proxy = vec_proxy_assign_opts(proxy, index, elt, VCTRS_OWNERSHIP_total, &unchop_assign_opts);
     REPROTECT(proxy, proxy_pi);
 
     if (has_names) {
@@ -521,7 +521,7 @@ static SEXP vec_unchop(SEXP x,
       SEXP inner = PROTECT(vec_names(elt));
       SEXP elt_names = PROTECT(apply_name_spec(name_spec, outer, inner, size));
       if (elt_names != R_NilValue) {
-        out_names = chr_assign(out_names, index, elt_names, vctrs_ownership_total);
+        out_names = chr_assign(out_names, index, elt_names, VCTRS_OWNERSHIP_total);
         REPROTECT(out_names, out_names_pi);
       }
       UNPROTECT(2);

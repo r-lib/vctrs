@@ -3,12 +3,12 @@
 
 // Ownership is recursive
 enum vctrs_ownership {
-  vctrs_ownership_shared,
-  vctrs_ownership_total
+  VCTRS_OWNERSHIP_shared,
+  VCTRS_OWNERSHIP_total
 };
 
 static inline const enum vctrs_ownership vec_ownership(SEXP x) {
-  return NO_REFERENCES(x) ? vctrs_ownership_total : vctrs_ownership_shared;
+  return NO_REFERENCES(x) ? VCTRS_OWNERSHIP_total : VCTRS_OWNERSHIP_shared;
 }
 
 #endif

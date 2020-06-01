@@ -28,7 +28,7 @@ SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_ownership ownership) 
   attrib = PROTECT(Rf_shallow_duplicate(attrib));
   ++n_protect;
 
-  if (ownership == vctrs_ownership_total) {
+  if (ownership == VCTRS_OWNERSHIP_total) {
     x = PROTECT(r_clone_shared(x));
   } else {
     x = PROTECT(r_clone_referenced(x));

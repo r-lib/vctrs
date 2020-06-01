@@ -98,27 +98,27 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
 // on a number of factors.
 //
 // - If a fallback is required, the `proxy` is duplicated at the R level.
-// - If `opts->ownership` is `vctrs_ownership_total`, the `proxy` is only
+// - If `opts->ownership` is `VCTRS_OWNERSHIP_total`, the `proxy` is only
 //   duplicated if it is shared, i.e. `MAYBE_SHARED()` returns `true`.
-// - If `opts->ownership` is `vctrs_ownership_shared`, the `proxy` is only
+// - If `opts->ownership` is `VCTRS_OWNERSHIP_shared`, the `proxy` is only
 //   duplicated if it is referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
 //
 // In `vec_proxy_assign()`, which is part of the experimental public API,
 // ownership is determined with a call to `NO_REFERENCES()`. If there are no
-// references, then `vctrs_ownership_total` is used, else
-// `vctrs_ownership_shared` is used.
+// references, then `VCTRS_OWNERSHIP_total` is used, else
+// `VCTRS_OWNERSHIP_shared` is used.
 //
 // Ownership of the `proxy` must be recursive. For data frames, the `ownership`
 // argument is passed along to each column.
 //
-// Practically, we only set `vctrs_ownership_total` when we create a fresh data
+// Practically, we only set `VCTRS_OWNERSHIP_total` when we create a fresh data
 // structure at the C level and then assign into it to fill it. This happens
 // in `vec_c()` and `vec_rbind()`. For data frames, this `ownership` parameter
 // is particularly important for R 4.0.0 where references are tracked more
 // precisely. In R 4.0.0, a freshly created data frame's columns all have a
 // refcount of 1 because of the `SET_VECTOR_ELT()` call that set them in the
 // data frame. This makes them referenced, but not shared. If
-// `vctrs_ownership_shared` was set and `df_assign()` was used in a loop
+// `VCTRS_OWNERSHIP_shared` was set and `df_assign()` was used in a loop
 // (as it is in `vec_rbind()`), then a copy of each column would be made at
 // each iteration of the loop (any time a new set of rows is assigned
 // into the output object).
@@ -196,7 +196,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   const CTYPE* value_data = CONST_DEREF(value);                 \
                                                                 \
   SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
+  if (ownership == VCTRS_OWNERSHIP_total) {                     \
     out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
     out = PROTECT(r_clone_referenced(x));                       \
@@ -228,7 +228,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   const CTYPE* value_data = CONST_DEREF(value);                 \
                                                                 \
   SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
+  if (ownership == VCTRS_OWNERSHIP_total) {                     \
     out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
     out = PROTECT(r_clone_referenced(x));                       \
@@ -284,7 +284,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownershi
   }                                                             \
                                                                 \
   SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
+  if (ownership == VCTRS_OWNERSHIP_total) {                     \
     out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
     out = PROTECT(r_clone_referenced(x));                       \
@@ -312,7 +312,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownershi
   }                                                             \
                                                                 \
   SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
+  if (ownership == VCTRS_OWNERSHIP_total) {                     \
     out = PROTECT(r_clone_shared(x));                           \
   } else {                                                      \
     out = PROTECT(r_clone_referenced(x));                       \
@@ -366,7 +366,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
                const enum vctrs_ownership ownership,
                const struct vec_assign_opts* opts) {
   SEXP out;
-  if (ownership == vctrs_ownership_total) {
+  if (ownership == VCTRS_OWNERSHIP_total) {
     out = PROTECT(r_clone_shared(x));
   } else {
     out = PROTECT(r_clone_referenced(x));
@@ -424,7 +424,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     proxy_nms = PROTECT(r_clone_referenced(proxy_nms));
   }
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_ownership_total));
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, VCTRS_OWNERSHIP_total));
 
   proxy = PROTECT(r_clone_referenced(proxy));
   proxy = vec_set_names(proxy, proxy_nms);
