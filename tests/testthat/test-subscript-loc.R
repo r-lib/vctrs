@@ -2,6 +2,7 @@
 test_that("vec_as_location2() returns a position", {
   expect_identical(vec_as_location2(2, 2L), 2L)
   expect_identical(vec_as_location2("foo", 2L, c("bar", "foo")), 2L)
+  expect_identical(vec_as_location2("0", 4L, as.character(-1:2)), 2L)
 })
 
 test_that("vec_as_location2() requires integer or character inputs", {

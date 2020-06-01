@@ -207,7 +207,7 @@ vec_as_location2_result <- function(i,
     return(result)
   }
 
-  if (i == 0L) {
+  if (identical(i, 0L)) {
     return(result(err = new_error_location2_type(
       i = i,
       subscript_arg = arg,
