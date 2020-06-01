@@ -352,8 +352,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
     // Take over attribute restoration only if the `[` method did not
     // restore itself
     if (ATTRIB(out) == R_NilValue) {
-      const enum vctrs_ownership ownership = vec_ownership(out);
-      out = vec_restore(out, x, restore_size, ownership);
+      out = vec_restore(out, x, restore_size, vec_ownership(out));
     }
 
     UNPROTECT(nprot);
@@ -392,8 +391,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
       Rf_setAttrib(out, R_NamesSymbol, names);
     }
 
-    const enum vctrs_ownership ownership = vec_ownership(out);
-    out = vec_restore(out, x, restore_size, ownership);
+    out = vec_restore(out, x, restore_size, vec_ownership(out));
 
     UNPROTECT(nprot);
     return out;
@@ -401,8 +399,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 
   case vctrs_type_dataframe: {
     SEXP out = PROTECT_N(df_slice(data, subscript), &nprot);
-    const enum vctrs_ownership ownership = vec_ownership(out);
-    out = vec_restore(out, x, restore_size, ownership);
+    out = vec_restore(out, x, restore_size, vec_ownership(out));
     UNPROTECT(nprot);
     return out;
   }

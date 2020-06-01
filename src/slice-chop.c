@@ -203,8 +203,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       UNPROTECT(1);
     }
 
-    const enum vctrs_ownership ownership = vec_ownership(elt);
-    elt = vec_restore(elt, x, info.restore_size, ownership);
+    elt = vec_restore(elt, x, info.restore_size, vec_ownership(elt));
 
     SET_VECTOR_ELT(info.out, i, elt);
     UNPROTECT(1);
@@ -265,8 +264,7 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
     }
 
     SEXP elt = VECTOR_ELT(info.out, i);
-    const enum vctrs_ownership ownership = vec_ownership(elt);
-    elt = vec_restore(elt, x, info.restore_size, ownership);
+    elt = vec_restore(elt, x, info.restore_size, vec_ownership(elt));
     SET_VECTOR_ELT(info.out, i, elt);
   }
 
@@ -306,8 +304,7 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       }
     }
 
-    const enum vctrs_ownership ownership = vec_ownership(elt);
-    elt = vec_restore(elt, x, info.restore_size, ownership);
+    elt = vec_restore(elt, x, info.restore_size, vec_ownership(elt));
 
     SET_VECTOR_ELT(info.out, i, elt);
     UNPROTECT(1);
@@ -354,8 +351,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
     // Restore attributes only if `[` fallback doesn't
     if (ATTRIB(elt) == R_NilValue) {
-      const enum vctrs_ownership ownership = vec_ownership(elt);
-      elt = vec_restore(elt, x, info.restore_size, ownership);
+      elt = vec_restore(elt, x, info.restore_size, vec_ownership(elt));
     }
 
     SET_VECTOR_ELT(info.out, i, elt);
@@ -529,7 +525,7 @@ static SEXP vec_unchop(SEXP x,
   }
 
   SEXP out_size_sexp = PROTECT(r_int(out_size));
-  const enum vctrs_ownership ownership = vec_ownership(proxy);
+  enum vctrs_ownership ownership = vec_ownership(proxy);
 
   SEXP out = PROTECT(vec_restore(proxy, ptype, out_size_sexp, ownership));
 
