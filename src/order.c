@@ -161,6 +161,16 @@ static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
 
 // -----------------------------------------------------------------------------
 
+static void lgl_radix_order(SEXP x,
+                            bool na_last,
+                            bool decreasing,
+                            R_xlen_t size,
+                            struct order_info* p_info) {
+  int_radix_order(x, na_last, decreasing, size, p_info);
+}
+
+// -----------------------------------------------------------------------------
+
 static void vec_col_radix_order_switch(SEXP x,
                                        bool na_last,
                                        bool decreasing,
@@ -230,6 +240,7 @@ static void vec_col_radix_order_switch(SEXP x,
                                        struct order_info* p_info) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_integer: int_radix_order(x, na_last, decreasing, size, p_info); return;
+  case vctrs_type_logical: lgl_radix_order(x, na_last, decreasing, size, p_info); return;
   case vctrs_type_dataframe: df_col_radix_order(x, na_last, decreasing, size, p_info); return;
   default: Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
   }
@@ -258,6 +269,7 @@ static void vec_radix_order_switch(SEXP x,
 
   switch (type) {
   case vctrs_type_integer: int_radix_order(x, na_last, c_decreasing, size, p_info); return;
+  case vctrs_type_logical: lgl_radix_order(x, na_last, c_decreasing, size, p_info); return;
   default: Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
   }
 }
