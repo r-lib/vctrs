@@ -9,11 +9,6 @@ struct order_info {
   int* p_copy;
 };
 
-enum na_last {
-  NA_LAST_true,
-  NA_LAST_false
-};
-
 // -----------------------------------------------------------------------------
 
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
@@ -21,8 +16,34 @@ enum na_last {
 static inline uint32_t map_from_int32_to_uint32(int32_t x);
 static inline uint8_t extract_byte(uint32_t x, uint8_t pass);
 
+// The mapped uint32 value requires a complex adjustment based on the values
+// of `na_last` and `decreasing`. This moves the na_last/decreasing check
+// out of the inner loop.
+#define INT_RADIX_ORDER_BUILD_COUNTS(ADJUST_MAPPED) do {         \
+  for (R_xlen_t i = 0; i < size; ++i) {                          \
+    const int32_t elt_x = p_x[i];                                \
+                                                                 \
+    uint32_t elt_mapped;                                         \
+                                                                 \
+    if (elt_x == NA_INTEGER) {                                   \
+      elt_mapped = na_uint32;                                    \
+    } else {                                                     \
+      elt_mapped = map_from_int32_to_uint32(elt_x);              \
+      ADJUST_MAPPED;                                             \
+    }                                                            \
+                                                                 \
+    for (uint8_t pass = 0; pass < n_passes; ++pass) {            \
+      const uint8_t byte = extract_byte(elt_mapped, pass);       \
+      p_bytes[pass_start_bytes[pass] + i] = byte;                \
+      ++p_counts[pass_start_counts[pass] + byte];                \
+    }                                                            \
+  }                                                              \
+} while (0)                                                      \
+
+
 static void int_radix_order(SEXP x,
-                            const enum na_last na_last,
+                            bool na_last,
+                            bool decreasing,
                             R_xlen_t size,
                             struct order_info* p_info) {
   static const uint8_t n_passes = 4;
@@ -54,27 +75,20 @@ static void int_radix_order(SEXP x,
   }
 
   // Rely on `NA_INTEGER == INT_MIN`, which is mapped to `0` as a `uint32_t`.
-  // If `na_last = NA_LAST_true`, shift all `uint32_t` values down 1 to be able
-  // to map `NA` to the maximum `uint32_t` value.
-  const uint32_t na_uint32 = (na_last == NA_LAST_true) ? UINT32_MAX : 0;
-  const int32_t na_last_adjustment = (na_last == NA_LAST_true) ? -1 : 0;
+  const uint32_t na_uint32 = (na_last) ? UINT32_MAX : 0;
 
   // Build 4 histograms in one pass (one for each byte)
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const int32_t elt_x = p_x[i];
-
-    uint32_t elt_mapped;
-
-    if (elt_x == NA_INTEGER) {
-      elt_mapped = na_uint32;
+  if (na_last) {
+    if (decreasing) {
+      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT32_MAX - elt_mapped);
     } else {
-      elt_mapped = map_from_int32_to_uint32(elt_x) + na_last_adjustment;
+      INT_RADIX_ORDER_BUILD_COUNTS(--elt_mapped);
     }
-
-    for (uint8_t pass = 0; pass < n_passes; ++pass) {
-      const uint8_t byte = extract_byte(elt_mapped, pass);
-      p_bytes[pass_start_bytes[pass] + i] = byte;
-      ++p_counts[pass_start_counts[pass] + byte];
+  } else {
+    if (decreasing) {
+      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT32_MAX - elt_mapped + 1);
+    } else {
+      INT_RADIX_ORDER_BUILD_COUNTS();
     }
   }
 
@@ -128,6 +142,7 @@ static void int_radix_order(SEXP x,
 }
 
 #undef UINT8_MAX_SIZE
+#undef INT_RADIX_ORDER_BUILD_COUNTS
 
 
 #define HEX_UINT32_SIGN_BIT 0x80000000u
@@ -146,55 +161,125 @@ static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
 
 // -----------------------------------------------------------------------------
 
-static void vec_radix_order_switch(SEXP x,
-                                   const enum na_last na_last,
-                                   R_xlen_t size,
-                                   struct order_info* p_info);
+static void vec_col_radix_order_switch(SEXP x,
+                                       bool na_last,
+                                       bool decreasing,
+                                       R_xlen_t size,
+                                       struct order_info* p_info);
 
-
-static void df_radix_order(SEXP x,
-                           const enum na_last na_last,
-                           R_xlen_t size,
-                           struct order_info* p_info) {
+// Specifically for a df-col. Slightly different from `df_radix_order()` in
+// that `decreasing` is fixed for all columns.
+static void df_col_radix_order(SEXP x,
+                               bool na_last,
+                               bool decreasing,
+                               R_xlen_t size,
+                               struct order_info* p_info) {
   R_xlen_t n_cols = Rf_xlength(x);
 
   // Iterate over columns backwards to sort correctly
   for (R_xlen_t i = 0; i < n_cols; ++i) {
     R_xlen_t j = n_cols - 1 - i;
     SEXP col = VECTOR_ELT(x, j);
-    vec_radix_order_switch(col, na_last, size, p_info);
+    vec_col_radix_order_switch(col, na_last, decreasing, size, p_info);
   }
 }
 
 // -----------------------------------------------------------------------------
 
-static void vec_radix_order_switch(SEXP x,
-                                   const enum na_last na_last,
-                                   R_xlen_t size,
-                                   struct order_info* p_info) {
+static void df_radix_order(SEXP x,
+                           bool na_last,
+                           SEXP decreasing,
+                           R_xlen_t size,
+                           struct order_info* p_info) {
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  R_xlen_t n_decreasing = Rf_xlength(decreasing);
+  int* p_decreasing = LOGICAL(decreasing);
+
+  bool recycle;
+
+  if (n_decreasing == 1) {
+    recycle = true;
+  } else if (n_decreasing == n_cols) {
+    recycle = false;
+  } else {
+    Rf_errorcall(
+      R_NilValue,
+      "`decreasing` should have length 1 or length equal to the number of "
+      "columns of `x` when `x` is a data frame."
+    );
+  }
+
+  // Iterate over columns backwards to sort correctly
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    R_xlen_t j = n_cols - 1 - i;
+    SEXP col = VECTOR_ELT(x, j);
+    bool col_decreasing = recycle ? p_decreasing[0] : p_decreasing[j];
+    vec_col_radix_order_switch(col, na_last, col_decreasing, size, p_info);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+// Like `vec_radix_order_switch()`, but specifically for columns of a data
+// frame where `decreasing` is known and is scalar
+static void vec_col_radix_order_switch(SEXP x,
+                                       bool na_last,
+                                       bool decreasing,
+                                       R_xlen_t size,
+                                       struct order_info* p_info) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_integer: int_radix_order(x, na_last, size, p_info); return;
-  case vctrs_type_dataframe: df_radix_order(x, na_last, size, p_info); return;
+  case vctrs_type_integer: int_radix_order(x, na_last, decreasing, size, p_info); return;
+  case vctrs_type_dataframe: df_col_radix_order(x, na_last, decreasing, size, p_info); return;
   default: Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
   }
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_radix_order(SEXP x, const enum na_last na_last);
+static void vec_radix_order_switch(SEXP x,
+                                   bool na_last,
+                                   SEXP decreasing,
+                                   R_xlen_t size,
+                                   struct order_info* p_info) {
+  const enum vctrs_type type = vec_proxy_typeof(x);
+
+  if (type == vctrs_type_dataframe) {
+    df_radix_order(x, na_last, decreasing, size, p_info);
+    return;
+  }
+
+  // We know it is logical with no missing values, but size hasn't been checked
+  if (Rf_xlength(decreasing) != 1) {
+    Rf_errorcall(R_NilValue, "`decreasing` must have length 1 when `x` is not a data frame.");
+  }
+
+  bool c_decreasing = LOGICAL(decreasing)[0];
+
+  switch (type) {
+  case vctrs_type_integer: int_radix_order(x, na_last, c_decreasing, size, p_info); return;
+  default: Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+static bool lgl_any_na(SEXP x);
+
+static SEXP vec_radix_order(SEXP x, bool na_last, SEXP decreasing);
 
 // [[ register() ]]
-SEXP vctrs_radix_order(SEXP x, SEXP na_last) {
+SEXP vctrs_radix_order(SEXP x, SEXP na_last, SEXP decreasing) {
   if (!r_is_bool(na_last)) {
     Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
   }
 
-  enum na_last c_na_last = (LOGICAL(na_last)[0]) ? NA_LAST_true : NA_LAST_false;
+  bool c_na_last = LOGICAL(na_last)[0];
 
-  return vec_radix_order(x, c_na_last);
+  return vec_radix_order(x, c_na_last, decreasing);
 }
 
-static SEXP vec_radix_order(SEXP x, const enum na_last na_last) {
+static SEXP vec_radix_order(SEXP x, bool na_last, SEXP decreasing) {
   // TODO:
   // x = PROTECT(vec_proxy_compare(x));
 
@@ -203,6 +288,14 @@ static SEXP vec_radix_order(SEXP x, const enum na_last na_last) {
   // How to track vector of `decreasing` if so?
 
   R_xlen_t size = vec_size(x);
+
+  // Don't check length here. This might be vectorized if `x` is a data frame.
+  if (TYPEOF(decreasing) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
+  }
+  if (lgl_any_na(decreasing)) {
+    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
+  }
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
@@ -223,8 +316,23 @@ static SEXP vec_radix_order(SEXP x, const enum na_last na_last) {
     .p_copy = p_copy
   };
 
-  vec_radix_order_switch(x, na_last, size, &info);
+  vec_radix_order_switch(x, na_last, decreasing, size, &info);
 
   UNPROTECT(2);
   return info.out;
+}
+
+// -----------------------------------------------------------------------------
+
+static bool lgl_any_na(SEXP x) {
+  R_xlen_t size = Rf_xlength(x);
+  const int* p_x = LOGICAL_RO(x);
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    if (p_x[i] == NA_LOGICAL) {
+      return true;
+    }
+  }
+
+  return false;
 }
