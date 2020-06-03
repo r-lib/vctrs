@@ -158,26 +158,6 @@ static void int_radix_order(SEXP x, R_xlen_t size, struct order_info* p_info) {
   SEXP copy = p_info->copy;
   int* p_copy = p_info->p_copy;
 
-  // Early exit if sorting isn't required
-  // TODO: Assumes non-strict ascending order
-  bool sorted = true;
-  int32_t previous = INT_MIN;
-
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const int32_t current = p_x[i];
-
-    if (current < previous) {
-      sorted = false;
-      break;
-    }
-
-    previous = current;
-  }
-
-  if (sorted) {
-    return;
-  }
-
   // Tracks the counts of each byte seen.
   // It is a long array that gets broken into `n_passes` parts.
   R_xlen_t* p_counts = (R_xlen_t*) R_alloc(UINT8_MAX_SIZE * n_passes, sizeof(R_xlen_t));
