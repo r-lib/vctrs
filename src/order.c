@@ -1,26 +1,5 @@
 #include "vctrs.h"
 
-// -----------------------------------------------------------------------------
-
-#define HEX_UINT32_SIGN_BIT 0x80000000u
-
-// [INT32_MIN, INT32_MAX] => [0, UINT32_MAX]
-static inline uint32_t map_from_int32_to_uint32(int32_t x) {
-  return x ^ HEX_UINT32_SIGN_BIT;
-}
-
-#undef HEX_UINT32_SIGN_BIT
-
-// -----------------------------------------------------------------------------
-
-static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
-  return (x >> (8 * pass)) & UINT8_MAX;
-}
-
-// -----------------------------------------------------------------------------
-
-#define UINT8_MAX_SIZE (UINT8_MAX + 1)
-
 struct order_info {
   SEXP out;
   int* p_out;
@@ -28,6 +7,13 @@ struct order_info {
   SEXP copy;
   int* p_copy;
 };
+
+// -----------------------------------------------------------------------------
+
+#define UINT8_MAX_SIZE (UINT8_MAX + 1)
+
+static inline uint32_t map_from_int32_to_uint32(int32_t x);
+static inline uint8_t extract_byte(uint32_t x, uint8_t pass);
 
 static void int_radix_order(SEXP x, R_xlen_t size, struct order_info* p_info) {
   static const uint8_t n_passes = 4;
@@ -119,20 +105,67 @@ static void int_radix_order(SEXP x, R_xlen_t size, struct order_info* p_info) {
   p_info->p_copy = p_copy;
 }
 
-SEXP vctrs_radix_order(SEXP x) {
-  // TODO switch on type, and use data frame rather than list
-  if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`x` must be a retangular list.");
-  }
+#undef UINT8_MAX_SIZE
 
+
+#define HEX_UINT32_SIGN_BIT 0x80000000u
+
+// [INT32_MIN, INT32_MAX] => [0, UINT32_MAX]
+static inline uint32_t map_from_int32_to_uint32(int32_t x) {
+  return x ^ HEX_UINT32_SIGN_BIT;
+}
+
+#undef HEX_UINT32_SIGN_BIT
+
+
+static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
+  return (x >> (8 * pass)) & UINT8_MAX;
+}
+
+// -----------------------------------------------------------------------------
+
+static void vec_radix_order_switch(SEXP x, R_xlen_t size, struct order_info* p_info);
+
+
+static void df_radix_order(SEXP x, R_xlen_t size, struct order_info* p_info) {
   R_xlen_t n_cols = Rf_xlength(x);
 
-  if (n_cols == 0) {
-    return Rf_allocVector(INTSXP, 0);
+  // Iterate over columns backwards to sort correctly
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    R_xlen_t j = n_cols - 1 - i;
+    SEXP col = VECTOR_ELT(x, j);
+    vec_radix_order_switch(col, size, p_info);
   }
+}
 
-  // TODO: This will eventually be a data frame, so assume equal sizes
-  R_xlen_t size = vec_size(VECTOR_ELT(x, 0));
+// -----------------------------------------------------------------------------
+
+static void vec_radix_order_switch(SEXP x, R_xlen_t size, struct order_info* p_info) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_integer: int_radix_order(x, size, p_info); return;
+  case vctrs_type_dataframe: df_radix_order(x, size, p_info); return;
+  default: Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_radix_order(SEXP x);
+
+// [[ register() ]]
+SEXP vctrs_radix_order(SEXP x) {
+  return vec_radix_order(x);
+}
+
+static SEXP vec_radix_order(SEXP x) {
+  // TODO:
+  // x = PROTECT(vec_proxy_compare(x));
+
+  // TODO:
+  // Should proxy-compare flatten df-cols?
+  // How to track vector of `decreasing` if so?
+
+  R_xlen_t size = vec_size(x);
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
@@ -153,15 +186,8 @@ SEXP vctrs_radix_order(SEXP x) {
     .p_copy = p_copy
   };
 
-  // Iterate over columns backwards to sort correctly
-  for (R_xlen_t i = 0; i < n_cols; ++i) {
-    R_xlen_t j = n_cols - 1 - i;
-    SEXP col = VECTOR_ELT(x, j);
-    int_radix_order(col, size, &info);
-  }
+  vec_radix_order_switch(x, size, &info);
 
   UNPROTECT(2);
   return info.out;
 }
-
-#undef UINT8_MAX_SIZE
