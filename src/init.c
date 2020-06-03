@@ -129,7 +129,6 @@ extern SEXP vctrs_df_slice_complete(SEXP);
 extern SEXP vctrs_df_locate_complete(SEXP);
 extern SEXP vctrs_df_detect_complete(SEXP);
 extern SEXP vctrs_normalize_encoding(SEXP);
-extern SEXP vctrs_int_radix_sort(SEXP);
 extern SEXP vctrs_radix_order(SEXP);
 
 
@@ -277,7 +276,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_locate_complete",         (DL_FUNC) &vctrs_df_locate_complete, 1},
   {"vctrs_df_detect_complete",         (DL_FUNC) &vctrs_df_detect_complete, 1},
   {"vctrs_normalize_encoding",         (DL_FUNC) &vctrs_normalize_encoding, 1},
-  {"vctrs_int_radix_sort",             (DL_FUNC) &vctrs_int_radix_sort, 1},
   {"vctrs_radix_order",                (DL_FUNC) &vctrs_radix_order, 1},
   {NULL, NULL, 0}
 };
