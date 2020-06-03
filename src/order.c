@@ -25,8 +25,36 @@ SEXP vctrs_int_radix_sort(SEXP x) {
   static const uint8_t n_passes = 4;
 
   const int* p_x = INTEGER_RO(x);
-
   const R_xlen_t size = Rf_xlength(x);
+
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  // Initialize `out` with sequential 1-based ordering
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_out[i] = i + 1;
+  }
+
+  // Early exit if sorting isn't required
+  // TODO: Assumes non-strict ascending order
+  bool sorted = true;
+  int32_t previous = INT_MIN;
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const int32_t current = p_x[i];
+
+    if (current < previous) {
+      sorted = false;
+      break;
+    }
+
+    previous = current;
+  }
+
+  if (sorted) {
+    UNPROTECT(1);
+    return out;
+  }
 
   // Tracks the counts of each byte seen.
   // It is a long array that gets broken into `n_passes` parts.
@@ -58,17 +86,9 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     }
   }
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_out = INTEGER(out);
-
   // To store intermediate results after each pass
   SEXP copy = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_copy = INTEGER(copy);
-
-  // Initialize `out` with sequential ordering
-  for (R_xlen_t i = 0; i < size; ++i) {
-    p_out[i] = i;
-  }
 
   R_xlen_t p_offsets[UINT8_MAX_SIZE];
 
@@ -99,7 +119,7 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
     for (R_xlen_t i = 0; i < size; ++i) {
       const int32_t elt = p_out[i];
-      const uint8_t loc = p_bytes[start_bytes + elt];
+      const uint8_t loc = p_bytes[start_bytes + elt - 1];
 
       p_copy[p_offsets[loc]++] = elt;
     }
@@ -110,11 +130,6 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     copy = temp;
     p_out = INTEGER(out);
     p_copy = INTEGER(copy);
-  }
-
-  // Increment to 1-based ordering
-  for (R_xlen_t i = 0; i < size; ++i) {
-    ++p_out[i];
   }
 
   UNPROTECT(2);
