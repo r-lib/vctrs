@@ -28,9 +28,13 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
   const R_xlen_t size = Rf_xlength(x);
 
+  // Tracks the counts of each byte seen.
+  // It is a long array that gets broken into `n_passes` parts.
   R_xlen_t* p_counts = (R_xlen_t*) R_alloc(UINT8_MAX_SIZE * n_passes, sizeof(R_xlen_t));
   memset(p_counts, 0, UINT8_MAX_SIZE * n_passes * sizeof(R_xlen_t));
 
+  // Tracks the bytes themselves, since computing them requires some extra
+  // work of mapping `x` to `uint32_t` before extracting bytes.
   uint8_t* p_bytes = (uint8_t*) R_alloc(size * n_passes, sizeof(uint8_t));
 
   // For jumping along the bytes/counts arrays
@@ -50,13 +54,14 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     for (uint8_t pass = 0; pass < n_passes; ++pass) {
       const uint8_t byte = extract_byte(elt_mapped, pass);
       p_bytes[pass_start_bytes[pass] + i] = byte;
-      p_counts[pass_start_counts[pass] + byte]++;
+      ++p_counts[pass_start_counts[pass] + byte];
     }
   }
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
+  // To store intermediate results after each pass
   SEXP copy = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_copy = INTEGER(copy);
 
@@ -95,7 +100,7 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
   // Increment to 1-based ordering
   for (R_xlen_t i = 0; i < size; ++i) {
-    p_out[i]++;
+    ++p_out[i];
   }
 
   UNPROTECT(2);
