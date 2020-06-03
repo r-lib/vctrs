@@ -17,6 +17,16 @@ test_that("ordering on ties is done stably", {
   expect_identical(vec_radix_order(x)[3:4], c(2L, 4L))
 })
 
+test_that("`NA` order defaults to last", {
+  x <- c(1L, NA_integer_, 3L)
+  expect_identical(vec_radix_order(x), c(1L, 3L, 2L))
+})
+
+test_that("`NA` order can be first", {
+  x <- c(1L, NA_integer_, 3L)
+  expect_identical(vec_radix_order(x, na_last = FALSE), c(2L, 1L, 3L))
+})
+
 # ------------------------------------------------------------------------------
 # vec_radix_order(<data.frame>)
 
