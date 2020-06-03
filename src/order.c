@@ -291,8 +291,10 @@ SEXP vctrs_radix_order(SEXP x) {
     .p_copy = p_copy
   };
 
+  // Iterate over columns backwards to sort correctly
   for (R_xlen_t i = 0; i < n_cols; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
+    R_xlen_t j = n_cols - 1 - i;
+    SEXP col = VECTOR_ELT(x, j);
     int_radix_order(col, size, &info);
   }
 
