@@ -7,14 +7,20 @@ struct order_info {
 
   SEXP copy;
   int* p_copy;
-};
 
-// -----------------------------------------------------------------------------
+  R_xlen_t* p_counts;
+
+  uint8_t* p_bytes;
+
+  uint8_t n_passes;
+};
 
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
 
-static inline uint32_t map_from_int32_to_uint32(int32_t x);
-static inline uint8_t extract_byte(uint32_t x, uint8_t pass);
+// -----------------------------------------------------------------------------
+
+static inline uint64_t map_from_int32_to_uint64(int32_t x);
+static inline uint8_t extract_byte(uint64_t x, uint8_t pass);
 
 // The mapped uint32 value requires a complex adjustment based on the values
 // of `na_last` and `decreasing`. This moves the na_last/decreasing check
@@ -26,9 +32,9 @@ static inline uint8_t extract_byte(uint32_t x, uint8_t pass);
     uint32_t elt_mapped;                                         \
                                                                  \
     if (elt_x == NA_INTEGER) {                                   \
-      elt_mapped = na_uint32;                                    \
+      elt_mapped = na_uint64;                                    \
     } else {                                                     \
-      elt_mapped = map_from_int32_to_uint32(elt_x);              \
+      elt_mapped = map_from_int32_to_uint64(elt_x);              \
       ADJUST_MAPPED;                                             \
     }                                                            \
                                                                  \
@@ -46,24 +52,15 @@ static void int_radix_order(SEXP x,
                             bool decreasing,
                             R_xlen_t size,
                             struct order_info* p_info) {
-  static const uint8_t n_passes = 4;
-
   const int* p_x = INTEGER_RO(x);
 
   SEXP out = p_info->out;
   int* p_out = p_info->p_out;
-
   SEXP copy = p_info->copy;
   int* p_copy = p_info->p_copy;
-
-  // Tracks the counts of each byte seen.
-  // It is a long array that gets broken into `n_passes` parts.
-  R_xlen_t* p_counts = (R_xlen_t*) R_alloc(UINT8_MAX_SIZE * n_passes, sizeof(R_xlen_t));
-  memset(p_counts, 0, UINT8_MAX_SIZE * n_passes * sizeof(R_xlen_t));
-
-  // Tracks the bytes themselves, since computing them requires some extra
-  // work of mapping `x` to `uint32_t` before extracting bytes.
-  uint8_t* p_bytes = (uint8_t*) R_alloc(size * n_passes, sizeof(uint8_t));
+  R_xlen_t* p_counts = p_info->p_counts;
+  uint8_t* p_bytes = p_info->p_bytes;
+  const uint8_t n_passes = p_info->n_passes;
 
   // For jumping along the bytes/counts arrays
   R_xlen_t pass_start_bytes[n_passes];
@@ -75,18 +72,18 @@ static void int_radix_order(SEXP x,
   }
 
   // Rely on `NA_INTEGER == INT_MIN`, which is mapped to `0` as a `uint32_t`.
-  const uint32_t na_uint32 = (na_last) ? UINT32_MAX : 0;
+  const uint64_t na_uint64 = (na_last) ? UINT64_MAX : 0;
 
   // Build 4 histograms in one pass (one for each byte)
   if (na_last) {
     if (decreasing) {
-      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT32_MAX - elt_mapped);
+      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT64_MAX - elt_mapped);
     } else {
       INT_RADIX_ORDER_BUILD_COUNTS(--elt_mapped);
     }
   } else {
     if (decreasing) {
-      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT32_MAX - elt_mapped + 1);
+      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT64_MAX - elt_mapped + 1);
     } else {
       INT_RADIX_ORDER_BUILD_COUNTS();
     }
@@ -141,21 +138,20 @@ static void int_radix_order(SEXP x,
   p_info->p_copy = p_copy;
 }
 
-#undef UINT8_MAX_SIZE
 #undef INT_RADIX_ORDER_BUILD_COUNTS
 
 
 #define HEX_UINT32_SIGN_BIT 0x80000000u
 
 // [INT32_MIN, INT32_MAX] => [0, UINT32_MAX]
-static inline uint32_t map_from_int32_to_uint32(int32_t x) {
-  return x ^ HEX_UINT32_SIGN_BIT;
+static inline uint64_t map_from_int32_to_uint64(int32_t x) {
+  return (uint64_t) (x ^ HEX_UINT32_SIGN_BIT);
 }
 
 #undef HEX_UINT32_SIGN_BIT
 
 
-static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
+static inline uint8_t extract_byte(uint64_t x, uint8_t pass) {
   return (x >> (8 * pass)) & UINT8_MAX;
 }
 
@@ -239,11 +235,15 @@ static void vec_col_radix_order_switch(SEXP x,
                                        R_xlen_t size,
                                        struct order_info* p_info) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_integer: int_radix_order(x, na_last, decreasing, size, p_info); return;
-  case vctrs_type_logical: lgl_radix_order(x, na_last, decreasing, size, p_info); return;
-  case vctrs_type_dataframe: df_col_radix_order(x, na_last, decreasing, size, p_info); return;
+  case vctrs_type_integer: int_radix_order(x, na_last, decreasing, size, p_info); break;
+  case vctrs_type_logical: lgl_radix_order(x, na_last, decreasing, size, p_info); break;
+  case vctrs_type_dataframe: df_col_radix_order(x, na_last, decreasing, size, p_info); break;
   default: Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
   }
+
+  // Clear counts between columns.
+  // Bytes will always be completely overwritten so we don't need to clear them.
+  memset(p_info->p_counts, 0, UINT8_MAX_SIZE * p_info->n_passes * sizeof(R_xlen_t));
 }
 
 // -----------------------------------------------------------------------------
@@ -299,6 +299,8 @@ static SEXP vec_radix_order(SEXP x, bool na_last, SEXP decreasing) {
   // Should proxy-compare flatten df-cols?
   // How to track vector of `decreasing` if so?
 
+  static const uint8_t n_passes = 8;
+
   R_xlen_t size = vec_size(x);
 
   // Don't check length here. This might be vectorized if `x` is a data frame.
@@ -321,11 +323,23 @@ static SEXP vec_radix_order(SEXP x, bool na_last, SEXP decreasing) {
   SEXP copy = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_copy = INTEGER(copy);
 
+  // Tracks the counts of each byte seen.
+  // It is a long array that gets broken into `n_passes` parts.
+  R_xlen_t* p_counts = (R_xlen_t*) R_alloc(UINT8_MAX_SIZE * n_passes, sizeof(R_xlen_t));
+  memset(p_counts, 0, UINT8_MAX_SIZE * n_passes * sizeof(R_xlen_t));
+
+  // Tracks the bytes themselves, since computing them requires some extra
+  // work of mapping `x` to `uint32_t` before extracting bytes.
+  uint8_t* p_bytes = (uint8_t*) R_alloc(size * n_passes, sizeof(uint8_t));
+
   struct order_info info = {
     .out = out,
     .p_out = p_out,
     .copy = copy,
-    .p_copy = p_copy
+    .p_copy = p_copy,
+    .p_counts = p_counts,
+    .p_bytes = p_bytes,
+    .n_passes = n_passes
   };
 
   vec_radix_order_switch(x, na_last, decreasing, size, &info);
@@ -348,3 +362,5 @@ static bool lgl_any_na(SEXP x) {
 
   return false;
 }
+
+#undef UINT8_MAX_SIZE
