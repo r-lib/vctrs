@@ -29,9 +29,6 @@ struct order_info {
   int* p_copy;
 };
 
-// Returns a boolean `true` if `x` is completely sorted after this pass,
-// indicating that we can stop ordering. If there are any ties, we have to
-// continue to try and break them.
 static void int_radix_order(SEXP x, R_xlen_t size, struct order_info* p_info) {
   static const uint8_t n_passes = 4;
 
