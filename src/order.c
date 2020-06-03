@@ -59,9 +59,6 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
   R_xlen_t p_offsets[UINT8_MAX_SIZE];
 
-  // TODO: Maybe not required
-  memset(p_offsets, 0, UINT8_MAX_SIZE * sizeof(R_xlen_t));
-
   for (uint8_t pass = 0; pass < n_passes; ++pass) {
     // Load `copy` with current copy of `out`
     for (R_xlen_t i = 0; i < size; ++i) {
