@@ -77,10 +77,24 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     const R_xlen_t start_counts = pass_start_counts[pass];
 
     R_xlen_t offset = 0;
+    bool pass_skip = false;
 
     for (R_xlen_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+      const R_xlen_t count = p_counts[start_counts + i];
+
+      // Skip this pass if all bytes are identical, which happens
+      // when a bucket holds a count equal to the number of values.
+      if (count == size) {
+        pass_skip = true;
+        break;
+      }
+
       p_offsets[i] = offset;
-      offset += p_counts[start_counts + i];
+      offset += count;
+    }
+
+    if (pass_skip) {
+      continue;
     }
 
     for (R_xlen_t i = 0; i < size; ++i) {
