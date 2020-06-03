@@ -32,7 +32,7 @@ SEXP vctrs_int_radix_sort(SEXP x) {
   R_xlen_t* p_counts = (R_xlen_t*) R_alloc(UINT8_MAX_SIZE * n_passes, sizeof(R_xlen_t));
   memset(p_counts, 0, UINT8_MAX_SIZE * n_passes * sizeof(R_xlen_t));
 
-  //uint8_t* p_bytes = (uint8_t*) R_alloc(size * n_passes, sizeof(uint8_t));
+  uint8_t* p_bytes = (uint8_t*) R_alloc(size * n_passes, sizeof(uint8_t));
 
   // Build 4 histograms in one pass (one for each byte)
   for (R_xlen_t i = 0; i < size; ++i) {
@@ -41,7 +41,7 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
     for (uint8_t pass = 0; pass < n_passes; ++pass) {
       const uint8_t byte = extract_byte(elt_mapped, pass);
-      //p_bytes[i + PASS_OFFSET(size, pass)] = byte;
+      p_bytes[i + PASS_OFFSET(size, pass)] = byte;
       p_counts[byte + PASS_OFFSET(UINT8_MAX_SIZE, pass)]++;
     }
   }
@@ -66,6 +66,7 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     }
 
     const R_xlen_t counts_offset = PASS_OFFSET(UINT8_MAX_SIZE, pass);
+    const R_xlen_t bytes_offset = PASS_OFFSET(size, pass);
 
     R_xlen_t offset = 0;
 
@@ -76,9 +77,7 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
     for (R_xlen_t i = 0; i < size; ++i) {
       const int32_t elt_copy = p_copy[i];
-      const int32_t elt_x = p_x[elt_copy];
-      const uint32_t elt_mapped = map_from_int32_to_uint32(elt_x);
-      const uint8_t loc = extract_byte(elt_mapped, pass);
+      const uint8_t loc = p_bytes[elt_copy + bytes_offset];
 
       p_out[p_offsets[loc]++] = elt_copy;
     }
