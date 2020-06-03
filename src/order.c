@@ -46,11 +46,16 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     }
   }
 
-  SEXP out = PROTECT(Rf_duplicate(x));
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
   SEXP copy = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_copy = INTEGER(copy);
+
+  // Initialize `out` with sequential 1-based ordering
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_out[i] = i + 1;
+  }
 
   R_xlen_t p_offsets[UINT8_MAX_SIZE];
 
@@ -74,7 +79,8 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
     for (R_xlen_t i = 0; i < size; ++i) {
       const int32_t elt_copy = p_copy[i];
-      const uint32_t elt_mapped = map_from_int32_to_uint32(elt_copy);
+      const int32_t elt_x = p_x[elt_copy - 1];
+      const uint32_t elt_mapped = map_from_int32_to_uint32(elt_x);
       const uint8_t loc = extract_byte(elt_mapped, pass);
 
       p_out[p_offsets[loc]++] = elt_copy;
