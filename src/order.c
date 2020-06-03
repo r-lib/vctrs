@@ -73,19 +73,19 @@ SEXP vctrs_int_radix_sort(SEXP x) {
   R_xlen_t p_offsets[UINT8_MAX_SIZE];
 
   for (uint8_t pass = 0; pass < n_passes; ++pass) {
-    const R_xlen_t bytes_offset = pass_start_bytes[pass];
-    const R_xlen_t counts_offset = pass_start_counts[pass];
+    const R_xlen_t start_bytes = pass_start_bytes[pass];
+    const R_xlen_t start_counts = pass_start_counts[pass];
 
     R_xlen_t offset = 0;
 
     for (R_xlen_t i = 0; i < UINT8_MAX_SIZE; ++i) {
       p_offsets[i] = offset;
-      offset += p_counts[i + counts_offset];
+      offset += p_counts[start_counts + i];
     }
 
     for (R_xlen_t i = 0; i < size; ++i) {
       const int32_t elt = p_out[i];
-      const uint8_t loc = p_bytes[elt + bytes_offset];
+      const uint8_t loc = p_bytes[start_bytes + elt];
 
       p_copy[p_offsets[loc]++] = elt;
     }
