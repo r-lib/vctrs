@@ -23,7 +23,7 @@ static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
 #define PASS_OFFSET(size, pass) (size * (R_xlen_t) pass)
 
 SEXP vctrs_int_radix_sort(SEXP x) {
-  const uint8_t n_passes = 4;
+  static const uint8_t n_passes = 4;
 
   const int* p_x = INTEGER_RO(x);
 
@@ -60,11 +60,6 @@ SEXP vctrs_int_radix_sort(SEXP x) {
   R_xlen_t p_offsets[UINT8_MAX_SIZE];
 
   for (uint8_t pass = 0; pass < n_passes; ++pass) {
-    // Load `copy` with current copy of `out`
-    for (R_xlen_t i = 0; i < size; ++i) {
-      p_copy[i] = p_out[i];
-    }
-
     const R_xlen_t counts_offset = PASS_OFFSET(UINT8_MAX_SIZE, pass);
     const R_xlen_t bytes_offset = PASS_OFFSET(size, pass);
 
@@ -76,11 +71,18 @@ SEXP vctrs_int_radix_sort(SEXP x) {
     }
 
     for (R_xlen_t i = 0; i < size; ++i) {
-      const int32_t elt_copy = p_copy[i];
-      const uint8_t loc = p_bytes[elt_copy + bytes_offset];
+      const int32_t elt = p_out[i];
+      const uint8_t loc = p_bytes[elt + bytes_offset];
 
-      p_out[p_offsets[loc]++] = elt_copy;
+      p_copy[p_offsets[loc]++] = elt;
     }
+
+    // Pointer swap before next pass
+    SEXP temp = out;
+    out = copy;
+    copy = temp;
+    p_out = INTEGER(out);
+    p_copy = INTEGER(copy);
   }
 
   // Increment to 1-based ordering
