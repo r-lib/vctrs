@@ -20,7 +20,6 @@ static inline uint8_t extract_byte(uint32_t x, uint8_t pass) {
 // -----------------------------------------------------------------------------
 
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
-#define PASS_OFFSET(size, pass) (size * (R_xlen_t) pass)
 
 SEXP vctrs_int_radix_sort(SEXP x) {
   static const uint8_t n_passes = 4;
@@ -34,6 +33,15 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
   uint8_t* p_bytes = (uint8_t*) R_alloc(size * n_passes, sizeof(uint8_t));
 
+  // For jumping along the bytes/counts arrays
+  R_xlen_t pass_start_bytes[n_passes];
+  R_xlen_t pass_start_counts[n_passes];
+
+  for (R_xlen_t pass = 0; pass < n_passes; ++pass) {
+    pass_start_bytes[pass] = size * pass;
+    pass_start_counts[pass] = UINT8_MAX_SIZE * pass;
+  }
+
   // Build 4 histograms in one pass (one for each byte)
   for (R_xlen_t i = 0; i < size; ++i) {
     const int32_t elt_x = p_x[i];
@@ -41,8 +49,8 @@ SEXP vctrs_int_radix_sort(SEXP x) {
 
     for (uint8_t pass = 0; pass < n_passes; ++pass) {
       const uint8_t byte = extract_byte(elt_mapped, pass);
-      p_bytes[i + PASS_OFFSET(size, pass)] = byte;
-      p_counts[byte + PASS_OFFSET(UINT8_MAX_SIZE, pass)]++;
+      p_bytes[pass_start_bytes[pass] + i] = byte;
+      p_counts[pass_start_counts[pass] + byte]++;
     }
   }
 
@@ -60,8 +68,8 @@ SEXP vctrs_int_radix_sort(SEXP x) {
   R_xlen_t p_offsets[UINT8_MAX_SIZE];
 
   for (uint8_t pass = 0; pass < n_passes; ++pass) {
-    const R_xlen_t counts_offset = PASS_OFFSET(UINT8_MAX_SIZE, pass);
-    const R_xlen_t bytes_offset = PASS_OFFSET(size, pass);
+    const R_xlen_t bytes_offset = pass_start_bytes[pass];
+    const R_xlen_t counts_offset = pass_start_counts[pass];
 
     R_xlen_t offset = 0;
 
@@ -94,4 +102,3 @@ SEXP vctrs_int_radix_sort(SEXP x) {
   return out;
 }
 
-#undef PASS_OFFSET
