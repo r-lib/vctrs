@@ -1,6 +1,7 @@
 
 # Avoids adding `sf` to Suggests
 testthat_import_from("sf", c(
+  "st_sf",
   "st_sfc",
   "st_point",
   "st_bbox",
@@ -11,6 +12,113 @@ testthat_import_from("sf", c(
   "st_multipoint"
 ))
 
+# Need recent version to work around restore bug for sfc lists
+skip_if_not_installed("sf", "0.9-4")
+
+test_that("sf has a ptype2 method", {
+	sfc1 = st_sfc(st_point(1:2), st_point(3:4))
+	sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
+
+	sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
+	sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
+
+	out = vctrs::vec_ptype2(sf1, sf2)
+	exp = st_sf(
+		x = double(),
+		y = character(),
+		geo1 = sfc1[0],
+		geo2 = sfc2[0],
+		stringsAsFactors = FALSE
+	)
+	expect_identical(out, exp)
+
+	out = vctrs::vec_ptype2(sf1, new_data_frame(sf2))
+	expect_identical(out, exp)
+
+	out = vctrs::vec_ptype2(new_data_frame(sf1), sf2)
+	exp_rhs = st_sf(
+		x = double(),
+		y = character(),
+		geo1 = sfc1[0],
+		geo2 = sfc2[0],
+		stringsAsFactors = FALSE,
+		sf_column_name = "geo2"
+	)
+	expect_identical(out, exp_rhs)
+})
+
+test_that("sf has a cast method", {
+	sfc1 = st_sfc(st_point(1:2), st_point(3:4))
+	sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
+
+	sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
+	sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
+
+	expect_error(
+		vctrs::vec_cast(sf1, sf2),
+		class = "vctrs_error_cast_lossy"
+	)
+	expect_error(
+		vctrs::vec_cast(sf2, sf1),
+		class = "vctrs_error_cast_lossy"
+	)
+
+	common = vec_ptype2(sf1, sf2)
+
+	out = vctrs::vec_cast(sf1, common)
+	exp = st_sf(
+		x = c(1, 0),
+		y = character(2)[NA],
+		geo1 = sfc1,
+		geo2 = sfc2[c(NA, NA) + 0L],
+		stringsAsFactors = FALSE
+	)
+	expect_identical(out, exp)
+
+	out = vctrs::vec_cast(sf2, common)
+	exp = st_sf(
+		x = 0,
+		y = "",
+		geo1 = sfc1[NA + 0L],
+		geo2 = sfc2,
+		stringsAsFactors = FALSE
+	)
+	expect_identical(out, exp)
+})
+
+# https://github.com/r-lib/vctrs/issues/1136
+test_that("can combine sf data frames", {
+	testthat_import_from("dplyr", "bind_rows")
+
+	sfc1 = st_sfc(st_point(1:2), st_point(3:4))
+	sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
+
+	sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
+	sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
+
+	# FIXME: Currently `vec_rbind()` returns a data frame because we
+	# are temporarily working around bugs due to bad interaction of
+	# different fallbacks. `bind_rows()` returns an `sf` data frame as
+	# expected because of `dplyr_reconstruct()`.
+	exp = data_frame(
+		x = c(1, 0, 0),
+		geo1 = sfc1[c(1:2, NA)],
+		y = c(NA, NA, ""),
+		geo2 = sfc2[c(NA, NA, 1)]
+	)
+	expect_identical(vctrs::vec_rbind(sf1, sf2), exp)
+	expect_identical(bind_rows(sf1, sf2), st_as_sf(exp))
+
+	exp = data_frame(
+		y = c("", NA, NA, ""),
+		x = c(0, 1, 0, 0),
+		geo2 = sfc2[c(1, NA, NA, 1)],
+		geo1 = sfc1[c(NA, 1:2, NA)]
+	)
+	expect_identical(vctrs::vec_rbind(sf2, sf1, sf2), exp)
+	expect_identical(bind_rows(sf2, sf1, sf2), st_as_sf(exp))
+})
+
 # https://github.com/r-spatial/sf/issues/1390
 test_that("can combine sfc lists", {
   ls <- st_linestring(matrix(1:3, ncol = 3))
@@ -19,7 +127,11 @@ test_that("can combine sfc lists", {
   expect_identical(vec_c(sfc, sfc), c(sfc, sfc))
 
   sf <- st_as_sf(data.frame(id = 1, geometry = sfc))
-  expect_identical(vec_rbind(sf, sf), rbind(sf, sf))
+
+  # Currently returns a bare data frame because of the workaround for
+  # the `c()` fallback sentinels
+  expect_identical(vec_rbind(sf, sf), new_data_frame(rbind(sf, sf)))
+  expect_identical(vec_rbind(sf, sf, sf), new_data_frame(rbind(sf, sf, sf)))
 })
 
 test_that("can combine sfc lists with unspecified chunks", {
@@ -89,3 +201,10 @@ test_that("`precision` and `crs` attributes of `sfc` vectors are combined", {
 	expect_identical(vctrs::vec_c(x, y), c(x, y))
 	# expect_error(vctrs::vec_c(x, y), "coordinate reference systems not equal")
 })
+
+
+# Local Variables:
+# indent-tabs-mode: t
+# ess-indent-offset: 4
+# tab-width: 4
+# End:

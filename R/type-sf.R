@@ -1,0 +1,138 @@
+
+# Imported at load-time
+st_crs = function(...) NULL
+st_precision = function(...) NULL
+st_as_sf = function(...) NULL
+sf_deps = c(
+	"st_crs",
+	"st_precision",
+	"st_as_sf"
+)
+
+
+# Registered at load-time (same for all other methods)
+vec_proxy.sf = function(x, ...) {
+	x
+}
+
+vec_restore.sf = function(x, to, ...) {
+	sfc_name = attr(to, "sf_column")
+	crs = st_crs(to)
+	prec = st_precision(to)
+
+	st_as_sf(
+		x,
+		sf_column_name = sfc_name,
+		crs = crs,
+		precision = prec,
+		stringsAsFactors = FALSE
+	)
+}
+
+sf_ptype2 = function(x, y, ...) {
+	data = vctrs::df_ptype2(x, y, ...)
+
+	# Workaround for `c()` fallback sentinels. Must be fixed before
+	# moving the methods downstream.
+	opts <- match_fallback_opts(...)
+	if (identical(opts$s3_fallback, S3_FALLBACK_true)) {
+		return(data)
+	}
+
+	x_sf <- inherits(x, "sf")
+	y_sf <- inherits(y, "sf")
+
+	if (x_sf && y_sf) {
+		# Take active geometry from left-hand side
+		sfc_name = attr(x, "sf_column")
+
+		# CRS and precision must match
+		crs = common_crs(x, y)
+		prec = common_prec(x, y)
+	} else if (x_sf) {
+		sfc_name = attr(x, "sf_column")
+		crs = st_crs(x)
+		prec = st_precision(x)
+	} else if (y_sf) {
+		sfc_name = attr(y, "sf_column")
+		crs = st_crs(y)
+		prec = st_precision(y)
+	} else {
+		stop("Internal error: Expected at least one `sf` input.")
+	}
+
+	st_as_sf(
+		data,
+		sf_column_name = sfc_name,
+		crs = crs,
+		precision = prec,
+		stringsAsFactors = FALSE
+	)
+}
+
+vec_ptype2.sf.sf = function(x, y, ...) {
+	sf_ptype2(x, y, ...)
+}
+vec_ptype2.sf.data.frame = function(x, y, ...) {
+	sf_ptype2(x, y, ...)
+}
+vec_ptype2.data.frame.sf = function(x, y, ...) {
+	sf_ptype2(x, y, ...)
+}
+
+sf_cast = function(x, to, ...) {
+	data = vctrs::df_cast(x, to, ...)
+
+	# Workaround for `c()` fallback sentinels. Must be fixed before
+	# moving the methods downstream.
+	opts <- match_fallback_opts(...)
+	if (identical(opts$s3_fallback, S3_FALLBACK_true)) {
+		return(data)
+	}
+
+	# Take active geometry from target type
+	sfc_name = attr(to, "sf_column")
+
+	# CRS and precision must match
+	crs = common_crs(x, to)
+	prec = common_prec(x, to)
+
+	st_as_sf(
+		data,
+		sf_column_name = sfc_name,
+		crs = crs,
+		precision = prec,
+		stringsAsFactors = FALSE
+	)
+}
+
+vec_cast.sf.sf = function(x, to, ...) {
+	sf_cast(x, to, ...)
+}
+
+
+# take conservative approach of requiring equal CRS and precision
+common_crs = function(x, y) {
+	lhs = st_crs(x)
+	rhs = st_crs(y)
+
+	if (lhs != rhs)
+		stop("coordinate reference systems not equal: use st_transform() first?")
+
+	lhs
+}
+common_prec = function(x, y) {
+	lhs = st_precision(x)
+	rhs = st_precision(y)
+
+	if (lhs != rhs)
+		stop("precisions not equal")
+
+	lhs
+}
+
+# Local Variables:
+# indent-tabs-mode: t
+# ess-indent-offset: 4
+# tab-width: 4
+# End:
