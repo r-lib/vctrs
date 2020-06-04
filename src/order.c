@@ -19,6 +19,17 @@ struct order_info {
 
 // -----------------------------------------------------------------------------
 
+// TODO: It is possible to map int32 to a uint32 rather than a uint64 since
+// we know that it can fit completely in uint32. This would result in only
+// needing 4 passes over the data (currently it uses 8 passes, but the last
+// 4 are always skipped after computing the counts. This takes some time
+// though). We have allocated memory in `p_counts` and `p_bytes` for 8 passes,
+// which would be required for doubles, but integers could use that allocated
+// memory and just store 4 passes worth of values. This requires changing
+// `map_from_int32_to_uint64()` to return uint32, and changing anything in
+// `int_radix_order()` that uses 64 -> 32. We would also explicitly set
+// `n_passes` to 4.
+
 static inline uint64_t map_from_int32_to_uint64(int32_t x);
 static inline uint8_t extract_byte(uint64_t x, uint8_t pass);
 
