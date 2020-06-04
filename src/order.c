@@ -106,11 +106,14 @@ static void int_radix_order(SEXP x,
     const R_xlen_t start_bytes = pass_start_bytes[pass];
     const R_xlen_t start_counts = pass_start_counts[pass];
 
+    const uint8_t* p_bytes_pass = p_bytes + start_bytes;
+    const R_xlen_t* p_counts_pass = p_counts + start_counts;
+
     R_xlen_t offset = 0;
     bool pass_skip = false;
 
     for (R_xlen_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-      const R_xlen_t count = p_counts[start_counts + i];
+      const R_xlen_t count = p_counts_pass[i];
 
       // Skip this pass entirely if all bytes are identical, which happens
       // when a bucket holds a count equal to the number of values.
@@ -129,7 +132,7 @@ static void int_radix_order(SEXP x,
 
     for (R_xlen_t i = 0; i < size; ++i) {
       const int32_t elt = p_out[i];
-      const uint8_t loc = p_bytes[start_bytes + elt - 1];
+      const uint8_t loc = p_bytes_pass[elt - 1];
 
       p_copy[p_offsets[loc]++] = elt;
     }
