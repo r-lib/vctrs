@@ -1,8 +1,7 @@
 
-import_from <- function(ns, names, env = caller_env()) {
+testthat_import_from <- function(ns, names, env = caller_env()) {
   skip_if_not_installed(ns)
-  objs <- env_get_list(ns_env(ns), names)
-  env_bind(env, !!!objs)
+  import_from(ns, names, env = env)
 }
 
 vec_ptype2_fallback <- function(x, y, ...) {

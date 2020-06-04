@@ -1,6 +1,6 @@
 
 # Avoids adding `sf` to Suggests
-import_from("sf", c(
+testthat_import_from("sf", c(
   "st_sfc",
   "st_point",
   "st_bbox",
