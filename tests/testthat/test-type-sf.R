@@ -75,6 +75,12 @@ test_that("sf has a cast method", {
 	)
 	expect_identical(out, exp)
 
+	out = vctrs::vec_cast(new_data_frame(sf1), common)
+	expect_identical(out, exp)
+
+	out = vctrs::vec_cast(sf1, new_data_frame(common))
+	expect_identical(out, new_data_frame(exp))
+
 	out = vctrs::vec_cast(sf2, common)
 	exp = st_sf(
 		x = 0,

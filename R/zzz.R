@@ -93,6 +93,8 @@ on_package_load <- function(pkg, expr) {
       s3_register("vctrs::vec_ptype2", "sf.tbl_df")
       s3_register("vctrs::vec_ptype2", "tbl_df.sf")
       s3_register("vctrs::vec_cast", "sf.sf")
+      s3_register("vctrs::vec_cast", "sf.data.frame")
+      s3_register("vctrs::vec_cast", "data.frame.sf")
     }
   })
 

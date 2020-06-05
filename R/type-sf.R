@@ -99,12 +99,9 @@ sf_cast = function(x, to, ...) {
 		return(data)
 	}
 
-	# Take active geometry from target type
 	sfc_name = attr(to, "sf_column")
-
-	# CRS and precision must match
-	crs = common_crs(x, to)
-	prec = common_prec(x, to)
+	crs = st_crs(to)
+	prec = st_precision(to)
 
 	st_as_sf(
 		data,
@@ -117,6 +114,12 @@ sf_cast = function(x, to, ...) {
 
 vec_cast.sf.sf = function(x, to, ...) {
 	sf_cast(x, to, ...)
+}
+vec_cast.sf.data.frame = function(x, to, ...) {
+	sf_cast(x, to, ...)
+}
+vec_cast.data.frame.sf = function(x, to, ...) {
+	df_cast(x, to, ...)
 }
 
 
