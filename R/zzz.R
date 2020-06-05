@@ -80,7 +80,7 @@ on_package_load <- function(pkg, expr) {
   })
 
   on_package_load("sf", {
-    import_from("sf", sf_deps, env = ns)
+    import_from("sf", sf_deps, env = sf_env)
 
     if (!env_has(ns_env("sf"), "vec_restore.sf")) {
       s3_register("vctrs::vec_proxy", "sf")

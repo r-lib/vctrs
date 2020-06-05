@@ -1,14 +1,20 @@
 
-# Imported at load-time
-st_crs = function(...) NULL
-st_precision = function(...) NULL
-st_as_sf = function(...) NULL
+# Imported at load-time in `sf_env`
+st_crs = function(...) stop_sf()
+st_precision = function(...) stop_sf()
+st_as_sf = function(...) stop_sf()
+stop_sf = function() abort("Internal error: Failed sf import.")
+
 sf_deps = c(
 	"st_crs",
 	"st_precision",
 	"st_as_sf"
 )
+sf_env = env()
 
+
+# sf namespace
+local(envir = sf_env, {
 
 # Registered at load-time (same for all other methods)
 vec_proxy.sf = function(x, ...) {
@@ -142,6 +148,10 @@ common_prec = function(x, y) {
 
 	lhs
 }
+
+}) # local(envir = sf_env)
+
+env_bind(ns_env("vctrs"), !!!as.list(sf_env))
 
 # Local Variables:
 # indent-tabs-mode: t
