@@ -11,6 +11,7 @@ on_package_load <- function(pkg, expr) {
 
 .onLoad <- function(libname, pkgname) {
   check_linked_version(pkgname)
+  ns <- ns_env("vctrs")
 
   on_package_load("testthat", {
     s3_register("testthat::is_informative_error", "vctrs_error_cast_lossy")
@@ -78,6 +79,25 @@ on_package_load <- function(pkg, expr) {
     }
   })
 
+  on_package_load("sf", {
+    import_from("sf", sf_deps, env = sf_env)
+
+    if (!env_has(ns_env("sf"), "vec_restore.sf")) {
+      s3_register("vctrs::vec_proxy", "sf")
+      s3_register("vctrs::vec_restore", "sf")
+    }
+    if (!env_has(ns_env("sf"), "vec_ptype2.sf.sf")) {
+      s3_register("vctrs::vec_ptype2", "sf.sf")
+      s3_register("vctrs::vec_ptype2", "sf.data.frame")
+      s3_register("vctrs::vec_ptype2", "data.frame.sf")
+      s3_register("vctrs::vec_ptype2", "sf.tbl_df")
+      s3_register("vctrs::vec_ptype2", "tbl_df.sf")
+      s3_register("vctrs::vec_cast", "sf.sf")
+      s3_register("vctrs::vec_cast", "sf.data.frame")
+      s3_register("vctrs::vec_cast", "data.frame.sf")
+    }
+  })
+
   utils::globalVariables("vec_set_attributes")
 
   # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0
@@ -92,7 +112,6 @@ on_package_load <- function(pkg, expr) {
     }
   }
 
-  ns <- ns_env("vctrs")
   env_bind(ns, vec_set_attributes = vec_set_attributes)
 
   .Call(vctrs_init_library, ns_env())

@@ -32,7 +32,7 @@ test_that("`numeric_version` falls back to base methods", {
 test_that("common type of data.table and data.frame is data.table", {
   # As data.table is not in Suggests, these checks are only run on the
   # devs' machines
-  import_from("data.table", "data.table")
+  testthat_import_from("data.table", "data.table")
 
   expect_identical(
     vec_ptype2(data.table(x = TRUE), data.table(y = 2)),
@@ -62,7 +62,7 @@ test_that("common type of data.table and data.frame is data.table", {
 })
 
 test_that("data.table and tibble do not have a common type", {
-  import_from("data.table", "data.table")
+  testthat_import_from("data.table", "data.table")
 
   expect_incompatible_df(
     vec_ptype_common(data.table(x = TRUE), tibble(y = 2)),
