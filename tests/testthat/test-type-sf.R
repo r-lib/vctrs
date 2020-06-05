@@ -119,6 +119,33 @@ test_that("can combine sf data frames", {
 	expect_identical(bind_rows(sf2, sf1, sf2), st_as_sf(exp))
 })
 
+test_that("can combine sf and tibble", {
+	sfc1 = st_sfc(st_point(1:2), st_point(3:4))
+	sfc2 = st_sfc(st_linestring(matrix(1:4, 2)))
+
+	sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
+	sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
+
+	out = vctrs::vec_rbind(sf2, data.frame(x = 1))
+	exp = data_frame(
+		y = c("", NA),
+		x = c(0, 1),
+		geo2 = sfc2[c(1L, NA)]
+	)
+	expect_identical(out, exp)
+
+	out = vctrs::vec_rbind(sf2, tibble::tibble(x = 1))
+	expect_identical(out, exp)
+
+	out = vctrs::vec_rbind(tibble::tibble(x = 1), sf2)
+	exp = data_frame(
+		x = c(1, 0),
+		y = c(NA, ""),
+		geo2 = sfc2[c(NA, 1L)]
+	)
+	expect_identical(out, exp)
+})
+
 # https://github.com/r-spatial/sf/issues/1390
 test_that("can combine sfc lists", {
   ls <- st_linestring(matrix(1:3, ncol = 3))

@@ -80,6 +80,15 @@ vec_ptype2.data.frame.sf = function(x, y, ...) {
 	sf_ptype2(x, y, ...)
 }
 
+# Maybe we should not have these methods, but they are currently
+# required to avoid the base-df fallback
+vec_ptype2.sf.tbl_df = function(x, y, ...) {
+	new_data_frame(sf_ptype2(x, y, ...))
+}
+vec_ptype2.tbl_df.sf = function(x, y, ...) {
+	new_data_frame(sf_ptype2(x, y, ...))
+}
+
 sf_cast = function(x, to, ...) {
 	data = vctrs::df_cast(x, to, ...)
 
