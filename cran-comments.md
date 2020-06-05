@@ -1,5 +1,6 @@
 
 LTO mismatch is fixed.
+r-devel error is fixed.
 
 
 ## Test environments
