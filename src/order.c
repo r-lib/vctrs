@@ -33,30 +33,6 @@ struct order_info {
 static inline uint64_t map_from_int32_to_uint64(int32_t x);
 static inline uint8_t extract_byte(uint64_t x, uint8_t pass);
 
-// The mapped uint32 value requires a complex adjustment based on the values
-// of `na_last` and `decreasing`. This moves the na_last/decreasing check
-// out of the inner loop.
-#define INT_RADIX_ORDER_BUILD_COUNTS(ADJUST_MAPPED) do {         \
-  for (R_xlen_t i = 0; i < size; ++i) {                          \
-    const int32_t elt_x = p_x[i];                                \
-                                                                 \
-    uint32_t elt_mapped;                                         \
-                                                                 \
-    if (elt_x == NA_INTEGER) {                                   \
-      elt_mapped = na_uint64;                                    \
-    } else {                                                     \
-      elt_mapped = map_from_int32_to_uint64(elt_x);              \
-      ADJUST_MAPPED;                                             \
-    }                                                            \
-                                                                 \
-    for (uint8_t pass = 0; pass < n_passes; ++pass) {            \
-      const uint8_t byte = extract_byte(elt_mapped, pass);       \
-      p_bytes[pass_start_bytes[pass] + i] = byte;                \
-      ++p_counts[pass_start_counts[pass] + byte];                \
-    }                                                            \
-  }                                                              \
-} while (0)                                                      \
-
 
 static void int_radix_order(SEXP x,
                             bool na_last,
@@ -83,20 +59,37 @@ static void int_radix_order(SEXP x,
   }
 
   // Rely on `NA_INTEGER == INT_MIN`, which is mapped to `0` as a `uint32_t`.
-  const uint64_t na_uint64 = (na_last) ? UINT64_MAX : 0;
+  const uint64_t na_uint64 = na_last ? UINT64_MAX : 0;
+
+  // These values come from writing out the 4 combinations of na_last/decreasing
+  // and seeing how adjustments have to be made to keep `NA` as the
+  // largest/smallest value. They are ugly, but should be fast.
+  const uint64_t adj_before = na_last ? UINT64_MAX - 1 : UINT64_MAX;
+  const uint64_t adj_after = decreasing ? 1 : (na_last ? -1 : 0);
 
   // Build 4 histograms in one pass (one for each byte)
-  if (na_last) {
-    if (decreasing) {
-      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT64_MAX - elt_mapped);
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const int32_t elt_x = p_x[i];
+
+    uint32_t elt_mapped;
+
+    if (elt_x == NA_INTEGER) {
+      elt_mapped = na_uint64;
     } else {
-      INT_RADIX_ORDER_BUILD_COUNTS(--elt_mapped);
+      elt_mapped = map_from_int32_to_uint64(elt_x);
+
+      // Adjust based on combination of `na_last` and `decreasing`
+      if (decreasing) {
+        elt_mapped = adj_before - elt_mapped + adj_after;
+      } else {
+        elt_mapped += adj_after;
+      }
     }
-  } else {
-    if (decreasing) {
-      INT_RADIX_ORDER_BUILD_COUNTS(elt_mapped = UINT64_MAX - elt_mapped + 1);
-    } else {
-      INT_RADIX_ORDER_BUILD_COUNTS();
+
+    for (uint8_t pass = 0; pass < n_passes; ++pass) {
+      const uint8_t byte = extract_byte(elt_mapped, pass);
+      p_bytes[pass_start_bytes[pass] + i] = byte;
+      ++p_counts[pass_start_counts[pass] + byte];
     }
   }
 
@@ -151,8 +144,6 @@ static void int_radix_order(SEXP x,
   p_info->copy = copy;
   p_info->p_copy = p_copy;
 }
-
-#undef INT_RADIX_ORDER_BUILD_COUNTS
 
 
 #define HEX_UINT32_SIGN_BIT 0x80000000u
