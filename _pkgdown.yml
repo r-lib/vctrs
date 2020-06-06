@@ -25,6 +25,8 @@ reference:
   - vec_cast
   - vec_proxy
   - vec_restore
+  - vec_proxy_compare
+  - vec_proxy_equal
 
 - title: Foundations
   contents:
@@ -86,8 +88,6 @@ reference:
   contents:
   - vctr
   - vec_list_cast
-  - vec_proxy_compare
-  - vec_proxy_equal
   - vec_ptype_full
   - vec_ptype_finalise
   - df_ptype2
