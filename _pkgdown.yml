@@ -19,6 +19,13 @@ reference:
   contents:
   - starts_with("internal-faq")
 
+- title: Genericity
+  contents:
+  - vec_ptype2
+  - vec_cast
+  - vec_proxy
+  - vec_restore
+
 - title: Foundations
   contents:
   - vec_data
@@ -78,9 +85,7 @@ reference:
 - title: Developer tools
   contents:
   - vctr
-  - vec_cast
   - vec_list_cast
-  - vec_ptype2
   - vec_proxy_compare
   - vec_proxy_equal
   - vec_ptype_full
