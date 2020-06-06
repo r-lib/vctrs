@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
       </span>
     </div>
 
@@ -242,7 +242,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; function (x, ...) </span>
 <span class="co">#&gt; UseMethod("mean")</span>
-<span class="co">#&gt; &lt;bytecode: 0x7f9d0baa3ae8&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x7fc6867bf2e8&gt;</span>
 <span class="co">#&gt; &lt;environment: namespace:base&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
@@ -441,7 +441,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span>
 <span class="co">#&gt; Levels: small big</span>
 <span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>() + <span class="fl">7</span>)
-<span class="co">#&gt; [1] NA           "2020-06-12" "2020-06-12" "2020-06-05" "2020-06-05"</span></pre></body></html></div>
+<span class="co">#&gt; [1] NA           "2020-06-13" "2020-06-13" "2020-06-06" "2020-06-06"</span></pre></body></html></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fl">1</span>), <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="fl">2</span>))
 <span class="co">#&gt;    x  y</span>
