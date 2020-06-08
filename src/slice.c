@@ -334,7 +334,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
-      Rf_errorcall(R_NilValue, "Can't slice a scalar");
+      vec_assert(x, NULL);
     }
 
     if (is_compact(subscript)) {

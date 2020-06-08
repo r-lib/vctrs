@@ -696,3 +696,7 @@ test_that("vec_slice() restores unrestored but named foreign classes", {
   expect_true(is_common_class_fallback(out))
   expect_identical(fallback_class(out), "vctrs_foobar")
 })
+
+test_that("scalar type error is thrown when `vec_slice_impl()` is called directly (#1139)", {
+  expect_error(vec_slice_seq(x, 1L, 1L), class = "vctrs_error_scalar_type")
+})
