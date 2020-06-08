@@ -438,8 +438,8 @@ bool vec_is_restored(SEXP x, SEXP to) {
 }
 
 
-// [[export]]
-SEXP vctrs_slice(SEXP x, SEXP subscript) {
+// [[ include("vctrs.h"); register() ]]
+SEXP vec_slice(SEXP x, SEXP subscript) {
   vec_assert(x, args_empty);
 
   subscript = PROTECT(vec_as_location(subscript, vec_size(x), PROTECT(vec_names(x))));
@@ -447,10 +447,6 @@ SEXP vctrs_slice(SEXP x, SEXP subscript) {
 
   UNPROTECT(2);
   return out;
-}
-
-SEXP vec_slice(SEXP x, SEXP subscript) {
-  return vctrs_slice(x, subscript);
 }
 
 // [[ include("vctrs.h") ]]
