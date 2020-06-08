@@ -12,30 +12,33 @@
 // size `INSERTION_SIZE`. Should be fast for these small slices, inserts
 // into `p_out_slice` directly.
 static void int_insertion_sort(int* p_out_slice,
-                               const int* p_x,
+                               int* p_x_slice,
                                const R_xlen_t size) {
   for (R_xlen_t i = 1; i < size; ++i) {
+    const int x_elt = p_x_slice[i];
     const int out_elt = p_out_slice[i];
-    const int x_elt = p_x[out_elt - 1];
 
     R_xlen_t j = i - 1;
 
     while (j >= 0) {
-      int out_cmp_elt = p_out_slice[j];
-      int x_cmp_elt = p_x[out_cmp_elt - 1];
+      int x_cmp_elt = p_x_slice[j];
 
       if (x_elt >= x_cmp_elt) {
         break;
       }
 
+      int out_cmp_elt = p_out_slice[j];
+
       // Shift
+      p_x_slice[j + 1] = x_cmp_elt;
       p_out_slice[j + 1] = out_cmp_elt;
 
-      // Update
+      // Next
       --j;
     }
 
     // Place original element in updated location
+    p_x_slice[j + 1] = x_elt;
     p_out_slice[j + 1] = out_elt;
   }
 }
@@ -61,12 +64,13 @@ static void int_radix_order_pass(int* p_out_slice,
                                  int* p_aux_slice,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
-                                 const int* p_x,
+                                 int* p_x_slice,
+                                 int* p_x_aux_slice,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   // Finish this group with insertion sort once it gets small enough
   if (size <= INT_INSERTION_SIZE) {
-    int_insertion_sort(p_out_slice, p_x, size);
+    int_insertion_sort(p_out_slice, p_x_slice, size);
     return;
   }
 
@@ -78,8 +82,7 @@ static void int_radix_order_pass(int* p_out_slice,
 
   // Histogram
   for (R_xlen_t i = 0; i < size; ++i) {
-    const int out_elt = p_out_slice[i];
-    const int x_elt = p_x[out_elt - 1];
+    const int x_elt = p_x_slice[i];
 
     uint32_t x_elt_mapped;
 
@@ -122,12 +125,14 @@ static void int_radix_order_pass(int* p_out_slice,
     const uint8_t byte = p_bytes[i];
     const R_xlen_t loc = p_counts[byte]++;
     p_aux_slice[loc] = p_out_slice[i];
+    p_x_aux_slice[loc] = p_x_slice[i];
   }
 
   // Move from `aux` back to `out`
-  // TODO: (Maybe in reverse order??)
+  // TODO: Maybe with pointer swaps?
   for (R_xlen_t i = 0; i < size; ++i) {
     p_out_slice[i] = p_aux_slice[i];
+    p_x_slice[i] = p_x_aux_slice[i];
   }
 }
 
@@ -136,7 +141,8 @@ static void int_radix_order_pass(int* p_out_slice,
 static void int_radix_order_impl(int* p_out_slice,
                                  int* p_aux_slice,
                                  uint8_t* p_bytes,
-                                 const int* p_x,
+                                 int* p_x_slice,
+                                 int* p_x_aux_slice,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
@@ -146,7 +152,8 @@ static void int_radix_order_impl(int* p_out_slice,
     p_aux_slice,
     p_bytes,
     p_counts,
-    p_x,
+    p_x_slice,
+    p_x_aux_slice,
     size,
     pass
   );
@@ -166,6 +173,7 @@ static void int_radix_order_impl(int* p_out_slice,
     last_cumulative_count = cumulative_count;
 
     if (group_size == 1) {
+      ++p_x_slice;
       ++p_out_slice;
       ++p_aux_slice;
       ++p_bytes;
@@ -175,6 +183,7 @@ static void int_radix_order_impl(int* p_out_slice,
     // Can get here in the case of ties, like c(1L, 1L), which have a
     // `group_size` of 2 in the last radix, but there is nothing left to compare
     if (next_pass == 4) {
+      p_x_slice += group_size;
       p_out_slice += group_size;
       p_aux_slice += group_size;
       p_bytes += group_size;
@@ -185,11 +194,13 @@ static void int_radix_order_impl(int* p_out_slice,
       p_out_slice,
       p_aux_slice,
       p_bytes,
-      p_x,
+      p_x_slice,
+      p_x_aux_slice,
       group_size,
       next_pass
     );
 
+    p_x_slice += group_size;
     p_out_slice += group_size;
     p_aux_slice += group_size;
     p_bytes += group_size;
@@ -206,6 +217,18 @@ SEXP int_radix_order(SEXP x) {
   R_xlen_t size = Rf_xlength(x);
   const int* p_x = INTEGER_RO(x);
 
+  // This is sometimes bigger than it needs to be, but will only
+  // be much bigger than required if `x` is filled with numbers that are
+  // incredibly spread out.
+  SEXP x_slice = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_x_slice = INTEGER(x_slice);
+
+  // Fill `x_slice` with `x`
+  memcpy(p_x_slice, p_x, size * sizeof(int));
+
+  SEXP x_aux_slice = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_x_aux_slice = INTEGER(x_aux_slice);
+
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
@@ -219,9 +242,19 @@ SEXP int_radix_order(SEXP x) {
 
   uint8_t* p_bytes = (uint8_t*) R_alloc(size, sizeof(uint8_t));
 
-  int_radix_order_impl(p_out, p_aux, p_bytes, p_x, size, 0);
+  const uint8_t pass = 0;
 
-  UNPROTECT(2);
+  int_radix_order_impl(
+    p_out,
+    p_aux,
+    p_bytes,
+    p_x_slice,
+    p_x_aux_slice,
+    size,
+    pass
+  );
+
+  UNPROTECT(4);
   return out;
 }
 
