@@ -242,7 +242,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; function (x, ...) </span>
 <span class="co">#&gt; UseMethod("mean")</span>
-<span class="co">#&gt; &lt;bytecode: 0x7fc8a320aae8&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x7fcbcbdf4fc8&gt;</span>
 <span class="co">#&gt; &lt;environment: namespace:base&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
@@ -256,7 +256,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] "x"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; [1] 4 0 0</span></pre></body></html></div>
+<span class="co">#&gt; [1] 4 0 1</span></pre></body></html></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> throws an error if the inputs are not vectors or not automatically coercible:</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html">globalenv</a></span>())
 <span class="co">#&gt; Error: `..1` must be a vector, not a function.</span>
@@ -313,9 +313,9 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="no">datetime</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">date</span>, <span class="no">datetime</span>)
-<span class="co">#&gt; [1] "2020-01-01"    "4322029-02-20"</span>
+<span class="co">#&gt; [1] "2020-01-01" "2020-01-01"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">datetime</span>, <span class="no">date</span>)
-<span class="co">#&gt; [1] "2020-01-01 09:00:00 UTC" "1970-01-01 05:04:22 UTC"</span></pre></body></html></div>
+<span class="co">#&gt; [1] "2020-01-01 09:00:00 UTC" "2020-01-01 00:00:00 UTC"</span></pre></body></html></div>
 <p>This behaviour arises because neither <code><a href="https://rdrr.io/r/base/Dates.html">c.Date()</a></code> nor <code><a href="https://rdrr.io/r/base/DateTimeClasses.html">c.POSIXct()</a></code> check that all inputs are of the same type.</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> uses a standard set of rules to avoid this problem. When you mix dates and date-times, vctrs returns a date-time and converts dates to date-times at midnight (in the timezone of the date-time).</p>
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">date</span>, <span class="no">datetime</span>)
@@ -441,7 +441,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span>
 <span class="co">#&gt; Levels: small big</span>
 <span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>() + <span class="fl">7</span>)
-<span class="co">#&gt; [1] NA           "2020-06-13" "2020-06-13" "2020-06-06" "2020-06-06"</span></pre></body></html></div>
+<span class="co">#&gt; [1] NA           "2020-06-15" "2020-06-15" "2020-06-08" "2020-06-08"</span></pre></body></html></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fl">1</span>), <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="fl">2</span>))
 <span class="co">#&gt;    x  y</span>
