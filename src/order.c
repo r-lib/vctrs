@@ -281,12 +281,10 @@ static void vec_radix_order_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static bool lgl_any_na(SEXP x);
-
 static SEXP vec_radix_order(SEXP x, bool na_last, SEXP decreasing);
 
 // [[ register() ]]
-SEXP vctrs_radix_order(SEXP x, SEXP na_last, SEXP decreasing) {
+SEXP vctrs_radix_order_old(SEXP x, SEXP na_last, SEXP decreasing) {
   if (!r_is_bool(na_last)) {
     Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
   }
@@ -354,18 +352,5 @@ static SEXP vec_radix_order(SEXP x, bool na_last, SEXP decreasing) {
 }
 
 // -----------------------------------------------------------------------------
-
-static bool lgl_any_na(SEXP x) {
-  R_xlen_t size = Rf_xlength(x);
-  const int* p_x = LOGICAL_RO(x);
-
-  for (R_xlen_t i = 0; i < size; ++i) {
-    if (p_x[i] == NA_LOGICAL) {
-      return true;
-    }
-  }
-
-  return false;
-}
 
 #undef UINT8_MAX_SIZE
