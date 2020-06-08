@@ -5,6 +5,20 @@
 
 // -----------------------------------------------------------------------------
 
+// Shifts or flips `x` depending on the value of `na_last` and `direction` to
+// maintain the correct order. `NA` is always last if `na_last` is true.
+// `direction = 1` ascending
+// `direction = -1` descending
+static inline int int_shift(int x, int direction, bool na_last) {
+  if (na_last) {
+    return (x == NA_INTEGER) ? INT_MAX : x * direction - 1;
+  } else {
+    return (x == NA_INTEGER) ? INT_MIN : x * direction;
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 // A bit ad hoc
 #define INT_INSERTION_SIZE 256
 
@@ -13,47 +27,17 @@
 // into `p_o` directly.
 static void int_insertion_sort(int* p_o,
                                int* p_x,
-                               bool decreasing,
-                               bool na_last,
                                const R_xlen_t size) {
-  const int na_int = na_last ? INT_MAX : INT_MIN;
-
-  // These values come from writing out the 4 combinations of na_last/decreasing
-  // and seeing how adjustments have to be made to keep `NA` as the
-  // largest/smallest value. They are ugly, but should be fast.
-  const int adj_before = na_last ? INT_MAX - 1 : INT_MAX;
-  const int adj_after = decreasing ? 1 : (na_last ? -1 : 0);
-
   for (R_xlen_t i = 1; i < size; ++i) {
     const int x_elt = p_x[i];
     const int o_elt = p_o[i];
-
-    int x_elt_mapped;
-
-    if (x_elt == NA_INTEGER) {
-      x_elt_mapped = na_int;
-    } else if (decreasing) {
-      x_elt_mapped = adj_before - x_elt + adj_after;
-    } else {
-      x_elt_mapped = x_elt + adj_after;
-    }
 
     R_xlen_t j = i - 1;
 
     while (j >= 0) {
       int x_cmp_elt = p_x[j];
 
-      int x_cmp_elt_mapped;
-
-      if (x_cmp_elt == NA_INTEGER) {
-        x_cmp_elt_mapped = na_int;
-      } else if (decreasing) {
-        x_cmp_elt_mapped = adj_before - x_cmp_elt + adj_after;
-      } else {
-        x_cmp_elt_mapped = x_cmp_elt + adj_after;
-      }
-
-      if (x_elt_mapped >= x_cmp_elt_mapped) {
+      if (x_elt >= x_cmp_elt) {
         break;
       }
 
@@ -96,27 +80,16 @@ static void int_radix_order_pass(int* p_x,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
-                                 bool decreasing,
-                                 bool na_last,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   // Finish this group with insertion sort once it gets small enough
   if (size <= INT_INSERTION_SIZE) {
-    int_insertion_sort(p_o, p_x, decreasing, na_last, size);
+    int_insertion_sort(p_o, p_x, size);
     return;
   }
 
   const uint8_t radix = 3 - pass;
   const uint8_t shift = radix * 8;
-
-  // Rely on `NA_INTEGER == INT_MIN`, which is mapped to `0` as a `uint32_t`.
-  const uint32_t na_uint32 = na_last ? UINT32_MAX : 0;
-
-  // These values come from writing out the 4 combinations of na_last/decreasing
-  // and seeing how adjustments have to be made to keep `NA` as the
-  // largest/smallest value. They are ugly, but should be fast.
-  const uint32_t adj_before = na_last ? UINT32_MAX - 1 : UINT32_MAX;
-  const uint32_t adj_after = decreasing ? 1 : (na_last ? -1 : 0);
 
   uint8_t byte = 0;
 
@@ -124,20 +97,8 @@ static void int_radix_order_pass(int* p_x,
   for (R_xlen_t i = 0; i < size; ++i) {
     const int x_elt = p_x[i];
 
-    uint32_t x_elt_mapped;
-
-    if (x_elt == NA_INTEGER) {
-      x_elt_mapped = na_uint32;
-    } else {
-      x_elt_mapped = map_from_int32_to_uint32(x_elt);
-
-      // Adjust based on combination of `na_last` and `decreasing`
-      if (decreasing) {
-        x_elt_mapped = adj_before - x_elt_mapped + adj_after;
-      } else {
-        x_elt_mapped += adj_after;
-      }
-    }
+    // Relies on `NA_INTEGER == INT_MIN`
+    const uint32_t x_elt_mapped = map_from_int32_to_uint32(x_elt);
 
     byte = extract_byte(x_elt_mapped, shift);
 
@@ -190,8 +151,6 @@ static void int_radix_order_impl(int* p_x,
                                  int* p_o,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
-                                 bool decreasing,
-                                 bool na_last,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
@@ -203,8 +162,6 @@ static void int_radix_order_impl(int* p_x,
     p_o_aux,
     p_bytes,
     p_counts,
-    decreasing,
-    na_last,
     size,
     pass
   );
@@ -249,8 +206,6 @@ static void int_radix_order_impl(int* p_x,
       p_o,
       p_o_aux,
       p_bytes,
-      decreasing,
-      na_last,
       group_size,
       next_pass
     );
@@ -290,6 +245,8 @@ SEXP int_radix_order(SEXP x, bool decreasing, bool na_last) {
     Rf_errorcall(R_NilValue, "`x` must be an integer vector.");
   }
 
+  const int direction = decreasing ? -1 : 1;
+
   R_xlen_t size = Rf_xlength(x);
   const int* p_x = INTEGER_RO(x);
 
@@ -299,8 +256,10 @@ SEXP int_radix_order(SEXP x, bool decreasing, bool na_last) {
   SEXP x_copy = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_x_copy = INTEGER(x_copy);
 
-  // Fill `x_slice` with `x`
-  memcpy(p_x_copy, p_x, size * sizeof(int));
+  // Correct the order once up front
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_x_copy[i] = int_shift(p_x[i], direction, na_last);
+  }
 
   SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_x_aux = INTEGER(x_aux);
@@ -326,8 +285,6 @@ SEXP int_radix_order(SEXP x, bool decreasing, bool na_last) {
     p_o,
     p_o_aux,
     p_bytes,
-    decreasing,
-    na_last,
     size,
     pass
   );
