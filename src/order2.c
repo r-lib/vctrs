@@ -13,17 +13,47 @@
 // into `p_o` directly.
 static void int_insertion_sort(int* p_o,
                                int* p_x,
+                               bool decreasing,
+                               bool na_last,
                                const R_xlen_t size) {
+  const int na_int = na_last ? INT_MAX : INT_MIN;
+
+  // These values come from writing out the 4 combinations of na_last/decreasing
+  // and seeing how adjustments have to be made to keep `NA` as the
+  // largest/smallest value. They are ugly, but should be fast.
+  const int adj_before = na_last ? INT_MAX - 1 : INT_MAX;
+  const int adj_after = decreasing ? 1 : (na_last ? -1 : 0);
+
   for (R_xlen_t i = 1; i < size; ++i) {
     const int x_elt = p_x[i];
     const int o_elt = p_o[i];
+
+    int x_elt_mapped;
+
+    if (x_elt == NA_INTEGER) {
+      x_elt_mapped = na_int;
+    } else if (decreasing) {
+      x_elt_mapped = adj_before - x_elt + adj_after;
+    } else {
+      x_elt_mapped = x_elt + adj_after;
+    }
 
     R_xlen_t j = i - 1;
 
     while (j >= 0) {
       int x_cmp_elt = p_x[j];
 
-      if (x_elt >= x_cmp_elt) {
+      int x_cmp_elt_mapped;
+
+      if (x_cmp_elt == NA_INTEGER) {
+        x_cmp_elt_mapped = na_int;
+      } else if (decreasing) {
+        x_cmp_elt_mapped = adj_before - x_cmp_elt + adj_after;
+      } else {
+        x_cmp_elt_mapped = x_cmp_elt + adj_after;
+      }
+
+      if (x_elt_mapped >= x_cmp_elt_mapped) {
         break;
       }
 
@@ -66,17 +96,27 @@ static void int_radix_order_pass(int* p_x,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
+                                 bool decreasing,
+                                 bool na_last,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   // Finish this group with insertion sort once it gets small enough
   if (size <= INT_INSERTION_SIZE) {
-    int_insertion_sort(p_o, p_x, size);
+    int_insertion_sort(p_o, p_x, decreasing, na_last, size);
     return;
   }
 
   const uint8_t radix = 3 - pass;
   const uint8_t shift = radix * 8;
-  const uint32_t na_uint32 = 0;
+
+  // Rely on `NA_INTEGER == INT_MIN`, which is mapped to `0` as a `uint32_t`.
+  const uint32_t na_uint32 = na_last ? UINT32_MAX : 0;
+
+  // These values come from writing out the 4 combinations of na_last/decreasing
+  // and seeing how adjustments have to be made to keep `NA` as the
+  // largest/smallest value. They are ugly, but should be fast.
+  const uint32_t adj_before = na_last ? UINT32_MAX - 1 : UINT32_MAX;
+  const uint32_t adj_after = decreasing ? 1 : (na_last ? -1 : 0);
 
   uint8_t byte = 0;
 
@@ -90,6 +130,13 @@ static void int_radix_order_pass(int* p_x,
       x_elt_mapped = na_uint32;
     } else {
       x_elt_mapped = map_from_int32_to_uint32(x_elt);
+
+      // Adjust based on combination of `na_last` and `decreasing`
+      if (decreasing) {
+        x_elt_mapped = adj_before - x_elt_mapped + adj_after;
+      } else {
+        x_elt_mapped += adj_after;
+      }
     }
 
     byte = extract_byte(x_elt_mapped, shift);
@@ -143,6 +190,8 @@ static void int_radix_order_impl(int* p_x,
                                  int* p_o,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
+                                 bool decreasing,
+                                 bool na_last,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
@@ -154,6 +203,8 @@ static void int_radix_order_impl(int* p_x,
     p_o_aux,
     p_bytes,
     p_counts,
+    decreasing,
+    na_last,
     size,
     pass
   );
@@ -198,6 +249,8 @@ static void int_radix_order_impl(int* p_x,
       p_o,
       p_o_aux,
       p_bytes,
+      decreasing,
+      na_last,
       group_size,
       next_pass
     );
@@ -212,7 +265,27 @@ static void int_radix_order_impl(int* p_x,
 
 // -----------------------------------------------------------------------------
 
-SEXP int_radix_order(SEXP x) {
+SEXP int_radix_order(SEXP x, bool decreasing, bool na_last);
+
+// [[ register() ]]
+SEXP vctrs_int_radix_order(SEXP x, SEXP decreasing, SEXP na_last) {
+  if (!r_is_bool(decreasing)) {
+    Rf_errorcall(R_NilValue, "`decreasing` must be either `TRUE` or `FALSE`.");
+  }
+
+  bool c_decreasing = LOGICAL(decreasing)[0];
+
+  if (!r_is_bool(na_last)) {
+    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
+  }
+
+  bool c_na_last = LOGICAL(na_last)[0];
+
+  return int_radix_order(x, c_decreasing, c_na_last);
+}
+
+
+SEXP int_radix_order(SEXP x, bool decreasing, bool na_last) {
   if (TYPEOF(x) != INTSXP) {
     Rf_errorcall(R_NilValue, "`x` must be an integer vector.");
   }
@@ -253,6 +326,8 @@ SEXP int_radix_order(SEXP x) {
     p_o,
     p_o_aux,
     p_bytes,
+    decreasing,
+    na_last,
     size,
     pass
   );
