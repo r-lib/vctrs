@@ -65,6 +65,8 @@ static void int_radix_order_pass(int* p_out_slice,
   const uint8_t shift = radix * 8;
   const uint32_t na_uint32 = 0;
 
+  uint8_t byte = 0;
+
   // Histogram
   for (R_xlen_t i = 0; i < size; ++i) {
     const int out_elt = p_out_slice[i];
@@ -78,13 +80,16 @@ static void int_radix_order_pass(int* p_out_slice,
       x_elt_mapped = map_from_int32_to_uint32(x_elt);
     }
 
-    const uint8_t byte = extract_byte(x_elt_mapped, shift);
+    byte = extract_byte(x_elt_mapped, shift);
 
     p_bytes[i] = byte;
     ++p_counts[byte];
   }
 
-  // TODO: Check for all same and skip `pass`. How to update counts?
+  // Fast check to see if all bytes were the same. If so, skip `pass`.
+  if (p_counts[byte] == size) {
+    return;
+  }
 
   R_xlen_t cumulative = 0;
 
