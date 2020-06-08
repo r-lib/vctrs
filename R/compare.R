@@ -49,7 +49,7 @@ vec_proxy_compare_default <- function(x, relax = FALSE) {
       stop_unsupported(x, "vec_proxy_compare")
     }
   } else {
-    vec_data(x)
+    vec_proxy_equal(x)
   }
 }
 

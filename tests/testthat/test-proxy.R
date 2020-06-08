@@ -94,3 +94,19 @@ test_that("vec_proxy_equal() returns a POSIXct for POSIXlt objects (#901)", {
   x <- as.POSIXlt(new_date(0), tz = "UTC")
   expect_s3_class(vec_proxy_equal(x), "POSIXct")
 })
+
+test_that("vec_proxy_equal() defaults to vec_proxy() and vec_proxy_compare() defaults to vec_proxy_equal() (#1140)", {
+  foobar_proxy <- function(x, ...) data_frame(x = unclass(x), y = seq_along(x))
+
+  local_methods(vec_proxy.vctrs_foobar = foobar_proxy)
+
+  x <- foobar(3:1)
+  expect_identical(vec_proxy(x), foobar_proxy(x))
+  expect_identical(vec_proxy_equal(x), foobar_proxy(x))
+  expect_identical(vec_proxy_compare(x), foobar_proxy(x))
+
+  local_methods(vec_proxy_equal.vctrs_foobar = function(x, ...) foobar_proxy(letters[x]))
+
+  expect_identical(vec_proxy_equal(x), data_frame(x = letters[3:1], y = 1:3))
+  expect_identical(vec_proxy_compare(x), data_frame(x = letters[3:1], y = 1:3))
+})

@@ -149,9 +149,14 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
 static R_len_t df_size_from_list(SEXP x, SEXP n) {
   if (n == R_NilValue) {
-    return df_raw_size_from_list(x);
+    if (is_data_frame(x)) {
+      return df_size(x);
+    } else {
+      return df_raw_size_from_list(x);
+    }
+  } else {
+    return df_size_from_n(n);
   }
-  return df_size_from_n(n);
 }
 
 static R_len_t df_size_from_n(SEXP n) {
