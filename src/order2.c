@@ -137,9 +137,10 @@ static void int_radix_order_impl(int* p_out_slice,
     pass
   );
 
+  const uint8_t next_pass = pass + 1;
   R_xlen_t last_cumulative_count = 0;
 
-  for (uint8_t i = 0; i < UINT8_MAX; ++i) {
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
     if (cumulative_count == 0) {
@@ -157,13 +158,22 @@ static void int_radix_order_impl(int* p_out_slice,
       continue;
     }
 
+    // Can get here in the case of ties, like c(1L, 1L), which have a
+    // `group_size` of 2 in the last radix, but there is nothing left to compare
+    if (next_pass == 4) {
+      p_out_slice += group_size;
+      p_aux_slice += group_size;
+      p_bytes += group_size;
+      continue;
+    }
+
     int_radix_order_impl(
       p_out_slice,
       p_aux_slice,
       p_bytes,
       p_x,
       group_size,
-      pass + 1
+      next_pass
     );
 
     p_out_slice += group_size;
