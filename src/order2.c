@@ -5,6 +5,9 @@
 
 // -----------------------------------------------------------------------------
 
+// A bit ad hoc
+#define INT_INSERTION_SIZE 256
+
 // Used as an internal algorithm for radix sorting once we hit a slice of
 // size `INSERTION_SIZE`. Should be fast for these small slices, inserts
 // into `p_out_slice` directly.
@@ -61,6 +64,12 @@ static void int_radix_order_pass(int* p_out_slice,
                                  const int* p_x,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
+  // Finish this group with insertion sort once it gets small enough
+  if (size <= INT_INSERTION_SIZE) {
+    int_insertion_sort(p_out_slice, p_x, size);
+    return;
+  }
+
   const uint8_t radix = 3 - pass;
   const uint8_t shift = radix * 8;
   const uint32_t na_uint32 = 0;
@@ -221,3 +230,4 @@ SEXP int_radix_order(SEXP x) {
 
 #undef UINT8_MAX_SIZE
 
+#undef INT_INSERTION_SIZE
