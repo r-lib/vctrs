@@ -220,73 +220,113 @@ static void int_radix_order_impl(int* p_x,
 
 // -----------------------------------------------------------------------------
 
-SEXP int_radix_order(SEXP x, bool decreasing, bool na_last);
-
-// [[ register() ]]
-SEXP vctrs_int_radix_order(SEXP x, SEXP decreasing, SEXP na_last) {
-  if (!r_is_bool(decreasing)) {
-    Rf_errorcall(R_NilValue, "`decreasing` must be either `TRUE` or `FALSE`.");
-  }
-
-  bool c_decreasing = LOGICAL(decreasing)[0];
-
-  if (!r_is_bool(na_last)) {
-    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
-  }
-
-  bool c_na_last = LOGICAL(na_last)[0];
-
-  return int_radix_order(x, c_decreasing, c_na_last);
-}
-
-
-SEXP int_radix_order(SEXP x, bool decreasing, bool na_last) {
-  if (TYPEOF(x) != INTSXP) {
-    Rf_errorcall(R_NilValue, "`x` must be an integer vector.");
-  }
-
+static void int_radix_order(SEXP x,
+                            SEXP x_adjusted,
+                            SEXP x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            bool decreasing,
+                            bool na_last,
+                            R_xlen_t size) {
   const int direction = decreasing ? -1 : 1;
 
-  R_xlen_t size = Rf_xlength(x);
   const int* p_x = INTEGER_RO(x);
 
-  // This is sometimes bigger than it needs to be, but will only
-  // be much bigger than required if `x` is filled with numbers that are
-  // incredibly spread out.
-  SEXP x_copy = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_x_copy = INTEGER(x_copy);
+  int* p_x_adjusted = INTEGER(x_adjusted);
+  int* p_x_aux = INTEGER(x_aux);
 
   // Correct the order once up front
   for (R_xlen_t i = 0; i < size; ++i) {
-    p_x_copy[i] = int_shift(p_x[i], direction, na_last);
+    p_x_adjusted[i] = int_shift(p_x[i], direction, na_last);
   }
-
-  SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_x_aux = INTEGER(x_aux);
-
-  SEXP o = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_o = INTEGER(o);
-
-  // Initialize `out` with sequential 1-based ordering
-  for (R_xlen_t i = 0, j = 1; i < size; ++i, ++j) {
-    p_o[i] = j;
-  }
-
-  SEXP o_aux = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_o_aux = INTEGER(o_aux);
-
-  uint8_t* p_bytes = (uint8_t*) R_alloc(size, sizeof(uint8_t));
 
   const uint8_t pass = 0;
 
   int_radix_order_impl(
-    p_x_copy,
+    p_x_adjusted,
     p_x_aux,
     p_o,
     p_o_aux,
     p_bytes,
     size,
     pass
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last);
+
+// [[ register() ]]
+SEXP vctrs_radix_order(SEXP x, SEXP decreasing, SEXP na_last) {
+  if (!r_is_bool(na_last)) {
+    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
+  }
+
+  bool c_na_last = LOGICAL(na_last)[0];
+
+  return vec_radix_order(x, decreasing, c_na_last);
+}
+
+
+static void vec_radix_order_switch(SEXP x,
+                                   SEXP x_adjusted,
+                                   SEXP x_aux,
+                                   int* p_o,
+                                   int* p_o_aux,
+                                   uint8_t* p_bytes,
+                                   SEXP decreasing,
+                                   bool na_last,
+                                   R_xlen_t size);
+
+static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last) {
+  // TODO:
+  // x = PROTECT(vec_proxy_compare(x));
+
+  // TODO:
+  // Should proxy-compare flatten df-cols?
+  // How to track vector of `decreasing` if so?
+
+  R_xlen_t size = vec_size(x);
+
+  // Don't check length here. This might be vectorized if `x` is a data frame.
+  if (TYPEOF(decreasing) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
+  }
+  if (lgl_any_na(decreasing)) {
+    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
+  }
+
+  // This is sometimes bigger than it needs to be, but will only
+  // be much bigger than required if `x` is filled with numbers that are
+  // incredibly spread out.
+  SEXP x_adjusted = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
+
+  SEXP o = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_o = INTEGER(o);
+
+  SEXP o_aux = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_o_aux = INTEGER(o_aux);
+
+  // Initialize `out` with sequential 1-based ordering
+  for (R_xlen_t i = 0, j = 1; i < size; ++i, ++j) {
+    p_o[i] = j;
+  }
+
+  uint8_t* p_bytes = (uint8_t*) R_alloc(size, sizeof(uint8_t));
+
+  vec_radix_order_switch(
+    x,
+    x_adjusted,
+    x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    decreasing,
+    na_last,
+    size
   );
 
   UNPROTECT(4);
@@ -295,6 +335,41 @@ SEXP int_radix_order(SEXP x, bool decreasing, bool na_last) {
 
 // -----------------------------------------------------------------------------
 
+static void vec_radix_order_switch(SEXP x,
+                                   SEXP x_adjusted,
+                                   SEXP x_aux,
+                                   int* p_o,
+                                   int* p_o_aux,
+                                   uint8_t* p_bytes,
+                                   SEXP decreasing,
+                                   bool na_last,
+                                   R_xlen_t size) {
+  const enum vctrs_type type = vec_proxy_typeof(x);
+
+  //if (type == vctrs_type_dataframe) {
+  //  df_radix_order(x, na_last, decreasing, size);
+  //  return;
+  //}
+
+  // We know it is logical with no missing values, but size hasn't been checked
+  if (Rf_xlength(decreasing) != 1) {
+    Rf_errorcall(R_NilValue, "`decreasing` must have length 1 when `x` is not a data frame.");
+  }
+
+  bool c_decreasing = LOGICAL(decreasing)[0];
+
+  switch (type) {
+  case vctrs_type_integer: {
+    int_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, c_decreasing, na_last, size);
+    break;
+  }
+  default: {
+    Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
+  }
+  }
+}
+
+// -----------------------------------------------------------------------------
 
 #undef UINT8_MAX_SIZE
 
