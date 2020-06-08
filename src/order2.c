@@ -175,6 +175,7 @@ static void int_radix_order_impl(int* p_x,
     if (group_size == 1) {
       ++p_x;
       ++p_o;
+      ++p_x_aux;
       ++p_o_aux;
       ++p_bytes;
       continue;
@@ -185,6 +186,7 @@ static void int_radix_order_impl(int* p_x,
     if (next_pass == 4) {
       p_x += group_size;
       p_o += group_size;
+      p_x_aux += group_size;
       p_o_aux += group_size;
       p_bytes += group_size;
       continue;
@@ -202,6 +204,7 @@ static void int_radix_order_impl(int* p_x,
 
     p_x += group_size;
     p_o += group_size;
+    p_x_aux += group_size;
     p_o_aux += group_size;
     p_bytes += group_size;
   }
