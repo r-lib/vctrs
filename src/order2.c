@@ -237,8 +237,13 @@ static void int_radix_order(SEXP x,
   int* p_x_aux = INTEGER(x_aux);
 
   // Correct the order once up front
+  // - Adjusts based on decreasing / na_last
+  // - Adjusts based on previous column's partial ordering in `p_o`
+  // - TODO: Shouldn't have to do this on forward radix sort for data frames
   for (R_xlen_t i = 0; i < size; ++i) {
-    p_x_adjusted[i] = int_shift(p_x[i], direction, na_last);
+    const int loc = p_o[i];
+    const int elt = p_x[loc - 1];
+    p_x_adjusted[i] = int_shift(elt, direction, na_last);
   }
 
   const uint8_t pass = 0;
@@ -252,6 +257,130 @@ static void int_radix_order(SEXP x,
     size,
     pass
   );
+}
+
+// -----------------------------------------------------------------------------
+
+static void vec_col_radix_order_switch(SEXP x,
+                                       SEXP x_adjusted,
+                                       SEXP x_aux,
+                                       int* p_o,
+                                       int* p_o_aux,
+                                       uint8_t* p_bytes,
+                                       bool decreasing,
+                                       bool na_last,
+                                       R_xlen_t size);
+
+// Specifically for a df-col. Slightly different from `df_radix_order()` in
+// that `decreasing` is fixed for all columns.
+static void df_col_radix_order(SEXP x,
+                               SEXP x_adjusted,
+                               SEXP x_aux,
+                               int* p_o,
+                               int* p_o_aux,
+                               uint8_t* p_bytes,
+                               bool decreasing,
+                               bool na_last,
+                               R_xlen_t size) {
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  // Iterate over columns backwards to sort correctly
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    R_xlen_t j = n_cols - 1 - i;
+
+    SEXP col = VECTOR_ELT(x, j);
+
+    vec_col_radix_order_switch(
+      col,
+      x_adjusted,
+      x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      decreasing,
+      na_last,
+      size
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+static void df_radix_order(SEXP x,
+                           SEXP x_adjusted,
+                           SEXP x_aux,
+                           int* p_o,
+                           int* p_o_aux,
+                           uint8_t* p_bytes,
+                           SEXP decreasing,
+                           bool na_last,
+                           R_xlen_t size) {
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  R_xlen_t n_decreasing = Rf_xlength(decreasing);
+  int* p_decreasing = LOGICAL(decreasing);
+
+  bool recycle;
+
+  if (n_decreasing == 1) {
+    recycle = true;
+  } else if (n_decreasing == n_cols) {
+    recycle = false;
+  } else {
+    Rf_errorcall(
+      R_NilValue,
+      "`decreasing` should have length 1 or length equal to the number of "
+      "columns of `x` when `x` is a data frame."
+    );
+  }
+
+  // Iterate over columns backwards to sort correctly
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    R_xlen_t j = n_cols - 1 - i;
+
+    SEXP col = VECTOR_ELT(x, j);
+    bool col_decreasing = recycle ? p_decreasing[0] : p_decreasing[j];
+
+    vec_col_radix_order_switch(
+      col,
+      x_adjusted,
+      x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      col_decreasing,
+      na_last,
+      size
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+// Like `vec_radix_order_switch()`, but specifically for columns of a data
+// frame where `decreasing` is known and is scalar
+static void vec_col_radix_order_switch(SEXP x,
+                                       SEXP x_adjusted,
+                                       SEXP x_aux,
+                                       int* p_o,
+                                       int* p_o_aux,
+                                       uint8_t* p_bytes,
+                                       bool decreasing,
+                                       bool na_last,
+                                       R_xlen_t size) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_integer: {
+    int_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    break;
+  }
+  case vctrs_type_dataframe: {
+    df_col_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    break;
+  }
+  default: {
+    Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
+  }
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -346,10 +475,10 @@ static void vec_radix_order_switch(SEXP x,
                                    R_xlen_t size) {
   const enum vctrs_type type = vec_proxy_typeof(x);
 
-  //if (type == vctrs_type_dataframe) {
-  //  df_radix_order(x, na_last, decreasing, size);
-  //  return;
-  //}
+  if (type == vctrs_type_dataframe) {
+    df_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    return;
+  }
 
   // We know it is logical with no missing values, but size hasn't been checked
   if (Rf_xlength(decreasing) != 1) {
