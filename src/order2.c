@@ -9,7 +9,7 @@
 // maintain the correct order. `NA` is always last if `na_last` is true.
 // `direction = 1` ascending
 // `direction = -1` descending
-static inline int int_shift(int x, int direction, bool na_last) {
+static inline int int_adjust(int x, int direction, bool na_last) {
   if (na_last) {
     return (x == NA_INTEGER) ? INT_MAX : x * direction - 1;
   } else {
@@ -243,7 +243,7 @@ static void int_radix_order(SEXP x,
   for (R_xlen_t i = 0; i < size; ++i) {
     const int loc = p_o[i];
     const int elt = p_x[loc - 1];
-    p_x_adjusted[i] = int_shift(elt, direction, na_last);
+    p_x_adjusted[i] = int_adjust(elt, direction, na_last);
   }
 
   const uint8_t pass = 0;
