@@ -5,6 +5,84 @@
 
 // -----------------------------------------------------------------------------
 
+#define GROUP_DATA_SIZE_DEFAULT 100000
+
+struct group_info {
+  SEXP data;
+  int* p_data;
+  PROTECT_INDEX data_pi;
+
+  R_xlen_t data_size;
+
+  R_xlen_t n_groups;
+  R_xlen_t max_group_size;
+};
+
+static void group_realloc(struct group_info* p_ginfo, R_xlen_t size) {
+  // Rellocate
+  p_ginfo->data = Rf_xlengthgets(p_ginfo->data, size);
+
+  // Reprotect
+  REPROTECT(p_ginfo->data, p_ginfo->data_pi);
+
+  // Update size
+  p_ginfo->data_size = size;
+}
+
+struct group_infos {
+  struct group_info* p_info;
+  int current;
+};
+
+static inline struct group_info* groups_current(struct group_infos* p_ginfos) {
+  return &p_ginfos->p_info[p_ginfos->current];
+}
+
+// Swap groups after each column in a data frame `x`
+static void groups_swap(struct group_infos* p_ginfos) {
+  struct group_info* p_ginfo_pre = groups_current(p_ginfos);
+
+  // Make the swap
+  p_ginfos->current = 1 - p_ginfos->current;
+
+  struct group_info* p_ginfo_post = groups_current(p_ginfos);
+
+  // Clear the info from last time the swap was made
+  p_ginfo_post->max_group_size = 0;
+  p_ginfo_post->n_groups = 0;
+
+  // Ensure the new group info is at least as big as the old group info
+  if (p_ginfo_post->data_size < p_ginfo_pre->data_size) {
+    group_realloc(p_ginfo_post, p_ginfo_pre->data_size * 2);
+  }
+}
+
+static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size) {
+  if (size == 0) {
+    Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
+  }
+
+  struct group_info* p_ginfo = groups_current(p_ginfos);
+
+  // Extend `data` as required - reprotects itself
+  if (p_ginfo->data_size == p_ginfo->n_groups) {
+    group_realloc(p_ginfo, p_ginfo->data_size * 2);
+  }
+
+  // Push group size
+  p_ginfo->p_data[p_ginfo->n_groups] = size;
+
+  // Bump number of groups
+  ++p_ginfo->n_groups;
+
+  // Update max group size
+  if (p_ginfo->max_group_size < size) {
+    p_ginfo->max_group_size = size;
+  }
+}
+
+// -----------------------------------------------------------------------------
+
 // Shifts or flips `x` depending on the value of `na_last` and `direction` to
 // maintain the correct order. `NA` is always last if `na_last` is true.
 // `direction = 1` ascending
@@ -88,6 +166,7 @@ static void int_counting_sort(const int* p_x,
                               SEXP x_adjusted,
                               int* p_o,
                               int* p_o_aux,
+                              struct group_infos* p_ginfos,
                               R_xlen_t size,
                               int x_min,
                               uint32_t range,
@@ -204,6 +283,7 @@ static void int_counting_sort(const int* p_x,
 // into `p_o` directly.
 static void int_insertion_sort(int* p_o,
                                int* p_x,
+                               struct group_infos* p_ginfos,
                                const R_xlen_t size) {
   for (R_xlen_t i = 1; i < size; ++i) {
     const int x_elt = p_x[i];
@@ -257,11 +337,12 @@ static void int_radix_order_pass(int* p_x,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
+                                 struct group_infos* p_ginfos,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   // Finish this group with insertion sort once it gets small enough
   if (size <= INT_INSERTION_SIZE) {
-    int_insertion_sort(p_o, p_x, size);
+    int_insertion_sort(p_o, p_x, p_ginfos, size);
     return;
   }
 
@@ -328,6 +409,7 @@ static void int_radix_order_impl(int* p_x,
                                  int* p_o,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
+                                 struct group_infos* p_ginfos,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
@@ -339,6 +421,7 @@ static void int_radix_order_impl(int* p_x,
     p_o_aux,
     p_bytes,
     p_counts,
+    p_ginfos,
     size,
     pass
   );
@@ -383,6 +466,7 @@ static void int_radix_order_impl(int* p_x,
       p_o,
       p_o_aux,
       p_bytes,
+      p_ginfos,
       group_size,
       next_pass
     );
@@ -403,6 +487,7 @@ static void int_radix_order(const int* p_x,
                             int* p_o,
                             int* p_o_aux,
                             uint8_t* p_bytes,
+                            struct group_infos* p_ginfos,
                             bool decreasing,
                             bool na_last,
                             R_xlen_t size) {
@@ -429,6 +514,7 @@ static void int_radix_order(const int* p_x,
     p_o,
     p_o_aux,
     p_bytes,
+    p_ginfos,
     size,
     pass
   );
@@ -442,6 +528,7 @@ static void int_order(SEXP x,
                       int* p_o,
                       int* p_o_aux,
                       uint8_t* p_bytes,
+                      struct group_infos* p_ginfos,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
@@ -453,9 +540,9 @@ static void int_order(SEXP x,
   int_range(p_x, size, &x_min, &range);
 
   if (range < INT_RANGE_LIMIT) {
-    int_counting_sort(p_x, x_adjusted, p_o, p_o_aux, size, x_min, range, decreasing, na_last);
+    int_counting_sort(p_x, x_adjusted, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
   } else {
-    int_radix_order(p_x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    int_radix_order(p_x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
   }
 }
 
@@ -468,6 +555,7 @@ static void vec_col_radix_order_switch(SEXP x,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
+                                       struct group_infos* p_ginfos,
                                        bool decreasing,
                                        bool na_last,
                                        R_xlen_t size);
@@ -480,6 +568,7 @@ static void df_col_radix_order(SEXP x,
                                int* p_o,
                                int* p_o_aux,
                                uint8_t* p_bytes,
+                               struct group_infos* p_ginfos,
                                bool decreasing,
                                bool na_last,
                                R_xlen_t size) {
@@ -498,6 +587,7 @@ static void df_col_radix_order(SEXP x,
       p_o,
       p_o_aux,
       p_bytes,
+      p_ginfos,
       decreasing,
       na_last,
       size
@@ -513,6 +603,7 @@ static void df_radix_order(SEXP x,
                            int* p_o,
                            int* p_o_aux,
                            uint8_t* p_bytes,
+                           struct group_infos* p_ginfos,
                            SEXP decreasing,
                            bool na_last,
                            R_xlen_t size) {
@@ -549,6 +640,7 @@ static void df_radix_order(SEXP x,
       p_o,
       p_o_aux,
       p_bytes,
+      p_ginfos,
       col_decreasing,
       na_last,
       size
@@ -566,16 +658,17 @@ static void vec_col_radix_order_switch(SEXP x,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
+                                       struct group_infos* p_ginfos,
                                        bool decreasing,
                                        bool na_last,
                                        R_xlen_t size) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_integer: {
-    int_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    int_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
-    df_col_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    df_col_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
     break;
   }
   default: {
@@ -606,6 +699,7 @@ static void vec_radix_order_switch(SEXP x,
                                    int* p_o,
                                    int* p_o_aux,
                                    uint8_t* p_bytes,
+                                   struct group_infos* p_ginfos,
                                    SEXP decreasing,
                                    bool na_last,
                                    R_xlen_t size);
@@ -647,6 +741,31 @@ static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last) {
 
   uint8_t* p_bytes = (uint8_t*) R_alloc(size, sizeof(uint8_t));
 
+  struct group_info ginfo1;
+  ginfo1.data_size = GROUP_DATA_SIZE_DEFAULT;
+  ginfo1.data = Rf_allocVector(INTSXP, ginfo1.data_size);
+  PROTECT_WITH_INDEX(ginfo1.data, &ginfo1.data_pi);
+  ginfo1.p_data = INTEGER(ginfo1.data);
+  ginfo1.n_groups = 0;
+  ginfo1.max_group_size = 0;
+
+  struct group_info ginfo2;
+  ginfo2.data_size = 0;
+  ginfo2.data = Rf_allocVector(INTSXP, ginfo2.data_size);
+  PROTECT_WITH_INDEX(ginfo2.data, &ginfo2.data_pi);
+  ginfo2.p_data = INTEGER(ginfo2.data);
+  ginfo2.n_groups = 0;
+  ginfo2.max_group_size = 0;
+
+  struct group_info p_group_info[2];
+  p_group_info[0] = ginfo1;
+  p_group_info[1] = ginfo2;
+
+  struct group_infos ginfos;
+  struct group_infos* p_ginfos = &ginfos;
+  p_ginfos->p_info = p_group_info;
+  p_ginfos->current = 0;
+
   vec_radix_order_switch(
     x,
     x_adjusted,
@@ -654,12 +773,13 @@ static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last) {
     p_o,
     p_o_aux,
     p_bytes,
+    p_ginfos,
     decreasing,
     na_last,
     size
   );
 
-  UNPROTECT(4);
+  UNPROTECT(6);
   return o;
 }
 
@@ -671,13 +791,14 @@ static void vec_radix_order_switch(SEXP x,
                                    int* p_o,
                                    int* p_o_aux,
                                    uint8_t* p_bytes,
+                                   struct group_infos* p_ginfos,
                                    SEXP decreasing,
                                    bool na_last,
                                    R_xlen_t size) {
   const enum vctrs_type type = vec_proxy_typeof(x);
 
   if (type == vctrs_type_dataframe) {
-    df_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, decreasing, na_last, size);
+    df_radix_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
     return;
   }
 
@@ -690,7 +811,7 @@ static void vec_radix_order_switch(SEXP x,
 
   switch (type) {
   case vctrs_type_integer: {
-    int_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, c_decreasing, na_last, size);
+    int_order(x, x_adjusted, x_aux, p_o, p_o_aux, p_bytes, p_ginfos, c_decreasing, na_last, size);
     break;
   }
   default: {
