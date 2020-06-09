@@ -703,4 +703,6 @@ static void vec_radix_order_switch(SEXP x,
 
 #undef UINT8_MAX_SIZE
 
+#undef INT_RANGE_LIMIT
+
 #undef INT_INSERTION_SIZE
