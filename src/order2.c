@@ -169,7 +169,7 @@ static void int_radix_order_impl(int* p_x,
   const uint8_t next_pass = pass + 1;
   R_xlen_t last_cumulative_count = 0;
 
-  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+  for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
     if (cumulative_count == 0) {
