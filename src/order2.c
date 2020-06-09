@@ -30,12 +30,12 @@ static void group_realloc(struct group_info* p_ginfo, R_xlen_t size) {
 }
 
 struct group_infos {
-  struct group_info* p_info;
+  struct group_info** p_info;
   int current;
 };
 
 static inline struct group_info* groups_current(struct group_infos* p_ginfos) {
-  return &p_ginfos->p_info[p_ginfos->current];
+  return p_ginfos->p_info[p_ginfos->current];
 }
 
 // Swap groups after each column in a data frame `x`
@@ -757,9 +757,9 @@ static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last) {
   ginfo2.n_groups = 0;
   ginfo2.max_group_size = 0;
 
-  struct group_info p_group_info[2];
-  p_group_info[0] = ginfo1;
-  p_group_info[1] = ginfo2;
+  struct group_info* p_group_info[2];
+  p_group_info[0] = &ginfo1;
+  p_group_info[1] = &ginfo2;
 
   struct group_infos ginfos;
   struct group_infos* p_ginfos = &ginfos;
@@ -823,6 +823,8 @@ static void vec_radix_order_switch(SEXP x,
 // -----------------------------------------------------------------------------
 
 #undef UINT8_MAX_SIZE
+
+#undef GROUP_DATA_SIZE_DEFAULT
 
 #undef INT_RANGE_LIMIT
 
