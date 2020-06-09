@@ -99,11 +99,25 @@ static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size) {
 // maintain the correct order. `NA` is always last if `na_last` is true.
 // `direction = 1` ascending
 // `direction = -1` descending
-static inline int int_adjust(int x, int direction, bool na_last) {
+static inline void int_adjust_na_last(int* p_x, int direction, R_xlen_t size) {
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const int elt = p_x[i];
+    p_x[i] = (elt == NA_INTEGER) ? INT_MAX : elt * direction - 1;
+  }
+}
+
+static inline void int_adjust_na_first(int* p_x, int direction, R_xlen_t size) {
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const int elt = p_x[i];
+    p_x[i] = (elt == NA_INTEGER) ? INT_MIN : elt * direction;
+  }
+}
+
+static inline void int_adjust(int* p_x, int direction, bool na_last, R_xlen_t size) {
   if (na_last) {
-    return (x == NA_INTEGER) ? INT_MAX : x * direction - 1;
+    int_adjust_na_last(p_x, direction, size);
   } else {
-    return (x == NA_INTEGER) ? INT_MIN : x * direction;
+    int_adjust_na_first(p_x, direction, size);
   }
 }
 
@@ -524,15 +538,6 @@ static void int_radix_order(int* p_x,
                             bool decreasing,
                             bool na_last,
                             R_xlen_t size) {
-  const int direction = decreasing ? -1 : 1;
-
-  // Correct the order once up front
-  // - Adjusts based on decreasing / na_last
-  // - Adjusts based on previous column's partial ordering in `p_o`
-  for (R_xlen_t i = 0; i < size; ++i) {
-    p_x[i] = int_adjust(p_x[i], direction, na_last);
-  }
-
   const uint8_t pass = 0;
 
   int_radix_order_impl(
@@ -561,7 +566,10 @@ static void int_order(SEXP x,
                       R_xlen_t size) {
   int* p_x = INTEGER(x);
 
+  const int direction = decreasing ? -1 : 1;
+
   if (size < INT_INSERTION_SIZE) {
+    int_adjust(p_x, direction, na_last, size);
     int_insertion_sort(p_o, p_x, p_ginfos, size);
     return;
   }
@@ -577,6 +585,8 @@ static void int_order(SEXP x,
   }
 
   int* p_x_aux = INTEGER(x_aux);
+
+  int_adjust(p_x, direction, na_last, size);
 
   int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
 }
@@ -596,17 +606,6 @@ static void int_order_immutable(SEXP x,
                                 R_xlen_t size) {
   const int* p_x = INTEGER(x);
 
-  if (size < INT_INSERTION_SIZE) {
-    int* p_x_slice = INTEGER(x_slice);
-
-    for (R_xlen_t i = 0; i < size; ++i) {
-      p_x_slice[i] = p_x[i];
-    }
-
-    int_insertion_sort(p_o, p_x_slice, p_ginfos, size);
-    return;
-  }
-
   uint32_t range;
   int x_min;
 
@@ -624,6 +623,10 @@ static void int_order_immutable(SEXP x,
   for (R_xlen_t i = 0; i < size; ++i) {
     p_x_slice[i] = p_x[i];
   }
+
+  const int direction = decreasing ? -1 : 1;
+
+  int_adjust(p_x_slice, direction, na_last, size);
 
   int_radix_order(
     p_x_slice,
