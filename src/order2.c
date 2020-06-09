@@ -596,6 +596,17 @@ static void int_order_immutable(SEXP x,
                                 R_xlen_t size) {
   const int* p_x = INTEGER(x);
 
+  if (size < INT_INSERTION_SIZE) {
+    int* p_x_adjusted = INTEGER(x_adjusted);
+
+    for (R_xlen_t i = 0; i < size; ++i) {
+      p_x_adjusted[i] = p_x[i];
+    }
+
+    int_insertion_sort(p_o, p_x_adjusted, p_ginfos, size);
+    return;
+  }
+
   uint32_t range;
   int x_min;
 
@@ -709,8 +720,8 @@ static void df_radix_order(SEXP x,
     col_decreasing = recycle ? p_decreasing[0] : p_decreasing[i];
 
     // Reset pointers between columns
-    int* p_o_shift = p_o;
-    int* p_o_aux_shift = p_o_aux;
+    int* p_o_col = p_o;
+    int* p_o_aux_col = p_o_aux;
 
     // Get number of group chunks from previous column
     struct group_info* p_ginfo_pre = groups_current(p_ginfos);
@@ -736,23 +747,23 @@ static void df_radix_order(SEXP x,
       // TODO: Do x_adjusted / x_aux need to be incremented? I don't think
       // so since they are just temp memory
       if (group_size == 1) {
-        ++p_o_shift;
-        ++p_o_aux_shift;
+        ++p_o_col;
+        ++p_o_aux_col;
         groups_size_push(p_ginfos, 1);
         continue;
       }
 
       // Realign the partially sorted column group chunk
       for (R_xlen_t j = 0; j < group_size; ++j) {
-        const int loc = p_o_shift[j] - 1;
+        const int loc = p_o_col[j] - 1;
         p_x_adjusted[j] = p_col[loc];
       }
 
       vec_col_radix_order_switch(
         x_adjusted,
         x_aux,
-        p_o_shift,
-        p_o_aux_shift,
+        p_o_col,
+        p_o_aux_col,
         p_bytes,
         p_ginfos,
         col_decreasing,
@@ -760,8 +771,8 @@ static void df_radix_order(SEXP x,
         group_size
       );
 
-      p_o_shift += group_size;
-      p_o_aux_shift += group_size;
+      p_o_col += group_size;
+      p_o_aux_col += group_size;
     }
   }
 }
