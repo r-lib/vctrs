@@ -585,7 +585,7 @@ static void int_order(SEXP x,
 // We need `x` to be mutable so we copy it over into our temp vector.
 // Special case the counting sort though, which doesn't touch `x`.
 static void int_order_immutable(SEXP x,
-                                SEXP x_adjusted,
+                                SEXP x_slice,
                                 SEXP x_aux,
                                 int* p_o,
                                 int* p_o_aux,
@@ -597,13 +597,13 @@ static void int_order_immutable(SEXP x,
   const int* p_x = INTEGER(x);
 
   if (size < INT_INSERTION_SIZE) {
-    int* p_x_adjusted = INTEGER(x_adjusted);
+    int* p_x_slice = INTEGER(x_slice);
 
     for (R_xlen_t i = 0; i < size; ++i) {
-      p_x_adjusted[i] = p_x[i];
+      p_x_slice[i] = p_x[i];
     }
 
-    int_insertion_sort(p_o, p_x_adjusted, p_ginfos, size);
+    int_insertion_sort(p_o, p_x_slice, p_ginfos, size);
     return;
   }
 
@@ -612,21 +612,21 @@ static void int_order_immutable(SEXP x,
 
   int_range(p_x, size, &x_min, &range);
 
-  // If in counting sort range, no need to copy over to `x_adjusted`
+  // If in counting sort range, no need to copy over to `x_slice`
   if (range < INT_RANGE_LIMIT) {
     int_counting_sort(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
     return;
   }
 
-  int* p_x_adjusted = INTEGER(x_adjusted);
+  int* p_x_slice = INTEGER(x_slice);
   int* p_x_aux = INTEGER(x_aux);
 
   for (R_xlen_t i = 0; i < size; ++i) {
-    p_x_adjusted[i] = p_x[i];
+    p_x_slice[i] = p_x[i];
   }
 
   int_radix_order(
-    p_x_adjusted,
+    p_x_slice,
     p_x_aux,
     p_o,
     p_o_aux,
@@ -642,7 +642,7 @@ static void int_order_immutable(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void vec_radix_order_immutable_switch(SEXP x,
-                                             SEXP x_adjusted,
+                                             SEXP x_slice,
                                              SEXP x_aux,
                                              int* p_o,
                                              int* p_o_aux,
@@ -663,7 +663,7 @@ static void vec_col_radix_order_switch(SEXP x,
                                        R_xlen_t size);
 
 static void df_radix_order(SEXP x,
-                           SEXP x_adjusted,
+                           SEXP x_slice,
                            SEXP x_aux,
                            int* p_o,
                            int* p_o_aux,
@@ -697,13 +697,13 @@ static void df_radix_order(SEXP x,
   }
 
   // Apply on one column to fill group info.
-  // First column is immutable and we must copy into `x_adjusted`.
+  // First column is immutable and we must copy into `x_slice`.
   SEXP col = VECTOR_ELT(x, 0);
   bool col_decreasing = p_decreasing[0];
 
   vec_radix_order_immutable_switch(
     col,
-    x_adjusted,
+    x_slice,
     x_aux,
     p_o,
     p_o_aux,
@@ -735,8 +735,8 @@ static void df_radix_order(SEXP x,
     // Swap to other group info for this column
     groups_swap(p_ginfos);
 
-    // `x_adjusted` will hold current group slice of `x`
-    int* p_x_adjusted = INTEGER(x_adjusted);
+    // `x_slice` will hold current group slice of `x`
+    int* p_x_slice = INTEGER(x_slice);
     const int* p_col = INTEGER(col);
 
     // Iterate over this column's group chunks
@@ -744,7 +744,7 @@ static void df_radix_order(SEXP x,
       R_xlen_t group_size = p_ginfo_pre->p_data[group];
 
       // Easy case
-      // TODO: Do x_adjusted / x_aux need to be incremented? I don't think
+      // TODO: Do x_slice / x_aux need to be incremented? I don't think
       // so since they are just temp memory
       if (group_size == 1) {
         ++p_o_col;
@@ -756,11 +756,11 @@ static void df_radix_order(SEXP x,
       // Realign the partially sorted column group chunk
       for (R_xlen_t j = 0; j < group_size; ++j) {
         const int loc = p_o_col[j] - 1;
-        p_x_adjusted[j] = p_col[loc];
+        p_x_slice[j] = p_col[loc];
       }
 
       vec_col_radix_order_switch(
-        x_adjusted,
+        x_slice,
         x_aux,
         p_o_col,
         p_o_aux_col,
@@ -824,7 +824,7 @@ SEXP vctrs_radix_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 
 
 static void vec_radix_order_switch(SEXP x,
-                                   SEXP x_adjusted,
+                                   SEXP x_slice,
                                    SEXP x_aux,
                                    int* p_o,
                                    int* p_o_aux,
@@ -855,7 +855,7 @@ static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last, bool groups) 
   // This is sometimes bigger than it needs to be, but will only
   // be much bigger than required if `x` is filled with numbers that are
   // incredibly spread out.
-  SEXP x_adjusted = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP x_slice = PROTECT(Rf_allocVector(INTSXP, size));
   SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
 
   SEXP o = PROTECT(Rf_allocVector(INTSXP, size));
@@ -907,7 +907,7 @@ static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last, bool groups) 
 
   vec_radix_order_switch(
     x,
-    x_adjusted,
+    x_slice,
     x_aux,
     p_o,
     p_o_aux,
@@ -943,7 +943,7 @@ static SEXP vec_radix_order(SEXP x, SEXP decreasing, bool na_last, bool groups) 
 // -----------------------------------------------------------------------------
 
 static void vec_radix_order_switch(SEXP x,
-                                   SEXP x_adjusted,
+                                   SEXP x_slice,
                                    SEXP x_aux,
                                    int* p_o,
                                    int* p_o_aux,
@@ -957,7 +957,7 @@ static void vec_radix_order_switch(SEXP x,
   if (type == vctrs_type_dataframe) {
     df_radix_order(
       x,
-      x_adjusted,
+      x_slice,
       x_aux,
       p_o,
       p_o_aux,
@@ -980,7 +980,7 @@ static void vec_radix_order_switch(SEXP x,
 
   vec_radix_order_immutable_switch(
     x,
-    x_adjusted,
+    x_slice,
     x_aux,
     p_o,
     p_o_aux,
@@ -994,7 +994,7 @@ static void vec_radix_order_switch(SEXP x,
 
 // Used on bare vectors and the first column of data frame `x`s
 static void vec_radix_order_immutable_switch(SEXP x,
-                                             SEXP x_adjusted,
+                                             SEXP x_slice,
                                              SEXP x_aux,
                                              int* p_o,
                                              int* p_o_aux,
@@ -1007,7 +1007,7 @@ static void vec_radix_order_immutable_switch(SEXP x,
   case vctrs_type_integer: {
     int_order_immutable(
       x,
-      x_adjusted,
+      x_slice,
       x_aux,
       p_o,
       p_o_aux,
