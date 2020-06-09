@@ -228,7 +228,7 @@ static void int_counting_sort(const int* p_x,
   }
 
   // Accumulate counts, skip zeros
-  for (R_xlen_t i = 0; i < range; ++i) {
+  for (uint32_t i = 0; i < range; ++i) {
     R_xlen_t count = p_counts[j];
 
     if (count == 0) {
@@ -264,15 +264,13 @@ static void int_counting_sort(const int* p_x,
 
     const R_xlen_t loc = p_counts[bucket]++;
 
-    p_o[loc] = i + 1;
-    //p_o_aux[loc] = p_o[i];
+    p_o_aux[loc] = p_o[i];
   }
 
   // Copy back over
-  // TODO: Do we have to do this with forward pass df cols?
-  //for (R_xlen_t i = 0; i < size; ++i) {
-  //  p_o[i] = p_o_aux[i];
-  //}
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_o[i] = p_o_aux[i];
+  }
 
   // Reset counts for next column.
   // Only reset what we might have touched.
@@ -562,7 +560,11 @@ static void int_order(SEXP x,
                       bool na_last,
                       R_xlen_t size) {
   int* p_x = INTEGER(x);
-  int* p_x_aux = INTEGER(x_aux);
+
+  if (size < INT_INSERTION_SIZE) {
+    int_insertion_sort(p_o, p_x, p_ginfos, size);
+    return;
+  }
 
   uint32_t range;
   int x_min;
@@ -571,9 +573,12 @@ static void int_order(SEXP x,
 
   if (range < INT_RANGE_LIMIT) {
     int_counting_sort(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
-  } else {
-    int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
+    return;
   }
+
+  int* p_x_aux = INTEGER(x_aux);
+
+  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
 }
 
 // Only called when original `x` is just an integer vector.
@@ -700,8 +705,12 @@ static void df_radix_order(SEXP x,
 
   // Iterate over remaining columns by group chunk
   for (R_xlen_t i = 1; i < n_cols; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
-    bool col_decreasing = recycle ? p_decreasing[0] : p_decreasing[i];
+    col = VECTOR_ELT(x, i);
+    col_decreasing = recycle ? p_decreasing[0] : p_decreasing[i];
+
+    // Reset pointers between columns
+    int* p_o_shift = p_o;
+    int* p_o_aux_shift = p_o_aux;
 
     // Get number of group chunks from previous column
     struct group_info* p_ginfo_pre = groups_current(p_ginfos);
@@ -727,23 +736,23 @@ static void df_radix_order(SEXP x,
       // TODO: Do x_adjusted / x_aux need to be incremented? I don't think
       // so since they are just temp memory
       if (group_size == 1) {
-        ++p_o;
-        ++p_o_aux;
+        ++p_o_shift;
+        ++p_o_aux_shift;
         groups_size_push(p_ginfos, 1);
         continue;
       }
 
       // Realign the partially sorted column group chunk
       for (R_xlen_t j = 0; j < group_size; ++j) {
-        const int loc = p_o[j] - 1;
+        const int loc = p_o_shift[j] - 1;
         p_x_adjusted[j] = p_col[loc];
       }
 
       vec_col_radix_order_switch(
         x_adjusted,
         x_aux,
-        p_o,
-        p_o_aux,
+        p_o_shift,
+        p_o_aux_shift,
         p_bytes,
         p_ginfos,
         col_decreasing,
@@ -751,8 +760,8 @@ static void df_radix_order(SEXP x,
         group_size
       );
 
-      p_o += group_size;
-      p_o_aux += group_size;
+      p_o_shift += group_size;
+      p_o_aux_shift += group_size;
     }
   }
 }
