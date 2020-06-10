@@ -52,7 +52,8 @@ static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
 
 
 /*
- * `group_infos` contains information about 2 `group_info` structs.
+ * `group_infos` contains information about 2 `group_info` structs. It contains
+ * a pointer which points to 2 `group_info` pointers.
  *
  * For a single atomic vector, `current = 0` is always set and only one of the
  * structs is ever used.
@@ -63,13 +64,14 @@ static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
  * groups) while also updating the group information of the chunks of
  * the current one.
  *
- * @member p_info A pointer to an array of 2 `group_info*` to swap between.
- * @member current The current `p_info` we are on. This is either 0 or 1.
+ * @member p_p_group_info A pointer to two `group_info` pointers.
+ * @member current The current `group_info` pointer we are using. This is
+ *   either 0 or 1.
  * @member ignore Should group tracking be ignored entirely? This is the default
  *   for atomic vectors unless groups information is explicitly requested.
  */
 struct group_infos {
-  struct group_info** p_info;
+  struct group_info** p_p_group_info;
   int current;
   bool ignore;
 };
@@ -175,13 +177,13 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   group_info2.max_group_size = 0;
 
   // Store both of them in a `group_infos` object
-  struct group_info* p_group_info[2];
-  p_group_info[0] = &group_info1;
-  p_group_info[1] = &group_info2;
+  struct group_info* p_p_group_info[2];
+  p_p_group_info[0] = &group_info1;
+  p_p_group_info[1] = &group_info2;
 
   struct group_infos group_infos;
   struct group_infos* p_group_infos = &group_infos;
-  p_group_infos->p_info = p_group_info;
+  p_group_infos->p_p_group_info = p_p_group_info;
   p_group_infos->current = 0;
   p_group_infos->ignore = ignore;
 
@@ -1191,7 +1193,7 @@ static void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
  * Extract the current `group_info*`
  */
 static inline struct group_info* groups_current(struct group_infos* p_group_infos) {
-  return p_group_infos->p_info[p_group_infos->current];
+  return p_group_infos->p_p_group_info[p_group_infos->current];
 }
 
 /*
