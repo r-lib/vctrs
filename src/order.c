@@ -48,7 +48,7 @@ struct group_info {
   R_xlen_t max_group_size;
 };
 
-static void group_realloc(struct group_info* p_ginfo, R_xlen_t size);
+static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
 
 
 /*
@@ -74,9 +74,9 @@ struct group_infos {
   bool ignore;
 };
 
-static inline struct group_info* groups_current(struct group_infos* p_ginfos);
-static void groups_swap(struct group_infos* p_ginfos);
-static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size);
+static inline struct group_info* groups_current(struct group_infos* p_group_infos);
+static void groups_swap(struct group_infos* p_group_infos);
+static void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size);
 
 // -----------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ static void vec_order_switch(SEXP x,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
-                             struct group_infos* p_ginfos,
+                             struct group_infos* p_group_infos,
                              SEXP decreasing,
                              bool na_last,
                              R_xlen_t size);
@@ -157,33 +157,33 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   bool ignore = groups ? false : (is_data_frame(x) ? false : true);
 
   // First group info object is initialized with data
-  struct group_info ginfo1;
-  ginfo1.data_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
-  ginfo1.data = Rf_allocVector(INTSXP, ginfo1.data_size);
-  PROTECT_WITH_INDEX(ginfo1.data, &ginfo1.data_pi);
-  ginfo1.p_data = INTEGER(ginfo1.data);
-  ginfo1.n_groups = 0;
-  ginfo1.max_group_size = 0;
+  struct group_info group_info1;
+  group_info1.data_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
+  group_info1.data = Rf_allocVector(INTSXP, group_info1.data_size);
+  PROTECT_WITH_INDEX(group_info1.data, &group_info1.data_pi);
+  group_info1.p_data = INTEGER(group_info1.data);
+  group_info1.n_groups = 0;
+  group_info1.max_group_size = 0;
 
   // Second group info object is initialized, but is empty
-  struct group_info ginfo2;
-  ginfo2.data_size = 0;
-  ginfo2.data = Rf_allocVector(INTSXP, ginfo2.data_size);
-  PROTECT_WITH_INDEX(ginfo2.data, &ginfo2.data_pi);
-  ginfo2.p_data = INTEGER(ginfo2.data);
-  ginfo2.n_groups = 0;
-  ginfo2.max_group_size = 0;
+  struct group_info group_info2;
+  group_info2.data_size = 0;
+  group_info2.data = Rf_allocVector(INTSXP, group_info2.data_size);
+  PROTECT_WITH_INDEX(group_info2.data, &group_info2.data_pi);
+  group_info2.p_data = INTEGER(group_info2.data);
+  group_info2.n_groups = 0;
+  group_info2.max_group_size = 0;
 
   // Store both of them in a `group_infos` object
   struct group_info* p_group_info[2];
-  p_group_info[0] = &ginfo1;
-  p_group_info[1] = &ginfo2;
+  p_group_info[0] = &group_info1;
+  p_group_info[1] = &group_info2;
 
-  struct group_infos ginfos;
-  struct group_infos* p_ginfos = &ginfos;
-  p_ginfos->p_info = p_group_info;
-  p_ginfos->current = 0;
-  p_ginfos->ignore = ignore;
+  struct group_infos group_infos;
+  struct group_infos* p_group_infos = &group_infos;
+  p_group_infos->p_info = p_group_info;
+  p_group_infos->current = 0;
+  p_group_infos->ignore = ignore;
 
   vec_order_switch(
     x,
@@ -192,7 +192,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     p_o,
     p_o_aux,
     p_bytes,
-    p_ginfos,
+    p_group_infos,
     decreasing,
     na_last,
     size
@@ -200,17 +200,17 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
 
   // Return all group info rather than just ordering
   if (groups) {
-    struct group_info* p_ginfo = groups_current(p_ginfos);
+    struct group_info* p_group_info = groups_current(p_group_infos);
 
-    R_xlen_t n_groups = p_ginfo->n_groups;
-    p_ginfo->data = PROTECT(Rf_xlengthgets(p_ginfo->data, n_groups));
+    R_xlen_t n_groups = p_group_info->n_groups;
+    p_group_info->data = PROTECT(Rf_xlengthgets(p_group_info->data, n_groups));
 
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
 
     SET_VECTOR_ELT(out, 0, o);
-    SET_VECTOR_ELT(out, 1, p_ginfo->data);
-    SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_ginfo->n_groups));
-    SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_ginfo->max_group_size));
+    SET_VECTOR_ELT(out, 1, p_group_info->data);
+    SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_group_info->n_groups));
+    SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_group_info->max_group_size));
 
     UNPROTECT(8);
     return out;
@@ -228,7 +228,7 @@ static void df_order(SEXP x,
                      int* p_o,
                      int* p_o_aux,
                      uint8_t* p_bytes,
-                     struct group_infos* p_ginfos,
+                     struct group_infos* p_group_infos,
                      SEXP decreasing,
                      bool na_last,
                      R_xlen_t size);
@@ -239,7 +239,7 @@ static void vec_order_immutable_switch(SEXP x,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
-                                       struct group_infos* p_ginfos,
+                                       struct group_infos* p_group_infos,
                                        bool decreasing,
                                        bool na_last,
                                        R_xlen_t size);
@@ -250,7 +250,7 @@ static void vec_order_switch(SEXP x,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
-                             struct group_infos* p_ginfos,
+                             struct group_infos* p_group_infos,
                              SEXP decreasing,
                              bool na_last,
                              R_xlen_t size) {
@@ -264,7 +264,7 @@ static void vec_order_switch(SEXP x,
       p_o,
       p_o_aux,
       p_bytes,
-      p_ginfos,
+      p_group_infos,
       decreasing,
       na_last,
       size
@@ -290,7 +290,7 @@ static void vec_order_switch(SEXP x,
     p_o,
     p_o_aux,
     p_bytes,
-    p_ginfos,
+    p_group_infos,
     c_decreasing,
     na_last,
     size
@@ -305,7 +305,7 @@ static void int_order_immutable(const int* p_x,
                                 int* p_o,
                                 int* p_o_aux,
                                 uint8_t* p_bytes,
-                                struct group_infos* p_ginfos,
+                                struct group_infos* p_group_infos,
                                 bool decreasing,
                                 bool na_last,
                                 R_xlen_t size);
@@ -317,7 +317,7 @@ static void vec_order_immutable_switch(SEXP x,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
-                                       struct group_infos* p_ginfos,
+                                       struct group_infos* p_group_infos,
                                        bool decreasing,
                                        bool na_last,
                                        R_xlen_t size) {
@@ -334,7 +334,7 @@ static void vec_order_immutable_switch(SEXP x,
       p_o,
       p_o_aux,
       p_bytes,
-      p_ginfos,
+      p_group_infos,
       decreasing,
       na_last,
       size
@@ -366,7 +366,7 @@ static void int_compute_range(const int* p_x,
 static void int_counting_order(const int* p_x,
                                int* p_o,
                                int* p_o_aux,
-                               struct group_infos* p_ginfos,
+                               struct group_infos* p_group_infos,
                                R_xlen_t size,
                                int x_min,
                                uint32_t range,
@@ -375,7 +375,7 @@ static void int_counting_order(const int* p_x,
 
 static void int_insertion_order(int* p_x,
                                 int* p_o,
-                                struct group_infos* p_ginfos,
+                                struct group_infos* p_group_infos,
                                 const R_xlen_t size);
 
 static void int_radix_order(int* p_x,
@@ -383,7 +383,7 @@ static void int_radix_order(int* p_x,
                             int* p_o,
                             int* p_o_aux,
                             uint8_t* p_bytes,
-                            struct group_infos* p_ginfos,
+                            struct group_infos* p_group_infos,
                             const R_xlen_t size,
                             const uint8_t pass);
 
@@ -406,13 +406,13 @@ static void int_order(int* p_x,
                       int* p_o,
                       int* p_o_aux,
                       uint8_t* p_bytes,
-                      struct group_infos* p_ginfos,
+                      struct group_infos* p_group_infos,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
   if (size < INT_INSERTION_ORDER_BOUNDARY) {
     int_adjust(p_x, decreasing, na_last, size);
-    int_insertion_order(p_x, p_o, p_ginfos, size);
+    int_insertion_order(p_x, p_o, p_group_infos, size);
     return;
   }
 
@@ -422,14 +422,14 @@ static void int_order(int* p_x,
   int_compute_range(p_x, size, &x_min, &range);
 
   if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    int_counting_order(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
+    int_counting_order(p_x, p_o, p_o_aux, p_group_infos, size, x_min, range, decreasing, na_last);
     return;
   }
 
   uint8_t pass = 0;
 
   int_adjust(p_x, decreasing, na_last, size);
-  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, size, pass);
+  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
 }
 
 static void int_order_immutable(const int* p_x,
@@ -438,14 +438,14 @@ static void int_order_immutable(const int* p_x,
                                 int* p_o,
                                 int* p_o_aux,
                                 uint8_t* p_bytes,
-                                struct group_infos* p_ginfos,
+                                struct group_infos* p_group_infos,
                                 bool decreasing,
                                 bool na_last,
                                 R_xlen_t size) {
   if (size < INT_INSERTION_ORDER_BOUNDARY) {
     memcpy(p_x_slice, p_x, size * sizeof(int));
     int_adjust(p_x_slice, decreasing, na_last, size);
-    int_insertion_order(p_x_slice, p_o, p_ginfos, size);
+    int_insertion_order(p_x_slice, p_o, p_group_infos, size);
     return;
   }
 
@@ -456,7 +456,7 @@ static void int_order_immutable(const int* p_x,
 
   // If in counting sort range, no need to copy over to `x_slice`
   if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    int_counting_order(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
+    int_counting_order(p_x, p_o, p_o_aux, p_group_infos, size, x_min, range, decreasing, na_last);
     return;
   }
 
@@ -464,7 +464,7 @@ static void int_order_immutable(const int* p_x,
 
   memcpy(p_x_slice, p_x, size * sizeof(int));
   int_adjust(p_x_slice, decreasing, na_last, size);
-  int_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, size, pass);
+  int_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
 }
 
 // -----------------------------------------------------------------------------
@@ -622,7 +622,7 @@ static void int_compute_range(const int* p_x,
 static void int_counting_order(const int* p_x,
                                int* p_o,
                                int* p_o_aux,
-                               struct group_infos* p_ginfos,
+                               struct group_infos* p_group_infos,
                                R_xlen_t size,
                                int x_min,
                                uint32_t range,
@@ -668,7 +668,7 @@ static void int_counting_order(const int* p_x,
   if (!na_last && na_count != 0) {
     p_counts[na_bucket] = cumulative;
     cumulative += na_count;
-    groups_size_push(p_ginfos, na_count);
+    groups_size_push(p_group_infos, na_count);
   }
 
   // Accumulate counts, skip zeros
@@ -685,7 +685,7 @@ static void int_counting_order(const int* p_x,
     cumulative += count;
 
     // At this point we will handle this group completely
-    groups_size_push(p_ginfos, count);
+    groups_size_push(p_group_infos, count);
 
     j += direction;
   }
@@ -693,7 +693,7 @@ static void int_counting_order(const int* p_x,
   // `na_last = true` pushes NA counts to the back
   if (na_last && na_count != 0) {
     p_counts[na_bucket] = cumulative;
-    groups_size_push(p_ginfos, na_count);
+    groups_size_push(p_group_infos, na_count);
   }
 
   // Place in auxiliary in the right order, then copy back
@@ -737,7 +737,7 @@ static void int_counting_order(const int* p_x,
  */
 static void int_insertion_order(int* p_x,
                                 int* p_o,
-                                struct group_infos* p_ginfos,
+                                struct group_infos* p_group_infos,
                                 const R_xlen_t size) {
   // Don't think this can occur, but safer this way
   if (size == 0) {
@@ -789,14 +789,14 @@ static void int_insertion_order(int* p_x,
     }
 
     // Push current run size and reset size tracker
-    groups_size_push(p_ginfos, group_size);
+    groups_size_push(p_group_infos, group_size);
     group_size = 1;
 
     previous = current;
   }
 
   // Push final group run
-  groups_size_push(p_ginfos, group_size);
+  groups_size_push(p_group_infos, group_size);
 }
 
 // -----------------------------------------------------------------------------
@@ -807,7 +807,7 @@ static void int_radix_order_pass(int* p_x,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
-                                 struct group_infos* p_ginfos,
+                                 struct group_infos* p_group_infos,
                                  const R_xlen_t size,
                                  const uint8_t pass);
 
@@ -821,7 +821,7 @@ static void int_radix_order(int* p_x,
                             int* p_o,
                             int* p_o_aux,
                             uint8_t* p_bytes,
-                            struct group_infos* p_ginfos,
+                            struct group_infos* p_group_infos,
                             const R_xlen_t size,
                             const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
@@ -833,7 +833,7 @@ static void int_radix_order(int* p_x,
     p_o_aux,
     p_bytes,
     p_counts,
-    p_ginfos,
+    p_group_infos,
     size,
     pass
   );
@@ -853,7 +853,7 @@ static void int_radix_order(int* p_x,
     last_cumulative_count = cumulative_count;
 
     if (group_size == 1) {
-      groups_size_push(p_ginfos, 1);
+      groups_size_push(p_group_infos, 1);
       // TODO: Do we really need to increment all of these?
       // Maybe just `p_x` and `p_o`?
       ++p_x;
@@ -868,7 +868,7 @@ static void int_radix_order(int* p_x,
     // `group_size` of 2 in the last radix, but there is nothing left to
     // compare so we are done.
     if (next_pass == 4) {
-      groups_size_push(p_ginfos, group_size);
+      groups_size_push(p_group_infos, group_size);
       p_x += group_size;
       p_o += group_size;
       p_x_aux += group_size;
@@ -884,7 +884,7 @@ static void int_radix_order(int* p_x,
       p_o,
       p_o_aux,
       p_bytes,
-      p_ginfos,
+      p_group_infos,
       group_size,
       next_pass
     );
@@ -911,11 +911,11 @@ static void int_radix_order_pass(int* p_x,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
-                                 struct group_infos* p_ginfos,
+                                 struct group_infos* p_group_infos,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   if (size <= INT_INSERTION_ORDER_BOUNDARY) {
-    int_insertion_order(p_x, p_o, p_ginfos, size);
+    int_insertion_order(p_x, p_o, p_group_infos, size);
     return;
   }
 
@@ -998,14 +998,14 @@ static void col_order_switch(SEXP x,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
-                             struct group_infos* p_ginfos,
+                             struct group_infos* p_group_infos,
                              bool decreasing,
                              bool na_last,
                              R_xlen_t size,
                              const enum vctrs_type type);
 
 /*
- * `df_order()` is the main user of `p_ginfos`. It uses the grouping
+ * `df_order()` is the main user of `p_group_infos`. It uses the grouping
  * of the current column to break up the next column into sub groups. That
  * process is continued until either all columns have been processed or we
  * can tell all of the values apart.
@@ -1016,7 +1016,7 @@ static void df_order(SEXP x,
                      int* p_o,
                      int* p_o_aux,
                      uint8_t* p_bytes,
-                     struct group_infos* p_ginfos,
+                     struct group_infos* p_group_infos,
                      SEXP decreasing,
                      bool na_last,
                      R_xlen_t size) {
@@ -1046,7 +1046,7 @@ static void df_order(SEXP x,
   SEXP col = VECTOR_ELT(x, 0);
   bool col_decreasing = p_decreasing[0];
 
-  // Apply on one column to fill `p_ginfos`.
+  // Apply on one column to fill `p_group_infos`.
   // First column is immutable and we must copy into `x_slice`.
   vec_order_immutable_switch(
     col,
@@ -1055,7 +1055,7 @@ static void df_order(SEXP x,
     p_o,
     p_o_aux,
     p_bytes,
-    p_ginfos,
+    p_group_infos,
     col_decreasing,
     na_last,
     size
@@ -1065,7 +1065,7 @@ static void df_order(SEXP x,
   for (R_xlen_t i = 1; i < n_cols; ++i) {
     // TODO: Minor optimization can be made by turning off the group
     // tracking when working on the last column if group info isn't requested.
-    // Would probably need to track `requested` in `p_ginfos`.
+    // Would probably need to track `requested` in `p_group_infos`.
 
     col = VECTOR_ELT(x, i);
 
@@ -1079,8 +1079,8 @@ static void df_order(SEXP x,
     int* p_o_aux_col = p_o_aux;
 
     // Get the number of group chunks from previous column group info
-    struct group_info* p_ginfo_pre = groups_current(p_ginfos);
-    R_xlen_t n_groups = p_ginfo_pre->n_groups;
+    struct group_info* p_group_info_pre = groups_current(p_group_infos);
+    R_xlen_t n_groups = p_group_info_pre->n_groups;
 
     // If there were no ties, we are completely done
     if (n_groups == size) {
@@ -1088,7 +1088,7 @@ static void df_order(SEXP x,
     }
 
     // Swap to other group info to prepare for this column
-    groups_swap(p_ginfos);
+    groups_swap(p_group_infos);
 
     const enum vctrs_type type = vec_proxy_typeof(col);
 
@@ -1098,13 +1098,13 @@ static void df_order(SEXP x,
 
     // Iterate over this column's group chunks
     for (R_xlen_t group = 0; group < n_groups; ++group) {
-      R_xlen_t group_size = p_ginfo_pre->p_data[group];
+      R_xlen_t group_size = p_group_info_pre->p_data[group];
 
       // Fast handling of simplest case
       if (group_size == 1) {
         ++p_o_col;
         ++p_o_aux_col;
-        groups_size_push(p_ginfos, 1);
+        groups_size_push(p_group_infos, 1);
         continue;
       }
 
@@ -1121,7 +1121,7 @@ static void df_order(SEXP x,
         p_o_col,
         p_o_aux_col,
         p_bytes,
-        p_ginfos,
+        p_group_infos,
         col_decreasing,
         na_last,
         group_size,
@@ -1144,7 +1144,7 @@ static void col_order_switch(SEXP x,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
-                             struct group_infos* p_ginfos,
+                             struct group_infos* p_group_infos,
                              bool decreasing,
                              bool na_last,
                              R_xlen_t size,
@@ -1154,7 +1154,7 @@ static void col_order_switch(SEXP x,
     int* p_x = INTEGER(x);
     int* p_x_aux = INTEGER(x_aux);
 
-    int_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, decreasing, na_last, size);
+    int_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
 
     break;
   }
@@ -1173,25 +1173,25 @@ static void col_order_switch(SEXP x,
 /*
  * Reallocate `data` to be as long as `size`.
  */
-static void group_realloc(struct group_info* p_ginfo, R_xlen_t size) {
+static void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
   // Reallocate
-  p_ginfo->data = Rf_xlengthgets(p_ginfo->data, size);
+  p_group_info->data = Rf_xlengthgets(p_group_info->data, size);
 
   // Reprotect
-  REPROTECT(p_ginfo->data, p_ginfo->data_pi);
+  REPROTECT(p_group_info->data, p_group_info->data_pi);
 
   // Update pointer
-  p_ginfo->p_data = INTEGER(p_ginfo->data);
+  p_group_info->p_data = INTEGER(p_group_info->data);
 
   // Update size
-  p_ginfo->data_size = size;
+  p_group_info->data_size = size;
 }
 
 /*
  * Extract the current `group_info*`
  */
-static inline struct group_info* groups_current(struct group_infos* p_ginfos) {
-  return p_ginfos->p_info[p_ginfos->current];
+static inline struct group_info* groups_current(struct group_infos* p_group_infos) {
+  return p_group_infos->p_info[p_group_infos->current];
 }
 
 /*
@@ -1203,25 +1203,25 @@ static inline struct group_info* groups_current(struct group_infos* p_ginfos) {
  * the first column swap where the 2nd group info array starts as a size 0
  * integer vector (because we don't know if it will get used or not).
  */
-static void groups_swap(struct group_infos* p_ginfos) {
-  if (p_ginfos->ignore) {
+static void groups_swap(struct group_infos* p_group_infos) {
+  if (p_group_infos->ignore) {
     return;
   }
 
-  struct group_info* p_ginfo_pre = groups_current(p_ginfos);
+  struct group_info* p_group_info_pre = groups_current(p_group_infos);
 
   // Make the swap
-  p_ginfos->current = 1 - p_ginfos->current;
+  p_group_infos->current = 1 - p_group_infos->current;
 
-  struct group_info* p_ginfo_post = groups_current(p_ginfos);
+  struct group_info* p_group_info_post = groups_current(p_group_infos);
 
   // Clear the info from last time the swap was made
-  p_ginfo_post->max_group_size = 0;
-  p_ginfo_post->n_groups = 0;
+  p_group_info_post->max_group_size = 0;
+  p_group_info_post->n_groups = 0;
 
   // Ensure the new group info is at least as big as the old group info
-  if (p_ginfo_post->data_size < p_ginfo_pre->data_size) {
-    group_realloc(p_ginfo_post, p_ginfo_pre->data_size);
+  if (p_group_info_post->data_size < p_group_info_pre->data_size) {
+    group_realloc(p_group_info_post, p_group_info_pre->data_size);
   }
 }
 
@@ -1231,8 +1231,8 @@ static void groups_swap(struct group_infos* p_ginfos) {
  * - Reallocates as needed
  * - Updates number of groups / max group size as well
  */
-static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size) {
-  if (p_ginfos->ignore) {
+static void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
+  if (p_group_infos->ignore) {
     return;
   }
 
@@ -1240,22 +1240,22 @@ static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size) {
     Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
   }
 
-  struct group_info* p_ginfo = groups_current(p_ginfos);
+  struct group_info* p_group_info = groups_current(p_group_infos);
 
   // Extend `data` as required - reprotects itself
-  if (p_ginfo->data_size == p_ginfo->n_groups) {
-    group_realloc(p_ginfo, p_ginfo->data_size * 2);
+  if (p_group_info->data_size == p_group_info->n_groups) {
+    group_realloc(p_group_info, p_group_info->data_size * 2);
   }
 
   // Push group size
-  p_ginfo->p_data[p_ginfo->n_groups] = size;
+  p_group_info->p_data[p_group_info->n_groups] = size;
 
   // Bump number of groups
-  ++p_ginfo->n_groups;
+  ++p_group_info->n_groups;
 
   // Update max group size
-  if (p_ginfo->max_group_size < size) {
-    p_ginfo->max_group_size = size;
+  if (p_group_info->max_group_size < size) {
+    p_group_info->max_group_size = size;
   }
 }
 
