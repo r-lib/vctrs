@@ -1665,7 +1665,7 @@ static void groups_swap(struct group_infos* p_group_infos) {
 
   // Ensure the new group info is at least as big as the old group info
   if (p_group_info_post->data_size < p_group_info_pre->data_size) {
-    group_realloc(p_group_info_post, p_group_info_pre->data_size);
+    group_realloc(p_group_info_post, p_group_info_pre->data_size * 2);
   }
 }
 
