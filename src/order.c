@@ -17,6 +17,8 @@
 
 // A bit ad hoc - but seems to work well. Going up to 256 definitely has
 // negative performance implications for completely random input.
+// Base R seems to use 200, but I think this works a little better (from
+// limited testing).
 // Somewhat based on this post, which also uses 128.
 // https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
 #define INT_INSERTION_ORDER_BOUNDARY 128
