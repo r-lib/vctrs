@@ -49,6 +49,8 @@ SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 
 // -----------------------------------------------------------------------------
 
+static inline size_t vec_order_size_multiplier(SEXP x);
+
 static void vec_order_switch(SEXP x,
                              SEXP x_slice,
                              SEXP x_aux,
@@ -88,11 +90,12 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
   }
 
-  // This is sometimes bigger than it needs to be, but will only
-  // be much bigger than required if `x` is filled with numbers that are
-  // incredibly spread out.
-  SEXP x_slice = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
-  SEXP x_aux = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
+  const size_t multiplier = vec_order_size_multiplier(x);
+
+  // Auxiliary vectors to hold intermediate results the same size as `x`.
+  // If `x` is a data frame we allocate enough room for the largest column type.
+  SEXP x_slice = PROTECT_N(Rf_allocVector(RAWSXP, size * multiplier), p_n_prot);
+  SEXP x_aux = PROTECT_N(Rf_allocVector(RAWSXP, size * multiplier), p_n_prot);
 
   SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o = INTEGER(o);
@@ -269,8 +272,8 @@ static void vec_order_immutable_switch(SEXP x,
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_integer: {
     int* p_x = INTEGER(x);
-    int* p_x_slice = INTEGER(x_slice);
-    int* p_x_aux = INTEGER(x_aux);
+    int* p_x_slice = (int*) DATAPTR(x_slice);
+    int* p_x_aux = (int*) DATAPTR(x_aux);
 
     int_order_immutable(
       p_x,
@@ -1023,6 +1026,20 @@ static void col_order_switch(SEXP x,
                              R_xlen_t size,
                              const enum vctrs_type type);
 
+
+#define DF_ORDER_EXTRACT_CHUNK(CONST_DEREF, CTYPE) do {          \
+  const CTYPE* p_col = CONST_DEREF(col);                         \
+  CTYPE* p_x_slice = (CTYPE*) DATAPTR(x_slice);                  \
+                                                                 \
+  /* Extract the next group chunk and place in */                \
+  /* sequential order for cache friendliness */                  \
+  for (R_xlen_t j = 0; j < group_size; ++j) {                    \
+    const int loc = p_o_col[j] - 1;                              \
+    p_x_slice[j] = p_col[loc];                                   \
+  }                                                              \
+} while (0)
+
+
 /*
  * `df_order()` is the main user of `p_group_infos`. It uses the grouping
  * of the current column to break up the next column into sub groups. That
@@ -1112,10 +1129,6 @@ static void df_order(SEXP x,
 
     const enum vctrs_type type = vec_proxy_typeof(col);
 
-    // `x_slice` will hold current group slice of `x`
-    int* p_x_slice = INTEGER(x_slice);
-    const int* p_col = INTEGER(col);
-
     // Iterate over this column's group chunks
     for (R_xlen_t group = 0; group < n_groups; ++group) {
       R_xlen_t group_size = p_group_info_pre->p_data[group];
@@ -1127,11 +1140,10 @@ static void df_order(SEXP x,
         continue;
       }
 
-      // Extract the next group chunk and place in sequential order
-      // for cache friendliness
-      for (R_xlen_t j = 0; j < group_size; ++j) {
-        const int loc = p_o_col[j] - 1;
-        p_x_slice[j] = p_col[loc];
+      // Extract current chunk and place into `x_slice` in sequential order
+      switch (type) {
+      case vctrs_type_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
+      default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
       col_order_switch(
@@ -1152,11 +1164,13 @@ static void df_order(SEXP x,
   }
 }
 
+#undef DF_ORDER_EXTRACT_CHUNK
+
 // -----------------------------------------------------------------------------
 
 // Like `vec_order_switch()`, but specifically for columns of a data
 // frame where `decreasing` is known and is scalar.
-// Also assumes `x` is mutable!
+// Also assumes `x` is mutable and a RAWSXP!
 static void col_order_switch(SEXP x,
                              SEXP x_aux,
                              int* p_o,
@@ -1169,8 +1183,8 @@ static void col_order_switch(SEXP x,
                              const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer: {
-    int* p_x = INTEGER(x);
-    int* p_x_aux = INTEGER(x_aux);
+    int* p_x = (int*) DATAPTR(x);
+    int* p_x_aux = (int*) DATAPTR(x_aux);
 
     int_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
 
@@ -1181,7 +1195,7 @@ static void col_order_switch(SEXP x,
     break;
   }
   default: {
-    Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`");
+    Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`");
   }
   }
 }
@@ -1303,6 +1317,43 @@ static void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
   if (p_group_info->max_group_size < size) {
     p_group_info->max_group_size = size;
   }
+}
+
+// -----------------------------------------------------------------------------
+
+static inline size_t df_size_multiplier(SEXP x);
+
+/*
+ * Compute the minimum size required for `x_aux` and `x_slice`.
+ *
+ * If any vectors are doubles, then the minimum size is the size of double since
+ * that is the largest type. Otherwise we can save on memory and use the size
+ * of an integer.
+ */
+static inline size_t vec_order_size_multiplier(SEXP x) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_double:
+    return sizeof(double);
+  case vctrs_type_dataframe:
+    return df_size_multiplier(x);
+  default:
+    return sizeof(int);
+  }
+}
+
+// `x` should be a flattened df with no df-cols so we can use TYPEOF()
+static inline size_t df_size_multiplier(SEXP x) {
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+
+    if (TYPEOF(col) == REALSXP) {
+      return sizeof(double);
+    }
+  }
+
+  return sizeof(int);
 }
 
 // -----------------------------------------------------------------------------
