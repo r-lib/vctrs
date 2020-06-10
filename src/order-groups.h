@@ -62,12 +62,17 @@ struct group_info {
  * @member p_p_group_info A pointer to two `group_info` pointers.
  * @member current The current `group_info` pointer we are using. This is
  *   either 0 or 1.
- * @member ignore Should group tracking be ignored entirely? This is the default
- *   for atomic vectors unless groups information is explicitly requested.
+ * @member requested Was group information requested by the user? If so, we
+ *   always have to track group information.
+ * @member ignore Should group tracking be ignored? This is the default
+ *   for atomic vectors unless groups information is explicitly requested. For
+ *   data frames, this is true over all columns except the last one (for
+ *   performance) unless `requested` is true.
  */
 struct group_infos {
   struct group_info** p_p_group_info;
   int current;
+  bool requested;
   bool ignore;
 };
 
