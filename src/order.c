@@ -799,13 +799,8 @@ static void int_radix_order(int* p_x,
 
     if (group_size == 1) {
       groups_size_push(p_group_infos, 1);
-      // TODO: Do we really need to increment all of these?
-      // Maybe just `p_x` and `p_o`?
       ++p_x;
       ++p_o;
-      ++p_x_aux;
-      ++p_o_aux;
-      ++p_bytes;
       continue;
     }
 
@@ -816,9 +811,6 @@ static void int_radix_order(int* p_x,
       groups_size_push(p_group_infos, group_size);
       p_x += group_size;
       p_o += group_size;
-      p_x_aux += group_size;
-      p_o_aux += group_size;
-      p_bytes += group_size;
       continue;
     }
 
@@ -836,9 +828,6 @@ static void int_radix_order(int* p_x,
 
     p_x += group_size;
     p_o += group_size;
-    p_x_aux += group_size;
-    p_o_aux += group_size;
-    p_bytes += group_size;
   }
 }
 
@@ -1014,10 +1003,9 @@ static void df_order(SEXP x,
       col_decreasing = p_decreasing[i];
     }
 
-    // Reset pointers between columns since we increment them as
+    // Reset pointer between columns since we increment them as
     // we iterate through the groups
     int* p_o_col = p_o;
-    int* p_o_aux_col = p_o_aux;
 
     // Get the number of group chunks from previous column group info
     struct group_info* p_group_info_pre = groups_current(p_group_infos);
@@ -1050,7 +1038,6 @@ static void df_order(SEXP x,
       // Fast handling of simplest case
       if (group_size == 1) {
         ++p_o_col;
-        ++p_o_aux_col;
         groups_size_push(p_group_infos, 1);
         continue;
       }
@@ -1066,7 +1053,7 @@ static void df_order(SEXP x,
         x_slice,
         x_aux,
         p_o_col,
-        p_o_aux_col,
+        p_o_aux,
         p_bytes,
         p_group_infos,
         col_decreasing,
@@ -1076,7 +1063,6 @@ static void df_order(SEXP x,
       );
 
       p_o_col += group_size;
-      p_o_aux_col += group_size;
     }
   }
 }
