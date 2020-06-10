@@ -10,6 +10,9 @@
 // reallocate.
 #define GROUP_DATA_SIZE_DEFAULT 100000
 
+// This is the maximum range size that determines whether a counting sort
+// is used on the input or not. When `x` has a range less than this boundary,
+// a counting sort is often faster than a radix sort.
 #define INT_COUNTING_ORDER_RANGE_BOUNDARY 100000
 
 // A bit ad hoc - but seems to work well. Going up to 256 definitely has
