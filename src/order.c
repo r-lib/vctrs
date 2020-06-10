@@ -25,6 +25,7 @@ static struct group_info new_group_info(R_xlen_t size);
 static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
 
 static struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                          bool requested,
                                           bool ignore);
 static inline struct group_info* groups_current(struct group_infos* p_group_infos);
 static void groups_swap(struct group_infos* p_group_infos);
@@ -109,7 +110,8 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   // Should group info be ignored?
   // Can only ignore if dealing with non-data-frame input and groups have not
   // been requested, but this is more efficient for atomic vectors.
-  bool ignore = groups ? false : (is_data_frame(x) ? false : true);
+  bool requested = groups;
+  bool ignore = requested ? false : (is_data_frame(x) ? false : true);
 
   R_xlen_t group_info0_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
 
@@ -125,7 +127,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   p_p_group_info[0] = p_group_info0;
   p_p_group_info[1] = p_group_info1;
 
-  struct group_infos group_infos = new_group_infos(p_p_group_info, ignore);
+  struct group_infos group_infos = new_group_infos(p_p_group_info, requested, ignore);
   struct group_infos* p_group_infos = &group_infos;
 
   vec_order_switch(
@@ -1006,10 +1008,6 @@ static void df_order(SEXP x,
 
   // Iterate over remaining columns by group chunk
   for (R_xlen_t i = 1; i < n_cols; ++i) {
-    // TODO: Minor optimization can be made by turning off the group
-    // tracking when working on the last column if group info isn't requested.
-    // Would probably need to track `requested` in `p_group_infos`.
-
     col = VECTOR_ELT(x, i);
 
     if (!recycle_decreasing) {
@@ -1028,6 +1026,12 @@ static void df_order(SEXP x,
     // If there were no ties, we are completely done
     if (n_groups == size) {
       break;
+    }
+
+    // Turn off group tracking if we are on the last column and the
+    // user didn't request group information
+    if (i == n_cols - 1 && !p_group_infos->requested) {
+      p_group_infos->ignore = true;
     }
 
     // Swap to other group info to prepare for this column
@@ -1146,11 +1150,13 @@ static void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
 }
 
 static struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                          bool requested,
                                           bool ignore) {
   struct group_infos infos;
 
   infos.p_p_group_info = p_p_group_info;
   infos.current = 0;
+  infos.requested = requested;
   infos.ignore = ignore;
 
   return infos;
