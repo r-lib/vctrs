@@ -17,7 +17,7 @@
 // limited testing).
 // Somewhat based on this post, which also uses 128.
 // https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
-#define INT_INSERTION_ORDER_BOUNDARY 128
+#define INSERTION_ORDER_BOUNDARY 128
 
 // -----------------------------------------------------------------------------
 
@@ -250,7 +250,18 @@ static void vec_order_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static void int_order_immutable(const int* p_x,
+static void int_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size);
+
+static void dbl_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
                                 int* p_o,
@@ -274,10 +285,24 @@ static void vec_order_immutable_switch(SEXP x,
                                        R_xlen_t size) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_integer: {
-    const int* p_x = INTEGER_RO(x);
-
     int_order_immutable(
-      p_x,
+      x,
+      p_x_slice,
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_group_infos,
+      decreasing,
+      na_last,
+      size
+    );
+
+    break;
+  }
+  case vctrs_type_double: {
+    dbl_order_immutable(
+      x,
       p_x_slice,
       p_x_aux,
       p_o,
@@ -302,10 +327,10 @@ static void vec_order_immutable_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static inline void int_adjust(void* p_x,
-                              const bool decreasing,
-                              const bool na_last,
-                              const R_xlen_t size);
+static void int_adjust(void* p_x,
+                       const bool decreasing,
+                       const bool na_last,
+                       const R_xlen_t size);
 
 static void int_compute_range(const int* p_x,
                               R_xlen_t size,
@@ -359,7 +384,7 @@ static void int_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
-  if (size < INT_INSERTION_ORDER_BOUNDARY) {
+  if (size < INSERTION_ORDER_BOUNDARY) {
     int_adjust(p_x, decreasing, na_last, size);
     int_insertion_order(p_x, p_o, p_group_infos, size);
     return;
@@ -381,7 +406,7 @@ static void int_order(void* p_x,
   int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
 }
 
-static void int_order_immutable(const int* p_x,
+static void int_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
                                 int* p_o,
@@ -391,7 +416,9 @@ static void int_order_immutable(const int* p_x,
                                 bool decreasing,
                                 bool na_last,
                                 R_xlen_t size) {
-  if (size < INT_INSERTION_ORDER_BOUNDARY) {
+  const int* p_x = INTEGER_RO(x);
+
+  if (size < INSERTION_ORDER_BOUNDARY) {
     memcpy(p_x_slice, p_x, size * sizeof(int));
     int_adjust(p_x_slice, decreasing, na_last, size);
     int_insertion_order(p_x_slice, p_o, p_group_infos, size);
@@ -440,10 +467,10 @@ static inline uint32_t int_map_to_uint32(int x);
  * - The multiplication by `direction` applies to non-NA values and correctly
  *   orders inputs based on whether we are in a decreasing order or not.
  */
-static inline void int_adjust(void* p_x,
-                              const bool decreasing,
-                              const bool na_last,
-                              const R_xlen_t size) {
+static void int_adjust(void* p_x,
+                       const bool decreasing,
+                       const bool na_last,
+                       const R_xlen_t size) {
   const int direction = decreasing ? -1 : 1;
   const uint32_t na_u32 = na_last ? UINT32_MAX : 0;
   const int na_shift = na_last ? -1 : 0;
@@ -862,7 +889,7 @@ static void int_radix_order_pass(uint32_t* p_x,
                                  struct group_infos* p_group_infos,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
-  if (size <= INT_INSERTION_ORDER_BOUNDARY) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
     int_insertion_order(p_x, p_o, p_group_infos, size);
     return;
   }
@@ -928,6 +955,92 @@ static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
 
 // -----------------------------------------------------------------------------
 
+static void dbl_adjust(void* p_x,
+                       const bool decreasing,
+                       const bool na_last,
+                       const R_xlen_t size);
+
+static void dbl_insertion_order(uint64_t* p_x,
+                                int* p_o,
+                                struct group_infos* p_group_infos,
+                                const R_xlen_t size);
+
+static void dbl_radix_order(uint64_t* p_x,
+                            uint64_t* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_group_infos,
+                            const R_xlen_t size,
+                            const uint8_t pass);
+
+/*
+ * These are the main entry points for integer ordering. They are nearly
+ * identical except `dbl_order_immutable()` assumes that `p_x` cannot be
+ * modified directly and is user input.
+ *
+ * `dbl_order()` assumes `p_x` is modifiable by reference. It is called when
+ * iterating over data frame columns and `p_x` is the 2nd or greater column,
+ * in which case `p_x` is really a chunk of that column that has been copied
+ * into `x_slice`.
+ *
+ * `dbl_order_immutable()` assumes `p_x` is user input which cannot be modified.
+ * It copies `x` into another SEXP that can be modified directly unless a
+ * counting sort is going to be used, in which case `p_x` can be used directly.
+ *
+ * Unlike `int_order()`, there is no intermediate counting sort, as it is
+ * sort of unclear how to compute the range of a double vector in the same
+ * way.
+ */
+static void dbl_order(void* p_x,
+                      void* p_x_aux,
+                      int* p_o,
+                      int* p_o_aux,
+                      uint8_t* p_bytes,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
+  if (size < INSERTION_ORDER_BOUNDARY) {
+    dbl_adjust(p_x, decreasing, na_last, size);
+    dbl_insertion_order(p_x, p_o, p_group_infos, size);
+    return;
+  }
+
+  uint8_t pass = 0;
+
+  dbl_adjust(p_x, decreasing, na_last, size);
+  dbl_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
+}
+
+static void dbl_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size) {
+  const double* p_x = REAL_RO(x);
+
+  if (size < INSERTION_ORDER_BOUNDARY) {
+    memcpy(p_x_slice, p_x, size * sizeof(double));
+    dbl_adjust(p_x_slice, decreasing, na_last, size);
+    dbl_insertion_order(p_x_slice, p_o, p_group_infos, size);
+    return;
+  }
+
+  uint8_t pass = 0;
+
+  memcpy(p_x_slice, p_x, size * sizeof(double));
+  dbl_adjust(p_x_slice, decreasing, na_last, size);
+  dbl_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
+}
+
+// -----------------------------------------------------------------------------
+
 static inline uint64_t dbl_map_to_uint64(double x);
 
 /*
@@ -946,12 +1059,15 @@ static inline uint64_t dbl_map_to_uint64(double x);
  * dbl_map_to_uint64(.Machine$double.xmax) -> 18442240474082181119
  *
  * This gives us room to manually map (depending on `na_last`):
- *
  * dbl_map_to_uint64(NA_real_) -> 0 (UINT64_MAX)
  * dbl_map_to_uint64(NaN) -> 0 (UINT64_MAX)
  *
  */
-static void dbl_adjust(void* p_x, R_xlen_t size, int direction, bool na_last) {
+static void dbl_adjust(void* p_x,
+                       const bool decreasing,
+                       const bool na_last,
+                       const R_xlen_t size) {
+  const int direction = decreasing ? -1 : 1;
   const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
 
   double* p_x_dbl = (double*) p_x;
@@ -1010,6 +1126,259 @@ static inline uint64_t dbl_flip_uint64(uint64_t x) {
 #undef HEX_UINT64_SIGN
 #undef HEX_UINT64_ONES
 
+// -----------------------------------------------------------------------------
+
+/*
+ * `dbl_insertion_order()` is used in two ways:
+ * - It is how we "finish off" radix sorts rather than deep recursion.
+ * - If we have an original `x` input that is small enough, we just immediately
+ *   insertion sort it.
+ *
+ * For small inputs, it is much faster than deeply recursing with
+ * radix ordering.
+ *
+ * Insertion ordering expects that `p_x` has been adjusted with `dbl_adjust()`
+ * which takes care of `na_last` and `decreasing` and also maps `double` to
+ * `uint64_t` ahead of time.
+ *
+ * It is essentially the same as `int_insertion_sort()` with different types.
+ */
+static void dbl_insertion_order(uint64_t* p_x,
+                                int* p_o,
+                                struct group_infos* p_group_infos,
+                                const R_xlen_t size) {
+  // Don't think this can occur, but safer this way
+  if (size == 0) {
+    return;
+  }
+
+  for (R_xlen_t i = 1; i < size; ++i) {
+    const uint64_t x_elt = p_x[i];
+    const int o_elt = p_o[i];
+
+    R_xlen_t j = i - 1;
+
+    while (j >= 0) {
+      const uint64_t x_cmp_elt = p_x[j];
+
+      if (x_elt >= x_cmp_elt) {
+        break;
+      }
+
+      int o_cmp_elt = p_o[j];
+
+      // Swap
+      p_x[j + 1] = x_cmp_elt;
+      p_o[j + 1] = o_cmp_elt;
+
+      // Next
+      --j;
+    }
+
+    // Place original elements in new location
+    // closer to start of the vector
+    p_x[j + 1] = x_elt;
+    p_o[j + 1] = o_elt;
+  }
+
+  // We've ordered a small chunk, we need to push at least one group size.
+  // Depends on the post-ordered results so we have to do this
+  // in a separate loop.
+  R_xlen_t group_size = 1;
+  uint64_t previous = p_x[0];
+
+  for (R_xlen_t i = 1; i < size; ++i) {
+    const uint64_t current = p_x[i];
+
+    // Continue the current group run
+    if (current == previous) {
+      ++group_size;
+      continue;
+    }
+
+    // Push current run size and reset size tracker
+    groups_size_push(p_group_infos, group_size);
+    group_size = 1;
+
+    previous = current;
+  }
+
+  // Push final group run
+  groups_size_push(p_group_infos, group_size);
+}
+
+// -----------------------------------------------------------------------------
+
+static void dbl_radix_order_pass(uint64_t* p_x,
+                                 uint64_t* p_x_aux,
+                                 int* p_o,
+                                 int* p_o_aux,
+                                 uint8_t* p_bytes,
+                                 R_xlen_t* p_counts,
+                                 struct group_infos* p_group_infos,
+                                 const R_xlen_t size,
+                                 const uint8_t pass);
+
+/*
+ * Recursive function for radix ordering. Orders the current byte, then iterates
+ * over the sub groups and recursively calls itself on each subgroup to order
+ * the next byte.
+ *
+ * Expects that `dbl_adjust()` has been called on `p_x`, which takes care
+ * of `na_last` and `decreasing` and also maps `double` to `uint64_t` once
+ * up front so we don't have to do it for each radix pass.
+ *
+ * This needs 8 passes, unlike the 4 required by `int_radix_order()`.
+ */
+static void dbl_radix_order(uint64_t* p_x,
+                            uint64_t* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_group_infos,
+                            const R_xlen_t size,
+                            const uint8_t pass) {
+  R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
+
+  dbl_radix_order_pass(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_counts,
+    p_group_infos,
+    size,
+    pass
+  );
+
+  const uint8_t next_pass = pass + 1;
+  R_xlen_t last_cumulative_count = 0;
+
+  for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
+    const R_xlen_t cumulative_count = p_counts[i];
+
+    if (cumulative_count == 0) {
+      continue;
+    }
+
+    // Diff the accumulated counts to get the radix group size
+    const R_xlen_t group_size = cumulative_count - last_cumulative_count;
+    last_cumulative_count = cumulative_count;
+
+    if (group_size == 1) {
+      groups_size_push(p_group_infos, 1);
+      ++p_x;
+      ++p_o;
+      continue;
+    }
+
+    // Can get here in the case of ties, like c(1, 1), which have a
+    // `group_size` of 2 in the last radix, but there is nothing left to
+    // compare so we are done.
+    if (next_pass == 8) {
+      groups_size_push(p_group_infos, group_size);
+      p_x += group_size;
+      p_o += group_size;
+      continue;
+    }
+
+    // Order next byte of this subgroup
+    dbl_radix_order(
+      p_x,
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_group_infos,
+      group_size,
+      next_pass
+    );
+
+    p_x += group_size;
+    p_o += group_size;
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
+
+/*
+ * Orders based on a single byte corresponding to the current `pass`.
+ */
+static void dbl_radix_order_pass(uint64_t* p_x,
+                                 uint64_t* p_x_aux,
+                                 int* p_o,
+                                 int* p_o_aux,
+                                 uint8_t* p_bytes,
+                                 R_xlen_t* p_counts,
+                                 struct group_infos* p_group_infos,
+                                 const R_xlen_t size,
+                                 const uint8_t pass) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    dbl_insertion_order(p_x, p_o, p_group_infos, size);
+    return;
+  }
+
+  // TODO: Is this where we could modify for big endian?
+  const uint8_t radix = 7 - pass;
+  const uint8_t shift = radix * 8;
+
+  uint8_t byte = 0;
+
+  // Histogram
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint64_t x_elt = p_x[i];
+
+    byte = dbl_extract_uint64_byte(x_elt, shift);
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Fast check to see if all bytes were the same. If so, skip `pass`.
+  if (p_counts[byte] == size) {
+    return;
+  }
+
+  R_xlen_t cumulative = 0;
+
+  // Accumulate counts, skip zeros
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[i];
+
+    if (count == 0) {
+      continue;
+    }
+
+    // Replace with `cumulative` first, then bump `cumulative`.
+    // `p_counts` now represents starting locations for each radix group.
+    p_counts[i] = cumulative;
+    cumulative += count;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_o_aux[loc] = p_o[i];
+    p_x_aux[loc] = p_x[i];
+  }
+
+  // Copy back over
+  memcpy(p_o, p_o_aux, size * sizeof(int));
+  memcpy(p_x, p_x_aux, size * sizeof(uint64_t));
+}
+
+// -----------------------------------------------------------------------------
+
+// Bytes will be extracted 8 bits at a time.
+// This is a MSB radix sort, so they are extracted MSB->LSB.
+// TODO: This probably depends on endianness?
+static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
+  return (x >> shift) & UINT8_MAX;
+}
 
 // -----------------------------------------------------------------------------
 
@@ -1141,6 +1510,7 @@ static void df_order(SEXP x,
       // Extract current chunk and place into `x_slice` in sequential order
       switch (type) {
       case vctrs_type_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
+      case vctrs_type_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
@@ -1182,6 +1552,10 @@ static void col_order_switch(void* p_x,
   switch (type) {
   case vctrs_type_integer: {
     int_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
+    break;
+  }
+  case vctrs_type_double: {
+    dbl_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
@@ -1356,4 +1730,4 @@ static inline size_t df_size_multiplier(SEXP x) {
 
 #undef INT_COUNTING_ORDER_RANGE_BOUNDARY
 
-#undef INT_INSERTION_ORDER_BOUNDARY
+#undef INSERTION_ORDER_BOUNDARY
