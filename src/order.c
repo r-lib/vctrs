@@ -261,6 +261,17 @@ static void int_order_immutable(SEXP x,
                                 bool na_last,
                                 R_xlen_t size);
 
+static void lgl_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size);
+
 static void dbl_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
@@ -286,6 +297,22 @@ static void vec_order_immutable_switch(SEXP x,
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_integer: {
     int_order_immutable(
+      x,
+      p_x_slice,
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_group_infos,
+      decreasing,
+      na_last,
+      size
+    );
+
+    break;
+  }
+  case vctrs_type_logical: {
+    lgl_order_immutable(
       x,
       p_x_slice,
       p_x_aux,
@@ -955,6 +982,58 @@ static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
 
 // -----------------------------------------------------------------------------
 
+// We could have some optimized sort for 2 values (American flag sort?) but
+// honestly I don't see this as the main use case so we just pass through to
+// `int_order()` and `int_order_immutable()`.
+
+static void lgl_order(void* p_x,
+                      void* p_x_aux,
+                      int* p_o,
+                      int* p_o_aux,
+                      uint8_t* p_bytes,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
+  int_order(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size
+  );
+}
+
+static void lgl_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size) {
+  int_order_immutable(
+    x,
+    p_x_slice,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size
+  );
+}
+
+// -----------------------------------------------------------------------------
+
 static void dbl_adjust(void* p_x,
                        const bool decreasing,
                        const bool na_last,
@@ -1510,6 +1589,7 @@ static void df_order(SEXP x,
       // Extract current chunk and place into `x_slice` in sequential order
       switch (type) {
       case vctrs_type_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
+      case vctrs_type_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
       case vctrs_type_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
@@ -1552,6 +1632,10 @@ static void col_order_switch(void* p_x,
   switch (type) {
   case vctrs_type_integer: {
     int_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
+    break;
+  }
+  case vctrs_type_logical: {
+    lgl_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_double: {
