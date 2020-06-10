@@ -1,14 +1,24 @@
 #include "vctrs.h"
 #include "utils.h"
 
-#define UINT8_MAX_SIZE (UINT8_MAX + 1)
-
 // -----------------------------------------------------------------------------
+
+#define UINT8_MAX_SIZE (UINT8_MAX + 1)
 
 // This seems to be a reasonable default to start with for tracking group sizes
 // and is what base R uses. It is expanded by 2x every time we need to
 // reallocate.
 #define GROUP_DATA_SIZE_DEFAULT 100000
+
+#define INT_COUNTING_ORDER_RANGE_BOUNDARY 100000
+
+// A bit ad hoc - but seems to work well. Going up to 256 definitely has
+// negative performance implications for completely random input.
+// Somewhat based on this post, which also uses 128.
+// https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
+#define INT_INSERTION_ORDER_BOUNDARY 128
+
+// -----------------------------------------------------------------------------
 
 /*
  * Info related to 1 column / vector worth of groupings
@@ -33,22 +43,8 @@ struct group_info {
   R_xlen_t max_group_size;
 };
 
-/*
- * Reallocate `data` to be as long as `size`.
- */
-static void group_realloc(struct group_info* p_ginfo, R_xlen_t size) {
-  // Rellocate
-  p_ginfo->data = Rf_xlengthgets(p_ginfo->data, size);
+static void group_realloc(struct group_info* p_ginfo, R_xlen_t size);
 
-  // Reprotect
-  REPROTECT(p_ginfo->data, p_ginfo->data_pi);
-
-  // Update pointer
-  p_ginfo->p_data = INTEGER(p_ginfo->data);
-
-  // Update size
-  p_ginfo->data_size = size;
-}
 
 /*
  * `group_infos` contains information about 2 `group_info` structs.
@@ -73,76 +69,397 @@ struct group_infos {
   bool ignore;
 };
 
-/*
- * Extract the current `group_info*`
- */
-static inline struct group_info* groups_current(struct group_infos* p_ginfos) {
-  return p_ginfos->p_info[p_ginfos->current];
+static inline struct group_info* groups_current(struct group_infos* p_ginfos);
+static void groups_swap(struct group_infos* p_ginfos);
+static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size);
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups);
+
+// [[ register() ]]
+SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
+  if (!r_is_bool(na_last)) {
+    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
+  }
+
+  bool c_na_last = LOGICAL(na_last)[0];
+  bool c_groups = LOGICAL(groups)[0];
+
+  return vec_order(x, decreasing, c_na_last, c_groups);
 }
 
+// -----------------------------------------------------------------------------
+
+static void vec_order_switch(SEXP x,
+                             SEXP x_slice,
+                             SEXP x_aux,
+                             int* p_o,
+                             int* p_o_aux,
+                             uint8_t* p_bytes,
+                             struct group_infos* p_ginfos,
+                             SEXP decreasing,
+                             bool na_last,
+                             R_xlen_t size);
+
 /*
- * `groups_swap()` is called after each data frame column is processed.
- * It handles switching the `current` group info that we are working on,
- * and ensures that the information that might have been there before has
- * been zeroed out. It also ensures that the new current group info has at
- * least as much space as the previous one, which is especially important for
- * the first column swap where the 2nd group info array starts as a size 0
- * integer vector (because we don't know if it will get used or not).
+ * Compute the order of a vector.
+ * Can optionally compute the group sizes as well.
+ *
+ * TODO: Return group info as attributes for type stability? Might not be
+ * important since we have different R level functions.
  */
-static void groups_swap(struct group_infos* p_ginfos) {
-  if (p_ginfos->ignore) {
+static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
+  // TODO:
+  // x = PROTECT(vec_proxy_compare(x));
+
+  // TODO:
+  // Should proxy-compare flatten df-cols?
+  // How to track vector of `decreasing` if so?
+
+  R_xlen_t size = vec_size(x);
+
+  // Don't check length here. This might be vectorized if `x` is a data frame.
+  if (TYPEOF(decreasing) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
+  }
+  if (lgl_any_na(decreasing)) {
+    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
+  }
+
+  // This is sometimes bigger than it needs to be, but will only
+  // be much bigger than required if `x` is filled with numbers that are
+  // incredibly spread out.
+  SEXP x_slice = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
+
+  SEXP o = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_o = INTEGER(o);
+
+  SEXP o_aux = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_o_aux = INTEGER(o_aux);
+
+  // Initialize `out` with sequential 1-based ordering
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_o[i] = i + 1;
+  }
+
+  uint8_t* p_bytes = (uint8_t*) R_alloc(size, sizeof(uint8_t));
+
+  // Should group info be ignored?
+  // Can only ignore if dealing with non-data-frame input and groups have not
+  // been requested, but this is more efficient for atomic vectors.
+  bool ignore = groups ? false : (is_data_frame(x) ? false : true);
+
+  // First group info object is initialized with data
+  struct group_info ginfo1;
+  ginfo1.data_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
+  ginfo1.data = Rf_allocVector(INTSXP, ginfo1.data_size);
+  PROTECT_WITH_INDEX(ginfo1.data, &ginfo1.data_pi);
+  ginfo1.p_data = INTEGER(ginfo1.data);
+  ginfo1.n_groups = 0;
+  ginfo1.max_group_size = 0;
+
+  // Second group info object is initialized, but is empty
+  struct group_info ginfo2;
+  ginfo2.data_size = 0;
+  ginfo2.data = Rf_allocVector(INTSXP, ginfo2.data_size);
+  PROTECT_WITH_INDEX(ginfo2.data, &ginfo2.data_pi);
+  ginfo2.p_data = INTEGER(ginfo2.data);
+  ginfo2.n_groups = 0;
+  ginfo2.max_group_size = 0;
+
+  // Store both of them in a `group_infos` object
+  struct group_info* p_group_info[2];
+  p_group_info[0] = &ginfo1;
+  p_group_info[1] = &ginfo2;
+
+  struct group_infos ginfos;
+  struct group_infos* p_ginfos = &ginfos;
+  p_ginfos->p_info = p_group_info;
+  p_ginfos->current = 0;
+  p_ginfos->ignore = ignore;
+
+  vec_order_switch(
+    x,
+    x_slice,
+    x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_ginfos,
+    decreasing,
+    na_last,
+    size
+  );
+
+  // Return all group info rather than just ordering
+  if (groups) {
+    struct group_info* p_ginfo = groups_current(p_ginfos);
+
+    R_xlen_t n_groups = p_ginfo->n_groups;
+    p_ginfo->data = PROTECT(Rf_xlengthgets(p_ginfo->data, n_groups));
+
+    SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
+
+    SET_VECTOR_ELT(out, 0, o);
+    SET_VECTOR_ELT(out, 1, p_ginfo->data);
+    SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_ginfo->n_groups));
+    SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_ginfo->max_group_size));
+
+    UNPROTECT(8);
+    return out;
+  }
+
+  UNPROTECT(6);
+  return o;
+}
+
+// -----------------------------------------------------------------------------
+
+static void df_order(SEXP x,
+                     SEXP x_slice,
+                     SEXP x_aux,
+                     int* p_o,
+                     int* p_o_aux,
+                     uint8_t* p_bytes,
+                     struct group_infos* p_ginfos,
+                     SEXP decreasing,
+                     bool na_last,
+                     R_xlen_t size);
+
+static void vec_order_immutable_switch(SEXP x,
+                                       SEXP x_slice,
+                                       SEXP x_aux,
+                                       int* p_o,
+                                       int* p_o_aux,
+                                       uint8_t* p_bytes,
+                                       struct group_infos* p_ginfos,
+                                       bool decreasing,
+                                       bool na_last,
+                                       R_xlen_t size);
+
+static void vec_order_switch(SEXP x,
+                             SEXP x_slice,
+                             SEXP x_aux,
+                             int* p_o,
+                             int* p_o_aux,
+                             uint8_t* p_bytes,
+                             struct group_infos* p_ginfos,
+                             SEXP decreasing,
+                             bool na_last,
+                             R_xlen_t size) {
+  const enum vctrs_type type = vec_proxy_typeof(x);
+
+  if (type == vctrs_type_dataframe) {
+    df_order(
+      x,
+      x_slice,
+      x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_ginfos,
+      decreasing,
+      na_last,
+      size
+    );
+
     return;
   }
 
-  struct group_info* p_ginfo_pre = groups_current(p_ginfos);
+  // We know it is logical with no missing values, but size hasn't been checked
+  if (Rf_xlength(decreasing) != 1) {
+    Rf_errorcall(
+      R_NilValue,
+      "`decreasing` must have length 1 when `x` is not a data frame."
+    );
+  }
 
-  // Make the swap
-  p_ginfos->current = 1 - p_ginfos->current;
+  bool c_decreasing = LOGICAL(decreasing)[0];
 
-  struct group_info* p_ginfo_post = groups_current(p_ginfos);
+  vec_order_immutable_switch(
+    x,
+    x_slice,
+    x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_ginfos,
+    c_decreasing,
+    na_last,
+    size
+  );
+}
 
-  // Clear the info from last time the swap was made
-  p_ginfo_post->max_group_size = 0;
-  p_ginfo_post->n_groups = 0;
+// -----------------------------------------------------------------------------
 
-  // Ensure the new group info is at least as big as the old group info
-  if (p_ginfo_post->data_size < p_ginfo_pre->data_size) {
-    group_realloc(p_ginfo_post, p_ginfo_pre->data_size);
+static void int_order_immutable(const int* p_x,
+                                int* p_x_slice,
+                                int* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_ginfos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size);
+
+// Used on bare vectors and the first column of data frame `x`s
+static void vec_order_immutable_switch(SEXP x,
+                                       SEXP x_slice,
+                                       SEXP x_aux,
+                                       int* p_o,
+                                       int* p_o_aux,
+                                       uint8_t* p_bytes,
+                                       struct group_infos* p_ginfos,
+                                       bool decreasing,
+                                       bool na_last,
+                                       R_xlen_t size) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_integer: {
+    int* p_x = INTEGER(x);
+    int* p_x_slice = INTEGER(x_slice);
+    int* p_x_aux = INTEGER(x_aux);
+
+    int_order_immutable(
+      p_x,
+      p_x_slice,
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_ginfos,
+      decreasing,
+      na_last,
+      size
+    );
+
+    break;
+  }
+  case vctrs_type_dataframe: {
+    Rf_errorcall(R_NilValue, "Internal error: Data frames should have been handled by now");
+  }
+  default: {
+    Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`.");
+  }
   }
 }
 
+// -----------------------------------------------------------------------------
+
+static inline void int_adjust(int* p_x,
+                              const bool decreasing,
+                              const bool na_last,
+                              const R_xlen_t size);
+
+static void int_compute_range(const int* p_x,
+                              R_xlen_t size,
+                              int* p_x_min,
+                              uint32_t* p_range);
+
+static void int_counting_order(const int* p_x,
+                               int* p_o,
+                               int* p_o_aux,
+                               struct group_infos* p_ginfos,
+                               R_xlen_t size,
+                               int x_min,
+                               uint32_t range,
+                               bool decreasing,
+                               bool na_last);
+
+static void int_insertion_order(int* p_o,
+                                int* p_x,
+                                struct group_infos* p_ginfos,
+                                const R_xlen_t size);
+
+static void int_radix_order(int* p_x,
+                            int* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_ginfos,
+                            const R_xlen_t size,
+                            const uint8_t pass);
+
 /*
- * Push a group size onto the current `group_info*`
- * - Does nothing if we are ignoring group info
- * - Reallocates as needed
- * - Updates number of groups / max group size as well
+ * These are the main entry points for integer ordering. They are nearly
+ * identical except `int_order_immutable()` assumes that `p_x` cannot be
+ * modified directly and is user input.
+ *
+ * `int_order()` assumes `p_x` is modifiable by reference. It is called when
+ * iterating over data frame columns and `p_x` is the 2nd or greater column,
+ * in which case `p_x` is really a chunk of that column that has been copied
+ * into `x_slice`.
+ *
+ * `int_order_immutable()` assumes `p_x` is user input which cannot be modified.
+ * It copies `x` into another SEXP that can be modified directly unless a
+ * counting sort is going to be used, in which case `p_x` can be used directly.
  */
-static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size) {
-  if (p_ginfos->ignore) {
+static void int_order(int* p_x,
+                      int* p_x_aux,
+                      int* p_o,
+                      int* p_o_aux,
+                      uint8_t* p_bytes,
+                      struct group_infos* p_ginfos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
+  if (size < INT_INSERTION_ORDER_BOUNDARY) {
+    int_adjust(p_x, decreasing, na_last, size);
+    int_insertion_order(p_o, p_x, p_ginfos, size);
     return;
   }
 
-  if (size == 0) {
-    Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
+  uint32_t range;
+  int x_min;
+
+  int_compute_range(p_x, size, &x_min, &range);
+
+  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    int_counting_order(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
+    return;
   }
 
-  struct group_info* p_ginfo = groups_current(p_ginfos);
+  uint8_t pass = 0;
 
-  // Extend `data` as required - reprotects itself
-  if (p_ginfo->data_size == p_ginfo->n_groups) {
-    group_realloc(p_ginfo, p_ginfo->data_size * 2);
+  int_adjust(p_x, decreasing, na_last, size);
+  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, size, pass);
+}
+
+static void int_order_immutable(const int* p_x,
+                                int* p_x_slice,
+                                int* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_ginfos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size) {
+  if (size < INT_INSERTION_ORDER_BOUNDARY) {
+    memcpy(p_x_slice, p_x, size * sizeof(int));
+    int_adjust(p_x_slice, decreasing, na_last, size);
+    int_insertion_order(p_o, p_x_slice, p_ginfos, size);
+    return;
   }
 
-  // Push group size
-  p_ginfo->p_data[p_ginfo->n_groups] = size;
+  uint32_t range;
+  int x_min;
 
-  // Bump number of groups
-  ++p_ginfo->n_groups;
+  int_compute_range(p_x, size, &x_min, &range);
 
-  // Update max group size
-  if (p_ginfo->max_group_size < size) {
-    p_ginfo->max_group_size = size;
+  // If in counting sort range, no need to copy over to `x_slice`
+  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    int_counting_order(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
+    return;
   }
+
+  uint8_t pass = 0;
+
+  memcpy(p_x_slice, p_x, size * sizeof(int));
+  int_adjust(p_x_slice, decreasing, na_last, size);
+  int_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, size, pass);
 }
 
 // -----------------------------------------------------------------------------
@@ -287,8 +604,6 @@ static void int_compute_range(const int* p_x,
 }
 
 
-#define INT_COUNTING_ORDER_RANGE_BOUNDARY 100000
-
 /*
  * The counting sort expects `p_x` to be unadjusted (i.e. `int_adjust()` has
  * not been used). It handles `decreasing` and `na_last` internally.
@@ -300,14 +615,14 @@ static void int_compute_range(const int* p_x,
  * Counting sort does not modify `p_x` in any way.
  */
 static void int_counting_order(const int* p_x,
-                              int* p_o,
-                              int* p_o_aux,
-                              struct group_infos* p_ginfos,
-                              R_xlen_t size,
-                              int x_min,
-                              uint32_t range,
-                              bool decreasing,
-                              bool na_last) {
+                               int* p_o,
+                               int* p_o_aux,
+                               struct group_infos* p_ginfos,
+                               R_xlen_t size,
+                               int x_min,
+                               uint32_t range,
+                               bool decreasing,
+                               bool na_last) {
   // - Only allocate this once (counts are reset to 0 at end)
   // - Allocating as static allows us to allocate an array this large
   // - `+ 1` to ensure there is room for the extra `NA` bucket
@@ -404,21 +719,14 @@ static void int_counting_order(const int* p_x,
 
 // -----------------------------------------------------------------------------
 
-// A bit ad hoc - but seems to work well. Going up to 256 definitely has
-// negative performance implications for completely random input.
-// Somewhat based on this post, which also uses 128.
-// https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
-#define INT_INSERTION_ORDER_BOUNDARY 128
-
-// Used as an internal algorithm for radix sorting once we hit a slice of
-// size `INSERTION_SIZE`. Should be fast for these small slices, inserts
-// into `p_o` directly.
-
 /*
  * `int_insertion_order()` is used in two ways:
  * - It is how we "finish off" radix sorts rather than deep recursion.
  * - If we have an original `x` input that is small enough, we just immediately
  *   insertion sort it.
+ *
+ * For small inputs, it is much faster than deeply recursing with
+ * radix ordering.
  *
  * Insertion ordering expects that `p_x` has been adjusted with `int_adjust()`.
  */
@@ -488,29 +796,6 @@ static void int_insertion_order(int* p_o,
 
 // -----------------------------------------------------------------------------
 
-#define HEX_UINT32_SIGN_BIT 0x80000000u
-
-// Flipping the sign bit is all we need to do to map in an order preserving way.
-// Relies on `NA_INTEGER == INT_MIN` which maps to 0 correctly.
-// [INT32_MIN, INT32_MAX] => [0, UINT32_MAX]
-static inline uint32_t map_from_int32_to_uint32(int32_t x) {
-  return x ^ HEX_UINT32_SIGN_BIT;
-}
-
-#undef HEX_UINT32_SIGN_BIT
-
-// Bytes will be extracted 8 bits at a time.
-// This is a MSB radix sort, so they are extracted MSB->LSB.
-// TODO: This probably depends on endianness?
-static inline uint8_t extract_byte(uint32_t x, uint8_t shift) {
-  return (x >> shift) & UINT8_MAX;
-}
-
-// -----------------------------------------------------------------------------
-
-/*
- * Orders based on a single byte corresponding to the current `pass`.
- */
 static void int_radix_order_pass(int* p_x,
                                  int* p_x_aux,
                                  int* p_o,
@@ -519,65 +804,7 @@ static void int_radix_order_pass(int* p_x,
                                  R_xlen_t* p_counts,
                                  struct group_infos* p_ginfos,
                                  const R_xlen_t size,
-                                 const uint8_t pass) {
-  if (size <= INT_INSERTION_ORDER_BOUNDARY) {
-    int_insertion_order(p_o, p_x, p_ginfos, size);
-    return;
-  }
-
-  // TODO: Is this where we could modify for big endian?
-  const uint8_t radix = 3 - pass;
-  const uint8_t shift = radix * 8;
-
-  uint8_t byte = 0;
-
-  // Histogram
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const int x_elt = p_x[i];
-
-    const uint32_t x_elt_mapped = map_from_int32_to_uint32(x_elt);
-
-    byte = extract_byte(x_elt_mapped, shift);
-
-    p_bytes[i] = byte;
-    ++p_counts[byte];
-  }
-
-  // Fast check to see if all bytes were the same. If so, skip `pass`.
-  if (p_counts[byte] == size) {
-    return;
-  }
-
-  R_xlen_t cumulative = 0;
-
-  // Accumulate counts, skip zeros
-  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-    R_xlen_t count = p_counts[i];
-
-    if (count == 0) {
-      continue;
-    }
-
-    // Replace with `cumulative` first, then bump `cumulative`.
-    // `p_counts` now represents starting locations for each radix group.
-    p_counts[i] = cumulative;
-    cumulative += count;
-  }
-
-  // Place into auxiliary arrays in the correct order, then copy back over
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint8_t byte = p_bytes[i];
-    const R_xlen_t loc = p_counts[byte]++;
-    p_o_aux[loc] = p_o[i];
-    p_x_aux[loc] = p_x[i];
-  }
-
-  // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(int));
-  memcpy(p_x, p_x_aux, size * sizeof(int));
-}
-
-// -----------------------------------------------------------------------------
+                                 const uint8_t pass);
 
 /*
  * Recursive function for radix ordering. Orders the current byte, then iterates
@@ -667,112 +894,110 @@ static void int_radix_order(int* p_x,
 
 // -----------------------------------------------------------------------------
 
-/*
- * These are the main entry points for integer ordering. They are nearly
- * identical except `int_order_immutable()` assumes that `p_x` cannot be
- * modified directly and is user input.
- *
- * `int_order()` assumes `p_x` is modifiable by reference. It is called when
- * iterating over data frame columns and `p_x` is the 2nd or greater column,
- * in which case `p_x` is really a chunk of that column that has been copied
- * into `x_slice`.
- *
- * `int_order_immutable()` assumes `p_x` is user input which cannot be modified.
- * It copies `x` into another SEXP that can be modified directly unless a
- * counting sort is going to be used, in which case `p_x` can be used directly.
- */
+static inline uint32_t int_map_to_uint32(int x);
+static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift);
 
-static void int_order(int* p_x,
-                      int* p_x_aux,
-                      int* p_o,
-                      int* p_o_aux,
-                      uint8_t* p_bytes,
-                      struct group_infos* p_ginfos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
-  if (size < INT_INSERTION_ORDER_BOUNDARY) {
-    int_adjust(p_x, decreasing, na_last, size);
+/*
+ * Orders based on a single byte corresponding to the current `pass`.
+ */
+static void int_radix_order_pass(int* p_x,
+                                 int* p_x_aux,
+                                 int* p_o,
+                                 int* p_o_aux,
+                                 uint8_t* p_bytes,
+                                 R_xlen_t* p_counts,
+                                 struct group_infos* p_ginfos,
+                                 const R_xlen_t size,
+                                 const uint8_t pass) {
+  if (size <= INT_INSERTION_ORDER_BOUNDARY) {
     int_insertion_order(p_o, p_x, p_ginfos, size);
     return;
   }
 
-  uint32_t range;
-  int x_min;
+  // TODO: Is this where we could modify for big endian?
+  const uint8_t radix = 3 - pass;
+  const uint8_t shift = radix * 8;
 
-  int_compute_range(p_x, size, &x_min, &range);
+  uint8_t byte = 0;
 
-  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    int_counting_order(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
+  // Histogram
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const int x_elt = p_x[i];
+
+    const uint32_t x_elt_mapped = int_map_to_uint32(x_elt);
+
+    byte = int_extract_uint32_byte(x_elt_mapped, shift);
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Fast check to see if all bytes were the same. If so, skip `pass`.
+  if (p_counts[byte] == size) {
     return;
   }
 
-  uint8_t pass = 0;
+  R_xlen_t cumulative = 0;
 
-  int_adjust(p_x, decreasing, na_last, size);
-  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, size, pass);
+  // Accumulate counts, skip zeros
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[i];
+
+    if (count == 0) {
+      continue;
+    }
+
+    // Replace with `cumulative` first, then bump `cumulative`.
+    // `p_counts` now represents starting locations for each radix group.
+    p_counts[i] = cumulative;
+    cumulative += count;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_o_aux[loc] = p_o[i];
+    p_x_aux[loc] = p_x[i];
+  }
+
+  // Copy back over
+  memcpy(p_o, p_o_aux, size * sizeof(int));
+  memcpy(p_x, p_x_aux, size * sizeof(int));
 }
-
-
-static void int_order_immutable(const int* p_x,
-                                int* p_x_slice,
-                                int* p_x_aux,
-                                int* p_o,
-                                int* p_o_aux,
-                                uint8_t* p_bytes,
-                                struct group_infos* p_ginfos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
-  if (size < INT_INSERTION_ORDER_BOUNDARY) {
-    memcpy(p_x_slice, p_x, size * sizeof(int));
-    int_adjust(p_x_slice, decreasing, na_last, size);
-    int_insertion_order(p_o, p_x_slice, p_ginfos, size);
-    return;
-  }
-
-  uint32_t range;
-  int x_min;
-
-  int_compute_range(p_x, size, &x_min, &range);
-
-  // If in counting sort range, no need to copy over to `x_slice`
-  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    int_counting_order(p_x, p_o, p_o_aux, p_ginfos, size, x_min, range, decreasing, na_last);
-    return;
-  }
-
-  uint8_t pass = 0;
-
-  memcpy(p_x_slice, p_x, size * sizeof(int));
-  int_adjust(p_x_slice, decreasing, na_last, size);
-  int_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_ginfos, size, pass);
-}
-
 
 // -----------------------------------------------------------------------------
 
-static void vec_order_immutable_switch(SEXP x,
-                                       SEXP x_slice,
-                                       SEXP x_aux,
-                                       int* p_o,
-                                       int* p_o_aux,
-                                       uint8_t* p_bytes,
-                                       struct group_infos* p_ginfos,
-                                       bool decreasing,
-                                       bool na_last,
-                                       R_xlen_t size);
+#define HEX_UINT32_SIGN_BIT 0x80000000u
 
-static void vec_col_order_switch(SEXP x,
-                                 SEXP x_aux,
-                                 int* p_o,
-                                 int* p_o_aux,
-                                 uint8_t* p_bytes,
-                                 struct group_infos* p_ginfos,
-                                 bool decreasing,
-                                 bool na_last,
-                                 R_xlen_t size,
-                                 const enum vctrs_type type);
+// Flipping the sign bit is all we need to do to map in an order preserving way.
+// Relies on `NA_INTEGER == INT_MIN` which maps to 0 correctly.
+// [INT32_MIN, INT32_MAX] => [0, UINT32_MAX]
+static inline uint32_t int_map_to_uint32(int32_t x) {
+  return x ^ HEX_UINT32_SIGN_BIT;
+}
+
+#undef HEX_UINT32_SIGN_BIT
+
+// Bytes will be extracted 8 bits at a time.
+// This is a MSB radix sort, so they are extracted MSB->LSB.
+// TODO: This probably depends on endianness?
+static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
+  return (x >> shift) & UINT8_MAX;
+}
+
+// -----------------------------------------------------------------------------
+
+static void col_order_switch(SEXP x,
+                             SEXP x_aux,
+                             int* p_o,
+                             int* p_o_aux,
+                             uint8_t* p_bytes,
+                             struct group_infos* p_ginfos,
+                             bool decreasing,
+                             bool na_last,
+                             R_xlen_t size,
+                             const enum vctrs_type type);
 
 /*
  * `df_order()` is the main user of `p_ginfos`. It uses the grouping
@@ -885,7 +1110,7 @@ static void df_order(SEXP x,
         p_x_slice[j] = p_col[loc];
       }
 
-      vec_col_order_switch(
+      col_order_switch(
         x_slice,
         x_aux,
         p_o_col,
@@ -909,16 +1134,16 @@ static void df_order(SEXP x,
 // Like `vec_order_switch()`, but specifically for columns of a data
 // frame where `decreasing` is known and is scalar.
 // Also assumes `x` is mutable!
-static void vec_col_order_switch(SEXP x,
-                                 SEXP x_aux,
-                                 int* p_o,
-                                 int* p_o_aux,
-                                 uint8_t* p_bytes,
-                                 struct group_infos* p_ginfos,
-                                 bool decreasing,
-                                 bool na_last,
-                                 R_xlen_t size,
-                                 const enum vctrs_type type) {
+static void col_order_switch(SEXP x,
+                             SEXP x_aux,
+                             int* p_o,
+                             int* p_o_aux,
+                             uint8_t* p_bytes,
+                             struct group_infos* p_ginfos,
+                             bool decreasing,
+                             bool na_last,
+                             R_xlen_t size,
+                             const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer: {
     int* p_x = INTEGER(x);
@@ -940,238 +1165,92 @@ static void vec_col_order_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups);
+/*
+ * Reallocate `data` to be as long as `size`.
+ */
+static void group_realloc(struct group_info* p_ginfo, R_xlen_t size) {
+  // Reallocate
+  p_ginfo->data = Rf_xlengthgets(p_ginfo->data, size);
 
-// [[ register() ]]
-SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
-  if (!r_is_bool(na_last)) {
-    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
-  }
+  // Reprotect
+  REPROTECT(p_ginfo->data, p_ginfo->data_pi);
 
-  bool c_na_last = LOGICAL(na_last)[0];
-  bool c_groups = LOGICAL(groups)[0];
+  // Update pointer
+  p_ginfo->p_data = INTEGER(p_ginfo->data);
 
-  return vec_order(x, decreasing, c_na_last, c_groups);
+  // Update size
+  p_ginfo->data_size = size;
 }
-
-
-static void vec_order_switch(SEXP x,
-                             SEXP x_slice,
-                             SEXP x_aux,
-                             int* p_o,
-                             int* p_o_aux,
-                             uint8_t* p_bytes,
-                             struct group_infos* p_ginfos,
-                             SEXP decreasing,
-                             bool na_last,
-                             R_xlen_t size);
 
 /*
- * Compute the order of a vector.
- * Can optionally compute the group sizes as well.
- *
- * TODO: Return group info as attributes for type stability? Might not be
- * important since we have different R level functions.
+ * Extract the current `group_info*`
  */
-static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
-  // TODO:
-  // x = PROTECT(vec_proxy_compare(x));
-
-  // TODO:
-  // Should proxy-compare flatten df-cols?
-  // How to track vector of `decreasing` if so?
-
-  R_xlen_t size = vec_size(x);
-
-  // Don't check length here. This might be vectorized if `x` is a data frame.
-  if (TYPEOF(decreasing) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
-  }
-  if (lgl_any_na(decreasing)) {
-    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
-  }
-
-  // This is sometimes bigger than it needs to be, but will only
-  // be much bigger than required if `x` is filled with numbers that are
-  // incredibly spread out.
-  SEXP x_slice = PROTECT(Rf_allocVector(INTSXP, size));
-  SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
-
-  SEXP o = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_o = INTEGER(o);
-
-  SEXP o_aux = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_o_aux = INTEGER(o_aux);
-
-  // Initialize `out` with sequential 1-based ordering
-  for (R_xlen_t i = 0; i < size; ++i) {
-    p_o[i] = i + 1;
-  }
-
-  uint8_t* p_bytes = (uint8_t*) R_alloc(size, sizeof(uint8_t));
-
-  // Should group info be ignored?
-  // Can only ignore if dealing with non-data-frame input and groups have not
-  // been requested, but this is more efficient for atomic vectors.
-  bool ignore = groups ? false : (is_data_frame(x) ? false : true);
-
-  // First group info object is initialized with data
-  struct group_info ginfo1;
-  ginfo1.data_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
-  ginfo1.data = Rf_allocVector(INTSXP, ginfo1.data_size);
-  PROTECT_WITH_INDEX(ginfo1.data, &ginfo1.data_pi);
-  ginfo1.p_data = INTEGER(ginfo1.data);
-  ginfo1.n_groups = 0;
-  ginfo1.max_group_size = 0;
-
-  // Second group info object is initialized, but is empty
-  struct group_info ginfo2;
-  ginfo2.data_size = 0;
-  ginfo2.data = Rf_allocVector(INTSXP, ginfo2.data_size);
-  PROTECT_WITH_INDEX(ginfo2.data, &ginfo2.data_pi);
-  ginfo2.p_data = INTEGER(ginfo2.data);
-  ginfo2.n_groups = 0;
-  ginfo2.max_group_size = 0;
-
-  // Store both of them in a `group_infos` object
-  struct group_info* p_group_info[2];
-  p_group_info[0] = &ginfo1;
-  p_group_info[1] = &ginfo2;
-
-  struct group_infos ginfos;
-  struct group_infos* p_ginfos = &ginfos;
-  p_ginfos->p_info = p_group_info;
-  p_ginfos->current = 0;
-  p_ginfos->ignore = ignore;
-
-  vec_order_switch(
-    x,
-    x_slice,
-    x_aux,
-    p_o,
-    p_o_aux,
-    p_bytes,
-    p_ginfos,
-    decreasing,
-    na_last,
-    size
-  );
-
-  // Return all group info rather than just ordering
-  if (groups) {
-    struct group_info* p_ginfo = groups_current(p_ginfos);
-
-    R_xlen_t n_groups = p_ginfo->n_groups;
-    p_ginfo->data = PROTECT(Rf_xlengthgets(p_ginfo->data, n_groups));
-
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
-
-    SET_VECTOR_ELT(out, 0, o);
-    SET_VECTOR_ELT(out, 1, p_ginfo->data);
-    SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_ginfo->n_groups));
-    SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_ginfo->max_group_size));
-
-    UNPROTECT(8);
-    return out;
-  }
-
-  UNPROTECT(6);
-  return o;
+static inline struct group_info* groups_current(struct group_infos* p_ginfos) {
+  return p_ginfos->p_info[p_ginfos->current];
 }
 
-// -----------------------------------------------------------------------------
-
-static void vec_order_switch(SEXP x,
-                             SEXP x_slice,
-                             SEXP x_aux,
-                             int* p_o,
-                             int* p_o_aux,
-                             uint8_t* p_bytes,
-                             struct group_infos* p_ginfos,
-                             SEXP decreasing,
-                             bool na_last,
-                             R_xlen_t size) {
-  const enum vctrs_type type = vec_proxy_typeof(x);
-
-  if (type == vctrs_type_dataframe) {
-    df_order(
-      x,
-      x_slice,
-      x_aux,
-      p_o,
-      p_o_aux,
-      p_bytes,
-      p_ginfos,
-      decreasing,
-      na_last,
-      size
-    );
-
+/*
+ * `groups_swap()` is called after each data frame column is processed.
+ * It handles switching the `current` group info that we are working on,
+ * and ensures that the information that might have been there before has
+ * been zeroed out. It also ensures that the new current group info has at
+ * least as much space as the previous one, which is especially important for
+ * the first column swap where the 2nd group info array starts as a size 0
+ * integer vector (because we don't know if it will get used or not).
+ */
+static void groups_swap(struct group_infos* p_ginfos) {
+  if (p_ginfos->ignore) {
     return;
   }
 
-  // We know it is logical with no missing values, but size hasn't been checked
-  if (Rf_xlength(decreasing) != 1) {
-    Rf_errorcall(
-      R_NilValue,
-      "`decreasing` must have length 1 when `x` is not a data frame."
-    );
+  struct group_info* p_ginfo_pre = groups_current(p_ginfos);
+
+  // Make the swap
+  p_ginfos->current = 1 - p_ginfos->current;
+
+  struct group_info* p_ginfo_post = groups_current(p_ginfos);
+
+  // Clear the info from last time the swap was made
+  p_ginfo_post->max_group_size = 0;
+  p_ginfo_post->n_groups = 0;
+
+  // Ensure the new group info is at least as big as the old group info
+  if (p_ginfo_post->data_size < p_ginfo_pre->data_size) {
+    group_realloc(p_ginfo_post, p_ginfo_pre->data_size);
   }
-
-  bool c_decreasing = LOGICAL(decreasing)[0];
-
-  vec_order_immutable_switch(
-    x,
-    x_slice,
-    x_aux,
-    p_o,
-    p_o_aux,
-    p_bytes,
-    p_ginfos,
-    c_decreasing,
-    na_last,
-    size
-  );
 }
 
-// Used on bare vectors and the first column of data frame `x`s
-static void vec_order_immutable_switch(SEXP x,
-                                       SEXP x_slice,
-                                       SEXP x_aux,
-                                       int* p_o,
-                                       int* p_o_aux,
-                                       uint8_t* p_bytes,
-                                       struct group_infos* p_ginfos,
-                                       bool decreasing,
-                                       bool na_last,
-                                       R_xlen_t size) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_integer: {
-    int* p_x = INTEGER(x);
-    int* p_x_slice = INTEGER(x_slice);
-    int* p_x_aux = INTEGER(x_aux);
+/*
+ * Push a group size onto the current `group_info*`
+ * - Does nothing if we are ignoring group info
+ * - Reallocates as needed
+ * - Updates number of groups / max group size as well
+ */
+static void groups_size_push(struct group_infos* p_ginfos, R_xlen_t size) {
+  if (p_ginfos->ignore) {
+    return;
+  }
 
-    int_order_immutable(
-      p_x,
-      p_x_slice,
-      p_x_aux,
-      p_o,
-      p_o_aux,
-      p_bytes,
-      p_ginfos,
-      decreasing,
-      na_last,
-      size
-    );
+  if (size == 0) {
+    Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
+  }
 
-    break;
+  struct group_info* p_ginfo = groups_current(p_ginfos);
+
+  // Extend `data` as required - reprotects itself
+  if (p_ginfo->data_size == p_ginfo->n_groups) {
+    group_realloc(p_ginfo, p_ginfo->data_size * 2);
   }
-  case vctrs_type_dataframe: {
-    Rf_errorcall(R_NilValue, "Internal error: Data frames should have been handled by now");
-  }
-  default: {
-    Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`.");
-  }
+
+  // Push group size
+  p_ginfo->p_data[p_ginfo->n_groups] = size;
+
+  // Bump number of groups
+  ++p_ginfo->n_groups;
+
+  // Update max group size
+  if (p_ginfo->max_group_size < size) {
+    p_ginfo->max_group_size = size;
   }
 }
 
