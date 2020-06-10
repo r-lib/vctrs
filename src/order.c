@@ -831,7 +831,7 @@ static void int_radix_order(uint32_t* p_x,
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
-    if (cumulative_count == 0) {
+    if (!cumulative_count) {
       continue;
     }
 
@@ -1258,7 +1258,7 @@ static void dbl_radix_order(uint64_t* p_x,
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
-    if (cumulative_count == 0) {
+    if (!cumulative_count) {
       continue;
     }
 
