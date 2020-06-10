@@ -373,8 +373,8 @@ static void int_counting_order(const int* p_x,
                                bool decreasing,
                                bool na_last);
 
-static void int_insertion_order(int* p_o,
-                                int* p_x,
+static void int_insertion_order(int* p_x,
+                                int* p_o,
                                 struct group_infos* p_ginfos,
                                 const R_xlen_t size);
 
@@ -412,7 +412,7 @@ static void int_order(int* p_x,
                       R_xlen_t size) {
   if (size < INT_INSERTION_ORDER_BOUNDARY) {
     int_adjust(p_x, decreasing, na_last, size);
-    int_insertion_order(p_o, p_x, p_ginfos, size);
+    int_insertion_order(p_x, p_o, p_ginfos, size);
     return;
   }
 
@@ -445,7 +445,7 @@ static void int_order_immutable(const int* p_x,
   if (size < INT_INSERTION_ORDER_BOUNDARY) {
     memcpy(p_x_slice, p_x, size * sizeof(int));
     int_adjust(p_x_slice, decreasing, na_last, size);
-    int_insertion_order(p_o, p_x_slice, p_ginfos, size);
+    int_insertion_order(p_x_slice, p_o, p_ginfos, size);
     return;
   }
 
@@ -735,8 +735,8 @@ static void int_counting_order(const int* p_x,
  *
  * Insertion ordering expects that `p_x` has been adjusted with `int_adjust()`.
  */
-static void int_insertion_order(int* p_o,
-                                int* p_x,
+static void int_insertion_order(int* p_x,
+                                int* p_o,
                                 struct group_infos* p_ginfos,
                                 const R_xlen_t size) {
   // Don't think this can occur, but safer this way
@@ -915,7 +915,7 @@ static void int_radix_order_pass(int* p_x,
                                  const R_xlen_t size,
                                  const uint8_t pass) {
   if (size <= INT_INSERTION_ORDER_BOUNDARY) {
-    int_insertion_order(p_o, p_x, p_ginfos, size);
+    int_insertion_order(p_x, p_o, p_ginfos, size);
     return;
   }
 
