@@ -153,6 +153,43 @@ test_that("all `NA` values works - ensures that we can compute the 'range' of al
 })
 
 # ------------------------------------------------------------------------------
+# vec_order2(<logical>)
+
+# Really this just goes through the integer infrastructure. Just checking that
+# it is working.
+
+test_that("can order logicals", {
+  x <- c(FALSE, TRUE, FALSE)
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("all combinations of `decreasing` and `na_last` work", {
+  x <- c(TRUE, NA, FALSE)
+
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[order(x, na.last = TRUE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[order(x, na.last = FALSE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[order(x, na.last = TRUE, decreasing = TRUE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[order(x, na.last = FALSE, decreasing = TRUE)]
+  )
+})
+
+test_that("all `NA` values works", {
+  x <- c(NA, NA)
+  expect_identical(vec_order2(x), order(x))
+})
+
+# ------------------------------------------------------------------------------
 # vec_order2(<double>) - insertion
 
 test_that("can order doubles", {
@@ -330,6 +367,14 @@ test_that("secondary columns break ties - double", {
   df <- data.frame(
     x = c(1, 2, 1),
     y = c(3, 2, 1)
+  )
+  expect_identical(vec_order2(df), c(3L, 1L, 2L))
+})
+
+test_that("secondary columns break ties - logical", {
+  df <- data.frame(
+    x = c(FALSE, TRUE, FALSE),
+    y = c(TRUE, TRUE, FALSE)
   )
   expect_identical(vec_order2(df), c(3L, 1L, 2L))
 })
