@@ -1585,12 +1585,28 @@ static struct group_info new_group_info(R_xlen_t size) {
   return info;
 }
 
+// A good bit faster than `Rf_xlengthgets()` because that fills the new extended
+// locations with `NA` as well, which we don't need.
+static SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  memcpy(p_out, p_data, data_size * sizeof(int));
+
+  UNPROTECT(1);
+  return out;
+}
+
 /*
  * Reallocate `data` to be as long as `size`.
  */
 static void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
   // Reallocate
-  p_group_info->data = Rf_xlengthgets(p_group_info->data, size);
+  p_group_info->data = group_extend(
+    p_group_info->p_data,
+    p_group_info->data_size,
+    size
+  );
 
   // Reprotect
   REPROTECT(p_group_info->data, p_group_info->data_pi);
