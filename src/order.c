@@ -1,14 +1,10 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "order-groups.h"
 
 // -----------------------------------------------------------------------------
 
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
-
-// This seems to be a reasonable default to start with for tracking group sizes
-// and is what base R uses. It is expanded by 2x every time we need to
-// reallocate.
-#define GROUP_DATA_SIZE_DEFAULT 100000
 
 // This is the maximum range size that determines whether a counting sort
 // is used on the input or not. When `x` has a range less than this boundary,
@@ -25,57 +21,11 @@
 
 // -----------------------------------------------------------------------------
 
-/*
- * Info related to 1 column / vector worth of groupings
- *
- * @member data An integer vector of group sizes.
- * @member p_data A pointer to `data`.
- * @member data_pi The protection index for `data` which allows us to
- *   `REPROTECT()` on the fly.
- * @member data_size The current allocated size of `data`.
- * @member n_groups The current number of groups seen so far.
- *   Always `<= data_size`.
- * @member max_group_size The maximum group size seen so far.
- */
-struct group_info {
-  SEXP data;
-  int* p_data;
-  PROTECT_INDEX data_pi;
-
-  R_xlen_t data_size;
-
-  R_xlen_t n_groups;
-  R_xlen_t max_group_size;
-};
-
+static struct group_info new_group_info(R_xlen_t size);
 static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
 
-
-/*
- * `group_infos` contains information about 2 `group_info` structs. It contains
- * a pointer which points to 2 `group_info` pointers.
- *
- * For a single atomic vector, `current = 0` is always set and only one of the
- * structs is ever used.
- *
- * For a data frame with multiple columns, after every column `current` is
- * flipped between 0 and 1, giving us a chance to read the group information
- * off the previous column (which allows us to chunk the current column into
- * groups) while also updating the group information of the chunks of
- * the current one.
- *
- * @member p_p_group_info A pointer to two `group_info` pointers.
- * @member current The current `group_info` pointer we are using. This is
- *   either 0 or 1.
- * @member ignore Should group tracking be ignored entirely? This is the default
- *   for atomic vectors unless groups information is explicitly requested.
- */
-struct group_infos {
-  struct group_info** p_p_group_info;
-  int current;
-  bool ignore;
-};
-
+static struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                          bool ignore);
 static inline struct group_info* groups_current(struct group_infos* p_group_infos);
 static void groups_swap(struct group_infos* p_group_infos);
 static void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size);
@@ -117,6 +67,9 @@ static void vec_order_switch(SEXP x,
  * important since we have different R level functions.
  */
 static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
+  int n_prot = 0;
+  int* p_n_prot = &n_prot;
+
   // TODO:
   // x = PROTECT(vec_proxy_compare(x));
 
@@ -137,13 +90,13 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   // This is sometimes bigger than it needs to be, but will only
   // be much bigger than required if `x` is filled with numbers that are
   // incredibly spread out.
-  SEXP x_slice = PROTECT(Rf_allocVector(INTSXP, size));
-  SEXP x_aux = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP x_slice = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
+  SEXP x_aux = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
 
-  SEXP o = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o = INTEGER(o);
 
-  SEXP o_aux = PROTECT(Rf_allocVector(INTSXP, size));
+  SEXP o_aux = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o_aux = INTEGER(o_aux);
 
   // Initialize `out` with sequential 1-based ordering
@@ -158,34 +111,22 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   // been requested, but this is more efficient for atomic vectors.
   bool ignore = groups ? false : (is_data_frame(x) ? false : true);
 
-  // First group info object is initialized with data
-  struct group_info group_info1;
-  group_info1.data_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
-  group_info1.data = Rf_allocVector(INTSXP, group_info1.data_size);
-  PROTECT_WITH_INDEX(group_info1.data, &group_info1.data_pi);
-  group_info1.p_data = INTEGER(group_info1.data);
-  group_info1.n_groups = 0;
-  group_info1.max_group_size = 0;
+  R_xlen_t group_info0_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
 
-  // Second group info object is initialized, but is empty
-  struct group_info group_info2;
-  group_info2.data_size = 0;
-  group_info2.data = Rf_allocVector(INTSXP, group_info2.data_size);
-  PROTECT_WITH_INDEX(group_info2.data, &group_info2.data_pi);
-  group_info2.p_data = INTEGER(group_info2.data);
-  group_info2.n_groups = 0;
-  group_info2.max_group_size = 0;
+  struct group_info group_info0 = new_group_info(group_info0_size);
+  struct group_info* p_group_info0 = &group_info0;
+  PROTECT_GROUP_INFO(p_group_info0, p_n_prot);
 
-  // Store both of them in a `group_infos` object
+  struct group_info group_info1 = new_group_info(0);
+  struct group_info* p_group_info1 = &group_info1;
+  PROTECT_GROUP_INFO(p_group_info1, p_n_prot);
+
   struct group_info* p_p_group_info[2];
-  p_p_group_info[0] = &group_info1;
-  p_p_group_info[1] = &group_info2;
+  p_p_group_info[0] = p_group_info0;
+  p_p_group_info[1] = p_group_info1;
 
-  struct group_infos group_infos;
+  struct group_infos group_infos = new_group_infos(p_p_group_info, ignore);
   struct group_infos* p_group_infos = &group_infos;
-  p_group_infos->p_p_group_info = p_p_group_info;
-  p_group_infos->current = 0;
-  p_group_infos->ignore = ignore;
 
   vec_order_switch(
     x,
@@ -205,20 +146,20 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     struct group_info* p_group_info = groups_current(p_group_infos);
 
     R_xlen_t n_groups = p_group_info->n_groups;
-    p_group_info->data = PROTECT(Rf_xlengthgets(p_group_info->data, n_groups));
+    p_group_info->data = PROTECT_N(Rf_xlengthgets(p_group_info->data, n_groups), p_n_prot);
 
-    SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
+    SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 4), p_n_prot);
 
     SET_VECTOR_ELT(out, 0, o);
     SET_VECTOR_ELT(out, 1, p_group_info->data);
     SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_group_info->n_groups));
     SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_group_info->max_group_size));
 
-    UNPROTECT(8);
+    UNPROTECT(n_prot);
     return out;
   }
 
-  UNPROTECT(6);
+  UNPROTECT(n_prot);
   return o;
 }
 
@@ -1172,6 +1113,21 @@ static void col_order_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+// Pair with `PROTECT_GROUP_INFO()` in the caller
+static struct group_info new_group_info(R_xlen_t size) {
+  struct group_info info;
+
+  info.data_size = size;
+
+  info.data = PROTECT(Rf_allocVector(INTSXP, size));
+
+  info.n_groups = 0;
+  info.max_group_size = 0;
+
+  UNPROTECT(1);
+  return info;
+}
+
 /*
  * Reallocate `data` to be as long as `size`.
  */
@@ -1187,6 +1143,17 @@ static void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
 
   // Update size
   p_group_info->data_size = size;
+}
+
+static struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                          bool ignore) {
+  struct group_infos infos;
+
+  infos.p_p_group_info = p_p_group_info;
+  infos.current = 0;
+  infos.ignore = ignore;
+
+  return infos;
 }
 
 /*
@@ -1264,8 +1231,6 @@ static void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
 // -----------------------------------------------------------------------------
 
 #undef UINT8_MAX_SIZE
-
-#undef GROUP_DATA_SIZE_DEFAULT
 
 #undef INT_COUNTING_ORDER_RANGE_BOUNDARY
 
