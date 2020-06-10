@@ -70,22 +70,22 @@ test_that("all `NA` values works", {
 # have a range less than the counting order range boundary.
 
 test_that("can order integers with counting order", {
-  x <- (INT_INSERTION_ORDER_BOUNDARY + 1L):1L
+  x <- (INSERTION_ORDER_BOUNDARY + 1L):1L
   expect_identical(vec_order2(x), order(x))
 })
 
 test_that("can order sorted vector", {
-  x <- 1:(INT_INSERTION_ORDER_BOUNDARY + 1L)
+  x <- 1:(INSERTION_ORDER_BOUNDARY + 1L)
   expect_identical(vec_order2(x), order(x))
 })
 
 test_that("ordering on ties is done stably", {
-  x <- c(1:INT_INSERTION_ORDER_BOUNDARY, 1L)
-  expect_identical(vec_order2(x)[1:2], c(1L, INT_INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(1:INSERTION_ORDER_BOUNDARY, 1L)
+  expect_identical(vec_order2(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
 })
 
 test_that("all combinations of `decreasing` and `na_last` work", {
-  x <- c(3L, NA_integer_, 1L, 2L, 1:INT_INSERTION_ORDER_BOUNDARY)
+  x <- c(3L, NA_integer_, 1L, 2L, 1:INSERTION_ORDER_BOUNDARY)
 
   expect_identical(
     x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
@@ -111,23 +111,23 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 # To trigger radix ordering, get above the insertion order boundary and then
 # have a range greater than the counting order range boundary.
 
-test_that("can order integers with counting order", {
-  x <- c(INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L, 1:INT_INSERTION_ORDER_BOUNDARY)
+test_that("can order integers with radix order", {
+  x <- c(INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L, 1:INSERTION_ORDER_BOUNDARY)
   expect_identical(vec_order2(x), order(x))
 })
 
 test_that("can order sorted vector", {
-  x <- c(1:INT_INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+  x <- c(1:INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
   expect_identical(vec_order2(x), order(x))
 })
 
 test_that("ordering on ties is done stably", {
-  x <- c(1:INT_INSERTION_ORDER_BOUNDARY, 1L, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
-  expect_identical(vec_order2(x)[1:2], c(1L, INT_INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(1:INSERTION_ORDER_BOUNDARY, 1L, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+  expect_identical(vec_order2(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
 })
 
 test_that("all combinations of `decreasing` and `na_last` work", {
-  x <- c(3L, NA_integer_, 1L, 2L, 1:INT_INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+  x <- c(3L, NA_integer_, 1L, 2L, 1:INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
 
   expect_identical(
     x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
@@ -148,8 +148,151 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 })
 
 test_that("all `NA` values works - ensures that we can compute the 'range' of all NAs", {
-  x <- rep(NA_integer_, INT_INSERTION_ORDER_BOUNDARY + 1L)
+  x <- rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L)
   expect_identical(vec_order2(x), order(x))
+})
+
+# ------------------------------------------------------------------------------
+# vec_order2(<double>) - insertion
+
+test_that("can order doubles", {
+  x <- c(2, 3, 1, 5)
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("can order sorted vector", {
+  x <- 1:5 + 0
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("ordering on ties is done stably", {
+  x <- c(1, 3, 1, 3)
+  expect_identical(vec_order2(x)[1:2], c(1L, 3L))
+  expect_identical(vec_order2(x)[3:4], c(2L, 4L))
+})
+
+test_that("`NA` order defaults to last", {
+  x <- c(1, NA_real_, 3)
+  expect_identical(vec_order2(x), c(1L, 3L, 2L))
+})
+
+test_that("`NA` order can be first", {
+  x <- c(1, NA_real_, 3)
+  expect_identical(vec_order2(x, na_last = FALSE), c(2L, 1L, 3L))
+})
+
+test_that("`decreasing` can be set to `TRUE`", {
+  x <- c(1, 5, 3)
+  expect_identical(vec_order2(x, decreasing = TRUE), c(2L, 3L, 1L))
+})
+
+test_that("all combinations of `decreasing` and `na_last` work", {
+  x <- c(3, NA_real_, 1, 2)
+
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[order(x, na.last = TRUE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[order(x, na.last = FALSE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[order(x, na.last = TRUE, decreasing = TRUE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[order(x, na.last = FALSE, decreasing = TRUE)]
+  )
+})
+
+test_that("all `NA` values works", {
+  x <- c(NA_real_, NA_real_)
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("NA_real_ and NaN look identical for ordering", {
+  x <- c(NA_real_, NaN)
+  expect_identical(vec_order2(x, na_last = TRUE), c(1L, 2L))
+  expect_identical(vec_order2(x, na_last = FALSE), c(1L, 2L))
+})
+
+test_that("-Inf / Inf order correctly", {
+  x <- c(0, -Inf, Inf)
+  expect_identical(vec_order2(x, decreasing = FALSE), c(2L, 1L, 3L))
+  expect_identical(vec_order2(x, decreasing = TRUE), c(3L, 1L, 2L))
+})
+
+test_that("-0 and 0 order identically / stably", {
+  x <- c(0, -0)
+  expect_identical(vec_order2(x, decreasing = TRUE), c(1L, 2L))
+  expect_identical(vec_order2(x, decreasing = FALSE), c(1L, 2L))
+})
+
+# ------------------------------------------------------------------------------
+# vec_order2(<double>) - radix
+
+# To trigger radix ordering, get above the insertion order boundary. There is
+# no intermediate counting sort for doubles.
+
+test_that("can order doubles with radix order", {
+  x <- (INSERTION_ORDER_BOUNDARY + 1L):1L + 0
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("can order sorted vector", {
+  x <- 1:(INSERTION_ORDER_BOUNDARY + 1L) + 0
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("ordering on ties is done stably", {
+  x <- c(1:INSERTION_ORDER_BOUNDARY, 1L) + 0
+  expect_identical(vec_order2(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
+})
+
+test_that("all combinations of `decreasing` and `na_last` work", {
+  x <- c(3, NA_real_, 1, 2, 1:INSERTION_ORDER_BOUNDARY)
+
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[order(x, na.last = TRUE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[order(x, na.last = FALSE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[order(x, na.last = TRUE, decreasing = TRUE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[order(x, na.last = FALSE, decreasing = TRUE)]
+  )
+})
+
+test_that("all `NA` values works", {
+  x <- rep(NA_real_, INSERTION_ORDER_BOUNDARY + 1L)
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("NA_real_ and NaN look identical for ordering", {
+  x <- rep(c(NA_real_, NaN), INSERTION_ORDER_BOUNDARY + 1L)
+  expect_identical(vec_order2(x, na_last = TRUE), seq_along(x))
+  expect_identical(vec_order2(x, na_last = FALSE), seq_along(x))
+})
+
+test_that("-Inf / Inf order correctly", {
+  x <- c(rep(0, INSERTION_ORDER_BOUNDARY), -Inf, Inf)
+  expect_identical(vec_order2(x, decreasing = FALSE), order(x, decreasing = FALSE))
+  expect_identical(vec_order2(x, decreasing = TRUE), order(x, decreasing = TRUE))
+})
+
+test_that("-0 and 0 order identically / stably", {
+  x <- c(rep(0, INSERTION_ORDER_BOUNDARY), -0)
+  expect_identical(vec_order2(x, decreasing = TRUE), order(x, decreasing = FALSE))
+  expect_identical(vec_order2(x, decreasing = FALSE), order(x, decreasing = TRUE))
 })
 
 # ------------------------------------------------------------------------------
@@ -175,10 +318,18 @@ test_that("first column has ordering presedence", {
   expect_identical(vec_order2(df), 3:1)
 })
 
-test_that("secondary columns break ties", {
+test_that("secondary columns break ties - integer", {
   df <- data.frame(
     x = c(1L, 2L, 1L),
     y = c(3L, 2L, 1L)
+  )
+  expect_identical(vec_order2(df), c(3L, 1L, 2L))
+})
+
+test_that("secondary columns break ties - double", {
+  df <- data.frame(
+    x = c(1, 2, 1),
+    y = c(3, 2, 1)
   )
   expect_identical(vec_order2(df), c(3L, 1L, 2L))
 })
@@ -210,13 +361,13 @@ test_that("`decreasing` can be a vector", {
 # ------------------------------------------------------------------------------
 # vec_order2(<data.frame>) - counting
 
-test_that("can order 2+ integer columns with counting sort", {
-  half <- floor(INT_INSERTION_ORDER_BOUNDARY / 2) + 1L
+test_that("can order 2+ integer column chunks with counting sort", {
+  half <- floor(INSERTION_ORDER_BOUNDARY / 2) + 1L
   quarter_low <- floor(half / 2)
   quarter_high <- ceiling(half / 2)
 
   df <- data.frame(
-    x = c(rep(1L, half), rep(2L, half)),
+    x = 1L,
     y = c(rep(2L, quarter_low), rep(1L, quarter_high), rep(3L, half))
   )
 
@@ -226,14 +377,27 @@ test_that("can order 2+ integer columns with counting sort", {
 # ------------------------------------------------------------------------------
 # vec_order2(<data.frame>) - radix
 
-test_that("can order 2+ integer columns with radix sort", {
-  half <- floor(INT_INSERTION_ORDER_BOUNDARY / 2) + 1L
+test_that("can order 2+ integer column chunks with radix sort", {
+  half <- floor(INSERTION_ORDER_BOUNDARY / 2) + 1L
   quarter_low <- floor(half / 2)
   quarter_high <- ceiling(half / 2)
 
   df <- data.frame(
-    x = c(rep(1L, half), rep(2L, half), 1L),
+    x = 1L,
     y = c(rep(2L, quarter_low), rep(1L, quarter_high), rep(3L, half), INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+  )
+
+  expect_identical(vec_order2(df), lst_order(df))
+})
+
+test_that("can order 2+ double column chunks with radix sort", {
+  half <- floor(INSERTION_ORDER_BOUNDARY / 2) + 1L
+  quarter_low <- floor(half / 2)
+  quarter_high <- ceiling(half / 2)
+
+  df <- data.frame(
+    x = 1,
+    y = c(rep(2, quarter_low), rep(1, quarter_high), rep(3, half), INT_COUNTING_ORDER_RANGE_BOUNDARY + 1)
   )
 
   expect_identical(vec_order2(df), lst_order(df))
@@ -268,8 +432,9 @@ test_that("groups can be reallocated if we exceed the max group data size", {
   # The first column has all unique groups so 1 more than the default group
   # data size is needed and will be reallocated on the fly
   df <- data.frame(
-    x = sample(GROUP_DATA_SIZE_DEFAULT + 1L),
-    y = sample(GROUP_DATA_SIZE_DEFAULT + 1L)
+    x = sample(GROUP_DATA_SIZE_DEFAULT + 1L, replace = TRUE),
+    y = sample(GROUP_DATA_SIZE_DEFAULT + 1L, replace = TRUE),
+    z = sample(GROUP_DATA_SIZE_DEFAULT + 1L, replace = TRUE)
   )
 
   expect_identical(vec_order2(df), lst_order(df))
