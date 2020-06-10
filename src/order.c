@@ -927,6 +927,91 @@ static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
 
 // -----------------------------------------------------------------------------
 
+static inline uint64_t dbl_map_to_uint64(double x);
+
+/*
+ * When mapping double -> uint64_t:
+ *
+ * Smallest possible value comes from:
+ * dbl_map_to_uint64(-Inf) -> 4503599627370495
+ *
+ * One larger is:
+ * dbl_map_to_uint64(-.Machine$double.xmax) -> 4503599627370496
+ *
+ * Largest possible value comes from:
+ * dbl_map_to_uint64(Inf) -> 18442240474082181120
+ *
+ * One smaller is:
+ * dbl_map_to_uint64(.Machine$double.xmax) -> 18442240474082181119
+ *
+ * This gives us room to manually map (depending on `na_last`):
+ *
+ * dbl_map_to_uint64(NA_real_) -> 0 (UINT64_MAX)
+ * dbl_map_to_uint64(NaN) -> 0 (UINT64_MAX)
+ *
+ */
+static void dbl_adjust(void* p_x, R_xlen_t size, int direction, bool na_last) {
+  const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
+
+  double* p_x_dbl = (double*) p_x;
+  uint64_t* p_x_u64 = (uint64_t*) p_x;
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    // Flip direction ahead of time. Won't affect `NA_real`, `NaN` values.
+    double elt = p_x_dbl[i] * direction;
+
+    if (isnan(elt)) {
+      p_x_u64[i] = na_u64;
+      continue;
+    }
+
+    p_x_u64[i] = dbl_map_to_uint64(elt);
+  }
+}
+
+
+static inline uint64_t dbl_flip_uint64(uint64_t x);
+
+static union {
+  double d;
+  uint64_t u64;
+} d_u64;
+
+// - Assumes `x` is not a `NA_real_` or `NaN` value
+// - Correctly handles `Inf` and `-Inf`
+static inline uint64_t dbl_map_to_uint64(double x) {
+  // Catch `-0` vs `0`
+  if (x == 0) {
+    x = 0;
+  }
+
+  // Reinterpret as uint64_t without changing bytes
+  d_u64.d = x;
+
+  d_u64.u64 = dbl_flip_uint64(d_u64.u64);
+
+  return d_u64.u64;
+}
+
+
+#define HEX_UINT64_SIGN 0x8000000000000000u
+#define HEX_UINT64_ONES 0xffffffffffffffffu
+
+// To retain ordering in mapping from double -> uint64_t we always have to
+// flip the sign bit, and for negative numbers we also flip all of the other
+// bits.
+// http://stereopsis.com/radix.html
+static inline uint64_t dbl_flip_uint64(uint64_t x) {
+  const uint64_t mask = (x & HEX_UINT64_SIGN) ? HEX_UINT64_ONES : HEX_UINT64_SIGN;
+  return x ^ mask;
+}
+
+#undef HEX_UINT64_SIGN
+#undef HEX_UINT64_ONES
+
+
+// -----------------------------------------------------------------------------
+
 static void col_order_switch(SEXP x,
                              SEXP x_aux,
                              int* p_o,
