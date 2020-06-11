@@ -193,7 +193,8 @@ static void vec_order_immutable_switch(SEXP x,
                                        struct group_infos* p_group_infos,
                                        bool decreasing,
                                        bool na_last,
-                                       R_xlen_t size);
+                                       R_xlen_t size,
+                                       const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
                              void* p_x_slice,
@@ -244,7 +245,8 @@ static void vec_order_switch(SEXP x,
     p_group_infos,
     c_decreasing,
     na_last,
-    size
+    size,
+    type
   );
 }
 
@@ -293,8 +295,9 @@ static void vec_order_immutable_switch(SEXP x,
                                        struct group_infos* p_group_infos,
                                        bool decreasing,
                                        bool na_last,
-                                       R_xlen_t size) {
-  switch (vec_proxy_typeof(x)) {
+                                       R_xlen_t size,
+                                       const enum vctrs_type type) {
+  switch (type) {
   case vctrs_type_integer: {
     int_order_immutable(
       x,
@@ -1527,6 +1530,7 @@ static void df_order(SEXP x,
 
   SEXP col = VECTOR_ELT(x, 0);
   bool col_decreasing = p_decreasing[0];
+  enum vctrs_type type = vec_proxy_typeof(col);
 
   // Apply on one column to fill `p_group_infos`.
   // First column is immutable and we must copy into `x_slice`.
@@ -1540,7 +1544,8 @@ static void df_order(SEXP x,
     p_group_infos,
     col_decreasing,
     na_last,
-    size
+    size,
+    type
   );
 
   // Iterate over remaining columns by group chunk
@@ -1573,7 +1578,7 @@ static void df_order(SEXP x,
     // Swap to other group info to prepare for this column
     groups_swap(p_group_infos);
 
-    const enum vctrs_type type = vec_proxy_typeof(col);
+    type = vec_proxy_typeof(col);
 
     // Iterate over this column's group chunks
     for (R_xlen_t group = 0; group < n_groups; ++group) {
