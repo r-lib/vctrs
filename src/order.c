@@ -415,8 +415,7 @@ static void int_radix_order(uint32_t* p_x,
                             int* p_o_aux,
                             uint8_t* p_bytes,
                             struct group_infos* p_group_infos,
-                            const R_xlen_t size,
-                            const uint8_t pass);
+                            const R_xlen_t size);
 
 /*
  * These are the main entry points for integer ordering. They are nearly
@@ -457,10 +456,8 @@ static void int_order(void* p_x,
     return;
   }
 
-  uint8_t pass = 0;
-
   int_adjust(p_x, decreasing, na_last, size);
-  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
+  int_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size);
 }
 
 static void int_order_immutable(SEXP x,
@@ -493,11 +490,9 @@ static void int_order_immutable(SEXP x,
     return;
   }
 
-  uint8_t pass = 0;
-
   memcpy(p_x_slice, p_x, size * sizeof(int));
   int_adjust(p_x_slice, decreasing, na_last, size);
-  int_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
+  int_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size);
 }
 
 // -----------------------------------------------------------------------------
@@ -841,6 +836,50 @@ static void int_insertion_order(uint32_t* p_x,
 
 // -----------------------------------------------------------------------------
 
+static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size);
+
+static void int_radix_order_recurse(uint32_t* p_x,
+                                    uint32_t* p_x_aux,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    uint8_t* p_bytes,
+                                    bool* p_skips,
+                                    struct group_infos* p_group_infos,
+                                    const R_xlen_t size,
+                                    const uint8_t pass);
+
+static void int_radix_order(uint32_t* p_x,
+                            uint32_t* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_group_infos,
+                            const R_xlen_t size) {
+  bool p_skips[4];
+
+  uint8_t pass = int_compute_skips(p_skips, p_x, size);
+
+  // Skipped everything, 1 value
+  if (pass == 4) {
+    groups_size_push(p_group_infos, size);
+    return;
+  }
+
+  int_radix_order_recurse(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_skips,
+    p_group_infos,
+    size,
+    pass
+  );
+}
+
+// -----------------------------------------------------------------------------
+
 static void int_radix_order_pass(uint32_t* p_x,
                                  uint32_t* p_x_aux,
                                  int* p_o,
@@ -860,14 +899,15 @@ static void int_radix_order_pass(uint32_t* p_x,
  * of `na_last` and `decreasing` and also maps `int32_t` to `uint32_t` once
  * up front so we don't have to do it for each radix pass.
  */
-static void int_radix_order(uint32_t* p_x,
-                            uint32_t* p_x_aux,
-                            int* p_o,
-                            int* p_o_aux,
-                            uint8_t* p_bytes,
-                            struct group_infos* p_group_infos,
-                            const R_xlen_t size,
-                            const uint8_t pass) {
+static void int_radix_order_recurse(uint32_t* p_x,
+                                    uint32_t* p_x_aux,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    uint8_t* p_bytes,
+                                    bool* p_skips,
+                                    struct group_infos* p_group_infos,
+                                    const R_xlen_t size,
+                                    const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
 
   int_radix_order_pass(
@@ -882,7 +922,11 @@ static void int_radix_order(uint32_t* p_x,
     pass
   );
 
-  const uint8_t next_pass = pass + 1;
+  uint8_t next_pass = pass + 1;
+  while (next_pass < 4 && p_skips[next_pass]) {
+    ++next_pass;
+  }
+
   R_xlen_t last_cumulative_count = 0;
 
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
@@ -914,12 +958,13 @@ static void int_radix_order(uint32_t* p_x,
     }
 
     // Order next byte of this subgroup
-    int_radix_order(
+    int_radix_order_recurse(
       p_x,
       p_x_aux,
       p_o,
       p_o_aux,
       p_bytes,
+      p_skips,
       p_group_infos,
       group_size,
       next_pass
@@ -1003,6 +1048,53 @@ static void int_radix_order_pass(uint32_t* p_x,
 
 // -----------------------------------------------------------------------------
 
+static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size) {
+  for (uint8_t i = 0; i < 4; ++i) {
+    p_skips[i] = true;
+  }
+
+  uint8_t p_bytes[4];
+  const uint32_t elt0 = p_x[0];
+
+  // Get bytes of first element in MSD->LSD order.
+  // Placed in `p_bytes` in a way that aligns with the `pass` variable
+  for (uint8_t pass = 0, shift = 24; pass < 4; ++pass, shift -= 8) {
+    p_bytes[pass] = int_extract_uint32_byte(elt0, shift);
+  }
+
+  // Check to see which passes are skippable
+  for (R_xlen_t i = 1; i < size; ++i) {
+    uint8_t n_skips = 4;
+    const uint32_t elt = p_x[i];
+
+    for (uint8_t pass = 0, shift = 24; pass < 4; ++pass, shift -= 8) {
+      bool skip = p_skips[pass];
+
+      if (skip) {
+        p_skips[pass] = (p_bytes[pass] == int_extract_uint32_byte(elt, shift));
+      } else {
+        --n_skips;
+      }
+    }
+
+    // No passes are skippable
+    if (n_skips == 0) {
+      break;
+    }
+  }
+
+  uint8_t pass = 0;
+
+  // Shift forward to the first pass with varying bytes
+  while (pass < 4 && p_skips[pass]) {
+    ++pass;
+  }
+
+  return pass;
+}
+
+// -----------------------------------------------------------------------------
+
 // Bytes will be extracted 8 bits at a time.
 // This is a MSB radix sort, so they are extracted MSB->LSB.
 // TODO: This probably depends on endianness?
@@ -1080,8 +1172,7 @@ static void dbl_radix_order(uint64_t* p_x,
                             int* p_o_aux,
                             uint8_t* p_bytes,
                             struct group_infos* p_group_infos,
-                            const R_xlen_t size,
-                            const uint8_t pass);
+                            const R_xlen_t size);
 
 /*
  * These are the main entry points for integer ordering. They are nearly
@@ -1116,10 +1207,8 @@ static void dbl_order(void* p_x,
     return;
   }
 
-  uint8_t pass = 0;
-
   dbl_adjust(p_x, decreasing, na_last, size);
-  dbl_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
+  dbl_radix_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size);
 }
 
 static void dbl_order_immutable(SEXP x,
@@ -1141,11 +1230,9 @@ static void dbl_order_immutable(SEXP x,
     return;
   }
 
-  uint8_t pass = 0;
-
   memcpy(p_x_slice, p_x, size * sizeof(double));
   dbl_adjust(p_x_slice, decreasing, na_last, size);
-  dbl_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size, pass);
+  dbl_radix_order(p_x_slice, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, size);
 }
 
 // -----------------------------------------------------------------------------
@@ -1318,6 +1405,50 @@ static void dbl_insertion_order(uint64_t* p_x,
 
 // -----------------------------------------------------------------------------
 
+static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size);
+
+static void dbl_radix_order_recurse(uint64_t* p_x,
+                                    uint64_t* p_x_aux,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    uint8_t* p_bytes,
+                                    bool* p_skips,
+                                    struct group_infos* p_group_infos,
+                                    const R_xlen_t size,
+                                    const uint8_t pass);
+
+static void dbl_radix_order(uint64_t* p_x,
+                            uint64_t* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_group_infos,
+                            const R_xlen_t size) {
+  bool p_skips[8];
+
+  uint8_t pass = dbl_compute_skips(p_skips, p_x, size);
+
+  // Skipped everything, 1 value
+  if (pass == 8) {
+    groups_size_push(p_group_infos, size);
+    return;
+  }
+
+  dbl_radix_order_recurse(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_skips,
+    p_group_infos,
+    size,
+    pass
+  );
+}
+
+// -----------------------------------------------------------------------------
+
 static void dbl_radix_order_pass(uint64_t* p_x,
                                  uint64_t* p_x_aux,
                                  int* p_o,
@@ -1339,14 +1470,15 @@ static void dbl_radix_order_pass(uint64_t* p_x,
  *
  * This needs 8 passes, unlike the 4 required by `int_radix_order()`.
  */
-static void dbl_radix_order(uint64_t* p_x,
-                            uint64_t* p_x_aux,
-                            int* p_o,
-                            int* p_o_aux,
-                            uint8_t* p_bytes,
-                            struct group_infos* p_group_infos,
-                            const R_xlen_t size,
-                            const uint8_t pass) {
+static void dbl_radix_order_recurse(uint64_t* p_x,
+                                    uint64_t* p_x_aux,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    uint8_t* p_bytes,
+                                    bool* p_skips,
+                                    struct group_infos* p_group_infos,
+                                    const R_xlen_t size,
+                                    const uint8_t pass) {
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
 
   dbl_radix_order_pass(
@@ -1361,7 +1493,14 @@ static void dbl_radix_order(uint64_t* p_x,
     pass
   );
 
-  const uint8_t next_pass = pass + 1;
+  // Find the next pass with varying bytes. For small doubles like 1 or 2 it
+  // is fairly common for them to have `uint64_t` representations where passes
+  // 0-2 have data, but 3-7 are filled with zeros.
+  uint8_t next_pass = pass + 1;
+  while (next_pass < 8 && p_skips[next_pass]) {
+    ++next_pass;
+  }
+
   R_xlen_t last_cumulative_count = 0;
 
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
@@ -1393,12 +1532,13 @@ static void dbl_radix_order(uint64_t* p_x,
     }
 
     // Order next byte of this subgroup
-    dbl_radix_order(
+    dbl_radix_order_recurse(
       p_x,
       p_x_aux,
       p_o,
       p_o_aux,
       p_bytes,
+      p_skips,
       p_group_infos,
       group_size,
       next_pass
@@ -1478,6 +1618,53 @@ static void dbl_radix_order_pass(uint64_t* p_x,
   // Copy back over
   memcpy(p_o, p_o_aux, size * sizeof(int));
   memcpy(p_x, p_x_aux, size * sizeof(uint64_t));
+}
+
+// -----------------------------------------------------------------------------
+
+static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size) {
+  for (uint8_t i = 0; i < 8; ++i) {
+    p_skips[i] = true;
+  }
+
+  uint8_t p_bytes[8];
+  const uint64_t elt0 = p_x[0];
+
+  // Get bytes of first element in MSD->LSD order.
+  // Placed in `p_bytes` in a way that aligns with the `pass` variable
+  for (uint8_t pass = 0, shift = 56; pass < 8; ++pass, shift -= 8) {
+    p_bytes[pass] = dbl_extract_uint64_byte(elt0, shift);
+  }
+
+  // Check to see which passes are skippable
+  for (R_xlen_t i = 1; i < size; ++i) {
+    uint8_t n_skips = 8;
+    const uint64_t elt = p_x[i];
+
+    for (uint8_t pass = 0, shift = 56; pass < 8; ++pass, shift -= 8) {
+      bool skip = p_skips[pass];
+
+      if (skip) {
+        p_skips[pass] = (p_bytes[pass] == dbl_extract_uint64_byte(elt, shift));
+      } else {
+        --n_skips;
+      }
+    }
+
+    // No passes are skippable
+    if (n_skips == 0) {
+      break;
+    }
+  }
+
+  uint8_t pass = 0;
+
+  // Shift forward to the first pass with varying bytes
+  while (pass < 8 && p_skips[pass]) {
+    ++pass;
+  }
+
+  return pass;
 }
 
 // -----------------------------------------------------------------------------
