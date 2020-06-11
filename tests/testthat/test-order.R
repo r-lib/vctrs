@@ -355,14 +355,53 @@ test_that("imaginary section is used to break ties", {
 })
 
 test_that("can be used in a data frame", {
-  x <- c(1L, 1L, 1L, 2L)
+  x <- c(1L, 1L, 1L, 2L, 1L)
 
   y <- complex(
-    real = c(1L, 2L, 1L, 3L),
-    imaginary = c(3L, 2L, 1L, 4L)
+    real = c(1L, 2L, 1L, 3L, 1L),
+    imaginary = c(3L, 2L, 1L, 4L, 1L)
   )
 
+  z <- 1:5
+
+  # as second column
   df1 <- data.frame(x = x, y = y)
+
+  # as first column
+  df2 <- data.frame(y = y, x = x)
+
+  # as second column with a third after it
+  df3 <- data.frame(x = x, y = y, z = z)
+
+  expect_identical(vec_order2(df1), lst_order(df1))
+  expect_identical(vec_order2(df2), lst_order(df2))
+  expect_identical(vec_order2(df3), lst_order(df3))
+})
+
+test_that("all combinations of `decreasing` and `na_last` work", {
+  x <- complex(real = c(3, NA, 1.5, 2, NA), imaginary = c(1, 1, 1, 1, 2))
+
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[order(x, na.last = TRUE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[order(x, na.last = FALSE, decreasing = FALSE)]
+  )
+
+  # Base R is actually wrong here! It doesn't consider the imaginary part
+  # when ordering in decreasing order with `NA` real.
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    #x[order(x, na.last = TRUE, decreasing = TRUE)]
+    x[c(1L, 4L, 3L, 5L, 2L)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    #x[order(x, na.last = FALSE, decreasing = TRUE)]
+    x[c(5L, 2L, 1L, 4L, 3L)]
+  )
 })
 
 # ------------------------------------------------------------------------------

@@ -21,7 +21,7 @@
 
 // -----------------------------------------------------------------------------
 
-static struct group_info new_group_info(R_xlen_t size);
+static struct group_info new_group_info();
 static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
 
 static struct group_infos new_group_infos(struct group_info** p_p_group_info,
@@ -51,14 +51,9 @@ SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 
 static inline size_t vec_order_size_multiplier(SEXP x);
 
-static SEXP new_cpl_auxiliary(SEXP x,
-                              const enum vctrs_type type,
-                              R_xlen_t size);
-
 static void vec_order_switch(SEXP x,
                              void* p_x_slice,
                              void* p_x_aux,
-                             double* p_x_cpl_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -107,10 +102,6 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   SEXP x_aux = PROTECT_N(Rf_allocVector(RAWSXP, size * multiplier), p_n_prot);
   void* p_x_aux = DATAPTR(x_aux);
 
-  // Special handling of complex vectors, or data frame with complex columns
-  SEXP x_cpl_aux = PROTECT_N(new_cpl_auxiliary(x, type, size), p_n_prot);
-  double* p_x_cpl_aux = REAL(x_cpl_aux);
-
   SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o = INTEGER(o);
 
@@ -130,13 +121,11 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   bool requested = groups;
   bool ignore = requested ? false : (is_data_frame(x) ? false : true);
 
-  R_xlen_t group_info0_size = ignore ? 0 : GROUP_DATA_SIZE_DEFAULT;
-
-  struct group_info group_info0 = new_group_info(group_info0_size);
+  struct group_info group_info0 = new_group_info();
   struct group_info* p_group_info0 = &group_info0;
   PROTECT_GROUP_INFO(p_group_info0, p_n_prot);
 
-  struct group_info group_info1 = new_group_info(0);
+  struct group_info group_info1 = new_group_info();
   struct group_info* p_group_info1 = &group_info1;
   PROTECT_GROUP_INFO(p_group_info1, p_n_prot);
 
@@ -151,7 +140,6 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     x,
     p_x_slice,
     p_x_aux,
-    p_x_cpl_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -189,7 +177,6 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
 static void df_order(SEXP x,
                      void* p_x_slice,
                      void* p_x_aux,
-                     double* p_x_cpl_aux,
                      int* p_o,
                      int* p_o_aux,
                      uint8_t* p_bytes,
@@ -201,7 +188,6 @@ static void df_order(SEXP x,
 static void vec_order_immutable_switch(SEXP x,
                                        void* p_x_slice,
                                        void* p_x_aux,
-                                       double* p_x_cpl_aux,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
@@ -214,7 +200,6 @@ static void vec_order_immutable_switch(SEXP x,
 static void vec_order_switch(SEXP x,
                              void* p_x_slice,
                              void* p_x_aux,
-                             double* p_x_cpl_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -228,7 +213,6 @@ static void vec_order_switch(SEXP x,
       x,
       p_x_slice,
       p_x_aux,
-      p_x_cpl_aux,
       p_o,
       p_o_aux,
       p_bytes,
@@ -255,7 +239,6 @@ static void vec_order_switch(SEXP x,
     x,
     p_x_slice,
     p_x_aux,
-    p_x_cpl_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -305,7 +288,6 @@ static void dbl_order_immutable(SEXP x,
 static void cpl_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
-                                double* p_x_cpl_aux,
                                 int* p_o,
                                 int* p_o_aux,
                                 uint8_t* p_bytes,
@@ -318,7 +300,6 @@ static void cpl_order_immutable(SEXP x,
 static void vec_order_immutable_switch(SEXP x,
                                        void* p_x_slice,
                                        void* p_x_aux,
-                                       double* p_x_cpl_aux,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
@@ -381,7 +362,6 @@ static void vec_order_immutable_switch(SEXP x,
       x,
       p_x_slice,
       p_x_aux,
-      p_x_cpl_aux,
       p_o,
       p_o_aux,
       p_bytes,
@@ -1512,41 +1492,51 @@ static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
 // -----------------------------------------------------------------------------
 
 /*
- * `cpl_order()` uses the fact that Rcomplex is really just rcrd type of two
- * double vectors. It orders first on the real vector, and then on the
- * imaginary vector.
+ * `cpl_order_immutable()` uses the fact that Rcomplex is really just a rcrd
+ * type of two double vectors. It orders first on the real vector, and then on
+ * the imaginary vector.
  *
- * `cpl_order()` won't modify `p_x` in any way, so it is safe to call it from
- * `cpl_order_immutable()`.
+ * `cpl_order()` isn't required. It would only be called from data frames
+ * when there is a complex column, but in those cases we split the column
+ * into two double vectors (real / imaginary) and "rerun" the column using
+ * `dbl_order()`.
  */
-static void cpl_order(void* p_x,
-                      void* p_x_aux,
-                      double* p_x_cpl_aux,
-                      int* p_o,
-                      int* p_o_aux,
-                      uint8_t* p_bytes,
-                      struct group_infos* p_group_infos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
+static void cpl_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size) {
   // We treat complex as a two column data frame, so we have to use group
-  // information for at least the first column
+  // information for at least the first column.
+  // - If a complex atomic vector is used, `ignore` will be true unless the
+  //   user also requested group information.
+  // - If the first column of a df is a complex column, `ignore` will be false.
   bool reset_ignore = false;
   if (p_group_infos->ignore) {
     p_group_infos->ignore = false;
     reset_ignore = true;
   }
 
-  const Rcomplex* p_x_cpl = (const Rcomplex*) p_x;
+  const Rcomplex* p_x_cpl = COMPLEX_RO(x);
+
+  // When a complex column is present,
+  // `x_slice` and `x_aux` are allocated to have the
+  // size of a double vector.
+  double* p_x_slice_dbl = (double*) p_x_slice;
 
   // Handle the real portion first
   for (R_xlen_t i = 0; i < size; ++i) {
-    p_x_cpl_aux[i] = p_x_cpl[i].r;
+    p_x_slice_dbl[i] = p_x_cpl[i].r;
   }
 
   // Run it through double ordering
   dbl_order(
-    p_x_cpl_aux,
+    p_x_slice_dbl,
     p_x_aux,
     p_o,
     p_o_aux,
@@ -1558,8 +1548,8 @@ static void cpl_order(void* p_x,
   );
 
   // Reset `ignore` for the second pass if we don't need to track groups.
-  // This happens if either an atomic complex vector is passed in or if we
-  // have a data frame where the last column is complex.
+  // This happens if an atomic complex vector is passed in and the user
+  // hasn't requested group information.
   if (reset_ignore) {
     p_group_infos->ignore = true;
   }
@@ -1573,14 +1563,14 @@ static void cpl_order(void* p_x,
     return;
   }
 
-  // Swap to other group info to prepare for this column
+  // Swap to other group info to prepare for the imaginary section
   groups_swap(p_group_infos);
 
   // Fill with the imaginary portion.
   // Uses updated ordering to get it in sequential order.
   for (R_xlen_t i = 0; i < size; ++i) {
     const int loc = p_o[i] - 1;
-    p_x_cpl_aux[i] = p_x_cpl[loc].i;
+    p_x_slice_dbl[i] = p_x_cpl[loc].i;
   }
 
   // Iterate over the group chunks from the first pass
@@ -1589,14 +1579,14 @@ static void cpl_order(void* p_x,
 
     // Fast handling of simplest case
     if (group_size == 1) {
-      ++p_x_cpl_aux;
+      ++p_x_slice_dbl;
       ++p_o;
       groups_size_push(p_group_infos, 1);
       continue;
     }
 
     dbl_order(
-      p_x_cpl_aux,
+      p_x_slice_dbl,
       p_x_aux,
       p_o,
       p_o_aux,
@@ -1607,44 +1597,15 @@ static void cpl_order(void* p_x,
       group_size
     );
 
-    p_x_cpl_aux += group_size;
+    p_x_slice_dbl += group_size;
     p_o += group_size;
   }
-}
-
-static void cpl_order_immutable(SEXP x,
-                                void* p_x_slice,
-                                void* p_x_aux,
-                                double* p_x_cpl_aux,
-                                int* p_o,
-                                int* p_o_aux,
-                                uint8_t* p_bytes,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
-  void* p_x = DATAPTR(x);
-
-  // `cpl_order()` won't actually touch `x`, so we can reuse it
-  cpl_order(
-    p_x,
-    p_x_aux,
-    p_x_cpl_aux,
-    p_o,
-    p_o_aux,
-    p_bytes,
-    p_group_infos,
-    decreasing,
-    na_last,
-    size
-  );
 }
 
 // -----------------------------------------------------------------------------
 
 static void col_order_switch(void* p_x,
                              void* p_x_aux,
-                             double* p_x_cpl_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -1698,7 +1659,6 @@ static void col_order_switch(void* p_x,
 static void df_order(SEXP x,
                      void* p_x_slice,
                      void* p_x_aux,
-                     double* p_x_cpl_aux,
                      int* p_o,
                      int* p_o_aux,
                      uint8_t* p_bytes,
@@ -1739,7 +1699,6 @@ static void df_order(SEXP x,
     col,
     p_x_slice,
     p_x_aux,
-    p_x_cpl_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -1778,6 +1737,8 @@ static void df_order(SEXP x,
 
     type = vec_proxy_typeof(col);
 
+    // If we are on the rerun pass, flip this back off so the
+    // imaginary part is extracted below.
     if (type == vctrs_type_complex) {
       rerun_complex = rerun_complex ? false : true;
     }
@@ -1816,7 +1777,6 @@ static void df_order(SEXP x,
       col_order_switch(
         p_x_slice,
         p_x_aux,
-        p_x_cpl_aux,
         p_o_col,
         p_o_aux,
         p_bytes,
@@ -1841,7 +1801,6 @@ static void df_order(SEXP x,
 // and is scalar. Assumes `p_x` holds the current group chunk.
 static void col_order_switch(void* p_x,
                              void* p_x_aux,
-                             double* p_x_cpl_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -1864,7 +1823,8 @@ static void col_order_switch(void* p_x,
     break;
   }
   case vctrs_type_complex: {
-    cpl_order(p_x, p_x_aux, p_x_cpl_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
+    // Complex types are run in two passes, once over real then over imaginary
+    dbl_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
@@ -1880,12 +1840,12 @@ static void col_order_switch(void* p_x,
 // -----------------------------------------------------------------------------
 
 // Pair with `PROTECT_GROUP_INFO()` in the caller
-static struct group_info new_group_info(R_xlen_t size) {
+static struct group_info new_group_info() {
   struct group_info info;
 
-  info.data_size = size;
+  info.data_size = 0;
 
-  info.data = PROTECT(Rf_allocVector(INTSXP, size));
+  info.data = PROTECT(Rf_allocVector(INTSXP, 0));
 
   info.n_groups = 0;
   info.max_group_size = 0;
@@ -1910,6 +1870,11 @@ static SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
  * Reallocate `data` to be as long as `size`.
  */
 static void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
+  // First allocation
+  if (size == 0) {
+    size = GROUP_DATA_SIZE_DEFAULT;
+  }
+
   // Reallocate
   p_group_info->data = group_extend(
     p_group_info->p_data,
@@ -2019,9 +1984,9 @@ static inline size_t df_size_multiplier(SEXP x);
 /*
  * Compute the minimum size required for `x_aux` and `x_slice`.
  *
- * An Rcomplex is the largest type, but we don't want to always allocate that
- * much since that is a rare column type. This dynamically computes the
- * required size.
+ * For complex, we split the vector into two double vectors. We only need to
+ * allocate 1 double vector though, and it will be reused for both the real
+ * and imaginary parts.
  */
 static inline size_t vec_order_size_multiplier(SEXP x) {
   switch (vec_proxy_typeof(x)) {
@@ -2031,7 +1996,8 @@ static inline size_t vec_order_size_multiplier(SEXP x) {
   case vctrs_type_double:
     return sizeof(double);
   case vctrs_type_complex:
-    return sizeof(Rcomplex);
+    // Complex types will be split into two double vectors
+    return sizeof(double);
   case vctrs_type_dataframe:
     return df_size_multiplier(x);
   default:
@@ -2056,48 +2022,6 @@ static inline size_t df_size_multiplier(SEXP x) {
   }
 
   return multiplier;
-}
-
-// -----------------------------------------------------------------------------
-
-/*
- * If we have a complex vector or a data frame with any complex columns, we
- * will need an auxiliary double vector to store the real and imaginary parts.
- * Only 1 double vector is required, it is reused in the real and imaginary
- * parts and for all subsequent complex columns.
- */
-static SEXP new_cpl_auxiliary(SEXP x,
-                              const enum vctrs_type type,
-                              R_xlen_t size) {
-  if (type == vctrs_type_complex) {
-    return Rf_allocVector(REALSXP, size);
-  }
-
-  // We construct a pointer to this object,
-  // so it needs to be a valid double vector.
-  if (type != vctrs_type_dataframe) {
-    return vctrs_shared_empty_dbl;
-  }
-
-  bool any_complex = false;
-  R_xlen_t n_cols = Rf_xlength(x);
-
-  // Loop over columns looking for complex vectors.
-  // df-cols should be flattened so no need to loop recursively
-  for (R_xlen_t i = 0; i < n_cols; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
-
-    if (TYPEOF(col) == CPLXSXP) {
-      any_complex = true;
-      break;
-    }
-  }
-
-  if (any_complex) {
-    return Rf_allocVector(REALSXP, size);
-  }
-
-  return vctrs_shared_empty_dbl;
 }
 
 // -----------------------------------------------------------------------------
