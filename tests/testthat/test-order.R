@@ -333,6 +333,39 @@ test_that("-0 and 0 order identically / stably", {
 })
 
 # ------------------------------------------------------------------------------
+# vec_order2(<complex>)
+
+test_that("can order complex", {
+  x <- complex(real = c(3, 1, 2))
+  expect_identical(vec_order2(x), c(2L, 3L, 1L))
+})
+
+test_that("ordering on ties is done stably", {
+  x <- complex(real = c(1, 3, 1, 3))
+  expect_identical(vec_order2(x)[1:2], c(1L, 3L))
+  expect_identical(vec_order2(x)[3:4], c(2L, 4L))
+})
+
+test_that("imaginary section is used to break ties", {
+  x <- complex(
+    real = c(1L, 2L, 1L),
+    imaginary = c(3L, 2L, 1L)
+  )
+  expect_identical(vec_order2(x), c(3L, 1L, 2L))
+})
+
+test_that("can be used in a data frame", {
+  x <- c(1L, 1L, 1L, 2L)
+
+  y <- complex(
+    real = c(1L, 2L, 1L, 3L),
+    imaginary = c(3L, 2L, 1L, 4L)
+  )
+
+  df1 <- data.frame(x = x, y = y)
+})
+
+# ------------------------------------------------------------------------------
 # vec_order2(<data.frame>) - insertion
 
 test_that("data frame with no columns and no rows returns integer()", {
