@@ -1622,6 +1622,20 @@ static void dbl_radix_order_pass(uint64_t* p_x,
 
 // -----------------------------------------------------------------------------
 
+/*
+ * Detect completely skippable bytes
+ *
+ * There are 8 passes over a double, 1 for each byte. Often times for the entire
+ * `x` vector a few of those passes are useless because all of the bytes are
+ * the same. This does an up front computation in 1 pass over the data to
+ * determine which bytes are completely skippable.
+ *
+ * It is worth noting that just because byte 0 wasn't skippable doesn't mean
+ * that byte 1 isn't. With the way that doubles are mapped to uint64_t, it
+ * is often the case that, for small doubles, bytes 0-2 aren't skippable but
+ * the rest of them are (for example, this happens with doubles in the range
+ * of 1:128). This provides a nice performance increase there.
+ */
 static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size) {
   for (uint8_t i = 0; i < 8; ++i) {
     p_skips[i] = true;
