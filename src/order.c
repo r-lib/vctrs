@@ -50,10 +50,13 @@ SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 // -----------------------------------------------------------------------------
 
 static inline size_t vec_order_size_multiplier(SEXP x);
+static bool vec_order_any_character(SEXP x, const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
                              void* p_x_slice,
                              void* p_x_aux,
+                             int* p_x_chr_sizes,
+                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -102,6 +105,24 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   SEXP x_aux = PROTECT_N(Rf_allocVector(RAWSXP, size * multiplier), p_n_prot);
   void* p_x_aux = DATAPTR(x_aux);
 
+  // Character ordering is much faster if we keep track of individual string
+  // sizes, even if it is a bit of a headache
+  bool any_character = vec_order_any_character(x, type);
+
+  SEXP x_chr_sizes = vctrs_shared_empty_int;
+  if (any_character) {
+    x_chr_sizes = Rf_allocVector(INTSXP, size);
+  }
+  PROTECT_N(x_chr_sizes, p_n_prot);
+  int* p_x_chr_sizes = INTEGER(x_chr_sizes);
+
+  SEXP x_chr_sizes_aux = vctrs_shared_empty_int;
+  if (any_character) {
+    x_chr_sizes_aux = Rf_allocVector(INTSXP, size);
+  }
+  PROTECT_N(x_chr_sizes_aux, p_n_prot);
+  int* p_x_chr_sizes_aux = INTEGER(x_chr_sizes_aux);
+
   SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o = INTEGER(o);
 
@@ -140,6 +161,8 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     x,
     p_x_slice,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -177,6 +200,8 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
 static void df_order(SEXP x,
                      void* p_x_slice,
                      void* p_x_aux,
+                     int* p_x_chr_sizes,
+                     int* p_x_chr_sizes_aux,
                      int* p_o,
                      int* p_o_aux,
                      uint8_t* p_bytes,
@@ -188,6 +213,8 @@ static void df_order(SEXP x,
 static void vec_order_immutable_switch(SEXP x,
                                        void* p_x_slice,
                                        void* p_x_aux,
+                                       int* p_x_chr_sizes,
+                                       int* p_x_chr_sizes_aux,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
@@ -200,6 +227,8 @@ static void vec_order_immutable_switch(SEXP x,
 static void vec_order_switch(SEXP x,
                              void* p_x_slice,
                              void* p_x_aux,
+                             int* p_x_chr_sizes,
+                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -213,6 +242,8 @@ static void vec_order_switch(SEXP x,
       x,
       p_x_slice,
       p_x_aux,
+      p_x_chr_sizes,
+      p_x_chr_sizes_aux,
       p_o,
       p_o_aux,
       p_bytes,
@@ -239,6 +270,8 @@ static void vec_order_switch(SEXP x,
     x,
     p_x_slice,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -299,6 +332,8 @@ static void cpl_order_immutable(SEXP x,
 static void chr_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
+                                int* p_x_chr_sizes,
+                                int* p_x_chr_sizes_aux,
                                 int* p_o,
                                 int* p_o_aux,
                                 uint8_t* p_bytes,
@@ -311,6 +346,8 @@ static void chr_order_immutable(SEXP x,
 static void vec_order_immutable_switch(SEXP x,
                                        void* p_x_slice,
                                        void* p_x_aux,
+                                       int* p_x_chr_sizes,
+                                       int* p_x_chr_sizes_aux,
                                        int* p_o,
                                        int* p_o_aux,
                                        uint8_t* p_bytes,
@@ -389,6 +426,8 @@ static void vec_order_immutable_switch(SEXP x,
       x,
       p_x_slice,
       p_x_aux,
+      p_x_chr_sizes,
+      p_x_chr_sizes_aux,
       p_o,
       p_o_aux,
       p_bytes,
@@ -1832,7 +1871,10 @@ static void cpl_order_immutable(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+static R_len_t chr_fill_sizes(int* p_x_chr_sizes, const SEXP* p_x, R_xlen_t size);
+
 static void chr_insertion_order(SEXP* p_x,
+                                int* p_x_chr_sizes,
                                 int* p_o,
                                 struct group_infos* p_group_infos,
                                 bool decreasing,
@@ -1842,17 +1884,22 @@ static void chr_insertion_order(SEXP* p_x,
 
 static void chr_radix_order(SEXP* p_x,
                             SEXP* p_x_aux,
+                            int* p_x_chr_sizes,
+                            int* p_x_chr_sizes_aux,
                             int* p_o,
                             int* p_o_aux,
                             uint8_t* p_bytes,
                             struct group_infos* p_group_infos,
                             bool decreasing,
                             bool na_last,
-                            const R_xlen_t size);
+                            const R_xlen_t size,
+                            const R_len_t max_size);
 
 
 static void chr_order(void* p_x,
                       void* p_x_aux,
+                      int* p_x_chr_sizes,
+                      int* p_x_chr_sizes_aux,
                       int* p_o,
                       int* p_o_aux,
                       uint8_t* p_bytes,
@@ -1860,28 +1907,35 @@ static void chr_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
+  const R_len_t max_size = chr_fill_sizes(p_x_chr_sizes, p_x, size);
+
   if (size <= INSERTION_ORDER_BOUNDARY) {
     const int pass = 0;
-    chr_insertion_order(p_x, p_o, p_group_infos, decreasing, na_last, size, pass);
+    chr_insertion_order(p_x, p_x_chr_sizes, p_o, p_group_infos, decreasing, na_last, size, pass);
     return;
   }
 
   chr_radix_order(
     p_x,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
     p_group_infos,
     decreasing,
     na_last,
-    size
+    size,
+    max_size
   );
 }
 
 static void chr_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
+                                int* p_x_chr_sizes,
+                                int* p_x_chr_sizes_aux,
                                 int* p_o,
                                 int* p_o_aux,
                                 uint8_t* p_bytes,
@@ -1893,28 +1947,38 @@ static void chr_order_immutable(SEXP x,
 
   memcpy(p_x_slice, p_x, size * sizeof(SEXP));
 
+  const R_len_t max_size = chr_fill_sizes(p_x_chr_sizes, p_x, size);
+
   if (size <= INSERTION_ORDER_BOUNDARY) {
     const int pass = 0;
-    chr_insertion_order(p_x_slice, p_o, p_group_infos, decreasing, na_last, size, pass);
+    chr_insertion_order(p_x_slice, p_x_chr_sizes, p_o, p_group_infos, decreasing, na_last, size, pass);
     return;
   }
 
   chr_radix_order(
     p_x_slice,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
     p_group_infos,
     decreasing,
     na_last,
-    size
+    size,
+    max_size
   );
 }
 
 // -----------------------------------------------------------------------------
 
-static bool chr_str_ge(SEXP x, SEXP y, int direction, bool na_last, int radix);
+static bool chr_str_ge(SEXP x,
+                       SEXP y,
+                       int x_size,
+                       const int direction,
+                       const bool na_last,
+                       const R_len_t pass);
 
 /*
  * `chr_insertion_order()` is used in two ways:
@@ -1931,6 +1995,7 @@ static bool chr_str_ge(SEXP x, SEXP y, int direction, bool na_last, int radix);
  * Assumes `p_x` is mutable.
  */
 static void chr_insertion_order(SEXP* p_x,
+                                int* p_x_chr_sizes,
                                 int* p_o,
                                 struct group_infos* p_group_infos,
                                 bool decreasing,
@@ -1947,21 +2012,24 @@ static void chr_insertion_order(SEXP* p_x,
   for (R_xlen_t i = 1; i < size; ++i) {
     const SEXP x_elt = p_x[i];
     const int o_elt = p_o[i];
+    const int x_elt_size = p_x_chr_sizes[i];
 
     R_xlen_t j = i - 1;
 
     while (j >= 0) {
       const SEXP x_cmp_elt = p_x[j];
 
-      if (chr_str_ge(x_elt, x_cmp_elt, direction, na_last, pass)) {
+      if (chr_str_ge(x_elt, x_cmp_elt, x_elt_size, direction, na_last, pass)) {
         break;
       }
 
       int o_cmp_elt = p_o[j];
+      int x_cmp_elt_size = p_x_chr_sizes[j];
 
       // Swap
       p_x[j + 1] = x_cmp_elt;
       p_o[j + 1] = o_cmp_elt;
+      p_x_chr_sizes[j + 1] = x_cmp_elt_size;
 
       // Next
       --j;
@@ -1971,6 +2039,7 @@ static void chr_insertion_order(SEXP* p_x,
     // closer to start of the vector
     p_x[j + 1] = x_elt;
     p_o[j + 1] = o_elt;
+    p_x_chr_sizes[j + 1] = x_elt_size;
   }
 
   // We've ordered a small chunk, we need to push at least one group size.
@@ -2003,10 +2072,10 @@ static void chr_insertion_order(SEXP* p_x,
 
 // -----------------------------------------------------------------------------
 
-static R_len_t chr_compute_max_size(const SEXP* p_x, R_xlen_t size);
-
 static void chr_radix_order_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
+                                    int* p_x_chr_sizes,
+                                    int* p_x_chr_sizes_aux,
                                     int* p_o,
                                     int* p_o_aux,
                                     uint8_t* p_bytes,
@@ -2019,20 +2088,23 @@ static void chr_radix_order_recurse(SEXP* p_x,
 
 static void chr_radix_order(SEXP* p_x,
                             SEXP* p_x_aux,
+                            int* p_x_chr_sizes,
+                            int* p_x_chr_sizes_aux,
                             int* p_o,
                             int* p_o_aux,
                             uint8_t* p_bytes,
                             struct group_infos* p_group_infos,
                             bool decreasing,
                             bool na_last,
-                            const R_xlen_t size) {
+                            const R_xlen_t size,
+                            const R_len_t max_size) {
   R_len_t pass = 0;
-
-  R_len_t max_size = chr_compute_max_size(p_x, size);
 
   chr_radix_order_recurse(
     p_x,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -2049,6 +2121,8 @@ static void chr_radix_order(SEXP* p_x,
 
 static void chr_radix_order_pass(SEXP* p_x,
                                  SEXP* p_x_aux,
+                                 int* p_x_chr_sizes,
+                                 int* p_x_chr_sizes_aux,
                                  int* p_o,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
@@ -2061,6 +2135,8 @@ static void chr_radix_order_pass(SEXP* p_x,
 
 static void chr_radix_order_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
+                                    int* p_x_chr_sizes,
+                                    int* p_x_chr_sizes_aux,
                                     int* p_o,
                                     int* p_o_aux,
                                     uint8_t* p_bytes,
@@ -2075,6 +2151,8 @@ static void chr_radix_order_recurse(SEXP* p_x,
   chr_radix_order_pass(
     p_x,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -2103,6 +2181,7 @@ static void chr_radix_order_recurse(SEXP* p_x,
     if (group_size == 1) {
       groups_size_push(p_group_infos, 1);
       ++p_x;
+      ++p_x_chr_sizes;
       ++p_o;
       continue;
     }
@@ -2110,6 +2189,7 @@ static void chr_radix_order_recurse(SEXP* p_x,
     if (next_pass == max_size) {
       groups_size_push(p_group_infos, group_size);
       p_x += group_size;
+      p_x_chr_sizes += group_size;
       p_o += group_size;
       continue;
     }
@@ -2118,6 +2198,8 @@ static void chr_radix_order_recurse(SEXP* p_x,
     chr_radix_order_recurse(
       p_x,
       p_x_aux,
+      p_x_chr_sizes,
+      p_x_chr_sizes_aux,
       p_o,
       p_o_aux,
       p_bytes,
@@ -2130,6 +2212,7 @@ static void chr_radix_order_recurse(SEXP* p_x,
     );
 
     p_x += group_size;
+    p_x_chr_sizes += group_size;
     p_o += group_size;
   }
 }
@@ -2156,6 +2239,8 @@ static void chr_radix_order_recurse(SEXP* p_x,
  */
 static void chr_radix_order_pass(SEXP* p_x,
                                  SEXP* p_x_aux,
+                                 int* p_x_chr_sizes,
+                                 int* p_x_chr_sizes_aux,
                                  int* p_o,
                                  int* p_o_aux,
                                  uint8_t* p_bytes,
@@ -2166,7 +2251,7 @@ static void chr_radix_order_pass(SEXP* p_x,
                                  const R_xlen_t size,
                                  const R_len_t pass) {
   if (size <= INSERTION_ORDER_BOUNDARY) {
-    chr_insertion_order(p_x, p_o, p_group_infos, decreasing, na_last, size, pass);
+    chr_insertion_order(p_x, p_x_chr_sizes, p_o, p_group_infos, decreasing, na_last, size, pass);
     return;
   }
 
@@ -2198,7 +2283,7 @@ static void chr_radix_order_pass(SEXP* p_x,
       continue;
     }
 
-    const R_len_t x_elt_size = Rf_length(x_elt);
+    const R_len_t x_elt_size = p_x_chr_sizes[i];
 
     // Check if there are characters left in the string and extract the next
     // one if so, otherwise assume implicit "".
@@ -2263,11 +2348,13 @@ static void chr_radix_order_pass(SEXP* p_x,
     const R_xlen_t loc = p_counts[byte]++;
     p_o_aux[loc] = p_o[i];
     p_x_aux[loc] = p_x[i];
+    p_x_chr_sizes_aux[loc] = p_x_chr_sizes[i];
   }
 
   // Copy back over
   memcpy(p_o, p_o_aux, size * sizeof(int));
   memcpy(p_x, p_x_aux, size * sizeof(SEXP));
+  memcpy(p_x_chr_sizes, p_x_chr_sizes_aux, size * sizeof(int));
 }
 
 // -----------------------------------------------------------------------------
@@ -2308,6 +2395,7 @@ SEXP chr_print(SEXP x) {
  */
 static bool chr_str_ge(SEXP x,
                        SEXP y,
+                       int x_size,
                        const int direction,
                        const bool na_last,
                        const R_len_t pass) {
@@ -2324,11 +2412,11 @@ static bool chr_str_ge(SEXP x,
     return !na_last;
   }
 
-  const char* c_x = CHAR(x);
-  const char* c_y = CHAR(y);
-
   // Pure insertion sort - we know nothing yet
   if (pass == 0) {
+    const char* c_x = CHAR(x);
+    const char* c_y = CHAR(y);
+
     int cmp = strcmp(c_x, c_y) * direction;
     return cmp >= 0;
   }
@@ -2339,9 +2427,12 @@ static bool chr_str_ge(SEXP x,
   const int last_pass = pass - 1;
 
   // We are comparing length with C 0-based indexing so we have to do +1.
-  if (Rf_length(x) < last_pass + 1) {
+  if (x_size < last_pass + 1) {
     return true;
   }
+
+  const char* c_x = CHAR(x);
+  const char* c_y = CHAR(y);
 
   // Now start the comparison at `last_pass`, which we know exists
   c_x = c_x + last_pass;
@@ -2353,21 +2444,28 @@ static bool chr_str_ge(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static R_len_t chr_compute_max_size(const SEXP* p_x, R_xlen_t size) {
+/*
+ * Fills `p_x_chr_sizes` once for reuse in recursion.
+ * Also returns the max size to track the depth of recursion.
+ */
+static R_len_t chr_fill_sizes(int* p_x_chr_sizes, const SEXP* p_x, R_xlen_t size) {
   R_len_t max_size = 0;
 
   for (R_xlen_t i = 0; i < size; ++i) {
     const SEXP elt = p_x[i];
 
+    // Will never touch `p_x_chr_sizes` here
     if (elt == NA_STRING) {
       continue;
     }
 
-    const R_len_t size = Rf_length(elt);
+    const R_len_t elt_size = Rf_length(elt);
 
-    if (size > max_size) {
-      max_size = size;
+    if (elt_size > max_size) {
+      max_size = elt_size;
     }
+
+    p_x_chr_sizes[i] = (int) elt_size;
   }
 
   return max_size;
@@ -2377,6 +2475,8 @@ static R_len_t chr_compute_max_size(const SEXP* p_x, R_xlen_t size) {
 
 static void col_order_switch(void* p_x,
                              void* p_x_aux,
+                             int* p_x_chr_sizes,
+                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -2430,6 +2530,8 @@ static void col_order_switch(void* p_x,
 static void df_order(SEXP x,
                      void* p_x_slice,
                      void* p_x_aux,
+                     int* p_x_chr_sizes,
+                     int* p_x_chr_sizes_aux,
                      int* p_o,
                      int* p_o_aux,
                      uint8_t* p_bytes,
@@ -2470,6 +2572,8 @@ static void df_order(SEXP x,
     col,
     p_x_slice,
     p_x_aux,
+    p_x_chr_sizes,
+    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
@@ -2549,6 +2653,8 @@ static void df_order(SEXP x,
       col_order_switch(
         p_x_slice,
         p_x_aux,
+        p_x_chr_sizes,
+        p_x_chr_sizes_aux,
         p_o_col,
         p_o_aux,
         p_bytes,
@@ -2573,6 +2679,8 @@ static void df_order(SEXP x,
 // and is scalar. Assumes `p_x` holds the current group chunk.
 static void col_order_switch(void* p_x,
                              void* p_x_aux,
+                             int* p_x_chr_sizes,
+                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              int* p_o_aux,
                              uint8_t* p_bytes,
@@ -2600,7 +2708,7 @@ static void col_order_switch(void* p_x,
     break;
   }
   case vctrs_type_character: {
-    chr_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
+    chr_order(p_x, p_x_aux, p_x_chr_sizes, p_x_chr_sizes_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
@@ -2800,6 +2908,36 @@ static inline size_t df_size_multiplier(SEXP x) {
   }
 
   return multiplier;
+}
+
+// -----------------------------------------------------------------------------
+
+static bool df_any_character(SEXP x);
+
+static bool vec_order_any_character(SEXP x, const enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_character:
+    return true;
+  case vctrs_type_dataframe:
+    return df_any_character(x);
+  default:
+    return false;
+  }
+}
+
+static bool df_any_character(SEXP x) {
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+    const enum vctrs_type type = vec_proxy_typeof(col);
+
+    if (vec_order_any_character(col, type)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // -----------------------------------------------------------------------------
