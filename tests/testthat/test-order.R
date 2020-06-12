@@ -362,7 +362,7 @@ test_that("can be used in a data frame", {
     imaginary = c(3L, 2L, 1L, 4L, 1L)
   )
 
-  z <- 1:5
+  z <- c(1, 2, 5, 4, 3)
 
   # as second column
   df1 <- data.frame(x = x, y = y)
@@ -370,12 +370,13 @@ test_that("can be used in a data frame", {
   # as first column
   df2 <- data.frame(y = y, x = x)
 
-  # as second column with a third after it
+  # as second column with a third after it to break ties
   df3 <- data.frame(x = x, y = y, z = z)
 
-  expect_identical(vec_order2(df1), lst_order(df1))
-  expect_identical(vec_order2(df2), lst_order(df2))
-  expect_identical(vec_order2(df3), lst_order(df3))
+  # Base R can't do radix sorting with complex
+  expect_identical(vec_order2(df1), c(3L, 5L, 1L, 2L, 4L))
+  expect_identical(vec_order2(df2), c(3L, 5L, 1L, 2L, 4L))
+  expect_identical(vec_order2(df3), c(5L, 3L, 1L, 2L, 4L))
 })
 
 test_that("all combinations of `decreasing` and `na_last` work", {
