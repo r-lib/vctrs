@@ -296,6 +296,17 @@ static void cpl_order_immutable(SEXP x,
                                 bool na_last,
                                 R_xlen_t size);
 
+static void chr_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size);
+
 // Used on bare vectors and the first column of data frame `x`s
 static void vec_order_immutable_switch(SEXP x,
                                        void* p_x_slice,
@@ -359,6 +370,22 @@ static void vec_order_immutable_switch(SEXP x,
   }
   case vctrs_type_complex: {
     cpl_order_immutable(
+      x,
+      p_x_slice,
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_group_infos,
+      decreasing,
+      na_last,
+      size
+    );
+
+    break;
+  }
+  case vctrs_type_character: {
+    chr_order_immutable(
       x,
       p_x_slice,
       p_x_aux,
@@ -440,7 +467,7 @@ static void int_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
-  if (size < INSERTION_ORDER_BOUNDARY) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
     int_adjust(p_x, decreasing, na_last, size);
     int_insertion_order(p_x, p_o, p_group_infos, size);
     return;
@@ -472,7 +499,7 @@ static void int_order_immutable(SEXP x,
                                 R_xlen_t size) {
   const int* p_x = INTEGER_RO(x);
 
-  if (size < INSERTION_ORDER_BOUNDARY) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
     memcpy(p_x_slice, p_x, size * sizeof(int));
     int_adjust(p_x_slice, decreasing, na_last, size);
     int_insertion_order(p_x_slice, p_o, p_group_infos, size);
@@ -1201,7 +1228,7 @@ static void dbl_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
-  if (size < INSERTION_ORDER_BOUNDARY) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
     dbl_adjust(p_x, decreasing, na_last, size);
     dbl_insertion_order(p_x, p_o, p_group_infos, size);
     return;
@@ -1223,7 +1250,7 @@ static void dbl_order_immutable(SEXP x,
                                 R_xlen_t size) {
   const double* p_x = REAL_RO(x);
 
-  if (size < INSERTION_ORDER_BOUNDARY) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
     memcpy(p_x_slice, p_x, size * sizeof(double));
     dbl_adjust(p_x_slice, decreasing, na_last, size);
     dbl_insertion_order(p_x_slice, p_o, p_group_infos, size);
@@ -1805,6 +1832,549 @@ static void cpl_order_immutable(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+static void chr_insertion_order(SEXP* p_x,
+                                int* p_o,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                const R_xlen_t size,
+                                const R_len_t pass);
+
+static void chr_radix_order(SEXP* p_x,
+                            SEXP* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_group_infos,
+                            bool decreasing,
+                            bool na_last,
+                            const R_xlen_t size);
+
+
+static void chr_order(void* p_x,
+                      void* p_x_aux,
+                      int* p_o,
+                      int* p_o_aux,
+                      uint8_t* p_bytes,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    const int pass = 0;
+    chr_insertion_order(p_x, p_o, p_group_infos, decreasing, na_last, size, pass);
+    return;
+  }
+
+  chr_radix_order(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size
+  );
+}
+
+static void chr_order_immutable(SEXP x,
+                                void* p_x_slice,
+                                void* p_x_aux,
+                                int* p_o,
+                                int* p_o_aux,
+                                uint8_t* p_bytes,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                R_xlen_t size) {
+  const SEXP* p_x = STRING_PTR_RO(x);
+
+  memcpy(p_x_slice, p_x, size * sizeof(SEXP));
+
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    const int pass = 0;
+    chr_insertion_order(p_x_slice, p_o, p_group_infos, decreasing, na_last, size, pass);
+    return;
+  }
+
+  chr_radix_order(
+    p_x_slice,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+static bool chr_str_ge(SEXP x, SEXP y, int direction, bool na_last, int radix);
+
+/*
+ * `chr_insertion_order()` is used in two ways:
+ * - It is how we "finish off" radix sorts rather than deep recursion.
+ * - If we have an original `x` input that is small enough, we just immediately
+ *   insertion sort it.
+ *
+ * For small inputs, it is much faster than deeply recursing with
+ * radix ordering.
+ *
+ * Unlike `int/dbl_insertion_order()`, we have no way to order `p_x` ahead of
+ * time based on `decreasing` and `na_last` so we have to handle that here.
+ *
+ * Assumes `p_x` is mutable.
+ */
+static void chr_insertion_order(SEXP* p_x,
+                                int* p_o,
+                                struct group_infos* p_group_infos,
+                                bool decreasing,
+                                bool na_last,
+                                const R_xlen_t size,
+                                const R_len_t pass) {
+  const int direction = decreasing ? -1 : 1;
+
+  // Don't think this can occur, but safer this way
+  if (size == 0) {
+    return;
+  }
+
+  for (R_xlen_t i = 1; i < size; ++i) {
+    const SEXP x_elt = p_x[i];
+    const int o_elt = p_o[i];
+
+    R_xlen_t j = i - 1;
+
+    while (j >= 0) {
+      const SEXP x_cmp_elt = p_x[j];
+
+      if (chr_str_ge(x_elt, x_cmp_elt, direction, na_last, pass)) {
+        break;
+      }
+
+      int o_cmp_elt = p_o[j];
+
+      // Swap
+      p_x[j + 1] = x_cmp_elt;
+      p_o[j + 1] = o_cmp_elt;
+
+      // Next
+      --j;
+    }
+
+    // Place original elements in new location
+    // closer to start of the vector
+    p_x[j + 1] = x_elt;
+    p_o[j + 1] = o_elt;
+  }
+
+  // We've ordered a small chunk, we need to push at least one group size.
+  // Depends on the post-ordered results so we have to do this
+  // in a separate loop.
+  R_xlen_t group_size = 1;
+  SEXP previous = p_x[0];
+
+  for (R_xlen_t i = 1; i < size; ++i) {
+    const SEXP current = p_x[i];
+
+    // Continue the current group run.
+    // TODO: I think that comparing pointers is fine here, as equal strings
+    // should always be cached to the same CHARSXP (including NAs).
+    if (current == previous) {
+      ++group_size;
+      continue;
+    }
+
+    // Push current run size and reset size tracker
+    groups_size_push(p_group_infos, group_size);
+    group_size = 1;
+
+    previous = current;
+  }
+
+  // Push final group run
+  groups_size_push(p_group_infos, group_size);
+}
+
+// -----------------------------------------------------------------------------
+
+static R_len_t chr_compute_max_size(const SEXP* p_x, R_xlen_t size);
+
+static void chr_radix_order_recurse(SEXP* p_x,
+                                    SEXP* p_x_aux,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    uint8_t* p_bytes,
+                                    struct group_infos* p_group_infos,
+                                    bool decreasing,
+                                    bool na_last,
+                                    const R_xlen_t size,
+                                    const R_len_t pass,
+                                    const R_len_t max_size);
+
+static void chr_radix_order(SEXP* p_x,
+                            SEXP* p_x_aux,
+                            int* p_o,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            struct group_infos* p_group_infos,
+                            bool decreasing,
+                            bool na_last,
+                            const R_xlen_t size) {
+  R_len_t pass = 0;
+
+  R_len_t max_size = chr_compute_max_size(p_x, size);
+
+  chr_radix_order_recurse(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size,
+    pass,
+    max_size
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+static void chr_radix_order_pass(SEXP* p_x,
+                                 SEXP* p_x_aux,
+                                 int* p_o,
+                                 int* p_o_aux,
+                                 uint8_t* p_bytes,
+                                 R_xlen_t* p_counts,
+                                 struct group_infos* p_group_infos,
+                                 const bool decreasing,
+                                 const bool na_last,
+                                 const R_xlen_t size,
+                                 const R_len_t pass);
+
+static void chr_radix_order_recurse(SEXP* p_x,
+                                    SEXP* p_x_aux,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    uint8_t* p_bytes,
+                                    struct group_infos* p_group_infos,
+                                    bool decreasing,
+                                    bool na_last,
+                                    const R_xlen_t size,
+                                    const R_len_t pass,
+                                    const R_len_t max_size) {
+  R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
+
+  chr_radix_order_pass(
+    p_x,
+    p_x_aux,
+    p_o,
+    p_o_aux,
+    p_bytes,
+    p_counts,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size,
+    pass
+  );
+
+  const int next_pass = pass + 1;
+  R_xlen_t last_cumulative_count = 0;
+
+  for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
+    const R_xlen_t cumulative_count = p_counts[i];
+
+    if (!cumulative_count) {
+      continue;
+    }
+
+    // Diff the accumulated counts to get the radix group size
+    const R_xlen_t group_size = cumulative_count - last_cumulative_count;
+    last_cumulative_count = cumulative_count;
+
+    if (group_size == 1) {
+      groups_size_push(p_group_infos, 1);
+      ++p_x;
+      ++p_o;
+      continue;
+    }
+
+    if (next_pass == max_size) {
+      groups_size_push(p_group_infos, group_size);
+      p_x += group_size;
+      p_o += group_size;
+      continue;
+    }
+
+    // Order next byte of this subgroup
+    chr_radix_order_recurse(
+      p_x,
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_bytes,
+      p_group_infos,
+      decreasing,
+      na_last,
+      group_size,
+      next_pass,
+      max_size
+    );
+
+    p_x += group_size;
+    p_o += group_size;
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+/*
+ * Bucketing chars is a little tricky:
+ * - There are 256 ASCII characters in the extended set, numbered 0-255.
+ *
+ * - Bucket 0 would hold a null character, but these are not allowed in R
+ *   strings, so we reserve that one for `NA_STRING`
+ *
+ * - We also need a way to hold information about implicit `""`. These occur
+ *   when a string is shorter than the `max_size`. For example, "car" vs "cars".
+ *   If these were ordered together by char from left to right then we need a
+ *   way to describe the extra missing character in "car_". Lexicographically
+ *   it should sort smaller than anything longer, so we need to put it in
+ *   bucket 1. Bucket 1 maps to "Start of Heading", `c("\x01")`
+ */
+
+/*
+ * Orders based on a single byte corresponding to the current `pass`.
+ */
+static void chr_radix_order_pass(SEXP* p_x,
+                                 SEXP* p_x_aux,
+                                 int* p_o,
+                                 int* p_o_aux,
+                                 uint8_t* p_bytes,
+                                 R_xlen_t* p_counts,
+                                 struct group_infos* p_group_infos,
+                                 const bool decreasing,
+                                 const bool na_last,
+                                 const R_xlen_t size,
+                                 const R_len_t pass) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    chr_insertion_order(p_x, p_o, p_group_infos, decreasing, na_last, size, pass);
+    return;
+  }
+
+  uint8_t byte = 0;
+
+  const uint8_t na_bucket = 0;
+  R_xlen_t na_count = 0;
+
+  // Bucket for implicit `""` when we run out of characters in strings that
+  // are shorter than `max_size`. These sort less than longer strings, so we
+  // put them in the first possible bucket (after the NA one). The ASCII table
+  // says this aligns with the value of "Start of Heading" which forces these
+  // to sort identically
+  // order(c("\x01", "")) # how does this actually work?
+  // order(c("", "\x01"))
+  //
+  // data.table:::forder(c("\x01", ""))
+  // data.table:::forder(c("", "\x01"))
+  const uint8_t missing_bucket = 1;
+
+  // Histogram
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const SEXP x_elt = p_x[i];
+
+    if (x_elt == NA_STRING) {
+      byte = na_bucket;
+      p_bytes[i] = byte;
+      ++na_count;
+      continue;
+    }
+
+    const R_len_t x_elt_size = Rf_length(x_elt);
+
+    // Check if there are characters left in the string and extract the next
+    // one if so, otherwise assume implicit "".
+    if (pass < x_elt_size) {
+      const char* c_x_elt = CHAR(x_elt);
+      byte = (uint8_t) c_x_elt[pass];
+    } else {
+      byte = missing_bucket;
+    }
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Assign `na_counts` once at the end
+  p_counts[na_bucket] = na_count;
+
+  // Fast check to see if all bytes were the same. If so, skip `pass`.
+  if (p_counts[byte] == size) {
+    return;
+  }
+
+  R_xlen_t cumulative = 0;
+
+  // Handle decreasing/increasing by altering the order in which
+  // counts are accumulated. If not `decreasing`, start `j` at
+  // 1 to skip NA bucket.
+  const int direction = decreasing ? -1 : 1;
+  R_xlen_t j = decreasing ? UINT8_MAX_SIZE - 1 : 1;
+
+  // `na_last = false` pushes NA counts to the front
+  if (!na_last && na_count != 0) {
+    p_counts[na_bucket] = cumulative;
+    cumulative += na_count;
+  }
+
+  // Accumulate counts, skip zeros
+  // Also start at `i = 1` to skip `NA` bucket
+  for (uint16_t i = 1; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[j];
+
+    if (count == 0) {
+      j += direction;
+      continue;
+    }
+
+    // Insert current cumulative value, then increment
+    p_counts[j] = cumulative;
+    cumulative += count;
+
+    j += direction;
+  }
+
+  // `na_last = true` pushes NA counts to the back
+  if (na_last && na_count != 0) {
+    p_counts[na_bucket] = cumulative;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_o_aux[loc] = p_o[i];
+    p_x_aux[loc] = p_x[i];
+  }
+
+  // Copy back over
+  memcpy(p_o, p_o_aux, size * sizeof(int));
+  memcpy(p_x, p_x_aux, size * sizeof(SEXP));
+}
+
+// -----------------------------------------------------------------------------
+
+/*
+ * R strings cannot have null characters in them (try "\0").
+ * This maps to the ASCII value of 0. Since it is unused, we are free to use
+ * this bucket for NA_STRING values.
+ */
+
+SEXP chr_print(SEXP x) {
+  R_xlen_t size = Rf_xlength(x);
+  const SEXP* p_x = STRING_PTR_RO(x);
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const SEXP elt = p_x[i];
+    const char* c_elt = CHAR(elt);
+    const R_len_t n = Rf_length(elt);
+
+    for (R_len_t j = 0; j < n; ++j) {
+      Rprintf("%c %u\n", c_elt[j], (unsigned char) c_elt[j]);
+    }
+    Rprintf("%\n");
+  }
+
+  return R_NilValue;
+}
+
+// -----------------------------------------------------------------------------
+
+/*
+ * Is `x` greater than or equal to `y` lexicographically in the C locale?
+ *
+ * - Assume same encoding (UTF-8 / ASCII)
+ * - Handles direction / na_last
+ * - Starts comparison at current radix (they are equal up to that point, but
+ *   possibly not at that point)
+ */
+static bool chr_str_ge(SEXP x,
+                       SEXP y,
+                       const int direction,
+                       const bool na_last,
+                       const R_len_t pass) {
+  // Same pointer (including `NA`s)
+  if (x == y) {
+    return true;
+  }
+
+  // if `na_last` then `NA` is greater than anything else
+  if (x == NA_STRING) {
+    return na_last;
+  }
+  if (y == NA_STRING) {
+    return !na_last;
+  }
+
+  const char* c_x = CHAR(x);
+  const char* c_y = CHAR(y);
+
+  // Pure insertion sort - we know nothing yet
+  if (pass == 0) {
+    int cmp = strcmp(c_x, c_y) * direction;
+    return cmp >= 0;
+  }
+
+  // Otherwise we know they are equal up to the position before `pass`, but
+  // it might have been equality with implicit "" so we need to check the
+  // length of one of them
+  const int last_pass = pass - 1;
+
+  // We are comparing length with C 0-based indexing so we have to do +1.
+  if (Rf_length(x) < last_pass + 1) {
+    return true;
+  }
+
+  // Now start the comparison at `last_pass`, which we know exists
+  c_x = c_x + last_pass;
+  c_y = c_y + last_pass;
+
+  int cmp = strcmp(c_x, c_y) * direction;
+  return cmp >= 0;
+}
+
+// -----------------------------------------------------------------------------
+
+static R_len_t chr_compute_max_size(const SEXP* p_x, R_xlen_t size) {
+  R_len_t max_size = 0;
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const SEXP elt = p_x[i];
+
+    if (elt == NA_STRING) {
+      continue;
+    }
+
+    const R_len_t size = Rf_length(elt);
+
+    if (size > max_size) {
+      max_size = size;
+    }
+  }
+
+  return max_size;
+}
+
+// -----------------------------------------------------------------------------
+
 static void col_order_switch(void* p_x,
                              void* p_x_aux,
                              int* p_o,
@@ -1972,6 +2542,7 @@ static void df_order(SEXP x,
       case vctrs_type_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
       case vctrs_type_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
       case vctrs_type_complex: DF_ORDER_EXTRACT_CHUNK_CPL(); break;
+      case vctrs_type_character: DF_ORDER_EXTRACT_CHUNK(STRING_PTR_RO, SEXP); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
@@ -2026,6 +2597,10 @@ static void col_order_switch(void* p_x,
   case vctrs_type_complex: {
     // Complex types are run in two passes, once over real then over imaginary
     dbl_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
+    break;
+  }
+  case vctrs_type_character: {
+    chr_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
@@ -2199,6 +2774,8 @@ static inline size_t vec_order_size_multiplier(SEXP x) {
   case vctrs_type_complex:
     // Complex types will be split into two double vectors
     return sizeof(double);
+  case vctrs_type_character:
+    return sizeof(SEXP);
   case vctrs_type_dataframe:
     return df_size_multiplier(x);
   default:
