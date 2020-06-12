@@ -406,6 +406,66 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 })
 
 # ------------------------------------------------------------------------------
+# vec_order2(<character>) - insertion
+
+test_that("can order characters", {
+  x <- c("xy", "x", "a", "bc")
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("can order sorted vector", {
+  x <- c("a", "b", "c")
+  expect_identical(vec_order2(x), order(x))
+})
+
+test_that("ordering on ties is done stably", {
+  x <- c("ab", "ba", "ab", "ba")
+  expect_identical(vec_order2(x)[1:2], c(1L, 3L))
+  expect_identical(vec_order2(x)[3:4], c(2L, 4L))
+})
+
+test_that("`NA` order defaults to last", {
+  x <- c("x", NA_character_, "y")
+  expect_identical(vec_order2(x), c(1L, 3L, 2L))
+})
+
+test_that("`NA` order can be first", {
+  x <- c("x", NA_character_, "y")
+  expect_identical(vec_order2(x, na_last = FALSE), c(2L, 1L, 3L))
+})
+
+test_that("`decreasing` can be set to `TRUE`", {
+  x <- c("x", "abcde", "yz")
+  expect_identical(vec_order2(x, decreasing = TRUE), c(3L, 1L, 2L))
+})
+
+test_that("all combinations of `decreasing` and `na_last` work", {
+  x <- c("aaa", NA_character_, "a", "aa")
+
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[order(x, na.last = TRUE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[order(x, na.last = FALSE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[order(x, na.last = TRUE, decreasing = TRUE)]
+  )
+  expect_identical(
+    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[order(x, na.last = FALSE, decreasing = TRUE)]
+  )
+})
+
+test_that("all `NA` values works", {
+  x <- c(NA_character_, NA_character_)
+  expect_identical(vec_order2(x), order(x))
+})
+
+# ------------------------------------------------------------------------------
 # vec_order2(<data.frame>) - insertion
 
 test_that("data frame with no columns and no rows returns integer()", {
