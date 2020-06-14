@@ -158,8 +158,8 @@ vec_as_location2_result <- function(i,
                                     missing,
                                     negative,
                                     arg) {
-  allow_missing <- arg_match(missing, c("error", "propagate")) == "propagate"
-  allow_negative <- arg_match(negative, c("error", "ignore")) == "ignore"
+  allow_missing <- missing == "propagate"
+  allow_negative <- negative == "ignore"
 
   result <- vec_as_subscript2_result(
     i = i,
