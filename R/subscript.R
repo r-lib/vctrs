@@ -86,7 +86,7 @@ vec_as_subscript2_result <- function(i,
 
   # Return a child of subscript error. The child error messages refer
   # to single subscripts instead of subscript vectors.
-  if (!is_null(result$err)) {
+  if (!is.null(result$err)) {
     parent <- result$err$parent
     if (inherits(parent, "vctrs_error_cast_lossy")) {
       bullets <- new_cnd_bullets_subscript_lossy_cast(parent)
@@ -296,7 +296,7 @@ subscript_actions <- c(
 cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   action <- cnd$subscript_action
 
-  if (is_null(action)) {
+  if (is.null(action)) {
     if (cnd_subscript_scalar(cnd)) {
       action <- "extract"
     } else {

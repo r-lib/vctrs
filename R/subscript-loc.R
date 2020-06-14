@@ -172,7 +172,7 @@ vec_as_location2_result <- function(i,
     logical = "error"
   )
 
-  if (!is_null(result$err)) {
+  if (!is.null(result$err)) {
     parent <- result$err
     return(result(err = new_error_location2_type(
       i = i,
@@ -242,7 +242,7 @@ vec_as_location2_result <- function(i,
     i <- -i
   }
 
-  if (is_null(err)) {
+  if (is.null(err)) {
     result(i)
   } else {
     result(err = new_error_location2_type(
