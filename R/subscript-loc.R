@@ -169,7 +169,7 @@ vec_as_location2_result <- function(i,
 
   if (!is_null(result$err)) {
     parent <- result$err
-    return(result(err = new_error_location2_type(
+    return(result_err(new_error_location2_type(
       i = i,
       subscript_arg = arg,
       # Should body fields in parents be automatically inherited?
@@ -182,7 +182,7 @@ vec_as_location2_result <- function(i,
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location2_type(
+    return(result_err(new_error_location2_type(
       i = i,
       subscript_arg = arg,
       body = cnd_bullets_location2_need_scalar
@@ -196,7 +196,7 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location2_type(
+      result <- result_err(new_error_location2_type(
         i = i,
         subscript_arg = arg,
         body = cnd_bullets_location2_need_present
@@ -208,7 +208,7 @@ vec_as_location2_result <- function(i,
   }
 
   if (identical(i, 0L)) {
-    return(result(err = new_error_location2_type(
+    return(result_err(new_error_location2_type(
       i = i,
       subscript_arg = arg,
       body = cnd_bullets_location2_need_positive
@@ -216,7 +216,7 @@ vec_as_location2_result <- function(i,
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location2_type(
+    return(result_err(new_error_location2_type(
       i = i,
       subscript_arg = arg,
       body = cnd_bullets_location2_need_positive
@@ -240,7 +240,7 @@ vec_as_location2_result <- function(i,
   if (is_null(err)) {
     result(i)
   } else {
-    result(err = new_error_location2_type(
+    result_err(new_error_location2_type(
       i = i,
       parent = err,
       subscript_arg = arg

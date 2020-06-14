@@ -113,7 +113,7 @@ vec_as_subscript2_result <- function(i,
   i <- result$ok
 
   if (typeof(i) == "logical") {
-    return(result(err = new_error_subscript2_type(
+    return(result_err(new_error_subscript2_type(
       i = i,
       logical = logical,
       numeric = numeric,
