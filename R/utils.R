@@ -77,17 +77,25 @@ paste_line <- function (...) {
 }
 
 # Experimental
-result <- function(ok = NULL, err = NULL) {
-  structure(
-    list(ok = ok, err = err),
-    class = "rlang_result"
-  )
+result_err_class <- c("rlang_result_err", "rlang_result")
+result_err <- function(err) {
+  # structure() is too slow for tight loops
+  out <- list(err)
+  class(out) <- result_err_class
+  out
+}
+result_ok_class <- c("rlang_result_ok", "rlang_result")
+result <- function(ok) {
+  # structure() is too slow for tight loops
+  out <- list(ok)
+  class(out) <- result_ok_class
+  out
 }
 result_get <- function(x) {
-  if (!is_null(x$err)) {
-    cnd_signal(x$err)
+  if (identical(class(x), result_err_class)) {
+    cnd_signal(x[[1L]])
   }
-  x$ok
+  x[[1L]]
 }
 
 obj_type <- function(x) {
