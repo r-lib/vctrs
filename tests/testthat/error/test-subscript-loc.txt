@@ -1,4 +1,11 @@
 
+vec_as_location() UI
+====================
+
+> vec_as_location(1, 1L, missing = "bogus")
+Error: `missing` must be one of "propagate" or "error".
+
+
 vec_as_location() checks for mix of negative and missing locations
 ==================================================================
 
@@ -25,6 +32,22 @@ i Subscript has a positive value at location 2.
 Error: Must subset elements with a valid subscript vector.
 x Negative and positive locations can't be mixed.
 i Subscript has 10 positive values at locations 2, 3, 4, 5, 6, etc.
+
+
+num_as_location() UI
+====================
+
+> num_as_location(1, 1L, missing = "bogus")
+Error: `missing` must be one of "propagate" or "error".
+
+> num_as_location(1, 1L, negative = "bogus")
+Error: `negative` must be one of "invert", "error", or "ignore".
+
+> num_as_location(1, 1L, oob = "bogus")
+Error: `oob` must be one of "error" or "extend".
+
+> num_as_location(1, 1L, zero = "bogus")
+Error: `zero` must be one of "remove", "error", or "ignore".
 
 
 num_as_location() optionally forbids negative indices
@@ -128,6 +151,13 @@ i It must be logical, numeric, or character.
 > vec_as_location(2.5, 3L, arg = "foo")
 Error: Must subset elements with a valid subscript vector.
 x Can't convert from `foo` <double> to <integer> due to loss of precision.
+
+
+vec_as_location2() UI
+=====================
+
+> vec_as_location2(1, 1L, missing = "bogus")
+Error: `missing` must be one of "error" or "propagate".
 
 
 vec_as_location2() requires integer or character inputs
@@ -302,6 +332,16 @@ x Element `foo` doesn't exist.
 > vec_as_location2("foo", 1L, names = "bar")
 Error: Can't subset elements that don't exist.
 x Element `foo` doesn't exist.
+
+
+num_as_location() UI
+====================
+
+> num_as_location(1, 1L, missing = "bogus")
+Error: `missing` must be one of "propagate" or "error".
+
+> num_as_location(1, 1L, negative = "bogus")
+Error: `negative` must be one of "invert", "error", or "ignore".
 
 
 can optionally extend beyond the end

@@ -444,6 +444,9 @@ test_that("vec_as_location() works with vectors of dimensionality 1", {
 
 test_that("conversion to locations has informative error messages", {
   verify_output(test_path("error", "test-subscript-loc.txt"), {
+    "# vec_as_location() UI"
+    vec_as_location(1, 1L, missing = "bogus")
+
     "# vec_as_location() checks for mix of negative and missing locations"
     vec_as_location(-c(1L, NA), 30)
     vec_as_location(-c(1L, rep(NA, 10)), 30)
@@ -451,6 +454,12 @@ test_that("conversion to locations has informative error messages", {
     "# vec_as_location() checks for mix of negative and positive locations"
     vec_as_location(c(-1L, 1L), 30)
     vec_as_location(c(-1L, rep(1L, 10)), 30)
+
+    "# num_as_location() UI"
+    num_as_location(1, 1L, missing = "bogus")
+    num_as_location(1, 1L, negative = "bogus")
+    num_as_location(1, 1L, oob = "bogus")
+    num_as_location(1, 1L, zero = "bogus")
 
     "# num_as_location() optionally forbids negative indices"
     num_as_location(dbl(1, -1), 2L, negative = "error")
@@ -477,6 +486,9 @@ test_that("conversion to locations has informative error messages", {
     vec_as_location(env(), 10L, arg = "foo")
     vec_as_location(foobar(), 10L, arg = "foo")
     vec_as_location(2.5, 3L, arg = "foo")
+
+    "# vec_as_location2() UI"
+    vec_as_location2(1, 1L, missing = "bogus")
 
     "# vec_as_location2() requires integer or character inputs"
     vec_as_location2(TRUE, 10L)
@@ -519,6 +531,10 @@ test_that("conversion to locations has informative error messages", {
     "Character subscripts"
     vec_as_location("foo", 1L, names = "bar")
     vec_as_location2("foo", 1L, names = "bar")
+
+    "# num_as_location() UI"
+    num_as_location(1, 1L, missing = "bogus")
+    num_as_location(1, 1L, negative = "bogus")
 
     "# can optionally extend beyond the end"
     num_as_location(c(1, 3), 1, oob = "extend")
