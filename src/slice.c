@@ -3,6 +3,7 @@
 #include "slice.h"
 #include "subscript-loc.h"
 #include "type-data-frame.h"
+#include "owned.h"
 #include "utils.h"
 #include "dim.h"
 
@@ -351,7 +352,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 
     // Take over attribute restoration only if there is no `[` method
     if (!vec_is_restored(out, x)) {
-      out = vec_restore(out, x, restore_size);
+      out = vec_restore(out, x, restore_size, vec_owned(out));
     }
 
     UNPROTECT(nprot);
@@ -390,7 +391,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
       Rf_setAttrib(out, R_NamesSymbol, names);
     }
 
-    out = vec_restore(out, x, restore_size);
+    out = vec_restore(out, x, restore_size, vec_owned(out));
 
     UNPROTECT(nprot);
     return out;
@@ -398,7 +399,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 
   case vctrs_type_dataframe: {
     SEXP out = PROTECT_N(df_slice(data, subscript), &nprot);
-    out = vec_restore(out, x, restore_size);
+    out = vec_restore(out, x, restore_size, vec_owned(out));
     UNPROTECT(nprot);
     return out;
   }

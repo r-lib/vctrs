@@ -54,8 +54,8 @@ extern SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
-extern SEXP vec_restore(SEXP, SEXP, SEXP);
-extern SEXP vec_restore_default(SEXP, SEXP);
+extern SEXP vctrs_restore(SEXP, SEXP, SEXP);
+extern SEXP vctrs_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vec_proxy_compare(SEXP);
@@ -76,7 +76,7 @@ extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
-extern SEXP vec_bare_df_restore(SEXP, SEXP, SEXP);
+extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
 extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_assign_seq(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -191,8 +191,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_chop_seq",                   (DL_FUNC) &vctrs_chop_seq, 4},
   {"vctrs_slice_seq",                  (DL_FUNC) &vec_slice_seq, 4},
   {"vctrs_slice_rep",                  (DL_FUNC) &vec_slice_rep, 3},
-  {"vctrs_restore",                    (DL_FUNC) &vec_restore, 3},
-  {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
+  {"vctrs_restore",                    (DL_FUNC) &vctrs_restore, 3},
+  {"vctrs_restore_default",            (DL_FUNC) &vctrs_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
   {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_proxy_compare",              (DL_FUNC) &vec_proxy_compare, 1},
@@ -213,7 +213,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
-  {"vctrs_bare_df_restore",            (DL_FUNC) &vec_bare_df_restore, 3},
+  {"vctrs_bare_df_restore",            (DL_FUNC) &vctrs_bare_df_restore, 3},
   {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 3},
   {"vctrs_assign",                     (DL_FUNC) &vctrs_assign, 5},
   {"vctrs_assign_seq",                 (DL_FUNC) &vctrs_assign_seq, 5},

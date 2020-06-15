@@ -153,7 +153,7 @@ SEXP vec_c_opts(SEXP xs,
     counter += size;
   }
 
-  out = PROTECT(vec_restore(out, ptype, R_NilValue));
+  out = PROTECT(vec_restore(out, ptype, R_NilValue, VCTRS_OWNED_true));
 
   if (has_names) {
     out_names = PROTECT(vec_as_names(out_names, name_repair));

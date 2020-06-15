@@ -170,7 +170,7 @@ static SEXP vec_unchop(SEXP x,
 
   SEXP out_size_sexp = PROTECT(r_int(out_size));
 
-  SEXP out = PROTECT(vec_restore(proxy, ptype, out_size_sexp));
+  SEXP out = PROTECT(vec_restore(proxy, ptype, out_size_sexp, VCTRS_OWNED_true));
 
   if (has_names) {
     out_names = vec_as_names(out_names, name_repair);
