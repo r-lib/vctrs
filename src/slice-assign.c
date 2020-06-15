@@ -98,28 +98,28 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
 // on a number of factors.
 //
 // - If a fallback is required, the `proxy` is duplicated at the R level.
-// - If `owned` is `vctrs_owned_TRUE`, the `proxy` is typically not duplicated.
+// - If `owned` is `VCTRS_OWNED_true`, the `proxy` is typically not duplicated.
 //   However, if it is an ALTREP object, it is duplicated because we need to be
 //   able to assign into the object it represents, not the ALTREP SEXP itself.
-// - If `owned` is `vctrs_owned_FALSE`, the `proxy` is only
+// - If `owned` is `VCTRS_OWNED_false`, the `proxy` is only
 //   duplicated if it is referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
 //
 // In `vec_proxy_assign()`, which is part of the experimental public API,
 // ownership is determined with a call to `NO_REFERENCES()`. If there are no
-// references, then `vctrs_owned_TRUE` is used, else
-// `vctrs_owned_FALSE` is used.
+// references, then `VCTRS_OWNED_true` is used, else
+// `VCTRS_OWNED_false` is used.
 //
 // Ownership of the `proxy` must be recursive. For data frames, the `owned`
 // argument is passed along to each column.
 //
-// Practically, we only set `vctrs_owned_TRUE` when we create a fresh data
+// Practically, we only set `VCTRS_OWNED_true` when we create a fresh data
 // structure at the C level and then assign into it to fill it. This happens
 // in `vec_c()` and `vec_rbind()`. For data frames, this `owned` parameter
 // is particularly important for R 4.0.0 where references are tracked more
 // precisely. In R 4.0.0, a freshly created data frame's columns all have a
 // refcount of 1 because of the `SET_VECTOR_ELT()` call that set them in the
 // data frame. This makes them referenced, but not shared. If
-// `vctrs_owned_FALSE` was set and `df_assign()` was used in a loop
+// `VCTRS_OWNED_false` was set and `df_assign()` was used in a loop
 // (as it is in `vec_rbind()`), then a copy of each column would be made at
 // each iteration of the loop (any time a new set of rows is assigned
 // into the output object).
@@ -398,7 +398,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     proxy_nms = PROTECT(r_clone_referenced(proxy_nms));
   }
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_owned_TRUE));
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, VCTRS_OWNED_true));
 
   proxy = PROTECT(r_clone_referenced(proxy));
   proxy = vec_set_names(proxy, proxy_nms);

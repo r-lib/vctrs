@@ -181,7 +181,7 @@ static SEXP vec_rbind(SEXP xs,
     init_compact_seq(idx_ptr, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = df_assign(out, idx, x, vctrs_owned_TRUE, &bind_assign_opts);
+    out = df_assign(out, idx, x, VCTRS_OWNED_true, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     if (has_rownames) {
@@ -199,7 +199,7 @@ static SEXP vec_rbind(SEXP xs,
       PROTECT(rn);
 
       if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        rownames = chr_assign(rownames, idx, rn, vctrs_owned_TRUE);
+        rownames = chr_assign(rownames, idx, rn, VCTRS_OWNED_true);
         REPROTECT(rownames, rownames_pi);
       }
 
@@ -461,12 +461,12 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
     init_compact_seq(idx_ptr, counter, xn, true);
 
     // Total ownership of `out` because it was freshly created with `Rf_allocVector()`
-    out = list_assign(out, idx, x, vctrs_owned_TRUE);
+    out = list_assign(out, idx, x, VCTRS_OWNED_true);
     REPROTECT(out, out_pi);
 
     SEXP xnms = PROTECT(r_names(x));
     if (xnms != R_NilValue) {
-      names = chr_assign(names, idx, xnms, vctrs_owned_TRUE);
+      names = chr_assign(names, idx, xnms, VCTRS_OWNED_true);
       REPROTECT(names, names_pi);
     }
     UNPROTECT(1);
