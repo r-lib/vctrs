@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "slice-assign.h"
 #include "subscript-loc.h"
+#include "owned.h"
 #include "utils.h"
 #include "dim.h"
 
@@ -12,17 +13,15 @@ const struct vec_assign_opts vec_assign_default_opts = {
   .assign_names = false
 };
 
-static const enum vctrs_ownership proxy_ownership(SEXP x);
-
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 static SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value);
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership);
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
 
 
 // [[ include("slice-assign.h") ]]
@@ -45,8 +44,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = proxy_ownership(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
+  const enum vctrs_owned owned = vec_owned(proxy);
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
 
@@ -78,17 +77,17 @@ SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
 }
 
 static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
-                              const enum vctrs_ownership ownership,
+                              const enum vctrs_owned owned,
                               const struct vec_assign_opts* opts) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value, ownership);
-  case vctrs_type_integer:   return int_assign(proxy, index, value, ownership);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value, ownership);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value, ownership);
-  case vctrs_type_character: return chr_assign(proxy, index, value, ownership);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value, ownership);
-  case vctrs_type_list:      return list_assign(proxy, index, value, ownership);
-  case vctrs_type_dataframe: return df_assign(proxy, index, value, ownership, opts);
+  case vctrs_type_logical:   return lgl_assign(proxy, index, value, owned);
+  case vctrs_type_integer:   return int_assign(proxy, index, value, owned);
+  case vctrs_type_double:    return dbl_assign(proxy, index, value, owned);
+  case vctrs_type_complex:   return cpl_assign(proxy, index, value, owned);
+  case vctrs_type_character: return chr_assign(proxy, index, value, owned);
+  case vctrs_type_raw:       return raw_assign(proxy, index, value, owned);
+  case vctrs_type_list:      return list_assign(proxy, index, value, owned);
+  case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
   case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
   default:                   vctrs_stop_unsupported_type(vec_typeof(proxy), "vec_assign_switch()");
   }
@@ -99,27 +98,28 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
 // on a number of factors.
 //
 // - If a fallback is required, the `proxy` is duplicated at the R level.
-// - If `opts->ownership` is `vctrs_ownership_total`, the `proxy` is only
-//   duplicated if it is shared, i.e. `MAYBE_SHARED()` returns `true`.
-// - If `opts->ownership` is `vctrs_ownership_shared`, the `proxy` is only
+// - If `owned` is `vctrs_owned_TRUE`, the `proxy` is typically not duplicated.
+//   However, if it is an ALTREP object, it is duplicated because we need to be
+//   able to assign into the object it represents, not the ALTREP SEXP itself.
+// - If `owned` is `vctrs_owned_FALSE`, the `proxy` is only
 //   duplicated if it is referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
 //
 // In `vec_proxy_assign()`, which is part of the experimental public API,
 // ownership is determined with a call to `NO_REFERENCES()`. If there are no
-// references, then `vctrs_ownership_total` is used, else
-// `vctrs_ownership_shared` is used.
+// references, then `vctrs_owned_TRUE` is used, else
+// `vctrs_owned_FALSE` is used.
 //
-// Ownership of the `proxy` must be recursive. For data frames, the `ownership`
+// Ownership of the `proxy` must be recursive. For data frames, the `owned`
 // argument is passed along to each column.
 //
-// Practically, we only set `vctrs_ownership_total` when we create a fresh data
+// Practically, we only set `vctrs_owned_TRUE` when we create a fresh data
 // structure at the C level and then assign into it to fill it. This happens
-// in `vec_c()` and `vec_rbind()`. For data frames, this `ownership` parameter
+// in `vec_c()` and `vec_rbind()`. For data frames, this `owned` parameter
 // is particularly important for R 4.0.0 where references are tracked more
 // precisely. In R 4.0.0, a freshly created data frame's columns all have a
 // refcount of 1 because of the `SET_VECTOR_ELT()` call that set them in the
 // data frame. This makes them referenced, but not shared. If
-// `vctrs_ownership_shared` was set and `df_assign()` was used in a loop
+// `vctrs_owned_FALSE` was set and `df_assign()` was used in a loop
 // (as it is in `vec_rbind()`), then a copy of each column would be made at
 // each iteration of the loop (any time a new set of rows is assigned
 // into the output object).
@@ -138,11 +138,11 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
  */
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
   return vec_proxy_assign_opts(proxy, index, value,
-                               proxy_ownership(proxy),
+                               vec_owned(proxy),
                                &vec_assign_default_opts);
 }
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
-                           const enum vctrs_ownership ownership,
+                           const enum vctrs_owned owned,
                            const struct vec_assign_opts* opts) {
   int n_protect = 0;
 
@@ -171,9 +171,9 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     REPROTECT(index, index_pi);
     out = PROTECT(vec_assign_fallback(proxy, index, value));
   } else if (has_dim(proxy)) {
-    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, ownership, opts));
+    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, owned, opts));
   } else {
-    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, ownership, opts));
+    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, owned, opts));
   }
   ++n_protect;
 
@@ -196,13 +196,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
                                                                 \
-  SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
-    out = PROTECT(r_clone_shared(x));                           \
-  } else {                                                      \
-    out = PROTECT(r_clone_referenced(x));                       \
-  }                                                             \
-                                                                \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
   CTYPE* out_data = DEREF(out);                                 \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
@@ -228,13 +222,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                                                                 \
   const CTYPE* value_data = CONST_DEREF(value);                 \
                                                                 \
-  SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
-    out = PROTECT(r_clone_shared(x));                           \
-  } else {                                                      \
-    out = PROTECT(r_clone_referenced(x));                       \
-  }                                                             \
-                                                                \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
   CTYPE* out_data = DEREF(out) + start;                         \
                                                                 \
   for (int i = 0; i < n; ++i, out_data += step, ++value_data) { \
@@ -251,22 +239,22 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);    \
   }
 
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
-static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN(int, INTEGER, INTEGER_RO);
 }
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN(double, REAL, REAL_RO);
 }
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN(SEXP, STRING_PTR, STRING_PTR_RO);
 }
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN(Rbyte, RAW, RAW_RO);
 }
 
@@ -284,12 +272,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownershi
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
-    out = PROTECT(r_clone_shared(x));                           \
-  } else {                                                      \
-    out = PROTECT(r_clone_referenced(x));                       \
-  }                                                             \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
                                                                 \
   for (R_len_t i = 0; i < n; ++i) {                             \
     int j = index_data[i];                                      \
@@ -312,12 +295,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownershi
              "`value` should have been recycled to fit `x`.");  \
   }                                                             \
                                                                 \
-  SEXP out;                                                     \
-  if (ownership == vctrs_ownership_total) {                     \
-    out = PROTECT(r_clone_shared(x));                           \
-  } else {                                                      \
-    out = PROTECT(r_clone_referenced(x));                       \
-  }                                                             \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
                                                                 \
   for (R_len_t i = 0; i < n; ++i, start += step) {              \
     SET(out, start, GET(value, i));                             \
@@ -333,7 +311,7 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownershi
     ASSIGN_BARRIER_INDEX(GET, SET);             \
   }
 
-SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership ownership) {
+SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
   ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
 }
 
@@ -364,14 +342,9 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_ownership owne
  * [[ include("vctrs.h") ]]
  */
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
-               const enum vctrs_ownership ownership,
+               const enum vctrs_owned owned,
                const struct vec_assign_opts* opts) {
-  SEXP out;
-  if (ownership == vctrs_ownership_total) {
-    out = PROTECT(r_clone_shared(x));
-  } else {
-    out = PROTECT(r_clone_referenced(x));
-  }
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));
 
   R_len_t n = Rf_length(out);
 
@@ -391,7 +364,7 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
     // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
     SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
 
-    SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, ownership, opts));
+    SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, owned, opts));
     assigned = vec_restore(assigned, out_elt, R_NilValue);
 
     SET_VECTOR_ELT(out, i, assigned);
@@ -407,10 +380,6 @@ static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
                          syms_x, x,
                          syms_i, index,
                          syms_value, value);
-}
-
-static const enum vctrs_ownership proxy_ownership(SEXP proxy) {
-  return NO_REFERENCES(proxy) ? vctrs_ownership_total : vctrs_ownership_shared;
 }
 
 static
@@ -429,7 +398,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     proxy_nms = PROTECT(r_clone_referenced(proxy_nms));
   }
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_ownership_total));
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, vctrs_owned_TRUE));
 
   proxy = PROTECT(r_clone_referenced(proxy));
   proxy = vec_set_names(proxy, proxy_nms);
@@ -455,8 +424,8 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
-  const enum vctrs_ownership ownership = proxy_ownership(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, ownership, opts));
+  const enum vctrs_owned owned = vec_owned(proxy);
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue);
 
