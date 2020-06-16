@@ -56,5 +56,14 @@ struct truelength_info {
   *(p_n) += 5;                                                      \
 } while(0)
 
+
+struct truelength_info new_truelength_info();
+void truelength_reset(struct truelength_info* p_truelength_info);
+
+void truelength_save(struct truelength_info* p_truelength_info,
+                     SEXP x,
+                     R_xlen_t truelength,
+                     R_xlen_t size);
+
 // -----------------------------------------------------------------------------
 #endif
