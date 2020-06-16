@@ -2099,21 +2099,59 @@ static void chr_order(void* p_x,
   lazy_vec_initialize(p_lazy_x_aux);
   void* p_x_aux = p_lazy_x_aux->p_data;
 
-  // Move ordering into `p_x_aux`
+  // Move ordering into `p_x_aux`.
+  // `p_x_aux` is allocated as the larger of `int` and `SEXP*`.
   chr_extract_ordering(p_x_aux, p_x, size);
 
-  // Reuse `p_x` as the new aux memory.
-  // It is no longer needed since we extracted the ordering already.
-  int_order(
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    int_adjust(p_x_aux, decreasing, na_last, size);
+    int_insertion_order(p_x_aux, p_o, p_group_infos, size);
+    return;
+  }
+
+  lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+
+  uint32_t range;
+  int x_min;
+
+  int_compute_range(p_x_aux, size, &x_min, &range);
+
+  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    int_counting_order(
+      p_x_aux,
+      p_o,
+      p_o_aux,
+      p_group_infos,
+      size,
+      x_min,
+      range,
+      decreasing,
+      na_last
+    );
+
+    return;
+  }
+
+  lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
+
+  lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
+  memset(p_counts, 0, p_lazy_counts->size);
+
+  int_adjust(p_x_aux, decreasing, na_last, size);
+
+  // Reuse `p_x`, which was a `SEXP*` to the CHARSXPs but is no longer required.
+  // We ensure that this is as large as an `int` when originally allocating.
+  int_radix_order(
     p_x_aux,
     p_x,
     p_o,
-    p_lazy_o_aux,
-    p_lazy_bytes,
-    p_lazy_counts,
+    p_o_aux,
+    p_bytes,
+    p_counts,
     p_group_infos,
-    decreasing,
-    na_last,
     size
   );
 }
@@ -2837,11 +2875,11 @@ static void df_order(SEXP x,
 
       p_o_col += group_size;
     }
-  }
 
-  // Reset TRUELENGTHs between columns
-  if (type == vctrs_type_character) {
-    truelength_reset(p_truelength_info);
+    // Reset TRUELENGTHs between columns
+    if (type == vctrs_type_character) {
+      truelength_reset(p_truelength_info);
+    }
   }
 }
 
