@@ -406,7 +406,7 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_order2(<character>) - insertion
+# vec_order2(<character>)
 
 test_that("can order characters", {
   x <- c("xy", "x", "a", "bc")
@@ -463,6 +463,42 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 test_that("all `NA` values works", {
   x <- c(NA_character_, NA_character_)
   expect_identical(vec_order2(x), order(x))
+})
+
+test_that("can order empty string vs ASCII value 1 'Start of Header'", {
+  x <- c("\001", "")
+  expect_identical(vec_order2(x), c(2L, 1L))
+})
+
+test_that("can be used in a data frame", {
+  x <- c(1L, 4L, 1L, 3L, 1L)
+
+  y <- c("zy", "zz", "abcd", "gfa", "zy")
+
+  z <- c(1, 2, 5, 4, 3)
+
+  # as second column
+  df1 <- data.frame(x = x, y = y)
+
+  # as first column
+  df2 <- data.frame(y = y, x = x)
+
+  # as second column with a third after it to break ties
+  df3 <- data.frame(x = x, y = y, z = z)
+
+  expect_identical(vec_order2(df1), base_order(df1))
+  expect_identical(vec_order2(df2), base_order(df2))
+  expect_identical(vec_order2(df3), base_order(df3))
+})
+
+test_that("can have multiple character columns in a data frame", {
+  df <- data.frame(
+    x = c("def", "aba", "aba", "aba", "q"),
+    y = c("zy", "zz", "zz", "gfa", "zy"),
+    z = c("foo", "qux", "bar", "baz", "boo")
+  )
+
+  expect_identical(vec_order2(df), base_order(df))
 })
 
 # ------------------------------------------------------------------------------
