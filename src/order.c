@@ -2085,6 +2085,11 @@ static void chr_radix_order(SEXP* p_x,
  * `chr_order_immutable()` assumes `x` is user input which cannot be modified.
  * It copies `x` into another SEXP that can be modified directly and re-encodes
  * as UTF-8 if required.
+ *
+ * `chr_order()` essentially calls `int_order()`, however we can't call it
+ * directly because we don't have access to all the required arguments.
+ * Specifically we reuse `p_x` here as the auxiliary data structure for integer
+ * ordering, but to call `int_order()` we would need the lazy wrapper for it.
  */
 static void chr_order(void* p_x,
                       struct lazy_vec* p_lazy_x_aux,
