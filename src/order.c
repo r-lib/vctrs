@@ -611,14 +611,16 @@ static void int_order_immutable(SEXP x,
                                 R_xlen_t size) {
   const int* p_x = INTEGER_RO(x);
 
-  // TODO: Fix me - not optimal
-  lazy_vec_initialize(p_lazy_x_slice);
-  void* p_x_slice = p_lazy_x_slice->p_data;
-
   if (size <= INSERTION_ORDER_BOUNDARY) {
+    lazy_vec_initialize(p_lazy_x_slice);
+    void* p_x_slice = p_lazy_x_slice->p_data;
+
     memcpy(p_x_slice, p_x, size * sizeof(int));
+
     int_adjust(p_x_slice, decreasing, na_last, size);
+
     int_insertion_order(p_x_slice, p_o, p_group_infos, size);
+
     return;
   }
 
@@ -647,6 +649,9 @@ static void int_order_immutable(SEXP x,
     return;
   }
 
+  lazy_vec_initialize(p_lazy_x_slice);
+  void* p_x_slice = p_lazy_x_slice->p_data;
+
   lazy_vec_initialize(p_lazy_x_aux);
   uint32_t* p_x_aux = (uint32_t*) p_lazy_x_aux->p_data;
 
@@ -654,6 +659,7 @@ static void int_order_immutable(SEXP x,
   uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
 
   memcpy(p_x_slice, p_x, size * sizeof(int));
+
   int_adjust(p_x_slice, decreasing, na_last, size);
 
   int_radix_order(
