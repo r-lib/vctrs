@@ -8,6 +8,9 @@
 
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
 
+#define INT_MAX_RADIX_PASS 4
+#define DBL_MAX_RADIX_PASS 8
+
 // This is the maximum range size that determines whether a counting sort
 // is used on the input or not. When `x` has a range less than this boundary,
 // a counting sort is often faster than a radix sort.
@@ -1033,12 +1036,12 @@ static void int_radix_order(uint32_t* p_x,
                             R_xlen_t* p_counts,
                             struct group_infos* p_group_infos,
                             const R_xlen_t size) {
-  bool p_skips[4];
+  bool p_skips[INT_MAX_RADIX_PASS];
 
   uint8_t pass = int_compute_skips(p_skips, p_x, size);
 
   // Skipped everything, 1 value
-  if (pass == 4) {
+  if (pass == INT_MAX_RADIX_PASS) {
     groups_size_push(p_group_infos, size);
     return;
   }
@@ -1103,7 +1106,7 @@ static void int_radix_order_recurse(uint32_t* p_x,
   uint8_t next_pass = pass + 1;
   R_xlen_t* p_counts_next_pass = p_counts + UINT8_MAX_SIZE;
 
-  while (next_pass < 4 && p_skips[next_pass]) {
+  while (next_pass < INT_MAX_RADIX_PASS && p_skips[next_pass]) {
     ++next_pass;
     p_counts_next_pass += UINT8_MAX_SIZE;
   }
@@ -1134,7 +1137,7 @@ static void int_radix_order_recurse(uint32_t* p_x,
     // Can get here in the case of ties, like c(1L, 1L), which have a
     // `group_size` of 2 in the last radix, but there is nothing left to
     // compare so we are done.
-    if (next_pass == 4) {
+    if (next_pass == INT_MAX_RADIX_PASS) {
       groups_size_push(p_group_infos, group_size);
       p_x += group_size;
       p_o += group_size;
@@ -1182,7 +1185,7 @@ static void int_radix_order_pass(uint32_t* p_x,
   }
 
   // TODO: Is this where we could modify for big endian?
-  const uint8_t radix = 3 - pass;
+  const uint8_t radix = INT_MAX_RADIX_PASS - 1 - pass;
   const uint8_t shift = radix * 8;
 
   uint8_t byte = 0;
@@ -1234,25 +1237,27 @@ static void int_radix_order_pass(uint32_t* p_x,
 // -----------------------------------------------------------------------------
 
 static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size) {
-  for (uint8_t i = 0; i < 4; ++i) {
+  uint8_t shift_start = (INT_MAX_RADIX_PASS - 1) * 8;
+
+  for (uint8_t i = 0; i < INT_MAX_RADIX_PASS; ++i) {
     p_skips[i] = true;
   }
 
-  uint8_t p_bytes[4];
+  uint8_t p_bytes[INT_MAX_RADIX_PASS];
   const uint32_t elt0 = p_x[0];
 
   // Get bytes of first element in MSD->LSD order.
   // Placed in `p_bytes` in a way that aligns with the `pass` variable
-  for (uint8_t pass = 0, shift = 24; pass < 4; ++pass, shift -= 8) {
+  for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift -= 8) {
     p_bytes[pass] = int_extract_uint32_byte(elt0, shift);
   }
 
   // Check to see which passes are skippable
   for (R_xlen_t i = 1; i < size; ++i) {
-    uint8_t n_skips = 4;
+    uint8_t n_skips = INT_MAX_RADIX_PASS;
     const uint32_t elt = p_x[i];
 
-    for (uint8_t pass = 0, shift = 24; pass < 4; ++pass, shift -= 8) {
+    for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift -= 8) {
       bool skip = p_skips[pass];
 
       if (skip) {
@@ -1271,7 +1276,7 @@ static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t si
   uint8_t pass = 0;
 
   // Shift forward to the first pass with varying bytes
-  while (pass < 4 && p_skips[pass]) {
+  while (pass < INT_MAX_RADIX_PASS && p_skips[pass]) {
     ++pass;
   }
 
@@ -1667,12 +1672,12 @@ static void dbl_radix_order(uint64_t* p_x,
                             R_xlen_t* p_counts,
                             struct group_infos* p_group_infos,
                             const R_xlen_t size) {
-  bool p_skips[8];
+  bool p_skips[DBL_MAX_RADIX_PASS];
 
   uint8_t pass = dbl_compute_skips(p_skips, p_x, size);
 
   // Skipped everything, 1 value
-  if (pass == 8) {
+  if (pass == DBL_MAX_RADIX_PASS) {
     groups_size_push(p_group_infos, size);
     return;
   }
@@ -1742,7 +1747,7 @@ static void dbl_radix_order_recurse(uint64_t* p_x,
   uint8_t next_pass = pass + 1;
   R_xlen_t* p_counts_next_pass = p_counts + UINT8_MAX_SIZE;
 
-  while (next_pass < 8 && p_skips[next_pass]) {
+  while (next_pass < DBL_MAX_RADIX_PASS && p_skips[next_pass]) {
     ++next_pass;
     p_counts_next_pass += UINT8_MAX_SIZE;
   }
@@ -1820,7 +1825,7 @@ static void dbl_radix_order_pass(uint64_t* p_x,
   }
 
   // TODO: Is this where we could modify for big endian?
-  const uint8_t radix = 7 - pass;
+  const uint8_t radix = DBL_MAX_RADIX_PASS - 1 - pass;
   const uint8_t shift = radix * 8;
 
   uint8_t byte = 0;
@@ -1886,25 +1891,27 @@ static void dbl_radix_order_pass(uint64_t* p_x,
  * of 1:128). This provides a nice performance increase there.
  */
 static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size) {
-  for (uint8_t i = 0; i < 8; ++i) {
+  uint8_t shift_start = (DBL_MAX_RADIX_PASS - 1) * 8;
+
+  for (uint8_t i = 0; i < DBL_MAX_RADIX_PASS; ++i) {
     p_skips[i] = true;
   }
 
-  uint8_t p_bytes[8];
+  uint8_t p_bytes[DBL_MAX_RADIX_PASS];
   const uint64_t elt0 = p_x[0];
 
   // Get bytes of first element in MSD->LSD order.
   // Placed in `p_bytes` in a way that aligns with the `pass` variable
-  for (uint8_t pass = 0, shift = 56; pass < 8; ++pass, shift -= 8) {
+  for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift -= 8) {
     p_bytes[pass] = dbl_extract_uint64_byte(elt0, shift);
   }
 
   // Check to see which passes are skippable
   for (R_xlen_t i = 1; i < size; ++i) {
-    uint8_t n_skips = 8;
+    uint8_t n_skips = DBL_MAX_RADIX_PASS;
     const uint64_t elt = p_x[i];
 
-    for (uint8_t pass = 0, shift = 56; pass < 8; ++pass, shift -= 8) {
+    for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift -= 8) {
       bool skip = p_skips[pass];
 
       if (skip) {
@@ -1923,7 +1930,7 @@ static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t si
   uint8_t pass = 0;
 
   // Shift forward to the first pass with varying bytes
-  while (pass < 8 && p_skips[pass]) {
+  while (pass < DBL_MAX_RADIX_PASS && p_skips[pass]) {
     ++pass;
   }
 
@@ -3012,10 +3019,10 @@ static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type t
   case vctrs_type_integer:
   case vctrs_type_logical:
   case vctrs_type_character:
-    return 4;
+    return INT_MAX_RADIX_PASS;
   case vctrs_type_double:
   case vctrs_type_complex:
-    return 8;
+    return DBL_MAX_RADIX_PASS;
   case vctrs_type_dataframe:
     return df_counts_multiplier(x);
   default:
@@ -3047,6 +3054,9 @@ static inline size_t df_counts_multiplier(SEXP x) {
 // -----------------------------------------------------------------------------
 
 #undef UINT8_MAX_SIZE
+
+#undef INT_MAX_RADIX_PASS
+#undef DBL_MAX_RADIX_PASS
 
 #undef INT_COUNTING_ORDER_RANGE_BOUNDARY
 
