@@ -501,6 +501,14 @@ test_that("can have multiple character columns in a data frame", {
   expect_identical(vec_order2(df), base_order(df))
 })
 
+test_that("can order with varying encodings by converting to UTF-8", {
+  encs <- encodings()
+  x <- c(encs$utf8, encs$unknown, encs$latin1, "AC")
+
+  expect_identical(vec_order2(x), c(4L, 1L, 2L, 3L))
+  expect_identical(vec_order2(x, decreasing = TRUE), c(1L, 2L, 3L, 4L))
+})
+
 # ------------------------------------------------------------------------------
 # vec_order2(<data.frame>) - insertion
 
