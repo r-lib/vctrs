@@ -4,20 +4,25 @@ INSERTION_ORDER_BOUNDARY <- 128L
 INT_COUNTING_ORDER_RANGE_BOUNDARY <- 100000L
 
 # Force radix method for character comparisons
-lst_order <- function(x, na.last = TRUE, decreasing = FALSE) {
-  rlang::exec(
-    "order",
-    !!!unname(x),
-    na.last = na.last,
-    decreasing = decreasing,
-    method = "radix"
-  )
-}
-
 base_order <- function(x, na.last = TRUE, decreasing = FALSE) {
   if (is.data.frame(x)) {
-    lst_order(x, na.last = na.last, decreasing = decreasing)
+    x <- unname(x)
   } else {
-    order(x, na.last = na.last, decreasing = decreasing, method = "radix")
+    x <- list(x)
   }
+
+  args <- list(na.last = na.last, decreasing = decreasing)
+
+  # `method` didn't exist on R < 3.3.
+  # It would sometimes use radix sorting automatically.
+  if (getRversion() < "3.3.0") {
+    method <- list()
+  } else {
+    method <- list(method = "radix")
+  }
+
+  args <- c(x, args, method)
+
+
+  rlang::exec("order", !!!args)
 }
