@@ -3,9 +3,6 @@
 
 #include "vctrs.h"
 
-// Group functionality is kept in `order.c` to remain `static` and fast, but
-// some information like defines, macros, and structs live here for convenience
-
 // -----------------------------------------------------------------------------
 
 // This seems to be a reasonable default to start with for tracking group sizes
@@ -44,6 +41,9 @@ struct group_info {
   *(p_n) += 1;                                            \
 } while(0)
 
+
+struct group_info new_group_info();
+
 // -----------------------------------------------------------------------------
 
 /*
@@ -75,6 +75,20 @@ struct group_infos {
   bool requested;
   bool ignore;
 };
+
+/*
+ * Extract the current `group_info*`
+ */
+static inline struct group_info* groups_current(struct group_infos* p_group_infos) {
+  return p_group_infos->p_p_group_info[p_group_infos->current];
+}
+
+struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                   bool requested,
+                                   bool ignore);
+
+void groups_swap(struct group_infos* p_group_infos);
+void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size);
 
 // -----------------------------------------------------------------------------
 #endif
