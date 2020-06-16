@@ -47,6 +47,8 @@ Suggests:
     zeallot
 VignetteBuilder: 
     knitr
+Remotes:
+    rstudio/rmarkdown
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
