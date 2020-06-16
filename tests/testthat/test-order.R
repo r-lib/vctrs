@@ -613,7 +613,7 @@ test_that("can order 2+ integer column chunks with counting sort", {
     y = c(rep(2L, quarter_low), rep(1L, quarter_high), rep(3L, half))
   )
 
-  expect_identical(vec_order2(df), lst_order(df))
+  expect_identical(vec_order2(df), base_order(df))
 })
 
 # ------------------------------------------------------------------------------
@@ -629,7 +629,7 @@ test_that("can order 2+ integer column chunks with radix sort", {
     y = c(rep(2L, quarter_low), rep(1L, quarter_high), rep(3L, half), INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
   )
 
-  expect_identical(vec_order2(df), lst_order(df))
+  expect_identical(vec_order2(df), base_order(df))
 })
 
 test_that("can order 2+ double column chunks with radix sort", {
@@ -642,7 +642,7 @@ test_that("can order 2+ double column chunks with radix sort", {
     y = c(rep(2, quarter_low), rep(1, quarter_high), rep(3, half), INT_COUNTING_ORDER_RANGE_BOUNDARY + 1)
   )
 
-  expect_identical(vec_order2(df), lst_order(df))
+  expect_identical(vec_order2(df), base_order(df))
 })
 
 # ------------------------------------------------------------------------------
@@ -679,5 +679,5 @@ test_that("groups can be reallocated if we exceed the max group data size", {
     z = sample(GROUP_DATA_SIZE_DEFAULT + 1L, replace = TRUE)
   )
 
-  expect_identical(vec_order2(df), lst_order(df))
+  expect_identical(vec_order2(df), base_order(df))
 })
