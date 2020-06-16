@@ -47,7 +47,7 @@ SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 
 // -----------------------------------------------------------------------------
 
-static inline size_t vec_order_size_multiplier(SEXP x);
+static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
@@ -93,7 +93,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
   }
 
-  const size_t multiplier = vec_order_size_multiplier(x);
+  const size_t multiplier = vec_order_size_multiplier(x, type);
 
   // Auxiliary vectors to hold intermediate results the same size as `x`.
   // If `x` is a data frame we allocate enough room for the largest column type.
@@ -2923,8 +2923,8 @@ static inline size_t df_size_multiplier(SEXP x);
  * allocate 1 double vector though, and it will be reused for both the real
  * and imaginary parts.
  */
-static inline size_t vec_order_size_multiplier(SEXP x) {
-  switch (vec_proxy_typeof(x)) {
+static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type) {
+  switch (type) {
   case vctrs_type_integer:
   case vctrs_type_logical:
     return sizeof(int);
@@ -2952,7 +2952,9 @@ static inline size_t df_size_multiplier(SEXP x) {
 
   for (R_xlen_t i = 0; i < n_cols; ++i) {
     SEXP col = VECTOR_ELT(x, i);
-    size_t col_multiplier = vec_order_size_multiplier(col);
+    const enum vctrs_type type = vec_proxy_typeof(col);
+
+    size_t col_multiplier = vec_order_size_multiplier(col, type);
 
     if (col_multiplier > multiplier) {
       multiplier = col_multiplier;
