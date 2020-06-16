@@ -20,6 +20,14 @@
 // https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
 #define INSERTION_ORDER_BOUNDARY 128
 
+
+#define CHAR_IS_UTF8(x)  (LEVELS(x) & 8)
+#define CHAR_IS_ASCII(x) (LEVELS(x) & 64)
+
+// Re-encode if not ASCII or UTF-8
+#define CHAR_NEEDS_REENCODE(x) (!(CHAR_IS_ASCII(x) || (x) == NA_STRING || CHAR_IS_UTF8(x)))
+#define CHAR_REENCODE(x) Rf_mkCharCE(Rf_translateCharUTF8(x), CE_UTF8)
+
 // -----------------------------------------------------------------------------
 
 static struct group_info new_group_info();
@@ -1940,6 +1948,8 @@ static void chr_order(void* p_x,
   );
 }
 
+static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t size);
+
 static void chr_order_immutable(SEXP x,
                                 void* p_x_slice,
                                 void* p_x_aux,
@@ -1955,8 +1965,7 @@ static void chr_order_immutable(SEXP x,
                                 R_xlen_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
-  // TODO: With re-encode to UTF-8
-  memcpy(p_x_slice, p_x, size * sizeof(SEXP));
+  chr_copy_with_reencode(p_x_slice, p_x, size);
 
   // Place sorted and marked uniques in `p_truelength_info`
   chr_mark_sorted_uniques(
@@ -2361,6 +2370,29 @@ static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
 
 // -----------------------------------------------------------------------------
 
+/*
+ * Copy from `p_x` to `p_x_slice`. Also re-encodes as UTF-8 if any strings are
+ * not UTF-8 or ASCII. Most things are ASCII, so this should short circuit
+ * quickly after the first check.
+ */
+static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t size) {
+  const void* vmax = vmaxget();
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    if (CHAR_NEEDS_REENCODE(elt)) {
+      p_x_slice[i] = Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8);
+    } else {
+      p_x_slice[i] = elt;
+    }
+  }
+
+  vmaxset(vmax);
+}
+
+// -----------------------------------------------------------------------------
+
 static void col_order_switch(void* p_x,
                              void* p_x_aux,
                              int* p_x_chr_sizes,
@@ -2408,6 +2440,28 @@ static void col_order_switch(void* p_x,
       p_x_slice_col[j] = p_col[loc].i;                         \
     }                                                          \
   }                                                            \
+} while (0)
+
+#define DF_ORDER_EXTRACT_CHUNK_CHR() do {                      \
+  const SEXP* p_col = STRING_PTR_RO(col);                      \
+  SEXP* p_x_slice_col = (SEXP*) p_x_slice;                     \
+                                                               \
+  const void* vmax = vmaxget();                                \
+                                                               \
+  /* Extract and reencode to UTF-8 as needed */                \
+  for (R_xlen_t j = 0; j < group_size; ++j) {                  \
+    const int loc = p_o_col[j] - 1;                            \
+                                                               \
+    SEXP elt = p_col[loc];                                     \
+                                                               \
+    if (CHAR_NEEDS_REENCODE(elt)) {                            \
+      p_x_slice_col[j] = CHAR_REENCODE(elt);                   \
+    } else {                                                   \
+      p_x_slice_col[j] = elt;                                  \
+    }                                                          \
+  }                                                            \
+                                                               \
+  vmaxset(vmax);                                               \
 } while (0)
 
 /*
@@ -2552,7 +2606,7 @@ static void df_order(SEXP x,
       case vctrs_type_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
       case vctrs_type_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
       case vctrs_type_complex: DF_ORDER_EXTRACT_CHUNK_CPL(); break;
-      case vctrs_type_character: DF_ORDER_EXTRACT_CHUNK(STRING_PTR_RO, SEXP); break;
+      case vctrs_type_character: DF_ORDER_EXTRACT_CHUNK_CHR(); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
@@ -2584,6 +2638,7 @@ static void df_order(SEXP x,
 
 #undef DF_ORDER_EXTRACT_CHUNK
 #undef DF_ORDER_EXTRACT_CHUNK_CPL
+#undef DF_ORDER_EXTRACT_CHUNK_CHR
 
 // -----------------------------------------------------------------------------
 
@@ -2975,3 +3030,9 @@ static bool df_any_character(SEXP x) {
 #undef INT_COUNTING_ORDER_RANGE_BOUNDARY
 
 #undef INSERTION_ORDER_BOUNDARY
+
+#undef CHAR_IS_UTF8
+#undef CHAR_IS_ASCII
+
+#undef CHAR_NEEDS_REENCODE
+#undef CHAR_REENCODE
