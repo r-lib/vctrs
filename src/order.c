@@ -2014,10 +2014,10 @@ static void cpl_order_immutable(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void chr_mark_sorted_uniques(const SEXP* p_x,
-                                    SEXP* p_x_aux,
+                                    struct lazy_vec* p_lazy_x_aux,
                                     int* p_x_chr_sizes,
                                     int* p_x_chr_aux_sizes,
-                                    uint8_t* p_bytes,
+                                    struct lazy_vec* p_lazy_bytes,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size);
 
@@ -2094,21 +2094,15 @@ static void chr_order_immutable(SEXP x,
   lazy_vec_initialize(p_lazy_x_slice);
   void* p_x_slice = p_lazy_x_slice->p_data;
 
-  lazy_vec_initialize(p_lazy_x_aux);
-  SEXP* p_x_aux = (SEXP*) p_lazy_x_aux->p_data;
-
-  lazy_vec_initialize(p_lazy_bytes);
-  uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
-
   chr_copy_with_reencode(p_x_slice, p_x, size);
 
   // Place sorted and marked uniques in `p_truelength_info`
   chr_mark_sorted_uniques(
     p_x_slice,
-    p_x_aux,
+    p_lazy_x_aux,
     p_x_chr_sizes,
     p_x_chr_sizes_aux,
-    p_bytes,
+    p_lazy_bytes,
     p_truelength_info,
     size
   );
@@ -2172,10 +2166,10 @@ static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) 
  * `truelength_reset()`.
  */
 static void chr_mark_sorted_uniques(const SEXP* p_x,
-                                    SEXP* p_x_aux,
+                                    struct lazy_vec* p_lazy_x_aux,
                                     int* p_x_chr_sizes,
                                     int* p_x_chr_aux_sizes,
-                                    uint8_t* p_bytes,
+                                    struct lazy_vec* p_lazy_bytes,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size) {
   R_xlen_t max_size = 0;
@@ -2214,6 +2208,12 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
     // (R uses positive or zero truelengths)
     SET_TRUELENGTH(elt, -1);
   }
+
+  lazy_vec_initialize(p_lazy_x_aux);
+  SEXP* p_x_aux = (SEXP*) p_lazy_x_aux->p_data;
+
+  lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
 
   R_xlen_t n_uniques = p_truelength_info->size_used;
 
@@ -2742,19 +2742,12 @@ static void df_order(SEXP x,
     if (type == vctrs_type_character) {
       const SEXP* p_col = STRING_PTR_RO(col);
 
-      // TODO: Move this into chr_mark_sorted_uniques()
-      lazy_vec_initialize(p_lazy_x_aux);
-      SEXP* p_x_aux = (SEXP*) p_lazy_x_aux->p_data;
-
-      lazy_vec_initialize(p_lazy_bytes);
-      uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
-
       chr_mark_sorted_uniques(
         p_col,
-        p_x_aux,
+        p_lazy_x_aux,
         p_x_chr_sizes,
         p_x_chr_sizes_aux,
-        p_bytes,
+        p_lazy_bytes,
         p_truelength_info,
         size
       );
