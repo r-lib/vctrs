@@ -168,28 +168,28 @@ to vec_size() as lengths() is to length()." />
     </div>
 
     <div class="ref-description">
-    <p><code>vec_size(x)</code> returns the size of a vector. <code>vec_is_empty()</code>
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(x)</a></code> returns the size of a vector. <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_is_empty()</a></code>
 returns <code>TRUE</code> if the size is zero, <code>FALSE</code> otherwise.</p>
 <p>The size is distinct from the <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code> of a vector because it
 generalises to the "number of observations" for 2d structures,
 i.e. it's the number of rows in matrix or a data frame.  This
 definition has the important property that every column of a data
 frame (even data frame and matrix columns) have the same size.
-<code>vec_size_common(...)</code> returns the common size of multiple vectors.</p>
-<p><code>list_sizes()</code> returns an integer vector containing the size of each element
+<code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common(...)</a></code> returns the common size of multiple vectors.</p>
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>list_sizes()</a></code> returns an integer vector containing the size of each element
 of a list. It is nearly equivalent to, but faster than,
-<code>map_int(x, vec_size)</code>, with the exception that <code>list_sizes()</code> will
-error on non-list inputs, as defined by <code><a href='vec_is_list.html'>vec_is_list()</a></code>. <code>list_sizes()</code> is
-to <code>vec_size()</code> as <code><a href='https://rdrr.io/r/base/lengths.html'>lengths()</a></code> is to <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>.</p>
+<code>map_int(x, vec_size)</code>, with the exception that <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>list_sizes()</a></code> will
+error on non-list inputs, as defined by <code><a href='https://vctrs.r-lib.org/reference/vec_is_list.html'>vec_is_list()</a></code>. <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>list_sizes()</a></code> is
+to <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code> as <code><a href='https://rdrr.io/r/base/lengths.html'>lengths()</a></code> is to <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_size</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='kw'>x</span>)
 
-<span class='fu'>vec_size_common</span>(<span class='no'>...</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>.absent</span> <span class='kw'>=</span> <span class='fl'>0L</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common</a></span>(<span class='kw'>...</span>, .size = <span class='kw'>NULL</span>, .absent = <span class='fl'>0L</span>)
 
-<span class='fu'>list_sizes</span>(<span class='no'>x</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>list_sizes</a></span>(<span class='kw'>x</span>)
 
-<span class='fu'>vec_is_empty</span>(<span class='no'>x</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_is_empty</a></span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -215,22 +215,22 @@ is <code>NULL</code>. If left as <code>NULL</code> when no input is supplied, an
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An integer (or double for long vectors).</p>
-<p><code>vec_size_common()</code> returns <code>.absent</code> if all inputs are <code>NULL</code> or
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common()</a></code> returns <code>.absent</code> if all inputs are <code>NULL</code> or
 absent, <code>0L</code> by default.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>There is no vctrs helper that retrieves the number of columns: as this
-is a property of the <a href='vec_ptype.html'>type</a>.</p>
-<p><code>vec_size()</code> is equivalent to <code><a href='https://rdrr.io/r/base/nrow.html'>NROW()</a></code> but has a name that is easier to
+is a property of the <a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>type</a>.</p>
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code> is equivalent to <code><a href='https://rdrr.io/r/base/nrow.html'>NROW()</a></code> but has a name that is easier to
 pronounce, and throws an error when passed non-vector inputs.</p>
     <h2 class="hasAnchor" id="invariants"><a class="anchor" href="#invariants"></a>Invariants</h2>
 
     
 
 <ul>
-<li><p><code>vec_size(dataframe)</code> == <code>vec_size(dataframe[[i]])</code></p></li>
-<li><p><code>vec_size(matrix)</code> == <code>vec_size(matrix[, i, drop = FALSE])</code></p></li>
-<li><p><code>vec_size(vec_c(x, y))</code> == <code>vec_size(x)</code> + <code>vec_size(y)</code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(dataframe)</a></code> == <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(dataframe[[i]])</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(matrix)</a></code> == <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(matrix[, i, drop = FALSE])</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(vec_c(x, y))</a></code> == <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(x)</a></code> + <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(y)</a></code></p></li>
 </ul>
 
     <h2 class="hasAnchor" id="the-size-of-null"><a class="anchor" href="#the-size-of-null"></a>The size of NULL</h2>
@@ -238,8 +238,8 @@ pronounce, and throws an error when passed non-vector inputs.</p>
     
 
 
-<p>The size of <code>NULL</code> is hard-coded to <code>0L</code> in <code>vec_size()</code>.
-<code>vec_size_common()</code> returns <code>.absent</code> when all inputs are <code>NULL</code>
+<p>The size of <code>NULL</code> is hard-coded to <code>0L</code> in <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code>.
+<code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common()</a></code> returns <code>.absent</code> when all inputs are <code>NULL</code>
 (if only some inputs are <code>NULL</code>, they are simply ignored).</p>
 <p>A default size of 0 makes sense because sizes are most often
 queried in order to compute a total size while assembling a
@@ -255,18 +255,18 @@ rules.</p>
     
 
 <ul>
-<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code></p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='vec_slice.html'>vec_slice()</a></code> for a variation of <code>[</code> compatible with <code>vec_size()</code>,
-and <code><a href='vec_recycle.html'>vec_recycle()</a></code> to recycle vectors to common length.</p></div>
+    <div class='dont-index'><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> for a variation of <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> compatible with <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code>,
+and <code><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle()</a></code> to recycle vectors to common length.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_size</span>(<span class='fl'>1</span>:<span class='fl'>100</span>)</div><div class='output co'>#&gt; [1] 100</div><div class='input'><span class='fu'>vec_size</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt; [1] 32</div><div class='input'><span class='fu'>vec_size</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='kw'>dim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>10</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
-<span class='fu'>vec_size_common</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'>vec_size_common</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'>vec_size_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
-<span class='fu'>list_sizes</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"a"</span>, <span class='fl'>1</span>:<span class='fl'>5</span>, <span class='no'>letters</span>))</div><div class='output co'>#&gt; [1]  1  5 26</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span>)</div><div class='output co'>#&gt; [1] 100</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='kw'>mtcars</span>)</div><div class='output co'>#&gt; [1] 32</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>, <span class='fl'>10</span>)))</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 10</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>list_sizes</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"a"</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='kw'>letters</span>))</div><div class='output co'>#&gt; [1]  1  5 26</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

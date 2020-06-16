@@ -163,32 +163,32 @@ Extract the data underlying an S3 vector object, i.e. the underlying
 (named) atomic vector or list.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_data</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_data.html'>vec_data</a></span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector or object implementing <code><a href='vec_proxy.html'>vec_proxy()</a></code>.</p></td>
+      <td><p>A vector or object implementing <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The data underlying <code>x</code>, free from any attributes except the names.</p>
-    <h2 class="hasAnchor" id="difference-with-vec-proxy-"><a class="anchor" href="#difference-with-vec-proxy-"></a>Difference with <code><a href='vec_proxy.html'>vec_proxy()</a></code></h2>
+    <h2 class="hasAnchor" id="difference-with-vec-proxy-"><a class="anchor" href="#difference-with-vec-proxy-"></a>Difference with <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code></h2>
 
     
 
 <ul>
-<li><p><code>vec_data()</code> returns unstructured data. The only attributes
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_data.html'>vec_data()</a></code> returns unstructured data. The only attributes
 preserved are names, dims, and dimnames.</p>
 <p>Currently, due to the underlying memory architecture of R, this
 creates a full copy of the data.</p></li>
-<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code> may return structured data. This generic is the
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> may return structured data. This generic is the
 main customisation point for accessing memory values in vctrs,
-along with <code><a href='vec_proxy.html'>vec_restore()</a></code>.</p>
+along with <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code>.</p>
 <p>Methods must return a vector type. Records and data frames will
 be processed rowwise.</p></li>
 </ul>

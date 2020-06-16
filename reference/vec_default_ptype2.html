@@ -171,27 +171,27 @@ stop_incompatible_cast().
     </div>
 
     <div class="ref-description">
-    <p>These functions are automatically called when no <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or
-<code><a href='vec_cast.html'>vec_cast()</a></code> method is implemented for a pair of types.</p><ul>
+    <p>These functions are automatically called when no <code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code> or
+<code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code> method is implemented for a pair of types.</p><ul>
 <li><p>They apply special handling if one of the inputs is of type
 <code>AsIs</code> or <code>sfc</code>.</p></li>
 <li><p>They attempt a number of fallbacks in cases where it would be too
 inconvenient to be strict:</p><ul>
 <li><p>If the class and attributes are the same they are considered
-compatible. <code>vec_default_cast()</code> returns <code>x</code> in this case.</p></li>
+compatible. <code><a href='https://vctrs.r-lib.org/reference/vec_default_ptype2.html'>vec_default_cast()</a></code> returns <code>x</code> in this case.</p></li>
 <li><p>In case of incompatible data frame classes, they fall back to
 <code>data.frame</code>. If an incompatible subclass of tibble is
 involved, they fall back to <code>tbl_df</code>.</p></li>
 </ul></li>
-<li><p>Otherwise, an error is thrown with <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code> or
-<code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code>.</p></li>
+<li><p>Otherwise, an error is thrown with <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code> or
+<code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_cast()</a></code>.</p></li>
 </ul>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_default_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_default_ptype2.html'>vec_default_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, to_arg = <span class='st'>""</span>)
 
-<span class='fu'>vec_default_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_default_ptype2.html'>vec_default_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, y_arg = <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -206,21 +206,21 @@ involved, they fall back to <code>tbl_df</code>.</p></li>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>For <code><a href='vec_cast.html'>vec_cast_common()</a></code>, vectors to cast. For
-<code><a href='vec_cast.html'>vec_cast()</a></code>, <code>vec_cast_default()</code>, and <code><a href='vec_proxy.html'>vec_restore()</a></code>, these
+      <td><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code>, vectors to cast. For
+<code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code>, <code>vec_cast_default()</code>, and <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code>, these
 dots are only for future extensions and should be empty.</p></td>
     </tr>
     <tr>
       <th>x_arg</th>
       <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+incompatible types (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     <tr>
       <th>to_arg</th>
       <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+incompatible types (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     </table>
 

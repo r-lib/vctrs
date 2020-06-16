@@ -168,14 +168,14 @@ and paste the function source into your own package.)" />
 <code>S3Method()</code> namespace directive (often generated automatically by the
 <code>@export</code> roxygen2 tag). However, this technique requires that the generic
 be in an imported package, and sometimes you want to suggest a package,
-and only provide a method when that package is loaded. <code>s3_register()</code>
+and only provide a method when that package is loaded. <code><a href='https://vctrs.r-lib.org/reference/s3_register.html'>s3_register()</a></code>
 can be called from your package's <code><a href='https://rdrr.io/r/base/ns-hooks.html'>.onLoad()</a></code> to dynamically register
 a method only if the generic's package is loaded. (To avoid taking a
 dependency on vctrs for this one function, please feel free to copy
 and paste the function source into your own package.)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>s3_register</span>(<span class='no'>generic</span>, <span class='no'>class</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/s3_register.html'>s3_register</a></span>(<span class='kw'>generic</span>, <span class='kw'>class</span>, method = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,12 +203,12 @@ the old namespace. This might cause crashes because of dangling
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>For R 3.5.0 and later, <code>s3_register()</code> is also useful when demonstrating
+    <p>For R 3.5.0 and later, <code><a href='https://vctrs.r-lib.org/reference/s3_register.html'>s3_register()</a></code> is also useful when demonstrating
 class creation in a vignette, since method lookup no longer always involves
 the lexical scope. For R 3.6.0 and later, you can achieve a similar effect
 by using "delayed method registration", i.e. placing the following in your
-<code>NAMESPACE</code> file:</p><pre><span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/numeric_version.html'>getRversion</a></span>() <span class='kw'>&gt;=</span> <span class='st'>"3.6.0"</span>) {
-  <span class='fu'>S3method</span>(<span class='kw pkg'>package</span><span class='kw ns'>::</span><span class='no'>generic</span>, <span class='no'>class</span>)
+<code>NAMESPACE</code> file:</p><pre><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/numeric_version.html'>getRversion</a></span>() <span class='op'>&gt;=</span> <span class='st'>"3.6.0"</span>) {
+  <span class='fu'>S3method</span>(<span class='kw'>package</span>::<span class='kw'>generic</span>, <span class='kw'>class</span>)
 }</pre>
 
 
@@ -218,9 +218,9 @@ by using "delayed method registration", i.e. placing the following in your
 <span class='co'># that are not essential, while still providing finer control over</span>
 <span class='co'># printing when they are used.</span>
 
-<span class='no'>.onLoad</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>...</span>) {
-  <span class='fu'>s3_register</span>(<span class='st'>"pillar::pillar_shaft"</span>, <span class='st'>"vctrs_vctr"</span>)
-  <span class='fu'>s3_register</span>(<span class='st'>"tibble::type_sum"</span>, <span class='st'>"vctrs_vctr"</span>)
+<span class='kw'>.onLoad</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>...</span>) {
+  <span class='fu'><a href='https://vctrs.r-lib.org/reference/s3_register.html'>s3_register</a></span>(<span class='st'>"pillar::pillar_shaft"</span>, <span class='st'>"vctrs_vctr"</span>)
+  <span class='fu'><a href='https://vctrs.r-lib.org/reference/s3_register.html'>s3_register</a></span>(<span class='st'>"tibble::type_sum"</span>, <span class='st'>"vctrs_vctr"</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

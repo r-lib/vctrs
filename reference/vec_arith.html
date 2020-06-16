@@ -160,25 +160,25 @@ overcoming the limitations of the base Ops generic." />
 
     <div class="ref-description">
     <p>This generic provides a common double dispatch mechanism for all infix
-operators (<code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>, <code>^</code>, <code>%%</code>, <code>%/%</code>, <code>!</code>, <code>&amp;</code>, <code>|</code>). It is used
-to power the default arithmetic and boolean operators for <a href='new_vctr.html'>vctr</a>s objects,
+operators (<code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>/</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>*</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>^</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></code>, <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, <code>&amp;</code>, <code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>). It is used
+to power the default arithmetic and boolean operators for <a href='https://vctrs.r-lib.org/reference/new_vctr.html'>vctr</a>s objects,
 overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGeneric.html'>Ops</a> generic.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='kw'>op</span>, <span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for default</span>
-<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='kw'>op</span>, <span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for logical</span>
-<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='kw'>op</span>, <span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 
 <span class='co'># S3 method for numeric</span>
-<span class='fu'>vec_arith</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='kw'>op</span>, <span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 
-<span class='fu'>vec_arith_base</span>(<span class='no'>op</span>, <span class='no'>x</span>, <span class='no'>y</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith_base</a></span>(<span class='kw'>op</span>, <span class='kw'>x</span>, <span class='kw'>y</span>)
 
-<span class='fu'>MISSING</span>()</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>MISSING</a></span>()</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,8 +189,8 @@ overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGene
     </tr>
     <tr>
       <th>x, y</th>
-      <td><p>A pair of vectors. For <code>!</code>, unary <code>+</code> and unary <code>-</code>, <code>y</code> will be
-a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</code>.</p></td>
+      <td><p>A pair of vectors. For <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, unary <code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code> and unary <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code>y</code> will be
+a sentinel object of class <code>MISSING</code>, as created by <code><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>MISSING()</a></code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -200,26 +200,26 @@ a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>vec_arith_base()</code> is provided as a convenience for writing methods. It
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith_base()</a></code> is provided as a convenience for writing methods. It
 recycles <code>x</code> and <code>y</code> to common length then calls the base operator with the
-underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
-<p><code>vec_arith()</code> is also used in <code>diff.vctrs_vctr()</code> method via <code>-</code>.</p>
+underlying <code><a href='https://vctrs.r-lib.org/reference/vec_data.html'>vec_data()</a></code>.</p>
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith()</a></code> is also used in <code>diff.vctrs_vctr()</code> method via <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='vctrs-conditions.html'>stop_incompatible_op()</a></code> for signalling that an arithmetic
+    <div class='dont-index'><p><code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_op()</a></code> for signalling that an arithmetic
 operation is not permitted/supported.</p>
-<p>See <code><a href='vec_math.html'>vec_math()</a></code> for the equivalent for the unary mathematical
+<p>See <code><a href='https://vctrs.r-lib.org/reference/vec_math.html'>vec_math()</a></code> for the equivalent for the unary mathematical
 functions.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2018-01-01"</span>)
-<span class='no'>dt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2018-01-02 12:00"</span>)
-<span class='no'>t</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/difftime.html'>as.difftime</a></span>(<span class='fl'>12</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='st'>"hours"</span>)
+    <pre class="examples"><div class='input'><span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span>(<span class='st'>"2018-01-01"</span>)
+<span class='kw'>dt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2018-01-02 12:00"</span>)
+<span class='kw'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/difftime.html'>as.difftime</a></span>(<span class='fl'>12</span>, unit = <span class='st'>"hours"</span>)
 
-<span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='no'>dt</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='no'>dt</span>, <span class='no'>t</span>)</div><div class='output co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='no'>dt</span>, <span class='no'>d</span>)</div><div class='output co'>#&gt; Time difference of 129600 secs</div><div class='input'>
-<span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='no'>dt</span>, <span class='fl'>86400</span>)</div><div class='output co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='no'>dt</span>, <span class='no'>t</span>)</div><div class='output co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='no'>t</span>, <span class='no'>t</span>)</div><div class='output co'>#&gt; Time difference of 24 hours</div><div class='input'>
-<span class='fu'>vec_arith</span>(<span class='st'>"/"</span>, <span class='no'>t</span>, <span class='no'>t</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"/"</span>, <span class='no'>t</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt; Time difference of 6 hours</div><div class='input'>
-<span class='fu'>vec_arith</span>(<span class='st'>"*"</span>, <span class='no'>t</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt; Time difference of 24 hours</div></pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='kw'>d</span>)</div><div class='output co'>#&gt; Time difference of 129600 secs</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"+"</span>, <span class='kw'>dt</span>, <span class='fl'>86400</span>)</div><div class='output co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"+"</span>, <span class='kw'>dt</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"+"</span>, <span class='kw'>t</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; Time difference of 24 hours</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"/"</span>, <span class='kw'>t</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"/"</span>, <span class='kw'>t</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt; Time difference of 6 hours</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith</a></span>(<span class='st'>"*"</span>, <span class='kw'>t</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt; Time difference of 24 hours</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

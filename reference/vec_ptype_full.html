@@ -157,13 +157,13 @@ provides an abbreviated summary suitable for use in a column heading." />
     </div>
 
     <div class="ref-description">
-    <p><code>vec_ptype_full()</code> displays the full type of the vector. <code>vec_ptype_abbr()</code>
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_full()</a></code> displays the full type of the vector. <code><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_abbr()</a></code>
 provides an abbreviated summary suitable for use in a column heading.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_ptype_full</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_full</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
-<span class='fu'>vec_ptype_abbr</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_abbr</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,22 +185,22 @@ provides an abbreviated summary suitable for use in a column heading.</p>
 
     
 
-<p>The default method for <code>vec_ptype_full()</code> uses the first element of the
+<p>The default method for <code><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_full()</a></code> uses the first element of the
 class vector. Override this method if your class has parameters that should
 be prominently displayed.</p>
-<p>The default method for <code>vec_ptype_abbr()</code> <code><a href='https://rdrr.io/r/base/abbreviate.html'>abbreviate()</a></code>s <code>vec_ptype_full()</code>
+<p>The default method for <code><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_abbr()</a></code> <code><a href='https://rdrr.io/r/base/abbreviate.html'>abbreviate()</a></code>s <code><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_full()</a></code>
 to 8 characters. You should almost always override, aiming for 4-6
 characters where possible.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_full</span>(<span class='fl'>1</span>:<span class='fl'>10</span>))</div><div class='output co'>#&gt; integer</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_full</span>(<span class='no'>iris</span>))</div><div class='output co'>#&gt; data.frame&lt;
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_full</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>))</div><div class='output co'>#&gt; integer</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_full</a></span>(<span class='kw'>iris</span>))</div><div class='output co'>#&gt; data.frame&lt;
 #&gt;   Sepal.Length: double
 #&gt;   Sepal.Width : double
 #&gt;   Petal.Length: double
 #&gt;   Petal.Width : double
 #&gt;   Species     : factor&lt;12d60&gt;
 #&gt; &gt;</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_abbr</span>(<span class='fl'>1</span>:<span class='fl'>10</span>))</div><div class='output co'>#&gt; int</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype_full.html'>vec_ptype_abbr</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>))</div><div class='output co'>#&gt; int</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

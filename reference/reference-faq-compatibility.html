@@ -237,8 +237,8 @@ methods. In this reference you will find how vctrs tries to be
 compatible with your vector class, and what base methods you need to
 implement for compatibility.</p>
 <p>If you’re starting from scratch, we think you’ll find it easier to start
-using <code><a href='new_vctr.html'>new_vctr()</a></code> as documented in
-<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>. This guide is aimed for developers with
+using <code><a href='https://vctrs.r-lib.org/reference/new_vctr.html'>new_vctr()</a></code> as documented in
+<code>vignette("s3-vector")</code>. This guide is aimed for developers with
 existing vector classes.</p><h3>Aggregate operations with fallbacks</h3>
 
 
@@ -246,15 +246,15 @@ existing vector classes.</p><h3>Aggregate operations with fallbacks</h3>
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.</p><ul>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> falls back to the base <code>[</code> generic
-if no <code><a href='vec_proxy.html'>vec_proxy()</a></code> method is implemented. This
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> falls back to the base <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> generic
+if no <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method is implemented. This
 way foreign classes that do not implement
-<code><a href='vec_proxy.html'>vec_restore()</a></code> can restore attributes based on
+<code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code> can restore attributes based on
 the new subsetted contents.</p></li>
-<li><p><code><a href='vec_c.html'>vec_c()</a></code> and <code><a href='vec_bind.html'>vec_rbind()</a></code> now fall
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_c.html'>vec_c()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code> now fall
 back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if the inputs have a common
 parent class with a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method (only if they have no self-to-self
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method).</p>
+<code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code> method).</p>
 <p>vctrs works hard to make your <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method success in various
 situations (with <code>NULL</code> and <code>NA</code> inputs, even as first input which
 would normally prevent dispatch to your method). The main downside
@@ -270,39 +270,39 @@ coercion in <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>, and it
 <p>Most functions in vctrs are aggregate operations: they call other vctrs
 functions which themselves call other vctrs functions. The dependencies
 of a vctrs functions are listed in the Dependencies section of its
-documentation page. Take a look at <code><a href='vec_count.html'>vec_count()</a></code> for
+documentation page. Take a look at <code><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count()</a></code> for
 an example.</p>
 <p>These dependencies form a tree whose leaves are the four vctrs
-primitives. Here is the diagram for <code><a href='vec_count.html'>vec_count()</a></code>:</p>
+primitives. Here is the diagram for <code><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count()</a></code>:</p>
 <p><img src='figures/vec-count-deps.png' alt='' /></p><h3>The coercion generics</h3>
 
 
 <p>The coercion mechanism in vctrs is based on two generics:</p><ul>
-<li><p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code></p></li>
-<li><p><code><a href='vec_cast.html'>vec_cast()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code></p></li>
 </ul>
 
-<p>See the <a href='theory-faq-coercion.html'>theory overview</a>.</p>
+<p>See the <a href='https://vctrs.r-lib.org/reference/theory-faq-coercion.html'>theory overview</a>.</p>
 <p>Two objects with the same class and the same attributes are always
 considered compatible by ptype2 and cast. If the attributes or classes
 differ, they throw an incompatible type error.</p>
 <p>Coercion errors are the main source of incompatibility with vctrs. See
-the <a href='howto-faq-coercion.html'>howto guide</a> if you need to implement methods
+the <a href='https://vctrs.r-lib.org/reference/howto-faq-coercion.html'>howto guide</a> if you need to implement methods
 for these generics.</p>
 
 <h3>The proxy and restoration generics</h3>
 
 <ul>
-<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code></p></li>
-<li><p><code><a href='vec_proxy.html'>vec_restore()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code></p></li>
 </ul>
 
 <p>These generics are essential for vctrs but mostly optional.
-<code><a href='vec_proxy.html'>vec_proxy()</a></code> defaults to an <a href='https://rdrr.io/r/base/identity.html'>identity</a> function and you
+<code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> defaults to an <a href='https://rdrr.io/r/base/identity.html'>identity</a> function and you
 normally don’t need to implement it. The proxy a vector must be one of
 the atomic vector types, a list, or a data frame. By default, S3 lists
 that do not inherit from <code>"list"</code> do not have an identity proxy. In that
-case, you need to explicitly implement <code><a href='vec_proxy.html'>vec_proxy()</a></code> or make your class
+case, you need to explicitly implement <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> or make your class
 inherit from list.</p>
 
 

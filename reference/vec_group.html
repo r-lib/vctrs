@@ -169,12 +169,12 @@ attribute, n.
 
     <div class="ref-description">
     <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p><ul>
-<li><p><code>vec_group_id()</code> returns an identifier for the group that each element of
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_id()</a></code> returns an identifier for the group that each element of
 <code>x</code> falls in, constructed in the order that they appear. The number of
 groups is also returned as an attribute, <code>n</code>.</p></li>
-<li><p><code>vec_group_loc()</code> returns a data frame containing a <code>key</code> column with the
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc()</a></code> returns a data frame containing a <code>key</code> column with the
 unique groups, and a <code>loc</code> column with the locations of each group in <code>x</code>.</p></li>
-<li><p><code>vec_group_rle()</code> locates groups in <code>x</code> and returns them run length
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_rle()</a></code> locates groups in <code>x</code> and returns them run length
 encoded in the order that they appear. The return value is a rcrd object
 with fields for the <code>group</code> identifiers and the run <code>length</code> of the
 corresponding group. The number of groups is also returned as an
@@ -183,11 +183,11 @@ attribute, <code>n</code>.</p></li>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_group_id</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_id</a></span>(<span class='kw'>x</span>)
 
-<span class='fu'>vec_group_loc</span>(<span class='no'>x</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc</a></span>(<span class='kw'>x</span>)
 
-<span class='fu'>vec_group_rle</span>(<span class='no'>x</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_rle</a></span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -202,17 +202,17 @@ attribute, <code>n</code>.</p></li>
 
     
 <ul>
-<li><p><code>vec_group_id()</code>: An integer vector with the same size as <code>x</code>.</p></li>
-<li><p><code>vec_group_loc()</code>: A two column data frame with size equal to
-<code><a href='vec_size.html'>vec_size(vec_unique(x))</a></code>.</p><ul>
-<li><p>A <code>key</code> column of type <code><a href='vec_ptype.html'>vec_ptype(x)</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_id()</a></code>: An integer vector with the same size as <code>x</code>.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc()</a></code>: A two column data frame with size equal to
+<code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(vec_unique(x))</a></code>.</p><ul>
+<li><p>A <code>key</code> column of type <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype(x)</a></code></p></li>
 <li><p>A <code>loc</code> column of type list, with elements of type integer.</p></li>
 </ul></li>
-<li><p><code>vec_group_rle()</code>: A <code>vctrs_group_rle</code> rcrd object with two integer
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_rle()</a></code>: A <code>vctrs_group_rle</code> rcrd object with two integer
 vector fields: <code>group</code> and <code>length</code>.</p></li>
 </ul>
 
-<p>Note that when using <code>vec_group_loc()</code> for complex types, the default
+<p>Note that when using <code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc()</a></code> for complex types, the default
 <code>data.frame</code> print method will be suboptimal, and you will want to coerce
 into a tibble to better understand the output.</p>
     <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
@@ -220,36 +220,36 @@ into a tibble to better understand the output.</p>
     
 
 <ul>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>purrr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"p"</span>, <span class='st'>"u"</span>, <span class='st'>"r"</span>, <span class='st'>"r"</span>, <span class='st'>"r"</span>)
-<span class='fu'>vec_group_id</span>(<span class='no'>purrr</span>)</div><div class='output co'>#&gt; [1] 1 2 3 3 3
+    <pre class="examples"><div class='input'><span class='kw'>purrr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"p"</span>, <span class='st'>"u"</span>, <span class='st'>"r"</span>, <span class='st'>"r"</span>, <span class='st'>"r"</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_id</a></span>(<span class='kw'>purrr</span>)</div><div class='output co'>#&gt; [1] 1 2 3 3 3
 #&gt; attr(,"n")
-#&gt; [1] 3</div><div class='input'><span class='fu'>vec_group_rle</span>(<span class='no'>purrr</span>)</div><div class='output co'>#&gt; &lt;vctrs_group_rle[3][n = 3]&gt;
+#&gt; [1] 3</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_rle</a></span>(<span class='kw'>purrr</span>)</div><div class='output co'>#&gt; &lt;vctrs_group_rle[3][n = 3]&gt;
 #&gt; [1] 1x1 2x1 3x3</div><div class='input'>
-<span class='no'>groups</span> <span class='kw'>&lt;-</span> <span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]
-<span class='fu'>vec_group_id</span>(<span class='no'>groups</span>)</div><div class='output co'>#&gt;  [1] 1 1 2 3 4 3 4 3 3 3 3 4 4 4 4 4 4 2 2 2 3 4 4 4 4 2 1 2 1 1 1 2
+<span class='kw'>groups</span> <span class='op'>&lt;-</span> <span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_id</a></span>(<span class='kw'>groups</span>)</div><div class='output co'>#&gt;  [1] 1 1 2 3 4 3 4 3 3 3 3 4 4 4 4 4 4 2 2 2 3 4 4 4 4 2 1 2 1 1 1 2
 #&gt; attr(,"n")
 #&gt; [1] 4</div><div class='input'>
-<span class='no'>group_rle</span> <span class='kw'>&lt;-</span> <span class='fu'>vec_group_rle</span>(<span class='no'>groups</span>)
-<span class='no'>group_rle</span></div><div class='output co'>#&gt; &lt;vctrs_group_rle[16][n = 4]&gt;
+<span class='kw'>group_rle</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_rle</a></span>(<span class='kw'>groups</span>)
+<span class='kw'>group_rle</span></div><div class='output co'>#&gt; &lt;vctrs_group_rle[16][n = 4]&gt;
 #&gt;  [1] 1x2 2x1 3x1 4x1 3x1 4x1 3x4 4x6 2x3 3x1 4x4 2x1 1x1 2x1 1x3 2x1</div><div class='input'>
 <span class='co'># Access fields with `field()`</span>
-<span class='fu'><a href='fields.html'>field</a></span>(<span class='no'>group_rle</span>, <span class='st'>"group"</span>)</div><div class='output co'>#&gt;  [1] 1 2 3 4 3 4 3 4 2 3 4 2 1 2 1 2</div><div class='input'><span class='fu'><a href='fields.html'>field</a></span>(<span class='no'>group_rle</span>, <span class='st'>"length"</span>)</div><div class='output co'>#&gt;  [1] 2 1 1 1 1 1 4 6 3 1 4 1 1 1 3 1</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/fields.html'>field</a></span>(<span class='kw'>group_rle</span>, <span class='st'>"group"</span>)</div><div class='output co'>#&gt;  [1] 1 2 3 4 3 4 3 4 2 3 4 2 1 2 1 2</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/fields.html'>field</a></span>(<span class='kw'>group_rle</span>, <span class='st'>"length"</span>)</div><div class='output co'>#&gt;  [1] 2 1 1 1 1 1 4 6 3 1 4 1 1 1 3 1</div><div class='input'>
 <span class='co'># `vec_group_id()` is equivalent to</span>
-<span class='fu'><a href='vec_match.html'>vec_match</a></span>(<span class='no'>groups</span>, <span class='fu'><a href='vec_unique.html'>vec_unique</a></span>(<span class='no'>groups</span>))</div><div class='output co'>#&gt;  [1] 1 1 2 3 4 3 4 3 3 3 3 4 4 4 4 4 4 2 2 2 3 4 4 4 4 2 1 2 1 1 1 2</div><div class='input'>
-<span class='fu'>vec_group_loc</span>(<span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key                                                                loc
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match</a></span>(<span class='kw'>groups</span>, <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique</a></span>(<span class='kw'>groups</span>))</div><div class='output co'>#&gt;  [1] 1 1 2 3 4 3 4 3 3 3 3 4 4 4 4 4 4 2 2 2 3 4 4 4 4 2 1 2 1 1 1 2</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc</a></span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>)</div><div class='output co'>#&gt;   key                                                                loc
 #&gt; 1   0 1, 2, 5, 7, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25, 27, 29, 30, 31
-#&gt; 2   1                  3, 4, 6, 8, 9, 10, 11, 18, 19, 20, 21, 26, 28, 32</div><div class='input'><span class='fu'>vec_group_loc</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)])</div><div class='output co'>#&gt;   key.vs key.am                                          loc
+#&gt; 2   1                  3, 4, 6, 8, 9, 10, 11, 18, 19, 20, 21, 26, 28, 32</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc</a></span>(<span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)])</div><div class='output co'>#&gt;   key.vs key.am                                          loc
 #&gt; 1      0      1                         1, 2, 27, 29, 30, 31
 #&gt; 2      1      1                    3, 18, 19, 20, 26, 28, 32
 #&gt; 3      1      0                       4, 6, 8, 9, 10, 11, 21
 #&gt; 4      0      0 5, 7, 12, 13, 14, 15, 16, 17, 22, 23, 24, 25</div><div class='input'>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'>"tibble"</span>)) {
-  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'>vec_group_loc</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'><a href='https://tibble.tidyverse.org'>"tibble"</a></span>)) {
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc</a></span>(<span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
 }</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 4 x 2</span><span>
 #&gt;   key$vs   $am loc       
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>    

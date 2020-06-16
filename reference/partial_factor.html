@@ -161,7 +161,7 @@ result should be a factor that contains at least the specified levels." />
 result should be a factor that contains at least the specified levels.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>partial_factor</span>(<span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())</pre>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/partial_factor.html'>partial_factor</a></span>(levels = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,30 +175,29 @@ result should be a factor that contains at least the specified levels.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Assert that `x` is a factor</span>
-<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'>partial_factor</span>())
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'><a href='https://vctrs.r-lib.org/reference/partial_factor.html'>partial_factor</a></span>())
 
 <span class='co'># Testing with `factor()` is too strict,</span>
 <span class='co'># because it tries to match the levels exactly</span>
 <span class='co'># rather than learning them from the data.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>()))</div><div class='output co'>#&gt; Error : `factor("x")` must be a vector with type &lt;factor&lt;&gt;&gt;.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>()))</div><div class='output co'>#&gt; Error : `factor("x")` must be a vector with type &lt;factor&lt;&gt;&gt;.
 #&gt; Instead, it has type &lt;factor&lt;5a425&gt;&gt;.</div><div class='input'>
 <span class='co'># You can also enforce a minimum set of levels</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'>partial_factor</span>(<span class='st'>"y"</span>)))</div><div class='output co'>#&gt; Error : `factor("x")` must be a vector with type:
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>), <span class='fu'><a href='https://vctrs.r-lib.org/reference/partial_factor.html'>partial_factor</a></span>(<span class='st'>"y"</span>)))</div><div class='output co'>#&gt; Error : `factor("x")` must be a vector with type:
 #&gt; 
 #&gt;   &lt;partial_factor&lt;
 #&gt;     df698 {partial}
 #&gt;   &gt;&gt;
 #&gt; 
 #&gt; Instead, it has type &lt;factor&lt;5a425&gt;&gt;.</div><div class='input'>
-<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)), <span class='fu'>partial_factor</span>(<span class='st'>"y"</span>))
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)), <span class='fu'><a href='https://vctrs.r-lib.org/reference/partial_factor.html'>partial_factor</a></span>(<span class='st'>"y"</span>))
 
-<span class='no'>pf</span> <span class='kw'>&lt;-</span> <span class='fu'>partial_factor</span>(<span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>))
-<span class='no'>pf</span></div><div class='output co'>#&gt; partial_factor&lt;
+<span class='kw'>pf</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://vctrs.r-lib.org/reference/partial_factor.html'>partial_factor</a></span>(levels = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>))
+<span class='kw'>pf</span></div><div class='output co'>#&gt; partial_factor&lt;
 #&gt;   e1304 {partial}
 #&gt; &gt;</div><div class='input'>
-<span class='fu'><a href='vec_ptype.html'>vec_ptype_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"v"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"w"</span>), <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='no'>pf</span>)</div><div class='output co'>#&gt; factor(0)
-#&gt; Levels: v w x y</div><div class='input'>
-</div></pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"v"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"w"</span>), .ptype = <span class='kw'>pf</span>)</div><div class='output co'>#&gt; factor(0)
+#&gt; Levels: v w x y</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

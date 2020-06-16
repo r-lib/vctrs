@@ -161,21 +161,21 @@ type error when the columns are not compatible." />
     </div>
 
     <div class="ref-description">
-    <p><code>df_ptype2()</code> and <code>df_cast()</code> are the two functions you need to
-call from <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> methods for data frame
-subclasses. See <a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a>.
+    <p><code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_ptype2()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_cast()</a></code> are the two functions you need to
+call from <code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code> methods for data frame
+subclasses. See <a href='https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a>.
 Their main job is to determine the common type of two data frames,
 adding and coercing columns as needed, or throwing an incompatible
 type error when the columns are not compatible.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>df_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, y_arg = <span class='st'>""</span>)
 
-<span class='fu'>df_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, to_arg = <span class='st'>""</span>)
 
-<span class='fu'>tib_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>tib_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, y_arg = <span class='st'>""</span>)
 
-<span class='fu'>tib_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>tib_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, to_arg = <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,27 +186,27 @@ type error when the columns are not compatible.</p>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>If you call <code>df_ptype2()</code> or <code>df_cast()</code> from a
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or <code><a href='vec_cast.html'>vec_cast()</a></code> method, you must forward the dots
-passed to your method on to <code>df_ptype2()</code> or <code>df_cast()</code>.</p></td>
+      <td><p>If you call <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_ptype2()</a></code> or <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_cast()</a></code> from a
+<code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code> or <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code> method, you must forward the dots
+passed to your method on to <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_ptype2()</a></code> or <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_cast()</a></code>.</p></td>
     </tr>
     <tr>
       <th>x_arg</th>
       <td><p>Argument names for <code>x</code> and <code>y</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+incompatible types (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     <tr>
       <th>y_arg</th>
       <td><p>Argument names for <code>x</code> and <code>y</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+incompatible types (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     <tr>
       <th>to_arg</th>
       <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+incompatible types (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     </table>
 
@@ -216,8 +216,8 @@ incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_
 <ul>
 <li><p>When <code>x</code> and <code>y</code> are not compatible, an error of class
 <code>vctrs_error_incompatible_type</code> is thrown.</p></li>
-<li><p>When <code>x</code> and <code>y</code> are compatible, <code>df_ptype2()</code> returns the common
-type as a bare data frame. <code>tib_ptype2()</code> returns the common type
+<li><p>When <code>x</code> and <code>y</code> are compatible, <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>df_ptype2()</a></code> returns the common
+type as a bare data frame. <code><a href='https://vctrs.r-lib.org/reference/df_ptype2.html'>tib_ptype2()</a></code> returns the common type
 as a bare tibble.</p></li>
 </ul>
 

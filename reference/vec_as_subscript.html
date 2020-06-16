@@ -160,27 +160,27 @@ not checked in any way (length, missingness, negative elements)." />
 
     <div class="ref-description">
     <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p>
-<p>Convert <code>i</code> to the base type expected by <code><a href='vec_as_location.html'>vec_as_location()</a></code> or
-<code><a href='vec_as_location.html'>vec_as_location2()</a></code>. The values of the subscript type are
+<p>Convert <code>i</code> to the base type expected by <code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location()</a></code> or
+<code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location2()</a></code>. The values of the subscript type are
 not checked in any way (length, missingness, negative elements).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_as_subscript</span>(
-  <span class='no'>i</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>logical</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>numeric</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>character</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_subscript.html'>vec_as_subscript</a></span>(
+  <span class='kw'>i</span>,
+  <span class='kw'>...</span>,
+  logical = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
+  numeric = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
+  character = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
+  arg = <span class='kw'>NULL</span>
 )
 
-<span class='fu'>vec_as_subscript2</span>(
-  <span class='no'>i</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>logical</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>numeric</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>character</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_subscript.html'>vec_as_subscript2</a></span>(
+  <span class='kw'>i</span>,
+  <span class='kw'>...</span>,
+  logical = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
+  numeric = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
+  character = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cast"</span>, <span class='st'>"error"</span>),
+  arg = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -203,7 +203,7 @@ locations or names of the observations to get/set. Specify
 and character subscripts.</p>
 <p>If <code>"cast"</code> and the subscript is not one of the three base types
 (logical, integer or character), the subscript is
-<a href='vec_cast.html'>cast</a> to the relevant base type, e.g. factors are
+<a href='https://vctrs.r-lib.org/reference/vec_cast.html'>cast</a> to the relevant base type, e.g. factors are
 coerced to character. <code>NULL</code> is treated as an empty integer
 vector, and is thus coercible depending on the setting of
 <code>numeric</code>. Symbols are treated as character vectors and thus
@@ -214,7 +214,7 @@ informative error.</p></td>
     <tr>
       <th>arg</th>
       <td><p>The argument name to be displayed in error messages when
-<code><a href='vec_as_location.html'>vec_as_location()</a></code> and <code><a href='vec_as_location.html'>vec_as_location2()</a></code> are used to check the
+<code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location2()</a></code> are used to check the
 type of a function input.</p></td>
     </tr>
     </table>

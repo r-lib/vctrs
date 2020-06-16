@@ -165,17 +165,17 @@ doesn't conform.
     <div class="ref-description">
     
 <ul>
-<li><p><code>vec_is()</code> is a predicate that checks if its input is a vector that
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_is()</a></code> is a predicate that checks if its input is a vector that
 conforms to a prototype and/or a size.</p></li>
-<li><p><code>vec_assert()</code> throws an error when the input is not a vector or
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert()</a></code> throws an error when the input is not a vector or
 doesn't conform.</p></li>
 </ul>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_assert</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>arg</span> <span class='kw'>=</span> <span class='fu'>as_label</span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>x</span>)))
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert</a></span>(<span class='kw'>x</span>, ptype = <span class='kw'>NULL</span>, size = <span class='kw'>NULL</span>, arg = <span class='fu'>as_label</span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='kw'>x</span>)))
 
-<span class='fu'>vec_is</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_is</a></span>(<span class='kw'>x</span>, ptype = <span class='kw'>NULL</span>, size = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,9 +187,9 @@ doesn't conform.</p></li>
     <tr>
       <th>ptype</th>
       <td><p>Prototype to compare against. If the prototype has a
-class, its <code><a href='vec_ptype.html'>vec_ptype()</a></code> is compared to that of <code>x</code> with
+class, its <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code> is compared to that of <code>x</code> with
 <code><a href='https://rdrr.io/r/base/identical.html'>identical()</a></code>. Otherwise, its <code><a href='https://rdrr.io/r/base/typeof.html'>typeof()</a></code> is compared to that of
-<code>x</code> with <code>==</code>.</p></td>
+<code>x</code> with <code><a href='https://rdrr.io/r/base/Comparison.html'>==</a></code>.</p></td>
     </tr>
     <tr>
       <th>size</th>
@@ -205,7 +205,7 @@ default.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>vec_is()</code> returns <code>TRUE</code> or <code>FALSE</code>. <code>vec_assert()</code> either
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_is()</a></code> returns <code>TRUE</code> or <code>FALSE</code>. <code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert()</a></code> either
 throws a typed error (see section on error types) or returns <code>x</code>,
 invisibly.</p>
     <h2 class="hasAnchor" id="scalars-and-vectors"><a class="anchor" href="#scalars-and-vectors"></a>Scalars and vectors</h2>
@@ -216,7 +216,7 @@ invisibly.</p>
 <p>Informally, a vector is a collection that makes sense to use as
 column in a data frame. An object is a vector if one of the
 following conditions hold:</p><ul>
-<li><p>A <code><a href='vec_proxy.html'>vec_proxy()</a></code> method is implemented for the class of the
+<li><p>A <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method is implemented for the class of the
 object.</p></li>
 <li><p>The <a href='https://rdrr.io/r/base/typeof.html'>base type</a> of the object is atomic: <code>"logical"</code>,
 <code>"integer"</code>, <code>"double"</code>, <code>"complex"</code>, <code>"character"</code>, <code>"raw"</code></p></li>
@@ -245,8 +245,8 @@ always prepend your class to the <code>"class"</code> attribute for correct disp
     
 
 
-<p><code>vec_is()</code> never throws.
-<code>vec_assert()</code> throws the following errors:</p><ul>
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_is()</a></code> never throws.
+<code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_assert()</a></code> throws the following errors:</p><ul>
 <li><p>If the input is not a vector, an error of class
 <code>"vctrs_error_scalar_type"</code> is raised.</p></li>
 <li><p>If the prototype doesn't match, an error of class

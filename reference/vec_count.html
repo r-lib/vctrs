@@ -159,13 +159,13 @@ appear in the input." />
     </div>
 
     <div class="ref-description">
-    <p>Count the number of unique values in a vector. <code>vec_count()</code> has two
-important differences to <code><a href='table.html'>table()</a></code>: it returns a data frame, and when
+    <p>Count the number of unique values in a vector. <code><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count()</a></code> has two
+important differences to <code><a href='https://vctrs.r-lib.org/reference/table.html'>table()</a></code>: it returns a data frame, and when
 given multiple inputs (as a data frame), it only counts combinations that
 appear in the input.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"count"</span>, <span class='st'>"key"</span>, <span class='st'>"location"</span>, <span class='st'>"none"</span>))</pre>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>x</span>, sort = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"count"</span>, <span class='st'>"key"</span>, <span class='st'>"location"</span>, <span class='st'>"none"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,31 +195,31 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
     
 
 <ul>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code></p></li>
-<li><p><code><a href='vec_order.html'>vec_order()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_order.html'>vec_order()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_count</span>(<span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key count
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>)</div><div class='output co'>#&gt;   key count
 #&gt; 1   0    18
-#&gt; 2   1    14</div><div class='input'><span class='fu'>vec_count</span>(<span class='no'>iris</span>$<span class='no'>Species</span>)</div><div class='output co'>#&gt;          key count
+#&gt; 2   1    14</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>iris</span><span class='op'>$</span><span class='kw'>Species</span>)</div><div class='output co'>#&gt;          key count
 #&gt; 1     setosa    50
 #&gt; 2 versicolor    50
 #&gt; 3  virginica    50</div><div class='input'>
 <span class='co'># If you count a data frame you'll get a data frame</span>
 <span class='co'># column in the output</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>vec_count</span>(<span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))</div><div class='output co'>#&gt; 'data.frame':	4 obs. of  2 variables:
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))</div><div class='output co'>#&gt; 'data.frame':	4 obs. of  2 variables:
 #&gt;  $ key  :'data.frame':	4 obs. of  2 variables:
 #&gt;   ..$ vs: num  0 1 1 0
 #&gt;   ..$ am: num  0 1 0 1
 #&gt;  $ count: int  12 7 7 6</div><div class='input'>
 <span class='co'># Sorting ---------------------------------------</span>
 
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>letters</span>[<span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>6</span>)]
+<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='kw'>letters</span>[<span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>6</span>)]
 <span class='co'># default is to sort by frequency</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;    key count
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt;    key count
 #&gt; 1    f    21
 #&gt; 2    e    19
 #&gt; 3    g    16
@@ -228,13 +228,13 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 #&gt; 6    b     6
 #&gt; 7    c     4
 #&gt; 8    j     3
-#&gt; 9    i     2
+#&gt; 9    k     2
 #&gt; 10   l     2
-#&gt; 11   k     2
+#&gt; 11   i     2
 #&gt; 12   n     1
 #&gt; 13   a     1</div><div class='input'>
 <span class='co'># by can sort by key</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"key"</span>)</div><div class='output co'>#&gt;    key count
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>x</span>, sort = <span class='st'>"key"</span>)</div><div class='output co'>#&gt;    key count
 #&gt; 1    a     1
 #&gt; 2    b     6
 #&gt; 3    c     4
@@ -249,7 +249,7 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 #&gt; 12   l     2
 #&gt; 13   n     1</div><div class='input'>
 <span class='co'># or location of first value</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"location"</span>)</div><div class='output co'>#&gt;    key count
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>x</span>, sort = <span class='st'>"location"</span>)</div><div class='output co'>#&gt;    key count
 #&gt; 1    e    19
 #&gt; 2    d    14
 #&gt; 3    c     4
@@ -262,22 +262,22 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 #&gt; 10   h     9
 #&gt; 11   i     2
 #&gt; 12   n     1
-#&gt; 13   a     1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
+#&gt; 13   a     1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
 <span class='co'># or not at all</span>
-<span class='fu'>vec_count</span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"none"</span>)</div><div class='output co'>#&gt;    key count
-#&gt; 1    n     1
-#&gt; 2    j     3
-#&gt; 3    i     2
-#&gt; 4    l     2
-#&gt; 5    g    16
-#&gt; 6    h     9
-#&gt; 7    f    21
-#&gt; 8    a     1
-#&gt; 9    d    14
-#&gt; 10   k     2
-#&gt; 11   b     6
-#&gt; 12   e    19
-#&gt; 13   c     4</div></pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>x</span>, sort = <span class='st'>"none"</span>)</div><div class='output co'>#&gt;    key count
+#&gt; 1    f    21
+#&gt; 2    c     4
+#&gt; 3    j     3
+#&gt; 4    h     9
+#&gt; 5    k     2
+#&gt; 6    g    16
+#&gt; 7    n     1
+#&gt; 8    d    14
+#&gt; 9    e    19
+#&gt; 10   b     6
+#&gt; 11   l     2
+#&gt; 12   a     1
+#&gt; 13   i     2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -165,19 +165,19 @@ across all arguments. Column-binding creates a data frame with common length
 across all arguments.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_rbind</span>(
-  <span class='no'>...</span>,
-  <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.names_to</span> <span class='kw'>=</span> <span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/zap.html'>zap</a></span>(),
-  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
-  <span class='kw'>.name_spec</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a></span>(
+  <span class='kw'>...</span>,
+  .ptype = <span class='kw'>NULL</span>,
+  .names_to = <span class='kw'>rlang</span>::<span class='fu'><a href='https://rlang.r-lib.org/reference/zap.html'>zap</a></span>(),
+  .name_repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
+  .name_spec = <span class='kw'>NULL</span>
 )
 
-<span class='fu'>vec_cbind</span>(
-  <span class='no'>...</span>,
-  <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"minimal"</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind</a></span>(
+  <span class='kw'>...</span>,
+  .ptype = <span class='kw'>NULL</span>,
+  .size = <span class='kw'>NULL</span>,
+  .name_repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"minimal"</span>)
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -187,10 +187,10 @@ across all arguments.</p>
       <th>...</th>
       <td><p>Data frames or vectors.</p>
 <p>When the inputs are named:</p><ul>
-<li><p><code>vec_rbind()</code> assigns names to row names unless <code>.names_to</code> is
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code> assigns names to row names unless <code>.names_to</code> is
 supplied. In that case the names are assigned in the column
 defined by <code>.names_to</code>.</p></li>
-<li><p><code>vec_cbind()</code> creates packed data frame columns with named
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind()</a></code> creates packed data frame columns with named
 inputs.</p></li>
 </ul>
 
@@ -219,19 +219,19 @@ not named, an integer column is used instead.</p></li>
     <tr>
       <th>.name_repair</th>
       <td><p>One of <code>"unique"</code>, <code>"universal"</code>, or
-<code>"check_unique"</code>. See <code><a href='vec_as_names.html'>vec_as_names()</a></code> for the meaning of these
+<code>"check_unique"</code>. See <code><a href='https://vctrs.r-lib.org/reference/vec_as_names.html'>vec_as_names()</a></code> for the meaning of these
 options.</p>
-<p>With <code>vec_rbind()</code>, the repair function is applied to all inputs
-separately. This is because <code>vec_rbind()</code> needs to align their
+<p>With <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code>, the repair function is applied to all inputs
+separately. This is because <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code> needs to align their
 columns before binding the rows, and thus needs all inputs to
-have unique names. On the other hand, <code>vec_cbind()</code> applies the
+have unique names. On the other hand, <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind()</a></code> applies the
 repair function after all inputs have been concatenated together
-in a final data frame. Hence <code>vec_cbind()</code> allows the more
+in a final data frame. Hence <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind()</a></code> allows the more
 permissive minimal names repair.</p></td>
     </tr>
     <tr>
       <th>.name_spec</th>
-      <td><p>A name specification (as documented in <code><a href='vec_c.html'>vec_c()</a></code>)
+      <td><p>A name specification (as documented in <code><a href='https://vctrs.r-lib.org/reference/vec_c.html'>vec_c()</a></code>)
 for combining the outer inputs names in <code>...</code> and the inner row
 names of the inputs. This only has an effect when <code>.names_to</code> is
 set to <code>NULL</code>, which causes the input names to be assigned as row
@@ -240,7 +240,7 @@ names.</p></td>
     <tr>
       <th>.size</th>
       <td><p>If, <code>NULL</code>, the default, will determine the number of
-rows in <code>vec_cbind()</code> output by using the standard recycling rules.</p>
+rows in <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind()</a></code> output by using the standard recycling rules.</p>
 <p>Alternatively, specify the desired number of rows, and any inputs
 of length 1 will be recycled appropriately.</p></td>
     </tr>
@@ -249,10 +249,10 @@ of length 1 will be recycled appropriately.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame, or subclass of data frame.</p>
-<p>If <code>...</code> is a mix of different data frame subclasses, <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
-will be used to determine the output type. For <code>vec_rbind()</code>, this
+<p>If <code>...</code> is a mix of different data frame subclasses, <code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code>
+will be used to determine the output type. For <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code>, this
 will determine the type of the container and the type of each column;
-for <code>vec_cbind()</code> it only determines the type of the output container.
+for <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind()</a></code> it only determines the type of the output container.
 If there are no non-<code>NULL</code> inputs, the result will be <code><a href='https://rdrr.io/r/base/data.frame.html'>data.frame()</a></code>.</p>
     <h2 class="hasAnchor" id="invariants"><a class="anchor" href="#invariants"></a>Invariants</h2>
 
@@ -261,9 +261,9 @@ If there are no non-<code>NULL</code> inputs, the result will be <code><a href='
 
 <p>All inputs are first converted to a data frame. The conversion for
 1d vectors depends on the direction of binding:</p><ul>
-<li><p>For <code>vec_rbind()</code>, each element of the vector becomes a column in
+<li><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code>, each element of the vector becomes a column in
 a single row.</p></li>
-<li><p>For <code>vec_cbind()</code>, each element of the vector becomes a row in a
+<li><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind()</a></code>, each element of the vector becomes a row in a
 single column.</p></li>
 </ul>
 
@@ -288,65 +288,65 @@ effective size for the total number of rows is 1.</p>
 <h3>vctrs dependencies</h3>
 
 <ul>
-<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code></p></li>
-<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code></p></li>
-<li><p><code><a href='vec_init.html'>vec_init()</a></code></p></li>
-<li><p><code><a href='vec_slice.html'>vec_assign()</a></code></p></li>
-<li><p><code><a href='vec_proxy.html'>vec_restore()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_init.html'>vec_init()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_assign()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code></p></li>
 </ul>
 
 
-<h3>base dependencies of <code>vec_rbind()</code></h3>
+<h3>base dependencies of <code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code></h3>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
 </ul>
 
 <p>If columns to combine inherit from a common class,
-<code>vec_rbind()</code> falls back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if there exists a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>
+<code><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind()</a></code> falls back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if there exists a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>
 method implemented for this class hierarchy.</p>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='vec_c.html'>vec_c()</a></code> for combining 1d vectors.</p></div>
+    <div class='dont-index'><p><code><a href='https://vctrs.r-lib.org/reference/vec_c.html'>vec_c()</a></code> for combining 1d vectors.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># row binding -----------------------------------------</span>
 
 <span class='co'># common columns are coerced to common class</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>FALSE</span>)
 )</div><div class='output co'>#&gt;   x
 #&gt; 1 1
 #&gt; 2 0</div><div class='input'>
 <span class='co'># unique columns are filled with NAs</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"x"</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y = <span class='st'>"x"</span>)
 )</div><div class='output co'>#&gt;    x    y
 #&gt; 1  1 &lt;NA&gt;
 #&gt; 2 NA    x</div><div class='input'>
 <span class='co'># null inputs are ignored</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>),
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
   <span class='kw'>NULL</span>,
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>2</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>2</span>)
 )</div><div class='output co'>#&gt;   x
 #&gt; 1 1
 #&gt; 2 2</div><div class='input'>
 <span class='co'># bare vectors are treated as rows</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(x = <span class='fl'>1</span>, y = <span class='fl'>2</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(x = <span class='fl'>3</span>)
 )</div><div class='output co'>#&gt;   x  y
 #&gt; 1 1  2
 #&gt; 2 3 NA</div><div class='input'>
 <span class='co'># default names will be supplied if arguments are not named</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fl'>1</span>:<span class='fl'>2</span>,
-  <span class='fl'>1</span>:<span class='fl'>3</span>,
-  <span class='fl'>1</span>:<span class='fl'>4</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_rbind</a></span>(
+  <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,
+  <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
+  <span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>
 )</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* `` -&gt; ...1</span>
 #&gt; <span class='message'>* `` -&gt; ...2</span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
@@ -363,46 +363,45 @@ method implemented for this class hierarchy.</p>
 <span class='co'># column binding --------------------------------------</span>
 
 <span class='co'># each input is recycled to have common length</span>
-<span class='fu'>vec_cbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
 )</div><div class='output co'>#&gt;   x y
 #&gt; 1 1 1
 #&gt; 2 1 2
 #&gt; 3 1 3</div><div class='input'>
 <span class='co'># bare vectors are treated as columns</span>
-<span class='fu'>vec_cbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>),
-  <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>3</span>]
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
+  y = <span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>]
 )</div><div class='output co'>#&gt;   x y
 #&gt; 1 1 a
 #&gt; 2 1 b
 #&gt; 3 1 c</div><div class='input'>
 <span class='co'># if you supply a named data frame, it is packed in a single column</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>vec_cbind</span>(
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-  <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>
+<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind</a></span>(
+  x = <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>),
+  y = <span class='fl'>1</span>
 )
-<span class='no'>data</span></div><div class='output co'>#&gt;   x.a x.b y
+<span class='kw'>data</span></div><div class='output co'>#&gt;   x.a x.b y
 #&gt; 1   1   2 1</div><div class='input'>
 <span class='co'># Packed data frames are nested in a single column. This makes it</span>
 <span class='co'># possible to access it through a single name:</span>
-<span class='no'>data</span>$<span class='no'>x</span></div><div class='output co'>#&gt;   a b
+<span class='kw'>data</span><span class='op'>$</span><span class='kw'>x</span></div><div class='output co'>#&gt;   a b
 #&gt; 1 1 2</div><div class='input'>
 <span class='co'># since the base print method is suboptimal with packed data</span>
 <span class='co'># frames, it is recommended to use tibble to work with these:</span>
-<span class='kw'>if</span> (<span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tibble"</span>)) {
-  <span class='fu'>vec_cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='co'>if</span> (<span class='kw'>rlang</span>::<span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tibble"</span>)) {
+  <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind</a></span>(x = <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>), y = <span class='fl'>1</span>)
 }</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1 x 2</span><span>
 #&gt;     x$a    $b     y
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2     1</div><div class='input'>
 <span class='co'># duplicate names are flagged</span>
-<span class='fu'>vec_cbind</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_bind.html'>vec_cbind</a></span>(x = <span class='fl'>1</span>, x = <span class='fl'>2</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* x -&gt; x...1</span>
 #&gt; <span class='message'>* x -&gt; x...2</span></div><div class='output co'>#&gt;   x...1 x...2
-#&gt; 1     1     2</div><div class='input'>
-</div></span></pre>
+#&gt; 1     1     2</div><div class='input'></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

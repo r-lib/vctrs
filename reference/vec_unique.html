@@ -164,18 +164,18 @@ vec_unique_count(): the number of unique values.
     <div class="ref-description">
     
 <ul>
-<li><p><code>vec_unique()</code>: the unique values. Equivalent to <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>.</p></li>
-<li><p><code>vec_unique_loc()</code>: the locations of the unique values.</p></li>
-<li><p><code>vec_unique_count()</code>: the number of unique values.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique()</a></code>: the unique values. Equivalent to <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_loc()</a></code>: the locations of the unique values.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_count()</a></code>: the number of unique values.</p></li>
 </ul>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_unique</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique</a></span>(<span class='kw'>x</span>)
 
-<span class='fu'>vec_unique_loc</span>(<span class='no'>x</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_loc</a></span>(<span class='kw'>x</span>)
 
-<span class='fu'>vec_unique_count</span>(<span class='no'>x</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_count</a></span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -190,10 +190,10 @@ vec_unique_count(): the number of unique values.
 
     
 <ul>
-<li><p><code>vec_unique()</code>: a vector the same type as <code>x</code> containing only unique
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique()</a></code>: a vector the same type as <code>x</code> containing only unique
 values.</p></li>
-<li><p><code>vec_unique_loc()</code>: an integer vector, giving locations of unique values.</p></li>
-<li><p><code>vec_unique_count()</code>: an integer vector of length 1, giving the
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_loc()</a></code>: an integer vector, giving locations of unique values.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_count()</a></code>: an integer vector of length 1, giving the
 number of unique values.</p></li>
 </ul>
 
@@ -202,7 +202,7 @@ number of unique values.</p></li>
     
 
 <ul>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
 </ul>
 
     <h2 class="hasAnchor" id="missing-values"><a class="anchor" href="#missing-values"></a>Missing values</h2>
@@ -215,15 +215,15 @@ so these functions consider all <code>NAs</code> to be equal. (Similarly,
 all <code>NaN</code> are also considered to be equal.)</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='vec_duplicate.html'>vec_duplicate</a> for functions that work with the dual of
+    <div class='dont-index'><p><a href='https://vctrs.r-lib.org/reference/vec_duplicate.html'>vec_duplicate</a> for functions that work with the dual of
 unique values: duplicated values.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>8</span>)
-<span class='fu'>vec_unique</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  [1]  5 12  3  9  6 11 10  8  7 14 16  2 13  4 19 15</div><div class='input'><span class='fu'>vec_unique_loc</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  7 10 12 13 18 23 30 31 39 57 73</div><div class='input'><span class='fu'>vec_unique_count</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 16</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>8</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt;  [1]  5 12  3  9  6 11 10  8  7 14 16  2 13  4 19 15</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_loc</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  7 10 12 13 18 23 30 31 39 57 73</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique_count</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; [1] 16</div><div class='input'>
 <span class='co'># `vec_unique()` returns values in the order that encounters them</span>
 <span class='co'># use sort = "location" to match to the result of `vec_count()`</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'>vec_unique</span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1]  5 12  3  9  6 11</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='vec_count.html'>vec_count</a></span>(<span class='no'>x</span>, <span class='kw'>sort</span> <span class='kw'>=</span> <span class='st'>"location"</span>))</div><div class='output co'>#&gt;   key count
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique</a></span>(<span class='kw'>x</span>))</div><div class='output co'>#&gt; [1]  5 12  3  9  6 11</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_count.html'>vec_count</a></span>(<span class='kw'>x</span>, sort = <span class='st'>"location"</span>))</div><div class='output co'>#&gt;   key count
 #&gt; 1   5     6
 #&gt; 2  12     5
 #&gt; 3   3     4
@@ -231,9 +231,9 @@ unique values: duplicated values.</p></div>
 #&gt; 5   6    15
 #&gt; 6  11    12</div><div class='input'>
 <span class='co'># Normally missing values are not considered to be equal</span>
-<span class='fl'>NA</span> <span class='kw'>==</span> <span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'>
+<span class='fl'>NA</span> <span class='op'>==</span> <span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'>
 <span class='co'># But they are for the purposes of considering uniqueness</span>
-<span class='fu'>vec_unique</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>))</div><div class='output co'>#&gt; [1] NA  1  2</div></pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>))</div><div class='output co'>#&gt; [1] NA  1  2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

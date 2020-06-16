@@ -160,12 +160,12 @@ and min(), max(), median(), and quantile()." />
 
     <div class="ref-description">
     <p>Returns a proxy object (i.e. an atomic vector or data frame of atomic
-vectors). For <a href='new_vctr.html'>vctr</a>s, this determines the behaviour of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> and
-<code><a href='https://rdrr.io/r/base/sort.html'>sort()</a></code> (via <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code>); <code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code> and <code>&lt;=</code> (via <code><a href='vec_compare.html'>vec_compare()</a></code>);
+vectors). For <a href='https://vctrs.r-lib.org/reference/new_vctr.html'>vctr</a>s, this determines the behaviour of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> and
+<code><a href='https://rdrr.io/r/base/sort.html'>sort()</a></code> (via <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code>); <code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code> and <code>&lt;=</code> (via <code><a href='https://vctrs.r-lib.org/reference/vec_compare.html'>vec_compare()</a></code>);
 and <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>max()</a></code>, <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code>, and <code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_proxy_compare</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='kw'>relax</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>, relax = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,7 +181,7 @@ and <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code
     <tr>
       <th>relax</th>
       <td><p>If <code>TRUE</code>, and <code>x</code> is otherwise non-comparable, will return
-<code><a href='vec_seq_along.html'>vec_seq_along(x)</a></code>. This allows a data frame to be orderable, even if
+<code><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_seq_along(x)</a></code>. This allows a data frame to be orderable, even if
 one of its components is not. This is experimental and may change in the
 future.</p></td>
     </tr>
@@ -194,13 +194,13 @@ future.</p></td>
 
     <p>The default method assumes that all classes built on top of atomic
 vectors or records are orderable. If your class is not, you will need
-to provide a <code>vec_proxy_compare()</code> method that throws an error.</p>
+to provide a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code> method that throws an error.</p>
     <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
 
     
 
 <ul>
-<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code> called by default</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> called by default</p></li>
 </ul>
 
 

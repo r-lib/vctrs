@@ -170,55 +170,55 @@ for extracting with [[.
     <div class="ref-description">
     <p>These helpers provide a means of standardizing common indexing
 methods such as integer, character or logical indexing.</p><ul>
-<li><p><code>vec_as_location()</code> accepts integer, character, or logical vectors
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location()</a></code> accepts integer, character, or logical vectors
 of any size. The output is always an integer vector that is
-suitable for subsetting with <code>[</code> or <code><a href='vec_slice.html'>vec_slice()</a></code>. It might be a
+suitable for subsetting with <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> or <code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code>. It might be a
 different size than the input because negative selections are
 transformed to positive ones and logical vectors are transformed
 to a vector of indices for the <code>TRUE</code> locations.</p></li>
-<li><p><code>vec_as_location2()</code> accepts a single number or string. It returns
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location2()</a></code> accepts a single number or string. It returns
 a single location as a integer vector of size 1. This is suitable
-for extracting with <code>[[</code>.</p></li>
+for extracting with <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>.</p></li>
 </ul>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_as_location</span>(
-  <span class='no'>i</span>,
-  <span class='no'>n</span>,
-  <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"propagate"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location</a></span>(
+  <span class='kw'>i</span>,
+  <span class='kw'>n</span>,
+  names = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"propagate"</span>, <span class='st'>"error"</span>),
+  arg = <span class='kw'>NULL</span>
 )
 
-<span class='fu'>num_as_location</span>(
-  <span class='no'>i</span>,
-  <span class='no'>n</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"propagate"</span>, <span class='st'>"error"</span>),
-  <span class='kw'>negative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"invert"</span>, <span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
-  <span class='kw'>oob</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"extend"</span>),
-  <span class='kw'>zero</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"remove"</span>, <span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
-  <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>num_as_location</a></span>(
+  <span class='kw'>i</span>,
+  <span class='kw'>n</span>,
+  <span class='kw'>...</span>,
+  missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"propagate"</span>, <span class='st'>"error"</span>),
+  negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"invert"</span>, <span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
+  oob = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"extend"</span>),
+  zero = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"remove"</span>, <span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
+  arg = <span class='kw'>NULL</span>
 )
 
-<span class='fu'>vec_as_location2</span>(
-  <span class='no'>i</span>,
-  <span class='no'>n</span>,
-  <span class='kw'>names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"propagate"</span>),
-  <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location2</a></span>(
+  <span class='kw'>i</span>,
+  <span class='kw'>n</span>,
+  names = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"propagate"</span>),
+  arg = <span class='kw'>NULL</span>
 )
 
-<span class='fu'>num_as_location2</span>(
-  <span class='no'>i</span>,
-  <span class='no'>n</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>negative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
-  <span class='kw'>missing</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"propagate"</span>),
-  <span class='kw'>arg</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>num_as_location2</a></span>(
+  <span class='kw'>i</span>,
+  <span class='kw'>n</span>,
+  <span class='kw'>...</span>,
+  negative = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"ignore"</span>),
+  missing = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"error"</span>, <span class='st'>"propagate"</span>),
+  arg = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -256,7 +256,7 @@ subscripts can contain missing values and scalar subscripts can't.</p></td>
     <tr>
       <th>arg</th>
       <td><p>The argument name to be displayed in error messages when
-<code>vec_as_location()</code> and <code>vec_as_location2()</code> are used to check the
+<code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location2()</a></code> are used to check the
 type of a function input.</p></td>
     </tr>
     <tr>
@@ -280,24 +280,23 @@ can be used to implement extendable vectors like <code>letters[1:30]</code>.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>vec_as_location()</code> returns an integer vector that can be used
-as an index in a subsetting operation. <code>vec_as_location2()</code>
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location()</a></code> returns an integer vector that can be used
+as an index in a subsetting operation. <code><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location2()</a></code>
 returns an integer of size 1 that can be used a scalar index for
 extracting an element.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>:<span class='fl'>6</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>3</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='no'>x</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"r1"</span>, <span class='st'>"r2"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"c1"</span>, <span class='st'>"c2"</span>, <span class='st'>"c3"</span>))
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>3</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span>(<span class='kw'>x</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"r1"</span>, <span class='st'>"r2"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"c1"</span>, <span class='st'>"c2"</span>, <span class='st'>"c3"</span>))
 
 <span class='co'># The most common use case validates row indices</span>
-<span class='fu'>vec_as_location</span>(<span class='fl'>1</span>, <span class='fu'><a href='vec_size.html'>vec_size</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='kw'>x</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># Negative indices can be used to index from the back</span>
-<span class='fu'>vec_as_location</span>(-<span class='fl'>1</span>, <span class='fu'><a href='vec_size.html'>vec_size</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location</a></span>(<span class='op'>-</span><span class='fl'>1</span>, <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='kw'>x</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
 <span class='co'># Character vectors can be used if `names` are provided</span>
-<span class='fu'>vec_as_location</span>(<span class='st'>"r2"</span>, <span class='fu'><a href='vec_size.html'>vec_size</a></span>(<span class='no'>x</span>), <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location</a></span>(<span class='st'>"r2"</span>, <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size</a></span>(<span class='kw'>x</span>), <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='kw'>x</span>))</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
 <span class='co'># You can also construct an index for dimensions other than the first</span>
-<span class='fu'>vec_as_location</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"c2"</span>, <span class='st'>"c1"</span>), <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>x</span>), <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>x</span>))</div><div class='output co'>#&gt; [1] 2 1</div><div class='input'>
-</div></pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_location.html'>vec_as_location</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"c2"</span>, <span class='st'>"c1"</span>), <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='kw'>x</span>), <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='kw'>x</span>))</div><div class='output co'>#&gt; [1] 2 1</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -163,15 +163,15 @@ vec_rep_each() repeats each element of a vector a set number of times.
     <div class="ref-description">
     
 <ul>
-<li><p><code>vec_rep()</code> repeats an entire vector a set number of <code>times</code>.</p></li>
-<li><p><code>vec_rep_each()</code> repeats each element of a vector a set number of <code>times</code>.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep()</a></code> repeats an entire vector a set number of <code>times</code>.</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each()</a></code> repeats each element of a vector a set number of <code>times</code>.</p></li>
 </ul>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_rep</span>(<span class='no'>x</span>, <span class='no'>times</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep</a></span>(<span class='kw'>x</span>, <span class='kw'>times</span>)
 
-<span class='fu'>vec_rep_each</span>(<span class='no'>x</span>, <span class='no'>times</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each</a></span>(<span class='kw'>x</span>, <span class='kw'>times</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -182,22 +182,22 @@ vec_rep_each() repeats each element of a vector a set number of times.
     </tr>
     <tr>
       <th>times</th>
-      <td><p>For <code>vec_rep()</code>, a single integer for the number of times to repeat
+      <td><p>For <code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep()</a></code>, a single integer for the number of times to repeat
 the entire vector.</p>
-<p>For <code>vec_rep_each()</code>, an integer vector of the number of times to repeat
+<p>For <code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each()</a></code>, an integer vector of the number of times to repeat
 each element of <code>x</code>. <code>times</code> will be recycled to the size of <code>x</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>For <code>vec_rep()</code>, a vector the same type as <code>x</code> with size
+    <p>For <code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep()</a></code>, a vector the same type as <code>x</code> with size
 <code>vec_size(x) * times</code>.</p>
-<p>For <code>vec_rep_each()</code>, a vector the same type as <code>x</code> with size
+<p>For <code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each()</a></code>, a vector the same type as <code>x</code> with size
 <code><a href='https://rdrr.io/r/base/sum.html'>sum(vec_recycle(times, vec_size(x)))</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>vec_rep()</code> and <code>vec_rep_each()</code> work along the size of <code>x</code>, rather than
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each()</a></code> work along the size of <code>x</code>, rather than
 its length. For data frames, this means that rows are repeated rather
 than columns.</p>
     <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
@@ -205,19 +205,19 @@ than columns.</p>
     
 
 <ul>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Repeat the entire vector</span>
-<span class='fu'>vec_rep</span>(<span class='fl'>1</span>:<span class='fl'>2</span>, <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 1 2 1 2 1 2</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 1 2 1 2 1 2</div><div class='input'>
 <span class='co'># Repeat within each vector</span>
-<span class='fu'>vec_rep_each</span>(<span class='fl'>1</span>:<span class='fl'>2</span>, <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 1 1 1 2 2 2</div><div class='input'><span class='fu'>vec_rep_each</span>(<span class='fl'>1</span>:<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>))</div><div class='output co'>#&gt; [1] 1 1 1 2 2 2 2</div><div class='input'>
-<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>3</span>:<span class='fl'>4</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 1 1 1 2 2 2</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>4</span>))</div><div class='output co'>#&gt; [1] 1 1 1 2 2 2 2</div><div class='input'>
+<span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, y = <span class='fl'>3</span><span class='op'>:</span><span class='fl'>4</span>)
 
 <span class='co'># `rep()` repeats columns of data frames, and returns lists</span>
-<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='no'>df</span>, <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='output co'>#&gt; $x
+<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='kw'>df</span>, each = <span class='fl'>2</span>)</div><div class='output co'>#&gt; $x
 #&gt; [1] 1 2
 #&gt; 
 #&gt; $x
@@ -230,11 +230,11 @@ than columns.</p>
 #&gt; [1] 3 4
 #&gt; </div><div class='input'>
 <span class='co'># `vec_rep()` and `vec_rep_each()` repeat rows, and return data frames</span>
-<span class='fu'>vec_rep</span>(<span class='no'>df</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt;   x y
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep</a></span>(<span class='kw'>df</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt;   x y
 #&gt; 1 1 3
 #&gt; 2 2 4
 #&gt; 3 1 3
-#&gt; 4 2 4</div><div class='input'><span class='fu'>vec_rep_each</span>(<span class='no'>df</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt;   x y
+#&gt; 4 2 4</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec-rep.html'>vec_rep_each</a></span>(<span class='kw'>df</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt;   x y
 #&gt; 1 1 3
 #&gt; 2 1 3
 #&gt; 3 2 4

@@ -158,27 +158,27 @@ needle in haystack, or NA if it's not found." />
     </div>
 
     <div class="ref-description">
-    <p><code>vec_in()</code> returns a logical vector based on whether <code>needle</code> is found in
-haystack. <code>vec_match()</code> returns an integer vector giving location of
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_in()</a></code> returns a logical vector based on whether <code>needle</code> is found in
+haystack. <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match()</a></code> returns an integer vector giving location of
 <code>needle</code> in <code>haystack</code>, or <code>NA</code> if it's not found.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_match</span>(
-  <span class='no'>needles</span>,
-  <span class='no'>haystack</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>needles_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>haystack_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match</a></span>(
+  <span class='kw'>needles</span>,
+  <span class='kw'>haystack</span>,
+  <span class='kw'>...</span>,
+  na_equal = <span class='fl'>TRUE</span>,
+  needles_arg = <span class='st'>""</span>,
+  haystack_arg = <span class='st'>""</span>
 )
 
-<span class='fu'>vec_in</span>(
-  <span class='no'>needles</span>,
-  <span class='no'>haystack</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>needles_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>haystack_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_in</a></span>(
+  <span class='kw'>needles</span>,
+  <span class='kw'>haystack</span>,
+  <span class='kw'>...</span>,
+  na_equal = <span class='fl'>TRUE</span>,
+  needles_arg = <span class='st'>""</span>,
+  haystack_arg = <span class='st'>""</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -187,7 +187,7 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
     <tr>
       <th>needles, haystack</th>
       <td><p>Vector of <code>needles</code> to search for in vector haystack.
-<code>haystack</code> should usually be unique; if not <code>vec_match()</code> will only
+<code>haystack</code> should usually be unique; if not <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match()</a></code> will only
 return the location of the first match.</p>
 <p><code>needles</code> and <code>haystack</code> are coerced to the same type prior to
 comparison.</p></td>
@@ -212,11 +212,11 @@ the return value.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector the same length as <code>needles</code>. <code>vec_in()</code> returns a
-logical vector; <code>vec_match()</code> returns an integer vector.</p>
+    <p>A vector the same length as <code>needles</code>. <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_in()</a></code> returns a
+logical vector; <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match()</a></code> returns an integer vector.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>vec_in()</code> is equivalent to <a href='https://rdrr.io/r/base/match.html'>%in%</a>; <code>vec_match()</code> is equivalent to <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code>.</p>
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_in()</a></code> is equivalent to <a href='https://rdrr.io/r/base/match.html'>%in%</a>; <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match()</a></code> is equivalent to <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code>.</p>
     <h2 class="hasAnchor" id="missing-values"><a class="anchor" href="#missing-values"></a>Missing values</h2>
 
     
@@ -224,25 +224,25 @@ logical vector; <code>vec_match()</code> returns an integer vector.</p>
 <p>In most cases places in R, missing values are not considered to be equal,
 i.e. <code>NA == NA</code> is not <code>TRUE</code>. The exception is in matching functions
 like <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code> and <code><a href='https://rdrr.io/r/base/merge.html'>merge()</a></code>, where an <code>NA</code> will match another <code>NA</code>.
-By <code>vec_match()</code> and <code>vec_in()</code> will match <code>NA</code>s; but you can control
+By <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_in()</a></code> will match <code>NA</code>s; but you can control
 this behaviour with the <code>na_equal</code> argument.</p>
     <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
 
     
 
 <ul>
-<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>hadley</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='fu'>vec_match</span>(<span class='no'>hadley</span>, <span class='no'>letters</span>)</div><div class='output co'>#&gt; [1]  8  1  4 12  5 25</div><div class='input'>
-<span class='no'>vowels</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"e"</span>, <span class='st'>"i"</span>, <span class='st'>"o"</span>, <span class='st'>"u"</span>)
-<span class='fu'>vec_match</span>(<span class='no'>hadley</span>, <span class='no'>vowels</span>)</div><div class='output co'>#&gt; [1] NA  1 NA NA  2 NA</div><div class='input'><span class='fu'>vec_in</span>(<span class='no'>hadley</span>, <span class='no'>vowels</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE FALSE  TRUE FALSE</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>hadley</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)[[<span class='fl'>1</span>]]
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match</a></span>(<span class='kw'>hadley</span>, <span class='kw'>letters</span>)</div><div class='output co'>#&gt; [1]  8  1  4 12  5 25</div><div class='input'>
+<span class='kw'>vowels</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"e"</span>, <span class='st'>"i"</span>, <span class='st'>"o"</span>, <span class='st'>"u"</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match</a></span>(<span class='kw'>hadley</span>, <span class='kw'>vowels</span>)</div><div class='output co'>#&gt; [1] NA  1 NA NA  2 NA</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_in</a></span>(<span class='kw'>hadley</span>, <span class='kw'>vowels</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE FALSE  TRUE FALSE</div><div class='input'>
 <span class='co'># Only the first index of duplicates is returned</span>
-<span class='fu'>vec_match</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"a"</span>, <span class='st'>"b"</span>))</div><div class='output co'>#&gt; [1] 1 2</div></pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_match.html'>vec_match</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"a"</span>, <span class='st'>"b"</span>))</div><div class='output co'>#&gt; [1] 1 2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

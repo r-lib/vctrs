@@ -159,17 +159,17 @@ inputs, and is designed for interactive exploration." />
     </div>
 
     <div class="ref-description">
-    <p><code>vec_ptype()</code> returns the unfinalised prototype of a single vector.
-<code>vec_ptype_common()</code> finds the common type of multiple vectors.
-<code>vec_ptype_show()</code> nicely prints the common type of any number of
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code> returns the unfinalised prototype of a single vector.
+<code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common()</a></code> finds the common type of multiple vectors.
+<code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show()</a></code> nicely prints the common type of any number of
 inputs, and is designed for interactive exploration.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_ptype</span>(<span class='no'>x</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>)
 
-<span class='fu'>vec_ptype_common</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common</a></span>(<span class='kw'>...</span>, .ptype = <span class='kw'>NULL</span>)
 
-<span class='fu'>vec_ptype_show</span>(<span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,9 +180,9 @@ inputs, and is designed for interactive exploration.</p>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>For <code>vec_ptype()</code>, these dots are for future extensions and must
+      <td><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code>, these dots are for future extensions and must
 be empty.</p>
-<p>For <code>vec_ptype_common()</code> and <code>vec_ptype_show()</code>, vector inputs.</p></td>
+<p>For <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show()</a></code>, vector inputs.</p></td>
     </tr>
     <tr>
       <th>x_arg</th>
@@ -201,69 +201,69 @@ this is a convenient way to make production code demand fixed types.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>vec_ptype()</code> and <code>vec_ptype_common()</code> return a prototype
+    <p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common()</a></code> return a prototype
 (a size-0 vector)</p>
-    <h2 class="hasAnchor" id="vec-ptype-"><a class="anchor" href="#vec-ptype-"></a><code>vec_ptype()</code></h2>
+    <h2 class="hasAnchor" id="vec-ptype-"><a class="anchor" href="#vec-ptype-"></a><code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code></h2>
 
     
 
-<p><code>vec_ptype()</code> returns <a href='vec_size.html'>size</a> 0 vectors potentially
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code> returns <a href='https://vctrs.r-lib.org/reference/vec_size.html'>size</a> 0 vectors potentially
 containing attributes but no data. Generally, this is just
-<code><a href='vec_slice.html'>vec_slice(x, 0L)</a></code>, but some inputs require special
+<code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice(x, 0L)</a></code>, but some inputs require special
 handling.</p><ul>
 <li><p>While you can't slice <code>NULL</code>, the prototype of <code>NULL</code> is
 itself. This is because we treat <code>NULL</code> as an identity value in
-the <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> monoid.</p></li>
+the <code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code> monoid.</p></li>
 <li><p>The prototype of logical vectors that only contain missing values
-is the special <a href='unspecified.html'>unspecified</a> type, which can be coerced to any
+is the special <a href='https://vctrs.r-lib.org/reference/unspecified.html'>unspecified</a> type, which can be coerced to any
 other 1d type. This allows bare <code>NA</code>s to represent missing values
 for any 1d vector type.</p></li>
 </ul>
 
-<p>See <a href='internal-faq-ptype2-identity.html'>internal-faq-ptype2-identity</a> for more information about
+<p>See <a href='https://vctrs.r-lib.org/reference/internal-faq-ptype2-identity.html'>internal-faq-ptype2-identity</a> for more information about
 identity values.</p>
 <p>Because it may contain unspecified vectors, the prototype returned
-by <code>vec_ptype()</code> is said to be <strong>unfinalised</strong>. Call
-<code><a href='new_partial.html'>vec_ptype_finalise()</a></code> to finalise it. Commonly you will need the
-finalised prototype as returned by <code><a href='vec_slice.html'>vec_slice(x, 0L)</a></code>.</p>
-    <h2 class="hasAnchor" id="vec-ptype-common-"><a class="anchor" href="#vec-ptype-common-"></a><code>vec_ptype_common()</code></h2>
+by <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code> is said to be <strong>unfinalised</strong>. Call
+<code><a href='https://vctrs.r-lib.org/reference/new_partial.html'>vec_ptype_finalise()</a></code> to finalise it. Commonly you will need the
+finalised prototype as returned by <code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice(x, 0L)</a></code>.</p>
+    <h2 class="hasAnchor" id="vec-ptype-common-"><a class="anchor" href="#vec-ptype-common-"></a><code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common()</a></code></h2>
 
     
 
-<p><code>vec_ptype_common()</code> first finds the prototype of each input, then
-successively calls <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> to find a common type. It returns
-a <a href='new_partial.html'>finalised</a> prototype.</p>
-    <h2 class="hasAnchor" id="dependencies-of-vec-ptype-"><a class="anchor" href="#dependencies-of-vec-ptype-"></a>Dependencies of <code>vec_ptype()</code></h2>
+<p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common()</a></code> first finds the prototype of each input, then
+successively calls <code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code> to find a common type. It returns
+a <a href='https://vctrs.r-lib.org/reference/new_partial.html'>finalised</a> prototype.</p>
+    <h2 class="hasAnchor" id="dependencies-of-vec-ptype-"><a class="anchor" href="#dependencies-of-vec-ptype-"></a>Dependencies of <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype()</a></code></h2>
 
     
 
 <ul>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> for returning an empty slice</p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> for returning an empty slice</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="dependencies-of-vec-ptype-common-"><a class="anchor" href="#dependencies-of-vec-ptype-common-"></a>Dependencies of <code>vec_ptype_common()</code></h2>
+    <h2 class="hasAnchor" id="dependencies-of-vec-ptype-common-"><a class="anchor" href="#dependencies-of-vec-ptype-common-"></a>Dependencies of <code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_common()</a></code></h2>
 
     
 
 <ul>
-<li><p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code></p></li>
-<li><p><code><a href='new_partial.html'>vec_ptype_finalise()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/new_partial.html'>vec_ptype_finalise()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Unknown types ------------------------------------------</span>
-<span class='fu'>vec_ptype_show</span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='kw'>NULL</span>)</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='kw'>NULL</span>)</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'>
 <span class='co'># Vectors ------------------------------------------------</span>
-<span class='fu'>vec_ptype_show</span>(<span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt; Prototype: integer</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='no'>letters</span>)</div><div class='output co'>#&gt; Prototype: character</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; Prototype: date</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; Prototype: datetime&lt;local&gt;</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>))</div><div class='output co'>#&gt; Prototype: factor&lt;127a2&gt;</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>ordered</a></span>(<span class='st'>"a"</span>))</div><div class='output co'>#&gt; Prototype: ordered&lt;127a2&gt;</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>)</div><div class='output co'>#&gt; Prototype: integer</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='kw'>letters</span>)</div><div class='output co'>#&gt; Prototype: character</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; Prototype: date</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; Prototype: datetime&lt;local&gt;</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>))</div><div class='output co'>#&gt; Prototype: factor&lt;127a2&gt;</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>ordered</a></span>(<span class='st'>"a"</span>))</div><div class='output co'>#&gt; Prototype: ordered&lt;127a2&gt;</div><div class='input'>
 <span class='co'># Matrices -----------------------------------------------</span>
 <span class='co'># The prototype of a matrix includes the number of columns</span>
-<span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>, <span class='kw'>dim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt; Prototype: double[,2]</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='st'>"x"</span>, <span class='kw'>dim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt; Prototype: character[,2]</div><div class='input'>
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>, dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt; Prototype: double[,2]</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='st'>"x"</span>, dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt; Prototype: character[,2]</div><div class='input'>
 <span class='co'># Data frames --------------------------------------------</span>
 <span class='co'># The prototype of a data frame includes the prototype of</span>
 <span class='co'># every column</span>
-<span class='fu'>vec_ptype_show</span>(<span class='no'>iris</span>)</div><div class='output co'>#&gt; Prototype: data.frame&lt;
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(<span class='kw'>iris</span>)</div><div class='output co'>#&gt; Prototype: data.frame&lt;
 #&gt;   Sepal.Length: double
 #&gt;   Sepal.Width : double
 #&gt;   Petal.Length: double
@@ -272,10 +272,10 @@ a <a href='new_partial.html'>finalised</a> prototype.</p>
 #&gt; &gt;</div><div class='input'>
 <span class='co'># The prototype of multiple data frames includes the prototype</span>
 <span class='co'># of every column that in any data frame</span>
-<span class='fu'>vec_ptype_show</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>z</span> <span class='kw'>=</span> <span class='st'>"a"</span>)
+<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype_show</a></span>(
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>TRUE</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y = <span class='fl'>2</span>),
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(z = <span class='st'>"a"</span>)
 )</div><div class='output co'>#&gt; Prototype: &lt;data.frame&lt;
 #&gt;   x: logical
 #&gt;   y: double
