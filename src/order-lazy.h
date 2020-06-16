@@ -16,7 +16,7 @@ struct lazy_vec {
 
 #define PROTECT_LAZY_VEC(p_info, p_n) do {                     \
   PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi);      \
-  (p_info)->p_data = DATAPTR((p_info)->data);                  \
+  (p_info)->p_data = (void*) RAW((p_info)->data);              \
                                                                \
   *(p_n) += 1;                                                 \
 } while (0)
@@ -43,7 +43,7 @@ static inline void lazy_vec_initialize(struct lazy_vec* p_x) {
 
   REPROTECT(p_x->data, p_x->data_pi);
 
-  p_x->p_data = DATAPTR(p_x->data);
+  p_x->p_data = (void*) RAW(p_x->data);
 
   p_x->initialized = true;
 }
