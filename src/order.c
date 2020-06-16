@@ -140,7 +140,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   p_p_group_info[0] = p_group_info0;
   p_p_group_info[1] = p_group_info1;
 
-  struct group_infos group_infos = new_group_infos(p_p_group_info, requested, ignore);
+  struct group_infos group_infos = new_group_infos(p_p_group_info, size, requested, ignore);
   struct group_infos* p_group_infos = &group_infos;
 
   struct truelength_info truelength_info = new_truelength_info();

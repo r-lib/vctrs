@@ -71,6 +71,7 @@ struct group_info new_group_info();
  */
 struct group_infos {
   struct group_info** p_p_group_info;
+  R_xlen_t max_data_size;
   int current;
   bool requested;
   bool ignore;
@@ -84,6 +85,7 @@ static inline struct group_info* groups_current(struct group_infos* p_group_info
 }
 
 struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                   R_xlen_t max_data_size,
                                    bool requested,
                                    bool ignore);
 
