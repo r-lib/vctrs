@@ -1,6 +1,10 @@
 # ------------------------------------------------------------------------------
 # vec_order2(<integer>) - insertion
 
+test_that("can order size zero input", {
+  expect_identical(vec_order2(integer()), integer())
+})
+
 test_that("can order integers", {
   x <- c(2L, 3L, 1L, 5L)
   expect_identical(vec_order2(x), order(x))
@@ -158,6 +162,10 @@ test_that("all `NA` values works - ensures that we can compute the 'range' of al
 # Really this just goes through the integer infrastructure. Just checking that
 # it is working.
 
+test_that("can order size zero input", {
+  expect_identical(vec_order2(logical()), integer())
+})
+
 test_that("can order logicals", {
   x <- c(FALSE, TRUE, FALSE)
   expect_identical(vec_order2(x), order(x))
@@ -191,6 +199,10 @@ test_that("all `NA` values works", {
 
 # ------------------------------------------------------------------------------
 # vec_order2(<double>) - insertion
+
+test_that("can order size zero input", {
+  expect_identical(vec_order2(double()), integer())
+})
 
 test_that("can order doubles", {
   x <- c(2, 3, 1, 5)
@@ -335,6 +347,10 @@ test_that("-0 and 0 order identically / stably", {
 # ------------------------------------------------------------------------------
 # vec_order2(<complex>)
 
+test_that("can order size zero input", {
+  expect_identical(vec_order2(complex()), integer())
+})
+
 test_that("can order complex", {
   x <- complex(real = c(3, 1, 2))
   expect_identical(vec_order2(x), c(2L, 3L, 1L))
@@ -407,6 +423,10 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 
 # ------------------------------------------------------------------------------
 # vec_order2(<character>)
+
+test_that("can order size zero input", {
+  expect_identical(vec_order2(character()), integer())
+})
 
 test_that("can order characters", {
   x <- c("xy", "x", "a", "bc")
