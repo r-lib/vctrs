@@ -71,10 +71,8 @@ static void vec_order_switch(SEXP x,
 
 /*
  * Compute the order of a vector.
- * Can optionally compute the group sizes as well.
- *
- * TODO: Return group info as attributes for type stability? Might not be
- * important since we have different R level functions.
+ * Can optionally compute the group starts, number of groups, and
+ * max group size as well.
  */
 static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   int n_prot = 0;
