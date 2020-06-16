@@ -42,7 +42,8 @@ void truelength_save(struct truelength_info* p_truelength_info,
                      SEXP x,
                      R_xlen_t truelength,
                      R_xlen_t size) {
-  // Reallocate as needed
+  // Reallocate as needed. Should never overflow when doubling size because
+  // max string length in R is 2^31-1, and `size_used` is `R_xlen_t`.
   if (p_truelength_info->size_used == p_truelength_info->size_alloc) {
     truelength_realloc(p_truelength_info, p_truelength_info->size_used * 2);
   }
