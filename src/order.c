@@ -2309,32 +2309,6 @@ static void chr_radix_order_pass(SEXP* p_x,
 // -----------------------------------------------------------------------------
 
 /*
- * R strings cannot have null characters in them (try "\0").
- * This maps to the ASCII value of 0. Since it is unused, we are free to use
- * this bucket for NA_STRING values.
- */
-
-SEXP chr_print(SEXP x) {
-  R_xlen_t size = Rf_xlength(x);
-  const SEXP* p_x = STRING_PTR_RO(x);
-
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const SEXP elt = p_x[i];
-    const char* c_elt = CHAR(elt);
-    const R_len_t n = Rf_length(elt);
-
-    for (R_len_t j = 0; j < n; ++j) {
-      Rprintf("%c %u\n", c_elt[j], (unsigned char) c_elt[j]);
-    }
-    Rprintf("%\n");
-  }
-
-  return R_NilValue;
-}
-
-// -----------------------------------------------------------------------------
-
-/*
  * `x` and `y` are guaranteed to be different and not `NA`
  */
 static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
