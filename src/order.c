@@ -1918,15 +1918,25 @@ static void chr_radix_order(SEXP* p_x,
                             const R_xlen_t size,
                             const R_len_t max_size);
 
+/*
+ * These are the main entry points for character ordering.
+ *
+ * `chr_order()` assumes `p_x` is modifiable by reference. It also assumes that
+ * `chr_mark_sorted_uniques()` has already been called. For data frame columns
+ * where `chr_order()` is called on each group chunk,
+ * `chr_mark_sorted_uniques()` is only called once on the entire column. It
+ * also assumes that `p_x` has already been re-encoded as UTF-8 if required.
+ *
+ * `chr_order_immutable()` assumes `x` is user input which cannot be modified.
+ * It copies `x` into another SEXP that can be modified directly and re-encodes
+ * as UTF-8 if required.
+ */
 static void chr_order(void* p_x,
                       void* p_x_aux,
-                      int* p_x_chr_sizes,
-                      int* p_x_chr_sizes_aux,
                       int* p_o,
                       int* p_o_aux,
                       uint8_t* p_bytes,
                       struct group_infos* p_group_infos,
-                      struct truelength_info* p_truelength_info,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
@@ -1981,24 +1991,25 @@ static void chr_order_immutable(SEXP x,
   chr_order(
     p_x_slice,
     p_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
     p_o,
     p_o_aux,
     p_bytes,
     p_group_infos,
-    p_truelength_info,
     decreasing,
     na_last,
     size
   );
 
-  // Reset truelengths after each column
+  // Reset TRUELENGTHs
   truelength_reset(p_truelength_info);
 }
 
+// -----------------------------------------------------------------------------
+
 /*
  * Pull ordering off of marked `p_x` and place it into `p_x_aux` working memory.
+ * We mark the CHARSXP TRUELENGTHs with negative ordering to be different from
+ * what R might use, so that gets reversed here to get the true ordering back.
  */
 static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) {
   for (R_xlen_t i = 0; i < size; ++i) {
@@ -2018,7 +2029,22 @@ static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) 
 // -----------------------------------------------------------------------------
 
 /*
- * Called once per column.
+ * `chr_mark_sorted_uniques()` runs through the strings in `p_x` and places the
+ * unique strings in `p_truelength_info->p_uniques`. It marks the unique ones
+ * with a negative TRUELENGTH as it goes. Since identical strings share the
+ * same CHARSXP, this marks all strings in the vector at once.
+ *
+ * After detecting all unique strings, it sorts them in place with
+ * `chr_radix_order()`.
+ *
+ * Finally, it loops over the now sorted unique strings and marks them with
+ * their ordering (as a negative value). This allows `chr_order()` to loop
+ * through `p_x` and just pluck off the TRUELENGTH value, which will be an
+ * integer proxy for the value's ordering.
+ *
+ * `truelength_save()` also saves the unique strings and their original
+ * TRUELENGTH values so they can be reset after each column with
+ * `truelength_reset()`.
  */
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     SEXP* p_x_aux,
@@ -2032,7 +2058,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
   for (R_xlen_t i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
-    // These are replaced by `NA_INTEGER` for `int_order()`
+    // These are replaced by `NA_INTEGER` for use in `int_order()`
     if (elt == NA_STRING) {
       continue;
     }
@@ -2050,6 +2076,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
     // (must be before `truelength_save()` which bumps `size_used`)
     p_x_chr_sizes[p_truelength_info->size_used] = elt_size;
 
+    // Track max string size to know how deep to recurse
     if (max_size < elt_size) {
       max_size = elt_size;
     }
@@ -2066,7 +2093,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
   R_xlen_t n_uniques = p_truelength_info->size_used;
 
   // Sorts uniques in ascending order using `p_x_aux` for working memory.
-  // Assumes no `NA`.
+  // Assumes no `NA`!
   chr_radix_order(
     p_truelength_info->p_uniques,
     p_x_aux,
@@ -2089,6 +2116,14 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
 
 static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass);
 
+/*
+ * Insertion order for character vectors. This occurs in the radix ordering
+ * once we drop below a certain chunk size.
+ *
+ * One optimization done here is to take advantage of the `pass` info, which
+ * will indicate that all characters before this pass are identical already
+ * and don't need to be checked by `strcmp()`.
+ */
 static void chr_insertion_order(SEXP* p_x,
                                 int* p_x_chr_sizes,
                                 const R_xlen_t size,
@@ -2139,6 +2174,19 @@ static void chr_radix_order_recurse(SEXP* p_x,
                                     const R_len_t pass,
                                     const R_len_t max_size);
 
+/*
+ * Entry point for radix ordering of characters.
+ *
+ * This is different from with integers / doubles because:
+ * - `p_x` will contain only unique strings
+ * - `p_x` will not contain any `NA` strings
+ * - We just need to sort `p_x` in place, no need to track group information,
+ *   which is instead done by `int_order()` later
+ * - The number of passes is variable here, because strings have a variable
+ *   length.
+ * - We also track the character sizes because repeated `Rf_xlength()` calls
+ *   can get expensive over just indexing into the array.
+ */
 static void chr_radix_order(SEXP* p_x,
                             SEXP* p_x_aux,
                             int* p_x_chr_sizes,
@@ -2237,6 +2285,27 @@ static void chr_radix_order_recurse(SEXP* p_x,
 
 // -----------------------------------------------------------------------------
 
+/*
+ * Order the `pass + 1`-th character of the `p_x` strings.
+ *
+ * For ASCII strings, 1 character aligns with 1 byte, so we can order them
+ * 1 character at a time from left to right (MSB to LSB).
+ *
+ * For UTF-8 strings, the implementation of UTF-8 is done so that UTF-8
+ * characters are made up of between 1-4 bytes. Luckily, treating them as
+ * a sequence of single bytes like we do for ASCII orders identically to
+ * treating them as their full 1-4 byte sequence.
+ *
+ * Because these are variable length, some strings are shorter than others.
+ * Shorter strings should order lower than longer strings if they are otherwise
+ * equivalent, so we reserve the 0-th bucket of `p_counts` for counting
+ * implicit empty strings. Normally this would be an issue because this is
+ * the bucket for ASCII value 0, but this is the null value, which is not
+ * allowed in R strings!
+ *
+ * Additionally, we don't have to worry about having an `NA` bucket because
+ * there will be no missing values in the unique set.
+ */
 static void chr_radix_order_pass(SEXP* p_x,
                                  SEXP* p_x_aux,
                                  int* p_x_chr_sizes,
@@ -2257,12 +2326,12 @@ static void chr_radix_order_pass(SEXP* p_x,
 
   // Histogram
   for (R_xlen_t i = 0; i < size; ++i) {
-    const SEXP x_elt = p_x[i];
     const R_len_t x_elt_size = p_x_chr_sizes[i];
 
     // Check if there are characters left in the string and extract the next
     // one if so, otherwise assume implicit "".
     if (pass < x_elt_size) {
+      const SEXP x_elt = p_x[i];
       const char* c_x_elt = CHAR(x_elt);
       byte = (uint8_t) c_x_elt[pass];
     } else {
@@ -2309,7 +2378,14 @@ static void chr_radix_order_pass(SEXP* p_x,
 // -----------------------------------------------------------------------------
 
 /*
- * `x` and `y` are guaranteed to be different and not `NA`
+ * Check if `x` is greater than `y` lexicographically in a C-locale.
+ *
+ * - `x` and `y` are guaranteed to be different and not `NA`, so we don't gain
+ *   anything from pointer comparisons.
+ *
+ * - This is called from `chr_insertion_order()` from inside the radix ordering,
+ *   so we can use information about the current `pass` to only compare
+ *   characters that are actually different.
  */
 static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
   // Pure insertion sort - we know nothing yet
@@ -2347,7 +2423,7 @@ static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
 /*
  * Copy from `p_x` to `p_x_slice`. Also re-encodes as UTF-8 if any strings are
  * not UTF-8 or ASCII. Most things are ASCII, so this should short circuit
- * quickly after the first check.
+ * quickly after the first check in `CHAR_NEEDS_REENCODE()`.
  */
 static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t size) {
   const void* vmax = vmaxget();
@@ -2650,7 +2726,7 @@ static void col_order_switch(void* p_x,
     break;
   }
   case vctrs_type_character: {
-    chr_order(p_x, p_x_aux, p_x_chr_sizes, p_x_chr_sizes_aux, p_o, p_o_aux, p_bytes, p_group_infos, p_truelength_info, decreasing, na_last, size);
+    chr_order(p_x, p_x_aux, p_o, p_o_aux, p_bytes, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
