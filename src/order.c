@@ -47,7 +47,8 @@ static struct truelength_info new_truelength_info();
 
 static void truelength_save(struct truelength_info* p_truelength_info,
                             SEXP x,
-                            R_xlen_t length);
+                            R_xlen_t truelength,
+                            R_xlen_t size);
 
 static void truelength_reset(struct truelength_info* p_truelength_info);
 
@@ -76,13 +77,10 @@ SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 
 static inline size_t vec_order_size_multiplier(SEXP x);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
-static bool vec_order_any_character(SEXP x, const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
                              struct lazy_vec* p_lazy_x_slice,
                              struct lazy_vec* p_lazy_x_aux,
-                             int* p_x_chr_sizes,
-                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              struct lazy_vec* p_lazy_o_aux,
                              struct lazy_vec* p_lazy_bytes,
@@ -134,24 +132,6 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   struct lazy_vec lazy_x_aux = new_lazy_vec(size, multiplier);
   struct lazy_vec* p_lazy_x_aux = &lazy_x_aux;
   PROTECT_LAZY_VEC(p_lazy_x_aux, p_n_prot);
-
-  // Character ordering is much faster if we keep track of individual string
-  // sizes, even if it is a bit of a headache
-  bool any_character = vec_order_any_character(x, type);
-
-  SEXP x_chr_sizes = vctrs_shared_empty_int;
-  if (any_character) {
-    x_chr_sizes = Rf_allocVector(INTSXP, size);
-  }
-  PROTECT_N(x_chr_sizes, p_n_prot);
-  int* p_x_chr_sizes = INTEGER(x_chr_sizes);
-
-  SEXP x_chr_sizes_aux = vctrs_shared_empty_int;
-  if (any_character) {
-    x_chr_sizes_aux = Rf_allocVector(INTSXP, size);
-  }
-  PROTECT_N(x_chr_sizes_aux, p_n_prot);
-  int* p_x_chr_sizes_aux = INTEGER(x_chr_sizes_aux);
 
   SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o = INTEGER(o);
@@ -205,8 +185,6 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     x,
     p_lazy_x_slice,
     p_lazy_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
     p_o,
     p_lazy_o_aux,
     p_lazy_bytes,
@@ -246,8 +224,6 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
 static void df_order(SEXP x,
                      struct lazy_vec* p_lazy_x_slice,
                      struct lazy_vec* p_lazy_x_aux,
-                     int* p_x_chr_sizes,
-                     int* p_x_chr_sizes_aux,
                      int* p_o,
                      struct lazy_vec* p_lazy_o_aux,
                      struct lazy_vec* p_lazy_bytes,
@@ -261,8 +237,6 @@ static void df_order(SEXP x,
 static void vec_order_immutable_switch(SEXP x,
                                        struct lazy_vec* p_lazy_x_slice,
                                        struct lazy_vec* p_lazy_x_aux,
-                                       int* p_x_chr_sizes,
-                                       int* p_x_chr_sizes_aux,
                                        int* p_o,
                                        struct lazy_vec* p_lazy_o_aux,
                                        struct lazy_vec* p_lazy_bytes,
@@ -277,8 +251,6 @@ static void vec_order_immutable_switch(SEXP x,
 static void vec_order_switch(SEXP x,
                              struct lazy_vec* p_lazy_x_slice,
                              struct lazy_vec* p_lazy_x_aux,
-                             int* p_x_chr_sizes,
-                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              struct lazy_vec* p_lazy_o_aux,
                              struct lazy_vec* p_lazy_bytes,
@@ -294,8 +266,6 @@ static void vec_order_switch(SEXP x,
       x,
       p_lazy_x_slice,
       p_lazy_x_aux,
-      p_x_chr_sizes,
-      p_x_chr_sizes_aux,
       p_o,
       p_lazy_o_aux,
       p_lazy_bytes,
@@ -324,8 +294,6 @@ static void vec_order_switch(SEXP x,
     x,
     p_lazy_x_slice,
     p_lazy_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
     p_o,
     p_lazy_o_aux,
     p_lazy_bytes,
@@ -392,8 +360,6 @@ static void cpl_order_immutable(SEXP x,
 static void chr_order_immutable(SEXP x,
                                 struct lazy_vec* p_lazy_x_slice,
                                 struct lazy_vec* p_lazy_x_aux,
-                                int* p_x_chr_sizes,
-                                int* p_x_chr_sizes_aux,
                                 int* p_o,
                                 struct lazy_vec* p_lazy_o_aux,
                                 struct lazy_vec* p_lazy_bytes,
@@ -408,8 +374,6 @@ static void chr_order_immutable(SEXP x,
 static void vec_order_immutable_switch(SEXP x,
                                        struct lazy_vec* p_lazy_x_slice,
                                        struct lazy_vec* p_lazy_x_aux,
-                                       int* p_x_chr_sizes,
-                                       int* p_x_chr_sizes_aux,
                                        int* p_o,
                                        struct lazy_vec* p_lazy_o_aux,
                                        struct lazy_vec* p_lazy_bytes,
@@ -494,8 +458,6 @@ static void vec_order_immutable_switch(SEXP x,
       x,
       p_lazy_x_slice,
       p_lazy_x_aux,
-      p_x_chr_sizes,
-      p_x_chr_sizes_aux,
       p_o,
       p_lazy_o_aux,
       p_lazy_bytes,
@@ -2097,8 +2059,6 @@ static void cpl_order_immutable(SEXP x,
 
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_vec* p_lazy_x_aux,
-                                    int* p_x_chr_sizes,
-                                    int* p_x_chr_aux_sizes,
                                     struct lazy_vec* p_lazy_bytes,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size);
@@ -2107,8 +2067,8 @@ static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size);
 
 static void chr_radix_order(SEXP* p_x,
                             SEXP* p_x_aux,
-                            int* p_x_chr_sizes,
-                            int* p_x_chr_sizes_aux,
+                            int* p_sizes,
+                            int* p_sizes_aux,
                             uint8_t* p_bytes,
                             const R_xlen_t size,
                             const R_len_t max_size);
@@ -2163,8 +2123,6 @@ static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t si
 static void chr_order_immutable(SEXP x,
                                 struct lazy_vec* p_lazy_x_slice,
                                 struct lazy_vec* p_lazy_x_aux,
-                                int* p_x_chr_sizes,
-                                int* p_x_chr_sizes_aux,
                                 int* p_o,
                                 struct lazy_vec* p_lazy_o_aux,
                                 struct lazy_vec* p_lazy_bytes,
@@ -2185,8 +2143,6 @@ static void chr_order_immutable(SEXP x,
   chr_mark_sorted_uniques(
     p_x_slice,
     p_lazy_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
     p_lazy_bytes,
     p_truelength_info,
     size
@@ -2253,8 +2209,6 @@ static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) 
  */
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_vec* p_lazy_x_aux,
-                                    int* p_x_chr_sizes,
-                                    int* p_x_chr_aux_sizes,
                                     struct lazy_vec* p_lazy_bytes,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size) {
@@ -2277,10 +2231,6 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
 
     R_xlen_t elt_size = Rf_xlength(elt);
 
-    // Save the size for repeated use when ordering
-    // (must be before `truelength_save()` which bumps `size_used`)
-    p_x_chr_sizes[p_truelength_info->size_used] = elt_size;
-
     // Track max string size to know how deep to recurse
     if (max_size < elt_size) {
       max_size = elt_size;
@@ -2288,7 +2238,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
 
     // Save the truelength so we can reset it later.
     // Also saves this unique value so we can order uniques.
-    truelength_save(p_truelength_info, elt, truelength);
+    truelength_save(p_truelength_info, elt, truelength, elt_size);
 
     // Mark as negative to note that we have seen this string
     // (R uses positive or zero truelengths)
@@ -2308,8 +2258,8 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
   chr_radix_order(
     p_truelength_info->p_uniques,
     p_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_aux_sizes,
+    p_truelength_info->p_sizes,
+    p_truelength_info->p_sizes_aux,
     p_bytes,
     n_uniques,
     max_size
@@ -2336,7 +2286,7 @@ static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass);
  * and don't need to be checked by `strcmp()`.
  */
 static void chr_insertion_order(SEXP* p_x,
-                                int* p_x_chr_sizes,
+                                int* p_sizes,
                                 const R_xlen_t size,
                                 const R_len_t pass) {
   // Don't think this can occur, but safer this way
@@ -2346,22 +2296,22 @@ static void chr_insertion_order(SEXP* p_x,
 
   for (R_xlen_t i = 1; i < size; ++i) {
     const SEXP x_elt = p_x[i];
-    const int x_elt_size = p_x_chr_sizes[i];
+    const int x_size = p_sizes[i];
 
     R_xlen_t j = i - 1;
 
     while (j >= 0) {
       const SEXP x_cmp_elt = p_x[j];
 
-      if (chr_str_ge(x_elt, x_cmp_elt, x_elt_size, pass)) {
+      if (chr_str_ge(x_elt, x_cmp_elt, x_size, pass)) {
         break;
       }
 
-      int x_cmp_elt_size = p_x_chr_sizes[j];
+      int x_cmp_size = p_sizes[j];
 
       // Swap
       p_x[j + 1] = x_cmp_elt;
-      p_x_chr_sizes[j + 1] = x_cmp_elt_size;
+      p_sizes[j + 1] = x_cmp_size;
 
       // Next
       --j;
@@ -2370,7 +2320,7 @@ static void chr_insertion_order(SEXP* p_x,
     // Place original elements in new location
     // closer to start of the vector
     p_x[j + 1] = x_elt;
-    p_x_chr_sizes[j + 1] = x_elt_size;
+    p_sizes[j + 1] = x_size;
   }
 }
 
@@ -2378,8 +2328,8 @@ static void chr_insertion_order(SEXP* p_x,
 
 static void chr_radix_order_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
-                                    int* p_x_chr_sizes,
-                                    int* p_x_chr_sizes_aux,
+                                    int* p_sizes,
+                                    int* p_sizes_aux,
                                     uint8_t* p_bytes,
                                     const R_xlen_t size,
                                     const R_len_t pass,
@@ -2400,8 +2350,8 @@ static void chr_radix_order_recurse(SEXP* p_x,
  */
 static void chr_radix_order(SEXP* p_x,
                             SEXP* p_x_aux,
-                            int* p_x_chr_sizes,
-                            int* p_x_chr_sizes_aux,
+                            int* p_sizes,
+                            int* p_sizes_aux,
                             uint8_t* p_bytes,
                             const R_xlen_t size,
                             const R_len_t max_size) {
@@ -2410,8 +2360,8 @@ static void chr_radix_order(SEXP* p_x,
   chr_radix_order_recurse(
     p_x,
     p_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
+    p_sizes,
+    p_sizes_aux,
     p_bytes,
     size,
     pass,
@@ -2423,8 +2373,8 @@ static void chr_radix_order(SEXP* p_x,
 
 static void chr_radix_order_pass(SEXP* p_x,
                                  SEXP* p_x_aux,
-                                 int* p_x_chr_sizes,
-                                 int* p_x_chr_sizes_aux,
+                                 int* p_sizes,
+                                 int* p_sizes_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
                                  const R_xlen_t size,
@@ -2432,8 +2382,8 @@ static void chr_radix_order_pass(SEXP* p_x,
 
 static void chr_radix_order_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
-                                    int* p_x_chr_sizes,
-                                    int* p_x_chr_sizes_aux,
+                                    int* p_sizes,
+                                    int* p_sizes_aux,
                                     uint8_t* p_bytes,
                                     const R_xlen_t size,
                                     const R_len_t pass,
@@ -2443,8 +2393,8 @@ static void chr_radix_order_recurse(SEXP* p_x,
   chr_radix_order_pass(
     p_x,
     p_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
+    p_sizes,
+    p_sizes_aux,
     p_bytes,
     p_counts,
     size,
@@ -2467,13 +2417,13 @@ static void chr_radix_order_recurse(SEXP* p_x,
 
     if (group_size == 1) {
       ++p_x;
-      ++p_x_chr_sizes;
+      ++p_sizes;
       continue;
     }
 
     if (next_pass == max_size) {
       p_x += group_size;
-      p_x_chr_sizes += group_size;
+      p_sizes += group_size;
       continue;
     }
 
@@ -2481,8 +2431,8 @@ static void chr_radix_order_recurse(SEXP* p_x,
     chr_radix_order_recurse(
       p_x,
       p_x_aux,
-      p_x_chr_sizes,
-      p_x_chr_sizes_aux,
+      p_sizes,
+      p_sizes_aux,
       p_bytes,
       group_size,
       next_pass,
@@ -2490,7 +2440,7 @@ static void chr_radix_order_recurse(SEXP* p_x,
     );
 
     p_x += group_size;
-    p_x_chr_sizes += group_size;
+    p_sizes += group_size;
   }
 }
 
@@ -2519,14 +2469,14 @@ static void chr_radix_order_recurse(SEXP* p_x,
  */
 static void chr_radix_order_pass(SEXP* p_x,
                                  SEXP* p_x_aux,
-                                 int* p_x_chr_sizes,
-                                 int* p_x_chr_sizes_aux,
+                                 int* p_sizes,
+                                 int* p_sizes_aux,
                                  uint8_t* p_bytes,
                                  R_xlen_t* p_counts,
                                  const R_xlen_t size,
                                  const R_len_t pass) {
   if (size <= INSERTION_ORDER_BOUNDARY) {
-    chr_insertion_order(p_x, p_x_chr_sizes, size, pass);
+    chr_insertion_order(p_x, p_sizes, size, pass);
     return;
   }
 
@@ -2537,7 +2487,7 @@ static void chr_radix_order_pass(SEXP* p_x,
 
   // Histogram
   for (R_xlen_t i = 0; i < size; ++i) {
-    const R_len_t x_elt_size = p_x_chr_sizes[i];
+    const R_len_t x_elt_size = p_sizes[i];
 
     // Check if there are characters left in the string and extract the next
     // one if so, otherwise assume implicit "".
@@ -2578,12 +2528,12 @@ static void chr_radix_order_pass(SEXP* p_x,
     const uint8_t byte = p_bytes[i];
     const R_xlen_t loc = p_counts[byte]++;
     p_x_aux[loc] = p_x[i];
-    p_x_chr_sizes_aux[loc] = p_x_chr_sizes[i];
+    p_sizes_aux[loc] = p_sizes[i];
   }
 
   // Copy back over
   memcpy(p_x, p_x_aux, size * sizeof(SEXP));
-  memcpy(p_x_chr_sizes, p_x_chr_sizes_aux, size * sizeof(int));
+  memcpy(p_sizes, p_sizes_aux, size * sizeof(int));
 }
 
 // -----------------------------------------------------------------------------
@@ -2656,8 +2606,6 @@ static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t si
 
 static void col_order_switch(void* p_x,
                              struct lazy_vec* p_lazy_x_aux,
-                             int* p_x_chr_sizes,
-                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              struct lazy_vec* p_lazy_o_aux,
                              struct lazy_vec* p_lazy_bytes,
@@ -2735,8 +2683,6 @@ static void col_order_switch(void* p_x,
 static void df_order(SEXP x,
                      struct lazy_vec* p_lazy_x_slice,
                      struct lazy_vec* p_lazy_x_aux,
-                     int* p_x_chr_sizes,
-                     int* p_x_chr_sizes_aux,
                      int* p_o,
                      struct lazy_vec* p_lazy_o_aux,
                      struct lazy_vec* p_lazy_bytes,
@@ -2779,8 +2725,6 @@ static void df_order(SEXP x,
     col,
     p_lazy_x_slice,
     p_lazy_x_aux,
-    p_x_chr_sizes,
-    p_x_chr_sizes_aux,
     p_o,
     p_lazy_o_aux,
     p_lazy_bytes,
@@ -2834,8 +2778,6 @@ static void df_order(SEXP x,
       chr_mark_sorted_uniques(
         p_col,
         p_lazy_x_aux,
-        p_x_chr_sizes,
-        p_x_chr_sizes_aux,
         p_lazy_bytes,
         p_truelength_info,
         size
@@ -2881,8 +2823,6 @@ static void df_order(SEXP x,
       col_order_switch(
         p_x_slice,
         p_lazy_x_aux,
-        p_x_chr_sizes,
-        p_x_chr_sizes_aux,
         p_o_col,
         p_lazy_o_aux,
         p_lazy_bytes,
@@ -2915,8 +2855,6 @@ static void df_order(SEXP x,
 // and is scalar. Assumes `p_x` holds the current group chunk.
 static void col_order_switch(void* p_x,
                              struct lazy_vec* p_lazy_x_aux,
-                             int* p_x_chr_sizes,
-                             int* p_x_chr_sizes_aux,
                              int* p_o,
                              struct lazy_vec* p_lazy_o_aux,
                              struct lazy_vec* p_lazy_bytes,
@@ -3108,6 +3046,8 @@ static struct truelength_info new_truelength_info() {
   info.strings = vctrs_shared_empty_chr;
   info.lengths = vctrs_shared_empty_raw;
   info.uniques = vctrs_shared_empty_chr;
+  info.sizes = vctrs_shared_empty_int;
+  info.sizes_aux = vctrs_shared_empty_int;
 
   info.size_alloc = 0;
   info.size_used = 0;
@@ -3122,6 +3062,18 @@ static SEXP truelength_chr_extend(const SEXP* p_x,
   SEXP* p_out = STRING_PTR(out);
 
   memcpy(p_out, p_x, size_old * sizeof(SEXP));
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP truelength_int_extend(const int* p_x,
+                                  R_xlen_t size_old,
+                                  R_xlen_t size_new) {
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size_new));
+  int* p_out = INTEGER(out);
+
+  memcpy(p_out, p_x, size_old * sizeof(int));
 
   UNPROTECT(1);
   return out;
@@ -3178,13 +3130,36 @@ static void truelength_realloc(struct truelength_info* p_truelength_info, R_xlen
   // Update pointer
   p_truelength_info->p_uniques = STRING_PTR(p_truelength_info->uniques);
 
+  // Reallocate
+  p_truelength_info->sizes = truelength_int_extend(
+    p_truelength_info->p_sizes,
+    p_truelength_info->size_used,
+    size
+  );
+  // Reprotect
+  REPROTECT(p_truelength_info->sizes, p_truelength_info->sizes_pi);
+  // Update pointer
+  p_truelength_info->p_sizes = INTEGER(p_truelength_info->sizes);
+
+  // Reallocate
+  p_truelength_info->sizes_aux = truelength_int_extend(
+    p_truelength_info->p_sizes_aux,
+    p_truelength_info->size_used,
+    size
+  );
+  // Reprotect
+  REPROTECT(p_truelength_info->sizes_aux, p_truelength_info->sizes_aux_pi);
+  // Update pointer
+  p_truelength_info->p_sizes_aux = INTEGER(p_truelength_info->sizes_aux);
+
   // Update size
   p_truelength_info->size_alloc = size;
 }
 
 static void truelength_save(struct truelength_info* p_truelength_info,
                             SEXP x,
-                            R_xlen_t length) {
+                            R_xlen_t truelength,
+                            R_xlen_t size) {
   // Reallocate as needed
   if (p_truelength_info->size_used == p_truelength_info->size_alloc) {
     truelength_realloc(p_truelength_info, p_truelength_info->size_used * 2);
@@ -3192,8 +3167,9 @@ static void truelength_save(struct truelength_info* p_truelength_info,
 
   // Push `x` and `length`
   p_truelength_info->p_strings[p_truelength_info->size_used] = x;
-  p_truelength_info->p_lengths[p_truelength_info->size_used] = length;
+  p_truelength_info->p_lengths[p_truelength_info->size_used] = truelength;
   p_truelength_info->p_uniques[p_truelength_info->size_used] = x;
+  p_truelength_info->p_sizes[p_truelength_info->size_used] = size;
 
   // Bump number of used slots
   ++p_truelength_info->size_used;
@@ -3289,36 +3265,6 @@ static inline size_t df_size_multiplier(SEXP x) {
   }
 
   return multiplier;
-}
-
-// -----------------------------------------------------------------------------
-
-static bool df_any_character(SEXP x);
-
-static bool vec_order_any_character(SEXP x, const enum vctrs_type type) {
-  switch (type) {
-  case vctrs_type_character:
-    return true;
-  case vctrs_type_dataframe:
-    return df_any_character(x);
-  default:
-    return false;
-  }
-}
-
-static bool df_any_character(SEXP x) {
-  R_xlen_t n_cols = Rf_xlength(x);
-
-  for (R_xlen_t i = 0; i < n_cols; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
-    const enum vctrs_type type = vec_proxy_typeof(col);
-
-    if (vec_order_any_character(col, type)) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 // -----------------------------------------------------------------------------
