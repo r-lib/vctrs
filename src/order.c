@@ -47,6 +47,8 @@ SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
 
 // -----------------------------------------------------------------------------
 
+static SEXP vec_order_groups(SEXP o, struct group_info* p_group_info);
+
 static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
 
@@ -172,23 +174,50 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   // Return all group info rather than just ordering
   if (groups) {
     struct group_info* p_group_info = groups_current(p_group_infos);
-
-    R_xlen_t n_groups = p_group_info->n_groups;
-    p_group_info->data = PROTECT_N(Rf_xlengthgets(p_group_info->data, n_groups), p_n_prot);
-
-    SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 4), p_n_prot);
-
-    SET_VECTOR_ELT(out, 0, o);
-    SET_VECTOR_ELT(out, 1, p_group_info->data);
-    SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_group_info->n_groups));
-    SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_group_info->max_group_size));
-
+    SEXP out = vec_order_groups(o, p_group_info);
     UNPROTECT(n_prot);
     return out;
   }
 
   UNPROTECT(n_prot);
   return o;
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_order_groups(SEXP o, struct group_info* p_group_info) {
+  R_xlen_t n_groups = p_group_info->n_groups;
+
+  const int* p_sizes = p_group_info->p_data;
+
+  SEXP starts = PROTECT(Rf_allocVector(INTSXP, n_groups));
+  int* p_starts = INTEGER(starts);
+
+  int current = 1;
+
+  for (R_xlen_t i = 0; i < n_groups; ++i) {
+    p_starts[i] = current;
+    current += p_sizes[i];
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 4));
+
+  SET_VECTOR_ELT(out, 0, o);
+  SET_VECTOR_ELT(out, 1, starts);
+  SET_VECTOR_ELT(out, 2, Rf_ScalarInteger(p_group_info->n_groups));
+  SET_VECTOR_ELT(out, 3, Rf_ScalarInteger(p_group_info->max_group_size));
+
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 4));
+
+  SET_STRING_ELT(names, 0, Rf_mkChar("order"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("starts"));
+  SET_STRING_ELT(names, 2, Rf_mkChar("n_groups"));
+  SET_STRING_ELT(names, 3, Rf_mkChar("max_group_size"));
+
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  UNPROTECT(3);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
