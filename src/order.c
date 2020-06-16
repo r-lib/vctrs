@@ -42,11 +42,6 @@ static void truelength_reset(struct truelength_info* p_truelength_info);
 
 // -----------------------------------------------------------------------------
 
-static struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier);
-static void lazy_vec_initialize(struct lazy_vec* p_x);
-
-// -----------------------------------------------------------------------------
-
 static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups);
 
 // [[ register() ]]
@@ -3078,34 +3073,6 @@ static void truelength_reset(struct truelength_info* p_truelength_info) {
 
   // Also reset number of used strings
   p_truelength_info->size_used = 0;
-}
-
-// -----------------------------------------------------------------------------
-
-// Pair with `PROTECT_LAZY_VEC()`
-static struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
-  struct lazy_vec out;
-
-  out.data = vctrs_shared_empty_raw;
-
-  out.size = size * multiplier;
-  out.initialized = false;
-
-  return out;
-}
-
-static void lazy_vec_initialize(struct lazy_vec* p_x) {
-  if (p_x->initialized) {
-    return;
-  }
-
-  p_x->data = Rf_allocVector(RAWSXP, p_x->size);
-
-  REPROTECT(p_x->data, p_x->data_pi);
-
-  p_x->p_data = DATAPTR(p_x->data);
-
-  p_x->initialized = true;
 }
 
 // -----------------------------------------------------------------------------
