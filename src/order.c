@@ -64,6 +64,7 @@ static SEXP vec_order_groups(SEXP o, struct group_info* p_group_info);
 
 static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
+static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing);
 
 static void vec_order_switch(SEXP x,
                              int* p_o,
@@ -88,23 +89,13 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
-  // TODO:
-  // x = PROTECT(vec_proxy_compare(x));
+  // Call on `x` before potentially flattening cols with `vec_proxy_compare()`
+  decreasing = PROTECT_N(vec_order_check_decreasing(x, decreasing), p_n_prot);
 
-  // TODO:
-  // Should proxy-compare flatten df-cols?
-  // How to track vector of `decreasing` if so?
+  x = PROTECT_N(vec_proxy_compare(x), p_n_prot);
 
   R_xlen_t size = vec_size(x);
   const enum vctrs_type type = vec_proxy_typeof(x);
-
-  // Don't check length here. This might be vectorized if `x` is a data frame.
-  if (TYPEOF(decreasing) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
-  }
-  if (lgl_any_na(decreasing)) {
-    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
-  }
 
   const size_t multiplier = vec_order_size_multiplier(x, type);
 
@@ -133,7 +124,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   struct lazy_vec* p_lazy_counts = &lazy_counts;
   PROTECT_LAZY_VEC(p_lazy_counts, p_n_prot);
 
-  // Should group info be ignored?
+  // Determine if group info be ignored.
   // Can only ignore if dealing with non-data-frame input and groups have not
   // been requested, but this is more efficient for atomic vectors.
   bool requested = groups;
@@ -292,11 +283,11 @@ static void vec_order_switch(SEXP x,
     return;
   }
 
-  // We know it is logical with no missing values, but size hasn't been checked
   if (Rf_xlength(decreasing) != 1) {
     Rf_errorcall(
       R_NilValue,
-      "`decreasing` must have length 1 when `x` is not a data frame."
+      "Internal error: Size of decreasing != 1, but "
+      "`vec_order_check_decreasing()` didn't catch it."
     );
   }
 
@@ -2804,8 +2795,9 @@ static void df_order(SEXP x,
   } else {
     Rf_errorcall(
       R_NilValue,
-      "`decreasing` should have length 1 or length equal to the number of "
-      "columns of `x` when `x` is a data frame."
+      "Internal error: `vec_order_check_decreasing()` should expand "
+      "`decreasing` to have length 1 or length equal "
+      "to the number of columns of `x` after calling `vec_proxy_compare()`."
     );
   }
 
@@ -3097,6 +3089,174 @@ static inline size_t df_counts_multiplier(SEXP x) {
   }
 
   return multiplier;
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP df_check_decreasing(SEXP x, SEXP decreasing);
+
+/*
+ * `vec_order_check_decreasing()` checks the type and length of `decreasing`,
+ * and possibly expands it.
+ *
+ * `x` is expected to be the original input, before `vec_proxy_compare()` is
+ * called on it.
+ *
+ * If `x` is not a data frame, `decreasing` must be a boolean value. If
+ * `x` is something like a rcrd type with a multi-column data frame proxy,
+ * then restricting to a boolean `decreasing` is correct, and works because
+ * the single decreasing value will be recycled across the columns.
+ *
+ * If `x` is a data frame, and `decreasing` is size 1, we return it untouched
+ * and it will be recycled correctly.
+ *
+ * If `x` is a data frame and the size of `decreasing` matches the number of
+ * columns of `x`, we have to be careful to "expand" `decreasing` to match
+ * the number of columns of `x` that will exist after `vec_proxy_compare()`
+ * is called. It flattens df-cols which might either already exist in `x`,
+ * or may arise from rcrd columns that have data frame proxies. The majority
+ * of the code here is for tracking this expansion.
+ */
+static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing) {
+  // Don't check length here. This might be vectorized if `x` is a data frame.
+  if (TYPEOF(decreasing) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
+  }
+  if (lgl_any_na(decreasing)) {
+    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
+  }
+
+  if (is_data_frame(x)) {
+    return df_check_decreasing(x, decreasing);
+  }
+
+  if (Rf_xlength(decreasing) != 1) {
+    Rf_errorcall(R_NilValue, "`decreasing` must be a single `TRUE` or `FALSE` when `x` is not a data frame.");
+  }
+
+  return decreasing;
+}
+
+static SEXP df_expand_decreasing(SEXP x, SEXP decreasing, R_xlen_t n_cols);
+
+static SEXP df_check_decreasing(SEXP x, SEXP decreasing) {
+  R_xlen_t n_decreasing = Rf_xlength(decreasing);
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  // It will be recycled correctly even if columns get flattened
+  if (n_decreasing == 1) {
+    return decreasing;
+  }
+
+  // Must start out with the same length as the number of columns
+  if (n_decreasing != n_cols) {
+    Rf_errorcall(
+      R_NilValue,
+      "`decreasing` should have length 1 or length equal to the number of "
+      "columns of `x` when `x` is a data frame."
+    );
+  }
+
+  return df_expand_decreasing(x, decreasing, n_cols);
+}
+
+
+static int vec_decreasing_expansion(SEXP x);
+
+static SEXP df_expand_decreasing(SEXP x, SEXP decreasing, R_xlen_t n_cols) {
+  SEXP expansions = PROTECT(Rf_allocVector(INTSXP, n_cols));
+  int* p_expansions = INTEGER(expansions);
+
+  int size = 0;
+  bool needs_expansion = false;
+
+  // Compute expansion factor
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+    int expansion = vec_decreasing_expansion(col);
+
+    if (expansion != 1) {
+      needs_expansion = true;
+    }
+
+    p_expansions[i] = expansion;
+    size += expansion;
+  }
+
+  if (!needs_expansion) {
+    UNPROTECT(1);
+    return decreasing;
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
+  int* p_out = LOGICAL(out);
+
+  int* p_decreasing = LOGICAL(decreasing);
+
+  int k = 0;
+
+  // Fill `out` with repeated `decreasing` values to match expanded size
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    int col_decreasing = p_decreasing[i];
+    int expansion = p_expansions[i];
+
+    for (R_xlen_t j = 0; j < expansion; ++j) {
+      p_out[k] = col_decreasing;
+      ++k;
+    }
+  }
+
+  UNPROTECT(2);
+  return out;
+}
+
+
+static int df_decreasing_expansion(SEXP x);
+
+static int vec_decreasing_expansion(SEXP x) {
+  // Bare columns
+  if (!OBJECT(x)) {
+    return 1;
+  }
+
+  // Compute number of cols in df-cols,
+  // and do proxy-compare on the cols as needed
+  if (is_data_frame(x)) {
+    return df_decreasing_expansion(x);
+  }
+
+  int expansion;
+
+  // Otherwise we have an S3 column that could have a data frame
+  // comparison proxy containing multiple columns, so we need to check for that
+  SEXP proxy = PROTECT(vec_proxy_compare(x));
+
+  // If the `proxy` is a data frame, the expansion factor is the
+  // number of columns. Otherwise it is 1.
+  if (is_data_frame(proxy)) {
+    expansion = Rf_length(proxy);
+  } else {
+    expansion = 1;
+  }
+
+  UNPROTECT(1);
+  return expansion;
+}
+
+// 0-col df-cols get dropped from the comparison proxy, so returning `0` here
+// when a df-col has no columns should be correct
+static int df_decreasing_expansion(SEXP x) {
+  R_xlen_t n_cols = Rf_xlength(x);
+
+  int out = 0;
+
+  // Accumulate the expansion factors of the cols of the df-col
+  for (R_xlen_t i = 0; i < n_cols; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+    out += vec_decreasing_expansion(col);
+  }
+
+  return out;
 }
 
 // -----------------------------------------------------------------------------

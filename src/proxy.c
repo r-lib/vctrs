@@ -5,7 +5,9 @@
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;
 SEXP syms_vec_proxy_equal_dispatch = NULL;
+SEXP syms_vec_proxy_compare = NULL;
 SEXP fns_vec_proxy_equal_dispatch = NULL;
+SEXP fns_vec_proxy_compare = NULL;
 
 // Defined below
 SEXP vec_proxy_method(SEXP x);
@@ -113,6 +115,14 @@ SEXP vctrs_proxy_recursive(SEXP x, SEXP kind_) {
   return vec_proxy_recursive(x, kind);
 }
 
+// [[ include("vctrs.h") ]]
+SEXP vec_proxy_compare(SEXP x) {
+  return vctrs_dispatch1(
+    syms_vec_proxy_compare, fns_vec_proxy_compare,
+    syms_x, x
+  );
+}
+
 SEXP vec_proxy_method(SEXP x) {
   return s3_find_method("vec_proxy", x, vctrs_method_table);
 }
@@ -132,6 +142,8 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
 void vctrs_init_data(SEXP ns) {
   syms_vec_proxy = Rf_install("vec_proxy");
   syms_vec_proxy_equal_dispatch = Rf_install("vec_proxy_equal_dispatch");
+  syms_vec_proxy_compare = Rf_install("vec_proxy_compare");
 
   fns_vec_proxy_equal_dispatch = r_env_get(ns, syms_vec_proxy_equal_dispatch);
+  fns_vec_proxy_compare = r_env_get(ns, syms_vec_proxy_compare);
 }
