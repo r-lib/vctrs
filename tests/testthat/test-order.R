@@ -67,6 +67,34 @@ test_that("all `NA` values works", {
   expect_identical(vec_order2(x), order(x))
 })
 
+test_that("can order when in expected order", {
+  x <- c(1L, 1L, 2L, NA, NA)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 1:5)
+
+  x <- c(3L, 3L, 2L, NA, NA)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 1:5)
+
+  x <- c(NA, NA, 1L, 1L, 2L)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 1:5)
+
+  x <- c(NA, NA, 3L, 3L, 2L)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 1:5)
+})
+
+test_that("can order when in strictly opposite of expected order (no ties)", {
+  x <- c(NA, 2L, 1L)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 3:1)
+
+  x <- c(NA, 1L, 2L)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 3:1)
+
+  x <- c(2L, 1L, NA)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 3:1)
+
+  x <- c(1L, 2L, NA)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 3:1)
+})
+
 # ------------------------------------------------------------------------------
 # vec_order2(<integer>) - counting
 
@@ -529,6 +557,34 @@ test_that("can order with varying encodings by converting to UTF-8", {
   expect_identical(vec_order2(x, decreasing = TRUE), c(1L, 2L, 3L, 4L))
 })
 
+test_that("can order when in expected order", {
+  x <- c("a", "a", "b", NA, NA)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 1:5)
+
+  x <- c("c", "c", "b", NA, NA)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 1:5)
+
+  x <- c(NA, NA, "a", "a", "b")
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 1:5)
+
+  x <- c(NA, NA, "c", "c", "b")
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 1:5)
+})
+
+test_that("can order when in strictly opposite of expected order (no ties)", {
+  x <- c(NA, "b", "a")
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 3:1)
+
+  x <- c(NA, "a", "b")
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 3:1)
+
+  x <- c("b", "a", NA)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 3:1)
+
+  x <- c("a", "b", NA)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 3:1)
+})
+
 # ------------------------------------------------------------------------------
 # vec_order2(<data.frame>) - insertion
 
@@ -581,6 +637,15 @@ test_that("orders correctly when first column is already ordered but second isn'
     x = c(1L, 1L, 2L, 2L),
     y = c(3L, 2L, 4L, 1L)
   )
+  expect_identical(vec_order2(df), c(2L, 1L, 4L, 3L))
+})
+
+test_that("orders correctly when first column is already ordered but second isn't - character", {
+  df <- data.frame(
+    x = c("a", "a", "b", "b"),
+    y = c("c", "b", "d", "a")
+  )
+
   expect_identical(vec_order2(df), c(2L, 1L, 4L, 3L))
 })
 
