@@ -19,7 +19,24 @@ struct group_info new_group_info() {
 
 // -----------------------------------------------------------------------------
 
-static SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size);
+struct group_infos new_group_infos(struct group_info** p_p_group_info,
+                                   R_xlen_t max_data_size,
+                                   bool requested,
+                                   bool ignore) {
+  struct group_infos infos;
+
+  infos.p_p_group_info = p_p_group_info;
+  infos.max_data_size = max_data_size;
+  infos.current = 0;
+  infos.requested = requested;
+  infos.ignore = ignore;
+
+  return infos;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size);
 
 /*
  * Reallocate `data` to be as long as `size`.
@@ -49,7 +66,7 @@ void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
 
 // A good bit faster than `Rf_xlengthgets()` because that fills the new extended
 // locations with `NA` as well, which we don't need.
-static SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
+static inline SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
@@ -61,24 +78,20 @@ static SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
 
 // -----------------------------------------------------------------------------
 
-struct group_infos new_group_infos(struct group_info** p_p_group_info,
-                                   R_xlen_t max_data_size,
-                                   bool requested,
-                                   bool ignore) {
-  struct group_infos infos;
+R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size) {
+  // Avoid potential overflow when doubling size
+  uint64_t new_data_size = ((uint64_t) data_size) * 2;
 
-  infos.p_p_group_info = p_p_group_info;
-  infos.max_data_size = max_data_size;
-  infos.current = 0;
-  infos.requested = requested;
-  infos.ignore = ignore;
+  // Clamp maximum allocation size to the size of the input
+  if (new_data_size > max_data_size) {
+    return max_data_size;
+  }
 
-  return infos;
+  // Can now safely cast back to `R_xlen_t`
+  return (R_xlen_t) new_data_size;
 }
 
 // -----------------------------------------------------------------------------
-
-static R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size);
 
 /*
  * `groups_swap()` is called after each data frame column is processed.
@@ -114,60 +127,4 @@ void groups_swap(struct group_infos* p_group_infos) {
 
     group_realloc(p_group_info_post, new_data_size);
   }
-}
-
-// -----------------------------------------------------------------------------
-
-/*
- * Push a group size onto the current `group_info*`
- * - Does nothing if we are ignoring group info
- * - Reallocates as needed
- * - Updates number of groups / max group size as well
- */
-void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
-  if (p_group_infos->ignore) {
-    return;
-  }
-
-  if (size == 0) {
-    Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
-  }
-
-  struct group_info* p_group_info = groups_current(p_group_infos);
-
-  // Extend `data` as required - reprotects itself
-  if (p_group_info->data_size == p_group_info->n_groups) {
-    R_xlen_t new_data_size = groups_realloc_size(
-      p_group_info->data_size,
-      p_group_infos->max_data_size
-    );
-
-    group_realloc(p_group_info, new_data_size);
-  }
-
-  // Push group size
-  p_group_info->p_data[p_group_info->n_groups] = size;
-
-  // Bump number of groups
-  ++p_group_info->n_groups;
-
-  // Update max group size
-  if (p_group_info->max_group_size < size) {
-    p_group_info->max_group_size = size;
-  }
-}
-
-// -----------------------------------------------------------------------------
-
-static R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size) {
-  // Avoid potential overflow when doubling size
-  uint64_t new_data_size = ((uint64_t) data_size) * 2;
-
-  // Clamp maximum allocation size to the size of the input
-  if (new_data_size > max_data_size) {
-    return max_data_size;
-  }
-
-  // Can now safely cast back to `R_xlen_t`
-  return (R_xlen_t) new_data_size;
 }
