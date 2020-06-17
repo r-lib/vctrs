@@ -749,13 +749,13 @@ test_that("`na_last` is checked", {
 
 test_that("`decreasing` is checked", {
   expect_error(vec_order2(1L, decreasing = "x"), "must be logical")
-  expect_error(vec_order2(1L, decreasing = c(TRUE, TRUE)), "length 1")
+  expect_error(vec_order2(1L, decreasing = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")
   expect_error(vec_order2(1L, decreasing = NA), "missing values")
   expect_error(vec_order2(data.frame(x = 1), decreasing = c(TRUE, TRUE)), "length 1 or")
 })
 
 test_that("`x` is checked", {
-  expect_error(vec_order2(list()), "not supported")
+  expect_error(vec_order2(list()), class = "vctrs_error_unsupported")
 })
 
 # ------------------------------------------------------------------------------
@@ -773,4 +773,61 @@ test_that("groups can be reallocated if we exceed the max group data size", {
   )
 
   expect_identical(vec_order2(df), base_order(df))
+})
+
+# ------------------------------------------------------------------------------
+# vec_order2() - comparison proxy
+
+test_that("ordering works with rcrd types", {
+  x <- tuple(c(1, 2, 1), c(3, 2, 1))
+  expect_identical(vec_order2(x), c(3L, 1L, 2L))
+})
+
+test_that("data frame comparison proxies don't allow vector `decreasing`", {
+  x <- tuple(c(1, 2, 1), c(3, 2, 1))
+  expect_error(vec_order2(x, decreasing = c(TRUE, FALSE)), "single `TRUE` or `FALSE`")
+})
+
+test_that("ordering works with df-cols", {
+  skip("until #1142 is merged")
+
+  df_col <- new_data_frame(list(y = c(2, 1, 2), z = c(3, 3, 3)))
+  df <- new_data_frame(list(x = c(1, 1, 1), y = df_col))
+
+  expect_identical(vec_order2(df), c(2L, 1L, 3L))
+
+  # Can only supply a max of 2 `decreasing` values which get internally
+  # expanded to 3 to match the flattened df proxy
+  expect_identical(vec_order2(df, decreasing = c(FALSE, TRUE)), c(1L, 3L, 2L))
+
+  expect_error(vec_order2(df, decreasing = c(TRUE, TRUE, FALSE)))
+})
+
+test_that("ordering works with df-cols with 0 cols", {
+  skip("until #1142 is merged")
+
+  df_col <- new_data_frame(list(), n = 3L)
+  df <- new_data_frame(list(x = c(1, 3, 1), y = df_col, z = c(2, 1, 1)))
+
+  expect_identical(vec_order2(df), c(3L, 1L, 2L))
+
+  # Can supply 3 `decreasing` values even though the 0-col df-col gets dropped
+  expect_identical(vec_order2(df, decreasing = c(FALSE, TRUE, TRUE)), c(1L, 3L, 2L))
+
+  expect_error(vec_order2(df, decreasing = c(TRUE, FALSE)))
+})
+
+test_that("ordering works with rcrd cols", {
+  skip("until #1142 is merged")
+
+  y <- tuple(c(1, 2, 1), c(3, 2, 1))
+  df <- new_data_frame(list(z = c(1, 1, 1), y = y))
+
+  expect_identical(vec_order2(df), c(3L, 1L, 2L))
+
+  # Can only supply a max of 2 `decreasing` values which get internally
+  # expanded to 3 to match the flattened df proxy
+  expect_identical(vec_order2(df, decreasing = c(FALSE, TRUE)), c(2L, 1L, 3L))
+
+  expect_error(vec_order2(df, decreasing = c(TRUE, TRUE, FALSE)))
 })
