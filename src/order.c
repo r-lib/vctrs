@@ -1404,8 +1404,9 @@ static void dbl_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
+  dbl_adjust(p_x, decreasing, na_last, size);
+
   if (size <= INSERTION_ORDER_BOUNDARY) {
-    dbl_adjust(p_x, decreasing, na_last, size);
     dbl_insertion_order(p_x, p_o, p_group_infos, size);
     return;
   }
@@ -1422,8 +1423,6 @@ static void dbl_order(void* p_x,
   lazy_vec_initialize(p_lazy_counts);
   R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
   memset(p_counts, 0, p_lazy_counts->size);
-
-  dbl_adjust(p_x, decreasing, na_last, size);
 
   dbl_radix_order(
     p_x,
@@ -1453,9 +1452,10 @@ static void dbl_order_immutable(SEXP x,
   lazy_vec_initialize(p_lazy_x_slice);
   void* p_x_slice = p_lazy_x_slice->p_data;
 
+  memcpy(p_x_slice, p_x, size * sizeof(double));
+  dbl_adjust(p_x_slice, decreasing, na_last, size);
+
   if (size <= INSERTION_ORDER_BOUNDARY) {
-    memcpy(p_x_slice, p_x, size * sizeof(double));
-    dbl_adjust(p_x_slice, decreasing, na_last, size);
     dbl_insertion_order(p_x_slice, p_o, p_group_infos, size);
     return;
   }
@@ -1472,9 +1472,6 @@ static void dbl_order_immutable(SEXP x,
   lazy_vec_initialize(p_lazy_counts);
   R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
   memset(p_counts, 0, p_lazy_counts->size);
-
-  memcpy(p_x_slice, p_x, size * sizeof(double));
-  dbl_adjust(p_x_slice, decreasing, na_last, size);
 
   dbl_radix_order(
     p_x_slice,
