@@ -1372,6 +1372,13 @@ static void lgl_order_immutable(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+static bool dbl_sorted(const double* p_x,
+                       int* p_o,
+                       struct group_infos* p_group_infos,
+                       R_xlen_t size,
+                       bool decreasing,
+                       bool na_last);
+
 static void dbl_adjust(void* p_x,
                        const bool decreasing,
                        const bool na_last,
@@ -1419,6 +1426,10 @@ static void dbl_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
+  if (dbl_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+    return;
+  }
+
   dbl_adjust(p_x, decreasing, na_last, size);
 
   if (size <= INSERTION_ORDER_BOUNDARY) {
@@ -1463,6 +1474,10 @@ static void dbl_order_immutable(SEXP x,
                                 bool na_last,
                                 R_xlen_t size) {
   const double* p_x = REAL_RO(x);
+
+  if (dbl_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+    return;
+  }
 
   lazy_vec_initialize(p_lazy_x_slice);
   void* p_x_slice = p_lazy_x_slice->p_data;
@@ -3087,6 +3102,137 @@ static inline size_t df_counts_multiplier(SEXP x) {
 // -----------------------------------------------------------------------------
 
 static inline void ord_reverse(int* p_o, R_xlen_t size);
+
+static inline int dbl_cmp(double x,
+                          double y,
+                          const int direction,
+                          const int na_order);
+
+static bool dbl_sorted(const double* p_x,
+                       int* p_o,
+                       struct group_infos* p_group_infos,
+                       R_xlen_t size,
+                       bool decreasing,
+                       bool na_last) {
+  if (size == 0) {
+    return true;
+  }
+
+  if (size == 1) {
+    groups_size_push(p_group_infos, 1);
+    return true;
+  }
+
+  const int direction = decreasing ? -1 : 1;
+  const int na_order = na_last ? 1 : -1;
+
+  double previous = p_x[0];
+
+  R_xlen_t count = 0;
+
+  // Check for strictly opposite of expected order
+  // (ties are not allowed so we can reverse the vector stably)
+  for (R_xlen_t i = 1; i < size; ++i, ++count) {
+    double current = p_x[i];
+
+    int cmp = dbl_cmp(
+      current,
+      previous,
+      direction,
+      na_order
+    );
+
+    if (cmp >= 0) {
+      break;
+    }
+
+    previous = current;
+  }
+
+  // Was in strictly opposite of expected order.
+  if (count == size - 1) {
+    ord_reverse(p_o, size);
+
+    // Each group is size 1 since this is strict ordering
+    for (R_xlen_t j = 0; j < size; ++j) {
+      groups_size_push(p_group_infos, 1);
+    }
+
+    return true;
+  }
+
+  // Was partially in expected order. Need to sort.
+  if (count != 0) {
+    return false;
+  }
+
+  // Retain the original `n_groups` to be able to reset the group sizes if
+  // it turns out we don't have expected ordering
+  struct group_info* p_group_info = groups_current(p_group_infos);
+  R_xlen_t original_n_groups = p_group_info->n_groups;
+
+  R_xlen_t group_size = 1;
+
+  // Check for expected ordering - allowing ties since we don't have to
+  // reverse the ordering.
+  for (R_xlen_t i = 1; i < size; ++i) {
+    double current = p_x[i];
+
+    int cmp = dbl_cmp(
+      current,
+      previous,
+      direction,
+      na_order
+    );
+
+    // Not expected ordering
+    if (cmp < 0) {
+      p_group_info->n_groups = original_n_groups;
+      return false;
+    }
+
+    previous = current;
+
+    // Continue group run
+    if (cmp == 0) {
+      ++group_size;
+      continue;
+    }
+
+    // Expected ordering
+    groups_size_push(p_group_infos, group_size);
+    group_size = 1;
+  }
+
+  // Push final group run
+  groups_size_push(p_group_infos, group_size);
+
+  // Expected ordering
+  return true;
+}
+
+static inline int dbl_cmp(double x,
+                          double y,
+                          const int direction,
+                          const int na_order) {
+  if (isnan(x)) {
+    if (isnan(y)) {
+      return 0;
+    } else {
+      return na_order;
+    }
+  }
+
+  if (isnan(y)) {
+    return -na_order;
+  }
+
+  int cmp = (x > y) - (x < y);
+
+  return cmp * direction;
+}
+
+// -----------------------------------------------------------------------------
 
 static inline int int_cmp(int x,
                           int y,
