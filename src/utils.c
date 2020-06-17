@@ -2080,6 +2080,10 @@ void vctrs_init_utils(SEXP ns) {
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
   VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
 
+  // We assume the following in `vec_order()`
+  VCTRS_ASSERT(sizeof(int) == 4);
+  VCTRS_ASSERT(sizeof(double) == 8);
+
   SEXP current_frame_body = PROTECT(r_parse_eval("as.call(list(sys.frame, -1))", R_BaseEnv));
   SEXP current_frame_fn = PROTECT(r_new_function(R_NilValue, current_frame_body, R_EmptyEnv));
   peek_frame_call = Rf_lcons(current_frame_fn, R_NilValue);
