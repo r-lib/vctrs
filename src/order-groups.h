@@ -41,9 +41,6 @@ struct group_info {
   *(p_n) += 1;                                            \
 } while(0)
 
-
-struct group_info new_group_info();
-
 // -----------------------------------------------------------------------------
 
 /*
@@ -77,12 +74,9 @@ struct group_infos {
   bool ignore;
 };
 
-/*
- * Extract the current `group_info*`
- */
-static inline struct group_info* groups_current(struct group_infos* p_group_infos) {
-  return p_group_infos->p_p_group_info[p_group_infos->current];
-}
+// -----------------------------------------------------------------------------
+
+struct group_info new_group_info();
 
 struct group_infos new_group_infos(struct group_info** p_p_group_info,
                                    R_xlen_t max_data_size,
@@ -90,7 +84,65 @@ struct group_infos new_group_infos(struct group_info** p_p_group_info,
                                    bool ignore);
 
 void groups_swap(struct group_infos* p_group_infos);
-void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size);
+
+void group_realloc(struct group_info* p_group_info, R_xlen_t size);
+R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size);
+
+// -----------------------------------------------------------------------------
+
+/*
+ * Extract the current `group_info*`
+ */
+static inline struct group_info* groups_current(struct group_infos* p_group_infos) {
+  return p_group_infos->p_p_group_info[p_group_infos->current];
+}
+
+// -----------------------------------------------------------------------------
+
+/*
+ * Push a group size onto the current `group_info*`
+ * - Does nothing if we are ignoring group info
+ * - Reallocates as needed
+ * - Updates number of groups / max group size as well
+ *
+ * Fairly important for this to be inline! For me, when `groups_realloc_size()`
+ * and `group_realloc()` are inlined as well, then this becomes not inlined.
+ * They must get inlined unto this function and then this is too large to be
+ * inlined. Important because `p_group_infos->ignore` is often true, especially
+ * for atomic vectors.
+ */
+static inline void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
+  if (p_group_infos->ignore) {
+    return;
+  }
+
+  if (size == 0) {
+    Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
+  }
+
+  struct group_info* p_group_info = groups_current(p_group_infos);
+
+  // Extend `data` as required - reprotects itself
+  if (p_group_info->data_size == p_group_info->n_groups) {
+    R_xlen_t new_data_size = groups_realloc_size(
+      p_group_info->data_size,
+      p_group_infos->max_data_size
+    );
+
+    group_realloc(p_group_info, new_data_size);
+  }
+
+  // Push group size
+  p_group_info->p_data[p_group_info->n_groups] = size;
+
+  // Bump number of groups
+  ++p_group_info->n_groups;
+
+  // Update max group size
+  if (p_group_info->max_group_size < size) {
+    p_group_info->max_group_size = size;
+  }
+}
 
 // -----------------------------------------------------------------------------
 #endif
