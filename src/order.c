@@ -24,6 +24,16 @@
 // https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
 #define INSERTION_ORDER_BOUNDARY 128
 
+// On big-endian, MSB is on the far right.
+// On little-endian, MSB is on the far left.
+// This matters for double / integer radix ordering.
+#ifdef WORDS_BIGENDIAN
+# define PASS_TO_RADIX(X, MAX) (X)
+# define SHIFT_ADJUSTMENT 8
+#else
+# define PASS_TO_RADIX(X, MAX) (MAX - 1 - X)
+# define SHIFT_ADJUSTMENT -8
+#endif
 
 #define CHAR_IS_UTF8(x)  (LEVELS(x) & 8)
 #define CHAR_IS_ASCII(x) (LEVELS(x) & 64)
@@ -1182,8 +1192,7 @@ static void int_radix_order_pass(uint32_t* p_x,
     return;
   }
 
-  // TODO: Is this where we could modify for big endian?
-  const uint8_t radix = INT_MAX_RADIX_PASS - 1 - pass;
+  const uint8_t radix = PASS_TO_RADIX(pass, INT_MAX_RADIX_PASS);
   const uint8_t shift = radix * 8;
 
   uint8_t byte = 0;
@@ -1235,7 +1244,8 @@ static void int_radix_order_pass(uint32_t* p_x,
 // -----------------------------------------------------------------------------
 
 static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size) {
-  uint8_t shift_start = (INT_MAX_RADIX_PASS - 1) * 8;
+  uint8_t radix_start = PASS_TO_RADIX(0, INT_MAX_RADIX_PASS);
+  uint8_t shift_start = radix_start * 8;
 
   for (uint8_t i = 0; i < INT_MAX_RADIX_PASS; ++i) {
     p_skips[i] = true;
@@ -1246,7 +1256,7 @@ static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t si
 
   // Get bytes of first element in MSD->LSD order.
   // Placed in `p_bytes` in a way that aligns with the `pass` variable
-  for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift -= 8) {
+  for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
     p_bytes[pass] = int_extract_uint32_byte(elt0, shift);
   }
 
@@ -1255,7 +1265,7 @@ static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t si
     uint8_t n_skips = INT_MAX_RADIX_PASS;
     const uint32_t elt = p_x[i];
 
-    for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift -= 8) {
+    for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
       bool skip = p_skips[pass];
 
       if (skip) {
@@ -1285,7 +1295,6 @@ static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t si
 
 // Bytes will be extracted 8 bits at a time.
 // This is a MSB radix sort, so they are extracted MSB->LSB.
-// TODO: This probably depends on endianness?
 static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
   return (x >> shift) & UINT8_MAX;
 }
@@ -1822,8 +1831,7 @@ static void dbl_radix_order_pass(uint64_t* p_x,
     return;
   }
 
-  // TODO: Is this where we could modify for big endian?
-  const uint8_t radix = DBL_MAX_RADIX_PASS - 1 - pass;
+  const uint8_t radix = PASS_TO_RADIX(pass, DBL_MAX_RADIX_PASS);
   const uint8_t shift = radix * 8;
 
   uint8_t byte = 0;
@@ -1889,7 +1897,8 @@ static void dbl_radix_order_pass(uint64_t* p_x,
  * of 1:128). This provides a nice performance increase there.
  */
 static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size) {
-  uint8_t shift_start = (DBL_MAX_RADIX_PASS - 1) * 8;
+  uint8_t radix_start = PASS_TO_RADIX(0, DBL_MAX_RADIX_PASS);
+  uint8_t shift_start = radix_start * 8;
 
   for (uint8_t i = 0; i < DBL_MAX_RADIX_PASS; ++i) {
     p_skips[i] = true;
@@ -1900,7 +1909,7 @@ static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t si
 
   // Get bytes of first element in MSD->LSD order.
   // Placed in `p_bytes` in a way that aligns with the `pass` variable
-  for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift -= 8) {
+  for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
     p_bytes[pass] = dbl_extract_uint64_byte(elt0, shift);
   }
 
@@ -1909,7 +1918,7 @@ static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t si
     uint8_t n_skips = DBL_MAX_RADIX_PASS;
     const uint64_t elt = p_x[i];
 
-    for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift -= 8) {
+    for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
       bool skip = p_skips[pass];
 
       if (skip) {
@@ -1939,7 +1948,6 @@ static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t si
 
 // Bytes will be extracted 8 bits at a time.
 // This is a MSB radix sort, so they are extracted MSB->LSB.
-// TODO: This probably depends on endianness?
 static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
   return (x >> shift) & UINT8_MAX;
 }
@@ -3059,6 +3067,9 @@ static inline size_t df_counts_multiplier(SEXP x) {
 #undef INT_COUNTING_ORDER_RANGE_BOUNDARY
 
 #undef INSERTION_ORDER_BOUNDARY
+
+#undef PASS_TO_RADIX
+#undef SHIFT_ADJUSTMENT
 
 #undef CHAR_IS_UTF8
 #undef CHAR_IS_ASCII
