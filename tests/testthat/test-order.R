@@ -307,6 +307,34 @@ test_that("-0 and 0 order identically / stably", {
   expect_identical(vec_order2(x, decreasing = FALSE), c(1L, 2L))
 })
 
+test_that("can order when in expected order", {
+  x <- c(1, 1, 2, NA, NaN)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 1:5)
+
+  x <- c(3, 3, 2, NA, NaN)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 1:5)
+
+  x <- c(NA, NaN, 1, 1, 2)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 1:5)
+
+  x <- c(NA, NaN, 3, 3, 2)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 1:5)
+})
+
+test_that("can order when in strictly opposite of expected order (no ties)", {
+  x <- c(NA, 2, 1)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 3:1)
+
+  x <- c(NA, 1, 2)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 3:1)
+
+  x <- c(2, 1, NA)
+  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 3:1)
+
+  x <- c(1, 2, NA)
+  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 3:1)
+})
+
 # ------------------------------------------------------------------------------
 # vec_order2(<double>) - radix
 
