@@ -494,6 +494,13 @@ static void vec_order_immutable_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+static bool int_sorted(const int* p_x,
+                       int* p_o,
+                       struct group_infos* p_group_infos,
+                       R_xlen_t size,
+                       bool decreasing,
+                       bool na_last);
+
 static void int_adjust(void* p_x,
                        const bool decreasing,
                        const bool na_last,
@@ -552,6 +559,10 @@ static void int_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
+  if (int_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+    return;
+  }
+
   if (size <= INSERTION_ORDER_BOUNDARY) {
     int_adjust(p_x, decreasing, na_last, size);
     int_insertion_order(p_x, p_o, p_group_infos, size);
@@ -618,6 +629,10 @@ static void int_order_immutable(SEXP x,
                                 bool na_last,
                                 R_xlen_t size) {
   const int* p_x = INTEGER_RO(x);
+
+  if (int_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+    return;
+  }
 
   if (size <= INSERTION_ORDER_BOUNDARY) {
     lazy_vec_initialize(p_lazy_x_slice);
@@ -2068,6 +2083,13 @@ static void cpl_order_immutable(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+static bool chr_sorted(const SEXP* p_x,
+                       int* p_o,
+                       struct group_infos* p_group_infos,
+                       R_xlen_t size,
+                       bool decreasing,
+                       bool na_last);
+
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_vec* p_lazy_x_aux,
                                     struct lazy_vec* p_lazy_bytes,
@@ -2112,6 +2134,10 @@ static void chr_order(void* p_x,
                       bool decreasing,
                       bool na_last,
                       R_xlen_t size) {
+  if (chr_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+    return;
+  }
+
   lazy_vec_initialize(p_lazy_x_aux);
   void* p_x_aux = p_lazy_x_aux->p_data;
 
@@ -2187,6 +2213,10 @@ static void chr_order_immutable(SEXP x,
                                 bool na_last,
                                 R_xlen_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
+
+  if (chr_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+    return;
+  }
 
   lazy_vec_initialize(p_lazy_x_slice);
   void* p_x_slice = p_lazy_x_slice->p_data;
@@ -3052,6 +3082,310 @@ static inline size_t df_counts_multiplier(SEXP x) {
   }
 
   return multiplier;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline void ord_reverse(int* p_o, R_xlen_t size);
+
+static inline int int_cmp(int x,
+                          int y,
+                          const int direction,
+                          const int na_order);
+
+static bool int_sorted(const int* p_x,
+                       int* p_o,
+                       struct group_infos* p_group_infos,
+                       R_xlen_t size,
+                       bool decreasing,
+                       bool na_last) {
+  if (size == 0) {
+    return true;
+  }
+
+  if (size == 1) {
+    groups_size_push(p_group_infos, 1);
+    return true;
+  }
+
+  const int direction = decreasing ? -1 : 1;
+  const int na_order = na_last ? 1 : -1;
+
+  int previous = p_x[0];
+
+  R_xlen_t count = 0;
+
+  // Check for strictly opposite of expected order
+  // (ties are not allowed so we can reverse the vector stably)
+  for (R_xlen_t i = 1; i < size; ++i, ++count) {
+    int current = p_x[i];
+
+    int cmp = int_cmp(
+      current,
+      previous,
+      direction,
+      na_order
+    );
+
+    if (cmp >= 0) {
+      break;
+    }
+
+    previous = current;
+  }
+
+  // Was in strictly opposite of expected order.
+  if (count == size - 1) {
+    ord_reverse(p_o, size);
+
+    // Each group is size 1 since this is strict ordering
+    for (R_xlen_t j = 0; j < size; ++j) {
+      groups_size_push(p_group_infos, 1);
+    }
+
+    return true;
+  }
+
+  // Was partially in expected order. Need to sort.
+  if (count != 0) {
+    return false;
+  }
+
+  // Retain the original `n_groups` to be able to reset the group sizes if
+  // it turns out we don't have expected ordering
+  struct group_info* p_group_info = groups_current(p_group_infos);
+  R_xlen_t original_n_groups = p_group_info->n_groups;
+
+  R_xlen_t group_size = 1;
+
+  // Check for expected ordering - allowing ties since we don't have to
+  // reverse the ordering.
+  for (R_xlen_t i = 1; i < size; ++i) {
+    int current = p_x[i];
+
+    int cmp = int_cmp(
+      current,
+      previous,
+      direction,
+      na_order
+    );
+
+    // Not expected ordering
+    if (cmp < 0) {
+      p_group_info->n_groups = original_n_groups;
+      return false;
+    }
+
+    previous = current;
+
+    // Continue group run
+    if (cmp == 0) {
+      ++group_size;
+      continue;
+    }
+
+    // Expected ordering
+    groups_size_push(p_group_infos, group_size);
+    group_size = 1;
+  }
+
+  // Push final group run
+  groups_size_push(p_group_infos, group_size);
+
+  // Expected ordering
+  return true;
+}
+
+static inline int int_cmp(int x,
+                          int y,
+                          const int direction,
+                          const int na_order) {
+  if (x == NA_INTEGER) {
+    if (y == NA_INTEGER) {
+      return 0;
+    } else {
+      return na_order;
+    }
+  }
+
+  if (y == NA_INTEGER) {
+    return -na_order;
+  }
+
+  int cmp = (x > y) - (x < y);
+
+  return cmp * direction;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline int chr_cmp(SEXP x,
+                          SEXP y,
+                          const char* c_x,
+                          const char* c_y,
+                          const int direction,
+                          const int na_order);
+
+/*
+ * Check if `p_x` is in the "expected" ordering as defined by `decreasing` and
+ * `na_last`. If `p_x` is in the expected ordering, or if it is in the strictly
+ * opposite of the expected ordering (with no ties), then groups are pushed,
+ * the order is finalized, and `true` is returned indicating that no sorting
+ * is needed.
+ */
+static bool chr_sorted(const SEXP* p_x,
+                       int* p_o,
+                       struct group_infos* p_group_infos,
+                       R_xlen_t size,
+                       bool decreasing,
+                       bool na_last) {
+  if (size == 0) {
+    return true;
+  }
+
+  if (size == 1) {
+    groups_size_push(p_group_infos, 1);
+    return true;
+  }
+
+  const int direction = decreasing ? -1 : 1;
+  const int na_order = na_last ? 1 : -1;
+
+  SEXP previous = p_x[0];
+  const char* c_previous = CHAR(previous);
+
+  R_xlen_t count = 0;
+
+  // Check for strictly opposite of expected order
+  // (ties are not allowed so we can reverse the vector stably)
+  for (R_xlen_t i = 1; i < size; ++i, ++count) {
+    SEXP current = p_x[i];
+    const char* c_current = CHAR(current);
+
+    int cmp = chr_cmp(
+      current,
+      previous,
+      c_current,
+      c_previous,
+      direction,
+      na_order
+    );
+
+    if (cmp >= 0) {
+      break;
+    }
+
+    previous = current;
+    c_previous = c_current;
+  }
+
+  // Was in strictly opposite of expected order.
+  if (count == size - 1) {
+    ord_reverse(p_o, size);
+
+    // Each group is size 1 since this is strict ordering
+    for (R_xlen_t j = 0; j < size; ++j) {
+      groups_size_push(p_group_infos, 1);
+    }
+
+    return true;
+  }
+
+  // Was partially in expected order. Need to sort.
+  if (count != 0) {
+    return false;
+  }
+
+  // Retain the original `n_groups` to be able to reset the group sizes if
+  // it turns out we don't have expected ordering
+  struct group_info* p_group_info = groups_current(p_group_infos);
+  R_xlen_t original_n_groups = p_group_info->n_groups;
+
+  R_xlen_t group_size = 1;
+
+  // Check for expected ordering - allowing ties since we don't have to
+  // reverse the ordering.
+  for (R_xlen_t i = 1; i < size; ++i) {
+    SEXP current = p_x[i];
+    const char* c_current = CHAR(current);
+
+    int cmp = chr_cmp(
+      current,
+      previous,
+      c_current,
+      c_previous,
+      direction,
+      na_order
+    );
+
+    // Not expected ordering
+    if (cmp < 0) {
+      p_group_info->n_groups = original_n_groups;
+      return false;
+    }
+
+    previous = current;
+    c_previous = c_current;
+
+    // Continue group run
+    if (cmp == 0) {
+      ++group_size;
+      continue;
+    }
+
+    // Expected ordering
+    groups_size_push(p_group_infos, group_size);
+    group_size = 1;
+  }
+
+  // Push final group run
+  groups_size_push(p_group_infos, group_size);
+
+  // Expected ordering
+  return true;
+}
+
+/*
+ * `direction` is `1` for ascending and `-1` for descending.
+ * `na_order` is `1` if `na_last = true` and `-1` if `na_last = false`.
+ */
+static inline int chr_cmp(SEXP x,
+                          SEXP y,
+                          const char* c_x,
+                          const char* c_y,
+                          const int direction,
+                          const int na_order) {
+  // Same pointer - including `NA`s
+  if (x == y) {
+    return 0;
+  }
+
+  if (x == NA_STRING) {
+    return na_order;
+  }
+
+  if (y == NA_STRING) {
+    return -na_order;
+  }
+
+  return direction * strcmp(c_x, c_y);
+}
+
+// -----------------------------------------------------------------------------
+
+// Used when in strictly opposite of expected order.
+// `size` will be at least 2.
+static inline void ord_reverse(int* p_o, R_xlen_t size) {
+  const R_xlen_t half = size / 2;
+
+  for (R_xlen_t i = 0; i < half; ++i) {
+    R_xlen_t swap = size - 1 - i;
+
+    const int temp = p_o[i];
+
+    p_o[i] = p_o[swap];
+    p_o[swap] = temp;
+  }
 }
 
 // -----------------------------------------------------------------------------
