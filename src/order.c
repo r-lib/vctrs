@@ -2640,15 +2640,6 @@ static void chr_radix_order(SEXP* p_x,
 
 // -----------------------------------------------------------------------------
 
-static void chr_radix_order_pass(SEXP* p_x,
-                                 SEXP* p_x_aux,
-                                 int* p_sizes,
-                                 int* p_sizes_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 const R_xlen_t size,
-                                 const R_len_t pass);
-
 /*
  * Recursive function for ordering the `p_x` unique strings
  *
