@@ -179,9 +179,22 @@ test_that("all combinations of `decreasing` and `na_last` work", {
   )
 })
 
+test_that("can order all 1 value", {
+  x <- rep(1L, INSERTION_ORDER_BOUNDARY + 1L)
+  expect_identical(vec_order2(x), base_order(x))
+  expect_identical(vec_order2(x, decreasing = TRUE), base_order(x, decreasing = TRUE))
+})
+
 test_that("all `NA` values works - ensures that we can compute the 'range' of all NAs", {
   x <- rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L)
-  expect_identical(vec_order2(x), order(x))
+  expect_identical(vec_order2(x), base_order(x))
+  expect_identical(vec_order2(x, decreasing = TRUE), base_order(x, decreasing = TRUE))
+})
+
+test_that("can order with many NAs first", {
+  x <- c(rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L), 2L)
+  expect_identical(vec_order2(x), base_order(x))
+  expect_identical(vec_order2(x, na_last = FALSE), base_order(x, na.last = FALSE))
 })
 
 # ------------------------------------------------------------------------------
