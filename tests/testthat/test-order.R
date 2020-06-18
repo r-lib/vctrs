@@ -844,3 +844,21 @@ test_that("ordering works with rcrd cols", {
 
   expect_error(vec_order2(df, decreasing = c(TRUE, TRUE, FALSE)))
 })
+
+# ------------------------------------------------------------------------------
+# vec_order_groups()
+
+test_that("`vec_order_groups()` is working", {
+  x <- c(1, 3, 1, 5, 2, 5, 1)
+
+  expect <- list(
+    order = c(1L, 3L, 7L, 5L, 2L, 4L, 6L),
+    starts = c(1L, 4L, 5L, 6L),
+    n_groups = 4L,
+    max_group_size = 3L
+  )
+
+  expect_identical(vec_order_groups(x), expect)
+})
+
+
