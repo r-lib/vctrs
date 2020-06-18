@@ -240,11 +240,11 @@ test_that("vec_compare() silently falls back to base data frame", {
 # order/sort --------------------------------------------------------------
 
 test_that("can request NAs sorted first", {
-  expect_equal(vec_order(c(1, NA), "asc", "large"), 1:2)
-  expect_equal(vec_order(c(1, NA), "desc", "large"), 2:1)
+  expect_equal(vec_order(c(1, NA), "asc", "largest"), 1:2)
+  expect_equal(vec_order(c(1, NA), "desc", "largest"), 1:2)
 
-  expect_equal(vec_order(c(1, NA), "asc", "small"), 2:1)
-  expect_equal(vec_order(c(1, NA), "desc", "small"), 1:2)
+  expect_equal(vec_order(c(1, NA), "asc", "smallest"), 2:1)
+  expect_equal(vec_order(c(1, NA), "desc", "smallest"), 2:1)
 })
 
 test_that("can sort data frames", {
@@ -288,6 +288,8 @@ test_that("can order empty data frames (#356)", {
 })
 
 test_that("can order data frames with data frame columns (#527)", {
+  skip("until #1142 is merged")
+
   expect_equal(
     vec_order(iris),
     vec_order(data_frame(iris = iris))
@@ -295,6 +297,8 @@ test_that("can order data frames with data frame columns (#527)", {
 })
 
 test_that("can order data frames (and subclasses) with matrix columns", {
+  skip("until #1142 is merged")
+
   df <- new_data_frame(n = 2L)
 
   df$x <- new_data_frame(list(y = matrix(1:2, 2)))

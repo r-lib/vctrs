@@ -455,7 +455,7 @@ xtfrm.vctrs_vctr <- function(x) {
       proxy
     }
   } else {
-    order(order_proxy(proxy))
+    vec_order(vec_order(proxy))
   }
 }
 
