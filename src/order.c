@@ -94,7 +94,8 @@
  * value to be different from R) and also updates the original character vector.
  * We then iterate through the original vector again, plucking off the now
  * updated truelength integer values. This gives us an integer proxy for the
- * ordering, which we can run through `int_order()` to get the final ordering.
+ * ordering, which we can run through `int_order_chunk()` to get the final
+ * ordering.
  *
  * The ordering of unique characters uses a combination of 2 ordering
  * algorithms:
@@ -114,8 +115,8 @@
  * Complex
  *
  * We treat complex as a data frame of two double columns. We order the
- * real part first using `dbl_order()`, then order the imaginary part also
- * using `dbl_order()`.
+ * real part first using `dbl_order_chunk()`, then order the imaginary part also
+ * using `dbl_order_chunk()`.
  *
  * -----------------------------------------------------------------------------
  * Data frames
@@ -412,19 +413,19 @@ static void df_order(SEXP x,
                      bool na_last,
                      R_xlen_t size);
 
-static void vec_order_immutable_switch(SEXP x,
-                                       int* p_o,
-                                       struct lazy_vec* p_lazy_x_slice,
-                                       struct lazy_vec* p_lazy_x_aux,
-                                       struct lazy_vec* p_lazy_o_aux,
-                                       struct lazy_vec* p_lazy_bytes,
-                                       struct lazy_vec* p_lazy_counts,
-                                       struct group_infos* p_group_infos,
-                                       struct truelength_info* p_truelength_info,
-                                       bool decreasing,
-                                       bool na_last,
-                                       R_xlen_t size,
-                                       const enum vctrs_type type);
+static void vec_order_base_switch(SEXP x,
+                                  int* p_o,
+                                  struct lazy_vec* p_lazy_x_slice,
+                                  struct lazy_vec* p_lazy_x_aux,
+                                  struct lazy_vec* p_lazy_o_aux,
+                                  struct lazy_vec* p_lazy_bytes,
+                                  struct lazy_vec* p_lazy_counts,
+                                  struct group_infos* p_group_infos,
+                                  struct truelength_info* p_truelength_info,
+                                  bool decreasing,
+                                  bool na_last,
+                                  R_xlen_t size,
+                                  const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
                              int* p_o,
@@ -468,7 +469,7 @@ static void vec_order_switch(SEXP x,
 
   bool c_decreasing = LOGICAL(decreasing)[0];
 
-  vec_order_immutable_switch(
+  vec_order_base_switch(
     x,
     p_o,
     p_lazy_x_slice,
@@ -487,84 +488,84 @@ static void vec_order_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static void int_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size);
+static void int_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size);
 
-static void lgl_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size);
+static void lgl_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size);
 
-static void dbl_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size);
+static void dbl_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size);
 
-static void cpl_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size);
+static void cpl_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size);
 
-static void chr_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                struct truelength_info* p_truelength_info,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size);
+static void chr_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      struct truelength_info* p_truelength_info,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size);
 
 // Used on bare vectors and the first column of data frame `x`s
-static void vec_order_immutable_switch(SEXP x,
-                                       int* p_o,
-                                       struct lazy_vec* p_lazy_x_slice,
-                                       struct lazy_vec* p_lazy_x_aux,
-                                       struct lazy_vec* p_lazy_o_aux,
-                                       struct lazy_vec* p_lazy_bytes,
-                                       struct lazy_vec* p_lazy_counts,
-                                       struct group_infos* p_group_infos,
-                                       struct truelength_info* p_truelength_info,
-                                       bool decreasing,
-                                       bool na_last,
-                                       R_xlen_t size,
-                                       const enum vctrs_type type) {
+static void vec_order_base_switch(SEXP x,
+                                  int* p_o,
+                                  struct lazy_vec* p_lazy_x_slice,
+                                  struct lazy_vec* p_lazy_x_aux,
+                                  struct lazy_vec* p_lazy_o_aux,
+                                  struct lazy_vec* p_lazy_bytes,
+                                  struct lazy_vec* p_lazy_counts,
+                                  struct group_infos* p_group_infos,
+                                  struct truelength_info* p_truelength_info,
+                                  bool decreasing,
+                                  bool na_last,
+                                  R_xlen_t size,
+                                  const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer: {
-    int_order_immutable(
+    int_order(
       x,
       p_o,
       p_lazy_x_slice,
@@ -581,7 +582,7 @@ static void vec_order_immutable_switch(SEXP x,
     break;
   }
   case vctrs_type_logical: {
-    lgl_order_immutable(
+    lgl_order(
       x,
       p_o,
       p_lazy_x_slice,
@@ -598,7 +599,7 @@ static void vec_order_immutable_switch(SEXP x,
     break;
   }
   case vctrs_type_double: {
-    dbl_order_immutable(
+    dbl_order(
       x,
       p_o,
       p_lazy_x_slice,
@@ -615,7 +616,7 @@ static void vec_order_immutable_switch(SEXP x,
     break;
   }
   case vctrs_type_complex: {
-    cpl_order_immutable(
+    cpl_order(
       x,
       p_o,
       p_lazy_x_slice,
@@ -632,7 +633,7 @@ static void vec_order_immutable_switch(SEXP x,
     break;
   }
   case vctrs_type_character: {
-    chr_order_immutable(
+    chr_order(
       x,
       p_o,
       p_lazy_x_slice,
@@ -703,28 +704,28 @@ static void int_radix_order(uint32_t* p_x,
 
 /*
  * These are the main entry points for integer ordering. They are nearly
- * identical except `int_order_immutable()` assumes that `p_x` cannot be
+ * identical except `int_order()` assumes that `p_x` cannot be
  * modified directly and is user input.
  *
- * `int_order()` assumes `p_x` is modifiable by reference. It is called when
- * iterating over data frame columns and `p_x` is the 2nd or greater column,
- * in which case `p_x` is really a chunk of that column that has been copied
- * into `x_slice`.
+ * `int_order_chunk()` assumes `p_x` is modifiable by reference. It is called
+ * when iterating over data frame columns and `p_x` is the 2nd or greater
+ * column, in which case `p_x` is really a chunk of that column that has been
+ * copied into `x_slice`.
  *
- * `int_order_immutable()` assumes `p_x` is user input which cannot be modified.
+ * `int_order()` assumes `p_x` is user input which cannot be modified.
  * It copies `x` into another SEXP that can be modified directly unless a
  * counting sort is going to be used, in which case `p_x` can be used directly.
  */
-static void int_order(void* p_x,
-                      int* p_o,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
-                      struct group_infos* p_group_infos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
+static void int_order_chunk(void* p_x,
+                            int* p_o,
+                            struct lazy_vec* p_lazy_x_aux,
+                            struct lazy_vec* p_lazy_o_aux,
+                            struct lazy_vec* p_lazy_bytes,
+                            struct lazy_vec* p_lazy_counts,
+                            struct group_infos* p_group_infos,
+                            bool decreasing,
+                            bool na_last,
+                            R_xlen_t size) {
   if (int_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
     return;
   }
@@ -783,17 +784,17 @@ static void int_order(void* p_x,
   );
 }
 
-static void int_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
+static void int_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
   const int* p_x = INTEGER_RO(x);
 
   if (int_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
@@ -1484,19 +1485,19 @@ static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
 
 // We could have some optimized sort for 2 values (American flag sort?) but
 // honestly I don't see this as the main use case so we just pass through to
-// `int_order()` and `int_order_immutable()`.
+// `int_order_chunk()` and `int_order()`.
 
-static void lgl_order(void* p_x,
-                      int* p_o,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
-                      struct group_infos* p_group_infos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
-  int_order(
+static void lgl_order_chunk(void* p_x,
+                            int* p_o,
+                            struct lazy_vec* p_lazy_x_aux,
+                            struct lazy_vec* p_lazy_o_aux,
+                            struct lazy_vec* p_lazy_bytes,
+                            struct lazy_vec* p_lazy_counts,
+                            struct group_infos* p_group_infos,
+                            bool decreasing,
+                            bool na_last,
+                            R_xlen_t size) {
+  int_order_chunk(
     p_x,
     p_o,
     p_lazy_x_aux,
@@ -1510,18 +1511,18 @@ static void lgl_order(void* p_x,
   );
 }
 
-static void lgl_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
-  int_order_immutable(
+static void lgl_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
+  int_order(
     x,
     p_o,
     p_lazy_x_slice,
@@ -1566,32 +1567,32 @@ static void dbl_radix_order(uint64_t* p_x,
 
 /*
  * These are the main entry points for integer ordering. They are nearly
- * identical except `dbl_order_immutable()` assumes that `p_x` cannot be
+ * identical except `dbl_order()` assumes that `p_x` cannot be
  * modified directly and is user input.
  *
- * `dbl_order()` assumes `p_x` is modifiable by reference. It is called when
- * iterating over data frame columns and `p_x` is the 2nd or greater column,
- * in which case `p_x` is really a chunk of that column that has been copied
- * into `x_slice`.
+ * `dbl_order_chunk()` assumes `p_x` is modifiable by reference. It is called
+ * when iterating over data frame columns and `p_x` is the 2nd or greater
+ * column, in which case `p_x` is really a chunk of that column that has been
+ * copied into `x_slice`.
  *
- * `dbl_order_immutable()` assumes `p_x` is user input which cannot be modified.
+ * `dbl_order()` assumes `p_x` is user input which cannot be modified.
  * It copies `x` into another SEXP that can be modified directly unless a
  * counting sort is going to be used, in which case `p_x` can be used directly.
  *
- * Unlike `int_order()`, there is no intermediate counting sort, as it is
+ * Unlike `int_order_chunk()`, there is no intermediate counting sort, as it is
  * sort of unclear how to compute the range of a double vector in the same
  * way.
  */
-static void dbl_order(void* p_x,
-                      int* p_o,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
-                      struct group_infos* p_group_infos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
+static void dbl_order_chunk(void* p_x,
+                            int* p_o,
+                            struct lazy_vec* p_lazy_x_aux,
+                            struct lazy_vec* p_lazy_o_aux,
+                            struct lazy_vec* p_lazy_bytes,
+                            struct lazy_vec* p_lazy_counts,
+                            struct group_infos* p_group_infos,
+                            bool decreasing,
+                            bool na_last,
+                            R_xlen_t size) {
   if (dbl_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
     return;
   }
@@ -1628,17 +1629,17 @@ static void dbl_order(void* p_x,
   );
 }
 
-static void dbl_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
+static void dbl_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
   const double* p_x = REAL_RO(x);
 
   if (dbl_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
@@ -2148,26 +2149,26 @@ static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
 // -----------------------------------------------------------------------------
 
 /*
- * `cpl_order_immutable()` uses the fact that Rcomplex is really just a rcrd
+ * `cpl_order()` uses the fact that Rcomplex is really just a rcrd
  * type of two double vectors. It orders first on the real vector, and then on
  * the imaginary vector.
  *
- * `cpl_order()` isn't required. It would only be called from data frames
+ * `cpl_order_chunk()` isn't required. It would only be called from data frames
  * when there is a complex column, but in those cases we split the column
  * into two double vectors (real / imaginary) and "rerun" the column using
- * `dbl_order()`.
+ * `dbl_order_chunk()`.
  */
-static void cpl_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
+static void cpl_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
   // We treat complex as a two column data frame, so we have to use group
   // information for at least the first column.
   // - If a complex atomic vector is used, `ignore` will be true unless the
@@ -2193,7 +2194,7 @@ static void cpl_order_immutable(SEXP x,
   }
 
   // Run it through double ordering
-  dbl_order(
+  dbl_order_chunk(
     p_x_slice_dbl,
     p_o,
     p_lazy_x_aux,
@@ -2244,7 +2245,7 @@ static void cpl_order_immutable(SEXP x,
       continue;
     }
 
-    dbl_order(
+    dbl_order_chunk(
       p_x_slice_dbl,
       p_o,
       p_lazy_x_aux,
@@ -2290,31 +2291,32 @@ static void chr_radix_order(SEXP* p_x,
 /*
  * These are the main entry points for character ordering.
  *
- * `chr_order()` assumes `p_x` is modifiable by reference. It also assumes that
- * `chr_mark_sorted_uniques()` has already been called. For data frame columns
- * where `chr_order()` is called on each group chunk,
+ * `chr_order_chunk()` assumes `p_x` is modifiable by reference. It also
+ * assumes that `chr_mark_sorted_uniques()` has already been called. For data
+ * frame columns where `chr_order_chunk()` is called on each group chunk,
  * `chr_mark_sorted_uniques()` is only called once on the entire column. It
  * also assumes that `p_x` has already been re-encoded as UTF-8 if required.
  *
- * `chr_order_immutable()` assumes `x` is user input which cannot be modified.
+ * `chr_order()` assumes `x` is user input which cannot be modified.
  * It copies `x` into another SEXP that can be modified directly and re-encodes
  * as UTF-8 if required.
  *
- * `chr_order()` essentially calls `int_order()`, however we can't call it
- * directly because we don't have access to all the required arguments.
+ * `chr_order_chunk()` essentially calls `int_order_chunk()`, however we can't
+ * call it directly because we don't have access to all the required arguments.
  * Specifically we reuse `p_x` here as the auxiliary data structure for integer
- * ordering, but to call `int_order()` we would need the lazy wrapper for it.
+ * ordering, but to call `int_order_chunk()` we would need the lazy wrapper
+ * for it.
  */
-static void chr_order(void* p_x,
-                      int* p_o,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
-                      struct group_infos* p_group_infos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
+static void chr_order_chunk(void* p_x,
+                            int* p_o,
+                            struct lazy_vec* p_lazy_x_aux,
+                            struct lazy_vec* p_lazy_o_aux,
+                            struct lazy_vec* p_lazy_bytes,
+                            struct lazy_vec* p_lazy_counts,
+                            struct group_infos* p_group_infos,
+                            bool decreasing,
+                            bool na_last,
+                            R_xlen_t size) {
   if (chr_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
     return;
   }
@@ -2381,18 +2383,18 @@ static void chr_order(void* p_x,
 
 static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t size);
 
-static void chr_order_immutable(SEXP x,
-                                int* p_o,
-                                struct lazy_vec* p_lazy_x_slice,
-                                struct lazy_vec* p_lazy_x_aux,
-                                struct lazy_vec* p_lazy_o_aux,
-                                struct lazy_vec* p_lazy_bytes,
-                                struct lazy_vec* p_lazy_counts,
-                                struct group_infos* p_group_infos,
-                                struct truelength_info* p_truelength_info,
-                                bool decreasing,
-                                bool na_last,
-                                R_xlen_t size) {
+static void chr_order(SEXP x,
+                      int* p_o,
+                      struct lazy_vec* p_lazy_x_slice,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      struct truelength_info* p_truelength_info,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   if (chr_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
@@ -2413,7 +2415,7 @@ static void chr_order_immutable(SEXP x,
     size
   );
 
-  chr_order(
+  chr_order_chunk(
     p_x_slice,
     p_o,
     p_lazy_x_aux,
@@ -2464,7 +2466,7 @@ static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) 
  * `chr_radix_order()`.
  *
  * Finally, it loops over the now sorted unique strings and marks them with
- * their ordering (as a negative value). This allows `chr_order()` to loop
+ * their ordering (as a negative value). This allows `chr_order_chunk()` to loop
  * through `p_x` and just pluck off the TRUELENGTH value, which will be an
  * integer proxy for the value's ordering.
  *
@@ -2482,7 +2484,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
   for (R_xlen_t i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
-    // These are replaced by `NA_INTEGER` for use in `int_order()`
+    // These are replaced by `NA_INTEGER` for use in `int_order_chunk()`
     if (elt == NA_STRING) {
       continue;
     }
@@ -2607,7 +2609,7 @@ static void chr_radix_order_recurse(SEXP* p_x,
  * - `p_x` will contain only unique strings
  * - `p_x` will not contain any `NA` strings
  * - We just need to sort `p_x` in place, no need to track group information,
- *   which is instead done by `int_order()` later
+ *   which is instead done by `int_order_chunk()` later
  * - The number of passes is variable here, because strings have a variable
  *   length.
  * - We also track the character sizes because repeated `Rf_xlength()` calls
@@ -2869,18 +2871,18 @@ static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t si
 
 // -----------------------------------------------------------------------------
 
-static void col_order_switch(void* p_x,
-                             int* p_o,
-                             struct lazy_vec* p_lazy_x_aux,
-                             struct lazy_vec* p_lazy_o_aux,
-                             struct lazy_vec* p_lazy_bytes,
-                             struct lazy_vec* p_lazy_counts,
-                             struct group_infos* p_group_infos,
-                             struct truelength_info* p_truelength_info,
-                             bool decreasing,
-                             bool na_last,
-                             R_xlen_t size,
-                             const enum vctrs_type type);
+static void vec_order_chunk_switch(void* p_x,
+                                   int* p_o,
+                                   struct lazy_vec* p_lazy_x_aux,
+                                   struct lazy_vec* p_lazy_o_aux,
+                                   struct lazy_vec* p_lazy_bytes,
+                                   struct lazy_vec* p_lazy_counts,
+                                   struct group_infos* p_group_infos,
+                                   struct truelength_info* p_truelength_info,
+                                   bool decreasing,
+                                   bool na_last,
+                                   R_xlen_t size,
+                                   const enum vctrs_type type);
 
 
 #define DF_ORDER_EXTRACT_CHUNK(CONST_DEREF, CTYPE) do {          \
@@ -2987,7 +2989,7 @@ static void df_order(SEXP x,
 
   // Apply on one column to fill `p_group_infos`.
   // First column is immutable and we must copy into `x_slice`.
-  vec_order_immutable_switch(
+  vec_order_base_switch(
     col,
     p_o,
     p_lazy_x_slice,
@@ -3086,7 +3088,7 @@ static void df_order(SEXP x,
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
-      col_order_switch(
+      vec_order_chunk_switch(
         p_x_slice,
         p_o_col,
         p_lazy_x_aux,
@@ -3119,38 +3121,38 @@ static void df_order(SEXP x,
 
 // Specifically for columns of a data frame where `decreasing` is known
 // and is scalar. Assumes `p_x` holds the current group chunk.
-static void col_order_switch(void* p_x,
-                             int* p_o,
-                             struct lazy_vec* p_lazy_x_aux,
-                             struct lazy_vec* p_lazy_o_aux,
-                             struct lazy_vec* p_lazy_bytes,
-                             struct lazy_vec* p_lazy_counts,
-                             struct group_infos* p_group_infos,
-                             struct truelength_info* p_truelength_info,
-                             bool decreasing,
-                             bool na_last,
-                             R_xlen_t size,
-                             const enum vctrs_type type) {
+static void vec_order_chunk_switch(void* p_x,
+                                   int* p_o,
+                                   struct lazy_vec* p_lazy_x_aux,
+                                   struct lazy_vec* p_lazy_o_aux,
+                                   struct lazy_vec* p_lazy_bytes,
+                                   struct lazy_vec* p_lazy_counts,
+                                   struct group_infos* p_group_infos,
+                                   struct truelength_info* p_truelength_info,
+                                   bool decreasing,
+                                   bool na_last,
+                                   R_xlen_t size,
+                                   const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer: {
-    int_order(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
+    int_order_chunk(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_logical: {
-    lgl_order(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
+    lgl_order_chunk(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_double: {
-    dbl_order(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
+    dbl_order_chunk(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_complex: {
     // Complex types are run in two passes, once over real then over imaginary
-    dbl_order(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
+    dbl_order_chunk(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_character: {
-    chr_order(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
+    chr_order_chunk(p_x, p_o, p_lazy_x_aux, p_lazy_o_aux, p_lazy_bytes, p_lazy_counts, p_group_infos, decreasing, na_last, size);
     break;
   }
   case vctrs_type_dataframe: {
