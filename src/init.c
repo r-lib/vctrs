@@ -129,7 +129,8 @@ extern SEXP vctrs_df_slice_complete(SEXP);
 extern SEXP vctrs_df_locate_complete(SEXP);
 extern SEXP vctrs_df_detect_complete(SEXP);
 extern SEXP vctrs_normalize_encoding(SEXP);
-extern SEXP vctrs_order(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_order(SEXP, SEXP, SEXP);
+extern SEXP vctrs_order_groups(SEXP, SEXP, SEXP);
 
 
 // Maturing
@@ -276,7 +277,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_locate_complete",         (DL_FUNC) &vctrs_df_locate_complete, 1},
   {"vctrs_df_detect_complete",         (DL_FUNC) &vctrs_df_detect_complete, 1},
   {"vctrs_normalize_encoding",         (DL_FUNC) &vctrs_normalize_encoding, 1},
-  {"vctrs_order",                      (DL_FUNC) &vctrs_order, 4},
+  {"vctrs_order",                      (DL_FUNC) &vctrs_order, 3},
+  {"vctrs_order_groups",               (DL_FUNC) &vctrs_order_groups, 3},
   {NULL, NULL, 0}
 };
 
