@@ -1259,15 +1259,7 @@ static void int_radix_order(uint32_t* p_x,
 
 // -----------------------------------------------------------------------------
 
-static void int_radix_order_pass(uint32_t* p_x,
-                                 int* p_o,
-                                 uint32_t* p_x_aux,
-                                 int* p_o_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 struct group_infos* p_group_infos,
-                                 const R_xlen_t size,
-                                 const uint8_t pass);
+static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift);
 
 /*
  * Recursive function for radix ordering. Orders the current byte, then iterates
@@ -1284,30 +1276,99 @@ static void int_radix_order_recurse(uint32_t* p_x,
                                     struct group_infos* p_group_infos,
                                     const R_xlen_t size,
                                     const uint8_t pass) {
-  // Order the current byte
-  int_radix_order_pass(
-    p_x,
-    p_o,
-    p_x_aux,
-    p_o_aux,
-    p_bytes,
-    p_counts,
-    p_group_infos,
-    size,
-    pass
-  );
+  // Exit as fast as possible if we are below the insertion order boundary
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    int_insertion_order(p_x, p_o, p_group_infos, size);
+    return;
+  }
 
+  // Skip passes where our up front check told us that all bytes were the same
   uint8_t next_pass = pass + 1;
   R_xlen_t* p_counts_next_pass = p_counts + UINT8_MAX_SIZE;
 
-  // Skip passes where our up front check told us we could
   while (next_pass < INT_MAX_RADIX_PASS && p_skips[next_pass]) {
     ++next_pass;
     p_counts_next_pass += UINT8_MAX_SIZE;
   }
 
+  const uint8_t radix = PASS_TO_RADIX(pass, INT_MAX_RADIX_PASS);
+  const uint8_t shift = radix * 8;
+
+  uint8_t byte = 0;
+
+  // Histogram for this pass
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint32_t x_elt = p_x[i];
+
+    byte = int_extract_uint32_byte(x_elt, shift);
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Fast check to see if all bytes were the same.
+  // If so, skip this `pass` since we learned nothing.
+  // No need to accumulate counts and iterate over chunks,
+  // we know all others are zero.
+  if (p_counts[byte] == size) {
+    // Reset count for other group chunks
+    p_counts[byte] = 0;
+
+    // If we are already at the last pass, we are done
+    if (next_pass == INT_MAX_RADIX_PASS) {
+      groups_size_push(p_group_infos, size);
+      return;
+    }
+
+    // Otherwise, recurse on next byte using the same `size` since
+    // the group size hasn't changed
+    int_radix_order_recurse(
+      p_x,
+      p_o,
+      p_x_aux,
+      p_o_aux,
+      p_bytes,
+      p_counts_next_pass,
+      p_skips,
+      p_group_infos,
+      size,
+      next_pass
+    );
+
+    return;
+  }
+
+  R_xlen_t cumulative = 0;
+
+  // Accumulate counts, skip zeros
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[i];
+
+    if (count == 0) {
+      continue;
+    }
+
+    // Replace with `cumulative` first, then bump `cumulative`.
+    // `p_counts` now represents starting locations for each radix group.
+    p_counts[i] = cumulative;
+    cumulative += count;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_o_aux[loc] = p_o[i];
+    p_x_aux[loc] = p_x[i];
+  }
+
+  // Copy back over
+  memcpy(p_o, p_o_aux, size * sizeof(int));
+  memcpy(p_x, p_x_aux, size * sizeof(uint32_t));
+
   R_xlen_t last_cumulative_count = 0;
 
+  // Recurse on subgroups as required
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
@@ -1356,76 +1417,6 @@ static void int_radix_order_recurse(uint32_t* p_x,
     p_x += group_size;
     p_o += group_size;
   }
-}
-
-// -----------------------------------------------------------------------------
-
-static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift);
-
-/*
- * Orders based on a single byte corresponding to the current `pass`.
- */
-static void int_radix_order_pass(uint32_t* p_x,
-                                 int* p_o,
-                                 uint32_t* p_x_aux,
-                                 int* p_o_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 struct group_infos* p_group_infos,
-                                 const R_xlen_t size,
-                                 const uint8_t pass) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    int_insertion_order(p_x, p_o, p_group_infos, size);
-    return;
-  }
-
-  const uint8_t radix = PASS_TO_RADIX(pass, INT_MAX_RADIX_PASS);
-  const uint8_t shift = radix * 8;
-
-  uint8_t byte = 0;
-
-  // Histogram
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint32_t x_elt = p_x[i];
-
-    byte = int_extract_uint32_byte(x_elt, shift);
-
-    p_bytes[i] = byte;
-    ++p_counts[byte];
-  }
-
-  // Fast check to see if all bytes were the same. If so, skip `pass`.
-  if (p_counts[byte] == size) {
-    return;
-  }
-
-  R_xlen_t cumulative = 0;
-
-  // Accumulate counts, skip zeros
-  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-    R_xlen_t count = p_counts[i];
-
-    if (count == 0) {
-      continue;
-    }
-
-    // Replace with `cumulative` first, then bump `cumulative`.
-    // `p_counts` now represents starting locations for each radix group.
-    p_counts[i] = cumulative;
-    cumulative += count;
-  }
-
-  // Place into auxiliary arrays in the correct order, then copy back over
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint8_t byte = p_bytes[i];
-    const R_xlen_t loc = p_counts[byte]++;
-    p_o_aux[loc] = p_o[i];
-    p_x_aux[loc] = p_x[i];
-  }
-
-  // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(int));
-  memcpy(p_x, p_x_aux, size * sizeof(uint32_t));
 }
 
 // -----------------------------------------------------------------------------
@@ -1918,15 +1909,7 @@ static void dbl_radix_order(uint64_t* p_x,
 
 // -----------------------------------------------------------------------------
 
-static void dbl_radix_order_pass(uint64_t* p_x,
-                                 int* p_o,
-                                 uint64_t* p_x_aux,
-                                 int* p_o_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 struct group_infos* p_group_infos,
-                                 const R_xlen_t size,
-                                 const uint8_t pass);
+static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
 
 /*
  * Recursive function for radix ordering. Orders the current byte, then iterates
@@ -1945,21 +1928,13 @@ static void dbl_radix_order_recurse(uint64_t* p_x,
                                     struct group_infos* p_group_infos,
                                     const R_xlen_t size,
                                     const uint8_t pass) {
-  dbl_radix_order_pass(
-    p_x,
-    p_o,
-    p_x_aux,
-    p_o_aux,
-    p_bytes,
-    p_counts,
-    p_group_infos,
-    size,
-    pass
-  );
+  // Exit as fast as possible if we are below the insertion order boundary
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    dbl_insertion_order(p_x, p_o, p_group_infos, size);
+    return;
+  }
 
-  // Find the next pass with varying bytes. For small doubles like 1 or 2 it
-  // is fairly common for them to have `uint64_t` representations where passes
-  // 0-2 have data, but 3-7 are filled with zeros.
+  // Skip passes where our up front check told us that all bytes were the same
   uint8_t next_pass = pass + 1;
   R_xlen_t* p_counts_next_pass = p_counts + UINT8_MAX_SIZE;
 
@@ -1968,8 +1943,84 @@ static void dbl_radix_order_recurse(uint64_t* p_x,
     p_counts_next_pass += UINT8_MAX_SIZE;
   }
 
+  const uint8_t radix = PASS_TO_RADIX(pass, DBL_MAX_RADIX_PASS);
+  const uint8_t shift = radix * 8;
+
+  uint8_t byte = 0;
+
+  // Histogram
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint64_t x_elt = p_x[i];
+
+    byte = dbl_extract_uint64_byte(x_elt, shift);
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Fast check to see if all bytes were the same.
+  // If so, skip this `pass` since we learned nothing.
+  // No need to accumulate counts and iterate over chunks,
+  // we know all others are zero.
+  if (p_counts[byte] == size) {
+    // Reset count for other group chunks
+    p_counts[byte] = 0;
+
+    // If we are already at the last pass, we are done
+    if (next_pass == DBL_MAX_RADIX_PASS) {
+      groups_size_push(p_group_infos, size);
+      return;
+    }
+
+    // Otherwise, recurse on next byte using the same `size` since
+    // the group size hasn't changed
+    dbl_radix_order_recurse(
+      p_x,
+      p_o,
+      p_x_aux,
+      p_o_aux,
+      p_bytes,
+      p_counts_next_pass,
+      p_skips,
+      p_group_infos,
+      size,
+      next_pass
+    );
+
+    return;
+  }
+
+  R_xlen_t cumulative = 0;
+
+  // Accumulate counts, skip zeros
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[i];
+
+    if (count == 0) {
+      continue;
+    }
+
+    // Replace with `cumulative` first, then bump `cumulative`.
+    // `p_counts` now represents starting locations for each radix group.
+    p_counts[i] = cumulative;
+    cumulative += count;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_o_aux[loc] = p_o[i];
+    p_x_aux[loc] = p_x[i];
+  }
+
+  // Copy back over
+  memcpy(p_o, p_o_aux, size * sizeof(int));
+  memcpy(p_x, p_x_aux, size * sizeof(uint64_t));
+
   R_xlen_t last_cumulative_count = 0;
 
+  // Recurse on subgroups as required
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
@@ -2017,76 +2068,6 @@ static void dbl_radix_order_recurse(uint64_t* p_x,
     p_x += group_size;
     p_o += group_size;
   }
-}
-
-// -----------------------------------------------------------------------------
-
-static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
-
-/*
- * Orders based on a single byte corresponding to the current `pass`.
- */
-static void dbl_radix_order_pass(uint64_t* p_x,
-                                 int* p_o,
-                                 uint64_t* p_x_aux,
-                                 int* p_o_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 struct group_infos* p_group_infos,
-                                 const R_xlen_t size,
-                                 const uint8_t pass) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    dbl_insertion_order(p_x, p_o, p_group_infos, size);
-    return;
-  }
-
-  const uint8_t radix = PASS_TO_RADIX(pass, DBL_MAX_RADIX_PASS);
-  const uint8_t shift = radix * 8;
-
-  uint8_t byte = 0;
-
-  // Histogram
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint64_t x_elt = p_x[i];
-
-    byte = dbl_extract_uint64_byte(x_elt, shift);
-
-    p_bytes[i] = byte;
-    ++p_counts[byte];
-  }
-
-  // Fast check to see if all bytes were the same. If so, skip `pass`.
-  if (p_counts[byte] == size) {
-    return;
-  }
-
-  R_xlen_t cumulative = 0;
-
-  // Accumulate counts, skip zeros
-  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-    R_xlen_t count = p_counts[i];
-
-    if (count == 0) {
-      continue;
-    }
-
-    // Replace with `cumulative` first, then bump `cumulative`.
-    // `p_counts` now represents starting locations for each radix group.
-    p_counts[i] = cumulative;
-    cumulative += count;
-  }
-
-  // Place into auxiliary arrays in the correct order, then copy back over
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint8_t byte = p_bytes[i];
-    const R_xlen_t loc = p_counts[byte]++;
-    p_o_aux[loc] = p_o[i];
-    p_x_aux[loc] = p_x[i];
-  }
-
-  // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(int));
-  memcpy(p_x, p_x_aux, size * sizeof(uint64_t));
 }
 
 // -----------------------------------------------------------------------------
@@ -2659,15 +2640,27 @@ static void chr_radix_order(SEXP* p_x,
 
 // -----------------------------------------------------------------------------
 
-static void chr_radix_order_pass(SEXP* p_x,
-                                 SEXP* p_x_aux,
-                                 int* p_sizes,
-                                 int* p_sizes_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 const R_xlen_t size,
-                                 const R_len_t pass);
-
+/*
+ * Recursive function for ordering the `p_x` unique strings
+ *
+ * For ASCII strings, 1 character aligns with 1 byte, so we can order them
+ * 1 character at a time from left to right (MSB to LSB).
+ *
+ * For UTF-8 strings, the implementation of UTF-8 is done so that UTF-8
+ * characters are made up of between 1-4 bytes. Luckily, treating them as
+ * a sequence of single bytes like we do for ASCII orders identically to
+ * treating them as their full 1-4 byte sequence.
+ *
+ * Because these are variable length, some strings are shorter than others.
+ * Shorter strings should order lower than longer strings if they are otherwise
+ * equivalent, so we reserve the 0-th bucket of `p_counts` for counting
+ * implicit empty strings. Normally this would be an issue because this is
+ * the bucket for ASCII value 0, but this is the null value, which is not
+ * allowed in R strings!
+ *
+ * Additionally, we don't have to worry about having an `NA` bucket because
+ * there will be no missing values in the unique set.
+ */
 static void chr_radix_order_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
                                     int* p_sizes,
@@ -2676,22 +2669,99 @@ static void chr_radix_order_recurse(SEXP* p_x,
                                     const R_xlen_t size,
                                     const R_len_t pass,
                                     const R_len_t max_size) {
+  // Exit as fast as possible if we are below the insertion order boundary
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    chr_insertion_order(p_x, p_sizes, size, pass);
+    return;
+  }
+
+  // We don't carry along `p_counts` from an up front allocation since
+  // the strings have variable length
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
 
-  chr_radix_order_pass(
-    p_x,
-    p_x_aux,
-    p_sizes,
-    p_sizes_aux,
-    p_bytes,
-    p_counts,
-    size,
-    pass
-  );
-
   const int next_pass = pass + 1;
+
+  // NA values won't be in `p_x` so we can reserve the 0th bucket for ""
+  const uint8_t missing_bucket = 0;
+  uint8_t byte = 0;
+
+  // Histogram
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const R_len_t x_elt_size = p_sizes[i];
+
+    // Check if there are characters left in the string and extract the next
+    // one if so, otherwise assume implicit "".
+    if (pass < x_elt_size) {
+      const SEXP x_elt = p_x[i];
+      const char* c_x_elt = CHAR(x_elt);
+      byte = (uint8_t) c_x_elt[pass];
+    } else {
+      byte = missing_bucket;
+    }
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Fast check to see if all bytes were the same.
+  // If so, skip this `pass` since we learned nothing.
+  // No need to accumulate counts and iterate over chunks,
+  // we know all others are zero.
+  if (p_counts[byte] == size) {
+    // Reset count for other group chunks
+    p_counts[byte] = 0;
+
+    // If we are already at the last pass, we are done
+    if (next_pass == max_size) {
+      return;
+    }
+
+    // Otherwise, recurse on next byte using the same `size` since
+    // the group size hasn't changed
+    chr_radix_order_recurse(
+      p_x,
+      p_x_aux,
+      p_sizes,
+      p_sizes_aux,
+      p_bytes,
+      size,
+      next_pass,
+      max_size
+    );
+
+    return;
+  }
+
+  R_xlen_t cumulative = 0;
+
+  // Accumulate counts, skip zeros
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[i];
+
+    if (count == 0) {
+      continue;
+    }
+
+    // Insert current cumulative value, then increment
+    p_counts[i] = cumulative;
+    cumulative += count;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_x_aux[loc] = p_x[i];
+    p_sizes_aux[loc] = p_sizes[i];
+  }
+
+  // Copy back over
+  memcpy(p_x, p_x_aux, size * sizeof(SEXP));
+  memcpy(p_sizes, p_sizes_aux, size * sizeof(int));
+
   R_xlen_t last_cumulative_count = 0;
 
+  // Recurse on subgroups as required
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
@@ -2730,98 +2800,6 @@ static void chr_radix_order_recurse(SEXP* p_x,
     p_x += group_size;
     p_sizes += group_size;
   }
-}
-
-// -----------------------------------------------------------------------------
-
-/*
- * Order the `pass + 1`-th character of the `p_x` strings.
- *
- * For ASCII strings, 1 character aligns with 1 byte, so we can order them
- * 1 character at a time from left to right (MSB to LSB).
- *
- * For UTF-8 strings, the implementation of UTF-8 is done so that UTF-8
- * characters are made up of between 1-4 bytes. Luckily, treating them as
- * a sequence of single bytes like we do for ASCII orders identically to
- * treating them as their full 1-4 byte sequence.
- *
- * Because these are variable length, some strings are shorter than others.
- * Shorter strings should order lower than longer strings if they are otherwise
- * equivalent, so we reserve the 0-th bucket of `p_counts` for counting
- * implicit empty strings. Normally this would be an issue because this is
- * the bucket for ASCII value 0, but this is the null value, which is not
- * allowed in R strings!
- *
- * Additionally, we don't have to worry about having an `NA` bucket because
- * there will be no missing values in the unique set.
- */
-static void chr_radix_order_pass(SEXP* p_x,
-                                 SEXP* p_x_aux,
-                                 int* p_sizes,
-                                 int* p_sizes_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 const R_xlen_t size,
-                                 const R_len_t pass) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    chr_insertion_order(p_x, p_sizes, size, pass);
-    return;
-  }
-
-  uint8_t byte = 0;
-
-  // NA values won't be in `p_x` so we can reserve the 0th bucket for ""
-  const uint8_t missing_bucket = 0;
-
-  // Histogram
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const R_len_t x_elt_size = p_sizes[i];
-
-    // Check if there are characters left in the string and extract the next
-    // one if so, otherwise assume implicit "".
-    if (pass < x_elt_size) {
-      const SEXP x_elt = p_x[i];
-      const char* c_x_elt = CHAR(x_elt);
-      byte = (uint8_t) c_x_elt[pass];
-    } else {
-      byte = missing_bucket;
-    }
-
-    p_bytes[i] = byte;
-    ++p_counts[byte];
-  }
-
-  // Fast check to see if all bytes were the same. If so, skip `pass`.
-  if (p_counts[byte] == size) {
-    return;
-  }
-
-  R_xlen_t cumulative = 0;
-
-  // Accumulate counts, skip zeros
-  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-    R_xlen_t count = p_counts[i];
-
-    if (count == 0) {
-      continue;
-    }
-
-    // Insert current cumulative value, then increment
-    p_counts[i] = cumulative;
-    cumulative += count;
-  }
-
-  // Place into auxiliary arrays in the correct order, then copy back over
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint8_t byte = p_bytes[i];
-    const R_xlen_t loc = p_counts[byte]++;
-    p_x_aux[loc] = p_x[i];
-    p_sizes_aux[loc] = p_sizes[i];
-  }
-
-  // Copy back over
-  memcpy(p_x, p_x_aux, size * sizeof(SEXP));
-  memcpy(p_sizes, p_sizes_aux, size * sizeof(int));
 }
 
 // -----------------------------------------------------------------------------
