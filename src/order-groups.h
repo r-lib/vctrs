@@ -57,6 +57,9 @@ struct group_info {
  * the current one.
  *
  * @member p_p_group_info A pointer to two `group_info` pointers.
+ * @member max_data_size The maximum data size that can be allocated when
+ *   reallocating an individual `p_group_info`. This is set to the size of
+ *   `x`.
  * @member current The current `group_info` pointer we are using. This is
  *   either 0 or 1.
  * @member requested Was group information requested by the user? If so, we
