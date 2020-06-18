@@ -32,7 +32,7 @@ SEXP vec_proxy(SEXP x) {
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy_equal(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy_recursive(x, vctrs_proxy_equal));
+  SEXP proxy = PROTECT(vec_proxy_recursive(x, vctrs_proxy_kind_equal));
 
   if (is_data_frame(proxy)) {
     // Flatten df-cols so we don't have to recurse to work with data
@@ -75,9 +75,9 @@ SEXP vec_proxy_equal_dispatch(SEXP x) {
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind) {
   switch (kind) {
-  case vctrs_proxy_default: x = vec_proxy(x); break;
-  case vctrs_proxy_equal: x = vec_proxy_equal_dispatch(x); break;
-  case vctrs_proxy_compare: Rf_error("Internal error: Unimplemented proxy kind");
+  case vctrs_proxy_kind_default: x = vec_proxy(x); break;
+  case vctrs_proxy_kind_equal: x = vec_proxy_equal_dispatch(x); break;
+  case vctrs_proxy_kind_compare: Rf_error("Internal error: Unimplemented proxy kind");
   }
   PROTECT(x);
 
@@ -101,11 +101,11 @@ SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind) {
 SEXP vctrs_proxy_recursive(SEXP x, SEXP kind_) {
   enum vctrs_proxy_kind kind;
   if (kind_ == Rf_install("default")) {
-    kind = vctrs_proxy_default;
+    kind = vctrs_proxy_kind_default;
   } else if (kind_ == Rf_install("equal")) {
-    kind = vctrs_proxy_equal;
+    kind = vctrs_proxy_kind_equal;
   } else if (kind_ == Rf_install("compare")) {
-    kind = vctrs_proxy_compare;
+    kind = vctrs_proxy_kind_compare;
   } else {
     Rf_error("Internal error: Unexpected proxy kind `%s`.", CHAR(PRINTNAME(kind_)));
   }
