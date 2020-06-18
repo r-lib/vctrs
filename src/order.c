@@ -317,7 +317,7 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups) {
 
   // Used for character ordering - lazily generated to be fast
   // when not ordering character vectors
-  struct truelength_info truelength_info = new_truelength_info();
+  struct truelength_info truelength_info = new_truelength_info(size);
   struct truelength_info* p_truelength_info = &truelength_info;
   PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
 
