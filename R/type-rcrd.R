@@ -180,7 +180,7 @@ rep.vctrs_rcrd <- function(x, ...) {
 # FIXME
 
 #' @export
-vec_proxy_compare.vctrs_rcrd <- function(x, ..., relax = FALSE) {
+vec_proxy_compare.vctrs_rcrd <- function(x, ...) {
   new_data_frame(vec_data(x), n = length(x))
 }
 

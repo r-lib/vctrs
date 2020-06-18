@@ -9,11 +9,11 @@
 #' vectors or records are orderable. If your class is not, you will need
 #' to provide a `vec_proxy_compare()` method that throws an error.
 #'
+#' Lists by themselves are not orderable. However, if a list appears as a
+#' column of a data frame, it is considered sorted and is replaced with an
+#' integer vector of the sequence along the list.
+#'
 #' @param x A vector x.
-#' @param relax If `TRUE`, and `x` is otherwise non-comparable, will return
-#'   `vec_seq_along(x)`. This allows a data frame to be orderable, even if
-#'   one of its components is not. This is experimental and may change in the
-#'   future.
 #' @inheritParams ellipsis::dots_empty
 #' @return A 1d atomic vector or a data frame.
 #'
@@ -22,10 +22,15 @@
 #'
 #' @keywords internal
 #' @export
-vec_proxy_compare <- function(x, ..., relax = FALSE) {
+vec_proxy_compare <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+  return(.Call(vctrs_proxy_compare, x))
+  UseMethod("vec_proxy_compare")
+}
+
+vec_proxy_compare_dispatch <- function(x, ...) {
   UseMethod("vec_proxy_compare")
 }
 

@@ -121,7 +121,7 @@ test_that("vec_proxy_compare() refuses to deal with lists", {
 
 test_that("vec_compare() calls vec_proxy_compare()", {
   local_methods(
-    vec_proxy_compare.vctrs_foobar = function(x) rev(x),
+    vec_proxy_compare.vctrs_foobar = function(x, ...) rev(x),
     vec_ptype2.integer.vctrs_foobar = function(...) foobar(int()),
     vec_ptype2.vctrs_foobar = function(...) foobar(int()),
     vec_cast.vctrs_foobar = function(...) NULL,
@@ -266,7 +266,7 @@ test_that("can sort empty data frames (#356)", {
 })
 
 test_that("can order tibbles that contain non-comparable objects", {
-  expect_equal(vec_order(data_frame(list(10, 2, 1))), 1:3)
+  expect_equal(vec_order(data_frame(x = list(10, 2, 1))), 1:3)
 })
 
 test_that("can order matrices and arrays (#306)", {

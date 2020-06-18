@@ -69,9 +69,11 @@ vec_ptype_abbr.data.frame <- function(x, ...) {
 }
 
 #' @export
-vec_proxy_compare.data.frame <- function(x, ..., relax = FALSE) {
-  out <- lapply(as.list(x), vec_proxy_compare, relax = TRUE)
-  new_data_frame(out, nrow(x))
+vec_proxy_compare.data.frame <- function(x, ...) {
+  # C level `vec_proxy_compare()` recurses across columns and flattens
+  # df-cols. Required to have a no-op here to prevent `vec_proxy_equal()`
+  # from being called in the `vec_proxy_compare.default()` method.
+  x
 }
 
 df_is_coercible <- function(x, y, opts) {
