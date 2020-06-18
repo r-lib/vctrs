@@ -6,27 +6,159 @@
 
 // -----------------------------------------------------------------------------
 
+/*
+ * High level description of `vec_order()`
+ *
+ * Heavily inspired by `radixsort.c` in base R and `forder()` from data.table
+ * https://github.com/wch/r-source/blob/trunk/src/main/radixsort.c
+ * https://github.com/Rdatatable/data.table/blob/master/src/forder.c
+ *
+ * Additional resources about radix sorting:
+ * http://codercorner.com/RadixSortRevisited.htm
+ * http://stereopsis.com/radix.html
+ *
+ * The very end of this has a MSB radix sort implementation
+ * https://eternallyconfuzzled.com/sorting-c-introduction-to-the-automatic-ordering-of-data
+ *
+ * -----------------------------------------------------------------------------
+ * Integers
+ *
+ * This uses a combination of 3 ordering algorithms.
+ *
+ * - `int_insertion_order()` - An insertion sort is used when `x` is very
+ *   small. This has less overhead than the counting or radix sort and is
+ *   faster for small input.
+ *
+ * - `int_counting_order()` - A counting sort is used when `x` has a range
+ *   of less than `INT_COUNTING_ORDER_RANGE_BOUNDARY`. For integers with a
+ *   small range like this, the bucketing in the counting sort can be very
+ *   fast when compared with the recursive multipass approach of the radix sort.
+ *
+ * - `int_radix_order()` - A radix sort is used for everything else.
+ *   This is a MSB radix sort. It orders the vector 1 byte (8 bits) at a time,
+ *   so for a 4 byte int this makes a maximum of 4 passes over each integer.
+ *   It orders from most significant byte to least significant. After each
+ *   pass, there are 256 buckets (1 for each possible byte value). Each bucket
+ *   is then ordered separately on the next byte. This happens recursively for
+ *   the 4 passes. When the buckets get small enough in size, the insertion
+ *   sort is used to finish them off.
+ *
+ * For radix sorting, we have to use unsigned types for bit shifting to
+ * work reliably. We map `int` to `uint32_t` in a way that preserves order,
+ * and also handle `na_last` and `decreasing` in this mapping. This all happens
+ * in `int_adjust()`. It is assumed and checked at load time that
+ * `sizeof(int) == 4`.
+ *
+ * -----------------------------------------------------------------------------
+ * Doubles
+ *
+ * This uses a combination of 2 ordering algorithms:
+ *
+ * - `dbl_insertion_order()` - An insertion sort is used when `x` is very small.
+ *
+ * - `dbl_radix_order()` - This is similar to `int_radix_order()`, see above,
+ *   but makes a max of 8 passes over the data.
+ *
+ * For doubles, we assume `sizeof(double) == 8`, which should pretty much be
+ * ensured by IEEE 754 specifications.
+ *
+ * For the mapping here, it is possible to map `double -> uint64_t` in an
+ * order preserving way. This is very cool, and involves always flipping the
+ * sign bit of the value, and flipping all other bits if the value was negative.
+ * This is described more in: http://stereopsis.com/radix.html.
+ * This is implemented in `dbl_adjust()` which also handles `na_last` and
+ * `decreasing`. For `na_last`, we treat `NA_real_` and `NaN` equivalently.
+ * Base R does as well, but data.table does not.
+ *
+ * -----------------------------------------------------------------------------
+ * Characters
+ *
+ * Character vector ordering is a bit trickier than integers or doubles. It
+ * uses two internal details in R:
+ *
+ * - CHARSXP values in R are in a global string pool, and
+ *   repeated strings like `c("hi", "hi")` both point to the same CHARSXP.
+ *
+ * - There is a property that all vectors have called the TRUELENGTH. This is
+ *   used to overallocate in lists, but is otherwise unused
+ *   in CHARSXPs. The truelength is stored as a `R_xlen_t`.
+ *
+ * Character ordering is achieved by first iterating through `x` and extracting
+ * the unique values by using the TRUELENGTH. If the truelength is positive
+ * or zero, we save it as an unseen string and set the truelength to `-1`.
+ * Otherwise if it is negative we assume we have seen it already. At the
+ * end of this we have a vector of unique strings. We order this with
+ * `chr_radix_order()`. Then we iterate over the now sorted unique strings
+ * and set their truelength to `-i - 1` (where `i` is the index while
+ * iterating). This marks the unique strings with their ordering (as a negative
+ * value to be different from R) and also updates the original character vector.
+ * We then iterate through the original vector again, plucking off the now
+ * updated truelength integer values. This gives us an integer proxy for the
+ * ordering, which we can run through `int_order()` to get the final ordering.
+ *
+ * The ordering of unique characters uses a combination of 2 ordering
+ * algorithms:
+ *
+ * - `chr_insertion_order()` - Used when `x` is small.
+ *
+ * - `chr_radix_order()` - Same principle as integer/double ordering, but
+ *   we iterate 1 character at a time. We assume a C locale here, and any
+ *   non-ASCII and non-UTF8 strings are translated to UTF8.
+ *
+ * -----------------------------------------------------------------------------
+ * Logicals
+ *
+ * Just use the same infrastructure as integers.
+ *
+ * -----------------------------------------------------------------------------
+ * Complex
+ *
+ * We treat complex as a data frame of two double columns. We order the
+ * real part first using `dbl_order()`, then order the imaginary part also
+ * using `dbl_order()`.
+ *
+ * -----------------------------------------------------------------------------
+ * Data frames
+ *
+ * Multi-column data frame ordering uses the same principle as MSB ordering.
+ * It starts with the first column (the most "significant" one) and orders it.
+ * While ordering the column, group sizes are tracked ("groups" are duplicate
+ * values in the column). The next column is broken into chunks corresponding
+ * to these group sizes from the first column, and the chunks are ordered
+ * individually. While ordering the chunks of the 2nd column, group sizes are
+ * again tracked to use in subsequent columns.
+ */
+
+// -----------------------------------------------------------------------------
+
 #define UINT8_MAX_SIZE (UINT8_MAX + 1)
 
+/*
+ * Maximum number of passes required to completely sort ints and doubles
+ */
 #define INT_MAX_RADIX_PASS 4
 #define DBL_MAX_RADIX_PASS 8
 
-// This is the maximum range size that determines whether a counting sort
-// is used on the input or not. When `x` has a range less than this boundary,
-// a counting sort is often faster than a radix sort.
+/*
+ * Maximum range allowed when deciding whether or not to use a counting sort
+ * vs a radix sort. Counting sort is somewhat faster when less than this
+ * boundary value.
+ */
 #define INT_COUNTING_ORDER_RANGE_BOUNDARY 100000
 
-// A bit ad hoc - but seems to work well. Going up to 256 definitely has
-// negative performance implications for completely random input.
-// Base R seems to use 200, but I think this works a little better (from
-// limited testing).
-// Somewhat based on this post, which also uses 128.
-// https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
+/*
+ * Size of `x` that determines when an insertion sort should be used. Seems
+ * to work better than 256 (from limited testing), base R uses 200.
+ * Somewhat based on this post:
+ * https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
+ */
 #define INSERTION_ORDER_BOUNDARY 128
 
-// On big-endian, MSB is on the far right.
-// On little-endian, MSB is on the far left.
-// This matters for double / integer radix ordering.
+/*
+ * Adjustments for endianness and integer / double radix ordering.
+ * - On big-endian, MSB is on the far right.
+ * - On little-endian, MSB is on the far left.
+ */
 #ifdef WORDS_BIGENDIAN
 # define PASS_TO_RADIX(X, MAX) (X)
 # define SHIFT_ADJUSTMENT 8
@@ -35,33 +167,59 @@
 # define SHIFT_ADJUSTMENT -8
 #endif
 
+/*
+ * Utilities for deciding whether or not to re-encode as UTF-8
+ */
 #define CHAR_IS_UTF8(x)  (LEVELS(x) & 8)
 #define CHAR_IS_ASCII(x) (LEVELS(x) & 64)
-
-// Re-encode if not ASCII or UTF-8
 #define CHAR_NEEDS_REENCODE(x) (!(CHAR_IS_ASCII(x) || (x) == NA_STRING || CHAR_IS_UTF8(x)))
 #define CHAR_REENCODE(x) Rf_mkCharCE(Rf_translateCharUTF8(x), CE_UTF8)
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups);
+static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last);
 
 // [[ register() ]]
-SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP groups) {
+SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last) {
   if (!r_is_bool(na_last)) {
     Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
   }
 
   bool c_na_last = LOGICAL(na_last)[0];
-  bool c_groups = LOGICAL(groups)[0];
 
-  return vec_order(x, decreasing, c_na_last, c_groups);
+  return vec_order(x, decreasing, c_na_last);
+}
+
+
+static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups);
+
+static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last) {
+  return vec_order_impl(x, decreasing, na_last, false);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_groups(SEXP o, struct group_info* p_group_info);
+static SEXP vec_order_groups(SEXP x, SEXP decreasing, bool na_last);
 
+// [[ register() ]]
+SEXP vctrs_order_groups(SEXP x, SEXP decreasing, SEXP na_last) {
+  if (!r_is_bool(na_last)) {
+    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
+  }
+
+  bool c_na_last = LOGICAL(na_last)[0];
+
+  return vec_order_groups(x, decreasing, c_na_last);
+}
+
+
+static SEXP vec_order_groups(SEXP x, SEXP decreasing, bool na_last) {
+  return vec_order_impl(x, decreasing, na_last, true);
+}
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_order_groups_info(SEXP o, struct group_info* p_group_info);
 static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
 static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing);
@@ -81,11 +239,11 @@ static void vec_order_switch(SEXP x,
                              const enum vctrs_type type);
 
 /*
- * Compute the order of a vector.
- * Can optionally compute the group starts, number of groups, and
- * max group size as well.
+ * Returns an integer vector of the ordering unless `groups` is true. In
+ * that case it returns a list of length 4 containing the ordering, the
+ * starts of each group, the number of groups, and the maximum group size.
  */
-static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
+static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
@@ -97,9 +255,10 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   R_xlen_t size = vec_size(x);
   const enum vctrs_type type = vec_proxy_typeof(x);
 
+  // Compute the maximum size required for auxiliary working memory
   const size_t multiplier = vec_order_size_multiplier(x, type);
 
-  // Auxiliary vectors to hold intermediate results the same size as `x`.
+  // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
   struct lazy_vec lazy_x_slice = new_lazy_vec(size, multiplier);
   struct lazy_vec* p_lazy_x_slice = &lazy_x_slice;
@@ -117,6 +276,8 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   struct lazy_vec* p_lazy_bytes = &lazy_bytes;
   PROTECT_LAZY_VEC(p_lazy_bytes, p_n_prot);
 
+  // Compute the maximum size of the `counts` vector needed during radix
+  // ordering. 4 * 256 for integers, 8 * 256 for doubles.
   size_t counts_multiplier = vec_order_counts_multiplier(x, type);
   R_xlen_t counts_size = UINT8_MAX_SIZE * counts_multiplier;
 
@@ -124,12 +285,15 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   struct lazy_vec* p_lazy_counts = &lazy_counts;
   PROTECT_LAZY_VEC(p_lazy_counts, p_n_prot);
 
-  // Determine if group info be ignored.
-  // Can only ignore if dealing with non-data-frame input and groups have not
-  // been requested, but this is more efficient for atomic vectors.
+  // Determine if group tracking can be turned off.
+  // We turn if off if ordering non-data frame input as long as groups haven't
+  // been requested by the user.
+  // It is more efficient to ignore it when possible.
   bool requested = groups;
   bool ignore = requested ? false : (is_data_frame(x) ? false : true);
 
+  // Construct the two sets of group info needed for tracking groups.
+  // We switch between them after each data frame column is processed.
   struct group_info group_info0 = new_group_info();
   struct group_info* p_group_info0 = &group_info0;
   PROTECT_GROUP_INFO(p_group_info0, p_n_prot);
@@ -142,9 +306,16 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   p_p_group_info[0] = p_group_info0;
   p_p_group_info[1] = p_group_info1;
 
-  struct group_infos group_infos = new_group_infos(p_p_group_info, size, requested, ignore);
+  struct group_infos group_infos = new_group_infos(
+    p_p_group_info,
+    size,
+    requested,
+    ignore
+  );
   struct group_infos* p_group_infos = &group_infos;
 
+  // Used for character ordering - lazily generated to be fast
+  // when not ordering character vectors
   struct truelength_info truelength_info = new_truelength_info();
   struct truelength_info* p_truelength_info = &truelength_info;
   PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
@@ -152,7 +323,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
   int* p_o = INTEGER(o);
 
-  // Initialize `out` with sequential 1-based ordering
+  // Initialize `o` with sequential 1-based ordering
   for (R_xlen_t i = 0; i < size; ++i) {
     p_o[i] = i + 1;
   }
@@ -176,7 +347,7 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   // Return all group info rather than just ordering
   if (groups) {
     struct group_info* p_group_info = groups_current(p_group_infos);
-    SEXP out = vec_order_groups(o, p_group_info);
+    SEXP out = vec_order_groups_info(o, p_group_info);
     UNPROTECT(n_prot);
     return out;
   }
@@ -187,7 +358,11 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last, bool groups) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_groups(SEXP o, struct group_info* p_group_info) {
+/*
+ * Computes the full set of group information, not just the ordering.
+ * Computes 1-based group `starts` from the group sizes.
+ */
+static SEXP vec_order_groups_info(SEXP o, struct group_info* p_group_info) {
   R_xlen_t n_groups = p_group_info->n_groups;
 
   const int* p_sizes = p_group_info->p_data;
@@ -478,7 +653,7 @@ static void vec_order_immutable_switch(SEXP x,
     Rf_errorcall(R_NilValue, "Internal error: Data frames should have been handled by now");
   }
   default: {
-    Rf_errorcall(R_NilValue, "This type is not supported by `vec_radix_order()`.");
+    Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`.");
   }
   }
 }
@@ -3710,6 +3885,5 @@ static inline void ord_reverse(int* p_o, R_xlen_t size) {
 
 #undef CHAR_IS_UTF8
 #undef CHAR_IS_ASCII
-
 #undef CHAR_NEEDS_REENCODE
 #undef CHAR_REENCODE

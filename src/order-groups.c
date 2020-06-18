@@ -8,12 +8,11 @@ struct group_info new_group_info() {
 
   info.data_size = 0;
 
-  info.data = PROTECT(Rf_allocVector(INTSXP, 0));
+  info.data = vctrs_shared_empty_int;
 
   info.n_groups = 0;
   info.max_group_size = 0;
 
-  UNPROTECT(1);
   return info;
 }
 
