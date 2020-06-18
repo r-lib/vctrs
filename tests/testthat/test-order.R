@@ -33,31 +33,31 @@ test_that("`NA` order defaults to last", {
 
 test_that("`NA` order can be first", {
   x <- c(1L, NA_integer_, 3L)
-  expect_identical(vec_order2(x, na_last = FALSE), c(2L, 1L, 3L))
+  expect_identical(vec_order2(x, na_value = "smallest"), c(2L, 1L, 3L))
 })
 
-test_that("`decreasing` can be set to `TRUE`", {
+test_that("`direction` can be set to `desc`", {
   x <- c(1L, .Machine$integer.max, 3L)
-  expect_identical(vec_order2(x, decreasing = TRUE), c(2L, 3L, 1L))
+  expect_identical(vec_order2(x, direction = "desc"), c(2L, 3L, 1L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c(3L, NA_integer_, 1L, 2L)
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -69,30 +69,30 @@ test_that("all `NA` values works", {
 
 test_that("can order when in expected order", {
   x <- c(1L, 1L, 2L, NA, NA)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 1:5)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "largest"), 1:5)
 
   x <- c(3L, 3L, 2L, NA, NA)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 1:5)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "largest"), 1:5)
 
   x <- c(NA, NA, 1L, 1L, 2L)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 1:5)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "smallest"), 1:5)
 
   x <- c(NA, NA, 3L, 3L, 2L)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 1:5)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "smallest"), 1:5)
 })
 
 test_that("can order when in strictly opposite of expected order (no ties)", {
   x <- c(NA, 2L, 1L)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 3:1)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "largest"), 3:1)
 
   x <- c(NA, 1L, 2L)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 3:1)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "largest"), 3:1)
 
   x <- c(2L, 1L, NA)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 3:1)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "smallest"), 3:1)
 
   x <- c(1L, 2L, NA)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 3:1)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "smallest"), 3:1)
 })
 
 # ------------------------------------------------------------------------------
@@ -116,23 +116,23 @@ test_that("ordering on ties is done stably", {
   expect_identical(vec_order2(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c(3L, NA_integer_, 1L, 2L, 1:INSERTION_ORDER_BOUNDARY)
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -158,23 +158,23 @@ test_that("ordering on ties is done stably", {
   expect_identical(vec_order2(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c(3L, NA_integer_, 1L, 2L, 1:INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -182,19 +182,19 @@ test_that("all combinations of `decreasing` and `na_last` work", {
 test_that("can order all 1 value", {
   x <- rep(1L, INSERTION_ORDER_BOUNDARY + 1L)
   expect_identical(vec_order2(x), base_order(x))
-  expect_identical(vec_order2(x, decreasing = TRUE), base_order(x, decreasing = TRUE))
+  expect_identical(vec_order2(x, direction = "desc"), base_order(x, decreasing = TRUE))
 })
 
 test_that("all `NA` values works - ensures that we can compute the 'range' of all NAs", {
   x <- rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L)
   expect_identical(vec_order2(x), base_order(x))
-  expect_identical(vec_order2(x, decreasing = TRUE), base_order(x, decreasing = TRUE))
+  expect_identical(vec_order2(x, direction = "desc"), base_order(x, decreasing = TRUE))
 })
 
 test_that("can order with many NAs first", {
   x <- c(rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L), 2L)
   expect_identical(vec_order2(x), base_order(x))
-  expect_identical(vec_order2(x, na_last = FALSE), base_order(x, na.last = FALSE))
+  expect_identical(vec_order2(x, na_value = "smallest"), base_order(x, na.last = FALSE))
 })
 
 # ------------------------------------------------------------------------------
@@ -212,23 +212,23 @@ test_that("can order logicals", {
   expect_identical(vec_order2(x), order(x))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c(TRUE, NA, FALSE)
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -268,31 +268,31 @@ test_that("`NA` order defaults to last", {
 
 test_that("`NA` order can be first", {
   x <- c(1, NA_real_, 3)
-  expect_identical(vec_order2(x, na_last = FALSE), c(2L, 1L, 3L))
+  expect_identical(vec_order2(x, na_value = "smallest"), c(2L, 1L, 3L))
 })
 
-test_that("`decreasing` can be set to `TRUE`", {
+test_that("`direction` can be set to `desc`", {
   x <- c(1, 5, 3)
-  expect_identical(vec_order2(x, decreasing = TRUE), c(2L, 3L, 1L))
+  expect_identical(vec_order2(x, direction = "desc"), c(2L, 3L, 1L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c(3, NA_real_, 1, 2)
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -304,48 +304,48 @@ test_that("all `NA` values works", {
 
 test_that("NA_real_ and NaN look identical for ordering", {
   x <- c(NA_real_, NaN)
-  expect_identical(vec_order2(x, na_last = TRUE), c(1L, 2L))
-  expect_identical(vec_order2(x, na_last = FALSE), c(1L, 2L))
+  expect_identical(vec_order2(x, na_value = "largest"), c(1L, 2L))
+  expect_identical(vec_order2(x, na_value = "smallest"), c(1L, 2L))
 })
 
 test_that("-Inf / Inf order correctly", {
   x <- c(0, -Inf, Inf)
-  expect_identical(vec_order2(x, decreasing = FALSE), c(2L, 1L, 3L))
-  expect_identical(vec_order2(x, decreasing = TRUE), c(3L, 1L, 2L))
+  expect_identical(vec_order2(x, direction = "asc"), c(2L, 1L, 3L))
+  expect_identical(vec_order2(x, direction = "desc"), c(3L, 1L, 2L))
 })
 
 test_that("-0 and 0 order identically / stably", {
   x <- c(0, -0)
-  expect_identical(vec_order2(x, decreasing = TRUE), c(1L, 2L))
-  expect_identical(vec_order2(x, decreasing = FALSE), c(1L, 2L))
+  expect_identical(vec_order2(x, direction = "desc"), c(1L, 2L))
+  expect_identical(vec_order2(x, direction = "asc"), c(1L, 2L))
 })
 
 test_that("can order when in expected order", {
   x <- c(1, 1, 2, NA, NaN)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 1:5)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "largest"), 1:5)
 
   x <- c(3, 3, 2, NA, NaN)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 1:5)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "largest"), 1:5)
 
   x <- c(NA, NaN, 1, 1, 2)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 1:5)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "smallest"), 1:5)
 
   x <- c(NA, NaN, 3, 3, 2)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 1:5)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "smallest"), 1:5)
 })
 
 test_that("can order when in strictly opposite of expected order (no ties)", {
   x <- c(NA, 2, 1)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 3:1)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "largest"), 3:1)
 
   x <- c(NA, 1, 2)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 3:1)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "largest"), 3:1)
 
   x <- c(2, 1, NA)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 3:1)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "smallest"), 3:1)
 
   x <- c(1, 2, NA)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 3:1)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "smallest"), 3:1)
 })
 
 # ------------------------------------------------------------------------------
@@ -369,23 +369,23 @@ test_that("ordering on ties is done stably", {
   expect_identical(vec_order2(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c(3, NA_real_, 1, 2, 1:INSERTION_ORDER_BOUNDARY)
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -397,20 +397,20 @@ test_that("all `NA` values works", {
 
 test_that("NA_real_ and NaN look identical for ordering", {
   x <- rep(c(NA_real_, NaN), INSERTION_ORDER_BOUNDARY + 1L)
-  expect_identical(vec_order2(x, na_last = TRUE), seq_along(x))
-  expect_identical(vec_order2(x, na_last = FALSE), seq_along(x))
+  expect_identical(vec_order2(x, na_value = "largest"), seq_along(x))
+  expect_identical(vec_order2(x, na_value = "smallest"), seq_along(x))
 })
 
 test_that("-Inf / Inf order correctly", {
   x <- c(rep(0, INSERTION_ORDER_BOUNDARY), -Inf, Inf)
-  expect_identical(vec_order2(x, decreasing = FALSE), order(x, decreasing = FALSE))
-  expect_identical(vec_order2(x, decreasing = TRUE), order(x, decreasing = TRUE))
+  expect_identical(vec_order2(x, direction = "asc"), order(x, decreasing = FALSE))
+  expect_identical(vec_order2(x, direction = "desc"), order(x, decreasing = TRUE))
 })
 
 test_that("-0 and 0 order identically / stably", {
   x <- c(rep(0, INSERTION_ORDER_BOUNDARY), -0)
-  expect_identical(vec_order2(x, decreasing = TRUE), order(x, decreasing = FALSE))
-  expect_identical(vec_order2(x, decreasing = FALSE), order(x, decreasing = TRUE))
+  expect_identical(vec_order2(x, direction = "desc"), order(x, decreasing = TRUE))
+  expect_identical(vec_order2(x, direction = "asc"), order(x, decreasing = FALSE))
 })
 
 # ------------------------------------------------------------------------------
@@ -464,27 +464,27 @@ test_that("can be used in a data frame", {
   expect_identical(vec_order2(df3), c(5L, 3L, 1L, 2L, 4L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- complex(real = c(3, NA, 1.5, 2, NA), imaginary = c(1, 1, 1, 1, 2))
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
 
   # Base R is actually wrong here! It doesn't consider the imaginary part
   # when ordering in decreasing order with `NA` real.
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     #x[order(x, na.last = TRUE, decreasing = TRUE)]
     x[c(1L, 4L, 3L, 5L, 2L)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     #x[order(x, na.last = FALSE, decreasing = TRUE)]
     x[c(5L, 2L, 1L, 4L, 3L)]
   )
@@ -520,31 +520,31 @@ test_that("`NA` order defaults to last", {
 
 test_that("`NA` order can be first", {
   x <- c("x", NA_character_, "y")
-  expect_identical(vec_order2(x, na_last = FALSE), c(2L, 1L, 3L))
+  expect_identical(vec_order2(x, na_value = "smallest"), c(2L, 1L, 3L))
 })
 
-test_that("`decreasing` can be set to `TRUE`", {
+test_that("`direction` can be set to `desc`", {
   x <- c("x", "abcde", "yz")
-  expect_identical(vec_order2(x, decreasing = TRUE), c(3L, 1L, 2L))
+  expect_identical(vec_order2(x, direction = "desc"), c(3L, 1L, 2L))
 })
 
-test_that("all combinations of `decreasing` and `na_last` work", {
+test_that("all combinations of `direction` and `na_value` work", {
   x <- c("aaa", NA_character_, "a", "aa")
 
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "largest", direction = "asc")],
     x[order(x, na.last = TRUE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = FALSE)],
+    x[vec_order2(x, na_value = "smallest", direction = "asc")],
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = TRUE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "largest", direction = "desc")],
     x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
   expect_identical(
-    x[vec_order2(x, na_last = FALSE, decreasing = TRUE)],
+    x[vec_order2(x, na_value = "smallest", direction = "desc")],
     x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
 })
@@ -595,35 +595,35 @@ test_that("can order with varying encodings by converting to UTF-8", {
   x <- c(encs$utf8, encs$unknown, encs$latin1, "AC")
 
   expect_identical(vec_order2(x), c(4L, 1L, 2L, 3L))
-  expect_identical(vec_order2(x, decreasing = TRUE), c(1L, 2L, 3L, 4L))
+  expect_identical(vec_order2(x, direction = "desc"), c(1L, 2L, 3L, 4L))
 })
 
 test_that("can order when in expected order", {
   x <- c("a", "a", "b", NA, NA)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 1:5)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "largest"), 1:5)
 
   x <- c("c", "c", "b", NA, NA)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 1:5)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "largest"), 1:5)
 
   x <- c(NA, NA, "a", "a", "b")
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 1:5)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "smallest"), 1:5)
 
   x <- c(NA, NA, "c", "c", "b")
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 1:5)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "smallest"), 1:5)
 })
 
 test_that("can order when in strictly opposite of expected order (no ties)", {
   x <- c(NA, "b", "a")
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = TRUE), 3:1)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "largest"), 3:1)
 
   x <- c(NA, "a", "b")
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = TRUE), 3:1)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "largest"), 3:1)
 
   x <- c("b", "a", NA)
-  expect_identical(vec_order2(x, decreasing = FALSE, na_last = FALSE), 3:1)
+  expect_identical(vec_order2(x, direction = "asc", na_value = "smallest"), 3:1)
 
   x <- c("a", "b", NA)
-  expect_identical(vec_order2(x, decreasing = TRUE, na_last = FALSE), 3:1)
+  expect_identical(vec_order2(x, direction = "desc", na_value = "smallest"), 3:1)
 })
 
 # ------------------------------------------------------------------------------
@@ -690,20 +690,20 @@ test_that("orders correctly when first column is already ordered but second isn'
   expect_identical(vec_order2(df), c(2L, 1L, 4L, 3L))
 })
 
-test_that("`decreasing` is recycled", {
+test_that("`direction` is recycled", {
   df <- data.frame(
     x = c(1L, 1L, 2L, 2L),
     y = c(3L, 2L, 4L, 1L)
   )
-  expect_identical(vec_order2(df, decreasing = TRUE), c(3L, 4L, 1L, 2L))
+  expect_identical(vec_order2(df, direction = "desc"), c(3L, 4L, 1L, 2L))
 })
 
-test_that("`decreasing` can be a vector", {
+test_that("`direction` can be a vector", {
   df <- data.frame(
     x = c(1L, 1L, 2L, 2L),
     y = c(3L, 2L, 4L, 1L)
   )
-  expect_identical(vec_order2(df, decreasing = c(TRUE, FALSE)), c(4L, 3L, 2L, 1L))
+  expect_identical(vec_order2(df, direction = c("desc", "asc")), c(4L, 3L, 2L, 1L))
 })
 
 # ------------------------------------------------------------------------------
@@ -754,17 +754,17 @@ test_that("can order 2+ double column chunks with radix sort", {
 # ------------------------------------------------------------------------------
 # vec_order2() - error checking
 
-test_that("`na_last` is checked", {
-  expect_error(vec_order2(1L, na_last = "x"), "`TRUE` or `FALSE`")
-  expect_error(vec_order2(1L, na_last = c(TRUE, TRUE)), "`TRUE` or `FALSE`")
-  expect_error(vec_order2(1L, na_last = NA), "`TRUE` or `FALSE`")
+test_that("`na_value` is checked", {
+  expect_error(vec_order2(1L, na_value = "x"), "\"largest\" or \"smallest\"")
+  expect_error(vec_order2(1L, na_value = c(TRUE, TRUE)), "\"largest\" or \"smallest\"")
+  expect_error(vec_order2(1L, na_value = NA), "\"largest\" or \"smallest\"")
 })
 
-test_that("`decreasing` is checked", {
-  expect_error(vec_order2(1L, decreasing = "x"), "must be logical")
-  expect_error(vec_order2(1L, decreasing = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")
-  expect_error(vec_order2(1L, decreasing = NA), "missing values")
-  expect_error(vec_order2(data.frame(x = 1), decreasing = c(TRUE, TRUE)), "length 1 or")
+test_that("`direction` is checked", {
+  expect_error(vec_order2(1L, direction = "x"), "must contain only")
+  expect_error(vec_order2(1L, direction = c("asc", "asc")), "single value")
+  expect_error(vec_order2(1L, direction = NA_character_), "cannot be missing")
+  expect_error(vec_order2(data.frame(x = 1), direction = c("asc", "asc")), "length 1 or")
 })
 
 test_that("`x` is checked", {
@@ -796,9 +796,9 @@ test_that("ordering works with rcrd types", {
   expect_identical(vec_order2(x), c(3L, 1L, 2L))
 })
 
-test_that("data frame comparison proxies don't allow vector `decreasing`", {
+test_that("data frame comparison proxies don't allow vector `direction`", {
   x <- tuple(c(1, 2, 1), c(3, 2, 1))
-  expect_error(vec_order2(x, decreasing = c(TRUE, FALSE)), "single `TRUE` or `FALSE`")
+  expect_error(vec_order2(x, direction = c("desc", "asc")), "single value")
 })
 
 test_that("ordering works with df-cols", {
@@ -809,11 +809,11 @@ test_that("ordering works with df-cols", {
 
   expect_identical(vec_order2(df), c(2L, 1L, 3L))
 
-  # Can only supply a max of 2 `decreasing` values which get internally
+  # Can only supply a max of 2 `direction` values which get internally
   # expanded to 3 to match the flattened df proxy
-  expect_identical(vec_order2(df, decreasing = c(FALSE, TRUE)), c(1L, 3L, 2L))
+  expect_identical(vec_order2(df, direction = c("asc", "desc")), c(1L, 3L, 2L))
 
-  expect_error(vec_order2(df, decreasing = c(TRUE, TRUE, FALSE)))
+  expect_error(vec_order2(df, direction = c("desc", "desc", "asc")))
 })
 
 test_that("ordering works with df-cols with 0 cols", {
@@ -824,10 +824,10 @@ test_that("ordering works with df-cols with 0 cols", {
 
   expect_identical(vec_order2(df), c(3L, 1L, 2L))
 
-  # Can supply 3 `decreasing` values even though the 0-col df-col gets dropped
-  expect_identical(vec_order2(df, decreasing = c(FALSE, TRUE, TRUE)), c(1L, 3L, 2L))
+  # Can supply 3 `direction` values even though the 0-col df-col gets dropped
+  expect_identical(vec_order2(df, direction = c("asc", "desc", "desc")), c(1L, 3L, 2L))
 
-  expect_error(vec_order2(df, decreasing = c(TRUE, FALSE)))
+  expect_error(vec_order2(df, direction = c("desc", "asc")))
 })
 
 test_that("ordering works with rcrd cols", {
@@ -838,11 +838,11 @@ test_that("ordering works with rcrd cols", {
 
   expect_identical(vec_order2(df), c(3L, 1L, 2L))
 
-  # Can only supply a max of 2 `decreasing` values which get internally
+  # Can only supply a max of 2 `direction` values which get internally
   # expanded to 3 to match the flattened df proxy
-  expect_identical(vec_order2(df, decreasing = c(FALSE, TRUE)), c(2L, 1L, 3L))
+  expect_identical(vec_order2(df, direction = c("asc", "desc")), c(2L, 1L, 3L))
 
-  expect_error(vec_order2(df, decreasing = c(TRUE, TRUE, FALSE)))
+  expect_error(vec_order2(df, direction = c("desc", "desc", "asc")))
 })
 
 # ------------------------------------------------------------------------------
