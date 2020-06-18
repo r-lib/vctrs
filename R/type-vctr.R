@@ -449,7 +449,11 @@ xtfrm.vctrs_vctr <- function(x) {
 
   # order(order(x)) ~= rank(x)
   if (is_integer(proxy) || is_double(proxy)) {
-    proxy
+    if (is.object(proxy)) {
+      unstructure(proxy)
+    } else {
+      proxy
+    }
   } else {
     order(order_proxy(proxy))
   }
@@ -673,14 +677,12 @@ format.hidden <- function(x, ...) rep("xxx", length(x))
 
 local_hidden <- function(frame = caller_env()) {
   local_bindings(.env = global_env(), .frame = frame,
-    vec_ptype2.hidden         = function(x, y, ...) UseMethod("vec_ptype2.hidden"),
     vec_ptype2.hidden.hidden  = function(x, y, ...) new_hidden(),
     vec_ptype2.hidden.double  = function(x, y, ...) new_hidden(),
     vec_ptype2.double.hidden  = function(x, y, ...) new_hidden(),
     vec_ptype2.hidden.logical = function(x, y, ...) new_hidden(),
     vec_ptype2.logical.hidden = function(x, y, ...) new_hidden(),
 
-    vec_cast.hidden          = function(x, to, ...) UseMethod("vec_cast.hidden"),
     vec_cast.hidden.hidden   = function(x, to, ...) x,
     vec_cast.hidden.double   = function(x, to, ...) new_hidden(vec_data(x)),
     vec_cast.double.hidden   = function(x, to, ...) vec_data(x),
