@@ -8,7 +8,7 @@
 // This seems to be a reasonable default to start with for tracking the original
 // truelengths of the unique strings, and is what base R uses. It is expanded
 // by 2x every time we need to reallocate.
-#define TRUELENGTH_DATA_SIZE_DEFAULT 10000
+#define TRUELENGTH_SIZE_ALLOC_DEFAULT 10000
 
 // -----------------------------------------------------------------------------
 

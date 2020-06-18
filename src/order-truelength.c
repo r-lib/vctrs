@@ -201,8 +201,8 @@ static R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_inf
 
   // First allocation
   if (size_alloc == 0) {
-    if (TRUELENGTH_DATA_SIZE_DEFAULT < max_size_alloc) {
-      return TRUELENGTH_DATA_SIZE_DEFAULT;
+    if (TRUELENGTH_SIZE_ALLOC_DEFAULT < max_size_alloc) {
+      return TRUELENGTH_SIZE_ALLOC_DEFAULT;
     } else {
       return max_size_alloc;
     }
