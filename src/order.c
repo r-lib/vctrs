@@ -2649,6 +2649,27 @@ static void chr_radix_order_pass(SEXP* p_x,
                                  const R_xlen_t size,
                                  const R_len_t pass);
 
+/*
+ * Recursive function for ordering the `p_x` unique strings
+ *
+ * For ASCII strings, 1 character aligns with 1 byte, so we can order them
+ * 1 character at a time from left to right (MSB to LSB).
+ *
+ * For UTF-8 strings, the implementation of UTF-8 is done so that UTF-8
+ * characters are made up of between 1-4 bytes. Luckily, treating them as
+ * a sequence of single bytes like we do for ASCII orders identically to
+ * treating them as their full 1-4 byte sequence.
+ *
+ * Because these are variable length, some strings are shorter than others.
+ * Shorter strings should order lower than longer strings if they are otherwise
+ * equivalent, so we reserve the 0-th bucket of `p_counts` for counting
+ * implicit empty strings. Normally this would be an issue because this is
+ * the bucket for ASCII value 0, but this is the null value, which is not
+ * allowed in R strings!
+ *
+ * Additionally, we don't have to worry about having an `NA` bucket because
+ * there will be no missing values in the unique set.
+ */
 static void chr_radix_order_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
                                     int* p_sizes,
@@ -2657,22 +2678,99 @@ static void chr_radix_order_recurse(SEXP* p_x,
                                     const R_xlen_t size,
                                     const R_len_t pass,
                                     const R_len_t max_size) {
+  // Exit as fast as possible if we are below the insertion order boundary
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    chr_insertion_order(p_x, p_sizes, size, pass);
+    return;
+  }
+
+  // We don't carry along `p_counts` from an up front allocation since
+  // the strings have variable length
   R_xlen_t p_counts[UINT8_MAX_SIZE] = { 0 };
 
-  chr_radix_order_pass(
-    p_x,
-    p_x_aux,
-    p_sizes,
-    p_sizes_aux,
-    p_bytes,
-    p_counts,
-    size,
-    pass
-  );
-
   const int next_pass = pass + 1;
+
+  // NA values won't be in `p_x` so we can reserve the 0th bucket for ""
+  const uint8_t missing_bucket = 0;
+  uint8_t byte = 0;
+
+  // Histogram
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const R_len_t x_elt_size = p_sizes[i];
+
+    // Check if there are characters left in the string and extract the next
+    // one if so, otherwise assume implicit "".
+    if (pass < x_elt_size) {
+      const SEXP x_elt = p_x[i];
+      const char* c_x_elt = CHAR(x_elt);
+      byte = (uint8_t) c_x_elt[pass];
+    } else {
+      byte = missing_bucket;
+    }
+
+    p_bytes[i] = byte;
+    ++p_counts[byte];
+  }
+
+  // Fast check to see if all bytes were the same.
+  // If so, skip this `pass` since we learned nothing.
+  // No need to accumulate counts and iterate over chunks,
+  // we know all others are zero.
+  if (p_counts[byte] == size) {
+    // Reset count for other group chunks
+    p_counts[byte] = 0;
+
+    // If we are already at the last pass, we are done
+    if (next_pass == max_size) {
+      return;
+    }
+
+    // Otherwise, recurse on next byte using the same `size` since
+    // the group size hasn't changed
+    chr_radix_order_recurse(
+      p_x,
+      p_x_aux,
+      p_sizes,
+      p_sizes_aux,
+      p_bytes,
+      size,
+      next_pass,
+      max_size
+    );
+
+    return;
+  }
+
+  R_xlen_t cumulative = 0;
+
+  // Accumulate counts, skip zeros
+  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
+    R_xlen_t count = p_counts[i];
+
+    if (count == 0) {
+      continue;
+    }
+
+    // Insert current cumulative value, then increment
+    p_counts[i] = cumulative;
+    cumulative += count;
+  }
+
+  // Place into auxiliary arrays in the correct order, then copy back over
+  for (R_xlen_t i = 0; i < size; ++i) {
+    const uint8_t byte = p_bytes[i];
+    const R_xlen_t loc = p_counts[byte]++;
+    p_x_aux[loc] = p_x[i];
+    p_sizes_aux[loc] = p_sizes[i];
+  }
+
+  // Copy back over
+  memcpy(p_x, p_x_aux, size * sizeof(SEXP));
+  memcpy(p_sizes, p_sizes_aux, size * sizeof(int));
+
   R_xlen_t last_cumulative_count = 0;
 
+  // Recurse on subgroups as required
   for (uint16_t i = 0; last_cumulative_count < size && i < UINT8_MAX_SIZE; ++i) {
     const R_xlen_t cumulative_count = p_counts[i];
 
@@ -2711,98 +2809,6 @@ static void chr_radix_order_recurse(SEXP* p_x,
     p_x += group_size;
     p_sizes += group_size;
   }
-}
-
-// -----------------------------------------------------------------------------
-
-/*
- * Order the `pass + 1`-th character of the `p_x` strings.
- *
- * For ASCII strings, 1 character aligns with 1 byte, so we can order them
- * 1 character at a time from left to right (MSB to LSB).
- *
- * For UTF-8 strings, the implementation of UTF-8 is done so that UTF-8
- * characters are made up of between 1-4 bytes. Luckily, treating them as
- * a sequence of single bytes like we do for ASCII orders identically to
- * treating them as their full 1-4 byte sequence.
- *
- * Because these are variable length, some strings are shorter than others.
- * Shorter strings should order lower than longer strings if they are otherwise
- * equivalent, so we reserve the 0-th bucket of `p_counts` for counting
- * implicit empty strings. Normally this would be an issue because this is
- * the bucket for ASCII value 0, but this is the null value, which is not
- * allowed in R strings!
- *
- * Additionally, we don't have to worry about having an `NA` bucket because
- * there will be no missing values in the unique set.
- */
-static void chr_radix_order_pass(SEXP* p_x,
-                                 SEXP* p_x_aux,
-                                 int* p_sizes,
-                                 int* p_sizes_aux,
-                                 uint8_t* p_bytes,
-                                 R_xlen_t* p_counts,
-                                 const R_xlen_t size,
-                                 const R_len_t pass) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    chr_insertion_order(p_x, p_sizes, size, pass);
-    return;
-  }
-
-  uint8_t byte = 0;
-
-  // NA values won't be in `p_x` so we can reserve the 0th bucket for ""
-  const uint8_t missing_bucket = 0;
-
-  // Histogram
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const R_len_t x_elt_size = p_sizes[i];
-
-    // Check if there are characters left in the string and extract the next
-    // one if so, otherwise assume implicit "".
-    if (pass < x_elt_size) {
-      const SEXP x_elt = p_x[i];
-      const char* c_x_elt = CHAR(x_elt);
-      byte = (uint8_t) c_x_elt[pass];
-    } else {
-      byte = missing_bucket;
-    }
-
-    p_bytes[i] = byte;
-    ++p_counts[byte];
-  }
-
-  // Fast check to see if all bytes were the same. If so, skip `pass`.
-  if (p_counts[byte] == size) {
-    return;
-  }
-
-  R_xlen_t cumulative = 0;
-
-  // Accumulate counts, skip zeros
-  for (uint16_t i = 0; i < UINT8_MAX_SIZE; ++i) {
-    R_xlen_t count = p_counts[i];
-
-    if (count == 0) {
-      continue;
-    }
-
-    // Insert current cumulative value, then increment
-    p_counts[i] = cumulative;
-    cumulative += count;
-  }
-
-  // Place into auxiliary arrays in the correct order, then copy back over
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const uint8_t byte = p_bytes[i];
-    const R_xlen_t loc = p_counts[byte]++;
-    p_x_aux[loc] = p_x[i];
-    p_sizes_aux[loc] = p_sizes[i];
-  }
-
-  // Copy back over
-  memcpy(p_x, p_x_aux, size * sizeof(SEXP));
-  memcpy(p_sizes, p_sizes_aux, size * sizeof(int));
 }
 
 // -----------------------------------------------------------------------------
