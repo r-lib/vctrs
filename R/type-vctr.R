@@ -455,7 +455,7 @@ xtfrm.vctrs_vctr <- function(x) {
   if (typeof(proxy) %in% c("integer", "double")) {
     proxy
   } else {
-    order(order_proxy(proxy))
+    vec_order(vec_order(proxy))
   }
 }
 

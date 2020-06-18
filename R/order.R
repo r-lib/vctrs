@@ -1,5 +1,3 @@
-# order/sort --------------------------------------------------------------
-
 #' Order and sort vectors
 #'
 #' @param x A vector
@@ -28,58 +26,17 @@
 #' vec_order(df)
 #' vec_sort(df)
 #' vec_sort(df, "desc")
-vec_order <- function(x,
-                      direction = c("asc", "desc"),
-                      na_value = c("largest", "smallest")
-) {
-  direction <- match.arg(direction)
-  na_value <- match.arg(na_value)
-
-  order_proxy(vec_proxy_compare(x), direction = direction, na_value = na_value)
-}
-
-#' @export
-#' @rdname vec_order
-vec_sort <- function(x,
-                     direction = c("asc", "desc"),
-                     na_value = c("largest", "smallest")) {
-  direction <- match.arg(direction)
-  na_value <- match.arg(na_value)
-
-  idx <- vec_order(x, direction = direction, na_value = na_value)
-  vec_slice(x, idx)
-}
-
-order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
-  decreasing <- !identical(direction, "asc")
-  na.last <- identical(na_value, "largest")
-  if (decreasing) {
-    na.last <- !na.last
-  }
-
-  if (is.data.frame(proxy)) {
-    # Work around type-instability in `base::order()`
-    if (vec_size(proxy) == 0L) {
-      return(integer(0L))
-    }
-    args <- map(unname(proxy), function(.x) {
-      if (is.data.frame(.x)) {
-        .x <- order(vec_order(.x, direction = direction, na_value = na_value))
-      }
-      .x
-    })
-    exec("order", !!!args, decreasing = decreasing, na.last = na.last)
-  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
-    order(proxy, decreasing = decreasing, na.last = na.last)
-  } else {
-    abort("Invalid type returned by `vec_proxy_compare()`.")
-  }
-}
-
-vec_order2 <- function(x, direction = "asc", na_value = "largest") {
+vec_order <- function(x, direction = "asc", na_value = "largest") {
   .Call(vctrs_order, x, direction, na_value)
 }
 
 vec_order_groups <- function(x, direction = "asc", na_value = "largest") {
   .Call(vctrs_order_groups, x, direction, na_value)
+}
+
+#' @export
+#' @rdname vec_order
+vec_sort <- function(x, direction = "asc", na_value = "largest") {
+  idx <- vec_order(x, direction = direction, na_value = na_value)
+  vec_slice(x, idx)
 }
