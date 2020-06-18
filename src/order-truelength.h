@@ -30,6 +30,9 @@
  *
  * @member size_alloc The current allocated size of the SEXP objects in this
  *   struct
+ * @member max_size_alloc The maximum allowed allocation size for the SEXP
+ *   objects in this struct. Set to the size of `x`, which would occur if
+ *   all strings were unique.
  * @member size_used The number of unique strings currently in `strings`.
  */
 struct truelength_info {
@@ -54,6 +57,7 @@ struct truelength_info {
   PROTECT_INDEX sizes_aux_pi;
 
   R_xlen_t size_alloc;
+  R_xlen_t max_size_alloc;
   R_xlen_t size_used;
 };
 
@@ -77,7 +81,7 @@ struct truelength_info {
 } while(0)
 
 
-struct truelength_info new_truelength_info();
+struct truelength_info new_truelength_info(R_xlen_t max_size_alloc);
 void truelength_reset(struct truelength_info* p_truelength_info);
 
 void truelength_save(struct truelength_info* p_truelength_info,

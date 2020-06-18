@@ -7,7 +7,7 @@
  *
  * Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
  */
-struct truelength_info new_truelength_info() {
+struct truelength_info new_truelength_info(R_xlen_t max_size_alloc) {
   struct truelength_info info;
 
   info.strings = vctrs_shared_empty_chr;
@@ -17,6 +17,7 @@ struct truelength_info new_truelength_info() {
   info.sizes_aux = vctrs_shared_empty_int;
 
   info.size_alloc = 0;
+  info.max_size_alloc = max_size_alloc;
   info.size_used = 0;
 
   return info;
@@ -47,7 +48,7 @@ void truelength_reset(struct truelength_info* p_truelength_info) {
 
 // -----------------------------------------------------------------------------
 
-static void truelength_realloc(struct truelength_info* p_truelength_info, R_xlen_t size);
+static void truelength_realloc(struct truelength_info* p_truelength_info);
 
 /*
  * Saves a unique CHARSXP `x` along with its original truelength and
@@ -58,10 +59,9 @@ void truelength_save(struct truelength_info* p_truelength_info,
                      SEXP x,
                      R_xlen_t truelength,
                      R_xlen_t size) {
-  // Reallocate as needed. Should never overflow when doubling size because
-  // max string length in R is 2^31-1, and `size_used` is `R_xlen_t`.
+  // Reallocate as needed
   if (p_truelength_info->size_used == p_truelength_info->size_alloc) {
-    truelength_realloc(p_truelength_info, p_truelength_info->size_used * 2);
+    truelength_realloc(p_truelength_info);
   }
 
   // Push `x` and `length`
@@ -75,6 +75,8 @@ void truelength_save(struct truelength_info* p_truelength_info,
 }
 
 // -----------------------------------------------------------------------------
+
+static R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info);
 
 static SEXP truelength_chr_extend(const SEXP* p_x,
                                   R_xlen_t size_old,
@@ -92,11 +94,8 @@ static SEXP truelength_lengths_extend(const R_xlen_t* p_lengths,
  * Extend the vectors in `truelength_info`.
  * Reprotects itself.
  */
-static void truelength_realloc(struct truelength_info* p_truelength_info, R_xlen_t size) {
-  // First allocation
-  if (size == 0) {
-    size = TRUELENGTH_DATA_SIZE_DEFAULT;
-  }
+static void truelength_realloc(struct truelength_info* p_truelength_info) {
+  R_xlen_t size = truelength_realloc_size(p_truelength_info);
 
   // Reallocate
   p_truelength_info->strings = truelength_chr_extend(
@@ -192,4 +191,31 @@ static SEXP truelength_lengths_extend(const R_xlen_t* p_lengths,
 
   UNPROTECT(1);
   return out;
+}
+
+// -----------------------------------------------------------------------------
+
+static R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info) {
+  R_xlen_t size_alloc = p_truelength_info->size_alloc;
+  R_xlen_t max_size_alloc = p_truelength_info->max_size_alloc;
+
+  // First allocation
+  if (size_alloc == 0) {
+    if (TRUELENGTH_DATA_SIZE_DEFAULT < max_size_alloc) {
+      return TRUELENGTH_DATA_SIZE_DEFAULT;
+    } else {
+      return max_size_alloc;
+    }
+  }
+
+  // Avoid potential overflow when doubling size
+  uint64_t new_size_alloc = ((uint64_t) size_alloc) * 2;
+
+  // Clamp maximum allocation size to the size of the input
+  if (new_size_alloc > max_size_alloc) {
+    return max_size_alloc;
+  }
+
+  // Can now safely cast back to `R_xlen_t`
+  return (R_xlen_t) new_size_alloc;
 }
