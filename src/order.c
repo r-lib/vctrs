@@ -178,17 +178,20 @@
 
 // -----------------------------------------------------------------------------
 
+static bool parse_na_value(SEXP na_value);
+static SEXP parse_direction(SEXP direction);
+
 static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last);
 
 // [[ register() ]]
-SEXP vctrs_order(SEXP x, SEXP decreasing, SEXP na_last) {
-  if (!r_is_bool(na_last)) {
-    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
-  }
+SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value) {
+  SEXP decreasing = PROTECT(parse_direction(direction));
+  bool na_last = parse_na_value(na_value);
 
-  bool c_na_last = LOGICAL(na_last)[0];
+  SEXP out = vec_order(x, decreasing, na_last);
 
-  return vec_order(x, decreasing, c_na_last);
+  UNPROTECT(1);
+  return out;
 }
 
 
@@ -203,14 +206,14 @@ static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last) {
 static SEXP vec_order_groups(SEXP x, SEXP decreasing, bool na_last);
 
 // [[ register() ]]
-SEXP vctrs_order_groups(SEXP x, SEXP decreasing, SEXP na_last) {
-  if (!r_is_bool(na_last)) {
-    Rf_errorcall(R_NilValue, "`na_last` must be either `TRUE` or `FALSE`.");
-  }
+SEXP vctrs_order_groups(SEXP x, SEXP direction, SEXP na_value) {
+  SEXP decreasing = PROTECT(parse_direction(direction));
+  bool na_last = parse_na_value(na_value);
 
-  bool c_na_last = LOGICAL(na_last)[0];
+  SEXP out = vec_order_groups(x, decreasing, na_last);
 
-  return vec_order_groups(x, decreasing, c_na_last);
+  UNPROTECT(1);
+  return out;
 }
 
 
@@ -3356,10 +3359,10 @@ static SEXP df_check_decreasing(SEXP x, SEXP decreasing);
 static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing) {
   // Don't check length here. This might be vectorized if `x` is a data frame.
   if (TYPEOF(decreasing) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "`decreasing` must be logical");
+    Rf_errorcall(R_NilValue, "Internal error: `decreasing` must be logical");
   }
   if (lgl_any_na(decreasing)) {
-    Rf_errorcall(R_NilValue, "`decreasing` must not contain missing values.");
+    Rf_errorcall(R_NilValue, "Internal error: `decreasing` must not contain missing values.");
   }
 
   if (is_data_frame(x)) {
@@ -3367,7 +3370,7 @@ static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing) {
   }
 
   if (Rf_xlength(decreasing) != 1) {
-    Rf_errorcall(R_NilValue, "`decreasing` must be a single `TRUE` or `FALSE` when `x` is not a data frame.");
+    Rf_errorcall(R_NilValue, "`direction` must be a single value when `x` is not a data frame.");
   }
 
   return decreasing;
@@ -3388,7 +3391,7 @@ static SEXP df_check_decreasing(SEXP x, SEXP decreasing) {
   if (n_decreasing != n_cols) {
     Rf_errorcall(
       R_NilValue,
-      "`decreasing` should have length 1 or length equal to the number of "
+      "`direction` should have length 1 or length equal to the number of "
       "columns of `x` when `x` is a data frame."
     );
   }
@@ -3943,6 +3946,68 @@ static inline void ord_reverse(int* p_o, R_xlen_t size) {
     p_o[i] = p_o[swap];
     p_o[swap] = temp;
   }
+}
+
+// -----------------------------------------------------------------------------
+
+static bool parse_na_value(SEXP na_value) {
+  if (!r_is_string(na_value)) {
+    Rf_errorcall(
+      R_NilValue,
+      "`na_value` must be a single string containing "
+      "\"largest\" or \"smallest\"."
+    );
+  }
+
+  const SEXP char_na_value = STRING_PTR_RO(na_value)[0];
+  const char* c_na_value = CHAR(char_na_value);
+
+  if (!strcmp(c_na_value, "largest")) return true;
+  if (!strcmp(c_na_value, "smallest")) return false;
+
+  Rf_errorcall(
+    R_NilValue,
+    "`na_value` must be a single string containing "
+    "\"largest\" or \"smallest\"."
+  );
+}
+
+static int parse_direction_one(SEXP x);
+
+// Don't care about length here, checked later
+static SEXP parse_direction(SEXP direction) {
+  if (TYPEOF(direction) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`direction` must be a character vector.");
+  }
+
+  R_len_t size = Rf_length(direction);
+  const SEXP* p_direction = STRING_PTR_RO(direction);
+
+  SEXP decreasing = PROTECT(Rf_allocVector(LGLSXP, size));
+  int* p_decreasing = INTEGER(decreasing);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    p_decreasing[i] = parse_direction_one(p_direction[i]);
+  }
+
+  UNPROTECT(1);
+  return decreasing;
+}
+
+static int parse_direction_one(SEXP x) {
+  if (x == NA_STRING) {
+    Rf_errorcall(R_NilValue, "`direction` cannot be missing.");
+  }
+
+  const char* c_x = CHAR(x);
+
+  if (!strcmp(c_x, "asc")) return 0;
+  if (!strcmp(c_x, "desc")) return 1;
+
+  Rf_errorcall(
+    R_NilValue,
+    "`direction` must contain only \"asc\" or \"desc\"."
+  );
 }
 
 // -----------------------------------------------------------------------------
