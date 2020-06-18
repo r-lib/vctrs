@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* The experimental `relax` argument has been removed from
+  `vec_proxy_compare()`. List columns in data frames will continue to appear
+  as sorted vectors, but this is now considered an internal detail.
 
 # vctrs 0.3.1
 
