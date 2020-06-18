@@ -2,7 +2,11 @@
 
 // -----------------------------------------------------------------------------
 
-// Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
+/*
+ * Construct a new `truelength_info`
+ *
+ * Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
+ */
 struct truelength_info new_truelength_info() {
   struct truelength_info info;
 
@@ -20,6 +24,13 @@ struct truelength_info new_truelength_info() {
 
 // -----------------------------------------------------------------------------
 
+/*
+ * Reset the truelengths of all unique strings captured in `strings` using
+ * the original truelengths in `lengths`.
+ *
+ * Will be called after each character data frame column is processed, and
+ * at the end of `chr_order()` for a single character vector.
+ */
 void truelength_reset(struct truelength_info* p_truelength_info) {
   R_xlen_t size = p_truelength_info->size_used;
 
@@ -38,6 +49,11 @@ void truelength_reset(struct truelength_info* p_truelength_info) {
 
 static void truelength_realloc(struct truelength_info* p_truelength_info, R_xlen_t size);
 
+/*
+ * Saves a unique CHARSXP `x` along with its original truelength and
+ * its "size" (i.e the number of characters). Will be reset later with
+ * `truelength_reset()`.
+ */
 void truelength_save(struct truelength_info* p_truelength_info,
                      SEXP x,
                      R_xlen_t truelength,
@@ -72,6 +88,10 @@ static SEXP truelength_lengths_extend(const R_xlen_t* p_lengths,
                                       R_xlen_t size_old,
                                       R_xlen_t size_new);
 
+/*
+ * Extend the vectors in `truelength_info`.
+ * Reprotects itself.
+ */
 static void truelength_realloc(struct truelength_info* p_truelength_info, R_xlen_t size) {
   // First allocation
   if (size == 0) {

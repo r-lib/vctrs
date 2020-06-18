@@ -12,6 +12,26 @@
 
 // -----------------------------------------------------------------------------
 
+/*
+ * Struct of information required to track truelengths of character vectors
+ * when ordering them
+ *
+ * @members strings,p_strings,strings_pi The unique CHARSXP seen during
+ *   ordering.
+ * @members lengths,p_lengths,lengths_pi The original truelengths of the
+ *   `strings`.
+ * @members uniques,p_uniques,uniques_pi At first, this is the same as `strings`
+ *   until `chr_mark_sorted_uniques()` is called, which reorders them in place
+ *   and sorts them.
+ * @members sizes,p_sizes,sizes_pi The sizes of each individual CHARSXP in
+ *   `uniques`. Kept in the same ordering as `uniques` while sorting.
+ * @members sizes_aux, p_sizes_aux, sizes_aux_pi Auxiliary vector of sizes
+ *   that is used as working memory when sorting `uniques`.
+ *
+ * @member size_alloc The current allocated size of the SEXP objects in this
+ *   struct
+ * @member size_used The number of unique strings currently in `strings`.
+ */
 struct truelength_info {
   SEXP strings;
   SEXP* p_strings;
