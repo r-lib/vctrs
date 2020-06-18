@@ -167,6 +167,37 @@ test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
   expect_equal(vec_order(c(y, x)), c(2, 1))
 })
 
+test_that("vec_proxy_compare() flattens df-cols", {
+  df_col <- new_data_frame(list(z = 3:4))
+  df <- new_data_frame(list(x = 1:2, y = df_col))
+
+  expect <- new_data_frame(list(x = 1:2, z = 3:4))
+
+  expect_identical(vec_proxy_compare(df), expect)
+})
+
+test_that("vec_proxy_compare() unwraps 1 col dfs", {
+  df <- new_data_frame(list(x = 1:2))
+
+  expect_identical(vec_proxy_compare(df), 1:2)
+
+  df_col <- new_data_frame(list(y = 1:2))
+  df <- new_data_frame(list(x = df_col))
+
+  expect_identical(vec_proxy_compare(df), 1:2)
+})
+
+test_that("vec_proxy_compare() is relaxed on deeply nested lists", {
+  df_col <- new_data_frame(list(z = list("b", "a")))
+
+  # Relaxed and unwrapped
+  df1 <- new_data_frame(list(x = df_col))
+  expect_identical(vec_proxy_compare(df1), 1:2)
+
+  df2 <- new_data_frame(list(x = df_col, y = 1:2))
+  expect_identical(vec_proxy_compare(df2), data_frame(z = 1:2, y = 1:2))
+})
+
 test_that("error is thrown with data frames with 0 columns", {
   x <- new_data_frame(n = 1L)
   expect_error(vec_compare(x, x), "data frame with zero columns")
