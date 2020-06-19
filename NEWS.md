@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* `vec_order()` and `vec_sort()` now use a native ordering algorithm. It
+  produces the same results as before except in the case of character vectors,
+  which are now ordered in the C-locale. Additionally, the `direction`
+  argument is now vectorized for data frame input so columns can be ordered
+  with varying directions.
+  
 * Fixed performance issue with `vec_order()` on classed vectors which
   affected `dplyr::group_by()` (tidyverse/dplyr#5423).
 
