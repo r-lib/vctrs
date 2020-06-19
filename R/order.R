@@ -8,6 +8,19 @@
 #' `vec_sort()` sorts `x` by computing its order and using `vec_slice()` to
 #' rearrange.
 #'
+#' @details
+#' Character vectors are ordered in the C-locale. This is different from
+#' `base::order()`, which respects `base::Sys.setlocale()`, but should
+#' produce more reproducible results between different sessions and platforms.
+#' One immediate difference is that ordering is case-sensitive in the C-locale.
+#' Sorting `c("b", "C", "a")` with `vec_sort()` will return `c("C", "a", "b")`,
+#' but with `base::order()` will return `c("a", "b", "C")` unless
+#' `base::order(method = "radix")` is explicitly set, which also uses the
+#' C-locale. That said, this typically does not introduce any practical issues.
+#'
+#' Character vectors are always sorted in UTF-8. If any non-UTF-8
+#' characters are detected, they are translated to UTF-8 first.
+#'
 #' @param x A vector
 #' @param direction Direction to sort in.
 #'   - Unless `x` is a data frame, this should be a single `"asc"` or

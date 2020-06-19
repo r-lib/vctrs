@@ -37,6 +37,19 @@ using subsequent columns to break ties.
 \code{vec_sort()} sorts \code{x} by computing its order and using \code{vec_slice()} to
 rearrange.
 }
+\details{
+Character vectors are ordered in the C-locale. This is different from
+\code{base::order()}, which respects \code{base::Sys.setlocale()}, but should
+produce more reproducible results between different sessions and platforms.
+One immediate difference is that ordering is case-sensitive in the C-locale.
+Sorting \code{c("b", "C", "a")} with \code{vec_sort()} will return \code{c("C", "a", "b")},
+but with \code{base::order()} will return \code{c("a", "b", "C")} unless
+\code{base::order(method = "radix")} is explicitly set, which also uses the
+C-locale. That said, this typically does not introduce any practical issues.
+
+Character vectors are always sorted in UTF-8. If any non-UTF-8
+characters are detected, they are translated to UTF-8 first.
+}
 \section{Dependencies of \code{vec_order()}}{
 
 \itemize{
