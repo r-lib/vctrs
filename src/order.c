@@ -3951,15 +3951,20 @@ static inline void ord_reverse(int* p_o, R_xlen_t size) {
 // -----------------------------------------------------------------------------
 
 static bool parse_na_value(SEXP na_value) {
-  if (!r_is_string(na_value)) {
+  if (TYPEOF(na_value) != STRSXP || Rf_length(na_value) == 0) {
     Rf_errorcall(
       R_NilValue,
-      "`na_value` must be a single string containing "
+      "`na_value` must be a string containing "
       "\"largest\" or \"smallest\"."
     );
   }
 
   const SEXP char_na_value = STRING_PTR_RO(na_value)[0];
+
+  if (char_na_value == NA_STRING) {
+    Rf_errorcall(R_NilValue, "`na_value` must not be missing.");
+  }
+
   const char* c_na_value = CHAR(char_na_value);
 
   if (!strcmp(c_na_value, "largest")) return true;
@@ -3967,7 +3972,7 @@ static bool parse_na_value(SEXP na_value) {
 
   Rf_errorcall(
     R_NilValue,
-    "`na_value` must be a single string containing "
+    "`na_value` must be a string containing "
     "\"largest\" or \"smallest\"."
   );
 }

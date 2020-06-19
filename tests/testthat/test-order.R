@@ -757,7 +757,7 @@ test_that("can order 2+ double column chunks with radix sort", {
 test_that("`na_value` is checked", {
   expect_error(vec_order(1L, na_value = "x"), "\"largest\" or \"smallest\"")
   expect_error(vec_order(1L, na_value = c(TRUE, TRUE)), "\"largest\" or \"smallest\"")
-  expect_error(vec_order(1L, na_value = NA), "\"largest\" or \"smallest\"")
+  expect_error(vec_order(1L, na_value = NA_character_), "must not be missing")
 })
 
 test_that("`direction` is checked", {

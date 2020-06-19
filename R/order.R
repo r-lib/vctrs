@@ -1,7 +1,20 @@
 #' Order and sort vectors
 #'
+#' @description
+#' `vec_order()` computes the order of `x`. For data frames, the order is
+#' computed along the rows by computing the order of the first column and
+#' using subsequent columns to break ties.
+#'
+#' `vec_sort()` sorts `x` by computing its order and using `vec_slice()` to
+#' rearrange.
+#'
 #' @param x A vector
-#' @param direction Direction to sort in. Defaults to `asc`ending.
+#' @param direction Direction to sort in.
+#'   - Unless `x` is a data frame, this should be a single `"asc"` or
+#'     `"desc"` for ascending or descending order respectively.
+#'   - For data frames, this is allowed to be a vector of `"asc"` and `"desc"`
+#'     with length equal to the number of columns in `x` specifying the
+#'     direction to order each column in.
 #' @param na_value Should `NA`s be treated as the largest or smallest values?
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
@@ -26,17 +39,17 @@
 #' vec_order(df)
 #' vec_sort(df)
 #' vec_sort(df, "desc")
-vec_order <- function(x, direction = "asc", na_value = "largest") {
+vec_order <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
   .Call(vctrs_order, x, direction, na_value)
 }
 
-vec_order_groups <- function(x, direction = "asc", na_value = "largest") {
+vec_order_groups <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
   .Call(vctrs_order_groups, x, direction, na_value)
 }
 
 #' @export
 #' @rdname vec_order
-vec_sort <- function(x, direction = "asc", na_value = "largest") {
+vec_sort <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
   idx <- vec_order(x, direction = direction, na_value = na_value)
   vec_slice(x, idx)
 }
