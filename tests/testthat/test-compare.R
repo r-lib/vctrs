@@ -82,15 +82,6 @@ test_that("can compare data frames with data frame columns", {
   expect_equal(vec_compare(df1, df2), -1)
 })
 
-test_that("can compare data frames with list columns because of `vec_proxy_compare(relax = TRUE)`", {
-  # lists are replaced with `vec_seq_along()`,
-  # so `list(a = 1)` and `list(a = 0)` look equivalent
-  df1 <- data_frame(x = list(a = 1), y = 2)
-  df2 <- data_frame(x = list(a = 0), y = 3)
-
-  expect_equal(vec_compare(df1, df2), -1)
-})
-
 test_that("C code doesn't crash with bad inputs", {
   df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
@@ -115,8 +106,14 @@ test_that("xtfrm.vctrs_vctr works for variety of base classes", {
   expect_equal(xtfrm.vctrs_vctr(letters[x]), x)
 })
 
-test_that("vec_proxy_compare() refuses to deal with lists", {
-  expect_error(vec_proxy_compare(list()), class = "vctrs_error_unsupported")
+test_that("vec_proxy_order() orders list using order of appearance", {
+  x <- 1:2
+  y <- 2:4
+  z <- 3
+
+  lst <- list(x, y, x, y, z)
+
+  expect_identical(vec_proxy_order(lst), c(1L, 2L, 1L, 2L, 5L))
 })
 
 test_that("vec_compare() calls vec_proxy_compare()", {
@@ -168,10 +165,10 @@ test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
 })
 
 test_that("vec_proxy_compare() flattens df-cols", {
-  df_col <- new_data_frame(list(z = 3:4))
+  df_col <- new_data_frame(list(z = 3:4, w = 4:5))
   df <- new_data_frame(list(x = 1:2, y = df_col))
 
-  expect <- new_data_frame(list(x = 1:2, z = 3:4))
+  expect <- new_data_frame(list(x = 1:2, z = 3:4, w = 4:5))
 
   expect_identical(vec_proxy_compare(df), expect)
 })
@@ -187,15 +184,15 @@ test_that("vec_proxy_compare() unwraps 1 col dfs", {
   expect_identical(vec_proxy_compare(df), 1:2)
 })
 
-test_that("vec_proxy_compare() is relaxed on deeply nested lists", {
-  df_col <- new_data_frame(list(z = list("b", "a")))
+test_that("vec_proxy_order() works on deeply nested lists", {
+  df_col <- new_data_frame(list(z = list("b", "a", "b")))
 
   # Relaxed and unwrapped
   df1 <- new_data_frame(list(x = df_col))
-  expect_identical(vec_proxy_compare(df1), 1:2)
+  expect_identical(vec_proxy_order(df1), c(1L, 2L, 1L))
 
-  df2 <- new_data_frame(list(x = df_col, y = 1:2))
-  expect_identical(vec_proxy_compare(df2), data_frame(z = 1:2, y = 1:2))
+  df2 <- new_data_frame(list(x = df_col, y = 1:3))
+  expect_identical(vec_proxy_order(df2), data_frame(x = c(1L, 2L, 1L), y = 1:3))
 })
 
 test_that("error is thrown with data frames with 0 columns", {

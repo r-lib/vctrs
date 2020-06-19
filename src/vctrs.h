@@ -353,13 +353,14 @@ bool vec_is_unspecified(SEXP x);
 enum vctrs_proxy_kind {
   vctrs_proxy_kind_default,
   vctrs_proxy_kind_equal,
-  vctrs_proxy_kind_compare
+  vctrs_proxy_kind_compare,
+  vctrs_proxy_kind_order
 };
 
 SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
-SEXP vec_proxy_recursive(SEXP x, enum vctrs_proxy_kind kind);
+SEXP vec_proxy_order(SEXP x);
 SEXP vec_restore(SEXP x, SEXP to, SEXP i);
 SEXP vec_restore_default(SEXP x, SEXP to);
 R_len_t vec_size(SEXP x);

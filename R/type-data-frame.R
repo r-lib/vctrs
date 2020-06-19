@@ -69,11 +69,22 @@ vec_ptype_abbr.data.frame <- function(x, ...) {
 }
 
 #' @export
+vec_proxy_equal.data.frame <- function(x, ...) {
+  df_proxy(x, "equal")
+}
+
+#' @export
 vec_proxy_compare.data.frame <- function(x, ...) {
-  # C level `vec_proxy_compare()` recurses across columns and flattens
-  # df-cols. Required to have a no-op here to prevent `vec_proxy_equal()`
-  # from being called in the `vec_proxy_compare.default()` method.
-  x
+  df_proxy(x, "compare")
+}
+
+#' @export
+vec_proxy_order.data.frame <- function(x, ...) {
+  df_proxy(x, "order")
+}
+
+df_proxy <- function(x, kind) {
+  .Call(vctrs_df_proxy, x, sym(kind))
 }
 
 df_is_coercible <- function(x, y, opts) {

@@ -306,6 +306,16 @@ vec_cast.list.list <- function(x, to, ...) {
   shape_broadcast(x, to, ...)
 }
 
+# equal --------------------------------------------------------------
+
+#' @export
+vec_proxy_equal.array <- function(x, ...) {
+  # The conversion to data frame is only a stopgap, in the long
+  # term, we'll hash arrays natively. Note that hashing functions
+  # similarly convert to data frames.
+  x <- as.data.frame(x)
+  vec_proxy_equal(x)
+}
 
 # compare ------------------------------------------------------------
 
@@ -315,4 +325,43 @@ vec_proxy_compare.raw <- function(x, ...) {
   # order(as.raw(1:3))
   # #> Error in order(as.raw(1:3)): unimplemented type 'raw' in 'orderVector1'
   as.integer(x)
+}
+
+#' @export
+vec_proxy_compare.list <- function(x, ...) {
+  stop_unsupported(x, "vec_proxy_compare")
+}
+
+#' @export
+vec_proxy_compare.array <- function(x, ...) {
+  # The conversion to data frame is only a stopgap, in the long
+  # term, we'll hash arrays natively. Note that hashing functions
+  # similarly convert to data frames.
+  x <- as.data.frame(x)
+  vec_proxy_compare(x)
+}
+
+# order ------------------------------------------------------------
+
+#' @export
+vec_proxy_order.raw <- function(x, ...) {
+  # Can't rely on fallthrough behavior to `vec_proxy_compare()` because this
+  # isn't an S3 object. Have to call it manually.
+  vec_proxy_compare(x)
+}
+
+#' @export
+vec_proxy_order.list <- function(x, ...) {
+  # Order lists by first appearance.
+  # This allows list elements to be grouped in `vec_order()`.
+  vec_duplicate_id(x)
+}
+
+#' @export
+vec_proxy_order.array <- function(x, ...) {
+  # The conversion to data frame is only a stopgap, in the long
+  # term, we'll hash arrays natively. Note that hashing functions
+  # similarly convert to data frames.
+  x <- as.data.frame(x)
+  vec_proxy_order(x)
 }

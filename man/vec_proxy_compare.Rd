@@ -16,18 +16,18 @@ A 1d atomic vector or a data frame.
 }
 \description{
 Returns a proxy object (i.e. an atomic vector or data frame of atomic
-vectors). For \link{vctr}s, this determines the behaviour of \code{\link[=order]{order()}} and
-\code{\link[=sort]{sort()}} (via \code{\link[=xtfrm]{xtfrm()}}); \code{<}, \code{>}, \code{>=} and \code{<=} (via \code{\link[=vec_compare]{vec_compare()}});
-and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{median()}}, and \code{\link[=quantile]{quantile()}}.
+vectors). For \link{vctr}s, this determines the behaviour of \code{<}, \code{>}, \code{>=}
+and \code{<=} (via \code{\link[=vec_compare]{vec_compare()}}); and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{median()}}, and
+\code{\link[=quantile]{quantile()}}.
 }
 \details{
 The default method assumes that all classes built on top of atomic
-vectors or records are orderable. If your class is not, you will need
+vectors or records are comparable. Internally the default calls
+\code{\link[=vec_proxy_equal]{vec_proxy_equal()}}. If your class is not comparable, you will need
 to provide a \code{vec_proxy_compare()} method that throws an error.
 
-Lists by themselves are not orderable. However, if a list appears as a
-column of a data frame, it is considered sorted and is replaced with an
-integer vector of the sequence along the list.
+Lists are not comparable, as it is unclear how to compare elements of
+varying types.
 }
 \section{Dependencies}{
 

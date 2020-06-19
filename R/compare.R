@@ -1,17 +1,17 @@
 #' Comparison proxy
 #'
 #' Returns a proxy object (i.e. an atomic vector or data frame of atomic
-#' vectors). For [vctr]s, this determines the behaviour of [order()] and
-#' [sort()] (via [xtfrm()]); `<`, `>`, `>=` and `<=` (via [vec_compare()]);
-#' and [min()], [max()], [median()], and [quantile()].
+#' vectors). For [vctr]s, this determines the behaviour of `<`, `>`, `>=`
+#' and `<=` (via [vec_compare()]); and [min()], [max()], [median()], and
+#' [quantile()].
 #'
 #' The default method assumes that all classes built on top of atomic
-#' vectors or records are orderable. If your class is not, you will need
+#' vectors or records are comparable. Internally the default calls
+#' [vec_proxy_equal()]. If your class is not comparable, you will need
 #' to provide a `vec_proxy_compare()` method that throws an error.
 #'
-#' Lists by themselves are not orderable. However, if a list appears as a
-#' column of a data frame, it is considered sorted and is replaced with an
-#' integer vector of the sequence along the list.
+#' Lists are not comparable, as it is unclear how to compare elements of
+#' varying types.
 #'
 #' @param x A vector x.
 #' @inheritParams ellipsis::dots_empty
@@ -29,33 +29,9 @@ vec_proxy_compare <- function(x, ...) {
   return(.Call(vctrs_proxy_compare, x))
   UseMethod("vec_proxy_compare")
 }
-
-vec_proxy_compare_dispatch <- function(x, ...) {
-  UseMethod("vec_proxy_compare")
-}
-
 #' @export
-vec_proxy_compare.default <- function(x, ..., relax = FALSE) {
-  if (vec_dim_n(x) > 1) {
-    # The conversion to data frame is only a stopgap, in the long
-    # term, we'll hash arrays natively. Note that hashing functions
-    # similarly convert to data frames.
-    as.data.frame(x)
-  } else {
-    vec_proxy_compare_default(x, relax)
-  }
-}
-
-vec_proxy_compare_default <- function(x, relax = FALSE) {
-  if (is_bare_list(x)) {
-    if (relax) {
-      vec_seq_along(x)
-    } else {
-      stop_unsupported(x, "vec_proxy_compare")
-    }
-  } else {
-    vec_proxy_equal(x)
-  }
+vec_proxy_compare.default <- function(x, ...) {
+  stop_native_implementation("vec_proxy_compare.default")
 }
 
 #' Compare two vectors
@@ -115,10 +91,10 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 #' * `vec_sort()` a vector with the same size and type as `x`.
 #'
 #' @section Dependencies of `vec_order()`:
-#' * [vec_proxy_compare()]
+#' * [vec_proxy_order()]
 #'
 #' @section Dependencies of `vec_sort()`:
-#' * [vec_proxy_compare()]
+#' * [vec_proxy_order()]
 #' * [vec_order()]
 #' * [vec_slice()]
 #' @export
@@ -140,7 +116,7 @@ vec_order <- function(x,
   direction <- match.arg(direction)
   na_value <- match.arg(na_value)
 
-  order_proxy(vec_proxy_compare(x), direction = direction, na_value = na_value)
+  order_proxy(vec_proxy_order(x), direction = direction, na_value = na_value)
 }
 
 #' @export
@@ -179,6 +155,44 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
   } else {
     abort("Invalid type returned by `vec_proxy_compare()`.")
   }
+}
+
+# Order proxy ------------------------------------------------------------------
+
+#' Ordering proxy
+#'
+#' Returns a proxy object for ordering. For vctrs_vctr objects, this determines
+#' the behavior of `order()` and `sort()` (via `xtfrm()`). It also powers
+#' `vec_order()` and `vec_sort()` for other vector types.
+#'
+#' The default is to call [vec_proxy_compare()].
+#'
+#' Lists are special cased, and return an integer vector that can be used to
+#' order the elements in the list by first appearance.
+#'
+#' @param x A vector x.
+#' @inheritParams ellipsis::dots_empty
+#' @return A 1d atomic vector or a data frame.
+#'
+#' @section Dependencies:
+#' - [vec_proxy_compare()] called by default
+#'
+#' @keywords internal
+#' @export
+#' @examples
+#' # List elements are ordered by first appearance
+#' vec_proxy_order(list(1:2, 1, 1:2, 3))
+vec_proxy_order <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_proxy_order, x))
+  UseMethod("vec_proxy_order")
+}
+
+#' @export
+vec_proxy_order.default <- function(x, ...) {
+  stop_native_implementation("vec_proxy_order.default")
 }
 
 # Helpers -----------------------------------------------------------------
