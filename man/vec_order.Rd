@@ -5,14 +5,21 @@
 \alias{vec_sort}
 \title{Order and sort vectors}
 \usage{
-vec_order(x, direction = "asc", na_value = "largest")
+vec_order(x, direction = "asc", na_value = c("largest", "smallest"))
 
-vec_sort(x, direction = "asc", na_value = "largest")
+vec_sort(x, direction = "asc", na_value = c("largest", "smallest"))
 }
 \arguments{
 \item{x}{A vector}
 
-\item{direction}{Direction to sort in. Defaults to \code{asc}ending.}
+\item{direction}{Direction to sort in.
+\itemize{
+\item Unless \code{x} is a data frame, this should be a single \code{"asc"} or
+\code{"desc"} for ascending or descending order respectively.
+\item For data frames, this is allowed to be a vector of \code{"asc"} and \code{"desc"}
+with length equal to the number of columns in \code{x} specifying the
+direction to order each column in.
+}}
 
 \item{na_value}{Should \code{NA}s be treated as the largest or smallest values?}
 }
@@ -23,7 +30,12 @@ vec_sort(x, direction = "asc", na_value = "largest")
 }
 }
 \description{
-Order and sort vectors
+\code{vec_order()} computes the order of \code{x}. For data frames, the order is
+computed along the rows by computing the order of the first column and
+using subsequent columns to break ties.
+
+\code{vec_sort()} sorts \code{x} by computing its order and using \code{vec_slice()} to
+rearrange.
 }
 \section{Dependencies of \code{vec_order()}}{
 
