@@ -196,7 +196,7 @@ SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value) {
 }
 
 
-static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups);
+static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations);
 
 static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last) {
   return vec_order_impl(x, decreasing, na_last, false);
@@ -248,11 +248,13 @@ static void vec_order_switch(SEXP x,
                              const enum vctrs_type type);
 
 /*
- * Returns an integer vector of the ordering unless `groups` is true. In
- * that case it returns a list of length 4 containing the ordering, the
- * starts of each group, the number of groups, and the maximum group size.
+ * Returns an integer vector of the ordering unless `locations` is true. In
+ * that case it returns a data frame with two columns. The first is the
+ * `key` which is a slice of `x` containing the ordered unique values, and
+ * the second is `loc` which is a list column of integer vectors containing
+ * the locations in `x` corresponding to each key.
  */
-static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups) {
+static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
@@ -295,10 +297,10 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups) {
   PROTECT_LAZY_VEC(p_lazy_counts, p_n_prot);
 
   // Determine if group tracking can be turned off.
-  // We turn if off if ordering non-data frame input as long as groups haven't
-  // been requested by the user.
+  // We turn if off if ordering non-data frame input as long as
+  // locations haven't been requested by the user.
   // It is more efficient to ignore it when possible.
-  bool requested = groups;
+  bool requested = locations;
   bool ignore = requested ? false : (is_data_frame(proxy) ? false : true);
 
   // Construct the two sets of group info needed for tracking groups.
@@ -353,8 +355,8 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool groups) {
     type
   );
 
-  // Return all group info rather than just ordering
-  if (groups) {
+  // Return ordered location info rather than ordering
+  if (locations) {
     struct group_info* p_group_info = groups_current(p_group_infos);
     const int* p_sizes = p_group_info->p_data;
     R_xlen_t n_groups = p_group_info->n_groups;
