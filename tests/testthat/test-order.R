@@ -846,19 +846,19 @@ test_that("ordering works with rcrd cols", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_order_groups()
+# vec_group_loc()
 
-test_that("`vec_order_groups()` is working", {
+test_that("`vec_group_loc()` is working", {
   x <- c(1, 3, 1, 5, 2, 5, 1)
 
-  expect <- list(
-    order = c(1L, 3L, 7L, 5L, 2L, 4L, 6L),
-    starts = c(1L, 4L, 5L, 6L),
-    n_groups = 4L,
-    max_group_size = 3L
+  expect <- new_data_frame(
+    list(
+      key = c(1, 3, 5, 2),
+      loc = list(c(1L, 3L, 7L), 2L, c(4L, 6L), 5L)
+    )
   )
 
-  expect_identical(vec_order_groups(x), expect)
+  expect_identical(vec_group_loc(x), expect)
 })
 
 # ------------------------------------------------------------------------------
