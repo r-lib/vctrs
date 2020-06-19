@@ -56,8 +56,8 @@ vec_order <- function(x, direction = "asc", na_value = c("largest", "smallest"))
   .Call(vctrs_order, x, direction, na_value)
 }
 
-vec_order_groups <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
-  .Call(vctrs_order_groups, x, direction, na_value)
+vec_order_loc <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
+  .Call(vctrs_order_loc, x, direction, na_value)
 }
 
 #' @export
