@@ -205,6 +205,12 @@ test_that("error is thrown when comparing lists", {
   expect_error(.Call(vctrs_compare, list(), list(), FALSE), "Can't compare lists")
 })
 
+test_that("error is thrown when comparing data frames with list columns", {
+  df <- data_frame(x = list())
+  expect_error(vec_compare(df, df), class = "vctrs_error_unsupported")
+  expect_error(.Call(vctrs_compare, df, df, FALSE), "Can't compare lists")
+})
+
 test_that("error is thrown when comparing scalars", {
   x <- new_sclr(x = 1)
   expect_error(vec_compare(x, x), class = "vctrs_error_scalar_type")
