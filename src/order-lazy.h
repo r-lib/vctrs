@@ -79,4 +79,59 @@ static inline void lazy_vec_initialize(struct lazy_vec* p_x) {
 }
 
 // -----------------------------------------------------------------------------
+
+/*
+ * `lazy_order` is a lazy integer vector containing the ordering. It is lazy
+ * not in the allocation, but in the initialization of values. Typically
+ * it is initialized to a 1-based sequential ordering which is rearranged
+ * by the internal algorithm. However, for the counting order, the
+ * initialization is not required for the first integer column, which can
+ * result in a nice performance improvement.
+ */
+struct lazy_order {
+  SEXP o;
+  int* p_o;
+
+  R_xlen_t size;
+  bool initialized;
+};
+
+#define PROTECT_LAZY_ORDER(p_info, p_n) do {    \
+  PROTECT((p_info)->o);                         \
+  (p_info)->p_o = INTEGER((p_info)->o);         \
+                                                \
+  *(p_n) += 1;                                  \
+} while (0)
+
+
+static inline struct lazy_order new_lazy_order(R_xlen_t size) {
+  struct lazy_order out;
+
+  out.o = PROTECT(Rf_allocVector(INTSXP, size));
+
+  out.size = size;
+  out.initialized = false;
+
+  UNPROTECT(1);
+  return out;
+}
+
+static inline void lazy_order_initialize(struct lazy_order* p_lazy_order) {
+  if (p_lazy_order->initialized) {
+    return;
+  }
+
+  R_xlen_t size = p_lazy_order->size;
+
+  int* p_o = p_lazy_order->p_o;
+
+  // Initialize `o` with sequential 1-based ordering
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_o[i] = i + 1;
+  }
+
+  p_lazy_order->initialized = true;
+}
+
+// -----------------------------------------------------------------------------
 #endif
