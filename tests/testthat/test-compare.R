@@ -109,7 +109,7 @@ test_that("xtfrm.vctrs_vctr works for variety of base classes", {
 test_that("vec_proxy_order() orders list using order of appearance", {
   x <- 1:2
   y <- 2:4
-  z <- 3
+  z <- "a"
 
   lst <- list(x, y, x, y, z)
 
