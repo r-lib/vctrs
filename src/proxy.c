@@ -16,11 +16,10 @@ SEXP fns_vec_proxy_equal_array = NULL;
 SEXP fns_vec_proxy_compare_array = NULL;
 SEXP fns_vec_proxy_order_array = NULL;
 
-// Defined below
-SEXP vec_proxy_method(SEXP x);
-SEXP vec_proxy_invoke(SEXP x, SEXP method);
 static SEXP vec_proxy_unwrap(SEXP x);
 
+SEXP vec_proxy_method(SEXP x);
+SEXP vec_proxy_invoke(SEXP x, SEXP method);
 
 // [[ register(); include("vctrs.h") ]]
 SEXP vec_proxy(SEXP x) {
@@ -39,6 +38,40 @@ SEXP vec_proxy(SEXP x) {
   return out;
 }
 
+static inline SEXP vec_proxy_equal_method(SEXP x);
+static inline SEXP vec_proxy_equal_invoke(SEXP x, SEXP method);
+
+// [[ register(); include("vctrs.h") ]]
+SEXP vec_proxy_equal(SEXP x) {
+  SEXP method = PROTECT(vec_proxy_equal_method(x));
+  SEXP out = vec_proxy_equal_invoke(x, method);
+  UNPROTECT(1);
+  return out;
+}
+
+static inline SEXP vec_proxy_compare_method(SEXP x);
+static inline SEXP vec_proxy_compare_invoke(SEXP x, SEXP method);
+
+// [[ register(); include("vctrs.h") ]]
+SEXP vec_proxy_compare(SEXP x) {
+  SEXP method = PROTECT(vec_proxy_compare_method(x));
+  SEXP out = vec_proxy_compare_invoke(x, method);
+  UNPROTECT(1);
+  return out;
+}
+
+static inline SEXP vec_proxy_order_method(SEXP x);
+static inline SEXP vec_proxy_order_invoke(SEXP x, SEXP method);
+
+// [[ register(); include("vctrs.h") ]]
+SEXP vec_proxy_order(SEXP x) {
+  SEXP method = PROTECT(vec_proxy_order_method(x));
+  SEXP out = vec_proxy_order_invoke(x, method);
+  UNPROTECT(1);
+  return out;
+}
+
+
 SEXP vec_proxy_method(SEXP x) {
   return s3_find_method("vec_proxy", x, vctrs_method_table);
 }
@@ -55,139 +88,63 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
 }
 
 
-static inline SEXP vec_proxy_equal_method(SEXP x);
-static inline SEXP vec_proxy_equal_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy_equal(SEXP x) {
-  SEXP method = PROTECT(vec_proxy_equal_method(x));
-  SEXP out = vec_proxy_equal_invoke(x, method);
-  UNPROTECT(1);
-  return out;
+#define VEC_PROXY_METHOD(GENERIC, FNS_PROXY_ARRAY) {                    \
+  SEXP cls = PROTECT(s3_get_class(x));                                  \
+  SEXP method = s3_class_find_method(GENERIC, cls, vctrs_method_table); \
+                                                                        \
+  if (method != R_NilValue) {                                           \
+    UNPROTECT(1);                                                       \
+    return method;                                                      \
+  }                                                                     \
+                                                                        \
+  /* FIXME: Stopgap check for bare arrays */                            \
+  /* which equality functions don't handle well */                      \
+  if (vec_dim_n(x) > 1) {                                               \
+    UNPROTECT(1);                                                       \
+    return FNS_PROXY_ARRAY;                                             \
+  }                                                                     \
+                                                                        \
+  UNPROTECT(1);                                                         \
+  return R_NilValue;                                                    \
 }
 
 static inline SEXP vec_proxy_equal_method(SEXP x) {
-  SEXP cls = PROTECT(s3_get_class(x));
-  SEXP method = s3_class_find_method("vec_proxy_equal", cls, vctrs_method_table);
+  VEC_PROXY_METHOD("vec_proxy_equal", fns_vec_proxy_equal_array);
+}
+static inline SEXP vec_proxy_compare_method(SEXP x) {
+  VEC_PROXY_METHOD("vec_proxy_compare", fns_vec_proxy_compare_array);
+}
+static inline SEXP vec_proxy_order_method(SEXP x) {
+  VEC_PROXY_METHOD("vec_proxy_order", fns_vec_proxy_order_array);
+}
 
-  if (method != R_NilValue) {
-    UNPROTECT(1);
-    return method;
-  }
+#undef VEC_PROXY_METHOD
 
-  // FIXME: Stopgap check for bare arrays, which equality functions don't
-  // handle well
-  if (vec_dim_n(x) > 1) {
-    UNPROTECT(1);
-    return fns_vec_proxy_equal_array;
-  }
 
-  UNPROTECT(1);
-  return R_NilValue;
+#define VEC_PROXY_INVOKE(SYMS_PROXY, PROXY_DEFAULT) {          \
+  if (method != R_NilValue) {                                  \
+    return vctrs_dispatch1(SYMS_PROXY, method, syms_x, x);     \
+  }                                                            \
+                                                               \
+  /* Fallback on S3 objects with no proxy */                   \
+  if (vec_typeof(x) == vctrs_type_s3) {                        \
+    return PROXY_DEFAULT(x);                                   \
+  } else {                                                     \
+    return x;                                                  \
+  }                                                            \
 }
 
 static inline SEXP vec_proxy_equal_invoke(SEXP x, SEXP method) {
-  if (method != R_NilValue) {
-    return vctrs_dispatch1(syms_vec_proxy_equal, method, syms_x, x);
-  }
-
-  // Fallback to `vec_proxy()` on S3 objects with no equality proxy
-  if (vec_typeof(x) == vctrs_type_s3) {
-    return vec_proxy(x);
-  } else {
-    return x;
-  }
+  VEC_PROXY_INVOKE(syms_vec_proxy_equal, vec_proxy);
 }
-
-
-static inline SEXP vec_proxy_compare_method(SEXP x);
-static inline SEXP vec_proxy_compare_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy_compare(SEXP x) {
-  SEXP method = PROTECT(vec_proxy_compare_method(x));
-  SEXP out = vec_proxy_compare_invoke(x, method);
-  UNPROTECT(1);
-  return out;
-}
-
-static inline SEXP vec_proxy_compare_method(SEXP x) {
-  SEXP cls = PROTECT(s3_get_class(x));
-  SEXP method = s3_class_find_method("vec_proxy_compare", cls, vctrs_method_table);
-
-  if (method != R_NilValue) {
-    UNPROTECT(1);
-    return method;
-  }
-
-  // FIXME: Stopgap check for bare arrays, which comparison functions don't
-  // handle well
-  if (vec_dim_n(x) > 1) {
-    UNPROTECT(1);
-    return fns_vec_proxy_compare_array;
-  }
-
-  UNPROTECT(1);
-  return R_NilValue;
-}
-
 static inline SEXP vec_proxy_compare_invoke(SEXP x, SEXP method) {
-  if (method != R_NilValue) {
-    return vctrs_dispatch1(syms_vec_proxy_compare, method, syms_x, x);
-  }
-
-  // Fallback to `vec_proxy_equal()` on S3 objects with no comparison proxy
-  if (vec_typeof(x) == vctrs_type_s3) {
-    return vec_proxy_equal(x);
-  } else {
-    return x;
-  }
+  VEC_PROXY_INVOKE(syms_vec_proxy_compare, vec_proxy_equal);
 }
-
-
-static inline SEXP vec_proxy_order_method(SEXP x);
-static inline SEXP vec_proxy_order_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy_order(SEXP x) {
-  SEXP method = PROTECT(vec_proxy_order_method(x));
-  SEXP out = vec_proxy_order_invoke(x, method);
-  UNPROTECT(1);
-  return out;
-}
-
-static inline SEXP vec_proxy_order_method(SEXP x) {
-  SEXP cls = PROTECT(s3_get_class(x));
-  SEXP method = s3_class_find_method("vec_proxy_order", cls, vctrs_method_table);
-
-  if (method != R_NilValue) {
-    UNPROTECT(1);
-    return method;
-  }
-
-  // FIXME: Stopgap check for bare arrays, which ordering functions don't
-  // handle well
-  if (vec_dim_n(x) > 1) {
-    UNPROTECT(1);
-    return fns_vec_proxy_order_array;
-  }
-
-  UNPROTECT(1);
-  return R_NilValue;
-}
-
 static inline SEXP vec_proxy_order_invoke(SEXP x, SEXP method) {
-  if (method != R_NilValue) {
-    return vctrs_dispatch1(syms_vec_proxy_order, method, syms_x, x);
-  }
-
-  // Fallback to `vec_proxy_compare()` on S3 objects with no order proxy
-  if (vec_typeof(x) == vctrs_type_s3) {
-    return vec_proxy_compare(x);
-  } else {
-    return x;
-  }
+  VEC_PROXY_INVOKE(syms_vec_proxy_order, vec_proxy_compare);
 }
+
+#undef VEC_PROXY_INVOKE
 
 
 #define DF_PROXY(PROXY) do {                                   \
