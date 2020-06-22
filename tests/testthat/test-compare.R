@@ -165,33 +165,33 @@ test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
 })
 
 test_that("vec_proxy_compare() flattens df-cols", {
-  df_col <- new_data_frame(list(z = 3:4, w = 4:5))
-  df <- new_data_frame(list(x = 1:2, y = df_col))
+  df_col <- data_frame(z = 3:4, w = 4:5)
+  df <- data_frame(x = 1:2, y = df_col)
 
-  expect <- new_data_frame(list(x = 1:2, z = 3:4, w = 4:5))
+  expect <- data_frame(x = 1:2, z = 3:4, w = 4:5)
 
   expect_identical(vec_proxy_compare(df), expect)
 })
 
 test_that("vec_proxy_compare() unwraps 1 col dfs", {
-  df <- new_data_frame(list(x = 1:2))
+  df <- data_frame(x = 1:2)
 
   expect_identical(vec_proxy_compare(df), 1:2)
 
-  df_col <- new_data_frame(list(y = 1:2))
-  df <- new_data_frame(list(x = df_col))
+  df_col <- data_frame(y = 1:2)
+  df <- data_frame(x = df_col)
 
   expect_identical(vec_proxy_compare(df), 1:2)
 })
 
 test_that("vec_proxy_order() works on deeply nested lists", {
-  df_col <- new_data_frame(list(z = list("b", "a", "b")))
+  df_col <- data_frame(z = list("b", "a", "b"))
 
   # Relaxed and unwrapped
-  df1 <- new_data_frame(list(x = df_col))
+  df1 <- data_frame(x = df_col)
   expect_identical(vec_proxy_order(df1), c(1L, 2L, 1L))
 
-  df2 <- new_data_frame(list(x = df_col, y = 1:3))
+  df2 <- data_frame(x = df_col, y = 1:3)
   expect_identical(vec_proxy_order(df2), data_frame(x = c(1L, 2L, 1L), y = 1:3))
 })
 
