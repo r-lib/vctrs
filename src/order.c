@@ -179,6 +179,14 @@
 
 // -----------------------------------------------------------------------------
 
+enum vctrs_sortedness {
+  VCTRS_SORTEDNESS_unsorted,
+  VCTRS_SORTEDNESS_sorted,
+  VCTRS_SORTEDNESS_reversed,
+};
+
+// -----------------------------------------------------------------------------
+
 static bool parse_na_value(SEXP na_value);
 static SEXP parse_direction(SEXP direction);
 
@@ -234,7 +242,7 @@ static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type t
 static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing);
 
 static void vec_order_switch(SEXP x,
-                             int* p_o,
+                             struct lazy_order* p_lazy_order,
                              struct lazy_vec* p_lazy_x_slice,
                              struct lazy_vec* p_lazy_x_aux,
                              struct lazy_vec* p_lazy_o_aux,
@@ -331,17 +339,13 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations
   struct truelength_info* p_truelength_info = &truelength_info;
   PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
 
-  SEXP o = PROTECT_N(Rf_allocVector(INTSXP, size), p_n_prot);
-  int* p_o = INTEGER(o);
-
-  // Initialize `o` with sequential 1-based ordering
-  for (R_xlen_t i = 0; i < size; ++i) {
-    p_o[i] = i + 1;
-  }
+  struct lazy_order lazy_order = new_lazy_order(size);
+  struct lazy_order* p_lazy_order = &lazy_order;
+  PROTECT_LAZY_ORDER(p_lazy_order, p_n_prot);
 
   vec_order_switch(
     proxy,
-    p_o,
+    p_lazy_order,
     p_lazy_x_slice,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -361,6 +365,8 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations
     const int* p_sizes = p_group_info->p_data;
     R_xlen_t n_groups = p_group_info->n_groups;
 
+    const int* p_o = p_lazy_order->p_o;
+
     SEXP out = vec_order_loc_impl(x, p_o, p_sizes, n_groups);
 
     UNPROTECT(n_prot);
@@ -368,7 +374,7 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations
   }
 
   UNPROTECT(n_prot);
-  return o;
+  return p_lazy_order->o;
 }
 
 // -----------------------------------------------------------------------------
@@ -424,7 +430,7 @@ static SEXP vec_order_loc_impl(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void df_order(SEXP x,
-                     int* p_o,
+                     struct lazy_order* p_lazy_order,
                      struct lazy_vec* p_lazy_x_slice,
                      struct lazy_vec* p_lazy_x_aux,
                      struct lazy_vec* p_lazy_o_aux,
@@ -437,7 +443,7 @@ static void df_order(SEXP x,
                      R_xlen_t size);
 
 static void vec_order_base_switch(SEXP x,
-                                  int* p_o,
+                                  struct lazy_order* p_lazy_order,
                                   struct lazy_vec* p_lazy_x_slice,
                                   struct lazy_vec* p_lazy_x_aux,
                                   struct lazy_vec* p_lazy_o_aux,
@@ -451,7 +457,7 @@ static void vec_order_base_switch(SEXP x,
                                   const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
-                             int* p_o,
+                             struct lazy_order* p_lazy_order,
                              struct lazy_vec* p_lazy_x_slice,
                              struct lazy_vec* p_lazy_x_aux,
                              struct lazy_vec* p_lazy_o_aux,
@@ -466,7 +472,7 @@ static void vec_order_switch(SEXP x,
   if (type == vctrs_type_dataframe) {
     df_order(
       x,
-      p_o,
+      p_lazy_order,
       p_lazy_x_slice,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -494,7 +500,7 @@ static void vec_order_switch(SEXP x,
 
   vec_order_base_switch(
     x,
-    p_o,
+    p_lazy_order,
     p_lazy_x_slice,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -512,7 +518,7 @@ static void vec_order_switch(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void int_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -524,7 +530,7 @@ static void int_order(SEXP x,
                       R_xlen_t size);
 
 static void lgl_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -536,7 +542,7 @@ static void lgl_order(SEXP x,
                       R_xlen_t size);
 
 static void dbl_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -548,7 +554,7 @@ static void dbl_order(SEXP x,
                       R_xlen_t size);
 
 static void cpl_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -560,7 +566,7 @@ static void cpl_order(SEXP x,
                       R_xlen_t size);
 
 static void chr_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -574,7 +580,7 @@ static void chr_order(SEXP x,
 
 // Used on bare vectors and the first column of data frame `x`s
 static void vec_order_base_switch(SEXP x,
-                                  int* p_o,
+                                  struct lazy_order* p_lazy_order,
                                   struct lazy_vec* p_lazy_x_slice,
                                   struct lazy_vec* p_lazy_x_aux,
                                   struct lazy_vec* p_lazy_o_aux,
@@ -590,7 +596,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_integer: {
     int_order(
       x,
-      p_o,
+      p_lazy_order,
       p_lazy_x_slice,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -607,7 +613,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_logical: {
     lgl_order(
       x,
-      p_o,
+      p_lazy_order,
       p_lazy_x_slice,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -624,7 +630,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_double: {
     dbl_order(
       x,
-      p_o,
+      p_lazy_order,
       p_lazy_x_slice,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -641,7 +647,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_complex: {
     cpl_order(
       x,
-      p_o,
+      p_lazy_order,
       p_lazy_x_slice,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -658,7 +664,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_character: {
     chr_order(
       x,
-      p_o,
+      p_lazy_order,
       p_lazy_x_slice,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -684,12 +690,19 @@ static void vec_order_base_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static bool int_sorted(const int* p_x,
-                       int* p_o,
-                       struct group_infos* p_group_infos,
-                       R_xlen_t size,
-                       bool decreasing,
-                       bool na_last);
+static void ord_resolve_sortedness(int* p_o,
+                                   enum vctrs_sortedness sortedness,
+                                   R_xlen_t size);
+
+static void ord_resolve_sortedness_chunk(int* p_o,
+                                         enum vctrs_sortedness sortedness,
+                                         R_xlen_t size);
+
+static enum vctrs_sortedness int_sortedness(const int* p_x,
+                                            struct group_infos* p_group_infos,
+                                            R_xlen_t size,
+                                            bool decreasing,
+                                            bool na_last);
 
 static void int_adjust(void* p_x,
                        const bool decreasing,
@@ -708,6 +721,7 @@ static void int_counting_order(const int* p_x,
                                R_xlen_t size,
                                int x_min,
                                uint32_t range,
+                               bool initialized,
                                bool decreasing,
                                bool na_last);
 
@@ -749,7 +763,16 @@ static void int_order_chunk(void* p_x,
                             bool decreasing,
                             bool na_last,
                             R_xlen_t size) {
-  if (int_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+  const enum vctrs_sortedness sortedness = int_sortedness(
+    p_x,
+    p_group_infos,
+    size,
+    decreasing,
+    na_last
+  );
+
+  if (sortedness != VCTRS_SORTEDNESS_unsorted) {
+    ord_resolve_sortedness_chunk(p_o, sortedness, size);
     return;
   }
 
@@ -758,6 +781,10 @@ static void int_order_chunk(void* p_x,
     int_insertion_order(p_x, p_o, p_group_infos, size);
     return;
   }
+
+  // `int_order_chunk()` is on column chunks where order is guaranteed
+  // to have been initialized
+  const bool initialized = true;
 
   lazy_vec_initialize(p_lazy_o_aux);
   int* p_o_aux = (int*) p_lazy_o_aux->p_data;
@@ -776,6 +803,7 @@ static void int_order_chunk(void* p_x,
       size,
       x_min,
       range,
+      initialized,
       decreasing,
       na_last
     );
@@ -808,7 +836,7 @@ static void int_order_chunk(void* p_x,
 }
 
 static void int_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -820,16 +848,29 @@ static void int_order(SEXP x,
                       R_xlen_t size) {
   const int* p_x = INTEGER_RO(x);
 
-  if (int_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+  const enum vctrs_sortedness sortedness = int_sortedness(
+    p_x,
+    p_group_infos,
+    size,
+    decreasing,
+    na_last
+  );
+
+  // Handle sorted cases and set ordering to initialized
+  if (sortedness != VCTRS_SORTEDNESS_unsorted) {
+    int* p_o = p_lazy_order->p_o;
+    ord_resolve_sortedness(p_o, sortedness, size);
+    p_lazy_order->initialized = true;
     return;
   }
 
   if (size <= INSERTION_ORDER_BOUNDARY) {
+    lazy_order_initialize(p_lazy_order);
+    int* p_o = p_lazy_order->p_o;
+
     lazy_vec_initialize(p_lazy_x_slice);
     void* p_x_slice = p_lazy_x_slice->p_data;
-
     memcpy(p_x_slice, p_x, size * sizeof(int));
-
     int_adjust(p_x_slice, decreasing, na_last, size);
 
     int_insertion_order(p_x_slice, p_o, p_group_infos, size);
@@ -837,16 +878,20 @@ static void int_order(SEXP x,
     return;
   }
 
-  lazy_vec_initialize(p_lazy_o_aux);
-  int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+  // `int_order()` is on the first column / single vector
+  const bool initialized = false;
 
   uint32_t range;
   int x_min;
 
   int_compute_range(p_x, size, &x_min, &range);
 
-  // If in counting sort range, no need to copy over to `x_slice`
+  // If in counting sort range, no need to copy over to `x_slice` or initialize
+  // `p_lazy_o_aux` or `p_lazy_order`
   if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    int* p_o = p_lazy_order->p_o;
+    int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+
     int_counting_order(
       p_x,
       p_o,
@@ -855,16 +900,23 @@ static void int_order(SEXP x,
       size,
       x_min,
       range,
+      initialized,
       decreasing,
       na_last
     );
 
+    p_lazy_order->initialized = true;
     return;
   }
 
+  lazy_order_initialize(p_lazy_order);
+  int* p_o = p_lazy_order->p_o;
+
+  lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+
   lazy_vec_initialize(p_lazy_x_slice);
   void* p_x_slice = p_lazy_x_slice->p_data;
-
   memcpy(p_x_slice, p_x, size * sizeof(int));
   int_adjust(p_x_slice, decreasing, na_last, size);
 
@@ -1049,6 +1101,7 @@ static void int_counting_order(const int* p_x,
                                R_xlen_t size,
                                int x_min,
                                uint32_t range,
+                               bool initialized,
                                bool decreasing,
                                bool na_last) {
   // - Only allocate this once (counts are reset to 0 at end)
@@ -1119,25 +1172,26 @@ static void int_counting_order(const int* p_x,
     groups_size_push(p_group_infos, na_count);
   }
 
-  // Place in auxiliary in the right order, then copy back
-  for (R_xlen_t i = 0; i < size; ++i) {
-    const int elt = p_x[i];
-
-    uint32_t bucket;
-
-    if (elt == NA_INTEGER) {
-      bucket = na_bucket;
-    } else {
-      bucket = elt - x_min;
+  // If order is not initialized, we are on the first column / atomic vector
+  // and can place the order directly into the result. Much faster than
+  // initializing, placing in `p_o_aux`, and copying back over.
+  if (initialized) {
+    for (R_xlen_t i = 0; i < size; ++i) {
+      const int elt = p_x[i];
+      uint32_t bucket = (elt == NA_INTEGER) ? na_bucket : elt - x_min;
+      const R_xlen_t loc = p_counts[bucket]++;
+      p_o_aux[loc] = p_o[i];
     }
 
-    const R_xlen_t loc = p_counts[bucket]++;
-
-    p_o_aux[loc] = p_o[i];
+    memcpy(p_o, p_o_aux, size * sizeof(int));
+  } else {
+    for (R_xlen_t i = 0; i < size; ++i) {
+      const int elt = p_x[i];
+      uint32_t bucket = (elt == NA_INTEGER) ? na_bucket : elt - x_min;
+      const R_xlen_t loc = p_counts[bucket]++;
+      p_o[loc] = i + 1;
+    }
   }
-
-  // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(int));
 
   // Reset counts for next column.
   // Only reset what we might have touched.
@@ -1534,7 +1588,7 @@ static void lgl_order_chunk(void* p_x,
 }
 
 static void lgl_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -1546,7 +1600,7 @@ static void lgl_order(SEXP x,
                       R_xlen_t size) {
   int_order(
     x,
-    p_o,
+    p_lazy_order,
     p_lazy_x_slice,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -1561,12 +1615,11 @@ static void lgl_order(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static bool dbl_sorted(const double* p_x,
-                       int* p_o,
-                       struct group_infos* p_group_infos,
-                       R_xlen_t size,
-                       bool decreasing,
-                       bool na_last);
+static enum vctrs_sortedness dbl_sortedness(const double* p_x,
+                                            struct group_infos* p_group_infos,
+                                            R_xlen_t size,
+                                            bool decreasing,
+                                            bool na_last);
 
 static void dbl_adjust(void* p_x,
                        const bool decreasing,
@@ -1615,7 +1668,16 @@ static void dbl_order_chunk(void* p_x,
                             bool decreasing,
                             bool na_last,
                             R_xlen_t size) {
-  if (dbl_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+  const enum vctrs_sortedness sortedness = dbl_sortedness(
+    p_x,
+    p_group_infos,
+    size,
+    decreasing,
+    na_last
+  );
+
+  if (sortedness != VCTRS_SORTEDNESS_unsorted) {
+    ord_resolve_sortedness_chunk(p_o, sortedness, size);
     return;
   }
 
@@ -1652,7 +1714,7 @@ static void dbl_order_chunk(void* p_x,
 }
 
 static void dbl_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -1664,13 +1726,27 @@ static void dbl_order(SEXP x,
                       R_xlen_t size) {
   const double* p_x = REAL_RO(x);
 
-  if (dbl_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+  const enum vctrs_sortedness sortedness = dbl_sortedness(
+    p_x,
+    p_group_infos,
+    size,
+    decreasing,
+    na_last
+  );
+
+  // Handle sorted cases and set ordering to initialized
+  if (sortedness != VCTRS_SORTEDNESS_unsorted) {
+    int* p_o = p_lazy_order->p_o;
+    ord_resolve_sortedness(p_o, sortedness, size);
+    p_lazy_order->initialized = true;
     return;
   }
 
+  lazy_order_initialize(p_lazy_order);
+  int* p_o = p_lazy_order->p_o;
+
   lazy_vec_initialize(p_lazy_x_slice);
   void* p_x_slice = p_lazy_x_slice->p_data;
-
   memcpy(p_x_slice, p_x, size * sizeof(double));
   dbl_adjust(p_x_slice, decreasing, na_last, size);
 
@@ -2178,7 +2254,7 @@ static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
  * `dbl_order_chunk()`.
  */
 static void cpl_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -2198,6 +2274,10 @@ static void cpl_order(SEXP x,
     p_group_infos->ignore = false;
     reset_ignore = true;
   }
+
+  // Don't try to be lazy with ordering here, for simplicity
+  lazy_order_initialize(p_lazy_order);
+  int* p_o = p_lazy_order->p_o;
 
   const Rcomplex* p_x_cpl = COMPLEX_RO(x);
 
@@ -2284,12 +2364,11 @@ static void cpl_order(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static bool chr_sorted(const SEXP* p_x,
-                       int* p_o,
-                       struct group_infos* p_group_infos,
-                       R_xlen_t size,
-                       bool decreasing,
-                       bool na_last);
+static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
+                                            struct group_infos* p_group_infos,
+                                            R_xlen_t size,
+                                            bool decreasing,
+                                            bool na_last);
 
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_vec* p_lazy_x_aux,
@@ -2297,7 +2376,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size);
 
-static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size);
+static inline void chr_extract_ordering(int* p_x_aux, const SEXP* p_x, R_xlen_t size);
 
 static void chr_radix_order(SEXP* p_x,
                             SEXP* p_x_aux,
@@ -2342,7 +2421,16 @@ static void chr_order_chunk(void* p_x,
                             bool decreasing,
                             bool na_last,
                             R_xlen_t size) {
-  if (chr_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+  const enum vctrs_sortedness sortedness = chr_sortedness(
+    p_x,
+    p_group_infos,
+    size,
+    decreasing,
+    na_last
+  );
+
+  if (sortedness != VCTRS_SORTEDNESS_unsorted) {
+    ord_resolve_sortedness_chunk(p_o, sortedness, size);
     return;
   }
 
@@ -2358,6 +2446,10 @@ static void chr_order_chunk(void* p_x,
     int_insertion_order(p_x_aux, p_o, p_group_infos, size);
     return;
   }
+
+  // `chr_order_chunk()` is on column chunks where order is guaranteed
+  // to have been initialized
+  const bool initialized = true;
 
   lazy_vec_initialize(p_lazy_o_aux);
   int* p_o_aux = (int*) p_lazy_o_aux->p_data;
@@ -2376,6 +2468,7 @@ static void chr_order_chunk(void* p_x,
       size,
       x_min,
       range,
+      initialized,
       decreasing,
       na_last
     );
@@ -2408,8 +2501,20 @@ static void chr_order_chunk(void* p_x,
 
 static void chr_copy_with_reencode(SEXP* p_x_slice, const SEXP* p_x, R_xlen_t size);
 
+static void chr_int_order(void* p_x,
+                          void* p_x_aux,
+                          struct lazy_order* p_lazy_order,
+                          struct lazy_vec* p_lazy_o_aux,
+                          struct lazy_vec* p_lazy_bytes,
+                          struct lazy_vec* p_lazy_counts,
+                          struct group_infos* p_group_infos,
+                          struct truelength_info* p_truelength_info,
+                          bool decreasing,
+                          bool na_last,
+                          R_xlen_t size);
+
 static void chr_order(SEXP x,
-                      int* p_o,
+                      struct lazy_order* p_lazy_order,
                       struct lazy_vec* p_lazy_x_slice,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -2422,7 +2527,19 @@ static void chr_order(SEXP x,
                       R_xlen_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
-  if (chr_sorted(p_x, p_o, p_group_infos, size, decreasing, na_last)) {
+  const enum vctrs_sortedness sortedness = chr_sortedness(
+    p_x,
+    p_group_infos,
+    size,
+    decreasing,
+    na_last
+  );
+
+  // Handle sorted cases and set ordering to initialized
+  if (sortedness != VCTRS_SORTEDNESS_unsorted) {
+    int* p_o = p_lazy_order->p_o;
+    ord_resolve_sortedness(p_o, sortedness, size);
+    p_lazy_order->initialized = true;
     return;
   }
 
@@ -2440,14 +2557,25 @@ static void chr_order(SEXP x,
     size
   );
 
-  chr_order_chunk(
+  lazy_vec_initialize(p_lazy_x_aux);
+  void* p_x_aux = p_lazy_x_aux->p_data;
+
+  // Move integer ordering into `p_x_aux`.
+  // `p_x_aux` is allocated as the larger of `int` and `SEXP*`.
+  chr_extract_ordering(p_x_aux, p_x_slice, size);
+
+  // Reuse `p_x_slice`, which was a `SEXP*` to the CHARSXPs but is no longer
+  // required. We ensure that this is as large as `uint32_t` when originally
+  // allocating.
+  chr_int_order(
+    p_x_aux,
     p_x_slice,
-    p_o,
-    p_lazy_x_aux,
+    p_lazy_order,
     p_lazy_o_aux,
     p_lazy_bytes,
     p_lazy_counts,
     p_group_infos,
+    p_truelength_info,
     decreasing,
     na_last,
     size
@@ -2457,6 +2585,83 @@ static void chr_order(SEXP x,
   truelength_reset(p_truelength_info);
 }
 
+static void chr_int_order(void* p_x,
+                          void* p_x_aux,
+                          struct lazy_order* p_lazy_order,
+                          struct lazy_vec* p_lazy_o_aux,
+                          struct lazy_vec* p_lazy_bytes,
+                          struct lazy_vec* p_lazy_counts,
+                          struct group_infos* p_group_infos,
+                          struct truelength_info* p_truelength_info,
+                          bool decreasing,
+                          bool na_last,
+                          R_xlen_t size) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    lazy_order_initialize(p_lazy_order);
+    int* p_o = p_lazy_order->p_o;
+
+    int_adjust(p_x, decreasing, na_last, size);
+    int_insertion_order(p_x, p_o, p_group_infos, size);
+    return;
+  }
+
+  // `chr_order()` is on the first column / single vector
+  const bool initialized = false;
+
+  uint32_t range;
+  int x_min;
+
+  int_compute_range(p_x, size, &x_min, &range);
+
+  // If in counting sort range, no need to initialize
+  // `p_lazy_o_aux` or `p_lazy_order`
+  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    int* p_o = p_lazy_order->p_o;
+    int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+
+    int_counting_order(
+      p_x,
+      p_o,
+      p_o_aux,
+      p_group_infos,
+      size,
+      x_min,
+      range,
+      initialized,
+      decreasing,
+      na_last
+    );
+
+    return;
+  }
+
+  lazy_order_initialize(p_lazy_order);
+  int* p_o = p_lazy_order->p_o;
+
+  lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+
+  lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
+
+  lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
+  memset(p_counts, 0, p_lazy_counts->size);
+
+  int_adjust(p_x, decreasing, na_last, size);
+
+  int_radix_order(
+    p_x,
+    p_o,
+    p_x_aux,
+    p_o_aux,
+    p_bytes,
+    p_counts,
+    p_group_infos,
+    size
+  );
+}
+
 // -----------------------------------------------------------------------------
 
 /*
@@ -2464,7 +2669,7 @@ static void chr_order(SEXP x,
  * We mark the CHARSXP TRUELENGTHs with negative ordering to be different from
  * what R might use, so that gets reversed here to get the true ordering back.
  */
-static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) {
+static inline void chr_extract_ordering(int* p_x_aux, const SEXP* p_x, R_xlen_t size) {
   for (R_xlen_t i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
@@ -2480,6 +2685,11 @@ static inline void chr_extract_ordering(int* p_x_aux, SEXP* p_x, R_xlen_t size) 
 }
 
 // -----------------------------------------------------------------------------
+
+static void chr_insertion_order(SEXP* p_x,
+                                int* p_sizes,
+                                const R_xlen_t size,
+                                const R_len_t pass);
 
 /*
  * `chr_mark_sorted_uniques()` runs through the strings in `p_x` and places the
@@ -2537,13 +2747,13 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
     SET_TRUELENGTH(elt, -1);
   }
 
+  R_xlen_t n_uniques = p_truelength_info->size_used;
+
   lazy_vec_initialize(p_lazy_x_aux);
   SEXP* p_x_aux = (SEXP*) p_lazy_x_aux->p_data;
 
   lazy_vec_initialize(p_lazy_bytes);
   uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
-
-  R_xlen_t n_uniques = p_truelength_info->size_used;
 
   // Sorts uniques in ascending order using `p_x_aux` for working memory.
   // Assumes no `NA`!
@@ -2970,7 +3180,7 @@ static void vec_order_chunk_switch(void* p_x,
  * can tell all of the values apart.
  */
 static void df_order(SEXP x,
-                     int* p_o,
+                     struct lazy_order* p_lazy_order,
                      struct lazy_vec* p_lazy_x_slice,
                      struct lazy_vec* p_lazy_x_aux,
                      struct lazy_vec* p_lazy_o_aux,
@@ -3002,6 +3212,7 @@ static void df_order(SEXP x,
 
   // Special case no columns
   if (n_cols == 0) {
+    lazy_order_initialize(p_lazy_order);
     return;
   }
 
@@ -3013,7 +3224,7 @@ static void df_order(SEXP x,
   // First column is immutable and we must copy into `x_slice`.
   vec_order_base_switch(
     col,
-    p_o,
+    p_lazy_order,
     p_lazy_x_slice,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -3042,8 +3253,9 @@ static void df_order(SEXP x,
 
     // Reset pointer between columns since we increment it as
     // we iterate through the groups, but need it to start from the beginning
-    // on the next column
-    int* p_o_col = p_o;
+    // on the next column. `p_o` is initialized now that we have already
+    // processed at least one column.
+    int* p_o_col = p_lazy_order->p_o;
 
     // Get the number of group chunks from previous column group info
     struct group_info* p_group_info_pre = groups_current(p_group_infos);
@@ -3531,25 +3743,24 @@ static inline int dbl_cmp(double x,
  * Check if a double vector is ordered, handling `decreasing` and `na_last`
  *
  * If the double vector is in the expected ordering, no sorting needs to
- * occur. In these cases, if `p_x` is in exactly the expected ordering, `p_o`
- * is unmodified. If `p_x` is in exactly the opposite ordering, then `p_o`
- * is reversed (this only happens if it is strictly opposite of expected
+ * occur. In these cases, if `p_x` is in exactly the expected ordering.
+ * If `p_x` is in exactly the opposite ordering, the the ordering will later
+ * be reversed (this only happens if it is strictly opposite of expected
  * ordering, ties would prevent the reversal from being stable). Group
  * information is also pushed in these cases for use in the next columns.
  */
-static bool dbl_sorted(const double* p_x,
-                       int* p_o,
-                       struct group_infos* p_group_infos,
-                       R_xlen_t size,
-                       bool decreasing,
-                       bool na_last) {
+static enum vctrs_sortedness dbl_sortedness(const double* p_x,
+                                            struct group_infos* p_group_infos,
+                                            R_xlen_t size,
+                                            bool decreasing,
+                                            bool na_last) {
   if (size == 0) {
-    return true;
+    return VCTRS_SORTEDNESS_sorted;
   }
 
   if (size == 1) {
     groups_size_push(p_group_infos, 1);
-    return true;
+    return VCTRS_SORTEDNESS_sorted;
   }
 
   const int direction = decreasing ? -1 : 1;
@@ -3580,19 +3791,17 @@ static bool dbl_sorted(const double* p_x,
 
   // Was in strictly opposite of expected order.
   if (count == size - 1) {
-    ord_reverse(p_o, size);
-
     // Each group is size 1 since this is strict ordering
     for (R_xlen_t j = 0; j < size; ++j) {
       groups_size_push(p_group_infos, 1);
     }
 
-    return true;
+    return VCTRS_SORTEDNESS_reversed;
   }
 
   // Was partially in expected order. Need to sort.
   if (count != 0) {
-    return false;
+    return VCTRS_SORTEDNESS_unsorted;
   }
 
   // Retain the original `n_groups` to be able to reset the group sizes if
@@ -3617,7 +3826,7 @@ static bool dbl_sorted(const double* p_x,
     // Not expected ordering
     if (cmp < 0) {
       p_group_info->n_groups = original_n_groups;
-      return false;
+      return VCTRS_SORTEDNESS_unsorted;
     }
 
     previous = current;
@@ -3637,7 +3846,7 @@ static bool dbl_sorted(const double* p_x,
   groups_size_push(p_group_infos, group_size);
 
   // Expected ordering
-  return true;
+  return VCTRS_SORTEDNESS_sorted;
 }
 
 /*
@@ -3671,20 +3880,19 @@ static inline int int_cmp(int x,
                           const int direction,
                           const int na_order);
 
-// Very similar to `dbl_sorted()`
-static bool int_sorted(const int* p_x,
-                       int* p_o,
-                       struct group_infos* p_group_infos,
-                       R_xlen_t size,
-                       bool decreasing,
-                       bool na_last) {
+// Very similar to `dbl_sortedness()`
+static enum vctrs_sortedness int_sortedness(const int* p_x,
+                                            struct group_infos* p_group_infos,
+                                            R_xlen_t size,
+                                            bool decreasing,
+                                            bool na_last) {
   if (size == 0) {
-    return true;
+    return VCTRS_SORTEDNESS_sorted;
   }
 
   if (size == 1) {
     groups_size_push(p_group_infos, 1);
-    return true;
+    return VCTRS_SORTEDNESS_sorted;
   }
 
   const int direction = decreasing ? -1 : 1;
@@ -3715,19 +3923,17 @@ static bool int_sorted(const int* p_x,
 
   // Was in strictly opposite of expected order.
   if (count == size - 1) {
-    ord_reverse(p_o, size);
-
     // Each group is size 1 since this is strict ordering
     for (R_xlen_t j = 0; j < size; ++j) {
       groups_size_push(p_group_infos, 1);
     }
 
-    return true;
+    return VCTRS_SORTEDNESS_reversed;
   }
 
   // Was partially in expected order. Need to sort.
   if (count != 0) {
-    return false;
+    return VCTRS_SORTEDNESS_unsorted;
   }
 
   // Retain the original `n_groups` to be able to reset the group sizes if
@@ -3752,7 +3958,7 @@ static bool int_sorted(const int* p_x,
     // Not expected ordering
     if (cmp < 0) {
       p_group_info->n_groups = original_n_groups;
-      return false;
+      return VCTRS_SORTEDNESS_unsorted;
     }
 
     previous = current;
@@ -3772,7 +3978,7 @@ static bool int_sorted(const int* p_x,
   groups_size_push(p_group_infos, group_size);
 
   // Expected ordering
-  return true;
+  return VCTRS_SORTEDNESS_sorted;
 }
 
 // Very similar to `dbl_cmp()`
@@ -3810,22 +4016,21 @@ static inline int chr_cmp(SEXP x,
  * Check if `p_x` is in the "expected" ordering as defined by `decreasing` and
  * `na_last`. If `p_x` is in the expected ordering, or if it is in the strictly
  * opposite of the expected ordering (with no ties), then groups are pushed,
- * the order is finalized, and `true` is returned indicating that no sorting
- * is needed.
+ * and a `vctrs_sortedness` value is returned indicating how to finalize the
+ * order.
  */
-static bool chr_sorted(const SEXP* p_x,
-                       int* p_o,
-                       struct group_infos* p_group_infos,
-                       R_xlen_t size,
-                       bool decreasing,
-                       bool na_last) {
+static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
+                                            struct group_infos* p_group_infos,
+                                            R_xlen_t size,
+                                            bool decreasing,
+                                            bool na_last) {
   if (size == 0) {
-    return true;
+    return VCTRS_SORTEDNESS_sorted;
   }
 
   if (size == 1) {
     groups_size_push(p_group_infos, 1);
-    return true;
+    return VCTRS_SORTEDNESS_sorted;
   }
 
   const int direction = decreasing ? -1 : 1;
@@ -3861,19 +4066,17 @@ static bool chr_sorted(const SEXP* p_x,
 
   // Was in strictly opposite of expected order.
   if (count == size - 1) {
-    ord_reverse(p_o, size);
-
     // Each group is size 1 since this is strict ordering
     for (R_xlen_t j = 0; j < size; ++j) {
       groups_size_push(p_group_infos, 1);
     }
 
-    return true;
+    return VCTRS_SORTEDNESS_reversed;
   }
 
   // Was partially in expected order. Need to sort.
   if (count != 0) {
-    return false;
+    return VCTRS_SORTEDNESS_unsorted;
   }
 
   // Retain the original `n_groups` to be able to reset the group sizes if
@@ -3901,7 +4104,7 @@ static bool chr_sorted(const SEXP* p_x,
     // Not expected ordering
     if (cmp < 0) {
       p_group_info->n_groups = original_n_groups;
-      return false;
+      return VCTRS_SORTEDNESS_unsorted;
     }
 
     previous = current;
@@ -3922,7 +4125,7 @@ static bool chr_sorted(const SEXP* p_x,
   groups_size_push(p_group_infos, group_size);
 
   // Expected ordering
-  return true;
+  return VCTRS_SORTEDNESS_sorted;
 }
 
 /*
@@ -3953,9 +4156,70 @@ static inline int chr_cmp(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-// Used when in strictly opposite of expected order.
-// `size` will be at least 2.
+static inline void ord_reverse(int* p_o, R_xlen_t size);
+static inline void ord_reverse_chunk(int* p_o, R_xlen_t size);
+
+/*
+ * Resolve ordering based on the sortedness and whether or not `p_o` has
+ * been initialized. For a vector / first column, this function has to
+ * initialize the ordering (for reversed ordering this is faster than
+ * initializing the order sequentially then reversing it).
+ *
+ * `size` will correspond to the size of `x` for the first column, but will
+ * correspond to the size of the current group for subsequent columns.
+ */
+static void ord_resolve_sortedness(int* p_o,
+                                   enum vctrs_sortedness sortedness,
+                                   R_xlen_t size) {
+  if (sortedness == VCTRS_SORTEDNESS_unsorted) {
+    Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
+  }
+
+  if (sortedness == VCTRS_SORTEDNESS_sorted) {
+    // Initialize with sequential 1-based ordering
+    for (R_xlen_t i = 0; i < size; ++i) {
+      p_o[i] = i + 1;
+    }
+
+    return;
+  }
+
+  ord_reverse(p_o, size);
+}
+
+static void ord_resolve_sortedness_chunk(int* p_o,
+                                         enum vctrs_sortedness sortedness,
+                                         R_xlen_t size) {
+  if (sortedness == VCTRS_SORTEDNESS_unsorted) {
+    Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
+  }
+
+  if (sortedness == VCTRS_SORTEDNESS_sorted) {
+    return;
+  }
+
+  ord_reverse_chunk(p_o, size);
+}
+
+
+// Used when in strictly opposite of expected order and uninitialized.
 static inline void ord_reverse(int* p_o, R_xlen_t size) {
+  const R_xlen_t half = size / 2;
+
+  for (R_xlen_t i = 0; i < half; ++i) {
+    R_xlen_t swap = size - 1 - i;
+    p_o[i] = swap + 1;
+    p_o[swap] = i + 1;
+  }
+
+  // Initialize center value if odd number
+  if (size % 2 != 0) {
+    p_o[half] = half + 1;
+  }
+}
+
+// Used when in strictly opposite of expected order and initialized.
+static inline void ord_reverse_chunk(int* p_o, R_xlen_t size) {
   const R_xlen_t half = size / 2;
 
   for (R_xlen_t i = 0; i < half; ++i) {
