@@ -351,10 +351,10 @@ bool vec_is_unspecified(SEXP x);
 #include "names.h"
 
 enum vctrs_proxy_kind {
-  vctrs_proxy_kind_default,
-  vctrs_proxy_kind_equal,
-  vctrs_proxy_kind_compare,
-  vctrs_proxy_kind_order
+  VCTRS_PROXY_KIND_default,
+  VCTRS_PROXY_KIND_equal,
+  VCTRS_PROXY_KIND_compare,
+  VCTRS_PROXY_KIND_order
 };
 
 SEXP vec_proxy(SEXP x);

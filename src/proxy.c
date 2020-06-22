@@ -167,10 +167,10 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
   x = PROTECT(r_clone_referenced(x));
 
   switch (kind) {
-  case vctrs_proxy_kind_default: DF_PROXY(vec_proxy); break;
-  case vctrs_proxy_kind_equal: DF_PROXY(vec_proxy_equal); break;
-  case vctrs_proxy_kind_compare: DF_PROXY(vec_proxy_compare); break;
-  case vctrs_proxy_kind_order: DF_PROXY(vec_proxy_order); break;
+  case VCTRS_PROXY_KIND_default: DF_PROXY(vec_proxy); break;
+  case VCTRS_PROXY_KIND_equal: DF_PROXY(vec_proxy_equal); break;
+  case VCTRS_PROXY_KIND_compare: DF_PROXY(vec_proxy_compare); break;
+  case VCTRS_PROXY_KIND_order: DF_PROXY(vec_proxy_order); break;
   }
 
   x = PROTECT(df_flatten(x));
@@ -184,19 +184,11 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
 
 // [[ register() ]]
 SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
-  enum vctrs_proxy_kind c_kind;
-
-  if (kind == Rf_install("default")) {
-    c_kind = vctrs_proxy_kind_default;
-  } else if (kind == Rf_install("equal")) {
-    c_kind = vctrs_proxy_kind_equal;
-  } else if (kind == Rf_install("compare")) {
-    c_kind = vctrs_proxy_kind_compare;
-  } else if (kind == Rf_install("order")) {
-    c_kind = vctrs_proxy_kind_order;
-  }else {
-    Rf_error("Internal error: Unexpected proxy kind `%s`.", CHAR(PRINTNAME(kind)));
+  if (!r_is_number(kind)) {
+    Rf_errorcall(R_NilValue, "Internal error: `kind` must be a single integer.");
   }
+
+  enum vctrs_proxy_kind c_kind = r_int_get(kind, 0);
 
   return df_proxy(x, c_kind);
 }
