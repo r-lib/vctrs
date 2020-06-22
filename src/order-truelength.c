@@ -20,6 +20,8 @@ struct truelength_info new_truelength_info(R_xlen_t max_size_alloc) {
   info.max_size_alloc = max_size_alloc;
   info.size_used = 0;
 
+  info.reencode = false;
+
   return info;
 }
 
@@ -42,8 +44,9 @@ void truelength_reset(struct truelength_info* p_truelength_info) {
     SET_TRUELENGTH(string, length);
   }
 
-  // Also reset number of used strings
+  // Also reset number of used strings and whether or not to re-encode
   p_truelength_info->size_used = 0;
+  p_truelength_info->reencode = false;
 }
 
 // -----------------------------------------------------------------------------
