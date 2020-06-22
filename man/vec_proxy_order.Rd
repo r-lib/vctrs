@@ -15,9 +15,9 @@ vec_proxy_order(x, ...)
 A 1d atomic vector or a data frame.
 }
 \description{
-Returns a proxy object for ordering. For vctrs_vctr objects, this determines
-the behavior of \code{order()} and \code{sort()} (via \code{xtfrm()}). It also powers
-\code{vec_order()} and \code{vec_sort()} for other vector types.
+Returns a proxy object for ordering. For \code{\link[=vctr]{vctrs_vctr}} objects, this
+determines the behavior of \code{order()} and \code{sort()} (via \code{xtfrm()}). It also
+powers \code{vec_order()} and \code{vec_sort()} for other vector types.
 }
 \details{
 The default is to call \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}.

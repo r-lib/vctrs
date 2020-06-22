@@ -26,8 +26,8 @@ vectors or records are comparable. Internally the default calls
 \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}. If your class is not comparable, you will need
 to provide a \code{vec_proxy_compare()} method that throws an error.
 
-Lists are not comparable, as it is unclear how to compare elements of
-varying types.
+Lists are not comparable, as comparing elements of different types is
+undefined.
 }
 \section{Dependencies}{
 

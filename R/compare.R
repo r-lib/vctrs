@@ -10,8 +10,8 @@
 #' [vec_proxy_equal()]. If your class is not comparable, you will need
 #' to provide a `vec_proxy_compare()` method that throws an error.
 #'
-#' Lists are not comparable, as it is unclear how to compare elements of
-#' varying types.
+#' Lists are not comparable, as comparing elements of different types is
+#' undefined.
 #'
 #' @param x A vector x.
 #' @inheritParams ellipsis::dots_empty
@@ -161,9 +161,9 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
 
 #' Ordering proxy
 #'
-#' Returns a proxy object for ordering. For vctrs_vctr objects, this determines
-#' the behavior of `order()` and `sort()` (via `xtfrm()`). It also powers
-#' `vec_order()` and `vec_sort()` for other vector types.
+#' Returns a proxy object for ordering. For [`vctrs_vctr`][vctr] objects, this
+#' determines the behavior of `order()` and `sort()` (via `xtfrm()`). It also
+#' powers `vec_order()` and `vec_sort()` for other vector types.
 #'
 #' The default is to call [vec_proxy_compare()].
 #'

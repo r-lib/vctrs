@@ -4,7 +4,8 @@
 * New `vec_proxy_order()` that provides an ordering proxy for use in
   `vec_order()` and `vec_sort()`. The default method falls through to
   `vec_proxy_compare()`. Lists are special cased, and return an integer
-  vector proxy that orders by first appearance.
+  vector proxy that orders by first appearance. Generally, comparison requires
+  a common type, but ordering doesn't.
 
 * List columns in data frames are no longer comparable through `vec_compare()`.
 
