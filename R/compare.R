@@ -45,7 +45,7 @@
 #'
 #' # But lists are orderable by first appearance to allow for
 #' # ordering data frames with list-cols
-#' df <- data_frame(x = x)
+#' df <- new_data_frame(list(x = x))
 #' vec_sort(df)
 vec_proxy_compare <- function(x, ...) {
   if (!missing(...)) {
