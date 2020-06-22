@@ -2497,7 +2497,8 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
                                             struct group_infos* p_group_infos,
                                             R_xlen_t size,
                                             bool decreasing,
-                                            bool na_last);
+                                            bool na_last,
+                                            bool check_encoding);
 
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_vec* p_lazy_x_aux,
@@ -2552,12 +2553,18 @@ static void chr_order_chunk(int* p_o,
                             R_xlen_t size) {
   void* p_x_chunk = p_lazy_x_chunk->p_data;
 
+  // Don't check encoding on `p_x_chunk` data. In `df_order()`, we already
+  // ran `chr_mark_sorted_uniques()` which told `df_order()` whether or not
+  // to reencode as it created `p_x_chunk`
+  bool check_encoding = false;
+
   const enum vctrs_sortedness sortedness = chr_sortedness(
     p_x_chunk,
     p_group_infos,
     size,
     decreasing,
-    na_last
+    na_last,
+    check_encoding
   );
 
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
@@ -2605,12 +2612,16 @@ static void chr_order(SEXP x,
                       R_xlen_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
+  // Check encodings when determining sortedness on user input
+  bool check_encoding = true;
+
   const enum vctrs_sortedness sortedness = chr_sortedness(
     p_x,
     p_group_infos,
     size,
     decreasing,
-    na_last
+    na_last,
+    check_encoding
   );
 
   // Handle sorted cases and set ordering to initialized
@@ -2621,33 +2632,35 @@ static void chr_order(SEXP x,
     return;
   }
 
-  lazy_vec_initialize(p_lazy_x_chunk);
-  void* p_x_chunk = p_lazy_x_chunk->p_data;
-
-  chr_copy_with_reencode(p_x_chunk, p_x, size);
-
   // Place sorted and marked uniques in `p_truelength_info`
   chr_mark_sorted_uniques(
-    p_x_chunk,
+    p_x,
     p_lazy_x_aux,
     p_lazy_bytes,
     p_truelength_info,
     size
   );
 
+  // Only allocate `p_lazy_x_chunk` if reencoding is required
+  if (p_truelength_info->reencode) {
+    lazy_vec_initialize(p_lazy_x_chunk);
+    SEXP* p_x_chunk = p_lazy_x_chunk->p_data;
+
+    chr_copy_with_reencode(p_x_chunk, p_x, size);
+
+    p_x = p_x_chunk;
+  }
+
   lazy_vec_initialize(p_lazy_x_aux);
   void* p_x_aux = p_lazy_x_aux->p_data;
 
   // Move integer ordering into `p_x_aux`.
   // `p_x_aux` is allocated as the larger of `int` and `SEXP*`.
-  chr_extract_ordering(p_x_aux, p_x_chunk, size);
+  chr_extract_ordering(p_x_aux, p_x, size);
 
   // We tell `int_order_impl()` not to copy the input (`p_x_aux`) into the
   // slice vector (`p_lazy_x_aux`), because they are identical. The copy has
   // already been done.
-  // Also, reuse `p_lazy_x_chunk` as the new auxiliary vector. This was a
-  // `SEXP*` to the CHARSXPs but is no longer required. This is as large as
-  // `uint32_t` when originally allocating.
   int_order_impl(
     p_x_aux,
     p_lazy_order,
@@ -2696,6 +2709,13 @@ static void chr_insertion_order(SEXP* p_x,
                                 const R_xlen_t size,
                                 const R_len_t pass);
 
+static bool chr_needs_reencoding(const SEXP* p_x, R_xlen_t size);
+
+static R_xlen_t chr_mark_uniques(const SEXP* p_x,
+                                 struct truelength_info* p_truelength_info,
+                                 R_xlen_t size,
+                                 bool needs_reencoding);
+
 /*
  * `chr_mark_sorted_uniques()` runs through the strings in `p_x` and places the
  * unique strings in `p_truelength_info->p_uniques`. It marks the unique ones
@@ -2719,37 +2739,26 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_vec* p_lazy_bytes,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size) {
-  R_xlen_t max_size = 0;
+  // Collect uniques assuming no reencoding required (for performance)
+  bool needs_reencoding = false;
 
-  for (R_xlen_t i = 0; i < size; ++i) {
-    SEXP elt = p_x[i];
+  R_xlen_t max_size = chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
 
-    // These are replaced by `NA_INTEGER` for use in `int_order_chunk()`
-    if (elt == NA_STRING) {
-      continue;
-    }
+  // Check if any uniques need reencoding
+  needs_reencoding = chr_needs_reencoding(
+    p_truelength_info->p_uniques,
+    p_truelength_info->size_used
+  );
 
-    R_xlen_t truelength = TRUELENGTH(elt);
+  // Rerun marking of unique values if any need reencoding
+  // (some characters might translate to the same UTF-8 character)
+  if (needs_reencoding) {
+    // Reset existing uniques
+    truelength_reset(p_truelength_info);
 
-    // We have already seen and saved this string
-    if (truelength < 0) {
-      continue;
-    }
+    p_truelength_info->reencode = true;
 
-    R_xlen_t elt_size = Rf_xlength(elt);
-
-    // Track max string size to know how deep to recurse
-    if (max_size < elt_size) {
-      max_size = elt_size;
-    }
-
-    // Save the truelength so we can reset it later.
-    // Also saves this unique value so we can order uniques.
-    truelength_save(p_truelength_info, elt, truelength, elt_size);
-
-    // Mark as negative to note that we have seen this string
-    // (R uses positive or zero truelengths)
-    SET_TRUELENGTH(elt, -1);
+    max_size = chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
   }
 
   R_xlen_t n_uniques = p_truelength_info->size_used;
@@ -2778,6 +2787,66 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
     SEXP elt = p_truelength_info->p_uniques[i];
     SET_TRUELENGTH(elt, -i - 1);
   }
+}
+
+static R_xlen_t chr_mark_uniques(const SEXP* p_x,
+                                 struct truelength_info* p_truelength_info,
+                                 R_xlen_t size,
+                                 bool needs_reencoding) {
+  R_xlen_t max_size = 0;
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    // These are replaced by `NA_INTEGER` for use in `int_order_chunk()`
+    if (elt == NA_STRING) {
+      continue;
+    }
+
+    // Track if any strings need reencoding
+    if (needs_reencoding && CHAR_NEEDS_REENCODE(elt)) {
+      elt = CHAR_REENCODE(elt);
+    }
+
+    R_xlen_t truelength = TRUELENGTH(elt);
+
+    // We have already seen and saved this string
+    if (truelength < 0) {
+      continue;
+    }
+
+    R_xlen_t elt_size = Rf_xlength(elt);
+
+    // Track max string size to know how deep to recurse
+    if (max_size < elt_size) {
+      max_size = elt_size;
+    }
+
+    // Save the truelength so we can reset it later.
+    // Also saves this unique value so we can order uniques.
+    truelength_save(p_truelength_info, elt, truelength, elt_size);
+
+    // Mark as negative to note that we have seen this string
+    // (R uses positive or zero truelengths)
+    SET_TRUELENGTH(elt, -1);
+  }
+
+  return max_size;
+}
+
+// Only used on the unique strings for performance.
+// We heavily optimize for ASCII / UTF-8 here, while still supporting
+// translations as required with a second pass through `chr_mark_uniques()`.
+static bool chr_needs_reencoding(const SEXP* p_x, R_xlen_t size) {
+  for (R_xlen_t i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    if (CHAR_NEEDS_REENCODE(elt)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -3097,7 +3166,7 @@ static void chr_copy_with_reencode(SEXP* p_x_chunk, const SEXP* p_x, R_xlen_t si
     SEXP elt = p_x[i];
 
     if (CHAR_NEEDS_REENCODE(elt)) {
-      p_x_chunk[i] = Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8);
+      p_x_chunk[i] = CHAR_REENCODE(elt);
     } else {
       p_x_chunk[i] = elt;
     }
@@ -3160,23 +3229,29 @@ static void vec_order_chunk_switch(int* p_o,
   const SEXP* p_col = STRING_PTR_RO(col);                      \
   SEXP* p_x_chunk_col = (SEXP*) p_x_chunk;                     \
                                                                \
-  const void* vmax = vmaxget();                                \
-                                                               \
-  /* Extract and reencode to UTF-8 as needed */                \
-  for (R_xlen_t j = 0; j < group_size; ++j) {                  \
-    const int loc = p_o_col[j] - 1;                            \
-                                                               \
-    SEXP elt = p_col[loc];                                     \
-                                                               \
-    if (CHAR_NEEDS_REENCODE(elt)) {                            \
-      p_x_chunk_col[j] = CHAR_REENCODE(elt);                   \
-    } else {                                                   \
-      p_x_chunk_col[j] = elt;                                  \
+  if (!reencode) {                                             \
+    for (R_xlen_t j = 0; j < group_size; ++j) {                \
+      const int loc = p_o_col[j] - 1;                          \
+      p_x_chunk_col[j] = p_col[loc];                           \
     }                                                          \
-  }                                                            \
+  } else {                                                     \
+    const void* vmax = vmaxget();                              \
                                                                \
-  vmaxset(vmax);                                               \
-} while (0)
+    for (R_xlen_t j = 0; j < group_size; ++j) {                \
+      const int loc = p_o_col[j] - 1;                          \
+      SEXP elt = p_col[loc];                                   \
+                                                               \
+      if (CHAR_NEEDS_REENCODE(elt)) {                          \
+        p_x_chunk_col[j] = CHAR_REENCODE(elt);                 \
+      } else {                                                 \
+        p_x_chunk_col[j] = elt;                                \
+      }                                                        \
+    }                                                          \
+                                                               \
+    vmaxset(vmax);                                             \
+  }                                                            \
+} while (0);
+
 
 /*
  * `df_order()` is the main user of `p_group_infos`. It uses the grouping
@@ -3248,6 +3323,9 @@ static void df_order(SEXP x,
   // the real part so the column is rerun.
   bool rerun_complex = false;
 
+  // Controls whether or not to attempt re-encoding of character vectors
+  bool reencode = false;
+
   // Iterate over remaining columns by group chunk
   for (R_xlen_t i = 1; i < n_cols; ++i) {
     col = VECTOR_ELT(x, i);
@@ -3290,6 +3368,8 @@ static void df_order(SEXP x,
         p_truelength_info,
         size
       );
+
+      reencode = p_truelength_info->reencode;
     }
 
     // Turn off group tracking if:
@@ -4028,7 +4108,8 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
                                             struct group_infos* p_group_infos,
                                             R_xlen_t size,
                                             bool decreasing,
-                                            bool na_last) {
+                                            bool na_last,
+                                            bool check_encoding) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
   }
@@ -4041,7 +4122,14 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
 
+  const void* vmax = vmaxget();
+
   SEXP previous = p_x[0];
+
+  if (check_encoding && CHAR_NEEDS_REENCODE(previous)) {
+    previous = CHAR_REENCODE(previous);
+  }
+
   const char* c_previous = CHAR(previous);
 
   R_xlen_t count = 0;
@@ -4050,6 +4138,11 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // (ties are not allowed so we can reverse the vector stably)
   for (R_xlen_t i = 1; i < size; ++i, ++count) {
     SEXP current = p_x[i];
+
+    if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
+      current = CHAR_REENCODE(current);
+    }
+
     const char* c_current = CHAR(current);
 
     int cmp = chr_cmp(
@@ -4076,11 +4169,13 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
       groups_size_push(p_group_infos, 1);
     }
 
+    vmaxset(vmax);
     return VCTRS_SORTEDNESS_reversed;
   }
 
   // Was partially in expected order. Need to sort.
   if (count != 0) {
+    vmaxset(vmax);
     return VCTRS_SORTEDNESS_unsorted;
   }
 
@@ -4095,6 +4190,11 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // reverse the ordering.
   for (R_xlen_t i = 1; i < size; ++i) {
     SEXP current = p_x[i];
+
+    if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
+      current = CHAR_REENCODE(current);
+    }
+
     const char* c_current = CHAR(current);
 
     int cmp = chr_cmp(
@@ -4108,6 +4208,7 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
 
     // Not expected ordering
     if (cmp < 0) {
+      vmaxset(vmax);
       p_group_info->n_groups = original_n_groups;
       return VCTRS_SORTEDNESS_unsorted;
     }
@@ -4130,6 +4231,7 @@ static enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   groups_size_push(p_group_infos, group_size);
 
   // Expected ordering
+  vmaxset(vmax);
   return VCTRS_SORTEDNESS_sorted;
 }
 
