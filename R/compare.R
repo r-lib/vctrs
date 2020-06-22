@@ -1,27 +1,52 @@
-#' Comparison proxy
+# proxies -----------------------------------------------------------------
+
+#' Comparison and order proxy
 #'
-#' Returns a proxy object (i.e. an atomic vector or data frame of atomic
-#' vectors). For [vctr]s, this determines the behaviour of `<`, `>`, `>=`
-#' and `<=` (via [vec_compare()]); and [min()], [max()], [median()], and
-#' [quantile()].
+#' @description
+#' `vec_proxy_compare()` and `vec_proxy_order()` return proxy objects, i.e.
+#' an atomic vector or data frame of atomic vectors.
 #'
-#' The default method assumes that all classes built on top of atomic
-#' vectors or records are comparable. Internally the default calls
-#' [vec_proxy_equal()]. If your class is not comparable, you will need
+#' For [`vctrs_vctr`][vctr] objects:
+#'
+#' - `vec_proxy_compare()` determines the behavior of `<`, `>`, `>=`
+#'   and `<=` (via [vec_compare()]); and [min()], [max()], [median()], and
+#'   [quantile()].
+#'
+#' - `vec_proxy_order()` determines the behavior of `order()` and `sort()`
+#'   (via `xtfrm()`).
+#'
+#' @details
+#' The default method of `vec_proxy_compare()` assumes that all classes built
+#' on top of atomic vectors or records are comparable. Internally the default
+#' calls [vec_proxy_equal()]. If your class is not comparable, you will need
 #' to provide a `vec_proxy_compare()` method that throws an error.
 #'
-#' Lists are not comparable, as comparing elements of different types is
-#' undefined.
+#' The behavior of `vec_proxy_order()` is identical to `vec_proxy_compare()`,
+#' with the exception of lists. Lists are not comparable, as comparing
+#' elements of different types is undefined. However, to allow ordering of
+#' data frames containing list-columns, the ordering proxy of a list is
+#' generated as an integer vector that can be used to order list elements
+#' by first appearance.
 #'
 #' @param x A vector x.
 #' @inheritParams ellipsis::dots_empty
 #' @return A 1d atomic vector or a data frame.
 #'
 #' @section Dependencies:
-#' - [vec_proxy()] called by default
+#' - [vec_proxy_equal()] called by default in `vec_proxy_compare()`
+#' - [vec_proxy_compare()] called by default in `vec_proxy_order()`
 #'
 #' @keywords internal
 #' @export
+#' @examples
+#' # Lists are not comparable
+#' x <- list(1:2, 1, 1:2, 3)
+#' try(vec_compare(x, x))
+#'
+#' # But lists are orderable by first appearance to allow for
+#' # ordering data frames with list-cols
+#' df <- data_frame(x = x)
+#' vec_sort(df)
 vec_proxy_compare <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
@@ -33,6 +58,23 @@ vec_proxy_compare <- function(x, ...) {
 vec_proxy_compare.default <- function(x, ...) {
   stop_native_implementation("vec_proxy_compare.default")
 }
+
+#' @rdname vec_proxy_compare
+#' @export
+vec_proxy_order <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_proxy_order, x))
+  UseMethod("vec_proxy_order")
+}
+
+#' @export
+vec_proxy_order.default <- function(x, ...) {
+  stop_native_implementation("vec_proxy_order.default")
+}
+
+# compare -----------------------------------------------------------------
 
 #' Compare two vectors
 #'
@@ -155,44 +197,6 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
   } else {
     abort("Invalid type returned by `vec_proxy_compare()`.")
   }
-}
-
-# Order proxy ------------------------------------------------------------------
-
-#' Ordering proxy
-#'
-#' Returns a proxy object for ordering. For [`vctrs_vctr`][vctr] objects, this
-#' determines the behavior of `order()` and `sort()` (via `xtfrm()`). It also
-#' powers `vec_order()` and `vec_sort()` for other vector types.
-#'
-#' The default is to call [vec_proxy_compare()].
-#'
-#' Lists are special cased, and return an integer vector that can be used to
-#' order the elements in the list by first appearance.
-#'
-#' @param x A vector x.
-#' @inheritParams ellipsis::dots_empty
-#' @return A 1d atomic vector or a data frame.
-#'
-#' @section Dependencies:
-#' - [vec_proxy_compare()] called by default
-#'
-#' @keywords internal
-#' @export
-#' @examples
-#' # List elements are ordered by first appearance
-#' vec_proxy_order(list(1:2, 1, 1:2, 3))
-vec_proxy_order <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  return(.Call(vctrs_proxy_order, x))
-  UseMethod("vec_proxy_order")
-}
-
-#' @export
-vec_proxy_order.default <- function(x, ...) {
-  stop_native_implementation("vec_proxy_order.default")
 }
 
 # Helpers -----------------------------------------------------------------
