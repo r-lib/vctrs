@@ -108,13 +108,16 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
   return R_NilValue;                                                    \
 }
 
-static inline SEXP vec_proxy_equal_method(SEXP x) {
+static inline
+SEXP vec_proxy_equal_method(SEXP x) {
   VEC_PROXY_METHOD("vec_proxy_equal", fns_vec_proxy_equal_array);
 }
-static inline SEXP vec_proxy_compare_method(SEXP x) {
+static inline
+SEXP vec_proxy_compare_method(SEXP x) {
   VEC_PROXY_METHOD("vec_proxy_compare", fns_vec_proxy_compare_array);
 }
-static inline SEXP vec_proxy_order_method(SEXP x) {
+static inline
+SEXP vec_proxy_order_method(SEXP x) {
   VEC_PROXY_METHOD("vec_proxy_order", fns_vec_proxy_order_array);
 }
 
@@ -134,13 +137,16 @@ static inline SEXP vec_proxy_order_method(SEXP x) {
   }                                                            \
 }
 
-static inline SEXP vec_proxy_equal_invoke(SEXP x, SEXP method) {
+static inline
+SEXP vec_proxy_equal_invoke(SEXP x, SEXP method) {
   VEC_PROXY_INVOKE(syms_vec_proxy_equal, vec_proxy);
 }
-static inline SEXP vec_proxy_compare_invoke(SEXP x, SEXP method) {
+static inline
+SEXP vec_proxy_compare_invoke(SEXP x, SEXP method) {
   VEC_PROXY_INVOKE(syms_vec_proxy_compare, vec_proxy_equal);
 }
-static inline SEXP vec_proxy_order_invoke(SEXP x, SEXP method) {
+static inline
+SEXP vec_proxy_order_invoke(SEXP x, SEXP method) {
   VEC_PROXY_INVOKE(syms_vec_proxy_order, vec_proxy_compare);
 }
 
@@ -156,7 +162,8 @@ static inline SEXP vec_proxy_order_invoke(SEXP x, SEXP method) {
   }                                                            \
 } while (0)
 
-static SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
+static
+SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
   x = PROTECT(r_clone_referenced(x));
 
   switch (kind) {
@@ -195,7 +202,8 @@ SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
 }
 
 
-static SEXP vec_proxy_unwrap(SEXP x) {
+static
+SEXP vec_proxy_unwrap(SEXP x) {
   if (TYPEOF(x) == VECSXP && XLENGTH(x) == 1 && is_data_frame(x)) {
     x = vec_proxy_unwrap(VECTOR_ELT(x, 0));
   }
