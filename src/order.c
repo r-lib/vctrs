@@ -111,7 +111,9 @@
  * -----------------------------------------------------------------------------
  * Logicals
  *
- * Just use the same infrastructure as integers.
+ * Uses the same infrastructure as integers. Because the number of possible
+ * unique values is low, this will always use either an insertion sort for
+ * small vectors, or a counting sort for large ones.
  *
  * -----------------------------------------------------------------------------
  * Complex
