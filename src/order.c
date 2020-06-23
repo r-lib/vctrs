@@ -1895,6 +1895,11 @@ static inline void* dbl_maybe_copy(const double* p_x,
  *
  * Unlike `int_order_impl()`, `dbl_order_impl()` also deals with sortedness
  * since we don't have an up front sortedness check on complex vectors.
+ *
+ * When dealing with complex vectors, `p_x` and `p_lazy_x_chunk->p_data` will
+ * already point to the same memory. In this case, we don't need to copy `p_x`
+ * into `p_lazy_x_chunk`, so we set `copy = false` which tells
+ * `dbl_order_impl()` to just use `p_lazy_x_chunk` directly.
  */
 static void dbl_order_impl(const double* p_x,
                            struct lazy_order* p_lazy_o,
