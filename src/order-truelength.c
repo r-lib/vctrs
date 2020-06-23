@@ -1,5 +1,13 @@
 #include "order-truelength.h"
 
+/*
+ * See the notes in the character ordering section at the top of `order.c`
+ * for more details on how TRUELENGTH is used to detect unique strings.
+ *
+ * The helpers here are somewhat equivalent to the following from R's `order()`
+ * https://github.com/wch/r-source/blob/91b4507bf6040c0167fc5b6037c202c8cbd98afd/src/main/radixsort.c#L66-L123
+ */
+
 // -----------------------------------------------------------------------------
 
 /*
