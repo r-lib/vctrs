@@ -58,6 +58,9 @@ extern SEXP vec_restore(SEXP, SEXP, SEXP);
 extern SEXP vec_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
+extern SEXP vec_proxy_compare(SEXP);
+extern SEXP vec_proxy_order(SEXP);
+extern SEXP vctrs_df_proxy(SEXP, SEXP);
 extern SEXP vctrs_unspecified(SEXP);
 extern SEXP vctrs_ptype(SEXP, SEXP);
 extern SEXP vec_ptype_finalise(SEXP);
@@ -84,7 +87,6 @@ extern SEXP vctrs_df_size(SEXP);
 extern SEXP vctrs_as_df_col(SEXP, SEXP);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unset_s4(SEXP);
-extern SEXP vctrs_proxy_recursive(SEXP, SEXP);
 extern SEXP vctrs_maybe_translate_encoding(SEXP);
 extern SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
@@ -193,6 +195,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_restore_default",            (DL_FUNC) &vec_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
   {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
+  {"vctrs_proxy_compare",              (DL_FUNC) &vec_proxy_compare, 1},
+  {"vctrs_proxy_order",                (DL_FUNC) &vec_proxy_order, 1},
+  {"vctrs_df_proxy",                   (DL_FUNC) &vctrs_df_proxy, 2},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
   {"vctrs_ptype",                      (DL_FUNC) &vctrs_ptype, 2},
   {"vctrs_ptype_finalise",             (DL_FUNC) &vec_ptype_finalise, 1},
@@ -219,7 +224,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_df_col",                  (DL_FUNC) &vctrs_as_df_col, 2},
   {"vctrs_apply_name_spec",            (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                   (DL_FUNC) &vctrs_unset_s4, 1},
-  {"vctrs_proxy_recursive",            (DL_FUNC) &vctrs_proxy_recursive, 2},
   {"vctrs_maybe_translate_encoding",   (DL_FUNC) &vctrs_maybe_translate_encoding, 1},
   {"vctrs_maybe_translate_encoding2",  (DL_FUNC) &vctrs_maybe_translate_encoding2, 2},
   {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
