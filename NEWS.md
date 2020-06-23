@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* New `vec_order_loc()` which returns a two column data frame containing a `key`
+  column holding the sorted unique values of `x`, and a `loc` column holding
+  a list column of integer vectors corresponding to the locations of that unique
+  key in `x`. It is very similar to `vec_group_loc()`, but groups are
+  returned in order rather than by first appearance.
+
 * `vec_order()` and `vec_sort()` now use a native ordering algorithm. It
   produces the same results as before except in the case of character vectors,
   which are now ordered in the C-locale. Additionally, the `direction`
