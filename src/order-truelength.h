@@ -60,6 +60,8 @@ struct truelength_info {
   R_xlen_t max_size_alloc;
   R_xlen_t size_used;
 
+  R_xlen_t max_string_size;
+
   bool reencode;
 };
 
