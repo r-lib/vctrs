@@ -172,46 +172,46 @@
 
 // -----------------------------------------------------------------------------
 
-static bool parse_na_value(SEXP na_value);
+static SEXP parse_na_value(SEXP na_value);
 static SEXP parse_direction(SEXP direction);
 
-static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last);
+static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last);
 
 // [[ register() ]]
 SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value) {
   SEXP decreasing = PROTECT(parse_direction(direction));
-  bool na_last = parse_na_value(na_value);
+  SEXP na_last = PROTECT(parse_na_value(na_value));
 
   SEXP out = vec_order(x, decreasing, na_last);
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
 
-static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations);
+static SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations);
 
-static SEXP vec_order(SEXP x, SEXP decreasing, bool na_last) {
+static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last) {
   return vec_order_impl(x, decreasing, na_last, false);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_loc(SEXP x, SEXP decreasing, bool na_last);
+static SEXP vec_order_loc(SEXP x, SEXP decreasing, SEXP na_last);
 
 // [[ register() ]]
 SEXP vctrs_order_loc(SEXP x, SEXP direction, SEXP na_value) {
   SEXP decreasing = PROTECT(parse_direction(direction));
-  bool na_last = parse_na_value(na_value);
+  SEXP na_last = PROTECT(parse_na_value(na_value));
 
   SEXP out = vec_order_loc(x, decreasing, na_last);
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return out;
 }
 
 
-static SEXP vec_order_loc(SEXP x, SEXP decreasing, bool na_last) {
+static SEXP vec_order_loc(SEXP x, SEXP decreasing, SEXP na_last) {
   return vec_order_impl(x, decreasing, na_last, true);
 }
 
@@ -224,7 +224,7 @@ static SEXP vec_order_loc_impl(SEXP x,
 
 static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
-static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing);
+static SEXP vec_order_check_args(SEXP x, SEXP args);
 
 static void vec_order_switch(SEXP x,
                              struct lazy_order* p_lazy_o,
@@ -236,7 +236,7 @@ static void vec_order_switch(SEXP x,
                              struct group_infos* p_group_infos,
                              struct truelength_info* p_truelength_info,
                              SEXP decreasing,
-                             bool na_last,
+                             SEXP na_last,
                              R_xlen_t size,
                              const enum vctrs_type type);
 
@@ -247,12 +247,18 @@ static void vec_order_switch(SEXP x,
  * the second is `loc` which is a list column of integer vectors containing
  * the locations in `x` corresponding to each key.
  */
-static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations) {
+static SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
+  SEXP args = PROTECT_N(Rf_allocVector(VECSXP, 2), p_n_prot);
+  SET_VECTOR_ELT(args, 0, decreasing);
+  SET_VECTOR_ELT(args, 1, na_last);
+
   // Call on `x` before potentially flattening cols with `vec_proxy_compare()`
-  decreasing = PROTECT_N(vec_order_check_decreasing(x, decreasing), p_n_prot);
+  args = PROTECT_N(vec_order_check_args(x, args), p_n_prot);
+  decreasing = VECTOR_ELT(args, 0);
+  na_last = VECTOR_ELT(args, 1);
 
   SEXP proxy = PROTECT_N(vec_proxy_compare(x), p_n_prot);
 
@@ -424,7 +430,7 @@ static void df_order(SEXP x,
                      struct group_infos* p_group_infos,
                      struct truelength_info* p_truelength_info,
                      SEXP decreasing,
-                     bool na_last,
+                     SEXP na_last,
                      R_xlen_t size);
 
 static void vec_order_base_switch(SEXP x,
@@ -451,7 +457,7 @@ static void vec_order_switch(SEXP x,
                              struct group_infos* p_group_infos,
                              struct truelength_info* p_truelength_info,
                              SEXP decreasing,
-                             bool na_last,
+                             SEXP na_last,
                              R_xlen_t size,
                              const enum vctrs_type type) {
   if (type == vctrs_type_dataframe) {
@@ -477,11 +483,20 @@ static void vec_order_switch(SEXP x,
     Rf_errorcall(
       R_NilValue,
       "Internal error: Size of decreasing != 1, but "
-      "`vec_order_check_decreasing()` didn't catch it."
+      "`vec_order_check_args()` didn't catch it."
+    );
+  }
+
+  if (Rf_xlength(na_last) != 1) {
+    Rf_errorcall(
+      R_NilValue,
+      "Internal error: Size of na_last != 1, but "
+      "`vec_order_check_args()` didn't catch it."
     );
   }
 
   bool c_decreasing = LOGICAL(decreasing)[0];
+  bool c_na_last = LOGICAL(na_last)[0];
 
   vec_order_base_switch(
     x,
@@ -494,7 +509,7 @@ static void vec_order_switch(SEXP x,
     p_group_infos,
     p_truelength_info,
     c_decreasing,
-    na_last,
+    c_na_last,
     size,
     type
   );
@@ -3356,7 +3371,7 @@ static void df_order(SEXP x,
                      struct group_infos* p_group_infos,
                      struct truelength_info* p_truelength_info,
                      SEXP decreasing,
-                     bool na_last,
+                     SEXP na_last,
                      R_xlen_t size) {
   R_xlen_t n_cols = Rf_xlength(x);
 
@@ -3371,8 +3386,25 @@ static void df_order(SEXP x,
   } else {
     Rf_errorcall(
       R_NilValue,
-      "Internal error: `vec_order_check_decreasing()` should expand "
+      "Internal error: `vec_order_check_args()` should expand "
       "`decreasing` to have length 1 or length equal "
+      "to the number of columns of `x` after calling `vec_proxy_compare()`."
+    );
+  }
+
+  bool recycle_na_last;
+  R_xlen_t n_na_last = Rf_xlength(na_last);
+  int* p_na_last = LOGICAL(na_last);
+
+  if (n_na_last == 1) {
+    recycle_na_last = true;
+  } else if (n_na_last == n_cols) {
+    recycle_na_last = false;
+  } else {
+    Rf_errorcall(
+      R_NilValue,
+      "Internal error: `vec_order_check_args()` should expand "
+      "`na_last` to have length 1 or length equal "
       "to the number of columns of `x` after calling `vec_proxy_compare()`."
     );
   }
@@ -3385,6 +3417,7 @@ static void df_order(SEXP x,
 
   SEXP col = VECTOR_ELT(x, 0);
   bool col_decreasing = p_decreasing[0];
+  bool col_na_last = p_na_last[0];
   enum vctrs_type type = vec_proxy_typeof(col);
 
   // Apply on one column to fill `p_group_infos`.
@@ -3400,7 +3433,7 @@ static void df_order(SEXP x,
     p_group_infos,
     p_truelength_info,
     col_decreasing,
-    na_last,
+    col_na_last,
     size,
     type
   );
@@ -3419,6 +3452,9 @@ static void df_order(SEXP x,
 
     if (!recycle_decreasing) {
       col_decreasing = p_decreasing[i];
+    }
+    if (!recycle_na_last) {
+      col_na_last = p_na_last[i];
     }
 
     // Reset pointer between columns since we increment it as
@@ -3505,7 +3541,7 @@ static void df_order(SEXP x,
         p_group_infos,
         p_truelength_info,
         col_decreasing,
-        na_last,
+        col_na_last,
         group_size,
         type
       );
@@ -3736,32 +3772,35 @@ static inline size_t df_counts_multiplier(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP df_check_decreasing(SEXP x, SEXP decreasing);
+static SEXP df_check_args(SEXP x, SEXP args);
 
 /*
- * `vec_order_check_decreasing()` checks the type and length of `decreasing`,
- * and possibly expands it.
+ * `vec_order_check_args()` checks the type and length of `decreasing` and
+ * `na_last` and possibly expands them.
  *
  * `x` is expected to be the original input, before `vec_proxy_compare()` is
  * called on it.
  *
- * If `x` is not a data frame, `decreasing` must be a boolean value. If
- * `x` is something like a rcrd type with a multi-column data frame proxy,
- * then restricting to a boolean `decreasing` is correct, and works because
- * the single decreasing value will be recycled across the columns.
+ * If `x` is not a data frame, `decreasing` and `na_last` must be boolean
+ * values. If `x` is something like a rcrd type with a multi-column data frame
+ * proxy, then restricting to a boolean argument is correct, and works because
+ * the single value will be recycled across the columns.
  *
- * If `x` is a data frame, and `decreasing` is size 1, we return it untouched
- * and it will be recycled correctly.
+ * If `x` is a data frame, and `decreasing` or `na_last` is size 1, we return
+ * it untouched and it will be recycled correctly.
  *
- * If `x` is a data frame and the size of `decreasing` matches the number of
- * columns of `x`, we have to be careful to "expand" `decreasing` to match
+ * If `x` is a data frame and the size of the arg matches the number of
+ * columns of `x`, we have to be careful to "expand" the arg to match
  * the number of columns of `x` that will exist after `vec_proxy_compare()`
  * is called. It flattens df-cols which might either already exist in `x`,
  * or may arise from rcrd columns that have data frame proxies. The majority
  * of the code here is for tracking this expansion.
  */
-static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing) {
-  // Don't check length here. This might be vectorized if `x` is a data frame.
+static SEXP vec_order_check_args(SEXP x, SEXP args) {
+  SEXP decreasing = VECTOR_ELT(args, 0);
+  SEXP na_last = VECTOR_ELT(args, 1);
+
+  // Don't check length here. These might be vectorized if `x` is a data frame.
   if (TYPEOF(decreasing) != LGLSXP) {
     Rf_errorcall(R_NilValue, "Internal error: `decreasing` must be logical");
   }
@@ -3769,30 +3808,49 @@ static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing) {
     Rf_errorcall(R_NilValue, "Internal error: `decreasing` must not contain missing values.");
   }
 
+  if (TYPEOF(na_last) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: `na_last` must be logical");
+  }
+  if (lgl_any_na(na_last)) {
+    Rf_errorcall(R_NilValue, "Internal error: `na_last` must not contain missing values.");
+  }
+
   if (is_data_frame(x)) {
-    return df_check_decreasing(x, decreasing);
+    return df_check_args(x, args);
   }
 
   if (Rf_xlength(decreasing) != 1) {
     Rf_errorcall(R_NilValue, "`direction` must be a single value when `x` is not a data frame.");
   }
 
-  return decreasing;
+  if (Rf_xlength(na_last) != 1) {
+    Rf_errorcall(R_NilValue, "`na_value` must be a single value when `x` is not a data frame.");
+  }
+
+  return args;
 }
 
-static SEXP df_expand_decreasing(SEXP x, SEXP decreasing, R_xlen_t n_cols);
+static SEXP df_expand_args(SEXP x,
+                           SEXP args,
+                           R_xlen_t n_cols,
+                           R_xlen_t n_decreasing,
+                           R_xlen_t n_na_last);
 
-static SEXP df_check_decreasing(SEXP x, SEXP decreasing) {
+static SEXP df_check_args(SEXP x, SEXP args) {
+  SEXP decreasing = VECTOR_ELT(args, 0);
+  SEXP na_last = VECTOR_ELT(args, 1);
+
   R_xlen_t n_decreasing = Rf_xlength(decreasing);
+  R_xlen_t n_na_last = Rf_xlength(na_last);
   R_xlen_t n_cols = Rf_xlength(x);
 
-  // It will be recycled correctly even if columns get flattened
-  if (n_decreasing == 1) {
-    return decreasing;
+  // They will be recycled correctly even if columns get flattened
+  if (n_decreasing == 1 && n_na_last == 1) {
+    return args;
   }
 
   // Must start out with the same length as the number of columns
-  if (n_decreasing != n_cols) {
+  if (n_decreasing != 1 && n_decreasing != n_cols) {
     Rf_errorcall(
       R_NilValue,
       "`direction` should have length 1 or length equal to the number of "
@@ -3800,13 +3858,26 @@ static SEXP df_check_decreasing(SEXP x, SEXP decreasing) {
     );
   }
 
-  return df_expand_decreasing(x, decreasing, n_cols);
+  if (n_na_last != 1 && n_na_last != n_cols) {
+    Rf_errorcall(
+      R_NilValue,
+      "`na_value` should have length 1 or length equal to the number of "
+      "columns of `x` when `x` is a data frame."
+    );
+  }
+
+  return df_expand_args(x, args, n_cols, n_decreasing, n_na_last);
 }
 
 
+static SEXP expand_arg(SEXP arg, const int* p_expansions, R_xlen_t arg_size, R_xlen_t size);
 static int vec_decreasing_expansion(SEXP x);
 
-static SEXP df_expand_decreasing(SEXP x, SEXP decreasing, R_xlen_t n_cols) {
+static SEXP df_expand_args(SEXP x,
+                           SEXP args,
+                           R_xlen_t n_cols,
+                           R_xlen_t n_decreasing,
+                           R_xlen_t n_na_last) {
   SEXP expansions = PROTECT(Rf_allocVector(INTSXP, n_cols));
   int* p_expansions = INTEGER(expansions);
 
@@ -3828,28 +3899,46 @@ static SEXP df_expand_decreasing(SEXP x, SEXP decreasing, R_xlen_t n_cols) {
 
   if (!needs_expansion) {
     UNPROTECT(1);
-    return decreasing;
+    return args;
+  }
+
+  SEXP decreasing = VECTOR_ELT(args, 0);
+  SEXP na_last = VECTOR_ELT(args, 1);
+
+  decreasing = expand_arg(decreasing, p_expansions, n_decreasing, size);
+  SET_VECTOR_ELT(args, 0, decreasing);
+
+  na_last = expand_arg(na_last, p_expansions, n_na_last, size);
+  SET_VECTOR_ELT(args, 1, na_last);
+
+  UNPROTECT(1);
+  return args;
+}
+
+static SEXP expand_arg(SEXP arg, const int* p_expansions, R_xlen_t n_arg, R_xlen_t size) {
+  if (n_arg == 1) {
+    return arg;
   }
 
   SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
   int* p_out = LOGICAL(out);
 
-  int* p_decreasing = LOGICAL(decreasing);
+  int* p_arg = LOGICAL(arg);
 
   int k = 0;
 
-  // Fill `out` with repeated `decreasing` values to match expanded size
-  for (R_xlen_t i = 0; i < n_cols; ++i) {
-    int col_decreasing = p_decreasing[i];
+  // Fill `out` with repeated `arg` values to match expanded size
+  for (R_xlen_t i = 0; i < n_arg; ++i) {
+    int col_arg = p_arg[i];
     int expansion = p_expansions[i];
 
     for (R_xlen_t j = 0; j < expansion; ++j) {
-      p_out[k] = col_decreasing;
+      p_out[k] = col_arg;
       ++k;
     }
   }
 
-  UNPROTECT(2);
+  UNPROTECT(1);
   return out;
 }
 
@@ -3904,30 +3993,41 @@ static int df_decreasing_expansion(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-static bool parse_na_value(SEXP na_value) {
-  if (TYPEOF(na_value) != STRSXP || Rf_length(na_value) == 0) {
-    Rf_errorcall(
-      R_NilValue,
-      "`na_value` must be a string containing "
-      "\"largest\" or \"smallest\"."
-    );
+static int parse_na_value_one(SEXP x);
+
+// Don't care about length here, checked later
+static SEXP parse_na_value(SEXP na_value) {
+  if (TYPEOF(na_value) != STRSXP) {
+    Rf_errorcall(R_NilValue, "`na_value` must be a character vector.");
   }
 
-  const SEXP char_na_value = STRING_PTR_RO(na_value)[0];
+  R_len_t size = Rf_length(na_value);
+  const SEXP* p_na_value = STRING_PTR_RO(na_value);
 
-  if (char_na_value == NA_STRING) {
-    Rf_errorcall(R_NilValue, "`na_value` must not be missing.");
+  SEXP na_last = PROTECT(Rf_allocVector(LGLSXP, size));
+  int* p_na_last = LOGICAL(na_last);
+
+  for (R_len_t i = 0; i < size; ++i) {
+    p_na_last[i] = parse_na_value_one(p_na_value[i]);
   }
 
-  const char* c_na_value = CHAR(char_na_value);
+  UNPROTECT(1);
+  return na_last;
+}
 
-  if (!strcmp(c_na_value, "largest")) return true;
-  if (!strcmp(c_na_value, "smallest")) return false;
+static int parse_na_value_one(SEXP x) {
+  if (x == NA_STRING) {
+    Rf_errorcall(R_NilValue, "`na_value` cannot be missing.");
+  }
+
+  const char* c_x = CHAR(x);
+
+  if (!strcmp(c_x, "largest")) return 1;
+  if (!strcmp(c_x, "smallest")) return 0;
 
   Rf_errorcall(
     R_NilValue,
-    "`na_value` must be a string containing "
-    "\"largest\" or \"smallest\"."
+    "`na_value` must contain only \"largest\" or \"smallest\"."
   );
 }
 
@@ -3943,7 +4043,7 @@ static SEXP parse_direction(SEXP direction) {
   const SEXP* p_direction = STRING_PTR_RO(direction);
 
   SEXP decreasing = PROTECT(Rf_allocVector(LGLSXP, size));
-  int* p_decreasing = INTEGER(decreasing);
+  int* p_decreasing = LOGICAL(decreasing);
 
   for (R_len_t i = 0; i < size; ++i) {
     p_decreasing[i] = parse_direction_one(p_direction[i]);

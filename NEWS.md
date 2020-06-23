@@ -4,8 +4,8 @@
 * `vec_order()` and `vec_sort()` now use a native ordering algorithm. It
   produces the same results as before except in the case of character vectors,
   which are now ordered in the C-locale. Additionally, the `direction`
-  argument is now vectorized for data frame input so columns can be ordered
-  with varying directions.
+  and `na_value` arguments are now vectorized for data frame input so columns
+  can be ordered with varying directions and treatments of missing values.
 
 * Functions that make comparisons within a single vector, such as
   `vec_unique()`, or between two vectors, such as `vec_match()`, now

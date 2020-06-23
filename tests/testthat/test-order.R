@@ -698,12 +698,40 @@ test_that("`direction` is recycled", {
   expect_identical(vec_order(df, direction = "desc"), c(3L, 4L, 1L, 2L))
 })
 
+test_that("`na_value` is recycled", {
+  df <- data.frame(
+    x = c(1L, 1L, 2L, 2L, NA),
+    y = c(3L, 2L, 4L, 1L, NA)
+  )
+  expect_identical(vec_order(df, na_value = "smallest"), c(5L, 2L, 1L, 4L, 3L))
+})
+
 test_that("`direction` can be a vector", {
   df <- data.frame(
     x = c(1L, 1L, 2L, 2L),
     y = c(3L, 2L, 4L, 1L)
   )
   expect_identical(vec_order(df, direction = c("desc", "asc")), c(4L, 3L, 2L, 1L))
+})
+
+test_that("`na_value` can be a vector", {
+  df <- data.frame(
+    x = c(1L, 1L, 2L, 2L, NA, NA),
+    y = c(3L, 2L, 4L, 1L, NA, 2)
+  )
+  expect_identical(vec_order(df, na_value = c("smallest", "largest")), c(6L, 5L, 2L, 1L, 4L, 3L))
+})
+
+test_that("`na_value` and `direction` can both be vectors", {
+  df <- data.frame(
+    x = c(1L, 1L, 2L, 2L, NA, NA),
+    y = c(3L, 2L, 4L, 1L, NA, 2)
+  )
+
+  expect_identical(
+    vec_order(df, direction = c("desc", "asc"), na_value = c("smallest", "largest")),
+    6:1
+  )
 })
 
 # ------------------------------------------------------------------------------
@@ -756,8 +784,8 @@ test_that("can order 2+ double column chunks with radix sort", {
 
 test_that("`na_value` is checked", {
   expect_error(vec_order(1L, na_value = "x"), "\"largest\" or \"smallest\"")
-  expect_error(vec_order(1L, na_value = c(TRUE, TRUE)), "\"largest\" or \"smallest\"")
-  expect_error(vec_order(1L, na_value = NA_character_), "must not be missing")
+  expect_error(vec_order(1L, na_value = c(TRUE, TRUE)), "must be a character vector")
+  expect_error(vec_order(1L, na_value = NA_character_), "cannot be missing")
 })
 
 test_that("`direction` is checked", {
@@ -796,9 +824,10 @@ test_that("ordering works with rcrd types", {
   expect_identical(vec_order(x), c(3L, 1L, 2L))
 })
 
-test_that("data frame comparison proxies don't allow vector `direction`", {
+test_that("data frame comparison proxies don't allow vector `direction` or `na_value`", {
   x <- tuple(c(1, 2, 1), c(3, 2, 1))
   expect_error(vec_order(x, direction = c("desc", "asc")), "single value")
+  expect_error(vec_order(x, na_value = c("largest", "smallest")), "single value")
 })
 
 test_that("ordering works with df-cols", {
@@ -809,7 +838,7 @@ test_that("ordering works with df-cols", {
 
   expect_identical(vec_order(df), c(2L, 1L, 3L))
 
-  # Can only supply a max of 2 `direction` values which get internally
+  # Can only supply a max of 2 `direction` or `na_value` values which get internally
   # expanded to 3 to match the flattened df proxy
   expect_identical(vec_order(df, direction = c("asc", "desc")), c(1L, 3L, 2L))
 

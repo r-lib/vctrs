@@ -28,7 +28,14 @@
 #'   - For data frames, this is allowed to be a vector of `"asc"` and `"desc"`
 #'     with length equal to the number of columns in `x` specifying the
 #'     direction to order each column in.
-#' @param na_value Should `NA`s be treated as the largest or smallest values?
+#' @param na_value Treatment of `NA` values. `NaN` values are treated as
+#'   equivalent to `NA` values.
+#'   - Unless `x` is a data frame, this should be a single `"largest"` or
+#'     `"smallest"` for treating `NA` values as the largest or smallest values
+#'     respectively.
+#'   - For data frames, this is allowed to be a vector of `"largest"` and
+#'     `"smallest"` with length equal to the number of columns in `x` specifying
+#'     how `NA`s should be treated in each column.
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
@@ -52,17 +59,25 @@
 #' vec_order(df)
 #' vec_sort(df)
 #' vec_sort(df, "desc")
-vec_order <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
+#'
+#' # For data frames, `direction` and `na_value` are allowed to be vectors
+#' # with length equal to the number of columns in the data frame
+#' vec_sort(
+#'   df,
+#'   direction = c("desc", "asc"),
+#'   na_value = c("largest", "smallest")
+#' )
+vec_order <- function(x, direction = "asc", na_value = "largest") {
   .Call(vctrs_order, x, direction, na_value)
 }
 
-vec_order_loc <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
+vec_order_loc <- function(x, direction = "asc", na_value = "largest") {
   .Call(vctrs_order_loc, x, direction, na_value)
 }
 
 #' @export
 #' @rdname vec_order
-vec_sort <- function(x, direction = "asc", na_value = c("largest", "smallest")) {
+vec_sort <- function(x, direction = "asc", na_value = "largest") {
   idx <- vec_order(x, direction = direction, na_value = na_value)
   vec_slice(x, idx)
 }
