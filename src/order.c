@@ -4082,8 +4082,3 @@ static int parse_direction_one(SEXP x) {
 
 #undef PASS_TO_RADIX
 #undef SHIFT_ADJUSTMENT
-
-#undef CHAR_IS_UTF8
-#undef CHAR_IS_ASCII
-#undef CHAR_NEEDS_REENCODE
-#undef CHAR_REENCODE
