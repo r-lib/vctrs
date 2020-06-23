@@ -675,41 +675,6 @@ static void vec_order_base_switch(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static void int_adjust(void* p_x,
-                       const bool decreasing,
-                       const bool na_last,
-                       const R_xlen_t size);
-
-static void int_compute_range(const int* p_x,
-                              R_xlen_t size,
-                              int* p_x_min,
-                              uint32_t* p_range);
-
-static void int_counting_order(const int* p_x,
-                               int* p_o,
-                               int* p_o_aux,
-                               struct group_infos* p_group_infos,
-                               R_xlen_t size,
-                               int x_min,
-                               uint32_t range,
-                               bool initialized,
-                               bool decreasing,
-                               bool na_last);
-
-static void int_insertion_order(uint32_t* p_x,
-                                int* p_o,
-                                struct group_infos* p_group_infos,
-                                const R_xlen_t size);
-
-static void int_radix_order(uint32_t* p_x,
-                            int* p_o,
-                            uint32_t* p_x_aux,
-                            int* p_o_aux,
-                            uint8_t* p_bytes,
-                            R_xlen_t* p_counts,
-                            struct group_infos* p_group_infos,
-                            const R_xlen_t size);
-
 static void int_order_chunk_impl(void* p_x,
                                  int* p_o,
                                  struct lazy_vec* p_lazy_x_aux,
@@ -774,76 +739,6 @@ static void int_order_chunk(int* p_o,
   );
 }
 
-static void int_order_chunk_impl(void* p_x,
-                                 int* p_o,
-                                 struct lazy_vec* p_lazy_x_aux,
-                                 struct lazy_vec* p_lazy_o_aux,
-                                 struct lazy_vec* p_lazy_bytes,
-                                 struct lazy_vec* p_lazy_counts,
-                                 struct group_infos* p_group_infos,
-                                 bool decreasing,
-                                 bool na_last,
-                                 R_xlen_t size) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    int_adjust(p_x, decreasing, na_last, size);
-    int_insertion_order(p_x, p_o, p_group_infos, size);
-    return;
-  }
-
-  // `int_order_chunk()` is on column chunks where order is guaranteed
-  // to have been initialized
-  const bool initialized = true;
-
-  lazy_vec_initialize(p_lazy_o_aux);
-  int* p_o_aux = (int*) p_lazy_o_aux->p_data;
-
-  uint32_t range;
-  int x_min;
-
-  int_compute_range(p_x, size, &x_min, &range);
-
-  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    int_counting_order(
-      p_x,
-      p_o,
-      p_o_aux,
-      p_group_infos,
-      size,
-      x_min,
-      range,
-      initialized,
-      decreasing,
-      na_last
-    );
-
-    return;
-  }
-
-  int_adjust(p_x, decreasing, na_last, size);
-
-  lazy_vec_initialize(p_lazy_x_aux);
-  uint32_t* p_x_aux = (uint32_t*) p_lazy_x_aux->p_data;
-
-  lazy_vec_initialize(p_lazy_bytes);
-  uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
-
-  lazy_vec_initialize(p_lazy_counts);
-  R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
-  memset(p_counts, 0, p_lazy_counts->size);
-
-  int_radix_order(
-    p_x,
-    p_o,
-    p_x_aux,
-    p_o_aux,
-    p_bytes,
-    p_counts,
-    p_group_infos,
-    size
-  );
-}
-
-
 static void int_order_impl(const int* p_x,
                            struct lazy_order* p_lazy_o,
                            struct lazy_vec* p_lazy_x_chunk,
@@ -902,6 +797,131 @@ static void int_order(SEXP x,
   );
 }
 
+static void int_adjust(void* p_x,
+                       const bool decreasing,
+                       const bool na_last,
+                       const R_xlen_t size);
+
+static void int_compute_range(const int* p_x,
+                              R_xlen_t size,
+                              int* p_x_min,
+                              uint32_t* p_range);
+
+static void int_counting_order(const int* p_x,
+                               int* p_o,
+                               int* p_o_aux,
+                               struct group_infos* p_group_infos,
+                               R_xlen_t size,
+                               int x_min,
+                               uint32_t range,
+                               bool initialized,
+                               bool decreasing,
+                               bool na_last);
+
+static void int_insertion_order(uint32_t* p_x,
+                                int* p_o,
+                                struct group_infos* p_group_infos,
+                                const R_xlen_t size);
+
+static void int_radix_order(uint32_t* p_x,
+                            int* p_o,
+                            uint32_t* p_x_aux,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            R_xlen_t* p_counts,
+                            struct group_infos* p_group_infos,
+                            const R_xlen_t size);
+
+/*
+ * `int_order_chunk_impl()` is used by both `int_order_chunk()` and by
+ * `chr_order_chunk()`
+ */
+static void int_order_chunk_impl(void* p_x,
+                                 int* p_o,
+                                 struct lazy_vec* p_lazy_x_aux,
+                                 struct lazy_vec* p_lazy_o_aux,
+                                 struct lazy_vec* p_lazy_bytes,
+                                 struct lazy_vec* p_lazy_counts,
+                                 struct group_infos* p_group_infos,
+                                 bool decreasing,
+                                 bool na_last,
+                                 R_xlen_t size) {
+  if (size <= INSERTION_ORDER_BOUNDARY) {
+    int_adjust(p_x, decreasing, na_last, size);
+    int_insertion_order(p_x, p_o, p_group_infos, size);
+    return;
+  }
+
+  lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) p_lazy_o_aux->p_data;
+
+  uint32_t range;
+  int x_min;
+
+  int_compute_range(p_x, size, &x_min, &range);
+
+  /*
+   * If in counting order range and on the second or higher column, we will
+   * need `p_o_aux` as working memory. At this point, `p_o` will have been
+   * initialized from ordering the first column.
+   */
+  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    const bool initialized = true;
+
+    int_counting_order(
+      p_x,
+      p_o,
+      p_o_aux,
+      p_group_infos,
+      size,
+      x_min,
+      range,
+      initialized,
+      decreasing,
+      na_last
+    );
+
+    return;
+  }
+
+  lazy_vec_initialize(p_lazy_x_aux);
+  uint32_t* p_x_aux = (uint32_t*) p_lazy_x_aux->p_data;
+
+  lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) p_lazy_bytes->p_data;
+
+  lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
+  memset(p_counts, 0, p_lazy_counts->size);
+
+  int_adjust(p_x, decreasing, na_last, size);
+
+  int_radix_order(
+    p_x,
+    p_o,
+    p_x_aux,
+    p_o_aux,
+    p_bytes,
+    p_counts,
+    p_group_infos,
+    size
+  );
+}
+
+static inline void* int_maybe_copy(const int* p_x,
+                                   struct lazy_vec* p_lazy_x_chunk,
+                                   R_xlen_t size,
+                                   bool copy);
+
+/*
+ * `int_order_impl()` is used by both `int_order()` and by
+ * `chr_order()`.
+ *
+ * For `chr_order()`, the TRUELENGTH values will already be extracted into
+ * `p_lazy_x_chunk`. In this case, we set `copy = false` to tell
+ * `int_order_impl()` to use `p_lazy_x_chunk` directly rather than copying `p_x`
+ * over to `p_x_chunk`.
+ */
 static void int_order_impl(const int* p_x,
                            struct lazy_order* p_lazy_o,
                            struct lazy_vec* p_lazy_x_chunk,
@@ -918,33 +938,29 @@ static void int_order_impl(const int* p_x,
     lazy_order_initialize(p_lazy_o);
     int* p_o = p_lazy_o->p_o;
 
-    void* p_x_chunk;
-
-    if (copy) {
-      lazy_vec_initialize(p_lazy_x_chunk);
-      p_x_chunk = p_lazy_x_chunk->p_data;
-      memcpy(p_x_chunk, p_x, size * sizeof(int));
-    } else {
-      p_x_chunk = p_lazy_x_chunk->p_data;
-    }
-
+    void* p_x_chunk = int_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
     int_adjust(p_x_chunk, decreasing, na_last, size);
+
     int_insertion_order(p_x_chunk, p_o, p_group_infos, size);
 
     return;
   }
-
-  // `int_order()` is on the first column / single vector
-  const bool initialized = false;
 
   uint32_t range;
   int x_min;
 
   int_compute_range(p_x, size, &x_min, &range);
 
-  // If in counting sort range, no need to copy over to `x_chunk` or initialize
-  // `p_lazy_o_aux` or `p_lazy_o`
+  /*
+   * If in counting order range and on the first column / single vector,
+   * `p_o_aux` won't be used, so no need to initialize it.
+   *
+   * Also, `p_o` will be filled directly, so for performance we don't
+   * initialize its order.
+   */
   if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+    const bool initialized = false;
+
     int* p_o = p_lazy_o->p_o;
     int* p_o_aux = (int*) p_lazy_o_aux->p_data;
 
@@ -981,16 +997,7 @@ static void int_order_impl(const int* p_x,
   R_xlen_t* p_counts = (R_xlen_t*) p_lazy_counts->p_data;
   memset(p_counts, 0, p_lazy_counts->size);
 
-  void* p_x_chunk;
-
-  if (copy) {
-    lazy_vec_initialize(p_lazy_x_chunk);
-    p_x_chunk = p_lazy_x_chunk->p_data;
-    memcpy(p_x_chunk, p_x, size * sizeof(int));
-  } else {
-    p_x_chunk = p_lazy_x_chunk->p_data;
-  }
-
+  void* p_x_chunk = int_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
   int_adjust(p_x_chunk, decreasing, na_last, size);
 
   int_radix_order(
@@ -1003,6 +1010,26 @@ static void int_order_impl(const int* p_x,
     p_group_infos,
     size
   );
+}
+
+// If we aren't copying, we expect that `p_lazy_x_chunk` already contains
+// the integer values. This happens for character ordering where we store
+// the truelength values in `p_lazy_x_chunk`.
+static inline void* int_maybe_copy(const int* p_x,
+                                   struct lazy_vec* p_lazy_x_chunk,
+                                   R_xlen_t size,
+                                   bool copy) {
+  if (!copy) {
+    return p_lazy_x_chunk->p_data;
+  }
+
+  lazy_vec_initialize(p_lazy_x_chunk);
+
+  void* p_x_chunk = p_lazy_x_chunk->p_data;
+
+  memcpy(p_x_chunk, p_x, size * sizeof(int));
+
+  return p_x_chunk;
 }
 
 // -----------------------------------------------------------------------------
@@ -2513,7 +2540,7 @@ static void chr_order_chunk(int* p_o,
 
   // Don't check encoding on `p_x_chunk` data. In `df_order()`, we already
   // ran `chr_mark_sorted_uniques()` which told `df_order()` whether or not
-  // to reencode as it created `p_x_chunk`
+  // to re-encode as it created `p_x_chunk`
   bool check_encoding = false;
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
