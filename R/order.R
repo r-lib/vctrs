@@ -28,19 +28,17 @@
 #'
 #' @param x A vector
 #' @param direction Direction to sort in.
-#'   - Unless `x` is a data frame, this should be a single `"asc"` or
-#'     `"desc"` for ascending or descending order respectively.
-#'   - For data frames, this is allowed to be a vector of `"asc"` and `"desc"`
-#'     with length equal to the number of columns in `x` specifying the
-#'     direction to order each column in.
+#'   - A single `"asc"` or `"desc"` for ascending or descending order
+#'     respectively.
+#'   - For data frames, a length `1` or `ncol(x)` character vector containing
+#'     only `"asc"` or `"desc"`, specifying the direction for each column.
 #' @param na_value Treatment of `NA` values. `NaN` values are treated as
 #'   equivalent to `NA` values.
-#'   - Unless `x` is a data frame, this should be a single `"largest"` or
-#'     `"smallest"` for treating `NA` values as the largest or smallest values
-#'     respectively.
-#'   - For data frames, this is allowed to be a vector of `"largest"` and
-#'     `"smallest"` with length equal to the number of columns in `x` specifying
-#'     how `NA`s should be treated in each column.
+#'   - A single `"largest"` or `"smallest"` for treating `NA` values as the
+#'     largest or smallest values respectively.
+#'   - For data frames, a length `1` or `ncol(x)` character vector containing
+#'     only `"largest"` or `"smallest"`, specifying how `NA`s should be treated
+#'     in each column.
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.

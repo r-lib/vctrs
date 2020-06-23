@@ -11,7 +11,10 @@
   produces the same results as before except in the case of character vectors,
   which are now ordered in the C-locale. Additionally, the `direction`
   and `na_value` arguments are now vectorized for data frame input so columns
-  can be ordered with varying directions and treatments of missing values.
+  can be ordered with varying directions and treatments of missing values. The
+  algorithm comes from data.table's extremely fast `forder()` and their
+  contributions to R's `base::order()`. It is fast for all versions of R that
+  vctrs supports, going back 5 minor versions to R 3.3.
   
 * Fixed performance issue with `vec_order()` on classed vectors which
   affected `dplyr::group_by()` (tidyverse/dplyr#5423).

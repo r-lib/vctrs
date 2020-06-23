@@ -17,22 +17,20 @@ vec_sort(x, direction = "asc", na_value = "largest")
 
 \item{direction}{Direction to sort in.
 \itemize{
-\item Unless \code{x} is a data frame, this should be a single \code{"asc"} or
-\code{"desc"} for ascending or descending order respectively.
-\item For data frames, this is allowed to be a vector of \code{"asc"} and \code{"desc"}
-with length equal to the number of columns in \code{x} specifying the
-direction to order each column in.
+\item A single \code{"asc"} or \code{"desc"} for ascending or descending order
+respectively.
+\item For data frames, a length \code{1} or \code{ncol(x)} character vector containing
+only \code{"asc"} or \code{"desc"}, specifying the direction for each column.
 }}
 
 \item{na_value}{Treatment of \code{NA} values. \code{NaN} values are treated as
 equivalent to \code{NA} values.
 \itemize{
-\item Unless \code{x} is a data frame, this should be a single \code{"largest"} or
-\code{"smallest"} for treating \code{NA} values as the largest or smallest values
-respectively.
-\item For data frames, this is allowed to be a vector of \code{"largest"} and
-\code{"smallest"} with length equal to the number of columns in \code{x} specifying
-how \code{NA}s should be treated in each column.
+\item A single \code{"largest"} or \code{"smallest"} for treating \code{NA} values as the
+largest or smallest values respectively.
+\item For data frames, a length \code{1} or \code{ncol(x)} character vector containing
+only \code{"largest"} or \code{"smallest"}, specifying how \code{NA}s should be treated
+in each column.
 }}
 }
 \value{
