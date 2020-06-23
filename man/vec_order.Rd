@@ -2,13 +2,10 @@
 % Please edit documentation in R/order.R
 \name{vec_order}
 \alias{vec_order}
-\alias{vec_order_loc}
 \alias{vec_sort}
 \title{Order and sort vectors}
 \usage{
 vec_order(x, direction = "asc", na_value = "largest")
-
-vec_order_loc(x, direction = "asc", na_value = "largest")
 
 vec_sort(x, direction = "asc", na_value = "largest")
 }
@@ -37,12 +34,6 @@ in each column.
 \itemize{
 \item \code{vec_order()} an integer vector the same size as \code{x}.
 \item \code{vec_sort()} a vector with the same size and type as \code{x}.
-\item \code{vec_order_loc()}: A two column data frame with size equal to
-\code{vec_size(vec_unique(x))}.
-\itemize{
-\item A \code{key} column of type \code{vec_ptype(x)}.
-\item A \code{loc} column of type list, with elements of type integer.
-}
 }
 }
 \description{
@@ -52,11 +43,6 @@ using subsequent columns to break ties.
 
 \code{vec_sort()} sorts \code{x} by computing its order and using \code{vec_slice()} to
 rearrange.
-
-\code{vec_order_loc()} returns a data frame containing a \code{key} column with
-sorted unique groups, and a \code{loc} column with the locations of each
-group in \code{x}. It is similar to \code{\link[=vec_group_loc]{vec_group_loc()}}, except the groups are
-returned sorted rather than by first appearance.
 }
 \details{
 Character vectors are ordered in the C-locale. This is different from
@@ -74,14 +60,14 @@ characters are detected, they are translated to UTF-8 first.
 \section{Dependencies of \code{vec_order()}}{
 
 \itemize{
-\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+\item \code{\link[=vec_proxy_order]{vec_proxy_order()}}
 }
 }
 
 \section{Dependencies of \code{vec_sort()}}{
 
 \itemize{
-\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+\item \code{\link[=vec_proxy_order]{vec_proxy_order()}}
 \item \code{\link[=vec_order]{vec_order()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
 }
@@ -108,9 +94,4 @@ vec_sort(
   direction = c("desc", "asc"),
   na_value = c("largest", "smallest")
 )
-
-# `vec_order_loc()` is similar to `vec_group_loc()`, except keys are
-# returned ordered rather than by first appearance.
-vec_order_loc(df)
-vec_group_loc(df)
 }

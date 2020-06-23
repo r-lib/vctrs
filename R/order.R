@@ -8,11 +8,6 @@
 #' `vec_sort()` sorts `x` by computing its order and using `vec_slice()` to
 #' rearrange.
 #'
-#' `vec_order_loc()` returns a data frame containing a `key` column with
-#' sorted unique groups, and a `loc` column with the locations of each
-#' group in `x`. It is similar to [vec_group_loc()], except the groups are
-#' returned sorted rather than by first appearance.
-#'
 #' @details
 #' Character vectors are ordered in the C-locale. This is different from
 #' `base::order()`, which respects `base::Sys.setlocale()`, but should
@@ -42,16 +37,12 @@
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
-#' * `vec_order_loc()`: A two column data frame with size equal to
-#'   `vec_size(vec_unique(x))`.
-#'     * A `key` column of type `vec_ptype(x)`.
-#'     * A `loc` column of type list, with elements of type integer.
 #'
 #' @section Dependencies of `vec_order()`:
-#' * [vec_proxy_compare()]
+#' * [vec_proxy_order()]
 #'
 #' @section Dependencies of `vec_sort()`:
-#' * [vec_proxy_compare()]
+#' * [vec_proxy_order()]
 #' * [vec_order()]
 #' * [vec_slice()]
 #' @export
@@ -76,19 +67,8 @@
 #'   direction = c("desc", "asc"),
 #'   na_value = c("largest", "smallest")
 #' )
-#'
-#' # `vec_order_loc()` is similar to `vec_group_loc()`, except keys are
-#' # returned ordered rather than by first appearance.
-#' vec_order_loc(df)
-#' vec_group_loc(df)
 vec_order <- function(x, direction = "asc", na_value = "largest") {
   .Call(vctrs_order, x, direction, na_value)
-}
-
-#' @export
-#' @rdname vec_order
-vec_order_loc <- function(x, direction = "asc", na_value = "largest") {
-  .Call(vctrs_order_loc, x, direction, na_value)
 }
 
 #' @export
@@ -96,4 +76,42 @@ vec_order_loc <- function(x, direction = "asc", na_value = "largest") {
 vec_sort <- function(x, direction = "asc", na_value = "largest") {
   idx <- vec_order(x, direction = direction, na_value = na_value)
   vec_slice(x, idx)
+}
+
+
+#' Identify ordered groups
+#'
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
+#' `vec_order_loc()` returns a data frame containing a `key` column with
+#' sorted unique groups, and a `loc` column with the locations of each
+#' group in `x`. It is similar to [vec_group_loc()], except the groups are
+#' returned sorted rather than by first appearance.
+#'
+#' @inheritParams vec_order
+#'
+#' @return
+#' A two column data frame with size equal to `vec_size(vec_unique(x))`.
+#'   * A `key` column of type `vec_ptype(x)`.
+#'   * A `loc` column of type list, with elements of type integer.
+#'
+#' @section Dependencies of `vec_order_loc()`:
+#' * [vec_proxy_order()]
+#'
+#' @export
+#'
+#' @examples
+#' df <- data.frame(
+#'   g = sample(2, 10, replace = TRUE),
+#'   x = c(NA, sample(5, 9, replace = TRUE))
+#' )
+#'
+#' # `vec_order_loc()` is similar to `vec_group_loc()`, except keys are
+#' # returned ordered rather than by first appearance.
+#' vec_order_loc(df)
+#'
+#' vec_group_loc(df)
+vec_order_loc <- function(x, direction = "asc", na_value = "largest") {
+  .Call(vctrs_order_loc, x, direction, na_value)
 }
