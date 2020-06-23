@@ -5,9 +5,9 @@
 \alias{vec_sort}
 \title{Order and sort vectors}
 \usage{
-vec_order(x, direction = "asc", na_value = c("largest", "smallest"))
+vec_order(x, direction = "asc", na_value = "largest")
 
-vec_sort(x, direction = "asc", na_value = c("largest", "smallest"))
+vec_sort(x, direction = "asc", na_value = "largest")
 }
 \arguments{
 \item{x}{A vector}
@@ -21,7 +21,16 @@ with length equal to the number of columns in \code{x} specifying the
 direction to order each column in.
 }}
 
-\item{na_value}{Should \code{NA}s be treated as the largest or smallest values?}
+\item{na_value}{Treatment of \code{NA} values. \code{NaN} values are treated as
+equivalent to \code{NA} values.
+\itemize{
+\item Unless \code{x} is a data frame, this should be a single \code{"largest"} or
+\code{"smallest"} for treating \code{NA} values as the largest or smallest values
+respectively.
+\item For data frames, this is allowed to be a vector of \code{"largest"} and
+\code{"smallest"} with length equal to the number of columns in \code{x} specifying
+how \code{NA}s should be treated in each column.
+}}
 }
 \value{
 \itemize{
@@ -77,4 +86,12 @@ df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 vec_order(df)
 vec_sort(df)
 vec_sort(df, "desc")
+
+# For data frames, `direction` and `na_value` are allowed to be vectors
+# with length equal to the number of columns in the data frame
+vec_sort(
+  df,
+  direction = c("desc", "asc"),
+  na_value = c("largest", "smallest")
+)
 }
