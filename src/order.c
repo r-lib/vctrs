@@ -1705,25 +1705,6 @@ static void lgl_order(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static void dbl_adjust(void* p_x,
-                       const bool decreasing,
-                       const bool na_last,
-                       const R_xlen_t size);
-
-static void dbl_insertion_order(uint64_t* p_x,
-                                int* p_o,
-                                struct group_infos* p_group_infos,
-                                const R_xlen_t size);
-
-static void dbl_radix_order(uint64_t* p_x,
-                            int* p_o,
-                            uint64_t* p_x_aux,
-                            int* p_o_aux,
-                            uint8_t* p_bytes,
-                            R_xlen_t* p_counts,
-                            struct group_infos* p_group_infos,
-                            const R_xlen_t size);
-
 static void dbl_order_chunk_impl(void* p_x,
                                  int* p_o,
                                  struct lazy_vec* p_lazy_x_aux,
@@ -1779,6 +1760,76 @@ static void dbl_order_chunk(int* p_o,
   );
 }
 
+
+static void dbl_order_impl(const double* p_x,
+                           struct lazy_order* p_lazy_o,
+                           struct lazy_vec* p_lazy_x_chunk,
+                           struct lazy_vec* p_lazy_x_aux,
+                           struct lazy_vec* p_lazy_o_aux,
+                           struct lazy_vec* p_lazy_bytes,
+                           struct lazy_vec* p_lazy_counts,
+                           struct group_infos* p_group_infos,
+                           bool decreasing,
+                           bool na_last,
+                           R_xlen_t size,
+                           bool copy);
+
+static void dbl_order(SEXP x,
+                      struct lazy_order* p_lazy_o,
+                      struct lazy_vec* p_lazy_x_chunk,
+                      struct lazy_vec* p_lazy_x_aux,
+                      struct lazy_vec* p_lazy_o_aux,
+                      struct lazy_vec* p_lazy_bytes,
+                      struct lazy_vec* p_lazy_counts,
+                      struct group_infos* p_group_infos,
+                      bool decreasing,
+                      bool na_last,
+                      R_xlen_t size) {
+  const double* p_x = REAL_RO(x);
+
+  dbl_order_impl(
+    p_x,
+    p_lazy_o,
+    p_lazy_x_chunk,
+    p_lazy_x_aux,
+    p_lazy_o_aux,
+    p_lazy_bytes,
+    p_lazy_counts,
+    p_group_infos,
+    decreasing,
+    na_last,
+    size,
+    true
+  );
+}
+
+
+static void dbl_adjust(void* p_x,
+                       const bool decreasing,
+                       const bool na_last,
+                       const R_xlen_t size);
+
+static void dbl_insertion_order(uint64_t* p_x,
+                                int* p_o,
+                                struct group_infos* p_group_infos,
+                                const R_xlen_t size);
+
+static void dbl_radix_order(uint64_t* p_x,
+                            int* p_o,
+                            uint64_t* p_x_aux,
+                            int* p_o_aux,
+                            uint8_t* p_bytes,
+                            R_xlen_t* p_counts,
+                            struct group_infos* p_group_infos,
+                            const R_xlen_t size);
+
+/*
+ * Used by `dbl_order_chunk()` and by `cpl_order()`
+ *
+ * Unlike `int_order_chunk_impl()`, `dbl_order_chunk_impl()` also deals with
+ * sortedness since we don't have an up front sortedness check on complex
+ * vectors.
+ */
 static void dbl_order_chunk_impl(void* p_x,
                                  int* p_o,
                                  struct lazy_vec* p_lazy_x_aux,
@@ -1834,19 +1885,29 @@ static void dbl_order_chunk_impl(void* p_x,
   );
 }
 
-static void dbl_order(SEXP x,
-                      struct lazy_order* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
-                      struct group_infos* p_group_infos,
-                      bool decreasing,
-                      bool na_last,
-                      R_xlen_t size) {
-  const double* p_x = REAL_RO(x);
+static inline void* dbl_maybe_copy(const double* p_x,
+                                   struct lazy_vec* p_lazy_x_chunk,
+                                   R_xlen_t size,
+                                   bool copy);
 
+/*
+ * Used by `dbl_order()` and by `cpl_order()`
+ *
+ * Unlike `int_order_impl()`, `dbl_order_impl()` also deals with sortedness
+ * since we don't have an up front sortedness check on complex vectors.
+ */
+static void dbl_order_impl(const double* p_x,
+                           struct lazy_order* p_lazy_o,
+                           struct lazy_vec* p_lazy_x_chunk,
+                           struct lazy_vec* p_lazy_x_aux,
+                           struct lazy_vec* p_lazy_o_aux,
+                           struct lazy_vec* p_lazy_bytes,
+                           struct lazy_vec* p_lazy_counts,
+                           struct group_infos* p_group_infos,
+                           bool decreasing,
+                           bool na_last,
+                           R_xlen_t size,
+                           bool copy) {
   const enum vctrs_sortedness sortedness = dbl_sortedness(
     p_x,
     p_group_infos,
@@ -1866,9 +1927,7 @@ static void dbl_order(SEXP x,
   lazy_order_initialize(p_lazy_o);
   int* p_o = p_lazy_o->p_o;
 
-  lazy_vec_initialize(p_lazy_x_chunk);
-  void* p_x_chunk = p_lazy_x_chunk->p_data;
-  memcpy(p_x_chunk, p_x, size * sizeof(double));
+  void* p_x_chunk = dbl_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
   dbl_adjust(p_x_chunk, decreasing, na_last, size);
 
   if (size <= INSERTION_ORDER_BOUNDARY) {
@@ -1899,6 +1958,26 @@ static void dbl_order(SEXP x,
     p_group_infos,
     size
   );
+}
+
+// If we aren't copying, we expect that `p_lazy_x_chunk` already contains
+// the double values. This happens for complex ordering where we store
+// the real / imaginary values in `p_lazy_x_chunk` ahead of time.
+static inline void* dbl_maybe_copy(const double* p_x,
+                                   struct lazy_vec* p_lazy_x_chunk,
+                                   R_xlen_t size,
+                                   bool copy) {
+  if (!copy) {
+    return p_lazy_x_chunk->p_data;
+  }
+
+  lazy_vec_initialize(p_lazy_x_chunk);
+
+  void* p_x_chunk = p_lazy_x_chunk->p_data;
+
+  memcpy(p_x_chunk, p_x, size * sizeof(double));
+
+  return p_x_chunk;
 }
 
 // -----------------------------------------------------------------------------
@@ -2396,10 +2475,6 @@ static void cpl_order(SEXP x,
     reset_ignore = true;
   }
 
-  // Don't try to be lazy with ordering here, for simplicity
-  lazy_order_initialize(p_lazy_o);
-  int* p_o = p_lazy_o->p_o;
-
   const Rcomplex* p_x_cpl = COMPLEX_RO(x);
 
   // When a complex column is present,
@@ -2413,10 +2488,18 @@ static void cpl_order(SEXP x,
     p_x_chunk_dbl[i] = p_x_cpl[i].r;
   }
 
-  // Run it through double ordering
-  dbl_order_chunk_impl(
+  /*
+   * Call double ordering algorithm on real section.
+   *
+   * In this case, both `p_x_chunk_dbl` and `p_lazy_x_chunk` are passed through,
+   * but we set `copy = false` which tells `dbl_order_impl()` not to copy
+   * the input (`p_x_chunk_dbl`) over to the chunk vector of (`p_lazy_x_chunk`).
+   * It has already been done when we extracted the real section.
+   */
+  dbl_order_impl(
     p_x_chunk_dbl,
-    p_o,
+    p_lazy_o,
+    p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
     p_lazy_bytes,
@@ -2424,8 +2507,12 @@ static void cpl_order(SEXP x,
     p_group_infos,
     decreasing,
     na_last,
-    size
+    size,
+    false
   );
+
+  // Ordering will now be initialized
+  int* p_o = p_lazy_o->p_o;
 
   // Reset `ignore` for the second pass if we don't need to track groups.
   // This happens if an atomic complex vector is passed in and the user
