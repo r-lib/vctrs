@@ -26,6 +26,11 @@ typedef R_xlen_t r_ssize;
 // condition object otherwise
 #define ERR SEXP
 
+// Utilities for deciding whether or not to re-encode as UTF-8
+#define CHAR_IS_UTF8(x)  (LEVELS(x) & 8)
+#define CHAR_IS_ASCII(x) (LEVELS(x) & 64)
+#define CHAR_NEEDS_REENCODE(x) (!(CHAR_IS_ASCII(x) || (x) == NA_STRING || CHAR_IS_UTF8(x)))
+#define CHAR_REENCODE(x) Rf_mkCharCE(Rf_translateCharUTF8(x), CE_UTF8)
 
 // Vector types -------------------------------------------------
 
