@@ -34,6 +34,12 @@
  *   objects in this struct. Set to the size of `x`, which would occur if
  *   all strings were unique.
  * @member size_used The number of unique strings currently in `strings`.
+ * @member max_string_size The maximum string size of the unique strings stored
+ *   in `strings`. This controls the depth of recursion in `chr_radix_order()`.
+ * @member reencode Should the encoding be checked to see if a translation to
+ *   UTF-8 is required? This is used by `df_order()` when extracting out each
+ *   group chunk, and by `chr_order()` to decide whether the input needs to be
+ *   copied and re-encoded.
  */
 struct truelength_info {
   SEXP strings;
