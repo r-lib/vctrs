@@ -627,6 +627,13 @@ test_that("can order when in strictly opposite of expected order (no ties)", {
 })
 
 # ------------------------------------------------------------------------------
+# vec_order(<list>)
+
+test_that("list elements are ordered by first appearance", {
+  expect_identical(vec_order(list(1:2, "a", 1:2)), c(1L, 3L, 2L))
+})
+
+# ------------------------------------------------------------------------------
 # vec_order(<data.frame>) - insertion
 
 test_that("data frame with no columns and no rows returns integer()", {
@@ -796,7 +803,7 @@ test_that("`direction` is checked", {
 })
 
 test_that("`x` is checked", {
-  expect_error(vec_order(list()), class = "vctrs_error_unsupported")
+  expect_error(vec_order(foobar()), class = "vctrs_error_scalar_type")
 })
 
 # ------------------------------------------------------------------------------
@@ -831,8 +838,6 @@ test_that("data frame comparison proxies don't allow vector `direction` or `na_v
 })
 
 test_that("ordering works with df-cols", {
-  skip("until #1142 is merged")
-
   df_col <- new_data_frame(list(y = c(2, 1, 2), z = c(3, 3, 3)))
   df <- new_data_frame(list(x = c(1, 1, 1), y = df_col))
 
@@ -842,12 +847,10 @@ test_that("ordering works with df-cols", {
   # expanded to 3 to match the flattened df proxy
   expect_identical(vec_order(df, direction = c("asc", "desc")), c(1L, 3L, 2L))
 
-  expect_error(vec_order(df, direction = c("desc", "desc", "asc")))
+  expect_error(vec_order(df, direction = c("desc", "desc", "asc")), "or length equal to")
 })
 
 test_that("ordering works with df-cols with 0 cols", {
-  skip("until #1142 is merged")
-
   df_col <- new_data_frame(list(), n = 3L)
   df <- new_data_frame(list(x = c(1, 3, 1), y = df_col, z = c(2, 1, 1)))
 
@@ -856,12 +859,10 @@ test_that("ordering works with df-cols with 0 cols", {
   # Can supply 3 `direction` values even though the 0-col df-col gets dropped
   expect_identical(vec_order(df, direction = c("asc", "desc", "desc")), c(1L, 3L, 2L))
 
-  expect_error(vec_order(df, direction = c("desc", "asc")))
+  expect_error(vec_order(df, direction = c("desc", "asc")), "or length equal to")
 })
 
 test_that("ordering works with rcrd cols", {
-  skip("until #1142 is merged")
-
   y <- tuple(c(1, 2, 1), c(3, 2, 1))
   df <- new_data_frame(list(z = c(1, 1, 1), y = y))
 
@@ -871,7 +872,7 @@ test_that("ordering works with rcrd cols", {
   # expanded to 3 to match the flattened df proxy
   expect_identical(vec_order(df, direction = c("asc", "desc")), c(2L, 1L, 3L))
 
-  expect_error(vec_order(df, direction = c("desc", "desc", "asc")))
+  expect_error(vec_order(df, direction = c("desc", "desc", "asc")), "or length equal to")
 })
 
 # ------------------------------------------------------------------------------
@@ -920,7 +921,7 @@ test_that("can sort empty data frames (#356)", {
 })
 
 test_that("can order tibbles that contain non-comparable objects", {
-  expect_equal(vec_order(data_frame(list(10, 2, 1))), 1:3)
+  expect_equal(vec_order(data_frame(x = list(10, 2, 1))), 1:3)
 })
 
 test_that("can order matrices and arrays (#306)", {
@@ -942,8 +943,6 @@ test_that("can order empty data frames (#356)", {
 })
 
 test_that("can order data frames with data frame columns (#527)", {
-  skip("until #1142 is merged")
-
   expect_equal(
     vec_order(iris),
     vec_order(data_frame(iris = iris))
@@ -951,8 +950,6 @@ test_that("can order data frames with data frame columns (#527)", {
 })
 
 test_that("can order data frames (and subclasses) with matrix columns", {
-  skip("until #1142 is merged")
-
   df <- new_data_frame(n = 2L)
 
   df$x <- new_data_frame(list(y = matrix(1:2, 2)))

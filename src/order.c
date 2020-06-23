@@ -255,12 +255,12 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations
   SET_VECTOR_ELT(args, 0, decreasing);
   SET_VECTOR_ELT(args, 1, na_last);
 
-  // Call on `x` before potentially flattening cols with `vec_proxy_compare()`
+  // Call on `x` before potentially flattening cols with `vec_proxy_order()`
   args = PROTECT_N(vec_order_check_args(x, args), p_n_prot);
   decreasing = VECTOR_ELT(args, 0);
   na_last = VECTOR_ELT(args, 1);
 
-  SEXP proxy = PROTECT_N(vec_proxy_compare(x), p_n_prot);
+  SEXP proxy = PROTECT_N(vec_proxy_order(x), p_n_prot);
 
   R_xlen_t size = vec_size(proxy);
   const enum vctrs_type type = vec_proxy_typeof(proxy);
@@ -3388,7 +3388,7 @@ static void df_order(SEXP x,
       R_NilValue,
       "Internal error: `vec_order_check_args()` should expand "
       "`decreasing` to have length 1 or length equal "
-      "to the number of columns of `x` after calling `vec_proxy_compare()`."
+      "to the number of columns of `x` after calling `vec_proxy_order()`."
     );
   }
 
@@ -3405,7 +3405,7 @@ static void df_order(SEXP x,
       R_NilValue,
       "Internal error: `vec_order_check_args()` should expand "
       "`na_last` to have length 1 or length equal "
-      "to the number of columns of `x` after calling `vec_proxy_compare()`."
+      "to the number of columns of `x` after calling `vec_proxy_order()`."
     );
   }
 
@@ -3778,7 +3778,7 @@ static SEXP df_check_args(SEXP x, SEXP args);
  * `vec_order_check_args()` checks the type and length of `decreasing` and
  * `na_last` and possibly expands them.
  *
- * `x` is expected to be the original input, before `vec_proxy_compare()` is
+ * `x` is expected to be the original input, before `vec_proxy_order()` is
  * called on it.
  *
  * If `x` is not a data frame, `decreasing` and `na_last` must be boolean
@@ -3791,7 +3791,7 @@ static SEXP df_check_args(SEXP x, SEXP args);
  *
  * If `x` is a data frame and the size of the arg matches the number of
  * columns of `x`, we have to be careful to "expand" the arg to match
- * the number of columns of `x` that will exist after `vec_proxy_compare()`
+ * the number of columns of `x` that will exist after `vec_proxy_order()`
  * is called. It flattens df-cols which might either already exist in `x`,
  * or may arise from rcrd columns that have data frame proxies. The majority
  * of the code here is for tracking this expansion.
@@ -3960,8 +3960,8 @@ static int vec_decreasing_expansion(SEXP x) {
   int expansion;
 
   // Otherwise we have an S3 column that could have a data frame
-  // comparison proxy containing multiple columns, so we need to check for that
-  SEXP proxy = PROTECT(vec_proxy_compare(x));
+  // ordering proxy containing multiple columns, so we need to check for that
+  SEXP proxy = PROTECT(vec_proxy_order(x));
 
   // If the `proxy` is a data frame, the expansion factor is the
   // number of columns. Otherwise it is 1.
