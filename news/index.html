@@ -157,6 +157,11 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
+<ul>
+<li><p>New <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_order()</a></code> that provides an ordering proxy for use in <code><a href="https://vctrs.r-lib.org/reference/vec_order.html">vec_order()</a></code> and <code><a href="https://vctrs.r-lib.org/reference/vec_order.html">vec_sort()</a></code>. The default method falls through to <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>. Lists are special cased, and return an integer vector proxy that orders by first appearance.</p></li>
+<li><p>List columns in data frames are no longer comparable through <code><a href="https://vctrs.r-lib.org/reference/vec_compare.html">vec_compare()</a></code>.</p></li>
+<li><p>The experimental <code>relax</code> argument has been removed from <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>.</p></li>
+</ul>
 </div>
     <div id="vctrs-031" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
