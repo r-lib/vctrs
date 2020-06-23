@@ -116,21 +116,21 @@ static inline struct lazy_order new_lazy_order(R_xlen_t size) {
   return out;
 }
 
-static inline void lazy_order_initialize(struct lazy_order* p_lazy_order) {
-  if (p_lazy_order->initialized) {
+static inline void lazy_order_initialize(struct lazy_order* p_lazy_o) {
+  if (p_lazy_o->initialized) {
     return;
   }
 
-  R_xlen_t size = p_lazy_order->size;
+  R_xlen_t size = p_lazy_o->size;
 
-  int* p_o = p_lazy_order->p_o;
+  int* p_o = p_lazy_o->p_o;
 
   // Initialize `o` with sequential 1-based ordering
   for (R_xlen_t i = 0; i < size; ++i) {
     p_o[i] = i + 1;
   }
 
-  p_lazy_order->initialized = true;
+  p_lazy_o->initialized = true;
 }
 
 // -----------------------------------------------------------------------------

@@ -242,7 +242,7 @@ static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type t
 static SEXP vec_order_check_decreasing(SEXP x, SEXP decreasing);
 
 static void vec_order_switch(SEXP x,
-                             struct lazy_order* p_lazy_order,
+                             struct lazy_order* p_lazy_o,
                              struct lazy_vec* p_lazy_x_chunk,
                              struct lazy_vec* p_lazy_x_aux,
                              struct lazy_vec* p_lazy_o_aux,
@@ -339,13 +339,13 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations
   struct truelength_info* p_truelength_info = &truelength_info;
   PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
 
-  struct lazy_order lazy_order = new_lazy_order(size);
-  struct lazy_order* p_lazy_order = &lazy_order;
-  PROTECT_LAZY_ORDER(p_lazy_order, p_n_prot);
+  struct lazy_order lazy_o = new_lazy_order(size);
+  struct lazy_order* p_lazy_o = &lazy_o;
+  PROTECT_LAZY_ORDER(p_lazy_o, p_n_prot);
 
   vec_order_switch(
     proxy,
-    p_lazy_order,
+    p_lazy_o,
     p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -365,7 +365,7 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations
     const int* p_sizes = p_group_info->p_data;
     R_xlen_t n_groups = p_group_info->n_groups;
 
-    const int* p_o = p_lazy_order->p_o;
+    const int* p_o = p_lazy_o->p_o;
 
     SEXP out = vec_order_loc_impl(x, p_o, p_sizes, n_groups);
 
@@ -374,7 +374,7 @@ static SEXP vec_order_impl(SEXP x, SEXP decreasing, bool na_last, bool locations
   }
 
   UNPROTECT(n_prot);
-  return p_lazy_order->o;
+  return p_lazy_o->o;
 }
 
 // -----------------------------------------------------------------------------
@@ -430,7 +430,7 @@ static SEXP vec_order_loc_impl(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void df_order(SEXP x,
-                     struct lazy_order* p_lazy_order,
+                     struct lazy_order* p_lazy_o,
                      struct lazy_vec* p_lazy_x_chunk,
                      struct lazy_vec* p_lazy_x_aux,
                      struct lazy_vec* p_lazy_o_aux,
@@ -443,7 +443,7 @@ static void df_order(SEXP x,
                      R_xlen_t size);
 
 static void vec_order_base_switch(SEXP x,
-                                  struct lazy_order* p_lazy_order,
+                                  struct lazy_order* p_lazy_o,
                                   struct lazy_vec* p_lazy_x_chunk,
                                   struct lazy_vec* p_lazy_x_aux,
                                   struct lazy_vec* p_lazy_o_aux,
@@ -457,7 +457,7 @@ static void vec_order_base_switch(SEXP x,
                                   const enum vctrs_type type);
 
 static void vec_order_switch(SEXP x,
-                             struct lazy_order* p_lazy_order,
+                             struct lazy_order* p_lazy_o,
                              struct lazy_vec* p_lazy_x_chunk,
                              struct lazy_vec* p_lazy_x_aux,
                              struct lazy_vec* p_lazy_o_aux,
@@ -472,7 +472,7 @@ static void vec_order_switch(SEXP x,
   if (type == vctrs_type_dataframe) {
     df_order(
       x,
-      p_lazy_order,
+      p_lazy_o,
       p_lazy_x_chunk,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -500,7 +500,7 @@ static void vec_order_switch(SEXP x,
 
   vec_order_base_switch(
     x,
-    p_lazy_order,
+    p_lazy_o,
     p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -518,7 +518,7 @@ static void vec_order_switch(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void int_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -530,7 +530,7 @@ static void int_order(SEXP x,
                       R_xlen_t size);
 
 static void lgl_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -542,7 +542,7 @@ static void lgl_order(SEXP x,
                       R_xlen_t size);
 
 static void dbl_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -554,7 +554,7 @@ static void dbl_order(SEXP x,
                       R_xlen_t size);
 
 static void cpl_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -566,7 +566,7 @@ static void cpl_order(SEXP x,
                       R_xlen_t size);
 
 static void chr_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -580,7 +580,7 @@ static void chr_order(SEXP x,
 
 // Used on bare vectors and the first column of data frame `x`s
 static void vec_order_base_switch(SEXP x,
-                                  struct lazy_order* p_lazy_order,
+                                  struct lazy_order* p_lazy_o,
                                   struct lazy_vec* p_lazy_x_chunk,
                                   struct lazy_vec* p_lazy_x_aux,
                                   struct lazy_vec* p_lazy_o_aux,
@@ -596,7 +596,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_integer: {
     int_order(
       x,
-      p_lazy_order,
+      p_lazy_o,
       p_lazy_x_chunk,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -613,7 +613,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_logical: {
     lgl_order(
       x,
-      p_lazy_order,
+      p_lazy_o,
       p_lazy_x_chunk,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -630,7 +630,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_double: {
     dbl_order(
       x,
-      p_lazy_order,
+      p_lazy_o,
       p_lazy_x_chunk,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -647,7 +647,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_complex: {
     cpl_order(
       x,
-      p_lazy_order,
+      p_lazy_o,
       p_lazy_x_chunk,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -664,7 +664,7 @@ static void vec_order_base_switch(SEXP x,
   case vctrs_type_character: {
     chr_order(
       x,
-      p_lazy_order,
+      p_lazy_o,
       p_lazy_x_chunk,
       p_lazy_x_aux,
       p_lazy_o_aux,
@@ -874,7 +874,7 @@ static void int_order_chunk_impl(void* p_x,
 
 
 static void int_order_impl(const int* p_x,
-                           struct lazy_order* p_lazy_order,
+                           struct lazy_order* p_lazy_o,
                            struct lazy_vec* p_lazy_x_chunk,
                            struct lazy_vec* p_lazy_x_aux,
                            struct lazy_vec* p_lazy_o_aux,
@@ -887,7 +887,7 @@ static void int_order_impl(const int* p_x,
                            bool copy);
 
 static void int_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -909,15 +909,15 @@ static void int_order(SEXP x,
 
   // Handle sorted cases and set ordering to initialized
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
-    int* p_o = p_lazy_order->p_o;
+    int* p_o = p_lazy_o->p_o;
     ord_resolve_sortedness(p_o, sortedness, size);
-    p_lazy_order->initialized = true;
+    p_lazy_o->initialized = true;
     return;
   }
 
   int_order_impl(
     p_x,
-    p_lazy_order,
+    p_lazy_o,
     p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -932,7 +932,7 @@ static void int_order(SEXP x,
 }
 
 static void int_order_impl(const int* p_x,
-                           struct lazy_order* p_lazy_order,
+                           struct lazy_order* p_lazy_o,
                            struct lazy_vec* p_lazy_x_chunk,
                            struct lazy_vec* p_lazy_x_aux,
                            struct lazy_vec* p_lazy_o_aux,
@@ -944,8 +944,8 @@ static void int_order_impl(const int* p_x,
                            R_xlen_t size,
                            bool copy) {
   if (size <= INSERTION_ORDER_BOUNDARY) {
-    lazy_order_initialize(p_lazy_order);
-    int* p_o = p_lazy_order->p_o;
+    lazy_order_initialize(p_lazy_o);
+    int* p_o = p_lazy_o->p_o;
 
     void* p_x_chunk;
 
@@ -972,9 +972,9 @@ static void int_order_impl(const int* p_x,
   int_compute_range(p_x, size, &x_min, &range);
 
   // If in counting sort range, no need to copy over to `x_chunk` or initialize
-  // `p_lazy_o_aux` or `p_lazy_order`
+  // `p_lazy_o_aux` or `p_lazy_o`
   if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    int* p_o = p_lazy_order->p_o;
+    int* p_o = p_lazy_o->p_o;
     int* p_o_aux = (int*) p_lazy_o_aux->p_data;
 
     int_counting_order(
@@ -990,12 +990,12 @@ static void int_order_impl(const int* p_x,
       na_last
     );
 
-    p_lazy_order->initialized = true;
+    p_lazy_o->initialized = true;
     return;
   }
 
-  lazy_order_initialize(p_lazy_order);
-  int* p_o = p_lazy_order->p_o;
+  lazy_order_initialize(p_lazy_o);
+  int* p_o = p_lazy_o->p_o;
 
   lazy_vec_initialize(p_lazy_o_aux);
   int* p_o_aux = (int*) p_lazy_o_aux->p_data;
@@ -1680,7 +1680,7 @@ static void lgl_order_chunk(int* p_o,
 }
 
 static void lgl_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -1692,7 +1692,7 @@ static void lgl_order(SEXP x,
                       R_xlen_t size) {
   int_order(
     x,
-    p_lazy_order,
+    p_lazy_o,
     p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -1843,7 +1843,7 @@ static void dbl_order_chunk_impl(void* p_x,
 }
 
 static void dbl_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -1865,14 +1865,14 @@ static void dbl_order(SEXP x,
 
   // Handle sorted cases and set ordering to initialized
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
-    int* p_o = p_lazy_order->p_o;
+    int* p_o = p_lazy_o->p_o;
     ord_resolve_sortedness(p_o, sortedness, size);
-    p_lazy_order->initialized = true;
+    p_lazy_o->initialized = true;
     return;
   }
 
-  lazy_order_initialize(p_lazy_order);
-  int* p_o = p_lazy_order->p_o;
+  lazy_order_initialize(p_lazy_o);
+  int* p_o = p_lazy_o->p_o;
 
   lazy_vec_initialize(p_lazy_x_chunk);
   void* p_x_chunk = p_lazy_x_chunk->p_data;
@@ -2383,7 +2383,7 @@ static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
  * `dbl_order_chunk()`.
  */
 static void cpl_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -2405,8 +2405,8 @@ static void cpl_order(SEXP x,
   }
 
   // Don't try to be lazy with ordering here, for simplicity
-  lazy_order_initialize(p_lazy_order);
-  int* p_o = p_lazy_order->p_o;
+  lazy_order_initialize(p_lazy_o);
+  int* p_o = p_lazy_o->p_o;
 
   const Rcomplex* p_x_cpl = COMPLEX_RO(x);
 
@@ -2599,7 +2599,7 @@ static void chr_order_chunk(int* p_o,
 static void chr_copy_with_reencode(SEXP* p_x_chunk, const SEXP* p_x, R_xlen_t size);
 
 static void chr_order(SEXP x,
-                      struct lazy_order* p_lazy_order,
+                      struct lazy_order* p_lazy_o,
                       struct lazy_vec* p_lazy_x_chunk,
                       struct lazy_vec* p_lazy_x_aux,
                       struct lazy_vec* p_lazy_o_aux,
@@ -2626,9 +2626,9 @@ static void chr_order(SEXP x,
 
   // Handle sorted cases and set ordering to initialized
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
-    int* p_o = p_lazy_order->p_o;
+    int* p_o = p_lazy_o->p_o;
     ord_resolve_sortedness(p_o, sortedness, size);
-    p_lazy_order->initialized = true;
+    p_lazy_o->initialized = true;
     return;
   }
 
@@ -2663,7 +2663,7 @@ static void chr_order(SEXP x,
   // already been done.
   int_order_impl(
     p_x_aux,
-    p_lazy_order,
+    p_lazy_o,
     p_lazy_x_aux,
     p_lazy_x_chunk,
     p_lazy_o_aux,
@@ -3256,7 +3256,7 @@ static void vec_order_chunk_switch(int* p_o,
  * can tell all of the values apart.
  */
 static void df_order(SEXP x,
-                     struct lazy_order* p_lazy_order,
+                     struct lazy_order* p_lazy_o,
                      struct lazy_vec* p_lazy_x_chunk,
                      struct lazy_vec* p_lazy_x_aux,
                      struct lazy_vec* p_lazy_o_aux,
@@ -3288,7 +3288,7 @@ static void df_order(SEXP x,
 
   // Special case no columns
   if (n_cols == 0) {
-    lazy_order_initialize(p_lazy_order);
+    lazy_order_initialize(p_lazy_o);
     return;
   }
 
@@ -3300,7 +3300,7 @@ static void df_order(SEXP x,
   // First column is immutable and we must copy into `x_chunk`.
   vec_order_base_switch(
     col,
-    p_lazy_order,
+    p_lazy_o,
     p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -3334,7 +3334,7 @@ static void df_order(SEXP x,
     // we iterate through the groups, but need it to start from the beginning
     // on the next column. `p_o` is initialized now that we have already
     // processed at least one column.
-    int* p_o_col = p_lazy_order->p_o;
+    int* p_o_col = p_lazy_o->p_o;
 
     // Get the number of group chunks from previous column group info
     struct group_info* p_group_info_pre = groups_current(p_group_infos);
