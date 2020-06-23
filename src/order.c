@@ -2711,10 +2711,10 @@ static void chr_insertion_order(SEXP* p_x,
 
 static bool chr_needs_reencoding(const SEXP* p_x, R_xlen_t size);
 
-static R_xlen_t chr_mark_uniques(const SEXP* p_x,
-                                 struct truelength_info* p_truelength_info,
-                                 R_xlen_t size,
-                                 bool needs_reencoding);
+static void chr_mark_uniques(const SEXP* p_x,
+                             struct truelength_info* p_truelength_info,
+                             R_xlen_t size,
+                             bool needs_reencoding);
 
 /*
  * `chr_mark_sorted_uniques()` runs through the strings in `p_x` and places the
@@ -2742,7 +2742,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
   // Collect uniques assuming no reencoding required (for performance)
   bool needs_reencoding = false;
 
-  R_xlen_t max_size = chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
+  chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
 
   // Check if any uniques need reencoding
   needs_reencoding = chr_needs_reencoding(
@@ -2758,7 +2758,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
 
     p_truelength_info->reencode = true;
 
-    max_size = chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
+    chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
   }
 
   R_xlen_t n_uniques = p_truelength_info->size_used;
@@ -2778,7 +2778,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
     p_truelength_info->p_sizes_aux,
     p_bytes,
     n_uniques,
-    max_size
+    p_truelength_info->max_string_size
   );
 
   // Mark unique sorted strings with their order.
@@ -2789,12 +2789,10 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
   }
 }
 
-static R_xlen_t chr_mark_uniques(const SEXP* p_x,
-                                 struct truelength_info* p_truelength_info,
-                                 R_xlen_t size,
-                                 bool needs_reencoding) {
-  R_xlen_t max_size = 0;
-
+static void chr_mark_uniques(const SEXP* p_x,
+                             struct truelength_info* p_truelength_info,
+                             R_xlen_t size,
+                             bool needs_reencoding) {
   for (R_xlen_t i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
@@ -2818,8 +2816,8 @@ static R_xlen_t chr_mark_uniques(const SEXP* p_x,
     R_xlen_t elt_size = Rf_xlength(elt);
 
     // Track max string size to know how deep to recurse
-    if (max_size < elt_size) {
-      max_size = elt_size;
+    if (p_truelength_info->max_string_size < elt_size) {
+      p_truelength_info->max_string_size = elt_size;
     }
 
     // Save the truelength so we can reset it later.
@@ -2830,8 +2828,6 @@ static R_xlen_t chr_mark_uniques(const SEXP* p_x,
     // (R uses positive or zero truelengths)
     SET_TRUELENGTH(elt, -1);
   }
-
-  return max_size;
 }
 
 // Only used on the unique strings for performance.
