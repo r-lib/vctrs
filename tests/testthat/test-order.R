@@ -491,7 +491,7 @@ test_that("all combinations of `direction` and `na_value` work", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_order(<character>)
+# vec_order(<character>) - insertion
 
 test_that("can order size zero input", {
   expect_identical(vec_order(character()), integer())
@@ -624,6 +624,61 @@ test_that("can order when in strictly opposite of expected order (no ties)", {
 
   x <- c("a", "b", NA)
   expect_identical(vec_order(x, direction = "desc", na_value = "smallest"), 3:1)
+})
+
+# ------------------------------------------------------------------------------
+# vec_order(<character>) - radix
+
+# Have to get the number of unique strings above the INSERTION_ORDER_BOUNDARY
+# to trigger radix ordering.
+
+test_that("can order character vectors", {
+  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  expect_identical(vec_order(x), base_order(x))
+})
+
+test_that("ordering on ties is done stably", {
+  x <- c(paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L)), "x1")
+  expect_identical(vec_order(x)[1:2], c(1L, length(x)))
+})
+
+test_that("`NA` order defaults to last", {
+  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(x, NA_character_, "y")
+  expect_identical(vec_order(x)[length(x)], length(x) - 1L)
+})
+
+test_that("`NA` order can be first", {
+  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(x, NA_character_, "y")
+  expect_identical(vec_order(x, na_value = "smallest")[[1L]], length(x) - 1L)
+})
+
+test_that("`direction` can be set to `desc`", {
+  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  expect_identical(vec_order(x, direction = "desc"), base_order(x, decreasing = TRUE))
+})
+
+test_that("all combinations of `direction` and `na_value` work", {
+  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(x, NA_character_, "x", "aa", "x1")
+
+  expect_identical(
+    x[vec_order(x, na_value = "largest", direction = "asc")],
+    x[base_order(x, na.last = TRUE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order(x, na_value = "smallest", direction = "asc")],
+    x[base_order(x, na.last = FALSE, decreasing = FALSE)]
+  )
+  expect_identical(
+    x[vec_order(x, na_value = "largest", direction = "desc")],
+    x[base_order(x, na.last = TRUE, decreasing = TRUE)]
+  )
+  expect_identical(
+    x[vec_order(x, na_value = "smallest", direction = "desc")],
+    x[base_order(x, na.last = FALSE, decreasing = TRUE)]
+  )
 })
 
 # ------------------------------------------------------------------------------
