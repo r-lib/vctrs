@@ -54,8 +54,7 @@ but with \code{base::order()} will return \code{c("a", "b", "C")} unless
 \code{base::order(method = "radix")} is explicitly set, which also uses the
 C-locale. That said, this typically does not introduce any practical issues.
 
-Character vectors are always sorted in UTF-8. If any non-UTF-8
-characters are detected, they are translated to UTF-8 first.
+Character vectors are always translated to UTF-8 before ordering.
 }
 \section{Dependencies of \code{vec_order()}}{
 
