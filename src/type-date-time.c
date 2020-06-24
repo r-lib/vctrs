@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "owned.h"
 #include "utils.h"
 
 
@@ -238,24 +239,24 @@ SEXP posixlt_as_posixlt(SEXP x, SEXP to) {
 // restore
 
 // [[ include("vctrs.h") ]]
-SEXP vec_date_restore(SEXP x, SEXP to) {
-  SEXP out = PROTECT(vec_restore_default(x, to));
+SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_owned owned) {
+  SEXP out = PROTECT(vec_restore_default(x, to, owned));
   out = date_validate(out);
   UNPROTECT(1);
   return out;
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_posixct_restore(SEXP x, SEXP to) {
-  SEXP out = PROTECT(vec_restore_default(x, to));
+SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_owned owned) {
+  SEXP out = PROTECT(vec_restore_default(x, to, owned));
   out = datetime_validate(out);
   UNPROTECT(1);
   return out;
 }
 
 // [[ include("vctrs.h") ]]
-SEXP vec_posixlt_restore(SEXP x, SEXP to) {
-  SEXP out = PROTECT(vec_restore_default(x, to));
+SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_owned owned) {
+  SEXP out = PROTECT(vec_restore_default(x, to, owned));
   out = datetime_validate_tzone(out);
   UNPROTECT(1);
   return out;

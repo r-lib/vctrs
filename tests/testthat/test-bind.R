@@ -345,6 +345,28 @@ test_that("monitoring: name repair while rbinding doesn't modify in place", {
   expect_identical(df, expect)
 })
 
+test_that("performance: Row binding with S3 columns doesn't duplicate on every assignment (#1151)", {
+  skip_if_not_testing_performance()
+
+  x <- as.Date("2000-01-01")
+  x <- rep(x, 100)
+  df <- data.frame(x = x)
+  lst <- rep_len(list(df), 10000)
+
+  expect_time_lt(vec_rbind(!!!lst), 5)
+})
+
+test_that("performance: Row binding with df-cols doesn't duplicate on every assignment (#1122)", {
+  skip_if_not_testing_performance()
+
+  df_col <- new_data_frame(list(x = 1:1000))
+  df <- new_data_frame(list(y = df_col))
+
+  lst <- rep_len(list(df), 10000)
+
+  expect_time_lt(vec_rbind(!!!lst), 5)
+})
+
 # cols --------------------------------------------------------------------
 
 test_that("empty inputs give data frame", {

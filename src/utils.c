@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "utils.h"
 #include "type-data-frame.h"
+#include "owned.h"
 
 #include <R_ext/Rdynload.h>
 
@@ -336,7 +337,9 @@ SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data) {
 // [[ include("utils.h") ]]
 SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
-  out = vec_bare_df_restore(out, df, vctrs_shared_zero_int);
+
+  // Total ownership because `map()` generates a fresh list
+  out = vec_bare_df_restore(out, df, vctrs_shared_zero_int, VCTRS_OWNED_true);
 
   UNPROTECT(1);
   return out;
@@ -345,7 +348,9 @@ SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
 // [[ include("utils.h") ]]
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
-  out = vec_df_restore(out, df, vctrs_shared_zero_int);
+
+  // Total ownership because `map()` generates a fresh list
+  out = vec_df_restore(out, df, vctrs_shared_zero_int, VCTRS_OWNED_true);
 
   UNPROTECT(1);
   return out;

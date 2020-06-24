@@ -1,11 +1,7 @@
 #ifndef VCTRS_SLICE_ASSIGN_H
 #define VCTRS_SLICE_ASSIGN_H
 
-// Ownership is recursive
-enum vctrs_ownership {
-  vctrs_ownership_shared,
-  vctrs_ownership_total
-};
+#include "owned.h"
 
 struct vec_assign_opts {
   bool assign_names;
@@ -17,17 +13,17 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                      const struct vec_assign_opts* opts);
 
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
-                           const enum vctrs_ownership ownership,
+                           const enum vctrs_owned owned,
                            const struct vec_assign_opts* opts);
 
-SEXP chr_assign(SEXP out, SEXP index, SEXP value, const enum vctrs_ownership ownership);
-SEXP list_assign(SEXP out, SEXP index, SEXP value, const enum vctrs_ownership ownership);
+SEXP chr_assign(SEXP out, SEXP index, SEXP value, const enum vctrs_owned owned);
+SEXP list_assign(SEXP out, SEXP index, SEXP value, const enum vctrs_owned owned);
 SEXP df_assign(SEXP x, SEXP index, SEXP value,
-               const enum vctrs_ownership ownership,
+               const enum vctrs_owned owned,
                const struct vec_assign_opts* opts);
 
 SEXP vec_assign_shaped(SEXP proxy, SEXP index, SEXP value,
-                       const enum vctrs_ownership ownership,
+                       const enum vctrs_owned owned,
                        const struct vec_assign_opts* opts);
 
 #endif
