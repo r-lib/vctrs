@@ -49,21 +49,15 @@ tuple <- function(x = integer(), y = integer()) {
     x = vec_cast(x, integer()),
     y = vec_cast(y, integer())
   )
-  new_rcrd(fields, class = "tuple")
+  new_rcrd(fields, class = "vctrs_tuple")
 }
 
 tuple_methods <- list(
-  format.tuple = function(x, ...) {
+  format.vctrs_tuple = function(x, ...) {
     paste0("(", field(x, "x"), ",", field(x, "y"), ")")
   },
-
-  vec_ptype2.tuple = function(x, y, ...)  UseMethod("vec_ptype2.tuple"),
-  vec_ptype2.tuple.vctrs_unspecified = function(x, y, ...) tuple(),
-  vec_ptype2.tuple.tuple = function(x, y, ...) tuple(),
-
-  vec_cast.tuple = function(x, to, ...) UseMethod("vec_cast.tuple"),
-  vec_cast.tuple.list = function(x, to, ...) vec_list_cast(x, to, ...),
-  vec_cast.tuple.tuple = function(x, to, ...) x
+  vec_ptype2.vctrs_tuple.vctrs_tuple = function(x, y, ...) x,
+  vec_cast.vctrs_tuple.vctrs_tuple = function(x, to, ...) x
 )
 
 local_tuple_methods <- function(frame = caller_env()) {
@@ -78,8 +72,9 @@ local_comparable_tuple <- function(frame = caller_env()) {
   local_tuple_methods(frame = frame)
 
   # Compare only on first field
-  local_methods(.frame = frame,
-    vec_proxy_equal.tuple = function(x, ...) field(x, "x")
+  local_methods(
+    .frame = frame,
+    vec_proxy_equal.vctrs_tuple = function(x, ...) field(x, "x")
   )
 }
 
