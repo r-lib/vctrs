@@ -10,11 +10,11 @@ skip_if_not_testing_performance <- function(x) {
 }
 
 expect_time_lt <- function(expr, expect) {
-  time <- time_expr({{ expr }})
+  time <- time_of({{ expr }})
   expect_lt(time, expect)
 }
 
-time_expr <- function(expr) {
+time_of <- function(expr) {
   expr <- enquo(expr)
   time <- system.time(eval_tidy(expr))
   unclass(time)[["elapsed"]]
