@@ -15,8 +15,6 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 Investigation of `vec_order()` performance compared with `base::order()` using various data types and distributions of data (total size, number of groups, etc).
 
-Also investigates performance of `vec_order()` vs current implementation of `vec_unique()`, which is based on hashing and a dictionary. It might be worth switching to use the sort based approach of `vec_order()`.
-
 ## Setup
 
 ```{r}
@@ -25,6 +23,7 @@ library(rlang)
 library(stringr)
 library(ggplot2)
 library(dplyr)
+library(forcats)
 ```
 
 ```{r}
@@ -77,8 +76,19 @@ filter_bench <- function(.data, ...) {
 ```
 
 ```{r}
-autoplot_shaped <- function(df) {
-  autoplot(df, mapping = aes(shape = as.character(expression)))
+plot_bench <- function(df, title = waiver()) {
+  df %>%
+    ggplot(aes(x = n_groups, y = as.numeric(median))) +
+    geom_point(aes(color = as.character(expression))) +
+    facet_wrap(~ size, labeller = label_both, nrow = 1) +
+    scale_x_log10() +
+    scale_y_log10() + 
+    labs(
+      x = "Number of groups (log10)",
+      y = "Time (log10 seconds)",
+      color = "Type",
+      title = title
+    )
 }
 ```
 
@@ -109,10 +119,8 @@ df <- bench::press(
 
 We seem to have a small edge when ordering very small vectors, but this practically won't make too much of a difference.
 
-```{r}
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (small size)")
+```{r, echo=FALSE}
+plot_bench(df, title = "Integers (small)")
 ```
 
 ### Test 2
@@ -138,26 +146,8 @@ df <- bench::press(
 
 Performance seems to be generally about the same no matter the size or number of groups.
 
-```{r}
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (large size)")
-```
-
-Zoom into few groups, large size case
-
-```{r}
-df %>%
-  filter_bench(n_groups == 10, size == 1e7) %>%
-  autoplot_shaped()
-```
-
-Zoom into many groups, large size case
-
-```{r}
-df %>%
-  filter_bench(n_groups == 1e6, size == 1e7) %>%
-  autoplot_shaped()
+```{r, echo=FALSE}
+plot_bench(df, title = "Integers (large)")
 ```
 
 ### Test 3
@@ -182,8 +172,25 @@ df <- bench::press(
 There is a definite jump in performance when initially moving to the counting sort. Perhaps this boundary isn't optimal, but it seems to scale well after the boundary.
 
 ```{r}
-autoplot_shaped(df) +
-  facet_wrap(~ n_groups, ncol = 1, labeller = label_both)
+df
+```
+
+```{r, echo=FALSE}
+df %>%
+  ggplot(aes(x = n_groups, y = as.numeric(median))) +
+  geom_point(aes(
+    color = as.character(expression), 
+    shape = fct_reorder(as.factor(n_groups), n_groups)
+  )) +
+  scale_x_log10() +
+  scale_y_log10() + 
+  labs(
+    x = "Number of groups (log10)",
+    y = "Time (log10 seconds)",
+    color = "Type",
+    shape = "Number of groups",
+    title = "Integers - Counting sort jump"
+  )
 ```
 
 ## Doubles
@@ -213,10 +220,8 @@ df <- bench::press(
 
 Performance is about the same.
 
-```{r}
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Doubles (small size)")
+```{r, echo=FALSE}
+plot_bench(df, title = "Doubles (small)")
 ```
 
 ### Test 2
@@ -247,10 +252,14 @@ df <- bench::press(
 
 I imagine the increase in gc's for large sizes comes from the fact that `vec_order()` uses `Rf_allocVector()` to generate its working memory, and `base_order()` uses `malloc()`, which won't trigger a gc.
 
-```{r}
-autoplot_shaped(df) + 
+```{r, echo=FALSE}
+autoplot(df) + 
   guides(x = guide_axis(n.dodge = 2)) +
   ggtitle("Doubles (large size)")
+```
+
+```{r, echo=FALSE}
+plot_bench(df, title = "Doubles (large)")
 ```
 
 ## Characters
@@ -282,10 +291,8 @@ df <- bench::press(
 )
 ```
 
-```{r}
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Characters (small size)")
+```{r, echo=FALSE}
+plot_bench(df, title = "Characters (small)")
 ```
 
 As expected, for small ish sizes we are somewhat slower. This difference seems to go away as you increase the number of groups.
@@ -321,23 +328,27 @@ df <- bench::press(
 
 Generally about the same once the size gets larger
 
-```{r}
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Characters (large size)")
+```{r, echo=FALSE}
+plot_bench(df, title = "Characters (large)")
 ```
 
-Zoom into the size 1e7 row
+Zoom into the size 1e7 section and change to normal seconds (not log seconds)
 
 As the number of unique strings increases, we have to radix order more strings. This generally takes more time.
 
-```{r}
+```{r, echo=FALSE}
 df %>%
   filter_bench(size == 1e7) %>%
-  select(-size) %>%
-  autoplot("boxplot") +
-  facet_wrap(~ n_groups, labeller = label_both, ncol = 1) +
-  ggtitle("Characters, fixed size of 1e7")
+  ggplot(aes(x = n_groups, y = as.numeric(median))) +
+  geom_point(aes(color = as.character(expression))) +
+  geom_line(aes(color = as.character(expression))) +
+  scale_x_log10() +
+  labs(
+    x = "Number of groups (log10)",
+    y = "Time (seconds)",
+    color = "Type",
+    title = "Characters - 1e7 size"
+  )
 ```
 
 ### Test 3
@@ -382,28 +393,41 @@ df <- bench::press(
 )
 ```
 
-The string size doesn't seem to add _too_ much more time.
+The string size doesn't seem to add too much more time.
 
-```{r}
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle(
-    "Characters - Varying string size",
-    subtitle = "Most informative to look down the columns"
-  )
+```{r, echo=FALSE}
+df %>%
+  ggplot(aes(x = n_groups, y = as.numeric(median))) +
+  geom_point(aes(color = as.character(expression))) +
+  facet_wrap(~ string_size, labeller = label_both, nrow = 1) +
+  scale_x_log10() +
+  scale_y_log10() + 
+  labs(
+    x = "Number of groups (log10)",
+    y = "Time (log10 seconds)",
+    color = "Type",
+    title = "Varying string size"
+  ) +
+  guides(x = guide_axis(n.dodge = 2))
 ```
 
 Zoom in to 1e6 groups and varying string size. Here you can see that there is some effect on total time. Larger maximum string size = more time required, but it isn't that bad.
 
 We also seem to consistently do better than `order()` when most of the strings are unique. My guess is that this is a consequence of the fact that I store the results of `Rf_length()` on each string (this queries the nchars of the string) so I don't have to call that function repeatedly in the recursive section of the algorithm. `order()` doesn't do this. This adds a little memory overhead, but makes up for that in speed.
 
-```{r}
+```{r, echo=FALSE}
 df %>%
   filter_bench(n_groups == 1e6) %>% 
   select(-n_groups) %>%
-  autoplot_shaped() + 
-  facet_wrap(~ string_size, ncol = 1, labeller = label_both) +
-  ggtitle("Characters - Varying string size, all unique strings")
+  ggplot(aes(x = string_size, y = as.numeric(median))) +
+  geom_point(aes(color = as.character(expression))) +
+  scale_y_log10() + 
+  labs(
+    x = "String size",
+    y = "Time (seconds)",
+    color = "Type",
+    title = "Varying string size (n_groups = 1e6)"
+  )
 ```
 
 ## Completely sorted sequences
@@ -581,125 +605,4 @@ names(cols) <- seq_along(cols)
 df <- vctrs::new_data_frame(cols, size)
 
 bench::mark(vec_order(df), base_order(df), iterations = 10)
-```
-
-## Compare with `vec_unique_loc()`
-
-It is worth comparing to `vec_unique_loc()`, which is the most bare bones of the uniqueness functions, to test whether or not uniqueness-by-sorting can be faster than uniqueness-by-hashing.
-
-In a branch, I hacked together an implementation of `vec_unique_loc()` based on `vec_order()`. It takes approximately the same amount of time as `vec_order()` itself, so I will just use `vec_order()` as a proxy for the sorting approach.
-
-### Test 1
-
-- Integers
-- Varying total size (small)
-- Varying group size
-
-```{r}
-set.seed(123)
-
-size <- 10 ^ (1:4)
-n_groups <- 10 ^ (1:6)
-
-df <- bench::press(
-  size = size,
-  n_groups = n_groups,
-  {
-    x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), vec_unique_loc(x), iterations = 50, check = FALSE)
-  }
-)
-```
-
-Performance is about the same for small sizes
-
-```{r}
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (small size)")
-```
-
-### Test 2
-
-- Integers
-- Varying total size (large)
-- Varying number of groups
-
-```{r}
-set.seed(123)
-
-size <- 10 ^ (5:7)
-n_groups <- 10 ^ (1:6)
-
-df <- bench::press(
-  size = size,
-  n_groups = n_groups,
-  {
-    x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), vec_unique_loc(x), iterations = 20, check = FALSE)
-  }
-)
-```
-
-As the total size increases, `vec_order()` starts to do much better.
-
-```{r}
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (large size)")
-```
-
-Zoom into size=1e6, n_groups=10. I imagine this is a typical example we might see.
-
-```{r}
-df %>% filter_bench(size == 1e6, n_groups == 10)
-```
-
-In particular, at size=1e7 as the number of groups increases, `vec_order()` starts to pull away.
-
-```{r}
-df %>%
-  filter_bench(size == 1e7, n_groups >= 10000)
-
-df %>%
-  filter_bench(size == 1e7, n_groups >= 10000) %>%
-  select(-size) %>%
-  autoplot_shaped() +
-  facet_wrap(~n_groups, ncol = 1, labeller = label_both)
-```
-
-### Test 3
-
-Currently string ordering is much slower than `vec_unique_loc()` (especially when most strings are unique) due to all of the allocations that are required + the fact that it does a radix ordering of unique strings and then an integer radix ordering after that.
-
-I am confident that the C level part of `vec_order()` could gain a `sort_character = false` option that would do a much faster counting sort in order-of-first-appearance that utilizes the truelengths in a different way. It wouldn't sort strings at all, so should be very fast. This is what `cgroup()` does in `base::order()`, which is not currently implemented in `vec_order()` because I didn't have a use for it until now. https://github.com/wch/r-source/blob/8d7ac4699fba640d030703fa010b66bf26054cbd/src/main/radixsort.c#L1051
-
-Very large set of strings with 10 groups
-
-- Don't notice much of a difference between the two here, because there aren't many unique strings.
-
-```{r}
-set.seed(123)
-
-size <- 1e7
-n_groups <- 10
-
-dict <- new_dictionary(n_groups, min_length = 5, max_length = 20)
-x <- sample(dict, size, TRUE)
-
-bench::mark(vec_order(x), vec_unique_loc(x), iterations = 10, check = FALSE)
-```
-
-Very large set of completely random strings
-
-- Extremely large difference, because `vec_order()` is doing way too much work to actually sort the strings.
-
-```{r}
-set.seed(123)
-
-n_groups <- 1e7
-
-x <- new_dictionary(n_groups, min_length = 5, max_length = 20)
-
-bench::mark(vec_order(x), vec_unique_loc(x), iterations = 10, check = FALSE)
 ```
