@@ -166,17 +166,17 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
     int elt = p_subscript[i];
 
     // Missing value also covered here
-    if (elt < n) {
+    if (elt <= n) {
       continue;
     }
 
     // Special case: appending in ascending sequence at the end
     // should not require any sorting
-    if (elt == nn) {
+    if (elt - 1 == nn) {
       ++nn;
       --n_extend;
     } else {
-      extended[i_extend++] = elt;
+      extended[i_extend++] = elt - 1;
     }
   }
 
@@ -193,8 +193,6 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
       stop_location_oob_non_consecutive(subscript, n, opts);
     }
   }
-
-  UNPROTECT(1);
 }
 
 static SEXP dbl_as_location(SEXP subscript, R_len_t n,
