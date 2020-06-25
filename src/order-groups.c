@@ -119,11 +119,7 @@ void groups_swap(struct group_infos* p_group_infos) {
 
   // Ensure the new group info is at least as big as the old group info
   if (p_group_info_post->data_size < p_group_info_pre->data_size) {
-    R_xlen_t new_data_size = groups_realloc_size(
-      p_group_info_pre->data_size,
-      p_group_infos->max_data_size
-    );
-
+    R_xlen_t new_data_size = p_group_info_pre->data_size;
     group_realloc(p_group_info_post, new_data_size);
   }
 }
