@@ -6,7 +6,7 @@
 static SEXP int_invert_location(SEXP subscript, R_len_t n,
                                 const struct location_opts* opts);
 static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
-static void int_check_consecutive(SEXP subscript, R_len_t n,
+static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
                                   const struct location_opts* opts);
 
 static void stop_subscript_missing(SEXP i);
@@ -38,7 +38,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
   // positive indices need to go through and `int_filter_zero()`.
   R_len_t n_zero = 0;
 
-  bool extended = false;
+  R_len_t n_extend = 0;
 
   for (R_len_t i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
@@ -66,7 +66,7 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
         if (opts->loc_oob == LOC_OOB_ERROR) {
           stop_subscript_oob_location(subscript, n, opts);
         }
-        extended = true;
+        ++n_extend;
       }
     }
   }
@@ -76,8 +76,8 @@ static SEXP int_as_location(SEXP subscript, R_len_t n,
   }
   PROTECT(subscript);
 
-  if (extended) {
-    int_check_consecutive(subscript, n, opts);
+  if (n_extend > 0) {
+    int_check_consecutive(subscript, n, n_extend, opts);
   }
 
   UNPROTECT(1);
@@ -152,30 +152,44 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero) {
 // From compare.c
 int qsort_icmp(const void* x, const void* y);
 
-static void int_check_consecutive(SEXP subscript, R_len_t n,
+static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
                                   const struct location_opts* opts) {
-  SEXP sorted = PROTECT(Rf_duplicate(subscript));
-  int* p_sorted = INTEGER(sorted);
 
-  R_len_t n_subscript = Rf_length(sorted);
-  R_len_t n_missing = 0;
+  int extended[n_extend];
+  int i_extend = 0;
+  int nn = n;
 
-  qsort(p_sorted, n_subscript, sizeof(int), &qsort_icmp);
+  int* p_subscript = INTEGER(subscript);
 
+  R_len_t n_subscript = Rf_length(subscript);
   for (R_len_t i = 0; i < n_subscript; ++i) {
-    int elt = p_sorted[i];
+    int elt = p_subscript[i];
 
-    // All missing values are sorted to the beginning
-    if (elt == NA_INTEGER) {
-      ++n_missing;
-      continue;
-    }
-    --elt;
-
+    // Missing value also covered here
     if (elt < n) {
       continue;
     }
-    if (elt != (i - n_missing) && elt != n) {
+
+    // Special case: appending in ascending sequence at the end
+    // should not require any sorting
+    if (elt == nn) {
+      ++nn;
+      --n_extend;
+    } else {
+      extended[i_extend++] = elt;
+    }
+  }
+
+  if (i_extend == 0) {
+    return;
+  }
+
+  qsort(extended, i_extend, sizeof(int), &qsort_icmp);
+
+  for (R_len_t i = 0; i < i_extend; ++i) {
+    int elt = extended[i];
+
+    if (elt != nn + i) {
       stop_location_oob_non_consecutive(subscript, n, opts);
     }
   }
