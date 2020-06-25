@@ -5,10 +5,6 @@ Investigation of `vec_order()` performance compared with `base::order()`
 using various data types and distributions of data (total size, number
 of groups, etc).
 
-Also investigates performance of `vec_order()` vs current implementation
-of `vec_unique()`, which is based on hashing and a dictionary. It might
-be worth switching to use the sort based approach of `vec_order()`.
-
 ## Setup
 
 ``` r
@@ -17,6 +13,7 @@ library(rlang)
 library(stringr)
 library(ggplot2)
 library(dplyr)
+library(forcats)
 ```
 
 ``` r
@@ -69,8 +66,19 @@ filter_bench <- function(.data, ...) {
 ```
 
 ``` r
-autoplot_shaped <- function(df) {
-  autoplot(df, mapping = aes(shape = as.character(expression)))
+plot_bench <- function(df, title = waiver()) {
+  df %>%
+    ggplot(aes(x = n_groups, y = as.numeric(median))) +
+    geom_point(aes(color = as.character(expression))) +
+    facet_wrap(~ size, labeller = label_both, nrow = 1) +
+    scale_x_log10() +
+    scale_y_log10() + 
+    labs(
+      x = "Number of groups (log10)",
+      y = "Time (log10 seconds)",
+      color = "Type",
+      title = title
+    )
 }
 ```
 
@@ -107,12 +115,6 @@ df <- bench::press(
 We seem to have a small edge when ordering very small vectors, but this
 practically won’t make too much of a difference.
 
-``` r
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (small size)")
-```
-
 ![](order_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ### Test 2
@@ -141,33 +143,7 @@ df <- bench::press(
 Performance seems to be generally about the same no matter the size or
 number of groups.
 
-``` r
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (large size)")
-```
-
 ![](order_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
-
-Zoom into few groups, large size case
-
-``` r
-df %>%
-  filter_bench(n_groups == 10, size == 1e7) %>%
-  autoplot_shaped()
-```
-
-![](order_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-
-Zoom into many groups, large size case
-
-``` r
-df %>%
-  filter_bench(n_groups == 1e6, size == 1e7) %>%
-  autoplot_shaped()
-```
-
-![](order_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Test 3
 
@@ -195,11 +171,25 @@ counting sort. Perhaps this boundary isn’t optimal, but it seems to
 scale well after the boundary.
 
 ``` r
-autoplot_shaped(df) +
-  facet_wrap(~ n_groups, ncol = 1, labeller = label_both)
+df
+#>  # A tibble: 12 x 7
+#>     expression    n_groups      min   median `itr/sec` mem_alloc `gc/sec`
+#>     <bch:expr>       <dbl> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#>   1 vec_order(x)     80000  105.7ms    115ms      8.59    38.1MB    0.954
+#>   2 base_order(x)    80000   91.9ms    110ms      9.28    38.1MB    1.03 
+#>   3 vec_order(x)     90000  119.2ms    129ms      7.52    38.1MB    1.88 
+#>   4 base_order(x)    90000  109.5ms    117ms      8.43    38.1MB    1.49 
+#>   5 vec_order(x)     99999  115.1ms    136ms      7.27    38.1MB    0.808
+#>   6 base_order(x)    99999  102.6ms    118ms      8.49    38.1MB    0.944
+#>   7 vec_order(x)    100001  173.4ms    175ms      5.65   162.1MB    3.77 
+#>   8 base_order(x)   100001  165.9ms    172ms      5.78    38.1MB    0.642
+#>   9 vec_order(x)    110000  172.4ms    176ms      5.67   162.1MB    4.64 
+#>  10 base_order(x)   110000  167.4ms    171ms      5.80    38.1MB    0.644
+#>  11 vec_order(x)    120000  173.5ms    184ms      5.44   162.1MB    2.33 
+#>  12 base_order(x)   120000  166.6ms    174ms      5.73    38.1MB    0.302
 ```
 
-![](order_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](order_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ## Doubles
 
@@ -233,13 +223,7 @@ df <- bench::press(
 
 Performance is about the same.
 
-``` r
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Doubles (small size)")
-```
-
-![](order_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](order_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ### Test 2
 
@@ -273,11 +257,7 @@ I imagine the increase in gc’s for large sizes comes from the fact that
 `vec_order()` uses `Rf_allocVector()` to generate its working memory,
 and `base_order()` uses `malloc()`, which won’t trigger a gc.
 
-``` r
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Doubles (large size)")
-```
+![](order_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ![](order_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
@@ -319,12 +299,6 @@ df <- bench::press(
 )
 ```
 
-``` r
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Characters (small size)")
-```
-
 ![](order_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 As expected, for small ish sizes we are somewhat slower. This difference
@@ -337,18 +311,18 @@ df %>%
 #>  # A tibble: 12 x 8
 #>     expression     size n_groups      min   median `itr/sec` mem_alloc `gc/sec`
 #>     <chr>         <dbl>    <dbl> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>   1 vec_order(x)  10000       10  99.75µs 109.69µs     9077.   439.8KB      0  
-#>   2 base_order(x) 10000       10   73.6µs  76.43µs    12662.    39.1KB      0  
-#>   3 vec_order(x)  10000      100    115µs 128.07µs     7919.   439.8KB      0  
-#>   4 base_order(x) 10000      100  81.97µs  84.68µs    10854.    39.1KB      0  
-#>   5 vec_order(x)  10000     1000 178.84µs  192.1µs     5151.   439.8KB      0  
-#>   6 base_order(x) 10000     1000 156.21µs 161.95µs     5934.    39.1KB      0  
-#>   7 vec_order(x)  10000    10000   1.56ms   1.82ms      530.   439.8KB      0  
-#>   8 base_order(x) 10000    10000 857.35µs 966.28µs     1022.    39.1KB      0  
-#>   9 vec_order(x)  10000   100000 673.55µs 752.54µs     1327.   439.8KB      0  
-#>  10 base_order(x) 10000   100000    1.1ms   1.45ms      698.    39.1KB     14.2
-#>  11 vec_order(x)  10000  1000000   1.13ms    1.4ms      713.   439.8KB      0  
-#>  12 base_order(x) 10000  1000000    1.8ms   1.89ms      503.    39.1KB      0
+#>   1 vec_order(x)  10000       10 103.22µs 117.94µs     8661.   439.8KB        0
+#>   2 base_order(x) 10000       10  76.68µs  77.47µs    12533.    39.1KB        0
+#>   3 vec_order(x)  10000      100 122.55µs 135.85µs     7400.   439.8KB        0
+#>   4 base_order(x) 10000      100  82.58µs  84.96µs    11551.    39.1KB        0
+#>   5 vec_order(x)  10000     1000 192.71µs 205.72µs     4485.   439.8KB        0
+#>   6 base_order(x) 10000     1000 161.82µs 165.62µs     5785.    39.1KB        0
+#>   7 vec_order(x)  10000    10000   1.45ms   1.77ms      585.   439.8KB        0
+#>   8 base_order(x) 10000    10000 659.46µs 749.41µs     1295.    39.1KB        0
+#>   9 vec_order(x)  10000   100000 923.07µs  986.5µs      982.   439.8KB        0
+#>  10 base_order(x) 10000   100000   1.28ms   1.42ms      681.    39.1KB        0
+#>  11 vec_order(x)  10000  1000000   1.12ms   1.37ms      728.   439.8KB        0
+#>  12 base_order(x) 10000  1000000   1.71ms   1.83ms      533.    39.1KB        0
 ```
 
 ### Test 2
@@ -378,27 +352,13 @@ df <- bench::press(
 
 Generally about the same once the size gets larger
 
-``` r
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Characters (large size)")
-```
-
 ![](order_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
-Zoom into the size 1e7 row
+Zoom into the size 1e7 section and change to normal seconds (not log
+seconds)
 
 As the number of unique strings increases, we have to radix order more
 strings. This generally takes more time.
-
-``` r
-df %>%
-  filter_bench(size == 1e7) %>%
-  select(-size) %>%
-  autoplot("boxplot") +
-  facet_wrap(~ n_groups, labeller = label_both, ncol = 1) +
-  ggtitle("Characters, fixed size of 1e7")
-```
 
 ![](order_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
@@ -417,8 +377,8 @@ bench::mark(vec_order(x), base_order(x), iterations = 10)
 #>  # A tibble: 2 x 6
 #>    expression         min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)     5.07s    5.35s     0.175   855.8MB   0.280 
-#>  2 base_order(x)    5.91s    5.92s     0.167    38.1MB   0.0167
+#>  1 vec_order(x)     5.68s    5.89s     0.165   855.8MB   0.346 
+#>  2 base_order(x)    5.81s    5.95s     0.160    38.1MB   0.0160
 ```
 
 ### Test 4
@@ -453,16 +413,7 @@ df <- bench::press(
 )
 ```
 
-The string size doesn’t seem to add *too* much more time.
-
-``` r
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle(
-    "Characters - Varying string size",
-    subtitle = "Most informative to look down the columns"
-  )
-```
+The string size doesn’t seem to add too much more time.
 
 ![](order_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
@@ -477,15 +428,6 @@ the nchars of the string) so I don’t have to call that function
 repeatedly in the recursive section of the algorithm. `order()` doesn’t
 do this. This adds a little memory overhead, but makes up for that in
 speed.
-
-``` r
-df %>%
-  filter_bench(n_groups == 1e6) %>% 
-  select(-n_groups) %>%
-  autoplot_shaped() + 
-  facet_wrap(~ string_size, ncol = 1, labeller = label_both) +
-  ggtitle("Characters - Varying string size, all unique strings")
-```
 
 ![](order_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
@@ -509,8 +451,8 @@ bench::mark(
 #>  # A tibble: 2 x 6
 #>    expression         min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)   22.92ms   23.9ms      41.2    38.1MB     3.58
-#>  2 base_order(x)   6.17ms   6.44ms     154.         0B     0
+#>  1 vec_order(x)   23.31ms  24.23ms      40.5    38.1MB     2.58
+#>  2 base_order(x)   5.55ms   6.49ms     154.         0B     0
 
 # But tweak some options and it becomes closer
 bench::mark(
@@ -521,8 +463,8 @@ bench::mark(
 #>  # A tibble: 2 x 6
 #>    expression                                                 min median
 #>    <bch:expr>                                              <bch:> <bch:>
-#>  1 vec_order(x, direction = "desc", na_value = "smallest") 19.4ms 20.4ms
-#>  2 base_order(x, decreasing = TRUE, na.last = FALSE)       13.6ms 14.7ms
+#>  1 vec_order(x, direction = "desc", na_value = "smallest") 19.7ms 21.6ms
+#>  2 base_order(x, decreasing = TRUE, na.last = FALSE)       14.2ms 16.4ms
 #>  # … with 3 more variables: `itr/sec` <dbl>, mem_alloc <bch:byt>, `gc/sec` <dbl>
 ```
 
@@ -543,8 +485,8 @@ bench::mark(
 #>  # A tibble: 2 x 6
 #>    expression         min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)     178ms    180ms      5.55   162.1MB     1.85
-#>  2 base_order(x)    152ms    153ms      6.50    38.1MB     0
+#>  1 vec_order(x)     183ms    192ms      5.24   162.1MB     2.24
+#>  2 base_order(x)    154ms    159ms      6.24    38.1MB     0
 ```
 
 The performance difference goes away (for the most part) with doubles
@@ -560,8 +502,8 @@ bench::mark(
 #>  # A tibble: 2 x 6
 #>    expression         min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>    <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)     300ms    303ms      3.29   238.4MB    2.20 
-#>  2 base_order(x)    286ms    290ms      3.45    38.1MB    0.182
+#>  1 vec_order(x)     314ms    318ms      3.14   238.4MB    2.57 
+#>  2 base_order(x)    297ms    311ms      3.19    38.1MB    0.168
 ```
 
 ## Multiple columns
@@ -596,8 +538,8 @@ bench::mark(vec_order(df), base_order(df), iterations = 10)
 #>  # A tibble: 2 x 6
 #>    expression          min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>     <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(df)     121ms    121ms      8.23   114.8MB    3.53 
-#>  2 base_order(df)    140ms    144ms      6.96    38.1MB    0.773
+#>  1 vec_order(df)     122ms    126ms      7.93   114.8MB    1.98 
+#>  2 base_order(df)    149ms    150ms      6.59    38.1MB    0.732
 ```
 
 ### Test 2a
@@ -628,8 +570,8 @@ bench::mark(vec_order(df), base_order(df), iterations = 10)
 #>  # A tibble: 2 x 6
 #>    expression          min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>     <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(df)     439ms    447ms      2.24   238.8MB    1.50 
-#>  2 base_order(df)    467ms    473ms      2.12    38.1MB    0.236
+#>  1 vec_order(df)     455ms    457ms      2.18   238.8MB    2.18 
+#>  2 base_order(df)    476ms    481ms      2.08    38.1MB    0.231
 ```
 
 ### Test 2b
@@ -658,8 +600,8 @@ bench::mark(vec_order(df), base_order(df), iterations = 10)
 #>  # A tibble: 2 x 6
 #>    expression          min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>     <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(df)     543ms    546ms      1.83   238.8MB    1.83 
-#>  2 base_order(df)    933ms    938ms      1.07    38.1MB    0.118
+#>  1 vec_order(df)     557ms    561ms      1.78   238.8MB    7.13 
+#>  2 base_order(df)    973ms    990ms      1.01    38.1MB    0.113
 ```
 
 ### Test 3a
@@ -685,8 +627,8 @@ bench::mark(vec_order(df), base_order(df), iterations = 10)
 #>  # A tibble: 2 x 6
 #>    expression          min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>     <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(df)     192ms    198ms      5.06   19.84MB    0.563
-#>  2 base_order(df)    182ms    188ms      5.32    3.82MB    0
+#>  1 vec_order(df)     200ms    204ms      4.86   19.84MB    0.539
+#>  2 base_order(df)    188ms    198ms      5.07    3.82MB    0
 ```
 
 ### Test 3b
@@ -716,184 +658,6 @@ bench::mark(vec_order(df), base_order(df), iterations = 10)
 #>  # A tibble: 2 x 6
 #>    expression          min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>     <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(df)     367ms    371ms      2.69   32.54MB    0.673
-#>  2 base_order(df)    274ms    279ms      3.59    3.82MB    0
-```
-
-## Compare with `vec_unique_loc()`
-
-It is worth comparing to `vec_unique_loc()`, which is the most bare
-bones of the uniqueness functions, to test whether or not
-uniqueness-by-sorting can be faster than uniqueness-by-hashing.
-
-In a branch, I hacked together an implementation of `vec_unique_loc()`
-based on `vec_order()`. It takes approximately the same amount of time
-as `vec_order()` itself, so I will just use `vec_order()` as a proxy for
-the sorting approach.
-
-### Test 1
-
-  - Integers
-  - Varying total size (small)
-  - Varying group size
-
-<!-- end list -->
-
-``` r
-set.seed(123)
-
-size <- 10 ^ (1:4)
-n_groups <- 10 ^ (1:6)
-
-df <- bench::press(
-  size = size,
-  n_groups = n_groups,
-  {
-    x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), vec_unique_loc(x), iterations = 50, check = FALSE)
-  }
-)
-```
-
-Performance is about the same for small sizes
-
-``` r
-autoplot_shaped(df) +
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (small size)")
-```
-
-![](order_files/figure-gfm/unnamed-chunk-38-1.png)<!-- -->
-
-### Test 2
-
-  - Integers
-  - Varying total size (large)
-  - Varying number of groups
-
-<!-- end list -->
-
-``` r
-set.seed(123)
-
-size <- 10 ^ (5:7)
-n_groups <- 10 ^ (1:6)
-
-df <- bench::press(
-  size = size,
-  n_groups = n_groups,
-  {
-    x <- sample(n_groups, size, replace = TRUE)
-    bench::mark(vec_order(x), vec_unique_loc(x), iterations = 20, check = FALSE)
-  }
-)
-```
-
-As the total size increases, `vec_order()` starts to do much better.
-
-``` r
-autoplot_shaped(df) + 
-  guides(x = guide_axis(n.dodge = 2)) +
-  ggtitle("Integers (large size)")
-```
-
-![](order_files/figure-gfm/unnamed-chunk-40-1.png)<!-- -->
-
-Zoom into size=1e6, n\_groups=10. I imagine this is a typical example we
-might see.
-
-``` r
-df %>% filter_bench(size == 1e6, n_groups == 10)
-#>  # A tibble: 2 x 8
-#>    expression           size n_groups     min median `itr/sec` mem_alloc `gc/sec`
-#>    <bch:expr>          <dbl>    <dbl> <bch:t> <bch:>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)      1000000       10  2.92ms 3.09ms      322.    3.81MB     0   
-#>  2 vec_unique_loc(x) 1000000       10  3.94ms 5.43ms      186.   11.82MB     9.79
-```
-
-In particular, at size=1e7 as the number of groups increases,
-`vec_order()` starts to pull away.
-
-``` r
-df %>%
-  filter_bench(size == 1e7, n_groups >= 10000)
-#>  # A tibble: 6 x 8
-#>    expression          size n_groups     min  median `itr/sec` mem_alloc `gc/sec`
-#>    <bch:expr>         <dbl>    <dbl> <bch:t> <bch:t>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)      1.00e7    10000  75.3ms  81.9ms     11.8     38.1MB    1.32 
-#>  2 vec_unique_loc(x) 1.00e7    10000    89ms  93.7ms     10.7    102.3MB    3.58 
-#>  3 vec_order(x)      1.00e7   100000 167.7ms 173.2ms      5.75   162.1MB    1.44 
-#>  4 vec_unique_loc(x) 1.00e7   100000 212.1ms 232.7ms      4.30   103.5MB    0.760
-#>  5 vec_order(x)      1.00e7  1000000 148.4ms 153.2ms      6.52   162.1MB    3.51 
-#>  6 vec_unique_loc(x) 1.00e7  1000000 422.7ms 440.2ms      2.28     114MB    0.253
-
-df %>%
-  filter_bench(size == 1e7, n_groups >= 10000) %>%
-  select(-size) %>%
-  autoplot_shaped() +
-  facet_wrap(~n_groups, ncol = 1, labeller = label_both)
-```
-
-![](order_files/figure-gfm/unnamed-chunk-42-1.png)<!-- -->
-
-### Test 3
-
-Currently string ordering is much slower than `vec_unique_loc()`
-(especially when most strings are unique) due to all of the allocations
-that are required + the fact that it does a radix ordering of unique
-strings and then an integer radix ordering after that.
-
-I am confident that the C level part of `vec_order()` could gain a
-`sort_character = false` option that would do a much faster counting
-sort in order-of-first-appearance that utilizes the truelengths in a
-different way. It wouldn’t sort strings at all, so should be very fast.
-This is what `cgroup()` does in `base::order()`, which is not currently
-implemented in `vec_order()` because I didn’t have a use for it until
-now.
-<https://github.com/wch/r-source/blob/8d7ac4699fba640d030703fa010b66bf26054cbd/src/main/radixsort.c#L1051>
-
-Very large set of strings with 10 groups
-
-  - Don’t notice much of a difference between the two here, because
-    there aren’t many unique strings.
-
-<!-- end list -->
-
-``` r
-set.seed(123)
-
-size <- 1e7
-n_groups <- 10
-
-dict <- new_dictionary(n_groups, min_length = 5, max_length = 20)
-x <- sample(dict, size, TRUE)
-
-bench::mark(vec_order(x), vec_unique_loc(x), iterations = 10, check = FALSE)
-#>  # A tibble: 2 x 6
-#>    expression             min   median `itr/sec` mem_alloc `gc/sec`
-#>    <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)        78.6ms   81.5ms      11.8     124MB     1.31
-#>  2 vec_unique_loc(x)   81.6ms   83.4ms      11.9     102MB     2.98
-```
-
-Very large set of completely random strings
-
-  - Extremely large difference, because `vec_order()` is doing way too
-    much work to actually sort the strings.
-
-<!-- end list -->
-
-``` r
-set.seed(123)
-
-n_groups <- 1e7
-
-x <- new_dictionary(n_groups, min_length = 5, max_length = 20)
-
-bench::mark(vec_order(x), vec_unique_loc(x), iterations = 10, check = FALSE)
-#>  # A tibble: 2 x 6
-#>    expression             min   median `itr/sec` mem_alloc `gc/sec`
-#>    <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)         5.13s    5.83s     0.167     856MB    0.335
-#>  2 vec_unique_loc(x)    1.16s    1.52s     0.656     268MB    0.328
+#>  1 vec_order(df)     368ms    373ms      2.67   32.54MB    0.668
+#>  2 base_order(df)    278ms    292ms      3.43    3.82MB    0
 ```
