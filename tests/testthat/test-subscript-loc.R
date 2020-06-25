@@ -246,6 +246,10 @@ test_that("can optionally extend beyond the end", {
 
   verify_errors({
     expect_error(
+      num_as_location(3, 1, oob = "extend"),
+      class = "vctrs_error_subscript_oob"
+    )
+    expect_error(
       num_as_location(c(1, 3), 1, oob = "extend"),
       class = "vctrs_error_subscript_oob"
     )
