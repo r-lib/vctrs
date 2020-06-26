@@ -65,7 +65,8 @@ void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
 
 // A good bit faster than `Rf_xlengthgets()` because that fills the new extended
 // locations with `NA` as well, which we don't need.
-static inline SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
+static inline
+SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
