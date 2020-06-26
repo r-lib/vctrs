@@ -96,7 +96,8 @@ R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size);
 /*
  * Extract the current `group_info*`
  */
-static inline struct group_info* groups_current(struct group_infos* p_group_infos) {
+static inline
+struct group_info* groups_current(struct group_infos* p_group_infos) {
   return p_group_infos->p_p_group_info[p_group_infos->current];
 }
 
@@ -114,7 +115,8 @@ static inline struct group_info* groups_current(struct group_infos* p_group_info
  * inlined. Important because `p_group_infos->ignore` is often true, especially
  * for atomic vectors.
  */
-static inline void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
+static inline
+void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
   if (p_group_infos->ignore) {
     return;
   }

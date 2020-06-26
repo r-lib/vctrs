@@ -49,7 +49,8 @@ struct lazy_vec {
  * @param multiplier A `sizeof(<type>)` result for the type you are allocating
  *   memory for.
  */
-static inline struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
+static inline
+struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
   struct lazy_vec out;
 
   out.data = vctrs_shared_empty_raw;
@@ -64,7 +65,8 @@ static inline struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
  * Allocate the lazy vector if it hasn't already been allocated.
  * This reprotects itself using the protection index.
  */
-static inline void lazy_vec_initialize(struct lazy_vec* p_x) {
+static inline
+void lazy_vec_initialize(struct lazy_vec* p_x) {
   if (p_x->initialized) {
     return;
   }
@@ -104,7 +106,8 @@ struct lazy_order {
 } while (0)
 
 
-static inline struct lazy_order new_lazy_order(R_xlen_t size) {
+static inline
+struct lazy_order new_lazy_order(R_xlen_t size) {
   struct lazy_order out;
 
   out.o = PROTECT(Rf_allocVector(INTSXP, size));
@@ -116,7 +119,8 @@ static inline struct lazy_order new_lazy_order(R_xlen_t size) {
   return out;
 }
 
-static inline void lazy_order_initialize(struct lazy_order* p_lazy_o) {
+static inline
+void lazy_order_initialize(struct lazy_order* p_lazy_o) {
   if (p_lazy_o->initialized) {
     return;
   }

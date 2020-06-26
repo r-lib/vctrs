@@ -2,10 +2,7 @@
 
 // -----------------------------------------------------------------------------
 
-static inline int dbl_cmp(double x,
-                          double y,
-                          const int direction,
-                          const int na_order);
+static inline int dbl_cmp(double x, double y, const int direction, const int na_order);
 
 /*
  * Check if a double vector is ordered, handling `decreasing` and `na_last`
@@ -120,10 +117,8 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
 /*
  * Compare two doubles, handling `na_order` and `direction`
  */
-static inline int dbl_cmp(double x,
-                          double y,
-                          const int direction,
-                          const int na_order) {
+static inline
+int dbl_cmp(double x, double y, const int direction, const int na_order) {
   if (isnan(x)) {
     if (isnan(y)) {
       return 0;
@@ -143,10 +138,7 @@ static inline int dbl_cmp(double x,
 
 // -----------------------------------------------------------------------------
 
-static inline int int_cmp(int x,
-                          int y,
-                          const int direction,
-                          const int na_order);
+static inline int int_cmp(int x, int y, const int direction, const int na_order);
 
 // Very similar to `dbl_sortedness()`
 enum vctrs_sortedness int_sortedness(const int* p_x,
@@ -250,10 +242,8 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
 }
 
 // Very similar to `dbl_cmp()`
-static inline int int_cmp(int x,
-                          int y,
-                          const int direction,
-                          const int na_order) {
+static inline
+int int_cmp(int x, int y, const int direction, const int na_order) {
   if (x == NA_INTEGER) {
     if (y == NA_INTEGER) {
       return 0;
@@ -422,12 +412,13 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
  * `direction` is `1` for ascending and `-1` for descending.
  * `na_order` is `1` if `na_last = true` and `-1` if `na_last = false`.
  */
-static inline int chr_cmp(SEXP x,
-                          SEXP y,
-                          const char* c_x,
-                          const char* c_y,
-                          const int direction,
-                          const int na_order) {
+static inline
+int chr_cmp(SEXP x,
+            SEXP y,
+            const char* c_x,
+            const char* c_y,
+            const int direction,
+            const int na_order) {
   // Same pointer - including `NA`s
   if (x == y) {
     return 0;
@@ -495,7 +486,8 @@ void ord_resolve_sortedness_chunk(int* p_o,
 
 
 // Used when in strictly opposite of expected order and uninitialized.
-static inline void ord_reverse(int* p_o, R_xlen_t size) {
+static inline
+void ord_reverse(int* p_o, R_xlen_t size) {
   const R_xlen_t half = size / 2;
 
   for (R_xlen_t i = 0; i < half; ++i) {
@@ -513,7 +505,8 @@ static inline void ord_reverse(int* p_o, R_xlen_t size) {
 // Used when in strictly opposite of expected order and initialized.
 // No need to alter "center" value here, it will be initialized to a value
 // already and it won't be swapped.
-static inline void ord_reverse_chunk(int* p_o, R_xlen_t size) {
+static inline
+void ord_reverse_chunk(int* p_o, R_xlen_t size) {
   const R_xlen_t half = size / 2;
 
   for (R_xlen_t i = 0; i < half; ++i) {
