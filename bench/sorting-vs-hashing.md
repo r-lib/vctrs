@@ -74,6 +74,8 @@ based on `vec_order()`. It takes approximately the same amount of time
 as `vec_order()` itself, so I will just use `vec_order()` as a proxy for
 the sorting approach.
 
+## Integers
+
 ### Test 1
 
   - Integers
@@ -114,18 +116,18 @@ df[-1] %>%
 #>  # A tibble: 12 x 7
 #>      size n_groups      min   median `itr/sec` mem_alloc `gc/sec`
 #>     <dbl>    <dbl> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>   1 10000       10   38.3µs   51.8µs    19679.    39.1KB      0  
-#>   2 10000       10   83.5µs     88µs    11173.   104.2KB      0  
-#>   3 10000      100   33.5µs   49.2µs    19908.    39.1KB      0  
-#>   4 10000      100   58.1µs   90.1µs    10972.   104.7KB      0  
-#>   5 10000     1000   52.4µs   55.5µs    16933.    39.1KB      0  
-#>   6 10000     1000   64.5µs  109.7µs     9468.   114.3KB      0  
-#>   7 10000    10000     85µs    100µs     9817.    39.1KB      0  
-#>   8 10000    10000  166.8µs    226µs     4553.     191KB      0  
-#>   9 10000   100000  206.9µs  225.2µs     4343.    39.1KB      0  
-#>  10 10000   100000  190.1µs  257.2µs     3912.   267.7KB     39.5
-#>  11 10000  1000000  187.2µs    201µs     4867.   174.3KB      0  
-#>  12 10000  1000000  168.7µs  202.3µs     4744.   269.4KB     47.9
+#>   1 10000       10   38.3µs   40.9µs    21938.    39.1KB      0  
+#>   2 10000       10     54µs   90.4µs    10903.   104.2KB      0  
+#>   3 10000      100   35.1µs   46.2µs    21748.    39.1KB      0  
+#>   4 10000      100   46.8µs     87µs    12224.   104.7KB      0  
+#>   5 10000     1000   50.9µs   51.8µs    18652.    39.1KB      0  
+#>   6 10000     1000  101.1µs  114.2µs     8557.   114.3KB      0  
+#>   7 10000    10000   86.8µs   90.8µs    10622.    39.1KB      0  
+#>   8 10000    10000    161µs  198.7µs     5009.     191KB      0  
+#>   9 10000   100000    194µs  222.7µs     4414.    39.1KB      0  
+#>  10 10000   100000    152µs  220.6µs     4535.   267.7KB     45.8
+#>  11 10000  1000000  186.6µs  237.3µs     4378.   174.3KB      0  
+#>  12 10000  1000000  186.6µs  219.3µs     4410.   269.4KB     44.5
 ```
 
 ### Test 2
@@ -159,17 +161,20 @@ As the total size increases, `vec_order()` starts to do better.
 
 ![](sorting-vs-hashing_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-In particular, if you get to around 10,000,000 values and increase the
-number of groups past the counting sort range, you really see the
-benefits of the radix sort kick in.
+### Test 3
+
+This benchmark shows how much better `vec_order()` scales for large size
+and large number of groups. For integers it is always faster, and scales
+extremely well.
 
 ``` r
 set.seed(123)
 
-size <- 10 ^ 7
-n_groups <- c(1e6, seq(2e6, 1e7, by = 2e6))
+size <- 10 ^ 8
+n_groups <- 10 ^ (1:7)
 
 df <- bench::press(
+  size = size,
   n_groups = n_groups,
   {
     x <- sample(n_groups, size, replace = TRUE)
@@ -183,7 +188,71 @@ df <- bench::press(
 
 ![](sorting-vs-hashing_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
-### Test 3
+## Doubles
+
+### Test 1
+
+  - Doubles
+  - Varying total size (small)
+  - Varying group size
+
+<!-- end list -->
+
+``` r
+set.seed(123)
+
+size <- 10 ^ (1:4)
+n_groups <- 10 ^ (1:6)
+
+df <- bench::press(
+  size = size,
+  n_groups = n_groups,
+  {
+    x <- sample(n_groups, size, replace = TRUE) + 0
+    bench::mark(
+      vec_order(x), vec_unique_loc(x), 
+      iterations = 100, check = FALSE
+    )
+  }
+)
+```
+
+`vec_order()` is generally a bit slower for these smaller sizes, but it
+scales much better with large sizes and larger number of groups. See the
+next test.
+
+![](sorting-vs-hashing_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+### Test 2
+
+This benchmark shows how much better `vec_order()` scales for large size
+and large number of groups. For doubles it is slower up front, but
+scales much better.
+
+``` r
+set.seed(123)
+
+size <- 10 ^ 8
+n_groups <- 10 ^ (1:7)
+
+df <- bench::press(
+  size = size,
+  n_groups = n_groups,
+  {
+    x <- sample(n_groups, size, replace = TRUE) + 0
+    bench::mark(
+      vec_order(x), vec_unique_loc(x), 
+      iterations = 20, check = FALSE
+    )
+  }
+)
+```
+
+![](sorting-vs-hashing_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+## Characters
+
+### Test 1
 
 Currently string ordering is much slower than `vec_unique_loc()`
 (especially when most strings are unique) due to all of the allocations
@@ -219,8 +288,8 @@ bench::mark(vec_order(x), vec_unique_loc(x), iterations = 10, check = FALSE)
 #>  # A tibble: 2 x 6
 #>    expression             min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)        81.9ms     95ms      10.8     124MB     16.2
-#>  2 vec_unique_loc(x)     87ms   89.8ms      11.2     102MB     11.2
+#>  1 vec_order(x)        95.9ms    110ms      9.13     124MB        0
+#>  2 vec_unique_loc(x)  117.5ms    125ms      8.03     102MB        0
 ```
 
 Very large set of completely random strings
@@ -241,6 +310,102 @@ bench::mark(vec_order(x), vec_unique_loc(x), iterations = 10, check = FALSE)
 #>  # A tibble: 2 x 6
 #>    expression             min   median `itr/sec` mem_alloc `gc/sec`
 #>    <bch:expr>        <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
-#>  1 vec_order(x)         5.64s     6.1s     0.150     856MB    0.330
-#>  2 vec_unique_loc(x)    1.15s    1.49s     0.670     268MB    0.335
+#>  1 vec_order(x)          4.5s    4.53s     0.221     856MB    0.516
+#>  2 vec_unique_loc(x)    1.18s     1.2s     0.831     268MB    0.208
+```
+
+## Multiple columns
+
+### Test 1
+
+3 integer columns, each with 20 groups. 1e7 total size.
+
+``` r
+set.seed(123)
+
+size <- 1e7L
+n_groups <- 20
+n_cols <- 3
+
+cols <- replicate(n_cols, sample(n_groups, size, TRUE), simplify = FALSE)
+names(cols) <- seq_along(cols)
+df <- vctrs::new_data_frame(cols, size)
+
+bench::mark(
+  vec_order(df), 
+  vec_unique_loc(df), 
+  iterations = 10,
+  check = FALSE
+)
+#>  # A tibble: 2 x 6
+#>    expression              min   median `itr/sec` mem_alloc `gc/sec`
+#>    <bch:expr>         <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#>  1 vec_order(df)         253ms    263ms      3.77     115MB    0.419
+#>  2 vec_unique_loc(df)    304ms    320ms      3.10     102MB    0.344
+```
+
+### Test 2
+
+Same as before but with character columns. We do worse here because as
+mentioned before, we do too much work in `vec_order()` right now with
+character vectors.
+
+``` r
+set.seed(123)
+
+size <- 1e7L
+n_groups <- 20
+n_cols <- 3
+
+cols <- replicate(
+  n_cols, 
+  {
+    dict <- new_dictionary(n_groups, 5, 20)
+    sample(dict, size, TRUE)
+  }, 
+  simplify = FALSE
+)
+
+names(cols) <- seq_along(cols)
+df <- vctrs::new_data_frame(cols, size)
+
+bench::mark(
+  vec_order(df), 
+  vec_unique_loc(df), 
+  iterations = 5,
+  check = FALSE
+)
+#>  # A tibble: 2 x 6
+#>    expression              min   median `itr/sec` mem_alloc `gc/sec`
+#>    <bch:expr>         <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#>  1 vec_order(df)         485ms    492ms      2.04     239MB    0.509
+#>  2 vec_unique_loc(df)    470ms    474ms      2.11     102MB    0
+```
+
+### Test 3
+
+20 integer columns, each with 2 groups. 1e7 total size.
+
+``` r
+set.seed(123)
+
+size <- 1e7L
+n_groups <- 2
+n_cols <- 20
+
+cols <- replicate(n_cols, sample(n_groups, size, TRUE), simplify = FALSE)
+names(cols) <- seq_along(cols)
+df <- vctrs::new_data_frame(cols, size)
+
+bench::mark(
+  vec_order(df), 
+  vec_unique_loc(df), 
+  iterations = 5,
+  check = FALSE
+)
+#>  # A tibble: 2 x 6
+#>    expression              min   median `itr/sec` mem_alloc `gc/sec`
+#>    <bch:expr>         <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>
+#>  1 vec_order(df)         2.85s    2.85s     0.351     123MB    0.234
+#>  2 vec_unique_loc(df)    6.04s    6.08s     0.164     114MB    0
 ```
