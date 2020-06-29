@@ -272,8 +272,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   default: Rf_error("Internal error: Unimplemented type in `new_dictionary()`.");
   }
 
-  // Reprotect `d->protect` for the case of `init_dictionary_df()`,
-  // which allocates a new handle and assigns it to `d->protect`.
+  // `init_dictionary_*()` functions may allocate
   PROTECT(d->protect);
 
   d->used = 0;
