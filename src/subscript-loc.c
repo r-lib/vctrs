@@ -155,7 +155,8 @@ int qsort_icmp(const void* x, const void* y);
 static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
                                   const struct location_opts* opts) {
 
-  int extended[n_extend];
+  SEXP extended = PROTECT(Rf_allocVector(INTSXP, n_extend));
+  int* p_extended = INTEGER(extended);
   int i_extend = 0;
   int new_n = n;
 
@@ -176,25 +177,28 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
       ++new_n;
       --n_extend;
     } else {
-      extended[i_extend++] = elt - 1;
+      p_extended[i_extend++] = elt - 1;
     }
   }
 
   if (i_extend == 0) {
+    UNPROTECT(1);
     return;
   }
 
   // Only the first i_extend entries of the array are populated,
   // the rest is never touched.
-  qsort(extended, i_extend, sizeof(int), &qsort_icmp);
+  qsort(p_extended, i_extend, sizeof(int), &qsort_icmp);
 
   for (R_len_t i = 0; i < i_extend; ++i) {
-    int elt = extended[i];
+    int elt = p_extended[i];
 
     if (elt != new_n + i) {
       stop_location_oob_non_consecutive(subscript, n, opts);
     }
   }
+
+  UNPROTECT(1);
 }
 
 static SEXP dbl_as_location(SEXP subscript, R_len_t n,
