@@ -184,6 +184,8 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
     return;
   }
 
+  // Only the first i_extend entries of the array are populated,
+  // the rest is never touched.
   qsort(extended, i_extend, sizeof(int), &qsort_icmp);
 
   for (R_len_t i = 0; i < i_extend; ++i) {
