@@ -240,9 +240,6 @@ test_that("can optionally extend beyond the end", {
 
   expect_identical(num_as_location(1:5, 3, oob = "extend"), 1:5)
   expect_identical(num_as_location(4:5, 3, oob = "extend"), 4:5)
-  expect_identical(num_as_location(6:4, 3, oob = "extend"), 6:4)
-  expect_identical(num_as_location(c(1:5, 7, 6), 3, oob = "extend"), c(1:5, 7L, 6L))
-  expect_identical(num_as_location(c(1, NA, 4, 3), 2, oob = "extend"), c(1L, NA, 4L, 3L))
 
   verify_errors({
     expect_error(
@@ -266,6 +263,12 @@ test_that("can optionally extend beyond the end", {
       num_as_location(c(1:5, 7, 1, 10), 3, oob = "extend")
     )
   })
+})
+
+test_that("can extend beyond the end consecutively but non-monotonically (#1166)", {
+  expect_identical(num_as_location(6:4, 3, oob = "extend"), 6:4)
+  expect_identical(num_as_location(c(1:5, 7, 6), 3, oob = "extend"), c(1:5, 7L, 6L))
+  expect_identical(num_as_location(c(1, NA, 4, 3), 2, oob = "extend"), c(1L, NA, 4L, 3L))
 })
 
 test_that("missing values are supported in error formatters", {
