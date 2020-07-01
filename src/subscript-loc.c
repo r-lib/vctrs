@@ -157,7 +157,7 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
 
   int extended[n_extend];
   int i_extend = 0;
-  int nn = n;
+  int new_n = n;
 
   int* p_subscript = INTEGER(subscript);
 
@@ -172,8 +172,8 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
 
     // Special case: appending in ascending sequence at the end
     // should not require any sorting
-    if (elt - 1 == nn) {
-      ++nn;
+    if (elt - 1 == new_n) {
+      ++new_n;
       --n_extend;
     } else {
       extended[i_extend++] = elt - 1;
@@ -189,7 +189,7 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
   for (R_len_t i = 0; i < i_extend; ++i) {
     int elt = extended[i];
 
-    if (elt != nn + i) {
+    if (elt != new_n + i) {
       stop_location_oob_non_consecutive(subscript, n, opts);
     }
   }
