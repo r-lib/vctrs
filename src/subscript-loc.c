@@ -181,6 +181,10 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
     }
   }
 
+  if (n_extend != i_extend) {
+    Rf_error("Internal error in `int_check_consecutive()`: n_extend != i_extend.");
+  }
+
   if (i_extend == 0) {
     UNPROTECT(1);
     return;
