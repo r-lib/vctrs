@@ -233,7 +233,11 @@ vec_repair_names <- function(x,
                              repair = c("minimal", "unique", "universal", "check_unique"),
                              ...,
                              quiet = FALSE) {
-  set_names2(x, vec_names2(x, ..., repair = repair, quiet = quiet))
+  if (is.data.frame(x)) {
+    x
+  } else {
+    vec_set_names(x, vec_names2(x, ..., repair = repair, quiet = quiet))
+  }
 }
 
 minimal_names <- function(x) {
@@ -246,17 +250,6 @@ unique_names <- function(x, quiet = FALSE) {
 vec_names <- function(x) {
   .Call(vctrs_names, x)
 }
-`vec_names<-` <- function(x, value) {
-  if (is.data.frame(x)) {
-    # Do not update row names
-  } else if (vec_dim_n(x) == 1) {
-    names(x) <- value
-  } else {
-    rownames(x) <- value
-  }
-  x
-}
-set_names2 <- `vec_names<-`
 
 as_minimal_names <- function(names) {
   .Call(vctrs_as_minimal_names, names)
