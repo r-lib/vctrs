@@ -444,10 +444,6 @@ void r_browse(SEXP x);
 // Adapted from CERT C coding standards
 static inline
 intmax_t intmax_add(intmax_t x, intmax_t y) {
-  if (x == NA_INTEGER || y == NA_INTEGER) {
-    Rf_error("Internal error in `intmax_add()`: Unhandled missing values.");
-  }
-
   if ((y > 0 && x > (INTMAX_MAX - y)) ||
       (y < 0 && x < (INTMAX_MIN - y))) {
     Rf_error("Internal error in `intmax_add()`: Values too large to be added.");
