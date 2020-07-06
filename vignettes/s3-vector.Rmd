@@ -271,7 +271,7 @@ as_percent <- function(x) {
 }
 ```
 
-Occasionally, it is useful to provide conversions that go beyond what's allowed in casting. For example, we could offer a parsing method for character vectors. In this case, `as_percent()` should be generic, the default method should casting, and then additional method should implement more flexible conversion:
+Occasionally, it is useful to provide conversions that go beyond what's allowed in casting. For example, we could offer a parsing method for character vectors. In this case, `as_percent()` should be generic, the default method should cast, and then additional methods should implement more flexible conversion:
 
 ```{r}
 as_percent <- function(x, ...) {
