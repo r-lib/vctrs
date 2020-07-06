@@ -280,7 +280,7 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
     }
   }
 
-  Rf_error("Internal error: Unsupported type %s in `hash_fill()`.", Rf_type2char(TYPEOF(x)));
+  stop_unimplemented_vctrs_type("hash_fill", vec_proxy_typeof(x));
 }
 
 #define HASH_FILL(CTYPE, CONST_DEREF, HASHER)   \

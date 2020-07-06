@@ -247,8 +247,7 @@ SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
   case vctrs_type_character: return chr_slice(x, subscript);
   case vctrs_type_raw:       return raw_slice(x, subscript);
   case vctrs_type_list:      return list_slice(x, subscript);
-  default: Rf_error("Internal error: Non-vector base type `%s` in `vec_slice_base()`",
-                    vec_type_as_str(type));
+  default: stop_unimplemented_vctrs_type("vec_slice_base", type);
   }
 }
 
@@ -258,7 +257,7 @@ SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
 // (and the empty string is persistently protected anyway).
 static void repair_na_names(SEXP names, SEXP subscript) {
   if (!NO_REFERENCES(names)) {
-    Rf_errorcall(R_NilValue, "Internal error: `names` must not be referenced.");
+    stop_internal("repair_na_names", "`names` can't be referenced.");
   }
 
   // No possible way to have `NA_integer_` in a compact seq
@@ -361,7 +360,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 
   switch (info.type) {
   case vctrs_type_null:
-    Rf_error("Internal error: Unexpected `NULL` in `vec_slice_impl()`.");
+    stop_internal("vec_slice_impl", "Unexpected `NULL`.");
 
   case vctrs_type_logical:
   case vctrs_type_integer:
@@ -405,8 +404,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   }
 
   default:
-    Rf_error("Internal error: Unexpected type `%s` for vector proxy in `vec_slice()`",
-             vec_type_as_str(info.type));
+    stop_unimplemented_vctrs_type("vec_slice_impl", info.type);
   }
 }
 
