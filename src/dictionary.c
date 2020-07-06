@@ -28,10 +28,10 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
 
 
 static int nil_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  Rf_error("Internal error: Shouldn't compare NULL in dictionary.");
+  stop_internal("nil_p_equal", "Can't compare NULL in dictionary.");
 }
 static int nil_p_equal_missing(const void* x, R_len_t i) {
-  Rf_error("Internal error: Shouldn't compare NULL in dictionary.");
+  stop_internal("nil_p_equal_missing", "Can't compare NULL in dictionary.");
 }
 
 static int lgl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
@@ -137,7 +137,7 @@ static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
 
   R_len_t n_col = x_data->n_col;
   if (n_col != y_data->n_col) {
-    Rf_errorcall(R_NilValue, "Internal error: `x` and `y` must have the same number of columns.");
+    stop_internal("df_equal", "`x` and `y` must have the same number of columns.");
   }
 
   enum vctrs_type* types = x_data->col_types;
@@ -269,7 +269,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   case vctrs_type_raw: init_dictionary_raw(d); break;
   case vctrs_type_list: init_dictionary_list(d); break;
   case vctrs_type_dataframe: init_dictionary_df(d); break;
-  default: Rf_error("Internal error: Unimplemented type in `new_dictionary()`.");
+  default: vctrs_stop_unsupported_type("new_dictionary_opts", d->type);
   }
 
   // `init_dictionary_*()` functions may allocate
@@ -345,7 +345,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     // quadratic probing.
   }
 
-  Rf_errorcall(R_NilValue, "Internal error: Dictionary is full!");
+  stop_internal("dict_hash_with", "Dictionary is full.");
 }
 
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {

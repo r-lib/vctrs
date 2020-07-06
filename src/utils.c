@@ -369,7 +369,7 @@ SEXP s3_paste_method_sym(const char* generic, const char* class) {
   int class_len = strlen(class);
   int dot_len = 1;
   if (gen_len + class_len + dot_len >= sizeof(s3_buf)) {
-    Rf_error("Internal error: Generic or class name is too long.");
+    stop_internal("s3_paste_method_sym", "Generic or class name is too long.");
   }
 
   char* buf = s3_buf;
@@ -454,7 +454,7 @@ SEXP s3_get_class(SEXP x) {
   }
 
   if (!Rf_length(class)) {
-    Rf_error("Internal error in `s3_get_class()`: Class must have length.");
+    stop_internal("s3_get_class", "Class must have length.");
   }
 
   return class;
@@ -528,7 +528,7 @@ SEXP s3_bare_class(SEXP x) {
   case CLOSXP:
   case SPECIALSXP:
   case BUILTINSXP: return chrs_function;
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "base_dispatch_class_str");
+  default: vctrs_stop_unsupported_type("base_dispatch_class_str", vec_typeof(x));
   }
 }
 
@@ -671,7 +671,7 @@ SEXP node_compact_d(SEXP node) {
 // [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
   if (TYPEOF(levels) != STRSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: `level` must be a character vector.");
+    stop_internal("new_empty_factor", "`level` must be a character vector.");
   }
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
@@ -761,15 +761,15 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
 // `start` is 0-based
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   if (start < 0) {
-    Rf_error("Internal error: `start` must not be negative in `compact_seq()`.");
+    stop_internal("compact_seq", "`start` must not be negative.");
   }
 
   if (size < 0) {
-    Rf_error("Internal error: `size` must not be negative in `compact_seq()`.");
+    stop_internal("compact_seq", "`size` must not be negative.");
   }
 
   if (!increasing && size > start + 1) {
-    Rf_error("Internal error: If constructing a decreasing sequence, `size` must not be larger than `start` in `compact_seq()`.");
+    stop_internal("compact_seq", "`size` must not be larger than `start` for decreasing sequences.");
   }
 
   SEXP info = PROTECT(Rf_allocVector(INTSXP, 3));
@@ -817,7 +817,7 @@ void init_compact_rep(int* p, R_len_t i, R_len_t n) {
 // `i` should be an R-based index
 SEXP compact_rep(R_len_t i, R_len_t n) {
   if (n < 0) {
-    Rf_error("Internal error: Negative `n` in `compact_rep()`.");
+    stop_internal("compact_rep", "Negative `n` in `compact_rep()`.");
   }
 
   SEXP rep = PROTECT(Rf_allocVector(INTSXP, 2));
@@ -893,7 +893,7 @@ void* r_vec_deref(SEXP x) {
   case CPLXSXP: return COMPLEX(x);
   case STRSXP: return STRING_PTR(x);
   case RAWSXP: return RAW(x);
-  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  default: stop_unimplemented_type("r_vec_deref", TYPEOF(x));
   }
 }
 
@@ -901,7 +901,7 @@ const void* r_vec_const_deref(SEXP x) {
   switch (TYPEOF(x)) {
   case INTSXP: return INTEGER_RO(x);
   case STRSXP: return STRING_PTR_RO(x);
-  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  default: stop_unimplemented_type("r_vec_const_deref", TYPEOF(x));
   }
 }
 
@@ -909,7 +909,7 @@ void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
   switch (type) {
   case STRSXP: *((SEXP**) p) += i; return;
   case INTSXP: *((int**) p) += i; return;
-  default: Rf_error("Unimplemented type in `r_vec_ptr_inc()`.");
+  default: stop_unimplemented_type("r_vec_ptr_inc", type);
   }
 }
 
@@ -928,7 +928,7 @@ void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_
   switch (type) {
   case STRSXP: FILL(SEXP, p, value_p, value_i, n); return;
   case INTSXP: FILL(int, p, value_p, value_i, n); return;
-  default: Rf_error("Internal error: Unimplemented type in `r_fill()`");
+  default: stop_unimplemented_type("r_vec_fill", type);
   }
 }
 
@@ -937,7 +937,7 @@ void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_
 
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: Excepted logical vector in `r_lgl_sum()`");
+    stop_internal("r_lgl_sum", "Expected logical vector.");
   }
 
   R_len_t n = Rf_length(x);
@@ -960,7 +960,7 @@ R_len_t r_lgl_sum(SEXP x, bool na_true) {
 
 SEXP r_lgl_which(SEXP x, bool na_propagate) {
   if (TYPEOF(x) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: Expected logical vector in `r_lgl_which()`");
+    stop_internal("r_lgl_which", "Expected logical vector.");
   }
 
   R_len_t n = Rf_length(x);
@@ -1017,7 +1017,7 @@ void r_int_fill_seq(SEXP x, int start, R_len_t n) {
 SEXP r_seq(R_len_t from, R_len_t to) {
   R_len_t n = to - from;
   if (n < 0) {
-    Rf_error("Internal error: Negative length in `r_seq()`");
+    stop_internal("r_seq", "Negative length.");
   }
 
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
@@ -1084,7 +1084,7 @@ int r_chr_max_len(SEXP x) {
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
   int prefix_len = strlen(prefix);
   if (len - 1 < prefix_len) {
-    Rf_errorcall(R_NilValue, "Internal error: Prefix is larger than iota buffer.");
+    stop_internal("r_chr_iota", "Prefix is larger than iota buffer.");
   }
 
   memcpy(buf, prefix, prefix_len);
@@ -1115,7 +1115,7 @@ static void abort_parse(SEXP code, const char* why) {
   if (Rf_GetOption1(Rf_install("rlang__verbose_errors")) != R_NilValue) {
    Rf_PrintValue(code);
   }
-  Rf_error("Internal error: %s", why);
+  stop_internal("r_parse", why);
 }
 
 SEXP r_parse(const char* str) {
@@ -1124,10 +1124,10 @@ SEXP r_parse(const char* str) {
   ParseStatus status;
   SEXP out = PROTECT(R_ParseVector(str_, -1, &status, R_NilValue));
   if (status != PARSE_OK) {
-    abort_parse(str_, "Parsing failed");
+    abort_parse(str_, "Parsing failed.");
   }
   if (Rf_length(out) != 1) {
-    abort_parse(str_, "Expected a single expression");
+    abort_parse(str_, "Expected a single expression.");
   }
 
   out = VECTOR_ELT(out, 0);
@@ -1237,7 +1237,7 @@ SEXP r_peek_frame() {
  */
 SEXP r_pairlist(SEXP* tags, SEXP* cars) {
   if (!cars) {
-    Rf_error("Internal error: Null `cars` in `r_pairlist()`");
+    stop_internal("r_pairlist", "NULL `cars`.");
   }
 
   SEXP list = PROTECT(Rf_cons(R_NilValue, R_NilValue));
@@ -1270,7 +1270,7 @@ bool r_has_name_at(SEXP names, R_len_t i) {
 
   R_len_t n = Rf_length(names);
   if (n <= i) {
-    Rf_error("Internal error: Names shorter than expected: (%d/%d)", i + 1, n);
+    stop_internal("r_has_name_at", "Names shorter than expected: (%d/%d).", i + 1, n);
   }
 
   SEXP elt = STRING_ELT(names, i);
@@ -1540,9 +1540,45 @@ SEXP vctrs_fast_c(SEXP x, SEXP y) {
 
   switch (x_type) {
   case STRSXP: return chr_c(x, y);
-  default: Rf_error("Unimplemented type `%s` in `fast_c()`.", x_type);
+  default: stop_unimplemented_type("vctrs_fast_c", x_type);
   }
 }
+
+
+#define FMT_BUFSIZE 4096
+#define FMT_INTERP(BUF, FMT, DOTS)              \
+  {                                             \
+    va_list dots;                               \
+    va_start(dots, FMT);                        \
+    vsnprintf(BUF, FMT_BUFSIZE, FMT, dots);     \
+    va_end(dots);                               \
+                                                \
+    BUF[FMT_BUFSIZE - 1] = '\0';                \
+  }
+
+__attribute__((noreturn))
+void r_abort(const char* fmt, ...) {
+  R_CheckStack2(FMT_BUFSIZE);
+  char msg[FMT_BUFSIZE];
+  FMT_INTERP(msg, fmt, ...);
+
+  SEXP r_msg = PROTECT(r_chr(msg));
+  vctrs_eval_mask1(syms_abort, syms_message, r_msg);
+
+  never_reached("r_abort");
+}
+
+__attribute__((noreturn))
+void stop_internal(const char* fn, const char* fmt, ...) {
+  R_CheckStack2(FMT_BUFSIZE);
+  char msg[FMT_BUFSIZE];
+  FMT_INTERP(msg, fmt, ...);
+
+  r_abort("Internal error in `%s()`: %s", fn, msg);
+}
+
+#undef FMT_INTERP
+#undef FMT_BUFSIZE
 
 
 bool vctrs_debug_verbose = false;
@@ -1653,6 +1689,8 @@ SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
+SEXP syms_abort = NULL;
+SEXP syms_message = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1922,6 +1960,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
+  syms_abort = Rf_install("abort");
+  syms_message = Rf_install("message");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

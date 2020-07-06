@@ -30,7 +30,7 @@ int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
   case vctrs_type_raw:       x_p = RAW_RO(x);        y_p = RAW_RO(y);        break;
   case vctrs_type_list:      x_p = x;                y_p = y;                break;
 
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar()");
+  default: vctrs_stop_unsupported_type("equal_scalar", vec_typeof(x));
   }
 
   if (na_equal) {
@@ -60,7 +60,7 @@ int equal_scalar_na_equal_p(enum vctrs_type proxy_type,
   case vctrs_type_character: return chr_equal_scalar_na_equal(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
   case vctrs_type_raw: return raw_equal_scalar_na_equal(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j);
   case vctrs_type_list: return list_equal_scalar_na_equal(((const SEXP) x_p), i, ((const SEXP) y_p), j);
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar_na_equal_p()");
+  default: vctrs_stop_unsupported_type("equal_scalar_na_equal_p", vec_typeof(x));
   }
 }
 // [[ include("vctrs.h") ]]
@@ -75,7 +75,7 @@ int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
   case vctrs_type_character: return chr_equal_scalar_na_propagate(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
   case vctrs_type_raw: return raw_equal_scalar_na_propagate(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j);
   case vctrs_type_list: return list_equal_scalar_na_propagate(((const SEXP) x_p), i, ((const SEXP) y_p), j);
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "equal_scalar_na_propagate_p()");
+  default: vctrs_stop_unsupported_type("equal_scalar_na_propagate_p", vec_typeof(x));
   }
 }
 
@@ -263,10 +263,10 @@ bool equal_object(SEXP x, SEXP y) {
   case ENVSXP:
   case EXTPTRSXP:
     // These are handled above with pointer comparison
-    Rf_error("Internal error: Unexpected reference type in `vec_equal()`");
+    stop_internal("equal_object", "Unexpected reference type.");
 
   default:
-    Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
+    stop_unimplemented_type("equal_object", TYPEOF(x));
   }
 
   R_len_t n = Rf_length(x);
@@ -287,7 +287,7 @@ bool equal_object(SEXP x, SEXP y) {
   case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
   case EXPRSXP:
   case VECSXP:  EQUAL_ALL_BARRIER(list_equal_scalar_na_equal);
-  default:      Rf_errorcall(R_NilValue, "Internal error: Unexpected type in `equal_object()`");
+  default:      stop_unimplemented_type("equal_object", type);
   }
 }
 
@@ -495,7 +495,7 @@ int equal_na(SEXP x, R_len_t i) {
   default: break;
   }
 
-  vctrs_stop_unsupported_type(vec_typeof(x), "equal_na()");
+  vctrs_stop_unsupported_type("equal_na", vec_typeof(x));
 }
 
 #define EQUAL_NA(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA)     \

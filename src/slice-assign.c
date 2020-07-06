@@ -89,7 +89,7 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
   case vctrs_type_list:      return list_assign(proxy, index, value, owned);
   case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
   case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
-  default:                   vctrs_stop_unsupported_type(vec_typeof(proxy), "vec_assign_switch()");
+  default:                   vctrs_stop_unsupported_type("vec_assign_switch", vec_typeof(proxy));
   }
   never_reached("vec_assign_switch");
 }
@@ -150,12 +150,10 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   PROTECT_PROXY_INFO(&value_info, &n_protect);
 
   if (TYPEOF(proxy) != TYPEOF(value_info.proxy)) {
-    Rf_error(
-      "Internal error in `vec_proxy_assign_opts()`: "
-      "`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
-      Rf_type2char(TYPEOF(proxy)),
-      Rf_type2char(TYPEOF(value_info.proxy))
-    );
+    stop_internal("vec_proxy_assign_opts",
+                  "`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
+                  Rf_type2char(TYPEOF(proxy)),
+                  Rf_type2char(TYPEOF(value_info.proxy)));
   }
 
   // If a fallback is required, the `proxy` is identical to the output container
@@ -185,51 +183,51 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   return out;
 }
 
-#define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                 \
-  R_len_t n = Rf_length(index);                                 \
-  int* index_data = INTEGER(index);                             \
-                                                                \
-  if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
-             "`value` should have been recycled to fit `x`.");  \
-  }                                                             \
-                                                                \
-  const CTYPE* value_data = CONST_DEREF(value);                 \
-                                                                \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
-  CTYPE* out_data = DEREF(out);                                 \
-                                                                \
-  for (R_len_t i = 0; i < n; ++i) {                             \
-    int j = index_data[i];                                      \
-    if (j != NA_INTEGER) {                                      \
-      out_data[j - 1] = value_data[i];                          \
-    }                                                           \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                         \
+  R_len_t n = Rf_length(index);                                         \
+  int* index_data = INTEGER(index);                                     \
+                                                                        \
+  if (n != Rf_length(value)) {                                          \
+    stop_internal("vec_assign",                                         \
+                  "`value` should have been recycled to fit `x`.");     \
+  }                                                                     \
+                                                                        \
+  const CTYPE* value_data = CONST_DEREF(value);                         \
+                                                                        \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+  CTYPE* out_data = DEREF(out);                                         \
+                                                                        \
+  for (R_len_t i = 0; i < n; ++i) {                                     \
+    int j = index_data[i];                                              \
+    if (j != NA_INTEGER) {                                              \
+      out_data[j - 1] = value_data[i];                                  \
+    }                                                                   \
+  }                                                                     \
+                                                                        \
+  UNPROTECT(1);                                                         \
   return out
 
-#define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF)               \
-  int* index_data = INTEGER(index);                             \
-  R_len_t start = index_data[0];                                \
-  R_len_t n = index_data[1];                                    \
-  R_len_t step = index_data[2];                                 \
-                                                                \
-  if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
-             "`value` should have been recycled to fit `x`.");  \
-  }                                                             \
-                                                                \
-  const CTYPE* value_data = CONST_DEREF(value);                 \
-                                                                \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
-  CTYPE* out_data = DEREF(out) + start;                         \
-                                                                \
-  for (int i = 0; i < n; ++i, out_data += step, ++value_data) { \
-    *out_data = *value_data;                                    \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF)                       \
+  int* index_data = INTEGER(index);                                     \
+  R_len_t start = index_data[0];                                        \
+  R_len_t n = index_data[1];                                            \
+  R_len_t step = index_data[2];                                         \
+                                                                        \
+  if (n != Rf_length(value)) {                                          \
+    stop_internal("vec_assign",                                         \
+                  "`value` should have been recycled to fit `x`.");     \
+  }                                                                     \
+                                                                        \
+  const CTYPE* value_data = CONST_DEREF(value);                         \
+                                                                        \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+  CTYPE* out_data = DEREF(out) + start;                                 \
+                                                                        \
+  for (int i = 0; i < n; ++i, out_data += step, ++value_data) {         \
+    *out_data = *value_data;                                            \
+  }                                                                     \
+                                                                        \
+  UNPROTECT(1);                                                         \
   return out
 
 #define ASSIGN(CTYPE, DEREF, CONST_DEREF)       \
@@ -263,45 +261,45 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned ow
 #undef ASSIGN_COMPACT
 
 
-#define ASSIGN_BARRIER_INDEX(GET, SET)                          \
-  R_len_t n = Rf_length(index);                                 \
-  int* index_data = INTEGER(index);                             \
-                                                                \
-  if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
-             "`value` should have been recycled to fit `x`.");  \
-  }                                                             \
-                                                                \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
-                                                                \
-  for (R_len_t i = 0; i < n; ++i) {                             \
-    int j = index_data[i];                                      \
-    if (j != NA_INTEGER) {                                      \
-      SET(out, j - 1, GET(value, i));                           \
-    }                                                           \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define ASSIGN_BARRIER_INDEX(GET, SET)                                  \
+  R_len_t n = Rf_length(index);                                         \
+  int* index_data = INTEGER(index);                                     \
+                                                                        \
+  if (n != Rf_length(value)) {                                          \
+    stop_internal("vec_assign",                                         \
+                  "`value` should have been recycled to fit `x`.");     \
+  }                                                                     \
+                                                                        \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+                                                                        \
+  for (R_len_t i = 0; i < n; ++i) {                                     \
+    int j = index_data[i];                                              \
+    if (j != NA_INTEGER) {                                              \
+      SET(out, j - 1, GET(value, i));                                   \
+    }                                                                   \
+  }                                                                     \
+                                                                        \
+  UNPROTECT(1);                                                         \
   return out
 
-#define ASSIGN_BARRIER_COMPACT(GET, SET)                        \
-  int* index_data = INTEGER(index);                             \
-  R_len_t start = index_data[0];                                \
-  R_len_t n = index_data[1];                                    \
-  R_len_t step = index_data[2];                                 \
-                                                                \
-  if (n != Rf_length(value)) {                                  \
-    Rf_error("Internal error in `vec_assign()`: "               \
-             "`value` should have been recycled to fit `x`.");  \
-  }                                                             \
-                                                                \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));           \
-                                                                \
-  for (R_len_t i = 0; i < n; ++i, start += step) {              \
-    SET(out, start, GET(value, i));                             \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define ASSIGN_BARRIER_COMPACT(GET, SET)                                \
+  int* index_data = INTEGER(index);                                     \
+  R_len_t start = index_data[0];                                        \
+  R_len_t n = index_data[1];                                            \
+  R_len_t step = index_data[2];                                         \
+                                                                        \
+  if (n != Rf_length(value)) {                                          \
+    stop_internal("vec_assign",                                         \
+                  "`value` should have been recycled to fit `x`.");     \
+  }                                                                     \
+                                                                        \
+  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+                                                                        \
+  for (R_len_t i = 0; i < n; ++i, start += step) {                      \
+    SET(out, start, GET(value, i));                                     \
+  }                                                                     \
+                                                                        \
+  UNPROTECT(1);                                                         \
   return out
 
 #define ASSIGN_BARRIER(GET, SET)                \
@@ -349,9 +347,10 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
   R_len_t n = Rf_length(out);
 
   if (Rf_length(value) != n) {
-    Rf_error("Internal error in `df_assign()`: Can't assign %d columns to df of length %d.",
-             Rf_length(value),
-             n);
+    stop_internal("df_assign",
+                  "Can't assign %d columns to df of length %d.",
+                  Rf_length(value),
+                  n);
   }
 
   for (R_len_t i = 0; i < n; ++i) {

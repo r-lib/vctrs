@@ -92,7 +92,16 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x5_sym, SEXP x5,
                      SEXP x6_sym, SEXP x6);
 
-void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
+__attribute__((noreturn)) void r_abort(const char* fmt, ...);
+__attribute__((noreturn)) void stop_internal(const char* fn, const char* fmt, ...);
+__attribute__((noreturn)) void vctrs_stop_unsupported_type(const char* fn, enum vctrs_type);
+
+static inline
+__attribute__((noreturn))
+void stop_unimplemented_type(const char* fn, SEXPTYPE type) {
+  stop_internal(fn, "Unimplemented type `%s`.", Rf_type2char(type));
+}
+
 
 SEXP map(SEXP x, SEXP (*fn)(SEXP));
 SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data);
@@ -297,7 +306,7 @@ static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
 
 static inline void r__vec_get_check(SEXP x, R_len_t i, const char* fn) {
   if ((Rf_length(x) - 1) < i) {
-    Rf_error("Internal error in `%s()`: Vector is too small", fn);
+    stop_internal(fn, "Vector is too small.");
   }
 }
 static inline int r_lgl_get(SEXP x, R_len_t i) {
@@ -326,7 +335,7 @@ void r_int_poke(SEXP x, R_len_t i, int value) {
 static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
   switch (type) {
   case INTSXP: return (void*) INTEGER(x);
-  default: Rf_error("Internal error: Unimplemented type in `r_vec_unwrap()`.");
+  default: stop_unimplemented_type("r_vec_unwrap", type);
   }
 }
 
@@ -426,7 +435,7 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   case vctrs_type_complex: return &vctrs_shared_na_cpl;
   case vctrs_type_character: return &NA_STRING;
   case vctrs_type_list: return vctrs_shared_na_list;
-  default: vctrs_stop_unsupported_type(type, "vec_type_missing_value");
+  default: vctrs_stop_unsupported_type("vec_type_missing_value", type);
   }
 }
 
@@ -439,7 +448,7 @@ static inline
 intmax_t intmax_add(intmax_t x, intmax_t y) {
   if ((y > 0 && x > (INTMAX_MAX - y)) ||
       (y < 0 && x < (INTMAX_MIN - y))) {
-    Rf_error("Internal error in `intmax_add()`: Values too large to be added.");
+    stop_internal("intmax_add", "Values too large to be added.");
   }
 
   return x + y;
@@ -450,7 +459,7 @@ r_ssize r_ssize_add(r_ssize x, r_ssize y) {
   intmax_t out = intmax_add(x, y);
 
   if (out > R_SSIZE_MAX) {
-    Rf_error("Internal error in `r_ssize_safe_add()`: Result too large for an `r_ssize`.");
+    stop_internal("r_ssize_safe_add", "Result too large for an `r_ssize`.");
   }
 
   return (r_ssize) out;
@@ -565,6 +574,8 @@ extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_action;
 extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
+extern SEXP syms_abort;
+extern SEXP syms_message;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

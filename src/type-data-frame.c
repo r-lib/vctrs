@@ -81,7 +81,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
     // We might add dynamic dots later on
     if (tag == R_ClassSymbol) {
-      Rf_error("Internal error in `new_data_frame()`: Can't supply `class` in `...`.");
+      stop_internal("new_data_frame", "Can't supply `class` in `...`.");
     }
 
     if (tag == R_NamesSymbol) {
@@ -470,7 +470,7 @@ SEXP df_cast_opts(const struct cast_opts* opts) {
   SEXP to_names = PROTECT(r_names(opts->to));
 
   if (x_names == R_NilValue || to_names == R_NilValue) {
-    Rf_error("Internal error in `df_cast()`: Data frame must have names.");
+    stop_internal("df_cast_opts", "Data frame must have names.");
   }
 
   SEXP out = R_NilValue;

@@ -143,8 +143,9 @@ SEXP vctrs_bare_df_restore(SEXP x, SEXP to, SEXP n) {
 // [[ include("vctrs.h") ]]
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned) {
   if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: Attempt to restore data frame from a %s.",
-                 Rf_type2char(TYPEOF(x)));
+    stop_internal("vec_bare_df_restore",
+                  "Attempt to restore data frame from a %s.",
+                  Rf_type2char(TYPEOF(x)));
   }
 
   R_len_t size = (n == R_NilValue) ? df_raw_size(x) : r_int_get(n, 0);

@@ -173,10 +173,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   }
   default:
     vec_assert(x, args_empty);
-    Rf_error(
-      "Internal error: Unexpected type `%s` for vector proxy in `vec_chop()`",
-      vec_type_as_str(proxy_info.type)
-    );
+    vctrs_stop_unsupported_type("vec_chop_base", proxy_info.type);
   }
 }
 

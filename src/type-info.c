@@ -211,12 +211,9 @@ SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
   return Rf_mkString(vec_type_as_str(type));
 }
 
-
-void vctrs_stop_unsupported_type(enum vctrs_type type, const char* fn) {
-  Rf_errorcall(R_NilValue,
-               "Internal error: Unsupported vctrs type `%s` in `%s`",
-               vec_type_as_str(type),
-               fn);
+__attribute__((noreturn))
+void vctrs_stop_unsupported_type(const char* fn, enum vctrs_type type) {
+  stop_internal(fn, "Unsupported vctrs type `%s`.", vec_type_as_str(type));
 }
 
 const char* vec_type_as_str(enum vctrs_type type) {

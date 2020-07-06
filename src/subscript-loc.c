@@ -182,7 +182,10 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
   }
 
   if (n_extend != i_extend) {
-    Rf_error("Internal error in `int_check_consecutive()`: n_extend != i_extend.");
+    stop_internal("int_check_consecutive",
+                  "n_extend (%d) != i_extend (%d).",
+                  n_extend,
+                  i_extend);
   }
 
   if (i_extend == 0) {
@@ -326,8 +329,7 @@ SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
   case REALSXP: out = dbl_as_location(subscript, n, opts); break;
   case LGLSXP: out = lgl_as_location(subscript, n, opts); break;
   case STRSXP: out = chr_as_location(subscript, names, opts); break;
-  default: Rf_errorcall(R_NilValue, "Internal error: Wrong subscript type `%s` in `vec_as_location_opts()`.",
-                        Rf_type2char(TYPEOF(subscript)));
+  default: stop_unimplemented_type("vec_as_location_opts", TYPEOF(subscript));
   }
 
   UNPROTECT(2);
@@ -417,7 +419,7 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
     PROTECT(n_);
 
     if (Rf_length(n_) != 1) {
-      Rf_error("Internal error: `n` must be a scalar number");
+      stop_internal("vctrs_as_location", "`n` must be a scalar number.");
     }
 
     n = r_int_get(n_, 0);
