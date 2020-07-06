@@ -174,6 +174,9 @@ static SEXP c_data_frame_class(SEXP cls) {
   if (Rf_length(cls) == 0) {
     return classes_data_frame;
   }
+  if (STRING_ELT(cls, Rf_length(cls) - 1) == strings_data_frame) {
+    return cls;
+  }
 
   SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(args, 0, cls);
