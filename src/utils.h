@@ -201,11 +201,6 @@ extern SEXP (*rlang_unbox)(SEXP);
 extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
-static inline
-R_len_t r_length(SEXP x) {
-  return Rf_length(x);
-}
-
 void* r_vec_deref(SEXP x);
 const void* r_vec_const_deref(SEXP x);
 
@@ -444,6 +439,31 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
 
 void c_print_backtrace();
 void r_browse(SEXP x);
+
+
+// Adapted from CERT C coding standards
+static inline
+intmax_t intmax_add(intmax_t x, intmax_t y) {
+  if ((y > 0 && x > (INTMAX_MAX - y)) ||
+      (y < 0 && x < (INTMAX_MIN - y))) {
+    Rf_error("Internal error in `intmax_add()`: Values too large to be added.");
+  }
+
+  return x + y;
+}
+
+static inline
+r_ssize r_ssize_add(r_ssize x, r_ssize y) {
+  intmax_t out = intmax_add(x, y);
+
+  if (out > R_SSIZE_MAX) {
+    Rf_error("Internal error in `r_ssize_safe_add()`: Result too large for an `r_ssize`.");
+  }
+
+  return (r_ssize) out;
+}
+
+SEXP chr_c(SEXP x, SEXP y);
 
 
 extern SEXP vctrs_ns_env;
