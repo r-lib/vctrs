@@ -198,7 +198,7 @@ detect_dot_dot <- function(names) {
 #' @description
 #' These functions work like [rlang::names2()], [names()] and [names<-()],
 #' except that they return or modify the conceptual names of the vector.
-#' This is different for data frames and matrices (here, row names are used),
+#' This is different for data frames (here, row names are used), and matrices
 #' and arrays (here, the dimension names of the first dimension are used).
 #'
 #' `vec_names2()` returns the repaired names from a vector, even if it is unnamed.
@@ -224,7 +224,7 @@ detect_dot_dot <- function(names) {
 #' vec_names2(1:3, repair = "unique")
 #' vec_names2(c(a = 1, b = 2))
 #'
-#' # `vec_names()` is different from `names()`:
+#' # `vec_names()` consistently returns the rowwise names of data frames and arrays:
 #' vec_names(data.frame(a = 1, b = 2))
 #' names(data.frame(a = 1, b = 2))
 #' vec_names(mtcars)
