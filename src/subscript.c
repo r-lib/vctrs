@@ -199,8 +199,7 @@ static SEXP dbl_cast_subscript_fallback(SEXP subscript,
     SEXP err_obj = PROTECT(*err);
 
     SEXP body = PROTECT(vctrs_eval_mask1(syms_new_dbl_cast_subscript_body,
-                                         syms_lossy_err, err_obj,
-                                         vctrs_ns_env));
+                                         syms_lossy_err, err_obj));
 
     *err = new_error_subscript_type(subscript,
                                     opts,

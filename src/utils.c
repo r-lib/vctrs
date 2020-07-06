@@ -45,7 +45,14 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
  * This takes two arrays of argument (`args`) and argument names
  * `syms`). The names should correspond to formal arguments of `fn`.
  * Elements of `args` are assigned to their corresponding name in
- * `syms` in a child of `env`. A call to `fn` is constructed with the
+ * `syms` directly in the current environment, i.e. the environment of
+ * the closure wrapping the `.Call()` invokation. Since masked
+ * evaluation causes side effects and variable assignments in that
+ * frame environment, the native code invokation must be tailing: no
+ * further R code (including `on.exit()` expressions) should be
+ * evaluated in that closure wrapper.
+ *
+ * A call to `fn` is constructed with the
  * CARs and TAGs assigned symmetrically to the elements of
  * `syms`. This way the arguments are masked by symbols corresponding
  * to the formal parameters.
@@ -57,57 +64,52 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
  * @param args A null-terminated array of arguments passed to the method.
  * @param env The environment in which to evaluate.
  */
-SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
-  SEXP mask = PROTECT(r_new_environment(env, 4));
+SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args) {
+  SEXP mask = PROTECT(r_peek_frame());
   SEXP out = vctrs_eval_mask_n_impl(fn, syms, args, mask);
 
   UNPROTECT(1);
   return out;
 }
 SEXP vctrs_eval_mask1(SEXP fn,
-                      SEXP x_sym, SEXP x,
-                      SEXP env) {
+                      SEXP x_sym, SEXP x) {
   SEXP syms[2] = { x_sym, NULL };
   SEXP args[2] = { x, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask2(SEXP fn,
                       SEXP x_sym, SEXP x,
-                      SEXP y_sym, SEXP y,
-                      SEXP env) {
+                      SEXP y_sym, SEXP y) {
   SEXP syms[3] = { x_sym, y_sym, NULL };
   SEXP args[3] = { x, y, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask3(SEXP fn,
                       SEXP x_sym, SEXP x,
                       SEXP y_sym, SEXP y,
-                      SEXP z_sym, SEXP z,
-                      SEXP env) {
+                      SEXP z_sym, SEXP z) {
   SEXP syms[4] = { x_sym, y_sym, z_sym, NULL };
   SEXP args[4] = { x, y, z, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask4(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
-                      SEXP x4_sym, SEXP x4,
-                      SEXP env) {
+                      SEXP x4_sym, SEXP x4) {
   SEXP syms[5] = { x1_sym, x2_sym, x3_sym, x4_sym, NULL };
   SEXP args[5] = { x1, x2, x3, x4, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask5(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
-                      SEXP x5_sym, SEXP x5,
-                      SEXP env) {
+                      SEXP x5_sym, SEXP x5) {
   SEXP syms[6] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, NULL };
   SEXP args[6] = { x1, x2, x3, x4, x5, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x1_sym, SEXP x1,
@@ -115,11 +117,10 @@ SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
-                      SEXP x6_sym, SEXP x6,
-                      SEXP env) {
+                      SEXP x6_sym, SEXP x6) {
   SEXP syms[7] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, NULL };
   SEXP args[7] = { x1, x2, x3, x4, x5, x6, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x1_sym, SEXP x1,
@@ -128,27 +129,27 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
-                      SEXP x7_sym, SEXP x7,
-                      SEXP env) {
+                      SEXP x7_sym, SEXP x7) {
   SEXP syms[8] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, NULL };
   SEXP args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 
 /**
- * Dispatch in the global environment
+ * Dispatch in the current environment
  *
  * Like `vctrs_eval_mask_n()`, the arguments `args` are are assigned
  * to the symbols `syms`. In addition, the function `fn` is assigned
- * to `fn_sym`. The mask is a direct child of the global environment
- * so that method dispatch finds globally defined methods.
+ * to `fn_sym`. The mask is the current environment which has hygiene
+ * implications regarding the closure wrapping `.Call()`, as
+ * documented in `vctrs_eval_mask_n()`.
  *
  * @param fn_sym A symbol to which `fn` is assigned.
  * @inheritParams vctrs_eval_mask_n
  */
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args) {
-  // Mask `fn` with `fn_sym`. We dispatch in the global environment.
-  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv, 4));
+  // Mask `fn` with `fn_sym` and `args` with `syms` in the current environment
+  SEXP mask = PROTECT(r_peek_frame());
   Rf_defineVar(fn_sym, fn, mask);
 
   SEXP out = vctrs_eval_mask_n_impl(fn_sym, syms, args, mask);
@@ -1215,6 +1216,16 @@ SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
 }
 
+static SEXP peek_frame_call = NULL;
+
+// Calling `sys.frame()` has a cost of 1.5us compared to 300ns for
+// `R_GetCurrentEnv()`. However the latter is currently buggy, see
+// https://bugs.r-project.org/bugzilla/show_bug.cgi?id=17839.
+SEXP r_peek_frame() {
+  return Rf_eval(peek_frame_call, R_EmptyEnv);
+}
+
+
 /**
  * Create a call or pairlist
  *
@@ -1977,4 +1988,10 @@ void vctrs_init_utils(SEXP ns) {
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
   VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
+
+  SEXP current_frame_body = PROTECT(r_parse_eval("as.call(list(sys.frame, -1))", R_BaseEnv));
+  SEXP current_frame_fn = PROTECT(r_new_function(R_NilValue, current_frame_body, R_EmptyEnv));
+  peek_frame_call = Rf_lcons(current_frame_fn, R_NilValue);
+  R_PreserveObject(peek_frame_call);
+  UNPROTECT(2);
 }
