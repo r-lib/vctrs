@@ -442,8 +442,7 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
 
 static void stop_subscript_missing(SEXP i) {
   vctrs_eval_mask1(Rf_install("stop_subscript_missing"),
-                   syms_i, i,
-                   vctrs_ns_env);
+                   syms_i, i);
   never_reached("stop_subscript_missing");
 }
 
@@ -453,8 +452,7 @@ static void stop_location_negative_missing(SEXP i,
   vctrs_eval_mask3(Rf_install("stop_location_negative_missing"),
                    syms_i, i,
                    syms_subscript_arg, arg,
-                   syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   vctrs_ns_env);
+                   syms_subscript_action, get_opts_action(opts->subscript_opts));
   never_reached("stop_location_negative_missing");
 }
 static void stop_location_negative_positive(SEXP i,
@@ -463,8 +461,7 @@ static void stop_location_negative_positive(SEXP i,
   vctrs_eval_mask3(Rf_install("stop_location_negative_positive"),
                    syms_i, i,
                    syms_subscript_arg, arg,
-                   syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   vctrs_ns_env);
+                   syms_subscript_action, get_opts_action(opts->subscript_opts));
   never_reached("stop_location_negative_positive");
 }
 
@@ -477,8 +474,7 @@ static void stop_subscript_oob_location(SEXP i, R_len_t size,
                    syms_subscript_type, chrs_numeric,
                    syms_size, size_obj,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
+                   syms_subscript_arg, arg);
 
   UNPROTECT(1);
   never_reached("stop_subscript_oob_location");
@@ -491,8 +487,7 @@ static void stop_subscript_oob_name(SEXP i, SEXP names,
                    syms_subscript_type, chrs_character,
                    syms_names, names,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
+                   syms_subscript_arg, arg);
   never_reached("stop_subscript_oob_name");
 }
 
@@ -502,8 +497,7 @@ static void stop_location_negative(SEXP i,
   vctrs_eval_mask3(Rf_install("stop_location_negative"),
                    syms_i, i,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
+                   syms_subscript_arg, arg);
   never_reached("stop_location_negative");
 }
 
@@ -513,8 +507,7 @@ static void stop_location_zero(SEXP i,
   vctrs_eval_mask3(Rf_install("stop_location_zero"),
                    syms_i, i,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
+                   syms_subscript_arg, arg);
   never_reached("stop_location_zero");
 }
 
@@ -525,8 +518,7 @@ static void stop_indicator_size(SEXP i, SEXP n,
                    syms_i, i,
                    syms_n, n,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
+                   syms_subscript_arg, arg);
   never_reached("stop_indicator_size");
 }
 
@@ -538,8 +530,7 @@ static void stop_location_oob_non_consecutive(SEXP i, R_len_t size,
                    syms_i, i,
                    syms_size, size_obj,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg,
-                   vctrs_ns_env);
+                   syms_subscript_arg, arg);
 
   UNPROTECT(1);
   never_reached("stop_location_oob_non_consecutive");

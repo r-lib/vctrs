@@ -154,6 +154,19 @@ test_that("incompatible size errors", {
   })
 })
 
+test_that("simplified backtraces include whole vctrs context", {
+  skip_on_cran()
+
+  top <- current_env()
+  trace <- NULL
+  expect_error(withCallingHandlers(vec_slice(1, 2), error = function(...) {
+    trace <<- trace_back(top, sys.frame(-1L))
+  }))
+
+  trace_lines <- format(trace, simplify = "branch")
+  expect_true(any(grepl("vec_slice", trace_lines)))
+})
+
 verify_output(test_path("error", "test-conditions.txt"), {
   "# incompatible type error validates `action`"
   stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = "conver")

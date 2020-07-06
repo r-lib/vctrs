@@ -31,41 +31,34 @@ bool r_is_bool(SEXP x);
 int r_bool_as_int(SEXP x);
 
 SEXP vctrs_eval_mask_n(SEXP fn,
-                       SEXP* syms, SEXP* args,
-                       SEXP env);
+                       SEXP* syms, SEXP* args);
 SEXP vctrs_eval_mask1(SEXP fn,
-                      SEXP x_sym, SEXP x,
-                      SEXP env);
+                      SEXP x_sym, SEXP x);
 SEXP vctrs_eval_mask2(SEXP fn,
                       SEXP x_sym, SEXP x,
-                      SEXP y_sym, SEXP y,
-                      SEXP env);
+                      SEXP y_sym, SEXP y);
 SEXP vctrs_eval_mask3(SEXP fn,
                       SEXP x_sym, SEXP x,
                       SEXP y_sym, SEXP y,
-                      SEXP z_sym, SEXP z,
-                      SEXP env);
+                      SEXP z_sym, SEXP z);
 SEXP vctrs_eval_mask4(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
-                      SEXP x4_sym, SEXP x4,
-                      SEXP env);
+                      SEXP x4_sym, SEXP x4);
 SEXP vctrs_eval_mask5(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
-                      SEXP x5_sym, SEXP x5,
-                      SEXP env);
+                      SEXP x5_sym, SEXP x5);
 SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
-                      SEXP x6_sym, SEXP x6,
-                      SEXP env);
+                      SEXP x6_sym, SEXP x6);
 SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
@@ -73,8 +66,7 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
-                      SEXP x7_sym, SEXP x7,
-                      SEXP env);
+                      SEXP x7_sym, SEXP x7);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -247,6 +239,7 @@ bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 bool r_is_number(SEXP x);
 SEXP r_peek_option(const char* option);
+SEXP r_peek_frame();
 SEXP r_clone_referenced(SEXP x);
 SEXP r_clone_shared(SEXP x);
 
