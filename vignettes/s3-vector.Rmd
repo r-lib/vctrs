@@ -271,6 +271,24 @@ as_percent <- function(x) {
 }
 ```
 
+Occasionally, it is useful to provide conversions that go beyond what's allowed in casting. For example, we could offer a parsing method for character vectors. In this case, `as_percent()` should be generic, and only the default method should resort to casting:
+
+```{r}
+as_percent <- function(x, ...) {
+  UseMethod("as_percent")
+}
+
+as_percent.default <- function(x, ...) {
+  vec_cast(x, new_percent())
+}
+
+as_percent.character <- function(x) {
+  value <- as.numeric(gsub(" *% *$", "", x)) / 100
+  new_percent(value)
+}
+```
+
+
 
 ### Decimal class
 
