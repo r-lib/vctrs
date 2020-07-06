@@ -193,15 +193,51 @@ detect_dot_dot <- function(names) {
   grep("^[.][.](?:[.]|[1-9][0-9]*)$", names)
 }
 
-#' Extract repaired names from a vector
+#' Get or set the names of a vector
 #'
-#' Returns the repaired names from a vector, even if the vector is unnamed.
+#' @description
+#' These functions work like [rlang::names2()], [names()] and [names<-()],
+#' except that they return or modify the the rowwise names of the vector. These are:
+#' * The usual `names()` for atomic vectors and lists
+#' * The row names for data frames and matrices
+#' * The names of the first dimension for arrays
+#' Rowwise names are size consistent: the length of the names always equals
+#' [vec_size()].
+#'
+#' `vec_names2()` returns the repaired names from a vector, even if it is unnamed.
+#' See [vec_as_names()] for details on name repair.
+#'
+#' `vec_names()` is a bare-bones version that returns `NULL` if the vector is
+#' unnamed.
+#'
+#' `vec_set_names()` sets the names or removes them.
 #'
 #' @param x A vector with names
+#' @param names A character vector, or `NULL`.
 #' @inheritParams vec_as_names
 #'
-#' @return The names of x, repaired
-#' @noRd
+#' @return
+#'   `vec_names2()` returns the names of `x`, repaired.
+#'   `vec_names()` returns the names of `x` or `NULL` if unnamed.
+#'   `vec_set_names()` returns `x` with names updated.
+#'
+#' @name vec_names
+#' @export
+#' @examples
+#' vec_names2(1:3)
+#' vec_names2(1:3, repair = "unique")
+#' vec_names2(c(a = 1, b = 2))
+#'
+#' # `vec_names()` consistently returns the rowwise names of data frames and arrays:
+#' vec_names(data.frame(a = 1, b = 2))
+#' names(data.frame(a = 1, b = 2))
+#' vec_names(mtcars)
+#' names(mtcars)
+#' vec_names(Titanic)
+#' names(Titanic)
+#'
+#' vec_set_names(1:3, letters[1:3])
+#' vec_set_names(data.frame(a = 1:3), letters[1:3])
 vec_names2 <- function(x,
                        ...,
                        repair = c("minimal", "unique", "universal", "check_unique"),
@@ -247,6 +283,8 @@ unique_names <- function(x, quiet = FALSE) {
   .Call(vctrs_unique_names, x, quiet)
 }
 
+#' @rdname vec_names
+#' @export
 vec_names <- function(x) {
   .Call(vctrs_names, x)
 }
@@ -433,6 +471,8 @@ set_names_fallback <- function(x, names) {
   x
 }
 
+#' @rdname vec_names
+#' @export
 vec_set_names <- function(x, names) {
   .Call(vctrs_set_names, x, names)
 }
