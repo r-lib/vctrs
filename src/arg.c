@@ -8,8 +8,8 @@
 
 static int fill_arg_buffer(struct vctrs_arg* arg,
                            char* buf,
-                           r_ssize_t cur_size,
-                           r_ssize_t tot_size);
+                           r_ssize cur_size,
+                           r_ssize tot_size);
 
 /**
  * This takes a `struct vctrs_arg{}` linked list and calls the
@@ -23,8 +23,8 @@ SEXP vctrs_arg(struct vctrs_arg* arg) {
     return chrs_empty;
   }
 
-  r_ssize_t next_size = DEFAULT_ARG_BUF_SIZE;
-  r_ssize_t size;
+  r_ssize next_size = DEFAULT_ARG_BUF_SIZE;
+  r_ssize size;
 
   SEXP buf_holder = PROTECT(R_NilValue);
   char* buf;
@@ -56,8 +56,8 @@ SEXP vctrs_arg(struct vctrs_arg* arg) {
  */
 static int fill_arg_buffer(struct vctrs_arg* arg,
                            char* buf,
-                           r_ssize_t cur_size,
-                           r_ssize_t tot_size) {
+                           r_ssize cur_size,
+                           r_ssize tot_size) {
   if (arg->parent) {
     cur_size = fill_arg_buffer(arg->parent, buf, cur_size, tot_size);
 
@@ -66,7 +66,7 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
     }
   }
 
-  r_ssize_t written = arg->fill(arg->data, buf + cur_size, tot_size - cur_size);
+  r_ssize written = arg->fill(arg->data, buf + cur_size, tot_size - cur_size);
 
   if (written < 0) {
     return written;
@@ -80,7 +80,7 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
 
 // Simple wrapper around a `const char*` argument tag
 
-static r_ssize_t wrapper_arg_fill(void* data, char* buf, r_ssize_t remaining);
+static r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining);
 
 struct vctrs_arg new_wrapper_arg(struct vctrs_arg* parent, const char* arg) {
   return (struct vctrs_arg) {
@@ -90,7 +90,7 @@ struct vctrs_arg new_wrapper_arg(struct vctrs_arg* parent, const char* arg) {
   };
 }
 
-static r_ssize_t wrapper_arg_fill(void* data, char* buf, r_ssize_t remaining) {
+static r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining) {
   const char* src = (const char*) data;
 
   size_t len = strlen(src);
@@ -109,7 +109,7 @@ static r_ssize_t wrapper_arg_fill(void* data, char* buf, r_ssize_t remaining) {
 // Wrapper around a counter representing the current position of the
 // argument
 
-static r_ssize_t counter_arg_fill(void* data, char* buf, r_ssize_t remaining);
+static r_ssize counter_arg_fill(void* data, char* buf, r_ssize remaining);
 
 struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
                                  struct arg_data_counter* data) {
@@ -128,7 +128,7 @@ struct arg_data_counter new_counter_arg_data(R_len_t* i, SEXP* names, R_len_t* n
   };
 }
 
-static r_ssize_t counter_arg_fill(void* data_, char* buf, r_ssize_t remaining) {
+static r_ssize counter_arg_fill(void* data_, char* buf, r_ssize remaining) {
   struct arg_data_counter* data = (struct arg_data_counter*) data_;
   R_len_t i = *data->i;
 
@@ -154,7 +154,7 @@ static r_ssize_t counter_arg_fill(void* data_, char* buf, r_ssize_t remaining) {
 // Indexing tag that materialises as `$rhs`. The `$` is only written when
 // the arg has a parent.
 
-static r_ssize_t index_arg_fill(void* data, char* buf, r_ssize_t remaining);
+static r_ssize index_arg_fill(void* data, char* buf, r_ssize remaining);
 static bool is_empty_arg(struct vctrs_arg* arg);
 
 struct vctrs_arg new_index_arg(struct vctrs_arg* parent,
@@ -175,7 +175,7 @@ struct arg_data_index new_index_arg_data(const char* arg,
 }
 
 
-static r_ssize_t index_arg_fill(void* data_, char* buf, r_ssize_t remaining) {
+static r_ssize index_arg_fill(void* data_, char* buf, r_ssize remaining) {
   struct arg_data_index* data = (struct arg_data_index*) data_;
   const char* src = data->arg;
   size_t len = strlen(src);

@@ -17,7 +17,7 @@
  */
 struct vctrs_arg {
   struct vctrs_arg* parent;
-  r_ssize_t (*fill)(void* data, char* buf, r_ssize_t remaining);
+  r_ssize (*fill)(void* data, char* buf, r_ssize remaining);
   void* data;
 };
 
