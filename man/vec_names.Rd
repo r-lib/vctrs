@@ -45,7 +45,7 @@ caused by repairing the names. This only concerns unique and
 universal repairing. Set \code{quiet} to \code{TRUE} to silence the
 messages.}
 
-\item{names}{A character vector.}
+\item{names}{A character vector, or \code{NULL}.}
 }
 \value{
 \code{vec_names2()} returns the names of \code{x}, repaired.
@@ -54,9 +54,14 @@ messages.}
 }
 \description{
 These functions work like \code{\link[rlang:names2]{rlang::names2()}}, \code{\link[=names]{names()}} and \code{\link[=names<-]{names<-()}},
-except that they return or modify the conceptual names of the vector.
-This is different for data frames and matrices (here, row names are used),
-and arrays (here, the dimension names of the first dimension are used).
+except that they return or modify the the rowwise names of the vector. These are:
+\itemize{
+\item The usual \code{names()} for atomic vectors and lists
+\item The row names for data frames and matrices
+\item The names of the first dimension for arrays
+Rowwise names are size consistent: the length of the names always equals
+\code{\link[=vec_size]{vec_size()}}.
+}
 
 \code{vec_names2()} returns the repaired names from a vector, even if it is unnamed.
 See \code{\link[=vec_as_names]{vec_as_names()}} for details on name repair.
@@ -64,7 +69,7 @@ See \code{\link[=vec_as_names]{vec_as_names()}} for details on name repair.
 \code{vec_names()} is a bare-bones version that returns \code{NULL} if the vector is
 unnamed.
 
-\code{vec_set_names()} sets the names.
+\code{vec_set_names()} sets the names or removes them.
 }
 \examples{
 vec_names2(1:3)
