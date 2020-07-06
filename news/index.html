@@ -158,6 +158,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>The native routines in vctrs now dispatch and evaluate in the vctrs namespace. This improves the continuity of evaluation in backtraces.</p></li>
 <li><p><code><a href="https://vctrs.r-lib.org/reference/new_data_frame.html">new_data_frame()</a></code> is now twice as fast when <code>class</code> is supplied.</p></li>
 <li><p>New <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_names2()</a></code>, <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_names()</a></code> and <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_set_names()</a></code> (<a href='https://github.com/r-lib/vctrs/issues/1173'>#1173</a>).</p></li>
 <li><p>New <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_order()</a></code> that provides an ordering proxy for use in <code><a href="https://vctrs.r-lib.org/reference/vec_order.html">vec_order()</a></code> and <code><a href="https://vctrs.r-lib.org/reference/vec_order.html">vec_sort()</a></code>. The default method falls through to <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>. Lists are special cased, and return an integer vector proxy that orders by first appearance.</p></li>
