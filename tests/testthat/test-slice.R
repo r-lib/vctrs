@@ -701,3 +701,8 @@ test_that("scalar type error is thrown when `vec_slice_impl()` is called directl
   x <- foobar(as.list(1:3))
   expect_error(vec_slice_seq(x, 1L, 1L), class = "vctrs_error_scalar_type")
 })
+
+test_that("column sizes are checked before slicing (#552)", {
+  x <- structure(list(a = 1, b = 2:3), row.names = 1:2, class = "data.frame")
+  expect_error(vctrs::vec_slice(x, 2), "must match the data frame size")
+})

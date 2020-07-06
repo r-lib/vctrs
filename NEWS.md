@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_slice()` now checks sizes of data frame columns in case the
+  data structure is corrupt (#552).
+
 * The native routines in vctrs now dispatch and evaluate in the vctrs
   namespace. This improves the continuity of evaluation in backtraces.
 

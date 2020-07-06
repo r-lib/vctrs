@@ -178,6 +178,8 @@ static SEXP list_slice(SEXP x, SEXP subscript) {
 
 static SEXP df_slice(SEXP x, SEXP subscript) {
   R_len_t n = Rf_length(x);
+  R_len_t size = df_size(x);
+
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
 
   // FIXME: Should that be restored?
@@ -187,6 +189,11 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
+
+    if (vec_size(elt) != size) {
+      stop_internal("df_slice", "Columns must match the data frame size.");
+    }
+
     SEXP sliced = vec_slice_impl(elt, subscript);
     SET_VECTOR_ELT(out, i, sliced);
   }
