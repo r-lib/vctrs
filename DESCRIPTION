@@ -48,7 +48,7 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes:
-    rstudio/rmarkdown
+    rstudio/rmarkdown@v2.3
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
