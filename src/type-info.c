@@ -212,7 +212,7 @@ SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
 }
 
 __attribute__((noreturn))
-void vctrs_stop_unsupported_type(const char* fn, enum vctrs_type type) {
+void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type type) {
   stop_internal(fn, "Unsupported vctrs type `%s`.", vec_type_as_str(type));
 }
 

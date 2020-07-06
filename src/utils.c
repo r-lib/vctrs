@@ -528,7 +528,7 @@ SEXP s3_bare_class(SEXP x) {
   case CLOSXP:
   case SPECIALSXP:
   case BUILTINSXP: return chrs_function;
-  default: vctrs_stop_unsupported_type("base_dispatch_class_str", vec_typeof(x));
+  default: stop_unimplemented_vctrs_type("base_dispatch_class_str", vec_typeof(x));
   }
 }
 

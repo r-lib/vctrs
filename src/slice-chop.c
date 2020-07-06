@@ -173,7 +173,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   }
   default:
     vec_assert(x, args_empty);
-    vctrs_stop_unsupported_type("vec_chop_base", proxy_info.type);
+    stop_unimplemented_vctrs_type("vec_chop_base", proxy_info.type);
   }
 }
 

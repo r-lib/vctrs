@@ -94,7 +94,7 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
 
 __attribute__((noreturn)) void r_abort(const char* fmt, ...);
 __attribute__((noreturn)) void stop_internal(const char* fn, const char* fmt, ...);
-__attribute__((noreturn)) void vctrs_stop_unsupported_type(const char* fn, enum vctrs_type);
+__attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
 
 static inline
 __attribute__((noreturn))
@@ -435,7 +435,7 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   case vctrs_type_complex: return &vctrs_shared_na_cpl;
   case vctrs_type_character: return &NA_STRING;
   case vctrs_type_list: return vctrs_shared_na_list;
-  default: vctrs_stop_unsupported_type("vec_type_missing_value", type);
+  default: stop_unimplemented_vctrs_type("vec_type_missing_value", type);
   }
 }
 

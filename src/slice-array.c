@@ -279,7 +279,7 @@ SEXP vec_slice_shaped_base(enum vctrs_type type,
   case vctrs_type_character: return chr_slice_shaped(x, index, p_info);
   case vctrs_type_raw:       return raw_slice_shaped(x, index, p_info);
   case vctrs_type_list:      return list_slice_shaped(x, index, p_info);
-  default: vctrs_stop_unsupported_type("vec_slice_shaped_base", type);
+  default: stop_unimplemented_vctrs_type("vec_slice_shaped_base", type);
   }
 }
 

@@ -89,7 +89,7 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
   case vctrs_type_list:      return list_assign(proxy, index, value, owned);
   case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
   case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
-  default:                   vctrs_stop_unsupported_type("vec_assign_switch", vec_typeof(proxy));
+  default:                   stop_unimplemented_vctrs_type("vec_assign_switch", vec_typeof(proxy));
   }
   never_reached("vec_assign_switch");
 }

@@ -247,7 +247,7 @@ SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
   case vctrs_type_character: return chr_slice(x, subscript);
   case vctrs_type_raw:       return raw_slice(x, subscript);
   case vctrs_type_list:      return list_slice(x, subscript);
-  default: vctrs_stop_unsupported_type("vec_slice_base", type);
+  default: stop_unimplemented_vctrs_type("vec_slice_base", type);
   }
 }
 
@@ -404,7 +404,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   }
 
   default:
-    vctrs_stop_unsupported_type("vec_slice_impl", info.type);
+    stop_unimplemented_vctrs_type("vec_slice_impl", info.type);
   }
 }
 

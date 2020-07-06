@@ -280,7 +280,7 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
     }
   }
 
-  vctrs_stop_unsupported_type("hash_fill", TYPEOF(x));
+  stop_unimplemented_vctrs_type("hash_fill", vec_proxy_typeof(x));
 }
 
 #define HASH_FILL(CTYPE, CONST_DEREF, HASHER)   \

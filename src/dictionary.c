@@ -269,7 +269,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   case vctrs_type_raw: init_dictionary_raw(d); break;
   case vctrs_type_list: init_dictionary_list(d); break;
   case vctrs_type_dataframe: init_dictionary_df(d); break;
-  default: vctrs_stop_unsupported_type("new_dictionary_opts", d->type);
+  default: stop_unimplemented_vctrs_type("new_dictionary_opts", d->type);
   }
 
   // `init_dictionary_*()` functions may allocate

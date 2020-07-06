@@ -206,8 +206,8 @@ static inline SEXP vec_assign_shaped_switch(SEXP proxy,
   case vctrs_type_character: return chr_assign_shaped(proxy, index, value, owned, p_info);
   case vctrs_type_raw:       return raw_assign_shaped(proxy, index, value, owned, p_info);
   case vctrs_type_list:      return list_assign_shaped(proxy, index, value, owned, p_info);
-  default:                   vctrs_stop_unsupported_type("vec_assign_shaped_switch",
-                                                         vec_proxy_typeof(proxy));
+  default:                   stop_unimplemented_vctrs_type("vec_assign_shaped_switch",
+                                                           vec_proxy_typeof(proxy));
   }
 }
 
