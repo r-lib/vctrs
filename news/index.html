@@ -158,6 +158,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>New <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_names2()</a></code>, <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_names()</a></code> and <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_set_names()</a></code> (<a href='https://github.com/r-lib/vctrs/issues/1173'>#1173</a>).</p></li>
 <li><p>New <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_order()</a></code> that provides an ordering proxy for use in <code><a href="https://vctrs.r-lib.org/reference/vec_order.html">vec_order()</a></code> and <code><a href="https://vctrs.r-lib.org/reference/vec_order.html">vec_sort()</a></code>. The default method falls through to <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>. Lists are special cased, and return an integer vector proxy that orders by first appearance.</p></li>
 <li><p>List columns in data frames are no longer comparable through <code><a href="https://vctrs.r-lib.org/reference/vec_compare.html">vec_compare()</a></code>.</p></li>
 <li><p>The experimental <code>relax</code> argument has been removed from <code><a href="https://vctrs.r-lib.org/reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>.</p></li>
@@ -252,7 +253,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <li><p><code><a href="https://vctrs.r-lib.org/reference/vec_proxy.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
 <li><p><code><a href="https://vctrs.r-lib.org/reference/vec_cast.html">vec_cast()</a></code> to and from data frames preserves the row names of inputs.</p></li>
 <li>
-<p>The internal function <code>vec_names()</code> now returns row names if the input is a data frame. Similarly, <code>vec_set_names()</code> sets row names on data frames. This is part of a general effort at making row names the vector names of data frames in vctrs.</p>
+<p>The internal function <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_names()</a></code> now returns row names if the input is a data frame. Similarly, <code><a href="https://vctrs.r-lib.org/reference/vec_names.html">vec_set_names()</a></code> sets row names on data frames. This is part of a general effort at making row names the vector names of data frames in vctrs.</p>
 <p>If necessary, the row names are repaired verbosely but without error to make them unique. This should be a mostly harmless change for users, but it could break unit tests in packages if they make assumptions about the row names.</p>
 </li>
 </ul>
