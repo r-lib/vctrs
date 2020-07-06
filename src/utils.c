@@ -1529,7 +1529,7 @@ SEXP vctrs_fast_c(SEXP x, SEXP y) {
 
   switch (x_type) {
   case STRSXP: return chr_c(x, y);
-  default: Rf_error("Unimplemented type `%s` in `base_c()`.", x_type);
+  default: Rf_error("Unimplemented type `%s` in `fast_c()`.", x_type);
   }
 }
 
