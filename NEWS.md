@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `new_data_frame()` is now twice as fast when `class` is supplied.
+
 * New `vec_names2()`, `vec_names()` and `vec_set_names()` (#1173).
 
 * New `vec_proxy_order()` that provides an ordering proxy for use in

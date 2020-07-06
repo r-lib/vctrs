@@ -171,23 +171,7 @@ static SEXP c_data_frame_class(SEXP cls) {
   if (TYPEOF(cls) != STRSXP) {
     Rf_errorcall(R_NilValue, "`class` must be NULL or a character vector");
   }
-  if (Rf_length(cls) == 0) {
-    return classes_data_frame;
-  }
-
-  SEXP args = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(args, 0, cls);
-  SET_VECTOR_ELT(args, 1, classes_data_frame);
-
-  SEXP out = vec_c(
-    args,
-    vctrs_shared_empty_chr,
-    R_NilValue,
-    NULL
-  );
-
-  UNPROTECT(1);
-  return out;
+  return chr_c(cls, classes_data_frame);
 }
 
 // [[ include("type-data-frame.h") ]]

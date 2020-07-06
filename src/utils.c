@@ -1489,6 +1489,51 @@ ERR r_try_catch(void (*fn)(void*),
 SEXP (*rlang_sym_as_character)(SEXP x);
 
 
+// [[ include("utils.h") ]]
+SEXP chr_c(SEXP x, SEXP y) {
+  r_ssize x_n = r_length(x);
+  r_ssize y_n = r_length(y);
+
+  if (x_n == 0) {
+    return y;
+  }
+  if (y_n == 0) {
+    return x;
+  }
+
+  r_ssize out_n = r_ssize_add(x_n, y_n);
+  SEXP out = PROTECT(r_new_vector(STRSXP, out_n));
+
+  SEXP* p_out = STRING_PTR(out);
+  const SEXP* p_x = STRING_PTR_RO(x);
+  const SEXP* p_y = STRING_PTR_RO(y);
+
+  for (r_ssize i = 0; i < x_n; ++i) {
+    p_out[i] = p_x[i];
+  }
+  for (r_ssize i = 0, j = x_n; i < y_n; ++i, ++j) {
+    p_out[j] = p_y[i];
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_fast_c(SEXP x, SEXP y) {
+  SEXPTYPE x_type = TYPEOF(x);
+
+  if (x_type != TYPEOF(y)) {
+    Rf_error("`x` and `y` must have the same types.");
+  }
+
+  switch (x_type) {
+  case STRSXP: return chr_c(x, y);
+  default: Rf_error("Unimplemented type `%s` in `base_c()`.", x_type);
+  }
+}
+
+
 bool vctrs_debug_verbose = false;
 
 SEXP vctrs_ns_env = NULL;
