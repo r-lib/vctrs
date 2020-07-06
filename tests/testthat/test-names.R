@@ -22,23 +22,6 @@ test_that("vec_names() dispatches", {
   expect_identical(vec_names(foobar()), "dispatched!")
 })
 
-test_that("vec_names<- sets names", {
-  x <- letters
-  vec_names(x) <- letters
-  expect_identical(vec_names(x), letters)
-  vec_names(x) <- NULL
-  expect_null(vec_names(x))
-
-  y <- iris
-  vec_names(y) <- as.character(-seq_len(vec_size(y)))
-  expect_identical(row.names(y), row.names(iris))
-  expect_null(vec_names(y))
-
-  z <- ones(3, 2, 1)
-  vec_names(z) <- as.character(1:3)
-  expect_identical(vec_names(z), as.character(1:3))
-})
-
 
 # vec_names2() -------------------------------------------------------------
 
