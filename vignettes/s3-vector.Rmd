@@ -19,10 +19,7 @@ This vignette shows you how to create your own S3 vector classes. It focuses on 
 
 I assume that you're already familiar with the basic machinery of S3, and the vocabulary I use in Advanced R: constructor, helper, and validator. If not, I recommend reading at least the first two sections of [the S3 chapter](https://adv-r.hadley.nz/s3.html) of _Advanced R_.
 
-This article refers to "vectors of numbers" as *double vectors*. Here, "double" stands for ["double precision floating point number"](https://en.wikipedia.org/wiki/Double-precision_floating-point_format). It is also the underlying *storage mode* for `numeric()` vectors in R, see the "Mode names" section in `?mode`. This is a deliberate choice, for two reasons:
-
-1. each vector class should be aware of its storage mode,
-2. using `numeric` instead of `double` will not work for method names for `vec_ptype2()` and `vec_cast()`.
+This article refers to "vectors of numbers" as *double vectors*. Here, "double" stands for ["double precision floating point number"](https://en.wikipedia.org/wiki/Double-precision_floating-point_format), see also `double()`.
 
 ```{r setup}
 library(vctrs)
@@ -208,6 +205,10 @@ Next we define methods that say that combining a `percent` and double should yie
 
 Because double dispatch is a bit of a hack, we need to provide two methods. It's your responsibility to ensure that each member of the pair returns the same result: if they don't you will get weird and unpredictable behaviour.
 
+The double dispatch mechanism requires us to refer to the underlying type, `double`, in the method name.
+If we implemented `vec_ptype2.vctrs_percent.numeric()`, it would never be called.
+See also `?mode`, especially the "Mode names" section.
+
 ```{r}
 vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
 vec_ptype2.double.vctrs_percent <- function(x, y, ...) double()
@@ -228,6 +229,9 @@ vec_cast.vctrs_percent.vctrs_percent <- function(x, to, ...) x
 And then for converting back and forth between doubles. To convert a double to a percent we use the `percent()` helper (not the constructor; this is unvalidated user input). To convert a `percent` to a double, we strip the attributes.
 
 Note that for historical reasons the order of argument in the signature is the opposite as for `vec_ptype2()`. The class for `to` comes first, and the class for `x` comes second.
+
+Again, the double dispatch mechanism requires us to refer to the underlying type, `double`, in the method name.
+Implementing `vec_cast.vctrs_percent.numeric()` has no effect.
 
 ```{r}
 vec_cast.vctrs_percent.double <- function(x, to, ...) percent(x)
