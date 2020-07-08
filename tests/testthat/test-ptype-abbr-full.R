@@ -20,8 +20,14 @@ test_that("non objects default to type + shape", {
 
 })
 
+test_that("non objects can omit shape", {
+  expect_equal(vec_ptype_abbr(ones(10), shape = FALSE), "dbl")
+  expect_equal(vec_ptype_abbr(ones(0, 10), shape = FALSE), "dbl")
+  expect_equal(vec_ptype_abbr(ones(10, 0), shape = FALSE), "dbl")
+})
+
 test_that("objects default to first class", {
-  x <- structure(1, class = "foofy")
+  x <- structure(1, class = c("foofy", "goofy"))
   expect_equal(vec_ptype_full(x), "foofy")
   expect_equal(vec_ptype_abbr(x), "foofy")
 })
@@ -38,6 +44,12 @@ test_that("complex and factor as expected (#323)", {
   expect_equal(vec_ptype_abbr(factor()), "fct")
 })
 
-test_that("named lists are tagged (#322)", {
+test_that("named lists are always tagged (#322)", {
   expect_identical(vec_ptype_abbr(list(x = 1, y = 2)), "named list")
+  expect_identical(vec_ptype_abbr(list(x = 1, y = 2), check_named = TRUE), "named list")
+})
+
+test_that("named atomics are tagged optionally (#781)", {
+  expect_identical(vec_ptype_abbr(c(x = 1, y = 2), check_named = TRUE), "named dbl")
+  expect_identical(vec_ptype_abbr(c(x = 1L, y = 2L), check_named = TRUE), "named int")
 })

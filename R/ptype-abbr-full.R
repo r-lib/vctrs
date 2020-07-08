@@ -13,6 +13,8 @@
 #' characters where possible.
 #'
 #' @param x A vector.
+#' @param check_named Add a prefix for named vectors.
+#' @param shape Include the shape of the vector.
 #' @inheritParams ellipsis::dots_empty
 #'
 #' @keywords internal
@@ -32,7 +34,7 @@ vec_ptype_full <- function(x, ...) {
 
 #' @export
 #' @rdname vec_ptype_full
-vec_ptype_abbr <- function(x, ...) {
+vec_ptype_abbr <- function(x, ..., check_named = FALSE, shape = TRUE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
@@ -59,11 +61,12 @@ vec_ptype_full.default <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.default <- function(x, ...) {
+vec_ptype_abbr.default <- function(x, ..., check_named = FALSE, shape = TRUE) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
   } else if (is_list(x)) {
     named <- is_character(names(x))
+    # Always print "named" even if !check_named, for compatibility
     paste0(if (named) "named ", "list", vec_ptype_shape(x))
   } else if (is_vector(x)) {
     abbr <- switch(typeof(x),
@@ -77,7 +80,11 @@ vec_ptype_abbr.default <- function(x, ...) {
       raw = "raw",
       abbreviate(typeof(x))
     )
-    paste0(abbr, vec_ptype_shape(x))
+    paste0(
+      if (check_named && !is.null(x) && !is.null(vec_names(x))) "named ",
+      abbr,
+      if (shape) vec_ptype_shape(x)
+    )
   } else {
     abort("Not a vector.")
   }
