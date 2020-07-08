@@ -19,6 +19,11 @@ This vignette shows you how to create your own S3 vector classes. It focuses on 
 
 I assume that you're already familiar with the basic machinery of S3, and the vocabulary I use in Advanced R: constructor, helper, and validator. If not, I recommend reading at least the first two sections of [the S3 chapter](https://adv-r.hadley.nz/s3.html) of _Advanced R_.
 
+This article refers to "vectors of numbers" as *double vectors*. Here, "double" stands for ["double precision floating point number"](https://en.wikipedia.org/wiki/Double-precision_floating-point_format). It is also the underlying *storage mode* for `numeric()` vectors in R, see the "Mode names" section in `?mode`. This is a deliberate choice, for two reasons:
+
+1. each vector class should be aware of its storage mode,
+2. using `numeric` instead of `double` will not work for method names for `vec_ptype2()` and `vec_cast()`.
+
 ```{r setup}
 library(vctrs)
 library(zeallot)
