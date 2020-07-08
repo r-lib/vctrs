@@ -250,7 +250,7 @@ messages.</p></td>
 #&gt; <span class='message'>* `` -&gt; ...1</span>
 #&gt; <span class='message'>* `` -&gt; ...2</span>
 #&gt; <span class='message'>* `` -&gt; ...3</span></div><div class='output co'>#&gt; [1] "...1" "...2" "...3"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] "a" "b"</div><div class='input'>
-<span class='co'># `vec_names()` is different from `names()`:</span>
+<span class='co'># `vec_names()` consistently returns the rowwise names of data frames and arrays:</span>
 <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] "a" "b"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names</a></span>(<span class='kw'>mtcars</span>)</div><div class='output co'>#&gt;  [1] "Mazda RX4"           "Mazda RX4 Wag"       "Datsun 710"         
 #&gt;  [4] "Hornet 4 Drive"      "Hornet Sportabout"   "Valiant"            
 #&gt;  [7] "Duster 360"          "Merc 240D"           "Merc 230"           
