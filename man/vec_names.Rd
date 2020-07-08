@@ -76,7 +76,7 @@ vec_names2(1:3)
 vec_names2(1:3, repair = "unique")
 vec_names2(c(a = 1, b = 2))
 
-# `vec_names()` is different from `names()`:
+# `vec_names()` consistently returns the rowwise names of data frames and arrays:
 vec_names(data.frame(a = 1, b = 2))
 names(data.frame(a = 1, b = 2))
 vec_names(mtcars)
