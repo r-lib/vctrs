@@ -39,7 +39,10 @@ vec_ptype_abbr <- function(x, ...) {
   UseMethod("vec_ptype_abbr")
 }
 
+#' @export
 vec_ptype_full.NULL <- function(x, ...) "NULL"
+
+#' @export
 vec_ptype_abbr.NULL <- function(x, ...) "NULL"
 
 # Default: base types and fallback for S3/S4 ------------------------------
