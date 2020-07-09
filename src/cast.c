@@ -143,8 +143,7 @@ SEXP vec_cast_default(SEXP x,
                               syms_to_arg, to_arg,
                               syms_from_dispatch, vctrs_shared_true,
                               syms_df_fallback, df_fallback,
-                              syms_s3_fallback, s3_fallback,
-                              vctrs_ns_env);
+                              syms_s3_fallback, s3_fallback);
   UNPROTECT(2);
   return out;
 }

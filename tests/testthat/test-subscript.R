@@ -81,6 +81,7 @@ test_that("subscript functions have informative error messages", {
 
     "# can customise subscript errors"
     with_tibble_cols(vec_as_subscript(env()))
+    with_dm_tables(vec_as_subscript(env()))
 
     "# vec_as_subscript() checks dimensionality"
     vec_as_subscript(matrix(TRUE, nrow = 1))

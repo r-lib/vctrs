@@ -31,41 +31,34 @@ bool r_is_bool(SEXP x);
 int r_bool_as_int(SEXP x);
 
 SEXP vctrs_eval_mask_n(SEXP fn,
-                       SEXP* syms, SEXP* args,
-                       SEXP env);
+                       SEXP* syms, SEXP* args);
 SEXP vctrs_eval_mask1(SEXP fn,
-                      SEXP x_sym, SEXP x,
-                      SEXP env);
+                      SEXP x_sym, SEXP x);
 SEXP vctrs_eval_mask2(SEXP fn,
                       SEXP x_sym, SEXP x,
-                      SEXP y_sym, SEXP y,
-                      SEXP env);
+                      SEXP y_sym, SEXP y);
 SEXP vctrs_eval_mask3(SEXP fn,
                       SEXP x_sym, SEXP x,
                       SEXP y_sym, SEXP y,
-                      SEXP z_sym, SEXP z,
-                      SEXP env);
+                      SEXP z_sym, SEXP z);
 SEXP vctrs_eval_mask4(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
-                      SEXP x4_sym, SEXP x4,
-                      SEXP env);
+                      SEXP x4_sym, SEXP x4);
 SEXP vctrs_eval_mask5(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
-                      SEXP x5_sym, SEXP x5,
-                      SEXP env);
+                      SEXP x5_sym, SEXP x5);
 SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
-                      SEXP x6_sym, SEXP x6,
-                      SEXP env);
+                      SEXP x6_sym, SEXP x6);
 SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
@@ -73,8 +66,7 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
-                      SEXP x7_sym, SEXP x7,
-                      SEXP env);
+                      SEXP x7_sym, SEXP x7);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -100,7 +92,16 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x5_sym, SEXP x5,
                      SEXP x6_sym, SEXP x6);
 
-void vctrs_stop_unsupported_type(enum vctrs_type, const char* fn) __attribute__((noreturn));
+__attribute__((noreturn)) void r_abort(const char* fmt, ...);
+__attribute__((noreturn)) void stop_internal(const char* fn, const char* fmt, ...);
+__attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
+
+static inline
+__attribute__((noreturn))
+void stop_unimplemented_type(const char* fn, SEXPTYPE type) {
+  stop_internal(fn, "Unimplemented type `%s`.", Rf_type2char(type));
+}
+
 
 SEXP map(SEXP x, SEXP (*fn)(SEXP));
 SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data);
@@ -201,11 +202,6 @@ extern SEXP (*rlang_unbox)(SEXP);
 extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
-static inline
-R_len_t r_length(SEXP x) {
-  return Rf_length(x);
-}
-
 void* r_vec_deref(SEXP x);
 const void* r_vec_const_deref(SEXP x);
 
@@ -252,6 +248,7 @@ bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 bool r_is_number(SEXP x);
 SEXP r_peek_option(const char* option);
+SEXP r_peek_frame();
 SEXP r_clone_referenced(SEXP x);
 SEXP r_clone_shared(SEXP x);
 
@@ -309,7 +306,7 @@ static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
 
 static inline void r__vec_get_check(SEXP x, R_len_t i, const char* fn) {
   if ((Rf_length(x) - 1) < i) {
-    Rf_error("Internal error in `%s()`: Vector is too small", fn);
+    stop_internal(fn, "Vector is too small.");
   }
 }
 static inline int r_lgl_get(SEXP x, R_len_t i) {
@@ -338,7 +335,7 @@ void r_int_poke(SEXP x, R_len_t i, int value) {
 static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
   switch (type) {
   case INTSXP: return (void*) INTEGER(x);
-  default: Rf_error("Internal error: Unimplemented type in `r_vec_unwrap()`.");
+  default: stop_unimplemented_type("r_vec_unwrap", type);
   }
 }
 
@@ -438,12 +435,37 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   case vctrs_type_complex: return &vctrs_shared_na_cpl;
   case vctrs_type_character: return &NA_STRING;
   case vctrs_type_list: return vctrs_shared_na_list;
-  default: vctrs_stop_unsupported_type(type, "vec_type_missing_value");
+  default: stop_unimplemented_vctrs_type("vec_type_missing_value", type);
   }
 }
 
 void c_print_backtrace();
 void r_browse(SEXP x);
+
+
+// Adapted from CERT C coding standards
+static inline
+intmax_t intmax_add(intmax_t x, intmax_t y) {
+  if ((y > 0 && x > (INTMAX_MAX - y)) ||
+      (y < 0 && x < (INTMAX_MIN - y))) {
+    stop_internal("intmax_add", "Values too large to be added.");
+  }
+
+  return x + y;
+}
+
+static inline
+r_ssize r_ssize_add(r_ssize x, r_ssize y) {
+  intmax_t out = intmax_add(x, y);
+
+  if (out > R_SSIZE_MAX) {
+    stop_internal("r_ssize_safe_add", "Result too large for an `r_ssize`.");
+  }
+
+  return (r_ssize) out;
+}
+
+SEXP chr_c(SEXP x, SEXP y);
 
 
 extern SEXP vctrs_ns_env;
@@ -552,6 +574,8 @@ extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_action;
 extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
+extern SEXP syms_abort;
+extern SEXP syms_message;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

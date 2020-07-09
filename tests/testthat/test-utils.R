@@ -68,3 +68,10 @@ test_that("vec_common_suffix() finds common suffix", {
   exp <- data.frame(x = 2:3, y = c("bar", "baz"))
   expect_identical(vec_common_suffix(x, y), exp)
 })
+
+test_that("fast_c() concatenates", {
+  expect_identical(fast_c(character(), "foo"), "foo")
+  expect_identical(fast_c("foo", character()), "foo")
+  expect_identical(fast_c("foo", c("bar", "baz")), c("foo", "bar", "baz"))
+  expect_identical(fast_c(c("bar", "baz"), "foo"), c("bar", "baz", "foo"))
+})

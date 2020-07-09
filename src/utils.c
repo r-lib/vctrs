@@ -45,7 +45,14 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
  * This takes two arrays of argument (`args`) and argument names
  * `syms`). The names should correspond to formal arguments of `fn`.
  * Elements of `args` are assigned to their corresponding name in
- * `syms` in a child of `env`. A call to `fn` is constructed with the
+ * `syms` directly in the current environment, i.e. the environment of
+ * the closure wrapping the `.Call()` invokation. Since masked
+ * evaluation causes side effects and variable assignments in that
+ * frame environment, the native code invokation must be tailing: no
+ * further R code (including `on.exit()` expressions) should be
+ * evaluated in that closure wrapper.
+ *
+ * A call to `fn` is constructed with the
  * CARs and TAGs assigned symmetrically to the elements of
  * `syms`. This way the arguments are masked by symbols corresponding
  * to the formal parameters.
@@ -57,57 +64,52 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
  * @param args A null-terminated array of arguments passed to the method.
  * @param env The environment in which to evaluate.
  */
-SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
-  SEXP mask = PROTECT(r_new_environment(env, 4));
+SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args) {
+  SEXP mask = PROTECT(r_peek_frame());
   SEXP out = vctrs_eval_mask_n_impl(fn, syms, args, mask);
 
   UNPROTECT(1);
   return out;
 }
 SEXP vctrs_eval_mask1(SEXP fn,
-                      SEXP x_sym, SEXP x,
-                      SEXP env) {
+                      SEXP x_sym, SEXP x) {
   SEXP syms[2] = { x_sym, NULL };
   SEXP args[2] = { x, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask2(SEXP fn,
                       SEXP x_sym, SEXP x,
-                      SEXP y_sym, SEXP y,
-                      SEXP env) {
+                      SEXP y_sym, SEXP y) {
   SEXP syms[3] = { x_sym, y_sym, NULL };
   SEXP args[3] = { x, y, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask3(SEXP fn,
                       SEXP x_sym, SEXP x,
                       SEXP y_sym, SEXP y,
-                      SEXP z_sym, SEXP z,
-                      SEXP env) {
+                      SEXP z_sym, SEXP z) {
   SEXP syms[4] = { x_sym, y_sym, z_sym, NULL };
   SEXP args[4] = { x, y, z, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask4(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
-                      SEXP x4_sym, SEXP x4,
-                      SEXP env) {
+                      SEXP x4_sym, SEXP x4) {
   SEXP syms[5] = { x1_sym, x2_sym, x3_sym, x4_sym, NULL };
   SEXP args[5] = { x1, x2, x3, x4, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask5(SEXP fn,
                       SEXP x1_sym, SEXP x1,
                       SEXP x2_sym, SEXP x2,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
-                      SEXP x5_sym, SEXP x5,
-                      SEXP env) {
+                      SEXP x5_sym, SEXP x5) {
   SEXP syms[6] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, NULL };
   SEXP args[6] = { x1, x2, x3, x4, x5, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x1_sym, SEXP x1,
@@ -115,11 +117,10 @@ SEXP vctrs_eval_mask6(SEXP fn,
                       SEXP x3_sym, SEXP x3,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
-                      SEXP x6_sym, SEXP x6,
-                      SEXP env) {
+                      SEXP x6_sym, SEXP x6) {
   SEXP syms[7] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, NULL };
   SEXP args[7] = { x1, x2, x3, x4, x5, x6, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x1_sym, SEXP x1,
@@ -128,27 +129,27 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x4_sym, SEXP x4,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
-                      SEXP x7_sym, SEXP x7,
-                      SEXP env) {
+                      SEXP x7_sym, SEXP x7) {
   SEXP syms[8] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, NULL };
   SEXP args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
-  return vctrs_eval_mask_n(fn, syms, args, env);
+  return vctrs_eval_mask_n(fn, syms, args);
 }
 
 /**
- * Dispatch in the global environment
+ * Dispatch in the current environment
  *
  * Like `vctrs_eval_mask_n()`, the arguments `args` are are assigned
  * to the symbols `syms`. In addition, the function `fn` is assigned
- * to `fn_sym`. The mask is a direct child of the global environment
- * so that method dispatch finds globally defined methods.
+ * to `fn_sym`. The mask is the current environment which has hygiene
+ * implications regarding the closure wrapping `.Call()`, as
+ * documented in `vctrs_eval_mask_n()`.
  *
  * @param fn_sym A symbol to which `fn` is assigned.
  * @inheritParams vctrs_eval_mask_n
  */
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args) {
-  // Mask `fn` with `fn_sym`. We dispatch in the global environment.
-  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv, 4));
+  // Mask `fn` with `fn_sym` and `args` with `syms` in the current environment
+  SEXP mask = PROTECT(r_peek_frame());
   Rf_defineVar(fn_sym, fn, mask);
 
   SEXP out = vctrs_eval_mask_n_impl(fn_sym, syms, args, mask);
@@ -368,7 +369,7 @@ SEXP s3_paste_method_sym(const char* generic, const char* class) {
   int class_len = strlen(class);
   int dot_len = 1;
   if (gen_len + class_len + dot_len >= sizeof(s3_buf)) {
-    Rf_error("Internal error: Generic or class name is too long.");
+    stop_internal("s3_paste_method_sym", "Generic or class name is too long.");
   }
 
   char* buf = s3_buf;
@@ -453,7 +454,7 @@ SEXP s3_get_class(SEXP x) {
   }
 
   if (!Rf_length(class)) {
-    Rf_error("Internal error in `s3_get_class()`: Class must have length.");
+    stop_internal("s3_get_class", "Class must have length.");
   }
 
   return class;
@@ -527,7 +528,7 @@ SEXP s3_bare_class(SEXP x) {
   case CLOSXP:
   case SPECIALSXP:
   case BUILTINSXP: return chrs_function;
-  default: vctrs_stop_unsupported_type(vec_typeof(x), "base_dispatch_class_str");
+  default: stop_unimplemented_vctrs_type("base_dispatch_class_str", vec_typeof(x));
   }
 }
 
@@ -670,7 +671,7 @@ SEXP node_compact_d(SEXP node) {
 // [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
   if (TYPEOF(levels) != STRSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: `level` must be a character vector.");
+    stop_internal("new_empty_factor", "`level` must be a character vector.");
   }
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
@@ -760,15 +761,15 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
 // `start` is 0-based
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   if (start < 0) {
-    Rf_error("Internal error: `start` must not be negative in `compact_seq()`.");
+    stop_internal("compact_seq", "`start` must not be negative.");
   }
 
   if (size < 0) {
-    Rf_error("Internal error: `size` must not be negative in `compact_seq()`.");
+    stop_internal("compact_seq", "`size` must not be negative.");
   }
 
   if (!increasing && size > start + 1) {
-    Rf_error("Internal error: If constructing a decreasing sequence, `size` must not be larger than `start` in `compact_seq()`.");
+    stop_internal("compact_seq", "`size` must not be larger than `start` for decreasing sequences.");
   }
 
   SEXP info = PROTECT(Rf_allocVector(INTSXP, 3));
@@ -816,7 +817,7 @@ void init_compact_rep(int* p, R_len_t i, R_len_t n) {
 // `i` should be an R-based index
 SEXP compact_rep(R_len_t i, R_len_t n) {
   if (n < 0) {
-    Rf_error("Internal error: Negative `n` in `compact_rep()`.");
+    stop_internal("compact_rep", "Negative `n` in `compact_rep()`.");
   }
 
   SEXP rep = PROTECT(Rf_allocVector(INTSXP, 2));
@@ -892,7 +893,7 @@ void* r_vec_deref(SEXP x) {
   case CPLXSXP: return COMPLEX(x);
   case STRSXP: return STRING_PTR(x);
   case RAWSXP: return RAW(x);
-  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  default: stop_unimplemented_type("r_vec_deref", TYPEOF(x));
   }
 }
 
@@ -900,7 +901,7 @@ const void* r_vec_const_deref(SEXP x) {
   switch (TYPEOF(x)) {
   case INTSXP: return INTEGER_RO(x);
   case STRSXP: return STRING_PTR_RO(x);
-  default: Rf_error("Unimplemented type in `r_vec_deref()`.");
+  default: stop_unimplemented_type("r_vec_const_deref", TYPEOF(x));
   }
 }
 
@@ -908,7 +909,7 @@ void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
   switch (type) {
   case STRSXP: *((SEXP**) p) += i; return;
   case INTSXP: *((int**) p) += i; return;
-  default: Rf_error("Unimplemented type in `r_vec_ptr_inc()`.");
+  default: stop_unimplemented_type("r_vec_ptr_inc", type);
   }
 }
 
@@ -927,7 +928,7 @@ void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_
   switch (type) {
   case STRSXP: FILL(SEXP, p, value_p, value_i, n); return;
   case INTSXP: FILL(int, p, value_p, value_i, n); return;
-  default: Rf_error("Internal error: Unimplemented type in `r_fill()`");
+  default: stop_unimplemented_type("r_vec_fill", type);
   }
 }
 
@@ -936,7 +937,7 @@ void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_
 
 R_len_t r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: Excepted logical vector in `r_lgl_sum()`");
+    stop_internal("r_lgl_sum", "Expected logical vector.");
   }
 
   R_len_t n = Rf_length(x);
@@ -959,7 +960,7 @@ R_len_t r_lgl_sum(SEXP x, bool na_true) {
 
 SEXP r_lgl_which(SEXP x, bool na_propagate) {
   if (TYPEOF(x) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: Expected logical vector in `r_lgl_which()`");
+    stop_internal("r_lgl_which", "Expected logical vector.");
   }
 
   R_len_t n = Rf_length(x);
@@ -1016,7 +1017,7 @@ void r_int_fill_seq(SEXP x, int start, R_len_t n) {
 SEXP r_seq(R_len_t from, R_len_t to) {
   R_len_t n = to - from;
   if (n < 0) {
-    Rf_error("Internal error: Negative length in `r_seq()`");
+    stop_internal("r_seq", "Negative length.");
   }
 
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
@@ -1083,7 +1084,7 @@ int r_chr_max_len(SEXP x) {
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
   int prefix_len = strlen(prefix);
   if (len - 1 < prefix_len) {
-    Rf_errorcall(R_NilValue, "Internal error: Prefix is larger than iota buffer.");
+    stop_internal("r_chr_iota", "Prefix is larger than iota buffer.");
   }
 
   memcpy(buf, prefix, prefix_len);
@@ -1114,7 +1115,7 @@ static void abort_parse(SEXP code, const char* why) {
   if (Rf_GetOption1(Rf_install("rlang__verbose_errors")) != R_NilValue) {
    Rf_PrintValue(code);
   }
-  Rf_error("Internal error: %s", why);
+  stop_internal("r_parse", why);
 }
 
 SEXP r_parse(const char* str) {
@@ -1123,10 +1124,10 @@ SEXP r_parse(const char* str) {
   ParseStatus status;
   SEXP out = PROTECT(R_ParseVector(str_, -1, &status, R_NilValue));
   if (status != PARSE_OK) {
-    abort_parse(str_, "Parsing failed");
+    abort_parse(str_, "Parsing failed.");
   }
   if (Rf_length(out) != 1) {
-    abort_parse(str_, "Expected a single expression");
+    abort_parse(str_, "Expected a single expression.");
   }
 
   out = VECTOR_ELT(out, 0);
@@ -1215,6 +1216,16 @@ SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
 }
 
+static SEXP peek_frame_call = NULL;
+
+// Calling `sys.frame()` has a cost of 1.5us compared to 300ns for
+// `R_GetCurrentEnv()`. However the latter is currently buggy, see
+// https://bugs.r-project.org/bugzilla/show_bug.cgi?id=17839.
+SEXP r_peek_frame() {
+  return Rf_eval(peek_frame_call, R_EmptyEnv);
+}
+
+
 /**
  * Create a call or pairlist
  *
@@ -1226,7 +1237,7 @@ SEXP r_peek_option(const char* option) {
  */
 SEXP r_pairlist(SEXP* tags, SEXP* cars) {
   if (!cars) {
-    Rf_error("Internal error: Null `cars` in `r_pairlist()`");
+    stop_internal("r_pairlist", "NULL `cars`.");
   }
 
   SEXP list = PROTECT(Rf_cons(R_NilValue, R_NilValue));
@@ -1259,7 +1270,7 @@ bool r_has_name_at(SEXP names, R_len_t i) {
 
   R_len_t n = Rf_length(names);
   if (n <= i) {
-    Rf_error("Internal error: Names shorter than expected: (%d/%d)", i + 1, n);
+    stop_internal("r_has_name_at", "Names shorter than expected: (%d/%d).", i + 1, n);
   }
 
   SEXP elt = STRING_ELT(names, i);
@@ -1489,6 +1500,87 @@ ERR r_try_catch(void (*fn)(void*),
 SEXP (*rlang_sym_as_character)(SEXP x);
 
 
+// [[ include("utils.h") ]]
+SEXP chr_c(SEXP x, SEXP y) {
+  r_ssize x_n = r_length(x);
+  r_ssize y_n = r_length(y);
+
+  if (x_n == 0) {
+    return y;
+  }
+  if (y_n == 0) {
+    return x;
+  }
+
+  r_ssize out_n = r_ssize_add(x_n, y_n);
+  SEXP out = PROTECT(r_new_vector(STRSXP, out_n));
+
+  SEXP* p_out = STRING_PTR(out);
+  const SEXP* p_x = STRING_PTR_RO(x);
+  const SEXP* p_y = STRING_PTR_RO(y);
+
+  for (r_ssize i = 0; i < x_n; ++i) {
+    p_out[i] = p_x[i];
+  }
+  for (r_ssize i = 0, j = x_n; i < y_n; ++i, ++j) {
+    p_out[j] = p_y[i];
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ register() ]]
+SEXP vctrs_fast_c(SEXP x, SEXP y) {
+  SEXPTYPE x_type = TYPEOF(x);
+
+  if (x_type != TYPEOF(y)) {
+    Rf_error("`x` and `y` must have the same types.");
+  }
+
+  switch (x_type) {
+  case STRSXP: return chr_c(x, y);
+  default: stop_unimplemented_type("vctrs_fast_c", x_type);
+  }
+}
+
+
+#define FMT_BUFSIZE 4096
+#define FMT_INTERP(BUF, FMT, DOTS)              \
+  {                                             \
+    va_list dots;                               \
+    va_start(dots, FMT);                        \
+    vsnprintf(BUF, FMT_BUFSIZE, FMT, dots);     \
+    va_end(dots);                               \
+                                                \
+    BUF[FMT_BUFSIZE - 1] = '\0';                \
+  }
+
+__attribute__((noreturn))
+void r_abort(const char* fmt, ...) {
+  R_CheckStack2(FMT_BUFSIZE);
+  char msg[FMT_BUFSIZE];
+  FMT_INTERP(msg, fmt, ...);
+
+  SEXP r_msg = PROTECT(r_chr(msg));
+  vctrs_eval_mask1(syms_abort, syms_message, r_msg);
+
+  never_reached("r_abort");
+}
+
+__attribute__((noreturn))
+void stop_internal(const char* fn, const char* fmt, ...) {
+  R_CheckStack2(FMT_BUFSIZE);
+  char msg[FMT_BUFSIZE];
+  FMT_INTERP(msg, fmt, ...);
+
+  r_abort("Internal error in `%s()`: %s", fn, msg);
+}
+
+#undef FMT_INTERP
+#undef FMT_BUFSIZE
+
+
 bool vctrs_debug_verbose = false;
 
 SEXP vctrs_ns_env = NULL;
@@ -1597,6 +1689,8 @@ SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
+SEXP syms_abort = NULL;
+SEXP syms_message = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1866,6 +1960,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
+  syms_abort = Rf_install("abort");
+  syms_message = Rf_install("message");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -1932,4 +2028,10 @@ void vctrs_init_utils(SEXP ns) {
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
   VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
+
+  SEXP current_frame_body = PROTECT(r_parse_eval("as.call(list(sys.frame, -1))", R_BaseEnv));
+  SEXP current_frame_fn = PROTECT(r_new_function(R_NilValue, current_frame_body, R_EmptyEnv));
+  peek_frame_call = Rf_lcons(current_frame_fn, R_NilValue);
+  R_PreserveObject(peek_frame_call);
+  UNPROTECT(2);
 }

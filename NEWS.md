@@ -1,6 +1,14 @@
 
 # vctrs (development version)
 
+* `vec_slice()` now checks sizes of data frame columns in case the
+  data structure is corrupt (#552).
+
+* The native routines in vctrs now dispatch and evaluate in the vctrs
+  namespace. This improves the continuity of evaluation in backtraces.
+
+* `new_data_frame()` is now twice as fast when `class` is supplied.
+
 * New `vec_names2()`, `vec_names()` and `vec_set_names()` (#1173).
 
 * New `vec_proxy_order()` that provides an ordering proxy for use in

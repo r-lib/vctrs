@@ -16,7 +16,11 @@ extern bool vctrs_debug_verbose;
 #define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
 
 
-typedef R_xlen_t r_ssize_t;
+typedef R_xlen_t r_ssize;
+#define R_SSIZE_MAX R_XLEN_T_MAX
+
+#define r_length Rf_xlength
+#define r_new_vector Rf_allocVector
 
 // An ERR indicates either a C NULL in case of no error, or a
 // condition object otherwise
