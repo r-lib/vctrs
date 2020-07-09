@@ -858,7 +858,7 @@ meter(10) / meter(1)
 meter(10) * meter(1)
 ```
 
-Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not (and neither do addition and subtraction).
+Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while `meter(10) / 2` makes sense, `2 / meter(10)` does not (and neither do addition and subtraction). To support both doubles and integers as operands, we dispatch over `numeric` here instead of `double`.
 
 ```{r, error = TRUE}
 vec_arith.vctrs_meter.numeric <- function(op, x, y, ...) {
@@ -878,6 +878,7 @@ vec_arith.numeric.vctrs_meter <- function(op, x, y, ...) {
 }
 
 meter(2) * 10
+meter(2) * as.integer(10)
 10 * meter(2)
 meter(20) / 10
 10 / meter(20)
