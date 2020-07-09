@@ -207,7 +207,6 @@ Because double dispatch is a bit of a hack, we need to provide two methods. It's
 
 The double dispatch mechanism requires us to refer to the underlying type, `double`, in the method name.
 If we implemented `vec_ptype2.vctrs_percent.numeric()`, it would never be called.
-See also `?mode`, especially the "Mode names" section.
 
 ```{r}
 vec_ptype2.vctrs_percent.double <- function(x, y, ...) double()
