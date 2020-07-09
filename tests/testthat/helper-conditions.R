@@ -31,3 +31,11 @@ with_tibble_rows <- function(expr) {
     subscript_action = "remove"
   )
 }
+with_dm_tables <- function(expr) {
+  with_subscript_data(
+    expr,
+    subscript_arg = quote(foo(bar)),
+    subscript_elt = "table",
+    subscript_action = "extract"
+  )
+}

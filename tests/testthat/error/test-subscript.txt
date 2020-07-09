@@ -60,6 +60,11 @@ Error: Must rename columns with a valid subscript vector.
 x Subscript `foo(bar)` has the wrong type `environment`.
 i It must be logical, numeric, or character.
 
+> with_dm_tables(vec_as_subscript(env()))
+Error: Must extract tables with a valid subscript vector.
+x Subscript `foo(bar)` has the wrong type `environment`.
+i It must be logical, numeric, or character.
+
 
 vec_as_subscript() checks dimensionality
 ========================================
