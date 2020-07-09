@@ -116,6 +116,7 @@
     
 <p>This vignette shows you how to create your own S3 vector classes. It focuses on the aspects of making a vector class that every class needs to worry about; you’ll also need to provide methods that actually make the vector useful.</p>
 <p>I assume that you’re already familiar with the basic machinery of S3, and the vocabulary I use in Advanced R: constructor, helper, and validator. If not, I recommend reading at least the first two sections of <a href="https://adv-r.hadley.nz/s3.html">the S3 chapter</a> of <em>Advanced R</em>.</p>
+<p>This article refers to “vectors of numbers” as <em>double vectors</em>. Here, “double” stands for <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">“double precision floating point number”</a>, see also <code><a href="https://rdrr.io/r/base/double.html">double()</a></code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://vctrs.r-lib.org">vctrs</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/nteetor/zeallot">zeallot</a></span>)
@@ -282,6 +283,7 @@
 </pre></div>
 <p>Next we define methods that say that combining a <code>percent</code> and double should yield a <code>double</code>. We avoid returning a <code>percent</code> here because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.</p>
 <p>Because double dispatch is a bit of a hack, we need to provide two methods. It’s your responsibility to ensure that each member of the pair returns the same result: if they don’t you will get weird and unpredictable behaviour.</p>
+<p>The double dispatch mechanism requires us to refer to the underlying type, <code>double</code>, in the method name. If we implemented <code>vec_ptype2.vctrs_percent.numeric()</code>, it would never be called.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="kw">vec_ptype2.vctrs_percent.double</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()
 <span class="kw">vec_ptype2.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()
@@ -300,6 +302,7 @@
 </pre></div>
 <p>And then for converting back and forth between doubles. To convert a double to a percent we use the <code>percent()</code> helper (not the constructor; this is unvalidated user input). To convert a <code>percent</code> to a double, we strip the attributes.</p>
 <p>Note that for historical reasons the order of argument in the signature is the opposite as for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>. The class for <code>to</code> comes first, and the class for <code>x</code> comes second.</p>
+<p>Again, the double dispatch mechanism requires us to refer to the underlying type, <code>double</code>, in the method name. Implementing <code>vec_cast.vctrs_percent.numeric()</code> has no effect.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="kw">vec_cast.vctrs_percent.double</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu">percent</span>(<span class="kw">x</span>)
 <span class="kw">vec_cast.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>)
@@ -943,7 +946,7 @@
 <span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">*</span> <span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; Error: &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span>
 </pre></div>
-<p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (and neither do addition and subtraction).</p>
+<p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (and neither do addition and subtraction). To support both doubles and integers as operands, we dispatch over <code>numeric</code> here instead of <code>double</code>.</p>
 <div class="sourceCode" id="cb59"><pre class="downlit">
 <span class="kw">vec_arith.vctrs_meter.numeric</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(
@@ -962,6 +965,9 @@
 }
 
 <span class="fu">meter</span>(<span class="fl">2</span>) <span class="op">*</span> <span class="fl">10</span>
+<span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
+<span class="co">#&gt; [1] 20 m</span>
+<span class="fu">meter</span>(<span class="fl">2</span>) <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fl">10</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 20 m</span>
 <span class="fl">10</span> <span class="op">*</span> <span class="fu">meter</span>(<span class="fl">2</span>)
