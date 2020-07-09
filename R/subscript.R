@@ -75,9 +75,9 @@ vec_as_subscript2_result <- function(i,
                                      logical = "cast",
                                      numeric = "cast",
                                      character = "cast") {
-  logical <- arg_match(logical, c("cast", "error"))
-  numeric <- arg_match(numeric, c("cast", "error"))
-  character <- arg_match(character, c("cast", "error"))
+  logical <- arg_match0(logical, c("cast", "error"))
+  numeric <- arg_match0(numeric, c("cast", "error"))
+  character <- arg_match0(character, c("cast", "error"))
 
   result <- vec_as_subscript_result(
     i,
