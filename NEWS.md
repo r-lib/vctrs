@@ -1,5 +1,5 @@
 
-# vctrs (development version)
+# vctrs 0.3.2
 
 * `vec_slice()` now checks sizes of data frame columns in case the
   data structure is corrupt (#552).
@@ -20,6 +20,7 @@
 
 * The experimental `relax` argument has been removed from
   `vec_proxy_compare()`.
+
 
 # vctrs 0.3.1
 
