@@ -29,7 +29,7 @@ Imports:
     ellipsis (>= 0.2.0),
     digest,
     glue,
-    rlang (>= 0.4.5)
+    rlang (>= 0.4.7)
 Suggests: 
     bit64,
     covr,
@@ -47,8 +47,6 @@ Suggests:
     zeallot
 VignetteBuilder: 
     knitr
-Remotes:
-    r-lib/rlang
 Encoding: UTF-8
 Language: en-GB
 LazyData: true
