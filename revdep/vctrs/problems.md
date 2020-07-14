@@ -36,7 +36,7 @@ Run `cloud_details(, "projects")` for more info
     > 
     > # View only active projects with "Fun" in their title.
     > projects("Fun")
-    Error: C stack usage  7973364 is too close to the limit
+    Error: C stack usage  7969220 is too close to the limit
     Execution halted
     ```
 
@@ -58,7 +58,7 @@ Run `cloud_details(, "projects")` for more info
         current_owner corresp_auth creator 
         <prjaut>      <prjaut>     <prjaut>
       1 13: Agnew     8888: Stone  0: root 
-      Error: C stack usage  7973204 is too close to the limit
+      Error: C stack usage  7973652 is too close to the limit
       Execution halted
     ```
 
@@ -68,83 +68,5 @@ Run `cloud_details(, "projects")` for more info
     ```
     Namespace in Imports field not imported from: ‘methods’
       All declared Imports should be used.
-    ```
-
-# tibble
-
-<details>
-
-* Version: 3.0.3
-* Source code: https://github.com/cran/tibble
-* URL: https://tibble.tidyverse.org/, https://github.com/tidyverse/tibble
-* BugReports: https://github.com/tidyverse/tibble/issues
-* Date/Publication: 2020-07-10 20:40:03 UTC
-* Number of recursive dependencies: 68
-
-Run `cloud_details(, "tibble")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       11. base::tryCatch(.Call(vctrs_try_catch_callback, data, NULL), ...)
-       12. base:::tryCatchList(expr, classes, parentenv, handlers)
-       13. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-       14. base:::doTryCatch(return(expr), name, parentenv, handler)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 1401 | SKIPPED: 108 | WARNINGS: 0 | FAILED: 5 ]
-      1. Failure: [.tbl_df rejects unknown column indexes (#83) (@test-subsetting.R#176) 
-      2. Failure: [.tbl_df rejects unknown column indexes (#83) (@test-subsetting.R#176) 
-      3. Failure: [.tbl_df rejects unknown column indexes (#83) (@test-subsetting.R#176) 
-      4. Error: can use classed character indexes (#778) (@test-subsetting.R#398) 
-      5. Error: can use classed integer indexes (#778) (@test-subsetting.R#410) 
-      
-      Error: testthat unit tests failed
-      Execution halted
-    ```
-
-# tidyselect
-
-<details>
-
-* Version: 1.1.0
-* Source code: https://github.com/cran/tidyselect
-* URL: https://tidyselect.r-lib.org, https://github.com/r-lib/tidyselect
-* BugReports: https://github.com/r-lib/tidyselect/issues
-* Date/Publication: 2020-05-11 23:10:07 UTC
-* Number of recursive dependencies: 54
-
-Run `cloud_details(, "tidyselect")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Backtrace:
-        1. testthat::expect_error(...)
-       23. vctrs:::try_catch_impl(...)
-       24. base::tryCatch(.Call(vctrs_try_catch_callback, data, NULL), ...)
-       25. base:::tryCatchList(expr, classes, parentenv, handlers)
-       26. base:::tryCatchOne(expr, names, parentenv, handlers[[1L]])
-       27. base:::doTryCatch(return(expr), name, parentenv, handler)
-      
-      ══ testthat results  ═══════════════════════════════════════════════════════════
-      [ OK: 451 | SKIPPED: 18 | WARNINGS: 0 | FAILED: 2 ]
-      1. Error: vars_select() supports S3 vectors (#109) (@test-lifecycle-deprecated.R#150) 
-      2. Failure: vars_select() type-checks inputs (@test-lifecycle-deprecated.R#162) 
-      
-      Error: testthat unit tests failed
-      Execution halted
     ```
 
