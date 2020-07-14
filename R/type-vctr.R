@@ -447,13 +447,13 @@ anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
 xtfrm.vctrs_vctr <- function(x) {
   proxy <- vec_proxy_compare(x)
 
+  if (is.object(proxy) && typeof(proxy) %in% c("integer", "double", "character")) {
+    proxy <- unstructure(proxy)
+  }
+
   # order(order(x)) ~= rank(x)
-  if (is_integer(proxy) || is_double(proxy)) {
-    if (is.object(proxy)) {
-      unstructure(proxy)
-    } else {
-      proxy
-    }
+  if (typeof(proxy) %in% c("integer", "double")) {
+    proxy
   } else {
     order(order_proxy(proxy))
   }
