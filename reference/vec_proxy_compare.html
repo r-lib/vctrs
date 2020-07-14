@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Comparison and order proxy — vec_proxy_compare • vctrs</title>
+<title>Comparison proxy — vec_proxy_compare • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,17 +46,11 @@
 
 
 
-<meta property="og:title" content="Comparison and order proxy — vec_proxy_compare" />
-<meta property="og:description" content="vec_proxy_compare() and vec_proxy_order() return proxy objects, i.e.
-an atomic vector or data frame of atomic vectors.
-For vctrs_vctr objects:
-vec_proxy_compare() determines the behavior of &amp;lt;, &amp;gt;, &amp;gt;=
-and &amp;lt;= (via vec_compare()); and min(), max(), median(), and
-quantile().
-vec_proxy_order() determines the behavior of order() and sort()
-(via xtfrm()).
-
-" />
+<meta property="og:title" content="Comparison proxy — vec_proxy_compare" />
+<meta property="og:description" content="Returns a proxy object (i.e. an atomic vector or data frame of atomic
+vectors). For vctrs, this determines the behaviour of order() and
+sort() (via xtfrm()); &amp;lt;, &amp;gt;, &amp;gt;= and &amp;lt;= (via vec_compare());
+and min(), max(), median(), and quantile()." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -159,27 +153,19 @@ vec_proxy_order() determines the behavior of order() and sort()
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Comparison and order proxy</h1>
+    <h1>Comparison proxy</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/compare.R'><code>R/compare.R</code></a></small>
     <div class="hidden name"><code>vec_proxy_compare.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_order()</a></code> return proxy objects, i.e.
-an atomic vector or data frame of atomic vectors.</p>
-<p>For <code><a href='https://vctrs.r-lib.org/reference/new_vctr.html'>vctrs_vctr</a></code> objects:</p><ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code> determines the behavior of <code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code>
-and <code>&lt;=</code> (via <code><a href='https://vctrs.r-lib.org/reference/vec_compare.html'>vec_compare()</a></code>); and <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>max()</a></code>, <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code>, and
-<code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>.</p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_order()</a></code> determines the behavior of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> and <code><a href='https://rdrr.io/r/base/sort.html'>sort()</a></code>
-(via <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code>).</p></li>
-</ul>
-
+    <p>Returns a proxy object (i.e. an atomic vector or data frame of atomic
+vectors). For <a href='https://vctrs.r-lib.org/reference/new_vctr.html'>vctr</a>s, this determines the behaviour of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> and
+<code><a href='https://rdrr.io/r/base/sort.html'>sort()</a></code> (via <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code>); <code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code> and <code>&lt;=</code> (via <code><a href='https://vctrs.r-lib.org/reference/vec_compare.html'>vec_compare()</a></code>);
+and <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>max()</a></code>, <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code>, and <code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
-
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_order</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>, relax = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -192,6 +178,13 @@ and <code>&lt;=</code> (via <code><a href='https://vctrs.r-lib.org/reference/vec
       <th>...</th>
       <td><p>These dots are for future extensions and must be empty.</p></td>
     </tr>
+    <tr>
+      <th>relax</th>
+      <td><p>If <code>TRUE</code>, and <code>x</code> is otherwise non-comparable, will return
+<code><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_seq_along(x)</a></code>. This allows a data frame to be orderable, even if
+one of its components is not. This is experimental and may change in the
+future.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -199,38 +192,18 @@ and <code>&lt;=</code> (via <code><a href='https://vctrs.r-lib.org/reference/vec
     <p>A 1d atomic vector or a data frame.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The default method of <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code> assumes that all classes built
-on top of atomic vectors or records are comparable. Internally the default
-calls <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code>. If your class is not comparable, you will need
+    <p>The default method assumes that all classes built on top of atomic
+vectors or records are orderable. If your class is not, you will need
 to provide a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code> method that throws an error.</p>
-<p>The behavior of <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_order()</a></code> is identical to <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code>,
-with the exception of lists. Lists are not comparable, as comparing
-elements of different types is undefined. However, to allow ordering of
-data frames containing list-columns, the ordering proxy of a list is
-generated as an integer vector that can be used to order list elements
-by first appearance.</p>
     <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
 
     
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code> called by default in <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code></p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code> called by default in <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_order()</a></code></p></li>
+<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> called by default</p></li>
 </ul>
 
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Lists are not comparable</span>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>3</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_compare.html'>vec_compare</a></span>(<span class='kw'>x</span>, <span class='kw'>x</span>))</div><div class='output co'>#&gt; Error : `vec_proxy_compare.list()` not supported.</div><div class='input'>
-<span class='co'># But lists are orderable by first appearance to allow for</span>
-<span class='co'># ordering data frames with list-cols</span>
-<span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://vctrs.r-lib.org/reference/new_data_frame.html'>new_data_frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(x = <span class='kw'>x</span>))
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_order.html'>vec_sort</a></span>(<span class='kw'>df</span>)</div><div class='output co'>#&gt;      x
-#&gt; 1 1, 2
-#&gt; 2 1, 2
-#&gt; 3    1
-#&gt; 4    3</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
