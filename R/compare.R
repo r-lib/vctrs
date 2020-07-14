@@ -130,10 +130,9 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 #' vec_sort(df, "desc")
 vec_order <- function(x,
                       direction = c("asc", "desc"),
-                      na_value = c("largest", "smallest")
-                      ) {
-  direction <- match.arg(direction)
-  na_value <- match.arg(na_value)
+                      na_value = c("largest", "smallest")) {
+  direction <- arg_match0(direction, c("asc", "desc"))
+  na_value <- arg_match0(na_value, c("largest", "smallest"))
 
   order_proxy(vec_proxy_compare(x), direction = direction, na_value = na_value)
 }
@@ -143,8 +142,8 @@ vec_order <- function(x,
 vec_sort <- function(x,
                      direction = c("asc", "desc"),
                      na_value = c("largest", "smallest")) {
-  direction <- match.arg(direction)
-  na_value <- match.arg(na_value)
+  direction <- arg_match0(direction, c("asc", "desc"))
+  na_value <- arg_match0(na_value, c("largest", "smallest"))
 
   idx <- vec_order(x, direction = direction, na_value = na_value)
   vec_slice(x, idx)

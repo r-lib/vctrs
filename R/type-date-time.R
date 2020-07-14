@@ -37,7 +37,7 @@ new_datetime <- function(x = double(), tzone = "") {
 #' @rdname new_date
 new_duration <- function(x = double(), units = c("secs", "mins", "hours", "days", "weeks")) {
   stopifnot(is.double(x))
-  units <- match.arg(units)
+  units <- arg_match0(units, c("secs", "mins", "hours", "days", "weeks"))
 
   structure(
     x,
