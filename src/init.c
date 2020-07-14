@@ -58,9 +58,6 @@ extern SEXP vctrs_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
-extern SEXP vec_proxy_compare(SEXP);
-extern SEXP vec_proxy_order(SEXP);
-extern SEXP vctrs_df_proxy(SEXP, SEXP);
 extern SEXP vctrs_unspecified(SEXP);
 extern SEXP vctrs_ptype(SEXP, SEXP);
 extern SEXP vec_ptype_finalise(SEXP);
@@ -196,9 +193,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_restore_default",            (DL_FUNC) &vctrs_restore_default, 2},
   {"vctrs_proxy",                      (DL_FUNC) &vec_proxy, 1},
   {"vctrs_proxy_equal",                (DL_FUNC) &vec_proxy_equal, 1},
-  {"vctrs_proxy_compare",              (DL_FUNC) &vec_proxy_compare, 1},
-  {"vctrs_proxy_order",                (DL_FUNC) &vec_proxy_order, 1},
-  {"vctrs_df_proxy",                   (DL_FUNC) &vctrs_df_proxy, 2},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
   {"vctrs_ptype",                      (DL_FUNC) &vctrs_ptype, 2},
   {"vctrs_ptype_finalise",             (DL_FUNC) &vec_ptype_finalise, 1},

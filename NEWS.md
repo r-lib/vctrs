@@ -11,15 +11,6 @@
 
 * New `vec_names2()`, `vec_names()` and `vec_set_names()` (#1173).
 
-* New `vec_proxy_order()` that provides an ordering proxy for use in
-  `vec_order()` and `vec_sort()`. The default method falls through to
-  `vec_proxy_compare()`. Lists are special cased, and return an integer
-  vector proxy that orders by first appearance.
-
-* List columns in data frames are no longer comparable through `vec_compare()`.
-
-* The experimental `relax` argument has been removed from
-  `vec_proxy_compare()`.
 
 
 # vctrs 0.3.1

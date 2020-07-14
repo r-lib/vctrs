@@ -2,63 +2,39 @@
 % Please edit documentation in R/compare.R
 \name{vec_proxy_compare}
 \alias{vec_proxy_compare}
-\alias{vec_proxy_order}
-\title{Comparison and order proxy}
+\title{Comparison proxy}
 \usage{
-vec_proxy_compare(x, ...)
-
-vec_proxy_order(x, ...)
+vec_proxy_compare(x, ..., relax = FALSE)
 }
 \arguments{
 \item{x}{A vector x.}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{relax}{If \code{TRUE}, and \code{x} is otherwise non-comparable, will return
+\code{vec_seq_along(x)}. This allows a data frame to be orderable, even if
+one of its components is not. This is experimental and may change in the
+future.}
 }
 \value{
 A 1d atomic vector or a data frame.
 }
 \description{
-\code{vec_proxy_compare()} and \code{vec_proxy_order()} return proxy objects, i.e.
-an atomic vector or data frame of atomic vectors.
-
-For \code{\link[=vctr]{vctrs_vctr}} objects:
-\itemize{
-\item \code{vec_proxy_compare()} determines the behavior of \code{<}, \code{>}, \code{>=}
-and \code{<=} (via \code{\link[=vec_compare]{vec_compare()}}); and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{median()}}, and
-\code{\link[=quantile]{quantile()}}.
-\item \code{vec_proxy_order()} determines the behavior of \code{order()} and \code{sort()}
-(via \code{xtfrm()}).
-}
+Returns a proxy object (i.e. an atomic vector or data frame of atomic
+vectors). For \link{vctr}s, this determines the behaviour of \code{\link[=order]{order()}} and
+\code{\link[=sort]{sort()}} (via \code{\link[=xtfrm]{xtfrm()}}); \code{<}, \code{>}, \code{>=} and \code{<=} (via \code{\link[=vec_compare]{vec_compare()}});
+and \code{\link[=min]{min()}}, \code{\link[=max]{max()}}, \code{\link[=median]{median()}}, and \code{\link[=quantile]{quantile()}}.
 }
 \details{
-The default method of \code{vec_proxy_compare()} assumes that all classes built
-on top of atomic vectors or records are comparable. Internally the default
-calls \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}. If your class is not comparable, you will need
+The default method assumes that all classes built on top of atomic
+vectors or records are orderable. If your class is not, you will need
 to provide a \code{vec_proxy_compare()} method that throws an error.
-
-The behavior of \code{vec_proxy_order()} is identical to \code{vec_proxy_compare()},
-with the exception of lists. Lists are not comparable, as comparing
-elements of different types is undefined. However, to allow ordering of
-data frames containing list-columns, the ordering proxy of a list is
-generated as an integer vector that can be used to order list elements
-by first appearance.
 }
 \section{Dependencies}{
 
 \itemize{
-\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}} called by default in \code{vec_proxy_compare()}
-\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}} called by default in \code{vec_proxy_order()}
+\item \code{\link[=vec_proxy]{vec_proxy()}} called by default
 }
 }
 
-\examples{
-# Lists are not comparable
-x <- list(1:2, 1, 1:2, 3)
-try(vec_compare(x, x))
-
-# But lists are orderable by first appearance to allow for
-# ordering data frames with list-cols
-df <- new_data_frame(list(x = x))
-vec_sort(df)
-}
 \keyword{internal}

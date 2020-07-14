@@ -439,7 +439,7 @@ SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table) {
   return R_NilValue;
 }
 
-// [[ include("utils.h") ]]
+static
 SEXP s3_get_class(SEXP x) {
   SEXP class = R_NilValue;
 
@@ -457,14 +457,7 @@ SEXP s3_get_class(SEXP x) {
     stop_internal("s3_get_class", "Class must have length.");
   }
 
-  return class;
-}
-
-SEXP s3_get_class0(SEXP x) {
-  SEXP class = PROTECT(s3_get_class(x));
-  SEXP out = STRING_ELT(class, 0);
-  UNPROTECT(1);
-  return out;
+  return STRING_ELT(class, 0);
 }
 
 // [[ include("utils.h") ]]
@@ -473,8 +466,8 @@ SEXP s3_find_method_xy(const char* generic,
                        SEXP y,
                        SEXP table,
                        SEXP* method_sym_out) {
-  SEXP x_class = PROTECT(s3_get_class0(x));
-  SEXP y_class = PROTECT(s3_get_class0(y));
+  SEXP x_class = PROTECT(s3_get_class(x));
+  SEXP y_class = PROTECT(s3_get_class(y));
 
   SEXP method_sym = R_NilValue;
   method_sym = s3_paste_method_sym(generic, CHAR(x_class));
@@ -497,7 +490,7 @@ SEXP s3_find_method2(const char* generic,
                      SEXP x,
                      SEXP table,
                      SEXP* method_sym_out) {
-  SEXP class = PROTECT(s3_get_class0(x));
+  SEXP class = PROTECT(s3_get_class(x));
 
   SEXP method_sym = s3_paste_method_sym(generic, CHAR(class));
   SEXP method = s3_sym_get_method(method_sym, table);
@@ -516,7 +509,6 @@ SEXP s3_find_method2(const char* generic,
 // [[ include("utils.h") ]]
 SEXP s3_bare_class(SEXP x) {
   switch (TYPEOF(x)) {
-  case NILSXP: return chrs_null;
   case LGLSXP: return chrs_logical;
   case INTSXP: return chrs_integer;
   case REALSXP: return chrs_double;
@@ -524,7 +516,6 @@ SEXP s3_bare_class(SEXP x) {
   case STRSXP: return chrs_character;
   case RAWSXP: return chrs_raw;
   case VECSXP: return chrs_list;
-  case EXPRSXP: return chrs_expression;
   case CLOSXP:
   case SPECIALSXP:
   case BUILTINSXP: return chrs_function;
@@ -1624,7 +1615,6 @@ SEXP chrs_assign = NULL;
 SEXP chrs_rename = NULL;
 SEXP chrs_remove = NULL;
 SEXP chrs_negate = NULL;
-SEXP chrs_null = NULL;
 SEXP chrs_logical = NULL;
 SEXP chrs_integer = NULL;
 SEXP chrs_double = NULL;
@@ -1632,7 +1622,6 @@ SEXP chrs_complex = NULL;
 SEXP chrs_character = NULL;
 SEXP chrs_raw = NULL;
 SEXP chrs_list = NULL;
-SEXP chrs_expression = NULL;
 SEXP chrs_numeric = NULL;
 SEXP chrs_function = NULL;
 SEXP chrs_empty = NULL;
@@ -1849,7 +1838,6 @@ void vctrs_init_utils(SEXP ns) {
   chrs_rename = r_new_shared_character("rename");
   chrs_remove = r_new_shared_character("remove");
   chrs_negate = r_new_shared_character("negate");
-  chrs_null = r_new_shared_character("NULL");
   chrs_logical = r_new_shared_character("logical");
   chrs_integer = r_new_shared_character("integer");
   chrs_double = r_new_shared_character("double");
@@ -1857,7 +1845,6 @@ void vctrs_init_utils(SEXP ns) {
   chrs_character = r_new_shared_character("character");
   chrs_raw = r_new_shared_character("raw");
   chrs_list = r_new_shared_character("list");
-  chrs_expression = r_new_shared_character("expression");
   chrs_numeric = r_new_shared_character("numeric");
   chrs_function = r_new_shared_character("function");
   chrs_empty = r_new_shared_character("");

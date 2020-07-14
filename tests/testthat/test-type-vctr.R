@@ -185,7 +185,7 @@ test_that("is.na<-() supported", {
 
 test_that("comparison functions remapped", {
   local_methods(
-    vec_proxy_compare.bizzaro = function(x, ...) -vec_data(x)
+    vec_proxy_compare.bizzaro = function(x) -vec_data(x)
   )
 
   x1 <- new_vctr(c(1, 2), class = "bizzaro")
