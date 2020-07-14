@@ -37,7 +37,7 @@ static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
 
-static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
+static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
 
 /**
  * Evaluate with masked arguments
@@ -66,7 +66,7 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
  */
 SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args) {
   SEXP mask = PROTECT(r_peek_frame());
-  SEXP out = vctrs_eval_mask_n_impl(fn, syms, args, mask);
+  SEXP out = vctrs_eval_mask_n_impl(R_NilValue, fn, syms, args, mask);
 
   UNPROTECT(1);
   return out;
@@ -148,11 +148,9 @@ SEXP vctrs_eval_mask7(SEXP fn,
  * @inheritParams vctrs_eval_mask_n
  */
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args) {
-  // Mask `fn` with `fn_sym` and `args` with `syms` in the current environment
   SEXP mask = PROTECT(r_peek_frame());
-  Rf_defineVar(fn_sym, fn, mask);
 
-  SEXP out = vctrs_eval_mask_n_impl(fn_sym, syms, args, mask);
+  SEXP out = vctrs_eval_mask_n_impl(fn_sym, fn, syms, args, mask);
 
   UNPROTECT(1);
   return out;
@@ -199,8 +197,13 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
 
-static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
+static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
   SEXP mask = PROTECT(r_new_environment(env, 8));
+
+  if (fn_sym != R_NilValue) {
+    Rf_defineVar(fn_sym, fn, mask);
+    fn = fn_sym;
+  }
 
   SEXP body = PROTECT(r_call(fn, syms, syms));
   SEXP call_fn = PROTECT(r_new_function(R_NilValue, body, mask));
