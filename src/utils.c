@@ -199,17 +199,21 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
 
-static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP mask) {
-  SEXP call = PROTECT(r_call(fn, syms, syms));
+static SEXP vctrs_eval_mask_n_impl(SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
+  SEXP mask = PROTECT(r_new_environment(env, 8));
+
+  SEXP body = PROTECT(r_call(fn, syms, syms));
+  SEXP call_fn = PROTECT(r_new_function(R_NilValue, body, mask));
+  SEXP call = PROTECT(Rf_lang1(call_fn));
 
   while (*syms) {
     Rf_defineVar(*syms, *args, mask);
     ++syms; ++args;
   }
 
-  SEXP out = Rf_eval(call, mask);
+  SEXP out = Rf_eval(call, env);
 
-  UNPROTECT(1);
+  UNPROTECT(4);
   return out;
 }
 
