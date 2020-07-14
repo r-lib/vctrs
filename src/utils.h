@@ -251,6 +251,7 @@ SEXP r_peek_frame();
 SEXP r_clone_referenced(SEXP x);
 SEXP r_clone_shared(SEXP x);
 
+SEXP r_parse(const char* str);
 SEXP r_parse_eval(const char* str, SEXP env);
 
 static inline
