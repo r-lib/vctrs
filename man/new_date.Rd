@@ -76,6 +76,6 @@ and casting functions.
 \examples{
 new_date(0)
 new_datetime(0, tzone = "UTC")
-new_duration(1, "hour")
+new_duration(1, "hours")
 }
 \keyword{internal}

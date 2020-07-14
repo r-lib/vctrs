@@ -22,7 +22,7 @@
 #' @examples
 #' new_date(0)
 #' new_datetime(0, tzone = "UTC")
-#' new_duration(1, "hour")
+#' new_duration(1, "hours")
 new_date <- function(x = double()) {
   .Call(vctrs_new_date, x)
 }
