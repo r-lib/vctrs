@@ -1,8 +1,4 @@
 
-LTO mismatch is fixed.
-r-devel error is fixed.
-
-
 ## Test environments
 
 * local macOS: release
@@ -18,6 +14,4 @@ r-devel error is fixed.
 
 ## Revdep checks
 
-We ran revdep checks on 39 revdeps of vctrs: https://github.com/r-lib/vctrs/tree/master/revdep/vctrs.
-
-There were two failures. The maintainer of sf was notified. We'll send a new version of haven shortly.
+We ran checks on revdeps of vctrs, dplyr, and tidyr. No problems were found.
