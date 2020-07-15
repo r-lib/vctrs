@@ -159,13 +159,9 @@ static SEXP vec_rbind(SEXP xs,
     }
     names_to_type = TYPEOF(index);
     names_to_col = PROTECT_N(Rf_allocVector(names_to_type, n_rows), &n_prot);
-    if (names_to_type == STRSXP) {
-      p_index = (void*) index;
-      p_names_to_col = (void*) names_to_col;
-    } else {
-      p_index = r_vec_deref_const(index);
-      p_names_to_col = r_vec_deref(names_to_col);
-    }
+
+    p_index = r_vec_deref_barrier_const(index);
+    p_names_to_col = r_vec_deref_barrier(names_to_col);
   }
 
   // Compact sequences use 0-based counters

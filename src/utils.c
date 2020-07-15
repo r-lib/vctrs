@@ -898,7 +898,6 @@ void* r_vec_deref(SEXP x) {
   case INTSXP: return INTEGER(x);
   case REALSXP: return REAL(x);
   case CPLXSXP: return COMPLEX(x);
-  case STRSXP: return STRING_PTR(x);
   case RAWSXP: return RAW(x);
   default: stop_unimplemented_type("r_vec_deref", TYPEOF(x));
   }
@@ -913,6 +912,26 @@ const void* r_vec_deref_const(SEXP x) {
   case STRSXP: return STRING_PTR_RO(x);
   case RAWSXP: return RAW_RO(x);
   default: stop_unimplemented_type("r_vec_deref_const", TYPEOF(x));
+  }
+}
+
+void* r_vec_deref_barrier(SEXP x) {
+  switch (TYPEOF(x)) {
+  case STRSXP:
+  case VECSXP:
+    return (void*) x;
+  default:
+    return r_vec_deref(x);
+  }
+}
+
+const void* r_vec_deref_barrier_const(SEXP x) {
+  switch (TYPEOF(x)) {
+  case STRSXP:
+  case VECSXP:
+    return (const void*) x;
+  default:
+    return r_vec_deref_const(x);
   }
 }
 
