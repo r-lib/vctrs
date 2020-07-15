@@ -1,6 +1,9 @@
 
 # vctrs 0.3.2
 
+* Fixed a performance issue in `bind_rows()` with S3 columns (#1122,
+  #1124, #1151, tidyverse/dplyr#5327).
+
 * `vec_slice()` now checks sizes of data frame columns in case the
   data structure is corrupt (#552).
 
@@ -10,7 +13,6 @@
 * `new_data_frame()` is now twice as fast when `class` is supplied.
 
 * New `vec_names2()`, `vec_names()` and `vec_set_names()` (#1173).
-
 
 
 # vctrs 0.3.1
