@@ -191,6 +191,7 @@ test_that("can repair names in `vec_rbind()` (#229)", {
 
 test_that("can construct an id column", {
   df <- data.frame(x = 1)
+  vec_rbind(a = df, b = df, .names_to = "id")$id
 
   expect_named(vec_rbind(df, df, .names_to = "id"), c("id", "x"))
   expect_equal(vec_rbind(df, df, .names_to = "id")$id, c(1L, 2L))

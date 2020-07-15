@@ -924,25 +924,42 @@ void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
   }
 }
 
-#define FILL(CTYPE, PTR, VAL_PTR, VAL_I, N)             \
+#define FILL(CTYPE, DEST, DEST_I, SRC, SRC_I, N)        \
   do {                                                  \
-    CTYPE* data = (CTYPE*) PTR;                         \
-    CTYPE* end = data + N;                              \
-    CTYPE value = ((const CTYPE*) VAL_PTR)[VAL_I];      \
+    CTYPE* p_dest = (CTYPE*) DEST;                      \
+    p_dest += DEST_I;                                   \
+    CTYPE* end = p_dest + N;                            \
+    CTYPE value = ((const CTYPE*) SRC)[SRC_I];          \
                                                         \
-    while (data != end) {                               \
-      *data++ = value;                                  \
+    while (p_dest != end) {                             \
+      *p_dest++ = value;                                \
     }                                                   \
   } while (false)
 
-void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n) {
+#define FILL_BARRIER(GET, SET, DEST, DEST_I, SRC, SRC_I, N)     \
+  do {                                                          \
+    SEXP out = (SEXP) DEST;                                     \
+    SEXP value = GET((SEXP) SRC, SRC_I);                        \
+                                                                \
+    for (r_ssize i = 0; i < N; ++i) {                           \
+      SET(out, DEST_I + i, value);                              \
+    }                                                           \
+  } while (false)
+
+void r_vec_fill(SEXPTYPE type,
+                void* dest,
+                r_ssize dest_i,
+                const void* src,
+                r_ssize src_i,
+                r_ssize n) {
   switch (type) {
-  case STRSXP: FILL(SEXP, p, value_p, value_i, n); return;
-  case INTSXP: FILL(int, p, value_p, value_i, n); return;
+  case INTSXP: FILL(int, dest, dest_i, src, src_i, n); return;
+  case STRSXP: FILL_BARRIER(STRING_ELT, SET_STRING_ELT, dest, dest_i, src, src_i, n); return;
   default: stop_unimplemented_type("r_vec_fill", type);
   }
 }
 
+#undef FILL_BARRIER
 #undef FILL
 
 
