@@ -1,4 +1,7 @@
 
+# vctrs (development version)
+
+
 # vctrs 0.3.2
 
 * Fixed a performance issue in `bind_rows()` with S3 columns (#1122,
