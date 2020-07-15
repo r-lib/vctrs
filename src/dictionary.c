@@ -214,7 +214,7 @@ static void init_dictionary_df(struct dictionary* d) {
     if (col_type == vctrs_type_list) {
       col_ptrs[i] = col;
     } else {
-      col_ptrs[i] = r_vec_const_deref(col);
+      col_ptrs[i] = r_vec_deref_const(col);
     }
   }
 

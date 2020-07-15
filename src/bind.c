@@ -163,7 +163,7 @@ static SEXP vec_rbind(SEXP xs,
       p_index = (void*) index;
       p_names_to_col = (void*) names_to_col;
     } else {
-      p_index = r_vec_const_deref(index);
+      p_index = r_vec_deref_const(index);
       p_names_to_col = r_vec_deref(names_to_col);
     }
   }

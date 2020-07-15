@@ -904,7 +904,7 @@ void* r_vec_deref(SEXP x) {
   }
 }
 
-const void* r_vec_const_deref(SEXP x) {
+const void* r_vec_deref_const(SEXP x) {
   switch (TYPEOF(x)) {
   case LGLSXP: return LOGICAL_RO(x);
   case INTSXP: return INTEGER_RO(x);
@@ -912,7 +912,7 @@ const void* r_vec_const_deref(SEXP x) {
   case CPLXSXP: return COMPLEX_RO(x);
   case STRSXP: return STRING_PTR_RO(x);
   case RAWSXP: return RAW_RO(x);
-  default: stop_unimplemented_type("r_vec_const_deref", TYPEOF(x));
+  default: stop_unimplemented_type("r_vec_deref_const", TYPEOF(x));
   }
 }
 
