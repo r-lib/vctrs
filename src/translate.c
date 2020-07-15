@@ -213,7 +213,6 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   SEXP out = PROTECT(r_clone_referenced(x));
-  SEXP* p_out = STRING_PTR(out);
 
   const void *vmax = vmaxget();
 
@@ -221,11 +220,11 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t size) {
     SEXP chr = p_x[i];
 
     if (Rf_getCharCE(chr) == CE_UTF8) {
-      p_out[i] = chr;
+      SET_STRING_ELT(out, i, chr);
       continue;
     }
 
-    p_out[i] = Rf_mkCharCE(Rf_translateCharUTF8(chr), CE_UTF8);
+    SET_STRING_ELT(out, i, Rf_mkCharCE(Rf_translateCharUTF8(chr), CE_UTF8));
   }
 
   vmaxset(vmax);

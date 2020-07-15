@@ -1526,15 +1526,14 @@ SEXP chr_c(SEXP x, SEXP y) {
   r_ssize out_n = r_ssize_add(x_n, y_n);
   SEXP out = PROTECT(r_new_vector(STRSXP, out_n));
 
-  SEXP* p_out = STRING_PTR(out);
   const SEXP* p_x = STRING_PTR_RO(x);
   const SEXP* p_y = STRING_PTR_RO(y);
 
   for (r_ssize i = 0; i < x_n; ++i) {
-    p_out[i] = p_x[i];
+    SET_STRING_ELT(out, i, p_x[i]);
   }
   for (r_ssize i = 0, j = x_n; i < y_n; ++i, ++j) {
-    p_out[j] = p_y[i];
+    SET_STRING_ELT(out, j, p_y[i]);
   }
 
   UNPROTECT(1);

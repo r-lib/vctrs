@@ -278,7 +278,6 @@ static void repair_na_names(SEXP names, SEXP subscript) {
     return;
   }
 
-  SEXP* p_names = STRING_PTR(names);
   const int* p_subscript = INTEGER_RO(subscript);
 
   // Special handling for a compact_rep object with repeated `NA`
@@ -288,7 +287,7 @@ static void repair_na_names(SEXP names, SEXP subscript) {
     }
 
     for (R_len_t i = 0; i < n; ++i) {
-      p_names[i] = strings_empty;
+      SET_STRING_ELT(names, i, strings_empty);
     }
 
     return;
@@ -296,7 +295,7 @@ static void repair_na_names(SEXP names, SEXP subscript) {
 
   for (R_len_t i = 0; i < n; ++i) {
     if (p_subscript[i] == NA_INTEGER) {
-      p_names[i] = strings_empty;
+      SET_STRING_ELT(names, i, strings_empty);
     }
   }
 }
