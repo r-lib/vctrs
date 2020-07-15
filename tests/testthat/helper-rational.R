@@ -32,7 +32,7 @@ gcd <- function(x, y) {
   ifelse(r, gcd(y, r), y)
 }
 
-vec_proxy_compare.vctrs_rational <- function(x) {
+vec_proxy_compare.vctrs_rational <- function(x, ...) {
   field(x, "n") / field(x, "d")
 }
 

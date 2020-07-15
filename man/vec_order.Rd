@@ -28,14 +28,14 @@ Order and sort vectors
 \section{Dependencies of \code{vec_order()}}{
 
 \itemize{
-\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+\item \code{\link[=vec_proxy_order]{vec_proxy_order()}}
 }
 }
 
 \section{Dependencies of \code{vec_sort()}}{
 
 \itemize{
-\item \code{\link[=vec_proxy_compare]{vec_proxy_compare()}}
+\item \code{\link[=vec_proxy_order]{vec_proxy_order()}}
 \item \code{\link[=vec_order]{vec_order()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
 }

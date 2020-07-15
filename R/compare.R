@@ -1,57 +1,80 @@
-#' Comparison proxy
+# proxies -----------------------------------------------------------------
+
+#' Comparison and order proxy
 #'
-#' Returns a proxy object (i.e. an atomic vector or data frame of atomic
-#' vectors). For [vctr]s, this determines the behaviour of [order()] and
-#' [sort()] (via [xtfrm()]); `<`, `>`, `>=` and `<=` (via [vec_compare()]);
-#' and [min()], [max()], [median()], and [quantile()].
+#' @description
+#' `vec_proxy_compare()` and `vec_proxy_order()` return proxy objects, i.e.
+#' an atomic vector or data frame of atomic vectors.
 #'
-#' The default method assumes that all classes built on top of atomic
-#' vectors or records are orderable. If your class is not, you will need
+#' For [`vctrs_vctr`][vctr] objects:
+#'
+#' - `vec_proxy_compare()` determines the behavior of `<`, `>`, `>=`
+#'   and `<=` (via [vec_compare()]); and [min()], [max()], [median()], and
+#'   [quantile()].
+#'
+#' - `vec_proxy_order()` determines the behavior of `order()` and `sort()`
+#'   (via `xtfrm()`).
+#'
+#' @details
+#' The default method of `vec_proxy_compare()` assumes that all classes built
+#' on top of atomic vectors or records are comparable. Internally the default
+#' calls [vec_proxy_equal()]. If your class is not comparable, you will need
 #' to provide a `vec_proxy_compare()` method that throws an error.
 #'
+#' The behavior of `vec_proxy_order()` is identical to `vec_proxy_compare()`,
+#' with the exception of lists. Lists are not comparable, as comparing
+#' elements of different types is undefined. However, to allow ordering of
+#' data frames containing list-columns, the ordering proxy of a list is
+#' generated as an integer vector that can be used to order list elements
+#' by first appearance.
+#'
 #' @param x A vector x.
-#' @param relax If `TRUE`, and `x` is otherwise non-comparable, will return
-#'   `vec_seq_along(x)`. This allows a data frame to be orderable, even if
-#'   one of its components is not. This is experimental and may change in the
-#'   future.
 #' @inheritParams ellipsis::dots_empty
 #' @return A 1d atomic vector or a data frame.
 #'
 #' @section Dependencies:
-#' - [vec_proxy()] called by default
+#' - [vec_proxy_equal()] called by default in `vec_proxy_compare()`
+#' - [vec_proxy_compare()] called by default in `vec_proxy_order()`
 #'
 #' @keywords internal
 #' @export
-vec_proxy_compare <- function(x, ..., relax = FALSE) {
+#' @examples
+#' # Lists are not comparable
+#' x <- list(1:2, 1, 1:2, 3)
+#' try(vec_compare(x, x))
+#'
+#' # But lists are orderable by first appearance to allow for
+#' # ordering data frames with list-cols
+#' df <- new_data_frame(list(x = x))
+#' vec_sort(df)
+vec_proxy_compare <- function(x, ...) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+  return(.Call(vctrs_proxy_compare, x))
   UseMethod("vec_proxy_compare")
+}
+#' @export
+vec_proxy_compare.default <- function(x, ...) {
+  stop_native_implementation("vec_proxy_compare.default")
+}
+
+#' @rdname vec_proxy_compare
+#' @export
+vec_proxy_order <- function(x, ...) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+  return(.Call(vctrs_proxy_order, x))
+  UseMethod("vec_proxy_order")
 }
 
 #' @export
-vec_proxy_compare.default <- function(x, ..., relax = FALSE) {
-  if (vec_dim_n(x) > 1) {
-    # The conversion to data frame is only a stopgap, in the long
-    # term, we'll hash arrays natively. Note that hashing functions
-    # similarly convert to data frames.
-    as.data.frame(x)
-  } else {
-    vec_proxy_compare_default(x, relax)
-  }
+vec_proxy_order.default <- function(x, ...) {
+  stop_native_implementation("vec_proxy_order.default")
 }
 
-vec_proxy_compare_default <- function(x, relax = FALSE) {
-  if (is_bare_list(x)) {
-    if (relax) {
-      vec_seq_along(x)
-    } else {
-      stop_unsupported(x, "vec_proxy_compare")
-    }
-  } else {
-    vec_proxy_equal(x)
-  }
-}
+# compare -----------------------------------------------------------------
 
 #' Compare two vectors
 #'
@@ -110,10 +133,10 @@ vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
 #' * `vec_sort()` a vector with the same size and type as `x`.
 #'
 #' @section Dependencies of `vec_order()`:
-#' * [vec_proxy_compare()]
+#' * [vec_proxy_order()]
 #'
 #' @section Dependencies of `vec_sort()`:
-#' * [vec_proxy_compare()]
+#' * [vec_proxy_order()]
 #' * [vec_order()]
 #' * [vec_slice()]
 #' @export
@@ -134,7 +157,7 @@ vec_order <- function(x,
   direction <- arg_match0(direction, c("asc", "desc"))
   na_value <- arg_match0(na_value, c("largest", "smallest"))
 
-  order_proxy(vec_proxy_compare(x), direction = direction, na_value = na_value)
+  order_proxy(vec_proxy_order(x), direction = direction, na_value = na_value)
 }
 
 #' @export

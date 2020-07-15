@@ -82,15 +82,6 @@ test_that("can compare data frames with data frame columns", {
   expect_equal(vec_compare(df1, df2), -1)
 })
 
-test_that("can compare data frames with list columns because of `vec_proxy_compare(relax = TRUE)`", {
-  # lists are replaced with `vec_seq_along()`,
-  # so `list(a = 1)` and `list(a = 0)` look equivalent
-  df1 <- data_frame(x = list(a = 1), y = 2)
-  df2 <- data_frame(x = list(a = 0), y = 3)
-
-  expect_equal(vec_compare(df1, df2), -1)
-})
-
 test_that("C code doesn't crash with bad inputs", {
   df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
@@ -115,13 +106,19 @@ test_that("xtfrm.vctrs_vctr works for variety of base classes", {
   expect_equal(xtfrm.vctrs_vctr(letters[x]), x)
 })
 
-test_that("vec_proxy_compare() refuses to deal with lists", {
-  expect_error(vec_proxy_compare(list()), class = "vctrs_error_unsupported")
+test_that("vec_proxy_order() orders list using order of appearance", {
+  x <- 1:2
+  y <- 2:4
+  z <- "a"
+
+  lst <- list(x, y, x, y, z)
+
+  expect_identical(vec_proxy_order(lst), c(1L, 2L, 1L, 2L, 5L))
 })
 
 test_that("vec_compare() calls vec_proxy_compare()", {
   local_methods(
-    vec_proxy_compare.vctrs_foobar = function(x) rev(x),
+    vec_proxy_compare.vctrs_foobar = function(x, ...) rev(x),
     vec_ptype2.integer.vctrs_foobar = function(...) foobar(int()),
     vec_ptype2.vctrs_foobar = function(...) foobar(int()),
     vec_cast.vctrs_foobar = function(...) NULL,
@@ -167,6 +164,37 @@ test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
   expect_equal(vec_order(c(y, x)), c(2, 1))
 })
 
+test_that("vec_proxy_compare() flattens df-cols", {
+  df_col <- data_frame(z = 3:4, w = 4:5)
+  df <- data_frame(x = 1:2, y = df_col)
+
+  expect <- data_frame(x = 1:2, z = 3:4, w = 4:5)
+
+  expect_identical(vec_proxy_compare(df), expect)
+})
+
+test_that("vec_proxy_compare() unwraps 1 col dfs", {
+  df <- data_frame(x = 1:2)
+
+  expect_identical(vec_proxy_compare(df), 1:2)
+
+  df_col <- data_frame(y = 1:2)
+  df <- data_frame(x = df_col)
+
+  expect_identical(vec_proxy_compare(df), 1:2)
+})
+
+test_that("vec_proxy_order() works on deeply nested lists", {
+  df_col <- data_frame(z = list("b", "a", "b"))
+
+  # Relaxed and unwrapped
+  df1 <- data_frame(x = df_col)
+  expect_identical(vec_proxy_order(df1), c(1L, 2L, 1L))
+
+  df2 <- data_frame(x = df_col, y = 1:3)
+  expect_identical(vec_proxy_order(df2), data_frame(x = c(1L, 2L, 1L), y = 1:3))
+})
+
 test_that("error is thrown with data frames with 0 columns", {
   x <- new_data_frame(n = 1L)
   expect_error(vec_compare(x, x), "data frame with zero columns")
@@ -175,6 +203,12 @@ test_that("error is thrown with data frames with 0 columns", {
 test_that("error is thrown when comparing lists", {
   expect_error(vec_compare(list(), list()), class = "vctrs_error_unsupported")
   expect_error(.Call(vctrs_compare, list(), list(), FALSE), "Can't compare lists")
+})
+
+test_that("error is thrown when comparing data frames with list columns", {
+  df <- data_frame(x = list())
+  expect_error(vec_compare(df, df), class = "vctrs_error_unsupported")
+  expect_error(.Call(vctrs_compare, df, df, FALSE), "Can't compare lists")
 })
 
 test_that("error is thrown when comparing scalars", {
@@ -266,7 +300,7 @@ test_that("can sort empty data frames (#356)", {
 })
 
 test_that("can order tibbles that contain non-comparable objects", {
-  expect_equal(vec_order(data_frame(list(10, 2, 1))), 1:3)
+  expect_equal(vec_order(data_frame(x = list(10, 2, 1))), 1:3)
 })
 
 test_that("can order matrices and arrays (#306)", {

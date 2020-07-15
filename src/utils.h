@@ -122,6 +122,7 @@ SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
 SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
 SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table);
+SEXP s3_get_class(SEXP x);
 SEXP s3_find_method_xy(const char* generic,
                        SEXP x,
                        SEXP y,
@@ -510,6 +511,7 @@ extern SEXP chrs_assign;
 extern SEXP chrs_rename;
 extern SEXP chrs_remove;
 extern SEXP chrs_negate;
+extern SEXP chrs_null;
 extern SEXP chrs_logical;
 extern SEXP chrs_integer;
 extern SEXP chrs_double;
@@ -517,6 +519,7 @@ extern SEXP chrs_complex;
 extern SEXP chrs_character;
 extern SEXP chrs_raw;
 extern SEXP chrs_list;
+extern SEXP chrs_expression;
 extern SEXP chrs_numeric;
 extern SEXP chrs_function;
 extern SEXP chrs_empty;

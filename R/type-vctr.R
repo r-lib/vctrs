@@ -445,7 +445,7 @@ anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
 
 #' @export
 xtfrm.vctrs_vctr <- function(x) {
-  proxy <- vec_proxy_compare(x)
+  proxy <- vec_proxy_order(x)
 
   if (is.object(proxy) && typeof(proxy) %in% c("integer", "double", "character")) {
     proxy <- unstructure(proxy)

@@ -31,12 +31,9 @@ vec_proxy_equal <- function(x, ...) {
   return(.Call(vctrs_proxy_equal, x))
   UseMethod("vec_proxy_equal")
 }
-vec_proxy_equal_dispatch <- function(x, ...) {
-  UseMethod("vec_proxy_equal")
-}
 #' @export
 vec_proxy_equal.default <- function(x, ...) {
-  vec_proxy(x)
+  stop_native_implementation("vec_proxy_equal.default")
 }
 
 #' Test if two vectors are equal
