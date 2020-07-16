@@ -1,4 +1,5 @@
 #include "rlang.hpp"
+#include "utils.hpp"
 
 
 template <enum r_type R_TYPE,
@@ -70,7 +71,7 @@ void equal_fill_na_equal(enum r_type type,
   switch (type) {
   case r_type_logical: equal_fill_na_equal<r_type_logical>(p_x, p_y, size, p_out); return;
   case r_type_integer: equal_fill_na_equal<r_type_integer>(p_x, p_y, size, p_out); return;
-  default: throw;
+  default: throw unimplemented_type_exception("equal_fill_na_equal", type);
   }
 }
 
@@ -83,7 +84,7 @@ void equal_fill_na_propagate(enum r_type type,
   switch (type) {
   case r_type_logical: equal_fill_na_propagate<r_type_logical>(p_x, p_y, size, p_out); return;
   case r_type_integer: equal_fill_na_propagate<r_type_integer>(p_x, p_y, size, p_out); return;
-  default: throw;
+  default: throw unimplemented_type_exception("equal_fill_na_propagate", type);
   }
 }
 
@@ -95,17 +96,14 @@ void equal_fill(enum r_type type,
                 const void* p_y,
                 r_ssize size,
                 bool na_equal,
-                int* p_out,
-                int* err) {
+                int* p_out) {
   try {
     if (na_equal) {
       equal_fill_na_equal(type, p_x, p_y, size, p_out);
     } else {
       equal_fill_na_propagate(type, p_x, p_y, size, p_out);
     }
-  } catch (...) {
-    *err = -1;
-  }
+  } RETHROW()
 }
 
 } // extern "C"
