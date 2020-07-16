@@ -1,5 +1,5 @@
-#ifndef VCTRS_UTILS_HPP
-#define VCTRS_UTILS_HPP
+#ifndef VCTRS_CPP_UTILS_H
+#define VCTRS_CPP_UTILS_H
 
 
 extern "C" {

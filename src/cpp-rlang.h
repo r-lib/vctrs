@@ -1,5 +1,5 @@
-#ifndef VCTRS_RLANG_HPP
-#define VCTRS_RLANG_HPP
+#ifndef CPP_RLANG_H
+#define CPP_RLANG_H
 
 
 #define R_NO_REMAP
