@@ -22,27 +22,27 @@ struct traits;
 
 template <>
 struct traits<r_type_logical> {
-  typedef int array_type;
+  using array_type = int;
 };
 
 template <>
 struct traits<r_type_integer> {
-  typedef int array_type;
+  using array_type = int;
 };
 
 template <>
 struct traits<r_type_double> {
-  typedef double array_type;
+  using array_type = double;
 };
 
 template <>
 struct traits<r_type_complex> {
-  typedef r_complex_t array_type;
+  using array_type = r_complex_t;
 };
 
 template <>
 struct traits<r_type_raw> {
-  typedef unsigned char* array_type;
+  using array_type = unsigned char*;
 };
 
 } // namespace rlang
