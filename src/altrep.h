@@ -5,6 +5,13 @@
 
 #if (R_VERSION < R_Version(3, 5, 0)) ||                 \
     (defined(_WIN32) && R_VERSION == R_Version(3, 5, 0))
+# define HAS_ALTREP 0
+#else
+# define HAS_ALTREP 1
+#endif
+
+
+#if !HAS_ALTREP
 
 # define ALTREP(x) false
 # define ALTVEC_EXTRACT_SUBSET_PROXY(x, indx, call) NULL

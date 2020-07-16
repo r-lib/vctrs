@@ -2,7 +2,7 @@
 #include "altrep-rle.h"
 #include "altrep.h"
 
-#if (R_VERSION < R_Version(3, 5, 0))
+#if (!HAS_ALTREP)
 
 #include <R_ext/Rdynload.h>
 

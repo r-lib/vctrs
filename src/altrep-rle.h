@@ -3,7 +3,7 @@
 
 #include "altrep.h"
 
-#if (R_VERSION >= R_Version(3, 5, 0))
+#if (HAS_ALTREP)
 
 SEXP altrep_rle_Make(SEXP input);
 R_xlen_t altrep_rle_Length(SEXP vec);
