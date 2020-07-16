@@ -14,7 +14,8 @@
 #if !HAS_ALTREP
 
 # define ALTREP(x) false
-# define ALTVEC_EXTRACT_SUBSET_PROXY(x, indx, call) NULL
+# define ALTVEC_EXTRACT_SUBSET_PROXY(x, indx, call)     \
+  ((void) x, (void) indx, (void) call, NULL)
 
 #else
 
