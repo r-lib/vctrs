@@ -103,7 +103,7 @@ void equal_fill(enum r_type type,
     } else {
       equal_fill_na_propagate(type, p_x, p_y, size, p_out);
     }
-  } RETHROW()
+  } RETHROW("equal_fill")
 }
 
 } // extern "C"

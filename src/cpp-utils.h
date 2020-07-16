@@ -26,11 +26,11 @@ struct unimplemented_type_exception {
   { }
 };
 
-#define RETHROW()                                       \
+#define RETHROW(FN)                                     \
   catch (const unimplemented_type_exception& exc) {     \
     stop_unimplemented_type(exc.fn, exc.type);          \
   } catch (...) {                                       \
-    stop_unknown("equal_fill");                         \
+    stop_unknown(FN);                                   \
   }
 
 
