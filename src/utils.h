@@ -207,7 +207,6 @@ const void* r_vec_deref_const(SEXP x);
 void* r_vec_deref_barrier(SEXP x);
 const void* r_vec_deref_barrier_const(SEXP x);
 
-void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i);
 void r_vec_fill(SEXPTYPE type,
                 void* p_dest,
                 r_ssize dest_i,

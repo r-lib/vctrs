@@ -935,14 +935,6 @@ const void* r_vec_deref_barrier_const(SEXP x) {
   }
 }
 
-void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
-  switch (type) {
-  case STRSXP: *((SEXP**) p) += i; return;
-  case INTSXP: *((int**) p) += i; return;
-  default: stop_unimplemented_type("r_vec_ptr_inc", type);
-  }
-}
-
 #define FILL(CTYPE, DEST, DEST_I, SRC, SRC_I, N)        \
   do {                                                  \
     CTYPE* p_dest = (CTYPE*) DEST;                      \
