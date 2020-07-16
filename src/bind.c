@@ -146,8 +146,8 @@ static SEXP vec_rbind(SEXP xs,
 
   SEXP names_to_col = R_NilValue;
   SEXPTYPE names_to_type = 99;
-  void* names_to_p = NULL;
-  const void* index_p = NULL;
+  void* p_names_to_col = NULL;
+  const void* p_index = NULL;
 
   if (has_names_to) {
     SEXP index = R_NilValue;
@@ -157,11 +157,11 @@ static SEXP vec_rbind(SEXP xs,
       index = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
       r_int_fill_seq(index, 1, n_inputs);
     }
-    index_p = r_vec_const_deref(index);
-
     names_to_type = TYPEOF(index);
     names_to_col = PROTECT_N(Rf_allocVector(names_to_type, n_rows), &n_prot);
-    names_to_p = r_vec_deref(names_to_col);
+
+    p_index = r_vec_deref_barrier_const(index);
+    p_names_to_col = r_vec_deref_barrier(names_to_col);
   }
 
   // Compact sequences use 0-based counters
@@ -209,8 +209,7 @@ static SEXP vec_rbind(SEXP xs,
 
     // Assign current name to group vector, if supplied
     if (has_names_to) {
-      r_vec_fill(names_to_type, names_to_p, index_p, i, size);
-      r_vec_ptr_inc(names_to_type, &names_to_p, size);
+      r_vec_fill(names_to_type, p_names_to_col, counter, p_index, i, size);
     }
 
     counter += size;

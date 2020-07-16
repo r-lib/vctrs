@@ -127,7 +127,7 @@ static void init_dictionary_list(struct dictionary* d) {
 
 struct dictionary_df_data {
   enum vctrs_type* col_types;
-  void** col_ptrs;
+  const void** col_ptrs;
   R_len_t n_col;
 };
 
@@ -141,8 +141,8 @@ static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   }
 
   enum vctrs_type* types = x_data->col_types;
-  void** x_ptrs = x_data->col_ptrs;
-  void** y_ptrs = y_data->col_ptrs;
+  const void** x_ptrs = x_data->col_ptrs;
+  const void** y_ptrs = y_data->col_ptrs;
 
   // `vec_proxy_equal()` flattens data frames so we don't need to
   // worry about df-cols
@@ -161,7 +161,7 @@ static int df_equal_missing(const void* x, R_len_t i) {
   struct dictionary_df_data* x_data = (struct dictionary_df_data*) x;
 
   enum vctrs_type* types = x_data->col_types;
-  void** x_ptrs = x_data->col_ptrs;
+  const void** x_ptrs = x_data->col_ptrs;
   R_len_t n_col = x_data->n_col;
 
   for (R_len_t col = 0; col < n_col; ++col) {
@@ -199,7 +199,7 @@ static void init_dictionary_df(struct dictionary* d) {
 
   struct dictionary_df_data* data = (struct dictionary_df_data*) RAW(data_handle);
   enum vctrs_type* col_types = (enum vctrs_type*) RAW(col_types_handle);
-  void** col_ptrs = (void**) RAW(col_ptrs_handle);
+  const void** col_ptrs = (const void**) RAW(col_ptrs_handle);
 
   data->col_types = col_types;
   data->col_ptrs = col_ptrs;
@@ -214,7 +214,7 @@ static void init_dictionary_df(struct dictionary* d) {
     if (col_type == vctrs_type_list) {
       col_ptrs[i] = col;
     } else {
-      col_ptrs[i] = r_vec_deref(col);
+      col_ptrs[i] = r_vec_deref_const(col);
     }
   }
 

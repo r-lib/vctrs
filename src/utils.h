@@ -203,10 +203,17 @@ extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
 void* r_vec_deref(SEXP x);
-const void* r_vec_const_deref(SEXP x);
+const void* r_vec_deref_const(SEXP x);
+void* r_vec_deref_barrier(SEXP x);
+const void* r_vec_deref_barrier_const(SEXP x);
 
 void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i);
-void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n);
+void r_vec_fill(SEXPTYPE type,
+                void* p_dest,
+                r_ssize dest_i,
+                const void* p_src,
+                r_ssize src_i,
+                r_ssize n);
 
 R_len_t r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);

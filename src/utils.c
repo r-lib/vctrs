@@ -898,17 +898,40 @@ void* r_vec_deref(SEXP x) {
   case INTSXP: return INTEGER(x);
   case REALSXP: return REAL(x);
   case CPLXSXP: return COMPLEX(x);
-  case STRSXP: return STRING_PTR(x);
   case RAWSXP: return RAW(x);
   default: stop_unimplemented_type("r_vec_deref", TYPEOF(x));
   }
 }
 
-const void* r_vec_const_deref(SEXP x) {
+const void* r_vec_deref_const(SEXP x) {
   switch (TYPEOF(x)) {
+  case LGLSXP: return LOGICAL_RO(x);
   case INTSXP: return INTEGER_RO(x);
+  case REALSXP: return REAL_RO(x);
+  case CPLXSXP: return COMPLEX_RO(x);
   case STRSXP: return STRING_PTR_RO(x);
-  default: stop_unimplemented_type("r_vec_const_deref", TYPEOF(x));
+  case RAWSXP: return RAW_RO(x);
+  default: stop_unimplemented_type("r_vec_deref_const", TYPEOF(x));
+  }
+}
+
+void* r_vec_deref_barrier(SEXP x) {
+  switch (TYPEOF(x)) {
+  case STRSXP:
+  case VECSXP:
+    return (void*) x;
+  default:
+    return r_vec_deref(x);
+  }
+}
+
+const void* r_vec_deref_barrier_const(SEXP x) {
+  switch (TYPEOF(x)) {
+  case STRSXP:
+  case VECSXP:
+    return (const void*) x;
+  default:
+    return r_vec_deref_const(x);
   }
 }
 
@@ -920,25 +943,42 @@ void r_vec_ptr_inc(SEXPTYPE type, void** p, R_len_t i) {
   }
 }
 
-#define FILL(CTYPE, PTR, VAL_PTR, VAL_I, N)             \
+#define FILL(CTYPE, DEST, DEST_I, SRC, SRC_I, N)        \
   do {                                                  \
-    CTYPE* data = (CTYPE*) PTR;                         \
-    CTYPE* end = data + N;                              \
-    CTYPE value = ((const CTYPE*) VAL_PTR)[VAL_I];      \
+    CTYPE* p_dest = (CTYPE*) DEST;                      \
+    p_dest += DEST_I;                                   \
+    CTYPE* end = p_dest + N;                            \
+    CTYPE value = ((const CTYPE*) SRC)[SRC_I];          \
                                                         \
-    while (data != end) {                               \
-      *data++ = value;                                  \
+    while (p_dest != end) {                             \
+      *p_dest++ = value;                                \
     }                                                   \
   } while (false)
 
-void r_vec_fill(SEXPTYPE type, void* p, const void* value_p, R_len_t value_i, R_len_t n) {
+#define FILL_BARRIER(GET, SET, DEST, DEST_I, SRC, SRC_I, N)     \
+  do {                                                          \
+    SEXP out = (SEXP) DEST;                                     \
+    SEXP value = GET((SEXP) SRC, SRC_I);                        \
+                                                                \
+    for (r_ssize i = 0; i < N; ++i) {                           \
+      SET(out, DEST_I + i, value);                              \
+    }                                                           \
+  } while (false)
+
+void r_vec_fill(SEXPTYPE type,
+                void* dest,
+                r_ssize dest_i,
+                const void* src,
+                r_ssize src_i,
+                r_ssize n) {
   switch (type) {
-  case STRSXP: FILL(SEXP, p, value_p, value_i, n); return;
-  case INTSXP: FILL(int, p, value_p, value_i, n); return;
+  case INTSXP: FILL(int, dest, dest_i, src, src_i, n); return;
+  case STRSXP: FILL_BARRIER(STRING_ELT, SET_STRING_ELT, dest, dest_i, src, src_i, n); return;
   default: stop_unimplemented_type("r_vec_fill", type);
   }
 }
 
+#undef FILL_BARRIER
 #undef FILL
 
 
@@ -1522,15 +1562,14 @@ SEXP chr_c(SEXP x, SEXP y) {
   r_ssize out_n = r_ssize_add(x_n, y_n);
   SEXP out = PROTECT(r_new_vector(STRSXP, out_n));
 
-  SEXP* p_out = STRING_PTR(out);
   const SEXP* p_x = STRING_PTR_RO(x);
   const SEXP* p_y = STRING_PTR_RO(y);
 
   for (r_ssize i = 0; i < x_n; ++i) {
-    p_out[i] = p_x[i];
+    SET_STRING_ELT(out, i, p_x[i]);
   }
   for (r_ssize i = 0, j = x_n; i < y_n; ++i, ++j) {
-    p_out[j] = p_y[i];
+    SET_STRING_ELT(out, j, p_y[i]);
   }
 
   UNPROTECT(1);
