@@ -1,6 +1,11 @@
+#ifndef VCTRS_RLANG_HPP
+#define VCTRS_RLANG_HPP
+
+
 #define R_NO_REMAP
 #include <Rinternals.h>
 
+// Prevent unsafe usage
 #define SEXP sexp_unsafe_in_this_file
 #define SEXPREC sexp_unsafe_in_this_file
 
@@ -51,13 +56,11 @@ struct traits;
 template <>
 struct traits<r_type_logical> {
   typedef int array_type;
-  const array_type na_value = NA_LOGICAL;
 };
 
 template <>
 struct traits<r_type_integer> {
   typedef int array_type;
-  const array_type na_value = NA_INTEGER;
 };
 
 template <>
@@ -78,5 +81,15 @@ struct traits<r_type_raw> {
 } // namespace rlang
 
 
-#define DEFAULT_CTYPE(R_TYPE) typename rlang::traits<R_TYPE>::array_type
-#define NA_VALUE(R_TYPE) rlang::traits<R_TYPE>::na_value
+#define C_TYPE(R_TYPE) rlang::traits<R_TYPE>::array_type
+#define DEFAULT_C_TYPE(R_TYPE) typename C_TYPE(R_TYPE)
+
+
+template <enum r_type R_TYPE>
+typename C_TYPE(R_TYPE) na_value();
+
+template <> int na_value<r_type_logical>() { return NA_LOGICAL; }
+template <> int na_value<r_type_integer>() { return NA_INTEGER; }
+
+
+#endif
