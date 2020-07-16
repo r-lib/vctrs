@@ -5,9 +5,10 @@
 #define R_NO_REMAP
 #include <Rinternals.h>
 
-// Prevent unsafe usage
+// Prevent some unsafe usages
 #define SEXP sexp_unsafe_in_this_file
 #define SEXPREC sexp_unsafe_in_this_file
+#define Rf_allocVector alloc_unsafe_in_this_file
 
 
 typedef R_xlen_t r_ssize;
