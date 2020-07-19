@@ -110,8 +110,9 @@ test_that("combining data frames with foreign classes uses fallback", {
     foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
     bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
     baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
-    expect_warning(vec_ptype_common_df_fallback(foo, bar, baz))
-    expect_warning(vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar))
+    # Nested expect_warning() require testthat > 2.3.2
+    suppressWarnings(expect_warning(vec_ptype_common_df_fallback(foo, bar, baz)))
+    suppressWarnings(expect_warning(vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar)))
 
     with_fallback_warning(expect_df_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo))))
     with_fallback_warning(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1)))))

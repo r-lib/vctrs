@@ -81,7 +81,7 @@ expect_syntactic <- function(name, exp_syn_name) {
 }
 
 expect_error_cnd <- function(object, class, message = NULL, ..., .fixed = TRUE) {
-  cnd <- expect_error(object, regexp = message, class = class, fixed = .fixed)
+  cnd <- expect_error(object, regexp = message, class = class[[1]], fixed = .fixed)
   expect_true(inherits_all(cnd, class))
 
   exp_fields <- list2(...)
@@ -101,7 +101,7 @@ expect_incompatible_df_cast <- function(x, fallback) {
 }
 
 expect_df_fallback_warning <- function(expr) {
-  expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)")
+  suppressWarnings(expect_warning({{ expr }}, "falling back to (<data.frame>|<tibble>)"))
 }
 expect_df_fallback_warning_maybe <- function(expr) {
   if (is_true(peek_option("vctrs:::warn_on_fallback"))) {
