@@ -60,7 +60,7 @@ test_that("can't cast rcrd to list", {
 test_that("default casts are implemented correctly", {
   r <- new_rcrd(list(x = 1, y = 1))
 
-  expect_error(vec_cast(1, r), error = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(1, r), class = "vctrs_error_incompatible_type")
   expect_equal(vec_cast(NULL, r), NULL)
 })
 

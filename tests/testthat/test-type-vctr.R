@@ -526,11 +526,9 @@ test_that("Summary generics behave identically to base for empty vctrs (#88)", {
     )
   )
 
-  expect_warning(
-    expect_identical(
-      new_vctr(range(numeric())),
-      range(new_vctr(numeric()))
-    )
+  expect_identical(
+    new_vctr(range(1)),
+    range(new_vctr(1))
   )
 
   expect_identical(
