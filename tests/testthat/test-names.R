@@ -191,6 +191,22 @@ test_that("vec_set_names() sets matrix/array names", {
   expect_equal(vec_set_names(y, names), exp)
 })
 
+test_that("vec_set_names() doesn't alter names", {
+  x <- matrix(1, dimnames = list(rows = "a", cols = "x"))
+  vec_set_names(x, "y")
+  expect_equal(vec_names2(x), "a")
+  expect_equal(colnames(x), "x")
+  vec_set_names(x, NULL)
+  expect_equal(vec_names2(x), "a")
+  expect_equal(colnames(x), "x")
+
+  y <- array(1:4, dim = c(1, 2, 2), dimnames = list(rows = "a", one = 1:2, two = 1:2))
+  vec_set_names(y, "y")
+  expect_equal(vec_names2(y), "a")
+  vec_set_names(y, NULL)
+  expect_equal(vec_names2(y), "a")
+})
+
 test_that("vec_set_names() sets row names on data frames", {
   expect_identical(
     vec_set_names(data_frame(x = 1), "foo"),
