@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* `vec_set_names()` no longer alters the input in-place (#1194).
+
 * New `vec_proxy_order()` that provides an ordering proxy for use in
   `vec_order()` and `vec_sort()`. The default method falls through to
   `vec_proxy_compare()`. Lists are special cased, and return an integer

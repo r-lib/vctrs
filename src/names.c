@@ -704,6 +704,9 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
 
   if (dim_names == R_NilValue) {
     dim_names = PROTECT_N(Rf_allocVector(VECSXP, vec_dim_n(x)), &nprot);
+  } else {
+    // Also clone attribute
+    dim_names = PROTECT_N(Rf_shallow_duplicate(dim_names), &nprot);
   }
 
   SET_VECTOR_ELT(dim_names, 0, names);
