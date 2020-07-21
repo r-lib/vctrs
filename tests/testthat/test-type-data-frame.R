@@ -396,6 +396,13 @@ test_that("can flatten data frames", {
 
   df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
   expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
+
+  df2 <- data_frame(1, 2)
+  expect_identical(df_flatten(df2), set_names(df2, c("", "")))
+
+  df_col <- data_frame(x = 2, y = 3)
+  df3 <- data_frame(1, df_col)
+  expect_identical(df_flatten(df3), data_frame(1, x = 2, y = 3))
 })
 
 test_that("new_data_frame() zaps existing attributes", {

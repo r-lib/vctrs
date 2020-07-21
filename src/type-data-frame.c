@@ -676,17 +676,23 @@ SEXP df_flatten(SEXP x) {
 static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter) {
   R_len_t n = Rf_length(x);
   SEXP x_names = PROTECT(r_names(x));
+  bool has_names = x_names != R_NilValue;
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP col = VECTOR_ELT(x, i);
 
     if (is_data_frame(col)) {
       counter = df_flatten_loop(col, out, out_names, counter);
-    } else {
-      SET_VECTOR_ELT(out, counter, col);
-      SET_STRING_ELT(out_names, counter, STRING_ELT(x_names, i));
-      ++counter;
+      continue;
     }
+
+    SET_VECTOR_ELT(out, counter, col);
+
+    if (has_names) {
+      SET_STRING_ELT(out_names, counter, STRING_ELT(x_names, i));
+    }
+
+    ++counter;
   }
 
   UNPROTECT(1);
