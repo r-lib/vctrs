@@ -241,6 +241,10 @@ SEXP r_new_integer(R_len_t n) {
   return Rf_allocVector(INTSXP, n);
 }
 static inline
+SEXP r_new_character(R_len_t n) {
+  return Rf_allocVector(STRSXP, n);
+}
+static inline
 SEXP r_new_list(R_len_t n) {
   return Rf_allocVector(VECSXP, n);
 }
