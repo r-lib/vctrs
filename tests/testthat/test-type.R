@@ -197,14 +197,15 @@ test_that("vec_ptype_finalise() works with NULL", {
 })
 
 test_that("vec_ptype_finalise() works recursively over bare data frames", {
-  df <- data_frame(x = numeric(), y = unspecified(), z = partial_factor())
+  df <- new_data_frame(list(x = numeric(), y = unspecified(), z = partial_factor()))
   expect <- data_frame(x = numeric(), y = logical(), z = factor())
 
   expect_identical(vec_ptype_finalise(df), expect)
 })
 
 test_that("vec_ptype_finalise() works recursively over classed data frames", {
-  df <- subclass(data_frame(x = numeric(), y = unspecified(), z = partial_factor()))
+  df <- new_data_frame(list(x = numeric(), y = unspecified(), z = partial_factor()))
+  df <- subclass(df)
   expect <- subclass(data_frame(x = numeric(), y = logical(), z = factor()))
 
   expect_identical(vec_ptype_finalise(df), expect)

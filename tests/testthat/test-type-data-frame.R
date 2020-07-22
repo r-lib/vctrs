@@ -221,8 +221,8 @@ test_that("can restore subclasses of data frames", {
 })
 
 test_that("df_cast() checks for names", {
-  x <- data_frame(1)
-  y <- data_frame(2)
+  x <- new_data_frame(list(1))
+  y <- new_data_frame(list(2))
   expect_error(vec_cast_common(x, y), "must have names")
 })
 
