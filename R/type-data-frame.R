@@ -28,13 +28,12 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
 new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
 
-# Light weight constructor used for tests - avoids having to repeatedly do
-# stringsAsFactors = FALSE etc. Should not be used in internal code as is
-# not a real helper as it lacks value checks.
-data_frame <- function(...) {
-  cols <- list(...)
-  new_data_frame(cols)
+data_frame <- function(...,
+                       .size = NULL,
+                       .name_repair = c("minimal", "unique", "universal", "check_unique")) {
+  .Call(vctrs_data_frame, list2(...), .size, .name_repair)
 }
+data_frame <- fn_inline_formals(data_frame, ".name_repair")
 
 #' @export
 vec_ptype_full.data.frame <- function(x, ...) {

@@ -174,6 +174,153 @@ static SEXP c_data_frame_class(SEXP cls) {
   return chr_c(cls, classes_data_frame);
 }
 
+
+SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts);
+
+// [[ register() ]]
+SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
+  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+
+  r_ssize c_size = 0;
+  if (size == R_NilValue) {
+    c_size = vec_size_common(x, 0);
+  } else {
+    c_size = size_validate(size, ".size");
+  }
+
+  SEXP out = data_frame(x, c_size, &name_repair_opts);
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP df_splice(SEXP x, r_ssize n);
+
+SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
+  if (TYPEOF(x) != VECSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: `x` must be a list.");
+  }
+
+  x = PROTECT(vec_recycle_common(x, size));
+
+  r_ssize n_cols = r_length(x);
+
+  // Unnamed columns are auto-named with `""`
+  if (r_names(x) == R_NilValue) {
+    r_poke_names(x, r_new_character(n_cols));
+  }
+
+  x = PROTECT(df_splice(x, n_cols));
+
+  SEXP names = PROTECT(r_names(x));
+  names = vec_as_names(names, p_name_repair_opts);
+  r_poke_names(x, names);
+
+  SEXP out = new_data_frame(x, size);
+
+  UNPROTECT(3);
+  return out;
+}
+
+static SEXP df_splice(SEXP x, r_ssize n) {
+  SEXP names = PROTECT(r_names(x));
+  const SEXP* p_names = STRING_PTR_RO(names);
+
+  bool any_needs_splice = false;
+  r_ssize i = 0;
+
+  for (; i < n; ++i) {
+    // Only splice unnamed data frames
+    if (p_names[i] != strings_empty) {
+      continue;
+    }
+
+    SEXP col = VECTOR_ELT(x, i);
+
+    if (is_data_frame(col)) {
+      any_needs_splice = true;
+      break;
+    }
+  }
+
+  if (!any_needs_splice) {
+    UNPROTECT(1);
+    return x;
+  }
+
+  SEXP splice = PROTECT(r_new_logical(n));
+  int* p_splice = LOGICAL(splice);
+
+  for (r_ssize j = 0; j < n; ++j) {
+    p_splice[j] = 0;
+  }
+
+  r_ssize width = i;
+
+  for (; i < n; ++i) {
+    // Only splice unnamed data frames
+    if (p_names[i] != strings_empty) {
+      ++width;
+      continue;
+    }
+
+    SEXP col = VECTOR_ELT(x, i);
+
+    if (is_data_frame(col)) {
+      width += r_length(col);
+      p_splice[i] = 1;
+    } else {
+      ++width;
+    }
+  }
+
+  SEXP out = PROTECT(r_new_list(width));
+  SEXP out_names = PROTECT(r_new_character(width));
+
+  r_ssize loc = 0;
+
+  // Splice loop
+  for (r_ssize i = 0; i < n; ++i) {
+    if (!p_splice[i]) {
+      SET_VECTOR_ELT(out, loc, VECTOR_ELT(x, i));
+      SET_STRING_ELT(out_names, loc, p_names[i]);
+      ++loc;
+      continue;
+    }
+
+    SEXP col = VECTOR_ELT(x, i);
+    SEXP col_names = PROTECT(r_names(col));
+
+    if (TYPEOF(col_names) != STRSXP) {
+      Rf_errorcall(
+        R_NilValue,
+        "Encountered corrupt data frame. "
+        "Data frames must have character column names."
+      );
+    }
+
+    const SEXP* p_col_names = STRING_PTR_RO(col_names);
+    r_ssize col_i = 0;
+
+    r_ssize stop = loc + r_length(col);
+
+    for (; loc < stop; ++loc, ++col_i) {
+      SET_VECTOR_ELT(out, loc, VECTOR_ELT(col, col_i));
+      SET_STRING_ELT(out_names, loc, p_col_names[col_i]);
+    }
+
+    loc = stop;
+    UNPROTECT(1);
+  }
+
+  r_poke_names(out, out_names);
+
+  UNPROTECT(4);
+  return out;
+}
+
+
 // [[ include("type-data-frame.h") ]]
 enum rownames_type rownames_type(SEXP x) {
   switch (TYPEOF(x)) {

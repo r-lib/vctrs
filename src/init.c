@@ -122,6 +122,7 @@ extern SEXP vctrs_implements_ptype2(SEXP);
 extern SEXP vctrs_ptype2_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cast_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_fast_c(SEXP, SEXP);
+extern SEXP vctrs_data_frame(SEXP, SEXP, SEXP);
 
 
 // Maturing
@@ -261,6 +262,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_ptype2_dispatch_native",     (DL_FUNC) &vctrs_ptype2_dispatch_native, 5},
   {"vctrs_cast_dispatch_native",       (DL_FUNC) &vctrs_cast_dispatch_native, 5},
   {"vctrs_fast_c",                     (DL_FUNC) &vctrs_fast_c, 2},
+  {"vctrs_data_frame",                 (DL_FUNC) &vctrs_data_frame, 3},
   {NULL, NULL, 0}
 };
 
