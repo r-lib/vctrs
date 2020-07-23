@@ -463,6 +463,17 @@ test_that("spliced data frames without names are caught", {
   expect_error(data_frame(df_col), "corrupt data frame")
 })
 
+test_that("`NULL` inputs are dropped", {
+  expect_identical(data_frame(NULL, x = 1, NULL), data_frame(x = 1))
+})
+
+test_that("`NULL` inputs are dropped before name repair", {
+  expect_identical(
+    data_frame(x = NULL, x = 1, .name_repair = "check_unique"),
+    data_frame(x = 1)
+  )
+})
+
 test_that("`.size` can force a desired size", {
   df <- data_frame(x = 1, .size = 5)
   expect_identical(df$x, rep(1, 5))

@@ -195,6 +195,7 @@ SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
   return out;
 }
 
+static SEXP lst_drop_null(SEXP x, r_ssize n);
 static SEXP df_splice(SEXP x, r_ssize n);
 
 SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
@@ -213,6 +214,7 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
     UNPROTECT(1);
   }
 
+  x = PROTECT(lst_drop_null(x, n_cols));
   x = PROTECT(df_splice(x, n_cols));
 
   SEXP names = PROTECT(r_names(x));
@@ -221,7 +223,55 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
   SEXP out = new_data_frame(x, size);
 
-  UNPROTECT(4);
+  UNPROTECT(5);
+  return out;
+}
+
+static SEXP lst_drop_null(SEXP x, r_ssize n) {
+  bool any_null = false;
+  r_ssize i = 0;
+
+  // Check for existence of any nulls for a quick exit
+  for (; i < n; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+
+    if (col == R_NilValue) {
+      any_null = true;
+      break;
+    }
+  }
+
+  if (!any_null) {
+    return x;
+  }
+
+  r_ssize count = 0;
+
+  for (; i < n; ++i) {
+    count += VECTOR_ELT(x, i) == R_NilValue;
+  }
+
+  SEXP names = PROTECT(r_names(x));
+  const SEXP* p_names = STRING_PTR_RO(names);
+
+  r_ssize n_out = n - count;
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, n_out));
+  SEXP out_names = PROTECT(Rf_allocVector(STRSXP, n_out));
+  r_ssize out_i = 0;
+
+  for (r_ssize i = 0; i < n; ++i) {
+    SEXP col = VECTOR_ELT(x, i);
+
+    if (col != R_NilValue) {
+      SET_VECTOR_ELT(out, out_i, col);
+      SET_STRING_ELT(out_names, out_i, p_names[i]);
+      ++out_i;
+    }
+  }
+
+  r_poke_names(out, out_names);
+
+  UNPROTECT(3);
   return out;
 }
 
