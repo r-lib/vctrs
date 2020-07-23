@@ -812,7 +812,7 @@ struct name_repair_opts new_name_repair_opts(SEXP name_repair, struct vctrs_arg*
     } else if (c == strings_check_unique) {
       opts.type = name_repair_check_unique;
     } else {
-      Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(name_repair));
+      Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(c));
     }
 
     return opts;
