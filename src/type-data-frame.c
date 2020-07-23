@@ -199,7 +199,7 @@ static SEXP df_splice(SEXP x, r_ssize n);
 
 SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
   if (TYPEOF(x) != VECSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: `x` must be a list.");
+    stop_internal("data_frame", "`x` must be a list.");
   }
 
   x = PROTECT(vec_recycle_common(x, size));
@@ -208,18 +208,20 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
   // Unnamed columns are auto-named with `""`
   if (r_names(x) == R_NilValue) {
-    r_poke_names(x, r_new_character(n_cols));
+    SEXP names = PROTECT(r_new_character(n_cols));
+    r_poke_names(x, names);
+    UNPROTECT(1);
   }
 
   x = PROTECT(df_splice(x, n_cols));
 
   SEXP names = PROTECT(r_names(x));
-  names = vec_as_names(names, p_name_repair_opts);
+  names = PROTECT(vec_as_names(names, p_name_repair_opts));
   r_poke_names(x, names);
 
   SEXP out = new_data_frame(x, size);
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return out;
 }
 
@@ -293,8 +295,8 @@ static SEXP df_splice(SEXP x, r_ssize n) {
     SEXP col_names = PROTECT(r_names(col));
 
     if (TYPEOF(col_names) != STRSXP) {
-      Rf_errorcall(
-        R_NilValue,
+      stop_internal(
+        "df_splice",
         "Encountered corrupt data frame. "
         "Data frames must have character column names."
       );
