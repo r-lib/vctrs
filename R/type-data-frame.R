@@ -103,6 +103,13 @@ data_frame <- function(...,
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
 
+df_list <- function(...,
+                    .size = NULL,
+                    .name_repair = c("check_unique", "unique", "universal", "minimal")) {
+  .Call(vctrs_df_list, list2(...), .size, .name_repair)
+}
+df_list <- fn_inline_formals(df_list, ".name_repair")
+
 #' @export
 vec_ptype_full.data.frame <- function(x, ...) {
   if (length(x) == 0) {

@@ -195,12 +195,40 @@ SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
   return out;
 }
 
-static SEXP lst_drop_null(SEXP x, r_ssize n);
-static SEXP df_splice(SEXP x, r_ssize n);
+SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts);
 
 SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
+  SEXP out = PROTECT(df_list(x, size, p_name_repair_opts));
+  out = new_data_frame(out, size);
+  UNPROTECT(1);
+  return out;
+}
+
+
+// [[ register() ]]
+SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
+  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+
+  r_ssize c_size = 0;
+  if (size == R_NilValue) {
+    c_size = vec_size_common(x, 0);
+  } else {
+    c_size = size_validate(size, ".size");
+  }
+
+  SEXP out = df_list(x, c_size, &name_repair_opts);
+
+  UNPROTECT(1);
+  return out;
+}
+
+static SEXP df_list_drop_null(SEXP x, r_ssize n);
+static SEXP df_list_splice(SEXP x, r_ssize n);
+
+SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
   if (TYPEOF(x) != VECSXP) {
-    stop_internal("data_frame", "`x` must be a list.");
+    stop_internal("df_list", "`x` must be a list.");
   }
 
   x = PROTECT(vec_recycle_common(x, size));
@@ -214,20 +242,18 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
     UNPROTECT(1);
   }
 
-  x = PROTECT(lst_drop_null(x, n_cols));
-  x = PROTECT(df_splice(x, n_cols));
+  x = PROTECT(df_list_drop_null(x, n_cols));
+  x = PROTECT(df_list_splice(x, n_cols));
 
   SEXP names = PROTECT(r_names(x));
   names = PROTECT(vec_as_names(names, p_name_repair_opts));
   r_poke_names(x, names);
 
-  SEXP out = new_data_frame(x, size);
-
   UNPROTECT(5);
-  return out;
+  return x;
 }
 
-static SEXP lst_drop_null(SEXP x, r_ssize n) {
+static SEXP df_list_drop_null(SEXP x, r_ssize n) {
   r_ssize count = 0;
 
   for (r_ssize i = 0; i < n; ++i) {
@@ -262,7 +288,7 @@ static SEXP lst_drop_null(SEXP x, r_ssize n) {
   return out;
 }
 
-static SEXP df_splice(SEXP x, r_ssize n) {
+static SEXP df_list_splice(SEXP x, r_ssize n) {
   SEXP names = PROTECT(r_names(x));
   const SEXP* p_names = STRING_PTR_RO(names);
 
