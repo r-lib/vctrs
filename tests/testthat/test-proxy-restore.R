@@ -24,6 +24,11 @@ test_that("data frame vec_restore() checks type", {
   expect_error(vec_restore(NA, mtcars), "Attempt to restore data frame from a logical")
 })
 
+test_that("data frame restore forces character column names", {
+  df <- new_data_frame(list(1))
+  expect_named(vec_restore(df, df), "")
+})
+
 test_that("can use vctrs primitives from vec_restore() without inflooping", {
   local_methods(
     vec_restore.vctrs_foobar = function(x, to, ...) {

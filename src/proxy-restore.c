@@ -123,7 +123,9 @@ static SEXP vec_bare_df_restore_impl(SEXP x, SEXP to, R_len_t size,
   x = PROTECT(vec_restore_default(x, to, owned));
 
   if (Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
-    Rf_setAttrib(x, R_NamesSymbol, vctrs_shared_empty_chr);
+    SEXP names = PROTECT(Rf_allocVector(STRSXP, Rf_length(x)));
+    Rf_setAttrib(x, R_NamesSymbol, names);
+    UNPROTECT(1);
   }
 
   SEXP rownames = PROTECT(df_rownames(x));
