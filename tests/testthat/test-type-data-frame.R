@@ -441,7 +441,7 @@ test_that("dots are dynamic", {
 })
 
 test_that("unnamed input is auto named with empty strings", {
-  expect_named(data_frame(1, 2), c("", ""))
+  expect_named(data_frame(1, 2, .name_repair = "minimal"), c("", ""))
 })
 
 test_that("unnamed data frames are auto spliced", {

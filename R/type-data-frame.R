@@ -30,7 +30,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
 data_frame <- function(...,
                        .size = NULL,
-                       .name_repair = c("minimal", "unique", "universal", "check_unique")) {
+                       .name_repair = c("check_unique", "unique", "universal", "minimal")) {
   .Call(vctrs_data_frame, list2(...), .size, .name_repair)
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
