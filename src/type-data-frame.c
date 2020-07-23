@@ -228,27 +228,14 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 }
 
 static SEXP lst_drop_null(SEXP x, r_ssize n) {
-  bool any_null = false;
-  r_ssize i = 0;
-
-  // Check for existence of any nulls for a quick exit
-  for (; i < n; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
-
-    if (col == R_NilValue) {
-      any_null = true;
-      break;
-    }
-  }
-
-  if (!any_null) {
-    return x;
-  }
-
   r_ssize count = 0;
 
-  for (; i < n; ++i) {
+  for (r_ssize i = 0; i < n; ++i) {
     count += VECTOR_ELT(x, i) == R_NilValue;
+  }
+
+  if (count == 0) {
+    return x;
   }
 
   SEXP names = PROTECT(r_names(x));
