@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* New performant `data_frame()` constructor for creating data frames in a way
+  that follows tidyverse semantics. Among other things, inputs are recycled
+  using tidyverse recycling rules, strings are never converted to factors,
+  list-columns are easier to create, and unnamed data frame input is
+  automatically spliced.
+
 * Fixed performance issue with `vec_order()` on classed vectors which
   affected `dplyr::group_by()` (tidyverse/dplyr#5423).
 
