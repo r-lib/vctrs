@@ -337,3 +337,9 @@ test_that("can order data frames (and subclasses) with matrix columns", {
   df$x <- tibble::tibble(y = matrix(1:2, 2))
   expect_identical(vec_order(df), 1:2)
 })
+
+test_that("classed proxies do not affect performance (tidyverse/dplyr#5423)", {
+  skip_on_cran()
+  x <- glue::glue("{1:10000}")
+  expect_time_lt(vec_order(x), 0.2)
+})

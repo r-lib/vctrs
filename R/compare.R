@@ -192,6 +192,9 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
     })
     exec("order", !!!args, decreasing = decreasing, na.last = na.last)
   } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
+    if (is.object(proxy)) {
+      proxy <- unstructure(proxy)
+    }
     order(proxy, decreasing = decreasing, na.last = na.last)
   } else {
     abort("Invalid type returned by `vec_proxy_compare()`.")

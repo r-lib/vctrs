@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* Fixed performance issue with `vec_order()` on classed vectors which
+  affected `dplyr::group_by()` (tidyverse/dplyr#5423).
+
 * `vec_set_names()` no longer alters the input in-place (#1194).
 
 * New `vec_proxy_order()` that provides an ordering proxy for use in
