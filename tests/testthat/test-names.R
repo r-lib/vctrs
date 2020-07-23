@@ -58,6 +58,11 @@ test_that("vec_as_names() requires character vector", {
   expect_error(vec_as_names(NULL), "`names` must be a character vector")
 })
 
+test_that("vec_as_names() validates `repair`", {
+  expect_error(vec_as_names("x", repair = "foo"), "can't be \"foo\"")
+  expect_error(vec_as_names(1, repair = 1), "string or a function")
+})
+
 test_that("vec_as_names() repairs names", {
   expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
   expect_identical(vec_as_names(chr(NA, NA), repair = "unique"), c("...1", "...2"))
