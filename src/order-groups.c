@@ -4,16 +4,12 @@
 
 // Pair with `PROTECT_GROUP_INFO()` in the caller
 struct group_info new_group_info() {
-  struct group_info info;
-
-  info.data_size = 0;
-
-  info.data = vctrs_shared_empty_int;
-
-  info.n_groups = 0;
-  info.max_group_size = 0;
-
-  return info;
+  return (struct group_info) {
+    .data_size = 0,
+    .data = vctrs_shared_empty_int,
+    .n_groups = 0,
+    .max_group_size = 0
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -22,15 +18,13 @@ struct group_infos new_group_infos(struct group_info** p_p_group_info,
                                    R_xlen_t max_data_size,
                                    bool requested,
                                    bool ignore) {
-  struct group_infos infos;
-
-  infos.p_p_group_info = p_p_group_info;
-  infos.max_data_size = max_data_size;
-  infos.current = 0;
-  infos.requested = requested;
-  infos.ignore = ignore;
-
-  return infos;
+  return (struct group_infos) {
+    .p_p_group_info = p_p_group_info,
+    .max_data_size = max_data_size,
+    .current = 0,
+    .requested = requested,
+    .ignore = ignore
+  };
 }
 
 // -----------------------------------------------------------------------------

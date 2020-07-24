@@ -16,23 +16,21 @@
  * Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
  */
 struct truelength_info new_truelength_info(R_xlen_t max_size_alloc) {
-  struct truelength_info info;
+  return (struct truelength_info) {
+    .strings = vctrs_shared_empty_chr,
+    .lengths = vctrs_shared_empty_raw,
+    .uniques = vctrs_shared_empty_chr,
+    .sizes = vctrs_shared_empty_int,
+    .sizes_aux = vctrs_shared_empty_int,
 
-  info.strings = vctrs_shared_empty_chr;
-  info.lengths = vctrs_shared_empty_raw;
-  info.uniques = vctrs_shared_empty_chr;
-  info.sizes = vctrs_shared_empty_int;
-  info.sizes_aux = vctrs_shared_empty_int;
+    .size_alloc = 0,
+    .max_size_alloc = max_size_alloc,
+    .size_used = 0,
 
-  info.size_alloc = 0;
-  info.max_size_alloc = max_size_alloc;
-  info.size_used = 0;
+    .max_string_size = 0,
 
-  info.max_string_size = 0;
-
-  info.reencode = false;
-
-  return info;
+    .reencode = false
+  };
 }
 
 // -----------------------------------------------------------------------------
