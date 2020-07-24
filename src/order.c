@@ -200,14 +200,14 @@ SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_loc(SEXP x, SEXP decreasing, SEXP na_last);
+static SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last);
 
 // [[ register() ]]
-SEXP vctrs_order_loc(SEXP x, SEXP direction, SEXP na_value) {
+SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value) {
   SEXP decreasing = PROTECT(parse_direction(direction));
   SEXP na_last = PROTECT(parse_na_value(na_value));
 
-  SEXP out = vec_order_loc(x, decreasing, na_last);
+  SEXP out = vec_order_locs(x, decreasing, na_last);
 
   UNPROTECT(2);
   return out;
@@ -215,16 +215,16 @@ SEXP vctrs_order_loc(SEXP x, SEXP direction, SEXP na_value) {
 
 
 static
-SEXP vec_order_loc(SEXP x, SEXP decreasing, SEXP na_last) {
+SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last) {
   return vec_order_impl(x, decreasing, na_last, true);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_loc_impl(SEXP x,
-                               const int* p_o,
-                               const int* p_sizes,
-                               R_xlen_t n_groups);
+static SEXP vec_order_locs_impl(SEXP x,
+                                const int* p_o,
+                                const int* p_sizes,
+                                R_xlen_t n_groups);
 
 static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
 static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
@@ -363,7 +363,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 
     const int* p_o = p_lazy_o->p_o;
 
-    SEXP out = vec_order_loc_impl(x, p_o, p_sizes, n_groups);
+    SEXP out = vec_order_locs_impl(x, p_o, p_sizes, n_groups);
 
     UNPROTECT(n_prot);
     return out;
@@ -376,10 +376,10 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 // -----------------------------------------------------------------------------
 
 static
-SEXP vec_order_loc_impl(SEXP x,
-                        const int* p_o,
-                        const int* p_sizes,
-                        R_xlen_t n_groups) {
+SEXP vec_order_locs_impl(SEXP x,
+                         const int* p_o,
+                         const int* p_sizes,
+                         R_xlen_t n_groups) {
   SEXP loc = PROTECT(Rf_allocVector(VECSXP, n_groups));
 
   SEXP key_loc = PROTECT(Rf_allocVector(INTSXP, n_groups));
