@@ -931,7 +931,7 @@ void int_order_chunk_impl(void* p_x,
 }
 
 static inline void* int_maybe_copy(const int* p_x,
-                                   struct lazy_vec* p_lazy_x_chunk,
+                                   struct lazy_vec* p_lazy_result,
                                    R_xlen_t size,
                                    bool copy);
 
@@ -1029,23 +1029,23 @@ void int_order_impl(const int* p_x,
   );
 }
 
-// If we aren't copying, we expect that `p_lazy_x_chunk` already contains
+// If we aren't copying, we expect that `p_lazy_result` already contains
 // the integer values. This happens for character ordering where we store
 // the truelength values in `p_lazy_x_chunk`.
 static inline
 void* int_maybe_copy(const int* p_x,
-                     struct lazy_vec* p_lazy_x_chunk,
+                     struct lazy_vec* p_lazy_result,
                      R_xlen_t size,
                      bool copy) {
   if (!copy) {
-    return p_lazy_x_chunk->p_data;
+    return p_lazy_result->p_data;
   }
 
-  void* p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+  void* p_result = lazy_vec_initialize(p_lazy_result);
 
-  memcpy(p_x_chunk, p_x, size * sizeof(int));
+  memcpy(p_result, p_x, size * sizeof(int));
 
-  return p_x_chunk;
+  return p_result;
 }
 
 // -----------------------------------------------------------------------------
@@ -1911,7 +1911,7 @@ void dbl_order_chunk_impl(void* p_x,
 }
 
 static inline void* dbl_maybe_copy(const double* p_x,
-                                   struct lazy_vec* p_lazy_x_chunk,
+                                   struct lazy_vec* p_lazy_result,
                                    R_xlen_t size,
                                    bool copy);
 
@@ -1991,18 +1991,18 @@ void dbl_order_impl(const double* p_x,
 // the real / imaginary values in `p_lazy_x_chunk` ahead of time.
 static inline
 void* dbl_maybe_copy(const double* p_x,
-                     struct lazy_vec* p_lazy_x_chunk,
+                     struct lazy_vec* p_lazy_result,
                      R_xlen_t size,
                      bool copy) {
   if (!copy) {
-    return p_lazy_x_chunk->p_data;
+    return p_lazy_result->p_data;
   }
 
-  void* p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+  void* p_result = lazy_vec_initialize(p_lazy_result);
 
-  memcpy(p_x_chunk, p_x, size * sizeof(double));
+  memcpy(p_result, p_x, size * sizeof(double));
 
-  return p_x_chunk;
+  return p_result;
 }
 
 // -----------------------------------------------------------------------------
