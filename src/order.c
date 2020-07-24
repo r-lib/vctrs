@@ -3775,7 +3775,7 @@ size_t df_size_multiplier(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-static inline size_t df_counts_multiplier(SEXP x);
+static size_t df_counts_multiplier(SEXP x);
 
 /*
  * Compute the minimum size required for `p_counts`
@@ -3804,7 +3804,7 @@ size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type) {
 }
 
 // `x` should be a flattened df with no df-cols
-static inline
+static
 size_t df_counts_multiplier(SEXP x) {
   R_xlen_t n_cols = Rf_xlength(x);
 
