@@ -41,7 +41,6 @@
 #' * [vec_proxy_order()]
 #'
 #' @section Dependencies of `vec_sort()`:
-#' * [vec_proxy_order()]
 #' * [vec_order()]
 #' * [vec_slice()]
 #' @export
