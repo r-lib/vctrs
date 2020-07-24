@@ -77,13 +77,11 @@ void truelength_save(struct truelength_info* p_truelength_info,
     truelength_realloc(p_truelength_info);
   }
 
-  // Push `x` and `length`
   p_truelength_info->p_strings[p_truelength_info->size_used] = x;
   p_truelength_info->p_lengths[p_truelength_info->size_used] = truelength;
   p_truelength_info->p_uniques[p_truelength_info->size_used] = x;
   p_truelength_info->p_sizes[p_truelength_info->size_used] = size;
 
-  // Bump number of used slots
   ++p_truelength_info->size_used;
 }
 
@@ -101,62 +99,46 @@ static
 void truelength_realloc(struct truelength_info* p_truelength_info) {
   R_xlen_t size = truelength_realloc_size(p_truelength_info);
 
-  // Reallocate
   p_truelength_info->strings = p_chr_resize(
     p_truelength_info->p_strings,
     p_truelength_info->size_used,
     size
   );
-  // Reprotect
   REPROTECT(p_truelength_info->strings, p_truelength_info->strings_pi);
-  // Update pointer
   p_truelength_info->p_strings = STRING_PTR(p_truelength_info->strings);
 
-  // Reallocate
   p_truelength_info->lengths = p_lengths_resize(
     p_truelength_info->p_lengths,
     p_truelength_info->size_used,
     size
   );
-  // Reprotect
   REPROTECT(p_truelength_info->lengths, p_truelength_info->lengths_pi);
-  // Update pointer
   p_truelength_info->p_lengths = (R_xlen_t*) RAW(p_truelength_info->lengths);
 
-  // Reallocate
   p_truelength_info->uniques = p_chr_resize(
     p_truelength_info->p_uniques,
     p_truelength_info->size_used,
     size
   );
-  // Reprotect
   REPROTECT(p_truelength_info->uniques, p_truelength_info->uniques_pi);
-  // Update pointer
   p_truelength_info->p_uniques = STRING_PTR(p_truelength_info->uniques);
 
-  // Reallocate
   p_truelength_info->sizes = p_int_resize(
     p_truelength_info->p_sizes,
     p_truelength_info->size_used,
     size
   );
-  // Reprotect
   REPROTECT(p_truelength_info->sizes, p_truelength_info->sizes_pi);
-  // Update pointer
   p_truelength_info->p_sizes = INTEGER(p_truelength_info->sizes);
 
-  // Reallocate
   p_truelength_info->sizes_aux = p_int_resize(
     p_truelength_info->p_sizes_aux,
     p_truelength_info->size_used,
     size
   );
-  // Reprotect
   REPROTECT(p_truelength_info->sizes_aux, p_truelength_info->sizes_aux_pi);
-  // Update pointer
   p_truelength_info->p_sizes_aux = INTEGER(p_truelength_info->sizes_aux);
 
-  // Update size
   p_truelength_info->size_alloc = size;
 }
 
