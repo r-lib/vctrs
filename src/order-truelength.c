@@ -1,4 +1,5 @@
 #include "order-truelength.h"
+#include "utils.h"
 
 /*
  * See the notes in the character ordering section at the top of `order.c`
@@ -91,7 +92,6 @@ void truelength_save(struct truelength_info* p_truelength_info,
 static R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info);
 
 static SEXP truelength_chr_extend(const SEXP* p_x, R_xlen_t size_old, R_xlen_t size_new);
-static SEXP truelength_int_extend(const int* p_x, R_xlen_t size_old, R_xlen_t size_new);
 static SEXP truelength_lengths_extend(const R_xlen_t* p_lengths, R_xlen_t size_old, R_xlen_t size_new);
 
 /*
@@ -136,7 +136,7 @@ void truelength_realloc(struct truelength_info* p_truelength_info) {
   p_truelength_info->p_uniques = STRING_PTR(p_truelength_info->uniques);
 
   // Reallocate
-  p_truelength_info->sizes = truelength_int_extend(
+  p_truelength_info->sizes = p_int_resize(
     p_truelength_info->p_sizes,
     p_truelength_info->size_used,
     size
@@ -147,7 +147,7 @@ void truelength_realloc(struct truelength_info* p_truelength_info) {
   p_truelength_info->p_sizes = INTEGER(p_truelength_info->sizes);
 
   // Reallocate
-  p_truelength_info->sizes_aux = truelength_int_extend(
+  p_truelength_info->sizes_aux = p_int_resize(
     p_truelength_info->p_sizes_aux,
     p_truelength_info->size_used,
     size
@@ -168,17 +168,6 @@ SEXP truelength_chr_extend(const SEXP* p_x, R_xlen_t size_old, R_xlen_t size_new
   SEXP* p_out = STRING_PTR(out);
 
   memcpy(p_out, p_x, size_old * sizeof(SEXP));
-
-  UNPROTECT(1);
-  return out;
-}
-
-static
-SEXP truelength_int_extend(const int* p_x, R_xlen_t size_old, R_xlen_t size_new) {
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size_new));
-  int* p_out = INTEGER(out);
-
-  memcpy(p_out, p_x, size_old * sizeof(int));
 
   UNPROTECT(1);
   return out;
