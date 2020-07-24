@@ -378,6 +378,16 @@ SEXP p_int_resize(const int* p_x, R_xlen_t x_size, R_xlen_t size) {
   return out;
 }
 // [[ include("utils.h") ]]
+SEXP p_raw_resize(const Rbyte* p_x, R_xlen_t x_size, R_xlen_t size) {
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, size));
+  Rbyte* p_out = RAW(out);
+
+  memcpy(p_out, p_x, x_size * sizeof(Rbyte));
+
+  UNPROTECT(1);
+  return out;
+}
+// [[ include("utils.h") ]]
 SEXP p_chr_resize(const SEXP* p_x, R_xlen_t x_size, R_xlen_t size) {
   SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
 
