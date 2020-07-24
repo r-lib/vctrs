@@ -93,21 +93,26 @@ struct lazy_int {
   bool initialized;
 };
 
-#define PROTECT_LAZY_INT(p_info, p_n) do {      \
-  PROTECT((p_info)->data);                      \
-  (p_info)->p_data = INTEGER((p_info)->data);   \
-                                                \
-  *(p_n) += 1;                                  \
+#define PROTECT_LAZY_INT(p_info, p_n) do { \
+  PROTECT((p_info)->data);                 \
+  *(p_n) += 1;                             \
 } while (0)
 
 
 static inline
 struct lazy_int new_lazy_int(R_xlen_t size) {
-  return (struct lazy_int) {
-    .data = Rf_allocVector(INTSXP, size),
+  SEXP data = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_data = INTEGER(data);
+
+  struct lazy_int out = {
+    .data = data,
+    .p_data = p_data,
     .size = size,
     .initialized = false
   };
+
+  UNPROTECT(1);
+  return out;
 }
 
 static inline
