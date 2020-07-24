@@ -66,7 +66,6 @@ Character vectors are always translated to UTF-8 before ordering.
 \section{Dependencies of \code{vec_sort()}}{
 
 \itemize{
-\item \code{\link[=vec_proxy_order]{vec_proxy_order()}}
 \item \code{\link[=vec_order]{vec_order()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
 }
