@@ -34,8 +34,6 @@ struct lazy_vec {
 
 #define PROTECT_LAZY_VEC(p_info, p_n) do {                     \
   PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi);      \
-  (p_info)->p_data = (void*) RAW((p_info)->data);              \
-                                                               \
   *(p_n) += 1;                                                 \
 } while (0)
 
@@ -52,7 +50,7 @@ struct lazy_vec {
 static inline
 struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
   return (struct lazy_vec) {
-    .data = vctrs_shared_empty_raw,
+    .data = R_NilValue,
     .size = size * multiplier,
     .initialized = false
   };
