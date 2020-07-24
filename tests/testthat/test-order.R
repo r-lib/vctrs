@@ -847,13 +847,13 @@ test_that("can order 2+ double column chunks with radix sort", {
 test_that("`na_value` is checked", {
   expect_error(vec_order(1L, na_value = "x"), "\"largest\" or \"smallest\"")
   expect_error(vec_order(1L, na_value = c(TRUE, TRUE)), "must be a character vector")
-  expect_error(vec_order(1L, na_value = NA_character_), "cannot be missing")
+  expect_error(vec_order(1L, na_value = NA_character_), "can't be missing")
 })
 
 test_that("`direction` is checked", {
   expect_error(vec_order(1L, direction = "x"), "must contain only")
   expect_error(vec_order(1L, direction = c("asc", "asc")), "single value")
-  expect_error(vec_order(1L, direction = NA_character_), "cannot be missing")
+  expect_error(vec_order(1L, direction = NA_character_), "can't be missing")
   expect_error(vec_order(data.frame(x = 1), direction = c("asc", "asc")), "length 1 or")
 })
 
