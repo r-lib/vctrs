@@ -377,6 +377,17 @@ SEXP p_int_resize(const int* p_x, R_xlen_t x_size, R_xlen_t size) {
   UNPROTECT(1);
   return out;
 }
+// [[ include("utils.h") ]]
+SEXP p_chr_resize(const SEXP* p_x, R_xlen_t x_size, R_xlen_t size) {
+  SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
+
+  for (R_xlen_t i = 0; i < x_size; ++i) {
+    SET_STRING_ELT(out, i, p_x[i]);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
 
 
 inline void never_reached(const char* fn) {
