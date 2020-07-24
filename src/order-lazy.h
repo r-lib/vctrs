@@ -51,14 +51,11 @@ struct lazy_vec {
  */
 static inline
 struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
-  struct lazy_vec out;
-
-  out.data = vctrs_shared_empty_raw;
-
-  out.size = size * multiplier;
-  out.initialized = false;
-
-  return out;
+  return (struct lazy_vec) {
+    .data = vctrs_shared_empty_raw,
+    .size = size * multiplier,
+    .initialized = false
+  };
 }
 
 /*
@@ -108,15 +105,11 @@ struct lazy_order {
 
 static inline
 struct lazy_order new_lazy_order(R_xlen_t size) {
-  struct lazy_order out;
-
-  out.o = PROTECT(Rf_allocVector(INTSXP, size));
-
-  out.size = size;
-  out.initialized = false;
-
-  UNPROTECT(1);
-  return out;
+  return (struct lazy_order) {
+    .o = Rf_allocVector(INTSXP, size),
+    .size = size,
+    .initialized = false
+  };
 }
 
 static inline
