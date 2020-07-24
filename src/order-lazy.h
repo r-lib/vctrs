@@ -18,9 +18,9 @@
  * @member p_data A void pointer to the RAWSXP.
  * @member data_pi A protection index to `data` so it can reprotect itself
  *   upon allocation.
- * @member size The total size of the RAWSXP to allocate. This is generally
- *   computed as `size * multiplier` in `new_lazy_vec()`, where multiplier
- *   is a `sizeof(<type>)`.
+ * @member n_bytes_data The total size of the RAWSXP to allocate.
+ *   This is computed as `size * n_bytes` in `new_lazy_vec()`, where `n_bytes`
+ *   is from `sizeof(<type>)`.
  * @member initialized Has the lazy vector been initialized yet?
  */
 struct lazy_vec {
@@ -28,7 +28,7 @@ struct lazy_vec {
   void* p_data;
   PROTECT_INDEX data_pi;
 
-  R_xlen_t size;
+  R_xlen_t n_bytes_data;
   bool initialized;
 };
 
@@ -44,14 +44,14 @@ struct lazy_vec {
  * Pair with `PROTECT_LAZY_VEC()`.
  *
  * @param size The size of the type you want to interpret the memory as.
- * @param multiplier A `sizeof(<type>)` result for the type you are allocating
+ * @param n_bytes A `sizeof(<type>)` result for the type you are allocating
  *   memory for.
  */
 static inline
-struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
+struct lazy_vec new_lazy_vec(R_xlen_t size, size_t n_bytes) {
   return (struct lazy_vec) {
     .data = R_NilValue,
-    .size = size * multiplier,
+    .n_bytes_data = size * n_bytes,
     .initialized = false
   };
 }
@@ -66,7 +66,7 @@ void* lazy_vec_initialize(struct lazy_vec* p_x) {
     return p_x->p_data;
   }
 
-  p_x->data = Rf_allocVector(RAWSXP, p_x->size);
+  p_x->data = Rf_allocVector(RAWSXP, p_x->n_bytes_data);
 
   REPROTECT(p_x->data, p_x->data_pi);
 
