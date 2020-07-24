@@ -931,9 +931,9 @@ test_that("ordering works with rcrd cols", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_order_loc()
+# vec_order_locs()
 
-test_that("`vec_order_loc()` is working", {
+test_that("`vec_order_locs()` is working", {
   x <- c(1, 3, 1, 5, 2, 5, 1)
 
   expect <- new_data_frame(
@@ -943,7 +943,7 @@ test_that("`vec_order_loc()` is working", {
     )
   )
 
-  expect_identical(vec_order_loc(x), expect)
+  expect_identical(vec_order_locs(x), expect)
 })
 
 # ------------------------------------------------------------------------------

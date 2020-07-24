@@ -1,7 +1,7 @@
 
 # vctrs (development version)
 
-* New `vec_order_loc()` which returns a two column data frame containing a `key`
+* New `vec_order_locs()` which returns a two column data frame containing a `key`
   column holding the sorted unique values of `x`, and a `loc` column holding
   a list column of integer vectors corresponding to the locations of that unique
   key in `x`. It is very similar to `vec_group_loc()`, but groups are

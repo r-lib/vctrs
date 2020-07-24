@@ -82,7 +82,7 @@ vec_sort <- function(x, direction = "asc", na_value = "largest") {
 #' @description
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
-#' `vec_order_loc()` returns a data frame containing a `key` column with
+#' `vec_order_locs()` returns a data frame containing a `key` column with
 #' sorted unique groups, and a `loc` column with the locations of each
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
@@ -94,7 +94,7 @@ vec_sort <- function(x, direction = "asc", na_value = "largest") {
 #'   * A `key` column of type `vec_ptype(x)`.
 #'   * A `loc` column of type list, with elements of type integer.
 #'
-#' @section Dependencies of `vec_order_loc()`:
+#' @section Dependencies of `vec_order_locs()`:
 #' * [vec_proxy_order()]
 #'
 #' @export
@@ -105,11 +105,11 @@ vec_sort <- function(x, direction = "asc", na_value = "largest") {
 #'   x = c(NA, sample(5, 9, replace = TRUE))
 #' )
 #'
-#' # `vec_order_loc()` is similar to `vec_group_loc()`, except keys are
+#' # `vec_order_locs()` is similar to `vec_group_loc()`, except keys are
 #' # returned ordered rather than by first appearance.
-#' vec_order_loc(df)
+#' vec_order_locs(df)
 #'
 #' vec_group_loc(df)
-vec_order_loc <- function(x, direction = "asc", na_value = "largest") {
-  .Call(vctrs_order_loc, x, direction, na_value)
+vec_order_locs <- function(x, direction = "asc", na_value = "largest") {
+  .Call(vctrs_order_locs, x, direction, na_value)
 }
