@@ -4132,17 +4132,3 @@ int parse_direction_one(SEXP x) {
     "`direction` must contain only \"asc\" or \"desc\"."
   );
 }
-
-// -----------------------------------------------------------------------------
-
-#undef UINT8_MAX_SIZE
-
-#undef INT_MAX_RADIX_PASS
-#undef DBL_MAX_RADIX_PASS
-
-#undef INT_COUNTING_ORDER_RANGE_BOUNDARY
-
-#undef INSERTION_ORDER_BOUNDARY
-
-#undef PASS_TO_RADIX
-#undef SHIFT_ADJUSTMENT
