@@ -17,11 +17,11 @@
  */
 struct truelength_info new_truelength_info(R_xlen_t max_size_alloc) {
   return (struct truelength_info) {
-    .strings = vctrs_shared_empty_chr,
-    .lengths = vctrs_shared_empty_raw,
-    .uniques = vctrs_shared_empty_chr,
-    .sizes = vctrs_shared_empty_int,
-    .sizes_aux = vctrs_shared_empty_int,
+    .strings = R_NilValue,
+    .lengths = R_NilValue,
+    .uniques = R_NilValue,
+    .sizes = R_NilValue,
+    .sizes_aux = R_NilValue,
 
     .size_alloc = 0,
     .max_size_alloc = max_size_alloc,
