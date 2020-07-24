@@ -73,20 +73,10 @@ struct truelength_info {
 
 #define PROTECT_TRUELENGTH_INFO(p_info, p_n) do {                   \
   PROTECT_WITH_INDEX((p_info)->strings, &(p_info)->strings_pi);     \
-  (p_info)->p_strings = STRING_PTR((p_info)->strings);              \
-                                                                    \
   PROTECT_WITH_INDEX((p_info)->lengths, &(p_info)->lengths_pi);     \
-  (p_info)->p_lengths = (R_xlen_t*) RAW((p_info)->lengths);         \
-                                                                    \
   PROTECT_WITH_INDEX((p_info)->uniques, &(p_info)->uniques_pi);     \
-  (p_info)->p_uniques = STRING_PTR((p_info)->uniques);              \
-                                                                    \
   PROTECT_WITH_INDEX((p_info)->sizes, &(p_info)->sizes_pi);         \
-  (p_info)->p_sizes = INTEGER((p_info)->sizes);                     \
-                                                                    \
   PROTECT_WITH_INDEX((p_info)->sizes_aux, &(p_info)->sizes_aux_pi); \
-  (p_info)->p_sizes_aux = INTEGER((p_info)->sizes_aux);             \
-                                                                    \
   *(p_n) += 5;                                                      \
 } while(0)
 
