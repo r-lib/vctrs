@@ -91,7 +91,7 @@ void truelength_save(struct truelength_info* p_truelength_info,
 
 static R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info);
 
-static SEXP truelength_lengths_extend(const R_xlen_t* p_lengths, R_xlen_t size_old, R_xlen_t size_new);
+static inline SEXP p_lengths_resize(const R_xlen_t* p_x, R_xlen_t x_size, R_xlen_t size);
 
 /*
  * Extend the vectors in `truelength_info`.
@@ -113,7 +113,7 @@ void truelength_realloc(struct truelength_info* p_truelength_info) {
   p_truelength_info->p_strings = STRING_PTR(p_truelength_info->strings);
 
   // Reallocate
-  p_truelength_info->lengths = truelength_lengths_extend(
+  p_truelength_info->lengths = p_lengths_resize(
     p_truelength_info->p_lengths,
     p_truelength_info->size_used,
     size
@@ -160,15 +160,15 @@ void truelength_realloc(struct truelength_info* p_truelength_info) {
   p_truelength_info->size_alloc = size;
 }
 
-static
-SEXP truelength_lengths_extend(const R_xlen_t* p_lengths, R_xlen_t size_old, R_xlen_t size_new) {
-  SEXP out = PROTECT(Rf_allocVector(RAWSXP, size_new * sizeof(R_xlen_t)));
-  R_xlen_t* p_out = (R_xlen_t*) RAW(out);
+static inline
+SEXP p_lengths_resize(const R_xlen_t* p_x, R_xlen_t x_size, R_xlen_t size) {
+  const Rbyte* p_x_rbyte = (const Rbyte*) p_x;
 
-  memcpy(p_out, p_lengths, size_old * sizeof(R_xlen_t));
-
-  UNPROTECT(1);
-  return out;
+  return p_raw_resize(
+    p_x_rbyte,
+    x_size * sizeof(R_xlen_t),
+    size * sizeof(R_xlen_t)
+  );
 }
 
 // -----------------------------------------------------------------------------
