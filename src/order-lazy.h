@@ -61,9 +61,9 @@ struct lazy_vec new_lazy_vec(R_xlen_t size, size_t multiplier) {
  * This reprotects itself using the protection index.
  */
 static inline
-void lazy_vec_initialize(struct lazy_vec* p_x) {
+void* lazy_vec_initialize(struct lazy_vec* p_x) {
   if (p_x->initialized) {
-    return;
+    return p_x->p_data;
   }
 
   p_x->data = Rf_allocVector(RAWSXP, p_x->size);
@@ -73,6 +73,8 @@ void lazy_vec_initialize(struct lazy_vec* p_x) {
   p_x->p_data = (void*) RAW(p_x->data);
 
   p_x->initialized = true;
+
+  return p_x->p_data;
 }
 
 // -----------------------------------------------------------------------------
@@ -116,21 +118,21 @@ struct lazy_int new_lazy_int(R_xlen_t size) {
 }
 
 static inline
-void lazy_order_initialize(struct lazy_int* p_lazy_o) {
+int* lazy_order_initialize(struct lazy_int* p_lazy_o) {
   if (p_lazy_o->initialized) {
-    return;
+    return p_lazy_o->p_data;
   }
 
   R_xlen_t size = p_lazy_o->size;
 
-  int* p_data = p_lazy_o->p_data;
-
   // Initialize `x` with sequential 1-based ordering
   for (R_xlen_t i = 0; i < size; ++i) {
-    p_data[i] = i + 1;
+    p_lazy_o->p_data[i] = i + 1;
   }
 
   p_lazy_o->initialized = true;
+
+  return p_lazy_o->p_data;
 }
 
 // -----------------------------------------------------------------------------
