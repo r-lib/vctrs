@@ -226,8 +226,8 @@ static SEXP vec_order_locs_impl(SEXP x,
                                 const int* p_sizes,
                                 R_xlen_t n_groups);
 
-static inline size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type);
-static inline size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type);
+static inline size_t vec_compute_n_bytes_lazy_vec(SEXP x, const enum vctrs_type type);
+static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
 static SEXP vec_order_check_args(SEXP x, SEXP args);
 
 static void vec_order_switch(SEXP x,
@@ -271,15 +271,15 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   // Compute the maximum size required for auxiliary working memory
-  const size_t multiplier = vec_order_size_multiplier(proxy, type);
+  const size_t n_bytes_lazy_vec = vec_compute_n_bytes_lazy_vec(proxy, type);
 
   // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
-  struct lazy_vec lazy_x_chunk = new_lazy_vec(size, multiplier);
+  struct lazy_vec lazy_x_chunk = new_lazy_vec(size, n_bytes_lazy_vec);
   struct lazy_vec* p_lazy_x_chunk = &lazy_x_chunk;
   PROTECT_LAZY_VEC(p_lazy_x_chunk, p_n_prot);
 
-  struct lazy_vec lazy_x_aux = new_lazy_vec(size, multiplier);
+  struct lazy_vec lazy_x_aux = new_lazy_vec(size, n_bytes_lazy_vec);
   struct lazy_vec* p_lazy_x_aux = &lazy_x_aux;
   PROTECT_LAZY_VEC(p_lazy_x_aux, p_n_prot);
 
@@ -293,10 +293,10 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 
   // Compute the maximum size of the `counts` vector needed during radix
   // ordering. 4 * 256 for integers, 8 * 256 for doubles.
-  size_t counts_multiplier = vec_order_counts_multiplier(proxy, type);
-  R_xlen_t counts_size = UINT8_MAX_SIZE * counts_multiplier;
+  size_t n_bytes_lazy_counts = vec_compute_n_bytes_lazy_counts(proxy, type);
+  R_xlen_t size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
-  struct lazy_vec lazy_counts = new_lazy_vec(counts_size, sizeof(R_xlen_t));
+  struct lazy_vec lazy_counts = new_lazy_vec(size_lazy_counts, sizeof(R_xlen_t));
   struct lazy_vec* p_lazy_counts = &lazy_counts;
   PROTECT_LAZY_VEC(p_lazy_counts, p_n_prot);
 
@@ -914,7 +914,7 @@ void int_order_chunk_impl(void* p_x,
   uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
 
   R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   int_adjust(p_x, decreasing, na_last, size);
 
@@ -1012,7 +1012,7 @@ void int_order_impl(const int* p_x,
   uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
 
   R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   void* p_x_chunk = int_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
   int_adjust(p_x_chunk, decreasing, na_last, size);
@@ -1896,7 +1896,7 @@ void dbl_order_chunk_impl(void* p_x,
   uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
 
   R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   dbl_radix_order(
     p_x,
@@ -1972,7 +1972,7 @@ void dbl_order_impl(const double* p_x,
   uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
 
   R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->size);
+  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   dbl_radix_order(
     p_x_chunk,
@@ -3690,7 +3690,7 @@ void vec_order_chunk_switch(int* p_o,
 
 // -----------------------------------------------------------------------------
 
-static inline size_t df_size_multiplier(SEXP x);
+static inline size_t df_compute_n_bytes_lazy_vec(SEXP x);
 
 /*
  * Compute the minimum size required for `lazy_x_aux` and `lazy_x_chunk`.
@@ -3700,7 +3700,7 @@ static inline size_t df_size_multiplier(SEXP x);
  * and imaginary parts.
  */
 static inline
-size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type) {
+size_t vec_compute_n_bytes_lazy_vec(SEXP x, const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer:
   case vctrs_type_logical:
@@ -3714,7 +3714,7 @@ size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type) {
     // Auxiliary data will store SEXP and ints, so return the larger
     return sizeof(SEXP) > sizeof(int) ? sizeof(SEXP) : sizeof(int);
   case vctrs_type_dataframe:
-    return df_size_multiplier(x);
+    return df_compute_n_bytes_lazy_vec(x);
   default:
     Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`.");
   }
@@ -3722,7 +3722,7 @@ size_t vec_order_size_multiplier(SEXP x, const enum vctrs_type type) {
 
 // `x` should be a flattened df with no df-cols
 static inline
-size_t df_size_multiplier(SEXP x) {
+size_t df_compute_n_bytes_lazy_vec(SEXP x) {
   R_xlen_t n_cols = Rf_xlength(x);
 
   size_t multiplier = 0;
@@ -3731,7 +3731,7 @@ size_t df_size_multiplier(SEXP x) {
     SEXP col = VECTOR_ELT(x, i);
     const enum vctrs_type type = vec_proxy_typeof(col);
 
-    size_t col_multiplier = vec_order_size_multiplier(col, type);
+    size_t col_multiplier = vec_compute_n_bytes_lazy_vec(col, type);
 
     if (col_multiplier > multiplier) {
       multiplier = col_multiplier;
@@ -3743,7 +3743,7 @@ size_t df_size_multiplier(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-static size_t df_counts_multiplier(SEXP x);
+static size_t df_compute_n_bytes_lazy_counts(SEXP x);
 
 /*
  * Compute the minimum size required for `p_counts`
@@ -3755,7 +3755,7 @@ static size_t df_counts_multiplier(SEXP x);
  * - Complex uses double radix sorting.
  */
 static inline
-size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type) {
+size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer:
   case vctrs_type_logical:
@@ -3765,7 +3765,7 @@ size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type) {
   case vctrs_type_complex:
     return DBL_MAX_RADIX_PASS;
   case vctrs_type_dataframe:
-    return df_counts_multiplier(x);
+    return df_compute_n_bytes_lazy_counts(x);
   default:
     Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`.");
   }
@@ -3773,7 +3773,7 @@ size_t vec_order_counts_multiplier(SEXP x, const enum vctrs_type type) {
 
 // `x` should be a flattened df with no df-cols
 static
-size_t df_counts_multiplier(SEXP x) {
+size_t df_compute_n_bytes_lazy_counts(SEXP x) {
   R_xlen_t n_cols = Rf_xlength(x);
 
   size_t multiplier = 0;
@@ -3782,7 +3782,7 @@ size_t df_counts_multiplier(SEXP x) {
     SEXP col = VECTOR_ELT(x, i);
     const enum vctrs_type type = vec_proxy_typeof(col);
 
-    size_t col_multiplier = vec_order_counts_multiplier(col, type);
+    size_t col_multiplier = vec_compute_n_bytes_lazy_counts(col, type);
 
     if (col_multiplier > multiplier) {
       multiplier = col_multiplier;
