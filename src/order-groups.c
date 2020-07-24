@@ -6,7 +6,7 @@
 struct group_info new_group_info() {
   return (struct group_info) {
     .data_size = 0,
-    .data = vctrs_shared_empty_int,
+    .data = R_NilValue,
     .n_groups = 0,
     .max_group_size = 0
   };

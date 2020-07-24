@@ -37,7 +37,6 @@ struct group_info {
 
 #define PROTECT_GROUP_INFO(p_info, p_n) do {              \
   PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi); \
-  (p_info)->p_data = INTEGER((p_info)->data);             \
   *(p_n) += 1;                                            \
 } while(0)
 
