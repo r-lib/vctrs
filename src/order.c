@@ -3860,14 +3860,14 @@ SEXP vec_order_check_args(SEXP x, SEXP args) {
     Rf_errorcall(R_NilValue, "Internal error: `decreasing` must be logical");
   }
   if (lgl_any_na(decreasing)) {
-    Rf_errorcall(R_NilValue, "Internal error: `decreasing` must not contain missing values.");
+    Rf_errorcall(R_NilValue, "Internal error: `decreasing` can't contain missing values.");
   }
 
   if (TYPEOF(na_last) != LGLSXP) {
     Rf_errorcall(R_NilValue, "Internal error: `na_last` must be logical");
   }
   if (lgl_any_na(na_last)) {
-    Rf_errorcall(R_NilValue, "Internal error: `na_last` must not contain missing values.");
+    Rf_errorcall(R_NilValue, "Internal error: `na_last` can't contain missing values.");
   }
 
   if (is_data_frame(x)) {
@@ -4079,7 +4079,7 @@ SEXP parse_na_value(SEXP na_value) {
 static
 int parse_na_value_one(SEXP x) {
   if (x == NA_STRING) {
-    Rf_errorcall(R_NilValue, "`na_value` cannot be missing.");
+    Rf_errorcall(R_NilValue, "`na_value` can't be missing.");
   }
 
   const char* c_x = CHAR(x);
@@ -4119,7 +4119,7 @@ SEXP parse_direction(SEXP direction) {
 static
 int parse_direction_one(SEXP x) {
   if (x == NA_STRING) {
-    Rf_errorcall(R_NilValue, "`direction` cannot be missing.");
+    Rf_errorcall(R_NilValue, "`direction` can't be missing.");
   }
 
   const char* c_x = CHAR(x);
