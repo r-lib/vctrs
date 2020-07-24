@@ -114,6 +114,8 @@ bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
 
+SEXP p_int_resize(const int* p_x, R_xlen_t x_size, R_xlen_t size);
+
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
 

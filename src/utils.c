@@ -364,6 +364,21 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   return out;
 }
 
+
+// Faster than `Rf_xlengthgets()` because that fills the new extended
+// locations with `NA`, which we don't need.
+// [[ include("utils.h") ]]
+SEXP p_int_resize(const int* p_x, R_xlen_t x_size, R_xlen_t size) {
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  memcpy(p_out, p_x, x_size * sizeof(int));
+
+  UNPROTECT(1);
+  return out;
+}
+
+
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Reached the unreachable.", fn);
 }

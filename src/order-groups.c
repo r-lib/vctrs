@@ -1,4 +1,5 @@
 #include "order-groups.h"
+#include "utils.h"
 
 // -----------------------------------------------------------------------------
 
@@ -71,8 +72,6 @@ void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
 
 // -----------------------------------------------------------------------------
 
-static inline SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size);
-
 /*
  * Reallocate `data` to be as long as `size`.
  */
@@ -84,7 +83,7 @@ void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
   }
 
   // Reallocate
-  p_group_info->data = group_extend(
+  p_group_info->data = p_int_resize(
     p_group_info->p_data,
     p_group_info->data_size,
     size
@@ -98,19 +97,6 @@ void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
 
   // Update size
   p_group_info->data_size = size;
-}
-
-// A good bit faster than `Rf_xlengthgets()` because that fills the new extended
-// locations with `NA` as well, which we don't need.
-static inline
-SEXP group_extend(const int* p_data, R_xlen_t data_size, R_xlen_t size) {
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_out = INTEGER(out);
-
-  memcpy(p_out, p_data, data_size * sizeof(int));
-
-  UNPROTECT(1);
-  return out;
 }
 
 // -----------------------------------------------------------------------------
