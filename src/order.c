@@ -930,11 +930,6 @@ void int_order_chunk_impl(void* p_x,
   );
 }
 
-static inline void* int_maybe_copy(const int* p_x,
-                                   struct lazy_vec* p_lazy_result,
-                                   R_xlen_t size,
-                                   bool copy);
-
 /*
  * `int_order_impl()` is used by both `int_order()` and by
  * `chr_order()`.
@@ -960,7 +955,14 @@ void int_order_impl(const int* p_x,
   if (size <= INSERTION_ORDER_BOUNDARY) {
     int* p_o = lazy_order_initialize(p_lazy_o);
 
-    void* p_x_chunk = int_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
+    void* p_x_chunk;
+    if (copy) {
+      p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+      memcpy(p_x_chunk, p_x, size * sizeof(int));
+    } else {
+      p_x_chunk = p_lazy_x_chunk->p_data;
+    }
+
     int_adjust(p_x_chunk, decreasing, na_last, size);
 
     int_insertion_order(p_x_chunk, p_o, p_group_infos, size);
@@ -1014,7 +1016,14 @@ void int_order_impl(const int* p_x,
   R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
-  void* p_x_chunk = int_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
+  void* p_x_chunk;
+  if (copy) {
+    p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+    memcpy(p_x_chunk, p_x, size * sizeof(int));
+  } else {
+    p_x_chunk = p_lazy_x_chunk->p_data;
+  }
+
   int_adjust(p_x_chunk, decreasing, na_last, size);
 
   int_radix_order(
@@ -1027,25 +1036,6 @@ void int_order_impl(const int* p_x,
     p_group_infos,
     size
   );
-}
-
-// If we aren't copying, we expect that `p_lazy_result` already contains
-// the integer values. This happens for character ordering where we store
-// the truelength values in `p_lazy_x_chunk`.
-static inline
-void* int_maybe_copy(const int* p_x,
-                     struct lazy_vec* p_lazy_result,
-                     R_xlen_t size,
-                     bool copy) {
-  if (!copy) {
-    return p_lazy_result->p_data;
-  }
-
-  void* p_result = lazy_vec_initialize(p_lazy_result);
-
-  memcpy(p_result, p_x, size * sizeof(int));
-
-  return p_result;
 }
 
 // -----------------------------------------------------------------------------
@@ -1910,11 +1900,6 @@ void dbl_order_chunk_impl(void* p_x,
   );
 }
 
-static inline void* dbl_maybe_copy(const double* p_x,
-                                   struct lazy_vec* p_lazy_result,
-                                   R_xlen_t size,
-                                   bool copy);
-
 /*
  * Used by `dbl_order()` and by `cpl_order()`
  *
@@ -1957,7 +1942,14 @@ void dbl_order_impl(const double* p_x,
 
   int* p_o = lazy_order_initialize(p_lazy_o);
 
-  void* p_x_chunk = dbl_maybe_copy(p_x, p_lazy_x_chunk, size, copy);
+  void* p_x_chunk;
+  if (copy) {
+    p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+    memcpy(p_x_chunk, p_x, size * sizeof(double));
+  } else {
+    p_x_chunk = p_lazy_x_chunk->p_data;
+  }
+
   dbl_adjust(p_x_chunk, decreasing, na_last, size);
 
   if (size <= INSERTION_ORDER_BOUNDARY) {
@@ -1984,25 +1976,6 @@ void dbl_order_impl(const double* p_x,
     p_group_infos,
     size
   );
-}
-
-// If we aren't copying, we expect that `p_lazy_x_chunk` already contains
-// the double values. This happens for complex ordering where we store
-// the real / imaginary values in `p_lazy_x_chunk` ahead of time.
-static inline
-void* dbl_maybe_copy(const double* p_x,
-                     struct lazy_vec* p_lazy_result,
-                     R_xlen_t size,
-                     bool copy) {
-  if (!copy) {
-    return p_lazy_result->p_data;
-  }
-
-  void* p_result = lazy_vec_initialize(p_lazy_result);
-
-  memcpy(p_result, p_x, size * sizeof(double));
-
-  return p_result;
 }
 
 // -----------------------------------------------------------------------------
