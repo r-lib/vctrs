@@ -152,7 +152,7 @@ plot_bench(df, title = "Integers (large)")
 
 ### Test 3
 
-Investigating the performance of switching from the counting sort to the radix sort. This happens at `INT_COUNTING_ORDER_RANGE_BOUNDARY` which is 100,000.
+Investigating the performance of switching from the counting sort to the radix sort. This happens at `INT_ORDER_COUNTING_RANGE_BOUNDARY` which is 100,000.
 
 ```{r}
 set.seed(123)

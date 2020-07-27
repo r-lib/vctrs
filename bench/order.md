@@ -148,7 +148,7 @@ number of groups.
 ### Test 3
 
 Investigating the performance of switching from the counting sort to the
-radix sort. This happens at `INT_COUNTING_ORDER_RANGE_BOUNDARY` which is
+radix sort. This happens at `INT_ORDER_COUNTING_RANGE_BOUNDARY` which is
 100,000.
 
 ``` r
