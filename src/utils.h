@@ -493,6 +493,15 @@ intmax_t intmax_add(intmax_t x, intmax_t y) {
 
   return x + y;
 }
+static inline
+intmax_t intmax_subtract(intmax_t x, intmax_t y) {
+  if ((y > 0 && x < (INTMAX_MIN + y)) ||
+      (y < 0 && x < (INTMAX_MAX + y))) {
+    stop_internal("intmax_subtract", "Subtraction resulted in overflow or underflow.");
+  }
+
+  return x - y;
+}
 
 static inline
 r_ssize r_ssize_add(r_ssize x, r_ssize y) {
