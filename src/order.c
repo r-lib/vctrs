@@ -2909,7 +2909,7 @@ void chr_mark_uniques(const SEXP* p_x,
 
     // Save the truelength so we can reset it later.
     // Also saves this unique value so we can order uniques.
-    truelength_save(p_truelength_info, elt, truelength, elt_size);
+    truelength_save(elt, truelength, elt_size, p_truelength_info);
 
     // Mark as negative to note that we have seen this string.
     // R uses positive or zero truelengths.

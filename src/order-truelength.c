@@ -68,10 +68,10 @@ static void truelength_realloc(struct truelength_info* p_truelength_info);
  * its "size" (i.e the number of characters). Will be reset later with
  * `truelength_reset()`.
  */
-void truelength_save(struct truelength_info* p_truelength_info,
-                     SEXP x,
+void truelength_save(SEXP x,
                      R_xlen_t truelength,
-                     R_xlen_t size) {
+                     R_xlen_t size,
+                     struct truelength_info* p_truelength_info) {
   // Reallocate as needed
   if (p_truelength_info->size_used == p_truelength_info->size_alloc) {
     truelength_realloc(p_truelength_info);
