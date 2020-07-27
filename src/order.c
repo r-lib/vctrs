@@ -220,17 +220,17 @@ static SEXP vec_order_locs_impl(SEXP x,
                                 const int* p_sizes,
                                 R_xlen_t n_groups);
 
-static inline size_t vec_compute_n_bytes_lazy_vec(SEXP x, const enum vctrs_type type);
+static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
 static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
 static SEXP vec_order_check_args(SEXP x, SEXP args);
 
 static void vec_order_switch(SEXP x,
                              struct lazy_int* p_lazy_o,
-                             struct lazy_vec* p_lazy_x_chunk,
-                             struct lazy_vec* p_lazy_x_aux,
-                             struct lazy_vec* p_lazy_o_aux,
-                             struct lazy_vec* p_lazy_bytes,
-                             struct lazy_vec* p_lazy_counts,
+                             struct lazy_raw* p_lazy_x_chunk,
+                             struct lazy_raw* p_lazy_x_aux,
+                             struct lazy_raw* p_lazy_o_aux,
+                             struct lazy_raw* p_lazy_bytes,
+                             struct lazy_raw* p_lazy_counts,
                              struct group_infos* p_group_infos,
                              struct truelength_info* p_truelength_info,
                              SEXP decreasing,
@@ -265,20 +265,20 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   // Compute the maximum size required for auxiliary working memory
-  const size_t n_bytes_lazy_vec = vec_compute_n_bytes_lazy_vec(proxy, type);
+  const size_t n_bytes_lazy_raw = vec_compute_n_bytes_lazy_raw(proxy, type);
 
   // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
-  struct lazy_vec lazy_x_chunk = new_lazy_vec(size, n_bytes_lazy_vec);
+  struct lazy_raw lazy_x_chunk = new_lazy_raw(size, n_bytes_lazy_raw);
   PROTECT_LAZY_VEC(&lazy_x_chunk, p_n_prot);
 
-  struct lazy_vec lazy_x_aux = new_lazy_vec(size, n_bytes_lazy_vec);
+  struct lazy_raw lazy_x_aux = new_lazy_raw(size, n_bytes_lazy_raw);
   PROTECT_LAZY_VEC(&lazy_x_aux, p_n_prot);
 
-  struct lazy_vec lazy_o_aux = new_lazy_vec(size, sizeof(int));
+  struct lazy_raw lazy_o_aux = new_lazy_raw(size, sizeof(int));
   PROTECT_LAZY_VEC(&lazy_o_aux, p_n_prot);
 
-  struct lazy_vec lazy_bytes = new_lazy_vec(size, sizeof(uint8_t));
+  struct lazy_raw lazy_bytes = new_lazy_raw(size, sizeof(uint8_t));
   PROTECT_LAZY_VEC(&lazy_bytes, p_n_prot);
 
   // Compute the maximum size of the `counts` vector needed during radix
@@ -286,7 +286,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   size_t n_bytes_lazy_counts = vec_compute_n_bytes_lazy_counts(proxy, type);
   R_xlen_t size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
-  struct lazy_vec lazy_counts = new_lazy_vec(size_lazy_counts, sizeof(R_xlen_t));
+  struct lazy_raw lazy_counts = new_lazy_raw(size_lazy_counts, sizeof(R_xlen_t));
   PROTECT_LAZY_VEC(&lazy_counts, p_n_prot);
 
   // Determine if group tracking can be turned off.
@@ -412,11 +412,11 @@ SEXP vec_order_locs_impl(SEXP x,
 
 static void df_order(SEXP x,
                      struct lazy_int* p_lazy_o,
-                     struct lazy_vec* p_lazy_x_chunk,
-                     struct lazy_vec* p_lazy_x_aux,
-                     struct lazy_vec* p_lazy_o_aux,
-                     struct lazy_vec* p_lazy_bytes,
-                     struct lazy_vec* p_lazy_counts,
+                     struct lazy_raw* p_lazy_x_chunk,
+                     struct lazy_raw* p_lazy_x_aux,
+                     struct lazy_raw* p_lazy_o_aux,
+                     struct lazy_raw* p_lazy_bytes,
+                     struct lazy_raw* p_lazy_counts,
                      struct group_infos* p_group_infos,
                      struct truelength_info* p_truelength_info,
                      SEXP decreasing,
@@ -425,11 +425,11 @@ static void df_order(SEXP x,
 
 static void vec_order_base_switch(SEXP x,
                                   struct lazy_int* p_lazy_o,
-                                  struct lazy_vec* p_lazy_x_chunk,
-                                  struct lazy_vec* p_lazy_x_aux,
-                                  struct lazy_vec* p_lazy_o_aux,
-                                  struct lazy_vec* p_lazy_bytes,
-                                  struct lazy_vec* p_lazy_counts,
+                                  struct lazy_raw* p_lazy_x_chunk,
+                                  struct lazy_raw* p_lazy_x_aux,
+                                  struct lazy_raw* p_lazy_o_aux,
+                                  struct lazy_raw* p_lazy_bytes,
+                                  struct lazy_raw* p_lazy_counts,
                                   struct group_infos* p_group_infos,
                                   struct truelength_info* p_truelength_info,
                                   bool decreasing,
@@ -440,11 +440,11 @@ static void vec_order_base_switch(SEXP x,
 static
 void vec_order_switch(SEXP x,
                       struct lazy_int* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
+                      struct lazy_raw* p_lazy_x_chunk,
+                      struct lazy_raw* p_lazy_x_aux,
+                      struct lazy_raw* p_lazy_o_aux,
+                      struct lazy_raw* p_lazy_bytes,
+                      struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       struct truelength_info* p_truelength_info,
                       SEXP decreasing,
@@ -510,11 +510,11 @@ void vec_order_switch(SEXP x,
 
 static void int_order(SEXP x,
                       struct lazy_int* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
+                      struct lazy_raw* p_lazy_x_chunk,
+                      struct lazy_raw* p_lazy_x_aux,
+                      struct lazy_raw* p_lazy_o_aux,
+                      struct lazy_raw* p_lazy_bytes,
+                      struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       bool decreasing,
                       bool na_last,
@@ -522,11 +522,11 @@ static void int_order(SEXP x,
 
 static void lgl_order(SEXP x,
                       struct lazy_int* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
+                      struct lazy_raw* p_lazy_x_chunk,
+                      struct lazy_raw* p_lazy_x_aux,
+                      struct lazy_raw* p_lazy_o_aux,
+                      struct lazy_raw* p_lazy_bytes,
+                      struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       bool decreasing,
                       bool na_last,
@@ -534,11 +534,11 @@ static void lgl_order(SEXP x,
 
 static void dbl_order(SEXP x,
                       struct lazy_int* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
+                      struct lazy_raw* p_lazy_x_chunk,
+                      struct lazy_raw* p_lazy_x_aux,
+                      struct lazy_raw* p_lazy_o_aux,
+                      struct lazy_raw* p_lazy_bytes,
+                      struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       bool decreasing,
                       bool na_last,
@@ -546,11 +546,11 @@ static void dbl_order(SEXP x,
 
 static void cpl_order(SEXP x,
                       struct lazy_int* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
+                      struct lazy_raw* p_lazy_x_chunk,
+                      struct lazy_raw* p_lazy_x_aux,
+                      struct lazy_raw* p_lazy_o_aux,
+                      struct lazy_raw* p_lazy_bytes,
+                      struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       bool decreasing,
                       bool na_last,
@@ -558,11 +558,11 @@ static void cpl_order(SEXP x,
 
 static void chr_order(SEXP x,
                       struct lazy_int* p_lazy_o,
-                      struct lazy_vec* p_lazy_x_chunk,
-                      struct lazy_vec* p_lazy_x_aux,
-                      struct lazy_vec* p_lazy_o_aux,
-                      struct lazy_vec* p_lazy_bytes,
-                      struct lazy_vec* p_lazy_counts,
+                      struct lazy_raw* p_lazy_x_chunk,
+                      struct lazy_raw* p_lazy_x_aux,
+                      struct lazy_raw* p_lazy_o_aux,
+                      struct lazy_raw* p_lazy_bytes,
+                      struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       struct truelength_info* p_truelength_info,
                       bool decreasing,
@@ -573,11 +573,11 @@ static void chr_order(SEXP x,
 static
 void vec_order_base_switch(SEXP x,
                            struct lazy_int* p_lazy_o,
-                           struct lazy_vec* p_lazy_x_chunk,
-                           struct lazy_vec* p_lazy_x_aux,
-                           struct lazy_vec* p_lazy_o_aux,
-                           struct lazy_vec* p_lazy_bytes,
-                           struct lazy_vec* p_lazy_counts,
+                           struct lazy_raw* p_lazy_x_chunk,
+                           struct lazy_raw* p_lazy_x_aux,
+                           struct lazy_raw* p_lazy_o_aux,
+                           struct lazy_raw* p_lazy_bytes,
+                           struct lazy_raw* p_lazy_counts,
                            struct group_infos* p_group_infos,
                            struct truelength_info* p_truelength_info,
                            bool decreasing,
@@ -684,10 +684,10 @@ void vec_order_base_switch(SEXP x,
 
 static void int_order_chunk_impl(void* p_x,
                                  int* p_o,
-                                 struct lazy_vec* p_lazy_x_aux,
-                                 struct lazy_vec* p_lazy_o_aux,
-                                 struct lazy_vec* p_lazy_bytes,
-                                 struct lazy_vec* p_lazy_counts,
+                                 struct lazy_raw* p_lazy_x_aux,
+                                 struct lazy_raw* p_lazy_o_aux,
+                                 struct lazy_raw* p_lazy_bytes,
+                                 struct lazy_raw* p_lazy_counts,
                                  struct group_infos* p_group_infos,
                                  bool decreasing,
                                  bool na_last,
@@ -709,11 +709,11 @@ static void int_order_chunk_impl(void* p_x,
  */
 static
 void int_order_chunk(int* p_o,
-                     struct lazy_vec* p_lazy_x_chunk,
-                     struct lazy_vec* p_lazy_x_aux,
-                     struct lazy_vec* p_lazy_o_aux,
-                     struct lazy_vec* p_lazy_bytes,
-                     struct lazy_vec* p_lazy_counts,
+                     struct lazy_raw* p_lazy_x_chunk,
+                     struct lazy_raw* p_lazy_x_aux,
+                     struct lazy_raw* p_lazy_o_aux,
+                     struct lazy_raw* p_lazy_bytes,
+                     struct lazy_raw* p_lazy_counts,
                      struct group_infos* p_group_infos,
                      bool decreasing,
                      bool na_last,
@@ -749,11 +749,11 @@ void int_order_chunk(int* p_o,
 
 static void int_order_impl(const int* p_x,
                            struct lazy_int* p_lazy_o,
-                           struct lazy_vec* p_lazy_x_chunk,
-                           struct lazy_vec* p_lazy_x_aux,
-                           struct lazy_vec* p_lazy_o_aux,
-                           struct lazy_vec* p_lazy_bytes,
-                           struct lazy_vec* p_lazy_counts,
+                           struct lazy_raw* p_lazy_x_chunk,
+                           struct lazy_raw* p_lazy_x_aux,
+                           struct lazy_raw* p_lazy_o_aux,
+                           struct lazy_raw* p_lazy_bytes,
+                           struct lazy_raw* p_lazy_counts,
                            struct group_infos* p_group_infos,
                            bool decreasing,
                            bool na_last,
@@ -763,11 +763,11 @@ static void int_order_impl(const int* p_x,
 static
 void int_order(SEXP x,
                struct lazy_int* p_lazy_o,
-               struct lazy_vec* p_lazy_x_chunk,
-               struct lazy_vec* p_lazy_x_aux,
-               struct lazy_vec* p_lazy_o_aux,
-               struct lazy_vec* p_lazy_bytes,
-               struct lazy_vec* p_lazy_counts,
+               struct lazy_raw* p_lazy_x_chunk,
+               struct lazy_raw* p_lazy_x_aux,
+               struct lazy_raw* p_lazy_o_aux,
+               struct lazy_raw* p_lazy_bytes,
+               struct lazy_raw* p_lazy_counts,
                struct group_infos* p_group_infos,
                bool decreasing,
                bool na_last,
@@ -848,10 +848,10 @@ static void int_radix_order(uint32_t* p_x,
 static
 void int_order_chunk_impl(void* p_x,
                           int* p_o,
-                          struct lazy_vec* p_lazy_x_aux,
-                          struct lazy_vec* p_lazy_o_aux,
-                          struct lazy_vec* p_lazy_bytes,
-                          struct lazy_vec* p_lazy_counts,
+                          struct lazy_raw* p_lazy_x_aux,
+                          struct lazy_raw* p_lazy_o_aux,
+                          struct lazy_raw* p_lazy_bytes,
+                          struct lazy_raw* p_lazy_counts,
                           struct group_infos* p_group_infos,
                           bool decreasing,
                           bool na_last,
@@ -862,7 +862,7 @@ void int_order_chunk_impl(void* p_x,
     return;
   }
 
-  int* p_o_aux = (int*) lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
 
   uint32_t range;
   int x_min;
@@ -893,11 +893,11 @@ void int_order_chunk_impl(void* p_x,
     return;
   }
 
-  uint32_t* p_x_aux = (uint32_t*) lazy_vec_initialize(p_lazy_x_aux);
+  uint32_t* p_x_aux = (uint32_t*) lazy_raw_initialize(p_lazy_x_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
 
-  R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) lazy_raw_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   int_adjust(p_x, decreasing, na_last, size);
@@ -926,11 +926,11 @@ void int_order_chunk_impl(void* p_x,
 static
 void int_order_impl(const int* p_x,
                     struct lazy_int* p_lazy_o,
-                    struct lazy_vec* p_lazy_x_chunk,
-                    struct lazy_vec* p_lazy_x_aux,
-                    struct lazy_vec* p_lazy_o_aux,
-                    struct lazy_vec* p_lazy_bytes,
-                    struct lazy_vec* p_lazy_counts,
+                    struct lazy_raw* p_lazy_x_chunk,
+                    struct lazy_raw* p_lazy_x_aux,
+                    struct lazy_raw* p_lazy_o_aux,
+                    struct lazy_raw* p_lazy_bytes,
+                    struct lazy_raw* p_lazy_counts,
                     struct group_infos* p_group_infos,
                     bool decreasing,
                     bool na_last,
@@ -941,7 +941,7 @@ void int_order_impl(const int* p_x,
 
     void* p_x_chunk;
     if (copy) {
-      p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+      p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
       memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
     } else {
       p_x_chunk = p_lazy_x_chunk->p_data;
@@ -991,18 +991,18 @@ void int_order_impl(const int* p_x,
 
   int* p_o = lazy_order_initialize(p_lazy_o);
 
-  int* p_o_aux = (int*) lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
 
-  uint32_t* p_x_aux = (uint32_t*) lazy_vec_initialize(p_lazy_x_aux);
+  uint32_t* p_x_aux = (uint32_t*) lazy_raw_initialize(p_lazy_x_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
 
-  R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) lazy_raw_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   void* p_x_chunk;
   if (copy) {
-    p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+    p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
     memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
@@ -1657,11 +1657,11 @@ uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift) {
  */
 static
 void lgl_order_chunk(int* p_o,
-                     struct lazy_vec* p_lazy_x_chunk,
-                     struct lazy_vec* p_lazy_x_aux,
-                     struct lazy_vec* p_lazy_o_aux,
-                     struct lazy_vec* p_lazy_bytes,
-                     struct lazy_vec* p_lazy_counts,
+                     struct lazy_raw* p_lazy_x_chunk,
+                     struct lazy_raw* p_lazy_x_aux,
+                     struct lazy_raw* p_lazy_o_aux,
+                     struct lazy_raw* p_lazy_bytes,
+                     struct lazy_raw* p_lazy_counts,
                      struct group_infos* p_group_infos,
                      bool decreasing,
                      bool na_last,
@@ -1683,11 +1683,11 @@ void lgl_order_chunk(int* p_o,
 static
 void lgl_order(SEXP x,
                struct lazy_int* p_lazy_o,
-               struct lazy_vec* p_lazy_x_chunk,
-               struct lazy_vec* p_lazy_x_aux,
-               struct lazy_vec* p_lazy_o_aux,
-               struct lazy_vec* p_lazy_bytes,
-               struct lazy_vec* p_lazy_counts,
+               struct lazy_raw* p_lazy_x_chunk,
+               struct lazy_raw* p_lazy_x_aux,
+               struct lazy_raw* p_lazy_o_aux,
+               struct lazy_raw* p_lazy_bytes,
+               struct lazy_raw* p_lazy_counts,
                struct group_infos* p_group_infos,
                bool decreasing,
                bool na_last,
@@ -1711,10 +1711,10 @@ void lgl_order(SEXP x,
 
 static void dbl_order_chunk_impl(void* p_x,
                                  int* p_o,
-                                 struct lazy_vec* p_lazy_x_aux,
-                                 struct lazy_vec* p_lazy_o_aux,
-                                 struct lazy_vec* p_lazy_bytes,
-                                 struct lazy_vec* p_lazy_counts,
+                                 struct lazy_raw* p_lazy_x_aux,
+                                 struct lazy_raw* p_lazy_o_aux,
+                                 struct lazy_raw* p_lazy_bytes,
+                                 struct lazy_raw* p_lazy_counts,
                                  struct group_infos* p_group_infos,
                                  bool decreasing,
                                  bool na_last,
@@ -1740,11 +1740,11 @@ static void dbl_order_chunk_impl(void* p_x,
  */
 static
 void dbl_order_chunk(int* p_o,
-                     struct lazy_vec* p_lazy_x_chunk,
-                     struct lazy_vec* p_lazy_x_aux,
-                     struct lazy_vec* p_lazy_o_aux,
-                     struct lazy_vec* p_lazy_bytes,
-                     struct lazy_vec* p_lazy_counts,
+                     struct lazy_raw* p_lazy_x_chunk,
+                     struct lazy_raw* p_lazy_x_aux,
+                     struct lazy_raw* p_lazy_o_aux,
+                     struct lazy_raw* p_lazy_bytes,
+                     struct lazy_raw* p_lazy_counts,
                      struct group_infos* p_group_infos,
                      bool decreasing,
                      bool na_last,
@@ -1768,11 +1768,11 @@ void dbl_order_chunk(int* p_o,
 
 static void dbl_order_impl(const double* p_x,
                            struct lazy_int* p_lazy_o,
-                           struct lazy_vec* p_lazy_x_chunk,
-                           struct lazy_vec* p_lazy_x_aux,
-                           struct lazy_vec* p_lazy_o_aux,
-                           struct lazy_vec* p_lazy_bytes,
-                           struct lazy_vec* p_lazy_counts,
+                           struct lazy_raw* p_lazy_x_chunk,
+                           struct lazy_raw* p_lazy_x_aux,
+                           struct lazy_raw* p_lazy_o_aux,
+                           struct lazy_raw* p_lazy_bytes,
+                           struct lazy_raw* p_lazy_counts,
                            struct group_infos* p_group_infos,
                            bool decreasing,
                            bool na_last,
@@ -1782,11 +1782,11 @@ static void dbl_order_impl(const double* p_x,
 static
 void dbl_order(SEXP x,
                struct lazy_int* p_lazy_o,
-               struct lazy_vec* p_lazy_x_chunk,
-               struct lazy_vec* p_lazy_x_aux,
-               struct lazy_vec* p_lazy_o_aux,
-               struct lazy_vec* p_lazy_bytes,
-               struct lazy_vec* p_lazy_counts,
+               struct lazy_raw* p_lazy_x_chunk,
+               struct lazy_raw* p_lazy_x_aux,
+               struct lazy_raw* p_lazy_o_aux,
+               struct lazy_raw* p_lazy_bytes,
+               struct lazy_raw* p_lazy_counts,
                struct group_infos* p_group_infos,
                bool decreasing,
                bool na_last,
@@ -1839,10 +1839,10 @@ static void dbl_radix_order(uint64_t* p_x,
 static
 void dbl_order_chunk_impl(void* p_x,
                           int* p_o,
-                          struct lazy_vec* p_lazy_x_aux,
-                          struct lazy_vec* p_lazy_o_aux,
-                          struct lazy_vec* p_lazy_bytes,
-                          struct lazy_vec* p_lazy_counts,
+                          struct lazy_raw* p_lazy_x_aux,
+                          struct lazy_raw* p_lazy_o_aux,
+                          struct lazy_raw* p_lazy_bytes,
+                          struct lazy_raw* p_lazy_counts,
                           struct group_infos* p_group_infos,
                           bool decreasing,
                           bool na_last,
@@ -1867,13 +1867,13 @@ void dbl_order_chunk_impl(void* p_x,
     return;
   }
 
-  uint64_t* p_x_aux = (uint64_t*) lazy_vec_initialize(p_lazy_x_aux);
+  uint64_t* p_x_aux = (uint64_t*) lazy_raw_initialize(p_lazy_x_aux);
 
-  int* p_o_aux = (int*) lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
 
-  R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) lazy_raw_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   dbl_radix_order(
@@ -1902,11 +1902,11 @@ void dbl_order_chunk_impl(void* p_x,
 static
 void dbl_order_impl(const double* p_x,
                     struct lazy_int* p_lazy_o,
-                    struct lazy_vec* p_lazy_x_chunk,
-                    struct lazy_vec* p_lazy_x_aux,
-                    struct lazy_vec* p_lazy_o_aux,
-                    struct lazy_vec* p_lazy_bytes,
-                    struct lazy_vec* p_lazy_counts,
+                    struct lazy_raw* p_lazy_x_chunk,
+                    struct lazy_raw* p_lazy_x_aux,
+                    struct lazy_raw* p_lazy_o_aux,
+                    struct lazy_raw* p_lazy_bytes,
+                    struct lazy_raw* p_lazy_counts,
                     struct group_infos* p_group_infos,
                     bool decreasing,
                     bool na_last,
@@ -1932,7 +1932,7 @@ void dbl_order_impl(const double* p_x,
 
   void* p_x_chunk;
   if (copy) {
-    p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+    p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
     memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
@@ -1945,13 +1945,13 @@ void dbl_order_impl(const double* p_x,
     return;
   }
 
-  uint64_t* p_x_aux = (uint64_t*) lazy_vec_initialize(p_lazy_x_aux);
+  uint64_t* p_x_aux = (uint64_t*) lazy_raw_initialize(p_lazy_x_aux);
 
-  int* p_o_aux = (int*) lazy_vec_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
 
-  R_xlen_t* p_counts = (R_xlen_t*) lazy_vec_initialize(p_lazy_counts);
+  R_xlen_t* p_counts = (R_xlen_t*) lazy_raw_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
   dbl_radix_order(
@@ -2454,11 +2454,11 @@ uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
 static
 void cpl_order(SEXP x,
                struct lazy_int* p_lazy_o,
-               struct lazy_vec* p_lazy_x_chunk,
-               struct lazy_vec* p_lazy_x_aux,
-               struct lazy_vec* p_lazy_o_aux,
-               struct lazy_vec* p_lazy_bytes,
-               struct lazy_vec* p_lazy_counts,
+               struct lazy_raw* p_lazy_x_chunk,
+               struct lazy_raw* p_lazy_x_aux,
+               struct lazy_raw* p_lazy_o_aux,
+               struct lazy_raw* p_lazy_bytes,
+               struct lazy_raw* p_lazy_counts,
                struct group_infos* p_group_infos,
                bool decreasing,
                bool na_last,
@@ -2479,7 +2479,7 @@ void cpl_order(SEXP x,
   // When a complex column is present,
   // `lazy_x_chunk` and `lazy_x_aux` are created to have the
   // size of a double vector.
-  double* p_x_chunk_dbl = (double*) lazy_vec_initialize(p_lazy_x_chunk);
+  double* p_x_chunk_dbl = (double*) lazy_raw_initialize(p_lazy_x_chunk);
 
   // Handle the real portion first
   for (R_xlen_t i = 0; i < size; ++i) {
@@ -2571,8 +2571,8 @@ void cpl_order(SEXP x,
 // -----------------------------------------------------------------------------
 
 static void chr_mark_sorted_uniques(const SEXP* p_x,
-                                    struct lazy_vec* p_lazy_x_aux,
-                                    struct lazy_vec* p_lazy_bytes,
+                                    struct lazy_raw* p_lazy_x_aux,
+                                    struct lazy_raw* p_lazy_bytes,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size);
 
@@ -2613,11 +2613,11 @@ static void chr_radix_order(SEXP* p_x,
  */
 static
 void chr_order_chunk(int* p_o,
-                     struct lazy_vec* p_lazy_x_chunk,
-                     struct lazy_vec* p_lazy_x_aux,
-                     struct lazy_vec* p_lazy_o_aux,
-                     struct lazy_vec* p_lazy_bytes,
-                     struct lazy_vec* p_lazy_counts,
+                     struct lazy_raw* p_lazy_x_chunk,
+                     struct lazy_raw* p_lazy_x_aux,
+                     struct lazy_raw* p_lazy_o_aux,
+                     struct lazy_raw* p_lazy_bytes,
+                     struct lazy_raw* p_lazy_counts,
                      struct group_infos* p_group_infos,
                      bool decreasing,
                      bool na_last,
@@ -2643,7 +2643,7 @@ void chr_order_chunk(int* p_o,
     return;
   }
 
-  void* p_x_aux = lazy_vec_initialize(p_lazy_x_aux);
+  void* p_x_aux = lazy_raw_initialize(p_lazy_x_aux);
 
   // Move integer ordering into `p_x_aux`.
   // `p_x_aux` is allocated as the larger of `int` and `SEXP*`.
@@ -2674,11 +2674,11 @@ static void chr_copy_with_reencode(SEXP* p_x_chunk, const SEXP* p_x, R_xlen_t si
 static
 void chr_order(SEXP x,
                struct lazy_int* p_lazy_o,
-               struct lazy_vec* p_lazy_x_chunk,
-               struct lazy_vec* p_lazy_x_aux,
-               struct lazy_vec* p_lazy_o_aux,
-               struct lazy_vec* p_lazy_bytes,
-               struct lazy_vec* p_lazy_counts,
+               struct lazy_raw* p_lazy_x_chunk,
+               struct lazy_raw* p_lazy_x_aux,
+               struct lazy_raw* p_lazy_o_aux,
+               struct lazy_raw* p_lazy_bytes,
+               struct lazy_raw* p_lazy_counts,
                struct group_infos* p_group_infos,
                struct truelength_info* p_truelength_info,
                bool decreasing,
@@ -2719,12 +2719,12 @@ void chr_order(SEXP x,
 
   // Only allocate `p_lazy_x_aux` if reencoding is required
   if (p_truelength_info->reencode) {
-    SEXP* p_x_aux = lazy_vec_initialize(p_lazy_x_aux);
+    SEXP* p_x_aux = lazy_raw_initialize(p_lazy_x_aux);
     chr_copy_with_reencode(p_x_aux, p_x, size);
     p_x = p_x_aux;
   }
 
-  void* p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+  void* p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
 
   // Move integer ordering into `p_x_chunk`.
   // `p_x_chunk` is allocated as the larger of `int` and `SEXP*`.
@@ -2815,8 +2815,8 @@ static void chr_mark_uniques(const SEXP* p_x,
  */
 static
 void chr_mark_sorted_uniques(const SEXP* p_x,
-                             struct lazy_vec* p_lazy_x_aux,
-                             struct lazy_vec* p_lazy_bytes,
+                             struct lazy_raw* p_lazy_x_aux,
+                             struct lazy_raw* p_lazy_bytes,
                              struct truelength_info* p_truelength_info,
                              R_xlen_t size) {
   // Collect uniques assuming no reencoding required (for performance)
@@ -2844,9 +2844,9 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
 
   R_xlen_t n_uniques = p_truelength_info->size_used;
 
-  SEXP* p_x_aux = (SEXP*) lazy_vec_initialize(p_lazy_x_aux);
+  SEXP* p_x_aux = (SEXP*) lazy_raw_initialize(p_lazy_x_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_vec_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
 
   // Sorts uniques in ascending order using `p_x_aux` for working memory.
   // Assumes no `NA`!
@@ -3260,11 +3260,11 @@ void chr_copy_with_reencode(SEXP* p_x_chunk, const SEXP* p_x, R_xlen_t size) {
 // -----------------------------------------------------------------------------
 
 static void vec_order_chunk_switch(int* p_o,
-                                   struct lazy_vec* p_lazy_x_chunk,
-                                   struct lazy_vec* p_lazy_x_aux,
-                                   struct lazy_vec* p_lazy_o_aux,
-                                   struct lazy_vec* p_lazy_bytes,
-                                   struct lazy_vec* p_lazy_counts,
+                                   struct lazy_raw* p_lazy_x_chunk,
+                                   struct lazy_raw* p_lazy_x_aux,
+                                   struct lazy_raw* p_lazy_o_aux,
+                                   struct lazy_raw* p_lazy_bytes,
+                                   struct lazy_raw* p_lazy_counts,
                                    struct group_infos* p_group_infos,
                                    struct truelength_info* p_truelength_info,
                                    bool decreasing,
@@ -3346,11 +3346,11 @@ static void vec_order_chunk_switch(int* p_o,
 static
 void df_order(SEXP x,
               struct lazy_int* p_lazy_o,
-              struct lazy_vec* p_lazy_x_chunk,
-              struct lazy_vec* p_lazy_x_aux,
-              struct lazy_vec* p_lazy_o_aux,
-              struct lazy_vec* p_lazy_bytes,
-              struct lazy_vec* p_lazy_counts,
+              struct lazy_raw* p_lazy_x_chunk,
+              struct lazy_raw* p_lazy_x_aux,
+              struct lazy_raw* p_lazy_o_aux,
+              struct lazy_raw* p_lazy_bytes,
+              struct lazy_raw* p_lazy_counts,
               struct group_infos* p_group_infos,
               struct truelength_info* p_truelength_info,
               SEXP decreasing,
@@ -3490,7 +3490,7 @@ void df_order(SEXP x,
     groups_swap(p_group_infos);
 
     // Ensure `x_chunk` is initialized to hold chunks
-    void* p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
+    void* p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
 
     // Iterate over this column's group chunks
     for (R_xlen_t group = 0; group < n_groups; ++group) {
@@ -3550,11 +3550,11 @@ void df_order(SEXP x,
  */
 static
 void vec_order_chunk_switch(int* p_o,
-                            struct lazy_vec* p_lazy_x_chunk,
-                            struct lazy_vec* p_lazy_x_aux,
-                            struct lazy_vec* p_lazy_o_aux,
-                            struct lazy_vec* p_lazy_bytes,
-                            struct lazy_vec* p_lazy_counts,
+                            struct lazy_raw* p_lazy_x_chunk,
+                            struct lazy_raw* p_lazy_x_aux,
+                            struct lazy_raw* p_lazy_o_aux,
+                            struct lazy_raw* p_lazy_bytes,
+                            struct lazy_raw* p_lazy_counts,
                             struct group_infos* p_group_infos,
                             struct truelength_info* p_truelength_info,
                             bool decreasing,
@@ -3655,7 +3655,7 @@ void vec_order_chunk_switch(int* p_o,
 
 // -----------------------------------------------------------------------------
 
-static inline size_t df_compute_n_bytes_lazy_vec(SEXP x);
+static inline size_t df_compute_n_bytes_lazy_raw(SEXP x);
 
 /*
  * Compute the minimum size required for `lazy_x_aux` and `lazy_x_chunk`.
@@ -3665,7 +3665,7 @@ static inline size_t df_compute_n_bytes_lazy_vec(SEXP x);
  * and imaginary parts.
  */
 static inline
-size_t vec_compute_n_bytes_lazy_vec(SEXP x, const enum vctrs_type type) {
+size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_integer:
   case vctrs_type_logical:
@@ -3679,7 +3679,7 @@ size_t vec_compute_n_bytes_lazy_vec(SEXP x, const enum vctrs_type type) {
     // Auxiliary data will store SEXP and ints, so return the larger
     return sizeof(SEXP) > sizeof(int) ? sizeof(SEXP) : sizeof(int);
   case vctrs_type_dataframe:
-    return df_compute_n_bytes_lazy_vec(x);
+    return df_compute_n_bytes_lazy_raw(x);
   default:
     Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`.");
   }
@@ -3687,7 +3687,7 @@ size_t vec_compute_n_bytes_lazy_vec(SEXP x, const enum vctrs_type type) {
 
 // `x` should be a flattened df with no df-cols
 static inline
-size_t df_compute_n_bytes_lazy_vec(SEXP x) {
+size_t df_compute_n_bytes_lazy_raw(SEXP x) {
   R_xlen_t n_cols = Rf_xlength(x);
 
   size_t multiplier = 0;
@@ -3696,7 +3696,7 @@ size_t df_compute_n_bytes_lazy_vec(SEXP x) {
     SEXP col = VECTOR_ELT(x, i);
     const enum vctrs_type type = vec_proxy_typeof(col);
 
-    size_t col_multiplier = vec_compute_n_bytes_lazy_vec(col, type);
+    size_t col_multiplier = vec_compute_n_bytes_lazy_raw(col, type);
 
     if (col_multiplier > multiplier) {
       multiplier = col_multiplier;

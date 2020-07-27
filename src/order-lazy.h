@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------
 
 /*
- * `lazy_vec` is a lazy raw vector that only allocates itself when
- * `lazy_vec_initialize()` is called. It is used as working memory of varying
+ * `lazy_raw` is a lazy raw vector that only allocates itself when
+ * `lazy_raw_initialize()` is called. It is used as working memory of varying
  * types by `vec_order()`. In `vec_order()` we aren't always sure how much
  * working memory is required, but we want to reuse it where we can once we
  * do allocate it. These lazy vectors allow us to specify the maximum amount
@@ -19,11 +19,11 @@
  * @member data_pi A protection index to `data` so it can reprotect itself
  *   upon allocation.
  * @member n_bytes_data The total size of the RAWSXP to allocate.
- *   This is computed as `size * n_bytes` in `new_lazy_vec()`, where `n_bytes`
+ *   This is computed as `size * n_bytes` in `new_lazy_raw()`, where `n_bytes`
  *   is from `sizeof(<type>)`.
  * @member initialized Has the lazy vector been initialized yet?
  */
-struct lazy_vec {
+struct lazy_raw {
   SEXP data;
   void* p_data;
   PROTECT_INDEX data_pi;
@@ -48,8 +48,8 @@ struct lazy_vec {
  *   memory for.
  */
 static inline
-struct lazy_vec new_lazy_vec(R_xlen_t size, size_t n_bytes) {
-  return (struct lazy_vec) {
+struct lazy_raw new_lazy_raw(R_xlen_t size, size_t n_bytes) {
+  return (struct lazy_raw) {
     .data = R_NilValue,
     .n_bytes_data = size * n_bytes,
     .initialized = false
@@ -61,7 +61,7 @@ struct lazy_vec new_lazy_vec(R_xlen_t size, size_t n_bytes) {
  * This reprotects itself using the protection index.
  */
 static inline
-void* lazy_vec_initialize(struct lazy_vec* p_x) {
+void* lazy_raw_initialize(struct lazy_raw* p_x) {
   if (p_x->initialized) {
     return p_x->p_data;
   }
