@@ -10,13 +10,16 @@
 #'
 #' @details
 #' Character vectors are ordered in the C-locale. This is different from
-#' `base::order()`, which respects `base::Sys.setlocale()`, but should
-#' produce more reproducible results between different sessions and platforms.
-#' One immediate difference is that ordering is case-sensitive in the C-locale.
-#' Sorting `c("b", "C", "a")` with `vec_sort()` will return `c("C", "a", "b")`,
-#' but with `base::order()` will return `c("a", "b", "C")` unless
-#' `base::order(method = "radix")` is explicitly set, which also uses the
-#' C-locale. That said, this typically does not introduce any practical issues.
+#' `base::order()`, which respects `base::Sys.setlocale()`. Sorting in a
+#' consistent locale can produce more reproducible results between different
+#' sessions and platforms, however, the results of sorting in the C-locale
+#' can be surprising. For example, capital letters sort before lower case
+#' letters. Sorting `c("b", "C", "a")` with `vec_sort()` will return
+#' `c("C", "a", "b")`, but with `base::order()` will return `c("a", "b", "C")`
+#' unless `base::order(method = "radix")` is explicitly set, which also uses
+#' the C-locale. While sorting with the C-locale can be useful for
+#' algorithmic efficiency, in many real world uses it can be the cause of
+#' data analysis mistakes.
 #'
 #' Character vectors are always translated to UTF-8 before ordering.
 #'
