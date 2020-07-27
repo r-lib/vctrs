@@ -30,7 +30,7 @@ struct group_infos new_group_infos(struct group_info** p_p_group_info,
 
 // -----------------------------------------------------------------------------
 
-static void group_realloc(struct group_info* p_group_info, R_xlen_t size);
+static void group_realloc(R_xlen_t size, struct group_info* p_group_info);
 static R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size);
 
 /*
@@ -41,7 +41,7 @@ static R_xlen_t groups_realloc_size(R_xlen_t data_size, R_xlen_t max_data_size);
  * Should only be called through `groups_size_maybe_push()` to ensure
  * that we only push groups if we are tracking them.
  */
-void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
+void groups_size_push(R_xlen_t size, struct group_infos* p_group_infos) {
   if (size == 0) {
     Rf_errorcall(R_NilValue, "Internal error: Group `size` to push should never be zero.");
   }
@@ -55,7 +55,7 @@ void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
       p_group_infos->max_data_size
     );
 
-    group_realloc(p_group_info, new_data_size);
+    group_realloc(new_data_size, p_group_info);
   }
 
   // Push group size
@@ -76,7 +76,7 @@ void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size) {
  * Reallocate `data` to be as long as `size`.
  */
 static
-void group_realloc(struct group_info* p_group_info, R_xlen_t size) {
+void group_realloc(R_xlen_t size, struct group_info* p_group_info) {
   // First allocation
   if (size == 0) {
     size = GROUP_DATA_SIZE_DEFAULT;
@@ -145,6 +145,6 @@ void groups_swap(struct group_infos* p_group_infos) {
   // Ensure the new group info is at least as big as the old group info
   if (p_group_info_post->data_size < p_group_info_pre->data_size) {
     R_xlen_t new_data_size = p_group_info_pre->data_size;
-    group_realloc(p_group_info_post, new_data_size);
+    group_realloc(new_data_size, p_group_info_post);
   }
 }
