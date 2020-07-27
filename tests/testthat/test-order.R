@@ -102,22 +102,22 @@ test_that("can order when in strictly opposite of expected order (no ties)", {
 # have a range less than the counting order range boundary.
 
 test_that("can order integers with counting order", {
-  x <- (INSERTION_ORDER_BOUNDARY + 1L):1L
+  x <- (ORDER_INSERTION_BOUNDARY + 1L):1L
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("can order sorted vector", {
-  x <- 1:(INSERTION_ORDER_BOUNDARY + 1L)
+  x <- 1:(ORDER_INSERTION_BOUNDARY + 1L)
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("ordering on ties is done stably", {
-  x <- c(1:INSERTION_ORDER_BOUNDARY, 1L)
-  expect_identical(vec_order(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(1:ORDER_INSERTION_BOUNDARY, 1L)
+  expect_identical(vec_order(x)[1:2], c(1L, ORDER_INSERTION_BOUNDARY + 1L))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {
-  x <- c(3L, NA_integer_, 1L, 2L, 1:INSERTION_ORDER_BOUNDARY)
+  x <- c(3L, NA_integer_, 1L, 2L, 1:ORDER_INSERTION_BOUNDARY)
 
   expect_identical(
     x[vec_order(x, na_value = "largest", direction = "asc")],
@@ -144,22 +144,22 @@ test_that("all combinations of `direction` and `na_value` work", {
 # have a range greater than the counting order range boundary.
 
 test_that("can order integers with radix order", {
-  x <- c(INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L, 1:INSERTION_ORDER_BOUNDARY)
+  x <- c(INT_ORDER_COUNTING_RANGE_BOUNDARY + 1L, 1:ORDER_INSERTION_BOUNDARY)
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("can order sorted vector", {
-  x <- c(1:INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+  x <- c(1:ORDER_INSERTION_BOUNDARY, INT_ORDER_COUNTING_RANGE_BOUNDARY + 1L)
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("ordering on ties is done stably", {
-  x <- c(1:INSERTION_ORDER_BOUNDARY, 1L, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
-  expect_identical(vec_order(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(1:ORDER_INSERTION_BOUNDARY, 1L, INT_ORDER_COUNTING_RANGE_BOUNDARY + 1L)
+  expect_identical(vec_order(x)[1:2], c(1L, ORDER_INSERTION_BOUNDARY + 1L))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {
-  x <- c(3L, NA_integer_, 1L, 2L, 1:INSERTION_ORDER_BOUNDARY, INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+  x <- c(3L, NA_integer_, 1L, 2L, 1:ORDER_INSERTION_BOUNDARY, INT_ORDER_COUNTING_RANGE_BOUNDARY + 1L)
 
   expect_identical(
     x[vec_order(x, na_value = "largest", direction = "asc")],
@@ -180,19 +180,19 @@ test_that("all combinations of `direction` and `na_value` work", {
 })
 
 test_that("can order all 1 value", {
-  x <- rep(1L, INSERTION_ORDER_BOUNDARY + 1L)
+  x <- rep(1L, ORDER_INSERTION_BOUNDARY + 1L)
   expect_identical(vec_order(x), base_order(x))
   expect_identical(vec_order(x, direction = "desc"), base_order(x, decreasing = TRUE))
 })
 
 test_that("all `NA` values works - ensures that we can compute the 'range' of all NAs", {
-  x <- rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L)
+  x <- rep(NA_integer_, ORDER_INSERTION_BOUNDARY + 1L)
   expect_identical(vec_order(x), base_order(x))
   expect_identical(vec_order(x, direction = "desc"), base_order(x, decreasing = TRUE))
 })
 
 test_that("can order with many NAs first", {
-  x <- c(rep(NA_integer_, INSERTION_ORDER_BOUNDARY + 1L), 2L)
+  x <- c(rep(NA_integer_, ORDER_INSERTION_BOUNDARY + 1L), 2L)
   expect_identical(vec_order(x), base_order(x))
   expect_identical(vec_order(x, na_value = "smallest"), base_order(x, na.last = FALSE))
 })
@@ -355,22 +355,22 @@ test_that("can order when in strictly opposite of expected order (no ties)", {
 # no intermediate counting sort for doubles.
 
 test_that("can order doubles with radix order", {
-  x <- (INSERTION_ORDER_BOUNDARY + 1L):1L + 0
+  x <- (ORDER_INSERTION_BOUNDARY + 1L):1L + 0
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("can order sorted vector", {
-  x <- 1:(INSERTION_ORDER_BOUNDARY + 1L) + 0
+  x <- 1:(ORDER_INSERTION_BOUNDARY + 1L) + 0
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("ordering on ties is done stably", {
-  x <- c(1:INSERTION_ORDER_BOUNDARY, 1L) + 0
-  expect_identical(vec_order(x)[1:2], c(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- c(1:ORDER_INSERTION_BOUNDARY, 1L) + 0
+  expect_identical(vec_order(x)[1:2], c(1L, ORDER_INSERTION_BOUNDARY + 1L))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {
-  x <- c(3, NA_real_, 1, 2, 1:INSERTION_ORDER_BOUNDARY)
+  x <- c(3, NA_real_, 1, 2, 1:ORDER_INSERTION_BOUNDARY)
 
   expect_identical(
     x[vec_order(x, na_value = "largest", direction = "asc")],
@@ -391,24 +391,24 @@ test_that("all combinations of `direction` and `na_value` work", {
 })
 
 test_that("all `NA` values works", {
-  x <- rep(NA_real_, INSERTION_ORDER_BOUNDARY + 1L)
+  x <- rep(NA_real_, ORDER_INSERTION_BOUNDARY + 1L)
   expect_identical(vec_order(x), order(x))
 })
 
 test_that("NA_real_ and NaN look identical for ordering", {
-  x <- rep(c(NA_real_, NaN), INSERTION_ORDER_BOUNDARY + 1L)
+  x <- rep(c(NA_real_, NaN), ORDER_INSERTION_BOUNDARY + 1L)
   expect_identical(vec_order(x, na_value = "largest"), seq_along(x))
   expect_identical(vec_order(x, na_value = "smallest"), seq_along(x))
 })
 
 test_that("-Inf / Inf order correctly", {
-  x <- c(rep(0, INSERTION_ORDER_BOUNDARY), -Inf, Inf)
+  x <- c(rep(0, ORDER_INSERTION_BOUNDARY), -Inf, Inf)
   expect_identical(vec_order(x, direction = "asc"), order(x, decreasing = FALSE))
   expect_identical(vec_order(x, direction = "desc"), order(x, decreasing = TRUE))
 })
 
 test_that("-0 and 0 order identically / stably", {
-  x <- c(rep(0, INSERTION_ORDER_BOUNDARY), -0)
+  x <- c(rep(0, ORDER_INSERTION_BOUNDARY), -0)
   expect_identical(vec_order(x, direction = "desc"), order(x, decreasing = TRUE))
   expect_identical(vec_order(x, direction = "asc"), order(x, decreasing = FALSE))
 })
@@ -629,38 +629,38 @@ test_that("can order when in strictly opposite of expected order (no ties)", {
 # ------------------------------------------------------------------------------
 # vec_order(<character>) - radix
 
-# Have to get the number of unique strings above the INSERTION_ORDER_BOUNDARY
+# Have to get the number of unique strings above the ORDER_INSERTION_BOUNDARY
 # to trigger radix ordering.
 
 test_that("can order character vectors", {
-  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   expect_identical(vec_order(x), base_order(x))
 })
 
 test_that("ordering on ties is done stably", {
-  x <- c(paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L)), "x1")
+  x <- c(paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L)), "x1")
   expect_identical(vec_order(x)[1:2], c(1L, length(x)))
 })
 
 test_that("`NA` order defaults to last", {
-  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   x <- c(x, NA_character_, "y")
   expect_identical(vec_order(x)[length(x)], length(x) - 1L)
 })
 
 test_that("`NA` order can be first", {
-  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   x <- c(x, NA_character_, "y")
   expect_identical(vec_order(x, na_value = "smallest")[[1L]], length(x) - 1L)
 })
 
 test_that("`direction` can be set to `desc`", {
-  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   expect_identical(vec_order(x, direction = "desc"), base_order(x, decreasing = TRUE))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {
-  x <- paste0("x", seq(1L, INSERTION_ORDER_BOUNDARY + 1L))
+  x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   x <- c(x, NA_character_, "x", "aa", "x1")
 
   expect_identical(
@@ -800,7 +800,7 @@ test_that("`na_value` and `direction` can both be vectors", {
 # vec_order(<data.frame>) - counting
 
 test_that("can order 2+ integer column chunks with counting sort", {
-  half <- floor(INSERTION_ORDER_BOUNDARY / 2) + 1L
+  half <- floor(ORDER_INSERTION_BOUNDARY / 2) + 1L
   quarter_low <- floor(half / 2)
   quarter_high <- ceiling(half / 2)
 
@@ -816,26 +816,26 @@ test_that("can order 2+ integer column chunks with counting sort", {
 # vec_order(<data.frame>) - radix
 
 test_that("can order 2+ integer column chunks with radix sort", {
-  half <- floor(INSERTION_ORDER_BOUNDARY / 2) + 1L
+  half <- floor(ORDER_INSERTION_BOUNDARY / 2) + 1L
   quarter_low <- floor(half / 2)
   quarter_high <- ceiling(half / 2)
 
   df <- data.frame(
     x = 1L,
-    y = c(rep(2L, quarter_low), rep(1L, quarter_high), rep(3L, half), INT_COUNTING_ORDER_RANGE_BOUNDARY + 1L)
+    y = c(rep(2L, quarter_low), rep(1L, quarter_high), rep(3L, half), INT_ORDER_COUNTING_RANGE_BOUNDARY + 1L)
   )
 
   expect_identical(vec_order(df), base_order(df))
 })
 
 test_that("can order 2+ double column chunks with radix sort", {
-  half <- floor(INSERTION_ORDER_BOUNDARY / 2) + 1L
+  half <- floor(ORDER_INSERTION_BOUNDARY / 2) + 1L
   quarter_low <- floor(half / 2)
   quarter_high <- ceiling(half / 2)
 
   df <- data.frame(
     x = 1,
-    y = c(rep(2, quarter_low), rep(1, quarter_high), rep(3, half), INT_COUNTING_ORDER_RANGE_BOUNDARY + 1)
+    y = c(rep(2, quarter_low), rep(1, quarter_high), rep(3, half), INT_ORDER_COUNTING_RANGE_BOUNDARY + 1)
   )
 
   expect_identical(vec_order(df), base_order(df))

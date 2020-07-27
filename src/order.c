@@ -27,16 +27,16 @@
  *
  * This uses a combination of 3 ordering algorithms.
  *
- * - `int_insertion_order()` - An insertion sort is used when `x` is very
+ * - `int_order_insertion()` - An insertion sort is used when `x` is very
  *   small. This has less overhead than the counting or radix sort and is
  *   faster for small input.
  *
- * - `int_counting_order()` - A counting sort is used when `x` has a range
- *   of less than `INT_COUNTING_ORDER_RANGE_BOUNDARY`. For integers with a
+ * - `int_order_counting()` - A counting sort is used when `x` has a range
+ *   of less than `INT_ORDER_COUNTING_RANGE_BOUNDARY`. For integers with a
  *   small range like this, the bucketing in the counting sort can be very
  *   fast when compared with the recursive multipass approach of the radix sort.
  *
- * - `int_radix_order()` - A radix sort is used for everything else.
+ * - `int_order_radix()` - A radix sort is used for everything else.
  *   This is a MSB radix sort. It orders the vector 1 byte (8 bits) at a time,
  *   so for a 4 byte int this makes a maximum of 4 passes over each integer.
  *   It orders from most significant byte to least significant. After each
@@ -56,9 +56,9 @@
  *
  * This uses a combination of 2 ordering algorithms:
  *
- * - `dbl_insertion_order()` - An insertion sort is used when `x` is very small.
+ * - `dbl_order_insertion()` - An insertion sort is used when `x` is very small.
  *
- * - `dbl_radix_order()` - This is similar to `int_radix_order()`, see above,
+ * - `dbl_order_radix()` - This is similar to `int_order_radix()`, see above,
  *   but makes a max of 8 passes over the data.
  *
  * For doubles, we assume `sizeof(double) == 8`, which should pretty much be
@@ -90,7 +90,7 @@
  * or zero, we save it as an unseen string and set the truelength to `-1`.
  * Otherwise if it is negative we assume we have seen it already. At the
  * end of this we have a vector of unique strings. We order this with
- * `chr_radix_order()`. Then we iterate over the now sorted unique strings
+ * `chr_order_radix()`. Then we iterate over the now sorted unique strings
  * and set their truelength to `-i - 1` (where `i` is the index while
  * iterating). This marks the unique strings with their ordering (as a negative
  * value to be different from R) and also updates the original character vector.
@@ -102,9 +102,9 @@
  * The ordering of unique characters uses a combination of 2 ordering
  * algorithms:
  *
- * - `chr_insertion_order()` - Used when `x` is small.
+ * - `chr_order_insertion()` - Used when `x` is small.
  *
- * - `chr_radix_order()` - Same principle as integer/double ordering, but
+ * - `chr_order_radix()` - Same principle as integer/double ordering, but
  *   we iterate 1 character at a time. We assume a C locale here, and any
  *   non-ASCII and non-UTF8 strings are translated to UTF8.
  *
@@ -149,7 +149,7 @@
  * vs a radix sort. Counting sort is somewhat faster when less than this
  * boundary value.
  */
-#define INT_COUNTING_ORDER_RANGE_BOUNDARY 100000
+#define INT_ORDER_COUNTING_RANGE_BOUNDARY 100000
 
 /*
  * Size of `x` that determines when an insertion sort should be used. Seems
@@ -157,7 +157,7 @@
  * Somewhat based on this post:
  * https://probablydance.com/2016/12/27/i-wrote-a-faster-sorting-algorithm/
  */
-#define INSERTION_ORDER_BOUNDARY 128
+#define ORDER_INSERTION_BOUNDARY 128
 
 /*
  * Adjustments for translating current `pass` into the current `radix` byte
@@ -816,7 +816,7 @@ static void int_compute_range(const int* p_x,
                               int* p_x_min,
                               uint32_t* p_range);
 
-static void int_counting_order(const int* p_x,
+static void int_order_counting(const int* p_x,
                                int* p_o,
                                int* p_o_aux,
                                struct group_infos* p_group_infos,
@@ -827,12 +827,12 @@ static void int_counting_order(const int* p_x,
                                bool decreasing,
                                bool na_last);
 
-static void int_insertion_order(uint32_t* p_x,
+static void int_order_insertion(uint32_t* p_x,
                                 int* p_o,
                                 struct group_infos* p_group_infos,
                                 const R_xlen_t size);
 
-static void int_radix_order(uint32_t* p_x,
+static void int_order_radix(uint32_t* p_x,
                             int* p_o,
                             uint32_t* p_x_aux,
                             int* p_o_aux,
@@ -856,9 +856,9 @@ void int_order_chunk_impl(void* p_x,
                           bool decreasing,
                           bool na_last,
                           R_xlen_t size) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
+  if (size <= ORDER_INSERTION_BOUNDARY) {
     int_adjust(p_x, decreasing, na_last, size);
-    int_insertion_order(p_x, p_o, p_group_infos, size);
+    int_order_insertion(p_x, p_o, p_group_infos, size);
     return;
   }
 
@@ -874,10 +874,10 @@ void int_order_chunk_impl(void* p_x,
    * need `p_o_aux` as working memory. At this point, `p_o` will have been
    * initialized from ordering the first column.
    */
-  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+  if (range < INT_ORDER_COUNTING_RANGE_BOUNDARY) {
     const bool initialized = true;
 
-    int_counting_order(
+    int_order_counting(
       p_x,
       p_o,
       p_o_aux,
@@ -902,7 +902,7 @@ void int_order_chunk_impl(void* p_x,
 
   int_adjust(p_x, decreasing, na_last, size);
 
-  int_radix_order(
+  int_order_radix(
     p_x,
     p_o,
     p_x_aux,
@@ -936,7 +936,7 @@ void int_order_impl(const int* p_x,
                     bool na_last,
                     R_xlen_t size,
                     bool copy) {
-  if (size <= INSERTION_ORDER_BOUNDARY) {
+  if (size <= ORDER_INSERTION_BOUNDARY) {
     int* p_o = lazy_order_initialize(p_lazy_o);
 
     void* p_x_chunk;
@@ -949,7 +949,7 @@ void int_order_impl(const int* p_x,
 
     int_adjust(p_x_chunk, decreasing, na_last, size);
 
-    int_insertion_order(p_x_chunk, p_o, p_group_infos, size);
+    int_order_insertion(p_x_chunk, p_o, p_group_infos, size);
 
     return;
   }
@@ -966,13 +966,13 @@ void int_order_impl(const int* p_x,
    * Also, `p_o` will be filled directly, so for performance we don't
    * initialize its order.
    */
-  if (range < INT_COUNTING_ORDER_RANGE_BOUNDARY) {
+  if (range < INT_ORDER_COUNTING_RANGE_BOUNDARY) {
     const bool initialized = false;
 
     int* p_o = p_lazy_o->p_data;
     int* p_o_aux = (int*) p_lazy_o_aux->p_data;
 
-    int_counting_order(
+    int_order_counting(
       p_x,
       p_o,
       p_o_aux,
@@ -1010,7 +1010,7 @@ void int_order_impl(const int* p_x,
 
   int_adjust(p_x_chunk, decreasing, na_last, size);
 
-  int_radix_order(
+  int_order_radix(
     p_x_chunk,
     p_o,
     p_x_aux,
@@ -1095,7 +1095,7 @@ static inline uint32_t int_map_to_uint32(int x) {
  * - `NA` values are skipped over. If all values are `NA`, we defer to radix
  *   sort (which definitely can handle that case) by returning a `range` of the
  *   maximum uint32 value (which will be greater than
- *   INT_COUNTING_ORDER_RANGE_BOUNDARY).
+ *   INT_ORDER_COUNTING_RANGE_BOUNDARY).
  */
 static
 void int_compute_range(const int* p_x,
@@ -1171,13 +1171,13 @@ void int_compute_range(const int* p_x,
  * not been used). It handles `decreasing` and `na_last` internally.
  *
  * Counting sort is used when `p_x` has a range less than
- * `INT_COUNTING_ORDER_RANGE_BOUNDARY`. In these cases radix sort
+ * `INT_ORDER_COUNTING_RANGE_BOUNDARY`. In these cases radix sort
  * doesn't spread out values as much when looking at individual radixes.
  *
  * Counting sort does not modify `p_x` in any way.
  */
 static
-void int_counting_order(const int* p_x,
+void int_order_counting(const int* p_x,
                         int* p_o,
                         int* p_o_aux,
                         struct group_infos* p_group_infos,
@@ -1190,15 +1190,15 @@ void int_counting_order(const int* p_x,
   // - Only allocate this once (counts are reset to 0 at end)
   // - Allocating as static allows us to allocate an array this large
   // - `+ 1` to ensure there is room for the extra `NA` bucket
-  static R_xlen_t p_counts[INT_COUNTING_ORDER_RANGE_BOUNDARY + 1] = { 0 };
+  static R_xlen_t p_counts[INT_ORDER_COUNTING_RANGE_BOUNDARY + 1] = { 0 };
 
   // `NA` values get counted in the last used bucket
   uint32_t na_bucket = range;
   R_xlen_t na_count = 0;
 
   // Sanity check
-  if (range > INT_COUNTING_ORDER_RANGE_BOUNDARY) {
-    Rf_errorcall(R_NilValue, "Internal error: `range > INT_COUNTING_ORDER_RANGE_BOUNDARY`.");
+  if (range > INT_ORDER_COUNTING_RANGE_BOUNDARY) {
+    Rf_errorcall(R_NilValue, "Internal error: `range > INT_ORDER_COUNTING_RANGE_BOUNDARY`.");
   }
 
   // Histogram pass
@@ -1285,7 +1285,7 @@ void int_counting_order(const int* p_x,
 // -----------------------------------------------------------------------------
 
 /*
- * `int_insertion_order()` is used in two ways:
+ * `int_order_insertion()` is used in two ways:
  * - It is how we "finish off" radix sorts rather than deep recursion.
  * - If we have an original `x` input that is small enough, we just immediately
  *   insertion sort it.
@@ -1298,7 +1298,7 @@ void int_counting_order(const int* p_x,
  * `uint32_t` ahead of time.
  */
 static
-void int_insertion_order(uint32_t* p_x,
+void int_order_insertion(uint32_t* p_x,
                          int* p_o,
                          struct group_infos* p_group_infos,
                          const R_xlen_t size) {
@@ -1366,7 +1366,7 @@ void int_insertion_order(uint32_t* p_x,
 
 static uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size);
 
-static void int_radix_order_recurse(uint32_t* p_x,
+static void int_order_radix_recurse(uint32_t* p_x,
                                     int* p_o,
                                     uint32_t* p_x_aux,
                                     int* p_o_aux,
@@ -1387,7 +1387,7 @@ static void int_radix_order_recurse(uint32_t* p_x,
  * Sorts `p_x` and `p_o` in place
  */
 static
-void int_radix_order(uint32_t* p_x,
+void int_order_radix(uint32_t* p_x,
                      int* p_o,
                      uint32_t* p_x_aux,
                      int* p_o_aux,
@@ -1405,7 +1405,7 @@ void int_radix_order(uint32_t* p_x,
     return;
   }
 
-  int_radix_order_recurse(
+  int_order_radix_recurse(
     p_x,
     p_o,
     p_x_aux,
@@ -1429,7 +1429,7 @@ static inline uint8_t int_extract_uint32_byte(uint32_t x, uint8_t shift);
  * the next byte.
  */
 static
-void int_radix_order_recurse(uint32_t* p_x,
+void int_order_radix_recurse(uint32_t* p_x,
                              int* p_o,
                              uint32_t* p_x_aux,
                              int* p_o_aux,
@@ -1440,8 +1440,8 @@ void int_radix_order_recurse(uint32_t* p_x,
                              const R_xlen_t size,
                              const uint8_t pass) {
   // Exit as fast as possible if we are below the insertion order boundary
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    int_insertion_order(p_x, p_o, p_group_infos, size);
+  if (size <= ORDER_INSERTION_BOUNDARY) {
+    int_order_insertion(p_x, p_o, p_group_infos, size);
     return;
   }
 
@@ -1485,7 +1485,7 @@ void int_radix_order_recurse(uint32_t* p_x,
 
     // Otherwise, recurse on next byte using the same `size` since
     // the group size hasn't changed
-    int_radix_order_recurse(
+    int_order_radix_recurse(
       p_x,
       p_o,
       p_x_aux,
@@ -1564,7 +1564,7 @@ void int_radix_order_recurse(uint32_t* p_x,
     }
 
     // Order next byte of this subgroup
-    int_radix_order_recurse(
+    int_order_radix_recurse(
       p_x,
       p_o,
       p_x_aux,
@@ -1815,12 +1815,12 @@ static void dbl_adjust(void* p_x,
                        const bool na_last,
                        const R_xlen_t size);
 
-static void dbl_insertion_order(uint64_t* p_x,
+static void dbl_order_insertion(uint64_t* p_x,
                                 int* p_o,
                                 struct group_infos* p_group_infos,
                                 const R_xlen_t size);
 
-static void dbl_radix_order(uint64_t* p_x,
+static void dbl_order_radix(uint64_t* p_x,
                             int* p_o,
                             uint64_t* p_x_aux,
                             int* p_o_aux,
@@ -1862,8 +1862,8 @@ void dbl_order_chunk_impl(void* p_x,
 
   dbl_adjust(p_x, decreasing, na_last, size);
 
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    dbl_insertion_order(p_x, p_o, p_group_infos, size);
+  if (size <= ORDER_INSERTION_BOUNDARY) {
+    dbl_order_insertion(p_x, p_o, p_group_infos, size);
     return;
   }
 
@@ -1876,7 +1876,7 @@ void dbl_order_chunk_impl(void* p_x,
   R_xlen_t* p_counts = (R_xlen_t*) lazy_raw_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
-  dbl_radix_order(
+  dbl_order_radix(
     p_x,
     p_o,
     p_x_aux,
@@ -1940,8 +1940,8 @@ void dbl_order_impl(const double* p_x,
 
   dbl_adjust(p_x_chunk, decreasing, na_last, size);
 
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    dbl_insertion_order(p_x_chunk, p_o, p_group_infos, size);
+  if (size <= ORDER_INSERTION_BOUNDARY) {
+    dbl_order_insertion(p_x_chunk, p_o, p_group_infos, size);
     return;
   }
 
@@ -1954,7 +1954,7 @@ void dbl_order_impl(const double* p_x,
   R_xlen_t* p_counts = (R_xlen_t*) lazy_raw_initialize(p_lazy_counts);
   memset(p_counts, 0, p_lazy_counts->n_bytes_data);
 
-  dbl_radix_order(
+  dbl_order_radix(
     p_x_chunk,
     p_o,
     p_x_aux,
@@ -2061,7 +2061,7 @@ uint64_t dbl_flip_uint64(uint64_t x) {
 // -----------------------------------------------------------------------------
 
 /*
- * `dbl_insertion_order()` is used in two ways:
+ * `dbl_order_insertion()` is used in two ways:
  * - It is how we "finish off" radix sorts rather than deep recursion.
  * - If we have an original `x` input that is small enough, we just immediately
  *   insertion sort it.
@@ -2073,10 +2073,10 @@ uint64_t dbl_flip_uint64(uint64_t x) {
  * which takes care of `na_last` and `decreasing` and also maps `double` to
  * `uint64_t` ahead of time.
  *
- * It is essentially the same as `int_insertion_sort()` with different types.
+ * It is essentially the same as `int_order_insertion()` with different types.
  */
 static
-void dbl_insertion_order(uint64_t* p_x,
+void dbl_order_insertion(uint64_t* p_x,
                          int* p_o,
                          struct group_infos* p_group_infos,
                          const R_xlen_t size) {
@@ -2144,7 +2144,7 @@ void dbl_insertion_order(uint64_t* p_x,
 
 static uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size);
 
-static void dbl_radix_order_recurse(uint64_t* p_x,
+static void dbl_order_radix_recurse(uint64_t* p_x,
                                     int* p_o,
                                     uint64_t* p_x_aux,
                                     int* p_o_aux,
@@ -2165,7 +2165,7 @@ static void dbl_radix_order_recurse(uint64_t* p_x,
  * Sorts `p_x` and `p_o` in place
  */
 static
-void dbl_radix_order(uint64_t* p_x,
+void dbl_order_radix(uint64_t* p_x,
                      int* p_o,
                      uint64_t* p_x_aux,
                      int* p_o_aux,
@@ -2183,7 +2183,7 @@ void dbl_radix_order(uint64_t* p_x,
     return;
   }
 
-  dbl_radix_order_recurse(
+  dbl_order_radix_recurse(
     p_x,
     p_o,
     p_x_aux,
@@ -2206,10 +2206,10 @@ static inline uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift);
  * over the sub groups and recursively calls itself on each subgroup to order
  * the next byte.
  *
- * This needs 8 passes, unlike the 4 required by `int_radix_order()`.
+ * This needs 8 passes, unlike the 4 required by `int_order_radix()`.
  */
 static
-void dbl_radix_order_recurse(uint64_t* p_x,
+void dbl_order_radix_recurse(uint64_t* p_x,
                              int* p_o,
                              uint64_t* p_x_aux,
                              int* p_o_aux,
@@ -2220,8 +2220,8 @@ void dbl_radix_order_recurse(uint64_t* p_x,
                              const R_xlen_t size,
                              const uint8_t pass) {
   // Exit as fast as possible if we are below the insertion order boundary
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    dbl_insertion_order(p_x, p_o, p_group_infos, size);
+  if (size <= ORDER_INSERTION_BOUNDARY) {
+    dbl_order_insertion(p_x, p_o, p_group_infos, size);
     return;
   }
 
@@ -2265,7 +2265,7 @@ void dbl_radix_order_recurse(uint64_t* p_x,
 
     // Otherwise, recurse on next byte using the same `size` since
     // the group size hasn't changed
-    dbl_radix_order_recurse(
+    dbl_order_radix_recurse(
       p_x,
       p_o,
       p_x_aux,
@@ -2343,7 +2343,7 @@ void dbl_radix_order_recurse(uint64_t* p_x,
     }
 
     // Order next byte of this subgroup
-    dbl_radix_order_recurse(
+    dbl_order_radix_recurse(
       p_x,
       p_o,
       p_x_aux,
@@ -2578,7 +2578,7 @@ static void chr_mark_sorted_uniques(const SEXP* p_x,
 
 static inline void chr_extract_ordering(int* p_x_aux, const SEXP* p_x, R_xlen_t size);
 
-static void chr_radix_order(SEXP* p_x,
+static void chr_order_radix(SEXP* p_x,
                             SEXP* p_x_aux,
                             int* p_sizes,
                             int* p_sizes_aux,
@@ -2707,7 +2707,7 @@ void chr_order(SEXP x,
   }
 
   // Sort unique strings and mark their truelengths with ordering.
-  // Use `p_lazy_x_chunk` as auxiliary memory for `chr_radix_order()` so we
+  // Use `p_lazy_x_chunk` as auxiliary memory for `chr_order_radix()` so we
   // hopefully don't have to also allocate `p_lazy_x_aux`.
   chr_mark_sorted_uniques(
     p_x,
@@ -2796,7 +2796,7 @@ static void chr_mark_uniques(const SEXP* p_x,
  * same CHARSXP, this marks all strings in the vector at once.
  *
  * After detecting all unique strings, it sorts them in place with
- * `chr_radix_order()`.
+ * `chr_order_radix()`.
  *
  * Finally, it loops over the now sorted unique strings and marks them with
  * their ordering (as a negative value). This allows `chr_order_chunk()` to loop
@@ -2850,7 +2850,7 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
 
   // Sorts uniques in ascending order using `p_x_aux` for working memory.
   // Assumes no `NA`!
-  chr_radix_order(
+  chr_order_radix(
     p_truelength_info->p_uniques,
     p_x_aux,
     p_truelength_info->p_sizes,
@@ -2939,7 +2939,7 @@ static bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass);
  * and don't need to be checked by `strcmp()`.
  */
 static
-void chr_insertion_order(SEXP* p_x,
+void chr_order_insertion(SEXP* p_x,
                          int* p_sizes,
                          const R_xlen_t size,
                          const R_len_t pass) {
@@ -2980,7 +2980,7 @@ void chr_insertion_order(SEXP* p_x,
 
 // -----------------------------------------------------------------------------
 
-static void chr_radix_order_recurse(SEXP* p_x,
+static void chr_order_radix_recurse(SEXP* p_x,
                                     SEXP* p_x_aux,
                                     int* p_sizes,
                                     int* p_sizes_aux,
@@ -3003,7 +3003,7 @@ static void chr_radix_order_recurse(SEXP* p_x,
  *   can get expensive over just indexing into the array.
  */
 static
-void chr_radix_order(SEXP* p_x,
+void chr_order_radix(SEXP* p_x,
                      SEXP* p_x_aux,
                      int* p_sizes,
                      int* p_sizes_aux,
@@ -3012,7 +3012,7 @@ void chr_radix_order(SEXP* p_x,
                      const R_len_t max_size) {
   R_len_t pass = 0;
 
-  chr_radix_order_recurse(
+  chr_order_radix_recurse(
     p_x,
     p_x_aux,
     p_sizes,
@@ -3048,7 +3048,7 @@ void chr_radix_order(SEXP* p_x,
  * there will be no missing values in the unique set.
  */
 static
-void chr_radix_order_recurse(SEXP* p_x,
+void chr_order_radix_recurse(SEXP* p_x,
                              SEXP* p_x_aux,
                              int* p_sizes,
                              int* p_sizes_aux,
@@ -3057,8 +3057,8 @@ void chr_radix_order_recurse(SEXP* p_x,
                              const R_len_t pass,
                              const R_len_t max_size) {
   // Exit as fast as possible if we are below the insertion order boundary
-  if (size <= INSERTION_ORDER_BOUNDARY) {
-    chr_insertion_order(p_x, p_sizes, size, pass);
+  if (size <= ORDER_INSERTION_BOUNDARY) {
+    chr_order_insertion(p_x, p_sizes, size, pass);
     return;
   }
 
@@ -3105,7 +3105,7 @@ void chr_radix_order_recurse(SEXP* p_x,
 
     // Otherwise, recurse on next byte using the same `size` since
     // the group size hasn't changed
-    chr_radix_order_recurse(
+    chr_order_radix_recurse(
       p_x,
       p_x_aux,
       p_sizes,
@@ -3173,7 +3173,7 @@ void chr_radix_order_recurse(SEXP* p_x,
     }
 
     // Order next byte of this subgroup
-    chr_radix_order_recurse(
+    chr_order_radix_recurse(
       p_x,
       p_x_aux,
       p_sizes,
@@ -3197,7 +3197,7 @@ void chr_radix_order_recurse(SEXP* p_x,
  * - `x` and `y` are guaranteed to be different and not `NA`, so we don't gain
  *   anything from pointer comparisons.
  *
- * - This is called from `chr_insertion_order()` from inside the radix ordering,
+ * - This is called from `chr_order_insertion()` from inside the radix ordering,
  *   so we can use information about the current `pass` to only compare
  *   characters that are actually different.
  */
