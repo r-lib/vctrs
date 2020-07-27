@@ -1240,7 +1240,7 @@ void int_order_counting(const int* p_x,
   if (!na_last && na_count != 0) {
     p_counts[na_bucket] = cumulative;
     cumulative += na_count;
-    groups_size_maybe_push(p_group_infos, na_count);
+    groups_size_maybe_push(na_count, p_group_infos);
   }
 
   // Accumulate counts, skip zeros
@@ -1257,7 +1257,7 @@ void int_order_counting(const int* p_x,
     cumulative += count;
 
     // At this point we will handle this group completely
-    groups_size_maybe_push(p_group_infos, count);
+    groups_size_maybe_push(count, p_group_infos);
 
     j += direction;
   }
@@ -1265,7 +1265,7 @@ void int_order_counting(const int* p_x,
   // `na_last = true` pushes NA counts to the back
   if (na_last && na_count != 0) {
     p_counts[na_bucket] = cumulative;
-    groups_size_maybe_push(p_group_infos, na_count);
+    groups_size_maybe_push(na_count, p_group_infos);
   }
 
   // If order is not initialized, we are on the first column / atomic vector
@@ -1365,14 +1365,14 @@ void int_order_insertion(const R_xlen_t size,
     }
 
     // Push current run size and reset size tracker
-    groups_size_maybe_push(p_group_infos, group_size);
+    groups_size_maybe_push(group_size, p_group_infos);
     group_size = 1;
 
     previous = current;
   }
 
   // Push final group run
-  groups_size_maybe_push(p_group_infos, group_size);
+  groups_size_maybe_push(group_size, p_group_infos);
 }
 
 // -----------------------------------------------------------------------------
@@ -1414,7 +1414,7 @@ void int_order_radix(const R_xlen_t size,
 
   // Skipped all passes - Happens when `x` is 1 value repeated
   if (pass == INT_MAX_RADIX_PASS) {
-    groups_size_maybe_push(p_group_infos, size);
+    groups_size_maybe_push(size, p_group_infos);
     return;
   }
 
@@ -1492,7 +1492,7 @@ void int_order_radix_recurse(const R_xlen_t size,
 
     if (next_pass == INT_MAX_RADIX_PASS) {
       // If we are already at the last pass, we are done
-      groups_size_maybe_push(p_group_infos, size);
+      groups_size_maybe_push(size, p_group_infos);
     } else {
       // Otherwise, recurse on next byte using the same `size` since
       // the group size hasn't changed
@@ -1559,7 +1559,7 @@ void int_order_radix_recurse(const R_xlen_t size,
     last_cumulative_count = cumulative_count;
 
     if (group_size == 1) {
-      groups_size_maybe_push(p_group_infos, 1);
+      groups_size_maybe_push(1, p_group_infos);
       ++p_x;
       ++p_o;
       continue;
@@ -1569,7 +1569,7 @@ void int_order_radix_recurse(const R_xlen_t size,
     // `group_size` of 2 in the last radix, but there is nothing left to
     // compare so we are done.
     if (next_pass == INT_MAX_RADIX_PASS) {
-      groups_size_maybe_push(p_group_infos, group_size);
+      groups_size_maybe_push(group_size, p_group_infos);
       p_x += group_size;
       p_o += group_size;
       continue;
@@ -2142,14 +2142,14 @@ void dbl_order_insertion(const R_xlen_t size,
     }
 
     // Push current run size and reset size tracker
-    groups_size_maybe_push(p_group_infos, group_size);
+    groups_size_maybe_push(group_size, p_group_infos);
     group_size = 1;
 
     previous = current;
   }
 
   // Push final group run
-  groups_size_maybe_push(p_group_infos, group_size);
+  groups_size_maybe_push(group_size, p_group_infos);
 }
 
 // -----------------------------------------------------------------------------
@@ -2191,7 +2191,7 @@ void dbl_order_radix(const R_xlen_t size,
 
   // Skipped all passes - Happens when `x` is 1 value repeated
   if (pass == DBL_MAX_RADIX_PASS) {
-    groups_size_maybe_push(p_group_infos, size);
+    groups_size_maybe_push(size, p_group_infos);
     return;
   }
 
@@ -2271,7 +2271,7 @@ void dbl_order_radix_recurse(const R_xlen_t size,
 
     if (next_pass == DBL_MAX_RADIX_PASS) {
       // If we are already at the last pass, we are done
-      groups_size_maybe_push(p_group_infos, size);
+      groups_size_maybe_push(size, p_group_infos);
     } else {
       // Otherwise, recurse on next byte using the same `size` since
       // the group size hasn't changed
@@ -2337,7 +2337,7 @@ void dbl_order_radix_recurse(const R_xlen_t size,
     last_cumulative_count = cumulative_count;
 
     if (group_size == 1) {
-      groups_size_maybe_push(p_group_infos, 1);
+      groups_size_maybe_push(1, p_group_infos);
       ++p_x;
       ++p_o;
       continue;
@@ -2347,7 +2347,7 @@ void dbl_order_radix_recurse(const R_xlen_t size,
     // `group_size` of 2 in the last radix, but there is nothing left to
     // compare so we are done.
     if (next_pass == DBL_MAX_RADIX_PASS) {
-      groups_size_maybe_push(p_group_infos, group_size);
+      groups_size_maybe_push(group_size, p_group_infos);
       p_x += group_size;
       p_o += group_size;
       continue;
@@ -2557,7 +2557,7 @@ void cpl_order(SEXP x,
     if (group_size == 1) {
       ++p_x_chunk_dbl;
       ++p_o;
-      groups_size_maybe_push(p_group_infos, 1);
+      groups_size_maybe_push(1, p_group_infos);
       continue;
     }
 
@@ -3437,7 +3437,7 @@ void df_order(SEXP x,
       // Fast handling of simplest case
       if (group_size == 1) {
         ++p_o_col;
-        groups_size_maybe_push(p_group_infos, 1);
+        groups_size_maybe_push(1, p_group_infos);
         continue;
       }
 

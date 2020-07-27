@@ -25,7 +25,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   }
 
   if (size == 1) {
-    groups_size_push(p_group_infos, 1);
+    groups_size_maybe_push(1, p_group_infos);
     return VCTRS_SORTEDNESS_sorted;
   }
 
@@ -59,7 +59,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   if (count == size - 1) {
     // Each group is size 1 since this is strict ordering
     for (R_xlen_t j = 0; j < size; ++j) {
-      groups_size_push(p_group_infos, 1);
+      groups_size_maybe_push(1, p_group_infos);
     }
 
     return VCTRS_SORTEDNESS_reversed;
@@ -104,12 +104,12 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
     }
 
     // Expected ordering
-    groups_size_push(p_group_infos, group_size);
+    groups_size_maybe_push(group_size, p_group_infos);
     group_size = 1;
   }
 
   // Push final group run
-  groups_size_push(p_group_infos, group_size);
+  groups_size_maybe_push(group_size, p_group_infos);
 
   // Expected ordering
   return VCTRS_SORTEDNESS_sorted;
@@ -152,7 +152,7 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
   }
 
   if (size == 1) {
-    groups_size_push(p_group_infos, 1);
+    groups_size_maybe_push(1, p_group_infos);
     return VCTRS_SORTEDNESS_sorted;
   }
 
@@ -186,7 +186,7 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
   if (count == size - 1) {
     // Each group is size 1 since this is strict ordering
     for (R_xlen_t j = 0; j < size; ++j) {
-      groups_size_push(p_group_infos, 1);
+      groups_size_maybe_push(1, p_group_infos);
     }
 
     return VCTRS_SORTEDNESS_reversed;
@@ -231,12 +231,12 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
     }
 
     // Expected ordering
-    groups_size_push(p_group_infos, group_size);
+    groups_size_maybe_push(group_size, p_group_infos);
     group_size = 1;
   }
 
   // Push final group run
-  groups_size_push(p_group_infos, group_size);
+  groups_size_maybe_push(group_size, p_group_infos);
 
   // Expected ordering
   return VCTRS_SORTEDNESS_sorted;
@@ -289,7 +289,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   }
 
   if (size == 1) {
-    groups_size_push(p_group_infos, 1);
+    groups_size_maybe_push(1, p_group_infos);
     return VCTRS_SORTEDNESS_sorted;
   }
 
@@ -347,7 +347,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   if (count == size - 1) {
     // Each group is size 1 since this is strict ordering
     for (R_xlen_t j = 0; j < size; ++j) {
-      groups_size_push(p_group_infos, 1);
+      groups_size_maybe_push(1, p_group_infos);
     }
 
     vmaxset(vmax);
@@ -411,12 +411,12 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     }
 
     // Expected ordering
-    groups_size_push(p_group_infos, group_size);
+    groups_size_maybe_push(group_size, p_group_infos);
     group_size = 1;
   }
 
   // Push final group run
-  groups_size_push(p_group_infos, group_size);
+  groups_size_maybe_push(group_size, p_group_infos);
 
   // Expected ordering
   vmaxset(vmax);

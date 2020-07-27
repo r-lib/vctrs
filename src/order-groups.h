@@ -99,7 +99,7 @@ struct group_info* groups_current(struct group_infos* p_group_infos) {
 
 // -----------------------------------------------------------------------------
 
-void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size);
+void groups_size_push(R_xlen_t size, struct group_infos* p_group_infos);
 
 /*
  * Inline version of `groups_size_push()` that only attempts to push if
@@ -107,11 +107,11 @@ void groups_size_push(struct group_infos* p_group_infos, R_xlen_t size);
  * especially with atomic vectors where order generally isn't required.
  */
 static inline
-void groups_size_maybe_push(struct group_infos* p_group_infos, R_xlen_t size) {
+void groups_size_maybe_push(R_xlen_t size, struct group_infos* p_group_infos) {
   if (p_group_infos->ignore) {
     return;
   } else {
-    groups_size_push(p_group_infos, size);
+    groups_size_push(size, p_group_infos);
   }
 }
 
