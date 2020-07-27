@@ -958,7 +958,7 @@ void int_order_impl(const int* p_x,
     void* p_x_chunk;
     if (copy) {
       p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
-      memcpy(p_x_chunk, p_x, size * sizeof(int));
+      memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
     } else {
       p_x_chunk = p_lazy_x_chunk->p_data;
     }
@@ -1019,7 +1019,7 @@ void int_order_impl(const int* p_x,
   void* p_x_chunk;
   if (copy) {
     p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
-    memcpy(p_x_chunk, p_x, size * sizeof(int));
+    memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
   }
@@ -1282,7 +1282,7 @@ void int_counting_order(const int* p_x,
       p_o_aux[loc] = p_o[i];
     }
 
-    memcpy(p_o, p_o_aux, size * sizeof(int));
+    memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
   } else {
     for (R_xlen_t i = 0; i < size; ++i) {
       const int elt = p_x[i];
@@ -1542,8 +1542,8 @@ void int_radix_order_recurse(uint32_t* p_x,
   }
 
   // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(int));
-  memcpy(p_x, p_x_aux, size * sizeof(uint32_t));
+  memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+  memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
 
   R_xlen_t last_cumulative_count = 0;
 
@@ -1945,7 +1945,7 @@ void dbl_order_impl(const double* p_x,
   void* p_x_chunk;
   if (copy) {
     p_x_chunk = lazy_vec_initialize(p_lazy_x_chunk);
-    memcpy(p_x_chunk, p_x, size * sizeof(double));
+    memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
   }
@@ -2318,8 +2318,8 @@ void dbl_radix_order_recurse(uint64_t* p_x,
   }
 
   // Copy back over
-  memcpy(p_o, p_o_aux, size * sizeof(int));
-  memcpy(p_x, p_x_aux, size * sizeof(uint64_t));
+  memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+  memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
 
   R_xlen_t last_cumulative_count = 0;
 
@@ -3151,8 +3151,8 @@ void chr_radix_order_recurse(SEXP* p_x,
   }
 
   // Copy back over
-  memcpy(p_x, p_x_aux, size * sizeof(SEXP));
-  memcpy(p_sizes, p_sizes_aux, size * sizeof(int));
+  memcpy(p_x, p_x_aux, size * sizeof(*p_x_aux));
+  memcpy(p_sizes, p_sizes_aux, size * sizeof(*p_sizes_aux));
 
   R_xlen_t last_cumulative_count = 0;
 
