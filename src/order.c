@@ -735,14 +735,14 @@ void int_order_chunk(bool decreasing,
 
   const enum vctrs_sortedness sortedness = int_sortedness(
     p_x_chunk,
-    p_group_infos,
     size,
     decreasing,
-    na_last
+    na_last,
+    p_group_infos
   );
 
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
-    ord_resolve_sortedness_chunk(p_o, sortedness, size);
+    ord_resolve_sortedness_chunk(sortedness, size, p_o);
     return;
   }
 
@@ -789,16 +789,16 @@ void int_order(SEXP x,
 
   const enum vctrs_sortedness sortedness = int_sortedness(
     p_x,
-    p_group_infos,
     size,
     decreasing,
-    na_last
+    na_last,
+    p_group_infos
   );
 
   // Handle sorted cases and set ordering to initialized
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
     int* p_o = p_lazy_o->p_data;
-    ord_resolve_sortedness(p_o, sortedness, size);
+    ord_resolve_sortedness(sortedness, size, p_o);
     p_lazy_o->initialized = true;
     return;
   }
@@ -1861,14 +1861,14 @@ void dbl_order_chunk_impl(bool decreasing,
                           struct group_infos* p_group_infos) {
   const enum vctrs_sortedness sortedness = dbl_sortedness(
     p_x,
-    p_group_infos,
     size,
     decreasing,
-    na_last
+    na_last,
+    p_group_infos
   );
 
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
-    ord_resolve_sortedness_chunk(p_o, sortedness, size);
+    ord_resolve_sortedness_chunk(sortedness, size, p_o);
     return;
   }
 
@@ -1926,16 +1926,16 @@ void dbl_order_impl(const double* p_x,
                     struct group_infos* p_group_infos) {
   const enum vctrs_sortedness sortedness = dbl_sortedness(
     p_x,
-    p_group_infos,
     size,
     decreasing,
-    na_last
+    na_last,
+    p_group_infos
   );
 
   // Handle sorted cases and set ordering to initialized
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
     int* p_o = p_lazy_o->p_data;
-    ord_resolve_sortedness(p_o, sortedness, size);
+    ord_resolve_sortedness(sortedness, size, p_o);
     p_lazy_o->initialized = true;
     return;
   }
@@ -2643,15 +2643,15 @@ void chr_order_chunk(bool decreasing,
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
     p_x_chunk,
-    p_group_infos,
     size,
     decreasing,
     na_last,
-    check_encoding
+    check_encoding,
+    p_group_infos
   );
 
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
-    ord_resolve_sortedness_chunk(p_o, sortedness, size);
+    ord_resolve_sortedness_chunk(sortedness, size, p_o);
     return;
   }
 
@@ -2702,17 +2702,17 @@ void chr_order(SEXP x,
 
   const enum vctrs_sortedness sortedness = chr_sortedness(
     p_x,
-    p_group_infos,
     size,
     decreasing,
     na_last,
-    check_encoding
+    check_encoding,
+    p_group_infos
   );
 
   // Handle sorted cases and set ordering to initialized
   if (sortedness != VCTRS_SORTEDNESS_unsorted) {
     int* p_o = p_lazy_o->p_data;
-    ord_resolve_sortedness(p_o, sortedness, size);
+    ord_resolve_sortedness(sortedness, size, p_o);
     p_lazy_o->initialized = true;
     return;
   }
