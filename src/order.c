@@ -1477,26 +1477,25 @@ void int_order_radix_recurse(uint32_t* p_x,
     // Reset count for other group chunks
     p_counts[byte] = 0;
 
-    // If we are already at the last pass, we are done
     if (next_pass == INT_MAX_RADIX_PASS) {
+      // If we are already at the last pass, we are done
       groups_size_maybe_push(p_group_infos, size);
-      return;
+    } else {
+      // Otherwise, recurse on next byte using the same `size` since
+      // the group size hasn't changed
+      int_order_radix_recurse(
+        p_x,
+        p_o,
+        p_x_aux,
+        p_o_aux,
+        p_bytes,
+        p_counts_next_pass,
+        p_skips,
+        p_group_infos,
+        size,
+        next_pass
+      );
     }
-
-    // Otherwise, recurse on next byte using the same `size` since
-    // the group size hasn't changed
-    int_order_radix_recurse(
-      p_x,
-      p_o,
-      p_x_aux,
-      p_o_aux,
-      p_bytes,
-      p_counts_next_pass,
-      p_skips,
-      p_group_infos,
-      size,
-      next_pass
-    );
 
     return;
   }
@@ -2257,26 +2256,25 @@ void dbl_order_radix_recurse(uint64_t* p_x,
     // Reset count for other group chunks
     p_counts[byte] = 0;
 
-    // If we are already at the last pass, we are done
     if (next_pass == DBL_MAX_RADIX_PASS) {
+      // If we are already at the last pass, we are done
       groups_size_maybe_push(p_group_infos, size);
-      return;
+    } else {
+      // Otherwise, recurse on next byte using the same `size` since
+      // the group size hasn't changed
+      dbl_order_radix_recurse(
+        p_x,
+        p_o,
+        p_x_aux,
+        p_o_aux,
+        p_bytes,
+        p_counts_next_pass,
+        p_skips,
+        p_group_infos,
+        size,
+        next_pass
+      );
     }
-
-    // Otherwise, recurse on next byte using the same `size` since
-    // the group size hasn't changed
-    dbl_order_radix_recurse(
-      p_x,
-      p_o,
-      p_x_aux,
-      p_o_aux,
-      p_bytes,
-      p_counts_next_pass,
-      p_skips,
-      p_group_infos,
-      size,
-      next_pass
-    );
 
     return;
   }
@@ -3098,23 +3096,20 @@ void chr_order_radix_recurse(SEXP* p_x,
     // Reset count for other group chunks
     p_counts[byte] = 0;
 
-    // If we are already at the last pass, we are done
-    if (next_pass == max_size) {
-      return;
+    if (next_pass != max_size) {
+      // If we are not at the last pass, recurse on next byte using
+      // the same `size` since the group size hasn't changed
+      chr_order_radix_recurse(
+        p_x,
+        p_x_aux,
+        p_sizes,
+        p_sizes_aux,
+        p_bytes,
+        size,
+        next_pass,
+        max_size
+      );
     }
-
-    // Otherwise, recurse on next byte using the same `size` since
-    // the group size hasn't changed
-    chr_order_radix_recurse(
-      p_x,
-      p_x_aux,
-      p_sizes,
-      p_sizes_aux,
-      p_bytes,
-      size,
-      next_pass,
-      max_size
-    );
 
     return;
   }
