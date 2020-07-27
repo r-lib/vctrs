@@ -232,6 +232,7 @@ static void vec_order_switch(SEXP x,
                              struct lazy_raw* p_lazy_bytes,
                              struct lazy_raw* p_lazy_counts,
                              struct group_infos* p_group_infos,
+                             struct lazy_chr* p_lazy_x_reencoded,
                              struct truelength_info* p_truelength_info,
                              SEXP decreasing,
                              SEXP na_last,
@@ -320,6 +321,9 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   struct truelength_info truelength_info = new_truelength_info(size);
   PROTECT_TRUELENGTH_INFO(&truelength_info, p_n_prot);
 
+  struct lazy_chr lazy_x_reencoded = new_lazy_chr(size);
+  PROTECT_LAZY_CHR(&lazy_x_reencoded, p_n_prot);
+
   struct lazy_int lazy_o = new_lazy_int(size);
   PROTECT_LAZY_INT(&lazy_o, p_n_prot);
 
@@ -332,6 +336,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
     &lazy_bytes,
     &lazy_counts,
     &group_infos,
+    &lazy_x_reencoded,
     &truelength_info,
     decreasing,
     na_last,
@@ -418,6 +423,7 @@ static void df_order(SEXP x,
                      struct lazy_raw* p_lazy_bytes,
                      struct lazy_raw* p_lazy_counts,
                      struct group_infos* p_group_infos,
+                     struct lazy_chr* p_lazy_x_reencoded,
                      struct truelength_info* p_truelength_info,
                      SEXP decreasing,
                      SEXP na_last,
@@ -431,6 +437,7 @@ static void vec_order_base_switch(SEXP x,
                                   struct lazy_raw* p_lazy_bytes,
                                   struct lazy_raw* p_lazy_counts,
                                   struct group_infos* p_group_infos,
+                                  struct lazy_chr* p_lazy_x_reencoded,
                                   struct truelength_info* p_truelength_info,
                                   bool decreasing,
                                   bool na_last,
@@ -446,6 +453,7 @@ void vec_order_switch(SEXP x,
                       struct lazy_raw* p_lazy_bytes,
                       struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
+                      struct lazy_chr* p_lazy_x_reencoded,
                       struct truelength_info* p_truelength_info,
                       SEXP decreasing,
                       SEXP na_last,
@@ -461,6 +469,7 @@ void vec_order_switch(SEXP x,
       p_lazy_bytes,
       p_lazy_counts,
       p_group_infos,
+      p_lazy_x_reencoded,
       p_truelength_info,
       decreasing,
       na_last,
@@ -498,6 +507,7 @@ void vec_order_switch(SEXP x,
     p_lazy_bytes,
     p_lazy_counts,
     p_group_infos,
+    p_lazy_x_reencoded,
     p_truelength_info,
     c_decreasing,
     c_na_last,
@@ -564,6 +574,7 @@ static void chr_order(SEXP x,
                       struct lazy_raw* p_lazy_bytes,
                       struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
+                      struct lazy_chr* p_lazy_x_reencoded,
                       struct truelength_info* p_truelength_info,
                       bool decreasing,
                       bool na_last,
@@ -579,6 +590,7 @@ void vec_order_base_switch(SEXP x,
                            struct lazy_raw* p_lazy_bytes,
                            struct lazy_raw* p_lazy_counts,
                            struct group_infos* p_group_infos,
+                           struct lazy_chr* p_lazy_x_reencoded,
                            struct truelength_info* p_truelength_info,
                            bool decreasing,
                            bool na_last,
@@ -663,6 +675,7 @@ void vec_order_base_switch(SEXP x,
       p_lazy_bytes,
       p_lazy_counts,
       p_group_infos,
+      p_lazy_x_reencoded,
       p_truelength_info,
       decreasing,
       na_last,
@@ -2571,6 +2584,7 @@ void cpl_order(SEXP x,
 static void chr_mark_sorted_uniques(const SEXP* p_x,
                                     struct lazy_raw* p_lazy_x_aux,
                                     struct lazy_raw* p_lazy_bytes,
+                                    struct lazy_chr* p_lazy_x_reencoded,
                                     struct truelength_info* p_truelength_info,
                                     R_xlen_t size);
 
@@ -2667,7 +2681,7 @@ void chr_order_chunk(int* p_o,
   );
 }
 
-static void chr_copy_with_reencode(SEXP* p_x_chunk, const SEXP* p_x, R_xlen_t size);
+static void chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, R_xlen_t size);
 
 static
 void chr_order(SEXP x,
@@ -2678,6 +2692,7 @@ void chr_order(SEXP x,
                struct lazy_raw* p_lazy_bytes,
                struct lazy_raw* p_lazy_counts,
                struct group_infos* p_group_infos,
+               struct lazy_chr* p_lazy_x_reencoded,
                struct truelength_info* p_truelength_info,
                bool decreasing,
                bool na_last,
@@ -2706,20 +2721,21 @@ void chr_order(SEXP x,
 
   // Sort unique strings and mark their truelengths with ordering.
   // Use `p_lazy_x_chunk` as auxiliary memory for `chr_order_radix()` so we
-  // hopefully don't have to also allocate `p_lazy_x_aux`.
+  // hopefully don't have to also allocate `p_lazy_x_aux`. If re-encoding
+  // is required, it stores the results in `p_lazy_x_reencoded`.
   chr_mark_sorted_uniques(
     p_x,
     p_lazy_x_chunk,
     p_lazy_bytes,
+    p_lazy_x_reencoded,
     p_truelength_info,
     size
   );
 
-  // Only allocate `p_lazy_x_aux` if reencoding is required
+  // If we re-encoded, then the vector to extract the ordering from is in
+  // `p_lazy_x_reencoded`.
   if (p_truelength_info->reencode) {
-    SEXP* p_x_aux = lazy_raw_initialize(p_lazy_x_aux);
-    chr_copy_with_reencode(p_x_aux, p_x, size);
-    p_x = p_x_aux;
+    p_x = p_lazy_x_reencoded->p_data;
   }
 
   void* p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
@@ -2784,8 +2800,7 @@ static bool chr_any_needs_reencoding(const SEXP* p_x, R_xlen_t size);
 
 static void chr_mark_uniques(const SEXP* p_x,
                              struct truelength_info* p_truelength_info,
-                             R_xlen_t size,
-                             bool needs_reencoding);
+                             R_xlen_t size);
 
 /*
  * `chr_mark_sorted_uniques()` runs through the strings in `p_x` and places the
@@ -2815,29 +2830,33 @@ static
 void chr_mark_sorted_uniques(const SEXP* p_x,
                              struct lazy_raw* p_lazy_x_aux,
                              struct lazy_raw* p_lazy_bytes,
+                             struct lazy_chr* p_lazy_x_reencoded,
                              struct truelength_info* p_truelength_info,
                              R_xlen_t size) {
-  // Collect uniques assuming no reencoding required (for performance)
-  bool needs_reencoding = false;
-
-  chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
+  chr_mark_uniques(p_x, p_truelength_info, size);
 
   // Check if any uniques need reencoding
-  needs_reencoding = chr_any_needs_reencoding(
+  bool reencode = chr_any_needs_reencoding(
     p_truelength_info->p_uniques,
     p_truelength_info->size_used
   );
 
-  // Rerun marking of unique values if any need reencoding
+  // Rerun marking of unique values if any needed reencoding
   // (some characters might translate to the same UTF-8 character)
-  if (needs_reencoding) {
+  if (reencode) {
     // Reset existing uniques before rerun
     truelength_reset(p_truelength_info);
 
-    // Tell `df_order()` and `chr_order()` we need to re-encode
+    // Initialize container for re-encoded result
+    lazy_chr_initialize(p_lazy_x_reencoded);
+
+    chr_copy_with_reencode(p_x, p_lazy_x_reencoded->data, size);
+
+    // Tell `df_order()` and `chr_order()` we re-encoded
     p_truelength_info->reencode = true;
 
-    chr_mark_uniques(p_x, p_truelength_info, size, needs_reencoding);
+    // Re-mark uniques on re-encoded vector
+    chr_mark_uniques(p_lazy_x_reencoded->p_data, p_truelength_info, size);
   }
 
   R_xlen_t n_uniques = p_truelength_info->size_used;
@@ -2869,19 +2888,13 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
 static
 void chr_mark_uniques(const SEXP* p_x,
                       struct truelength_info* p_truelength_info,
-                      R_xlen_t size,
-                      bool needs_reencoding) {
+                      R_xlen_t size) {
   for (R_xlen_t i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
     // `NA_STRING` is replaced by `NA_INTEGER` for use in integer ordering
     if (elt == NA_STRING) {
       continue;
-    }
-
-    // Re-encode only on a rerun pass if any uniques needed re-encoding
-    if (needs_reencoding && CHAR_NEEDS_REENCODE(elt)) {
-      elt = CHAR_REENCODE(elt);
     }
 
     R_xlen_t truelength = TRUELENGTH(elt);
@@ -3231,21 +3244,21 @@ bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
 // -----------------------------------------------------------------------------
 
 /*
- * Copy from `p_x` to `p_x_chunk`. Also re-encodes as UTF-8 if any strings are
+ * Copy from `p_x` to `x_result`. Also re-encodes as UTF-8 if any strings are
  * not UTF-8 or ASCII. Most things are ASCII, so this should short circuit
  * quickly after the first check in `CHAR_NEEDS_REENCODE()`.
  */
 static
-void chr_copy_with_reencode(SEXP* p_x_chunk, const SEXP* p_x, R_xlen_t size) {
+void chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, R_xlen_t size) {
   const void* vmax = vmaxget();
 
   for (R_xlen_t i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
     if (CHAR_NEEDS_REENCODE(elt)) {
-      p_x_chunk[i] = CHAR_REENCODE(elt);
+      SET_STRING_ELT(x_result, i, CHAR_REENCODE(elt));
     } else {
-      p_x_chunk[i] = elt;
+      SET_STRING_ELT(x_result, i, elt);
     }
   }
 
@@ -3261,7 +3274,6 @@ static void vec_order_chunk_switch(int* p_o,
                                    struct lazy_raw* p_lazy_bytes,
                                    struct lazy_raw* p_lazy_counts,
                                    struct group_infos* p_group_infos,
-                                   struct truelength_info* p_truelength_info,
                                    bool decreasing,
                                    bool na_last,
                                    R_xlen_t size,
@@ -3302,35 +3314,6 @@ static void vec_order_chunk_switch(int* p_o,
   }                                                            \
 } while (0)
 
-#define DF_ORDER_EXTRACT_CHUNK_CHR() do {                      \
-  const SEXP* p_col = STRING_PTR_RO(col);                      \
-  SEXP* p_x_chunk_col = (SEXP*) p_x_chunk;                     \
-                                                               \
-  /* Use info from up front `chr_mark_sorted_uniques()` */     \
-  /* to know if re-encoding is required */                     \
-  if (reencode) {                                              \
-    const void* vmax = vmaxget();                              \
-                                                               \
-    for (R_xlen_t j = 0; j < group_size; ++j) {                \
-      const int loc = p_o_col[j] - 1;                          \
-      SEXP elt = p_col[loc];                                   \
-                                                               \
-      if (CHAR_NEEDS_REENCODE(elt)) {                          \
-        p_x_chunk_col[j] = CHAR_REENCODE(elt);                 \
-      } else {                                                 \
-        p_x_chunk_col[j] = elt;                                \
-      }                                                        \
-    }                                                          \
-                                                               \
-    vmaxset(vmax);                                             \
-  } else {                                                     \
-    for (R_xlen_t j = 0; j < group_size; ++j) {                \
-      const int loc = p_o_col[j] - 1;                          \
-      p_x_chunk_col[j] = p_col[loc];                           \
-    }                                                          \
-  }                                                            \
-} while (0);
-
 
 /*
  * `df_order()` is the main user of `p_group_infos`. It uses the grouping
@@ -3347,6 +3330,7 @@ void df_order(SEXP x,
               struct lazy_raw* p_lazy_bytes,
               struct lazy_raw* p_lazy_counts,
               struct group_infos* p_group_infos,
+              struct lazy_chr* p_lazy_x_reencoded,
               struct truelength_info* p_truelength_info,
               SEXP decreasing,
               SEXP na_last,
@@ -3409,6 +3393,7 @@ void df_order(SEXP x,
     p_lazy_bytes,
     p_lazy_counts,
     p_group_infos,
+    p_lazy_x_reencoded,
     p_truelength_info,
     col_decreasing,
     col_na_last,
@@ -3420,9 +3405,6 @@ void df_order(SEXP x,
   // imaginary part. This is done by decrementing `i` after processing
   // the real part so the column is rerun.
   bool rerun_complex = false;
-
-  // Controls whether or not to attempt re-encoding of character vectors
-  bool reencode = false;
 
   // Iterate over remaining columns by group chunk
   for (R_xlen_t i = 1; i < n_cols; ++i) {
@@ -3466,11 +3448,16 @@ void df_order(SEXP x,
         p_col,
         p_lazy_x_aux,
         p_lazy_bytes,
+        p_lazy_x_reencoded,
         p_truelength_info,
         size
       );
 
-      reencode = p_truelength_info->reencode;
+      // If re-encoding was required, the re-encoded column is stored
+      // in `p_lazy_x_reencoded`.
+      if (p_truelength_info->reencode) {
+        col = p_lazy_x_reencoded->data;
+      }
     }
 
     // Turn off group tracking if:
@@ -3503,8 +3490,8 @@ void df_order(SEXP x,
       case vctrs_type_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
       case vctrs_type_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
       case vctrs_type_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
+      case vctrs_type_character: DF_ORDER_EXTRACT_CHUNK(STRING_PTR_RO, SEXP); break;
       case vctrs_type_complex: DF_ORDER_EXTRACT_CHUNK_CPL(); break;
-      case vctrs_type_character: DF_ORDER_EXTRACT_CHUNK_CHR(); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
@@ -3516,7 +3503,6 @@ void df_order(SEXP x,
         p_lazy_bytes,
         p_lazy_counts,
         p_group_infos,
-        p_truelength_info,
         col_decreasing,
         col_na_last,
         group_size,
@@ -3535,7 +3521,6 @@ void df_order(SEXP x,
 
 #undef DF_ORDER_EXTRACT_CHUNK
 #undef DF_ORDER_EXTRACT_CHUNK_CPL
-#undef DF_ORDER_EXTRACT_CHUNK_CHR
 
 // -----------------------------------------------------------------------------
 
@@ -3551,7 +3536,6 @@ void vec_order_chunk_switch(int* p_o,
                             struct lazy_raw* p_lazy_bytes,
                             struct lazy_raw* p_lazy_counts,
                             struct group_infos* p_group_infos,
-                            struct truelength_info* p_truelength_info,
                             bool decreasing,
                             bool na_last,
                             R_xlen_t size,
