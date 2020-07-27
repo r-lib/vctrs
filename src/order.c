@@ -1168,10 +1168,10 @@ void int_compute_range(const int* p_x,
    * - Max possible range is from
    *   `c(.Machine$integer.max, -.Machine$integer.max)` which is exactly the
    *   max of a `uint32_t`.
-   * - We need to go up to `int64_t` to avoid intermediate overflow.
+   * - We need to go up to `intmax_t` to avoid intermediate overflow.
    * - `+ 1` to get an inclusive range on both ends.
    */
-  range = (uint32_t) ((int64_t) x_max - (int64_t) x_min + 1);
+  range = (uint32_t) intmax_add(intmax_subtract(x_max, x_min), 1);
 
   *p_x_min = x_min;
   *p_range = range;
