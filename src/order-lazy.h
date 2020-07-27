@@ -28,7 +28,7 @@ struct lazy_raw {
   void* p_data;
   PROTECT_INDEX data_pi;
 
-  R_xlen_t n_bytes_data;
+  r_ssize n_bytes_data;
   bool initialized;
 };
 
@@ -48,7 +48,7 @@ struct lazy_raw {
  *   memory for.
  */
 static inline
-struct lazy_raw new_lazy_raw(R_xlen_t size, size_t n_bytes) {
+struct lazy_raw new_lazy_raw(r_ssize size, size_t n_bytes) {
   return (struct lazy_raw) {
     .data = R_NilValue,
     .n_bytes_data = size * n_bytes,
@@ -91,7 +91,7 @@ struct lazy_int {
   SEXP data;
   int* p_data;
 
-  R_xlen_t size;
+  r_ssize size;
   bool initialized;
 };
 
@@ -102,7 +102,7 @@ struct lazy_int {
 
 
 static inline
-struct lazy_int new_lazy_int(R_xlen_t size) {
+struct lazy_int new_lazy_int(r_ssize size) {
   SEXP data = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_data = INTEGER(data);
 
@@ -123,10 +123,10 @@ int* lazy_order_initialize(struct lazy_int* p_lazy_o) {
     return p_lazy_o->p_data;
   }
 
-  R_xlen_t size = p_lazy_o->size;
+  r_ssize size = p_lazy_o->size;
 
   // Initialize `x` with sequential 1-based ordering
-  for (R_xlen_t i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     p_lazy_o->p_data[i] = i + 1;
   }
 
@@ -142,7 +142,7 @@ struct lazy_chr {
   const SEXP* p_data;
   PROTECT_INDEX data_pi;
 
-  R_xlen_t size;
+  r_ssize size;
   bool initialized;
 };
 
@@ -152,7 +152,7 @@ struct lazy_chr {
 } while (0)
 
 static inline
-struct lazy_chr new_lazy_chr(R_xlen_t size) {
+struct lazy_chr new_lazy_chr(r_ssize size) {
   return (struct lazy_chr) {
     .data = R_NilValue,
     .size = size,

@@ -16,7 +16,7 @@
  *
  * Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
  */
-struct truelength_info new_truelength_info(R_xlen_t max_size_alloc) {
+struct truelength_info new_truelength_info(r_ssize max_size_alloc) {
   return (struct truelength_info) {
     .strings = R_NilValue,
     .lengths = R_NilValue,
@@ -44,11 +44,11 @@ struct truelength_info new_truelength_info(R_xlen_t max_size_alloc) {
  * at the end of `chr_order()` for a single character vector.
  */
 void truelength_reset(struct truelength_info* p_truelength_info) {
-  R_xlen_t size = p_truelength_info->size_used;
+  r_ssize size = p_truelength_info->size_used;
 
-  for (R_xlen_t i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     SEXP string = p_truelength_info->p_strings[i];
-    R_xlen_t length = p_truelength_info->p_lengths[i];
+    r_ssize length = p_truelength_info->p_lengths[i];
 
     SET_TRUELENGTH(string, length);
   }
@@ -69,8 +69,8 @@ static void truelength_realloc(struct truelength_info* p_truelength_info);
  * `truelength_reset()`.
  */
 void truelength_save(SEXP x,
-                     R_xlen_t truelength,
-                     R_xlen_t size,
+                     r_ssize truelength,
+                     r_ssize size,
                      struct truelength_info* p_truelength_info) {
   // Reallocate as needed
   if (p_truelength_info->size_used == p_truelength_info->size_alloc) {
@@ -87,9 +87,9 @@ void truelength_save(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info);
+static r_ssize truelength_realloc_size(struct truelength_info* p_truelength_info);
 
-static inline SEXP p_lengths_resize(const R_xlen_t* p_x, R_xlen_t x_size, R_xlen_t size);
+static inline SEXP p_lengths_resize(const r_ssize* p_x, r_ssize x_size, r_ssize size);
 
 /*
  * Extend the vectors in `truelength_info`.
@@ -97,7 +97,7 @@ static inline SEXP p_lengths_resize(const R_xlen_t* p_x, R_xlen_t x_size, R_xlen
  */
 static
 void truelength_realloc(struct truelength_info* p_truelength_info) {
-  R_xlen_t size = truelength_realloc_size(p_truelength_info);
+  r_ssize size = truelength_realloc_size(p_truelength_info);
 
   p_truelength_info->strings = p_chr_resize(
     p_truelength_info->p_strings,
@@ -113,7 +113,7 @@ void truelength_realloc(struct truelength_info* p_truelength_info) {
     size
   );
   REPROTECT(p_truelength_info->lengths, p_truelength_info->lengths_pi);
-  p_truelength_info->p_lengths = (R_xlen_t*) RAW(p_truelength_info->lengths);
+  p_truelength_info->p_lengths = (r_ssize*) RAW(p_truelength_info->lengths);
 
   p_truelength_info->uniques = p_chr_resize(
     p_truelength_info->p_uniques,
@@ -143,22 +143,22 @@ void truelength_realloc(struct truelength_info* p_truelength_info) {
 }
 
 static inline
-SEXP p_lengths_resize(const R_xlen_t* p_x, R_xlen_t x_size, R_xlen_t size) {
+SEXP p_lengths_resize(const r_ssize* p_x, r_ssize x_size, r_ssize size) {
   const Rbyte* p_x_rbyte = (const Rbyte*) p_x;
 
   return p_raw_resize(
     p_x_rbyte,
-    x_size * sizeof(R_xlen_t),
-    size * sizeof(R_xlen_t)
+    x_size * sizeof(r_ssize),
+    size * sizeof(r_ssize)
   );
 }
 
 // -----------------------------------------------------------------------------
 
 static
-R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info) {
-  R_xlen_t size_alloc = p_truelength_info->size_alloc;
-  R_xlen_t max_size_alloc = p_truelength_info->max_size_alloc;
+r_ssize truelength_realloc_size(struct truelength_info* p_truelength_info) {
+  r_ssize size_alloc = p_truelength_info->size_alloc;
+  r_ssize max_size_alloc = p_truelength_info->max_size_alloc;
 
   // First allocation
   if (size_alloc == 0) {
@@ -177,6 +177,6 @@ R_xlen_t truelength_realloc_size(struct truelength_info* p_truelength_info) {
     return max_size_alloc;
   }
 
-  // Can now safely cast back to `R_xlen_t`
-  return (R_xlen_t) new_size_alloc;
+  // Can now safely cast back to `r_ssize`
+  return (r_ssize) new_size_alloc;
 }

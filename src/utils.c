@@ -368,7 +368,7 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
 // Faster than `Rf_xlengthgets()` because that fills the new extended
 // locations with `NA`, which we don't need.
 // [[ include("utils.h") ]]
-SEXP p_int_resize(const int* p_x, R_xlen_t x_size, R_xlen_t size) {
+SEXP p_int_resize(const int* p_x, r_ssize x_size, r_ssize size) {
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
@@ -378,7 +378,7 @@ SEXP p_int_resize(const int* p_x, R_xlen_t x_size, R_xlen_t size) {
   return out;
 }
 // [[ include("utils.h") ]]
-SEXP p_raw_resize(const Rbyte* p_x, R_xlen_t x_size, R_xlen_t size) {
+SEXP p_raw_resize(const Rbyte* p_x, r_ssize x_size, r_ssize size) {
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, size));
   Rbyte* p_out = RAW(out);
 
@@ -388,10 +388,10 @@ SEXP p_raw_resize(const Rbyte* p_x, R_xlen_t x_size, R_xlen_t size) {
   return out;
 }
 // [[ include("utils.h") ]]
-SEXP p_chr_resize(const SEXP* p_x, R_xlen_t x_size, R_xlen_t size) {
+SEXP p_chr_resize(const SEXP* p_x, r_ssize x_size, r_ssize size) {
   SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
 
-  for (R_xlen_t i = 0; i < x_size; ++i) {
+  for (r_ssize i = 0; i < x_size; ++i) {
     SET_STRING_ELT(out, i, p_x[i]);
   }
 
@@ -400,8 +400,8 @@ SEXP p_chr_resize(const SEXP* p_x, R_xlen_t x_size, R_xlen_t size) {
 }
 
 // [[ include("utils.h") ]]
-bool p_chr_any_reencode(const SEXP* p_x, R_xlen_t size) {
-  for (R_xlen_t i = 0; i < size; ++i) {
+bool p_chr_any_reencode(const SEXP* p_x, r_ssize size) {
+  for (r_ssize i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
     if (CHAR_NEEDS_REENCODE(elt)) {
@@ -413,10 +413,10 @@ bool p_chr_any_reencode(const SEXP* p_x, R_xlen_t size) {
 }
 
 // [[ include("utils.h") ]]
-void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, R_xlen_t size) {
+void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, r_ssize size) {
   const void* vmax = vmaxget();
 
-  for (R_xlen_t i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     SEXP elt = p_x[i];
 
     if (CHAR_NEEDS_REENCODE(elt)) {
