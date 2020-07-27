@@ -84,10 +84,10 @@ struct truelength_info {
 struct truelength_info new_truelength_info(R_xlen_t max_size_alloc);
 void truelength_reset(struct truelength_info* p_truelength_info);
 
-void truelength_save(struct truelength_info* p_truelength_info,
-                     SEXP x,
+void truelength_save(SEXP x,
                      R_xlen_t truelength,
-                     R_xlen_t size);
+                     R_xlen_t size,
+                     struct truelength_info* p_truelength_info);
 
 // -----------------------------------------------------------------------------
 #endif
