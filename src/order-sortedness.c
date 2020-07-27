@@ -1,4 +1,5 @@
 #include "order-sortedness.h"
+#include "utils.h"
 
 // -----------------------------------------------------------------------------
 
@@ -437,6 +438,7 @@ int chr_cmp(SEXP x,
 
 // -----------------------------------------------------------------------------
 
+static inline void int_incr(int* p_x, R_xlen_t size);
 static inline void ord_reverse(int* p_o, R_xlen_t size);
 
 /*
@@ -451,39 +453,22 @@ static inline void ord_reverse(int* p_o, R_xlen_t size);
 void ord_resolve_sortedness(int* p_o,
                             enum vctrs_sortedness sortedness,
                             R_xlen_t size) {
-  if (sortedness == VCTRS_SORTEDNESS_unsorted) {
-    Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
+  switch (sortedness) {
+  case VCTRS_SORTEDNESS_sorted: int_incr(p_o, size); return;
+  case VCTRS_SORTEDNESS_reversed: ord_reverse(p_o, size); return;
+  case VCTRS_SORTEDNESS_unsorted: Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
   }
 
-  if (sortedness == VCTRS_SORTEDNESS_sorted) {
-    // Initialize with sequential 1-based ordering
-    for (R_xlen_t i = 0; i < size; ++i) {
-      p_o[i] = i + 1;
-    }
-
-    return;
-  }
-
-  ord_reverse(p_o, size);
+  never_reached("ord_resolve_sortedness");
 }
 
-
-static inline void ord_reverse_chunk(int* p_o, R_xlen_t size);
-
-void ord_resolve_sortedness_chunk(int* p_o,
-                                  enum vctrs_sortedness sortedness,
-                                  R_xlen_t size) {
-  if (sortedness == VCTRS_SORTEDNESS_unsorted) {
-    Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
+// Initialize with sequential 1-based ordering
+static inline
+void int_incr(int* p_x, R_xlen_t size) {
+  for (R_xlen_t i = 0; i < size; ++i) {
+    p_x[i] = i + 1;
   }
-
-  if (sortedness == VCTRS_SORTEDNESS_sorted) {
-    return;
-  }
-
-  ord_reverse_chunk(p_o, size);
 }
-
 
 // Used when in strictly opposite of expected order and uninitialized.
 static inline
@@ -501,6 +486,22 @@ void ord_reverse(int* p_o, R_xlen_t size) {
     p_o[half] = half + 1;
   }
 }
+
+
+static inline void ord_reverse_chunk(int* p_o, R_xlen_t size);
+
+void ord_resolve_sortedness_chunk(int* p_o,
+                                  enum vctrs_sortedness sortedness,
+                                  R_xlen_t size) {
+  switch (sortedness) {
+  case VCTRS_SORTEDNESS_sorted: return;
+  case VCTRS_SORTEDNESS_reversed: ord_reverse_chunk(p_o, size); return;
+  case VCTRS_SORTEDNESS_unsorted: Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
+  }
+
+  never_reached("ord_resolve_sortedness_chunk");
+}
+
 
 // Used when in strictly opposite of expected order and initialized.
 // No need to alter "center" value here, it will be initialized to a value
