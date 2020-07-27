@@ -136,4 +136,46 @@ int* lazy_order_initialize(struct lazy_int* p_lazy_o) {
 }
 
 // -----------------------------------------------------------------------------
+
+struct lazy_chr {
+  SEXP data;
+  const SEXP* p_data;
+  PROTECT_INDEX data_pi;
+
+  R_xlen_t size;
+  bool initialized;
+};
+
+#define PROTECT_LAZY_CHR(p_info, p_n) do {                \
+  PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi); \
+  *(p_n) += 1;                                            \
+} while (0)
+
+static inline
+struct lazy_chr new_lazy_chr(R_xlen_t size) {
+  return (struct lazy_chr) {
+    .data = R_NilValue,
+    .size = size,
+    .initialized = false
+  };
+}
+
+static inline
+const SEXP* lazy_chr_initialize(struct lazy_chr* p_x) {
+  if (p_x->initialized) {
+    return p_x->p_data;
+  }
+
+  p_x->data = Rf_allocVector(STRSXP, p_x->size);
+
+  REPROTECT(p_x->data, p_x->data_pi);
+
+  p_x->p_data = STRING_PTR_RO(p_x->data);
+
+  p_x->initialized = true;
+
+  return p_x->p_data;
+}
+
+// -----------------------------------------------------------------------------
 #endif
