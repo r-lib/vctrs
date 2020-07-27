@@ -1618,7 +1618,9 @@ uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size) {
 
   // Get bytes of first element in MSD->LSD order.
   // Placed in `p_bytes` in a way that aligns with the `pass` variable
-  for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
+  for (uint8_t pass = 0, shift = shift_start;
+       pass < INT_MAX_RADIX_PASS;
+       ++pass, shift += SHIFT_ADJUSTMENT) {
     p_bytes[pass] = int_extract_uint32_byte(elt0, shift);
   }
 
@@ -1627,7 +1629,9 @@ uint8_t int_compute_skips(bool* p_skips, const uint32_t* p_x, R_xlen_t size) {
     uint8_t n_skips = INT_MAX_RADIX_PASS;
     const uint32_t elt = p_x[i];
 
-    for (uint8_t pass = 0, shift = shift_start; pass < INT_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
+    for (uint8_t pass = 0, shift = shift_start;
+         pass < INT_MAX_RADIX_PASS;
+         ++pass, shift += SHIFT_ADJUSTMENT) {
       bool skip = p_skips[pass];
 
       if (skip) {
@@ -2403,7 +2407,9 @@ uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size) {
 
   // Get bytes of first element in MSD->LSD order.
   // Placed in `p_bytes` in a way that aligns with the `pass` variable
-  for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
+  for (uint8_t pass = 0, shift = shift_start;
+       pass < DBL_MAX_RADIX_PASS;
+       ++pass, shift += SHIFT_ADJUSTMENT) {
     p_bytes[pass] = dbl_extract_uint64_byte(elt0, shift);
   }
 
@@ -2412,7 +2418,9 @@ uint8_t dbl_compute_skips(bool* p_skips, const uint64_t* p_x, R_xlen_t size) {
     uint8_t n_skips = DBL_MAX_RADIX_PASS;
     const uint64_t elt = p_x[i];
 
-    for (uint8_t pass = 0, shift = shift_start; pass < DBL_MAX_RADIX_PASS; ++pass, shift += SHIFT_ADJUSTMENT) {
+    for (uint8_t pass = 0, shift = shift_start;
+         pass < DBL_MAX_RADIX_PASS;
+         ++pass, shift += SHIFT_ADJUSTMENT) {
       bool skip = p_skips[pass];
 
       if (skip) {
