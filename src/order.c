@@ -1094,7 +1094,7 @@ void int_adjust(void* p_x,
 // Flipping the sign bit is all we need to do to map in an order preserving way.
 // [INT32_MIN, INT32_MAX] => [0, UINT32_MAX]
 static inline uint32_t int_map_to_uint32(int x) {
-  return x ^ HEX_UINT32_SIGN_BIT;
+  return ((uint32_t) x) ^ HEX_UINT32_SIGN_BIT;
 }
 
 #undef HEX_UINT32_SIGN_BIT
