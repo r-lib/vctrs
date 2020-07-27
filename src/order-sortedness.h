@@ -15,33 +15,33 @@ enum vctrs_sortedness {
 // -----------------------------------------------------------------------------
 
 enum vctrs_sortedness dbl_sortedness(const double* p_x,
-                                     struct group_infos* p_group_infos,
-                                     R_xlen_t size,
-                                     bool decreasing,
-                                     bool na_last);
-
-enum vctrs_sortedness int_sortedness(const int* p_x,
-                                     struct group_infos* p_group_infos,
-                                     R_xlen_t size,
-                                     bool decreasing,
-                                     bool na_last);
-
-enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     struct group_infos* p_group_infos,
                                      R_xlen_t size,
                                      bool decreasing,
                                      bool na_last,
-                                     bool check_encoding);
+                                     struct group_infos* p_group_infos);
+
+enum vctrs_sortedness int_sortedness(const int* p_x,
+                                     R_xlen_t size,
+                                     bool decreasing,
+                                     bool na_last,
+                                     struct group_infos* p_group_infos);
+
+enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
+                                     R_xlen_t size,
+                                     bool decreasing,
+                                     bool na_last,
+                                     bool check_encoding,
+                                     struct group_infos* p_group_infos);
 
 // -----------------------------------------------------------------------------
 
-void ord_resolve_sortedness(int* p_o,
-                            enum vctrs_sortedness sortedness,
-                            R_xlen_t size);
+void ord_resolve_sortedness(enum vctrs_sortedness sortedness,
+                            R_xlen_t size,
+                            int* p_o);
 
-void ord_resolve_sortedness_chunk(int* p_o,
-                                  enum vctrs_sortedness sortedness,
-                                  R_xlen_t size);
+void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
+                                  R_xlen_t size,
+                                  int* p_o);
 
 // -----------------------------------------------------------------------------
 #endif

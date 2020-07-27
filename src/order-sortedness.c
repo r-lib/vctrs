@@ -16,10 +16,10 @@ static inline int dbl_cmp(double x, double y, const int direction, const int na_
  * information is also pushed in these cases for use in the next columns.
  */
 enum vctrs_sortedness dbl_sortedness(const double* p_x,
-                                     struct group_infos* p_group_infos,
                                      R_xlen_t size,
                                      bool decreasing,
-                                     bool na_last) {
+                                     bool na_last,
+                                     struct group_infos* p_group_infos) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
   }
@@ -143,10 +143,10 @@ static inline int int_cmp(int x, int y, const int direction, const int na_order)
 
 // Very similar to `dbl_sortedness()`
 enum vctrs_sortedness int_sortedness(const int* p_x,
-                                     struct group_infos* p_group_infos,
                                      R_xlen_t size,
                                      bool decreasing,
-                                     bool na_last) {
+                                     bool na_last,
+                                     struct group_infos* p_group_infos) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
   }
@@ -279,11 +279,11 @@ static inline int chr_cmp(SEXP x,
  * order.
  */
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     struct group_infos* p_group_infos,
                                      R_xlen_t size,
                                      bool decreasing,
                                      bool na_last,
-                                     bool check_encoding) {
+                                     bool check_encoding,
+                                     struct group_infos* p_group_infos) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
   }
@@ -453,8 +453,8 @@ int chr_cmp(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static inline void int_incr(int* p_x, R_xlen_t size);
-static inline void ord_reverse(int* p_o, R_xlen_t size);
+static inline void int_incr(R_xlen_t size, int* p_x);
+static inline void ord_reverse(R_xlen_t size, int* p_o);
 
 /*
  * Resolve ordering based on the sortedness and whether or not `p_o` has
@@ -465,12 +465,12 @@ static inline void ord_reverse(int* p_o, R_xlen_t size);
  * `size` will correspond to the size of `x` for the first column, but will
  * correspond to the size of the current group for subsequent columns.
  */
-void ord_resolve_sortedness(int* p_o,
-                            enum vctrs_sortedness sortedness,
-                            R_xlen_t size) {
+void ord_resolve_sortedness(enum vctrs_sortedness sortedness,
+                            R_xlen_t size,
+                            int* p_o) {
   switch (sortedness) {
-  case VCTRS_SORTEDNESS_sorted: int_incr(p_o, size); return;
-  case VCTRS_SORTEDNESS_reversed: ord_reverse(p_o, size); return;
+  case VCTRS_SORTEDNESS_sorted: int_incr(size, p_o); return;
+  case VCTRS_SORTEDNESS_reversed: ord_reverse(size, p_o); return;
   case VCTRS_SORTEDNESS_unsorted: Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
   }
 
@@ -479,7 +479,7 @@ void ord_resolve_sortedness(int* p_o,
 
 // Initialize with sequential 1-based ordering
 static inline
-void int_incr(int* p_x, R_xlen_t size) {
+void int_incr(R_xlen_t size, int* p_x) {
   for (R_xlen_t i = 0; i < size; ++i) {
     p_x[i] = i + 1;
   }
@@ -487,7 +487,7 @@ void int_incr(int* p_x, R_xlen_t size) {
 
 // Used when in strictly opposite of expected order and uninitialized.
 static inline
-void ord_reverse(int* p_o, R_xlen_t size) {
+void ord_reverse(R_xlen_t size, int* p_o) {
   const R_xlen_t half = size / 2;
 
   for (R_xlen_t i = 0; i < half; ++i) {
@@ -503,14 +503,14 @@ void ord_reverse(int* p_o, R_xlen_t size) {
 }
 
 
-static inline void ord_reverse_chunk(int* p_o, R_xlen_t size);
+static inline void ord_reverse_chunk(R_xlen_t size, int* p_o);
 
-void ord_resolve_sortedness_chunk(int* p_o,
-                                  enum vctrs_sortedness sortedness,
-                                  R_xlen_t size) {
+void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
+                                  R_xlen_t size,
+                                  int* p_o) {
   switch (sortedness) {
   case VCTRS_SORTEDNESS_sorted: return;
-  case VCTRS_SORTEDNESS_reversed: ord_reverse_chunk(p_o, size); return;
+  case VCTRS_SORTEDNESS_reversed: ord_reverse_chunk(size, p_o); return;
   case VCTRS_SORTEDNESS_unsorted: Rf_errorcall(R_NilValue, "Internal error: Unsorted case should be handled elsewhere.");
   }
 
@@ -522,7 +522,7 @@ void ord_resolve_sortedness_chunk(int* p_o,
 // No need to alter "center" value here, it will be initialized to a value
 // already and it won't be swapped.
 static inline
-void ord_reverse_chunk(int* p_o, R_xlen_t size) {
+void ord_reverse_chunk(R_xlen_t size, int* p_o) {
   const R_xlen_t half = size / 2;
 
   for (R_xlen_t i = 0; i < half; ++i) {
