@@ -276,20 +276,16 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
   struct lazy_vec lazy_x_chunk = new_lazy_vec(size, n_bytes_lazy_vec);
-  struct lazy_vec* p_lazy_x_chunk = &lazy_x_chunk;
-  PROTECT_LAZY_VEC(p_lazy_x_chunk, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_x_chunk, p_n_prot);
 
   struct lazy_vec lazy_x_aux = new_lazy_vec(size, n_bytes_lazy_vec);
-  struct lazy_vec* p_lazy_x_aux = &lazy_x_aux;
-  PROTECT_LAZY_VEC(p_lazy_x_aux, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_x_aux, p_n_prot);
 
   struct lazy_vec lazy_o_aux = new_lazy_vec(size, sizeof(int));
-  struct lazy_vec* p_lazy_o_aux = &lazy_o_aux;
-  PROTECT_LAZY_VEC(p_lazy_o_aux, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_o_aux, p_n_prot);
 
   struct lazy_vec lazy_bytes = new_lazy_vec(size, sizeof(uint8_t));
-  struct lazy_vec* p_lazy_bytes = &lazy_bytes;
-  PROTECT_LAZY_VEC(p_lazy_bytes, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_bytes, p_n_prot);
 
   // Compute the maximum size of the `counts` vector needed during radix
   // ordering. 4 * 256 for integers, 8 * 256 for doubles.
@@ -297,8 +293,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   R_xlen_t size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
   struct lazy_vec lazy_counts = new_lazy_vec(size_lazy_counts, sizeof(R_xlen_t));
-  struct lazy_vec* p_lazy_counts = &lazy_counts;
-  PROTECT_LAZY_VEC(p_lazy_counts, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_counts, p_n_prot);
 
   // Determine if group tracking can be turned off.
   // We turn if off if ordering non-data frame input as long as
@@ -310,16 +305,14 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   // Construct the two sets of group info needed for tracking groups.
   // We switch between them after each data frame column is processed.
   struct group_info group_info0 = new_group_info();
-  struct group_info* p_group_info0 = &group_info0;
-  PROTECT_GROUP_INFO(p_group_info0, p_n_prot);
+  PROTECT_GROUP_INFO(&group_info0, p_n_prot);
 
   struct group_info group_info1 = new_group_info();
-  struct group_info* p_group_info1 = &group_info1;
-  PROTECT_GROUP_INFO(p_group_info1, p_n_prot);
+  PROTECT_GROUP_INFO(&group_info1, p_n_prot);
 
   struct group_info* p_p_group_info[2];
-  p_p_group_info[0] = p_group_info0;
-  p_p_group_info[1] = p_group_info1;
+  p_p_group_info[0] = &group_info0;
+  p_p_group_info[1] = &group_info1;
 
   struct group_infos group_infos = new_group_infos(
     p_p_group_info,
@@ -327,28 +320,25 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
     requested,
     ignore
   );
-  struct group_infos* p_group_infos = &group_infos;
 
   // Used for character ordering - lazily generated to be fast
   // when not ordering character vectors
   struct truelength_info truelength_info = new_truelength_info(size);
-  struct truelength_info* p_truelength_info = &truelength_info;
-  PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
+  PROTECT_TRUELENGTH_INFO(&truelength_info, p_n_prot);
 
   struct lazy_int lazy_o = new_lazy_int(size);
-  struct lazy_int* p_lazy_o = &lazy_o;
-  PROTECT_LAZY_INT(p_lazy_o, p_n_prot);
+  PROTECT_LAZY_INT(&lazy_o, p_n_prot);
 
   vec_order_switch(
     proxy,
-    p_lazy_o,
-    p_lazy_x_chunk,
-    p_lazy_x_aux,
-    p_lazy_o_aux,
-    p_lazy_bytes,
-    p_lazy_counts,
-    p_group_infos,
-    p_truelength_info,
+    &lazy_o,
+    &lazy_x_chunk,
+    &lazy_x_aux,
+    &lazy_o_aux,
+    &lazy_bytes,
+    &lazy_counts,
+    &group_infos,
+    &truelength_info,
     decreasing,
     na_last,
     size,
@@ -357,11 +347,11 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 
   // Return ordered location info rather than ordering
   if (locations) {
-    struct group_info* p_group_info = groups_current(p_group_infos);
+    struct group_info* p_group_info = groups_current(&group_infos);
     const int* p_sizes = p_group_info->p_data;
     R_xlen_t n_groups = p_group_info->n_groups;
 
-    const int* p_o = p_lazy_o->p_data;
+    const int* p_o = lazy_o.p_data;
 
     SEXP out = vec_order_locs_impl(x, p_o, p_sizes, n_groups);
 
@@ -370,7 +360,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   }
 
   UNPROTECT(n_prot);
-  return p_lazy_o->data;
+  return lazy_o.data;
 }
 
 // -----------------------------------------------------------------------------
