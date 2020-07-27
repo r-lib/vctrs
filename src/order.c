@@ -160,17 +160,11 @@
 #define INSERTION_ORDER_BOUNDARY 128
 
 /*
- * Adjustments for endianness and integer / double radix ordering.
- * - On big-endian, MSB is on the far right.
- * - On little-endian, MSB is on the far left.
+ * Adjustments for translating current `pass` into the current `radix` byte
+ * that we need to shift to.
  */
-#ifdef WORDS_BIGENDIAN
-# define PASS_TO_RADIX(X, MAX) (X)
-# define SHIFT_ADJUSTMENT CHAR_BIT
-#else
-# define PASS_TO_RADIX(X, MAX) (MAX - 1 - X)
-# define SHIFT_ADJUSTMENT -CHAR_BIT
-#endif
+#define PASS_TO_RADIX(X, MAX) (MAX - 1 - X)
+#define SHIFT_ADJUSTMENT -CHAR_BIT
 
 // -----------------------------------------------------------------------------
 
