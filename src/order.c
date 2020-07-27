@@ -2681,8 +2681,6 @@ void chr_order_chunk(int* p_o,
   );
 }
 
-static void chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, R_xlen_t size);
-
 static
 void chr_order(SEXP x,
                struct lazy_int* p_lazy_o,
@@ -2796,8 +2794,6 @@ void chr_extract_ordering(int* p_x_aux, const SEXP* p_x, R_xlen_t size) {
 
 // -----------------------------------------------------------------------------
 
-static bool chr_any_needs_reencoding(const SEXP* p_x, R_xlen_t size);
-
 static void chr_mark_uniques(const SEXP* p_x,
                              struct truelength_info* p_truelength_info,
                              R_xlen_t size);
@@ -2836,7 +2832,7 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
   chr_mark_uniques(p_x, p_truelength_info, size);
 
   // Check if any uniques need reencoding
-  bool reencode = chr_any_needs_reencoding(
+  bool reencode = p_chr_any_reencode(
     p_truelength_info->p_uniques,
     p_truelength_info->size_used
   );
@@ -2850,7 +2846,7 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
     // Initialize container for re-encoded result
     lazy_chr_initialize(p_lazy_x_reencoded);
 
-    chr_copy_with_reencode(p_x, p_lazy_x_reencoded->data, size);
+    p_chr_copy_with_reencode(p_x, p_lazy_x_reencoded->data, size);
 
     // Tell `df_order()` and `chr_order()` we re-encoded
     p_truelength_info->reencode = true;
@@ -2919,22 +2915,6 @@ void chr_mark_uniques(const SEXP* p_x,
     // R uses positive or zero truelengths.
     SET_TRUELENGTH(elt, -1);
   }
-}
-
-// Only used on the unique strings for performance.
-// We heavily optimize for ASCII / UTF-8 here, while still supporting
-// translations as required with a second pass through `chr_mark_uniques()`.
-static
-bool chr_any_needs_reencoding(const SEXP* p_x, R_xlen_t size) {
-  for (R_xlen_t i = 0; i < size; ++i) {
-    SEXP elt = p_x[i];
-
-    if (CHAR_NEEDS_REENCODE(elt)) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -3239,30 +3219,6 @@ bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
 
   int cmp = strcmp(c_x, c_y);
   return cmp >= 0;
-}
-
-// -----------------------------------------------------------------------------
-
-/*
- * Copy from `p_x` to `x_result`. Also re-encodes as UTF-8 if any strings are
- * not UTF-8 or ASCII. Most things are ASCII, so this should short circuit
- * quickly after the first check in `CHAR_NEEDS_REENCODE()`.
- */
-static
-void chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, R_xlen_t size) {
-  const void* vmax = vmaxget();
-
-  for (R_xlen_t i = 0; i < size; ++i) {
-    SEXP elt = p_x[i];
-
-    if (CHAR_NEEDS_REENCODE(elt)) {
-      SET_STRING_ELT(x_result, i, CHAR_REENCODE(elt));
-    } else {
-      SET_STRING_ELT(x_result, i, elt);
-    }
-  }
-
-  vmaxset(vmax);
 }
 
 // -----------------------------------------------------------------------------
