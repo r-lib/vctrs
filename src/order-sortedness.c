@@ -299,10 +299,12 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   const void* vmax = vmaxget();
 
   SEXP previous = p_x[0];
+  PROTECT_INDEX previous_pi;
 
   if (check_encoding && CHAR_NEEDS_REENCODE(previous)) {
     previous = CHAR_REENCODE(previous);
   }
+  PROTECT_WITH_INDEX(previous, &previous_pi);
 
   const char* c_previous = CHAR(previous);
 
@@ -316,6 +318,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
       current = CHAR_REENCODE(current);
     }
+    PROTECT(current);
 
     const char* c_current = CHAR(current);
 
@@ -329,10 +332,14 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     );
 
     if (cmp >= 0) {
+      UNPROTECT(1);
       break;
     }
 
     previous = current;
+    REPROTECT(previous, previous_pi);
+    UNPROTECT(1);
+
     c_previous = c_current;
   }
 
@@ -344,12 +351,14 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     }
 
     vmaxset(vmax);
+    UNPROTECT(1);
     return VCTRS_SORTEDNESS_reversed;
   }
 
   // Was partially in expected order. Need to sort.
   if (count != 0) {
     vmaxset(vmax);
+    UNPROTECT(1);
     return VCTRS_SORTEDNESS_unsorted;
   }
 
@@ -368,6 +377,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
       current = CHAR_REENCODE(current);
     }
+    PROTECT(current);
 
     const char* c_current = CHAR(current);
 
@@ -382,12 +392,16 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
 
     // Not expected ordering
     if (cmp < 0) {
-      vmaxset(vmax);
       p_group_info->n_groups = original_n_groups;
+      vmaxset(vmax);
+      UNPROTECT(2);
       return VCTRS_SORTEDNESS_unsorted;
     }
 
     previous = current;
+    REPROTECT(previous, previous_pi);
+    UNPROTECT(1);
+
     c_previous = c_current;
 
     // Continue group run
@@ -406,6 +420,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
 
   // Expected ordering
   vmaxset(vmax);
+  UNPROTECT(1);
   return VCTRS_SORTEDNESS_sorted;
 }
 
