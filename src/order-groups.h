@@ -29,10 +29,10 @@ struct group_info {
   int* p_data;
   PROTECT_INDEX data_pi;
 
-  R_xlen_t data_size;
+  r_ssize data_size;
 
-  R_xlen_t n_groups;
-  R_xlen_t max_group_size;
+  r_ssize n_groups;
+  r_ssize max_group_size;
 };
 
 #define PROTECT_GROUP_INFO(p_info, p_n) do {              \
@@ -70,7 +70,7 @@ struct group_info {
  */
 struct group_infos {
   struct group_info** p_p_group_info;
-  R_xlen_t max_data_size;
+  r_ssize max_data_size;
   int current;
   bool requested;
   bool ignore;
@@ -81,7 +81,7 @@ struct group_infos {
 struct group_info new_group_info();
 
 struct group_infos new_group_infos(struct group_info** p_p_group_info,
-                                   R_xlen_t max_data_size,
+                                   r_ssize max_data_size,
                                    bool requested,
                                    bool ignore);
 
@@ -99,7 +99,7 @@ struct group_info* groups_current(struct group_infos* p_group_infos) {
 
 // -----------------------------------------------------------------------------
 
-void groups_size_push(R_xlen_t size, struct group_infos* p_group_infos);
+void groups_size_push(r_ssize size, struct group_infos* p_group_infos);
 
 /*
  * Inline version of `groups_size_push()` that only attempts to push if
@@ -107,7 +107,7 @@ void groups_size_push(R_xlen_t size, struct group_infos* p_group_infos);
  * especially with atomic vectors where order generally isn't required.
  */
 static inline
-void groups_size_maybe_push(R_xlen_t size, struct group_infos* p_group_infos) {
+void groups_size_maybe_push(r_ssize size, struct group_infos* p_group_infos) {
   if (p_group_infos->ignore) {
     return;
   } else {

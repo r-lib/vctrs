@@ -15,19 +15,19 @@ enum vctrs_sortedness {
 // -----------------------------------------------------------------------------
 
 enum vctrs_sortedness dbl_sortedness(const double* p_x,
-                                     R_xlen_t size,
+                                     r_ssize size,
                                      bool decreasing,
                                      bool na_last,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness int_sortedness(const int* p_x,
-                                     R_xlen_t size,
+                                     r_ssize size,
                                      bool decreasing,
                                      bool na_last,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     R_xlen_t size,
+                                     r_ssize size,
                                      bool decreasing,
                                      bool na_last,
                                      bool check_encoding,
@@ -36,11 +36,11 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
 // -----------------------------------------------------------------------------
 
 void ord_resolve_sortedness(enum vctrs_sortedness sortedness,
-                            R_xlen_t size,
+                            r_ssize size,
                             int* p_o);
 
 void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
-                                  R_xlen_t size,
+                                  r_ssize size,
                                   int* p_o);
 
 // -----------------------------------------------------------------------------

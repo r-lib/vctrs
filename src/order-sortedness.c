@@ -16,7 +16,7 @@ static inline int dbl_cmp(double x, double y, const int direction, const int na_
  * information is also pushed in these cases for use in the next columns.
  */
 enum vctrs_sortedness dbl_sortedness(const double* p_x,
-                                     R_xlen_t size,
+                                     r_ssize size,
                                      bool decreasing,
                                      bool na_last,
                                      struct group_infos* p_group_infos) {
@@ -34,11 +34,11 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
 
   double previous = p_x[0];
 
-  R_xlen_t count = 0;
+  r_ssize count = 0;
 
   // Check for strictly opposite of expected order
   // (ties are not allowed so we can reverse the vector stably)
-  for (R_xlen_t i = 1; i < size; ++i, ++count) {
+  for (r_ssize i = 1; i < size; ++i, ++count) {
     double current = p_x[i];
 
     int cmp = dbl_cmp(
@@ -58,7 +58,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // Was in strictly opposite of expected order.
   if (count == size - 1) {
     // Each group is size 1 since this is strict ordering
-    for (R_xlen_t j = 0; j < size; ++j) {
+    for (r_ssize j = 0; j < size; ++j) {
       groups_size_maybe_push(1, p_group_infos);
     }
 
@@ -73,13 +73,13 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // Retain the original `n_groups` to be able to reset the group sizes if
   // it turns out we don't have expected ordering
   struct group_info* p_group_info = groups_current(p_group_infos);
-  R_xlen_t original_n_groups = p_group_info->n_groups;
+  r_ssize original_n_groups = p_group_info->n_groups;
 
-  R_xlen_t group_size = 1;
+  r_ssize group_size = 1;
 
   // Check for expected ordering - allowing ties since we don't have to
   // reverse the ordering.
-  for (R_xlen_t i = 1; i < size; ++i) {
+  for (r_ssize i = 1; i < size; ++i) {
     double current = p_x[i];
 
     int cmp = dbl_cmp(
@@ -143,7 +143,7 @@ static inline int int_cmp(int x, int y, const int direction, const int na_order)
 
 // Very similar to `dbl_sortedness()`
 enum vctrs_sortedness int_sortedness(const int* p_x,
-                                     R_xlen_t size,
+                                     r_ssize size,
                                      bool decreasing,
                                      bool na_last,
                                      struct group_infos* p_group_infos) {
@@ -161,11 +161,11 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
 
   int previous = p_x[0];
 
-  R_xlen_t count = 0;
+  r_ssize count = 0;
 
   // Check for strictly opposite of expected order
   // (ties are not allowed so we can reverse the vector stably)
-  for (R_xlen_t i = 1; i < size; ++i, ++count) {
+  for (r_ssize i = 1; i < size; ++i, ++count) {
     int current = p_x[i];
 
     int cmp = int_cmp(
@@ -185,7 +185,7 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
   // Was in strictly opposite of expected order.
   if (count == size - 1) {
     // Each group is size 1 since this is strict ordering
-    for (R_xlen_t j = 0; j < size; ++j) {
+    for (r_ssize j = 0; j < size; ++j) {
       groups_size_maybe_push(1, p_group_infos);
     }
 
@@ -200,13 +200,13 @@ enum vctrs_sortedness int_sortedness(const int* p_x,
   // Retain the original `n_groups` to be able to reset the group sizes if
   // it turns out we don't have expected ordering
   struct group_info* p_group_info = groups_current(p_group_infos);
-  R_xlen_t original_n_groups = p_group_info->n_groups;
+  r_ssize original_n_groups = p_group_info->n_groups;
 
-  R_xlen_t group_size = 1;
+  r_ssize group_size = 1;
 
   // Check for expected ordering - allowing ties since we don't have to
   // reverse the ordering.
-  for (R_xlen_t i = 1; i < size; ++i) {
+  for (r_ssize i = 1; i < size; ++i) {
     int current = p_x[i];
 
     int cmp = int_cmp(
@@ -279,7 +279,7 @@ static inline int chr_cmp(SEXP x,
  * order.
  */
 enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
-                                     R_xlen_t size,
+                                     r_ssize size,
                                      bool decreasing,
                                      bool na_last,
                                      bool check_encoding,
@@ -308,11 +308,11 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
 
   const char* c_previous = CHAR(previous);
 
-  R_xlen_t count = 0;
+  r_ssize count = 0;
 
   // Check for strictly opposite of expected order
   // (ties are not allowed so we can reverse the vector stably)
-  for (R_xlen_t i = 1; i < size; ++i, ++count) {
+  for (r_ssize i = 1; i < size; ++i, ++count) {
     SEXP current = p_x[i];
 
     if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
@@ -346,7 +346,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // Was in strictly opposite of expected order.
   if (count == size - 1) {
     // Each group is size 1 since this is strict ordering
-    for (R_xlen_t j = 0; j < size; ++j) {
+    for (r_ssize j = 0; j < size; ++j) {
       groups_size_maybe_push(1, p_group_infos);
     }
 
@@ -365,13 +365,13 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // Retain the original `n_groups` to be able to reset the group sizes if
   // it turns out we don't have expected ordering
   struct group_info* p_group_info = groups_current(p_group_infos);
-  R_xlen_t original_n_groups = p_group_info->n_groups;
+  r_ssize original_n_groups = p_group_info->n_groups;
 
-  R_xlen_t group_size = 1;
+  r_ssize group_size = 1;
 
   // Check for expected ordering - allowing ties since we don't have to
   // reverse the ordering.
-  for (R_xlen_t i = 1; i < size; ++i) {
+  for (r_ssize i = 1; i < size; ++i) {
     SEXP current = p_x[i];
 
     if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
@@ -453,8 +453,8 @@ int chr_cmp(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static inline void int_incr(R_xlen_t size, int* p_x);
-static inline void ord_reverse(R_xlen_t size, int* p_o);
+static inline void int_incr(r_ssize size, int* p_x);
+static inline void ord_reverse(r_ssize size, int* p_o);
 
 /*
  * Resolve ordering based on the sortedness and whether or not `p_o` has
@@ -466,7 +466,7 @@ static inline void ord_reverse(R_xlen_t size, int* p_o);
  * correspond to the size of the current group for subsequent columns.
  */
 void ord_resolve_sortedness(enum vctrs_sortedness sortedness,
-                            R_xlen_t size,
+                            r_ssize size,
                             int* p_o) {
   switch (sortedness) {
   case VCTRS_SORTEDNESS_sorted: int_incr(size, p_o); return;
@@ -479,19 +479,19 @@ void ord_resolve_sortedness(enum vctrs_sortedness sortedness,
 
 // Initialize with sequential 1-based ordering
 static inline
-void int_incr(R_xlen_t size, int* p_x) {
-  for (R_xlen_t i = 0; i < size; ++i) {
+void int_incr(r_ssize size, int* p_x) {
+  for (r_ssize i = 0; i < size; ++i) {
     p_x[i] = i + 1;
   }
 }
 
 // Used when in strictly opposite of expected order and uninitialized.
 static inline
-void ord_reverse(R_xlen_t size, int* p_o) {
-  const R_xlen_t half = size / 2;
+void ord_reverse(r_ssize size, int* p_o) {
+  const r_ssize half = size / 2;
 
-  for (R_xlen_t i = 0; i < half; ++i) {
-    R_xlen_t swap = size - 1 - i;
+  for (r_ssize i = 0; i < half; ++i) {
+    r_ssize swap = size - 1 - i;
     p_o[i] = swap + 1;
     p_o[swap] = i + 1;
   }
@@ -503,10 +503,10 @@ void ord_reverse(R_xlen_t size, int* p_o) {
 }
 
 
-static inline void ord_reverse_chunk(R_xlen_t size, int* p_o);
+static inline void ord_reverse_chunk(r_ssize size, int* p_o);
 
 void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
-                                  R_xlen_t size,
+                                  r_ssize size,
                                   int* p_o) {
   switch (sortedness) {
   case VCTRS_SORTEDNESS_sorted: return;
@@ -522,11 +522,11 @@ void ord_resolve_sortedness_chunk(enum vctrs_sortedness sortedness,
 // No need to alter "center" value here, it will be initialized to a value
 // already and it won't be swapped.
 static inline
-void ord_reverse_chunk(R_xlen_t size, int* p_o) {
-  const R_xlen_t half = size / 2;
+void ord_reverse_chunk(r_ssize size, int* p_o) {
+  const r_ssize half = size / 2;
 
-  for (R_xlen_t i = 0; i < half; ++i) {
-    R_xlen_t swap = size - 1 - i;
+  for (r_ssize i = 0; i < half; ++i) {
+    r_ssize swap = size - 1 - i;
 
     const int temp = p_o[i];
 

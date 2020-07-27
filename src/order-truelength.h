@@ -47,7 +47,7 @@ struct truelength_info {
   PROTECT_INDEX strings_pi;
 
   SEXP lengths;
-  R_xlen_t* p_lengths;
+  r_ssize* p_lengths;
   PROTECT_INDEX lengths_pi;
 
   SEXP uniques;
@@ -62,11 +62,11 @@ struct truelength_info {
   int* p_sizes_aux;
   PROTECT_INDEX sizes_aux_pi;
 
-  R_xlen_t size_alloc;
-  R_xlen_t max_size_alloc;
-  R_xlen_t size_used;
+  r_ssize size_alloc;
+  r_ssize max_size_alloc;
+  r_ssize size_used;
 
-  R_xlen_t max_string_size;
+  r_ssize max_string_size;
 
   bool reencode;
 };
@@ -81,12 +81,12 @@ struct truelength_info {
 } while(0)
 
 
-struct truelength_info new_truelength_info(R_xlen_t max_size_alloc);
+struct truelength_info new_truelength_info(r_ssize max_size_alloc);
 void truelength_reset(struct truelength_info* p_truelength_info);
 
 void truelength_save(SEXP x,
-                     R_xlen_t truelength,
-                     R_xlen_t size,
+                     r_ssize truelength,
+                     r_ssize size,
                      struct truelength_info* p_truelength_info);
 
 // -----------------------------------------------------------------------------
