@@ -166,10 +166,10 @@
  */
 #ifdef WORDS_BIGENDIAN
 # define PASS_TO_RADIX(X, MAX) (X)
-# define SHIFT_ADJUSTMENT 8
+# define SHIFT_ADJUSTMENT CHAR_BIT
 #else
 # define PASS_TO_RADIX(X, MAX) (MAX - 1 - X)
-# define SHIFT_ADJUSTMENT -8
+# define SHIFT_ADJUSTMENT -CHAR_BIT
 #endif
 
 // -----------------------------------------------------------------------------
