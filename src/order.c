@@ -271,16 +271,16 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
   struct lazy_raw lazy_x_chunk = new_lazy_raw(size, n_bytes_lazy_raw);
-  PROTECT_LAZY_VEC(&lazy_x_chunk, p_n_prot);
+  PROTECT_LAZY_RAW(&lazy_x_chunk, p_n_prot);
 
   struct lazy_raw lazy_x_aux = new_lazy_raw(size, n_bytes_lazy_raw);
-  PROTECT_LAZY_VEC(&lazy_x_aux, p_n_prot);
+  PROTECT_LAZY_RAW(&lazy_x_aux, p_n_prot);
 
   struct lazy_raw lazy_o_aux = new_lazy_raw(size, sizeof(int));
-  PROTECT_LAZY_VEC(&lazy_o_aux, p_n_prot);
+  PROTECT_LAZY_RAW(&lazy_o_aux, p_n_prot);
 
   struct lazy_raw lazy_bytes = new_lazy_raw(size, sizeof(uint8_t));
-  PROTECT_LAZY_VEC(&lazy_bytes, p_n_prot);
+  PROTECT_LAZY_RAW(&lazy_bytes, p_n_prot);
 
   // Compute the maximum size of the `counts` vector needed during radix
   // ordering. 4 * 256 for integers, 8 * 256 for doubles.
@@ -288,7 +288,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   R_xlen_t size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
   struct lazy_raw lazy_counts = new_lazy_raw(size_lazy_counts, sizeof(R_xlen_t));
-  PROTECT_LAZY_VEC(&lazy_counts, p_n_prot);
+  PROTECT_LAZY_RAW(&lazy_counts, p_n_prot);
 
   // Determine if group tracking can be turned off.
   // We turn if off if ordering non-data frame input as long as

@@ -32,7 +32,7 @@ struct lazy_raw {
   bool initialized;
 };
 
-#define PROTECT_LAZY_VEC(p_info, p_n) do {                     \
+#define PROTECT_LAZY_RAW(p_info, p_n) do {                     \
   PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi);      \
   *(p_n) += 1;                                                 \
 } while (0)
@@ -41,7 +41,7 @@ struct lazy_raw {
 /*
  * Construct a new lazy vector
  *
- * Pair with `PROTECT_LAZY_VEC()`.
+ * Pair with `PROTECT_LAZY_RAW()`.
  *
  * @param size The size of the type you want to interpret the memory as.
  * @param n_bytes A `sizeof(<type>)` result for the type you are allocating
