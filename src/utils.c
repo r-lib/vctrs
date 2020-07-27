@@ -399,6 +399,35 @@ SEXP p_chr_resize(const SEXP* p_x, R_xlen_t x_size, R_xlen_t size) {
   return out;
 }
 
+// [[ include("utils.h") ]]
+bool p_chr_any_reencode(const SEXP* p_x, R_xlen_t size) {
+  for (R_xlen_t i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    if (CHAR_NEEDS_REENCODE(elt)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// [[ include("utils.h") ]]
+void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, R_xlen_t size) {
+  const void* vmax = vmaxget();
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    if (CHAR_NEEDS_REENCODE(elt)) {
+      SET_STRING_ELT(x_result, i, CHAR_REENCODE(elt));
+    } else {
+      SET_STRING_ELT(x_result, i, elt);
+    }
+  }
+
+  vmaxset(vmax);
+}
 
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Reached the unreachable.", fn);
