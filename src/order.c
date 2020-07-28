@@ -2681,6 +2681,36 @@ void chr_order_chunk(bool decreasing,
   );
 }
 
+
+struct chr_order_data_exec {
+  SEXP x;
+  bool decreasing;
+  bool na_last;
+  r_ssize size;
+  struct lazy_int* p_lazy_o;
+  struct lazy_raw* p_lazy_x_chunk;
+  struct lazy_raw* p_lazy_x_aux;
+  struct lazy_raw* p_lazy_o_aux;
+  struct lazy_raw* p_lazy_bytes;
+  struct lazy_raw* p_lazy_counts;
+  struct group_infos* p_group_infos;
+  struct lazy_chr* p_lazy_x_reencoded;
+  struct truelength_info* p_truelength_info;
+};
+
+struct chr_order_data_cleanup {
+  struct truelength_info* p_truelength_info;
+};
+
+static SEXP chr_order_exec(void* p_data);
+static void chr_order_cleanup(void* p_data);
+
+/*
+ * `chr_order()` directly modifies the `TRUELENGTH()` values of the CHARSXPs
+ * in `x`. These must be reset after the call with `truelength_reset()`. To
+ * ensure that this function is called (even on a longjump),
+ * `R_ExecWithCleanup()` is used.
+ */
 static
 void chr_order(SEXP x,
                bool decreasing,
@@ -2695,6 +2725,91 @@ void chr_order(SEXP x,
                struct group_infos* p_group_infos,
                struct lazy_chr* p_lazy_x_reencoded,
                struct truelength_info* p_truelength_info) {
+  struct chr_order_data_exec data_exec = {
+    .x = x,
+    .decreasing = decreasing,
+    .na_last = na_last,
+    .size = size,
+    .p_lazy_o = p_lazy_o,
+    .p_lazy_x_chunk = p_lazy_x_chunk,
+    .p_lazy_x_aux = p_lazy_x_aux,
+    .p_lazy_o_aux = p_lazy_o_aux,
+    .p_lazy_bytes = p_lazy_bytes,
+    .p_lazy_counts = p_lazy_counts,
+    .p_group_infos = p_group_infos,
+    .p_lazy_x_reencoded = p_lazy_x_reencoded,
+    .p_truelength_info = p_truelength_info
+  };
+
+  struct chr_order_data_cleanup data_cleanup = {
+    .p_truelength_info = p_truelength_info
+  };
+
+  R_ExecWithCleanup(
+    chr_order_exec,
+    &data_exec,
+    chr_order_cleanup,
+    &data_cleanup
+  );
+}
+
+static void chr_order_internal(SEXP x,
+                               bool decreasing,
+                               bool na_last,
+                               r_ssize size,
+                               struct lazy_int* p_lazy_o,
+                               struct lazy_raw* p_lazy_x_chunk,
+                               struct lazy_raw* p_lazy_x_aux,
+                               struct lazy_raw* p_lazy_o_aux,
+                               struct lazy_raw* p_lazy_bytes,
+                               struct lazy_raw* p_lazy_counts,
+                               struct group_infos* p_group_infos,
+                               struct lazy_chr* p_lazy_x_reencoded,
+                               struct truelength_info* p_truelength_info);
+
+static
+SEXP chr_order_exec(void* p_data) {
+  struct chr_order_data_exec* p_data_exec = (struct chr_order_data_exec*) p_data;
+
+  chr_order_internal(
+    p_data_exec->x,
+    p_data_exec->decreasing,
+    p_data_exec->na_last,
+    p_data_exec->size,
+    p_data_exec->p_lazy_o,
+    p_data_exec->p_lazy_x_chunk,
+    p_data_exec->p_lazy_x_aux,
+    p_data_exec->p_lazy_o_aux,
+    p_data_exec->p_lazy_bytes,
+    p_data_exec->p_lazy_counts,
+    p_data_exec->p_group_infos,
+    p_data_exec->p_lazy_x_reencoded,
+    p_data_exec->p_truelength_info
+  );
+
+  return R_NilValue;
+}
+
+static
+void chr_order_cleanup(void* p_data) {
+  struct chr_order_data_cleanup* p_data_cleanup = (struct chr_order_data_cleanup*) p_data;
+  truelength_reset(p_data_cleanup->p_truelength_info);
+}
+
+static
+void chr_order_internal(SEXP x,
+                        bool decreasing,
+                        bool na_last,
+                        r_ssize size,
+                        struct lazy_int* p_lazy_o,
+                        struct lazy_raw* p_lazy_x_chunk,
+                        struct lazy_raw* p_lazy_x_aux,
+                        struct lazy_raw* p_lazy_o_aux,
+                        struct lazy_raw* p_lazy_bytes,
+                        struct lazy_raw* p_lazy_counts,
+                        struct group_infos* p_group_infos,
+                        struct lazy_chr* p_lazy_x_reencoded,
+                        struct truelength_info* p_truelength_info) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   // Check encodings when determining sortedness of user input
@@ -2764,9 +2879,6 @@ void chr_order(SEXP x,
     p_lazy_counts,
     p_group_infos
   );
-
-  // Reset TRUELENGTHs
-  truelength_reset(p_truelength_info);
 }
 
 // -----------------------------------------------------------------------------
