@@ -49,4 +49,3 @@ new_data_frame(list(x = 1:10, y = 10:1))
 data structure from individual columns. This can be used to create a
 named list for further use by \code{new_data_frame()}.
 }
-\keyword{internal}

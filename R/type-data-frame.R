@@ -30,7 +30,6 @@
 #'     consistent.
 #'
 #' @export
-#' @keywords internal
 #' @examples
 #' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
