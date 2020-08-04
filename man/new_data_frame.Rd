@@ -28,6 +28,10 @@ respectively:
 \item \code{"row.names"} is used if provided, if \code{n} is provided it must be
 consistent.
 }}
+
+\item{y}{Vector types.}
+
+\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
 \description{
 A \code{data.frame} is a list with "row.names" attribute. Each

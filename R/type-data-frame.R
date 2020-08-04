@@ -293,6 +293,7 @@ df_cast_params <- function(x,
 }
 
 #' @rdname new_data_frame
+#' @inheritParams vec_ptype2
 #' @export vec_ptype2.data.frame
 #' @method vec_ptype2 data.frame
 #' @export
@@ -444,6 +445,7 @@ known_classes <- function(x) {
 # Cast --------------------------------------------------------------------
 
 #' @rdname new_data_frame
+#' @inheritParams vec_cast
 #' @export vec_cast.data.frame
 #' @method vec_cast data.frame
 #' @export
