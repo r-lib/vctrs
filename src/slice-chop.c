@@ -314,7 +314,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // definition to ensure consistent look-up. This is the same logic
   // as in `vctrs_dispatch_n()`, reimplemented here to allow repeated
   // evaluations in a loop.
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv, 2));
+  SEXP env = PROTECT(r_new_environment(R_GlobalEnv));
   Rf_defineVar(syms_x, x, env);
   Rf_defineVar(syms_i, info.index, env);
 

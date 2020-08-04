@@ -198,7 +198,7 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
 }
 
 static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
-  SEXP mask = PROTECT(r_new_environment(env, 8));
+  SEXP mask = PROTECT(r_new_environment(env));
 
   if (fn_sym != R_NilValue) {
     Rf_defineVar(fn_sym, fn, mask);
@@ -1184,6 +1184,7 @@ static SEXP new_env_call = NULL;
 static SEXP new_env__parent_node = NULL;
 static SEXP new_env__size_node = NULL;
 
+#if 0
 SEXP r_new_environment(SEXP parent, R_len_t size) {
   parent = parent ? parent : R_EmptyEnv;
   SETCAR(new_env__parent_node, parent);
@@ -1198,11 +1199,13 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
 
   return env;
 }
+#endif
 
 static SEXP new_function_call = NULL;
 static SEXP new_function__formals_node = NULL;
 static SEXP new_function__body_node = NULL;
 
+#if 0
 SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
   SETCAR(new_function__formals_node, formals);
   SETCAR(new_function__body_node, body);
@@ -1215,6 +1218,7 @@ SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
 
   return fn;
 }
+#endif
 
 // [[ include("utils.h") ]]
 SEXP r_protect(SEXP x) {

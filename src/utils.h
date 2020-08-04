@@ -245,8 +245,22 @@ SEXP r_new_list(R_len_t n) {
   return Rf_allocVector(VECSXP, n);
 }
 
-SEXP r_new_environment(SEXP parent, R_len_t size);
-SEXP r_new_function(SEXP formals, SEXP body, SEXP env);
+static inline
+SEXP r_new_environment(SEXP parent) {
+  SEXP env = Rf_allocSExp(ENVSXP);
+  SET_ENCLOS(env, parent);
+  return env;
+}
+
+static inline
+SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
+  SEXP fn = Rf_allocSExp(CLOSXP);
+  SET_FORMALS(fn, formals);
+  SET_BODY(fn, body);
+  SET_CLOENV(fn, env);
+  return fn;
+}
+
 SEXP r_as_function(SEXP x, const char* arg);
 
 SEXP r_protect(SEXP x);

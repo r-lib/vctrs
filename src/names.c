@@ -84,7 +84,7 @@ SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts) {
 
   // Don't use vctrs dispatch utils because we match argument positionally
   SEXP call = PROTECT(Rf_lang2(syms_repair, syms_names));
-  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv, 2));
+  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv));
   Rf_defineVar(syms_repair, opts->fn, mask);
   Rf_defineVar(syms_names, names, mask);
   SEXP out = PROTECT(Rf_eval(call, mask));
