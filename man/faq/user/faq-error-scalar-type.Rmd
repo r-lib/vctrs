@@ -47,45 +47,6 @@ vctrs::vec_slice(call, 1:2)
 ```
 
 
-## Why isn't my list class considered a vector?
+# I get a scalar type error but I think this is a bug
 
-By default, S3 lists are not considered to be vectors by vctrs:
-
-```{r}
-my_list <- structure(list(), class = "my_class")
-
-vctrs::vec_is(my_list)
-```
-
-To be treated as a vector, the class must either inherit from `"list"` explicitly:
-
-```{r}
-my_explicit_list <- structure(list(), class = c("my_class", "list"))
-vctrs::vec_is(my_explicit_list)
-```
-
-Or it should implement a `vec_proxy()` method that returns its input if explicit inheritance is not possible or troublesome:
-
-```{r}
-#' @export
-vec_proxy.my_class <- function(x, ...) x
-
-vctrs::vec_is(my_list)
-```
-
-Note that explicit inheritance is the preferred way because this makes it possible for your class to dispatch on `list` methods of S3 generics:
-
-```{r, error = TRUE}
-my_generic <- function(x) UseMethod("my_generic")
-my_generic.list <- function(x) "dispatched!"
-
-my_generic(my_list)
-
-my_generic(my_explicit_list)
-```
-
-
-## Why isn't my data frame class considered a vector?
-
-The most likely explanation is that the data frame has not been
-properly constructed. See [?faq-error-data-frame-scalar-type].
+It's possible the author of the class needs to do some work to declare their class a vector. Consider reaching out to the author. We have written a [developer FAQ page][howto-faq-fix-scalar-type-error] to help them fix the issue.

@@ -72,45 +72,12 @@ lapply(call, function(x) x)
 vctrs::vec_slice(call, 1:2)
 #> Error: Input must be a vector, not a call.
 }\if{html}{\out{</div>}}
-\subsection{Why isn’t my list class considered a vector?}{
-
-By default, S3 lists are not considered to be vectors by vctrs:\if{html}{\out{<div class="r">}}\preformatted{my_list <- structure(list(), class = "my_class")
-
-vctrs::vec_is(my_list)
-#> [1] FALSE
-}\if{html}{\out{</div>}}
-
-To be treated as a vector, the class must either inherit from \code{"list"}
-explicitly:\if{html}{\out{<div class="r">}}\preformatted{my_explicit_list <- structure(list(), class = c("my_class", "list"))
-vctrs::vec_is(my_explicit_list)
-#> [1] TRUE
-}\if{html}{\out{</div>}}
-
-Or it should implement a \code{vec_proxy()} method that returns its input if
-explicit inheritance is not possible or troublesome:\if{html}{\out{<div class="r">}}\preformatted{#' @export
-vec_proxy.my_class <- function(x, ...) x
-
-vctrs::vec_is(my_list)
-#> [1] FALSE
-}\if{html}{\out{</div>}}
-
-Note that explicit inheritance is the preferred way because this makes
-it possible for your class to dispatch on \code{list} methods of S3 generics:\if{html}{\out{<div class="r">}}\preformatted{my_generic <- function(x) UseMethod("my_generic")
-my_generic.list <- function(x) "dispatched!"
-
-my_generic(my_list)
-#> Error in UseMethod("my_generic"): no applicable method for 'my_generic' applied to an object of class "my_class"
-
-my_generic(my_explicit_list)
-#> [1] "dispatched!"
-}\if{html}{\out{</div>}}
 }
 
-\subsection{Why isn’t my data frame class considered a vector?}{
-
-The most likely explanation is that the data frame has not been properly
-constructed. See
-\link{?faq-error-data-frame-scalar-type}.
-}
+\section{I get a scalar type error but I think this is a bug}{
+It’s possible the author of the class needs to do some work to declare
+their class a vector. Consider reaching out to the author. We have
+written a \link[=howto-faq-fix-scalar-type-error]{developer FAQ page} to
+help them fix the issue.
 }
 

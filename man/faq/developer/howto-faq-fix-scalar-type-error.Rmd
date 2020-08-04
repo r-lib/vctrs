@@ -1,0 +1,74 @@
+
+```{r, child = "../setup.Rmd", include = FALSE}
+```
+
+The tidyverse is a bit stricter than base R regarding what kind of objects are considered as vectors (see the [user FAQ][faq-error-scalar-type] about this topic). Sometimes vctrs won't treat your class as a vector when it should.
+
+
+## Why isn't my list class considered a vector?
+
+By default, S3 lists are not considered to be vectors by vctrs:
+
+```{r}
+my_list <- structure(list(), class = "my_class")
+
+vctrs::vec_is(my_list)
+```
+
+To be treated as a vector, the class must either inherit from `"list"` explicitly:
+
+```{r}
+my_explicit_list <- structure(list(), class = c("my_class", "list"))
+vctrs::vec_is(my_explicit_list)
+```
+
+Or it should implement a `vec_proxy()` method that returns its input if explicit inheritance is not possible or troublesome:
+
+```{r}
+#' @export
+vec_proxy.my_class <- function(x, ...) x
+
+vctrs::vec_is(my_list)
+```
+
+Note that explicit inheritance is the preferred way because this makes it possible for your class to dispatch on `list` methods of S3 generics:
+
+```{r, error = TRUE}
+my_generic <- function(x) UseMethod("my_generic")
+my_generic.list <- function(x) "dispatched!"
+
+my_generic(my_list)
+
+my_generic(my_explicit_list)
+```
+
+
+## Why isn't my data frame class considered a vector?
+
+The most likely explanation is that the data frame has not been
+properly constructed.
+
+However, if you get an "Input must be a vector" error with a data frame subclass, it probably means that the data frame has not been properly constructed. The main cause of these errors are data frames whose _base class_ is not `"data.frame"`:
+
+```{r, error = TRUE}
+my_df <- data.frame(x = 1)
+class(my_df) <- c("data.frame", "my_class")
+
+vctrs::vec_assert(my_df)
+```
+
+This is problematic as many tidyverse functions won't work properly:
+
+```{r, error = TRUE}
+dplyr::slice(my_df, 1)
+```
+
+It is generally not appropriate to declare your class to be a superclass of another class. We generally consider this undefined behaviour (UB). To fix these errors, you can simply change the construction of your data frame class so that `"data.frame"` is a base class, i.e. it should come last in the class vector:
+
+```{r}
+class(my_df) <- c("my_class", "data.frame")
+
+vctrs::vec_assert(my_df)
+
+dplyr::slice(my_df, 1)
+```
