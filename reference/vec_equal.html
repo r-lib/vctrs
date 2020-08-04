@@ -98,7 +98,7 @@ vec_equal(x, vec_init(x), na_equal = TRUE).
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -164,20 +164,20 @@ vec_equal(x, vec_init(x), na_equal = TRUE).
     </div>
 
     <div class="ref-description">
-    <p><code><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal_na()</a></code> tests a special case: equality with <code>NA</code>. It is similar to
+    <p><code>vec_equal_na()</code> tests a special case: equality with <code>NA</code>. It is similar to
 <a href='https://rdrr.io/r/base/NA.html'>is.na</a> but:</p><ul>
 <li><p>Considers the missing element of a list to be <code>NULL</code>.</p></li>
 <li><p>Considered data frames and records to be missing if every component
 is missing.
-This preserves the invariant that <code><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal_na(x)</a></code> is equal to
-<code><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal(x, vec_init(x), na_equal = TRUE)</a></code>.</p></li>
+This preserves the invariant that <code>vec_equal_na(x)</code> is equal to
+<code>vec_equal(x, vec_init(x), na_equal = TRUE)</code>.</p></li>
 </ul>
 
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, na_equal = <span class='fl'>FALSE</span>, .ptype = <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>vec_equal</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal_na</a></span>(<span class='kw'>x</span>)</pre>
+<span class='fu'>vec_equal_na</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -208,17 +208,17 @@ This preserves the invariant that <code><a href='https://vctrs.r-lib.org/referen
     
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common()</a></code></p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
+<li><p><code><a href='vec_recycle.html'>vec_recycle_common()</a></code></p></li>
+<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE    NA</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>, na_equal = <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal_na</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] FALSE FALSE  TRUE</div><div class='input'>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal</a></span>(<span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>)</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal</a></span>(<span class='st'>"d"</span>, <span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>])</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE</div><div class='input'>
-<span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>), y = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>))
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal</a></span>(<span class='kw'>df</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>, y = <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE    NA    NA</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal_na</a></span>(<span class='kw'>df</span>)</div><div class='output co'>#&gt; [1] FALSE FALSE FALSE FALSE  TRUE</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE    NA</div><div class='input'><span class='fu'>vec_equal</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>), <span class='fl'>FALSE</span>, <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>TRUE</span>, <span class='fl'>FALSE</span>, <span class='fl'>NA</span>))</div><div class='output co'>#&gt; [1] FALSE FALSE  TRUE</div><div class='input'>
+<span class='fu'>vec_equal</span>(<span class='fl'>5</span>, <span class='fl'>1</span>:<span class='fl'>10</span>)</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</div><div class='input'><span class='fu'>vec_equal</span>(<span class='st'>"d"</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>10</span>])</div><div class='output co'>#&gt;  [1] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE</div><div class='input'>
+<span class='no'>df</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>NA</span>, <span class='fl'>NA</span>))
+<span class='fu'>vec_equal</span>(<span class='no'>df</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE    NA    NA</div><div class='input'><span class='fu'>vec_equal_na</span>(<span class='no'>df</span>)</div><div class='output co'>#&gt; [1] FALSE FALSE FALSE FALSE  TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -234,7 +234,7 @@ This preserves the invariant that <code><a href='https://vctrs.r-lib.org/referen
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

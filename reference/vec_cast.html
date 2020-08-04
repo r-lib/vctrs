@@ -92,7 +92,7 @@ the foundation of type coercions in vctrs." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -158,35 +158,35 @@ the foundation of type coercions in vctrs." />
     </div>
 
     <div class="ref-description">
-    <p><code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code> provides directional conversions from one type of
-vector to another. Along with <code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code>, this generic forms
+    <p><code>vec_cast()</code> provides directional conversions from one type of
+vector to another. Along with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>, this generic forms
 the foundation of type coercions in vctrs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, to_arg = <span class='st'>""</span>)
+    <pre class="usage"><span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common</a></span>(<span class='kw'>...</span>, .to = <span class='kw'>NULL</span>)
+<span class='fu'>vec_cast_common</span>(<span class='no'>...</span>, <span class='kw'>.to</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='co'># S3 method for logical</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for integer</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for double</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for complex</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for raw</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for character</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for list</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'>vec_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,15 +201,15 @@ the foundation of type coercions in vctrs.</p>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code>, vectors to cast. For
-<code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code>, <code>vec_cast_default()</code>, and <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code>, these
+      <td><p>For <code>vec_cast_common()</code>, vectors to cast. For
+<code>vec_cast()</code>, <code>vec_cast_default()</code>, and <code><a href='vec_proxy.html'>vec_restore()</a></code>, these
 dots are only for future extensions and should be empty.</p></td>
     </tr>
     <tr>
       <th>x_arg, to_arg</th>
       <td><p>Argument names for <code>x</code> and <code>to</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
+incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>).</p></td>
     </tr>
     </table>
 
@@ -224,25 +224,25 @@ there is no 1-to-1 mapping for a specific value).</p>
     
 <ul>
 <li><p>For an overview of how these generics work and their roles in vctrs,
-see <code><a href='https://vctrs.r-lib.org/reference/theory-faq-coercion.html'>?theory-faq-coercion</a></code>.</p></li>
+see <code><a href='theory-faq-coercion.html'>?theory-faq-coercion</a></code>.</p></li>
 <li><p>For an example of implementing coercion methods for simple vectors,
-see <code><a href='https://vctrs.r-lib.org/reference/howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
+see <code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
 <li><p>For an example of implementing coercion methods for data frame
 subclasses, see
-<code><a href='https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a></code>.</p></li>
+<code><a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a></code>.</p></li>
 <li><p>For a tutorial about implementing vctrs classes from scratch, see
-<code>vignette("s3-vector")</code>.</p></li>
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="dependencies-of-vec-cast-common-"><a class="anchor" href="#dependencies-of-vec-cast-common-"></a>Dependencies of <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code></h2>
+    <h2 class="hasAnchor" id="dependencies-of-vec-cast-common-"><a class="anchor" href="#dependencies-of-vec-cast-common-"></a>Dependencies of <code>vec_cast_common()</code></h2>
 
     
 
 <h3>vctrs dependencies</h3>
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_ptype2.html'>vec_ptype2()</a></code></p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code></p></li>
+<li><p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code></p></li>
+<li><p><code>vec_cast()</code></p></li>
 </ul>
 
 
@@ -250,33 +250,33 @@ subclasses, see
 
 
 <p>Some functions enable a base-class fallback for
-<code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common()</a></code>. In that case the inputs are deemed compatible
+<code>vec_cast_common()</code>. In that case the inputs are deemed compatible
 when they have the same <a href='https://rdrr.io/r/base/typeof.html'>base type</a> and inherit from
 the same base class.</p>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Call <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_cast()</a></code> when you determine from the
+    <div class='dont-index'><p>Call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code> when you determine from the
 attributes that an input can't be cast to the target type.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># x is a double, but no information is lost</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='fu'>vec_cast</span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># When information is lost the cast fails</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
-#&gt; * Locations: 2</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
+#&gt; * Locations: 2</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># You can suppress this error and get the partial results</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
+<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()))</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
 <span class='co'># By default this suppress all lossy cast errors without</span>
 <span class='co'># distinction, but you can be specific about what cast is allowed</span>
 <span class='co'># by supplying prototypes</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()), to_ptype = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()), to_ptype = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.
+<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span>(<span class='fu'>vec_cast</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span>()), <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># No sensible coercion is possible so an error is generated</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>)))</div><div class='output co'>#&gt; Error : Can't convert &lt;double&gt; to &lt;factor&lt;127a2&gt;&gt;.</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_cast</span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>)))</div><div class='output co'>#&gt; Error : Can't convert &lt;double&gt; to &lt;factor&lt;127a2&gt;&gt;.</div><div class='input'>
 <span class='co'># Cast to common type</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>)))</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>vec_cast_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>)))</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] a
 #&gt; Levels: a b
 #&gt; 
@@ -299,7 +299,7 @@ attributes that an input can't be cast to the target type.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

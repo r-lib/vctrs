@@ -92,7 +92,7 @@ that matches vec_size() instead of length()." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -159,15 +159,15 @@ that matches vec_size() instead of length()." />
 
     <div class="ref-description">
     <p>This provides a common interface to extracting and modifying observations
-for all vector types, regardless of dimensionality. It is an analog to <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>
-that matches <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code> instead of <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>.</p>
+for all vector types, regardless of dimensionality. It is an analog to <code>[</code>
+that matches <code><a href='vec_size.html'>vec_size()</a></code> instead of <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>x</span>, <span class='kw'>i</span>)
+    <pre class="usage"><span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='no'>i</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>x</span>, <span class='kw'>i</span>) <span class='op'>&lt;-</span> <span class='kw'>value</span>
+<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='no'>i</span>) <span class='kw'>&lt;-</span> <span class='no'>value</span>
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_assign</a></span>(<span class='kw'>x</span>, <span class='kw'>i</span>, <span class='kw'>value</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, value_arg = <span class='st'>""</span>)</pre>
+<span class='fu'>vec_assign</span>(<span class='no'>x</span>, <span class='no'>i</span>, <span class='no'>value</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>value_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -197,8 +197,8 @@ of this rule.</p></td>
       <th>x_arg, value_arg</th>
       <td><p>Argument names for <code>x</code> and <code>value</code>. These are used
 in error messages to inform the user about the locations of
-incompatible types and sizes (see <code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_type()</a></code> and
-<code><a href='https://vctrs.r-lib.org/reference/vctrs-conditions.html'>stop_incompatible_size()</a></code>).</p></td>
+incompatible types and sizes (see <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code> and
+<code><a href='vctrs-conditions.html'>stop_incompatible_size()</a></code>).</p></td>
     </tr>
     </table>
 
@@ -211,22 +211,22 @@ incompatible types and sizes (see <code><a href='https://vctrs.r-lib.org/referen
 
 
 <p>Support for S3 objects depends on whether the object implements a
-<code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method.</p><ul>
-<li><p>When a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method exists, the proxy is sliced and
-<code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code> is called on the result.</p></li>
-<li><p>Otherwise <code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> falls back to the base generic <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>.</p></li>
+<code><a href='vec_proxy.html'>vec_proxy()</a></code> method.</p><ul>
+<li><p>When a <code><a href='vec_proxy.html'>vec_proxy()</a></code> method exists, the proxy is sliced and
+<code><a href='vec_proxy.html'>vec_restore()</a></code> is called on the result.</p></li>
+<li><p>Otherwise <code>vec_slice()</code> falls back to the base generic <code>[</code>.</p></li>
 </ul>
 
 <p>Note that S3 lists are treated as scalars by default, and will
-cause an error if they don't implement a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method.</p>
+cause an error if they don't implement a <code><a href='vec_proxy.html'>vec_proxy()</a></code> method.</p>
     <h2 class="hasAnchor" id="differences-with-base-r-subsetting"><a class="anchor" href="#differences-with-base-r-subsetting"></a>Differences with base R subsetting</h2>
 
     
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> only slices along one dimension. For
+<li><p><code>vec_slice()</code> only slices along one dimension. For
 two-dimensional types, the first dimension is subsetted.</p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> preserves attributes by default.</p></li>
+<li><p><code>vec_slice()</code> preserves attributes by default.</p></li>
 <li><p><code>vec_slice&lt;-()</code> is type-stable and always returns the same type
 as the LHS.</p></li>
 </ul>
@@ -238,8 +238,8 @@ as the LHS.</p></li>
 <h3>vctrs dependencies</h3>
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code></p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code></p></li>
+<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code></p></li>
+<li><p><code><a href='vec_proxy.html'>vec_restore()</a></code></p></li>
 </ul>
 
 
@@ -249,22 +249,22 @@ as the LHS.</p></li>
 <li><p><code><a href='https://rdrr.io/r/base/Extract.html'>base::`[`</a></code></p></li>
 </ul>
 
-<p>If a non-data-frame vector class doesn't have a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code>
-method, the vector is sliced with <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> instead.</p>
+<p>If a non-data-frame vector class doesn't have a <code><a href='vec_proxy.html'>vec_proxy()</a></code>
+method, the vector is sliced with <code>[</code> instead.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>10</span>)
-<span class='kw'>x</span></div><div class='output co'>#&gt;  [1]  9  3  1 10  5  6  8  4  7  2</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>x</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 9 3 1</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>10</span>)
+<span class='no'>x</span></div><div class='output co'>#&gt;  [1]  9  3  1 10  5  6  8  4  7  2</div><div class='input'><span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 9 3 1</div><div class='input'>
 <span class='co'># You can assign with the infix variant:</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>x</span>, <span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='fl'>100</span>
-<span class='kw'>x</span></div><div class='output co'>#&gt;  [1]   9 100   1  10   5   6   8   4   7   2</div><div class='input'>
+<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='fl'>100</span>
+<span class='no'>x</span></div><div class='output co'>#&gt;  [1]   9 100   1  10   5   6   8   4   7   2</div><div class='input'>
 <span class='co'># Or with the regular variant that doesn't modify the original input:</span>
-<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_assign</a></span>(<span class='kw'>x</span>, <span class='fl'>3</span>, <span class='fl'>500</span>)
-<span class='kw'>y</span></div><div class='output co'>#&gt;  [1]   9 100 500  10   5   6   8   4   7   2</div><div class='input'><span class='kw'>x</span></div><div class='output co'>#&gt;  [1]   9 100   1  10   5   6   8   4   7   2</div><div class='input'>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>vec_assign</span>(<span class='no'>x</span>, <span class='fl'>3</span>, <span class='fl'>500</span>)
+<span class='no'>y</span></div><div class='output co'>#&gt;  [1]   9 100 500  10   5   6   8   4   7   2</div><div class='input'><span class='no'>x</span></div><div class='output co'>#&gt;  [1]   9 100   1  10   5   6   8   4   7   2</div><div class='input'>
 
 <span class='co'># Slicing objects of higher dimension:</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>mtcars</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)</div><div class='output co'>#&gt;                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+<span class='fu'>vec_slice</span>(<span class='no'>mtcars</span>, <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt;                mpg cyl disp  hp drat    wt  qsec vs am gear carb
 #&gt; Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
 #&gt; Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
 #&gt; Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</div><div class='input'>
@@ -272,27 +272,27 @@ method, the vector is sliced with <code><a href='https://rdrr.io/r/base/Extract.
 
 <span class='co'># The assign variant is type stable. It always returns the same</span>
 <span class='co'># type as the input.</span>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>x</span>, <span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='fl'>20.0</span>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fl'>5</span>
+<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='fl'>20.0</span>
 
 <span class='co'># `x` is still an integer vector because the RHS was cast to the</span>
 <span class='co'># type of the LHS:</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; integer(0)</div><div class='input'>
+<span class='fu'><a href='vec_ptype.html'>vec_ptype</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; integer(0)</div><div class='input'>
 <span class='co'># Compare to `[&lt;-`:</span>
-<span class='kw'>x</span>[<span class='fl'>2</span>] <span class='op'>&lt;-</span> <span class='fl'>20.0</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; numeric(0)</div><div class='input'>
+<span class='no'>x</span>[<span class='fl'>2</span>] <span class='kw'>&lt;-</span> <span class='fl'>20.0</span>
+<span class='fu'><a href='vec_ptype.html'>vec_ptype</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; numeric(0)</div><div class='input'>
 
 <span class='co'># Note that the types must be coercible for the cast to happen.</span>
 <span class='co'># For instance, you can cast a double vector of whole numbers to an</span>
 <span class='co'># integer vector:</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>())</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># But not fractional doubles:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast</a></span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>()))</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
 #&gt; * Locations: 1</div><div class='input'>
 <span class='co'># For this reason you can't assign fractional values in an integer</span>
 <span class='co'># vector:</span>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice</a></span>(<span class='kw'>x</span>, <span class='fl'>2</span>) <span class='op'>&lt;-</span> <span class='fl'>1.5</span>)</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>:<span class='fl'>3</span>
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_slice</span>(<span class='no'>x</span>, <span class='fl'>2</span>) <span class='kw'>&lt;-</span> <span class='fl'>1.5</span>)</div><div class='output co'>#&gt; Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
 #&gt; * Locations: 1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -309,7 +309,7 @@ method, the vector is sliced with <code><a href='https://rdrr.io/r/base/Extract.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

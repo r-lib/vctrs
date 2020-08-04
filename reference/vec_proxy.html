@@ -129,7 +129,7 @@ if your class has attributes that depend on the data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -196,17 +196,17 @@ if your class has attributes that depend on the data." />
 
     <div class="ref-description">
     <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p>
-<p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> returns the data structure containing the values of a
+<p><code>vec_proxy()</code> returns the data structure containing the values of a
 vector. This data structure is usually the vector itself. In this
 case the proxy is the <a href='https://rdrr.io/r/base/identity.html'>identity function</a>, which is
-the default <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method.</p>
-<p>Only experts should implement special <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> methods, for
+the default <code>vec_proxy()</code> method.</p>
+<p>Only experts should implement special <code>vec_proxy()</code> methods, for
 these cases:</p><ul>
 <li><p>A vector has vectorised attributes, i.e. metadata for
 each element of the vector. These <em>record types</em> are implemented
 in vctrs by returning a data frame in the proxy method. If you're
 starting your class from scratch, consider deriving from the
-<code><a href='https://vctrs.r-lib.org/reference/new_rcrd.html'>rcrd</a></code> class. It implements the appropriate data
+<code><a href='new_rcrd.html'>rcrd</a></code> class. It implements the appropriate data
 frame proxy and is generally the preferred way to create a record
 class.</p></li>
 <li><p>When you're implementing a vector on top of a non-vector type,
@@ -224,22 +224,22 @@ identity proxy (i.e. a proxy method that just returns its input)
 to let vctrs know this is a vector list and not a scalar.</p></li>
 </ul>
 
-<p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code> is the inverse operation of <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code>. It
+<p><code>vec_restore()</code> is the inverse operation of <code>vec_proxy()</code>. It
 should only be called on vector proxies.</p><ul>
-<li><p>It undoes the transformations of <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code>.</p></li>
+<li><p>It undoes the transformations of <code>vec_proxy()</code>.</p></li>
 <li><p>It restores attributes and classes. These may be lost when the
 memory values are manipulated. For example slicing a subset of a
 vector's proxy causes a new proxy to be allocated.</p></li>
 </ul>
 
 <p>By default vctrs restores all attributes and classes
-automatically. You only need to implement a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code> method
+automatically. You only need to implement a <code>vec_restore()</code> method
 if your class has attributes that depend on the data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+    <pre class="usage"><span class='fu'>vec_proxy</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, n = <span class='kw'>NULL</span>)</pre>
+<span class='fu'>vec_restore</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -261,7 +261,7 @@ if your class has attributes that depend on the data.</p>
       <td><p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>
 
 The total size to restore to. This is currently passed by
-<code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> to solve edge cases arising in data frame
+<code><a href='vec_slice.html'>vec_slice()</a></code> to solve edge cases arising in data frame
 restoration. In most cases you don't need this information and
 can safely ignore that argument. This parameter should be
 considered internal and experimental, it might change in the
@@ -274,32 +274,32 @@ future.</p></td>
     
 
 
-<p>You should only implement <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> when your type is designed
+<p>You should only implement <code>vec_proxy()</code> when your type is designed
 around a non-vector class. I.e. anything that is not either:</p><ul>
 <li><p>An atomic vector</p></li>
 <li><p>A bare list</p></li>
 <li><p>A data frame</p></li>
 </ul>
 
-<p>In this case, implement <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> to return such a vector
-class. The vctrs operations such as <code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> are applied on
-the proxy and <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code> is called to restore the original
+<p>In this case, implement <code>vec_proxy()</code> to return such a vector
+class. The vctrs operations such as <code><a href='vec_slice.html'>vec_slice()</a></code> are applied on
+the proxy and <code>vec_restore()</code> is called to restore the original
 representation of your type.</p>
-<p>The most common case where you need to implement <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> is
+<p>The most common case where you need to implement <code>vec_proxy()</code> is
 for S3 lists. In vctrs, S3 lists are treated as scalars by
 default. This way we don't treat objects like model fits as
 vectors. To prevent vctrs from treating your S3 list as a scalar,
-unclass it in the <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> method. For instance, here is the
-definition for <code>list_of</code>:</p><pre><span class='kw'>vec_proxy.vctrs_list_of</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) {
-  <span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='kw'>x</span>)
+unclass it in the <code>vec_proxy()</code> method. For instance, here is the
+definition for <code>list_of</code>:</p><pre><span class='no'>vec_proxy.vctrs_list_of</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>) {
+  <span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='no'>x</span>)
 }</pre>
 
-<p>Another case where you need to implement a proxy is <a href='https://vctrs.r-lib.org/reference/new_rcrd.html'>record types</a>. Record types should return a data frame, as in
-the <code>POSIXlt</code> method:</p><pre><span class='kw'>vec_proxy.POSIXlt</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) {
-  <span class='fu'><a href='https://vctrs.r-lib.org/reference/new_data_frame.html'>new_data_frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='kw'>x</span>))
+<p>Another case where you need to implement a proxy is <a href='new_rcrd.html'>record types</a>. Record types should return a data frame, as in
+the <code>POSIXlt</code> method:</p><pre><span class='no'>vec_proxy.POSIXlt</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>) {
+  <span class='fu'><a href='new_data_frame.html'>new_data_frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='no'>x</span>))
 }</pre>
 
-<p>Note that you don't need to implement <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> when your class
+<p>Note that you don't need to implement <code>vec_proxy()</code> when your class
 inherits from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code>.</p>
     <h2 class="hasAnchor" id="restoring"><a class="anchor" href="#restoring"></a>Restoring</h2>
 
@@ -308,7 +308,7 @@ inherits from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code>.</p>
 
 <p>A restore is a specialised type of cast, primarily used in
 conjunction with <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> or a C-level function that works on
-the underlying data structure. A <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code> method can make
+the underlying data structure. A <code>vec_restore()</code> method can make
 the following assumptions about <code>x</code>:</p><ul>
 <li><p>It has the correct type.</p></li>
 <li><p>It has the correct names.</p></li>
@@ -317,11 +317,11 @@ the following assumptions about <code>x</code>:</p><ul>
 without triggering an infinite loop of restoration.</p></li>
 </ul>
 
-<p>The length may be different (for example after <code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code> has
+<p>The length may be different (for example after <code><a href='vec_slice.html'>vec_slice()</a></code> has
 been called), and all other attributes may have been lost. The
 method should restore all attributes so that after restoration,
-<code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore(vec_data(x), x)</a></code> yields <code>x</code>.</p>
-<p>To understand the difference between <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code>
+<code>vec_restore(vec_data(x), x)</code> yields <code>x</code>.</p>
+<p>To understand the difference between <code><a href='vec_cast.html'>vec_cast()</a></code> and <code>vec_restore()</code>
 think about factors: it doesn't make sense to cast an integer to a factor,
 but if <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> or another low-level function has stripped attributes,
 you still need to be able to restore them.</p>
@@ -336,7 +336,7 @@ attributes that don't require special handling for your class.</p>
     
 
 <ul>
-<li><p><code>x</code> must be a vector in the vctrs sense (see <code><a href='https://vctrs.r-lib.org/reference/vec_assert.html'>vec_is()</a></code>)</p></li>
+<li><p><code>x</code> must be a vector in the vctrs sense (see <code><a href='vec_assert.html'>vec_is()</a></code>)</p></li>
 <li><p>By default the underlying data is returned as is (identity proxy)</p></li>
 </ul>
 
@@ -360,7 +360,7 @@ proxy for compatibility with vctrs (see discussion above).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

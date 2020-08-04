@@ -92,7 +92,7 @@ an existing object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -158,14 +158,14 @@ an existing object." />
     </div>
 
     <div class="ref-description">
-    <p><code><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_seq_along()</a></code> is equivalent to <code><a href='https://rdrr.io/r/base/seq.html'>seq_along()</a></code> but uses size, not length.
-<code><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_init_along()</a></code> creates a vector of missing values with size matching
+    <p><code>vec_seq_along()</code> is equivalent to <code><a href='https://rdrr.io/r/base/seq.html'>seq_along()</a></code> but uses size, not length.
+<code>vec_init_along()</code> creates a vector of missing values with size matching
 an existing object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_seq_along</a></span>(<span class='kw'>x</span>)
+    <pre class="usage"><span class='fu'>vec_seq_along</span>(<span class='no'>x</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_init_along</a></span>(<span class='kw'>x</span>, y = <span class='kw'>x</span>)</pre>
+<span class='fu'>vec_init_along</span>(<span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,15 +180,15 @@ an existing object.</p>
 
     
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_seq_along()</a></code> an integer vector with the same size as <code>x</code>.</p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_init_along()</a></code> a vector with the same type as <code>x</code> and the same size
+<li><p><code>vec_seq_along()</code> an integer vector with the same size as <code>x</code>.</p></li>
+<li><p><code>vec_init_along()</code> a vector with the same type as <code>x</code> and the same size
 as <code>y</code>.</p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_seq_along</a></span>(<span class='kw'>mtcars</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
-#&gt; [26] 26 27 28 29 30 31 32</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_seq_along.html'>vec_init_along</a></span>(<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>mtcars</span>))</div><div class='output co'>#&gt;      mpg cyl disp hp drat wt qsec vs am gear carb
+    <pre class="examples"><div class='input'><span class='fu'>vec_seq_along</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+#&gt; [26] 26 27 28 29 30 31 32</div><div class='input'><span class='fu'>vec_init_along</span>(<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>mtcars</span>))</div><div class='output co'>#&gt;      mpg cyl disp hp drat wt qsec vs am gear carb
 #&gt; ...1  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
 #&gt; ...2  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
 #&gt; ...3  NA  NA   NA NA   NA NA   NA NA NA   NA   NA
@@ -210,7 +210,7 @@ as <code>y</code>.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

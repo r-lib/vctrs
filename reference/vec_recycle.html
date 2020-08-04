@@ -94,7 +94,7 @@ precise definition of size." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -160,16 +160,16 @@ precise definition of size." />
     </div>
 
     <div class="ref-description">
-    <p><code><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle(x, size)</a></code> recycles a single vector to given size.
-<code><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common(...)</a></code> recycles multiple vectors to their common size.
+    <p><code>vec_recycle(x, size)</code> recycles a single vector to given size.
+<code>vec_recycle_common(...)</code> recycles multiple vectors to their common size.
 All functions obey the vctrs recycling rules, described below, and will
-throw an error if recycling is not possible. See <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code> for the
+throw an error if recycling is not possible. See <code><a href='vec_size.html'>vec_size()</a></code> for the
 precise definition of size.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle</a></span>(<span class='kw'>x</span>, <span class='kw'>size</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>)
+    <pre class="usage"><span class='fu'>vec_recycle</span>(<span class='no'>x</span>, <span class='no'>size</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='kw'>...</span>, .size = <span class='kw'>NULL</span>)</pre>
+<span class='fu'>vec_recycle_common</span>(<span class='no'>...</span>, <span class='kw'>.size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -185,8 +185,8 @@ precise definition of size.</p>
     <tr>
       <th>...</th>
       <td><ul>
-<li><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common()</a></code>, vectors to recycle.</p><ul>
-<li><p>For <code><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle()</a></code>, these dots should be empty.</p></li>
+<li><p>For <code>vec_recycle_common()</code>, vectors to recycle.</p><ul>
+<li><p>For <code>vec_recycle()</code>, these dots should be empty.</p></li>
 </ul></li>
 </ul></td>
     </tr>
@@ -199,7 +199,7 @@ incompatible size.</p></td>
     <tr>
       <th>.size</th>
       <td><p>Desired output size. If omitted,
-will use the common size from <code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size_common()</a></code>.</p></td>
+will use the common size from <code><a href='vec_size.html'>vec_size_common()</a></code>.</p></td>
     </tr>
     </table>
 
@@ -222,28 +222,28 @@ recycled to be the same length.</p>
     
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_slice.html'>vec_slice()</a></code></p></li>
+<li><p><code><a href='vec_slice.html'>vec_slice()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Inputs with 1 observation are recycled</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>vec_recycle_common</span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 1 2 3 4 5
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 5 5 5 5 5
-#&gt; </div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; integer(0)
 #&gt; 
 #&gt; [[2]]
 #&gt; numeric(0)
-#&gt; </div><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
+#&gt; </div><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='fu'>vec_recycle_common</span>(<span class='fl'>1</span>:<span class='fl'>5</span>, <span class='fl'>1</span>:<span class='fl'>2</span>)
 }
 
 <span class='co'># Data frames and matrices are recycled along their rows</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>), <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
+<span class='fu'>vec_recycle_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>), <span class='fl'>1</span>:<span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt;   x
 #&gt; 1 1
 #&gt; 2 1
@@ -253,7 +253,7 @@ recycled to be the same length.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 1 2 3 4 5
-#&gt; </div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)), <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>:<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)), <span class='fl'>1</span>:<span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt;      [,1] [,2]
 #&gt; [1,]    1    2
 #&gt; [2,]    1    2
@@ -263,7 +263,7 @@ recycled to be the same length.</p>
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 1 2 3 4 5
-#&gt; </div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_recycle.html'>vec_recycle_common</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>1</span>)), <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>1</span>)), <span class='fl'>1</span>:<span class='fl'>5</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; , , 1
 #&gt; 
 #&gt;      [,1] [,2] [,3]
@@ -292,7 +292,7 @@ recycled to be the same length.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

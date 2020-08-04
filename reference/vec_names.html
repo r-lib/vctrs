@@ -103,7 +103,7 @@ vec_set_names() sets the names or removes them." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -175,26 +175,26 @@ except that they return or modify the the rowwise names of the vector. These are
 <li><p>The row names for data frames and matrices</p></li>
 <li><p>The names of the first dimension for arrays
 Rowwise names are size consistent: the length of the names always equals
-<code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size()</a></code>.</p></li>
+<code><a href='vec_size.html'>vec_size()</a></code>.</p></li>
 </ul>
 
-<p><code><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2()</a></code> returns the repaired names from a vector, even if it is unnamed.
-See <code><a href='https://vctrs.r-lib.org/reference/vec_as_names.html'>vec_as_names()</a></code> for details on name repair.</p>
-<p><code><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names()</a></code> is a bare-bones version that returns <code>NULL</code> if the vector is
+<p><code>vec_names2()</code> returns the repaired names from a vector, even if it is unnamed.
+See <code><a href='vec_as_names.html'>vec_as_names()</a></code> for details on name repair.</p>
+<p><code>vec_names()</code> is a bare-bones version that returns <code>NULL</code> if the vector is
 unnamed.</p>
-<p><code><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_set_names()</a></code> sets the names or removes them.</p>
+<p><code>vec_set_names()</code> sets the names or removes them.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2</a></span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>...</span>,
-  repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
-  quiet = <span class='fl'>FALSE</span>
+    <pre class="usage"><span class='fu'>vec_names2</span>(
+  <span class='no'>x</span>,
+  <span class='no'>...</span>,
+  <span class='kw'>repair</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
+  <span class='kw'>quiet</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names</a></span>(<span class='kw'>x</span>)
+<span class='fu'>vec_names</span>(<span class='no'>x</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_set_names</a></span>(<span class='kw'>x</span>, <span class='kw'>names</span>)</pre>
+<span class='fu'>vec_set_names</span>(<span class='no'>x</span>, <span class='no'>names</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -241,17 +241,17 @@ messages.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2()</a></code> returns the names of <code>x</code>, repaired.
-<code><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names()</a></code> returns the names of <code>x</code> or <code>NULL</code> if unnamed.
-<code><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_set_names()</a></code> returns <code>x</code> with names updated.</p>
+    <p><code>vec_names2()</code> returns the names of <code>x</code>, repaired.
+<code>vec_names()</code> returns the names of <code>x</code> or <code>NULL</code> if unnamed.
+<code>vec_set_names()</code> returns <code>x</code> with names updated.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] "" "" ""</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, repair = <span class='st'>"unique"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+    <pre class="examples"><div class='input'><span class='fu'>vec_names2</span>(<span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] "" "" ""</div><div class='input'><span class='fu'>vec_names2</span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>repair</span> <span class='kw'>=</span> <span class='st'>"unique"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* `` -&gt; ...1</span>
 #&gt; <span class='message'>* `` -&gt; ...2</span>
-#&gt; <span class='message'>* `` -&gt; ...3</span></div><div class='output co'>#&gt; [1] "...1" "...2" "...3"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] "a" "b"</div><div class='input'>
+#&gt; <span class='message'>* `` -&gt; ...3</span></div><div class='output co'>#&gt; [1] "...1" "...2" "...3"</div><div class='input'><span class='fu'>vec_names2</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] "a" "b"</div><div class='input'>
 <span class='co'># `vec_names()` consistently returns the rowwise names of data frames and arrays:</span>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] "a" "b"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names</a></span>(<span class='kw'>mtcars</span>)</div><div class='output co'>#&gt;  [1] "Mazda RX4"           "Mazda RX4 Wag"       "Datsun 710"         
+<span class='fu'>vec_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>2</span>))</div><div class='output co'>#&gt; [1] "a" "b"</div><div class='input'><span class='fu'>vec_names</span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt;  [1] "Mazda RX4"           "Mazda RX4 Wag"       "Datsun 710"         
 #&gt;  [4] "Hornet 4 Drive"      "Hornet Sportabout"   "Valiant"            
 #&gt;  [7] "Duster 360"          "Merc 240D"           "Merc 230"           
 #&gt; [10] "Merc 280"            "Merc 280C"           "Merc 450SE"         
@@ -261,10 +261,10 @@ messages.</p></td>
 #&gt; [22] "Dodge Challenger"    "AMC Javelin"         "Camaro Z28"         
 #&gt; [25] "Pontiac Firebird"    "Fiat X1-9"           "Porsche 914-2"      
 #&gt; [28] "Lotus Europa"        "Ford Pantera L"      "Ferrari Dino"       
-#&gt; [31] "Maserati Bora"       "Volvo 142E"         </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>mtcars</span>)</div><div class='output co'>#&gt;  [1] "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear"
-#&gt; [11] "carb"</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_names</a></span>(<span class='kw'>Titanic</span>)</div><div class='output co'>#&gt; [1] "1st"  "2nd"  "3rd"  "Crew"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='kw'>Titanic</span>)</div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_set_names</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>])</div><div class='output co'>#&gt; a b c 
-#&gt; 1 2 3 </div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_names.html'>vec_set_names</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>), <span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>])</div><div class='output co'>#&gt;   a
+#&gt; [31] "Maserati Bora"       "Volvo 142E"         </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>mtcars</span>)</div><div class='output co'>#&gt;  [1] "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear"
+#&gt; [11] "carb"</div><div class='input'><span class='fu'>vec_names</span>(<span class='no'>Titanic</span>)</div><div class='output co'>#&gt; [1] "1st"  "2nd"  "3rd"  "Crew"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>Titanic</span>)</div><div class='output co'>#&gt; NULL</div><div class='input'>
+<span class='fu'>vec_set_names</span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>3</span>])</div><div class='output co'>#&gt; a b c 
+#&gt; 1 2 3 </div><div class='input'><span class='fu'>vec_set_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>), <span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>3</span>])</div><div class='output co'>#&gt;   a
 #&gt; a 1
 #&gt; b 2
 #&gt; c 3</div></pre>
@@ -283,7 +283,7 @@ messages.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

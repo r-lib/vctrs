@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -116,10 +116,8 @@
     
 <p>This vignette introduces the ideas of type-stability and size-stability. If a function possesses these properties, it is substantially easier to reason about because to predict the “shape” of the output you only need to know the “shape”s of the inputs.</p>
 <p>This work is partly motivated by a common pattern that I noticed when reviewing code: if I read the code (without running it!), and I can’t predict the type of each variable, I feel very uneasy about the code. This sense is important because most unit tests explore typical inputs, rather than exhaustively testing the strange and unusual. Analysing the types (and size) of variables makes it possible to spot unpleasant edge cases.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://vctrs.r-lib.org">vctrs</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/nteetor/zeallot">zeallot</a></span>)
-</pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">vctrs</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">zeallot</span>)</pre></body></html></div>
 <div id="definitions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#definitions" class="anchor"></a>Definitions</h2>
@@ -148,54 +146,44 @@
 <li><p><code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> is trivially type-stable and size-stable because it always returns a double vector of length 1 (or it throws an error).</p></li>
 <li>
 <p>Surprisingly, <code><a href="https://rdrr.io/r/stats/median.html">median()</a></code> is type-unstable:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1L</span>, <span class="fl">1L</span>)))
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1L</span>, <span class="fl">1L</span>)))
 <span class="co">#&gt; Prototype: double</span>
 <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1L</span>, <span class="fl">1L</span>, <span class="fl">1L</span>)))
-<span class="co">#&gt; Prototype: integer</span>
-</pre></div>
+<span class="co">#&gt; Prototype: integer</span></pre></body></html></div>
 <p>It is, however, size-stable, since it always returns a vector of length 1.</p>
 </li>
 <li>
 <p><code><a href="https://rdrr.io/r/base/lapply.html">sapply()</a></code> is type-unstable because you can’t predict the output type only knowing the input types:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="fl">1L</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">x</span>, <span class="kw">x</span>)))
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="fl">1L</span>, <span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">x</span>, <span class="no">x</span>)))
 <span class="co">#&gt; Prototype: integer[,1]</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">x</span>, <span class="kw">x</span>)))
-<span class="co">#&gt; Prototype: list</span>
-</pre></div>
+<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">x</span>, <span class="no">x</span>)))
+<span class="co">#&gt; Prototype: list</span></pre></body></html></div>
 <p>It’s not quite size-stable; <code><a href="../reference/vec_size.html">vec_size(sapply(x, f))</a></code> is <code><a href="../reference/vec_size.html">vec_size(x)</a></code> for vectors but not for matrices (the output is transposed) or data frames (it iterates over the columns).</p>
 </li>
 <li><p><code><a href="https://rdrr.io/r/base/lapply.html">vapply()</a></code> is a type-stable version of <code><a href="https://rdrr.io/r/base/lapply.html">sapply()</a></code> because <code><a href="../reference/vec_ptype.html">vec_ptype_show(vapply(x, fn, template))</a></code> is always <code><a href="../reference/vec_ptype.html">vec_ptype_show(template)</a></code>.<br>
 It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/base/lapply.html">sapply()</a></code>.</p></li>
 <li>
 <p><code><a href="https://rdrr.io/r/base/c.html">c()</a></code> is type-unstable because <code><a href="https://rdrr.io/r/base/c.html">c(x, y)</a></code> doesn’t always output the same type as <code><a href="https://rdrr.io/r/base/c.html">c(y, x)</a></code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>()))
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>()))
 <span class="co">#&gt; Prototype: double</span>
 <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="fl">NA</span>))
-<span class="co">#&gt; Prototype: date</span>
-</pre></div>
+<span class="co">#&gt; Prototype: date</span></pre></body></html></div>
 <p><code><a href="https://rdrr.io/r/base/c.html">c()</a></code> is <em>almost always</em> length-stable because <code><a href="https://rdrr.io/r/base/length.html">length(c(x, y))</a></code> <em>almost always</em> equals <code>length(x) + length(y)</code>. One common source of instability here is dealing with non-vectors (see the later section “Non-vectors”):</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html">new.env</a></span>(parent = <span class="fu"><a href="https://rdrr.io/r/base/environment.html">emptyenv</a></span>())
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">env</span>)
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">env</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html">new.env</a></span>(<span class="kw">parent</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html">emptyenv</a></span>())
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">env</span>)
 <span class="co">#&gt; [1] 0</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">mean</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">mean</span>)
 <span class="co">#&gt; [1] 1</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">env</span>, <span class="kw">mean</span>))
-<span class="co">#&gt; [1] 2</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">env</span>, <span class="no">mean</span>))
+<span class="co">#&gt; [1] 2</span></pre></body></html></div>
 </li>
 <li><p><code><a href="https://rdrr.io/r/base/paste.html">paste(x1, x2)</a></code> is length-stable because <code><a href="https://rdrr.io/r/base/length.html">length(paste(x1, x2))</a></code> equals <code><a href="https://rdrr.io/r/base/Extremes.html">max(length(x1), length(x2))</a></code>. However, it doesn’t follow the usual arithmetic recycling rules because <code><a href="https://rdrr.io/r/base/paste.html">paste(1:2, 1:3)</a></code> doesn’t generate a warning.</p></li>
 <li>
 <p><code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> is length-stable because <code><a href="https://rdrr.io/r/base/length.html">length(ifelse(cond, true, false))</a></code> is always <code><a href="https://rdrr.io/r/base/length.html">length(cond)</a></code>. <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> is type-unstable because the output type depends on the value of <code>cond</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fl">NA</span>, <span class="fl">1L</span>, <span class="fl">1L</span>))
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fl">NA</span>, <span class="fl">1L</span>, <span class="fl">1L</span>))
 <span class="co">#&gt; Prototype: logical</span>
 <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fl">FALSE</span>, <span class="fl">1L</span>, <span class="fl">1L</span>))
-<span class="co">#&gt; Prototype: integer</span>
-</pre></div>
+<span class="co">#&gt; Prototype: integer</span></pre></body></html></div>
 </li>
 <li><p><code><a href="https://rdrr.io/r/utils/read.table.html">read.csv(file)</a></code> is type-unstable and size-unstable because, while you know it will return a data frame, you don’t know what columns it will return or how many rows it will have. Similarly, <code>df[[i]]</code> is not type-stable because the result depends on the <em>value</em> of <code>i</code>. There are many important functions that can not be made type-stable or size-stable!</p></li>
 </ol>
@@ -223,18 +211,13 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <h3 class="hasAnchor">
 <a href="#atomic-vectors" class="anchor"></a>Atomic vectors</h3>
 <p>If we only consider atomic vectors, <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> is type-stable because it uses a hierarchy of types: character &gt; complex &gt; double &gt; integer &gt; logical.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span>)
-<span class="co">#&gt; [1] 0.0 1.0 2.5</span>
-</pre></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span>)
+<span class="co">#&gt; [1] 0.0 1.0 2.5</span></pre></body></html></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> obeys similar rules:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span>)
-<span class="co">#&gt; [1] 0.0 1.0 2.5</span>
-</pre></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span>)
+<span class="co">#&gt; [1] 0.0 1.0 2.5</span></pre></body></html></div>
 <p>But it does not automatically coerce to character vectors or lists:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">FALSE</span>, <span class="st">"x"</span>)
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">FALSE</span>, <span class="st">"x"</span>)
 <span class="co">#&gt; [1] "FALSE" "x"</span>
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">FALSE</span>, <span class="st">"x"</span>)
 <span class="co">#&gt; Error: Can't combine `..1` &lt;logical&gt; and `..2` &lt;character&gt;.</span>
@@ -246,32 +229,26 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; [1] 1</span>
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">FALSE</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">1</span>))
-<span class="co">#&gt; Error: Can't combine `..1` &lt;logical&gt; and `..2` &lt;list&gt;.</span>
-</pre></div>
+<span class="co">#&gt; Error: Can't combine `..1` &lt;logical&gt; and `..2` &lt;list&gt;.</span></pre></body></html></div>
 </div>
 <div id="incompatible-vectors-and-non-vectors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#incompatible-vectors-and-non-vectors" class="anchor"></a>Incompatible vectors and non-vectors</h3>
 <p>In general, most base methods do not throw an error:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">10.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"x"</span>))
-<span class="co">#&gt; [1] 10.5  1.0</span>
-</pre></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">10.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"x"</span>))
+<span class="co">#&gt; [1] 10.5  1.0</span></pre></body></html></div>
 <p>If the inputs aren’t vectors, <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> automatically puts them in a list:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html">globalenv</a></span>())
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html">globalenv</a></span>())
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; function (x, ...) </span>
 <span class="co">#&gt; UseMethod("mean")</span>
-<span class="co">#&gt; &lt;bytecode: 0x7fe3481b0b50&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x7fdf4a8545c0&gt;</span>
 <span class="co">#&gt; &lt;environment: namespace:base&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span>
-</pre></div>
+<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></pre></body></html></div>
 <p>For numeric versions, this depends on the order of inputs. Version first is an error, otherwise the input is wrapped in a list:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html">getRversion</a></span>(), <span class="st">"x"</span>)
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html">getRversion</a></span>(), <span class="st">"x"</span>)
 <span class="co">#&gt; Error: invalid version specification 'x'</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"x"</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html">getRversion</a></span>())
@@ -279,187 +256,156 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] "x"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; [1] 4 0 2</span>
-</pre></div>
+<span class="co">#&gt; [1] 4 0 2</span></pre></body></html></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> throws an error if the inputs are not vectors or not automatically coercible:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html">globalenv</a></span>())
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html">globalenv</a></span>())
 <span class="co">#&gt; Error: `..1` must be a vector, not a function.</span>
 
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"x"</span>), <span class="st">"x"</span>)
-<span class="co">#&gt; Error: Can't combine `..1` &lt;date&gt; and `..2` &lt;factor&lt;5a425&gt;&gt;.</span>
-</pre></div>
+<span class="co">#&gt; Error: Can't combine `..1` &lt;date&gt; and `..2` &lt;factor&lt;5a425&gt;&gt;.</span></pre></body></html></div>
 </div>
 <div id="factors" class="section level3">
 <h3 class="hasAnchor">
 <a href="#factors" class="anchor"></a>Factors</h3>
 <p>Combining two factors returns an integer vector:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">fa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>)
-<span class="kw">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"b"</span>)
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">fa</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"a"</span>)
+<span class="no">fb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"b"</span>)
 
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">fa</span>, <span class="kw">fb</span>)
-<span class="co">#&gt; [1] 1 1</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">fa</span>, <span class="no">fb</span>)
+<span class="co">#&gt; [1] 1 1</span></pre></body></html></div>
 <p>(This is documented in <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> but is still undesirable.)</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> returns a factor taking the union of the levels. This behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with <code><a href="https://dplyr.tidyverse.org/reference/bind.html">dplyr::bind_rows()</a></code>, which is stricter and is a common source of user difficulty.)</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">fa</span>, <span class="kw">fb</span>)
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">fa</span>, <span class="no">fb</span>)
 <span class="co">#&gt; [1] a b</span>
 <span class="co">#&gt; Levels: a b</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">fb</span>, <span class="kw">fa</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">fb</span>, <span class="no">fa</span>)
 <span class="co">#&gt; [1] b a</span>
-<span class="co">#&gt; Levels: b a</span>
-</pre></div>
+<span class="co">#&gt; Levels: b a</span></pre></body></html></div>
 </div>
 <div id="date-times" class="section level3">
 <h3 class="hasAnchor">
 <a href="#date-times" class="anchor"></a>Date-times</h3>
 <p><code><a href="https://rdrr.io/r/base/c.html">c()</a></code> strips the time zone associated with date-times:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw">datetime_nz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>, tz = <span class="st">"Pacific/Auckland"</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">datetime_nz</span>)
-<span class="co">#&gt; [1] "2019-12-31 20:00:00 UTC"</span>
-</pre></div>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">datetime_nz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>, <span class="kw">tz</span> <span class="kw">=</span> <span class="st">"Pacific/Auckland"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">datetime_nz</span>)
+<span class="co">#&gt; [1] "2019-12-31 20:00:00 UTC"</span></pre></body></html></div>
 <p>This behaviour is documented in <code><a href="https://rdrr.io/r/base/DateTimeClasses.html">?DateTimeClasses</a></code> but is the source of considerable user pain.</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> preserves time zones:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">datetime_nz</span>)
-<span class="co">#&gt; [1] "2020-01-01 09:00:00 NZDT"</span>
-</pre></div>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">datetime_nz</span>)
+<span class="co">#&gt; [1] "2020-01-01 09:00:00 NZDT"</span></pre></body></html></div>
 <p>What time zone should the output have if inputs have different time zones? One option would be to be strict and force the user to manually align all the time zones. However, this is onerous (particularly because there’s no easy way to change the time zone in base R), so vctrs chooses to use the first non-local time zone:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="kw">datetime_local</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)
-<span class="kw">datetime_houston</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>, tz = <span class="st">"US/Central"</span>)
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">datetime_local</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)
+<span class="no">datetime_houston</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>, <span class="kw">tz</span> <span class="kw">=</span> <span class="st">"US/Central"</span>)
 
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">datetime_local</span>, <span class="kw">datetime_houston</span>, <span class="kw">datetime_nz</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">datetime_local</span>, <span class="no">datetime_houston</span>, <span class="no">datetime_nz</span>)
 <span class="co">#&gt; [1] "2020-01-01 03:00:00 CST" "2020-01-01 09:00:00 CST"</span>
 <span class="co">#&gt; [3] "2019-12-31 14:00:00 CST"</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">datetime_houston</span>, <span class="kw">datetime_nz</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">datetime_houston</span>, <span class="no">datetime_nz</span>)
 <span class="co">#&gt; [1] "2020-01-01 09:00:00 CST" "2019-12-31 14:00:00 CST"</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">datetime_nz</span>, <span class="kw">datetime_houston</span>)
-<span class="co">#&gt; [1] "2020-01-01 09:00:00 NZDT" "2020-01-02 04:00:00 NZDT"</span>
-</pre></div>
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">datetime_nz</span>, <span class="no">datetime_houston</span>)
+<span class="co">#&gt; [1] "2020-01-01 09:00:00 NZDT" "2020-01-02 04:00:00 NZDT"</span></pre></body></html></div>
 </div>
 <div id="dates-and-date-times" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dates-and-date-times" class="anchor"></a>Dates and date-times</h3>
 <p>Combining dates and date-times with <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> gives silently incorrect results:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="kw">date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="st">"2020-01-01"</span>)
-<span class="kw">datetime</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">date</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span>(<span class="st">"2020-01-01"</span>)
+<span class="no">datetime</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span>(<span class="st">"2020-01-01 09:00"</span>)
 
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">date</span>, <span class="kw">datetime</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">date</span>, <span class="no">datetime</span>)
 <span class="co">#&gt; [1] "2020-01-01" "2020-01-01"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">datetime</span>, <span class="kw">date</span>)
-<span class="co">#&gt; [1] "2020-01-01 09:00:00 UTC" "2020-01-01 00:00:00 UTC"</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">datetime</span>, <span class="no">date</span>)
+<span class="co">#&gt; [1] "2020-01-01 09:00:00 UTC" "2020-01-01 00:00:00 UTC"</span></pre></body></html></div>
 <p>This behaviour arises because neither <code><a href="https://rdrr.io/r/base/Dates.html">c.Date()</a></code> nor <code><a href="https://rdrr.io/r/base/DateTimeClasses.html">c.POSIXct()</a></code> check that all inputs are of the same type.</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> uses a standard set of rules to avoid this problem. When you mix dates and date-times, vctrs returns a date-time and converts dates to date-times at midnight (in the timezone of the date-time).</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">date</span>, <span class="kw">datetime</span>)
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">date</span>, <span class="no">datetime</span>)
 <span class="co">#&gt; [1] "2020-01-01 00:00:00 UTC" "2020-01-01 09:00:00 UTC"</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">date</span>, <span class="kw">datetime_nz</span>)
-<span class="co">#&gt; [1] "2020-01-01 00:00:00 NZDT" "2020-01-01 09:00:00 NZDT"</span>
-</pre></div>
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">date</span>, <span class="no">datetime_nz</span>)
+<span class="co">#&gt; [1] "2020-01-01 00:00:00 NZDT" "2020-01-01 09:00:00 NZDT"</span></pre></body></html></div>
 </div>
 <div id="missing-values" class="section level3">
 <h3 class="hasAnchor">
 <a href="#missing-values" class="anchor"></a>Missing values</h3>
 <p>If a missing value comes at the beginning of the inputs, <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> falls back to the internal behaviour, which strips all attributes:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="kw">fa</span>)
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="no">fa</span>)
 <span class="co">#&gt; [1] NA  1</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="kw">date</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="no">date</span>)
 <span class="co">#&gt; [1]    NA 18262</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="kw">datetime</span>)
-<span class="co">#&gt; [1]         NA 1577869200</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="no">datetime</span>)
+<span class="co">#&gt; [1]         NA 1577869200</span></pre></body></html></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> takes a different approach treating a logical vector consisting only of <code>NA</code> as the <code><a href="../reference/unspecified.html">unspecified()</a></code> class which can be converted to any other 1d type:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="kw">fa</span>)
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="no">fa</span>)
 <span class="co">#&gt; [1] &lt;NA&gt; a   </span>
 <span class="co">#&gt; Levels: a</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="kw">date</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="no">date</span>)
 <span class="co">#&gt; [1] NA           "2020-01-01"</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="kw">datetime</span>)
-<span class="co">#&gt; [1] NA                        "2020-01-01 09:00:00 UTC"</span>
-</pre></div>
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="no">datetime</span>)
+<span class="co">#&gt; [1] NA                        "2020-01-01 09:00:00 UTC"</span></pre></body></html></div>
 </div>
 <div id="data-frames" class="section level3">
 <h3 class="hasAnchor">
 <a href="#data-frames" class="anchor"></a>Data frames</h3>
 <p>Because it is <em>almost always</em> length-stable, <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> combines data frames column wise (into a list):</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="kw">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(x = <span class="fl">1</span>)
-<span class="kw">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(x = <span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">df1</span>, <span class="kw">df1</span>))
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">df1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fl">1</span>)
+<span class="no">df2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">df1</span>, <span class="no">df1</span>))
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ x: num 1</span>
-<span class="co">#&gt;  $ x: num 1</span>
-</pre></div>
+<span class="co">#&gt;  $ x: num 1</span></pre></body></html></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> is size-stable, which implies it will row-bind data frames:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">df1</span>, <span class="kw">df2</span>)
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">df1</span>, <span class="no">df2</span>)
 <span class="co">#&gt;   x</span>
 <span class="co">#&gt; 1 1</span>
-<span class="co">#&gt; 2 2</span>
-</pre></div>
+<span class="co">#&gt; 2 2</span></pre></body></html></div>
 </div>
 <div id="matrices-and-arrays" class="section level3">
 <h3 class="hasAnchor">
 <a href="#matrices-and-arrays" class="anchor"></a>Matrices and arrays</h3>
 <p>The same reasoning applies to matrices:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, nrow = <span class="fl">2</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">m</span>, <span class="kw">m</span>)
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">1</span>:<span class="fl">4</span>, <span class="kw">nrow</span> <span class="kw">=</span> <span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">m</span>, <span class="no">m</span>)
 <span class="co">#&gt; [1] 1 2 3 4 1 2 3 4</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">m</span>, <span class="kw">m</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">m</span>, <span class="no">m</span>)
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    3</span>
 <span class="co">#&gt; [2,]    2    4</span>
 <span class="co">#&gt; [3,]    1    3</span>
-<span class="co">#&gt; [4,]    2    4</span>
-</pre></div>
+<span class="co">#&gt; [4,]    2    4</span></pre></body></html></div>
 <p>One difference is that <code><a href="../reference/vec_c.html">vec_c()</a></code> will “broadcast” a vector to match the dimensions of a matrix:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">m</span>, <span class="fl">1</span>)
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">m</span>, <span class="fl">1</span>)
 <span class="co">#&gt; [1] 1 2 3 4 1</span>
 
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">m</span>, <span class="fl">1</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">m</span>, <span class="fl">1</span>)
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]    1    3</span>
 <span class="co">#&gt; [2,]    2    4</span>
-<span class="co">#&gt; [3,]    1    1</span>
-</pre></div>
+<span class="co">#&gt; [3,]    1    1</span></pre></body></html></div>
 </div>
 <div id="implementation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#implementation" class="anchor"></a>Implementation</h3>
 <p>The basic implementation of <code><a href="../reference/vec_c.html">vec_c()</a></code> is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with <code><a href="../reference/vec_init.html">vec_init()</a></code>, and then insert each input into the correct place in the output.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="kw">vec_c</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">...</span>) {
-  <span class="kw">args</span> <span class="op">&lt;-</span> <span class="fu">compact</span>(<span class="fu">list2</span>(<span class="kw">...</span>))
+<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">vec_c</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">...</span>) {
+  <span class="no">args</span> <span class="kw">&lt;-</span> <span class="fu">compact</span>(<span class="fu">list2</span>(<span class="no">...</span>))
 
-  <span class="kw">ptype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(<span class="op">!</span><span class="op">!</span><span class="op">!</span><span class="kw">args</span>)
-  <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(<span class="kw">ptype</span>))
+  <span class="no">ptype</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span>(!!!<span class="no">args</span>)
+  <span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span>(<span class="no">ptype</span>))
     <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="kw">NULL</span>)
 
-  <span class="kw">ns</span> <span class="op">&lt;-</span> <span class="fu">map_int</span>(<span class="kw">args</span>, <span class="kw">vec_size</span>)
-  <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_init.html">vec_init</a></span>(<span class="kw">ptype</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">ns</span>))
+  <span class="no">ns</span> <span class="kw">&lt;-</span> <span class="fu">map_int</span>(<span class="no">args</span>, <span class="no">vec_size</span>)
+  <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_init.html">vec_init</a></span>(<span class="no">ptype</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">ns</span>))
 
-  <span class="kw">pos</span> <span class="op">&lt;-</span> <span class="fl">1</span>
-  <span class="co">for</span> (<span class="kw">i</span> <span class="co">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span>(<span class="kw">ns</span>)) {
-    <span class="kw">n</span> <span class="op">&lt;-</span> <span class="kw">ns</span>[[<span class="kw">i</span>]]
-    
-    <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">args</span>[[<span class="kw">i</span>]], to = <span class="kw">ptype</span>)
-    <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">out</span>, <span class="kw">pos</span><span class="op">:</span>(<span class="kw">pos</span> <span class="op">+</span> <span class="kw">n</span> <span class="op">-</span> <span class="fl">1</span>)) <span class="op">&lt;-</span> <span class="kw">x</span>
-    <span class="kw">pos</span> <span class="op">&lt;-</span> <span class="kw">pos</span> <span class="op">+</span> <span class="kw">n</span>
+  <span class="no">pos</span> <span class="kw">&lt;-</span> <span class="fl">1</span>
+  <span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span>(<span class="no">ns</span>)) {
+    <span class="no">n</span> <span class="kw">&lt;-</span> <span class="no">ns</span><span class="kw">[[</span><span class="no">i</span>]]
+
+    <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">args</span><span class="kw">[[</span><span class="no">i</span>]], <span class="kw">to</span> <span class="kw">=</span> <span class="no">ptype</span>)
+    <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="no">out</span>, <span class="no">pos</span>:(<span class="no">pos</span> + <span class="no">n</span> - <span class="fl">1</span>)) <span class="kw">&lt;-</span> <span class="no">x</span>
+    <span class="no">pos</span> <span class="kw">&lt;-</span> <span class="no">pos</span> + <span class="no">n</span>
   }
 
-  <span class="kw">out</span>
-}
-</pre></div>
+  <span class="no">out</span>
+}</pre></body></html></div>
 <p>(The real <code><a href="../reference/vec_c.html">vec_c()</a></code> is a bit more complicated in order to handle inner and outer names).</p>
 </div>
 </div>
@@ -472,35 +418,32 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <p>I found it much easier to understand what <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> <em>should</em> do once I internalised the ideas of type- and size-stability:</p>
 <ul>
 <li><p>The first argument must be logical.</p></li>
-<li><p><code><a href="../reference/vec_ptype.html">vec_ptype(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_ptype.html">vec_ptype_common(yes, no)</a></code>. Unlike <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> this implies that <code>if_else()</code> must always evaluate both <code>yes</code> and <code>no</code> in order to figure out the correct type. I think this is consistent with <code><a href="https://rdrr.io/r/base/Logic.html">&amp;&amp;</a></code> (scalar operation, short circuits) and <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code> (vectorised, evaluates both sides).</p></li>
+<li><p><code><a href="../reference/vec_ptype.html">vec_ptype(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_ptype.html">vec_ptype_common(yes, no)</a></code>. Unlike <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code> this implies that <code>if_else()</code> must always evaluate both <code>yes</code> and <code>no</code> in order to figure out the correct type. I think this is consistent with <code>&amp;&amp;</code> (scalar operation, short circuits) and <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code> (vectorised, evaluates both sides).</p></li>
 <li><p><code><a href="../reference/vec_size.html">vec_size(if_else(test, yes, no))</a></code> equals <code><a href="../reference/vec_size.html">vec_size_common(test, yes, no)</a></code>. I think the output could have the same size as <code>test</code> (i.e., the same behaviour as <code>ifelse</code>), but I <em>think</em> as a general rule that your inputs should either be mutually recycling or not.</p></li>
 </ul>
 <p>This leads to the following implementation:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="kw">if_else</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">test</span>, <span class="kw">yes</span>, <span class="kw">no</span>) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">test</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html">logical</a></span>())
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">yes</span>, <span class="kw">no</span>) <span class="op">%&lt;-%</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(<span class="kw">yes</span>, <span class="kw">no</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">test</span>, <span class="kw">yes</span>, <span class="kw">no</span>) <span class="op">%&lt;-%</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="kw">test</span>, <span class="kw">yes</span>, <span class="kw">no</span>)
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">if_else</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">test</span>, <span class="no">yes</span>, <span class="no">no</span>) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">test</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html">logical</a></span>())
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">yes</span>, <span class="no">no</span>) <span class="kw">%&lt;-%</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(<span class="no">yes</span>, <span class="no">no</span>)
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">test</span>, <span class="no">yes</span>, <span class="no">no</span>) <span class="kw">%&lt;-%</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="no">test</span>, <span class="no">yes</span>, <span class="no">no</span>)
 
-  <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_init.html">vec_init</a></span>(<span class="kw">yes</span>, <span class="fu"><a href="../reference/vec_size.html">vec_size</a></span>(<span class="kw">yes</span>))
-  <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">out</span>, <span class="kw">test</span>) <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">yes</span>, <span class="kw">test</span>)
-  <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">out</span>, <span class="op">!</span><span class="kw">test</span>) <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">no</span>, <span class="op">!</span><span class="kw">test</span>)
+  <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_init.html">vec_init</a></span>(<span class="no">yes</span>, <span class="fu"><a href="../reference/vec_size.html">vec_size</a></span>(<span class="no">yes</span>))
+  <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="no">out</span>, <span class="no">test</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="no">yes</span>, <span class="no">test</span>)
+  <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="no">out</span>, !<span class="no">test</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="no">no</span>, !<span class="no">test</span>)
 
-  <span class="kw">out</span>
+  <span class="no">out</span>
 }
 
-<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>)
-<span class="fu">if_else</span>(<span class="kw">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="st">"small"</span>, <span class="st">"big"</span>)
+<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">NA</span>, <span class="fl">1</span>:<span class="fl">4</span>)
+<span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="st">"small"</span>, <span class="st">"big"</span>)
 <span class="co">#&gt; [1] NA      "big"   "big"   "small" "small"</span>
-<span class="fu">if_else</span>(<span class="kw">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"small"</span>), <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"big"</span>))
+<span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"small"</span>), <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="st">"big"</span>))
 <span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span>
 <span class="co">#&gt; Levels: small big</span>
-<span class="fu">if_else</span>(<span class="kw">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>() <span class="op">+</span> <span class="fl">7</span>)
-<span class="co">#&gt; [1] NA           "2020-07-21" "2020-07-21" "2020-07-14" "2020-07-14"</span>
-</pre></div>
+<span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>(), <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html">Sys.Date</a></span>() + <span class="fl">7</span>)
+<span class="co">#&gt; [1] NA           "2020-08-11" "2020-08-11" "2020-08-04" "2020-08-04"</span></pre></body></html></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="fu">if_else</span>(<span class="kw">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(x = <span class="fl">1</span>), <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(y = <span class="fl">2</span>))
+<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fl">1</span>), <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="fl">2</span>))
 <span class="co">#&gt;    x  y</span>
 <span class="co">#&gt; 1 NA NA</span>
 <span class="co">#&gt; 2 NA  2</span>
@@ -508,14 +451,13 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; 4  1 NA</span>
 <span class="co">#&gt; 5  1 NA</span>
 
-<span class="fu">if_else</span>(<span class="kw">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, ncol = <span class="fl">2</span>), <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="fl">30</span>, <span class="fl">30</span>))
+<span class="fu">if_else</span>(<span class="no">x</span> <span class="kw">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">1</span>:<span class="fl">10</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">2</span>), <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="fl">30</span>, <span class="fl">30</span>))
 <span class="co">#&gt;      [,1] [,2]</span>
 <span class="co">#&gt; [1,]   NA   NA</span>
 <span class="co">#&gt; [2,]   30   30</span>
 <span class="co">#&gt; [3,]   30   30</span>
 <span class="co">#&gt; [4,]    4    9</span>
-<span class="co">#&gt; [5,]    5   10</span>
-</pre></div>
+<span class="co">#&gt; [5,]    5   10</span></pre></body></html></div>
 </div>
   </div>
 
@@ -534,7 +476,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

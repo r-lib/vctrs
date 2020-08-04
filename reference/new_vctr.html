@@ -93,7 +93,7 @@ vector classes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -161,11 +161,11 @@ vector classes." />
     <div class="ref-description">
     <p>This abstract class provides a set of useful default methods that makes it
 considerably easier to get started with a new S3 vector class. See
-<code>vignette("s3-vector")</code> to learn how to use it to create your own S3
+<code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code> to learn how to use it to create your own S3
 vector classes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/new_vctr.html'>new_vctr</a></span>(<span class='kw'>.data</span>, <span class='kw'>...</span>, class = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), inherit_base_type = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>new_vctr</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(), <span class='kw'>inherit_base_type</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,9 +195,9 @@ are required to inherit from the base type.</p></td>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>List vctrs are special cases. When created through <code><a href='https://vctrs.r-lib.org/reference/new_vctr.html'>new_vctr()</a></code>, the
+    <p>List vctrs are special cases. When created through <code>new_vctr()</code>, the
 resulting list vctr should always be recognized as a list by
-<code><a href='https://vctrs.r-lib.org/reference/vec_is_list.html'>vec_is_list()</a></code>. Because of this, if <code>inherit_base_type</code> is <code>FALSE</code>
+<code><a href='vec_is_list.html'>vec_is_list()</a></code>. Because of this, if <code>inherit_base_type</code> is <code>FALSE</code>
 an error is thrown.</p>
     <h2 class="hasAnchor" id="base-methods"><a class="anchor" href="#base-methods"></a>Base methods</h2>
 
@@ -207,30 +207,30 @@ an error is thrown.</p>
 set of generics defined by this package. Generally, you should think
 carefully before overriding any of the methods that vctrs implements for
 you as they've been carefully planned to be internally consistent.</p><ul>
-<li><p><code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> use <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> dispatch to the underlying base function,
-then restore attributes with <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_restore()</a></code>.
+<li><p><code>[[</code> and <code>[</code> use <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> dispatch to the underlying base function,
+then restore attributes with <code><a href='vec_proxy.html'>vec_restore()</a></code>.
 <code><a href='https://rdrr.io/r/base/rep.html'>rep()</a></code> and <code>length&lt;-</code> work similarly.</p></li>
 <li><p><code>[[&lt;-</code> and <code>[&lt;-</code> cast <code>value</code> to same type as <code>x</code>, then call
 <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code>.</p></li>
 <li><p><code><a href='https://rdrr.io/r/base/logical.html'>as.logical()</a></code>, <code><a href='https://rdrr.io/r/base/integer.html'>as.integer()</a></code>, <code><a href='https://rdrr.io/r/base/numeric.html'>as.numeric()</a></code>, <code><a href='https://rdrr.io/r/base/character.html'>as.character()</a></code>,
-<code><a href='https://rdrr.io/r/base/as.Date.html'>as.Date()</a></code> and <code><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct()</a></code> methods call <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code>.
-The <code><a href='https://rdrr.io/r/base/list.html'>as.list()</a></code> method calls <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> repeatedly, and the <code><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame()</a></code>
+<code><a href='https://rdrr.io/r/base/as.Date.html'>as.Date()</a></code> and <code><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct()</a></code> methods call <code><a href='vec_cast.html'>vec_cast()</a></code>.
+The <code><a href='https://rdrr.io/r/base/list.html'>as.list()</a></code> method calls <code>[[</code> repeatedly, and the <code><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame()</a></code>
 method uses a standard technique to wrap a vector in a data frame.</p></li>
 <li><p><code><a href='https://rdrr.io/r/base/factor.html'>as.factor()</a></code>, <code><a href='https://rdrr.io/r/base/factor.html'>as.ordered()</a></code> and <code><a href='https://rdrr.io/r/base/difftime.html'>as.difftime()</a></code> are not generic functions
 in base R, but have been reimplemented as generics in the <code>generics</code>
-package. <code>vctrs</code> extends these and calls <code><a href='https://vctrs.r-lib.org/reference/vec_cast.html'>vec_cast()</a></code>. To inherit this
+package. <code>vctrs</code> extends these and calls <code><a href='vec_cast.html'>vec_cast()</a></code>. To inherit this
 behaviour in a package, import and re-export the generic of interest
 from <code>generics</code>.</p></li>
-<li><p><code><a href='https://rdrr.io/r/base/Comparison.html'>==</a></code>, <code><a href='https://rdrr.io/r/base/Comparison.html'>!=</a></code>, <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>anyDuplicated()</a></code>, and <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> use
-<code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code>.</p></li>
+<li><p><code>==</code>, <code>!=</code>, <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>anyDuplicated()</a></code>, and <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> use
+<code><a href='vec_proxy.html'>vec_proxy()</a></code>.</p></li>
 <li><p><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&gt;</code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>max()</a></code>, <code><a href='https://rdrr.io/r/base/range.html'>range()</a></code>, <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code>,
-<code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>, and <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code> methods use <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_compare.html'>vec_proxy_compare()</a></code>.</p></li>
-<li><p><code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>/</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>*</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>^</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></code>, <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, <code>&amp;</code>, and <code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code> operators
-use <code><a href='https://vctrs.r-lib.org/reference/vec_arith.html'>vec_arith()</a></code>.</p></li>
+<code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>, and <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code> methods use <code><a href='vec_proxy_compare.html'>vec_proxy_compare()</a></code>.</p></li>
+<li><p><code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>, <code>^</code>, <code>%%</code>, <code>%/%</code>, <code>!</code>, <code>&amp;</code>, and <code>|</code> operators
+use <code><a href='vec_arith.html'>vec_arith()</a></code>.</p></li>
 <li><p>Mathematical operations including the Summary group generics (<code><a href='https://rdrr.io/r/base/prod.html'>prod()</a></code>,
 <code><a href='https://rdrr.io/r/base/sum.html'>sum()</a></code>, <code><a href='https://rdrr.io/r/base/any.html'>any()</a></code>, <code><a href='https://rdrr.io/r/base/all.html'>all()</a></code>), the Math group generics (<code><a href='https://rdrr.io/r/base/MathFun.html'>abs()</a></code>, <code><a href='https://rdrr.io/r/base/sign.html'>sign()</a></code>,
 etc), <code><a href='https://rdrr.io/r/base/mean.html'>mean()</a></code>, <code><a href='https://rdrr.io/r/base/is.finite.html'>is.nan()</a></code>, <code><a href='https://rdrr.io/r/base/is.finite.html'>is.finite()</a></code>, and <code><a href='https://rdrr.io/r/base/is.finite.html'>is.infinite()</a></code>
-use <code><a href='https://vctrs.r-lib.org/reference/vec_math.html'>vec_math()</a></code>.</p></li>
+use <code><a href='vec_math.html'>vec_math()</a></code>.</p></li>
 <li><p><code>dims()</code>, <code>dims&lt;-</code>, <code><a href='https://rdrr.io/r/base/dimnames.html'>dimnames()</a></code>, <code>dimnames&lt;-</code>, <code><a href='https://rdrr.io/r/base/levels.html'>levels()</a></code>, and
 <code>levels&lt;-</code> methods throw errors.</p></li>
 </ul>
@@ -251,7 +251,7 @@ use <code><a href='https://vctrs.r-lib.org/reference/vec_math.html'>vec_math()</
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

@@ -92,7 +92,7 @@ the are returned in a separate parallel vector." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -163,7 +163,7 @@ not just factors. Instead of returning the keys in the character names,
 the are returned in a separate parallel vector.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_split.html'>vec_split</a></span>(<span class='kw'>x</span>, <span class='kw'>by</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_split</span>(<span class='no'>x</span>, <span class='no'>by</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,9 +181,9 @@ the are returned in a separate parallel vector.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame with two columns and size equal to
-<code><a href='https://vctrs.r-lib.org/reference/vec_size.html'>vec_size(vec_unique(by))</a></code>. The <code>key</code> column has the same type as
+<code><a href='vec_size.html'>vec_size(vec_unique(by))</a></code>. The <code>key</code> column has the same type as
 <code>by</code>, and the <code>val</code> column is a list containing elements of type
-<code><a href='https://vctrs.r-lib.org/reference/vec_ptype.html'>vec_ptype(x)</a></code>.</p>
+<code><a href='vec_ptype.html'>vec_ptype(x)</a></code>.</p>
 <p>Note for complex types, the default <code>data.frame</code> print method will be
 suboptimal, and you will want to coerce into a tibble to better
 understand the output.</p>
@@ -192,22 +192,22 @@ understand the output.</p>
     
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_group.html'>vec_group_loc()</a></code></p></li>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_chop.html'>vec_chop()</a></code></p></li>
+<li><p><code><a href='vec_group.html'>vec_group_loc()</a></code></p></li>
+<li><p><code><a href='vec_chop.html'>vec_chop()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_split.html'>vec_split</a></span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>cyl</span>, <span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>)</div><div class='output co'>#&gt;   key                                                  val
+    <pre class="examples"><div class='input'><span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>$<span class='no'>vs</span>)</div><div class='output co'>#&gt;   key                                                  val
 #&gt; 1   0 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 8, 6, 8
-#&gt; 2   1             4, 6, 6, 4, 4, 6, 6, 4, 4, 4, 4, 4, 4, 4</div><div class='input'><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_split.html'>vec_split</a></span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>cyl</span>, <span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)])</div><div class='output co'>#&gt;   key.vs key.am                                val
+#&gt; 2   1             4, 6, 6, 4, 4, 6, 6, 4, 4, 4, 4, 4, 4, 4</div><div class='input'><span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)])</div><div class='output co'>#&gt;   key.vs key.am                                val
 #&gt; 1      0      1                   6, 6, 4, 8, 6, 8
 #&gt; 2      1      1                4, 4, 4, 4, 4, 4, 4
 #&gt; 3      1      0                6, 6, 4, 4, 6, 6, 4
 #&gt; 4      0      0 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8</div><div class='input'>
-<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'><a href='https://tibble.tidyverse.org'>"tibble"</a></span>)) {
-  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_split.html'>vec_split</a></span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>cyl</span>, <span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
-  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_split.html'>vec_split</a></span>(<span class='kw'>mtcars</span>, <span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
+<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='st'>"tibble"</span>)) {
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'>vec_split</span>(<span class='no'>mtcars</span>$<span class='no'>cyl</span>, <span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='fu'>vec_split</span>(<span class='no'>mtcars</span>, <span class='no'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
 }</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 4 x 2</span><span>
 #&gt;   key$vs   $am val                
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;list&gt;</span><span>             
@@ -230,7 +230,7 @@ understand the output.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

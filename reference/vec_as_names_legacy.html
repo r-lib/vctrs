@@ -94,7 +94,7 @@ deprecated and removed from the package some time in the future." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -162,12 +162,12 @@ deprecated and removed from the package some time in the future." />
     <div class="ref-description">
     <p>This standardises names with the legacy approach that was used in
 tidyverse packages (such as tibble, tidyr, and readxl) before
-<code><a href='https://vctrs.r-lib.org/reference/vec_as_names.html'>vec_as_names()</a></code> was implemented. This tool is meant to help
+<code><a href='vec_as_names.html'>vec_as_names()</a></code> was implemented. This tool is meant to help
 transitioning to the new name repairing standard and will be
 deprecated and removed from the package some time in the future.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_as_names_legacy.html'>vec_as_names_legacy</a></span>(<span class='kw'>names</span>, prefix = <span class='st'>"V"</span>, sep = <span class='st'>""</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_as_names_legacy</span>(<span class='no'>names</span>, <span class='kw'>prefix</span> <span class='kw'>=</span> <span class='st'>"V"</span>, <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -184,18 +184,18 @@ deprecated and removed from the package some time in the future.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='kw'>rlang</span>::<span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tibble"</span>)) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='kw pkg'>rlang</span><span class='kw ns'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tibble"</span>)) {
 
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://tibble.tidyverse.org'>tibble</a></span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>tibble</span>)
 
 <span class='co'># Names repair is turned off by default in tibble:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(a = <span class='fl'>1</span>, a = <span class='fl'>2</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>2</span>))
 
 <span class='co'># You can turn it on by supplying a repair method:</span>
-<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(a = <span class='fl'>1</span>, a = <span class='fl'>2</span>, .name_repair = <span class='st'>"universal"</span>)
+<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='st'>"universal"</span>)
 
 <span class='co'># If you prefer the legacy method, use `vec_as_names_legacy()`:</span>
-<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(a = <span class='fl'>1</span>, a = <span class='fl'>2</span>, .name_repair = <span class='kw'>vec_as_names_legacy</span>)
+<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>.name_repair</span> <span class='kw'>=</span> <span class='no'>vec_as_names_legacy</span>)
 
 }</div><div class='output co'>#&gt; Error : Column name `a` must not be duplicated.</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* a -&gt; a...1</span>
@@ -218,7 +218,7 @@ deprecated and removed from the package some time in the future.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

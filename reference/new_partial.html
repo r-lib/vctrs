@@ -92,7 +92,7 @@ need to provide a vec_ptype_finalise() method." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -158,16 +158,16 @@ need to provide a vec_ptype_finalise() method." />
     </div>
 
     <div class="ref-description">
-    <p>Use <code><a href='https://vctrs.r-lib.org/reference/new_partial.html'>new_partial()</a></code> when constructing a new partial type subclass;
-and use <code><a href='https://vctrs.r-lib.org/reference/new_partial.html'>is_partial()</a></code> to test if a type is partial. All subclasses
-need to provide a <code><a href='https://vctrs.r-lib.org/reference/new_partial.html'>vec_ptype_finalise()</a></code> method.</p>
+    <p>Use <code>new_partial()</code> when constructing a new partial type subclass;
+and use <code>is_partial()</code> to test if a type is partial. All subclasses
+need to provide a <code>vec_ptype_finalise()</code> method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/new_partial.html'>new_partial</a></span>(<span class='kw'>...</span>, class = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())
+    <pre class="usage"><span class='fu'>new_partial</span>(<span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/new_partial.html'>is_partial</a></span>(<span class='kw'>x</span>)
+<span class='fu'>is_partial</span>(<span class='no'>x</span>)
 
-<span class='fu'><a href='https://vctrs.r-lib.org/reference/new_partial.html'>vec_ptype_finalise</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'>vec_ptype_finalise</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,7 +186,7 @@ need to provide a <code><a href='https://vctrs.r-lib.org/reference/new_partial.h
 
     <p>As the name suggests, a partial type <em>partially</em> specifies a type, and
 it must be combined with data to yield a full type. A useful example
-of a partial type is <code><a href='https://vctrs.r-lib.org/reference/partial_frame.html'>partial_frame()</a></code>, which makes it possible to
+of a partial type is <code><a href='partial_frame.html'>partial_frame()</a></code>, which makes it possible to
 specify the type of just a few columns in a data frame. Use this constructor
 if you're making your own partial type.</p>
 
@@ -205,7 +205,7 @@ if you're making your own partial type.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

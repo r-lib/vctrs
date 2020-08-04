@@ -94,7 +94,7 @@ vec_unique() and vec_duplicate_detect()); is.na() and anyNA()
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
       </span>
     </div>
 
@@ -161,13 +161,13 @@ vec_unique() and vec_duplicate_detect()); is.na() and anyNA()
 
     <div class="ref-description">
     <p>Returns a proxy object (i.e. an atomic vector or data frame of atomic
-vectors). For <a href='https://vctrs.r-lib.org/reference/new_vctr.html'>vctr</a>s, this determines the behaviour of <code><a href='https://rdrr.io/r/base/Comparison.html'>==</a></code> and
-<code><a href='https://rdrr.io/r/base/Comparison.html'>!=</a></code> (via <code><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal()</a></code>); <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>duplicated()</a></code> (via
-<code><a href='https://vctrs.r-lib.org/reference/vec_unique.html'>vec_unique()</a></code> and <code><a href='https://vctrs.r-lib.org/reference/vec_duplicate.html'>vec_duplicate_detect()</a></code>); <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> and <code><a href='https://rdrr.io/r/base/NA.html'>anyNA()</a></code>
-(via <code><a href='https://vctrs.r-lib.org/reference/vec_equal.html'>vec_equal_na()</a></code>).</p>
+vectors). For <a href='new_vctr.html'>vctr</a>s, this determines the behaviour of <code>==</code> and
+<code>!=</code> (via <code><a href='vec_equal.html'>vec_equal()</a></code>); <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>duplicated()</a></code> (via
+<code><a href='vec_unique.html'>vec_unique()</a></code> and <code><a href='vec_duplicate.html'>vec_duplicate_detect()</a></code>); <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> and <code><a href='https://rdrr.io/r/base/NA.html'>anyNA()</a></code>
+(via <code><a href='vec_equal.html'>vec_equal_na()</a></code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal</a></span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>vec_proxy_equal</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,18 +187,18 @@ vectors). For <a href='https://vctrs.r-lib.org/reference/new_vctr.html'>vctr</a>
     <p>A 1d atomic vector or a data frame.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The default method calls <code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code>, as the default underlying
+    <p>The default method calls <code><a href='vec_proxy.html'>vec_proxy()</a></code>, as the default underlying
 vector data should be equal-able in most cases. If your class is
-not equal-able, provide a <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code> method that throws an
+not equal-able, provide a <code>vec_proxy_equal()</code> method that throws an
 error.</p>
-<p>If the proxy for <code>x</code> is a data frame, <code><a href='https://vctrs.r-lib.org/reference/vec_proxy_equal.html'>vec_proxy_equal()</a></code> is
+<p>If the proxy for <code>x</code> is a data frame, <code>vec_proxy_equal()</code> is
 recursively applied on all columns as well.</p>
     <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
 
     
 
 <ul>
-<li><p><code><a href='https://vctrs.r-lib.org/reference/vec_proxy.html'>vec_proxy()</a></code> called by default</p></li>
+<li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code> called by default</p></li>
 </ul>
 
 
@@ -217,7 +217,7 @@ recursively applied on all columns as well.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
