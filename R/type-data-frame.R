@@ -55,7 +55,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'   unquoting.
 #'
 #' @seealso
-#' [new_data_frame()] for constructing data frame subclasses from validated
+#' [new_data_frame()] for constructing data frame subclasses from a validated
 #' input. [data_frame()] for a fast data frame creation helper.
 #'
 #' @param ... Vectors of equal-length. When inputs are named, those names

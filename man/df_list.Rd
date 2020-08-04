@@ -58,6 +58,6 @@ df <- fancy_df(x = 1)
 class(df)
 }
 \seealso{
-\code{\link[=new_data_frame]{new_data_frame()}} for constructing data frame subclasses from validated
+\code{\link[=new_data_frame]{new_data_frame()}} for constructing data frame subclasses from a validated
 input. \code{\link[=data_frame]{data_frame()}} for a fast data frame creation helper.
 }

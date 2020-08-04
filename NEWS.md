@@ -10,7 +10,8 @@
 * New `df_list()` for safely and consistently constructing the data structure
   underlying a data frame, a named list of equal-length vectors. It is useful
   in combination with `new_data_frame()` for creating user-friendly
-  constructors for data frame subclasses.
+  constructors for data frame subclasses that use the tidyverse rules for
+  recycling and determining types.
 
 * Fixed performance issue with `vec_order()` on classed vectors which
   affected `dplyr::group_by()` (tidyverse/dplyr#5423).
