@@ -25,3 +25,10 @@ NULL
 #'
 #' @name howto-faq-coercion-data-frame
 NULL
+
+#' FAQ - Why isn't my data frame subclass treated as a vector?
+#'
+#' @includeRmd man/faq/developer/faq-error-data-frame-scalar-type.Rmd description
+#'
+#' @name faq-error-data-frame-scalar-type
+NULL

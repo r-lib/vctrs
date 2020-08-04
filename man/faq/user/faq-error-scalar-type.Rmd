@@ -83,3 +83,9 @@ my_generic(my_list)
 
 my_generic(my_explicit_list)
 ```
+
+
+## Why isn't my data frame class considered a vector?
+
+The most likely explanation is that the data frame has not been
+properly constructed. See [?faq-error-data-frame-scalar-type].

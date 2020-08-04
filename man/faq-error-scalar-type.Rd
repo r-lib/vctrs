@@ -105,5 +105,12 @@ my_generic(my_explicit_list)
 #> [1] "dispatched!"
 }\if{html}{\out{</div>}}
 }
+
+\subsection{Why isn’t my data frame class considered a vector?}{
+
+The most likely explanation is that the data frame has not been properly
+constructed. See
+\link{?faq-error-data-frame-scalar-type}.
+}
 }
 
