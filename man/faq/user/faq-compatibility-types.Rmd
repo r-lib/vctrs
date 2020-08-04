@@ -9,7 +9,7 @@ stopifnot(rlang::is_installed("dplyr"))
 Two vectors are __compatible__ when you can safely:
 
 - Combine them into one larger vector.
-- Assign values from one of the vector in the other vector.
+- Assign values from one of the vectors into the other vector.
 
 Examples of compatible types are integer and double vectors. On the other hand, integer and character vectors are not compatible.
 
@@ -41,7 +41,7 @@ In general, the common type is the _richer_ type, in other words the type that c
 
 # Type conversion and lossy cast errors
 
-Type compatibility does not necessarily mean that you can __convert__ one type to the other type. That's because one of the type might support a larger set of possible values. For instance, integer and double vectors are compatible but double vectors can't be converted to integer if they contain fractional values.
+Type compatibility does not necessarily mean that you can __convert__ one type to the other type. That's because one of the types might support a larger set of possible values. For instance, integer and double vectors are compatible, but double vectors can't be converted to integer if they contain fractional values.
 
 When vctrs can't convert a vector because the target type is not as rich as the source type, it throws a lossy cast error. Assigning a fractional number to an integer vector is a typical example of a lossy cast error:
 

@@ -7,7 +7,7 @@
 Two vectors are \strong{compatible} when you can safely:
 \itemize{
 \item Combine them into one larger vector.
-\item Assign values from one of the vector in the other vector.
+\item Assign values from one of the vectors into the other vector.
 }
 
 Examples of compatible types are integer and double vectors. On the
@@ -48,10 +48,10 @@ vectors:
 
 \section{Type conversion and lossy cast errors}{
 Type compatibility does not necessarily mean that you can \strong{convert}
-one type to the other type. That’s because one of the type might support
-a larger set of possible values. For instance, integer and double
-vectors are compatible but double vectors can’t be converted to integer
-if they contain fractional values.
+one type to the other type. That’s because one of the types might
+support a larger set of possible values. For instance, integer and
+double vectors are compatible, but double vectors can’t be converted to
+integer if they contain fractional values.
 
 When vctrs can’t convert a vector because the target type is not as rich
 as the source type, it throws a lossy cast error. Assigning a fractional
