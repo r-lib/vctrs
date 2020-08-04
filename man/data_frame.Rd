@@ -23,7 +23,18 @@ be computed as the common size of the inputs.}
 \description{
 \code{data_frame()} constructs a data frame. It is similar to
 \code{\link[base:data.frame]{base::data.frame()}}, but there are a few notable differences that make it
-more in line with vctrs principles:
+more in line with vctrs principles. The Properties section outlines these.
+}
+\details{
+If no column names are supplied, \code{""} will be used as a default for all
+columns. This is applied before name repair occurs, so the default
+name repair of \code{"check_unique"} will error if any unnamed inputs
+are supplied and \code{"unique"} will repair the empty string column names
+appropriately. If the column names don't matter, use a \code{"minimal"} name
+repair for convenience and performance.
+}
+\section{Properties}{
+
 \itemize{
 \item Inputs are recycled to a common size with \code{\link[=vec_recycle_common]{vec_recycle_common()}}.
 \item With the exception of data frames, inputs are not modified in any way.
@@ -36,14 +47,7 @@ inputs are stored unmodified as data frame columns.
 unquoting.
 }
 }
-\details{
-If no column names are supplied, \code{""} will be used as a default for all
-columns. This is applied before name repair occurs, so the default
-name repair of \code{"check_unique"} will error if any unnamed inputs
-are supplied and \code{"unique"} will repair the empty string column names
-appropriately. If the column names don't matter, use a \code{"minimal"} name
-repair for convenience and performance.
-}
+
 \examples{
 data_frame(x = 1, y = 2)
 
@@ -76,4 +80,11 @@ if (rlang::is_installed("tibble")) {
 
 # Unnamed data frame input is automatically spliced
 data_frame(x = 1, data_frame(y = 1:2, z = "a"))
+}
+\seealso{
+\code{\link[=df_list]{df_list()}} for safely creating a data frame's underlying data structure from
+individual columns. \code{\link[=new_data_frame]{new_data_frame()}} for constructing the actual data
+frame from that underlying data structure. Together, these can be useful
+for developers when creating new data frame subclasses supporting
+standard evaluation.
 }

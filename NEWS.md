@@ -7,6 +7,11 @@
   list-columns are easier to create, and unnamed data frame input is
   automatically spliced.
 
+* New `df_list()` for safely and consistently constructing the data structure
+  underlying a data frame, a named list of equal-length vectors. It is useful
+  in combination with `new_data_frame()` for creating user-friendly
+  constructors for data frame subclasses.
+
 * Fixed performance issue with `vec_order()` on classed vectors which
   affected `dplyr::group_by()` (tidyverse/dplyr#5423).
 

@@ -1,9 +1,20 @@
 #' Data frame class
 #'
-#' A `data.frame` [data.frame()] is a list with "row.names" attribute. Each
+#' A `data.frame` is a list with "row.names" attribute. Each
 #' element of the list must be named, and of the same length. These functions
 #' help the base data.frame classes fit in to the vctrs type system by
 #' providing constructors, coercion functions, and casting functions.
+#'
+#' @details
+#' `new_data_frame()` is meant to be performant, and does not check the inputs
+#' for correctness in any way. It is only safe to use after a call to
+#' [df_list()], which collects and validates the columns used
+#' to construct the data frame.
+#'
+#' @seealso
+#' [df_list()] for a way to safely construct a data frame's underlying
+#' data structure from individual columns. This can be used to create a
+#' named list for further use by `new_data_frame()`.
 #'
 #' @param x A named list of equal-length vectors. The lengths are not
 #'   checked; it is responsibility of the caller to make sure they are
@@ -27,12 +38,14 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
 }
 new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
-#' Construct a data frame
+#' Data frame structure
 #'
-#' @description
-#' `data_frame()` constructs a data frame. It is similar to
-#' [base::data.frame()], but there are a few notable differences that make it
-#' more in line with vctrs principles:
+#' `df_list()` constructs the data structure underlying a data
+#' frame, a named list of equal-length vectors. It is often used in
+#' combination with [new_data_frame()] to safely and consistently create
+#' a helper function for data frame subclasses.
+#'
+#' @section Properties:
 #'
 #' - Inputs are recycled to a common size with [vec_recycle_common()].
 #'
@@ -48,6 +61,47 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #' - The dots are dynamic, allowing for splicing of lists with `!!!` and
 #'   unquoting.
 #'
+#' @seealso
+#' [new_data_frame()] for constructing data frame subclasses from validated
+#' input. [data_frame()] for a fast data frame creation helper.
+#'
+#' @param ... Vectors of equal-length. When inputs are named, those names
+#'   are used for names of the resulting list.
+#' @param .size The common size of vectors supplied in `...`. If `NULL`, this
+#'   will be computed as the common size of the inputs.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
+#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#'
+#' @export
+#' @examples
+#' # `new_data_frame()` can be used to create custom data frame constructors
+#' new_fancy_df <- function(x = list(), n = NULL, ..., class = NULL) {
+#'   new_data_frame(x, n = n, ..., class = c(class, "fancy_df"))
+#' }
+#'
+#' # Combine this constructor with `df_list()` to create a safe,
+#' # consistent helper function for your data frame subclass
+#' fancy_df <- function(...) {
+#'   data <- df_list(...)
+#'   new_fancy_df(data)
+#' }
+#'
+#' df <- fancy_df(x = 1)
+#' class(df)
+df_list <- function(...,
+                    .size = NULL,
+                    .name_repair = c("check_unique", "unique", "universal", "minimal")) {
+  .Call(vctrs_df_list, list2(...), .size, .name_repair)
+}
+df_list <- fn_inline_formals(df_list, ".name_repair")
+
+#' Construct a data frame
+#'
+#' @description
+#' `data_frame()` constructs a data frame. It is similar to
+#' [base::data.frame()], but there are a few notable differences that make it
+#' more in line with vctrs principles. The Properties section outlines these.
+#'
 #' @details
 #' If no column names are supplied, `""` will be used as a default for all
 #' columns. This is applied before name repair occurs, so the default
@@ -55,6 +109,15 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #' are supplied and `"unique"` will repair the empty string column names
 #' appropriately. If the column names don't matter, use a `"minimal"` name
 #' repair for convenience and performance.
+#'
+#' @inheritSection df_list Properties
+#'
+#' @seealso
+#' [df_list()] for safely creating a data frame's underlying data structure from
+#' individual columns. [new_data_frame()] for constructing the actual data
+#' frame from that underlying data structure. Together, these can be useful
+#' for developers when creating new data frame subclasses supporting
+#' standard evaluation.
 #'
 #' @param ... Vectors to become columns in the data frame. When inputs are
 #'   named, those names are used for column names.
@@ -102,13 +165,6 @@ data_frame <- function(...,
   .Call(vctrs_data_frame, list2(...), .size, .name_repair)
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
-
-df_list <- function(...,
-                    .size = NULL,
-                    .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(vctrs_df_list, list2(...), .size, .name_repair)
-}
-df_list <- fn_inline_formals(df_list, ".name_repair")
 
 #' @export
 vec_ptype_full.data.frame <- function(x, ...) {

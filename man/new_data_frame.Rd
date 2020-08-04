@@ -30,12 +30,23 @@ consistent.
 }}
 }
 \description{
-A \code{data.frame} \code{\link[=data.frame]{data.frame()}} is a list with "row.names" attribute. Each
+A \code{data.frame} is a list with "row.names" attribute. Each
 element of the list must be named, and of the same length. These functions
 help the base data.frame classes fit in to the vctrs type system by
 providing constructors, coercion functions, and casting functions.
 }
+\details{
+\code{new_data_frame()} is meant to be performant, and does not check the inputs
+for correctness in any way. It is only safe to use after a call to
+\code{\link[=df_list]{df_list()}}, which collects and validates the columns used
+to construct the data frame.
+}
 \examples{
 new_data_frame(list(x = 1:10, y = 10:1))
+}
+\seealso{
+\code{\link[=df_list]{df_list()}} for a way to safely construct a data frame's underlying
+data structure from individual columns. This can be used to create a
+named list for further use by \code{new_data_frame()}.
 }
 \keyword{internal}
