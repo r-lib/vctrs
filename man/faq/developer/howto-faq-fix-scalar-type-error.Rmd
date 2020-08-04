@@ -2,6 +2,10 @@
 ```{r, child = "../setup.Rmd", include = FALSE}
 ```
 
+```{r, include = FALSE}
+stopifnot(rlang::is_installed("dplyr"))
+```
+
 The tidyverse is a bit stricter than base R regarding what kind of objects are considered as vectors (see the [user FAQ][faq-error-scalar-type] about this topic). Sometimes vctrs won't treat your class as a vector when it should.
 
 
