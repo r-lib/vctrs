@@ -1,3 +1,10 @@
+#' FAQ - How is the compatibility of vector types decided?
+#'
+#' @includeRmd man/faq/user/faq-compatibility-types.Rmd description
+#'
+#' @name faq-compatibility-types
+NULL
+
 #' FAQ - Error/Warning: Some attributes are incompatible
 #'
 #' @description
