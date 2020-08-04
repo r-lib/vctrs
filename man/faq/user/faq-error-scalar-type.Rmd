@@ -1,0 +1,85 @@
+
+```{r, child = "../setup.Rmd", include = FALSE}
+```
+
+This error occurs when a function expects a vector and gets a scalar object instead. This commonly happens when some code attempts to assign a scalar object as column in a data frame:
+
+```{r, error = TRUE}
+fn <- function() NULL
+tibble::tibble(x = fn)
+
+fit <- lm(1:3 ~ 1)
+tibble::tibble(x = fit)
+```
+
+
+# Vectorness in base R and in the tidyverse
+
+In base R, almost everything is a vector or behaves like a vector. In the tidyverse we have chosen to be a bit stricter about what is considered a vector. The main question we ask ourselves to decide on the vectorness of a type is whether it makes sense to include that object as a column in a data frame.
+
+The main difference is that S3 lists are considered vectors by base R but in the tidyverse that's not the case by default:
+
+```{r, error = TRUE}
+fit <- lm(1:3 ~ 1)
+
+typeof(fit)
+class(fit)
+
+# S3 lists can be subset like a vector using base R:
+fit[1:3]
+
+# But not in vctrs
+vctrs::vec_slice(fit, 1:3)
+```
+
+Defused function calls are another (more esoteric) example:
+
+```{r, error = TRUE}
+call <- quote(foo(bar = TRUE, baz = FALSE))
+call
+
+# They can be subset like a vector using base R:
+call[1:2]
+lapply(call, function(x) x)
+
+# But not with vctrs:
+vctrs::vec_slice(call, 1:2)
+```
+
+
+## Why isn't my list class considered a vector?
+
+By default, S3 lists are not considered to be vectors by vctrs:
+
+```{r}
+my_list <- structure(list(), class = "my_class")
+
+vctrs::vec_is(my_list)
+```
+
+To be treated as a vector, the class must either inherit from `"list"` explicitly:
+
+```{r}
+my_explicit_list <- structure(list(), class = c("my_class", "list"))
+vctrs::vec_is(my_explicit_list)
+```
+
+Or it should implement a `vec_proxy()` method that returns its input if explicit inheritance is not possible or troublesome:
+
+```{r}
+#' @export
+vec_proxy.my_class <- function(x, ...) x
+
+vctrs::vec_is(my_list)
+```
+
+Note that explicit inheritance is the preferred way because this makes it possible for your class to dispatch on `list` methods of S3 generics:
+
+```{r, error = TRUE}
+my_generic <- function(x) UseMethod("my_generic")
+my_generic.list <- function(x) "dispatched!"
+
+my_generic(my_list)
+
+my_generic(my_explicit_list)
+```
