@@ -1,9 +1,14 @@
-#' Data frame class
+#' Assemble attributes for data frame construction
 #'
-#' A `data.frame` [data.frame()] is a list with "row.names" attribute. Each
-#' element of the list must be named, and of the same length. These functions
-#' help the base data.frame classes fit in to the vctrs type system by
-#' providing constructors, coercion functions, and casting functions.
+#' `new_data_frame()` constructs a new data frame from an existing list. It is
+#' meant to be performant, and does not check the inputs for correctness in any
+#' way. It is only safe to use after a call to [df_list()], which collects and
+#' validates the columns used to construct the data frame.
+#'
+#' @seealso
+#' [df_list()] for a way to safely construct a data frame's underlying
+#' data structure from individual columns. This can be used to create a
+#' named list for further use by `new_data_frame()`.
 #'
 #' @param x A named list of equal-length vectors. The lengths are not
 #'   checked; it is responsibility of the caller to make sure they are
@@ -19,7 +24,6 @@
 #'     consistent.
 #'
 #' @export
-#' @keywords internal
 #' @examples
 #' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
@@ -27,14 +31,133 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
 }
 new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
-
-# Light weight constructor used for tests - avoids having to repeatedly do
-# stringsAsFactors = FALSE etc. Should not be used in internal code as is
-# not a real helper as it lacks value checks.
-data_frame <- function(...) {
-  cols <- list(...)
-  new_data_frame(cols)
+#' Collect columns for data frame construction
+#'
+#' `df_list()` constructs the data structure underlying a data
+#' frame, a named list of equal-length vectors. It is often used in
+#' combination with [new_data_frame()] to safely and consistently create
+#' a helper function for data frame subclasses.
+#'
+#' @section Properties:
+#'
+#' - Inputs are recycled to a common size with [vec_recycle_common()].
+#'
+#' - With the exception of data frames, inputs are not modified in any way.
+#'   Character vectors are never converted to factors, and lists are stored
+#'   as-is for easy creation of list-columns.
+#'
+#' - Unnamed data frame inputs are automatically spliced. Named data frame
+#'   inputs are stored unmodified as data frame columns.
+#'
+#' - `NULL` inputs are completely ignored.
+#'
+#' - The dots are dynamic, allowing for splicing of lists with `!!!` and
+#'   unquoting.
+#'
+#' @seealso
+#' [new_data_frame()] for constructing data frame subclasses from a validated
+#' input. [data_frame()] for a fast data frame creation helper.
+#'
+#' @param ... Vectors of equal-length. When inputs are named, those names
+#'   are used for names of the resulting list.
+#' @param .size The common size of vectors supplied in `...`. If `NULL`, this
+#'   will be computed as the common size of the inputs.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
+#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#'
+#' @export
+#' @examples
+#' # `new_data_frame()` can be used to create custom data frame constructors
+#' new_fancy_df <- function(x = list(), n = NULL, ..., class = NULL) {
+#'   new_data_frame(x, n = n, ..., class = c(class, "fancy_df"))
+#' }
+#'
+#' # Combine this constructor with `df_list()` to create a safe,
+#' # consistent helper function for your data frame subclass
+#' fancy_df <- function(...) {
+#'   data <- df_list(...)
+#'   new_fancy_df(data)
+#' }
+#'
+#' df <- fancy_df(x = 1)
+#' class(df)
+df_list <- function(...,
+                    .size = NULL,
+                    .name_repair = c("check_unique", "unique", "universal", "minimal")) {
+  .Call(vctrs_df_list, list2(...), .size, .name_repair)
 }
+df_list <- fn_inline_formals(df_list, ".name_repair")
+
+#' Construct a data frame
+#'
+#' @description
+#' `data_frame()` constructs a data frame. It is similar to
+#' [base::data.frame()], but there are a few notable differences that make it
+#' more in line with vctrs principles. The Properties section outlines these.
+#'
+#' @details
+#' If no column names are supplied, `""` will be used as a default for all
+#' columns. This is applied before name repair occurs, so the default
+#' name repair of `"check_unique"` will error if any unnamed inputs
+#' are supplied and `"unique"` will repair the empty string column names
+#' appropriately. If the column names don't matter, use a `"minimal"` name
+#' repair for convenience and performance.
+#'
+#' @inheritSection df_list Properties
+#'
+#' @seealso
+#' [df_list()] for safely creating a data frame's underlying data structure from
+#' individual columns. [new_data_frame()] for constructing the actual data
+#' frame from that underlying data structure. Together, these can be useful
+#' for developers when creating new data frame subclasses supporting
+#' standard evaluation.
+#'
+#' @param ... Vectors to become columns in the data frame. When inputs are
+#'   named, those names are used for column names.
+#' @param .size The number of rows in the data frame. If `NULL`, this will
+#'   be computed as the common size of the inputs.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
+#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#'
+#' @export
+#' @examples
+#' data_frame(x = 1, y = 2)
+#'
+#' # Inputs are recycled using tidyverse recycling rules
+#' data_frame(x = 1, y = 1:3)
+#'
+#' # Strings are never converted to factors
+#' class(data_frame(x = "foo")$x)
+#'
+#' # List columns can be easily created
+#' df <- data_frame(x = list(1:2, 2, 3:4), y = 3:1)
+#'
+#' # However, the base print method is suboptimal for displaying them,
+#' # so it is recommended to convert them to tibble
+#' if (rlang::is_installed("tibble")) {
+#'   tibble::as_tibble(df)
+#' }
+#'
+#' # Named data frame inputs create data frame columns
+#' df <- data_frame(x = data_frame(y = 1:2, z = "a"))
+#'
+#' # The `x` column itself is another data frame
+#' df$x
+#'
+#' # Again, it is recommended to convert these to tibbles for a better
+#' # print method
+#' if (rlang::is_installed("tibble")) {
+#'   tibble::as_tibble(df)
+#' }
+#'
+#' # Unnamed data frame input is automatically spliced
+#' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
+data_frame <- function(...,
+                       .size = NULL,
+                       .name_repair = c("check_unique", "unique", "universal", "minimal")) {
+  .Call(vctrs_data_frame, list2(...), .size, .name_repair)
+}
+data_frame <- fn_inline_formals(data_frame, ".name_repair")
 
 #' @export
 vec_ptype_full.data.frame <- function(x, ...) {
@@ -163,7 +286,16 @@ df_cast_params <- function(x,
   df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
 
-#' @rdname new_data_frame
+#' vctrs methods for data frames
+#'
+#' These functions help the base data.frame class fit into the vctrs type system
+#' by providing coercion and casting functions.
+#'
+#' @keywords internal
+#' @name vctrs-data-frame
+NULL
+
+#' @rdname vctrs-data-frame
 #' @export vec_ptype2.data.frame
 #' @method vec_ptype2 data.frame
 #' @export
@@ -314,7 +446,7 @@ known_classes <- function(x) {
 
 # Cast --------------------------------------------------------------------
 
-#' @rdname new_data_frame
+#' @rdname vctrs-data-frame
 #' @export vec_cast.data.frame
 #' @method vec_cast data.frame
 #' @export

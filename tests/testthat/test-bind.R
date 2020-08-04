@@ -524,8 +524,9 @@ test_that("vec_cbind() never packs named vectors", {
 })
 
 test_that("names are repaired late if unpacked", {
-  out1 <- vec_cbind(a = 1, data_frame(b = 2, b = 3))
-  out2 <- vec_cbind(a = 1, as.matrix(data_frame(b = 2, b = 3)))
+  df <- data_frame(b = 2, b = 3, .name_repair = "minimal")
+  out1 <- vec_cbind(a = 1, df)
+  out2 <- vec_cbind(a = 1, as.matrix(df))
   out3 <- vec_cbind(a = 1, matrix(1:2, nrow = 1))
   expect_named(out1, c("a", "b...2", "b...3"))
   expect_named(out2, c("a", "b...2", "b...3"))
@@ -533,8 +534,9 @@ test_that("names are repaired late if unpacked", {
 })
 
 test_that("names are not repaired if packed", {
-  out1 <- vec_cbind(a = 1, packed = data_frame(b = 2, b = 3))
-  out2 <- vec_cbind(a = 1, packed = as.matrix(data_frame(b = 2, b = 3)))
+  df <- data_frame(b = 2, b = 3, .name_repair = "minimal")
+  out1 <- vec_cbind(a = 1, packed = df)
+  out2 <- vec_cbind(a = 1, packed = as.matrix(df))
   out3 <- vec_cbind(a = 1, packed = matrix(1:2, nrow = 1))
 
   expect_named(out1, c("a", "packed"))
@@ -684,7 +686,7 @@ test_that("can rbind data frames with matrix columns (#625)", {
 })
 
 test_that("rbind repairs names of data frames (#704)", {
-  df <- data_frame(x = 1, x = 2)
+  df <- data_frame(x = 1, x = 2, .name_repair = "minimal")
   df_repaired <- data_frame(x...1 = 1, x...2 = 2)
   expect_identical(vec_rbind(df), df_repaired)
   expect_identical(vec_rbind(df, df), vec_rbind(df_repaired, df_repaired))

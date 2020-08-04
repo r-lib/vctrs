@@ -221,8 +221,8 @@ test_that("can restore subclasses of data frames", {
 })
 
 test_that("df_cast() checks for names", {
-  x <- data_frame(1)
-  y <- data_frame(2)
+  x <- new_data_frame(list(1))
+  y <- new_data_frame(list(2))
   expect_error(vec_cast_common(x, y), "must have names")
 })
 
@@ -409,6 +409,100 @@ test_that("new_data_frame() zaps existing attributes", {
     attributes(new_data_frame(list(), bar = 2)),
   )
 })
+
+# data_frame --------------------------------------------------------------
+
+test_that("can construct data frames with empty input", {
+  expect_identical(data_frame(), new_data_frame())
+  expect_named(data_frame(), character())
+})
+
+test_that("input is tidy recycled", {
+  expect_identical(
+    data_frame(x = 1, y = 1:3),
+    data_frame(x = c(1, 1, 1), y = 1:3)
+  )
+
+  expect_identical(
+    data_frame(x = 1, y = integer()),
+    data_frame(x = double(), y = integer())
+  )
+
+  expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
+})
+
+test_that("dots are dynamic", {
+  list_2_data_frame <- function(x) data_frame(!!!x)
+
+  expect_identical(
+    list_2_data_frame(list(x = 1, y = 2)),
+    data_frame(x = 1, y = 2)
+  )
+})
+
+test_that("unnamed input is auto named with empty strings", {
+  expect_named(data_frame(1, 2, .name_repair = "minimal"), c("", ""))
+})
+
+test_that("unnamed data frames are auto spliced", {
+  expect_identical(
+    data_frame(w = 1, data_frame(x = 2, y = 3), z = 4),
+    data_frame(w = 1, x = 2, y = 3, z = 4)
+  )
+})
+
+test_that("named data frames are not spliced", {
+  df_col <- data_frame(x = 2, y = 3)
+  df <- data_frame(w = 1, col = data_frame(x = 2, y = 3), z = 4)
+
+  expect_identical(df$col, df_col)
+})
+
+test_that("spliced data frames without names are caught", {
+  df_col <- new_data_frame(list(1))
+  expect_error(data_frame(df_col), "corrupt data frame")
+})
+
+test_that("`NULL` inputs are dropped", {
+  expect_identical(data_frame(NULL, x = 1, NULL), data_frame(x = 1))
+})
+
+test_that("`NULL` inputs are dropped before name repair", {
+  expect_identical(
+    data_frame(x = NULL, x = 1, .name_repair = "check_unique"),
+    data_frame(x = 1)
+  )
+})
+
+test_that("`.size` can force a desired size", {
+  df <- data_frame(x = 1, .size = 5)
+  expect_identical(df$x, rep(1, 5))
+
+  expect_size(data_frame(.size = 5), 5L)
+})
+
+test_that("`.name_repair` repairs names", {
+  expect_named(
+    expect_message(data_frame(x = 1, x = 1, .name_repair = "unique")),
+    c("x...1", "x...2")
+  )
+})
+
+test_that("`.name_repair` happens after auto-naming with empty strings", {
+  expect_named(
+    expect_message(data_frame(1, 2, .name_repair = "unique")),
+    c("...1", "...2")
+  )
+})
+
+test_that("`.name_repair` happens after splicing", {
+  expect_named(
+    expect_message(data_frame(x = 1, data_frame(x = 2), .name_repair = "unique")),
+    c("x...1", "x...2")
+  )
+})
+
+# fallback ----------------------------------------------------------------
 
 test_that("data frame fallback handles column types (#999)", {
   df1 <- foobar(data.frame(x = 1))

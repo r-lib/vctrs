@@ -204,5 +204,11 @@ R_len_t size_validate(SEXP size, const char* arg) {
     Rf_errorcall(R_NilValue, "`%s` must be a single integer.", arg);
   }
 
-  return r_int_get(size, 0);
+  int out = r_int_get(size, 0);
+
+  if (out == NA_INTEGER) {
+    Rf_errorcall(R_NilValue, "`%s` can't be missing.", arg);
+  }
+
+  return out;
 }
