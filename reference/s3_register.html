@@ -175,7 +175,7 @@ dependency on vctrs for this one function, please feel free to copy
 and paste the function source into your own package.)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>s3_register</span>(<span class='no'>generic</span>, <span class='no'>class</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>s3_register</span>(<span class='kw'>generic</span>, <span class='kw'>class</span>, method = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -207,10 +207,9 @@ the old namespace. This might cause crashes because of dangling
 class creation in a vignette, since method lookup no longer always involves
 the lexical scope. For R 3.6.0 and later, you can achieve a similar effect
 by using "delayed method registration", i.e. placing the following in your
-<code>NAMESPACE</code> file:</p><pre>if (getRversion() &amp;gt;= "3.6.0") {
-  S3method(package::generic, class)
-}
-</pre>
+<code>NAMESPACE</code> file:</p><pre><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/numeric_version.html'>getRversion</a></span>() <span class='op'>&gt;=</span> <span class='st'>"3.6.0"</span>) {
+  <span class='fu'>S3method</span>(<span class='kw'>package</span>::<span class='kw'>generic</span>, <span class='kw'>class</span>)
+}</pre>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -219,7 +218,7 @@ by using "delayed method registration", i.e. placing the following in your
 <span class='co'># that are not essential, while still providing finer control over</span>
 <span class='co'># printing when they are used.</span>
 
-<span class='no'>.onLoad</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>...</span>) {
+<span class='kw'>.onLoad</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>...</span>) {
   <span class='fu'>s3_register</span>(<span class='st'>"pillar::pillar_shaft"</span>, <span class='st'>"vctrs_vctr"</span>)
   <span class='fu'>s3_register</span>(<span class='st'>"tibble::type_sum"</span>, <span class='st'>"vctrs_vctr"</span>)
 }</div></pre>
@@ -238,7 +237,7 @@ by using "delayed method registration", i.e. placing the following in your
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

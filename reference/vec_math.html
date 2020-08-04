@@ -165,9 +165,9 @@ Summary group generics, the Math group generics, and a handful of other
 mathematical functions like <code><a href='https://rdrr.io/r/base/mean.html'>mean()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_math</span>(<span class='no'>.fn</span>, <span class='no'>.x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>vec_math</span>(<span class='kw'>.fn</span>, <span class='kw'>.x</span>, <span class='kw'>...</span>)
 
-<span class='fu'>vec_math_base</span>(<span class='no'>.fn</span>, <span class='no'>.x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>vec_math_base</span>(<span class='kw'>.fn</span>, <span class='kw'>.x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,12 +212,12 @@ calls the base <code>.fn</code> on the underlying <code><a href='vec_data.html'>
     <div class='dont-index'><p><code><a href='vec_arith.html'>vec_arith()</a></code> for the equivalent for the arithmetic infix operators.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='new_vctr.html'>new_vctr</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2.5</span>, <span class='fl'>10</span>))
-<span class='no'>x</span></div><div class='output co'>#&gt; &lt;vctrs_vctr[3]&gt;
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_vctr.html'>new_vctr</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2.5</span>, <span class='fl'>10</span>))
+<span class='kw'>x</span></div><div class='output co'>#&gt; &lt;vctrs_vctr[3]&gt;
 #&gt; [1]  1.0  2.5 10.0</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; &lt;vctrs_vctr[3]&gt;
-#&gt; [1]  1.0  2.5 10.0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; &lt;vctrs_vctr[1]&gt;
-#&gt; [1] 13.5</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; &lt;vctrs_vctr[3]&gt;
+<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; &lt;vctrs_vctr[3]&gt;
+#&gt; [1]  1.0  2.5 10.0</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; &lt;vctrs_vctr[1]&gt;
+#&gt; [1] 13.5</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; &lt;vctrs_vctr[3]&gt;
 #&gt; [1]  1.0  3.5 13.5</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -234,7 +234,7 @@ calls the base <code>.fn</code> on the underlying <code><a href='vec_data.html'>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -173,9 +173,9 @@ doesn't conform.</p></li>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_assert</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>arg</span> <span class='kw'>=</span> <span class='fu'>as_label</span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>x</span>)))
+    <pre class="usage"><span class='fu'>vec_assert</span>(<span class='kw'>x</span>, ptype = <span class='kw'>NULL</span>, size = <span class='kw'>NULL</span>, arg = <span class='fu'>as_label</span>(<span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='kw'>x</span>)))
 
-<span class='fu'>vec_is</span>(<span class='no'>x</span>, <span class='kw'>ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>vec_is</span>(<span class='kw'>x</span>, ptype = <span class='kw'>NULL</span>, size = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,7 +189,7 @@ doesn't conform.</p></li>
       <td><p>Prototype to compare against. If the prototype has a
 class, its <code><a href='vec_ptype.html'>vec_ptype()</a></code> is compared to that of <code>x</code> with
 <code><a href='https://rdrr.io/r/base/identical.html'>identical()</a></code>. Otherwise, its <code><a href='https://rdrr.io/r/base/typeof.html'>typeof()</a></code> is compared to that of
-<code>x</code> with <code>==</code>.</p></td>
+<code>x</code> with <code><a href='https://rdrr.io/r/base/Comparison.html'>==</a></code>.</p></td>
     </tr>
     <tr>
       <th>size</th>
@@ -272,7 +272,7 @@ always prepend your class to the <code>"class"</code> attribute for correct disp
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

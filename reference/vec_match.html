@@ -164,21 +164,21 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
     </div>
 
     <pre class="usage"><span class='fu'>vec_match</span>(
-  <span class='no'>needles</span>,
-  <span class='no'>haystack</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>needles_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>haystack_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+  <span class='kw'>needles</span>,
+  <span class='kw'>haystack</span>,
+  <span class='kw'>...</span>,
+  na_equal = <span class='fl'>TRUE</span>,
+  needles_arg = <span class='st'>""</span>,
+  haystack_arg = <span class='st'>""</span>
 )
 
 <span class='fu'>vec_in</span>(
-  <span class='no'>needles</span>,
-  <span class='no'>haystack</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>na_equal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>needles_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>haystack_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+  <span class='kw'>needles</span>,
+  <span class='kw'>haystack</span>,
+  <span class='kw'>...</span>,
+  na_equal = <span class='fl'>TRUE</span>,
+  needles_arg = <span class='st'>""</span>,
+  haystack_arg = <span class='st'>""</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -237,10 +237,10 @@ this behaviour with the <code>na_equal</code> argument.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>hadley</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)<span class='kw'>[[</span><span class='fl'>1</span>]]
-<span class='fu'>vec_match</span>(<span class='no'>hadley</span>, <span class='no'>letters</span>)</div><div class='output co'>#&gt; [1]  8  1  4 12  5 25</div><div class='input'>
-<span class='no'>vowels</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"e"</span>, <span class='st'>"i"</span>, <span class='st'>"o"</span>, <span class='st'>"u"</span>)
-<span class='fu'>vec_match</span>(<span class='no'>hadley</span>, <span class='no'>vowels</span>)</div><div class='output co'>#&gt; [1] NA  1 NA NA  2 NA</div><div class='input'><span class='fu'>vec_in</span>(<span class='no'>hadley</span>, <span class='no'>vowels</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE FALSE  TRUE FALSE</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>hadley</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span>(<span class='st'>"hadley"</span>, <span class='st'>""</span>)[[<span class='fl'>1</span>]]
+<span class='fu'>vec_match</span>(<span class='kw'>hadley</span>, <span class='kw'>letters</span>)</div><div class='output co'>#&gt; [1]  8  1  4 12  5 25</div><div class='input'>
+<span class='kw'>vowels</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"e"</span>, <span class='st'>"i"</span>, <span class='st'>"o"</span>, <span class='st'>"u"</span>)
+<span class='fu'>vec_match</span>(<span class='kw'>hadley</span>, <span class='kw'>vowels</span>)</div><div class='output co'>#&gt; [1] NA  1 NA NA  2 NA</div><div class='input'><span class='fu'>vec_in</span>(<span class='kw'>hadley</span>, <span class='kw'>vowels</span>)</div><div class='output co'>#&gt; [1] FALSE  TRUE FALSE FALSE  TRUE FALSE</div><div class='input'>
 <span class='co'># Only the first index of duplicates is returned</span>
 <span class='fu'>vec_match</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"a"</span>, <span class='st'>"b"</span>))</div><div class='output co'>#&gt; [1] 1 2</div></pre>
   </div>
@@ -258,7 +258,7 @@ this behaviour with the <code>na_equal</code> argument.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -189,7 +189,7 @@
 <ul>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> no longer restores attributes of foreign objects for which a <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> method exist. This fixes an issue with <code>ts</code> objects which were previously incorrectly restored.</p></li>
 <li><p>The <code><a href="https://rdrr.io/r/base/list.html">as.list()</a></code> method for <code>vctrs_rcrd</code> objects has been removed in favor of directly using the method for <code>vctrs_vctr</code>, which calls <code><a href="../reference/vec_chop.html">vec_chop()</a></code>.</p></li>
-<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the inputs have a common class hierarchy for which a <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method is implemented but no self-to-self <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> method is implemented.</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the inputs have a common class hierarchy for which a <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method is implemented but no self-to-self <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> method is implemented.</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now internally calls <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> and <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> on the data frame common type that is used to create the output (<a href='https://github.com/r-lib/vctrs/issues/1109'>#1109</a>).</p></li>
 <li><p><code><a href="../reference/vec_as_location.html">vec_as_location2("0")</a></code> now works correctly (<a href='https://github.com/r-lib/vctrs/issues/1131'>#1131</a>).</p></li>
 <li><p><code>?reference-faq-compatibility</code> is a new reference guide on vctrs primitives. It includes an overview of the fallbacks to base R generics implemented in vctrs for compatibility with existing classes.</p></li>
@@ -239,19 +239,19 @@
 <a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
 <ul>
 <li>
-<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are no longer inherited (<a href='https://github.com/r-lib/vctrs/issues/710'>#710</a>). Class implementers must implement one set of methods for each compatible class.</p>
-<p>For example, a tibble subclass no longer inherits from the <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods between <code>tbl_df</code> and <code>data.frame</code>. This means that you explicitly need to implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods with <code>tbl_df</code> and <code>data.frame</code>.</p>
-<p>This change requires a bit more work from class maintainers but is safer because the coercion hierarchies are generally different from class hierarchies. See the S3 dispatch section of <code><a href="../reference/vec_ptype2.html">?vec_ptype2</a></code> for more information.</p>
+<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are no longer inherited (<a href='https://github.com/r-lib/vctrs/issues/710'>#710</a>). Class implementers must implement one set of methods for each compatible class.</p>
+<p>For example, a tibble subclass no longer inherits from the <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods between <code>tbl_df</code> and <code>data.frame</code>. This means that you explicitly need to implement <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods with <code>tbl_df</code> and <code>data.frame</code>.</p>
+<p>This change requires a bit more work from class maintainers but is safer because the coercion hierarchies are generally different from class hierarchies. See the S3 dispatch section of <code><a href="../reference/vec_ptype2.logical.html">?vec_ptype2</a></code> for more information.</p>
 </li>
 <li>
-<p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> is now restricted to the same conversions as <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods (<a href='https://github.com/r-lib/vctrs/issues/606'>#606</a>, <a href='https://github.com/r-lib/vctrs/issues/741'>#741</a>). This change is motivated by safety and performance:</p>
+<p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> is now restricted to the same conversions as <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods (<a href='https://github.com/r-lib/vctrs/issues/606'>#606</a>, <a href='https://github.com/r-lib/vctrs/issues/741'>#741</a>). This change is motivated by safety and performance:</p>
 <ul>
 <li><p>It is generally sloppy to generically convert arbitrary inputs to one type. Restricted coercions are more predictable and allow your code to fail earlier when there is a type issue.</p></li>
 <li><p>When unrestricted conversions are useful, this is generally towards a known type. For example, <code><a href="https://glue.tidyverse.org/reference/glue.html">glue::glue()</a></code> needs to convert arbitrary inputs to the known character type. In this case, using double dispatch instead of a single dispatch generic like <code><a href="https://rdrr.io/r/base/character.html">as.character()</a></code> is wasteful.</p></li>
 <li><p>To implement the useful semantics of coercible casts (already used in <code><a href="../reference/vec_slice.html">vec_assign()</a></code>), two double dispatch were needed. Now it can be done with one double dispatch by calling <code><a href="../reference/vec_cast.html">vec_cast()</a></code> directly.</p></li>
 </ul>
 </li>
-<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> now throws an error of class <code>vctrs_error_incompatible_type</code> rather than <code>vctrs_error_incompatible_cast</code>. This means that <code><a href="../reference/vec_cast.html">vec_cast()</a></code> also throws errors of this class, which better aligns it with <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now that they are restricted to the same conversions.</p></li>
+<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> now throws an error of class <code>vctrs_error_incompatible_type</code> rather than <code>vctrs_error_incompatible_cast</code>. This means that <code><a href="../reference/vec_cast.html">vec_cast()</a></code> also throws errors of this class, which better aligns it with <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> now that they are restricted to the same conversions.</p></li>
 <li><p>The <code>y</code> argument of <code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> has been renamed to <code>to</code> to better match <code>to_arg</code>.</p></li>
 </ul>
 </div>
@@ -260,13 +260,13 @@
 <a href="#type-system" class="anchor"></a>Type system</h2>
 <ul>
 <li>
-<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. They no longer need any the boiler plate. Implementing a method for classes <code>foo</code> and <code>bar</code> is now as simple as:</p>
+<p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. They no longer need any the boiler plate. Implementing a method for classes <code>foo</code> and <code>bar</code> is now as simple as:</p>
 <pre><code>#' <a href='https://github.com/export'>@export</a>
 vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <p>vctrs also takes care of implementing the default and unspecified methods. If you have implemented these methods, they are no longer called and can now be removed.</p>
 <p>One consequence of the new dispatch mechanism is that <code><a href="https://rdrr.io/r/base/UseMethod.html">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
 </li>
-<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods now get zero-size prototypes as inputs. This guarantees that methods do not peek at the data to determine the richer type.</p></li>
+<li><p><code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods now get zero-size prototypes as inputs. This guarantees that methods do not peek at the data to determine the richer type.</p></li>
 <li><p><code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> no longer allows S3 lists that implement a <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> method to automatically be considered lists. A S3 list must explicitly inherit from <code>"list"</code> in the base class to be considered a list.</p></li>
 <li><p><code><a href="../reference/vec_proxy.html">vec_restore()</a></code> no longer restores row names if the target is not a data frame. This fixes an issue where <code>POSIXlt</code> objects would carry a <code>row.names</code> attribute after a proxy/restore roundtrip.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast()</a></code> to and from data frames preserves the row names of inputs.</p></li>
@@ -286,14 +286,14 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <p>In the future we may extend this fallback principle to other base types when they are explicitly included in the class vector (such as <code>"list"</code>).</p>
 </li>
 <li>
-<p>Improved support for foreign classes in the combining operations <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code>. A foreign class is a class that doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. When all the objects to combine have the same foreign class, one of these fallbacks is invoked:</p>
+<p>Improved support for foreign classes in the combining operations <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code>. A foreign class is a class that doesn’t implement <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>. When all the objects to combine have the same foreign class, one of these fallbacks is invoked:</p>
 <ul>
 <li><p>If the class implements a <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> method, the method is used for the combination. (FIXME: <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> currently doesn’t use this fallback.)</p></li>
 <li><p>Otherwise if the objects have identical attributes and the same base type, we consider them to be compatible. The vectors are concatenated and the attributes are restored (<a href='https://github.com/r-lib/vctrs/issues/776'>#776</a>).</p></li>
 </ul>
 <p>These fallbacks do not make your class completely compatible with vctrs-powered packages, but they should help in many simple cases.</p>
 </li>
-<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> for S4 objects if the object doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but sets an S4 <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method (<a href='https://github.com/r-lib/vctrs/issues/919'>#919</a>).</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code> now fall back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> for S4 objects if the object doesn’t implement <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> but sets an S4 <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> method (<a href='https://github.com/r-lib/vctrs/issues/919'>#919</a>).</p></li>
 </ul>
 </div>
 <div id="vector-operations" class="section level2">
@@ -324,7 +324,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <ul>
 <li><p>vctrs now supports the <code>data.table</code> class. The common type of a data frame and a data table is a data table.</p></li>
 <li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> now always appends a base <code>"list"</code> class to list <code>.data</code> to be compatible with changes to <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code>. This affects <code><a href="../reference/new_list_of.html">new_list_of()</a></code>, which now returns an object with a base class of <code>"list"</code>.</p></li>
-<li><p>dplyr methods are now implemented for <code><a href="../reference/vec_proxy.html">vec_restore()</a></code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>, and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. The user-visible consequence (and breaking change) is that row-binding a grouped data frame and a data frame or tibble now returns a grouped data frame. It would previously return a tibble.</p></li>
+<li><p>dplyr methods are now implemented for <code><a href="../reference/vec_proxy.html">vec_restore()</a></code>, <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>, and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. The user-visible consequence (and breaking change) is that row-binding a grouped data frame and a data frame or tibble now returns a grouped data frame. It would previously return a tibble.</p></li>
 <li><p>The <code>is.na&lt;-()</code> method for <code>vctrs_vctr</code> now supports numeric and character subscripts to indicate where to insert missing values (<a href='https://github.com/r-lib/vctrs/issues/947'>#947</a>).</p></li>
 <li><p>Improved support for vector-like S4 objects (<a href='https://github.com/r-lib/vctrs/issues/550'>#550</a>, <a href='https://github.com/r-lib/vctrs/issues/551'>#551</a>).</p></li>
 <li><p>The base classes <code>AsIs</code> and <code>table</code> have vctrs methods (<a href='https://github.com/r-lib/vctrs/issues/904'>#904</a>, <a href='https://github.com/r-lib/vctrs/issues/906'>#906</a>).</p></li>
@@ -347,7 +347,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 <h2 class="hasAnchor">
 <a href="#conditions" class="anchor"></a>Conditions</h2>
 <ul>
-<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code> now has an <code>action</code> argument for customizing whether the coercion error came from <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> or <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. <code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> is now a thin wrapper around <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type(action = "convert")</a></code>.</p></li>
+<li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code> now has an <code>action</code> argument for customizing whether the coercion error came from <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> or <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. <code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> is now a thin wrapper around <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type(action = "convert")</a></code>.</p></li>
 <li><p><code>stop_</code> functions now take <code>details</code> after the dots. This argument can no longer be passed by position.</p></li>
 <li><p>Supplying both <code>details</code> and <code>message</code> to the <code>stop_</code> functions is now an internal error.</p></li>
 <li><p><code>x_arg</code>, <code>y_arg</code>, and <code>to_arg</code> are now compulsory arguments in <code>stop_</code> functions like <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code>.</p></li>
@@ -388,7 +388,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </h1>
 <ul>
 <li><p>The main feature of this release is considerable performance improvements with factors and dates.</p></li>
-<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now falls back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the vector doesn’t implement <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> but implements <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. This should improve the compatibility of vctrs-based functions with foreign classes (<a href='https://github.com/r-lib/vctrs/issues/801'>#801</a>).</p></li>
+<li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now falls back to <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> if the vector doesn’t implement <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> but implements <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. This should improve the compatibility of vctrs-based functions with foreign classes (<a href='https://github.com/r-lib/vctrs/issues/801'>#801</a>).</p></li>
 <li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> is now faster.</p></li>
 <li><p>New <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> for detecting if a vector is a list in the vctrs sense. For instance, objects of class <code>lm</code> are not lists. In general, classes need to explicitly inherit from <code>"list"</code> to be considered as lists by vctrs.</p></li>
 <li>
@@ -420,8 +420,8 @@ x
 <li><p>New <code><a href="../reference/vec_as_subscript.html">vec_as_subscript2()</a></code>, <code><a href="../reference/vec_as_location.html">vec_as_location2()</a></code>, and <code><a href="../reference/vec_as_location.html">num_as_location2()</a></code> variants for validating scalar subscripts and locations (e.g. for indexing with <code><a href="https://rdrr.io/r/base/Extract.html">[[</a></code>).</p></li>
 <li><p><code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> now preserves names of its inputs if possible.</p></li>
 <li>
-<p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods for base classes now prevent inheritance. This makes sense because the subtyping graph created by <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods is generally not the same as the inheritance relationships defined by S3 classes. For instance, subclasses are often a richer type than their superclasses, and should often be declared as supertypes (e.g. <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> should return the subclass).</p>
-<p>We introduced this breaking change in a patch release because <code><a href="../reference/new_vctr.html">new_vctr()</a></code> now adds the base type to the class vector by default, which caused <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> to dispatch erroneously to the methods for base types. We’ll finish switching to this approach in vctrs 0.3.0 for the rest of the base S3 classes (dates, data frames, …).</p>
+<p><code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods for base classes now prevent inheritance. This makes sense because the subtyping graph created by <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods is generally not the same as the inheritance relationships defined by S3 classes. For instance, subclasses are often a richer type than their superclasses, and should often be declared as supertypes (e.g. <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> should return the subclass).</p>
+<p>We introduced this breaking change in a patch release because <code><a href="../reference/new_vctr.html">new_vctr()</a></code> now adds the base type to the class vector by default, which caused <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> to dispatch erroneously to the methods for base types. We’ll finish switching to this approach in vctrs 0.3.0 for the rest of the base S3 classes (dates, data frames, …).</p>
 </li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal_na()</a></code> now works with complex vectors.</p></li>
 <li><p><code>vctrs_vctr</code> class gains an <code><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXlt()</a></code> method (<a href='https://github.com/r-lib/vctrs/issues/717'>#717</a>).</p></li>
@@ -430,7 +430,7 @@ x
 <li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> is now applied recursively across the columns of data frames (<a href='https://github.com/r-lib/vctrs/issues/641'>#641</a>).</p></li>
 <li><p><code><a href="../reference/vec_split.html">vec_split()</a></code> no longer returns the <code>val</code> column as a <code>list_of</code>. It is now returned as a bare list (<a href='https://github.com/r-lib/vctrs/issues/660'>#660</a>).</p></li>
 <li><p>Complex numbers are now coercible with integer and double (<a href='https://github.com/r-lib/vctrs/issues/564'>#564</a>).</p></li>
-<li><p>zeallot has been moved from Imports to Suggests, meaning that <code>%&lt;-%</code> is no longer re-exported from vctrs.</p></li>
+<li><p>zeallot has been moved from Imports to Suggests, meaning that <code><a href="https://rdrr.io/pkg/zeallot/man/operator.html">%&lt;-%</a></code> is no longer re-exported from vctrs.</p></li>
 <li><p><code><a href="../reference/vec_equal.html">vec_equal()</a></code> no longer propagates missing values when comparing list elements. This means that <code><a href="../reference/vec_equal.html">vec_equal(list(NULL), list(NULL))</a></code> will continue to return <code>NA</code> because <code>NULL</code> is the missing element for a list, but now <code><a href="../reference/vec_equal.html">vec_equal(list(NA), list(NA))</a></code> returns <code>TRUE</code> because the <code>NA</code> values are compared directly without checking for missingness.</p></li>
 <li><p>Lists of expressions are now supported in <code><a href="../reference/vec_equal.html">vec_equal()</a></code> and functions that compare elements, such as <code><a href="../reference/vec_unique.html">vec_unique()</a></code> and <code><a href="../reference/vec_match.html">vec_match()</a></code>. This ensures that they work with the result of modeling functions like <code><a href="https://rdrr.io/r/stats/glm.html">glm()</a></code> and <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html">mgcv::gam()</a></code> which store “family” objects containing expressions (<a href='https://github.com/r-lib/vctrs/issues/643'>#643</a>).</p></li>
 <li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> gains an experimental <code>inherit_base_type</code> argument which determines whether or not the class of the underlying type will be included in the class.</p></li>
@@ -456,7 +456,7 @@ x
 <a href="#vctrs-020" class="anchor"></a>vctrs 0.2.0<small> 2019-07-05 </small>
 </h1>
 <p>With the 0.2.0 release, many vctrs functions have been rewritten with native C code to improve performance. Functions like <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> should now be fast enough to be used in packages. This is an ongoing effort, for instance the handling of factors and dates has not been rewritten yet. These classes still slow down vctrs primitives.</p>
-<p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package (see the <a href="https://www.tidyverse.org/lifecycle/">lifecycle of tidyverse packages</a>). Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
+<p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package (see the <a href="https://www.tidyverse.org/lifecycle/">lifecycle of tidyverse packages</a>). Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
 <div id="breaking-changes-1" class="section level2">
 <h2 class="hasAnchor">
 <a href="#breaking-changes-1" class="anchor"></a>Breaking changes</h2>
@@ -490,7 +490,7 @@ vec_c(foo = c(a = 1), .name_spec = ~ paste(.x, .y, sep = "_"))</a></code></pre>
 <code><a href="../reference/vec_type.html">vec_type()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code>
 </li>
 <li>
-<code><a href="../reference/vec_type.html">vec_type2()</a></code> =&gt; <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>
+<code><a href="../reference/vec_type.html">vec_type2()</a></code> =&gt; <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>
 </li>
 <li>
 <code><a href="../reference/vec_type.html">vec_type_common()</a></code> =&gt; <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>
@@ -524,23 +524,23 @@ vec_rbind(df1, df2)
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
-<div class="sourceCode" id="cb7"><pre class="r">data &lt;- tibble::tibble(x = 1:3, y = letters[1:3])
-data &lt;- vec_cbind(data, packed = data)
-data
-# A tibble: 3 x 3
-      x y     packed$x $y
-  &lt;int&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;
-1     1 a            1 a
-2     2 b            2 b
-3     3 c            3 c</pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>data &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(<span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dt">y =</span> letters[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>])</span>
+<span id="cb7-2"><a href="#cb7-2"></a>data &lt;-<span class="st"> </span><span class="kw">vec_cbind</span>(data, <span class="dt">packed =</span> data)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>data</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># A tibble: 3 x 3</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>      x y     packed<span class="op">$</span>x <span class="op">$</span>y</span>
+<span id="cb7-6"><a href="#cb7-6"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">    </span><span class="er">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="dv">1</span>     <span class="dv">1</span> a            <span class="dv">1</span> a</span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="dv">2</span>     <span class="dv">2</span> b            <span class="dv">2</span> b</span>
+<span id="cb7-9"><a href="#cb7-9"></a><span class="dv">3</span>     <span class="dv">3</span> c            <span class="dv">3</span> c</span></code></pre></div>
 <p>Packed data frames are nested in a single column. This makes it possible to access it through a single name:</p>
-<div class="sourceCode" id="cb8"><pre class="r">data$packed
-# A tibble: 3 x 2
-      x y
-  &lt;int&gt; &lt;chr&gt;
-1     1 a
-2     2 b
-3     3 c</pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>data<span class="op">$</span>packed</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co"># A tibble: 3 x 2</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>      x y</span>
+<span id="cb8-4"><a href="#cb8-4"></a>  <span class="op">&lt;</span>int<span class="op">&gt;</span><span class="st"> </span><span class="er">&lt;</span>chr<span class="op">&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a><span class="dv">1</span>     <span class="dv">1</span> a</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="dv">2</span>     <span class="dv">2</span> b</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="dv">3</span>     <span class="dv">3</span> c</span></code></pre></div>
 <p>We are planning to use this syntax more widely in the tidyverse.</p>
 </li>
 <li>
@@ -597,7 +597,7 @@ data
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

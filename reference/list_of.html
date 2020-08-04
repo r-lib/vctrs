@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title><code>list_of</code> S3 class for homogenous lists — list_of • vctrs</title>
+<title>list_of S3 class for homogenous lists — list_of • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,7 @@
 
 
 
-<meta property="og:title" content="<code>list_of</code> S3 class for homogenous lists — list_of" />
+<meta property="og:title" content="list_of S3 class for homogenous lists — list_of" />
 <meta property="og:description" content="A list_of object is a list where each element has the same type.
 Modifying the list with $, [, and [[ preserves the constraint
 by coercing all input items." />
@@ -159,23 +159,23 @@ by coercing all input items." />
 
     <div class="ref-description">
     <p>A <code>list_of</code> object is a list where each element has the same type.
-Modifying the list with <code>$</code>, <code>[</code>, and <code>[[</code> preserves the constraint
+Modifying the list with <code><a href='https://rdrr.io/r/base/Extract.html'>$</a></code>, <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code>, and <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> preserves the constraint
 by coercing all input items.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_of</span>(<span class='no'>...</span>, <span class='kw'>.ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>list_of</span>(<span class='kw'>...</span>, .ptype = <span class='kw'>NULL</span>)
 
-<span class='fu'>as_list_of</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>as_list_of</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
-<span class='fu'>validate_list_of</span>(<span class='no'>x</span>)
+<span class='fu'>validate_list_of</span>(<span class='kw'>x</span>)
 
-<span class='fu'>is_list_of</span>(<span class='no'>x</span>)
-
-<span class='co'># S3 method for vctrs_list_of</span>
-<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>)
+<span class='fu'>is_list_of</span>(<span class='kw'>x</span>)
 
 <span class='co'># S3 method for vctrs_list_of</span>
-<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, y_arg = <span class='st'>""</span>)
+
+<span class='co'># S3 method for vctrs_list_of</span>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -198,7 +198,7 @@ this is a convenient way to make production code demand fixed types.</p></td>
     </tr>
     <tr>
       <th>y, to</th>
-      <td><p>Arguments to <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>.</p></td>
+      <td><p>Arguments to <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>.</p></td>
     </tr>
     <tr>
       <th>x_arg</th>
@@ -216,13 +216,13 @@ incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Unlike regular lists, setting a list element to <code>NULL</code> using <code>[[</code>
+    <p>Unlike regular lists, setting a list element to <code>NULL</code> using <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code>
 does not remove it.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>list_of</span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='fl'>5</span>:<span class='fl'>6</span>, <span class='fl'>10</span>:<span class='fl'>15</span>)
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"tibble"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
-  <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x</span>)
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'>list_of</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>10</span><span class='op'>:</span><span class='fl'>15</span>)
+<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"tibble"</span>, quietly = <span class='fl'>TRUE</span>)) {
+  <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='kw'>x</span>)
 }</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 1</span><span>
 #&gt;             x
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;list&lt;int&gt;&gt;</span><span>
@@ -257,7 +257,7 @@ does not remove it.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

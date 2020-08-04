@@ -121,14 +121,14 @@ data frame class.
 These helpers should always return data tables. To this end we use the
 conversion generic as.data.table(). Depending on the tools available
 for the particular class at hand, a constructor might be appropriate as
-well.dt_ptype2 &amp;amp;lt;- function(x, y, ...) {
+well.dt_ptype2 &amp;lt;- function(x, y, ...) {
   as.data.table(df_ptype2(x, y, ...))
 }
-dt_cast &amp;amp;lt;- function(x, to, ...) {
+dt_cast &amp;lt;- function(x, to, ...) {
   as.data.table(df_cast(x, to, ...))
 }
 We start with the self-self method:#' @export
-vec_ptype2.data.table.data.table &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.data.table.data.table &amp;lt;- function(x, y, ...) {
   dt_ptype2(x, y, ...)
 }
 Between a data frame and a data table, we consider the richer type to be
@@ -137,11 +137,11 @@ data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call dt_type2() from the
 vec_ptype2() method. It always returns a data table, no matter the
 order of arguments:#' @export
-vec_ptype2.data.table.data.frame &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.data.table.data.frame &amp;lt;- function(x, y, ...) {
   dt_ptype2(x, y, ...)
 }
 #' @export
-vec_ptype2.data.frame.data.table &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.data.frame.data.table &amp;lt;- function(x, y, ...) {
   dt_ptype2(x, y, ...)
 }
 The vec_cast() methods follow the same pattern, but note how the
@@ -151,36 +151,36 @@ Also, please note that for historical reasons, the order of the classes
 in the method name is in reverse order of the arguments in the function
 signature. The first class represents to, whereas the second class
 represents x.#' @export
-vec_cast.data.table.data.table &amp;amp;lt;- function(x, to, ...) {
+vec_cast.data.table.data.table &amp;lt;- function(x, to, ...) {
   dt_cast(x, to, ...)
 }
 #' @export
-vec_cast.data.table.data.frame &amp;amp;lt;- function(x, to, ...) {
+vec_cast.data.table.data.frame &amp;lt;- function(x, to, ...) {
   # `x` is a data.frame to be converted to a data.table
   dt_cast(x, to, ...)
 }
 #' @export
-vec_cast.data.frame.data.table &amp;amp;lt;- function(x, to, ...) {
+vec_cast.data.frame.data.table &amp;lt;- function(x, to, ...) {
   # `x` is a data.table to be converted to a data.frame
   df_cast(x, to, ...)
 }
 With these methods vctrs is now able to combine data tables with data
 frames:vec_cbind(data.frame(x = 1:3), data.table(y = &quot;foo&quot;))
-#&amp;amp;gt;    x   y
-#&amp;amp;gt; 1: 1 foo
-#&amp;amp;gt; 2: 2 foo
-#&amp;amp;gt; 3: 3 foo
+#&amp;gt;    x   y
+#&amp;gt; 1: 1 foo
+#&amp;gt; 2: 2 foo
+#&amp;gt; 3: 3 foo
 
 A tibble example
 
 
 In this example we implement coercion methods for a tibble subclass that
 carries a colour as a scalar metadata:# User constructor
-my_tibble &amp;amp;lt;- function(colour = NULL, ...) {
+my_tibble &amp;lt;- function(colour = NULL, ...) {
   new_my_tibble(tibble::tibble(...), colour = colour)
 }
 # Developer constructor
-new_my_tibble &amp;amp;lt;- function(x, colour = NULL) {
+new_my_tibble &amp;lt;- function(x, colour = NULL) {
   stopifnot(is.data.frame(x))
   tibble::new_tibble(
     x,
@@ -190,7 +190,7 @@ new_my_tibble &amp;amp;lt;- function(x, colour = NULL) {
   )
 }
 
-df_colour &amp;amp;lt;- function(x) {
+df_colour &amp;lt;- function(x) {
   if (inherits(x, &quot;my_tibble&quot;)) {
     attr(x, &quot;colour&quot;)
   } else {
@@ -199,41 +199,41 @@ df_colour &amp;amp;lt;- function(x) {
 }
 
 #'@export
-print.my_tibble &amp;amp;lt;- function(x, ...) {
-  cat(sprintf(&quot;&amp;amp;lt;%s: %s&amp;amp;gt;\n&quot;, class(x)[[1]], df_colour(x)))
+print.my_tibble &amp;lt;- function(x, ...) {
+  cat(sprintf(&quot;&amp;lt;%s: %s&amp;gt;\n&quot;, class(x)[[1]], df_colour(x)))
   cli::cat_line(format(x)[-1])
 }
-This subclass is very simple. All it does is modify the header.red &amp;amp;lt;- my_tibble(&quot;red&quot;, x = 1, y = 1:2)
+This subclass is very simple. All it does is modify the header.red &amp;lt;- my_tibble(&quot;red&quot;, x = 1, y = 1:2)
 red
-#&amp;amp;gt; &amp;amp;lt;my_tibble: red&amp;amp;gt;
-#&amp;amp;gt;       x     y
-#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1     1
-#&amp;amp;gt; 2     1     2
+#&amp;gt; &amp;lt;my_tibble: red&amp;gt;
+#&amp;gt;       x     y
+#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+#&amp;gt; 1     1     1
+#&amp;gt; 2     1     2
 
 red[2]
-#&amp;amp;gt; &amp;amp;lt;my_tibble: red&amp;amp;gt;
-#&amp;amp;gt;       y
-#&amp;amp;gt;   &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1
-#&amp;amp;gt; 2     2
+#&amp;gt; &amp;lt;my_tibble: red&amp;gt;
+#&amp;gt;       y
+#&amp;gt;   &amp;lt;int&amp;gt;
+#&amp;gt; 1     1
+#&amp;gt; 2     2
 
-green &amp;amp;lt;- my_tibble(&quot;green&quot;, z = TRUE)
+green &amp;lt;- my_tibble(&quot;green&quot;, z = TRUE)
 green
-#&amp;amp;gt; &amp;amp;lt;my_tibble: green&amp;amp;gt;
-#&amp;amp;gt;   z    
-#&amp;amp;gt;   &amp;amp;lt;lgl&amp;amp;gt;
-#&amp;amp;gt; 1 TRUE
+#&amp;gt; &amp;lt;my_tibble: green&amp;gt;
+#&amp;gt;   z    
+#&amp;gt;   &amp;lt;lgl&amp;gt;
+#&amp;gt; 1 TRUE
 Combinations do not work properly out of the box, instead vctrs falls
 back to a bare tibble:vec_rbind(red, tibble::tibble(x = 10:12))
-#&amp;amp;gt; # A tibble: 5 x 2
-#&amp;amp;gt;       x     y
-#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1     1
-#&amp;amp;gt; 2     1     2
-#&amp;amp;gt; 3    10    NA
-#&amp;amp;gt; 4    11    NA
-#&amp;amp;gt; 5    12    NA
+#&amp;gt; # A tibble: 5 x 2
+#&amp;gt;       x     y
+#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+#&amp;gt; 1     1     1
+#&amp;gt; 2     1     2
+#&amp;gt; 3    10    NA
+#&amp;gt; 4    11    NA
+#&amp;gt; 5    12    NA
 Instead of falling back to a data frame, we would like to return a
 &amp;lt;my_tibble&amp;gt; when combined with a data frame or a tibble. Because this
 subclass has more metadata than normal data frames (it has a colour), it
@@ -257,9 +257,9 @@ repetition. Consider exporting these if you expect your class to be
 derived by other subclasses.
 We first implement a helper to determine if two data frames have
 compatible colours. We use the df_colour() accessor which returns
-NULL when the data frame colour is undefined.has_compatible_colours &amp;amp;lt;- function(x, y) {
-  x_colour &amp;amp;lt;- df_colour(x) %||% df_colour(y)
-  y_colour &amp;amp;lt;- df_colour(y) %||% x_colour
+NULL when the data frame colour is undefined.has_compatible_colours &amp;lt;- function(x, y) {
+  x_colour &amp;lt;- df_colour(x) %||% df_colour(y)
+  y_colour &amp;lt;- df_colour(y) %||% x_colour
   identical(x_colour, y_colour)
 }
 Next we implement the coercion helpers. If the colours are not
@@ -273,8 +273,8 @@ need to take the arguments suffixed in _arg. Here we do need to take
 these arguments so we can pass them to the stop_ functions when we
 detect an incompatibility. They also should be passed to the parent
 methods.#' @export
-my_tib_cast &amp;amp;lt;- function(x, to, ..., x_arg = &quot;&quot;, to_arg = &quot;&quot;) {
-  out &amp;amp;lt;- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
+my_tib_cast &amp;lt;- function(x, to, ..., x_arg = &quot;&quot;, to_arg = &quot;&quot;) {
+  out &amp;lt;- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 
   if (!has_compatible_colours(x, to)) {
     stop_incompatible_cast(
@@ -286,12 +286,12 @@ my_tib_cast &amp;amp;lt;- function(x, to, ..., x_arg = &quot;&quot;, to_arg = &q
     )
   }
 
-  colour &amp;amp;lt;- df_colour(x) %||% df_colour(to)
+  colour &amp;lt;- df_colour(x) %||% df_colour(to)
   new_my_tibble(out, colour = colour)
 }
 #' @export
-my_tib_ptype2 &amp;amp;lt;- function(x, y, ..., x_arg = &quot;&quot;, y_arg = &quot;&quot;) {
-  out &amp;amp;lt;- tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
+my_tib_ptype2 &amp;lt;- function(x, y, ..., x_arg = &quot;&quot;, y_arg = &quot;&quot;) {
+  out &amp;lt;- tib_ptype2(x, y, ..., x_arg = x_arg, y_arg = y_arg)
 
   if (!has_compatible_colours(x, y)) {
     stop_incompatible_type(
@@ -303,103 +303,103 @@ my_tib_ptype2 &amp;amp;lt;- function(x, y, ..., x_arg = &quot;&quot;, y_arg = &q
     )
   }
 
-  colour &amp;amp;lt;- df_colour(x) %||% df_colour(y)
+  colour &amp;lt;- df_colour(x) %||% df_colour(y)
   new_my_tibble(out, colour = colour)
 }
 Let’s now implement the coercion methods, starting with the self-self
 methods.#' @export
-vec_ptype2.my_tibble.my_tibble &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.my_tibble.my_tibble &amp;lt;- function(x, y, ...) {
   my_tib_ptype2(x, y, ...)
 }
 #' @export
-vec_cast.my_tibble.my_tibble &amp;amp;lt;- function(x, to, ...) {
+vec_cast.my_tibble.my_tibble &amp;lt;- function(x, to, ...) {
   my_tib_cast(x, to, ...)
 }
 We can now combine compatible instances of our class!vec_rbind(red, red)
-#&amp;amp;gt; &amp;amp;lt;my_tibble: red&amp;amp;gt;
-#&amp;amp;gt;       x     y
-#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1     1
-#&amp;amp;gt; 2     1     2
-#&amp;amp;gt; 3     1     1
-#&amp;amp;gt; 4     1     2
+#&amp;gt; &amp;lt;my_tibble: red&amp;gt;
+#&amp;gt;       x     y
+#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+#&amp;gt; 1     1     1
+#&amp;gt; 2     1     2
+#&amp;gt; 3     1     1
+#&amp;gt; 4     1     2
 
 vec_rbind(green, green)
-#&amp;amp;gt; &amp;amp;lt;my_tibble: green&amp;amp;gt;
-#&amp;amp;gt;   z    
-#&amp;amp;gt;   &amp;amp;lt;lgl&amp;amp;gt;
-#&amp;amp;gt; 1 TRUE 
-#&amp;amp;gt; 2 TRUE
+#&amp;gt; &amp;lt;my_tibble: green&amp;gt;
+#&amp;gt;   z    
+#&amp;gt;   &amp;lt;lgl&amp;gt;
+#&amp;gt; 1 TRUE 
+#&amp;gt; 2 TRUE
 
 vec_rbind(green, red)
-#&amp;amp;gt; Error: Can't combine `..1` &amp;amp;lt;my_tibble&amp;amp;gt; and `..2` &amp;amp;lt;my_tibble&amp;amp;gt;.
-#&amp;amp;gt; Can't combine colours.
+#&amp;gt; Error: Can't combine `..1` &amp;lt;my_tibble&amp;gt; and `..2` &amp;lt;my_tibble&amp;gt;.
+#&amp;gt; Can't combine colours.
 The methods for combining our class with tibbles follow the same
 pattern. For ptype2 we return our class in both cases because it is the
 richer type:#' @export
-vec_ptype2.my_tibble.tbl_df &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.my_tibble.tbl_df &amp;lt;- function(x, y, ...) {
   my_tib_ptype2(x, y, ...)
 }
 #' @export
-vec_ptype2.tbl_df.my_tibble &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.tbl_df.my_tibble &amp;lt;- function(x, y, ...) {
   my_tib_ptype2(x, y, ...)
 }
 For cast are careful about returning a tibble when casting to a tibble.
 Note the call to vctrs::tib_cast():#' @export
-vec_cast.my_tibble.tbl_df &amp;amp;lt;- function(x, to, ...) {
+vec_cast.my_tibble.tbl_df &amp;lt;- function(x, to, ...) {
   my_tib_cast(x, to, ...)
 }
 #' @export
-vec_cast.tbl_df.my_tibble &amp;amp;lt;- function(x, to, ...) {
+vec_cast.tbl_df.my_tibble &amp;lt;- function(x, to, ...) {
   tib_cast(x, to, ...)
 }
 From this point, we get correct combinations with tibbles:vec_rbind(red, tibble::tibble(x = 10:12))
-#&amp;amp;gt; &amp;amp;lt;my_tibble: red&amp;amp;gt;
-#&amp;amp;gt;       x     y
-#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1     1
-#&amp;amp;gt; 2     1     2
-#&amp;amp;gt; 3    10    NA
-#&amp;amp;gt; 4    11    NA
-#&amp;amp;gt; 5    12    NA
+#&amp;gt; &amp;lt;my_tibble: red&amp;gt;
+#&amp;gt;       x     y
+#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+#&amp;gt; 1     1     1
+#&amp;gt; 2     1     2
+#&amp;gt; 3    10    NA
+#&amp;gt; 4    11    NA
+#&amp;gt; 5    12    NA
 However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
 haven’t explicitly specified the methods for this class:vec_rbind(red, data.frame(x = 10:12))
-#&amp;amp;gt; # A tibble: 5 x 2
-#&amp;amp;gt;       x     y
-#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1     1
-#&amp;amp;gt; 2     1     2
-#&amp;amp;gt; 3    10    NA
-#&amp;amp;gt; 4    11    NA
-#&amp;amp;gt; 5    12    NA
+#&amp;gt; # A tibble: 5 x 2
+#&amp;gt;       x     y
+#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+#&amp;gt; 1     1     1
+#&amp;gt; 2     1     2
+#&amp;gt; 3    10    NA
+#&amp;gt; 4    11    NA
+#&amp;gt; 5    12    NA
 Let’s finish up the boiler plate:#' @export
-vec_ptype2.my_tibble.data.frame &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.my_tibble.data.frame &amp;lt;- function(x, y, ...) {
   my_tib_ptype2(x, y, ...)
 }
 #' @export
-vec_ptype2.data.frame.my_tibble &amp;amp;lt;- function(x, y, ...) {
+vec_ptype2.data.frame.my_tibble &amp;lt;- function(x, y, ...) {
   my_tib_ptype2(x, y, ...)
 }
 
 #' @export
-vec_cast.my_tibble.data.frame &amp;amp;lt;- function(x, to, ...) {
+vec_cast.my_tibble.data.frame &amp;lt;- function(x, to, ...) {
   my_tib_cast(x, to, ...)
 }
 #' @export
-vec_cast.data.frame.my_tibble &amp;amp;lt;- function(x, to, ...) {
+vec_cast.data.frame.my_tibble &amp;lt;- function(x, to, ...) {
   df_cast(x, to, ...)
 }
 This completes the implementation:vec_rbind(red, data.frame(x = 10:12))
-#&amp;amp;gt; &amp;amp;lt;my_tibble: red&amp;amp;gt;
-#&amp;amp;gt;       x     y
-#&amp;amp;gt;   &amp;amp;lt;dbl&amp;amp;gt; &amp;amp;lt;int&amp;amp;gt;
-#&amp;amp;gt; 1     1     1
-#&amp;amp;gt; 2     1     2
-#&amp;amp;gt; 3    10    NA
-#&amp;amp;gt; 4    11    NA
-#&amp;amp;gt; 5    12    NA
+#&amp;gt; &amp;lt;my_tibble: red&amp;gt;
+#&amp;gt;       x     y
+#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;
+#&amp;gt; 1     1     1
+#&amp;gt; 2     1     2
+#&amp;gt; 3    10    NA
+#&amp;gt; 4    11    NA
+#&amp;gt; 5    12    NA
 " />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
@@ -509,7 +509,7 @@ This completes the implementation:vec_rbind(red, data.frame(x = 10:12))
     </div>
 
     <div class="ref-description">
-    <p>This guide provides a practical recipe for implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
+    <p>This guide provides a practical recipe for implementing <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>
 and <code><a href='vec_cast.html'>vec_cast()</a></code> methods for coercions of data frame subclasses. Related
 topics:</p><ul>
 <li><p>For an overview of the coercion mechanism in vctrs, see
@@ -555,13 +555,13 @@ your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register(
 <p>Most of the common type determination should be performed by the parent
 class. In vctrs, double dispatch is implemented in such a way that you
 need to call the methods for the parent class manually. For
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> this means you need to call <code><a href='df_ptype2.html'>df_ptype2()</a></code> (for data frame
+<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> this means you need to call <code><a href='df_ptype2.html'>df_ptype2()</a></code> (for data frame
 subclasses) or <code><a href='df_ptype2.html'>tib_ptype2()</a></code> (for tibble subclasses). Similarly,
 <code><a href='df_ptype2.html'>df_cast()</a></code> and <code><a href='df_ptype2.html'>tib_cast()</a></code> are the workhorses for <code><a href='vec_cast.html'>vec_cast()</a></code> methods
 of subtypes of <code>data.frame</code> and <code>tbl_df</code>. These functions take the union
 of the columns in <code>x</code> and <code>y</code>, and ensure shared columns have the same
 type.</p>
-<p>These functions are much less strict than <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and
+<p>These functions are much less strict than <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and
 <code><a href='vec_cast.html'>vec_cast()</a></code> as they accept any subclass of data frame as input. They
 always return a <code>data.frame</code> or a <code>tbl_df</code>. You will probably want to
 write similar functions for your subclass to avoid repetition in your
@@ -583,28 +583,28 @@ data frame class.</p>
 <p>These helpers should always return data tables. To this end we use the
 conversion generic <code>as.data.table()</code>. Depending on the tools available
 for the particular class at hand, a constructor might be appropriate as
-well.<div class="r"></p><pre><span class='no'>dt_ptype2</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>as.data.table</span>(<span class='fu'><a href='df_ptype2.html'>df_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>))
+well.<div class="r"></p><pre><span class='kw'>dt_ptype2</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>as.data.table</span>(<span class='fu'><a href='df_ptype2.html'>df_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>))
 }
-<span class='no'>dt_cast</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'>as.data.table</span>(<span class='fu'><a href='df_ptype2.html'>df_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>))
+<span class='kw'>dt_cast</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'>as.data.table</span>(<span class='fu'><a href='df_ptype2.html'>df_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>))
 }</pre><p></div></p>
 <p>We start with the self-self method:<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.data.table.data.table</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>dt_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.data.table.data.table</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>dt_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
 <p>Between a data frame and a data table, we consider the richer type to be
 data table. This decision is not based on the value coverage of each
 data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call <code>dt_type2()</code> from the
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
+<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
 order of arguments:<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.data.table.data.frame</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>dt_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>dt_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.data.frame.data.table</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>dt_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.data.frame.data.table</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>dt_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
 <p>The <code><a href='vec_cast.html'>vec_cast()</a></code> methods follow the same pattern, but note how the
 method for coercing to data frame uses <code><a href='df_ptype2.html'>df_cast()</a></code> rather than
@@ -613,89 +613,89 @@ method for coercing to data frame uses <code><a href='df_ptype2.html'>df_cast()<
 in the method name is in reverse order of the arguments in the function
 signature. The first class represents <code>to</code>, whereas the second class
 represents <code>x</code>.<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_cast.data.table.data.table</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'>dt_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+<span class='kw'>vec_cast.data.table.data.table</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'>dt_cast</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_cast.data.table.data.frame</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
+<span class='kw'>vec_cast.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
   <span class='co'># `x` is a data.frame to be converted to a data.table</span>
-  <span class='fu'>dt_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+  <span class='fu'>dt_cast</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_cast.data.frame.data.table</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
+<span class='kw'>vec_cast.data.frame.data.table</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
   <span class='co'># `x` is a data.table to be converted to a data.frame</span>
-  <span class='fu'><a href='df_ptype2.html'>df_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+  <span class='fu'><a href='df_ptype2.html'>df_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
 <p>With these methods vctrs is now able to combine data tables with data
-frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>), <span class='fu'>data.table</span>(<span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"foo"</span>))
-<span class='co'>#&amp;gt;    x   y</span>
-<span class='co'>#&amp;gt; 1: 1 foo</span>
-<span class='co'>#&amp;gt; 2: 2 foo</span>
-<span class='co'>#&amp;gt; 3: 3 foo</span></pre><p></div></p>
+frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbind</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>), <span class='fu'>data.table</span>(y = <span class='st'>"foo"</span>))
+<span class='co'>#&gt;    x   y</span>
+<span class='co'>#&gt; 1: 1 foo</span>
+<span class='co'>#&gt; 2: 2 foo</span>
+<span class='co'>#&gt; 3: 3 foo</span></pre><p></div></p>
 
 <h3>A tibble example</h3>
 
 
 <p>In this example we implement coercion methods for a tibble subclass that
 carries a colour as a scalar metadata:<div class="r"></p><pre><span class='co'># User constructor</span>
-<span class='no'>my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>colour</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>) {
-  <span class='fu'>new_my_tibble</span>(<span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='no'>...</span>), <span class='kw'>colour</span> <span class='kw'>=</span> <span class='no'>colour</span>)
+<span class='kw'>my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>colour</span> = <span class='kw'>NULL</span>, <span class='kw'>...</span>) {
+  <span class='fu'>new_my_tibble</span>(<span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>...</span>), colour = <span class='kw'>colour</span>)
 }
 <span class='co'># Developer constructor</span>
-<span class='no'>new_my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>colour</span> <span class='kw'>=</span> <span class='kw'>NULL</span>) {
-  <span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>is.data.frame</a></span>(<span class='no'>x</span>))
-  <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/new_tibble.html'>new_tibble</a></span>(
-    <span class='no'>x</span>,
-    <span class='kw'>colour</span> <span class='kw'>=</span> <span class='no'>colour</span>,
-    <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>"my_tibble"</span>,
-    <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>x</span>)
+<span class='kw'>new_my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>colour</span> = <span class='kw'>NULL</span>) {
+  <span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>is.data.frame</a></span>(<span class='kw'>x</span>))
+  <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/new_tibble.html'>new_tibble</a></span>(
+    <span class='kw'>x</span>,
+    colour = <span class='kw'>colour</span>,
+    class = <span class='st'>"my_tibble"</span>,
+    nrow = <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='kw'>x</span>)
   )
 }
 
-<span class='no'>df_colour</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>) {
-  <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='no'>x</span>, <span class='st'>"my_tibble"</span>)) {
-    <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>x</span>, <span class='st'>"colour"</span>)
-  } <span class='kw'>else</span> {
+<span class='kw'>df_colour</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) {
+  <span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span>(<span class='kw'>x</span>, <span class='st'>"my_tibble"</span>)) {
+    <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>x</span>, <span class='st'>"colour"</span>)
+  } <span class='co'>else</span> {
     <span class='kw'>NULL</span>
   }
 }
 
 <span class='co'>#'@export</span>
-<span class='no'>print.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>) {
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sprintf.html'>sprintf</a></span>(<span class='st'>"&amp;lt;%s: %s&amp;gt;\n"</span>, <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='no'>x</span>)<span class='kw'>[[</span><span class='fl'>1</span>]], <span class='fu'>df_colour</span>(<span class='no'>x</span>)))
-  <span class='kw pkg'>cli</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cat_line.html'>cat_line</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>x</span>)[-<span class='fl'>1</span>])
+<span class='kw'>print.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>...</span>) {
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/sprintf.html'>sprintf</a></span>(<span class='st'>"&lt;%s: %s&gt;\n"</span>, <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='kw'>x</span>)[[<span class='fl'>1</span>]], <span class='fu'>df_colour</span>(<span class='kw'>x</span>)))
+  <span class='kw'>cli</span>::<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cat_line.html'>cat_line</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='kw'>x</span>)[<span class='op'>-</span><span class='fl'>1</span>])
 }</pre><p></div></p>
-<p>This subclass is very simple. All it does is modify the header.<div class="r"></p><pre><span class='no'>red</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'>my_tibble</span>(<span class='st'>"red"</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>)
-<span class='no'>red</span>
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: red&amp;gt;</span>
-<span class='co'>#&amp;gt;       x     y</span>
-<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1     1</span>
-<span class='co'>#&amp;gt; 2     1     2</span>
+<p>This subclass is very simple. All it does is modify the header.<div class="r"></p><pre><span class='kw'>red</span> <span class='op'>&lt;-</span> <span class='fu'>my_tibble</span>(<span class='st'>"red"</span>, x = <span class='fl'>1</span>, y = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
+<span class='kw'>red</span>
+<span class='co'>#&gt; &lt;my_tibble: red&gt;</span>
+<span class='co'>#&gt;       x     y</span>
+<span class='co'>#&gt;   &lt;dbl&gt; &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1     1</span>
+<span class='co'>#&gt; 2     1     2</span>
 
-<span class='no'>red</span>[<span class='fl'>2</span>]
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: red&amp;gt;</span>
-<span class='co'>#&amp;gt;       y</span>
-<span class='co'>#&amp;gt;   &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1</span>
-<span class='co'>#&amp;gt; 2     2</span>
+<span class='kw'>red</span>[<span class='fl'>2</span>]
+<span class='co'>#&gt; &lt;my_tibble: red&gt;</span>
+<span class='co'>#&gt;       y</span>
+<span class='co'>#&gt;   &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1</span>
+<span class='co'>#&gt; 2     2</span>
 
-<span class='no'>green</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'>my_tibble</span>(<span class='st'>"green"</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>green</span>
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: green&amp;gt;</span>
-<span class='co'>#&amp;gt;   z    </span>
-<span class='co'>#&amp;gt;   &amp;lt;lgl&amp;gt;</span>
-<span class='co'>#&amp;gt; 1 TRUE</span></pre><p></div></p>
+<span class='kw'>green</span> <span class='op'>&lt;-</span> <span class='fu'>my_tibble</span>(<span class='st'>"green"</span>, z = <span class='fl'>TRUE</span>)
+<span class='kw'>green</span>
+<span class='co'>#&gt; &lt;my_tibble: green&gt;</span>
+<span class='co'>#&gt;   z    </span>
+<span class='co'>#&gt;   &lt;lgl&gt;</span>
+<span class='co'>#&gt; 1 TRUE</span></pre><p></div></p>
 <p>Combinations do not work properly out of the box, instead vctrs falls
-back to a bare tibble:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>12</span>))
-<span class='co'>#&amp;gt; # A tibble: 5 x 2</span>
-<span class='co'>#&amp;gt;       x     y</span>
-<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1     1</span>
-<span class='co'>#&amp;gt; 2     1     2</span>
-<span class='co'>#&amp;gt; 3    10    NA</span>
-<span class='co'>#&amp;gt; 4    11    NA</span>
-<span class='co'>#&amp;gt; 5    12    NA</span></pre><p></div></p>
+back to a bare tibble:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>red</span>, <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='fl'>10</span><span class='op'>:</span><span class='fl'>12</span>))
+<span class='co'>#&gt; # A tibble: 5 x 2</span>
+<span class='co'>#&gt;       x     y</span>
+<span class='co'>#&gt;   &lt;dbl&gt; &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1     1</span>
+<span class='co'>#&gt; 2     1     2</span>
+<span class='co'>#&gt; 3    10    NA</span>
+<span class='co'>#&gt; 4    11    NA</span>
+<span class='co'>#&gt; 5    12    NA</span></pre><p></div></p>
 <p>Instead of falling back to a data frame, we would like to return a
 <code>&lt;my_tibble&gt;</code> when combined with a data frame or a tibble. Because this
 subclass has more metadata than normal data frames (it has a colour), it
@@ -719,10 +719,10 @@ repetition. Consider exporting these if you expect your class to be
 derived by other subclasses.</p>
 <p>We first implement a helper to determine if two data frames have
 compatible colours. We use the <code>df_colour()</code> accessor which returns
-<code>NULL</code> when the data frame colour is undefined.<div class="r"></p><pre><span class='no'>has_compatible_colours</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>) {
-  <span class='no'>x_colour</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'>df_colour</span>(<span class='no'>x</span>) <span class='kw'>%||%</span> <span class='fu'>df_colour</span>(<span class='no'>y</span>)
-  <span class='no'>y_colour</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'>df_colour</span>(<span class='no'>y</span>) <span class='kw'>%||%</span> <span class='no'>x_colour</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='no'>x_colour</span>, <span class='no'>y_colour</span>)
+<code>NULL</code> when the data frame colour is undefined.<div class="r"></p><pre><span class='kw'>has_compatible_colours</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>) {
+  <span class='kw'>x_colour</span> <span class='op'>&lt;-</span> <span class='fu'>df_colour</span>(<span class='kw'>x</span>) <span class='op'>%||%</span> <span class='fu'>df_colour</span>(<span class='kw'>y</span>)
+  <span class='kw'>y_colour</span> <span class='op'>&lt;-</span> <span class='fu'>df_colour</span>(<span class='kw'>y</span>) <span class='op'>%||%</span> <span class='kw'>x_colour</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(<span class='kw'>x_colour</span>, <span class='kw'>y_colour</span>)
 }</pre><p></div></p>
 <p>Next we implement the coercion helpers. If the colours are not
 compatible, we call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code> or
@@ -735,133 +735,133 @@ need to take the arguments suffixed in <code>_arg</code>. Here we do need to tak
 these arguments so we can pass them to the <code>stop_</code> functions when we
 detect an incompatibility. They also should be passed to the parent
 methods.<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>my_tib_cast</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='no'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>) {
-  <span class='no'>out</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'><a href='df_ptype2.html'>tib_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='no'>x_arg</span>, <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='no'>to_arg</span>)
+<span class='kw'>my_tib_cast</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, <span class='kw'>x_arg</span> = <span class='st'>""</span>, <span class='kw'>to_arg</span> = <span class='st'>""</span>) {
+  <span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='df_ptype2.html'>tib_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>, x_arg = <span class='kw'>x_arg</span>, to_arg = <span class='kw'>to_arg</span>)
 
-  <span class='kw'>if</span> (!<span class='fu'>has_compatible_colours</span>(<span class='no'>x</span>, <span class='no'>to</span>)) {
+  <span class='co'>if</span> (<span class='op'>!</span><span class='fu'>has_compatible_colours</span>(<span class='kw'>x</span>, <span class='kw'>to</span>)) {
     <span class='fu'><a href='vctrs-conditions.html'>stop_incompatible_cast</a></span>(
-      <span class='no'>x</span>,
-      <span class='no'>to</span>,
-      <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='no'>x_arg</span>,
-      <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='no'>to_arg</span>,
-      <span class='kw'>details</span> <span class='kw'>=</span> <span class='st'>"Can't combine colours."</span>
+      <span class='kw'>x</span>,
+      <span class='kw'>to</span>,
+      x_arg = <span class='kw'>x_arg</span>,
+      to_arg = <span class='kw'>to_arg</span>,
+      details = <span class='st'>"Can't combine colours."</span>
     )
   }
 
-  <span class='no'>colour</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'>df_colour</span>(<span class='no'>x</span>) <span class='kw'>%||%</span> <span class='fu'>df_colour</span>(<span class='no'>to</span>)
-  <span class='fu'>new_my_tibble</span>(<span class='no'>out</span>, <span class='kw'>colour</span> <span class='kw'>=</span> <span class='no'>colour</span>)
+  <span class='kw'>colour</span> <span class='op'>&lt;-</span> <span class='fu'>df_colour</span>(<span class='kw'>x</span>) <span class='op'>%||%</span> <span class='fu'>df_colour</span>(<span class='kw'>to</span>)
+  <span class='fu'>new_my_tibble</span>(<span class='kw'>out</span>, colour = <span class='kw'>colour</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>my_tib_ptype2</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='no'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>y_arg</span> <span class='kw'>=</span> <span class='st'>""</span>) {
-  <span class='no'>out</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'><a href='df_ptype2.html'>tib_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>, <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='no'>x_arg</span>, <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='no'>y_arg</span>)
+<span class='kw'>my_tib_ptype2</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, <span class='kw'>x_arg</span> = <span class='st'>""</span>, <span class='kw'>y_arg</span> = <span class='st'>""</span>) {
+  <span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='df_ptype2.html'>tib_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, x_arg = <span class='kw'>x_arg</span>, y_arg = <span class='kw'>y_arg</span>)
 
-  <span class='kw'>if</span> (!<span class='fu'>has_compatible_colours</span>(<span class='no'>x</span>, <span class='no'>y</span>)) {
+  <span class='co'>if</span> (<span class='op'>!</span><span class='fu'>has_compatible_colours</span>(<span class='kw'>x</span>, <span class='kw'>y</span>)) {
     <span class='fu'><a href='vctrs-conditions.html'>stop_incompatible_type</a></span>(
-      <span class='no'>x</span>,
-      <span class='no'>y</span>,
-      <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='no'>x_arg</span>,
-      <span class='kw'>y_arg</span> <span class='kw'>=</span> <span class='no'>y_arg</span>,
-      <span class='kw'>details</span> <span class='kw'>=</span> <span class='st'>"Can't combine colours."</span>
+      <span class='kw'>x</span>,
+      <span class='kw'>y</span>,
+      x_arg = <span class='kw'>x_arg</span>,
+      y_arg = <span class='kw'>y_arg</span>,
+      details = <span class='st'>"Can't combine colours."</span>
     )
   }
 
-  <span class='no'>colour</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='fu'>df_colour</span>(<span class='no'>x</span>) <span class='kw'>%||%</span> <span class='fu'>df_colour</span>(<span class='no'>y</span>)
-  <span class='fu'>new_my_tibble</span>(<span class='no'>out</span>, <span class='kw'>colour</span> <span class='kw'>=</span> <span class='no'>colour</span>)
+  <span class='kw'>colour</span> <span class='op'>&lt;-</span> <span class='fu'>df_colour</span>(<span class='kw'>x</span>) <span class='op'>%||%</span> <span class='fu'>df_colour</span>(<span class='kw'>y</span>)
+  <span class='fu'>new_my_tibble</span>(<span class='kw'>out</span>, colour = <span class='kw'>colour</span>)
 }</pre><p></div></p>
 <p>Let’s now implement the coercion methods, starting with the self-self
 methods.<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.my_tibble.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.my_tibble.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_cast.my_tibble.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+<span class='kw'>vec_cast.my_tibble.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_cast</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
-<p>We can now combine compatible instances of our class!<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='no'>red</span>)
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: red&amp;gt;</span>
-<span class='co'>#&amp;gt;       x     y</span>
-<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1     1</span>
-<span class='co'>#&amp;gt; 2     1     2</span>
-<span class='co'>#&amp;gt; 3     1     1</span>
-<span class='co'>#&amp;gt; 4     1     2</span>
+<p>We can now combine compatible instances of our class!<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>red</span>, <span class='kw'>red</span>)
+<span class='co'>#&gt; &lt;my_tibble: red&gt;</span>
+<span class='co'>#&gt;       x     y</span>
+<span class='co'>#&gt;   &lt;dbl&gt; &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1     1</span>
+<span class='co'>#&gt; 2     1     2</span>
+<span class='co'>#&gt; 3     1     1</span>
+<span class='co'>#&gt; 4     1     2</span>
 
-<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>green</span>, <span class='no'>green</span>)
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: green&amp;gt;</span>
-<span class='co'>#&amp;gt;   z    </span>
-<span class='co'>#&amp;gt;   &amp;lt;lgl&amp;gt;</span>
-<span class='co'>#&amp;gt; 1 TRUE </span>
-<span class='co'>#&amp;gt; 2 TRUE</span>
+<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>green</span>, <span class='kw'>green</span>)
+<span class='co'>#&gt; &lt;my_tibble: green&gt;</span>
+<span class='co'>#&gt;   z    </span>
+<span class='co'>#&gt;   &lt;lgl&gt;</span>
+<span class='co'>#&gt; 1 TRUE </span>
+<span class='co'>#&gt; 2 TRUE</span>
 
-<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>green</span>, <span class='no'>red</span>)
-<span class='co'>#&amp;gt; Error: Can't combine `..1` &amp;lt;my_tibble&amp;gt; and `..2` &amp;lt;my_tibble&amp;gt;.</span>
-<span class='co'>#&amp;gt; Can't combine colours.</span></pre><p></div></p>
+<span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>green</span>, <span class='kw'>red</span>)
+<span class='co'>#&gt; Error: Can't combine `..1` &lt;my_tibble&gt; and `..2` &lt;my_tibble&gt;.</span>
+<span class='co'>#&gt; Can't combine colours.</span></pre><p></div></p>
 <p>The methods for combining our class with tibbles follow the same
 pattern. For ptype2 we return our class in both cases because it is the
 richer type:<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.my_tibble.tbl_df</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.my_tibble.tbl_df</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.tbl_df.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.tbl_df.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
 <p>For cast are careful about returning a tibble when casting to a tibble.
 Note the call to <code><a href='df_ptype2.html'>vctrs::tib_cast()</a></code>:<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_cast.my_tibble.tbl_df</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+<span class='kw'>vec_cast.my_tibble.tbl_df</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_cast</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_cast.tbl_df.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'><a href='df_ptype2.html'>tib_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+<span class='kw'>vec_cast.tbl_df.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'><a href='df_ptype2.html'>tib_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
-<p>From this point, we get correct combinations with tibbles:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>12</span>))
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: red&amp;gt;</span>
-<span class='co'>#&amp;gt;       x     y</span>
-<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1     1</span>
-<span class='co'>#&amp;gt; 2     1     2</span>
-<span class='co'>#&amp;gt; 3    10    NA</span>
-<span class='co'>#&amp;gt; 4    11    NA</span>
-<span class='co'>#&amp;gt; 5    12    NA</span></pre><p></div></p>
+<p>From this point, we get correct combinations with tibbles:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>red</span>, <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='fl'>10</span><span class='op'>:</span><span class='fl'>12</span>))
+<span class='co'>#&gt; &lt;my_tibble: red&gt;</span>
+<span class='co'>#&gt;       x     y</span>
+<span class='co'>#&gt;   &lt;dbl&gt; &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1     1</span>
+<span class='co'>#&gt; 2     1     2</span>
+<span class='co'>#&gt; 3    10    NA</span>
+<span class='co'>#&gt; 4    11    NA</span>
+<span class='co'>#&gt; 5    12    NA</span></pre><p></div></p>
 <p>However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
-haven’t explicitly specified the methods for this class:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>12</span>))
-<span class='co'>#&amp;gt; # A tibble: 5 x 2</span>
-<span class='co'>#&amp;gt;       x     y</span>
-<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1     1</span>
-<span class='co'>#&amp;gt; 2     1     2</span>
-<span class='co'>#&amp;gt; 3    10    NA</span>
-<span class='co'>#&amp;gt; 4    11    NA</span>
-<span class='co'>#&amp;gt; 5    12    NA</span></pre><p></div></p>
+haven’t explicitly specified the methods for this class:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>red</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>10</span><span class='op'>:</span><span class='fl'>12</span>))
+<span class='co'>#&gt; # A tibble: 5 x 2</span>
+<span class='co'>#&gt;       x     y</span>
+<span class='co'>#&gt;   &lt;dbl&gt; &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1     1</span>
+<span class='co'>#&gt; 2     1     2</span>
+<span class='co'>#&gt; 3    10    NA</span>
+<span class='co'>#&gt; 4    11    NA</span>
+<span class='co'>#&gt; 5    12    NA</span></pre><p></div></p>
 <p>Let’s finish up the boiler plate:<div class="r"></p><pre><span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.my_tibble.data.frame</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.my_tibble.data.frame</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_ptype2.data.frame.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
+<span class='kw'>vec_ptype2.data.frame.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_ptype2</span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>)
 }
 
 <span class='co'>#' @export</span>
-<span class='no'>vec_cast.my_tibble.data.frame</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'>my_tib_cast</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+<span class='kw'>vec_cast.my_tibble.data.frame</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'>my_tib_cast</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }
 <span class='co'>#' @export</span>
-<span class='no'>vec_cast.data.frame.my_tibble</span> <span class='kw'>&amp;</span><span class='no'>lt</span>;- <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>) {
-  <span class='fu'><a href='df_ptype2.html'>df_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)
+<span class='kw'>vec_cast.data.frame.my_tibble</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>) {
+  <span class='fu'><a href='df_ptype2.html'>df_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)
 }</pre><p></div></p>
-<p>This completes the implementation:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='no'>red</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>12</span>))
-<span class='co'>#&amp;gt; &amp;lt;my_tibble: red&amp;gt;</span>
-<span class='co'>#&amp;gt;       x     y</span>
-<span class='co'>#&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt;</span>
-<span class='co'>#&amp;gt; 1     1     1</span>
-<span class='co'>#&amp;gt; 2     1     2</span>
-<span class='co'>#&amp;gt; 3    10    NA</span>
-<span class='co'>#&amp;gt; 4    11    NA</span>
-<span class='co'>#&amp;gt; 5    12    NA</span></pre><p></div></p>
+<p>This completes the implementation:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>red</span>, <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>10</span><span class='op'>:</span><span class='fl'>12</span>))
+<span class='co'>#&gt; &lt;my_tibble: red&gt;</span>
+<span class='co'>#&gt;       x     y</span>
+<span class='co'>#&gt;   &lt;dbl&gt; &lt;int&gt;</span>
+<span class='co'>#&gt; 1     1     1</span>
+<span class='co'>#&gt; 2     1     2</span>
+<span class='co'>#&gt; 3    10    NA</span>
+<span class='co'>#&gt; 4    11    NA</span>
+<span class='co'>#&gt; 5    12    NA</span></pre><p></div></p>
 
     </div>
 
@@ -883,7 +883,7 @@ haven’t explicitly specified the methods for this class:<div class="r"></p><pr
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

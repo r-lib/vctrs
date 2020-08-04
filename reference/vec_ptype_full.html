@@ -161,9 +161,9 @@ provides an abbreviated summary suitable for use in a column heading." />
 provides an abbreviated summary suitable for use in a column heading.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_ptype_full</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>vec_ptype_full</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
 
-<span class='fu'>vec_ptype_abbr</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>vec_ptype_abbr</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -193,14 +193,14 @@ to 8 characters. You should almost always override, aiming for 4-6
 characters where possible.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_full</span>(<span class='fl'>1</span>:<span class='fl'>10</span>))</div><div class='output co'>#&gt; integer</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_full</span>(<span class='no'>iris</span>))</div><div class='output co'>#&gt; data.frame&lt;
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_full</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>))</div><div class='output co'>#&gt; integer</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_full</span>(<span class='kw'>iris</span>))</div><div class='output co'>#&gt; data.frame&lt;
 #&gt;   Sepal.Length: double
 #&gt;   Sepal.Width : double
 #&gt;   Petal.Length: double
 #&gt;   Petal.Width : double
 #&gt;   Species     : factor&lt;12d60&gt;
 #&gt; &gt;</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_abbr</span>(<span class='fl'>1</span>:<span class='fl'>10</span>))</div><div class='output co'>#&gt; int</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'>vec_ptype_abbr</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>))</div><div class='output co'>#&gt; int</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -216,7 +216,7 @@ characters where possible.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

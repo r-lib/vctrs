@@ -166,52 +166,52 @@ testing easier.</p>
     </div>
 
     <pre class="usage"><span class='fu'>stop_incompatible_type</span>(
-  <span class='no'>x</span>,
-  <span class='no'>y</span>,
-  <span class='no'>...</span>,
-  <span class='no'>x_arg</span>,
-  <span class='no'>y_arg</span>,
-  <span class='kw'>action</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"combine"</span>, <span class='st'>"convert"</span>),
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>y</span>,
+  <span class='kw'>...</span>,
+  <span class='kw'>x_arg</span>,
+  <span class='kw'>y_arg</span>,
+  action = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"combine"</span>, <span class='st'>"convert"</span>),
+  details = <span class='kw'>NULL</span>,
+  message = <span class='kw'>NULL</span>,
+  class = <span class='kw'>NULL</span>
 )
 
 <span class='fu'>stop_incompatible_cast</span>(
-  <span class='no'>x</span>,
-  <span class='no'>to</span>,
-  <span class='no'>...</span>,
-  <span class='no'>x_arg</span>,
-  <span class='no'>to_arg</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>to</span>,
+  <span class='kw'>...</span>,
+  <span class='kw'>x_arg</span>,
+  <span class='kw'>to_arg</span>,
+  details = <span class='kw'>NULL</span>,
+  message = <span class='kw'>NULL</span>,
+  class = <span class='kw'>NULL</span>
 )
 
 <span class='fu'>stop_incompatible_op</span>(
-  <span class='no'>op</span>,
-  <span class='no'>x</span>,
-  <span class='no'>y</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>op</span>,
+  <span class='kw'>x</span>,
+  <span class='kw'>y</span>,
+  details = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  message = <span class='kw'>NULL</span>,
+  class = <span class='kw'>NULL</span>
 )
 
 <span class='fu'>stop_incompatible_size</span>(
-  <span class='no'>x</span>,
-  <span class='no'>y</span>,
-  <span class='no'>x_size</span>,
-  <span class='no'>y_size</span>,
-  <span class='no'>...</span>,
-  <span class='no'>x_arg</span>,
-  <span class='no'>y_arg</span>,
-  <span class='kw'>details</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>message</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>x</span>,
+  <span class='kw'>y</span>,
+  <span class='kw'>x_size</span>,
+  <span class='kw'>y_size</span>,
+  <span class='kw'>...</span>,
+  <span class='kw'>x_arg</span>,
+  <span class='kw'>y_arg</span>,
+  details = <span class='kw'>NULL</span>,
+  message = <span class='kw'>NULL</span>,
+  class = <span class='kw'>NULL</span>
 )
 
-<span class='fu'>allow_lossy_cast</span>(<span class='no'>expr</span>, <span class='kw'>x_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>to_ptype</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>allow_lossy_cast</span>(<span class='kw'>expr</span>, x_ptype = <span class='kw'>NULL</span>, to_ptype = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -233,7 +233,7 @@ types.</p></td>
     <tr>
       <th>action</th>
       <td><p>An option to customize the incompatible type message depending
-on the context. Errors thrown from <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> use <code>"combine"</code> and
+on the context. Errors thrown from <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> use <code>"combine"</code> and
 those thrown from <code><a href='vec_cast.html'>vec_cast()</a></code> use <code>"convert"</code>.</p></td>
     </tr>
     <tr>
@@ -268,18 +268,18 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
   <span class='kw'>NULL</span>,
   <span class='st'>""</span>,
-  <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>FALSE</span>),
-  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+  lossy = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>FALSE</span>),
+  x_arg = <span class='st'>""</span>,
+  to_arg = <span class='st'>""</span>
 )</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
 <span class='co'># If `lossy` has any `TRUE`, an error is thrown:</span>
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='maybe_lossy_cast.html'>maybe_lossy_cast</a></span>(
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
   <span class='kw'>NULL</span>,
   <span class='st'>""</span>,
-  <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
-  <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+  lossy = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
+  x_arg = <span class='st'>""</span>,
+  to_arg = <span class='st'>""</span>
 ))</div><div class='output co'>#&gt; Error : Can't convert from &lt;NULL&gt; to &lt;character&gt; due to loss of precision.
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># Unless lossy casts are allowed:</span>
@@ -288,12 +288,11 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
     <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
     <span class='kw'>NULL</span>,
     <span class='st'>""</span>,
-    <span class='kw'>lossy</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
-    <span class='kw'>x_arg</span> <span class='kw'>=</span> <span class='st'>""</span>,
-    <span class='kw'>to_arg</span> <span class='kw'>=</span> <span class='st'>""</span>
+    lossy = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
+    x_arg = <span class='st'>""</span>,
+    to_arg = <span class='st'>""</span>
   )
-)</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
-</div></pre>
+)</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -309,7 +308,7 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

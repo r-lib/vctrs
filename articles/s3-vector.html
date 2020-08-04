@@ -117,8 +117,10 @@
 <p>This vignette shows you how to create your own S3 vector classes. It focuses on the aspects of making a vector class that every class needs to worry about; you’ll also need to provide methods that actually make the vector useful.</p>
 <p>I assume that you’re already familiar with the basic machinery of S3, and the vocabulary I use in Advanced R: constructor, helper, and validator. If not, I recommend reading at least the first two sections of <a href="https://adv-r.hadley.nz/s3.html">the S3 chapter</a> of <em>Advanced R</em>.</p>
 <p>This article refers to “vectors of numbers” as <em>double vectors</em>. Here, “double” stands for <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">“double precision floating point number”</a>, see also <code><a href="https://rdrr.io/r/base/double.html">double()</a></code>.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">vctrs</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">zeallot</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://vctrs.r-lib.org">vctrs</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/nteetor/zeallot">zeallot</a></span>)
+</pre></div>
 <p>This vignette works through five big topics:</p>
 <ul>
 <li>The basics of creating a new vector class with vctrs.</li>
@@ -152,62 +154,77 @@
 <a href="#percent-class" class="anchor"></a>Percent class</h3>
 <p>In this section, I’ll show you how to make a <code>percent</code> class, i.e., a double vector that is printed as a percentage. We start by defining a low-level <a href="https://adv-r.hadley.nz/s3.html#s3-constrcutor">constructor</a> that uses <code><a href="../reference/vec_assert.html">vec_assert()</a></code> to checks types and/or sizes then calls <code><a href="../reference/new_vctr.html">new_vctr()</a></code>.</p>
 <p><code>percent</code> is built on a double vector of any length and doesn’t have any attributes.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">new_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="no">x</span>, <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_percent"</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">new_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="kw">x</span>, class = <span class="st">"vctrs_percent"</span>)
 }
 
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">new_percent</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>, <span class="fl">1</span>, <span class="kw">length.out</span> <span class="kw">=</span> <span class="fl">4</span>), <span class="fl">NA</span>))
-<span class="no">x</span>
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">new_percent</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0</span>, <span class="fl">1</span>, length.out = <span class="fl">4</span>), <span class="fl">NA</span>))
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;vctrs_percent[5]&gt;</span>
 <span class="co">#&gt; [1] 0.0000000 0.3333333 0.6666667 1.0000000        NA</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">x</span>)
-<span class="co">#&gt;  vctrs_pr [1:5] 0.0000000, 0.3333333, 0.6666667, 1.0000000,        NA</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">x</span>)
+<span class="co">#&gt;  vctrs_pr [1:5] 0.0000000, 0.3333333, 0.6666667, 1.0000000,        NA</span>
+</pre></div>
 <p>Note that we prefix the name of the class with the name of the package. This prevents conflicting definitions between packages. For packages that implement only one class (such as <a href="https://blob.tidyverse.org/">blob</a>), it’s fine to use the package name without prefix as the class name.</p>
 <p>We then follow up with a user friendly <a href="https://adv-r.hadley.nz/s3.html#helpers">helper</a>. Here we’ll use <code><a href="../reference/vec_cast.html">vec_cast()</a></code> to allow it to accept anything coercible to a double:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu">new_percent</span>(<span class="no">x</span>)
-}</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="kw">percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu">new_percent</span>(<span class="kw">x</span>)
+}
+</pre></div>
 <p>Before you go on, check that user-friendly constructor returns a zero-length vector when called with no arguments. This makes it easy to use as a prototype.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu">new_percent</span>()
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu">new_percent</span>()
 <span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
 <span class="fu">percent</span>()
-<span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span></pre></body></html></div>
+<span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
+</pre></div>
 <p>For the convenience of your users, consider implementing an <code>is_percent()</code> function:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">is_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(<span class="no">x</span>, <span class="st">"vctrs_percent"</span>)
-}</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">is_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(<span class="kw">x</span>, <span class="st">"vctrs_percent"</span>)
+}
+</pre></div>
 </div>
 <div id="format-method" class="section level3">
 <h3 class="hasAnchor">
 <a href="#format-method" class="anchor"></a><code>format()</code> method</h3>
 <p>The first method for every class should almost always be a <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method. This should return a character vector the same length as <code>x</code>. The easiest way to do this is to rely on one of R’s low-level formatting functions like <code><a href="https://rdrr.io/r/base/formatc.html">formatC()</a></code>:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">format.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>) * <span class="fl">100</span>, <span class="fl">3</span>))
-  <span class="no">out</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>)] <span class="kw">&lt;-</span> <span class="fl">NA</span>
-  <span class="no">out</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>)] <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">out</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>)], <span class="st">"%"</span>)
-  <span class="no">out</span>
-}</pre></body></html></div>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">x</span>
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">format.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>) <span class="op">*</span> <span class="fl">100</span>, <span class="fl">3</span>))
+  <span class="kw">out</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">x</span>)] <span class="op">&lt;-</span> <span class="fl">NA</span>
+  <span class="kw">out</span>[<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">x</span>)] <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">out</span>[<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">x</span>)], <span class="st">"%"</span>)
+  <span class="kw">out</span>
+}
+</pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;vctrs_percent[5]&gt;</span>
-<span class="co">#&gt; [1] 0%    33.3% 66.7% 100%  &lt;NA&gt;</span></pre></body></html></div>
+<span class="co">#&gt; [1] 0%    33.3% 66.7% 100%  &lt;NA&gt;</span>
+</pre></div>
 <p>(Note the use of <code><a href="../reference/vec_data.html">vec_data()</a></code> so <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> doesn’t get stuck in an infinite loop, and that I take a little care to not convert <code>NA</code> to <code>"NA"</code>; this leads to better printing.)</p>
 <p>The format method is also used by data frames, tibbles, and <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt;       x</span>
 <span class="co">#&gt; 1    0%</span>
 <span class="co">#&gt; 2 33.3%</span>
 <span class="co">#&gt; 3 66.7%</span>
 <span class="co">#&gt; 4  100%</span>
-<span class="co">#&gt; 5  &lt;NA&gt;</span></pre></body></html></div>
+<span class="co">#&gt; 5  &lt;NA&gt;</span>
+</pre></div>
 <p>For optimal display, I recommend also defining an abbreviated type name, which should be 4-5 letters for commonly used vectors. This is used in tibbles and in <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">vec_ptype_abbr.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">vec_ptype_abbr.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
   <span class="st">"prcnt"</span>
 }
 
-<span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="no">x</span>)
+<span class="kw">tibble</span>::<span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; # A tibble: 5 x 1</span>
 <span class="co">#&gt;         x</span>
 <span class="co">#&gt;   &lt;prcnt&gt;</span>
@@ -217,8 +234,9 @@
 <span class="co">#&gt; 4    100%</span>
 <span class="co">#&gt; 5      NA</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">x</span>)
-<span class="co">#&gt;  prcnt [1:5] 0%, 33.3%, 66.7%, 100%, &lt;NA&gt;</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">x</span>)
+<span class="co">#&gt;  prcnt [1:5] 0%, 33.3%, 66.7%, 100%, &lt;NA&gt;</span>
+</pre></div>
 <p>If you need more control over printing in tibbles, implement a method for <code><a href="https://rdrr.io/pkg/pillar/man/pillar_shaft.html">pillar::pillar_shaft()</a></code>. See <code><a href="../articles/pillar.html">vignette("pillar", package = "vctrs")</a></code> for details.</p>
 </div>
 </div>
@@ -228,7 +246,7 @@
 <p>The next set of methods you are likely to need are those related to coercion and casting. Coercion and casting are two sides of the same coin: changing the prototype of an existing object. When the change happens <em>implicitly</em> (e.g in <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>) we call it <strong>coercion</strong>; when the change happens <em>explicitly</em> (e.g. with <code><a href="https://rdrr.io/r/base/integer.html">as.integer(x)</a></code>), we call it <strong>casting</strong>.</p>
 <p>One of the main goals of vctrs is to put coercion and casting on a robust theoretical footing so it’s possible to make accurate predictions about what (e.g.) <code><a href="https://rdrr.io/r/base/c.html">c(x, y)</a></code> should do when <code>x</code> and <code>y</code> have different prototypes. vctrs achieves this goal through two generics:</p>
 <ul>
-<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2(x, y)</a></code> defines possible set of coercions. It returns a prototype if <code>x</code> and <code>y</code> can be safely coerced to the same prototype; otherwise it returns an error. The set of automatic coercions is usually quite small because too many tend to make code harder to reason about and silently propagate mistakes.</p></li>
+<li><p><code><a href="../reference/vec_ptype2.logical.html">vec_ptype2(x, y)</a></code> defines possible set of coercions. It returns a prototype if <code>x</code> and <code>y</code> can be safely coerced to the same prototype; otherwise it returns an error. The set of automatic coercions is usually quite small because too many tend to make code harder to reason about and silently propagate mistakes.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast(x, to)</a></code> defines the possible sets of casts. It returns <code>x</code> translated to have prototype <code>to</code>, or throws an error if the conversion isn’t possible. The set of possible casts is a superset of possible coercions because they’re requested explicitly.</p></li>
 </ul>
 <div id="double-dispatch" class="section level3">
@@ -245,44 +263,61 @@
 <h3 class="hasAnchor">
 <a href="#percent" class="anchor"></a>Percent class</h3>
 <p>We’ll make our percent class coercible back and forth with double vectors.</p>
-<p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> provides a user friendly error message if the coercion doesn’t exist and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span>(<span class="st">"bogus"</span>, <span class="fu">percent</span>())
+<p><code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> provides a user friendly error message if the coercion doesn’t exist and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit">
+<span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span>(<span class="st">"bogus"</span>, <span class="fu">percent</span>())
 <span class="co">#&gt; Error: Can't combine &lt;character&gt; and &lt;vctrs_percent&gt;.</span>
-<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span>(<span class="fu">percent</span>(), <span class="fl">NA</span>)
+<span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span>(<span class="fu">percent</span>(), <span class="fl">NA</span>)
 <span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
-<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span>(<span class="fl">NA</span>, <span class="fu">percent</span>())
-<span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span></pre></body></html></div>
+<span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span>(<span class="fl">NA</span>, <span class="fu">percent</span>())
+<span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
+</pre></div>
 <p>By default and in simple cases, an object of the same class is compatible with itself:</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span>(<span class="fu">percent</span>(), <span class="fu">percent</span>())
-<span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span></pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="downlit">
+<span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span>(<span class="fu">percent</span>(), <span class="fu">percent</span>())
+<span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
+</pre></div>
 <p>However this only works if the attributes for both objects are the same. Also the default methods are a bit slower. It is always a good idea to provide an explicit coercion method for the case of identical classes. So we’ll start by saying that a <code>vctrs_percent</code> combined with a <code>vctrs_percent</code> yields a <code>vctrs_percent</code>, which we indicate by returning a prototype generated by the constructor.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu">new_percent</span>()</pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit">
+<span class="kw">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu">new_percent</span>()
+</pre></div>
 <p>Next we define methods that say that combining a <code>percent</code> and double should yield a <code>double</code>. We avoid returning a <code>percent</code> here because errors in the scale (1 vs. 0.01) are more obvious with raw numbers.</p>
 <p>Because double dispatch is a bit of a hack, we need to provide two methods. It’s your responsibility to ensure that each member of the pair returns the same result: if they don’t you will get weird and unpredictable behaviour.</p>
 <p>The double dispatch mechanism requires us to refer to the underlying type, <code>double</code>, in the method name. If we implemented <code>vec_ptype2.vctrs_percent.numeric()</code>, it would never be called.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">vec_ptype2.vctrs_percent.double</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()
-<span class="no">vec_ptype2.double.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb13"><pre class="downlit">
+<span class="kw">vec_ptype2.vctrs_percent.double</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()
+<span class="kw">vec_ptype2.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()
+</pre></div>
 <p>We can check that we’ve implemented this correctly with <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>:</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu">percent</span>(), <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="fu">percent</span>())
+<div class="sourceCode" id="cb14"><pre class="downlit">
+<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span>(<span class="fu">percent</span>(), <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="fu">percent</span>())
 <span class="co">#&gt; Prototype: &lt;double&gt;</span>
 <span class="co">#&gt; 0. (                 , &lt;vctrs_percent&gt; ) = &lt;vctrs_percent&gt;</span>
 <span class="co">#&gt; 1. ( &lt;vctrs_percent&gt; , &lt;double&gt;        ) = &lt;double&gt;       </span>
-<span class="co">#&gt; 2. ( &lt;double&gt;        , &lt;vctrs_percent&gt; ) = &lt;double&gt;</span></pre></body></html></div>
-<p>The <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods define which input is the richer type that vctrs should coerce to. However, they don’t perform any conversion. This is the job of <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which we implement next. We’ll provide a method to cast a percent to a percent:</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">vec_cast.vctrs_percent.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="no">x</span></pre></body></html></div>
+<span class="co">#&gt; 2. ( &lt;double&gt;        , &lt;vctrs_percent&gt; ) = &lt;double&gt;</span>
+</pre></div>
+<p>The <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods define which input is the richer type that vctrs should coerce to. However, they don’t perform any conversion. This is the job of <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which we implement next. We’ll provide a method to cast a percent to a percent:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="kw">vec_cast.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="kw">x</span>
+</pre></div>
 <p>And then for converting back and forth between doubles. To convert a double to a percent we use the <code>percent()</code> helper (not the constructor; this is unvalidated user input). To convert a <code>percent</code> to a double, we strip the attributes.</p>
-<p>Note that for historical reasons the order of argument in the signature is the opposite as for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. The class for <code>to</code> comes first, and the class for <code>x</code> comes second.</p>
+<p>Note that for historical reasons the order of argument in the signature is the opposite as for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>. The class for <code>to</code> comes first, and the class for <code>x</code> comes second.</p>
 <p>Again, the double dispatch mechanism requires us to refer to the underlying type, <code>double</code>, in the method name. Implementing <code>vec_cast.vctrs_percent.numeric()</code> has no effect.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">vec_cast.vctrs_percent.double</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu">percent</span>(<span class="no">x</span>)
-<span class="no">vec_cast.double.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb16"><pre class="downlit">
+<span class="kw">vec_cast.vctrs_percent.double</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu">percent</span>(<span class="kw">x</span>)
+<span class="kw">vec_cast.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>)
+</pre></div>
 <p>Then we can check this works with <code><a href="../reference/vec_cast.html">vec_cast()</a></code>:</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fl">0.5</span>, <span class="fu">percent</span>())
+<div class="sourceCode" id="cb17"><pre class="downlit">
+<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fl">0.5</span>, <span class="fu">percent</span>())
 <span class="co">#&gt; &lt;vctrs_percent[1]&gt;</span>
 <span class="co">#&gt; [1] 50%</span>
 <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fu">percent</span>(<span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-<span class="co">#&gt; [1] 0.5</span></pre></body></html></div>
-<p>Once you’ve implemented <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, you get <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code>[&lt;-</code>, and <code>[[&lt;-</code> implementations for free.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">percent</span>(<span class="fl">0.5</span>), <span class="fl">1</span>)
+<span class="co">#&gt; [1] 0.5</span>
+</pre></div>
+<p>Once you’ve implemented <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, you get <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code>[&lt;-</code>, and <code>[[&lt;-</code> implementations for free.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit">
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">percent</span>(<span class="fl">0.5</span>), <span class="fl">1</span>)
 <span class="co">#&gt; [1] 0.5 1.0</span>
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">NA</span>, <span class="fu">percent</span>(<span class="fl">0.5</span>))
 <span class="co">#&gt; &lt;vctrs_percent[2]&gt;</span>
@@ -291,15 +326,17 @@
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">TRUE</span>, <span class="fu">percent</span>(<span class="fl">0.5</span>))
 <span class="co">#&gt; Error: Can't combine `..1` &lt;logical&gt; and `..2` &lt;vctrs_percent&gt;.</span>
 
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">percent</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">1</span>, <span class="fl">2</span>))
-<span class="no">x</span>[<span class="fl">1</span>:<span class="fl">2</span>] <span class="kw">&lt;-</span> <span class="fl">2</span>:<span class="fl">1</span>
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">percent</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">1</span>, <span class="fl">2</span>))
+<span class="kw">x</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>] <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">:</span><span class="fl">1</span>
 <span class="co">#&gt; Error: Can't convert &lt;integer&gt; to &lt;vctrs_percent&gt;.</span>
-<span class="no">x</span><span class="kw">[[</span><span class="fl">3</span>]] <span class="kw">&lt;-</span> <span class="fl">0.5</span>
-<span class="no">x</span>
+<span class="kw">x</span>[[<span class="fl">3</span>]] <span class="op">&lt;-</span> <span class="fl">0.5</span>
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;vctrs_percent[3]&gt;</span>
-<span class="co">#&gt; [1] 50%  100% 50%</span></pre></body></html></div>
+<span class="co">#&gt; [1] 50%  100% 50%</span>
+</pre></div>
 <p>You’ll also get mostly correct behaviour for <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>. The exception is when you use <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> with a base R class:</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="co"># Correct</span>
+<div class="sourceCode" id="cb19"><pre class="downlit">
+<span class="co"># Correct</span>
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu">percent</span>(<span class="fl">0.5</span>), <span class="fl">1</span>)
 <span class="co">#&gt; [1] 0.5 1.0</span>
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu">percent</span>(<span class="fl">0.5</span>), <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fl">1</span>))
@@ -307,160 +344,187 @@
 
 <span class="co"># Incorrect</span>
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fl">1</span>), <span class="fu">percent</span>(<span class="fl">0.5</span>))
-<span class="co">#&gt; [1] 1.0 0.5</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1.0 0.5</span>
+</pre></div>
 <p>Unfortunately there’s no way to fix this problem with the current design of <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>.</p>
 <p>Again, as a convenience, consider providing an <code>as_percent()</code> function that makes use of the casts defined in your <code>vec_cast.vctrs_percent()</code> methods:</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">as_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu">new_percent</span>())
-}</pre></body></html></div>
+<div class="sourceCode" id="cb20"><pre class="downlit">
+<span class="kw">as_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu">new_percent</span>())
+}
+</pre></div>
 <p>Occasionally, it is useful to provide conversions that go beyond what’s allowed in casting. For example, we could offer a parsing method for character vectors. In this case, <code>as_percent()</code> should be generic, the default method should cast, and then additional methods should implement more flexible conversion:</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">as_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
+<div class="sourceCode" id="cb21"><pre class="downlit">
+<span class="kw">as_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"as_percent"</span>)
 }
 
-<span class="no">as_percent.default</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu">new_percent</span>())
+<span class="kw">as_percent.default</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu">new_percent</span>())
 }
 
-<span class="no">as_percent.character</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">value</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">" *% *$"</span>, <span class="st">""</span>, <span class="no">x</span>)) / <span class="fl">100</span>
-  <span class="fu">new_percent</span>(<span class="no">value</span>)
-}</pre></body></html></div>
+<span class="kw">as_percent.character</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="kw">value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span>(<span class="st">" *% *$"</span>, <span class="st">""</span>, <span class="kw">x</span>)) <span class="op">/</span> <span class="fl">100</span>
+  <span class="fu">new_percent</span>(<span class="kw">value</span>)
+}
+</pre></div>
 </div>
 <div id="decimal-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#decimal-class" class="anchor"></a>Decimal class</h3>
 <p>Now that you’ve seen the basics with a very simple S3 class, we’ll gradually explore more complicated scenarios. This section creates a <code>decimal</code> class that prints with the specified number of decimal places. This is very similar to <code>percent</code> but now the class needs an attribute: the number of decimal places to display (an integer vector of length 1).</p>
 <p>We start off as before, defining a low-level constructor, a user-friendly constructor, a <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method, and a <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code>. Note that additional object attributes are simply passed along to <code><a href="../reference/new_vctr.html">new_vctr()</a></code>:</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">new_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="no">digits</span> <span class="kw">=</span> <span class="fl">2L</span>) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">x</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">digits</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">1</span>)
+<div class="sourceCode" id="cb22"><pre class="downlit">
+<span class="kw">new_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="kw">digits</span> = <span class="fl">2L</span>) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">x</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">digits</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), size = <span class="fl">1</span>)
 
-  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="no">x</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="no">digits</span>, <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_decimal"</span>)
+  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="kw">x</span>, digits = <span class="kw">digits</span>, class = <span class="st">"vctrs_decimal"</span>)
 }
 
-<span class="no">decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="no">digits</span> <span class="kw">=</span> <span class="fl">2L</span>) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="no">digits</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle</a></span>(<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">digits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()), <span class="fl">1L</span>)
+<span class="kw">decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="kw">digits</span> = <span class="fl">2L</span>) {
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="kw">digits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle</a></span>(<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">digits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()), <span class="fl">1L</span>)
 
-  <span class="fu">new_decimal</span>(<span class="no">x</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="no">digits</span>)
+  <span class="fu">new_decimal</span>(<span class="kw">x</span>, digits = <span class="kw">digits</span>)
 }
 
-<span class="no">digits</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">x</span>, <span class="st">"digits"</span>)
+<span class="kw">digits</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">x</span>, <span class="st">"digits"</span>)
 
-<span class="no">format.vctrs_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"%-0."</span>, <span class="fu">digits</span>(<span class="no">x</span>), <span class="st">"f"</span>), <span class="no">x</span>)
+<span class="kw">format.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"%-0."</span>, <span class="fu">digits</span>(<span class="kw">x</span>), <span class="st">"f"</span>), <span class="kw">x</span>)
 }
 
-<span class="no">vec_ptype_abbr.vctrs_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
+<span class="kw">vec_ptype_abbr.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
   <span class="st">"dec"</span>
 }
 
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">decimal</span>(<span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fl">10</span>), <span class="fl">1L</span>)
-<span class="no">x</span>
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">decimal</span>(<span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fl">10</span>), <span class="fl">1L</span>)
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;vctrs_decimal[10]&gt;</span>
-<span class="co">#&gt;  [1] 0.1 0.8 0.6 0.2 0.0 0.5 0.5 0.3 0.7 0.8</span></pre></body></html></div>
+<span class="co">#&gt;  [1] 0.1 0.8 0.6 0.2 0.0 0.5 0.5 0.3 0.7 0.8</span>
+</pre></div>
 <p>Note that I provide a little helper to extract the <code>digits</code> attribute. This makes the code a little easier to read and should not be exported.</p>
 <p>By default, vctrs assumes that attributes are independent of the data and so are automatically preserved. You’ll see what to do if the attributes are data dependent in the next section.</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">x</span>[<span class="fl">1</span>:<span class="fl">2</span>]
+<div class="sourceCode" id="cb23"><pre class="downlit">
+<span class="kw">x</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>]
 <span class="co">#&gt; &lt;vctrs_decimal[2]&gt;</span>
 <span class="co">#&gt; [1] 0.1 0.8</span>
-<span class="no">x</span><span class="kw">[[</span><span class="fl">1</span>]]
+<span class="kw">x</span>[[<span class="fl">1</span>]]
 <span class="co">#&gt; &lt;vctrs_decimal[1]&gt;</span>
-<span class="co">#&gt; [1] 0.1</span></pre></body></html></div>
+<span class="co">#&gt; [1] 0.1</span>
+</pre></div>
 <p>For the sake of exposition, we’ll assume that <code>digits</code> is an important attribute of the class and should be included in the full type:</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">vec_ptype_full.vctrs_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"decimal&lt;"</span>, <span class="fu">digits</span>(<span class="no">x</span>), <span class="st">"&gt;"</span>)
+<div class="sourceCode" id="cb24"><pre class="downlit">
+<span class="kw">vec_ptype_full.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"decimal&lt;"</span>, <span class="fu">digits</span>(<span class="kw">x</span>), <span class="st">"&gt;"</span>)
 }
 
-<span class="no">x</span>
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;decimal&lt;1&gt;[10]&gt;</span>
-<span class="co">#&gt;  [1] 0.1 0.8 0.6 0.2 0.0 0.5 0.5 0.3 0.7 0.8</span></pre></body></html></div>
-<p>Now consider <code><a href="../reference/vec_cast.html">vec_cast()</a></code> and <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">vec_ptype2.vctrs_decimal.vctrs_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
-  <span class="fu">new_decimal</span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="fu">digits</span>(<span class="no">x</span>), <span class="fu">digits</span>(<span class="no">y</span>)))
+<span class="co">#&gt;  [1] 0.1 0.8 0.6 0.2 0.0 0.5 0.5 0.3 0.7 0.8</span>
+</pre></div>
+<p>Now consider <code><a href="../reference/vec_cast.html">vec_cast()</a></code> and <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>. Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit">
+<span class="kw">vec_ptype2.vctrs_decimal.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
+  <span class="fu">new_decimal</span>(digits = <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="fu">digits</span>(<span class="kw">x</span>), <span class="fu">digits</span>(<span class="kw">y</span>)))
 }
-<span class="no">vec_cast.vctrs_decimal.vctrs_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) {
-  <span class="fu">new_decimal</span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>), <span class="kw">digits</span> <span class="kw">=</span> <span class="fu">digits</span>(<span class="no">to</span>))
+<span class="kw">vec_cast.vctrs_decimal.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) {
+  <span class="fu">new_decimal</span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>), digits = <span class="fu">digits</span>(<span class="kw">to</span>))
 }
 
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">decimal</span>(<span class="fl">1</span>/<span class="fl">100</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>), <span class="fu">decimal</span>(<span class="fl">2</span>/<span class="fl">100</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="fl">2</span>))
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">decimal</span>(<span class="fl">1</span><span class="op">/</span><span class="fl">100</span>, digits = <span class="fl">3</span>), <span class="fu">decimal</span>(<span class="fl">2</span><span class="op">/</span><span class="fl">100</span>, digits = <span class="fl">2</span>))
 <span class="co">#&gt; &lt;decimal&lt;3&gt;[2]&gt;</span>
-<span class="co">#&gt; [1] 0.010 0.020</span></pre></body></html></div>
+<span class="co">#&gt; [1] 0.010 0.020</span>
+</pre></div>
 <p>Finally, I can implement coercion to and from other types, like doubles. When automatically coercing, I choose the richer type (i.e., the decimal).</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">vec_ptype2.vctrs_decimal.double</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="no">x</span>
-<span class="no">vec_ptype2.double.vctrs_decimal</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="no">y</span>
+<div class="sourceCode" id="cb26"><pre class="downlit">
+<span class="kw">vec_ptype2.vctrs_decimal.double</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="kw">x</span>
+<span class="kw">vec_ptype2.double.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="kw">y</span>
 
-<span class="no">vec_cast.vctrs_decimal.double</span>  <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu">new_decimal</span>(<span class="no">x</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="fu">digits</span>(<span class="no">to</span>))
-<span class="no">vec_cast.double.vctrs_decimal</span>  <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>)
+<span class="kw">vec_cast.vctrs_decimal.double</span>  <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu">new_decimal</span>(<span class="kw">x</span>, digits = <span class="fu">digits</span>(<span class="kw">to</span>))
+<span class="kw">vec_cast.double.vctrs_decimal</span>  <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>)
 
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">decimal</span>(<span class="fl">1</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="fl">1</span>), <span class="no">pi</span>)
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">decimal</span>(<span class="fl">1</span>, digits = <span class="fl">1</span>), <span class="kw">pi</span>)
 <span class="co">#&gt; &lt;decimal&lt;1&gt;[2]&gt;</span>
 <span class="co">#&gt; [1] 1.0 3.1</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="no">pi</span>, <span class="fu">decimal</span>(<span class="fl">1</span>, <span class="kw">digits</span> <span class="kw">=</span> <span class="fl">1</span>))
+<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="kw">pi</span>, <span class="fu">decimal</span>(<span class="fl">1</span>, digits = <span class="fl">1</span>))
 <span class="co">#&gt; &lt;decimal&lt;1&gt;[2]&gt;</span>
-<span class="co">#&gt; [1] 3.1 1.0</span></pre></body></html></div>
+<span class="co">#&gt; [1] 3.1 1.0</span>
+</pre></div>
 <p>If type <code>x</code> has greater resolution than <code>y</code>, there will be some inputs that lose precision. These should generate errors using <code>stop_lossy_cast()</code>. You can see that in action when casting from doubles to integers; only some doubles can become integers without losing resolution.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">10</span>), <span class="kw">to</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+<div class="sourceCode" id="cb27"><pre class="downlit">
+<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">10</span>), to = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
 <span class="co">#&gt; [1]  1  2 10</span>
 
-<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="fl">2</span>, <span class="fl">10.5</span>), <span class="kw">to</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.5</span>, <span class="fl">2</span>, <span class="fl">10.5</span>), to = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
 <span class="co">#&gt; Error: Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
-<span class="co">#&gt; * Locations: 1, 3</span></pre></body></html></div>
+<span class="co">#&gt; * Locations: 1, 3</span>
+</pre></div>
 </div>
 <div id="cached-sum" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cached-sum" class="anchor"></a>Cached sum class</h3>
 <p>The next level up in complexity is an object that has data-dependent attributes. To explore this idea we’ll create a vector that caches the sum of its values. As usual, we start with low-level and user-friendly constructors:</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">new_cached_sum</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="no">sum</span> <span class="kw">=</span> <span class="fl">0L</span>) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">x</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">sum</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">1L</span>)
+<div class="sourceCode" id="cb28"><pre class="downlit">
+<span class="kw">new_cached_sum</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), <span class="kw">sum</span> = <span class="fl">0L</span>) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">x</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">sum</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>(), size = <span class="fl">1L</span>)
 
-  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="no">x</span>, <span class="kw">sum</span> <span class="kw">=</span> <span class="no">sum</span>, <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_cached_sum"</span>)
+  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="kw">x</span>, sum = <span class="kw">sum</span>, class = <span class="st">"vctrs_cached_sum"</span>)
 }
 
-<span class="no">cached_sum</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu">new_cached_sum</span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">x</span>))
-}</pre></body></html></div>
+<span class="kw">cached_sum</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu">new_cached_sum</span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">x</span>))
+}
+</pre></div>
 <p>For this class, we can use the default <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method, and instead, we’ll customise the <code><a href="../reference/obj_print.html">obj_print_footer()</a></code> method. This is a good place to display user facing attributes.</p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="no">obj_print_footer.vctrs_cached_sum</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"# Sum: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">x</span>, <span class="st">"sum"</span>), <span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>), <span class="st">"\n"</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">""</span>)
+<div class="sourceCode" id="cb29"><pre class="downlit">
+<span class="kw">obj_print_footer.vctrs_cached_sum</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"# Sum: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">x</span>, <span class="st">"sum"</span>), digits = <span class="fl">3</span>), <span class="st">"\n"</span>, sep = <span class="st">""</span>)
 }
 
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">cached_sum</span>(<span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fl">10</span>))
-<span class="no">x</span>
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">cached_sum</span>(<span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fl">10</span>))
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;vctrs_cached_sum[10]&gt;</span>
 <span class="co">#&gt;  [1] 0.87460066 0.17494063 0.03424133 0.32038573 0.40232824 0.19566983</span>
 <span class="co">#&gt;  [7] 0.40353812 0.06366146 0.38870131 0.97554784</span>
-<span class="co">#&gt; # Sum: 3.83</span></pre></body></html></div>
+<span class="co">#&gt; # Sum: 3.83</span>
+</pre></div>
 <p>We’ll also override <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code> and <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> to use the attribute. This is easiest to do with <code><a href="../reference/vec_math.html">vec_math()</a></code>, which you’ll learn about later.</p>
-<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="no">vec_math.vctrs_cached_sum</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">.fn</span>, <span class="no">.x</span>, <span class="no">...</span>) {
+<div class="sourceCode" id="cb30"><pre class="downlit">
+<span class="kw">vec_math.vctrs_cached_sum</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">.fn</span>, <span class="kw">.x</span>, <span class="kw">...</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"Using cache\n"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(<span class="no">.fn</span>,
-    <span class="kw">sum</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">.x</span>, <span class="st">"sum"</span>),
-    <span class="kw">mean</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">.x</span>, <span class="st">"sum"</span>) / <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">.x</span>),
-    <span class="fu"><a href="../reference/vec_math.html">vec_math_base</a></span>(<span class="no">.fn</span>, <span class="no">.x</span>, <span class="no">...</span>)
+  <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(<span class="kw">.fn</span>,
+    sum = <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">.x</span>, <span class="st">"sum"</span>),
+    mean = <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">.x</span>, <span class="st">"sum"</span>) <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">.x</span>),
+    <span class="fu"><a href="../reference/vec_math.html">vec_math_base</a></span>(<span class="kw">.fn</span>, <span class="kw">.x</span>, <span class="kw">...</span>)
   )
 }
 
-<span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; Using cache</span>
-<span class="co">#&gt; [1] 3.833615</span></pre></body></html></div>
+<span class="co">#&gt; [1] 3.833615</span>
+</pre></div>
 <p>As mentioned above, vctrs assumes that attributes are independent of the data. This means that when we take advantage of the default methods, they’ll work, but return the incorrect result:</p>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">x</span>[<span class="fl">1</span>:<span class="fl">2</span>]
+<div class="sourceCode" id="cb31"><pre class="downlit">
+<span class="kw">x</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>]
 <span class="co">#&gt; &lt;vctrs_cached_sum[2]&gt;</span>
 <span class="co">#&gt; [1] 0.8746007 0.1749406</span>
-<span class="co">#&gt; # Sum: 3.83</span></pre></body></html></div>
+<span class="co">#&gt; # Sum: 3.83</span>
+</pre></div>
 <p>To fix this, you need to provide a <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> method. Note that this method dispatches on the <code>to</code> argument.</p>
-<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">vec_restore.vctrs_cached_sum</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>, <span class="no">i</span> <span class="kw">=</span> <span class="kw">NULL</span>) {
-  <span class="fu">new_cached_sum</span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">x</span>))
+<div class="sourceCode" id="cb32"><pre class="downlit">
+<span class="kw">vec_restore.vctrs_cached_sum</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>, <span class="kw">i</span> = <span class="kw">NULL</span>) {
+  <span class="fu">new_cached_sum</span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">x</span>))
 }
 
-<span class="no">x</span>[<span class="fl">1</span>]
+<span class="kw">x</span>[<span class="fl">1</span>]
 <span class="co">#&gt; &lt;vctrs_cached_sum[1]&gt;</span>
 <span class="co">#&gt; [1] 0.8746007</span>
-<span class="co">#&gt; # Sum: 0.875</span></pre></body></html></div>
+<span class="co">#&gt; # Sum: 0.875</span>
+</pre></div>
 <p>This works because most of the vctrs methods dispatch to the underlying base function by first stripping off extra attributes with <code><a href="../reference/vec_data.html">vec_data()</a></code> and then reapplying them again with <code><a href="../reference/vec_proxy.html">vec_restore()</a></code>. The default <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> method copies over all attributes, which is not appropriate when the attributes depend on the data.</p>
 <p>Note that <code>vec_restore.class</code> is subtly different from <code>vec_cast.class.class()</code>. <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> is used when restoring attributes that have been lost; <code><a href="../reference/vec_cast.html">vec_cast()</a></code> is used for coercions. This is easier to understand with a concrete example. Imagine factors were implemented with <code><a href="../reference/new_vctr.html">new_vctr()</a></code>. <code>vec_restore.factor()</code> would restore attributes back to an integer vector, but you would not want to allow manually casting an integer to a factor with <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
 </div>
@@ -469,115 +533,133 @@
 <h2 class="hasAnchor">
 <a href="#record-style-objects" class="anchor"></a>Record-style objects</h2>
 <p>Record-style objects use a list of equal-length vectors to represent individual components of the object. The best example of this is <code>POSIXlt</code>, which underneath the hood is a list of 11 fields like year, month, and day. Record-style classes override <code><a href="https://rdrr.io/r/base/length.html">length()</a></code> and subsetting methods to conceal this implementation detail.</p>
-<div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXlt</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html">ISOdatetime</a></span>(<span class="fl">2020</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>:<span class="fl">3</span>))
-<span class="no">x</span>
+<div class="sourceCode" id="cb33"><pre class="downlit">
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXlt</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html">ISOdatetime</a></span>(<span class="fl">2020</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>))
+<span class="kw">x</span>
 <span class="co">#&gt; [1] "2020-01-01 00:00:01 UTC" "2020-01-01 00:00:02 UTC"</span>
 <span class="co">#&gt; [3] "2020-01-01 00:00:03 UTC"</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; [1] 3</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/class.html">unclass</a></span>(<span class="no">x</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/class.html">unclass</a></span>(<span class="kw">x</span>))
 <span class="co">#&gt; [1] 9</span>
 
-<span class="no">x</span><span class="kw">[[</span><span class="fl">1</span>]] <span class="co"># the first date time</span>
+<span class="kw">x</span>[[<span class="fl">1</span>]] <span class="co"># the first date time</span>
 <span class="co">#&gt; [1] "2020-01-01 00:00:01 UTC"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/class.html">unclass</a></span>(<span class="no">x</span>)<span class="kw">[[</span><span class="fl">1</span>]] <span class="co"># the first component, the number of seconds</span>
-<span class="co">#&gt; [1] 1 2 3</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/class.html">unclass</a></span>(<span class="kw">x</span>)[[<span class="fl">1</span>]] <span class="co"># the first component, the number of seconds</span>
+<span class="co">#&gt; [1] 1 2 3</span>
+</pre></div>
 <p>vctrs makes it easy to create new record-style classes using <code><a href="../reference/new_rcrd.html">new_rcrd()</a></code>, which has a wide selection of default methods.</p>
 <div id="rational-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#rational-class" class="anchor"></a>Rational class</h3>
 <p>A fraction, or rational number, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).</p>
 <p>As usual we start with low-level and user-friendly constructors. The low-level constructor calls <code><a href="../reference/new_rcrd.html">new_rcrd()</a></code>, which needs a named list of equal-length vectors.</p>
-<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="no">new_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">n</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="no">d</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">n</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">d</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+<div class="sourceCode" id="cb34"><pre class="downlit">
+<span class="kw">new_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">n</span> = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw">d</span> = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>()) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">n</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">d</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
 
-  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="no">n</span>, <span class="kw">d</span> <span class="kw">=</span> <span class="no">d</span>), <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_rational"</span>)
-}</pre></body></html></div>
+  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(n = <span class="kw">n</span>, d = <span class="kw">d</span>), class = <span class="st">"vctrs_rational"</span>)
+}
+</pre></div>
 <p>Our user friendly constructor casts <code>n</code> and <code>d</code> to integers and recycles them to the same length.</p>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="no">rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">n</span>, <span class="no">d</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">n</span>, <span class="no">d</span>) <span class="kw">%&lt;-%</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(<span class="no">n</span>, <span class="no">d</span>, <span class="kw">.to</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">n</span>, <span class="no">d</span>) <span class="kw">%&lt;-%</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="no">n</span>, <span class="no">d</span>)
+<div class="sourceCode" id="cb35"><pre class="downlit">
+<span class="kw">rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">n</span>, <span class="kw">d</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">n</span>, <span class="kw">d</span>) <span class="op">%&lt;-%</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span>(<span class="kw">n</span>, <span class="kw">d</span>, .to = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">n</span>, <span class="kw">d</span>) <span class="op">%&lt;-%</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="kw">n</span>, <span class="kw">d</span>)
 
-  <span class="fu">new_rational</span>(<span class="no">n</span>, <span class="no">d</span>)
+  <span class="fu">new_rational</span>(<span class="kw">n</span>, <span class="kw">d</span>)
 }
 
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">1</span>:<span class="fl">10</span>)</pre></body></html></div>
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>)
+</pre></div>
 <p>Behind the scenes, <code>x</code> is a named list with two elements. But those details are hidden so that it behaves like a vector:</p>
-<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb36"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; NULL</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)
-<span class="co">#&gt; [1] 10</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>)
+<span class="co">#&gt; [1] 10</span>
+</pre></div>
 <p>To access the underlying fields we need to use <code><a href="../reference/fields.html">field()</a></code> and <code><a href="../reference/fields.html">fields()</a></code>:</p>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="fu"><a href="../reference/fields.html">fields</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb37"><pre class="downlit">
+<span class="fu"><a href="../reference/fields.html">fields</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; [1] "n" "d"</span>
-<span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"n"</span>)
-<span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></pre></body></html></div>
+<span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"n"</span>)
+<span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span>
+</pre></div>
 <p>This allows us to create a format method:</p>
-<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="no">format.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">n</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"n"</span>)
-  <span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"d"</span>)
+<div class="sourceCode" id="cb38"><pre class="downlit">
+<span class="kw">format.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"n"</span>)
+  <span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"d"</span>)
 
-  <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">n</span>, <span class="st">"/"</span>, <span class="no">d</span>)
-  <span class="no">out</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">n</span>) <span class="kw">|</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">d</span>)] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+  <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">n</span>, <span class="st">"/"</span>, <span class="kw">d</span>)
+  <span class="kw">out</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">n</span>) <span class="op">|</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">d</span>)] <span class="op">&lt;-</span> <span class="fl">NA</span>
 
-  <span class="no">out</span>
+  <span class="kw">out</span>
 }
 
-<span class="no">vec_ptype_abbr.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) <span class="st">"rtnl"</span>
-<span class="no">vec_ptype_full.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) <span class="st">"rational"</span>
+<span class="kw">vec_ptype_abbr.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) <span class="st">"rtnl"</span>
+<span class="kw">vec_ptype_full.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) <span class="st">"rational"</span>
 
-<span class="no">x</span>
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;rational[10]&gt;</span>
-<span class="co">#&gt;  [1] 1/1  1/2  1/3  1/4  1/5  1/6  1/7  1/8  1/9  1/10</span></pre></body></html></div>
+<span class="co">#&gt;  [1] 1/1  1/2  1/3  1/4  1/5  1/6  1/7  1/8  1/9  1/10</span>
+</pre></div>
 <p>vctrs uses the <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method in <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>, hiding the underlying implementation details from the user:</p>
-<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">x</span>)
-<span class="co">#&gt;  rtnl [1:10] 1/1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9, 1/10</span></pre></body></html></div>
-<p>For <code>rational</code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> follow the same pattern as <code>percent()</code>. We allow coercion from integer and to doubles.</p>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="no">vec_ptype2.vctrs_rational.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu">new_rational</span>()
-<span class="no">vec_ptype2.vctrs_rational.integer</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu">new_rational</span>()
-<span class="no">vec_ptype2.integer.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu">new_rational</span>()
+<div class="sourceCode" id="cb39"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">x</span>)
+<span class="co">#&gt;  rtnl [1:10] 1/1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9, 1/10</span>
+</pre></div>
+<p>For <code>rational</code>, <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> follow the same pattern as <code>percent()</code>. We allow coercion from integer and to doubles.</p>
+<div class="sourceCode" id="cb40"><pre class="downlit">
+<span class="kw">vec_ptype2.vctrs_rational.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu">new_rational</span>()
+<span class="kw">vec_ptype2.vctrs_rational.integer</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu">new_rational</span>()
+<span class="kw">vec_ptype2.integer.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu">new_rational</span>()
 
-<span class="no">vec_cast.vctrs_rational.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="no">x</span>
-<span class="no">vec_cast.double.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"n"</span>) / <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"d"</span>)
-<span class="no">vec_cast.vctrs_rational.integer</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu">rational</span>(<span class="no">x</span>, <span class="fl">1</span>)
+<span class="kw">vec_cast.vctrs_rational.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="kw">x</span>
+<span class="kw">vec_cast.double.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"n"</span>) <span class="op">/</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"d"</span>)
+<span class="kw">vec_cast.vctrs_rational.integer</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu">rational</span>(<span class="kw">x</span>, <span class="fl">1</span>)
 
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">2</span>), <span class="fl">1L</span>, <span class="fl">NA</span>)
 <span class="co">#&gt; &lt;rational[3]&gt;</span>
-<span class="co">#&gt; [1] 1/2  1/1  &lt;NA&gt;</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1/2  1/1  &lt;NA&gt;</span>
+</pre></div>
 </div>
 <div id="decimal2-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#decimal2-class" class="anchor"></a>Decimal2 class</h3>
 <p>The previous implementation of <code>decimal</code> was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e., dollars and cents in a bank account), and double values suffer from floating point problems.</p>
 <p>A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a <code>scale</code>). The following code is a very quick sketch of how you might start creating such a class:</p>
-<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="no">new_decimal2</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">l</span>, <span class="no">r</span>, <span class="no">scale</span> <span class="kw">=</span> <span class="fl">2L</span>) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">l</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">r</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">scale</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">1L</span>)
+<div class="sourceCode" id="cb41"><pre class="downlit">
+<span class="kw">new_decimal2</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">l</span>, <span class="kw">r</span>, <span class="kw">scale</span> = <span class="fl">2L</span>) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">l</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">r</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">scale</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), size = <span class="fl">1L</span>)
 
-  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">l</span> <span class="kw">=</span> <span class="no">l</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="no">r</span>), <span class="kw">scale</span> <span class="kw">=</span> <span class="no">scale</span>, <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_decimal2"</span>)
+  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(l = <span class="kw">l</span>, r = <span class="kw">r</span>), scale = <span class="kw">scale</span>, class = <span class="st">"vctrs_decimal2"</span>)
 }
 
-<span class="no">decimal2</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">l</span>, <span class="no">r</span>, <span class="no">scale</span> <span class="kw">=</span> <span class="fl">2L</span>) {
-  <span class="no">l</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">l</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="no">r</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">r</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">l</span>, <span class="no">r</span>) <span class="kw">%&lt;-%</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="no">l</span>, <span class="no">r</span>)
-  <span class="no">scale</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">scale</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+<span class="kw">decimal2</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">l</span>, <span class="kw">r</span>, <span class="kw">scale</span> = <span class="fl">2L</span>) {
+  <span class="kw">l</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">l</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="kw">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">r</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">l</span>, <span class="kw">r</span>) <span class="op">%&lt;-%</span> <span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span>(<span class="kw">l</span>, <span class="kw">r</span>)
+  <span class="kw">scale</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">scale</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
 
   <span class="co"># should check that r &lt; 10^scale</span>
-  <span class="fu">new_decimal2</span>(<span class="kw">l</span> <span class="kw">=</span> <span class="no">l</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="no">r</span>, <span class="kw">scale</span> <span class="kw">=</span> <span class="no">scale</span>)
+  <span class="fu">new_decimal2</span>(l = <span class="kw">l</span>, r = <span class="kw">r</span>, scale = <span class="kw">scale</span>)
 }
 
-<span class="no">format.vctrs_decimal2</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">val</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"l"</span>) + <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"r"</span>) / <span class="fl">10</span>^<span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">x</span>, <span class="st">"scale"</span>)
-  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"%.0"</span>, <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">x</span>, <span class="st">"scale"</span>), <span class="st">"f"</span>), <span class="no">val</span>)
+<span class="kw">format.vctrs_decimal2</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">val</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"l"</span>) <span class="op">+</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"r"</span>) <span class="op">/</span> <span class="fl">10</span><span class="op">^</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">x</span>, <span class="st">"scale"</span>)
+  <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"%.0"</span>, <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">x</span>, <span class="st">"scale"</span>), <span class="st">"f"</span>), <span class="kw">val</span>)
 }
 
 <span class="fu">decimal2</span>(<span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">5</span>, <span class="fl">99</span>))
 <span class="co">#&gt; &lt;vctrs_decimal2[3]&gt;</span>
-<span class="co">#&gt; [1] 10.00 10.05 10.99</span></pre></body></html></div>
+<span class="co">#&gt; [1] 10.00 10.05 10.99</span>
+</pre></div>
 </div>
 </div>
 <div id="equality-and-comparison" class="section level2">
@@ -599,130 +681,149 @@
 <h3 class="hasAnchor">
 <a href="#rational-class-1" class="anchor"></a>Rational class</h3>
 <p>Let’s explore these ideas by with the rational class we started on above. By default, <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> converts a record to a data frame, and the default comparison works column by column:</p>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">rational</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>))
-<span class="no">x</span>
+<div class="sourceCode" id="cb42"><pre class="downlit">
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">rational</span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">2</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>))
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;rational[4]&gt;</span>
 <span class="co">#&gt; [1] 1/1 2/1 1/2 2/2</span>
 
-<span class="fu"><a href="../reference/vec_proxy.html">vec_proxy</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="../reference/vec_proxy.html">vec_proxy</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt;   n d</span>
 <span class="co">#&gt; 1 1 1</span>
 <span class="co">#&gt; 2 2 1</span>
 <span class="co">#&gt; 3 1 2</span>
 <span class="co">#&gt; 4 2 2</span>
 
-<span class="no">x</span> <span class="kw">==</span> <span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">1</span>)
-<span class="co">#&gt; [1]  TRUE FALSE FALSE FALSE</span></pre></body></html></div>
+<span class="kw">x</span> <span class="op">==</span> <span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">1</span>)
+<span class="co">#&gt; [1]  TRUE FALSE FALSE FALSE</span>
+</pre></div>
 <p>This makes sense as a default but isn’t correct here because <code>rational(1, 1)</code> represents the same number as <code>rational(2, 2)</code>, so they should be equal. We can fix that by implementing a <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> method that divides <code>n</code> and <code>d</code> by their greatest common divisor:</p>
-<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="co"># Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632</span>
-<span class="no">gcd</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>) {
-  <span class="no">r</span> <span class="kw">&lt;-</span> <span class="no">x</span> <span class="kw">%%</span> <span class="no">y</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="no">r</span>, <span class="fu">gcd</span>(<span class="no">y</span>, <span class="no">r</span>), <span class="no">y</span>)
+<div class="sourceCode" id="cb43"><pre class="downlit">
+<span class="co"># Thanks to Matthew Lundberg: https://stackoverflow.com/a/21504113/16632</span>
+<span class="kw">gcd</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>) {
+  <span class="kw">r</span> <span class="op">&lt;-</span> <span class="kw">x</span> <span class="op">%%</span> <span class="kw">y</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="kw">r</span>, <span class="fu">gcd</span>(<span class="kw">y</span>, <span class="kw">r</span>), <span class="kw">y</span>)
 }
 
-<span class="no">vec_proxy_equal.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">n</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"n"</span>)
-  <span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"d"</span>)
-  <span class="no">gcd</span> <span class="kw">&lt;-</span> <span class="fu">gcd</span>(<span class="no">n</span>, <span class="no">d</span>)
+<span class="kw">vec_proxy_equal.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"n"</span>)
+  <span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"d"</span>)
+  <span class="kw">gcd</span> <span class="op">&lt;-</span> <span class="fu">gcd</span>(<span class="kw">n</span>, <span class="kw">d</span>)
 
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="no">n</span> / <span class="no">gcd</span>, <span class="kw">d</span> <span class="kw">=</span> <span class="no">d</span> / <span class="no">gcd</span>)
+  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(n = <span class="kw">n</span> <span class="op">/</span> <span class="kw">gcd</span>, d = <span class="kw">d</span> <span class="op">/</span> <span class="kw">gcd</span>)
 }
-<span class="fu"><a href="../reference/vec_proxy_equal.html">vec_proxy_equal</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="../reference/vec_proxy_equal.html">vec_proxy_equal</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt;   n d</span>
 <span class="co">#&gt; 1 1 1</span>
 <span class="co">#&gt; 2 2 1</span>
 <span class="co">#&gt; 3 1 2</span>
 <span class="co">#&gt; 4 1 1</span>
 
-<span class="no">x</span> <span class="kw">==</span> <span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">1</span>)
-<span class="co">#&gt; [1]  TRUE FALSE FALSE  TRUE</span></pre></body></html></div>
+<span class="kw">x</span> <span class="op">==</span> <span class="fu">rational</span>(<span class="fl">1</span>, <span class="fl">1</span>)
+<span class="co">#&gt; [1]  TRUE FALSE FALSE  TRUE</span>
+</pre></div>
 <p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> is also used by <code><a href="https://rdrr.io/r/base/unique.html">unique()</a></code>:</p>
-<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb44"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; &lt;rational[3]&gt;</span>
-<span class="co">#&gt; [1] 1/1 2/1 1/2</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1/1 2/1 1/2</span>
+</pre></div>
 <p>We now need to fix <code><a href="https://rdrr.io/r/base/sort.html">sort()</a></code> similarly, since it currently sorts by <code>n</code>, then by <code>d</code>:</p>
-<div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb45"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; &lt;rational[4]&gt;</span>
-<span class="co">#&gt; [1] 1/1 1/2 2/1 2/2</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1/1 1/2 2/1 2/2</span>
+</pre></div>
 <p>The easiest fix is to convert the fraction to a decimal and then sort that:</p>
-<div class="sourceCode" id="cb46"><html><body><pre class="r"><span class="no">vec_proxy_compare.vctrs_rational</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"n"</span>) / <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="no">x</span>, <span class="st">"d"</span>)
+<div class="sourceCode" id="cb46"><pre class="downlit">
+<span class="kw">vec_proxy_compare.vctrs_rational</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"n"</span>) <span class="op">/</span> <span class="fu"><a href="../reference/fields.html">field</a></span>(<span class="kw">x</span>, <span class="st">"d"</span>)
 }
 
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; &lt;rational[4]&gt;</span>
-<span class="co">#&gt; [1] 1/2 1/1 2/2 2/1</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1/2 1/1 2/2 2/1</span>
+</pre></div>
 <p>(We could have used the same approach in <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code>, but when working with floating point numbers it’s not necessarily true that <code>x == y</code> implies that <code>d * x == d * y</code>.)</p>
 </div>
 <div id="polynomial-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#polynomial-class" class="anchor"></a>Polynomial class</h3>
 <p>A related problem occurs if we build our vector on top of a list. The following code defines a polynomial class that represents polynomials (like <code>1 + 3x - 2x^2</code>) using a list of integer vectors (like <code><a href="https://rdrr.io/r/base/c.html">c(1, 3, -2)</a></code>). Note the use of <code><a href="../reference/new_list_of.html">new_list_of()</a></code> in the constructor.</p>
-<div class="sourceCode" id="cb47"><html><body><pre class="r"><span class="no">new_poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="../reference/new_list_of.html">new_list_of</a></span>(<span class="no">x</span>, <span class="kw">ptype</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_poly"</span>)
+<div class="sourceCode" id="cb47"><pre class="downlit">
+<span class="kw">new_poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="fu"><a href="../reference/new_list_of.html">new_list_of</a></span>(<span class="kw">x</span>, ptype = <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(), class = <span class="st">"vctrs_poly"</span>)
 }
 
-<span class="no">poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">...</span>) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">...</span>)
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">x</span>, <span class="no">vec_cast</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
-  <span class="fu">new_poly</span>(<span class="no">x</span>)
+<span class="kw">poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">...</span>) {
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">...</span>)
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw">x</span>, <span class="kw">vec_cast</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>())
+  <span class="fu">new_poly</span>(<span class="kw">x</span>)
 }
 
-<span class="no">vec_ptype_full.vctrs_poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) <span class="st">"polynomial"</span>
-<span class="no">vec_ptype_abbr.vctrs_poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) <span class="st">"poly"</span>
+<span class="kw">vec_ptype_full.vctrs_poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) <span class="st">"polynomial"</span>
+<span class="kw">vec_ptype_abbr.vctrs_poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) <span class="st">"poly"</span>
 
-<span class="no">format.vctrs_poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">format_one</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-    <span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>) <span class="kw">==</span> <span class="fl">0</span>) {
+<span class="kw">format.vctrs_poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">format_one</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+    <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>) <span class="op">==</span> <span class="fl">0</span>) {
       <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="st">""</span>)
-    } <span class="kw">else</span> <span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>) <span class="kw">==</span> <span class="fl">1</span>) {
-      <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="no">x</span>)
-    } <span class="kw">else</span> {
-      <span class="no">suffix</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"\u22C5x^"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>) - <span class="fl">1</span>, <span class="fl">1</span>)), <span class="st">""</span>)
-      <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">x</span>, <span class="no">suffix</span>)
-      <span class="no">out</span> <span class="kw">&lt;-</span> <span class="no">out</span>[<span class="no">x</span> <span class="kw">!=</span> <span class="fl">0L</span>]
-      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">out</span>, <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" + "</span>)
+    } <span class="co">else</span> <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>) <span class="op">==</span> <span class="fl">1</span>) {
+      <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="kw">x</span>)
+    } <span class="co">else</span> {
+      <span class="kw">suffix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"\u22C5x^"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>) <span class="op">-</span> <span class="fl">1</span>, <span class="fl">1</span>)), <span class="st">""</span>)
+      <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">x</span>, <span class="kw">suffix</span>)
+      <span class="kw">out</span> <span class="op">&lt;-</span> <span class="kw">out</span>[<span class="kw">x</span> != <span class="fl">0L</span>]
+      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">out</span>, collapse = <span class="st">" + "</span>)
     }
   }
-  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span>(<span class="no">x</span>, <span class="no">format_one</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span>(<span class="fl">1</span>))
+  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span>(<span class="kw">x</span>, <span class="kw">format_one</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span>(<span class="fl">1</span>))
 }
 
-<span class="no">obj_print_data.vctrs_poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>) <span class="kw">==</span> <span class="fl">0</span>)
+<span class="kw">obj_print_data.vctrs_poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="co">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>) <span class="op">==</span> <span class="fl">0</span>)
     <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>()
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="no">x</span>), <span class="kw">quote</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="kw">x</span>), quote = <span class="fl">FALSE</span>)
 }
 
-<span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span>))
-<span class="no">p</span>
+<span class="kw">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span>))
+<span class="kw">p</span>
 <span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span>
+</pre></div>
 <p>The resulting objects will inherit from the <code>vctrs_list_of</code> class, which provides tailored methods for <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code><a href="https://rdrr.io/r/base/Extract.html">[[</a></code>, the corresponding assignment operators, and other methods.</p>
-<div class="sourceCode" id="cb48"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="no">p</span>)
+<div class="sourceCode" id="cb48"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span>(<span class="kw">p</span>)
 <span class="co">#&gt; [1] "vctrs_poly"    "vctrs_list_of" "vctrs_vctr"    "list"</span>
-<span class="no">p</span>[<span class="fl">2</span>]
+<span class="kw">p</span>[<span class="fl">2</span>]
 <span class="co">#&gt; &lt;polynomial[1]&gt;</span>
 <span class="co">#&gt; [1] 1⋅x^2 + 1</span>
-<span class="no">p</span><span class="kw">[[</span><span class="fl">2</span>]]
-<span class="co">#&gt; [1] 1 0 1</span></pre></body></html></div>
+<span class="kw">p</span>[[<span class="fl">2</span>]]
+<span class="co">#&gt; [1] 1 0 1</span>
+</pre></div>
 <p>Equality works out of the box because we can tell if two integer vectors are equal:</p>
-<div class="sourceCode" id="cb49"><html><body><pre class="r"><span class="no">p</span> <span class="kw">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>))
-<span class="co">#&gt; [1] FALSE  TRUE FALSE</span></pre></body></html></div>
+<div class="sourceCode" id="cb49"><pre class="downlit">
+<span class="kw">p</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>))
+<span class="co">#&gt; [1] FALSE  TRUE FALSE</span>
+</pre></div>
 <p>But we can’t order them because lists are not comparable:</p>
-<div class="sourceCode" id="cb50"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="no">p</span>)
+<div class="sourceCode" id="cb50"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="kw">p</span>)
 <span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span>
+</pre></div>
 <p>So we need to define a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
-<div class="sourceCode" id="cb51"><html><body><pre class="r"><span class="no">vec_proxy_compare.vctrs_poly</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">x_raw</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb51"><pre class="downlit">
+<span class="kw">vec_proxy_compare.vctrs_poly</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">x_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>)
   <span class="co"># First figure out the maximum length</span>
-  <span class="no">n</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span>(<span class="no">x_raw</span>, <span class="no">length</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(<span class="fl">1</span>)))
+  <span class="kw">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span>(<span class="kw">x_raw</span>, <span class="kw">length</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(<span class="fl">1</span>)))
 
   <span class="co"># Then expand all vectors to this length by filling in with zeros</span>
-  <span class="no">full</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">x_raw</span>, <span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0L</span>, <span class="no">n</span> - <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">x</span>)), <span class="no">x</span>))
+  <span class="kw">full</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw">x_raw</span>, <span class="fu">function</span>(<span class="kw">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0L</span>, <span class="kw">n</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">x</span>)), <span class="kw">x</span>))
 
   <span class="co"># Then turn into a data frame</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">rbind</span>, <span class="no">full</span>))
+  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="kw">rbind</span>, <span class="kw">full</span>))
 }
 
 <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span>(<span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span>))
@@ -730,7 +831,8 @@
 <span class="co">#&gt; [1] 3 2 1</span>
 <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span>(<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>), <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">0</span>)))
 <span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 1     1⋅x^2 1⋅x^1</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1     1⋅x^2 1⋅x^1</span>
+</pre></div>
 </div>
 </div>
 <div id="arithmetic" class="section level2">
@@ -743,140 +845,158 @@
 </ul>
 <p>Both generics define the behaviour for multiple functions because <code>sum.vctrs_vctr(x)</code> calls <code>vec_math.vctrs_vctr("sum", x)</code>, and <code>x + y</code> calls <code>vec_math.x_class.y_class("+", x, y)</code>. They’re accompanied by <code><a href="../reference/vec_math.html">vec_math_base()</a></code> and <code><a href="../reference/vec_arith.html">vec_arith_base()</a></code> which make it easy to call the underlying base R functions.</p>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> uses double dispatch and needs the following standard boilerplate:</p>
-<div class="sourceCode" id="cb52"><html><body><pre class="r"><span class="no">vec_arith.MYCLASS</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_arith.MYCLASS"</span>, <span class="no">y</span>)
+<div class="sourceCode" id="cb52"><pre class="downlit">
+<span class="kw">vec_arith.MYCLASS</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_arith.MYCLASS"</span>, <span class="kw">y</span>)
 }
-<span class="no">vec_arith.MYCLASS.default</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)
-}</pre></body></html></div>
+<span class="kw">vec_arith.MYCLASS.default</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)
+}
+</pre></div>
 <div id="cached-sum-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#cached-sum-class" class="anchor"></a>Cached sum class</h3>
 <p>I showed an example of <code><a href="../reference/vec_math.html">vec_math()</a></code> to define <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code> and <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> methods for <code>cached_sum</code>. Now let’s talk about exactly how it works. Most <code><a href="../reference/vec_math.html">vec_math()</a></code> functions will have a similar form. You use a switch statement to handle the methods that you care about and fall back to <code><a href="../reference/vec_math.html">vec_math_base()</a></code> for those that you don’t care about.</p>
-<div class="sourceCode" id="cb53"><html><body><pre class="r"><span class="no">vec_math.vctrs_cached_sum</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">.fn</span>, <span class="no">.x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(<span class="no">.fn</span>,
-    <span class="kw">sum</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">.x</span>, <span class="st">"sum"</span>),
-    <span class="kw">mean</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="no">.x</span>, <span class="st">"sum"</span>) / <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">.x</span>),
-    <span class="fu"><a href="../reference/vec_math.html">vec_math_base</a></span>(<span class="no">.fn</span>, <span class="no">.x</span>, <span class="no">...</span>)
+<div class="sourceCode" id="cb53"><pre class="downlit">
+<span class="kw">vec_math.vctrs_cached_sum</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">.fn</span>, <span class="kw">.x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(<span class="kw">.fn</span>,
+    sum = <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">.x</span>, <span class="st">"sum"</span>),
+    mean = <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span>(<span class="kw">.x</span>, <span class="st">"sum"</span>) <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">.x</span>),
+    <span class="fu"><a href="../reference/vec_math.html">vec_math_base</a></span>(<span class="kw">.fn</span>, <span class="kw">.x</span>, <span class="kw">...</span>)
   )
-}</pre></body></html></div>
+}
+</pre></div>
 </div>
 <div id="meter-class" class="section level3">
 <h3 class="hasAnchor">
 <a href="#meter-class" class="anchor"></a>Meter class</h3>
 <p>To explore the infix arithmetic operators exposed by <code><a href="../reference/vec_arith.html">vec_arith()</a></code> I’ll create a new class that represents a measurement in <code>meter</code>s:</p>
-<div class="sourceCode" id="cb54"><html><body><pre class="r"><span class="no">new_meter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/double.html">is.double</a></span>(<span class="no">x</span>))
-  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="no">x</span>, <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_meter"</span>)
+<div class="sourceCode" id="cb54"><pre class="downlit">
+<span class="kw">new_meter</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/double.html">is.double</a></span>(<span class="kw">x</span>))
+  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="kw">x</span>, class = <span class="st">"vctrs_meter"</span>)
 }
 
-<span class="no">format.vctrs_meter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>)), <span class="st">" m"</span>)
+<span class="kw">format.vctrs_meter</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>)), <span class="st">" m"</span>)
 }
 
-<span class="no">meter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu">new_meter</span>(<span class="no">x</span>)
+<span class="kw">meter</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu">new_meter</span>(<span class="kw">x</span>)
 }
 
-<span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">meter</span>(<span class="fl">1</span>:<span class="fl">10</span>)
-<span class="no">x</span>
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu">meter</span>(<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>)
+<span class="kw">x</span>
 <span class="co">#&gt; &lt;vctrs_meter[10]&gt;</span>
-<span class="co">#&gt;  [1]  1 m  2 m  3 m  4 m  5 m  6 m  7 m  8 m  9 m 10 m</span></pre></body></html></div>
+<span class="co">#&gt;  [1]  1 m  2 m  3 m  4 m  5 m  6 m  7 m  8 m  9 m 10 m</span>
+</pre></div>
 <p>Because <code>meter</code> is built on top of a double vector, basic mathematic operations work:</p>
-<div class="sourceCode" id="cb55"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">x</span>)
+<div class="sourceCode" id="cb55"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 55 m</span>
-<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
-<span class="co">#&gt; [1] 5.5 m</span></pre></body></html></div>
+<span class="co">#&gt; [1] 5.5 m</span>
+</pre></div>
 <p>But we can’t do arithmetic:</p>
-<div class="sourceCode" id="cb56"><html><body><pre class="r"><span class="no">x</span> + <span class="fl">1</span>
+<div class="sourceCode" id="cb56"><pre class="downlit">
+<span class="kw">x</span> <span class="op">+</span> <span class="fl">1</span>
 <span class="co">#&gt; Error: &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span>
-<span class="fu">meter</span>(<span class="fl">10</span>) + <span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">+</span> <span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; Error: &lt;vctrs_meter&gt; + &lt;vctrs_meter&gt; is not permitted</span>
-<span class="fu">meter</span>(<span class="fl">10</span>) * <span class="fl">3</span>
-<span class="co">#&gt; Error: &lt;vctrs_meter&gt; * &lt;double&gt; is not permitted</span></pre></body></html></div>
+<span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">*</span> <span class="fl">3</span>
+<span class="co">#&gt; Error: &lt;vctrs_meter&gt; * &lt;double&gt; is not permitted</span>
+</pre></div>
 <p>To allow these infix functions to work, we’ll need to provide <code><a href="../reference/vec_arith.html">vec_arith()</a></code> generic. But before we do that, let’s think about what combinations of inputs we should support:</p>
 <ul>
 <li><p>It makes sense to add and subtract meters: that yields another meter. We can divide a meter by another meter (yielding a unitless number), but we can’t multiply meters (because that would yield an area).</p></li>
 <li><p>For a combination of meter and number multiplication and division by a number are acceptable. Addition and subtraction don’t make much sense as we, strictly speaking, are dealing with objects of different nature.</p></li>
 </ul>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> is another function that uses double dispatch, so as usual we start with a template.</p>
-<div class="sourceCode" id="cb57"><html><body><pre class="r"><span class="no">vec_arith.vctrs_meter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_arith.vctrs_meter"</span>, <span class="no">y</span>)
+<div class="sourceCode" id="cb57"><pre class="downlit">
+<span class="kw">vec_arith.vctrs_meter</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span>(<span class="st">"vec_arith.vctrs_meter"</span>, <span class="kw">y</span>)
 }
-<span class="no">vec_arith.vctrs_meter.default</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)
-}</pre></body></html></div>
+<span class="kw">vec_arith.vctrs_meter.default</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)
+}
+</pre></div>
 <p>Then write the method for two meter objects. We use a switch statement to cover the cases we care about and <code><a href="../reference/vctrs-conditions.html">stop_incompatible_op()</a></code> to throw an informative error message for everything else.</p>
-<div class="sourceCode" id="cb58"><html><body><pre class="r"><span class="no">vec_arith.vctrs_meter.vctrs_meter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
+<div class="sourceCode" id="cb58"><pre class="downlit">
+<span class="kw">vec_arith.vctrs_meter.vctrs_meter</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(
-    <span class="no">op</span>,
-    <span class="st">"+"</span> <span class="kw">=</span> ,
-    <span class="st">"-"</span> <span class="kw">=</span> <span class="fu">new_meter</span>(<span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)),
-    <span class="st">"/"</span> <span class="kw">=</span> <span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>),
-    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)
+    <span class="kw">op</span>,
+    <span class="st">"+"</span> = ,
+    <span class="st">"-"</span> = <span class="fu">new_meter</span>(<span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)),
+    <span class="st">"/"</span> = <span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>),
+    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)
   )
 }
 
-<span class="fu">meter</span>(<span class="fl">10</span>) + <span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">+</span> <span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 11 m</span>
-<span class="fu">meter</span>(<span class="fl">10</span>) - <span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">-</span> <span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 9 m</span>
-<span class="fu">meter</span>(<span class="fl">10</span>) / <span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">/</span> <span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; [1] 10</span>
-<span class="fu">meter</span>(<span class="fl">10</span>) * <span class="fu">meter</span>(<span class="fl">1</span>)
-<span class="co">#&gt; Error: &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span></pre></body></html></div>
+<span class="fu">meter</span>(<span class="fl">10</span>) <span class="op">*</span> <span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="co">#&gt; Error: &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span>
+</pre></div>
 <p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (and neither do addition and subtraction). To support both doubles and integers as operands, we dispatch over <code>numeric</code> here instead of <code>double</code>.</p>
-<div class="sourceCode" id="cb59"><html><body><pre class="r"><span class="no">vec_arith.vctrs_meter.numeric</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
+<div class="sourceCode" id="cb59"><pre class="downlit">
+<span class="kw">vec_arith.vctrs_meter.numeric</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(
-    <span class="no">op</span>,
-    <span class="st">"/"</span> <span class="kw">=</span> ,
-    <span class="st">"*"</span> <span class="kw">=</span> <span class="fu">new_meter</span>(<span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)),
-    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)
+    <span class="kw">op</span>,
+    <span class="st">"/"</span> = ,
+    <span class="st">"*"</span> = <span class="fu">new_meter</span>(<span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)),
+    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)
   )
 }
-<span class="no">vec_arith.numeric.vctrs_meter</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
+<span class="kw">vec_arith.numeric.vctrs_meter</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
   <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(
-    <span class="no">op</span>,
-    <span class="st">"*"</span> <span class="kw">=</span> <span class="fu">new_meter</span>(<span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)),
-    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)
+    <span class="kw">op</span>,
+    <span class="st">"*"</span> = <span class="fu">new_meter</span>(<span class="fu"><a href="../reference/vec_arith.html">vec_arith_base</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)),
+    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)
   )
 }
 
-<span class="fu">meter</span>(<span class="fl">2</span>) * <span class="fl">10</span>
+<span class="fu">meter</span>(<span class="fl">2</span>) <span class="op">*</span> <span class="fl">10</span>
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 20 m</span>
-<span class="fu">meter</span>(<span class="fl">2</span>) * <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fl">10</span>)
+<span class="fu">meter</span>(<span class="fl">2</span>) <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fl">10</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 20 m</span>
-<span class="fl">10</span> * <span class="fu">meter</span>(<span class="fl">2</span>)
+<span class="fl">10</span> <span class="op">*</span> <span class="fu">meter</span>(<span class="fl">2</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 20 m</span>
-<span class="fu">meter</span>(<span class="fl">20</span>) / <span class="fl">10</span>
+<span class="fu">meter</span>(<span class="fl">20</span>) <span class="op">/</span> <span class="fl">10</span>
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 2 m</span>
-<span class="fl">10</span> / <span class="fu">meter</span>(<span class="fl">20</span>)
+<span class="fl">10</span> <span class="op">/</span> <span class="fu">meter</span>(<span class="fl">20</span>)
 <span class="co">#&gt; Error: &lt;double&gt; / &lt;vctrs_meter&gt; is not permitted</span>
-<span class="fu">meter</span>(<span class="fl">20</span>) + <span class="fl">10</span>
-<span class="co">#&gt; Error: &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span></pre></body></html></div>
+<span class="fu">meter</span>(<span class="fl">20</span>) <span class="op">+</span> <span class="fl">10</span>
+<span class="co">#&gt; Error: &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span>
+</pre></div>
 <p>For completeness, we also need <code>vec_arith.vctrs_meter.MISSING</code> for the unary <code><a href="https://rdrr.io/r/base/Arithmetic.html">+</a></code> and <code><a href="https://rdrr.io/r/base/Arithmetic.html">-</a></code> operators:</p>
-<div class="sourceCode" id="cb60"><html><body><pre class="r"><span class="no">vec_arith.vctrs_meter.MISSING</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(<span class="no">op</span>,
-    <span class="kw">`-`</span> <span class="kw">=</span> <span class="no">x</span> * -<span class="fl">1</span>,
-    <span class="kw">`+`</span> <span class="kw">=</span> <span class="no">x</span>,
-    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="no">op</span>, <span class="no">x</span>, <span class="no">y</span>)
+<div class="sourceCode" id="cb60"><pre class="downlit">
+<span class="kw">vec_arith.vctrs_meter.MISSING</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/switch.html">switch</a></span>(<span class="kw">op</span>,
+    `-` = <span class="kw">x</span> <span class="op">*</span> <span class="op">-</span><span class="fl">1</span>,
+    `+` = <span class="kw">x</span>,
+    <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span>(<span class="kw">op</span>, <span class="kw">x</span>, <span class="kw">y</span>)
   )
 }
--<span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="op">-</span><span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] -1 m</span>
-+<span class="fu">meter</span>(<span class="fl">1</span>)
+<span class="op">+</span><span class="fu">meter</span>(<span class="fl">1</span>)
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
-<span class="co">#&gt; [1] 1 m</span></pre></body></html></div>
+<span class="co">#&gt; [1] 1 m</span>
+</pre></div>
 </div>
 </div>
 <div id="implementing-a-vctrs-s3-class-in-a-package" class="section level2">
@@ -905,12 +1025,14 @@
 <li><p>In <code>R/percent.R</code>. This makes the most sense when the vctrs S3 class is a modest and self-contained part of the overall package.</p></li>
 </ul>
 <p>We also must use one of these locations to dump some internal documentation that’s needed to avoid <code>R CMD check</code> complaints. We don’t expect any human to ever read this documentation. Here’s how this dummy documentation should look, combined with the <code>#' @import vctrs</code> directive described above.</p>
-<div class="sourceCode" id="cb62"><html><body><pre class="r"><span class="co">#' Internal vctrs methods</span>
+<div class="sourceCode" id="cb62"><pre class="downlit">
+<span class="co">#' Internal vctrs methods</span>
 <span class="co">#'</span>
 <span class="co">#' @import vctrs</span>
 <span class="co">#' @keywords internal</span>
 <span class="co">#' @name pizza-vctrs</span>
-<span class="kw">NULL</span></pre></body></html></div>
+<span class="kw">NULL</span>
+</pre></div>
 <p>This should appear in <code>R/pizza-doc.R</code> (package-level docs) or in <code>R/percent.R</code> (class-focused file).</p>
 <p>Remember to call <code>devtools::document()</code> regularly, as you develop, to regenerate <code>NAMESPACE</code> and the <code>.Rd</code> files.</p>
 <p>From this point on, the code shown is expected to appear in <code>R/percent.R</code>.</p>
@@ -919,17 +1041,22 @@
 <h3 class="hasAnchor">
 <a href="#low-level-and-user-friendly-constructors" class="anchor"></a>Low-level and user-friendly constructors</h3>
 <p>Next we add our constructor:</p>
-<div class="sourceCode" id="cb63"><html><body><pre class="r"><span class="no">new_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
-  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="no">x</span>, <span class="kw">class</span> <span class="kw">=</span> <span class="st">"pizza_percent"</span>)
-}</pre></body></html></div>
+<div class="sourceCode" id="cb63"><pre class="downlit">
+<span class="kw">new_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
+  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span>(<span class="kw">x</span>, class = <span class="st">"pizza_percent"</span>)
+}
+</pre></div>
 <p>Note that the name of the package must be included in the class name (<code>pizza_percent</code>), but it does not need to be included in the constructor name. You do not need to export the constructor, unless you want people to extend your class.</p>
 <p>We can also add a call to <code>setOldClass()</code> for compatibility with S4:</p>
-<div class="sourceCode" id="cb64"><html><body><pre class="r"><span class="co"># for compatibility with the S4 system</span>
-<span class="kw pkg">methods</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/r/methods/setOldClass.html">setOldClass</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"pizza_percent"</span>, <span class="st">"vctrs_vctr"</span>))</pre></body></html></div>
+<div class="sourceCode" id="cb64"><pre class="downlit">
+<span class="co"># for compatibility with the S4 system</span>
+<span class="kw">methods</span>::<span class="fu"><a href="https://rdrr.io/r/methods/setOldClass.html">setOldClass</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"pizza_percent"</span>, <span class="st">"vctrs_vctr"</span>))
+</pre></div>
 <p>Because we’ve used a function from the methods package, you’ll also need to add methods to <code>Imports</code>, with (e.g.) <code>usethis::use_package("methods")</code>. This is a “free” dependency because methods is bundled with every R install.</p>
 <p>Next we implement, export, and document a user-friendly helper: <code>percent()</code>.</p>
-<div class="sourceCode" id="cb65"><html><body><pre class="r"><span class="co">#' `percent` vector</span>
+<div class="sourceCode" id="cb65"><pre class="downlit">
+<span class="co">#' `percent` vector</span>
 <span class="co">#'</span>
 <span class="co">#' This creates a double vector that represents percentages so when it is</span>
 <span class="co">#' printed, it is multiplied by 100 and suffixed with `%`.</span>
@@ -939,51 +1066,62 @@
 <span class="co">#' @export</span>
 <span class="co">#' @examples</span>
 <span class="co">#' percent(c(0.25, 0.5, 0.75))</span>
-<span class="no">percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="no">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
-  <span class="fu">new_percent</span>(<span class="no">x</span>)
-}</pre></body></html></div>
+<span class="kw">percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span> = <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()) {
+  <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span>(<span class="kw">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>())
+  <span class="fu">new_percent</span>(<span class="kw">x</span>)
+}
+</pre></div>
 <p>(Again note that the package name will appear in the class, but does not need to occur in the function, because we can already do <code>pizza::percent()</code>; it would be redundant to have <code>pizza::pizza_percent()</code>.)</p>
 </div>
 <div id="other-helpers" class="section level3">
 <h3 class="hasAnchor">
 <a href="#other-helpers" class="anchor"></a>Other helpers</h3>
 <p>It’s a good idea to provide a function that tests if an object is of this class. If you do so, it makes sense to document it with the user-friendly constructor <code>percent()</code>:</p>
-<div class="sourceCode" id="cb66"><html><body><pre class="r"><span class="co">#' @export</span>
+<div class="sourceCode" id="cb66"><pre class="downlit">
+<span class="co">#' @export</span>
 <span class="co">#' @rdname percent</span>
-<span class="no">is_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(<span class="no">x</span>, <span class="st">"pizza_percent"</span>)
-}</pre></body></html></div>
+<span class="kw">is_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>) {
+  <span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span>(<span class="kw">x</span>, <span class="st">"pizza_percent"</span>)
+}
+</pre></div>
 <p>You’ll also need to update the <code>percent()</code> documentation to reflect that <code>x</code> now means two different things:</p>
-<div class="sourceCode" id="cb67"><html><body><pre class="r">#' @param x
-#'  * For `percent()`: A numeric vector
-#'  * For `is_percent()`: An object to test.</pre></body></html></div>
+<div class="sourceCode" id="cb67"><pre class="downlit">
+<span class="co">#' @param x</span>
+<span class="co">#'  * For `percent()`: A numeric vector</span>
+<span class="co">#'  * For `is_percent()`: An object to test.</span>
+</pre></div>
 <p>Next we provide the key methods to make printing work. These are S3 methods, so they don’t need to be documented, but they do need to be exported.</p>
-<div class="sourceCode" id="cb68"><html><body><pre class="r"><span class="co">#' @export</span>
-<span class="no">format.pizza_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
-  <span class="no">out</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>) * <span class="fl">100</span>, <span class="fl">3</span>))
-  <span class="no">out</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>)] <span class="kw">&lt;-</span> <span class="fl">NA</span>
-  <span class="no">out</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>)] <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">out</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">x</span>)], <span class="st">"%"</span>)
-  <span class="no">out</span>
+<div class="sourceCode" id="cb68"><pre class="downlit">
+<span class="co">#' @export</span>
+<span class="kw">format.pizza_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
+  <span class="kw">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span>(<span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>) <span class="op">*</span> <span class="fl">100</span>, <span class="fl">3</span>))
+  <span class="kw">out</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">x</span>)] <span class="op">&lt;-</span> <span class="fl">NA</span>
+  <span class="kw">out</span>[<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">x</span>)] <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">out</span>[<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">x</span>)], <span class="st">"%"</span>)
+  <span class="kw">out</span>
 }
 
 <span class="co">#' @export</span>
-<span class="no">vec_ptype_abbr.pizza_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">...</span>) {
+<span class="kw">vec_ptype_abbr.pizza_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">...</span>) {
   <span class="st">"prcnt"</span>
-}</pre></body></html></div>
-<p>Finally, we implement methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
-<div class="sourceCode" id="cb69"><html><body><pre class="r"><span class="co">#' @export</span>
-<span class="no">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu">new_percent</span>()
+}
+</pre></div>
+<p>Finally, we implement methods for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
+<div class="sourceCode" id="cb69"><pre class="downlit">
 <span class="co">#' @export</span>
-<span class="no">vec_ptype2.double.vctrs_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()</pre></body></html></div>
+<span class="kw">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu">new_percent</span>()
+<span class="co">#' @export</span>
+<span class="kw">vec_ptype2.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">...</span>) <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span>()
+</pre></div>
 <p>The exact same roxygen2 treatment is needed for <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
-<div class="sourceCode" id="cb70"><html><body><pre class="r"><span class="co">#' @export</span>
-<span class="no">vec_cast.pizza_percent.pizza_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="no">x</span>
+<div class="sourceCode" id="cb70"><pre class="downlit">
 <span class="co">#' @export</span>
-<span class="no">vec_cast.pizza_percent.double</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu">percent</span>(<span class="no">x</span>)
+<span class="kw">vec_cast.pizza_percent.pizza_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="kw">x</span>
+<span class="co">#' @export</span>
+<span class="kw">vec_cast.pizza_percent.double</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu">percent</span>(<span class="kw">x</span>)
 <span class="co">#' @method vec_cast.double pizza_percent</span>
 <span class="co">#' @export</span>
-<span class="no">vec_cast.double.pizza_percent</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>, <span class="no">to</span>, <span class="no">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="no">x</span>)</pre></body></html></div>
+<span class="kw">vec_cast.double.pizza_percent</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">x</span>, <span class="kw">to</span>, <span class="kw">...</span>) <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span>(<span class="kw">x</span>)
+</pre></div>
 </div>
 <div id="testing" class="section level3">
 <h3 class="hasAnchor">
@@ -992,11 +1130,13 @@
 <ul>
 <li><p><code>R/percent.R</code> is the type of file where you really do want 100% test coverage. You can use <code>devtools::test_coverage_file()</code> to check this.</p></li>
 <li><p>Make sure to test behaviour with zero-length inputs and missing values.</p></li>
-<li><p>Use <code><a href="https://testthat.r-lib.org/reference/verify_output.html">testthat::verify_output()</a></code> to test your format method. Customised printing is often a primary motivation for creating your own S3 class in the first place, so this will alert you to unexpected changes in your printed output. Read more about <code>verify_output()</code> in the <a href="https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/">testthat v2.3.0 blog post</a>; it’s an example of a so-called <a href="https://ro-che.info/articles/2017-12-04-golden-tests">golden test</a>.</p></li>
-<li><p>Check for method symmetry; use <code>expect_s3_class()</code>, probably with <code>exact = TRUE</code>, to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
+<li><p>Use <code><a href="https://testthat.r-lib.org/reference/verify_output.html">testthat::verify_output()</a></code> to test your format method. Customised printing is often a primary motivation for creating your own S3 class in the first place, so this will alert you to unexpected changes in your printed output. Read more about <code><a href="https://testthat.r-lib.org/reference/verify_output.html">verify_output()</a></code> in the <a href="https://www.tidyverse.org/blog/2019/11/testthat-2-3-0/">testthat v2.3.0 blog post</a>; it’s an example of a so-called <a href="https://ro-che.info/articles/2017-12-04-golden-tests">golden test</a>.</p></li>
+<li><p>Check for method symmetry; use <code><a href="https://testthat.r-lib.org/reference/inheritance-expectations.html">expect_s3_class()</a></code>, probably with <code>exact = TRUE</code>, to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
 <li>
 <p>Use <code><a href="https://testthat.r-lib.org/reference/expect_error.html">testthat::expect_error()</a></code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
-<div class="sourceCode" id="cb71"><html><body><pre class="r"><span class="fu">expect_error</span>(<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">1</span>, <span class="st">"a"</span>), <span class="kw">class</span> <span class="kw">=</span> <span class="st">"vctrs_error_incompatible_type"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb71"><pre class="downlit">
+<span class="fu"><a href="https://testthat.r-lib.org/reference/expect_error.html">expect_error</a></span>(<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span>(<span class="fl">1</span>, <span class="st">"a"</span>), class = <span class="st">"vctrs_error_incompatible_type"</span>)
+</pre></div>
 </li>
 </ul>
 <p>If your tests pass when run by <code>devtools::test()</code>, but fail when run in <code>R CMD check</code>, it is very likely to reflect a problem with S3 method registration. Carefully check your roxygen2 comments and the generated <code>NAMESPACE</code>.</p>
@@ -1019,7 +1159,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
