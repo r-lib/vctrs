@@ -90,8 +90,6 @@ class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 vctrs::vec_assert(my_df)
 #&amp;gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.
 This is problematic as many tidyverse functions won’t work properly:dplyr::slice(my_df, 1)
-#&amp;gt; Warning: replacing previous import 'vctrs::data_frame' by 'tibble::data_frame'
-#&amp;gt; when loading 'dplyr'
 #&amp;gt; Error: Input must be a vector, not a `data.frame/my_class` object.
 It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
@@ -256,8 +254,6 @@ class</em> is not <code>"data.frame"</code>:<div class="r"></p><pre><span class=
 <span class='kw'>vctrs</span>::<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='kw'>my_df</span>)
 <span class='co'>#&gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.</span></pre><p></div></p>
 <p>This is problematic as many tidyverse functions won’t work properly:<div class="r"></p><pre><span class='kw'>dplyr</span>::<span class='fu'><a href='https://dplyr.tidyverse.org/reference/slice.html'>slice</a></span>(<span class='kw'>my_df</span>, <span class='fl'>1</span>)
-<span class='co'>#&gt; Warning: replacing previous import 'vctrs::data_frame' by 'tibble::data_frame'</span>
-<span class='co'>#&gt; when loading 'dplyr'</span>
 <span class='co'>#&gt; Error: Input must be a vector, not a `data.frame/my_class` object.</span></pre><p></div></p>
 <p>It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
