@@ -2,15 +2,9 @@
 % Please edit documentation in R/type-data-frame.R
 \name{new_data_frame}
 \alias{new_data_frame}
-\alias{vec_ptype2.data.frame}
-\alias{vec_cast.data.frame}
-\title{Data frame class}
+\title{Assemble attributes for data frame construction}
 \usage{
 new_data_frame(x = list(), n = NULL, ..., class = NULL)
-
-\method{vec_ptype2}{data.frame}(x, y, ...)
-
-\method{vec_cast}{data.frame}(x, to, ...)
 }
 \arguments{
 \item{x}{A named list of equal-length vectors. The lengths are not
@@ -28,22 +22,12 @@ respectively:
 \item \code{"row.names"} is used if provided, if \code{n} is provided it must be
 consistent.
 }}
-
-\item{y}{Vector types.}
-
-\item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
 \description{
-A \code{data.frame} is a list with "row.names" attribute. Each
-element of the list must be named, and of the same length. These functions
-help the base data.frame classes fit in to the vctrs type system by
-providing constructors, coercion functions, and casting functions.
-}
-\details{
-\code{new_data_frame()} is meant to be performant, and does not check the inputs
-for correctness in any way. It is only safe to use after a call to
-\code{\link[=df_list]{df_list()}}, which collects and validates the columns used
-to construct the data frame.
+\code{new_data_frame()} constructs a new data frame from an existing list. It is
+meant to be performant, and does not check the inputs for correctness in any
+way. It is only safe to use after a call to \code{\link[=df_list]{df_list()}}, which collects and
+validates the columns used to construct the data frame.
 }
 \examples{
 new_data_frame(list(x = 1:10, y = 10:1))

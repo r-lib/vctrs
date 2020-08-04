@@ -2,7 +2,7 @@
 % Please edit documentation in R/type-data-frame.R
 \name{df_list}
 \alias{df_list}
-\title{Data frame structure}
+\title{Collect columns for data frame construction}
 \usage{
 df_list(
   ...,

@@ -1,15 +1,9 @@
-#' Data frame class
+#' Assemble attributes for data frame construction
 #'
-#' A `data.frame` is a list with "row.names" attribute. Each
-#' element of the list must be named, and of the same length. These functions
-#' help the base data.frame classes fit in to the vctrs type system by
-#' providing constructors, coercion functions, and casting functions.
-#'
-#' @details
-#' `new_data_frame()` is meant to be performant, and does not check the inputs
-#' for correctness in any way. It is only safe to use after a call to
-#' [df_list()], which collects and validates the columns used
-#' to construct the data frame.
+#' `new_data_frame()` constructs a new data frame from an existing list. It is
+#' meant to be performant, and does not check the inputs for correctness in any
+#' way. It is only safe to use after a call to [df_list()], which collects and
+#' validates the columns used to construct the data frame.
 #'
 #' @seealso
 #' [df_list()] for a way to safely construct a data frame's underlying
@@ -37,7 +31,7 @@ new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
 }
 new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
-#' Data frame structure
+#' Collect columns for data frame construction
 #'
 #' `df_list()` constructs the data structure underlying a data
 #' frame, a named list of equal-length vectors. It is often used in
@@ -292,8 +286,16 @@ df_cast_params <- function(x,
   df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
 
-#' @rdname new_data_frame
-#' @inheritParams vec_ptype2
+#' vctrs methods for data frames
+#'
+#' These functions help the base data.frame class fit into the vctrs type system
+#' by providing coercion and casting functions.
+#'
+#' @keywords internal
+#' @name vctrs-data-frame
+NULL
+
+#' @rdname vctrs-data-frame
 #' @export vec_ptype2.data.frame
 #' @method vec_ptype2 data.frame
 #' @export
@@ -444,8 +446,7 @@ known_classes <- function(x) {
 
 # Cast --------------------------------------------------------------------
 
-#' @rdname new_data_frame
-#' @inheritParams vec_cast
+#' @rdname vctrs-data-frame
 #' @export vec_cast.data.frame
 #' @method vec_cast data.frame
 #' @export
