@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Data frame class — new_data_frame • vctrs</title>
+<title>Assemble attributes for data frame construction — new_data_frame • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,11 @@
 
 
 
-<meta property="og:title" content="Data frame class — new_data_frame" />
-<meta property="og:description" content="A data.frame data.frame() is a list with &quot;row.names&quot; attribute. Each
-element of the list must be named, and of the same length. These functions
-help the base data.frame classes fit in to the vctrs type system by
-providing constructors, coercion functions, and casting functions." />
+<meta property="og:title" content="Assemble attributes for data frame construction — new_data_frame" />
+<meta property="og:description" content="new_data_frame() constructs a new data frame from an existing list. It is
+meant to be performant, and does not check the inputs for correctness in any
+way. It is only safe to use after a call to df_list(), which collects and
+validates the columns used to construct the data frame." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -153,25 +153,19 @@ providing constructors, coercion functions, and casting functions." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Data frame class</h1>
+    <h1>Assemble attributes for data frame construction</h1>
     <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/type-data-frame.R'><code>R/type-data-frame.R</code></a></small>
     <div class="hidden name"><code>new_data_frame.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A <code>data.frame</code> <code><a href='https://rdrr.io/r/base/data.frame.html'>data.frame()</a></code> is a list with "row.names" attribute. Each
-element of the list must be named, and of the same length. These functions
-help the base data.frame classes fit in to the vctrs type system by
-providing constructors, coercion functions, and casting functions.</p>
+    <p><code>new_data_frame()</code> constructs a new data frame from an existing list. It is
+meant to be performant, and does not check the inputs for correctness in any
+way. It is only safe to use after a call to <code><a href='df_list.html'>df_list()</a></code>, which collects and
+validates the columns used to construct the data frame.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_data_frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), <span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
-
-<span class='co'># S3 method for data.frame</span>
-<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for data.frame</span>
-<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='no'>x</span>, <span class='no'>to</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>new_data_frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), <span class='kw'>n</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -199,6 +193,11 @@ consistent.</p></li>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='df_list.html'>df_list()</a></code> for a way to safely construct a data frame's underlying
+data structure from individual columns. This can be used to create a
+named list for further use by <code>new_data_frame()</code>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>new_data_frame</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>10</span>:<span class='fl'>1</span>))</div><div class='output co'>#&gt;     x  y

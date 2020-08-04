@@ -174,6 +174,11 @@
 <a href="#using-in-a-tibble" class="anchor"></a>Using in a tibble</h2>
 <p>Columns of this class can be used in a tibble right away because we’ve made a class using the vctrs infrastructure and have provided a <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method:</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tibble</span>)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'tibble'</span>
+<span class="co">#&gt; The following object is masked from 'package:vctrs':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     data_frame</span>
 
 <span class="no">loc</span> <span class="kw">&lt;-</span> <span class="fu">latlon</span>(
   <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">28.3411783</span>, <span class="fl">32.7102978</span>, <span class="fl">30.2622356</span>, <span class="fl">37.7859102</span>, <span class="fl">28.5</span>, <span class="fl">NA</span>),
