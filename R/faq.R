@@ -5,6 +5,7 @@
 #' @name faq-compatibility-types
 NULL
 
+
 #' FAQ - Error/Warning: Some attributes are incompatible
 #'
 #' @description
@@ -19,4 +20,12 @@ NULL
 #' @includeRmd man/faq/developer/links-coercion.Rmd
 #'
 #' @name faq-error-incompatible-attributes
+NULL
+
+
+#' FAQ - Error: Input must be a vector
+#'
+#' @includeRmd man/faq/user/faq-error-scalar-type.Rmd description
+#'
+#' @name faq-error-scalar-type
 NULL

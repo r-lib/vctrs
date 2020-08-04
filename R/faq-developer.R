@@ -25,3 +25,10 @@ NULL
 #'
 #' @name howto-faq-coercion-data-frame
 NULL
+
+#' FAQ - Why isn't my class treated as a vector?
+#'
+#' @includeRmd man/faq/developer/howto-faq-fix-scalar-type-error.Rmd description
+#'
+#' @name howto-faq-fix-scalar-type-error
+NULL
