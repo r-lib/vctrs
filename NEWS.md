@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `new_vctr()` now inherits from the base type of its input by
+  default.
+
 * New performant `data_frame()` constructor for creating data frames in a way
   that follows tidyverse semantics. Among other things, inputs are recycled
   using tidyverse recycling rules, strings are never converted to factors,

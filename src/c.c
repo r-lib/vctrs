@@ -180,9 +180,7 @@ bool needs_vec_c_fallback(SEXP ptype) {
 
   // Suboptimal: Prevent infinite recursion through `vctrs_vctr` method
   SEXP class = PROTECT(Rf_getAttrib(ptype, syms_fallback_class));
-  class = r_chr_get(class, r_length(class) - 1);
-
-  if (class == strings_vctrs_vctr) {
+  if (r_chr_has_string(class, strings_vctrs_vctr)) {
     UNPROTECT(1);
     return false;
   }

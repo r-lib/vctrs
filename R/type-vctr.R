@@ -67,7 +67,7 @@
 new_vctr <- function(.data,
                      ...,
                      class = character(),
-                     inherit_base_type = NULL) {
+                     inherit_base_type = TRUE) {
   if (!is_vector(.data)) {
     abort("`.data` must be a vector type.")
   }
@@ -78,17 +78,9 @@ new_vctr <- function(.data,
     if (is.data.frame(.data)) {
       abort("`.data` can't be a data frame.")
     }
-
-    if (is.null(inherit_base_type)) {
-      inherit_base_type <- TRUE
-    } else if (is_false(inherit_base_type)) {
+    if (is_false(inherit_base_type)) {
       abort("List `.data` must inherit from the base type.")
     }
-  }
-
-  # Default to `FALSE` in all cases except lists
-  if (is.null(inherit_base_type)) {
-    inherit_base_type <- FALSE
   }
 
   class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
