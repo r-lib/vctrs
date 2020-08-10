@@ -35,3 +35,21 @@ test_that("list_flatten() creates output of type `ptype`", {
     new_count_list(list(1, 2))
   )
 })
+
+test_that("list_flatten() creates atomic vectors if requested", {
+  expect_identical(
+    list_flatten(list(1, list(2)), ptype = int()),
+    1:2
+  )
+
+  x <- list(x = 1, y = list(foo = 2))
+  expect_identical(
+    list_flatten(x, ptype = int(), name_spec = "{outer}_{inner}"),
+    c(x = 1L, y_foo = 2L)
+  )
+
+  expect_error(
+    list_flatten(list(1, list(list(2))), ptype = int()),
+    class = "vctrs_error_incompatible_type"
+  )
+})
