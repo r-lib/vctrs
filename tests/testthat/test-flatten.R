@@ -53,3 +53,17 @@ test_that("list_flatten() creates atomic vectors if requested", {
     class = "vctrs_error_incompatible_type"
   )
 })
+
+test_that("list_flatten() preserves `NULL` elements for list ptypes", {
+  # They are compacted in `purrr::flatten()`. This doesn't seem right
+  # because `NULL` represents the missing element of lists and is
+  # semantically different from an empty list. From this viewpoint,
+  # compacting `NULL` is like compacting `NA` values in atomic
+  # vectors.
+  expect_identical(list_flatten(list(NULL,  NULL)), list(NULL, NULL))
+  expect_identical(list_flatten(list(list(), NULL, list())), list(NULL))
+})
+
+test_that("list_flatten() compacts `NULL` elements for atomic ptypes", {
+  expect_identical(list_flatten(list(NA, NULL, 1:3), ptype = int()), c(NA, 1:3))
+})
