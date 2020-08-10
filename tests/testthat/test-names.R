@@ -810,3 +810,19 @@ test_that("can pass glue string as name spec", {
 test_that("`outer` is recycled before name spec is invoked", {
   expect_identical(vec_c(outer = 1:2, .name_spec = "{outer}"), c(outer = 1L, outer = 2L))
 })
+
+test_that("apply_name_spec() recycles return value not arguments (#1099)", {
+  out <- unstructure(apply_name_spec("foo", "outer", c("a", "b", "c")))
+  expect_identical(out, c("foo", "foo", "foo"))
+
+  inner <- NULL
+  outer <- NULL
+  spec <- function(outer, inner) {
+    inner <<- inner
+    outer <<- outer
+  }
+
+  apply_name_spec(spec, "outer", c("a", "b", "c"))
+  expect_identical(inner, c("a", "b", "c"))
+  expect_identical(outer, "outer")
+})
