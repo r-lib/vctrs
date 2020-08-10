@@ -27,3 +27,11 @@ test_that("list_flatten() doesn't flatten data frames", {
   x <- list(1L, data.frame(x = 2:3))
   expect_identical(list_flatten(x), x)
 })
+
+test_that("list_flatten() creates output of type `ptype`", {
+  local_count_list_methods()
+  expect_identical(
+    list_flatten(list(1, list(2)), ptype = new_count_list()),
+    new_count_list(list(1, 2))
+  )
+})

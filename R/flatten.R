@@ -32,7 +32,7 @@
 #' @inheritParams vec_unchop
 #'
 #' @noRd
-list_flatten <- function(x, ..., name_spec = NULL) {
+list_flatten <- function(x, ..., ptype = x, name_spec = NULL) {
   ellipsis::check_dots_empty()
   list_assert(x)
 
@@ -40,7 +40,7 @@ list_flatten <- function(x, ..., name_spec = NULL) {
   out <- map_if(x, negate(vec_is_list), list)
 
   # Concatenate the elements (now all lists) in a single list
-  vec_unchop(out, ptype = x, name_spec = name_spec)
+  vec_unchop(out, ptype = ptype, name_spec = name_spec)
 }
 
 list_assert <- function(x, arg = as_label(substitute(x))) {

@@ -156,7 +156,7 @@ with_foobar_df_methods <- function(expr) {
 }
 
 # Stores number of elements in an attribute
-new_count_list <- function(x) {
+new_count_list <- function(x = list()) {
   stopifnot(vec_is_list(x))
   structure(
     x,
