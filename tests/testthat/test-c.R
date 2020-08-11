@@ -405,3 +405,38 @@ test_that("vec_c() has informative error messages", {
     vec_c(a = c(b = letters), b = 1, .name_spec = zap())
   })
 })
+
+test_that("concatenation performs expected allocations", {
+  verify_output(test_path("performance", "test-c.txt"), {
+    ints <- rep(list(1L), 1e2)
+    dbls <- rep(list(1), 1e2)
+
+    # Extra allocations from `list2()`, see r-lib/rlang#937
+    "# `vec_c()` "
+    "Integers"
+    with_memory_prof(vec_c(!!!ints))
+
+    "Doubles"
+    with_memory_prof(vec_c(!!!dbls))
+
+    "Integers to integer"
+    with_memory_prof(vec_c(!!!ints, ptype = int()))
+
+    "Doubles to integer"
+    with_memory_prof(vec_c(!!!dbls, ptype = int()))
+
+
+    "# `vec_unchop()` "
+    "Integers"
+    with_memory_prof(vec_unchop(ints))
+
+    "Doubles"
+    with_memory_prof(vec_unchop(dbls))
+
+    "Integers to integer"
+    with_memory_prof(vec_unchop(ints, ptype = int()))
+
+    "Doubles to integer"
+    with_memory_prof(vec_unchop(dbls, ptype = int()))
+  })
+})

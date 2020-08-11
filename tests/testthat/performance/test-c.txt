@@ -1,0 +1,42 @@
+> ints <- rep(list(1L), 100)
+> dbls <- rep(list(1), 100)
+
+`vec_c()` 
+==========
+
+> # Integers
+> with_memory_prof(vec_c(!!!ints))
+[1] 1744
+
+> # Doubles
+> with_memory_prof(vec_c(!!!dbls))
+[1] 2144
+
+> # Integers to integer
+> with_memory_prof(vec_c(!!!ints, ptype = int()))
+[1] 3464
+
+> # Doubles to integer
+> with_memory_prof(vec_c(!!!dbls, ptype = int()))
+[1] 3864
+
+
+`vec_unchop()` 
+===============
+
+> # Integers
+> with_memory_prof(vec_unchop(ints))
+[1] 896
+
+> # Doubles
+> with_memory_prof(vec_unchop(dbls))
+[1] 1296
+
+> # Integers to integer
+> with_memory_prof(vec_unchop(ints, ptype = int()))
+[1] 896
+
+> # Doubles to integer
+> with_memory_prof(vec_unchop(dbls, ptype = int()))
+[1] 896
+
