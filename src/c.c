@@ -85,14 +85,14 @@ SEXP vec_c_opts(SEXP xs,
   R_len_t out_size = 0;
 
   // Caching the sizes causes an extra allocation but it improves performance
-  SEXP ns_placeholder = PROTECT(Rf_allocVector(INTSXP, n));
-  int* ns = INTEGER(ns_placeholder);
+  SEXP sizes = PROTECT(Rf_allocVector(INTSXP, n));
+  int* p_sizes = INTEGER(sizes);
 
   for (R_len_t i = 0; i < n; ++i) {
     SEXP x = VECTOR_ELT(xs, i);
     R_len_t size = (x == R_NilValue) ? 0 : vec_size(x);
     out_size += size;
-    ns[i] = size;
+    p_sizes[i] = size;
   }
 
   PROTECT_INDEX out_pi;
@@ -102,7 +102,7 @@ SEXP vec_c_opts(SEXP xs,
   REPROTECT(out, out_pi);
 
   SEXP idx = PROTECT(compact_seq(0, 0, true));
-  int* idx_ptr = INTEGER(idx);
+  int* p_idx = INTEGER(idx);
 
   SEXP xs_names = PROTECT(r_names(xs));
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
@@ -121,7 +121,7 @@ SEXP vec_c_opts(SEXP xs,
   };
 
   for (R_len_t i = 0; i < n; ++i) {
-    R_len_t size = ns[i];
+    R_len_t size = p_sizes[i];
     if (!size) {
       continue;
     }
@@ -133,7 +133,7 @@ SEXP vec_c_opts(SEXP xs,
     };
     SEXP x = PROTECT(vec_cast_opts(&opts));
 
-    init_compact_seq(idx_ptr, counter, size, true);
+    init_compact_seq(p_idx, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
     out = vec_proxy_assign_opts(out, idx, x, VCTRS_OWNED_true, &c_assign_opts);
