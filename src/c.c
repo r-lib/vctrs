@@ -41,7 +41,7 @@ SEXP vec_c_opts(SEXP xs,
                 SEXP ptype,
                 SEXP name_spec,
                 const struct name_repair_opts* name_repair,
-                struct fallback_opts* fallback_opts) {
+                const struct fallback_opts* fallback_opts) {
   SEXP orig_ptype = ptype;
   ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, fallback_opts));
 
