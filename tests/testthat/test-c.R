@@ -232,6 +232,26 @@ test_that("vec_c() falls back to c() if S3 method is available", {
   )
 })
 
+test_that("c() fallback is consistent (FIXME)", {
+  out <- with_methods(
+    c.vctrs_foobar = function(...) structure(NextMethod(), class = "dispatched"),
+    list(
+      direct = vec_c(foobar(1L), foobar(2L)),
+      df = vec_c(data_frame(x = foobar(1L)), data_frame(x = foobar(2L))),
+      tib = vec_c(tibble(x = foobar(1L)), tibble(x = foobar(2L))),
+      foreign_df = vec_c(foobaz(data_frame(x = foobar(1L))), foobaz(data_frame(x = foobar(2L))))
+    )
+  )
+
+  # Proper `c()` dispatch:
+  expect_identical(out$direct, structure(1:2, class = "dispatched"))
+
+  # Inconsistent:
+  expect_identical(out$df$x, foobar(1:2))
+  expect_identical(out$tib$x, foobar(1:2))
+  expect_identical(out$foreign_df$x, foobar(1:2))
+})
+
 test_that("vec_c() falls back to c() if S4 method is available", {
   joe1 <- .Counts(c(1L, 2L), name = "Joe")
   joe2 <- .Counts(3L, name = "Joe")
@@ -383,5 +403,40 @@ test_that("vec_c() has informative error messages", {
 
     "# can ignore names by providing a `zap()` name-spec (#232)"
     vec_c(a = c(b = letters), b = 1, .name_spec = zap())
+  })
+})
+
+test_that("concatenation performs expected allocations", {
+  verify_output(test_path("performance", "test-c.txt"), {
+    ints <- rep(list(1L), 1e2)
+    dbls <- rep(list(1), 1e2)
+
+    # Extra allocations from `list2()`, see r-lib/rlang#937
+    "# `vec_c()` "
+    "Integers"
+    with_memory_prof(vec_c(!!!ints))
+
+    "Doubles"
+    with_memory_prof(vec_c(!!!dbls))
+
+    "Integers to integer"
+    with_memory_prof(vec_c(!!!ints, ptype = int()))
+
+    "Doubles to integer"
+    with_memory_prof(vec_c(!!!dbls, ptype = int()))
+
+
+    "# `vec_unchop()` "
+    "Integers"
+    with_memory_prof(vec_unchop(ints))
+
+    "Doubles"
+    with_memory_prof(vec_unchop(dbls))
+
+    "Integers to integer"
+    with_memory_prof(vec_unchop(ints, ptype = int()))
+
+    "Doubles to integer"
+    with_memory_prof(vec_unchop(dbls, ptype = int()))
   })
 })

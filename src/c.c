@@ -41,7 +41,7 @@ SEXP vec_c_opts(SEXP xs,
                 SEXP ptype,
                 SEXP name_spec,
                 const struct name_repair_opts* name_repair,
-                struct fallback_opts* fallback_opts) {
+                const struct fallback_opts* fallback_opts) {
   SEXP orig_ptype = ptype;
   ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, fallback_opts));
 
@@ -75,19 +75,16 @@ SEXP vec_c_opts(SEXP xs,
       vec_is_common_class_fallback(ptype)) {
     struct fallback_opts d_fallback_opts = *fallback_opts;
     d_fallback_opts.s3 = S3_FALLBACK_false;
-
-    UNPROTECT(1);
     ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, &d_fallback_opts));
-    xs = vec_cast_common_opts(xs, ptype, &d_fallback_opts);
   } else {
-    xs = vec_cast_common_opts(xs, ptype, fallback_opts);
+    ptype = PROTECT(vec_ptype_common_opts(xs, ptype, fallback_opts));
   }
-  PROTECT(xs);
 
   // Find individual input sizes and total size of output
   R_len_t n = Rf_length(xs);
   R_len_t out_size = 0;
 
+  // Caching the sizes causes an extra allocation but it improves performance
   SEXP ns_placeholder = PROTECT(Rf_allocVector(INTSXP, n));
   int* ns = INTEGER(ns_placeholder);
 
@@ -129,7 +126,12 @@ SEXP vec_c_opts(SEXP xs,
       continue;
     }
 
-    SEXP x = VECTOR_ELT(xs, i);
+    struct cast_opts opts = (struct cast_opts) {
+      .x = VECTOR_ELT(xs, i),
+      .to = ptype,
+      .fallback = *fallback_opts
+    };
+    SEXP x = PROTECT(vec_cast_opts(&opts));
 
     init_compact_seq(idx_ptr, counter, size, true);
 
@@ -151,6 +153,7 @@ SEXP vec_c_opts(SEXP xs,
     }
 
     counter += size;
+    UNPROTECT(1);
   }
 
   out = PROTECT(vec_restore(out, ptype, R_NilValue, VCTRS_OWNED_true));

@@ -8,7 +8,7 @@ SEXP vec_c_opts(SEXP xs,
                 SEXP ptype,
                 SEXP name_spec,
                 const struct name_repair_opts* name_repair,
-                struct fallback_opts* fallback_opts);
+                const struct fallback_opts* fallback_opts);
 
 SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec);
 SEXP vec_c_fallback(SEXP ptype,
