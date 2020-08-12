@@ -386,7 +386,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     return proxy;
   }
 
-  SEXP proxy_nms = PROTECT(vec_names(proxy));
+  SEXP proxy_nms = PROTECT(vec_proxy_names(proxy));
   if (proxy_nms == R_NilValue) {
     proxy_nms = PROTECT(Rf_allocVector(STRSXP, vec_size(proxy)));
   } else {
@@ -396,7 +396,7 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
   proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, VCTRS_OWNED_true));
 
   proxy = PROTECT(r_clone_referenced(proxy));
-  proxy = vec_set_names(proxy, proxy_nms);
+  proxy = vec_proxy_set_names(proxy, proxy_nms);
 
   UNPROTECT(5);
   return proxy;
