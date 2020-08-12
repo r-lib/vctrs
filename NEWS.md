@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* Fixed several performance issues in `vec_c()` and `vec_unchop()`
+  with named vectors.
+
 * The restriction that S3 lists must have a list-based proxy to be considered
   lists by `vec_is_list()` has been removed (#1208).
 
