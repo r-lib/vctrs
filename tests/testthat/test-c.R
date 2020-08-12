@@ -449,7 +449,8 @@ test_that("concatenation performs expected allocations", {
     "Data frame with named columns"
     df <- data_frame(
       x = set_names(as.list(1:2), c("a", "b")),
-      y = set_names(1:2, c("A", "B"))
+      y = set_names(1:2, c("A", "B")),
+      z = data_frame(Z = set_names(1:2, c("Za", "Zb")))
     )
     dfs <- rep(list(df), 1e2)
     with_memory_prof(vec_unchop(dfs))
