@@ -32,7 +32,8 @@ with_memory_prof <- function(expr) {
   utils::Rprofmem(NULL)
 
   bytes <- parse_allocations(f)$bytes
-  sum(bytes, na.rm = TRUE)
+  bytes <- sum(bytes, na.rm = TRUE)
+  new_vctrs_bytes(bytes)
 }
 parse_allocations <- function(filename) {
   if (!is_installed("profmem")) {

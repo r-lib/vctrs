@@ -220,3 +220,60 @@ import_from <- function(ns, names, env = caller_env()) {
 fast_c <- function(x, y) {
   .Call(vctrs_fast_c, x, y)
 }
+
+# Based on r-lib/bench (itself based on gaborcsardi/prettyunits)
+#' @export
+format.vctrs_bytes <- function(x, scientific = FALSE, digits = 3, drop0trailing = TRUE, ...) {
+  nms <- names(x)
+
+  bytes <- unclass(x)
+
+  unit <- map_chr(x, find_unit, byte_units)
+  res <- round(bytes / byte_units[unit], digits = digits)
+
+  ## Zero bytes
+  res[bytes == 0] <- 0
+  unit[bytes == 0] <- "B"
+
+  ## NA and NaN bytes
+  res[is.na(bytes)] <- NA_real_
+  res[is.nan(bytes)] <- NaN
+  unit[is.na(bytes)] <- ""            # Includes NaN as well
+
+  # Append an extra B to each unit
+  large_units <- unit %in% names(byte_units)[-1]
+  unit[large_units] <- paste0(unit[large_units], "B")
+
+  res <- format(res, scientific = scientific, digits = digits, drop0trailing = drop0trailing, ...)
+
+  stats::setNames(paste0(res, unit), nms)
+}
+#' @export
+print.vctrs_bytes <- function(x, ...) {
+  print(format(x, ...), quote = FALSE)
+}
+
+tolerance <- sqrt(.Machine$double.eps)
+find_unit <- function(x, units) {
+  if (is.na(x) || is.nan(x) || x <= 0 || is.infinite(x)) {
+    return(NA_character_)
+  }
+  epsilon <- 1 - (x * (1 / units))
+  names(utils::tail(n = 1, which(epsilon < tolerance)))
+}
+
+byte_units <- c(
+  'B' = 1,
+  'K' = 1024,
+  'M' = 1024 ^ 2,
+  'G' = 1024 ^ 3,
+  'T' = 1024 ^ 4,
+  'P' = 1024 ^ 5,
+  'E' = 1024 ^ 6,
+  'Z' = 1024 ^ 7,
+  'Y' = 1024 ^ 8
+)
+
+new_vctrs_bytes <- function(x) {
+  structure(x, class = c("vctrs_bytes", "numeric"))
+}
