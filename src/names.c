@@ -727,13 +727,13 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
   return x;
 }
 
-SEXP vec_set_df_rownames(SEXP x, SEXP names) {
+SEXP vec_set_df_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
   if (names == R_NilValue) {
     if (rownames_type(df_rownames(x)) != ROWNAMES_IDENTIFIERS) {
       return(x);
     }
 
-    x = PROTECT(r_clone_referenced(x));
+    x = PROTECT(vec_clone_referenced(x, owned));
     init_compact_rownames(x, vec_size(x));
 
     UNPROTECT(1);
@@ -741,9 +741,12 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
   }
 
   // Repair row names silently
-  names = PROTECT(vec_as_names(names, p_unique_repair_silent_opts));
+  if (!proxy) {
+    names = vec_as_names(names, p_unique_repair_silent_opts);
+  }
+  PROTECT(names);
 
-  x = PROTECT(r_clone_referenced(x));
+  x = PROTECT(vec_clone_referenced(x, owned));
   Rf_setAttrib(x, R_RowNamesSymbol, names);
 
   UNPROTECT(2);
@@ -756,7 +759,7 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
   check_names(x, names);
 
   if (is_data_frame(x)) {
-    return vec_set_df_rownames(x, names);
+    return vec_set_df_rownames(x, names, proxy, owned);
   }
 
   if (has_dim(x)) {

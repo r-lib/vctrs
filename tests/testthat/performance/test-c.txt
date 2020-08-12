@@ -53,6 +53,30 @@ Concatenation with with names
 > df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
 +   "A", "B")))
 > dfs <- rep(list(df), 100)
-> with_memory_prof(vec_unchop(ints))
-[1] 6592
+> with_memory_prof(vec_unchop(dfs))
+[1] 6240
+
+> # Data frame with rownames (non-repaired, non-recursive case)
+> df <- data_frame(x = 1:2)
+> dfs <- rep(list(df), 100)
+> dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 5904
+
+> # Data frame with rownames (repaired, non-recursive case)
+> dfs <- map(dfs, set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 13456
+
+> # FIXME: Data frame with rownames (non-repaired, recursive case)
+> df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
+> dfs <- rep(list(df), 100)
+> dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 1052048
+
+> # FIXME: Data frame with rownames (repaired, recursive case)
+> dfs <- map(dfs, set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 1067152
 

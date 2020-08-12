@@ -396,7 +396,6 @@ SEXP vec_proxy_assign_names(SEXP proxy,
   } else {
     proxy_nms = PROTECT(vec_clone_referenced(proxy_nms, owned));
   }
-
   proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, owned));
 
   proxy = PROTECT(vec_clone_referenced(proxy, owned));
