@@ -611,4 +611,10 @@ extern SEXP base_method_table;
 extern SEXP s4_c_method_table;
 
 
+#if defined(RLIB_DEBUG)
+SEXP R_inspect(SEXP x);
+SEXP R_inspect3(SEXP x, int deep, int pvec);
+#endif
+
+
 #endif
