@@ -441,7 +441,17 @@ test_that("concatenation performs expected allocations", {
 
 
     "# Concatenation with with names"
+
+    "Named integers"
     ints <- rep(list(set_names(1:3, letters[1:3])), 1e2)
+    with_memory_prof(vec_unchop(ints))
+
+    "Data frame with named columns"
+    df <- data_frame(
+      x = set_names(as.list(1:2), c("a", "b")),
+      y = set_names(1:2, c("A", "B"))
+    )
+    dfs <- rep(list(df), 1e2)
     with_memory_prof(vec_unchop(ints))
   })
 })

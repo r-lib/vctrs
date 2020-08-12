@@ -34,5 +34,8 @@ SEXP vec_as_unique_names(SEXP names, bool quiet);
 SEXP r_seq_chr(const char* prefix, R_len_t n);
 SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep);
 
+#include "owned.h"
+SEXP vec_proxy_set_names(SEXP x, SEXP names, const enum vctrs_owned owned);
+
 
 #endif

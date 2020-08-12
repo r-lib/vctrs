@@ -752,7 +752,7 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
 
 // FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
 // exist? See #526 and #531 for discussion and the related issue.
-SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy) {
+SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
   check_names(x, names);
 
   if (is_data_frame(x)) {
@@ -772,7 +772,7 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy) {
     return x;
   }
 
-  x = PROTECT(r_clone_referenced(x));
+  x = PROTECT(vec_clone_referenced(x, owned));
   Rf_setAttrib(x, R_NamesSymbol, names);
 
   UNPROTECT(1);
@@ -780,11 +780,11 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy) {
 }
 // [[ include("utils.h"); register() ]]
 SEXP vec_set_names(SEXP x, SEXP names) {
-  return vec_set_names_impl(x, names, false);
+  return vec_set_names_impl(x, names, false, VCTRS_OWNED_false);
 }
 // [[ include("utils.h") ]]
-SEXP vec_proxy_set_names(SEXP x, SEXP names) {
-  return vec_set_names_impl(x, names, true);
+SEXP vec_proxy_set_names(SEXP x, SEXP names, const enum vctrs_owned owned) {
+  return vec_set_names_impl(x, names, true, owned);
 }
 
 
