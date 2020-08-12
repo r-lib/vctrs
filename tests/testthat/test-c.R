@@ -438,5 +438,10 @@ test_that("concatenation performs expected allocations", {
 
     "Doubles to integer"
     with_memory_prof(vec_unchop(dbls, ptype = int()))
+
+
+    "# Concatenation with with names"
+    ints <- rep(list(set_names(1:3, letters[1:3])), 1e2)
+    with_memory_prof(vec_unchop(ints))
   })
 })
