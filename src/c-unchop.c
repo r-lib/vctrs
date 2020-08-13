@@ -84,22 +84,9 @@ static SEXP vec_unchop(SEXP xs,
 
   xs = PROTECT(vec_cast_common(xs, ptype));
 
-  SEXP xs_names = PROTECT(r_names(xs));
-
-  bool has_outer_names = (xs_names != R_NilValue);
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
-  bool has_names =
-    assign_names &&
-    !is_data_frame(ptype) &&
-    (has_outer_names || list_has_inner_vec_names(xs, x_size));
-
-  // Element sizes are only required for applying the `name_spec`
-  SEXP sizes = vctrs_shared_empty_int;
-  if (has_names) {
-    sizes = Rf_allocVector(INTSXP, x_size);
-  }
-  PROTECT(sizes);
-  int* p_sizes = INTEGER(sizes);
+  SEXP xs_names = PROTECT(r_names(xs));
+  bool xs_is_named = xs_names != R_NilValue && !is_data_frame(ptype);
 
   R_len_t out_size = 0;
 
@@ -111,12 +98,8 @@ static SEXP vec_unchop(SEXP xs,
       continue;
     }
 
-    R_len_t index_size = vec_size(VECTOR_ELT(indices, i));
+    R_len_t index_size = Rf_length(VECTOR_ELT(indices, i));
     out_size += index_size;
-
-    if (has_names) {
-      p_sizes[i] = index_size;
-    }
 
     // Each element of `xs` is recycled to its corresponding index's size
     x = vec_recycle(x, index_size, args_empty);
@@ -132,11 +115,8 @@ static SEXP vec_unchop(SEXP xs,
   proxy = vec_init(proxy, out_size);
   REPROTECT(proxy, proxy_pi);
 
+  SEXP out_names = R_NilValue;
   PROTECT_INDEX out_names_pi;
-  SEXP out_names = vctrs_shared_empty_chr;
-  if (has_names) {
-    out_names = Rf_allocVector(STRSXP, out_size);
-  }
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
   const struct vec_assign_opts unchop_assign_opts = {
@@ -156,15 +136,20 @@ static SEXP vec_unchop(SEXP xs,
     proxy = vec_proxy_assign_opts(proxy, loc, x, VCTRS_OWNED_true, &unchop_assign_opts);
     REPROTECT(proxy, proxy_pi);
 
-    if (has_names) {
-      R_len_t size = p_sizes[i];
-      SEXP outer = (has_outer_names) ? STRING_ELT(xs_names, i) : R_NilValue;
+    if (assign_names) {
+      R_len_t size = Rf_length(loc);
+      SEXP outer = xs_is_named ? STRING_ELT(xs_names, i) : R_NilValue;
       SEXP inner = PROTECT(vec_names(x));
-      SEXP x_names = PROTECT(apply_name_spec(name_spec, outer, inner, size));
-      if (x_names != R_NilValue) {
-        out_names = chr_assign(out_names, loc, x_names, VCTRS_OWNED_true);
-        REPROTECT(out_names, out_names_pi);
+      SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
+
+      if (x_nms != R_NilValue) {
+        R_LAZY_ALLOC(out_names, out_names_pi, STRSXP, out_size);
+        if (x_nms != chrs_empty) {
+          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
+          REPROTECT(out_names, out_names_pi);
+        }
       }
+
       UNPROTECT(2);
     }
   }
@@ -173,7 +158,7 @@ static SEXP vec_unchop(SEXP xs,
 
   SEXP out = PROTECT(vec_restore(proxy, ptype, out_size_sexp, VCTRS_OWNED_true));
 
-  if (has_names) {
+  if (out_names != R_NilValue) {
     out_names = PROTECT(vec_as_names(out_names, name_repair));
     out = vec_set_names(out, out_names);
     UNPROTECT(1);
@@ -184,7 +169,7 @@ static SEXP vec_unchop(SEXP xs,
     out = vec_set_names(out, R_NilValue);
   }
 
-  UNPROTECT(9);
+  UNPROTECT(8);
   return out;
 }
 
