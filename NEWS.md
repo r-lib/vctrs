@@ -1,6 +1,24 @@
 
 # vctrs (development version)
 
+* Name specifications can now return `NULL`. The names vector will
+  only be allocated if the spec function returns non-`NULL` during the
+  concatenation. This makes it possible to ignore outer names without
+  having to create an empty names vector when there are no inner
+  names:
+
+  ```
+  zap_outer_spec <- function(outer, inner) if (is_character(inner)) inner
+
+  # `NULL` names rather than a vector of ""
+  names(vec_c(a = 1:2, .name_spec = zap_outer_spec))
+  #> NULL
+
+  # Names are allocated when inner names exist
+  names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
+  #> [1] ""  ""  "b"
+  ```
+
 * Fixed several performance issues in `vec_c()` and `vec_unchop()`
   with named vectors.
 

@@ -950,6 +950,24 @@ test_that("can't zap names when `.names_to` is supplied", {
   )
 })
 
+test_that("can zap outer names from a name-spec (#1215)", {
+  zap_outer_spec <- function(outer, inner) if (is_character(inner)) inner
+
+  df <- data.frame(x = 1:2)
+  df_named <- data.frame(x = 3L, row.names = "foo")
+
+  expect_null(
+    vec_names(vec_rbind(a = df, .names_to = NULL, .name_spec = zap_outer_spec))
+  )
+  expect_identical(
+    vec_names(vec_rbind(a = df, df_named, .name_spec = zap_outer_spec)),
+    c("...1", "...2", "foo")
+  )
+})
+
+
+# Golden tests -------------------------------------------------------
+
 test_that("rows-binding performs expected allocations", {
   verify_output(test_path("performance", "test-bind.txt"), {
     ints <- rep(list(1L), 1e2)

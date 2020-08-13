@@ -578,11 +578,13 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
                              syms_outer, outer_chr,
                              syms_inner, inner);
 
-  if (TYPEOF(out) != STRSXP) {
-    Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector.");
-  }
-  if (Rf_length(out) != n) {
-    Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector as long as `inner`.");
+  if (out != R_NilValue) {
+    if (TYPEOF(out) != STRSXP) {
+      Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector.");
+    }
+    if (Rf_length(out) != n) {
+      Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector as long as `inner`.");
+    }
   }
 
   UNPROTECT(3);
