@@ -233,6 +233,13 @@ R_len_t r_chr_find(SEXP x, SEXP value);
 int r_chr_max_len(SEXP x);
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix);
 
+#define R_LAZY_ALLOC(SYM, PI, R_TYPE, SIZE) do {        \
+    if (SYM == R_NilValue) {                            \
+      SYM = Rf_allocVector(R_TYPE, SIZE);               \
+      REPROTECT(SYM, PI);                               \
+    }                                                   \
+  } while (0);
+
 static inline
 SEXP r_new_logical(R_len_t n) {
   return Rf_allocVector(LGLSXP, n);

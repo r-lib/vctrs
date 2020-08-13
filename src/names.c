@@ -537,7 +537,11 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   }
 
   if (outer == strings_empty || outer == NA_STRING) {
-    return inner;
+    if (inner == R_NilValue) {
+      return chrs_empty;
+    } else {
+      return inner;
+    }
   }
 
   if (r_is_empty_names(inner)) {
