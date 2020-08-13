@@ -184,6 +184,10 @@ static SEXP vec_rbind(SEXP xs,
     out = df_assign(out, idx, x, VCTRS_OWNED_true, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
+    // FIXME: This work happens in parallel to the names assignment in
+    // `df_assign()`. We should add a way to instruct df-assign to
+    // ignore the outermost names (but still assign inner names in
+    // case of data frames).
     if (has_rownames) {
       SEXP rn = df_rownames(x);
 

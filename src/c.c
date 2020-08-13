@@ -139,6 +139,10 @@ SEXP vec_c_opts(SEXP xs,
     out = vec_proxy_assign_opts(out, idx, x, VCTRS_OWNED_true, &c_assign_opts);
     REPROTECT(out, out_pi);
 
+    // FIXME: This work happens in parallel to the names assignment in
+    // `vec_proxy_assign()`. We should add a way to instruct
+    // proxy-assign to ignore the outermost names (but still assign
+    // inner names in case of data frames).
     if (has_names) {
       SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
       SEXP inner = PROTECT(vec_names(x));
