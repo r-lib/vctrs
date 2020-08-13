@@ -102,8 +102,8 @@ SEXP vec_c_opts(SEXP xs,
   out = vec_proxy(out);
   REPROTECT(out, out_pi);
 
-  SEXP idx = PROTECT(compact_seq(0, 0, true));
-  int* p_idx = INTEGER(idx);
+  SEXP loc = PROTECT(compact_seq(0, 0, true));
+  int* p_loc = INTEGER(loc);
 
   SEXP xs_names = PROTECT(r_names(xs));
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
@@ -134,10 +134,10 @@ SEXP vec_c_opts(SEXP xs,
     };
     SEXP x = PROTECT(vec_cast_opts(&opts));
 
-    init_compact_seq(p_idx, counter, size, true);
+    init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = vec_proxy_assign_opts(out, idx, x, VCTRS_OWNED_true, &c_assign_opts);
+    out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     // FIXME: This work happens in parallel to the names assignment in
@@ -150,7 +150,7 @@ SEXP vec_c_opts(SEXP xs,
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms, VCTRS_OWNED_true);
+        out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
         REPROTECT(out_names, out_names_pi);
       }
 

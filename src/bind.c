@@ -129,8 +129,8 @@ static SEXP vec_rbind(SEXP xs,
   SEXP out = vec_init(proxy, n_rows);
   PROTECT_WITH_INDEX(out, &out_pi);
 
-  SEXP idx = PROTECT_N(compact_seq(0, 0, true), &n_prot);
-  int* idx_ptr = INTEGER(idx);
+  SEXP loc = PROTECT_N(compact_seq(0, 0, true), &n_prot);
+  int* p_loc = INTEGER(loc);
 
   PROTECT_INDEX rownames_pi;
   SEXP rownames = R_NilValue;
@@ -178,10 +178,10 @@ static SEXP vec_rbind(SEXP xs,
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    init_compact_seq(idx_ptr, counter, size, true);
+    init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = df_assign(out, idx, x, VCTRS_OWNED_true, &bind_assign_opts);
+    out = df_assign(out, loc, x, VCTRS_OWNED_true, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     // FIXME: This work happens in parallel to the names assignment in
@@ -203,7 +203,7 @@ static SEXP vec_rbind(SEXP xs,
       PROTECT(rn);
 
       if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        rownames = chr_assign(rownames, idx, rn, VCTRS_OWNED_true);
+        rownames = chr_assign(rownames, loc, rn, VCTRS_OWNED_true);
         REPROTECT(rownames, rownames_pi);
       }
 
