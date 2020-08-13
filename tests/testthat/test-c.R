@@ -468,7 +468,7 @@ test_that("concatenation performs expected allocations", {
     # FIXME: The following recursive cases duplicate rownames
     # excessively because df-cols are restored at each chunk
     # assignment, causing a premature name-repair
-    "FIXME: Data frame with rownames (non-repaired, recursive case)"
+    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
     df <- data_frame(
       x = 1:2,
       y = data_frame(x = 1:2)
@@ -477,7 +477,7 @@ test_that("concatenation performs expected allocations", {
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
     with_memory_prof(vec_unchop(dfs))
 
-    "FIXME: Data frame with rownames (repaired, recursive case)"
+    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_unchop(dfs))
   })

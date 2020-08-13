@@ -68,14 +68,14 @@ Concatenation with with names
 > with_memory_prof(vec_unchop(dfs))
 [1] 13.1KB
 
-> # FIXME: Data frame with rownames (non-repaired, recursive case)
+> # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
 > df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
 [1] 1MB
 
-> # FIXME: Data frame with rownames (repaired, recursive case)
+> # FIXME (#1217): Data frame with rownames (repaired, recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
 [1] 1.02MB
