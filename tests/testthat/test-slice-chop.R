@@ -229,6 +229,47 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_chop_seq(x, 2L, 2L), list(vec_slice(x, 3:4)))
 })
 
+
+# vec_chop2 ---------------------------------------------------------------
+
+test_that("vec_chop2() transforms inner names to outer names", {
+  x <- c(a = 1, b = 2)
+  expect_identical(
+    vec_chop2(x),
+    list(a = 1, b = 2)
+  )
+
+  x <- data.frame(x = 1:2, row.names = c("foo", "bar"))
+  exp <- list(
+    foo = data.frame(x = 1L),
+    bar = data.frame(x = 2L)
+  )
+  expect_identical(vec_chop2(x), exp)
+
+  x <- matrix(1:4, 2)
+  row.names(x) <- c("foo", "bar")
+
+  # Fails because of #1221
+  # exp <- list(
+  #   foo = matrix(c(1L, 3L), 1),
+  #   bar = matrix(c(2L, 4L), 1)
+  # )
+  # expect_identical(vec_chop2(x), exp)
+
+  out <- vec_chop2(x)
+  expect_null(row.names(out[[1]]))
+  expect_null(row.names(out[[2]]))
+})
+
+test_that("vec_chop2() preserves names of lists", {
+  x <- list(a = 1, b = 2)
+  expect_identical(vec_chop2(x), x)
+
+  s3 <- new_vctr(x)
+  expect_identical(vec_chop2(s3), x)
+})
+
+
 # vec_unchop --------------------------------------------------------------
 
 test_that("`x` must be a list", {

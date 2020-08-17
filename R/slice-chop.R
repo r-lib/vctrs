@@ -105,3 +105,17 @@ vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
   args <- vec_recycle_common(starts, sizes, increasings)
   .Call(vctrs_chop_seq, x, args[[1]], args[[2]], args[[3]])
 }
+
+vec_chop2 <- function(x) {
+  if (vec_is_list(x)) {
+    # Lists necessarily have list storage and so don't require any
+    # genericity for extracting elements
+    out <- unstructure(x)
+  } else {
+    # Zap inner names of atomic vectors. They become outer names.
+    out <- vec_set_names(x, NULL)
+    out <- vec_chop(out)
+  }
+
+  vec_set_names(out, vec_names(x))
+}
