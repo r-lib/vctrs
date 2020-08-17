@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* The restriction that S3 lists must have a list-based proxy to be considered
+  lists by `vec_is_list()` has been removed (#1208).
+
 * New performant `data_frame()` constructor for creating data frames in a way
   that follows tidyverse semantics. Among other things, inputs are recycled
   using tidyverse recycling rules, strings are never converted to factors,
