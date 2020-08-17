@@ -911,6 +911,7 @@ const void* r_vec_deref_const(SEXP x) {
   case CPLXSXP: return COMPLEX_RO(x);
   case STRSXP: return STRING_PTR_RO(x);
   case RAWSXP: return RAW_RO(x);
+  case VECSXP: return VECTOR_PTR_RO(x);
   default: stop_unimplemented_type("r_vec_deref_const", TYPEOF(x));
   }
 }
