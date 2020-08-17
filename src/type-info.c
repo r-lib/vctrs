@@ -105,8 +105,6 @@ SEXP vctrs_is_list(SEXP x) {
   return Rf_ScalarLogical(vec_is_list(x));
 }
 
-static bool vec_proxy_is_list(SEXP x);
-
 // [[ include("vctrs.h") ]]
 bool vec_is_list(SEXP x) {
   // Require `x` to be a list internally
@@ -120,43 +118,7 @@ bool vec_is_list(SEXP x) {
   }
 
   // Classed VECSXP are only lists if the last class is explicitly `"list"`
-  if (class_type(x) != vctrs_class_list) {
-    return false;
-  }
-
-  // If `x` is an explicit list, also require that the proxy is a list
-  if (vec_proxy_is_list(x)) {
-    return true;
-  }
-
-  Rf_errorcall(
-    R_NilValue,
-    "`x` inherits explicitly from \"list\", "
-    "but the proxy returned by `vec_proxy()` is not a list."
-  );
-}
-
-static bool vec_proxy_is_list(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy(x));
-
-  // Require `proxy` to be a list internally
-  if (TYPEOF(proxy) != VECSXP) {
-    UNPROTECT(1);
-    return false;
-  }
-
-  // Unclassed VECSXP are lists
-  if (!OBJECT(proxy)) {
-    UNPROTECT(1);
-    return true;
-  }
-
-  // If the `proxy` has a class, only require
-  // that it is not a data frame
-  bool out = class_type(proxy) != vctrs_class_data_frame;
-
-  UNPROTECT(1);
-  return out;
+  return class_type(x) == vctrs_class_list;
 }
 
 

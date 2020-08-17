@@ -283,8 +283,28 @@ test_that("data frames of all types are not lists", {
   expect_false(vec_is_list(tibble::tibble()))
 })
 
-test_that("proxy of S3 lists must be a list", {
+test_that("S3 list with non-list proxy is still a list (#1208)", {
   x <- structure(list(), class = c("foobar", "list"))
   local_methods(vec_proxy.foobar = function(x) 1)
-  expect_error(vec_is_list(x), "`x` inherits")
+  # This used to be an error (#1003)
+  # expect_error(vec_is_list(x), "`x` inherits")
+  expect_true(vec_is_list(x))
+})
+
+test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
+  x <- structure(
+    list(1:2, "x"),
+    special = c("a", "b"),
+    class = c("list_rcrd", "list")
+  )
+
+  local_methods(
+    vec_proxy.list_rcrd = function(x) {
+      special <- attr(x, "special")
+      data <- unstructure(x)
+      new_data_frame(list(data = data, special = special))
+    }
+  )
+
+  expect_true(vec_is_list(x))
 })
