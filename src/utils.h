@@ -605,6 +605,7 @@ extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
 extern SEXP syms_abort;
 extern SEXP syms_message;
+extern SEXP syms_dot_elt;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 
