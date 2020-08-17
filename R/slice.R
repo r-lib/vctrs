@@ -249,3 +249,17 @@ vec_slice_seq <- function(x, start, size, increasing = TRUE) {
 vec_slice_rep <- function(x, i, n) {
   .Call(vctrs_slice_rep, x, i, n)
 }
+
+vec_slice2 <- function(x, i) {
+  with_extract(
+    if (vec_is_list(x)) {
+      # Lists are currently guaranteed to have list storage so we can
+      # just subset them directly
+      i <- vec_as_location2(i, vec_size(x))
+      .subset2(x, i)
+    } else {
+      out <- vec_slice(x, i)
+      vec_set_names(out, NULL)
+    }
+  )
+}

@@ -432,34 +432,6 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
   expect_equal(vec_slice(x, idx), c("foo", "foo", "bar"))
 })
 
-test_that("slice has informative error messages", {
-  verify_output(test_path("error", "test-slice.txt"), {
-    "# Unnamed vector with character subscript"
-    vec_slice(1:3, letters[1])
-
-    "# Negative subscripts are checked"
-    vec_slice(1:3, -c(1L, NA))
-    vec_slice(1:3, c(-1L, 1L))
-
-    "# oob error messages are properly constructed"
-    vec_slice(c(bar = 1), "foo")
-
-    "Multiple OOB indices"
-    vec_slice(letters, c(100, 1000))
-    vec_slice(letters, c(1, 100:103, 2, 104:110))
-    vec_slice(set_names(letters), c("foo", "bar"))
-    vec_slice(set_names(letters), toupper(letters))
-
-    "# Can't index beyond the end of a vector"
-    vec_slice(1:2, 3L)
-    vec_slice(1:2, -3L)
-
-    "# vec_slice throws error with non-vector subscripts"
-    vec_slice(1:3, Sys.Date())
-    vec_slice(1:3, matrix(TRUE, ncol = 1))
-  })
-})
-
 # vec_init ----------------------------------------------------------------
 
 test_that("na of atomic vectors is as expected", {
@@ -705,4 +677,102 @@ test_that("scalar type error is thrown when `vec_slice_impl()` is called directl
 test_that("column sizes are checked before slicing (#552)", {
   x <- structure(list(a = 1, b = 2:3), row.names = 1:2, class = "data.frame")
   expect_error(vctrs::vec_slice(x, 2), "must match the data frame size")
+})
+
+test_that("vec_slice2() zaps names of atomic values", {
+  expect_identical(
+    vec_slice2(c(foo = 1, bar = 2), 2),
+    2
+  )
+
+  out <- vec_slice2(mtcars, 2)
+  expect_null(vec_names(out))
+  expect_true(vec_equal(out, vec_slice(mtcars, 2)))
+
+  x <- matrix(1:4, 2)
+  row.names(x) <- c("foo", "bar")
+  out <- vec_slice2(x, 2)
+  expect_null(vec_names(out))
+})
+
+test_that("vec_slice2() extracts elements of recursive inputs", {
+  x <- list(a = c(foo = 1), b = c(bar = 2))
+  expect_identical(
+    vec_slice2(x, 2),
+    c(bar = 2)
+  )
+})
+
+test_that("vec_slice2() fails if subscript is OOB", {
+  expect_error(
+    vec_slice2(letters, 100),
+    class = "vctrs_error_subscript_oob"
+  )
+  expect_error(
+    vec_slice2(list(), 100),
+    class = "vctrs_error_subscript_oob"
+  )
+})
+
+test_that("vec_slice2() works with generic atomic vectors", {
+  x <- set_names(new_vctr(1:3), letters[1:3])
+  expect_identical(
+    vec_slice2(x, 2),
+    new_vctr(2L)
+  )
+
+  x <- new_rcrd(list(x = 1:2))
+  expect_identical(
+    vec_slice2(x, 2),
+    new_rcrd(list(x = 2L))
+  )
+})
+
+test_that("vec_slice2() works with generic lists", {
+  x <- list(a = c(foo = 1), b = c(bar = 2))
+  expect_identical(
+    vec_slice2(x, 2),
+    c(bar = 2)
+  )
+
+  local_list_rcrd_methods()
+  expect_identical(
+    vec_slice2(new_list_rcrd(x), 2),
+    c(bar = 2)
+  )
+})
+
+
+# Golden tests -------------------------------------------------------
+
+test_that("slicing functions have informative error messages", {
+  verify_output(test_path("error", "test-slice.txt"), {
+    "# Unnamed vector with character subscript"
+    vec_slice(1:3, letters[1])
+
+    "# Negative subscripts are checked"
+    vec_slice(1:3, -c(1L, NA))
+    vec_slice(1:3, c(-1L, 1L))
+
+    "# oob error messages are properly constructed"
+    vec_slice(c(bar = 1), "foo")
+
+    "Multiple OOB indices"
+    vec_slice(letters, c(100, 1000))
+    vec_slice(letters, c(1, 100:103, 2, 104:110))
+    vec_slice(set_names(letters), c("foo", "bar"))
+    vec_slice(set_names(letters), toupper(letters))
+
+    "# Can't index beyond the end of a vector"
+    vec_slice(1:2, 3L)
+    vec_slice(1:2, -3L)
+
+    "# vec_slice throws error with non-vector subscripts"
+    vec_slice(1:3, Sys.Date())
+    vec_slice(1:3, matrix(TRUE, ncol = 1))
+
+    "# vec_slice2() fails if subscript is OOB"
+    vec_slice2(letters, 100)
+    vec_slice2(list(), 100)
+  })
 })
