@@ -162,8 +162,6 @@ vec_is_vector <- function(x) {
 #' Notably, data frames and S3 record style classes like POSIXlt are not
 #' considered lists.
 #'
-#' If `x` inherits explicitly from `"list"`, it is also required that the
-#' proxy returned by [vec_proxy()] is a list. If it is not, an error is thrown.
 #' @export
 #' @examples
 #' vec_is_list(list())
