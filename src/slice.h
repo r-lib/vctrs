@@ -11,5 +11,7 @@ SEXP vec_slice_fallback(SEXP x, SEXP subscript);
 
 bool vec_is_restored(SEXP x, SEXP to);
 
+SEXP vec_chop2(SEXP x);
+
 
 #endif

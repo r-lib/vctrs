@@ -278,6 +278,7 @@ extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_data_frame(SEXP);
+extern SEXP vctrs_chop2(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
@@ -290,6 +291,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
   {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, -1},
+  {"vctrs_chop2",                      (DL_FUNC) &vctrs_chop2, 1},
   {NULL, NULL, 0}
 };
 

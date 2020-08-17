@@ -266,7 +266,9 @@ test_that("vec_chop2() preserves names of lists", {
   expect_identical(vec_chop2(x), x)
 
   s3 <- new_vctr(x)
-  expect_identical(vec_chop2(s3), x)
+  out <- vec_chop2(s3)
+  expect_identical(out, x)
+  expect_false(is.object(out))
 })
 
 
