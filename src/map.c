@@ -13,8 +13,10 @@ SEXP vctrs_map(SEXP args) {
     SEXP ptype = CAR(args);
 
     SEXP orig = x;
+    bool list_input = vec_is_list(orig);
+    bool list_output = vec_is_list(ptype);
 
-    if (vec_is_list(x)) {
+    if (list_input) {
       x = PROTECT(x);
     } else {
       x = PROTECT(vec_chop2(x));
@@ -30,8 +32,10 @@ SEXP vctrs_map(SEXP args) {
     SEXP out;
     SEXP out_proxy;
 
-    if (vec_is_list(ptype)) {
+    if (list_output) {
       out = PROTECT(r_clone_referenced(x));
+      SET_ATTRIB(out, R_NilValue);
+      SET_OBJECT(out, 0);
       out_proxy = PROTECT(R_NilValue);
     } else {
       out = PROTECT(vec_init(ptype, n));
@@ -41,7 +45,7 @@ SEXP vctrs_map(SEXP args) {
     SEXP loc = PROTECT(compact_seq(0, 0, true));
     int* p_loc = INTEGER(loc);
 
-    if (vec_is_list(ptype)) {
+    if (list_output) {
       for (r_ssize i = 0; i < n; ++i) {
         r_env_poke(env, syms_dot_elt, p_x[i]);
         SET_VECTOR_ELT(out, i, r_eval_force(vec_map_call, env));

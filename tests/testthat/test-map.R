@@ -1,4 +1,21 @@
 
+test_that("vec_map() handles S3 lists", {
+  local_list_rcrd_methods()
+  x <- new_list_rcrd(list(1:2, 3:5, 6:9))
+
+  exp <- list(1:2, 3:4, 6:7)
+  expect_identical(
+    vec_map(x, `[`, 1:2),
+    exp
+  )
+
+  expect_identical(
+    vec_map(x, `[`, 1:2, .ptype = x),
+    new_list_rcrd(exp)
+  )
+})
+
+
 # Tests imported from purrr -----------------------------------------------
 
 # These tests rely on compat-purrr-vctrs
