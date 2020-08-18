@@ -65,22 +65,10 @@ obj_str_data.vctrs_rcrd <- function(x, ...) {
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to, ...) UseMethod("vec_cast.vctrs_rcrd")
 
-#' @method vec_cast.vctrs_rcrd vctrs_rcrd
 #' @export
-vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ..., x_arg = x_arg, to_arg = to_arg) {
-  # This assumes that we don't have duplicate field names,
-  # which is verified even in the constructor.
-  if (!setequal(fields(x), fields(to))) {
-    stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-  }
-
-  new_data <- map2(
-    vec_data(x)[fields(to)],
-    vec_data(to),
-    vec_cast
-  )
-
-  new_rcrd(new_data)
+vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
+  out <- vec_cast(vec_data(x), vec_data(to), ...)
+  new_rcrd(out)
 }
 
 
