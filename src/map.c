@@ -44,7 +44,7 @@ SEXP vctrs_map(SEXP args) {
     if (vec_is_list(ptype)) {
       for (r_ssize i = 0; i < n; ++i) {
         r_env_poke(env, syms_dot_elt, p_x[i]);
-        SET_VECTOR_ELT(out, i, Rf_eval(vec_map_call, env));
+        SET_VECTOR_ELT(out, i, r_eval_force(vec_map_call, env));
       }
 
       // Should use a ptype identity check before casting. Probably
@@ -60,7 +60,7 @@ SEXP vctrs_map(SEXP args) {
       for (r_ssize i = 0; i < n; ++i) {
         r_env_poke(env, syms_dot_elt, p_x[i]);
 
-        SEXP elt_out = PROTECT(Rf_eval(vec_map_call, env));
+        SEXP elt_out = PROTECT(r_eval_force(vec_map_call, env));
         elt_out = PROTECT(vec_cast(elt_out, ptype, NULL, NULL));
 
         init_compact_seq(p_loc, i, 1, true);
