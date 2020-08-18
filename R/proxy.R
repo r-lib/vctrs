@@ -207,6 +207,10 @@ vec_data <- function(x) {
   vec_assert(x)
   x <- vec_proxy(x)
 
+  if (is.data.frame(x)) {
+    return(new_data_frame(x, row.names = attr(x, "row.names")))
+  }
+
   if (has_dim(x)) {
     x <- vec_set_attributes(x, list(dim = dim(x), dimnames = dimnames(x)))
   } else {

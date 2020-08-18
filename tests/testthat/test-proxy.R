@@ -110,3 +110,16 @@ test_that("vec_proxy_equal() defaults to vec_proxy() and vec_proxy_compare() def
   expect_identical(vec_proxy_equal(x), data_frame(x = letters[3:1], y = 1:3))
   expect_identical(vec_proxy_compare(x), data_frame(x = letters[3:1], y = 1:3))
 })
+
+test_that("vec_data() preserves data frames", {
+  expect_identical(
+    vec_data(tibble(x = 1)),
+    data_frame(x = 1)
+  )
+
+  # Rownames are preserved
+  expect_identical(
+    vec_data(mtcars),
+    mtcars
+  )
+})
