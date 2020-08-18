@@ -21,6 +21,9 @@ map_chr <- function(.x, .f, ...) {
 map_cpl <- function(.x, .f, ...) {
   map(.x, .f, ..., .ptype = cpl())
 }
+map_raw <- function(.x, .f, ...) {
+  map(.x, .f, ..., .ptype = raw())
+}
 
 walk <- function(.x, .f, ...) {
   map(.x, .f, ...)
@@ -44,6 +47,9 @@ pluck_chr <- function(.x, .f) {
 }
 pluck_cpl <- function(.x, .f) {
   map_cpl(.x, `[[`, .f)
+}
+pluck_raw <- function(.x, .f) {
+  map_raw(.x, `[[`, .f)
 }
 
 map2 <- function(.x, .y, .f, ...) {
@@ -104,6 +110,45 @@ map_if <- function(.x, .p, .f, ...) {
   matches <- probe(.x, .p)
   .x[matches] <- map(.x[matches], .f, ...)
   .x
+}
+
+map_at <- function(.x, .at, .f, ...) {
+  at_selection <- function(nm, .at){
+    if (is_quosures(.at)){
+      if (!is_installed("tidyselect")) {
+        abort("Using tidyselect in `map_at()` requires tidyselect.")
+      }
+      .at <- tidyselect::vars_select(.vars = nm, !!!.at)
+    }
+    .at
+  }
+  inv_which <- function(x, sel) {
+    if (is.character(sel)) {
+      names <- names(x)
+      if (is.null(names)) {
+        stop("character indexing requires a named object", call. = FALSE)
+      }
+      names %in% sel
+    } else if (is.numeric(sel)) {
+      if (any(sel < 0)) {
+        !seq_along(x) %in% abs(sel)
+      } else {
+        seq_along(x) %in% sel
+      }
+
+    } else {
+      stop("unrecognised index type", call. = FALSE)
+    }
+  }
+
+  where <- at_selection(names(.x), .at)
+  sel <- inv_which(.x, where)
+
+  out <- rep_along(.x, list(NULL))
+  out[sel]  <- map(.x[sel], .f, ...)
+  out[!sel] <- .x[!sel]
+
+  set_names(out, names(.x))
 }
 
 transpose <- function(.l) {
