@@ -1,33 +1,25 @@
-# nocov start - compat-purrr (last updated: rlang 0.2.0)
-
-# This file serves as a reference for compatibility functions for
-# purrr. They are not drop-in replacements but allow a similar style
-# of programming. This is useful in cases where purrr is too heavy a
-# package to depend on. Please find the most recent version in rlang's
-# repository.
+# nocov start --- compat-purrr-vctrs --- 2020-08-18
 
 map <- function(.x, .f, ...) {
-  lapply(.x, .f, ...)
-}
-map_mold <- function(.x, .f, .mold, ...) {
-  out <- vapply(.x, .f, .mold, ..., USE.NAMES = FALSE)
-  names(out) <- names(.x)
-  out
+  if (is.data.frame(.x)) {
+    .x <- unclass(.x)
+  }
+  vec_map(.x, .f, ...)
 }
 map_lgl <- function(.x, .f, ...) {
-  map_mold(.x, .f, logical(1), ...)
+  map(.x, .f, ..., .ptype = lgl())
 }
 map_int <- function(.x, .f, ...) {
-  map_mold(.x, .f, integer(1), ...)
+  map(.x, .f, ..., .ptype = int())
 }
 map_dbl <- function(.x, .f, ...) {
-  map_mold(.x, .f, double(1), ...)
+  map(.x, .f, ..., .ptype = dbl())
 }
 map_chr <- function(.x, .f, ...) {
-  map_mold(.x, .f, character(1), ...)
+  map(.x, .f, ..., .ptype = chr())
 }
 map_cpl <- function(.x, .f, ...) {
-  map_mold(.x, .f, complex(1), ...)
+  map(.x, .f, ..., .ptype = cpl())
 }
 
 walk <- function(.x, .f, ...) {
