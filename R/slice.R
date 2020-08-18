@@ -207,19 +207,17 @@ vec_remove <- function(x, i) {
 
 vec_index <- function(x, i, ...) {
   i <- maybe_missing(i, TRUE)
+  out <- vec_slice(x, i)
 
   if (!dots_n(...)) {
-    return(vec_slice(x, i))
+    return(out)
   }
 
   # Need to unclass to avoid infinite recursion through `[`
-  proxy <- unclass(vec_proxy(x))
-  vec_assert(proxy)
+  proxy <- vec_data(out)
+  out <- proxy[, ..., drop = FALSE]
 
-  i <- vec_as_location(i, vec_size(x), vec_names(x))
-  out <- proxy[i, ..., drop = FALSE]
-
-  vec_restore(out, x, n = length(i))
+  vec_restore(out, x)
 }
 
 #' Initialize a vector
@@ -248,4 +246,10 @@ vec_slice_seq <- function(x, start, size, increasing = TRUE) {
 # Exposed for testing (`i` is 1-based)
 vec_slice_rep <- function(x, i, n) {
   .Call(vctrs_slice_rep, x, i, n)
+}
+
+# Forwards arguments to `base::rep()`
+base_vec_rep <- function(x, ...) {
+  i <- rep(seq_len(vec_size(x)), ...)
+  vec_slice(x, i)
 }

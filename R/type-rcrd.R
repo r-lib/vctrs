@@ -38,7 +38,7 @@ vec_restore.vctrs_rcrd <- function(x, to, ...) {
 
 #' @export
 length.vctrs_rcrd <- function(x) {
-  .Call(vctrs_size, x)
+  vec_size(x)
 }
 
 #' @export
@@ -93,7 +93,7 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ..., x_arg = x_arg, to_arg = t
 
 #' @export
 `[[.vctrs_rcrd` <- function(x, i, ...) {
-  out <- lapply(vec_data(x), `[[`, i, ...)
+  out <- vec_slice(vec_data(x), i)
   vec_restore(out, x)
 }
 
@@ -104,7 +104,7 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ..., x_arg = x_arg, to_arg = t
 
 #' @export
 rep.vctrs_rcrd <- function(x, ...) {
-  out <- lapply(vec_data(x), rep, ...)
+  out <- lapply(vec_data(x), base_vec_rep, ...)
   vec_restore(out, x)
 }
 
@@ -118,12 +118,9 @@ rep.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 `[[<-.vctrs_rcrd` <- function(x, i, value) {
-  value <- vec_cast(value, x)
-  out <- map2(vec_data(x), vec_data(value), function(x, value) {
-    x[[i]] <- value
-    x
-  })
-  vec_restore(out, x)
+  force(i)
+  x[i] <- value
+  x
 }
 
 #' @export
@@ -133,20 +130,9 @@ rep.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 `[<-.vctrs_rcrd` <- function(x, i, value) {
+  i <- maybe_missing(i, TRUE)
   value <- vec_cast(value, x)
-
-  if (missing(i)) {
-    replace <- function(x, value) {
-      x[] <- value
-      x
-    }
-  } else {
-    replace <- function(x, value) {
-      x[i] <- value
-      x
-    }
-  }
-  out <- map2(vec_data(x), vec_data(value), replace)
+  out <- vec_assign(vec_data(x), i, vec_data(value))
   vec_restore(out, x)
 }
 

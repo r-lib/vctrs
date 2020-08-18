@@ -706,3 +706,11 @@ test_that("column sizes are checked before slicing (#552)", {
   x <- structure(list(a = 1, b = 2:3), row.names = 1:2, class = "data.frame")
   expect_error(vctrs::vec_slice(x, 2), "must match the data frame size")
 })
+
+test_that("base_vec_rep() slices data frames with the base::rep() UI", {
+  df <- data_frame(x = data_frame(y = 1:2))
+  expect_identical(
+    base_vec_rep(df, length.out = 4),
+    vec_slice(df, c(1:2, 1:2))
+  )
+})

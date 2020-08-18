@@ -162,6 +162,8 @@ test_that("subset assignment modifies each field", {
   local_tuple_methods()
   x <- tuple(c(1, 1), c(2, 2))
 
+  expect_error(x[[]] <- tuple(), "missing")
+
   x[[1]] <- tuple(3, 3)
   expect_equal(x, tuple(c(3, 1), c(3, 2)))
 
@@ -228,14 +230,14 @@ test_that("dangerous methods marked as unimplemented", {
 # slicing -----------------------------------------------------------------
 
 test_that("dots are forwarded", {
-  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "incorrect number of dimensions")
+  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "undefined columns selected")
 })
 
 test_that("records are restored after slicing the proxy", {
   expect_identical(new_rcrd(list(x = 1:2))[1], new_rcrd(list(x = 1L)))
 })
 
-test_that("can supply df-cols as fields", {
+test_that("can slice with df-cols fields", {
   x <- new_rcrd(data_frame(x = data_frame(y = 1:2)))
 
   out <- vec_slice(x, 2)
@@ -243,4 +245,33 @@ test_that("can supply df-cols as fields", {
     out,
     new_rcrd(data_frame(x = data_frame(y = 2L)))
   )
+  expect_identical(
+    x[2],
+    out
+  )
+  expect_identical(
+    x[[2]],
+    out
+  )
+})
+
+test_that("can rep with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:2)))
+
+  expect_identical(
+    rep(x, length.out = 4),
+    vec_slice(x, c(1:2, 1:2))
+  )
+})
+
+test_that("can assign with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:3)))
+  y <- new_rcrd(data_frame(x = data_frame(y = FALSE)))
+  exp <- new_rcrd(data_frame(x = data_frame(y = c(1L, 2L, 0L))))
+
+  expect_identical(vec_assign(x, 3, y), exp)
+
+  out <- x
+  out[[3]] <- y
+  expect_identical(out, exp)
 })
