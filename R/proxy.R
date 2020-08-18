@@ -208,7 +208,7 @@ vec_data <- function(x) {
   x <- vec_proxy(x)
 
   if (is.data.frame(x)) {
-    return(new_data_frame(x, row.names = attr(x, "row.names")))
+    return(new_data_frame(x, row.names = .row_names_info(x, 0L)))
   }
 
   if (has_dim(x)) {
