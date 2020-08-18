@@ -91,10 +91,29 @@ pmap <- function(.l, .f, ...) {
 }
 
 probe <- function(.x, .p, ...) {
+  as_predicate <- function(.fn, ..., .allow_na = FALSE) {
+    .fn <- as_function(.fn, ...)
+
+    function(...) {
+      out <- .fn(...)
+
+      if (!is_bool(out)) {
+        if (is_na(out) && .allow_na) {
+          # Always return a logical NA
+          return(NA)
+        }
+        abort("Predicate functions must return a single `TRUE` or `FALSE`.")
+      }
+
+      out
+    }
+  }
+
   if (is_logical(.p)) {
     stopifnot(length(.p) == length(.x))
     .p
   } else {
+    .p <- as_predicate(.p, ...)
     map_lgl(.x, .p, ...)
   }
 }
@@ -106,10 +125,19 @@ discard <- function(.x, .p, ...) {
   sel <- probe(.x, .p, ...)
   .x[is.na(sel) | !sel]
 }
-map_if <- function(.x, .p, .f, ...) {
-  matches <- probe(.x, .p)
-  .x[matches] <- map(.x[matches], .f, ...)
-  .x
+map_if <- function(.x, .p, .f, ..., .else = NULL) {
+  sel <- probe(.x, .p)
+
+  out <- rep_along(.x, list(NULL))
+  out[sel]  <- map(.x[sel], .f, ...)
+
+  if (is_null(.else)) {
+    out[!sel] <- .x[!sel]
+  } else {
+    out[!sel]  <- map(.x[!sel], .else, ...)
+  }
+
+  set_names(out, names(.x))
 }
 
 map_at <- function(.x, .at, .f, ...) {
