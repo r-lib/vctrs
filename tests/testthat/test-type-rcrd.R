@@ -88,24 +88,19 @@ test_that("can't cast incompatible rcrd", {
   )
 })
 
-# invalid inputs ------------------------------------------------------------
+# input validation --------------------------------------------------------
 
 test_that("must be list of equal length vectors", {
   expect_error(new_rcrd(list()), "list of length 1")
-  expect_error(new_rcrd(list(x = environment())), "vector")
-  expect_error(new_rcrd(list(x = 1, y = 1:2)), "same length")
+  expect_error(new_rcrd(list(x = environment())), class = "vctrs_error_scalar_type")
+  expect_error(new_rcrd(list(x = 1:2, y = 1:3)), class = "vctrs_error_incompatible_size")
 })
 
 test_that("names must be unique", {
-  expect_error(new_rcrd(list(1, 2)), "unique names")
-  expect_error(new_rcrd(list(x = 1, 2)), "unique names")
-  expect_error(new_rcrd(list(x = 1, x = 2)), "unique names")
-  expect_error(new_rcrd(setNames(list(1, 2), "x")), "unique names")
-})
-
-test_that("no attributes", {
-  x <- structure(list(x = 1:3), y = 1)
-  expect_error(new_rcrd(x), "no attributes")
+  expect_error(new_rcrd(list(1, 2)), class = "vctrs_error_names_cannot_be_empty")
+  expect_error(new_rcrd(list(x = 1, 2)), class = "vctrs_error_names_cannot_be_empty")
+  expect_error(new_rcrd(list(x = 1, x = 2)), class = "vctrs_error_names_must_be_unique")
+  expect_error(new_rcrd(setNames(list(1, 2), "x")), "can't return `NA`")
 })
 
 test_that("subset assignment throws error", {
@@ -113,6 +108,20 @@ test_that("subset assignment throws error", {
   expect_error(
     x$y <- 2,
     class = "vctrs_error_unsupported"
+  )
+})
+
+test_that("can supply data frame as fields", {
+  expect_identical(
+    new_rcrd(list(x = 1)),
+    new_rcrd(tibble(x = 1))
+  )
+})
+
+test_that("fields are recycled", {
+  expect_identical(
+    new_rcrd(list(x = 1, y = 1:2)),
+    new_rcrd(list(x = c(1, 1), y = 1:2))
   )
 })
 
@@ -224,4 +233,14 @@ test_that("dots are forwarded", {
 
 test_that("records are restored after slicing the proxy", {
   expect_identical(new_rcrd(list(x = 1:2))[1], new_rcrd(list(x = 1L)))
+})
+
+test_that("can supply df-cols as fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:2)))
+
+  out <- vec_slice(x, 2)
+  expect_identical(
+    out,
+    new_rcrd(data_frame(x = data_frame(y = 2L)))
+  )
 })

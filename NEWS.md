@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* `new_rcrd()` now uses `df_list()` to validate the fields. This makes
+  it more flexible as the fields are now recycled and can be of any
+  type supported by vctrs, including data frames.
+
 * `vec_data()` now preserves data frames. This is consistent with the
   notion that data frames are a primitive vector type in vctrs. This
   shouldn't affect code that uses `[[` and `length()` to manipulate

@@ -8,46 +8,21 @@
 #' length, like [POSIXlt], but where the organisation should be considered
 #' an implementation detail invisible to the user (unlike a [data.frame]).
 #'
-#' @param fields A list. It must possess the following properties:
-#'   * no attributes (apart from names)
-#'   * syntactic names
-#'   * length 1 or greater
-#'   * elements are vectors
-#'   * elements have equal length
+#' @param fields A list or a data frame. Lists must be rectangular
+#'   (same sizes), and contain uniquely named vectors (at least
+#'   one). `fields` is validated with [df_list()] which recycles
+#'   columns to the same size.
 #' @param ... Additional attributes
 #' @param class Name of subclass.
 #' @export
 #' @aliases ses rcrd
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
-  check_fields(fields)
-  structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
-}
-
-check_fields <- function(fields) {
-  if (!is.list(fields) || length(fields) == 0) {
+  fields <- df_list(!!!fields)
+  if (!length(fields)) {
     abort("`fields` must be a list of length 1 or greater.")
   }
-
-  if (!has_unique_names(fields)) {
-    abort("`fields` must have unique names.")
-  }
-
-  if (!identical(names(attributes(fields)), "names")) {
-    abort("`fields` must have no attributes (apart from names).")
-  }
-
-  is_vector <- map_lgl(fields, is_vector)
-  if (!all(is_vector)) {
-    abort("Every field must be a vector.")
-  }
-
-  lengths <- map_int(fields, length)
-  if (!all_equal(lengths)) {
-    abort("Every field must be the same length.")
-  }
-
-  invisible(fields)
+  structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
 }
 
 #' @export
