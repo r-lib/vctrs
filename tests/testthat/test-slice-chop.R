@@ -271,6 +271,17 @@ test_that("vec_chop2() preserves names of lists", {
   expect_false(is.object(out))
 })
 
+test_that("can chop record vectors", {
+  x <- new_rcrd(list(x = 1:2, y = 3:4))
+  exp <- list(
+    new_rcrd(list(x = 1L, y = 3L)),
+    new_rcrd(list(x = 2L, y = 4L))
+  )
+
+  expect_identical(vec_chop(x), exp)
+  expect_identical(vec_chop2(x), exp)
+})
+
 
 # vec_unchop --------------------------------------------------------------
 

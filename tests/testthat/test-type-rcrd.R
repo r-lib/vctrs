@@ -28,6 +28,19 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
+test_that("can set names of record vectors to NULL", {
+  x <- new_rcrd(list(a = 1))
+
+  orig <- x
+  names(x) <- NULL
+  expect_identical(x, orig)
+
+  expect_identical(vec_set_names(x, NULL), x)
+
+  expect_error(names(x) <- "foo", "Can't")
+  expect_error(vec_set_names(x, "foo"), "Can't")
+})
+
 
 # coercion ----------------------------------------------------------------
 
