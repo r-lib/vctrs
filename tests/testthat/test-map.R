@@ -1,4 +1,27 @@
 
+test_that("vec_map() handles S3 vectors", {
+  vctr <- new_vctr(1:3)
+  rcrd <- new_rcrd(list(x = 1:3, y = 4:6))
+
+  expect_identical(
+    vec_map(vctr, identity),
+    vec_chop(vctr)
+  )
+  expect_identical(
+    vec_map(rcrd, identity),
+    vec_chop(rcrd)
+  )
+
+  expect_identical(
+    vec_map(vctr, identity, .ptype = vctr),
+    vctr
+  )
+  expect_identical(
+    vec_map(rcrd, identity, .ptype = rcrd),
+    rcrd
+  )
+})
+
 test_that("vec_map() handles S3 lists", {
   local_list_rcrd_methods()
   x <- new_list_rcrd(list(1:2, 3:5, 6:9))
