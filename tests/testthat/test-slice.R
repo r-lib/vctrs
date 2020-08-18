@@ -714,3 +714,17 @@ test_that("base_vec_rep() slices data frames with the base::rep() UI", {
     vec_slice(df, c(1:2, 1:2))
   )
 })
+
+test_that("vec_size_assign() slices data frames with the base::rep() UI", {
+  df <- data_frame(x = data_frame(y = 1:3))
+
+  expect_identical(
+    vec_size_assign(df, 2),
+    vec_slice(df, 1:2)
+  )
+
+  expect_identical(
+    vec_size_assign(df, 4),
+    vec_slice(df, c(1:3, NA))
+  )
+})

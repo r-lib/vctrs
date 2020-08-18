@@ -110,7 +110,7 @@ rep.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 `length<-.vctrs_rcrd` <- function(x, value) {
-  out <- lapply(vec_data(x), `length<-`, value)
+  out <- vec_size_assign(vec_data(x), value)
   vec_restore(out, x)
 }
 

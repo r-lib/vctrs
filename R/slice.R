@@ -253,3 +253,17 @@ base_vec_rep <- function(x, ...) {
   i <- rep(seq_len(vec_size(x)), ...)
   vec_slice(x, i)
 }
+
+# Emulates `length<-`
+vec_size_assign <- function(x, n) {
+  x_size <- vec_size(x)
+
+  if (n > x_size) {
+    i <- seq_len(x_size)
+    i <- c(i, vec_init(int(), n - x_size))
+  } else {
+    i <- seq_len(n)
+  }
+
+  vec_slice(x, i)
+}

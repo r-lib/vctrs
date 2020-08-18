@@ -275,3 +275,13 @@ test_that("can assign with df-cols fields", {
   out[[3]] <- y
   expect_identical(out, exp)
 })
+
+test_that("can resize with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:3)))
+
+  length(x) <- 2
+  expect_identical(x, new_rcrd(data_frame(x = data_frame(y = 1:2))))
+
+  length(x) <- 4
+  expect_identical(x, new_rcrd(data_frame(x = data_frame(y = c(1:2, NA, NA)))))
+})
