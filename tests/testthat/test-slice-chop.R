@@ -271,15 +271,32 @@ test_that("vec_chop2() preserves names of lists", {
   expect_false(is.object(out))
 })
 
-test_that("can chop record vectors", {
+test_that("vec_chop2() works with generic atomic vectors", {
+  x <- set_names(new_vctr(1:2), letters[1:2])
+  exp <- list(
+    a = new_vctr(1L),
+    b = new_vctr(2L)
+  )
+  expect_identical(vec_chop2(x), exp)
+
+  # TODO: Test with names once rcrd vectors support them
   x <- new_rcrd(list(x = 1:2, y = 3:4))
   exp <- list(
     new_rcrd(list(x = 1L, y = 3L)),
     new_rcrd(list(x = 2L, y = 4L))
   )
 
-  expect_identical(vec_chop(x), exp)
+  expect_identical(vec_chop(x), exp) # FIXME: Only because rcrd is unnamed
   expect_identical(vec_chop2(x), exp)
+})
+
+test_that("vec_chop2() works with generic lists", {
+  x <- list(a = c(foo = 1:2), b = c(bar = 1:3))
+
+  expect_identical(vec_chop2(new_vctr(x)), x)
+
+  local_list_rcrd_methods()
+  expect_identical(vec_chop2(new_list_rcrd(x)), x)
 })
 
 
