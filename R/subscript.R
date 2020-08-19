@@ -342,3 +342,13 @@ cnd_subscript_scalar <- function(cnd) {
 
   out
 }
+
+with_extract <- function(expr) {
+  withCallingHandlers(
+    vctrs_error_subscript = function(cnd) {
+      cnd$subscript_action <- "extract"
+      cnd_signal(cnd)
+    },
+    expr
+  )
+}

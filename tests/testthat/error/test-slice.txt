@@ -73,3 +73,17 @@ i It must be logical, numeric, or character.
 Error: Must subset elements with a valid subscript vector.
 x Subscript must be a simple vector, not a matrix.
 
+
+vec_slice2() fails if subscript is OOB
+======================================
+
+> vec_slice2(letters, 100)
+Error: Can't extract elements that don't exist.
+x Location 100 doesn't exist.
+i There are only 26 elements.
+
+> vec_slice2(list(), 100)
+Error: Can't extract elements that don't exist.
+x Location 100 doesn't exist.
+i There are only 0 elements.
+

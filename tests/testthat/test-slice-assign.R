@@ -718,6 +718,58 @@ test_that("can assign object of any dimensionality with compact seqs", {
   expect_identical(vec_assign_seq(x4, 2, start, size, increasing), array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6)))
 })
 
+test_that("vec_assign2() handles atomic vectors", {
+  x <- c(a = 1L, b = 2L, c = 3L)
+  exp <- c(a = 1L, b = 0L, c = 3L)
+
+  expect_identical(vec_assign2(x, 2, FALSE), exp)
+
+  local_hidden()
+  expect_identical(vec_assign2(new_hidden(x), 2, FALSE), new_hidden(exp))
+
+  rcrd <- new_rcrd(list(x = 1:3))
+  rcrd_exp <- new_rcrd(list(x = c(1L, 0L, 3L)))
+  expect_identical(vec_assign2(rcrd, 2, new_rcrd(list(x = FALSE))), rcrd_exp)
+})
+
+test_that("vec_assign2() handles lists", {
+  x <- list(a = 1L, b = 2L, c = 3:4)
+  exp1 <- list(a = 1L, b = FALSE, c = 3:4)
+  exp2 <- list(a = 1L, b = NULL, c = 3:4)
+  exp3 <- list(a = 1L, b = list(NULL), c = 3:4)
+
+  expect_identical(vec_assign2(x, 2, FALSE), exp1)
+  expect_identical(vec_assign2(x, 2, NULL), exp2)
+  expect_identical(vec_assign2(x, 2, list(NULL)), exp3)
+
+  local_list_rcrd_methods()
+  expect_identical(vec_assign2(new_list_rcrd(x), 2, FALSE), new_list_rcrd(exp1))
+  expect_identical(vec_assign2(new_list_rcrd(x), 2, NULL), new_list_rcrd(exp2))
+  expect_identical(vec_assign2(new_list_rcrd(x), 2, list(NULL)), new_list_rcrd(exp3))
+})
+
+test_that("zap() is currently disallowed", {
+  expect_error(vec_assign2(list(1), 1, zap()), "Can't zap")
+})
+
+test_that("vec_assign2() fails with incompatible type", {
+  verify_errors({
+    expect_error(
+      vec_assign2(1:3, 2, ""),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+})
+
+test_that("vec_assign2() fails with OOB subscript", {
+  verify_errors({
+    expect_error(
+      vec_assign2(1:3, 4, 0),
+      class = "vctrs_error_subscript_oob"
+    )
+  })
+})
+
 
 # Golden tests ------------------------------------------------------------
 
@@ -743,5 +795,11 @@ test_that("slice and assign have informative errors", {
     "# `vec_assign()` error args can be overridden"
     vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
     vec_assign(1:2, 1L, 1:2, value_arg = "bar")
+
+    "# vec_assign2() fails with incompatible type"
+    vec_assign2(1:3, 2, "")
+
+    "# vec_assign2() fails with OOB subscript"
+    vec_assign2(1:3, 4, 0)
   })
 })

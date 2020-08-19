@@ -249,3 +249,38 @@ vec_slice_seq <- function(x, start, size, increasing = TRUE) {
 vec_slice_rep <- function(x, i, n) {
   .Call(vctrs_slice_rep, x, i, n)
 }
+
+vec_slice2 <- function(x, i) {
+  with_extract(
+    if (vec_is_list(x)) {
+      # Lists are currently guaranteed to have list storage so we can
+      # just subset them directly
+      i <- vec_as_location2(i, vec_size(x))
+      .subset2(x, i)
+    } else {
+      out <- vec_slice(x, i)
+      vec_set_names(out, NULL)
+    }
+  )
+}
+
+vec_assign2 <- function(x, i, value, ..., x_arg = "", value_arg = "") {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
+
+  # We may relax this in the future, e.g. for character `i`
+  if (is_zap(value)) {
+    abort("Can't zap elements.")
+  }
+
+  # If `x` is recursive, wrap RHS in a list before calling
+  # `vec_assign()`. The class of `x` must be coercible with lists. We
+  # intentionally wrap `NULL` values instead of treating them as a
+  # sentinel to zap elements.
+  if (vec_is_list(x)) {
+    value <- list(value)
+  }
+
+  vec_assign(x, i, value, x_arg = x_arg, value_arg = value_arg)
+}
