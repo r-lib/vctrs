@@ -158,6 +158,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code>outer</code> is now passed unrecycled to name specifications. Instead, the return value is recycled (<a href='https://github.com/r-lib/vctrs/issues/1099'>#1099</a>).</p></li>
 <li>
 <p>Name specifications can now return <code>NULL</code>. The names vector will only be allocated if the spec function returns non-<code>NULL</code> during the concatenation. This makes it possible to ignore outer names without having to create an empty names vector when there are no inner names:</p>
 <pre><code>zap_outer_spec &lt;- function(outer, inner) if (is_character(inner)) inner
