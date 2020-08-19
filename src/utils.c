@@ -1758,7 +1758,7 @@ SEXP r_new_shared_character(const char* name) {
 }
 
 void c_print_backtrace() {
-#if defined(VCTRS_DEBUG)
+#if defined(RLIB_DEBUG)
 #include <execinfo.h>
   void *buffer[500];
   int nptrs = backtrace(buffer, 100);
@@ -1770,7 +1770,7 @@ void c_print_backtrace() {
 
   free(strings);
 #else
-  Rprintf("Can't print C backtrace.\n");
+  Rprintf("vctrs must be compliled with -DRLIB_DEBUG.");
 #endif
 }
 

@@ -18,3 +18,17 @@ vec_ptype_common_df_fallback <- function(..., .ptype = NULL) {
 shaped_int <- function(...) {
   array(NA_integer_, c(...))
 }
+
+set_rownames_recursively <- function(x, i = NULL) {
+  n <- vec_size(x)
+  stopifnot(n <= length(letters))
+
+  for (j in seq_along(x)) {
+    if (is.data.frame(x[[j]])) {
+      x[[j]] <- set_rownames_recursively(x[[j]], i = i)
+    }
+  }
+
+  row.names(x) <- paste0(letters[seq_len(n)], i)
+  x
+}

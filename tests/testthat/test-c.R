@@ -438,5 +438,52 @@ test_that("concatenation performs expected allocations", {
 
     "Doubles to integer"
     with_memory_prof(vec_unchop(dbls, ptype = int()))
+
+
+    "# Concatenation with names"
+
+    "Named integers"
+    ints <- rep(list(set_names(1:3, letters[1:3])), 1e2)
+    with_memory_prof(vec_unchop(ints))
+
+    "Named matrices"
+    mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
+    mats <- rep(list(mat), 1e2)
+    with_memory_prof(vec_unchop(mats))
+
+    "Data frame with named columns"
+    df <- data_frame(
+      x = set_names(as.list(1:2), c("a", "b")),
+      y = set_names(1:2, c("A", "B")),
+      z = data_frame(Z = set_names(1:2, c("Za", "Zb")))
+    )
+    dfs <- rep(list(df), 1e2)
+    with_memory_prof(vec_unchop(dfs))
+
+    "Data frame with rownames (non-repaired, non-recursive case)"
+    df <- data_frame(x = 1:2)
+    dfs <- rep(list(df), 1e2)
+    dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+    with_memory_prof(vec_unchop(dfs))
+
+    "Data frame with rownames (repaired, non-recursive case)"
+    dfs <- map(dfs, set_rownames_recursively)
+    with_memory_prof(vec_unchop(dfs))
+
+    # FIXME: The following recursive cases duplicate rownames
+    # excessively because df-cols are restored at each chunk
+    # assignment, causing a premature name-repair
+    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
+    df <- data_frame(
+      x = 1:2,
+      y = data_frame(x = 1:2)
+    )
+    dfs <- rep(list(df), 1e2)
+    dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+    with_memory_prof(vec_unchop(dfs))
+
+    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
+    dfs <- map(dfs, set_rownames_recursively)
+    with_memory_prof(vec_unchop(dfs))
   })
 })

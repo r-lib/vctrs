@@ -6,19 +6,19 @@
 
 > # Integers
 > with_memory_prof(vec_c(!!!ints))
-[1] 1744
+[1] 1.7KB
 
 > # Doubles
 > with_memory_prof(vec_c(!!!dbls))
-[1] 2144
+[1] 2.09KB
 
 > # Integers to integer
 > with_memory_prof(vec_c(!!!ints, ptype = int()))
-[1] 3464
+[1] 3.38KB
 
 > # Doubles to integer
 > with_memory_prof(vec_c(!!!dbls, ptype = int()))
-[1] 3864
+[1] 3.77KB
 
 
 `vec_unchop()` 
@@ -26,17 +26,63 @@
 
 > # Integers
 > with_memory_prof(vec_unchop(ints))
-[1] 896
+[1] 896B
 
 > # Doubles
 > with_memory_prof(vec_unchop(dbls))
-[1] 1296
+[1] 1.27KB
 
 > # Integers to integer
 > with_memory_prof(vec_unchop(ints, ptype = int()))
-[1] 896
+[1] 896B
 
 > # Doubles to integer
 > with_memory_prof(vec_unchop(dbls, ptype = int()))
-[1] 896
+[1] 896B
+
+
+Concatenation with names
+========================
+
+> # Named integers
+> ints <- rep(list(set_names(1:3, letters[1:3])), 100)
+> with_memory_prof(vec_unchop(ints))
+[1] 6.44KB
+
+> # Named matrices
+> mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
+> mats <- rep(list(mat), 100)
+> with_memory_prof(vec_unchop(mats))
+[1] 5.27KB
+
+> # Data frame with named columns
+> df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
++   "A", "B")), z = data_frame(Z = set_names(1:2, c("Za", "Zb"))))
+> dfs <- rep(list(df), 100)
+> with_memory_prof(vec_unchop(dfs))
+[1] 8.53KB
+
+> # Data frame with rownames (non-repaired, non-recursive case)
+> df <- data_frame(x = 1:2)
+> dfs <- rep(list(df), 100)
+> dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 5.77KB
+
+> # Data frame with rownames (repaired, non-recursive case)
+> dfs <- map(dfs, set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 13.1KB
+
+> # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
+> df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
+> dfs <- rep(list(df), 100)
+> dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 1MB
+
+> # FIXME (#1217): Data frame with rownames (repaired, recursive case)
+> dfs <- map(dfs, set_rownames_recursively)
+> with_memory_prof(vec_unchop(dfs))
+[1] 1.02MB
 

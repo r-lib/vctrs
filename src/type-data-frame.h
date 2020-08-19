@@ -10,7 +10,11 @@ SEXP new_data_frame(SEXP x, R_len_t n);
 void init_data_frame(SEXP x, R_len_t n);
 void init_tibble(SEXP x, R_len_t n);
 void init_compact_rownames(SEXP x, R_len_t n);
-SEXP df_rownames(SEXP x);
+
+static inline
+SEXP df_rownames(SEXP x) {
+  return r_attrib_get(x, R_RowNamesSymbol);
+}
 
 bool is_native_df(SEXP x);
 SEXP df_poke(SEXP x, R_len_t i, SEXP value);

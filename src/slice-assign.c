@@ -1,9 +1,10 @@
 #include "vctrs.h"
+#include "dim.h"
+#include "names.h"
+#include "owned.h"
 #include "slice-assign.h"
 #include "subscript-loc.h"
-#include "owned.h"
 #include "utils.h"
-#include "dim.h"
 
 // Initialised at load time
 SEXP syms_vec_assign_fallback = NULL;
@@ -14,7 +15,7 @@ const struct vec_assign_opts vec_assign_default_opts = {
 };
 
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-static SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value);
+static SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value, const enum vctrs_owned owned);
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
 static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
 static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
@@ -172,7 +173,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   ++n_protect;
 
   if (opts->assign_names) {
-    out = vec_proxy_assign_names(out, index, value_info.proxy);
+    out = vec_proxy_assign_names(out, index, value_info.proxy, owned);
   }
 
   UNPROTECT(n_protect);
@@ -378,7 +379,10 @@ static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
 }
 
 static
-SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
+SEXP vec_proxy_assign_names(SEXP proxy,
+                            SEXP index,
+                            SEXP value,
+                            const enum vctrs_owned owned) {
   SEXP value_nms = PROTECT(vec_names(value));
 
   if (value_nms == R_NilValue) {
@@ -386,17 +390,16 @@ SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value) {
     return proxy;
   }
 
-  SEXP proxy_nms = PROTECT(vec_names(proxy));
+  SEXP proxy_nms = PROTECT(vec_proxy_names(proxy));
   if (proxy_nms == R_NilValue) {
     proxy_nms = PROTECT(Rf_allocVector(STRSXP, vec_size(proxy)));
   } else {
-    proxy_nms = PROTECT(r_clone_referenced(proxy_nms));
+    proxy_nms = PROTECT(vec_clone_referenced(proxy_nms, owned));
   }
+  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, owned));
 
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, VCTRS_OWNED_true));
-
-  proxy = PROTECT(r_clone_referenced(proxy));
-  proxy = vec_set_names(proxy, proxy_nms);
+  proxy = PROTECT(vec_clone_referenced(proxy, owned));
+  proxy = vec_proxy_set_names(proxy, proxy_nms, owned);
 
   UNPROTECT(5);
   return proxy;

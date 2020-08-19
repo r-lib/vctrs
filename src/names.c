@@ -95,10 +95,11 @@ SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts) {
   return out;
 }
 
+static
+SEXP vec_names_impl(SEXP x, bool proxy) {
+  bool has_class = OBJECT(x);
 
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_names(SEXP x) {
-  if (OBJECT(x) && Rf_inherits(x, "data.frame")) {
+  if (has_class && Rf_inherits(x, "data.frame")) {
     // Only return row names if they are character. Data frames with
     // automatic row names are treated as unnamed.
     SEXP rn = df_rownames(x);
@@ -110,14 +111,14 @@ SEXP vec_names(SEXP x) {
   }
 
   if (vec_dim_n(x) == 1) {
-    if (OBJECT(x)) {
+    if (!proxy && has_class) {
       return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
     } else {
       return r_names(x);
     }
   }
 
-  SEXP dimnames = PROTECT(Rf_getAttrib(x, R_DimNamesSymbol));
+  SEXP dimnames = PROTECT(r_attrib_get(x, R_DimNamesSymbol));
   if (dimnames == R_NilValue || Rf_length(dimnames) < 1) {
     UNPROTECT(1);
     return R_NilValue;
@@ -126,6 +127,15 @@ SEXP vec_names(SEXP x) {
   SEXP out = VECTOR_ELT(dimnames, 0);
   UNPROTECT(1);
   return out;
+}
+
+// [[ register(); include("vctrs.h") ]]
+SEXP vec_names(SEXP x) {
+  return vec_names_impl(x, false);
+}
+// [[ include("vctrs.h") ]]
+SEXP vec_proxy_names(SEXP x) {
+  return vec_names_impl(x, true);
 }
 
 // [[ register() ]]
@@ -684,8 +694,8 @@ static void check_names(SEXP x, SEXP names) {
   }
 }
 
-SEXP vec_set_rownames(SEXP x, SEXP names) {
-  if (OBJECT(x)) {
+SEXP vec_set_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
+  if (!proxy && OBJECT(x)) {
     return set_rownames_fallback(x, names);
   }
 
@@ -700,7 +710,7 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
     }
   }
 
-  x = PROTECT_N(r_clone_referenced(x), &nprot);
+  x = PROTECT_N(vec_clone_referenced(x, owned), &nprot);
 
   if (dim_names == R_NilValue) {
     dim_names = PROTECT_N(Rf_allocVector(VECSXP, vec_dim_n(x)), &nprot);
@@ -717,13 +727,13 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
   return x;
 }
 
-SEXP vec_set_df_rownames(SEXP x, SEXP names) {
+SEXP vec_set_df_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
   if (names == R_NilValue) {
     if (rownames_type(df_rownames(x)) != ROWNAMES_IDENTIFIERS) {
       return(x);
     }
 
-    x = PROTECT(r_clone_referenced(x));
+    x = PROTECT(vec_clone_referenced(x, owned));
     init_compact_rownames(x, vec_size(x));
 
     UNPROTECT(1);
@@ -731,9 +741,12 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
   }
 
   // Repair row names silently
-  names = PROTECT(vec_as_names(names, p_unique_repair_silent_opts));
+  if (!proxy) {
+    names = vec_as_names(names, p_unique_repair_silent_opts);
+  }
+  PROTECT(names);
 
-  x = PROTECT(r_clone_referenced(x));
+  x = PROTECT(vec_clone_referenced(x, owned));
   Rf_setAttrib(x, R_RowNamesSymbol, names);
 
   UNPROTECT(2);
@@ -742,19 +755,18 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names) {
 
 // FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
 // exist? See #526 and #531 for discussion and the related issue.
-// [[ include("utils.h"); register() ]]
-SEXP vec_set_names(SEXP x, SEXP names) {
+SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
   check_names(x, names);
 
   if (is_data_frame(x)) {
-    return vec_set_df_rownames(x, names);
+    return vec_set_df_rownames(x, names, proxy, owned);
   }
 
   if (has_dim(x)) {
-    return vec_set_rownames(x, names);
+    return vec_set_rownames(x, names, proxy, owned);
   }
 
-  if (OBJECT(x)) {
+  if (!proxy && OBJECT(x)) {
     return set_names_fallback(x, names);
   }
 
@@ -763,12 +775,21 @@ SEXP vec_set_names(SEXP x, SEXP names) {
     return x;
   }
 
-  x = PROTECT(r_clone_referenced(x));
+  x = PROTECT(vec_clone_referenced(x, owned));
   Rf_setAttrib(x, R_NamesSymbol, names);
 
   UNPROTECT(1);
   return x;
 }
+// [[ include("utils.h"); register() ]]
+SEXP vec_set_names(SEXP x, SEXP names) {
+  return vec_set_names_impl(x, names, false, VCTRS_OWNED_false);
+}
+// [[ include("utils.h") ]]
+SEXP vec_proxy_set_names(SEXP x, SEXP names, const enum vctrs_owned owned) {
+  return vec_set_names_impl(x, names, true, owned);
+}
+
 
 SEXP vctrs_validate_name_repair_arg(SEXP arg) {
   struct name_repair_opts opts = new_name_repair_opts(arg, args_empty, true);

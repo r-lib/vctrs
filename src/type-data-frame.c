@@ -460,25 +460,6 @@ static SEXP new_compact_rownames(R_len_t n) {
   return out;
 }
 
-// [[ include("type-data-frame.h") ]]
-SEXP df_rownames(SEXP x) {
-  // Required, because getAttrib() already does the transformation to a vector,
-  // and getAttrib0() is hidden
-  SEXP node = ATTRIB(x);
-
-  while (node != R_NilValue) {
-    SEXP tag = TAG(node);
-
-    if (tag == R_RowNamesSymbol) {
-      return CAR(node);
-    }
-
-    node = CDR(node);
-  }
-
-  return R_NilValue;
-}
-
 
 // vctrs type methods ------------------------------------------------
 

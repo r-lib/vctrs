@@ -2,6 +2,7 @@
 #define VCTRS_UTILS_H
 
 #include "arg-counter.h"
+#include "utils-rlang.h"
 
 
 #define SWAP(T, x, y) do {                      \
@@ -291,14 +292,8 @@ SEXP r_clone(SEXP x) {
 SEXP r_pairlist(SEXP* tags, SEXP* cars);
 SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
 
-static inline SEXP r_names(SEXP x) {
-  return Rf_getAttrib(x, R_NamesSymbol);
-}
 static inline SEXP r_poke_names(SEXP x, SEXP names) {
   return Rf_setAttrib(x, R_NamesSymbol, names);
-}
-static inline SEXP r_class(SEXP x) {
-  return Rf_getAttrib(x, R_ClassSymbol);
 }
 static inline SEXP r_poke_class(SEXP x, SEXP names) {
   return Rf_setAttrib(x, R_ClassSymbol, names);
@@ -614,6 +609,12 @@ extern SEXP fns_names;
 extern SEXP vctrs_method_table;
 extern SEXP base_method_table;
 extern SEXP s4_c_method_table;
+
+
+#if defined(RLIB_DEBUG)
+SEXP R_inspect(SEXP x);
+SEXP R_inspect3(SEXP x, int deep, int pvec);
+#endif
 
 
 #endif

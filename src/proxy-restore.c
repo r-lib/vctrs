@@ -131,6 +131,10 @@ static SEXP vec_bare_df_restore_impl(SEXP x, SEXP to, R_len_t size,
   SEXP rownames = PROTECT(df_rownames(x));
   if (rownames == R_NilValue) {
     init_compact_rownames(x, size);
+  } else if (rownames_type(rownames) == ROWNAMES_IDENTIFIERS) {
+    rownames = PROTECT(vec_as_names(rownames, p_unique_repair_silent_opts));
+    x = vec_proxy_set_names(x, rownames, owned);
+    UNPROTECT(1);
   }
 
   UNPROTECT(2);
