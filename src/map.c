@@ -26,7 +26,7 @@ SEXP vctrs_map(SEXP args) {
     const SEXP* p_x = VECTOR_PTR_RO(x);
 
     if (ptype == R_NilValue) {
-      Rf_error("TODO");
+      r_abort("`.ptype` can't be NULL.");
     }
 
     SEXP out;

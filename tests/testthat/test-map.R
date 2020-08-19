@@ -38,6 +38,10 @@ test_that("vec_map() handles S3 lists", {
   )
 })
 
+test_that("vec_map() requires a non-NULL ptype", {
+  expect_error(vec_map(1, identity, .ptype = NULL), "can't be NULL")
+})
+
 
 # Tests imported from purrr -----------------------------------------------
 
