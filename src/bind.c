@@ -194,6 +194,9 @@ static SEXP vec_rbind(SEXP xs,
 
       if (x_nms != R_NilValue) {
         R_LAZY_ALLOC(rownames, rownames_pi, STRSXP, n_rows);
+
+        // If there is no name to assign, skip the assignment since
+        // `out_names` already contains empty strings
         if (inner != chrs_empty) {
           rownames = chr_assign(rownames, loc, x_nms, VCTRS_OWNED_true);
           REPROTECT(rownames, rownames_pi);

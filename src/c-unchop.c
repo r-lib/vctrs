@@ -144,6 +144,9 @@ static SEXP vec_unchop(SEXP xs,
 
       if (x_nms != R_NilValue) {
         R_LAZY_ALLOC(out_names, out_names_pi, STRSXP, out_size);
+
+        // If there is no name to assign, skip the assignment since
+        // `out_names` already contains empty strings
         if (x_nms != chrs_empty) {
           out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
           REPROTECT(out_names, out_names_pi);
