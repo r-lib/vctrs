@@ -42,6 +42,13 @@ test_that("vec_map() requires a non-NULL ptype", {
   expect_error(vec_map(1, identity, .ptype = NULL), "can't be NULL")
 })
 
+test_that("functions must return size 1 vector when mapping to atomic", {
+  expect_error(
+    map(1:2, rep, 2, .ptype = int()),
+    "must return a size 1 vector"
+  )
+})
+
 
 # Tests imported from purrr -----------------------------------------------
 

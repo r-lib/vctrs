@@ -86,6 +86,10 @@ SEXP atomic_map(SEXP x, SEXP env, SEXP ptype) {
     r_env_poke(env, syms_dot_elt, p_x[i]);
 
     SEXP elt_out = PROTECT(r_eval_force(vec_map_call, env));
+    if (vec_size(elt_out) != 1) {
+      r_abort("Mapped function must return a size 1 vector.");
+    }
+
     elt_out = PROTECT(vec_cast(elt_out, ptype, NULL, NULL));
 
     init_compact_seq(p_loc, i, 1, true);
