@@ -23,6 +23,8 @@ SEXP vctrs_map(SEXP args) {
     bool list_input = vec_is_list(orig);
     bool list_output = vec_is_list(ptype);
 
+    // Instead of using `[[` or equivalent to access the elements of
+    // atomic inputs, we chop them into a list
     if (!list_input) {
       x = vec_chop2(x);
     }
@@ -45,6 +47,9 @@ SEXP vctrs_map(SEXP args) {
 
 static
 SEXP list_map(SEXP x, SEXP env, SEXP ptype) {
+  // When mapping to a list, we update the input list with the results
+  // inplace. We first zap the attributes of this list because it's
+  // cast to the target prototype later on.
   SEXP out = PROTECT(r_clone_referenced(x));
   SET_ATTRIB(out, R_NilValue);
   SET_OBJECT(out, 0);
@@ -57,8 +62,10 @@ SEXP list_map(SEXP x, SEXP env, SEXP ptype) {
     SET_VECTOR_ELT(out, i, r_eval_force(vec_map_call, env));
   }
 
-  // Should use a ptype identity check before casting. Probably
-  // `vec_cast()` should make that check.
+  // Genericity is accomplished by casting the complete list of
+  // outputs to the target prototype. Should use a ptype identity
+  // check before casting. Probably `vec_cast()` should make that
+  // check.
   if (OBJECT(ptype)) {
     out = vec_cast(out, ptype, NULL, NULL);
   }
@@ -71,6 +78,9 @@ static
 SEXP atomic_map(SEXP x, SEXP env, SEXP ptype) {
   r_ssize n = r_length(x);
 
+  // Genericity is handled in a typical fashion when mapping to an
+  // atomic vector. We initialise the target prototype and coerce each
+  // element to that target before assigning.
   SEXP out = PROTECT(vec_init(ptype, n));
 
   SEXP out_proxy = vec_proxy(out);
