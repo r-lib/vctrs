@@ -845,6 +845,9 @@ test_that("vec_unchop() fails if foreign classes are not homogeneous and there i
   )
 })
 
+
+# Golden tests ------------------------------------------------------------
+
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
     "# vec_unchop() errors on unsupported location values"
@@ -883,5 +886,44 @@ test_that("vec_unchop() has informative error messages", {
         indices = list(2:1, 3),
         name_spec = zap()
       )
+  })
+})
+
+test_that("chop functions have expected memory footprint", {
+  verify_output(test_path("performance", "test-slice-chop.txt"), {
+    local_list_rcrd_methods()
+    n <- 1e2
+
+    "Atomic vector"
+    vec <- rep(c(a = 1L, b = 2L), n)
+    with_memory_prof(vec_chop2(vec))
+
+    "S3 atomic vector"
+    vec_s3 <- new_vctr(vec)
+    with_memory_prof(vec_chop2(vec_s3))
+
+    "Record vector"
+    vec_rcrd <- rep(new_rcrd(list(a = 1:2, b = 3:4)), n)
+    with_memory_prof(vec_chop2(vec_rcrd))
+
+    "Data frame"
+    df <- vec_rep(data.frame(x = 1, y = 2), n)
+    with_memory_prof(vec_chop2(df))
+
+    "S3 data frame"
+    tib <- vec_rep(tibble(x = 1, y = 2), n)
+    with_memory_prof(vec_chop2(tib))
+
+    "# List"
+    list <- rep(list(a = c(foo = 1:2), b = c(bar = 1:3)), n)
+    with_memory_prof(vec_chop2(list))
+
+    "# S3 list"
+    vctr <- new_vctr(list)
+    with_memory_prof(vec_chop2(vctr))
+
+    "# S3 record list"
+    list_rcrd <- new_list_rcrd(list)
+    with_memory_prof(vec_chop2(list_rcrd))
   })
 })
