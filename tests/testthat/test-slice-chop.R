@@ -299,6 +299,10 @@ test_that("vec_chop2() works with generic lists", {
   expect_identical(vec_chop2(new_list_rcrd(x)), x)
 })
 
+test_that("vec_chop2() zaps attributes", {
+  expect_identical(vec_chop2(structure(list(), foo = TRUE)), list())
+})
+
 
 # vec_unchop --------------------------------------------------------------
 

@@ -424,6 +424,10 @@ SEXP vctrs_chop2(SEXP args) {
 
 // [[ include("slice.h") ]]
 SEXP vec_chop2(SEXP x) {
+  if (r_is_bare_list(x)) {
+    return x;
+  }
+
   SEXP out;
 
   if (vec_is_list(x)) {

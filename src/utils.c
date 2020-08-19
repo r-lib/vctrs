@@ -1623,6 +1623,24 @@ void stop_internal(const char* fn, const char* fmt, ...) {
 #undef FMT_BUFSIZE
 
 
+bool r_is_bare_list(SEXP x) {
+  if (TYPEOF(x) != VECSXP) {
+    return false;
+  }
+
+  SEXP attrib = r_attrib(x);
+
+  while (attrib != r_null) {
+    if (r_node_tag(attrib) != r_syms_names) {
+      return false;
+    }
+    attrib = r_node_cdr(attrib);
+  }
+
+  return true;
+}
+
+
 bool vctrs_debug_verbose = false;
 
 SEXP vctrs_ns_env = NULL;

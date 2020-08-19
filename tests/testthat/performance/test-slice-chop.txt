@@ -31,7 +31,7 @@ List
 
 > list <- rep(list(a = c(foo = 1:2), b = c(bar = 1:3)), n)
 > with_memory_prof(vec_chop2(list))
-[1] 1.61KB
+[1] 0B
 
 
 S3 list
