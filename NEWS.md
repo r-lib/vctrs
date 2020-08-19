@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `outer` is now passed unrecycled to name specifications. Instead,
+  the return value is recycled (#1099).
+
 * Name specifications can now return `NULL`. The names vector will
   only be allocated if the spec function returns non-`NULL` during the
   concatenation. This makes it possible to ignore outer names without
