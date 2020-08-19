@@ -694,8 +694,8 @@ static void check_names(SEXP x, SEXP names) {
   }
 }
 
-SEXP vec_set_rownames(SEXP x, SEXP names) {
-  if (OBJECT(x)) {
+SEXP vec_set_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
+  if (!proxy && OBJECT(x)) {
     return set_rownames_fallback(x, names);
   }
 
@@ -710,7 +710,7 @@ SEXP vec_set_rownames(SEXP x, SEXP names) {
     }
   }
 
-  x = PROTECT_N(r_clone_referenced(x), &nprot);
+  x = PROTECT_N(vec_clone_referenced(x, owned), &nprot);
 
   if (dim_names == R_NilValue) {
     dim_names = PROTECT_N(Rf_allocVector(VECSXP, vec_dim_n(x)), &nprot);
@@ -763,7 +763,7 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
   }
 
   if (has_dim(x)) {
-    return vec_set_rownames(x, names);
+    return vec_set_rownames(x, names, proxy, owned);
   }
 
   if (!proxy && OBJECT(x)) {
