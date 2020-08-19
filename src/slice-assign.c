@@ -147,6 +147,10 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                            const struct vec_assign_opts* opts) {
   int n_protect = 0;
 
+  struct vec_assign_opts mut_opts = *opts;
+  bool ignore_outer_names = mut_opts.ignore_outer_names;
+  mut_opts.ignore_outer_names = false;
+
   struct vctrs_proxy_info value_info = vec_proxy_info(value);
   PROTECT_PROXY_INFO(&value_info, &n_protect);
 
@@ -166,13 +170,13 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     out = PROTECT(vec_assign_fallback(proxy, index, value));
     ++n_protect;
   } else if (has_dim(proxy)) {
-    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, owned, opts));
+    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, owned, &mut_opts));
   } else {
-    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, owned, opts));
+    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, owned, &mut_opts));
   }
   ++n_protect;
 
-  if (opts->assign_names) {
+  if (!ignore_outer_names && opts->assign_names) {
     out = vec_proxy_assign_names(out, index, value_info.proxy, owned);
   }
 

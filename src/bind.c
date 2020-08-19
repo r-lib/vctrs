@@ -167,7 +167,10 @@ static SEXP vec_rbind(SEXP xs,
   R_len_t counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
-    .assign_names = assign_names
+    .assign_names = assign_names,
+    // Unlike in `vec_c()` we don't need to ignore outer names because
+    // `df_assign()` doesn't deal with those
+    .ignore_outer_names = false
   };
 
   for (R_len_t i = 0; i < n_inputs; ++i) {
@@ -183,10 +186,6 @@ static SEXP vec_rbind(SEXP xs,
     out = df_assign(out, loc, x, VCTRS_OWNED_true, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
-    // FIXME: This work happens in parallel to the names assignment in
-    // `df_assign()`. We should add a way to instruct df-assign to
-    // ignore the outermost names (but still assign inner names in
-    // case of data frames).
     if (assign_names) {
       SEXP outer = xs_is_named ? p_xs_names[i] : R_NilValue;
       SEXP inner = PROTECT(vec_names(x));

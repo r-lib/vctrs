@@ -47,13 +47,13 @@ Concatenation with names
 > # Named integers
 > ints <- rep(list(set_names(1:3, letters[1:3])), 100)
 > with_memory_prof(vec_unchop(ints))
-[1] 6.44KB
+[1] 4.05KB
 
 > # Named matrices
 > mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
 > mats <- rep(list(mat), 100)
 > with_memory_prof(vec_unchop(mats))
-[1] 5.27KB
+[1] 3.66KB
 
 > # Data frame with named columns
 > df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
@@ -67,22 +67,22 @@ Concatenation with names
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 10.3KB
+[1] 5.77KB
 
 > # Data frame with rownames (repaired, non-recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 25KB
+[1] 13.1KB
 
 > # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
 > df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 1.01MB
+[1] 1MB
 
 > # FIXME (#1217): Data frame with rownames (repaired, recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 1.03MB
+[1] 1.02MB
 
