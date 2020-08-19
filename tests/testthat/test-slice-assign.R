@@ -752,6 +752,24 @@ test_that("zap() is currently disallowed", {
   expect_error(vec_assign2(list(1), 1, zap()), "Can't zap")
 })
 
+test_that("vec_assign2() fails with incompatible type", {
+  verify_errors({
+    expect_error(
+      vec_assign2(1:3, 2, ""),
+      class = "vctrs_error_incompatible_type"
+    )
+  })
+})
+
+test_that("vec_assign2() fails with OOB subscript", {
+  verify_errors({
+    expect_error(
+      vec_assign2(1:3, 4, 0),
+      class = "vctrs_error_subscript_oob"
+    )
+  })
+})
+
 
 # Golden tests ------------------------------------------------------------
 
@@ -777,5 +795,11 @@ test_that("slice and assign have informative errors", {
     "# `vec_assign()` error args can be overridden"
     vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
     vec_assign(1:2, 1L, 1:2, value_arg = "bar")
+
+    "# vec_assign2() fails with incompatible type"
+    vec_assign2(1:3, 2, "")
+
+    "# vec_assign2() fails with OOB subscript"
+    vec_assign2(1:3, 4, 0)
   })
 })
