@@ -120,7 +120,8 @@ static SEXP vec_unchop(SEXP xs,
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
   const struct vec_assign_opts unchop_assign_opts = {
-    .assign_names = assign_names
+    .assign_names = assign_names,
+    .ignore_outer_names = true
   };
 
   for (R_len_t i = 0; i < xs_size; ++i) {
