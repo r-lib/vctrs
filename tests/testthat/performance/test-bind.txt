@@ -19,22 +19,22 @@
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_rbind(!!!dfs))
-[1] 10.3KB
+[1] 7.42KB
 
 > # Data frame with rownames (repaired, non-recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_rbind(!!!dfs))
-[1] 25.1KB
+[1] 14.8KB
 
 > # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
 > df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_rbind(!!!dfs))
-[1] 1.01MB
+[1] 1MB
 
 > # FIXME (#1217): Data frame with rownames (repaired, recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_rbind(!!!dfs))
-[1] 1.03MB
+[1] 1.02MB
 

@@ -38,24 +38,24 @@ static SEXP vec_unchop_fallback(SEXP ptype,
                                 const struct name_repair_opts* name_repair,
                                 enum fallback_homogeneous homogenous);
 
-static SEXP vec_unchop(SEXP x,
+static SEXP vec_unchop(SEXP xs,
                        SEXP indices,
                        SEXP ptype,
                        SEXP name_spec,
                        const struct name_repair_opts* name_repair) {
-  if (!vec_is_list(x)) {
+  if (!vec_is_list(xs)) {
     Rf_errorcall(R_NilValue, "`x` must be a list");
   }
 
   if (indices == R_NilValue) {
-    return vec_c(x, ptype, name_spec, name_repair);
+    return vec_c(xs, ptype, name_spec, name_repair);
   }
 
-  R_len_t x_size = vec_size(x);
+  R_len_t xs_size = vec_size(xs);
 
   // Apply size/type checking to `indices` before possibly exiting early from
   // having a `NULL` common type
-  if (x_size != vec_size(indices)) {
+  if (xs_size != vec_size(indices)) {
     Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
   }
 
@@ -63,16 +63,16 @@ static SEXP vec_unchop(SEXP x,
     Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
   }
 
-  ptype = PROTECT(vec_ptype_common_params(x, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true));
+  ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true));
 
   if (needs_vec_c_fallback(ptype)) {
-    SEXP out = vec_unchop_fallback(ptype, x, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
+    SEXP out = vec_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
     UNPROTECT(1);
     return out;
   }
   // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
-  if (needs_vec_c_homogeneous_fallback(x, ptype)) {
-    SEXP out = vec_unchop_fallback(ptype, x, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true);
+  if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
+    SEXP out = vec_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true);
     UNPROTECT(1);
     return out;
   }
@@ -82,88 +82,77 @@ static SEXP vec_unchop(SEXP x,
     return R_NilValue;
   }
 
-  x = PROTECT(vec_cast_common(x, ptype));
+  xs = PROTECT(vec_cast_common(xs, ptype));
 
-  SEXP x_names = PROTECT(r_names(x));
-
-  bool has_outer_names = (x_names != R_NilValue);
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
-  bool has_names =
-    assign_names &&
-    !is_data_frame(ptype) &&
-    (has_outer_names || list_has_inner_vec_names(x, x_size));
-
-  // Element sizes are only required for applying the `name_spec`
-  SEXP sizes = vctrs_shared_empty_int;
-  if (has_names) {
-    sizes = Rf_allocVector(INTSXP, x_size);
-  }
-  PROTECT(sizes);
-  int* p_sizes = INTEGER(sizes);
+  SEXP xs_names = PROTECT(r_names(xs));
+  bool xs_is_named = xs_names != R_NilValue && !is_data_frame(ptype);
 
   R_len_t out_size = 0;
 
   // `out_size` is computed from `indices`
-  for (R_len_t i = 0; i < x_size; ++i) {
-    SEXP elt = VECTOR_ELT(x, i);
+  for (R_len_t i = 0; i < xs_size; ++i) {
+    SEXP x = VECTOR_ELT(xs, i);
 
-    if (elt == R_NilValue) {
+    if (x == R_NilValue) {
       continue;
     }
 
-    R_len_t index_size = vec_size(VECTOR_ELT(indices, i));
+    R_len_t index_size = Rf_length(VECTOR_ELT(indices, i));
     out_size += index_size;
 
-    if (has_names) {
-      p_sizes[i] = index_size;
-    }
-
-    // Each element of `x` is recycled to its corresponding index's size
-    elt = vec_recycle(elt, index_size, args_empty);
-    SET_VECTOR_ELT(x, i, elt);
+    // Each element of `xs` is recycled to its corresponding index's size
+    x = vec_recycle(x, index_size, args_empty);
+    SET_VECTOR_ELT(xs, i, x);
   }
 
-  indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
+  SEXP locs = PROTECT(vec_as_indices(indices, out_size, R_NilValue));
 
-  PROTECT_INDEX proxy_pi;
   SEXP proxy = vec_proxy(ptype);
+  PROTECT_INDEX proxy_pi;
   PROTECT_WITH_INDEX(proxy, &proxy_pi);
+
   proxy = vec_init(proxy, out_size);
   REPROTECT(proxy, proxy_pi);
 
+  SEXP out_names = R_NilValue;
   PROTECT_INDEX out_names_pi;
-  SEXP out_names = vctrs_shared_empty_chr;
-  if (has_names) {
-    out_names = Rf_allocVector(STRSXP, out_size);
-  }
   PROTECT_WITH_INDEX(out_names, &out_names_pi);
 
   const struct vec_assign_opts unchop_assign_opts = {
     .assign_names = assign_names
   };
 
-  for (R_len_t i = 0; i < x_size; ++i) {
-    SEXP elt = VECTOR_ELT(x, i);
+  for (R_len_t i = 0; i < xs_size; ++i) {
+    SEXP x = VECTOR_ELT(xs, i);
 
-    if (elt == R_NilValue) {
+    if (x == R_NilValue) {
       continue;
     }
 
-    SEXP index = VECTOR_ELT(indices, i);
+    SEXP loc = VECTOR_ELT(locs, i);
 
     // Total ownership of `proxy` because it was freshly created with `vec_init()`
-    proxy = vec_proxy_assign_opts(proxy, index, elt, VCTRS_OWNED_true, &unchop_assign_opts);
+    proxy = vec_proxy_assign_opts(proxy, loc, x, VCTRS_OWNED_true, &unchop_assign_opts);
     REPROTECT(proxy, proxy_pi);
 
-    if (has_names) {
-      R_len_t size = p_sizes[i];
-      SEXP outer = (has_outer_names) ? STRING_ELT(x_names, i) : R_NilValue;
-      SEXP inner = PROTECT(vec_names(elt));
-      SEXP elt_names = PROTECT(apply_name_spec(name_spec, outer, inner, size));
-      if (elt_names != R_NilValue) {
-        out_names = chr_assign(out_names, index, elt_names, VCTRS_OWNED_true);
-        REPROTECT(out_names, out_names_pi);
+    if (assign_names) {
+      R_len_t size = Rf_length(loc);
+      SEXP outer = xs_is_named ? STRING_ELT(xs_names, i) : R_NilValue;
+      SEXP inner = PROTECT(vec_names(x));
+      SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
+
+      if (x_nms != R_NilValue) {
+        R_LAZY_ALLOC(out_names, out_names_pi, STRSXP, out_size);
+
+        // If there is no name to assign, skip the assignment since
+        // `out_names` already contains empty strings
+        if (x_nms != chrs_empty) {
+          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
+          REPROTECT(out_names, out_names_pi);
+        }
       }
+
       UNPROTECT(2);
     }
   }
@@ -172,10 +161,10 @@ static SEXP vec_unchop(SEXP x,
 
   SEXP out = PROTECT(vec_restore(proxy, ptype, out_size_sexp, VCTRS_OWNED_true));
 
-  if (has_names) {
-    out_names = vec_as_names(out_names, name_repair);
-    REPROTECT(out_names, out_names_pi);
+  if (out_names != R_NilValue) {
+    out_names = PROTECT(vec_as_names(out_names, name_repair));
     out = vec_set_names(out, out_names);
+    UNPROTECT(1);
   } else if (!assign_names) {
     // FIXME: `vec_ptype2()` doesn't consistently zaps names, so `out`
     // might have been initialised with names. This branch can be
@@ -183,7 +172,7 @@ static SEXP vec_unchop(SEXP x,
     out = vec_set_names(out, R_NilValue);
   }
 
-  UNPROTECT(9);
+  UNPROTECT(8);
   return out;
 }
 

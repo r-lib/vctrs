@@ -385,6 +385,29 @@ test_that("base c() fallback handles unspecified chunks", {
   expect_identical(out, quux(c(NA, NA, 1:2, NA)))
 })
 
+test_that("can zap outer names from a name-spec (#1215)", {
+  zap_outer_spec <- function(outer, inner) if (is_character(inner)) inner
+
+  expect_null(
+    names(vec_c(a = 1:2, .name_spec = zap_outer_spec))
+  )
+  expect_identical(
+    names(vec_c(a = 1:2, c(foo = 3L), .name_spec = zap_outer_spec)),
+    c("", "", "foo")
+  )
+
+  expect_null(
+    names(vec_unchop(list(a = 1:2), indices = list(1:2), name_spec = zap_outer_spec))
+  )
+  expect_identical(
+    names(vec_unchop(list(a = 1:2, c(foo = 3L)), indices = list(1:2, 3), name_spec = zap_outer_spec)),
+    c("", "", "foo")
+  )
+})
+
+
+# Golden tests -------------------------------------------------------
+
 test_that("vec_c() has informative error messages", {
   verify_output(test_path("error", "test-c.txt"), {
     "# vec_c() fails with complex foreign S3 classes"

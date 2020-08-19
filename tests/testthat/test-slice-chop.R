@@ -244,7 +244,7 @@ test_that("`indices` must be a list", {
 test_that("`indices` must be a list of integers", {
   expect_error(vec_unchop(list(1), list("x")), class = "vctrs_error_subscript_type")
   expect_error(vec_unchop(list(1), list(TRUE)), class = "vctrs_error_subscript_type")
-  expect_error(vec_unchop(list(1), list(quote(name))), class = "vctrs_error_scalar_type")
+  expect_error(vec_unchop(list(1), list(quote(name))), class = "vctrs_error_subscript_type")
 })
 
 test_that("`x` and `indices` must be lists of the same size", {

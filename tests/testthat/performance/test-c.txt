@@ -67,22 +67,22 @@ Concatenation with names
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 5.77KB
+[1] 10.3KB
 
 > # Data frame with rownames (repaired, non-recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 13.1KB
+[1] 25KB
 
 > # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
 > df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
 > dfs <- rep(list(df), 100)
 > dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 1MB
+[1] 1.01MB
 
 > # FIXME (#1217): Data frame with rownames (repaired, recursive case)
 > dfs <- map(dfs, set_rownames_recursively)
 > with_memory_prof(vec_unchop(dfs))
-[1] 1.02MB
+[1] 1.03MB
 

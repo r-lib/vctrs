@@ -77,18 +77,22 @@ static SEXP vec_rbind(SEXP xs,
     Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
   }
 
-  SEXP nms = PROTECT_N(r_names(xs), &n_prot);
-  bool has_names = nms != R_NilValue;
+  bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
+
   bool has_names_to = names_to != R_NilValue;
   R_len_t names_to_loc = 0;
 
   if (has_names_to) {
+    if (!assign_names) {
+      r_abort("Can't zap outer names when `.names_to` is supplied.");
+    }
+
     SEXP ptype_nms = PROTECT(r_names(ptype));
     names_to_loc = r_chr_find(ptype_nms, names_to);
     UNPROTECT(1);
 
     if (names_to_loc < 0) {
-      ptype = PROTECT_N(cbind_names_to(has_names, names_to, ptype), &n_prot);
+      ptype = PROTECT_N(cbind_names_to(r_names(xs) != R_NilValue, names_to, ptype), &n_prot);
       names_to_loc = 0;
     }
   }
@@ -100,12 +104,6 @@ static SEXP vec_rbind(SEXP xs,
   // Find individual input sizes and total size of output
   R_len_t n_rows = 0;
 
-  bool has_rownames = false;
-  if (!has_names_to && r_names(xs) != R_NilValue) {
-    // Names of inputs become row names when `names_to` isn't supplied
-    has_rownames = true;
-  }
-
   SEXP ns_placeholder = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
   int* ns = INTEGER(ns_placeholder);
 
@@ -114,13 +112,9 @@ static SEXP vec_rbind(SEXP xs,
     R_len_t size = (elt == R_NilValue) ? 0 : vec_size(elt);
     n_rows += size;
     ns[i] = size;
-
-    if (!has_rownames && is_data_frame(elt)) {
-      has_rownames = rownames_type(df_rownames(elt)) == ROWNAMES_IDENTIFIERS;
-    }
   }
 
-  SEXP proxy = PROTECT(vec_proxy(ptype));
+  SEXP proxy = PROTECT_N(vec_proxy(ptype), &n_prot);
   if (!is_data_frame(proxy)) {
     Rf_errorcall(R_NilValue, "Can't fill a data frame that doesn't have a data frame proxy.");
   }
@@ -128,31 +122,28 @@ static SEXP vec_rbind(SEXP xs,
   PROTECT_INDEX out_pi;
   SEXP out = vec_init(proxy, n_rows);
   PROTECT_WITH_INDEX(out, &out_pi);
+  ++n_prot;
 
-  SEXP idx = PROTECT_N(compact_seq(0, 0, true), &n_prot);
-  int* idx_ptr = INTEGER(idx);
+  SEXP loc = PROTECT_N(compact_seq(0, 0, true), &n_prot);
+  int* p_loc = INTEGER(loc);
 
-  PROTECT_INDEX rownames_pi;
   SEXP rownames = R_NilValue;
-  if (has_rownames) {
-    rownames = Rf_allocVector(STRSXP, n_rows);
-  }
+  PROTECT_INDEX rownames_pi;
   PROTECT_WITH_INDEX(rownames, &rownames_pi);
-
-  const SEXP* nms_p = NULL;
-  if (has_names) {
-    nms_p = STRING_PTR_RO(nms);
-  }
+  ++n_prot;
 
   SEXP names_to_col = R_NilValue;
   SEXPTYPE names_to_type = 99;
   void* p_names_to_col = NULL;
   const void* p_index = NULL;
 
+  SEXP xs_names = PROTECT_N(r_names(xs), &n_prot);
+  bool xs_is_named = xs_names != R_NilValue;
+
   if (has_names_to) {
     SEXP index = R_NilValue;
-    if (has_names) {
-      index = nms;
+    if (xs_is_named) {
+      index = xs_names;
     } else {
       index = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
       r_int_fill_seq(index, 1, n_inputs);
@@ -162,13 +153,21 @@ static SEXP vec_rbind(SEXP xs,
 
     p_index = r_vec_deref_barrier_const(index);
     p_names_to_col = r_vec_deref_barrier(names_to_col);
+
+    xs_names = R_NilValue;
+    xs_is_named = false;
+  }
+
+  const SEXP* p_xs_names = NULL;
+  if (xs_is_named) {
+    p_xs_names = STRING_PTR_RO(xs_names);
   }
 
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
-    .assign_names = true
+    .assign_names = assign_names
   };
 
   for (R_len_t i = 0; i < n_inputs; ++i) {
@@ -178,38 +177,34 @@ static SEXP vec_rbind(SEXP xs,
     }
     SEXP x = VECTOR_ELT(xs, i);
 
-    init_compact_seq(idx_ptr, counter, size, true);
+    init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = df_assign(out, idx, x, VCTRS_OWNED_true, &bind_assign_opts);
+    out = df_assign(out, loc, x, VCTRS_OWNED_true, &bind_assign_opts);
     REPROTECT(out, out_pi);
 
     // FIXME: This work happens in parallel to the names assignment in
     // `df_assign()`. We should add a way to instruct df-assign to
     // ignore the outermost names (but still assign inner names in
     // case of data frames).
-    if (has_rownames) {
-      SEXP rn = df_rownames(x);
+    if (assign_names) {
+      SEXP outer = xs_is_named ? p_xs_names[i] : R_NilValue;
+      SEXP inner = PROTECT(vec_names(x));
+      SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
-      if (has_names && nms_p[i] != strings_empty && !has_names_to) {
-        if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-          rn = apply_name_spec(name_spec, nms_p[i], rn, size);
-        } else if (size > 1) {
-          rn = r_seq_chr(CHAR(nms_p[i]), size);
-        } else {
-          rn = r_str_as_character(nms_p[i]);
+      if (x_nms != R_NilValue) {
+        R_LAZY_ALLOC(rownames, rownames_pi, STRSXP, n_rows);
+
+        // If there is no name to assign, skip the assignment since
+        // `out_names` already contains empty strings
+        if (inner != chrs_empty) {
+          rownames = chr_assign(rownames, loc, x_nms, VCTRS_OWNED_true);
+          REPROTECT(rownames, rownames_pi);
         }
       }
-      PROTECT(rn);
 
-      if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-        rownames = chr_assign(rownames, idx, rn, VCTRS_OWNED_true);
-        REPROTECT(rownames, rownames_pi);
-      }
-
-      UNPROTECT(1);
+      UNPROTECT(2);
     }
-    PROTECT(rownames);
 
     // Assign current name to group vector, if supplied
     if (has_names_to) {
@@ -217,17 +212,9 @@ static SEXP vec_rbind(SEXP xs,
     }
 
     counter += size;
-    UNPROTECT(1);
   }
 
-  if (has_rownames) {
-    const struct name_repair_opts rownames_repair = {
-      .type = name_repair_unique,
-      .fn = R_NilValue,
-      .quiet = true
-    };
-    rownames = vec_as_names(rownames, &rownames_repair);
-    REPROTECT(rownames, rownames_pi);
+  if (rownames != R_NilValue) {
     Rf_setAttrib(out, R_RowNamesSymbol, rownames);
   }
 
@@ -251,10 +238,10 @@ static SEXP vec_rbind(SEXP xs,
     }
   }
 
-  out = vec_restore(out, ptype, PROTECT(r_int(n_rows)), VCTRS_OWNED_true);
+  SEXP r_n_rows = PROTECT_N(r_int(n_rows), &n_prot);
+  out = vec_restore(out, ptype, r_n_rows, VCTRS_OWNED_true);
 
   UNPROTECT(n_prot);
-  UNPROTECT(4);
   return out;
 }
 

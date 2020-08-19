@@ -249,10 +249,11 @@ test_that("can assign row names in vec_rbind()", {
     foo = unrownames(df1),
     df2,
     bar = unrownames(mtcars[6, ]),
-    .names_to = NULL
+    .names_to = NULL,
+    .name_spec = "{outer}_{inner}"
   )
   exp <- mtcars[1:6, ]
-  row.names(exp) <- c(paste0("foo", 1:3), row.names(df2), "bar")
+  row.names(exp) <- c(paste0("foo_", 1:3), row.names(df2), "bar")
   expect_identical(out, exp)
 
   out <- vec_rbind(
@@ -929,6 +930,43 @@ test_that("vec_rbind() fallback works with tibbles", {
   expect_identical(vec_rbind(df, tib), exp)
   expect_identical(vec_rbind(tib, df), exp)
 })
+
+test_that("vec_rbind() zaps names when name-spec is zap() and names-to is NULL", {
+  expect_identical(
+    vec_rbind(foo = c(x = 1), .names_to = NULL, .name_spec = zap()),
+    data.frame(x = 1)
+  )
+})
+
+test_that("can't zap names when `.names_to` is supplied", {
+  expect_identical(
+    vec_rbind(foo = c(x = 1), .names_to = zap(), .name_spec = zap()),
+    data.frame(x = 1)
+  )
+  expect_error(
+    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
+    "Can't zap outer names when `.names_to` is supplied.",
+    fixed = TRUE
+  )
+})
+
+test_that("can zap outer names from a name-spec (#1215)", {
+  zap_outer_spec <- function(outer, inner) if (is_character(inner)) inner
+
+  df <- data.frame(x = 1:2)
+  df_named <- data.frame(x = 3L, row.names = "foo")
+
+  expect_null(
+    vec_names(vec_rbind(a = df, .names_to = NULL, .name_spec = zap_outer_spec))
+  )
+  expect_identical(
+    vec_names(vec_rbind(a = df, df_named, .name_spec = zap_outer_spec)),
+    c("...1", "...2", "foo")
+  )
+})
+
+
+# Golden tests -------------------------------------------------------
 
 test_that("rows-binding performs expected allocations", {
   verify_output(test_path("performance", "test-bind.txt"), {

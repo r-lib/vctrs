@@ -95,23 +95,23 @@ SEXP vec_c_opts(SEXP xs,
     p_sizes[i] = size;
   }
 
-  PROTECT_INDEX out_pi;
   SEXP out = vec_init(ptype, out_size);
+  PROTECT_INDEX out_pi;
   PROTECT_WITH_INDEX(out, &out_pi);
+
   out = vec_proxy(out);
   REPROTECT(out, out_pi);
 
-  SEXP idx = PROTECT(compact_seq(0, 0, true));
-  int* p_idx = INTEGER(idx);
+  SEXP loc = PROTECT(compact_seq(0, 0, true));
+  int* p_loc = INTEGER(loc);
 
-  SEXP xs_names = PROTECT(r_names(xs));
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
-  bool has_names = assign_names && (xs_names != R_NilValue || list_has_inner_vec_names(xs, n));
-  has_names = has_names && !is_data_frame(ptype);
+  SEXP xs_names = PROTECT(r_names(xs));
+  bool xs_is_named = xs_names != R_NilValue && !is_data_frame(ptype);
 
+  SEXP out_names = R_NilValue;
   PROTECT_INDEX out_names_pi;
-  SEXP out_names = has_names ? Rf_allocVector(STRSXP, out_size) : R_NilValue;
-  PROTECT_WITH_INDEX(out_names, &out_names_pi);
+  PROTECT_WITH_INDEX(R_NilValue, &out_names_pi);
 
   // Compact sequences use 0-based counters
   R_len_t counter = 0;
@@ -133,24 +133,30 @@ SEXP vec_c_opts(SEXP xs,
     };
     SEXP x = PROTECT(vec_cast_opts(&opts));
 
-    init_compact_seq(p_idx, counter, size, true);
+    init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = vec_proxy_assign_opts(out, idx, x, VCTRS_OWNED_true, &c_assign_opts);
+    out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
     REPROTECT(out, out_pi);
 
     // FIXME: This work happens in parallel to the names assignment in
     // `vec_proxy_assign()`. We should add a way to instruct
     // proxy-assign to ignore the outermost names (but still assign
     // inner names in case of data frames).
-    if (has_names) {
-      SEXP outer = xs_names == R_NilValue ? R_NilValue : STRING_ELT(xs_names, i);
+    if (assign_names) {
+      SEXP outer = xs_is_named ? STRING_ELT(xs_names, i) : R_NilValue;
       SEXP inner = PROTECT(vec_names(x));
       SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != R_NilValue) {
-        out_names = chr_assign(out_names, idx, x_nms, VCTRS_OWNED_true);
-        REPROTECT(out_names, out_names_pi);
+        R_LAZY_ALLOC(out_names, out_names_pi, STRSXP, out_size);
+
+        // If there is no name to assign, skip the assignment since
+        // `out_names` already contains empty strings
+        if (x_nms != chrs_empty) {
+          out_names = chr_assign(out_names, loc, x_nms, VCTRS_OWNED_true);
+          REPROTECT(out_names, out_names_pi);
+        }
       }
 
       UNPROTECT(2);
@@ -162,7 +168,7 @@ SEXP vec_c_opts(SEXP xs,
 
   out = PROTECT(vec_restore(out, ptype, R_NilValue, VCTRS_OWNED_true));
 
-  if (has_names) {
+  if (out_names != R_NilValue) {
     out_names = PROTECT(vec_as_names(out_names, name_repair));
     out = vec_set_names(out, out_names);
     UNPROTECT(1);
