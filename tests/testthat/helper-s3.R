@@ -139,7 +139,7 @@ foobar_df_ptype2 <- function(x, y, ...) {
 foobar_df_cast <- function(x, y, ...) {
   foobar(df_cast(x, y, ...))
 }
-local_foobar_df_methods <- function(expr, frame = caller_env()) {
+local_foobar_df_methods <- function(frame = caller_env()) {
   local_methods(
     .frame = frame,
     vec_ptype2.vctrs_foobar.vctrs_foobar = foobar_df_ptype2,
@@ -153,4 +153,36 @@ local_foobar_df_methods <- function(expr, frame = caller_env()) {
 with_foobar_df_methods <- function(expr) {
   local_foobar_df_methods()
   expr
+}
+
+# List that caches the size of its elements in a record field
+new_list_rcrd <- function(x, sizes = NULL) {
+  stopifnot(
+    vec_is_list(x),
+    is_null(sizes) || is_integer(sizes, n = length(x))
+  )
+
+  x <- vec_data(x)
+
+  if (is_null(sizes)) {
+    sizes <- list_sizes(x)
+  } else {
+    missing <- is.na(sizes)
+    sizes[missing] <- list_sizes(x[missing])
+  }
+
+  structure(x, sizes = sizes, class = c("vctrs_list_rcrd", "list"))
+}
+local_list_rcrd_methods <- function(frame = caller_env()) {
+  local_methods(
+    .frame = frame,
+    vec_proxy.vctrs_list_rcrd = function(x, ...) data_frame(data = unclass(x), sizes = attr(x, "sizes")),
+    vec_restore.vctrs_list_rcrd = function(x, to, ...) new_list_rcrd(x$data, x$sizes),
+    vec_ptype2.vctrs_list_rcrd.vctrs_list_rcrd = function(x, y, ...) x,
+    vec_ptype2.vctrs_list_rcrd.list = function(x, y, ...) x,
+    vec_ptype2.list.vctrs_list_rcrd = function(x, y, ...) y,
+    vec_cast.vctrs_list_rcrd.vctrs_list_rcrd = function(x, to, ...) x,
+    vec_cast.list.vctrs_list_rcrd = function(x, to, ...) vec_data(x),
+    vec_cast.vctrs_list_rcrd.list = function(x, to, ...) new_list_rcrd(x, sizes = vec_init(int(), length(x)))
+  )
 }

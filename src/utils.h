@@ -494,6 +494,8 @@ r_ssize r_ssize_add(r_ssize x, r_ssize y) {
 
 SEXP chr_c(SEXP x, SEXP y);
 
+bool r_is_bare_list(SEXP x);
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;

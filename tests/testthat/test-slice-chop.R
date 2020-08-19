@@ -229,6 +229,81 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_chop_seq(x, 2L, 2L), list(vec_slice(x, 3:4)))
 })
 
+
+# vec_chop2 ---------------------------------------------------------------
+
+test_that("vec_chop2() transforms inner names to outer names", {
+  x <- c(a = 1, b = 2)
+  expect_identical(
+    vec_chop2(x),
+    list(a = 1, b = 2)
+  )
+
+  x <- data.frame(x = 1:2, row.names = c("foo", "bar"))
+  exp <- list(
+    foo = data.frame(x = 1L),
+    bar = data.frame(x = 2L)
+  )
+  expect_identical(vec_chop2(x), exp)
+
+  x <- matrix(1:4, 2)
+  row.names(x) <- c("foo", "bar")
+
+  # Fails because of #1221
+  # exp <- list(
+  #   foo = matrix(c(1L, 3L), 1),
+  #   bar = matrix(c(2L, 4L), 1)
+  # )
+  # expect_identical(vec_chop2(x), exp)
+
+  out <- vec_chop2(x)
+  expect_null(row.names(out[[1]]))
+  expect_null(row.names(out[[2]]))
+})
+
+test_that("vec_chop2() preserves names of lists", {
+  x <- list(a = 1, b = 2)
+  expect_identical(vec_chop2(x), x)
+
+  s3 <- new_vctr(x)
+  out <- vec_chop2(s3)
+  expect_identical(out, x)
+  expect_false(is.object(out))
+})
+
+test_that("vec_chop2() works with generic atomic vectors", {
+  x <- set_names(new_vctr(1:2), letters[1:2])
+  exp <- list(
+    a = new_vctr(1L),
+    b = new_vctr(2L)
+  )
+  expect_identical(vec_chop2(x), exp)
+
+  # TODO: Test with names once rcrd vectors support them
+  x <- new_rcrd(list(x = 1:2, y = 3:4))
+  exp <- list(
+    new_rcrd(list(x = 1L, y = 3L)),
+    new_rcrd(list(x = 2L, y = 4L))
+  )
+
+  expect_identical(vec_chop(x), exp) # FIXME: Only because rcrd is unnamed
+  expect_identical(vec_chop2(x), exp)
+})
+
+test_that("vec_chop2() works with generic lists", {
+  x <- list(a = c(foo = 1:2), b = c(bar = 1:3))
+
+  expect_identical(vec_chop2(new_vctr(x)), x)
+
+  local_list_rcrd_methods()
+  expect_identical(vec_chop2(new_list_rcrd(x)), x)
+})
+
+test_that("vec_chop2() zaps attributes", {
+  expect_identical(vec_chop2(structure(list(), foo = TRUE)), list())
+})
+
+
 # vec_unchop --------------------------------------------------------------
 
 test_that("`x` must be a list", {
@@ -774,6 +849,9 @@ test_that("vec_unchop() fails if foreign classes are not homogeneous and there i
   )
 })
 
+
+# Golden tests ------------------------------------------------------------
+
 test_that("vec_unchop() has informative error messages", {
   verify_output(test_path("error", "test-unchop.txt"), {
     "# vec_unchop() errors on unsupported location values"
@@ -812,5 +890,44 @@ test_that("vec_unchop() has informative error messages", {
         indices = list(2:1, 3),
         name_spec = zap()
       )
+  })
+})
+
+test_that("chop functions have expected memory footprint", {
+  verify_output(test_path("performance", "test-slice-chop.txt"), {
+    local_list_rcrd_methods()
+    n <- 1e2
+
+    "Atomic vector"
+    vec <- rep(c(a = 1L, b = 2L), n)
+    with_memory_prof(vec_chop2(vec))
+
+    "S3 atomic vector"
+    vec_s3 <- new_vctr(vec)
+    with_memory_prof(vec_chop2(vec_s3))
+
+    "Record vector"
+    vec_rcrd <- rep(new_rcrd(list(a = 1:2, b = 3:4)), n)
+    with_memory_prof(vec_chop2(vec_rcrd))
+
+    "Data frame"
+    df <- vec_rep(data.frame(x = 1, y = 2), n)
+    with_memory_prof(vec_chop2(df))
+
+    "S3 data frame"
+    tib <- vec_rep(tibble(x = 1, y = 2), n)
+    with_memory_prof(vec_chop2(tib))
+
+    "# List"
+    list <- rep(list(a = c(foo = 1:2), b = c(bar = 1:3)), n)
+    with_memory_prof(vec_chop2(list))
+
+    "# S3 list"
+    vctr <- new_vctr(list)
+    with_memory_prof(vec_chop2(vctr))
+
+    "# S3 record list"
+    list_rcrd <- new_list_rcrd(list)
+    with_memory_prof(vec_chop2(list_rcrd))
   })
 })

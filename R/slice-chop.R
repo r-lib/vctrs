@@ -105,3 +105,7 @@ vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
   args <- vec_recycle_common(starts, sizes, increasings)
   .Call(vctrs_chop_seq, x, args[[1]], args[[2]], args[[3]])
 }
+
+vec_chop2 <- function(x) {
+  .External(vctrs_chop2, x)
+}

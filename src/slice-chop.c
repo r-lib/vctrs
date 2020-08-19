@@ -414,3 +414,41 @@ SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
   UNPROTECT(1);
   return indices;
 }
+
+// -----------------------------------------------------------------------------
+
+// [[ register(external = TRUE) ]]
+SEXP vctrs_chop2(SEXP args) {
+  return vec_chop2(CADR(args));
+}
+
+// [[ include("slice.h") ]]
+SEXP vec_chop2(SEXP x) {
+  if (r_is_bare_list(x)) {
+    return x;
+  }
+
+  SEXP out;
+
+  if (vec_is_list(x)) {
+    // Lists necessarily have list storage and so don't require any
+    // genericity for extracting elements
+    out = PROTECT(r_clone_referenced(x));
+    SET_ATTRIB(out, R_NilValue);
+    SET_OBJECT(out, 0);
+
+    UNPROTECT(1);
+  } else {
+    // Zap inner names of atomic vectors. They become outer names.
+    out = PROTECT(vec_set_names(x, R_NilValue));
+    out = vec_chop(out, R_NilValue);
+    UNPROTECT(1);
+  }
+  PROTECT(out);
+
+  SEXP names = PROTECT(vec_names(x));
+  out = vec_set_names(out, names);
+
+  UNPROTECT(2);
+  return out;
+}

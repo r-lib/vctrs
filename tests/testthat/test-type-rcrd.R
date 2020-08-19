@@ -28,6 +28,19 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
+test_that("can set names of record vectors to NULL", {
+  x <- new_rcrd(list(a = 1))
+
+  orig <- x
+  names(x) <- NULL
+  expect_identical(x, orig)
+
+  expect_identical(vec_set_names(x, NULL), x)
+
+  expect_error(names(x) <- "foo", "Can't")
+  expect_error(vec_set_names(x, "foo"), "Can't")
+})
+
 
 # coercion ----------------------------------------------------------------
 
@@ -224,4 +237,20 @@ test_that("dots are forwarded", {
 
 test_that("records are restored after slicing the proxy", {
   expect_identical(new_rcrd(list(x = 1:2))[1], new_rcrd(list(x = 1L)))
+})
+
+
+# helper classes ----------------------------------------------------------
+
+test_that("list_rcrd caches sizes", {
+  local_list_rcrd_methods()
+  x <- new_list_rcrd(list(1L, 2:3, 4:6))
+
+  out <- vec_slice(x, 2:3)
+  exp <- new_list_rcrd(list(2:3, 4:6), sizes = c(2L, 3L))
+  expect_identical(out, exp)
+
+  out <- vec_assign(x, 2:3, list(1:5, 2L))
+  exp <- new_list_rcrd(list(1L, 1:5, 2L), sizes = c(1L, 5L, 1L))
+  expect_identical(out, exp)
 })

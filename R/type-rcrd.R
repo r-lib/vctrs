@@ -70,6 +70,13 @@ length.vctrs_rcrd <- function(x) {
 names.vctrs_rcrd <- function(x) {
   NULL
 }
+#' @export
+`names<-.vctrs_rcrd` <- function(x, value) {
+  if (!is_null(value)) {
+    abort("Can't set names of record vectors.")
+  }
+  x
+}
 
 #' @export
 format.vctrs_rcrd <- function(x, ...) {
