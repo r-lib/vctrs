@@ -51,11 +51,11 @@ static SEXP vec_unchop(SEXP xs,
     return vec_c(xs, ptype, name_spec, name_repair);
   }
 
-  R_len_t x_size = vec_size(xs);
+  R_len_t xs_size = vec_size(xs);
 
   // Apply size/type checking to `indices` before possibly exiting early from
   // having a `NULL` common type
-  if (x_size != vec_size(indices)) {
+  if (xs_size != vec_size(indices)) {
     Rf_errorcall(R_NilValue, "`x` and `indices` must be lists of the same size");
   }
 
@@ -91,7 +91,7 @@ static SEXP vec_unchop(SEXP xs,
   R_len_t out_size = 0;
 
   // `out_size` is computed from `indices`
-  for (R_len_t i = 0; i < x_size; ++i) {
+  for (R_len_t i = 0; i < xs_size; ++i) {
     SEXP x = VECTOR_ELT(xs, i);
 
     if (x == R_NilValue) {
@@ -123,7 +123,7 @@ static SEXP vec_unchop(SEXP xs,
     .assign_names = assign_names
   };
 
-  for (R_len_t i = 0; i < x_size; ++i) {
+  for (R_len_t i = 0; i < xs_size; ++i) {
     SEXP x = VECTOR_ELT(xs, i);
 
     if (x == R_NilValue) {
