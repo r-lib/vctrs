@@ -16,7 +16,7 @@ The data underlying \code{x}, free from any attributes except the names.
 \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 
 Extract the data underlying an S3 vector object, i.e. the underlying
-(named) atomic vector or list.
+(named) atomic vector, data frame, or list.
 }
 \section{Difference with \code{vec_proxy()}}{
 
@@ -25,7 +25,7 @@ Extract the data underlying an S3 vector object, i.e. the underlying
 preserved are names, dims, and dimnames.
 
 Currently, due to the underlying memory architecture of R, this
-creates a full copy of the data.
+creates a full copy of the data for atomic vectors.
 \item \code{vec_proxy()} may return structured data. This generic is the
 main customisation point for accessing memory values in vctrs,
 along with \code{\link[=vec_restore]{vec_restore()}}.
