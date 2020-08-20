@@ -4,7 +4,7 @@ map <- function(.x, .f, ...) {
   if (is.data.frame(.x)) {
     .x <- unclass(.x)
   }
-  vec_map(.x, .f, ...)
+  vctrs::vec_map(.x, .f, ...)
 }
 map_lgl <- function(.x, .f, ...) {
   map(.x, .f, ..., .ptype = lgl())
