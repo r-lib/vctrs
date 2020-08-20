@@ -49,7 +49,7 @@
 <meta property="og:title" content="Extract underlying data — vec_data" />
 <meta property="og:description" content="
 Extract the data underlying an S3 vector object, i.e. the underlying
-(named) atomic vector or list." />
+(named) atomic vector, data frame, or list." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -160,7 +160,7 @@ Extract the data underlying an S3 vector object, i.e. the underlying
     <div class="ref-description">
     <p><a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a></p>
 <p>Extract the data underlying an S3 vector object, i.e. the underlying
-(named) atomic vector or list.</p>
+(named) atomic vector, data frame, or list.</p>
     </div>
 
     <pre class="usage"><span class='fu'>vec_data</span>(<span class='kw'>x</span>)</pre>
@@ -185,7 +185,7 @@ Extract the data underlying an S3 vector object, i.e. the underlying
 <li><p><code>vec_data()</code> returns unstructured data. The only attributes
 preserved are names, dims, and dimnames.</p>
 <p>Currently, due to the underlying memory architecture of R, this
-creates a full copy of the data.</p></li>
+creates a full copy of the data for atomic vectors.</p></li>
 <li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code> may return structured data. This generic is the
 main customisation point for accessing memory values in vctrs,
 along with <code><a href='vec_proxy.html'>vec_restore()</a></code>.</p>
