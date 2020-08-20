@@ -39,7 +39,9 @@ SEXP vctrs_map(SEXP args) {
     PROTECT(out);
 
     SEXP names = PROTECT(vec_names(orig));
-    vec_set_names(out, names);
+    if (names != R_NilValue) {
+      vec_set_names(out, names);
+    }
 
     UNPROTECT(3);
     return out;
