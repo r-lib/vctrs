@@ -181,7 +181,7 @@ vec_restore_default <- function(x, to, ...) {
 #' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
 #'
 #' Extract the data underlying an S3 vector object, i.e. the underlying
-#' (named) atomic vector or list.
+#' (named) atomic vector, data frame, or list.
 #'
 #' @param x A vector or object implementing `vec_proxy()`.
 #' @return The data underlying `x`, free from any attributes except the names.
@@ -192,7 +192,7 @@ vec_restore_default <- function(x, to, ...) {
 #'   preserved are names, dims, and dimnames.
 #'
 #'   Currently, due to the underlying memory architecture of R, this
-#'   creates a full copy of the data.
+#'   creates a full copy of the data for atomic vectors.
 #'
 #' * `vec_proxy()` may return structured data. This generic is the
 #'   main customisation point for accessing memory values in vctrs,
@@ -206,6 +206,10 @@ vec_restore_default <- function(x, to, ...) {
 vec_data <- function(x) {
   vec_assert(x)
   x <- vec_proxy(x)
+
+  if (is.data.frame(x)) {
+    return(new_data_frame(x, row.names = .row_names_info(x, 0L)))
+  }
 
   if (has_dim(x)) {
     x <- vec_set_attributes(x, list(dim = dim(x), dimnames = dimnames(x)))

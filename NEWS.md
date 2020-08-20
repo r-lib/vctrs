@@ -1,6 +1,12 @@
 
 # vctrs (development version)
 
+* `vec_data()` now preserves data frames. This is consistent with the
+  notion that data frames are a primitive vector type in vctrs. This
+  shouldn't affect code that uses `[[` and `length()` to manipulate
+  the data. On the other hand, the vctrs primitives like `vec_slice()`
+  will now operate rowwise when `vec_data()` returns a data frame.
+
 * `outer` is now passed unrecycled to name specifications. Instead,
   the return value is recycled (#1099).
 
