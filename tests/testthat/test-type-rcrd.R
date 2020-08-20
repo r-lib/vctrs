@@ -70,14 +70,14 @@ test_that("can't cast incompatible rcrd", {
       new_rcrd(list(a = "1", b = 3L)),
       new_rcrd(list(a = "1"))
     ),
-    class = "vctrs_error_incompatible_type"
+    class = "vctrs_error_cast_lossy"
   )
   expect_error(
     vec_cast(
       new_rcrd(list(a = "1", b = 3L)),
       new_rcrd(list(a = "1", c = 3L))
     ),
-    class = "vctrs_error_incompatible_type"
+    class = "vctrs_error_cast_lossy"
   )
   expect_error(
     vec_cast(
@@ -88,24 +88,19 @@ test_that("can't cast incompatible rcrd", {
   )
 })
 
-# invalid inputs ------------------------------------------------------------
+# input validation --------------------------------------------------------
 
 test_that("must be list of equal length vectors", {
   expect_error(new_rcrd(list()), "list of length 1")
-  expect_error(new_rcrd(list(x = environment())), "vector")
-  expect_error(new_rcrd(list(x = 1, y = 1:2)), "same length")
+  expect_error(new_rcrd(list(x = environment())), class = "vctrs_error_scalar_type")
+  expect_error(new_rcrd(list(x = 1:2, y = 1:3)), class = "vctrs_error_incompatible_size")
 })
 
 test_that("names must be unique", {
-  expect_error(new_rcrd(list(1, 2)), "unique names")
-  expect_error(new_rcrd(list(x = 1, 2)), "unique names")
-  expect_error(new_rcrd(list(x = 1, x = 2)), "unique names")
-  expect_error(new_rcrd(setNames(list(1, 2), "x")), "unique names")
-})
-
-test_that("no attributes", {
-  x <- structure(list(x = 1:3), y = 1)
-  expect_error(new_rcrd(x), "no attributes")
+  expect_error(new_rcrd(list(1, 2)), class = "vctrs_error_names_cannot_be_empty")
+  expect_error(new_rcrd(list(x = 1, 2)), class = "vctrs_error_names_cannot_be_empty")
+  expect_error(new_rcrd(list(x = 1, x = 2)), class = "vctrs_error_names_must_be_unique")
+  expect_error(new_rcrd(setNames(list(1, 2), "x")), "can't return `NA`")
 })
 
 test_that("subset assignment throws error", {
@@ -113,6 +108,20 @@ test_that("subset assignment throws error", {
   expect_error(
     x$y <- 2,
     class = "vctrs_error_unsupported"
+  )
+})
+
+test_that("can supply data frame as fields", {
+  expect_identical(
+    new_rcrd(list(x = 1)),
+    new_rcrd(tibble(x = 1))
+  )
+})
+
+test_that("fields are recycled", {
+  expect_identical(
+    new_rcrd(list(x = 1, y = 1:2)),
+    new_rcrd(list(x = c(1, 1), y = 1:2))
   )
 })
 
@@ -152,6 +161,8 @@ test_that("subsetting methods applied to each field", {
 test_that("subset assignment modifies each field", {
   local_tuple_methods()
   x <- tuple(c(1, 1), c(2, 2))
+
+  expect_error(x[[]] <- tuple(), "missing")
 
   x[[1]] <- tuple(3, 3)
   expect_equal(x, tuple(c(3, 1), c(3, 2)))
@@ -219,9 +230,58 @@ test_that("dangerous methods marked as unimplemented", {
 # slicing -----------------------------------------------------------------
 
 test_that("dots are forwarded", {
-  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "incorrect number of dimensions")
+  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "undefined columns selected")
 })
 
 test_that("records are restored after slicing the proxy", {
   expect_identical(new_rcrd(list(x = 1:2))[1], new_rcrd(list(x = 1L)))
+})
+
+test_that("can slice with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:2)))
+
+  out <- vec_slice(x, 2)
+  expect_identical(
+    out,
+    new_rcrd(data_frame(x = data_frame(y = 2L)))
+  )
+  expect_identical(
+    x[2],
+    out
+  )
+  expect_identical(
+    x[[2]],
+    out
+  )
+})
+
+test_that("can rep with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:2)))
+
+  expect_identical(
+    rep(x, length.out = 4),
+    vec_slice(x, c(1:2, 1:2))
+  )
+})
+
+test_that("can assign with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:3)))
+  y <- new_rcrd(data_frame(x = data_frame(y = FALSE)))
+  exp <- new_rcrd(data_frame(x = data_frame(y = c(1L, 2L, 0L))))
+
+  expect_identical(vec_assign(x, 3, y), exp)
+
+  out <- x
+  out[[3]] <- y
+  expect_identical(out, exp)
+})
+
+test_that("can resize with df-cols fields", {
+  x <- new_rcrd(data_frame(x = data_frame(y = 1:3)))
+
+  length(x) <- 2
+  expect_identical(x, new_rcrd(data_frame(x = data_frame(y = 1:2))))
+
+  length(x) <- 4
+  expect_identical(x, new_rcrd(data_frame(x = data_frame(y = c(1:2, NA, NA)))))
 })

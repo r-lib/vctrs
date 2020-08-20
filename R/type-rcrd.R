@@ -8,46 +8,21 @@
 #' length, like [POSIXlt], but where the organisation should be considered
 #' an implementation detail invisible to the user (unlike a [data.frame]).
 #'
-#' @param fields A list. It must possess the following properties:
-#'   * no attributes (apart from names)
-#'   * syntactic names
-#'   * length 1 or greater
-#'   * elements are vectors
-#'   * elements have equal length
+#' @param fields A list or a data frame. Lists must be rectangular
+#'   (same sizes), and contain uniquely named vectors (at least
+#'   one). `fields` is validated with [df_list()] which recycles
+#'   columns to the same size.
 #' @param ... Additional attributes
 #' @param class Name of subclass.
 #' @export
 #' @aliases ses rcrd
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
-  check_fields(fields)
-  structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
-}
-
-check_fields <- function(fields) {
-  if (!is.list(fields) || length(fields) == 0) {
+  fields <- df_list(!!!fields)
+  if (!length(fields)) {
     abort("`fields` must be a list of length 1 or greater.")
   }
-
-  if (!has_unique_names(fields)) {
-    abort("`fields` must have unique names.")
-  }
-
-  if (!identical(names(attributes(fields)), "names")) {
-    abort("`fields` must have no attributes (apart from names).")
-  }
-
-  is_vector <- map_lgl(fields, is_vector)
-  if (!all(is_vector)) {
-    abort("Every field must be a vector.")
-  }
-
-  lengths <- map_int(fields, length)
-  if (!all_equal(lengths)) {
-    abort("Every field must be the same length.")
-  }
-
-  invisible(fields)
+  structure(fields, ..., class = c(class, "vctrs_rcrd", "vctrs_vctr"))
 }
 
 #' @export
@@ -63,7 +38,7 @@ vec_restore.vctrs_rcrd <- function(x, to, ...) {
 
 #' @export
 length.vctrs_rcrd <- function(x) {
-  .Call(vctrs_size, x)
+  vec_size(x)
 }
 
 #' @export
@@ -90,22 +65,10 @@ obj_str_data.vctrs_rcrd <- function(x, ...) {
 #' @export
 vec_cast.vctrs_rcrd <- function(x, to, ...) UseMethod("vec_cast.vctrs_rcrd")
 
-#' @method vec_cast.vctrs_rcrd vctrs_rcrd
 #' @export
-vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ..., x_arg = x_arg, to_arg = to_arg) {
-  # This assumes that we don't have duplicate field names,
-  # which is verified even in the constructor.
-  if (!setequal(fields(x), fields(to))) {
-    stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-  }
-
-  new_data <- map2(
-    vec_data(x)[fields(to)],
-    vec_data(to),
-    vec_cast
-  )
-
-  new_rcrd(new_data)
+vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
+  out <- vec_cast(vec_data(x), vec_data(to), ...)
+  new_rcrd(out)
 }
 
 
@@ -118,7 +81,7 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ..., x_arg = x_arg, to_arg = t
 
 #' @export
 `[[.vctrs_rcrd` <- function(x, i, ...) {
-  out <- lapply(vec_data(x), `[[`, i, ...)
+  out <- vec_slice(vec_data(x), i)
   vec_restore(out, x)
 }
 
@@ -129,13 +92,13 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ..., x_arg = x_arg, to_arg = t
 
 #' @export
 rep.vctrs_rcrd <- function(x, ...) {
-  out <- lapply(vec_data(x), rep, ...)
+  out <- lapply(vec_data(x), base_vec_rep, ...)
   vec_restore(out, x)
 }
 
 #' @export
 `length<-.vctrs_rcrd` <- function(x, value) {
-  out <- lapply(vec_data(x), `length<-`, value)
+  out <- vec_size_assign(vec_data(x), value)
   vec_restore(out, x)
 }
 
@@ -143,12 +106,9 @@ rep.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 `[[<-.vctrs_rcrd` <- function(x, i, value) {
-  value <- vec_cast(value, x)
-  out <- map2(vec_data(x), vec_data(value), function(x, value) {
-    x[[i]] <- value
-    x
-  })
-  vec_restore(out, x)
+  force(i)
+  x[i] <- value
+  x
 }
 
 #' @export
@@ -158,20 +118,9 @@ rep.vctrs_rcrd <- function(x, ...) {
 
 #' @export
 `[<-.vctrs_rcrd` <- function(x, i, value) {
+  i <- maybe_missing(i, TRUE)
   value <- vec_cast(value, x)
-
-  if (missing(i)) {
-    replace <- function(x, value) {
-      x[] <- value
-      x
-    }
-  } else {
-    replace <- function(x, value) {
-      x[i] <- value
-      x
-    }
-  }
-  out <- map2(vec_data(x), vec_data(value), replace)
+  out <- vec_assign(vec_data(x), i, vec_data(value))
   vec_restore(out, x)
 }
 
