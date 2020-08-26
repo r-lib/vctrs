@@ -300,8 +300,8 @@ test_that("vec_c() doesn't fall back when ptype2 is implemented", {
     vec_restore.vctrs_quux = function(x, ...) new_quux(x),
     c.vctrs_foobar = function(...) foobar(NextMethod()),
     {
-      expect_is(c(foobar(1:3), foobar(4L)), "vctrs_foobar")
-      expect_is(vec_c(foobar(1:3), foobar(4L)), "vctrs_quux")
+      expect_s3_class(c(foobar(1:3), foobar(4L)), "vctrs_foobar")
+      expect_s3_class(vec_c(foobar(1:3), foobar(4L)), "vctrs_quux")
     }
   )
 })

@@ -363,7 +363,7 @@ test_that("unchopping takes the common type", {
 
   x <- list(1, 2L)
 
-  expect_is(vec_unchop(x, indices), "numeric")
+  expect_type(vec_unchop(x, indices), "double")
 })
 
 test_that("can specify a ptype to override common type", {

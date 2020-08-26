@@ -62,7 +62,7 @@ test_that("vec_group_id takes the equality proxy recursively", {
 # group rle ---------------------------------------------------------------
 
 test_that("vec_group_rle returns a `vctrs_group_rle` object", {
-  expect_is(vec_group_rle(1), "vctrs_group_rle")
+  expect_s3_class(vec_group_rle(1), "vctrs_group_rle")
 })
 
 test_that("vec_group_rle works with size 0 input", {

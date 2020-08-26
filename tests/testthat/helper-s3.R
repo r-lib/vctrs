@@ -15,9 +15,9 @@ foobar <- new_ctor("vctrs_foobar")
 foobaz <- new_ctor("vctrs_foobaz")
 quux <- new_ctor("vctrs_quux")
 
-expect_foobar <- function(x) expect_is({{ x }}, "vctrs_foobar")
-expect_foobaz <- function(x) expect_is({{ x }}, "vctrs_foobaz")
-expect_quux <- function(x) expect_is({{ x }}, "vctrs_quux")
+expect_foobar <- function(x) expect_s3_class({{ x }}, "vctrs_foobar")
+expect_foobaz <- function(x) expect_s3_class({{ x }}, "vctrs_foobaz")
+expect_quux <- function(x) expect_s3_class({{ x }}, "vctrs_quux")
 
 with_c_foobar <- function(expr) {
   with_methods(

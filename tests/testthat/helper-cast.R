@@ -9,7 +9,7 @@ expect_lossy_cast <- function(expr) {
     }),
     expr
   )
-  expect_is(cnd, "vctrs_warning_cast_lossy")
+  expect_s3_class(cnd, "vctrs_warning_cast_lossy")
 
   out
 }

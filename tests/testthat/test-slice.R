@@ -182,7 +182,7 @@ test_that("0 is ignored in positive indices", {
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
   err <- expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type")
-  expect_is(err$parent, "vctrs_error_cast_lossy")
+  expect_s3_class(err$parent, "vctrs_error_cast_lossy")
 })
 
 test_that("can slice with symbols", {

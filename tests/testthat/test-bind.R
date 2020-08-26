@@ -135,7 +135,7 @@ test_that("can rbind dates", {
 
 test_that("can rbind POSIXlt objects into POSIXct objects", {
   datetime <- as.POSIXlt(new_datetime(0))
-  expect_is(vec_rbind(datetime, datetime)[[1]], "POSIXct")
+  expect_s3_class(vec_rbind(datetime, datetime)[[1]], "POSIXct")
 
   datetime_named <- set_names(datetime, "col")
   expect_named(vec_rbind(datetime_named, datetime_named), "col")

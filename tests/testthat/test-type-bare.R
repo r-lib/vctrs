@@ -3,7 +3,7 @@ test_that("ptype2 base methods are not inherited", {
   ptypes <- vec_remove(base_empty_types, c("null", "dataframe"))
   for (ptype in ptypes) {
     x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)
-    expect_is(vec_ptype2(x, x), "foobar")
+    expect_s3_class(vec_ptype2(x, x), "foobar")
     expect_error(vec_ptype2(x, ptype), class = "vctrs_error_incompatible_type")
     expect_error(vec_ptype2(ptype, x), class = "vctrs_error_incompatible_type")
   }
@@ -13,7 +13,7 @@ test_that("cast base methods are not inherited", {
   ptypes <- vec_remove(base_empty_types, c("null", "dataframe"))
   for (ptype in ptypes) {
     x <- new_vctr(ptype, class = "foobar", inherit_base_type = TRUE)
-    expect_is(vec_cast(ptype, x), "foobar")
+    expect_s3_class(vec_cast(ptype, x), "foobar")
     expect_error(vec_cast(x, ptype), class = "vctrs_error_incompatible_type")
   }
 })

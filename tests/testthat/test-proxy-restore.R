@@ -17,7 +17,7 @@ test_that("default vec_restore() restores objectness", {
   to <- structure(NA, class = "foo")
   x <- vec_restore.default(NA, to)
   expect_true(is.object(x))
-  expect_is(x, "foo")
+  expect_s3_class(x, "foo")
 })
 
 test_that("data frame vec_restore() checks type", {

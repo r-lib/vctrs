@@ -93,7 +93,7 @@ test_that("combining data frames with foreign classes uses fallback", {
 
   # There should be only one warning even if many fallbacks
   expect_length(cnds, 1)
-  expect_is(cnds[[1]], "warning")
+  expect_s3_class(cnds[[1]], "warning")
   expect_match(cnds[[1]]$message, "falling back to <data.frame>")
 
   expect_incompatible_df(
@@ -560,9 +560,9 @@ test_that("data frame fallback handles column types (#999)", {
 
 test_that("falls back to tibble for tibble subclasses (#1025)", {
   foo <- foobar(tibble::as_tibble(mtcars))
-  expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars)), "tbl_df")
-  expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
-  expect_is(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
+  expect_s3_class(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars)), "tbl_df")
+  expect_s3_class(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
+  expect_s3_class(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
 
   verify_errors({
     with_fallback_warning(expect_df_fallback_warning(
