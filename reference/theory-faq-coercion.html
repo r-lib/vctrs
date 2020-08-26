@@ -411,7 +411,7 @@ subclasses, see
 <li><p>For a tutorial about implementing vctrs classes from scratch, see
 <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
 </ul>
-<h3>Combination mechanism in vctrs</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Combination mechanism in vctrs</h3>
 
 
 <p>The coercion system in vctrs is designed to make combination of multiple
@@ -457,7 +457,7 @@ implementations, unless the attributes of your class are constant and do
 not depend on the contents of the vector. We focus here on the first two
 steps, which require <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> implementations.</p>
 
-<h3><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
 
 
 <p>Methods for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> are passed two <em>prototypes</em>, i.e. two inputs
@@ -469,7 +469,7 @@ resolution, return any of the two.</p></li>
 determined from the attributes that the types of the inputs are not
 compatible.</p></li>
 </ul>
-<h3>Type compatibility</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Type compatibility</h4>
 
 
 <p>A type is <strong>compatible</strong> with another type if the values it represents
@@ -490,7 +490,7 @@ character vectors than to round numbers:<div class="r"></p><pre><span class='co'
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fl'>1L</span>)
 <span class='co'>#&gt; Error: Can't combine &lt;factor&lt;127a2&gt;&gt; and &lt;integer&gt;.</span></pre><p></div></p>
 
-<h3>Richness of type</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Richness of type</h4>
 
 
 <p>Richness of type is not a very precise notion. It can be about richer
@@ -512,7 +512,7 @@ decided to be laxer in vctrs because it is easy to inadvertently create
 factors instead of character vectors, especially with older versions of
 R where <code>stringsAsFactors</code> is still true by default.</p>
 
-<h3>Consistency and symmetry on permutation</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Consistency and symmetry on permutation</h4>
 
 
 <p>Each ptype2 method should strive to have exactly the same behaviour when
@@ -527,7 +527,7 @@ levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href=
 <p>In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.</p>
 
-<h3>Coercion hierarchy</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Coercion hierarchy</h4>
 
 
 <p>Coercible classes form a coercion (or subtyping) hierarchy. Here is a
@@ -553,7 +553,7 @@ manually. This is something we might make easier in the future.</p>
 
 
 
-<h3><code><a href='vec_cast.html'>vec_cast()</a></code></h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code><a href='vec_cast.html'>vec_cast()</a></code></h3>
 
 
 <p>The second generic, <code><a href='vec_cast.html'>vec_cast()</a></code>, is the one that looks at the data and
@@ -575,7 +575,7 @@ always returns the type of the right-hand side, or dies trying.</p></li>
 </ul>
 
 
-<h3>Double dispatch</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Double dispatch</h3>
 
 
 <p>The dispatch mechanism for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> looks like S3
@@ -591,7 +591,7 @@ explicitly if necessary.</p></li>
 </ul>
 
 
-<h3>Data frames</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Data frames</h3>
 
 
 <p>The determination of the common type of data frames with <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>
@@ -612,7 +612,7 @@ type that has fewer columns, this is an error.</p>
 <p>If you are implementing coercion methods for data frames, you will need
 to explicitly call the parent methods that perform the common type
 determination or the type conversion described above. These are exported
-as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>.</p><h3>Data frame fallbacks</h3>
+as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Data frame fallbacks</h4>
 
 
 <p>Being too strict with data frame combinations would cause too much pain

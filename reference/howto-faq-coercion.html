@@ -387,7 +387,7 @@ subclasses, see
 <li><p>For a tutorial about implementing vctrs classes from scratch, see
 <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code></p></li>
 </ul>
-<h3>The natural number class</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The natural number class</h3>
 
 
 <p>We’ll illustrate how to implement coercion methods with a simple class
@@ -423,7 +423,7 @@ subset.<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; [1]  1 NA</span></pre><p></div></p>
 
-<h3>Roxygen workflow</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Roxygen workflow</h3>
 
 
 <p>To implement methods for generics, first import the generics in your
@@ -438,9 +438,9 @@ regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register()</a></code>.</p>
 
-<h3>Implementing <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Implementing <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
 
-<h3>The self-self method</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The self-self method</h4>
 
 
 <p>The first method to implement is the one that signals that your class is
@@ -459,7 +459,7 @@ because this is how vctrs knows that a class that is implementing vctrs
 methods (for instance this disable fallbacks to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code>). Also, it
 makes your class a bit more efficient.</p>
 
-<h3>The parent and children methods</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The parent and children methods</h4>
 
 
 <p>Our natural number class is conceptually a parent of <code>&lt;logical&gt;</code> and a
@@ -508,7 +508,7 @@ implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span
   <span class='kw'>x</span>
 }</pre><p></div></p>
 
-<h3>Incompatible attributes</h3>
+<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Incompatible attributes</h4>
 
 
 <p>Most of the time, inputs are incompatible because they have different
@@ -534,7 +534,7 @@ generic signature but can usually be left out if not used.</p>
 
 
 
-<h3>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
 
 
 <p>Corresponding <code><a href='vec_cast.html'>vec_cast()</a></code> methods must be implemented for all
