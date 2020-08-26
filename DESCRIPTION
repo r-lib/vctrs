@@ -44,6 +44,7 @@ Suggests:
     tibble,
     withr,
     xml2,
+    waldo (>= 0.2.0),
     zeallot
 VignetteBuilder: 
     knitr
