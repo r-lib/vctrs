@@ -7,8 +7,12 @@
 #' @name table
 NULL
 
-# ------------------------------------------------------------------------------
-# Print
+#' @export
+vec_restore.table <- function(x, to, ...) {
+  new_table(x, dim = dim(x), dimnames = dimnames(x))
+}
+
+# Print -------------------------------------------------------------------
 
 #' @export
 vec_ptype_full.table <- function(x, ...) {
@@ -20,50 +24,31 @@ vec_ptype_abbr.table <- function(x, ...) {
   "table"
 }
 
-# ------------------------------------------------------------------------------
-# Coercion
+# Coercion ----------------------------------------------------------------
 
-#' @rdname table
-#' @export vec_ptype2.table
-#' @method vec_ptype2 table
-#' @export
-vec_ptype2.table <- function(x, y, ..., x_arg = "", y_arg = "") {
-  UseMethod("vec_ptype2.table")
-}
-
-#' @method vec_ptype2.table table
 #' @export
 vec_ptype2.table.table <- function(x, y, ..., x_arg = "", y_arg = "") {
-  vec_shaped_ptype(new_table(), x, y, x_arg = x_arg, y_arg = y_arg)
+  ptype <- vec_ptype2(unstructure(x), unstructure(y))
+  vec_shaped_ptype(new_table(ptype), x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
-# ------------------------------------------------------------------------------
-# Cast
-
-#' @rdname table
-#' @export vec_cast.table
-#' @method vec_cast table
-#' @export
-vec_cast.table <- function(x, to, ..., x_arg = "", to_arg = "") {
-  UseMethod("vec_cast.table")
-}
-#' @method vec_cast.table table
 #' @export
 vec_cast.table.table <- function(x, to, ...) {
-  shape_broadcast(x, to, ...)
+  out <- vec_cast(unstructure(x), unstructure(to))
+  out <- new_table(out, dim = dim(x), dimnames = dimnames(x))
+  shape_broadcast(out, to, ...)
 }
 
 # ------------------------------------------------------------------------------
 
-new_table <- function(x = integer(), dim = 0L) {
-  # `table()` doesn't support long vectors, even though `tabulate()` does
-  if (!is_integer(x)) {
-    abort("`x` must be an integer vector.")
-  }
-
-  if (!is.integer(dim)) {
+new_table <- function(x = integer(), dim = NULL, dimnames = NULL) {
+  if (is_null(dim)) {
+    dim <- length(x)
+  } else if (!is.integer(dim)) {
     abort("`dim` must be an integer vector.")
   }
+
+  dimnames <- dimnames %||% vec_init(list(), length(dim))
 
   n_elements <- prod(dim)
   n_x <- length(x)
@@ -74,7 +59,7 @@ new_table <- function(x = integer(), dim = 0L) {
     ))
   }
 
-  structure(x, dim = dim, class = "table")
+  structure(x, dim = dim, dimnames = dimnames, class = "table")
 }
 
 is_bare_table <- function(x) {

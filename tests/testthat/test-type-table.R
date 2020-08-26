@@ -18,34 +18,34 @@ test_that("can find a common type among tables with identical dimensions", {
   tab1 <- new_table()
   tab2 <- new_table(1:2, dim = c(1L, 2L, 1L))
 
-  expect_identical(vec_ptype2(tab1, tab1), new_table())
-  expect_identical(vec_ptype2(tab2, tab2), new_table(dim = c(0L, 2L, 1L)))
+  expect_identical(vec_ptype2(tab1, tab1), zap_dimnames(new_table()))
+  expect_identical(vec_ptype2(tab2, tab2), zap_dimnames(new_table(dim = c(0L, 2L, 1L))))
 })
 
 test_that("size is not considered in the ptype", {
   x <- new_table(1:2, dim = 2L)
   y <- new_table(1:3, dim = 3L)
 
-  expect_identical(vec_ptype2(x, y), new_table())
+  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table()))
 })
 
 test_that("can broadcast table shapes", {
   x <- new_table(dim = c(0L, 1L))
   y <- new_table(dim = c(0L, 2L))
 
-  expect_identical(vec_ptype2(x, y), new_table(dim = c(0L, 2L)))
+  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table(dim = c(0L, 2L))))
 
   x <- new_table(dim = c(0L, 1L, 3L))
   y <- new_table(dim = c(0L, 2L, 1L))
 
-  expect_identical(vec_ptype2(x, y), new_table(dim = c(0L, 2L, 3L)))
+  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table(dim = c(0L, 2L, 3L))))
 })
 
 test_that("implicit axes are broadcast", {
   x <- new_table(dim = c(0L, 2L))
   y <- new_table(dim = c(0L, 1L, 3L))
 
-  expect_identical(vec_ptype2(x, y), new_table(dim = c(0L, 2L, 3L)))
+  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table(dim = c(0L, 2L, 3L))))
 })
 
 test_that("errors on non-broadcastable dimensions", {
@@ -65,16 +65,6 @@ test_that("errors on non-tables", {
   expect_error(vec_ptype2("1", new_table()), class = "vctrs_error_incompatible_type")
 })
 
-test_that("inheritance is not allowed", {
-  x <- new_table()
-
-  y <- x
-  class(y) <- c("footable", class(x))
-
-  expect_error(vec_ptype2(x, y), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(y, x), class = "vctrs_error_incompatible_type")
-})
-
 test_that("common types have symmetry when mixed with unspecified input", {
   x <- new_table()
 
@@ -86,6 +76,18 @@ test_that("common types have symmetry when mixed with unspecified input", {
   expect_identical(vec_ptype2(x, NA), new_table(dim = c(0L, 2L)))
   expect_identical(vec_ptype2(NA, x), new_table(dim = c(0L, 2L)))
 })
+
+test_that("`table` delegates coercion", {
+  expect_identical(
+    vec_ptype2(new_table(1), new_table(FALSE)),
+    zap_dimnames(new_table(double()))
+  )
+  expect_error(
+    vec_ptype2(new_table(1), new_table("")),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
 
 # Casting -----------------------------------------------------------------
 
@@ -137,16 +139,6 @@ test_that("errors on non-tables", {
   expect_error(vec_cast("1", new_table()), class = "vctrs_error_incompatible_type")
 })
 
-test_that("inheritance is not allowed", {
-  x <- new_table()
-
-  y <- x
-  class(y) <- c("footable", class(x))
-
-  expect_error(vec_cast(x, y), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(y, x), class = "vctrs_error_incompatible_type")
-})
-
 test_that("can cast from, but not to, unspecified", {
   x <- new_table()
 
@@ -159,10 +151,20 @@ test_that("can cast from, but not to, unspecified", {
   expect_identical(vec_cast(NA, x), new_table(c(NA_integer_, NA_integer_), dim = c(1L, 2L)))
 })
 
+test_that("`table` delegates casting", {
+  expect_identical(
+    vec_cast(new_table(1), new_table(FALSE)),
+    new_table(TRUE)
+  )
+  expect_error(
+    vec_cast(new_table(1), new_table("")),
+    class = "vctrs_error_incompatible_type"
+  )
+})
+
 # Misc --------------------------------------------------------------------
 
 test_that("`new_table()` validates input", {
-  expect_error(new_table(1), "`x` must be an integer vector")
   expect_error(new_table(1L, 1), "`dim` must be an integer vector")
   expect_error(new_table(1:2, 1L), "must match the length of `x`")
 })
@@ -201,4 +203,16 @@ test_that("can use a table in `vec_unchop()`", {
 
   expect_identical(vec_unchop(list(x)), x)
   expect_identical(vec_unchop(list(x, x), list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
+})
+
+test_that("can concatenate tables of type double (#1190)", {
+  x <- table(c(1, 2)) / 2
+
+  out <- vec_c(x, x)
+  exp <- new_table(c(0.5, 0.5, 0.5, 0.5), dimnames = list(c("1", "2", "1", "2")))
+  expect_identical(out, exp)
+
+  out <- vec_rbind(x, x)
+  exp <- data_frame(`1` = new_table(c(0.5, 0.5)), `2` = new_table(c(0.5, 0.5)))
+  expect_identical(out, exp)
 })
