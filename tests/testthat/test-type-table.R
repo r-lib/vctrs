@@ -1,7 +1,6 @@
 context("test-type-table")
 
-# ------------------------------------------------------------------------------
-# Print
+# Print -------------------------------------------------------------------
 
 test_that("ptype print methods are descriptive", {
   tab1 <- new_table()
@@ -14,8 +13,7 @@ test_that("ptype print methods are descriptive", {
   expect_equal(vec_ptype_full(tab2), "table[,1,2,1]")
 })
 
-# ------------------------------------------------------------------------------
-# Coercion
+# Coercion ----------------------------------------------------------------
 
 test_that("can find a common type among tables with identical dimensions", {
   tab1 <- new_table()
@@ -90,8 +88,7 @@ test_that("common types have symmetry when mixed with unspecified input", {
   expect_identical(vec_ptype2(NA, x), new_table(dim = c(0L, 2L)))
 })
 
-# ------------------------------------------------------------------------------
-# Casting
+# Casting -----------------------------------------------------------------
 
 test_that("can cast to an identically shaped table", {
   x <- new_table(1:5, dim = 5L)
@@ -163,8 +160,7 @@ test_that("can cast from, but not to, unspecified", {
   expect_identical(vec_cast(NA, x), new_table(c(NA_integer_, NA_integer_), dim = c(1L, 2L)))
 })
 
-# ------------------------------------------------------------------------------
-# Misc
+# Misc --------------------------------------------------------------------
 
 test_that("`new_table()` validates input", {
   expect_error(new_table(1), "`x` must be an integer vector")
