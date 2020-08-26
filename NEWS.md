@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* Named one-dimensional arrays now behave consistently with simple
+  vectors in `vec_names()` and `vec_rbind()`.
+
 * `new_rcrd()` now uses `df_list()` to validate the fields. This makes
   it more flexible as the fields are now recycled and can be of any
   type supported by vctrs, including data frames.

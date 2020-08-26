@@ -75,6 +75,11 @@ sexp* r_pairlist_get(sexp* node, sexp* tag) {
 }
 
 static inline
+sexp* r_pairlist_poke(sexp* node, sexp* tag, sexp* value) {
+  return r_node_poke_car(r_pairlist_find(node, tag), value);
+}
+
+static inline
 sexp* r_pairlist_find_last(sexp* x) {
   while (CDR(x) != R_NilValue)
     x = CDR(x);
@@ -99,6 +104,10 @@ sexp* r_poke_attrib(sexp* x, sexp* attrs) {
 static inline
 sexp* r_attrib_get(sexp* x, sexp* tag) {
   return r_pairlist_get(r_attrib(x), tag);
+}
+static inline
+sexp* r_attrib_poke(sexp* x, sexp* tag, sexp* value) {
+  return r_pairlist_poke(r_attrib(x), tag, value);
 }
 
 static inline

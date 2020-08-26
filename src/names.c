@@ -110,7 +110,7 @@ SEXP vec_names_impl(SEXP x, bool proxy) {
     }
   }
 
-  if (vec_dim_n(x) == 1) {
+  if (vec_bare_dim(x) == R_NilValue) {
     if (!proxy && has_class) {
       return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
     } else {

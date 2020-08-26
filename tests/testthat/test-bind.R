@@ -964,6 +964,22 @@ test_that("can zap outer names from a name-spec (#1215)", {
   )
 })
 
+test_that("column names are treated consistently in vec_rbind()", {
+  exp <- data.frame(a = c(1L, 1L), b = c(2L, 2L))
+
+  x <- c(a = 1L, b = 2L)
+  expect_identical(vec_rbind(x, x), exp)
+
+  x <- array(1:2, dimnames = list(c("a", "b")))
+  expect_identical(vec_rbind(x, x), exp)
+
+  x <- matrix(1:2, nrow = 1, dimnames = list(NULL, c("a", "b")))
+  expect_identical(vec_rbind(x, x), exp)
+
+  x <- array(1:6, c(1, 2, 1), dimnames = list(NULL, c("a", "b"), NULL))
+  expect_error(vec_rbind(x, x), "Can't bind arrays")
+})
+
 
 # Golden tests -------------------------------------------------------
 
