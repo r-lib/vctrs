@@ -285,3 +285,9 @@ test_that("can resize with df-cols fields", {
   length(x) <- 4
   expect_identical(x, new_rcrd(data_frame(x = data_frame(y = c(1:2, NA, NA)))))
 })
+
+test_that("`[[` preserves type of record fields (#1205)", {
+  x <- new_rcrd(list(x = 1:3, a = list(1, 2:3, 4:6)))
+  expect_identical(field(x[3], "a"), list(4:6))
+  expect_identical(field(x[[3]], "a"), list(4:6))
+})

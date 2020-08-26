@@ -5,6 +5,9 @@
   it more flexible as the fields are now recycled and can be of any
   type supported by vctrs, including data frames.
 
+* Thanks to the previous change the `[[` method of records now
+  preserves list fields (#1205).
+
 * `vec_data()` now preserves data frames. This is consistent with the
   notion that data frames are a primitive vector type in vctrs. This
   shouldn't affect code that uses `[[` and `length()` to manipulate
