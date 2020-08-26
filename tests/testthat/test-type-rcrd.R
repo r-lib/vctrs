@@ -1,5 +1,3 @@
-context("test-type-rcrd")
-
 
 # constructor and accessors -----------------------------------------------
 

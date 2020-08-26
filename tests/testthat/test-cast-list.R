@@ -1,4 +1,3 @@
-context("test-cast-list")
 
 test_that("silently extracts elements of length 1", {
   expect_equal(vec_list_cast(list(1, 2), double()), c(1, 2))

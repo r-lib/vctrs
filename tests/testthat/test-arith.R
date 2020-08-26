@@ -1,4 +1,3 @@
-context("test-arith")
 
 test_that("logical/integer/numeric works", {
   expect_equal(vec_arith("+", TRUE, TRUE), 2L)

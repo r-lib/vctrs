@@ -1,5 +1,3 @@
-context("test-type")
-
 
 test_that("vec_ptype() is a no-op for NULL", {
   expect_null(vec_ptype(NULL))

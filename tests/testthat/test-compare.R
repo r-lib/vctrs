@@ -1,4 +1,3 @@
-context("test-compare")
 
 test_that("inputs must be vectors", {
   expect_error(vec_compare(NULL, 1), class = "vctrs_error_scalar_type")

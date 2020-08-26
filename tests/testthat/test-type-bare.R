@@ -1,5 +1,3 @@
-context("test-type-bare")
-
 
 test_that("ptype2 base methods are not inherited", {
   ptypes <- vec_remove(base_empty_types, c("null", "dataframe"))

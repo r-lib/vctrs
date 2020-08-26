@@ -1,4 +1,3 @@
-context("type-rational.R")
 
 # These tests check the rational type from the S3 vignette
 

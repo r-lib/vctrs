@@ -1,4 +1,3 @@
-context("test-slice-assign")
 
 test_that("slice-assign throws error with non-vector inputs", {
   x <- environment()

@@ -1,4 +1,3 @@
-context("test-cast")
 
 test_that("vec_cast() has helpful error messages", {
   verify_output(test_path("error", "test-cast.txt"), {

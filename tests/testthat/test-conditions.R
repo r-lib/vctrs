@@ -1,4 +1,3 @@
-context("conditions")
 
 test_that("conditions inherit from `vctrs_error`", {
   expect_error(stop_incompatible(NULL, NULL), class = "vctrs_error")

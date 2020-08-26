@@ -1,4 +1,3 @@
-context("test-type-integer64")
 
 test_that("casting of integer64 works", {
   x <- bit64::as.integer64(1:10)

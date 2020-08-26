@@ -1,4 +1,3 @@
-context("test-type-coerce")
 
 test_that("base coercions are symmetric and unchanging", {
   types <- list(

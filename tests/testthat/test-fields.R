@@ -1,4 +1,3 @@
-context("test-fields")
 
 test_that("n_fields captures number of fields", {
   r <- new_rcrd(list(x = 1, y = 2))

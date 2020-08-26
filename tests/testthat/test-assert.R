@@ -1,4 +1,3 @@
-context("test-assert")
 
 test_that("basic assert is idempotent", {
   x <- new_vctr(1:4)

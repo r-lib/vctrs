@@ -1,4 +1,3 @@
-context("test-translate")
 
 # ------------------------------------------------------------------------------
 # obj_maybe_translate_encoding()

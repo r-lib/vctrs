@@ -1,4 +1,3 @@
-context("test-type-unspecified")
 
 test_that("unknown type is idempotent", {
   types <- list(

@@ -1,4 +1,3 @@
-context("test-type-vctr")
 
 test_that("constructor sets attributes", {
   x <- new_vctr(1:4, class = "x", x = 1)

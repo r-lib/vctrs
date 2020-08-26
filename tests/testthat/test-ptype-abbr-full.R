@@ -1,4 +1,3 @@
-context("test-type-string")
 
 test_that("input must be a vector", {
   expect_error(vec_ptype_abbr(sum), "Not a vector")

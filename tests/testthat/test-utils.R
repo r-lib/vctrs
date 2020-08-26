@@ -1,4 +1,3 @@
-context("test-utils")
 
 test_that("names preserved if outer name is missing", {
   x <- c("a", "z", "")

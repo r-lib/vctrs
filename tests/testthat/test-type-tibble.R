@@ -1,4 +1,3 @@
-context("test-type-tibble")
 
 test_that("tibble beats data frame", {
   df <- new_data_frame()

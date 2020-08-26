@@ -1,4 +1,3 @@
-context("test-c")
 
 test_that("zero length input returns NULL", {
   expect_equal(vec_c(), NULL)

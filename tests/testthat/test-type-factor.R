@@ -1,4 +1,3 @@
-context("test-type-factor")
 
 test_that("ptype methods are descriptive", {
   f <- factor()

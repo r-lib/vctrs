@@ -1,4 +1,3 @@
-context("test-type-date-time")
 
 test_that("date-times have informative types", {
   expect_identical(vec_ptype_abbr(Sys.Date()), "date")

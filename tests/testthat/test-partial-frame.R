@@ -1,4 +1,3 @@
-context("test-partial-frame")
 
 test_that("has ok print method", {
   pf <- vec_ptype2(partial_frame(x = 1L), data.frame(y = 2))

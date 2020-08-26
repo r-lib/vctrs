@@ -1,4 +1,3 @@
-context("test-partial-factor")
 
 test_that("has ok print method", {
   partial <- partial_factor("x")
