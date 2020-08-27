@@ -2,14 +2,7 @@
 % Please edit documentation in R/type-table.R
 \name{table}
 \alias{table}
-\alias{vec_ptype2.table}
-\alias{vec_cast.table}
 \title{Table S3 class}
-\usage{
-\method{vec_ptype2}{table}(x, y, ..., x_arg = "", y_arg = "")
-
-\method{vec_cast}{table}(x, to, ..., x_arg = "", to_arg = "")
-}
 \description{
 These functions help the base table class fit into the vctrs type system
 by providing coercion and casting functions.

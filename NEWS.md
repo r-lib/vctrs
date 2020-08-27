@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* The `table` class is now implemented as a wrapper type that
+  delegates its coercion methods. It used to be restricted to integer
+  tables (#1190).
+
 * Named one-dimensional arrays now behave consistently with simple
   vectors in `vec_names()` and `vec_rbind()`.
 

@@ -277,3 +277,10 @@ byte_units <- c(
 new_vctrs_bytes <- function(x) {
   structure(x, class = c("vctrs_bytes", "numeric"))
 }
+
+named <- function(x) {
+  if (is_null(names(x))) {
+    names(x) <- names2(x)
+  }
+  x
+}

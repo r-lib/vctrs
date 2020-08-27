@@ -83,10 +83,3 @@ c_na <- function(...) {
   names(x)[names(x) == ""] <- NA_character_
   x
 }
-
-named <- function(x) {
-  if (is_null(names(x))) {
-    names(x) <- names2(x)
-  }
-  x
-}
