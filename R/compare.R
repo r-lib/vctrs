@@ -49,6 +49,10 @@
 #' vec_sort(df)
 vec_proxy_compare <- function(x, ...) {
   if (!missing(...)) {
+    # For backward compatibility with older dplyr versions
+    if (match_relax(...)) {
+      return(vec_proxy_order(x))
+    }
     ellipsis::check_dots_empty()
   }
   return(.Call(vctrs_proxy_compare, x))
@@ -57,6 +61,10 @@ vec_proxy_compare <- function(x, ...) {
 #' @export
 vec_proxy_compare.default <- function(x, ...) {
   stop_native_implementation("vec_proxy_compare.default")
+}
+
+match_relax <- function(..., relax = FALSE) {
+  relax
 }
 
 #' @rdname vec_proxy_compare
