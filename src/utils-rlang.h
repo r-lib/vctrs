@@ -7,6 +7,9 @@ typedef struct SEXPREC sexp;
 #define r_syms_names R_NamesSymbol
 #define r_syms_class R_ClassSymbol
 
+#define KEEP PROTECT
+#define FREE UNPROTECT
+
 
 // node.h ------------------------------------------------------------
 
@@ -76,7 +79,16 @@ sexp* r_pairlist_get(sexp* node, sexp* tag) {
 
 static inline
 sexp* r_pairlist_poke(sexp* node, sexp* tag, sexp* value) {
-  return r_node_poke_car(r_pairlist_find(node, tag), value);
+  sexp* x = r_pairlist_find(node, tag);
+
+  if (x == R_NilValue) {
+    node = r_new_node(value, node);
+    r_node_poke_tag(node, tag);
+    return node;
+  } else {
+    r_node_poke_car(x, value);
+    return node;
+  }
 }
 
 static inline
@@ -105,9 +117,15 @@ static inline
 sexp* r_attrib_get(sexp* x, sexp* tag) {
   return r_pairlist_get(r_attrib(x), tag);
 }
+
+SEXP r_clone_shared(SEXP x);
+
 static inline
-sexp* r_attrib_poke(sexp* x, sexp* tag, sexp* value) {
-  return r_pairlist_poke(r_attrib(x), tag, value);
+void r_attrib_poke(sexp* x, sexp* tag, sexp* value) {
+  sexp* attrib = KEEP(r_clone_shared(r_attrib(x)));
+  r_poke_attrib(x, r_pairlist_poke(attrib, tag, value));
+  FREE(1);
+  return;
 }
 
 static inline
