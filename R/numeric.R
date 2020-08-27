@@ -3,7 +3,7 @@
 #' This generic provides a common dispatch mechanism for all regular unary
 #' mathematical functions. It is used as a common wrapper around many of the
 #' Summary group generics, the Math group generics, and a handful of other
-#' mathematical functions like `mean()`.
+#' mathematical functions like `mean()` (but not `var()` or `sd()`).
 #'
 #' `vec_math_base()` is provided as a convenience for writing methods. It
 #' calls the base `.fn` on the underlying [vec_data()].
@@ -22,6 +22,10 @@
 #'   `digamma()`, `trigamma()`.
 #'
 #' * Additional generics: `mean()`, `is.nan()`, `is.finite()`, `is.infinite()`.
+#'
+#' Note that `median()` is currently not implemented, and `sd()` and
+#' `var()` are currently not generic and so do not support custom
+#' classes.
 #'
 #' @seealso [vec_arith()] for the equivalent for the arithmetic infix operators.
 #' @param .fn A mathematical function from the base package, as a string.

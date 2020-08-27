@@ -20,7 +20,7 @@ vec_math_base(.fn, .x, ...)
 This generic provides a common dispatch mechanism for all regular unary
 mathematical functions. It is used as a common wrapper around many of the
 Summary group generics, the Math group generics, and a handful of other
-mathematical functions like \code{mean()}.
+mathematical functions like \code{mean()} (but not \code{var()} or \code{sd()}).
 }
 \details{
 \code{vec_math_base()} is provided as a convenience for writing methods. It
@@ -40,6 +40,10 @@ calls the base \code{.fn} on the underlying \code{\link[=vec_data]{vec_data()}}.
 \code{digamma()}, \code{trigamma()}.
 \item Additional generics: \code{mean()}, \code{is.nan()}, \code{is.finite()}, \code{is.infinite()}.
 }
+
+Note that \code{median()} is currently not implemented, and \code{sd()} and
+\code{var()} are currently not generic and so do not support custom
+classes.
 }
 
 \examples{

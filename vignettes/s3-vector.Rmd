@@ -750,7 +750,7 @@ sort(poly(1, c(1, 0, 0), c(1, 0)))
 
 vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:
 
-*  `vec_math(fn, x, ...)` specifies the behaviour of mathematical functions like `abs()`, `sum()`, and `mean()`. (See `?vec_math()` for the complete list.)
+*  `vec_math(fn, x, ...)` specifies the behaviour of mathematical functions like `abs()`, `sum()`, and `mean()`. (Note that `var()` and `sd()` can't be overridden, see `?vec_math()` for the complete list supported by `vec_math()`.)
 
 *  `vec_arith(op, x, y)` specifies the behaviour of the arithmetic operations like `+`, `-`, and `%%`. (See `?vec_arith()` for the complete list.)
 
