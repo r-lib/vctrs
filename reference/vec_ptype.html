@@ -253,17 +253,30 @@ a <a href='new_partial.html'>finalised</a> prototype.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Unknown types ------------------------------------------</span>
-<span class='fu'>vec_ptype_show</span>()</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fl'>NA</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='kw'>NULL</span>)</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'>
+<span class='fu'>vec_ptype_show</span>()
+</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fl'>NA</span>)
+</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='kw'>NULL</span>)
+</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'>
 <span class='co'># Vectors ------------------------------------------------</span>
-<span class='fu'>vec_ptype_show</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>)</div><div class='output co'>#&gt; Prototype: integer</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='kw'>letters</span>)</div><div class='output co'>#&gt; Prototype: character</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())</div><div class='output co'>#&gt; Prototype: date</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())</div><div class='output co'>#&gt; Prototype: datetime&lt;local&gt;</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>))</div><div class='output co'>#&gt; Prototype: factor&lt;127a2&gt;</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>ordered</a></span>(<span class='st'>"a"</span>))</div><div class='output co'>#&gt; Prototype: ordered&lt;127a2&gt;</div><div class='input'>
+<span class='fu'>vec_ptype_show</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>)
+</div><div class='output co'>#&gt; Prototype: integer</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='kw'>letters</span>)
+</div><div class='output co'>#&gt; Prototype: character</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
+<span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())
+</div><div class='output co'>#&gt; Prototype: date</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())
+</div><div class='output co'>#&gt; Prototype: datetime&lt;local&gt;</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>))
+</div><div class='output co'>#&gt; Prototype: factor&lt;127a2&gt;</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>ordered</a></span>(<span class='st'>"a"</span>))
+</div><div class='output co'>#&gt; Prototype: ordered&lt;127a2&gt;</div><div class='input'>
 <span class='co'># Matrices -----------------------------------------------</span>
 <span class='co'># The prototype of a matrix includes the number of columns</span>
-<span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>, dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt; Prototype: double[,2]</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='st'>"x"</span>, dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))</div><div class='output co'>#&gt; Prototype: character[,2]</div><div class='input'>
+<span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='fl'>1</span>, dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))
+</div><div class='output co'>#&gt; Prototype: double[,2]</div><div class='input'><span class='fu'>vec_ptype_show</span>(<span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span>(<span class='st'>"x"</span>, dim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>)))
+</div><div class='output co'>#&gt; Prototype: character[,2]</div><div class='input'>
 <span class='co'># Data frames --------------------------------------------</span>
 <span class='co'># The prototype of a data frame includes the prototype of</span>
 <span class='co'># every column</span>
-<span class='fu'>vec_ptype_show</span>(<span class='kw'>iris</span>)</div><div class='output co'>#&gt; Prototype: data.frame&lt;
+<span class='fu'>vec_ptype_show</span>(<span class='kw'>iris</span>)
+</div><div class='output co'>#&gt; Prototype: data.frame&lt;
 #&gt;   Sepal.Length: double
 #&gt;   Sepal.Width : double
 #&gt;   Petal.Length: double
@@ -276,7 +289,8 @@ a <a href='new_partial.html'>finalised</a> prototype.</p>
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>TRUE</span>),
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y = <span class='fl'>2</span>),
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(z = <span class='st'>"a"</span>)
-)</div><div class='output co'>#&gt; Prototype: &lt;data.frame&lt;
+)
+</div><div class='output co'>#&gt; Prototype: &lt;data.frame&lt;
 #&gt;   x: logical
 #&gt;   y: double
 #&gt;   z: character

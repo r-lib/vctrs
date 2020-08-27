@@ -332,13 +332,16 @@ section in the "tidyverse package development principles".</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># By default, `vec_as_names()` returns minimal names:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>))</div><div class='output co'>#&gt; [1] ""    ""    "foo"</div><div class='input'>
+<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>))
+</div><div class='output co'>#&gt; [1] ""    ""    "foo"</div><div class='input'>
 <span class='co'># You can make them unique:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>), repair = <span class='st'>"unique"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>), repair = <span class='st'>"unique"</span>)
+</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* NA -&gt; ...1</span>
 #&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; [1] "...1" "...2" "foo" </div><div class='input'>
 <span class='co'># Universal repairing fixes any non-syntactic name:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_foo"</span>, <span class='st'>"+"</span>), repair = <span class='st'>"universal"</span>)</div><div class='output co'>#&gt; <span class='message'>New names:</span>
+<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_foo"</span>, <span class='st'>"+"</span>), repair = <span class='st'>"universal"</span>)
+</div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* `_foo` -&gt; ._foo</span>
 #&gt; <span class='message'>* `+` -&gt; .</span></div><div class='output co'>#&gt; [1] "._foo" "."    </div></pre>
   </div>

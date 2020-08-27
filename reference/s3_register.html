@@ -209,7 +209,8 @@ the lexical scope. For R 3.6.0 and later, you can achieve a similar effect
 by using "delayed method registration", i.e. placing the following in your
 <code>NAMESPACE</code> file:</p><pre><span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/numeric_version.html'>getRversion</a></span>() <span class='op'>&gt;=</span> <span class='st'>"3.6.0"</span>) {
   <span class='fu'>S3method</span>(<span class='kw'>package</span>::<span class='kw'>generic</span>, <span class='kw'>class</span>)
-}</pre>
+}
+</pre>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -221,7 +222,8 @@ by using "delayed method registration", i.e. placing the following in your
 <span class='kw'>.onLoad</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>...</span>) {
   <span class='fu'>s3_register</span>(<span class='st'>"pillar::pillar_shaft"</span>, <span class='st'>"vctrs_vctr"</span>)
   <span class='fu'>s3_register</span>(<span class='st'>"tibble::type_sum"</span>, <span class='st'>"vctrs_vctr"</span>)
-}</div></pre>
+}
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

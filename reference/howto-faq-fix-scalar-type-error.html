@@ -56,16 +56,19 @@ By default, S3 lists are not considered to be vectors by vctrs:my_list &amp;lt;-
 
 vctrs::vec_is(my_list)
 #&amp;gt; [1] FALSE
+
 To be treated as a vector, the class must either inherit from &quot;list&quot;
 explicitly:my_explicit_list &amp;lt;- structure(list(), class = c(&quot;my_class&quot;, &quot;list&quot;))
 vctrs::vec_is(my_explicit_list)
 #&amp;gt; [1] TRUE
+
 Or it should implement a vec_proxy() method that returns its input if
 explicit inheritance is not possible or troublesome:#' @export
 vec_proxy.my_class &amp;lt;- function(x, ...) x
 
 vctrs::vec_is(my_list)
 #&amp;gt; [1] FALSE
+
 Note that explicit inheritance is the preferred way because this makes
 it possible for your class to dispatch on list methods of S3 generics:my_generic &amp;lt;- function(x) UseMethod(&quot;my_generic&quot;)
 my_generic.list &amp;lt;- function(x) &quot;dispatched!&quot;
@@ -75,6 +78,7 @@ my_generic(my_list)
 
 my_generic(my_explicit_list)
 #&amp;gt; [1] &quot;dispatched!&quot;
+
 
 Why isn’t my data frame class considered a vector?
 
@@ -89,8 +93,10 @@ class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 
 vctrs::vec_assert(my_df)
 #&amp;gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.
+
 This is problematic as many tidyverse functions won’t work properly:dplyr::slice(my_df, 1)
 #&amp;gt; Error: Input must be a vector, not a `data.frame/my_class` object.
+
 It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
 To fix these errors, you can simply change the construction of your data
@@ -102,6 +108,7 @@ vctrs::vec_assert(my_df)
 dplyr::slice(my_df, 1)
 #&amp;gt;   x
 #&amp;gt; 1 1
+
 " />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
@@ -219,17 +226,20 @@ treat your class as a vector when it should.</p><h3 class='hasAnchor' id='argume
 <p>By default, S3 lists are not considered to be vectors by vctrs:<div class="r"></p><pre><span class='kw'>my_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), class = <span class='st'>"my_class"</span>)
 
 <span class='kw'>vctrs</span>::<span class='fu'><a href='vec_assert.html'>vec_is</a></span>(<span class='kw'>my_list</span>)
-<span class='co'>#&gt; [1] FALSE</span></pre><p></div></p>
+<span class='co'>#&gt; [1] FALSE</span>
+</pre><p></div></p>
 <p>To be treated as a vector, the class must either inherit from <code>"list"</code>
 explicitly:<div class="r"></p><pre><span class='kw'>my_explicit_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(), class = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"my_class"</span>, <span class='st'>"list"</span>))
 <span class='kw'>vctrs</span>::<span class='fu'><a href='vec_assert.html'>vec_is</a></span>(<span class='kw'>my_explicit_list</span>)
-<span class='co'>#&gt; [1] TRUE</span></pre><p></div></p>
+<span class='co'>#&gt; [1] TRUE</span>
+</pre><p></div></p>
 <p>Or it should implement a <code><a href='vec_proxy.html'>vec_proxy()</a></code> method that returns its input if
 explicit inheritance is not possible or troublesome:<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='kw'>vec_proxy.my_class</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>, <span class='kw'>...</span>) <span class='kw'>x</span>
 
 <span class='kw'>vctrs</span>::<span class='fu'><a href='vec_assert.html'>vec_is</a></span>(<span class='kw'>my_list</span>)
-<span class='co'>#&gt; [1] FALSE</span></pre><p></div></p>
+<span class='co'>#&gt; [1] FALSE</span>
+</pre><p></div></p>
 <p>Note that explicit inheritance is the preferred way because this makes
 it possible for your class to dispatch on <code>list</code> methods of S3 generics:<div class="r"></p><pre><span class='kw'>my_generic</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/UseMethod.html'>UseMethod</a></span>(<span class='st'>"my_generic"</span>)
 <span class='kw'>my_generic.list</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='st'>"dispatched!"</span>
@@ -238,7 +248,8 @@ it possible for your class to dispatch on <code>list</code> methods of S3 generi
 <span class='co'>#&gt; Error in UseMethod("my_generic"): no applicable method for 'my_generic' applied to an object of class "my_class"</span>
 
 <span class='fu'>my_generic</span>(<span class='kw'>my_explicit_list</span>)
-<span class='co'>#&gt; [1] "dispatched!"</span></pre><p></div></p>
+<span class='co'>#&gt; [1] "dispatched!"</span>
+</pre><p></div></p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Why isn’t my data frame class considered a vector?</h3>
 
@@ -252,9 +263,11 @@ class</em> is not <code>"data.frame"</code>:<div class="r"></p><pre><span class=
 <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='kw'>my_df</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"data.frame"</span>, <span class='st'>"my_class"</span>)
 
 <span class='kw'>vctrs</span>::<span class='fu'><a href='vec_assert.html'>vec_assert</a></span>(<span class='kw'>my_df</span>)
-<span class='co'>#&gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.</span></pre><p></div></p>
+<span class='co'>#&gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.</span>
+</pre><p></div></p>
 <p>This is problematic as many tidyverse functions won’t work properly:<div class="r"></p><pre><span class='kw'>dplyr</span>::<span class='fu'><a href='https://dplyr.tidyverse.org/reference/slice.html'>slice</a></span>(<span class='kw'>my_df</span>, <span class='fl'>1</span>)
-<span class='co'>#&gt; Error: Input must be a vector, not a `data.frame/my_class` object.</span></pre><p></div></p>
+<span class='co'>#&gt; Error: Input must be a vector, not a `data.frame/my_class` object.</span>
+</pre><p></div></p>
 <p>It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
 To fix these errors, you can simply change the construction of your data
@@ -265,7 +278,8 @@ last in the class vector:<div class="r"></p><pre><span class='fu'><a href='https
 
 <span class='kw'>dplyr</span>::<span class='fu'><a href='https://dplyr.tidyverse.org/reference/slice.html'>slice</a></span>(<span class='kw'>my_df</span>, <span class='fl'>1</span>)
 <span class='co'>#&gt;   x</span>
-<span class='co'>#&gt; 1 1</span></pre><p></div></p>
+<span class='co'>#&gt; 1 1</span>
+</pre><p></div></p>
 
     </div>
 

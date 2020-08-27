@@ -292,12 +292,14 @@ vectors. To prevent vctrs from treating your S3 list as a scalar,
 unclass it in the <code>vec_proxy()</code> method. For instance, here is the
 definition for <code>list_of</code>:</p><pre><span class='kw'>vec_proxy.vctrs_list_of</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) {
   <span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='kw'>x</span>)
-}</pre>
+}
+</pre>
 
 <p>Another case where you need to implement a proxy is <a href='new_rcrd.html'>record types</a>. Record types should return a data frame, as in
 the <code>POSIXlt</code> method:</p><pre><span class='kw'>vec_proxy.POSIXlt</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>x</span>) {
   <span class='fu'><a href='new_data_frame.html'>new_data_frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span>(<span class='kw'>x</span>))
-}</pre>
+}
+</pre>
 
 <p>Note that you don't need to implement <code>vec_proxy()</code> when your class
 inherits from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code>.</p>

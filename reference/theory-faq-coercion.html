@@ -82,6 +82,7 @@ vec_rbind(
   data.frame(x = 1, y = 2)
 )
 #&amp;gt; Error: Can't combine `..1$x` &amp;lt;character&amp;gt; and `..2$x` &amp;lt;double&amp;gt;.
+
 One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
 relevant generics are vec_ptype2() and vec_cast(). They both take
@@ -136,6 +137,7 @@ vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
 vec_ptype2(factor(&quot;a&quot;), 1L)
 #&amp;gt; Error: Can't combine &amp;lt;factor&amp;lt;127a2&amp;gt;&amp;gt; and &amp;lt;integer&amp;gt;.
 
+
 Richness of type
 
 
@@ -148,6 +150,7 @@ coercible.
 Let’s look again at what happens when we combine a factor and a
 character:vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
 #&amp;gt; character(0)
+
 The ptype2 method for &amp;lt;character&amp;gt; and &amp;lt;factor&amp;lt;&quot;a&quot;&amp;gt;&amp;gt; returns
 &amp;lt;character&amp;gt; because the former is a richer type. The factor can only
 contain &quot;a&quot; strings, whereas the character can contain any strings. In
@@ -170,6 +173,7 @@ levels are aggregated in order:vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)
 vec_ptype2(factor(&quot;b&quot;), factor(c(&quot;a&quot;, &quot;c&quot;)))
 #&amp;gt; factor(0)
 #&amp;gt; Levels: b a c
+
 In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.
 
@@ -272,6 +276,7 @@ vec_rbind(df1, df2)
 #&amp;gt;   x
 #&amp;gt; 1 1
 #&amp;gt; 2 1
+
 When a tibble is involved, we fall back to tibble:df3 &amp;lt;- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
@@ -280,6 +285,7 @@ vec_rbind(df1, df3)
 #&amp;gt;   &amp;lt;dbl&amp;gt;
 #&amp;gt; 1     1
 #&amp;gt; 2     1
+
 These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
 vectors. For example factors and characters have different
@@ -435,7 +441,8 @@ functions that use the split-apply-combine strategy. For example:<div class="r">
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='st'>"a"</span>),
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>, y = <span class='fl'>2</span>)
 )
-<span class='co'>#&gt; Error: Can't combine `..1$x` &lt;character&gt; and `..2$x` &lt;double&gt;.</span></pre><p></div></p>
+<span class='co'>#&gt; Error: Can't combine `..1$x` &lt;character&gt; and `..2$x` &lt;double&gt;.</span>
+</pre><p></div></p>
 <p>One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
 relevant generics are <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>. They both take
@@ -488,7 +495,8 @@ character vectors than to round numbers:<div class="r"></p><pre><span class='co'
 
 <span class='co'># But they are incompatible with integers</span>
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fl'>1L</span>)
-<span class='co'>#&gt; Error: Can't combine &lt;factor&lt;127a2&gt;&gt; and &lt;integer&gt;.</span></pre><p></div></p>
+<span class='co'>#&gt; Error: Can't combine &lt;factor&lt;127a2&gt;&gt; and &lt;integer&gt;.</span>
+</pre><p></div></p>
 
 <h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Richness of type</h4>
 
@@ -501,7 +509,8 @@ two types is richer, it probably means they shouldn’t be automatically
 coercible.</p>
 <p>Let’s look again at what happens when we combine a factor and a
 character:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='st'>"b"</span>)
-<span class='co'>#&gt; character(0)</span></pre><p></div></p>
+<span class='co'>#&gt; character(0)</span>
+</pre><p></div></p>
 <p>The ptype2 method for <code>&lt;character&gt;</code> and <code>&lt;factor&lt;"a"&gt;&gt;</code> returns
 <code>&lt;character&gt;</code> because the former is a richer type. The factor can only
 contain <code>"a"</code> strings, whereas the character can contain any strings. In
@@ -523,7 +532,8 @@ levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href=
 
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"b"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"c"</span>)))
 <span class='co'>#&gt; factor(0)</span>
-<span class='co'>#&gt; Levels: b a c</span></pre><p></div></p>
+<span class='co'>#&gt; Levels: b a c</span>
+</pre><p></div></p>
 <p>In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.</p>
 
@@ -625,7 +635,8 @@ a base data frame:<div class="r"></p><pre><span class='kw'>df1</span> <span clas
 <span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>df1</span>, <span class='kw'>df2</span>)
 <span class='co'>#&gt;   x</span>
 <span class='co'>#&gt; 1 1</span>
-<span class='co'>#&gt; 2 1</span></pre><p></div></p>
+<span class='co'>#&gt; 2 1</span>
+</pre><p></div></p>
 <p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre><span class='kw'>df3</span> <span class='op'>&lt;-</span> <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span>(<span class='kw'>df1</span>)
 
 <span class='fu'><a href='vec_bind.html'>vec_rbind</a></span>(<span class='kw'>df1</span>, <span class='kw'>df3</span>)
@@ -633,7 +644,8 @@ a base data frame:<div class="r"></p><pre><span class='kw'>df1</span> <span clas
 <span class='co'>#&gt;       x</span>
 <span class='co'>#&gt;   &lt;dbl&gt;</span>
 <span class='co'>#&gt; 1     1</span>
-<span class='co'>#&gt; 2     1</span></pre><p></div></p>
+<span class='co'>#&gt; 2     1</span>
+</pre><p></div></p>
 <p>These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
 vectors. For example factors and characters have different

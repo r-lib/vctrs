@@ -216,10 +216,19 @@ functions.</p></div>
 <span class='kw'>dt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span>(<span class='st'>"2018-01-02 12:00"</span>)
 <span class='kw'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/difftime.html'>as.difftime</a></span>(<span class='fl'>12</span>, unit = <span class='st'>"hours"</span>)
 
-<span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='fl'>1</span>)</div><div class='output co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='kw'>d</span>)</div><div class='output co'>#&gt; Time difference of 129600 secs</div><div class='input'>
-<span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='kw'>dt</span>, <span class='fl'>86400</span>)</div><div class='output co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='kw'>dt</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='kw'>t</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; Time difference of 24 hours</div><div class='input'>
-<span class='fu'>vec_arith</span>(<span class='st'>"/"</span>, <span class='kw'>t</span>, <span class='kw'>t</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"/"</span>, <span class='kw'>t</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt; Time difference of 6 hours</div><div class='input'>
-<span class='fu'>vec_arith</span>(<span class='st'>"*"</span>, <span class='kw'>t</span>, <span class='fl'>2</span>)</div><div class='output co'>#&gt; Time difference of 24 hours</div></pre>
+<span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='fl'>1</span>)
+</div><div class='output co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='kw'>t</span>)
+</div><div class='output co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"-"</span>, <span class='kw'>dt</span>, <span class='kw'>d</span>)
+</div><div class='output co'>#&gt; Time difference of 129600 secs</div><div class='input'>
+<span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='kw'>dt</span>, <span class='fl'>86400</span>)
+</div><div class='output co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='kw'>dt</span>, <span class='kw'>t</span>)
+</div><div class='output co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"+"</span>, <span class='kw'>t</span>, <span class='kw'>t</span>)
+</div><div class='output co'>#&gt; Time difference of 24 hours</div><div class='input'>
+<span class='fu'>vec_arith</span>(<span class='st'>"/"</span>, <span class='kw'>t</span>, <span class='kw'>t</span>)
+</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>vec_arith</span>(<span class='st'>"/"</span>, <span class='kw'>t</span>, <span class='fl'>2</span>)
+</div><div class='output co'>#&gt; Time difference of 6 hours</div><div class='input'>
+<span class='fu'>vec_arith</span>(<span class='st'>"*"</span>, <span class='kw'>t</span>, <span class='fl'>2</span>)
+</div><div class='output co'>#&gt; Time difference of 24 hours</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

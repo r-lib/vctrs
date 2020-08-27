@@ -271,7 +271,8 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
   lossy = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>FALSE</span>),
   x_arg = <span class='st'>""</span>,
   to_arg = <span class='st'>""</span>
-)</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
+)
+</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
 <span class='co'># If `lossy` has any `TRUE`, an error is thrown:</span>
 <span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='maybe_lossy_cast.html'>maybe_lossy_cast</a></span>(
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"foo"</span>, <span class='st'>"bar"</span>),
@@ -280,7 +281,8 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
   lossy = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>),
   x_arg = <span class='st'>""</span>,
   to_arg = <span class='st'>""</span>
-))</div><div class='output co'>#&gt; Error : Can't convert from &lt;NULL&gt; to &lt;character&gt; due to loss of precision.
+))
+</div><div class='output co'>#&gt; Error : Can't convert from &lt;NULL&gt; to &lt;character&gt; due to loss of precision.
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># Unless lossy casts are allowed:</span>
 <span class='fu'>allow_lossy_cast</span>(
@@ -292,7 +294,9 @@ or <code>to</code> match these <a href='vec_ptype.html'>prototypes</a>.</p></td>
     x_arg = <span class='st'>""</span>,
     to_arg = <span class='st'>""</span>
   )
-)</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'></div></pre>
+)
+</div><div class='output co'>#&gt; [1] "foo" "bar"</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

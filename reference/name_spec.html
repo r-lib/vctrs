@@ -51,7 +51,9 @@
 names. This sort of name combination arises when concatenating
 vectors or flattening lists. There are two possible cases:
 Named vector:vec_c(outer = c(inner1 = 1, inner2 = 2))
+
 Unnamed vector:vec_c(outer = 1:2)
+
 
 
 In r-lib and tidyverse packages, these cases are errors by default,
@@ -176,8 +178,10 @@ integer from 1 to the size of the vector if it is unnamed.
     <p>A name specification describes how to combine an inner and outer
 names. This sort of name combination arises when concatenating
 vectors or flattening lists. There are two possible cases:</p><ul>
-<li><p>Named vector:</p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span>(outer = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(inner1 = <span class='fl'>1</span>, inner2 = <span class='fl'>2</span>))</pre></li>
-<li><p>Unnamed vector:</p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span>(outer = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)</pre></li>
+<li><p>Named vector:</p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span>(outer = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(inner1 = <span class='fl'>1</span>, inner2 = <span class='fl'>2</span>))
+</pre></li>
+<li><p>Unnamed vector:</p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span>(outer = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
+</pre></li>
 </ul>
 
 <p>In r-lib and tidyverse packages, these cases are errors by default,
@@ -221,23 +225,30 @@ names are ignored and the result is unnamed.</p></li>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># By default, named inputs must be length 1:</span>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span>)         <span class='co'># ok</span></div><div class='output co'>#&gt; name 
-#&gt;    1 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>))  <span class='co'># bad</span></div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
+<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span>)         <span class='co'># ok</span>
+</div><div class='output co'>#&gt; name 
+#&gt;    1 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>))  <span class='co'># bad</span>
+</div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
 #&gt; Please supply a `.name_spec` specification.</div><div class='input'>
 <span class='co'># They also can't have internal names, even if scalar:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(internal = <span class='fl'>1</span>)))  <span class='co'># bad</span></div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
+<span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(internal = <span class='fl'>1</span>)))  <span class='co'># bad</span>
+</div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
 #&gt; Please supply a `.name_spec` specification.</div><div class='input'>
 <span class='co'># Pass a name specification to work around this. A specification</span>
 <span class='co'># can be a glue string referring to `outer` and `inner`:</span>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='st'>"{outer}"</span>)</div><div class='output co'>#&gt;  name  name  name other other 
-#&gt;     1     2     3     4     5 </div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='st'>"{outer}_{inner}"</span>)</div><div class='output co'>#&gt;  name_1  name_2  name_3 other_1 other_2 
+<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='st'>"{outer}"</span>)
+</div><div class='output co'>#&gt;  name  name  name other other 
+#&gt;     1     2     3     4     5 </div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='st'>"{outer}_{inner}"</span>)
+</div><div class='output co'>#&gt;  name_1  name_2  name_3 other_1 other_2 
 #&gt;       1       2       3       4       5 </div><div class='input'>
 <span class='co'># They can also be functions:</span>
 <span class='kw'>my_spec</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>outer</span>, <span class='kw'>inner</span>) <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='kw'>outer</span>, <span class='kw'>inner</span>, sep = <span class='st'>"_"</span>)
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='kw'>my_spec</span>)</div><div class='output co'>#&gt;  name_1  name_2  name_3 other_1 other_2 
+<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='kw'>my_spec</span>)
+</div><div class='output co'>#&gt;  name_1  name_2  name_3 other_1 other_2 
 #&gt;       1       2       3       4       5 </div><div class='input'>
 <span class='co'># Or purrr-style formulas for anonymous functions:</span>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>.x</span>, <span class='kw'>.y</span>))</div><div class='output co'>#&gt;  name1  name2  name3 other1 other2 
+<span class='fu'><a href='vec_c.html'>vec_c</a></span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other = <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec = <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='kw'>.x</span>, <span class='kw'>.y</span>))
+</div><div class='output co'>#&gt;  name1  name2  name3 other1 other2 
 #&gt;      1      2      3      4      5 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

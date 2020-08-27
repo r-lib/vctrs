@@ -75,14 +75,17 @@ common type of a set of vectors, NULL is promoted to any type:vec_ptype2(NULL, &
 #&amp;gt; character(0)
 vec_ptype2(1L, NULL)
 #&amp;gt; integer(0)
+
 The common type of NULL and NULL is the identity NULL:vec_ptype2(NULL, NULL)
 #&amp;gt; NULL
+
 This way the result of vec_ptype2(NULL, NULL) does not influence
 subsequent promotions:vec_ptype2(
   vec_ptype2(NULL, NULL),
   &quot;&quot;
 )
 #&amp;gt; character(0)
+
 
 Unspecified vectors
 
@@ -95,6 +98,7 @@ It makes it possible to assign vectors of NA inside any type of
 vectors, even when they are not coercible with logical:x &amp;lt;- letters[1:5]
 vec_assign(x, 1:2, c(NA, NA))
 #&amp;gt; [1] NA  NA  &quot;c&quot; &quot;d&quot; &quot;e&quot;
+
 We can’t put NULL in a data frame, so we need an identity element
 that behaves more like a vector. Logical vectors of NA seem a
 natural fit for this.
@@ -105,6 +109,7 @@ NULL:vec_ptype2(NA, &quot;&quot;)
 #&amp;gt; character(0)
 vec_ptype2(1L, c(NA, NA))
 #&amp;gt; integer(0)
+
 
 Finalising common types
 
@@ -118,16 +123,19 @@ vec_ptype2(NA, NULL)
 #&amp;gt; &amp;lt;unspecified&amp;gt; [0]
 vec_ptype2(NULL, NA)
 #&amp;gt; &amp;lt;unspecified&amp;gt; [0]
+
 We can’t return NA here because vec_ptype2() normally returns empty
 vectors. We also can’t return NULL because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
 end of the reduction.vec_ptype_finalise(vec_ptype2(NULL, NA))
 #&amp;gt; logical(0)
+
 See the output of vec_ptype_common() which performs the reduction and
 finalises the type, ready to be used by the caller:vec_ptype_common(NULL, NULL)
 #&amp;gt; NULL
 vec_ptype_common(NA, NULL)
 #&amp;gt; logical(0)
+
 Note that partial types in vctrs make use of the same mechanism.
 They are finalised with vec_ptype_finalise().
 " />
@@ -266,15 +274,18 @@ change the result of the reduction. vctrs has two identity values,
 common type of a set of vectors, <code>NULL</code> is promoted to any type:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='st'>""</span>)
 <span class='co'>#&gt; character(0)</span>
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fl'>1L</span>, <span class='kw'>NULL</span>)
-<span class='co'>#&gt; integer(0)</span></pre><p></div></p>
+<span class='co'>#&gt; integer(0)</span>
+</pre><p></div></p>
 <p>The common type of <code>NULL</code> and <code>NULL</code> is the identity <code>NULL</code>:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='kw'>NULL</span>)
-<span class='co'>#&gt; NULL</span></pre><p></div></p>
+<span class='co'>#&gt; NULL</span>
+</pre><p></div></p>
 <p>This way the result of <code><a href='vec_ptype2.logical.html'>vec_ptype2(NULL, NULL)</a></code> does not influence
 subsequent promotions:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(
   <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='kw'>NULL</span>),
   <span class='st'>""</span>
 )
-<span class='co'>#&gt; character(0)</span></pre><p></div></p>
+<span class='co'>#&gt; character(0)</span>
+</pre><p></div></p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Unspecified vectors</h3>
 
@@ -286,7 +297,8 @@ semantics of unspecified vectors serve two purposes:</p><ol>
 <li><p>It makes it possible to assign vectors of <code>NA</code> inside any type of
 vectors, even when they are not coercible with logical:<div class="r"></p><pre><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>]
 <span class='fu'><a href='vec_slice.html'>vec_assign</a></span>(<span class='kw'>x</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>))
-<span class='co'>#&gt; [1] NA  NA  "c" "d" "e"</span></pre><p></div></p></li>
+<span class='co'>#&gt; [1] NA  NA  "c" "d" "e"</span>
+</pre><p></div></p></li>
 <li><p>We can’t put <code>NULL</code> in a data frame, so we need an identity element
 that behaves more like a vector. Logical vectors of <code>NA</code> seem a
 natural fit for this.</p></li>
@@ -296,7 +308,8 @@ natural fit for this.</p></li>
 <code>NULL</code>:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fl'>NA</span>, <span class='st'>""</span>)
 <span class='co'>#&gt; character(0)</span>
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fl'>1L</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>))
-<span class='co'>#&gt; integer(0)</span></pre><p></div></p>
+<span class='co'>#&gt; integer(0)</span>
+</pre><p></div></p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Finalising common types</h3>
 
@@ -309,17 +322,20 @@ value:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='fl'>NA</span>, <span class='kw'>NULL</span>)
 <span class='co'>#&gt; &lt;unspecified&gt; [0]</span>
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='fl'>NA</span>)
-<span class='co'>#&gt; &lt;unspecified&gt; [0]</span></pre><p></div></p>
+<span class='co'>#&gt; &lt;unspecified&gt; [0]</span>
+</pre><p></div></p>
 <p>We can’t return <code>NA</code> here because <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> normally returns empty
 vectors. We also can’t return <code>NULL</code> because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
 end of the reduction.<div class="r"></p><pre><span class='fu'><a href='new_partial.html'>vec_ptype_finalise</a></span>(<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>NULL</span>, <span class='fl'>NA</span>))
-<span class='co'>#&gt; logical(0)</span></pre><p></div></p>
+<span class='co'>#&gt; logical(0)</span>
+</pre><p></div></p>
 <p>See the output of <code><a href='vec_ptype.html'>vec_ptype_common()</a></code> which performs the reduction and
 finalises the type, ready to be used by the caller:<div class="r"></p><pre><span class='fu'><a href='vec_ptype.html'>vec_ptype_common</a></span>(<span class='kw'>NULL</span>, <span class='kw'>NULL</span>)
 <span class='co'>#&gt; NULL</span>
 <span class='fu'><a href='vec_ptype.html'>vec_ptype_common</a></span>(<span class='fl'>NA</span>, <span class='kw'>NULL</span>)
-<span class='co'>#&gt; logical(0)</span></pre><p></div></p>
+<span class='co'>#&gt; logical(0)</span>
+</pre><p></div></p>
 <p>Note that <strong>partial</strong> types in vctrs make use of the same mechanism.
 They are finalised with <code><a href='new_partial.html'>vec_ptype_finalise()</a></code>.</p>
 
