@@ -1,5 +1,5 @@
 
-# vctrs (development version)
+# vctrs 0.3.3
 
 * The `table` class is now implemented as a wrapper type that
   delegates its coercion methods. It used to be restricted to integer
