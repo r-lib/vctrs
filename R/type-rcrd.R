@@ -10,14 +10,18 @@
 #'
 #' @param fields A list or a data frame. Lists must be rectangular
 #'   (same sizes), and contain uniquely named vectors (at least
-#'   one). `fields` is validated with [df_list()] which recycles
-#'   columns to the same size.
+#'   one). `fields` is validated with [df_list()] to ensure uniquely
+#'   named vectors.
 #' @param ... Additional attributes
 #' @param class Name of subclass.
 #' @export
 #' @aliases ses rcrd
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
+  if (vec_is_list(fields) && length(vec_unique(list_sizes(fields))) > 1L) {
+    abort("All fields must be the same size.")
+  }
+
   fields <- df_list(!!!fields)
   if (!length(fields)) {
     abort("`fields` must be a list of length 1 or greater.")

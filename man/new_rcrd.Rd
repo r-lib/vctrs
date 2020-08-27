@@ -11,8 +11,8 @@ new_rcrd(fields, ..., class = character())
 \arguments{
 \item{fields}{A list or a data frame. Lists must be rectangular
 (same sizes), and contain uniquely named vectors (at least
-one). \code{fields} is validated with \code{\link[=df_list]{df_list()}} which recycles
-columns to the same size.}
+one). \code{fields} is validated with \code{\link[=df_list]{df_list()}} to ensure uniquely
+named vectors.}
 
 \item{...}{Additional attributes}
 

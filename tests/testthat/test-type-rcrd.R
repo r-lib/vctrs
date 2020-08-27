@@ -91,7 +91,7 @@ test_that("can't cast incompatible rcrd", {
 test_that("must be list of equal length vectors", {
   expect_error(new_rcrd(list()), "list of length 1")
   expect_error(new_rcrd(list(x = environment())), class = "vctrs_error_scalar_type")
-  expect_error(new_rcrd(list(x = 1:2, y = 1:3)), class = "vctrs_error_incompatible_size")
+  expect_error(new_rcrd(list(x = 1:2, y = 1:3)), "same size")
 })
 
 test_that("names must be unique", {
@@ -116,10 +116,10 @@ test_that("can supply data frame as fields", {
   )
 })
 
-test_that("fields are recycled", {
-  expect_identical(
+test_that("fields are not recycled", {
+  expect_error(
     new_rcrd(list(x = 1, y = 1:2)),
-    new_rcrd(list(x = c(1, 1), y = 1:2))
+    "must be the same size"
   )
 })
 
