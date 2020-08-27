@@ -50,7 +50,7 @@
 <meta property="og:description" content="This generic provides a common dispatch mechanism for all regular unary
 mathematical functions. It is used as a common wrapper around many of the
 Summary group generics, the Math group generics, and a handful of other
-mathematical functions like mean()." />
+mathematical functions like mean() (but not var() or sd())." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -162,7 +162,7 @@ mathematical functions like mean()." />
     <p>This generic provides a common dispatch mechanism for all regular unary
 mathematical functions. It is used as a common wrapper around many of the
 Summary group generics, the Math group generics, and a handful of other
-mathematical functions like <code><a href='https://rdrr.io/r/base/mean.html'>mean()</a></code>.</p>
+mathematical functions like <code><a href='https://rdrr.io/r/base/mean.html'>mean()</a></code> (but not <code><a href='https://rdrr.io/r/stats/cor.html'>var()</a></code> or <code><a href='https://rdrr.io/r/stats/sd.html'>sd()</a></code>).</p>
     </div>
 
     <pre class="usage"><span class='fu'>vec_math</span>(<span class='kw'>.fn</span>, <span class='kw'>.x</span>, <span class='kw'>...</span>)
@@ -207,6 +207,9 @@ calls the base <code>.fn</code> on the underlying <code><a href='vec_data.html'>
 <li><p>Additional generics: <code><a href='https://rdrr.io/r/base/mean.html'>mean()</a></code>, <code><a href='https://rdrr.io/r/base/is.finite.html'>is.nan()</a></code>, <code><a href='https://rdrr.io/r/base/is.finite.html'>is.finite()</a></code>, <code><a href='https://rdrr.io/r/base/is.finite.html'>is.infinite()</a></code>.</p></li>
 </ul>
 
+<p>Note that <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code> is currently not implemented, and <code><a href='https://rdrr.io/r/stats/sd.html'>sd()</a></code> and
+<code><a href='https://rdrr.io/r/stats/cor.html'>var()</a></code> are currently not generic and so do not support custom
+classes.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='vec_arith.html'>vec_arith()</a></code> for the equivalent for the arithmetic infix operators.</p></div>
