@@ -5,5 +5,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
+options(cli.unicode = FALSE)
+
 library(vctrs)
 ```

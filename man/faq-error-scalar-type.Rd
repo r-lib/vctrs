@@ -9,12 +9,12 @@ object instead. This commonly happens when some code attempts to assign
 a scalar object as column in a data frame:\if{html}{\out{<div class="r">}}\preformatted{fn <- function() NULL
 tibble::tibble(x = fn)
 #> Error: All columns in a tibble must be vectors.
-#> ✖ Column `x` is a function.
+#> x Column `x` is a function.
 
 fit <- lm(1:3 ~ 1)
 tibble::tibble(x = fit)
 #> Error: All columns in a tibble must be vectors.
-#> ✖ Column `x` is a `lm` object.
+#> x Column `x` is a `lm` object.
 }\if{html}{\out{</div>}}
 }
 \section{Vectorness in base R and in the tidyverse}{
