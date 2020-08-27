@@ -205,6 +205,41 @@ test_that("can use a table in `vec_unchop()`", {
   expect_identical(vec_unchop(list(x, x), list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
 })
 
+test_that("can concatenate tables", {
+  x <- table(1:2)
+
+  out <- vec_c(x, x)
+  exp <- new_table(rep(1L, 4), dimnames = list(c("1", "2", "1", "2")))
+  expect_identical(out, exp)
+
+  out <- vec_rbind(x, x)
+  exp <- data_frame(`1` = new_table(c(1L, 1L)), `2` = new_table(c(1L, 1L)))
+  expect_identical(out, exp)
+
+
+  y <- table(list(1:2, 3:4))
+
+  # FIXME
+  out <- vec_c(y, y)
+  exp <- new_table(
+    matrix(int(1, 0, 1, 0, 0, 1, 0, 1), nrow = 4),
+    dim = c(4L, 2L),
+    dimnames = list(c("1", "2", "1", "2"), NULL)
+  )
+  expect_identical(out, exp)
+
+  out <- vec_rbind(y, y)
+  exp <- new_data_frame(list(
+    `3` = int(1, 0, 1, 0),
+    `4` = int(0, 1, 0, 1)
+    ),
+    row.names = c("1...1", "2...2", "1...3", "2...4")
+  )
+  expect_identical(out, exp)
+
+  skip("FIXME: dimnames of matrices are not properly concatenated")
+})
+
 test_that("can concatenate tables of type double (#1190)", {
   x <- table(c(1, 2)) / 2
 
