@@ -262,7 +262,9 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
 
   int nprot = 0;
 
-  R_len_t ndim = vec_dim_n(x);
+  SEXP dim = vec_bare_dim(x);
+  R_len_t ndim = (dim == R_NilValue) ? 1 : Rf_length(dim);
+
   if (ndim > 2) {
     Rf_errorcall(R_NilValue, "Can't bind arrays.");
   }
@@ -276,10 +278,15 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
 
   SEXP nms = PROTECT_N(vec_names(x), &nprot);
 
+  if (dim != R_NilValue) {
+    x = PROTECT_N(r_clone_referenced(x), &nprot);
+    r_attrib_poke(x, R_DimSymbol, R_NilValue);
+    r_attrib_poke(x, R_DimNamesSymbol, R_NilValue);
+  }
+
   // Remove names as they are promoted to data frame column names
   if (nms != R_NilValue) {
-    x = PROTECT_N(r_clone_referenced(x), &nprot);
-    r_poke_names(x, R_NilValue);
+    x = PROTECT_N(vec_set_names(x, R_NilValue), &nprot);
   }
 
   if (nms == R_NilValue) {

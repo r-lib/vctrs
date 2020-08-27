@@ -273,6 +273,12 @@ test_that("vec_set_names() errors with bad `names`", {
   expect_error(vec_set_names(1, c("x", "y")), "The size of `names`, 2")
 })
 
+test_that("vec_names() and vec_set_names() work with 1-dimensional arrays", {
+  x <- array(1:2, dimnames = list(c("a", "b")))
+  expect_identical(vec_names(x), c("a", "b"))
+  expect_identical(vec_names(vec_set_names(x, c("A", "B"))), c("A", "B"))
+})
+
 # minimal names -------------------------------------------------------------
 
 test_that("minimal names are made from `n` when `name = NULL`", {
