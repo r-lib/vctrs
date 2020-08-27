@@ -52,12 +52,12 @@ object instead. This commonly happens when some code attempts to assign
 a scalar object as column in a data frame:fn &amp;lt;- function() NULL
 tibble::tibble(x = fn)
 #&amp;gt; Error: All columns in a tibble must be vectors.
-#&amp;gt; ✖ Column `x` is a function.
+#&amp;gt; x Column `x` is a function.
 
 fit &amp;lt;- lm(1:3 ~ 1)
 tibble::tibble(x = fit)
 #&amp;gt; Error: All columns in a tibble must be vectors.
-#&amp;gt; ✖ Column `x` is a `lm` object.
+#&amp;gt; x Column `x` is a `lm` object.
 " />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
@@ -172,12 +172,12 @@ object instead. This commonly happens when some code attempts to assign
 a scalar object as column in a data frame:<div class="r"></p><pre><span class='kw'>fn</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>() <span class='kw'>NULL</span>
 <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='kw'>fn</span>)
 <span class='co'>#&gt; Error: All columns in a tibble must be vectors.</span>
-<span class='co'>#&gt; ✖ Column `x` is a function.</span>
+<span class='co'>#&gt; x Column `x` is a function.</span>
 
 <span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span>)
 <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='kw'>fit</span>)
 <span class='co'>#&gt; Error: All columns in a tibble must be vectors.</span>
-<span class='co'>#&gt; ✖ Column `x` is a `lm` object.</span>
+<span class='co'>#&gt; x Column `x` is a `lm` object.</span>
 </pre><p></div></p>
     </div>
 
