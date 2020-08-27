@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `list_of` and `list` can now be combined. Bare lists are promoted to
+  `list_of` if their elements are compatible. An error is thrown
+  otherwise (#1161).
+
 * `vec_assert()`, `vec_ptype2()`, `vec_cast()`, and `vec_as_location()`
   now use `caller_arg()` to infer a default `arg` value from the
   caller.
