@@ -223,8 +223,8 @@ SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
   return out;
 }
 
-static SEXP df_list_drop_null(SEXP x, r_ssize n);
-static SEXP df_list_splice(SEXP x, r_ssize n);
+static SEXP df_list_drop_null(SEXP x);
+static SEXP df_list_splice(SEXP x);
 
 SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
   if (TYPEOF(x) != VECSXP) {
@@ -242,8 +242,8 @@ SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_
     UNPROTECT(1);
   }
 
-  x = PROTECT(df_list_drop_null(x, n_cols));
-  x = PROTECT(df_list_splice(x, n_cols));
+  x = PROTECT(df_list_drop_null(x));
+  x = PROTECT(df_list_splice(x));
 
   SEXP names = PROTECT(r_names(x));
   names = PROTECT(vec_as_names(names, p_name_repair_opts));
@@ -253,10 +253,11 @@ SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_
   return x;
 }
 
-static SEXP df_list_drop_null(SEXP x, r_ssize n) {
+static SEXP df_list_drop_null(SEXP x) {
+  r_ssize n_cols = r_length(x);
   r_ssize count = 0;
 
-  for (r_ssize i = 0; i < n; ++i) {
+  for (r_ssize i = 0; i < n_cols; ++i) {
     count += VECTOR_ELT(x, i) == R_NilValue;
   }
 
@@ -267,12 +268,12 @@ static SEXP df_list_drop_null(SEXP x, r_ssize n) {
   SEXP names = PROTECT(r_names(x));
   const SEXP* p_names = STRING_PTR_RO(names);
 
-  r_ssize n_out = n - count;
+  r_ssize n_out = n_cols - count;
   SEXP out = PROTECT(Rf_allocVector(VECSXP, n_out));
   SEXP out_names = PROTECT(Rf_allocVector(STRSXP, n_out));
   r_ssize out_i = 0;
 
-  for (r_ssize i = 0; i < n; ++i) {
+  for (r_ssize i = 0; i < n_cols; ++i) {
     SEXP col = VECTOR_ELT(x, i);
 
     if (col != R_NilValue) {
@@ -288,14 +289,15 @@ static SEXP df_list_drop_null(SEXP x, r_ssize n) {
   return out;
 }
 
-static SEXP df_list_splice(SEXP x, r_ssize n) {
+static SEXP df_list_splice(SEXP x) {
   SEXP names = PROTECT(r_names(x));
   const SEXP* p_names = STRING_PTR_RO(names);
 
   bool any_needs_splice = false;
+  r_ssize n_cols = r_length(x);
   r_ssize i = 0;
 
-  for (; i < n; ++i) {
+  for (; i < n_cols; ++i) {
     // Only splice unnamed data frames
     if (p_names[i] != strings_empty) {
       continue;
@@ -314,16 +316,16 @@ static SEXP df_list_splice(SEXP x, r_ssize n) {
     return x;
   }
 
-  SEXP splice = PROTECT(r_new_logical(n));
+  SEXP splice = PROTECT(r_new_logical(n_cols));
   int* p_splice = LOGICAL(splice);
 
-  for (r_ssize j = 0; j < n; ++j) {
+  for (r_ssize j = 0; j < n_cols; ++j) {
     p_splice[j] = 0;
   }
 
   r_ssize width = i;
 
-  for (; i < n; ++i) {
+  for (; i < n_cols; ++i) {
     // Only splice unnamed data frames
     if (p_names[i] != strings_empty) {
       ++width;
@@ -346,7 +348,7 @@ static SEXP df_list_splice(SEXP x, r_ssize n) {
   r_ssize loc = 0;
 
   // Splice loop
-  for (r_ssize i = 0; i < n; ++i) {
+  for (r_ssize i = 0; i < n_cols; ++i) {
     if (!p_splice[i]) {
       SET_VECTOR_ELT(out, loc, VECTOR_ELT(x, i));
       SET_STRING_ELT(out_names, loc, p_names[i]);

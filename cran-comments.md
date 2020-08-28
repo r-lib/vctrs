@@ -1,4 +1,6 @@
 
+Attempt at fixing the gcc-asan error.
+
 ## Test environments
 
 * local macOS: release

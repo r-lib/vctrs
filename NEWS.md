@@ -1,4 +1,9 @@
 
+# vctrs 0.3.4
+
+* Fixed a GCC sanitiser error revealed by CRAN checks.
+
+
 # vctrs 0.3.3
 
 * The `table` class is now implemented as a wrapper type that
