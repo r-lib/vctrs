@@ -44,7 +44,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4.9000</span>
       </span>
     </div>
 
@@ -454,11 +454,11 @@
 <span class="kw">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(x = <span class="kw">x</span>)
 
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span>)
-<span class="co">#&gt; [1] 6 4</span>
+<span class="co">#&gt; [1] 7 1</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span>(<span class="kw">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span>)
 <span class="co">#&gt;   x</span>
-<span class="co">#&gt; 1 6</span>
-<span class="co">#&gt; 2 4</span>
+<span class="co">#&gt; 1 7</span>
+<span class="co">#&gt; 2 1</span>
 </pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
