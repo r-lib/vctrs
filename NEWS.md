@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* Fixed an encoding translation bug with lists containing data frames which
+  have columns where `vec_size()` is different from the low level
+  `Rf_length()` (#1233).
 
 # vctrs 0.3.4
 
