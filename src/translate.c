@@ -120,55 +120,27 @@ static bool list_any_known_encoding(SEXP x, r_ssize size) {
 }
 
 // -----------------------------------------------------------------------------
-// Utilities to translate all character vector elements of an object to UTF-8.
-// This does not check if a translation is required.
+// Utilities to translate all character vector elements of a list to UTF-8.
+//
+// - This does not check if a translation is required.
+// - Only `list_translate_encoding()` or `chr_translate_encoding()` are
+//   called directly.
+// - Data frame elements of lists are treated as lists here, since they won't
+//   have been proxied when the list was proxied, meaning we can't safely pass
+//   the size to each column.
 
 static SEXP chr_translate_encoding(SEXP x, r_ssize size);
 static SEXP list_translate_encoding(SEXP x, r_ssize size);
-static SEXP df_translate_encoding(SEXP x, r_ssize size);
 
-static SEXP obj_translate_encoding(SEXP x, r_ssize size) {
-  switch (TYPEOF(x)) {
-  case STRSXP: {
-    return chr_translate_encoding(x, size);
-  }
-  case VECSXP: {
-    if (is_data_frame(x)) {
-      return df_translate_encoding(x, size);
-    } else {
-      return list_translate_encoding(x, size);
-    }
-  }
-  default: {
-    return x;
-  }
-  }
-}
-
-// For usage on list elements. They have unknown size, and might be scalars.
 static SEXP elt_translate_encoding(SEXP x) {
   switch (TYPEOF(x)) {
-  case STRSXP: {
-    return chr_translate_encoding(x, r_length(x));
-  }
-  case VECSXP: {
-    if (is_data_frame(x)) {
-      return df_translate_encoding(x, vec_size(x));
-    } else {
-      return list_translate_encoding(x, r_length(x));
-    }
-  }
-  default: {
-    return x;
-  }
+  case STRSXP: return chr_translate_encoding(x, r_length(x));
+  case VECSXP: return list_translate_encoding(x, r_length(x));
+  default: return x;
   }
 }
 
 static SEXP chr_translate_encoding(SEXP x, r_ssize size) {
-  if (size == 0) {
-    return x;
-  }
-
   const SEXP* p_x = STRING_PTR_RO(x);
 
   SEXP out = PROTECT(r_clone_referenced(x));
@@ -195,21 +167,8 @@ static SEXP list_translate_encoding(SEXP x, r_ssize size) {
 
   for (r_ssize i = 0; i < size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
-    SET_VECTOR_ELT(x, i, elt_translate_encoding(elt));
-  }
-
-  UNPROTECT(1);
-  return x;
-}
-
-static SEXP df_translate_encoding(SEXP x, r_ssize size) {
-  r_ssize n_col = r_length(x);
-
-  x = PROTECT(r_clone_referenced(x));
-
-  for (r_ssize i = 0; i < n_col; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
-    SET_VECTOR_ELT(x, i, obj_translate_encoding(col, size));
+    elt = elt_translate_encoding(elt);
+    SET_VECTOR_ELT(x, i, elt);
   }
 
   UNPROTECT(1);
