@@ -75,59 +75,31 @@ static bool chr_translation_required2(SEXP x, r_ssize x_size, SEXP y, r_ssize y_
 // -----------------------------------------------------------------------------
 // Utilities to check if any character elements of a list have a
 // "known" encoding (UTF-8 or Latin1). This implies that we have to convert
-// all character elements of the list to UTF-8. Only `list_any_known_encoding()`
-// is ever called directly.
+// all character elements to UTF-8.
+//
+// - Only `list_any_known_encoding()` is ever called directly.
+// - Data frame elements are treated as lists here, since they won't have been
+//   proxied when the list was proxied, meaning we can't safely pass the size
+//   to each column.
 
 static bool chr_any_known_encoding(SEXP x, r_ssize size);
 static bool list_any_known_encoding(SEXP x, r_ssize size);
-static bool df_any_known_encoding(SEXP x, r_ssize size);
 
-static bool obj_any_known_encoding(SEXP x, r_ssize size) {
-  switch (TYPEOF(x)) {
-  case STRSXP: {
-    return chr_any_known_encoding(x, size);
-  }
-  case VECSXP: {
-    if (is_data_frame(x)) {
-      return df_any_known_encoding(x, size);
-    } else {
-      return list_any_known_encoding(x, size);
-    }
-  }
-  default: {
-    return false;
-  }
-  }
-}
-
-// For usage on list elements. They have unknown size, and might be scalars.
 static bool elt_any_known_encoding(SEXP x) {
   switch (TYPEOF(x)) {
-  case STRSXP: {
-    return chr_any_known_encoding(x, r_length(x));
-  }
-  case VECSXP: {
-    if (is_data_frame(x)) {
-      return df_any_known_encoding(x, vec_size(x));
-    } else {
-      return list_any_known_encoding(x, r_length(x));
-    }
-  }
-  default: {
-    return false;
-  }
+  case STRSXP: return chr_any_known_encoding(x, r_length(x));
+  case VECSXP: return list_any_known_encoding(x, r_length(x));
+  default: return false;
   }
 }
 
 static bool chr_any_known_encoding(SEXP x, r_ssize size) {
-  if (size == 0) {
-    return false;
-  }
-
   const SEXP* p_x = STRING_PTR_RO(x);
 
   for (r_ssize i = 0; i < size; ++i) {
-    if (Rf_getCharCE(p_x[i]) != CE_NATIVE) {
+    const SEXP elt = p_x[i];
+
+    if (Rf_getCharCE(elt) != CE_NATIVE) {
       return true;
     }
   }
@@ -137,22 +109,9 @@ static bool chr_any_known_encoding(SEXP x, r_ssize size) {
 
 static bool list_any_known_encoding(SEXP x, r_ssize size) {
   for (r_ssize i = 0; i < size; ++i) {
-    if (elt_any_known_encoding(VECTOR_ELT(x, i))) {
-      return true;
-    }
-  }
+    SEXP elt = VECTOR_ELT(x, i);
 
-  return false;
-}
-
-// Data frames have a separate path from lists here purely for
-// performance reasons. We know the size of each column, and can
-// pass that information through.
-static bool df_any_known_encoding(SEXP x, r_ssize size) {
-  r_ssize n_col = r_length(x);
-
-  for (r_ssize i = 0; i < n_col; ++i) {
-    if (obj_any_known_encoding(VECTOR_ELT(x, i), size)) {
+    if (elt_any_known_encoding(elt)) {
       return true;
     }
   }
