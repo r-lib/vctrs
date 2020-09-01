@@ -13,9 +13,9 @@
 // UTF-8 translation is not attempted in these cases:
 // - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
 
-static bool chr_translation_required_impl(const SEXP* x, r_ssize size, cetype_t reference) {
+static bool chr_translation_required_impl(const SEXP* p_x, r_ssize size, cetype_t reference) {
   for (r_ssize i = 0; i < size; ++i) {
-    if (Rf_getCharCE(x[i]) != reference) {
+    if (Rf_getCharCE(p_x[i]) != reference) {
       return true;
     }
   }
