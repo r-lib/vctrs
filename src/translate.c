@@ -126,7 +126,7 @@ static bool chr_any_known_encoding(SEXP x, r_ssize size) {
 
   const SEXP* p_x = STRING_PTR_RO(x);
 
-  for (int i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     if (Rf_getCharCE(p_x[i]) != CE_NATIVE) {
       return true;
     }
@@ -136,7 +136,7 @@ static bool chr_any_known_encoding(SEXP x, r_ssize size) {
 }
 
 static bool list_any_known_encoding(SEXP x, r_ssize size) {
-  for (int i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     if (elt_any_known_encoding(VECTOR_ELT(x, i))) {
       return true;
     }
@@ -149,9 +149,9 @@ static bool list_any_known_encoding(SEXP x, r_ssize size) {
 // performance reasons. We know the size of each column, and can
 // pass that information through.
 static bool df_any_known_encoding(SEXP x, r_ssize size) {
-  int n_col = r_length(x);
+  r_ssize n_col = r_length(x);
 
-  for (int i = 0; i < n_col; ++i) {
+  for (r_ssize i = 0; i < n_col; ++i) {
     if (obj_any_known_encoding(VECTOR_ELT(x, i), size)) {
       return true;
     }
@@ -216,7 +216,7 @@ static SEXP chr_translate_encoding(SEXP x, r_ssize size) {
 
   const void *vmax = vmaxget();
 
-  for (int i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     SEXP chr = p_x[i];
 
     if (Rf_getCharCE(chr) == CE_UTF8) {
@@ -235,7 +235,7 @@ static SEXP chr_translate_encoding(SEXP x, r_ssize size) {
 static SEXP list_translate_encoding(SEXP x, r_ssize size) {
   x = PROTECT(r_clone_referenced(x));
 
-  for (int i = 0; i < size; ++i) {
+  for (r_ssize i = 0; i < size; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
     SET_VECTOR_ELT(x, i, elt_translate_encoding(elt));
   }
@@ -245,11 +245,11 @@ static SEXP list_translate_encoding(SEXP x, r_ssize size) {
 }
 
 static SEXP df_translate_encoding(SEXP x, r_ssize size) {
-  int n_col = r_length(x);
+  r_ssize n_col = r_length(x);
 
   x = PROTECT(r_clone_referenced(x));
 
-  for (int i = 0; i < n_col; ++i) {
+  for (r_ssize i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(x, i);
     SET_VECTOR_ELT(x, i, obj_translate_encoding(col, size));
   }
@@ -301,11 +301,11 @@ static SEXP list_maybe_translate_encoding(SEXP x, r_ssize size) {
 }
 
 static SEXP df_maybe_translate_encoding(SEXP x, r_ssize size) {
-  int n_col = r_length(x);
+  r_ssize n_col = r_length(x);
 
   x = PROTECT(r_clone_referenced(x));
 
-  for (int i = 0; i < n_col; ++i) {
+  for (r_ssize i = 0; i < n_col; ++i) {
     SEXP elt = VECTOR_ELT(x, i);
     SET_VECTOR_ELT(x, i, obj_maybe_translate_encoding(elt, size));
   }
@@ -389,14 +389,14 @@ static SEXP list_maybe_translate_encoding2(SEXP x, r_ssize x_size, SEXP y, r_ssi
 }
 
 static SEXP df_maybe_translate_encoding2(SEXP x, r_ssize x_size, SEXP y, r_ssize y_size) {
-  int n_col = r_length(x);
+  r_ssize n_col = r_length(x);
 
   x = PROTECT(r_clone_referenced(x));
   y = PROTECT(r_clone_referenced(y));
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
-  for (int i = 0; i < n_col; ++i) {
+  for (r_ssize i = 0; i < n_col; ++i) {
     SEXP x_elt = VECTOR_ELT(x, i);
     SEXP y_elt = VECTOR_ELT(y, i);
 
