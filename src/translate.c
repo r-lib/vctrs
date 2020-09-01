@@ -220,7 +220,6 @@ static SEXP chr_translate_encoding(SEXP x, R_len_t n) {
     SEXP elt = p_x[i];
 
     if (Rf_getCharCE(elt) == CE_UTF8) {
-      SET_STRING_ELT(out, i, elt);
       continue;
     }
 
