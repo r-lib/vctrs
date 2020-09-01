@@ -217,14 +217,14 @@ static SEXP chr_translate_encoding(SEXP x, r_ssize size) {
   const void *vmax = vmaxget();
 
   for (r_ssize i = 0; i < size; ++i) {
-    SEXP chr = p_x[i];
+    SEXP elt = p_x[i];
 
-    if (Rf_getCharCE(chr) == CE_UTF8) {
-      SET_STRING_ELT(out, i, chr);
+    if (Rf_getCharCE(elt) == CE_UTF8) {
+      SET_STRING_ELT(out, i, elt);
       continue;
     }
 
-    SET_STRING_ELT(out, i, Rf_mkCharCE(Rf_translateCharUTF8(chr), CE_UTF8));
+    SET_STRING_ELT(out, i, Rf_mkCharCE(Rf_translateCharUTF8(elt), CE_UTF8));
   }
 
   vmaxset(vmax);
