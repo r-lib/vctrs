@@ -65,9 +65,12 @@ vec_arith.logical.default <- function(op, x, y, ...) stop_incompatible_op(op, x,
 #' @method vec_arith.logical logical
 #' @export
 vec_arith.logical.logical <- function(op, x, y, ...) vec_arith_base(op, x, y)
-#' @method vec_arith.logical numeric
+#' @method vec_arith.logical integer
 #' @export
-vec_arith.logical.numeric <- function(op, x, y, ...) vec_arith_base(op, x, y)
+vec_arith.logical.integer <- function(op, x, y, ...) vec_arith_base(op, x, y)
+#' @method vec_arith.logical double
+#' @export
+vec_arith.logical.double <- function(op, x, y, ...) vec_arith_base(op, x, y)
 
 #' @rdname vec_arith
 #' @export vec_arith.numeric
