@@ -14,6 +14,9 @@ Authors@R:
              family = "Vaughan",
              role = "aut",
              email = "davis@rstudio.com"),
+      person(given = "data.table team",
+             role = "cph",
+             comment = "Radix sort based on data.table's forder() and their contribution to R's order()"),
       person(given = "RStudio",
              role = "cph"))
 Description: Defines new notions of prototype and size that are

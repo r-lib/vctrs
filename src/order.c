@@ -1,3 +1,10 @@
+/*
+ * Based on code from the authors of the data.table package. Inspired directly
+ * from data.table's `forder()` and from their contribution to R's `order()`.
+ * (C) 2006-2020 Matt Dowle, Arun Srinivasan, and the rest of the data.table
+ * team.
+ */
+
 #include "vctrs.h"
 #include "utils.h"
 #include "type-data-frame.h"
