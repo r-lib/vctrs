@@ -1,3 +1,7 @@
+/*
+ * This file is additionally under an MPL-2.0 license. See LICENSE.note.
+ */
+
 #ifndef VCTRS_ORDER_SORTEDNESS_H
 #define VCTRS_ORDER_SORTEDNESS_H
 

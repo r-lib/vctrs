@@ -1,3 +1,7 @@
+/*
+ * This file is additionally under an MPL-2.0 license. See LICENSE.note.
+ */
+
 #include "order-truelength.h"
 #include "utils.h"
 
