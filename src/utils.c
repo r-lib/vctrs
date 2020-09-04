@@ -1026,24 +1026,33 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
   return which;
 }
 
-
-#define FILL(CTYPE, DEREF)                      \
-  CTYPE* data = DEREF(x);                       \
-                                                \
-  for (R_len_t i = 0; i < n; ++i, ++data)       \
-    *data = value
-
-void r_lgl_fill(SEXP x, int value, R_len_t n) {
-  FILL(int, LOGICAL);
+#define FILL() {                      \
+  for (R_len_t i = 0; i < n; ++i) {   \
+    p_x[i] = value;                   \
+  }                                   \
 }
-void r_int_fill(SEXP x, int value, R_len_t n) {
-  FILL(int, INTEGER);
+
+void r_p_lgl_fill(int* p_x, int value, R_len_t n) {
+  FILL();
 }
-void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
-  FILL(SEXP, STRING_PTR);
+void r_p_int_fill(int* p_x, int value, R_len_t n) {
+  FILL();
+}
+void r_p_chr_fill(SEXP* p_x, SEXP value, R_len_t n) {
+  FILL();
 }
 
 #undef FILL
+
+void r_lgl_fill(SEXP x, int value, R_len_t n) {
+  r_p_lgl_fill(LOGICAL(x), value, n);
+}
+void r_int_fill(SEXP x, int value, R_len_t n) {
+  r_p_int_fill(INTEGER(x), value, n);
+}
+void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
+  r_p_chr_fill(STRING_PTR(x), value, n);
+}
 
 
 void r_int_fill_seq(SEXP x, int start, R_len_t n) {
