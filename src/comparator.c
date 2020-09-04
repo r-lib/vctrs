@@ -61,39 +61,48 @@ static int list_equal_missing_p(const void* x, R_len_t i);
 static int df_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
 static int df_equal_missing_p(const void* x, R_len_t i);
 
-static void init_comparator_nil(struct comparator* p_comparator) {
+static
+void init_comparator_nil(struct comparator* p_comparator) {
   p_comparator->equal = &nil_equal_p;
   p_comparator->equal_missing = &nil_equal_missing_p;
 }
-static void init_comparator_lgl(struct comparator* p_comparator) {
+static
+void init_comparator_lgl(struct comparator* p_comparator) {
   p_comparator->equal = &lgl_equal_p;
   p_comparator->equal_missing = &lgl_equal_missing_p;
 }
-static void init_comparator_int(struct comparator* p_comparator) {
+static
+void init_comparator_int(struct comparator* p_comparator) {
   p_comparator->equal = &int_equal_p;
   p_comparator->equal_missing = &int_equal_missing_p;
 }
-static void init_comparator_dbl(struct comparator* p_comparator) {
+static
+void init_comparator_dbl(struct comparator* p_comparator) {
   p_comparator->equal = dbl_equal_p;
   p_comparator->equal_missing = &dbl_equal_missing_p;
 }
-static void init_comparator_cpl(struct comparator* p_comparator) {
+static
+void init_comparator_cpl(struct comparator* p_comparator) {
   p_comparator->equal = &cpl_equal_p;
   p_comparator->equal_missing = &cpl_equal_missing_p;
 }
-static void init_comparator_chr(struct comparator* p_comparator) {
+static
+void init_comparator_chr(struct comparator* p_comparator) {
   p_comparator->equal = &chr_equal_p;
   p_comparator->equal_missing = &chr_equal_missing_p;
 }
-static void init_comparator_raw(struct comparator* p_comparator) {
+static
+void init_comparator_raw(struct comparator* p_comparator) {
   p_comparator->equal = &raw_equal_p;
   p_comparator->equal_missing = &raw_equal_missing_p;
 }
-static void init_comparator_list(struct comparator* p_comparator) {
+static
+void init_comparator_list(struct comparator* p_comparator) {
   p_comparator->equal = &list_equal_p;
   p_comparator->equal_missing = &list_equal_missing_p;
 }
-static void init_comparator_df(struct comparator* p_comparator) {
+static
+void init_comparator_df(struct comparator* p_comparator) {
   p_comparator->equal = df_equal_p;
   p_comparator->equal_missing = &df_equal_missing_p;
 }
@@ -141,28 +150,36 @@ struct comparator_vec* new_comparator_vec(SEXP x) {
 }
 
 
-static void init_comparator_vec_nil(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_nil(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = NULL;
 }
-static void init_comparator_vec_lgl(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_lgl(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) LOGICAL_RO(p_comparator_vec->vec);
 }
-static void init_comparator_vec_int(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_int(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) INTEGER_RO(p_comparator_vec->vec);
 }
-static void init_comparator_vec_dbl(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_dbl(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) REAL_RO(p_comparator_vec->vec);
 }
-static void init_comparator_vec_cpl(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_cpl(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) COMPLEX_RO(p_comparator_vec->vec);
 }
-static void init_comparator_vec_chr(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_chr(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) STRING_PTR_RO(p_comparator_vec->vec);
 }
-static void init_comparator_vec_raw(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_raw(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) RAW_RO(p_comparator_vec->vec);
 }
-static void init_comparator_vec_list(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_list(struct comparator_vec* p_comparator_vec) {
   p_comparator_vec->vec_p = (const void*) p_comparator_vec->vec;
 }
 
@@ -172,7 +189,8 @@ struct comparator_df_data {
   R_len_t n_col;
 };
 
-static void init_comparator_vec_df(struct comparator_vec* p_comparator_vec) {
+static
+void init_comparator_vec_df(struct comparator_vec* p_comparator_vec) {
   SEXP df = p_comparator_vec->vec;
   R_len_t n_col = Rf_length(df);
 
@@ -217,63 +235,80 @@ static void init_comparator_vec_df(struct comparator_vec* p_comparator_vec) {
 
 // -----------------------------------------------------------------------------
 
-static int nil_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int nil_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   stop_internal("nil_equal_p", "Can't compare NULL.");
 }
-static int nil_equal_missing_p(const void* x, R_len_t i) {
+static
+int nil_equal_missing_p(const void* x, R_len_t i) {
   stop_internal("nil_equal_missing_p", "Can't compare NULL.");
 }
 
-static int lgl_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int lgl_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return lgl_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
-static int lgl_equal_missing_p(const void* x, R_len_t i) {
+static
+int lgl_equal_missing_p(const void* x, R_len_t i) {
   return lgl_equal_scalar_na_equal(((const int*) x) + i, &NA_LOGICAL);
 }
 
-static int int_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int int_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return int_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
 }
-static int int_equal_missing_p(const void* x, R_len_t i) {
+static
+int int_equal_missing_p(const void* x, R_len_t i) {
   return int_equal_scalar_na_equal(((const int*) x) + i, &NA_INTEGER);
 }
 
-static int dbl_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int dbl_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return dbl_equal_scalar_na_equal(((const double*) x) + i, ((const double*) y) + j);
 }
-static int dbl_equal_missing_p(const void* x, R_len_t i) {
+static
+int dbl_equal_missing_p(const void* x, R_len_t i) {
   return dbl_equal_scalar_na_equal(((const double*) x) + i, &NA_REAL);
 }
 
-static int cpl_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int cpl_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, ((const Rcomplex*) y) + j);
 }
-static int cpl_equal_missing_p(const void* x, R_len_t i) {
+static
+int cpl_equal_missing_p(const void* x, R_len_t i) {
   return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, &vctrs_shared_na_cpl);
 }
 
-static int chr_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int chr_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return chr_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
 }
-static int chr_equal_missing_p(const void* x, R_len_t i) {
+static
+int chr_equal_missing_p(const void* x, R_len_t i) {
   return chr_equal_scalar_na_equal(((const SEXP*) x) + i, &NA_STRING);
 }
 
-static int raw_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int raw_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return raw_equal_scalar_na_equal(((const Rbyte*) x) + i, ((const Rbyte*) y) + j);
 }
-static int raw_equal_missing_p(const void* x, R_len_t i) {
+static
+int raw_equal_missing_p(const void* x, R_len_t i) {
   return false;
 }
 
-static int list_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int list_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   return list_equal_scalar_na_equal(((const SEXP) x), i, ((const SEXP) y), j);
 }
-static int list_equal_missing_p(const void* x, R_len_t i) {
+static
+int list_equal_missing_p(const void* x, R_len_t i) {
   return list_equal_scalar_na_equal(((const SEXP) x), i, vctrs_shared_na_list, 0);
 }
 
-static int df_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+static
+int df_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
   struct comparator_df_data* x_data = (struct comparator_df_data*) x;
   struct comparator_df_data* y_data = (struct comparator_df_data*) y;
 
@@ -302,7 +337,8 @@ static int df_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
 
   return true;
 }
-static int df_equal_missing_p(const void* x, R_len_t i) {
+static
+int df_equal_missing_p(const void* x, R_len_t i) {
   struct comparator_df_data* x_data = (struct comparator_df_data*) x;
 
   enum vctrs_type* types = x_data->col_types;
