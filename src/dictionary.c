@@ -27,134 +27,6 @@ int32_t ceil2(int32_t x) {
 
 static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts);
 
-
-static void init_dictionary_nil(struct dictionary* d) {
-  d->vec_p = NULL;
-  d->p_equal_na_equal = &p_nil_equal_na_equal;
-  d->p_is_missing = &p_nil_is_missing;
-}
-static void init_dictionary_lgl(struct dictionary* d) {
-  d->vec_p = (const void*) LOGICAL_RO(d->vec);
-  d->p_equal_na_equal = &p_lgl_equal_na_equal;
-  d->p_is_missing = &p_lgl_is_missing;
-}
-static void init_dictionary_int(struct dictionary* d) {
-  d->vec_p = (const void*) INTEGER_RO(d->vec);
-  d->p_equal_na_equal = &p_int_equal_na_equal;
-  d->p_is_missing = &p_int_is_missing;
-}
-static void init_dictionary_dbl(struct dictionary* d) {
-  d->vec_p = (const void*) REAL_RO(d->vec);
-  d->p_equal_na_equal = p_dbl_equal_na_equal;
-  d->p_is_missing = &p_dbl_is_missing;
-}
-static void init_dictionary_cpl(struct dictionary* d) {
-  d->vec_p = (const void*) COMPLEX_RO(d->vec);
-  d->p_equal_na_equal = &p_cpl_equal_na_equal;
-  d->p_is_missing = &p_cpl_is_missing;
-}
-static void init_dictionary_chr(struct dictionary* d) {
-  d->vec_p = (const void*) STRING_PTR_RO(d->vec);
-  d->p_equal_na_equal = &p_chr_equal_na_equal;
-  d->p_is_missing = &p_chr_is_missing;
-}
-static void init_dictionary_raw(struct dictionary* d) {
-  d->vec_p = (const void*) RAW_RO(d->vec);
-  d->p_equal_na_equal = &p_raw_equal_na_equal;
-  d->p_is_missing = &p_raw_is_missing;
-}
-static void init_dictionary_list(struct dictionary* d) {
-  d->vec_p = (const void*) VECTOR_PTR_RO(d->vec);
-  d->p_equal_na_equal = &p_list_equal_na_equal;
-  d->p_is_missing = &p_list_is_missing;
-}
-
-struct dictionary_df_data {
-  enum vctrs_type* col_types;
-  const void** col_ptrs;
-  R_len_t n_col;
-};
-
-static int p_df_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
-  struct dictionary_df_data* x_data = (struct dictionary_df_data*) p_x;
-  struct dictionary_df_data* y_data = (struct dictionary_df_data*) p_y;
-
-  R_len_t n_col = x_data->n_col;
-  if (n_col != y_data->n_col) {
-    stop_internal("p_df_equal_na_equal", "`x` and `y` must have the same number of columns.");
-  }
-
-  enum vctrs_type* types = x_data->col_types;
-  const void** x_ptrs = x_data->col_ptrs;
-  const void** y_ptrs = y_data->col_ptrs;
-
-  // `vec_proxy_equal()` flattens data frames so we don't need to
-  // worry about df-cols
-  for (R_len_t col = 0; col < n_col; ++col) {
-    if (!p_equal_na_equal(x_ptrs[col], i, y_ptrs[col], j, types[col])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-static bool p_df_is_missing(const void* p_x, r_ssize i) {
-  struct dictionary_df_data* x_data = (struct dictionary_df_data*) p_x;
-
-  enum vctrs_type* types = x_data->col_types;
-  const void** x_ptrs = x_data->col_ptrs;
-  R_len_t n_col = x_data->n_col;
-
-  for (R_len_t col = 0; col < n_col; ++col) {
-    if (p_is_missing(x_ptrs[col], i, types[col])) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-static void init_dictionary_df(struct dictionary* d) {
-  SEXP df = d->vec;
-  R_len_t n_col = Rf_length(df);
-
-  SEXP data_handle = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct dictionary_df_data)));
-  SEXP col_types_handle = PROTECT(Rf_allocVector(RAWSXP, n_col * sizeof(enum vctrs_type)));
-  SEXP col_ptrs_handle = PROTECT(Rf_allocVector(RAWSXP, n_col * sizeof(void*)));
-
-  SEXP handle = PROTECT(Rf_allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(handle, 0, d->protect);
-  SET_VECTOR_ELT(handle, 1, data_handle);
-  SET_VECTOR_ELT(handle, 2, col_types_handle);
-  SET_VECTOR_ELT(handle, 3, col_ptrs_handle);
-
-
-  struct dictionary_df_data* data = (struct dictionary_df_data*) RAW(data_handle);
-  enum vctrs_type* col_types = (enum vctrs_type*) RAW(col_types_handle);
-  const void** col_ptrs = (const void**) RAW(col_ptrs_handle);
-
-  data->col_types = col_types;
-  data->col_ptrs = col_ptrs;
-  data->n_col = n_col;
-
-  for (R_len_t i = 0; i < n_col; ++i) {
-    SEXP col = VECTOR_ELT(df, i);
-    enum vctrs_type col_type = vec_proxy_typeof(col);
-
-    col_types[i] = col_type;
-    col_ptrs[i] = r_vec_deref_const(col);
-  }
-
-  d->protect = handle;
-  d->vec_p = data;
-  d->p_equal_na_equal = &p_df_equal_na_equal;
-  d->p_is_missing = &p_df_is_missing;
-
-  UNPROTECT(4);
-}
-
-
 // Dictionaries must be protected in consistent stack order with
 // `PROTECT_DICT()`
 struct dictionary* new_dictionary(SEXP x) {
@@ -180,29 +52,20 @@ static struct dictionary* new_dictionary_params(SEXP x, bool partial, bool na_eq
 }
 
 static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts) {
-  SEXP out = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct dictionary)));
+  int nprot = 0;
+
+  SEXP out = PROTECT_N(Rf_allocVector(RAWSXP, sizeof(struct dictionary)), &nprot);
   struct dictionary* d = (struct dictionary*) RAW(out);
 
-  d->vec = x;
   d->protect = out;
 
-  enum vctrs_type type = vec_proxy_typeof(x);
+  struct comparator* p_comparator = new_comparator(x);
+  PROTECT_COMPARATOR(p_comparator, &nprot);
+  d->p_comparator = p_comparator;
 
-  switch (type) {
-  case vctrs_type_null: init_dictionary_nil(d); break;
-  case vctrs_type_logical: init_dictionary_lgl(d); break;
-  case vctrs_type_integer: init_dictionary_int(d); break;
-  case vctrs_type_double: init_dictionary_dbl(d); break;
-  case vctrs_type_complex: init_dictionary_cpl(d); break;
-  case vctrs_type_character: init_dictionary_chr(d); break;
-  case vctrs_type_raw: init_dictionary_raw(d); break;
-  case vctrs_type_list: init_dictionary_list(d); break;
-  case vctrs_type_dataframe: init_dictionary_df(d); break;
-  default: stop_unimplemented_vctrs_type("new_dictionary_opts", type);
-  }
-
-  // `init_dictionary_*()` functions may allocate
-  PROTECT(d->protect);
+  struct comparator_vec* p_comparator_vec = new_comparator_vec(x);
+  PROTECT_COMPARATOR_VEC(p_comparator_vec, &nprot);
+  d->p_comparator_vec = p_comparator_vec;
 
   d->used = 0;
 
@@ -237,7 +100,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     d->hash = NULL;
   }
 
-  UNPROTECT(2);
+  UNPROTECT(nprot);
   return d;
 }
 
@@ -247,6 +110,10 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
 // `new_dictionary_partial()`.
 uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
   uint32_t hash = x->hash[i];
+
+  struct comparator* p_comparator = d->p_comparator;
+  const void* d_vec_p = d->p_comparator_vec->vec_p;
+  const void* x_vec_p = x->p_comparator_vec->vec_p;
 
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
@@ -266,7 +133,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     }
 
     // Check for same value as there might be a collision
-    if (d->p_equal_na_equal(d->vec_p, idx, x->vec_p, i)) {
+    if (p_comparator->equal(d_vec_p, idx, x_vec_p, i)) {
       return probe;
     }
 
@@ -282,7 +149,8 @@ uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
 }
 
 bool dict_is_missing(struct dictionary* d, R_len_t i) {
-  return d->hash[i] == HASH_MISSING && d->p_is_missing(d->vec_p, i);
+  return d->hash[i] == HASH_MISSING &&
+    d->p_comparator->equal_missing(d->p_comparator_vec->vec_p, i);
 }
 
 

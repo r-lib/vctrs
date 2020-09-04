@@ -1,3 +1,4 @@
+#include "comparator.h"
 
 #define DICT_EMPTY -1
 
@@ -11,11 +12,8 @@
 struct dictionary {
   SEXP protect;
 
-  SEXP vec;
-
-  int (*p_equal_na_equal)(const void*, r_ssize i, const void*, r_ssize j);
-  bool (*p_is_missing)(const void* p_x, r_ssize i);
-  const void* vec_p;
+  struct comparator* p_comparator;
+  struct comparator_vec* p_comparator_vec;
 
   uint32_t* hash;
   R_len_t* key;
@@ -43,12 +41,13 @@ struct dictionary_opts {
 struct dictionary* new_dictionary(SEXP x);
 struct dictionary* new_dictionary_partial(SEXP x);
 
-#define PROTECT_DICT(d, n) do {                 \
-    struct dictionary* d_ = (d);                \
-    PROTECT(d_->vec);                           \
-    PROTECT(d_->protect);                       \
-    *(n) += 2;                                  \
-  } while(0)
+#define PROTECT_DICT(d, n) do {                    \
+  struct dictionary* d_ = (d);                     \
+  PROTECT_COMPARATOR(d_->p_comparator, n);         \
+  PROTECT_COMPARATOR_VEC(d_->p_comparator_vec, n); \
+  PROTECT(d_->protect);                            \
+  *(n) += 1;                                       \
+} while(0)
 
 /**
  * Find key hash for a vector element
