@@ -9,52 +9,57 @@ SEXP vctrs_identify_runs(SEXP x) {
   return vec_identify_runs(x);
 }
 
-static SEXP lgl_identify_runs(SEXP x, R_len_t size);
-static SEXP int_identify_runs(SEXP x, R_len_t size);
-static SEXP dbl_identify_runs(SEXP x, R_len_t size);
-static SEXP cpl_identify_runs(SEXP x, R_len_t size);
-static SEXP chr_identify_runs(SEXP x, R_len_t size);
-static SEXP raw_identify_runs(SEXP x, R_len_t size);
-static SEXP list_identify_runs(SEXP x, R_len_t size);
-static SEXP df_identify_runs(SEXP x, R_len_t size);
+static int lgl_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int int_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int dbl_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int cpl_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int chr_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int raw_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int list_identify_runs(SEXP x, R_len_t size, int* p_out);
+static int df_identify_runs(SEXP x, R_len_t size, int* p_out);
 
 static SEXP vec_identify_runs(SEXP x) {
   x = PROTECT(vec_proxy_equal(x));
   R_len_t size = vec_size(x);
   x = PROTECT(obj_maybe_translate_encoding(x, size));
 
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  // Handle size 0 up front.
+  // All implementations assume at least 1 element.
+  if (size == 0) {
+    r_attrib_poke(out, syms_n, r_int(0));
+    UNPROTECT(3);
+    return out;
+  }
+
   enum vctrs_type type = vec_proxy_typeof(x);
 
-  SEXP out;
+  int n;
 
   switch (type) {
-  case vctrs_type_logical: out = lgl_identify_runs(x, size); break;
-  case vctrs_type_integer: out = int_identify_runs(x, size); break;
-  case vctrs_type_double: out = dbl_identify_runs(x, size); break;
-  case vctrs_type_complex: out = cpl_identify_runs(x, size); break;
-  case vctrs_type_character: out = chr_identify_runs(x, size); break;
-  case vctrs_type_raw: out = raw_identify_runs(x, size); break;
-  case vctrs_type_list: out = list_identify_runs(x, size); break;
-  case vctrs_type_dataframe: out = df_identify_runs(x, size); break;
+  case vctrs_type_logical: n = lgl_identify_runs(x, size, p_out); break;
+  case vctrs_type_integer: n = int_identify_runs(x, size, p_out); break;
+  case vctrs_type_double: n = dbl_identify_runs(x, size, p_out); break;
+  case vctrs_type_complex: n = cpl_identify_runs(x, size, p_out); break;
+  case vctrs_type_character: n = chr_identify_runs(x, size, p_out); break;
+  case vctrs_type_raw: n = raw_identify_runs(x, size, p_out); break;
+  case vctrs_type_list: n = list_identify_runs(x, size, p_out); break;
+  case vctrs_type_dataframe: n = df_identify_runs(x, size, p_out); break;
   default: stop_unimplemented_vctrs_type("vec_identify_runs", type);
   }
 
-  UNPROTECT(2);
+  r_attrib_poke(out, syms_n, r_int(n));
+
+  UNPROTECT(3);
   return out;
 }
 
 // -----------------------------------------------------------------------------
 
 #define VEC_IDENTIFY_RUNS(CTYPE, CONST_DEREF, SCALAR_EQUAL) {  \
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));            \
-  int* p_out = INTEGER(out);                                   \
-                                                               \
-  if (size == 0) {                                             \
-    UNPROTECT(1);                                              \
-    return out;                                                \
-  }                                                            \
-                                                               \
-  R_len_t id = 1;                                              \
+  int id = 1;                                                  \
   const CTYPE* p_x = CONST_DEREF(x);                           \
                                                                \
   /* Handle first case */                                      \
@@ -72,60 +77,50 @@ static SEXP vec_identify_runs(SEXP x) {
     p_out[i] = id;                                             \
   }                                                            \
                                                                \
-  UNPROTECT(1);                                                \
-  return out;                                                  \
+  return id;                                                   \
 }
 
-static SEXP lgl_identify_runs(SEXP x, R_len_t size) {
+static int lgl_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS(int, LOGICAL_RO, lgl_equal_scalar_na_equal);
 }
-static SEXP int_identify_runs(SEXP x, R_len_t size) {
+static int int_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS(int, INTEGER_RO, int_equal_scalar_na_equal);
 }
-static SEXP dbl_identify_runs(SEXP x, R_len_t size) {
+static int dbl_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS(double, REAL_RO, dbl_equal_scalar_na_equal);
 }
-static SEXP cpl_identify_runs(SEXP x, R_len_t size) {
+static int cpl_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
 }
-static SEXP chr_identify_runs(SEXP x, R_len_t size) {
+static int chr_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS(SEXP, STRING_PTR_RO, chr_equal_scalar_na_equal);
 }
-static SEXP raw_identify_runs(SEXP x, R_len_t size) {
+static int raw_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS(Rbyte, RAW_RO, raw_equal_scalar_na_equal);
 }
 
 #undef VEC_IDENTIFY_RUNS
 
 #define VEC_IDENTIFY_RUNS_BARRIER(SCALAR_EQUAL) {              \
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));            \
-  int* p_out = INTEGER(out);                                   \
-                                                               \
-  if (size == 0) {                                             \
-    UNPROTECT(1);                                              \
-    return out;                                                \
-  }                                                            \
-                                                               \
-  R_len_t id = 1;                                              \
+  int id = 1;                                                  \
                                                                \
   /* Handle first case */                                      \
-  int ref = 0;                                                 \
+  int loc = 0;                                                 \
   p_out[0] = id;                                               \
                                                                \
   for (R_len_t i = 1; i < size; ++i) {                         \
-    if (SCALAR_EQUAL(x, i, x, ref) == 0) {                     \
+    if (SCALAR_EQUAL(x, i, x, loc) == 0) {                     \
       ++id;                                                    \
-      ref = i;                                                 \
+      loc = i;                                                 \
     }                                                          \
                                                                \
     p_out[i] = id;                                             \
   }                                                            \
                                                                \
-  UNPROTECT(1);                                                \
-  return out;                                                  \
-}                                                              \
+  return id;                                                   \
+}
 
-static SEXP list_identify_runs(SEXP x, R_len_t size) {
+static int list_identify_runs(SEXP x, R_len_t size, int* p_out) {
   VEC_IDENTIFY_RUNS_BARRIER(list_equal_scalar_na_equal);
 }
 
@@ -133,92 +128,118 @@ static SEXP list_identify_runs(SEXP x, R_len_t size) {
 
 // -----------------------------------------------------------------------------
 
-static void df_identify_runs_impl(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
+static int df_identify_runs_impl(SEXP x,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
 
-static SEXP df_identify_runs(SEXP x, R_len_t size) {
+static int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
   int nprot = 0;
-
-  SEXP out = PROTECT_N(Rf_allocVector(INTSXP, size), &nprot);
-  int* p_out = INTEGER(out);
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size);
   struct df_short_circuit_info* p_info = &info;
   PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 
-  df_identify_runs_impl(x, p_info, p_out);
+  int id = df_identify_runs_impl(x, p_info, p_out);
 
   UNPROTECT(nprot);
-  return out;
+  return id;
 }
 
-static inline void vec_identify_runs_col(SEXP x,
-                                         struct df_short_circuit_info* p_info,
-                                         int* p_out);
+static inline int vec_identify_runs_col(SEXP x,
+                                        int id,
+                                        struct df_short_circuit_info* p_info,
+                                        int* p_out);
 
-static void df_identify_runs_impl(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out) {
-  // Specially handle size 0 case.
-  // Require at least 1 row to extract a "reference".
-  if (p_info->size == 0) {
-    return;
+static int df_identify_runs_impl(SEXP x,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out) {
+  int id = 1;
+  R_len_t n_col = Rf_length(x);
+
+  // Define 0 column case to be a single run
+  if (n_col == 0) {
+    r_p_int_fill(p_out, 1, p_info->size);
+    return id;
   }
 
-  // First start value is always true
+  // Handle first case
+  p_out[0] = id;
   p_info->p_row_known[0] = true;
   --p_info->remaining;
 
-  R_len_t n_col = Rf_length(x);
-
+  // Compute non-sequential run IDs
   for (R_len_t i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(x, i);
 
-    vec_identify_runs_col(col, p_info, p_out);
+    id = vec_identify_runs_col(col, id, p_info, p_out);
 
     // All values are unique
     if (p_info->remaining == 0) {
       break;
     }
   }
+
+  id = 1;
+  int previous = p_out[0];
+
+  // Overwrite with sequential IDs
+  for (R_len_t i = 1; i < p_info->size; ++i) {
+    const int current = p_out[i];
+
+    if (current != previous) {
+      ++id;
+      previous = current;
+    }
+
+    p_out[i] = id;
+  }
+
+  return id;
 }
 
 // -----------------------------------------------------------------------------
 
-static void lgl_identify_runs_col(SEXP x,
+static int lgl_identify_runs_col(SEXP x,
+                                int id,
+                                struct df_short_circuit_info* p_info,
+                                int* p_out);
+static int int_identify_runs_col(SEXP x,
+                                 int id,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
+static int dbl_identify_runs_col(SEXP x,
+                                 int id,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
+static int cpl_identify_runs_col(SEXP x,
+                                 int id,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
+static int chr_identify_runs_col(SEXP x,
+                                 int id,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
+static int raw_identify_runs_col(SEXP x,
+                                 int id,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
+static int list_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out);
-static void int_identify_runs_col(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
-static void dbl_identify_runs_col(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
-static void cpl_identify_runs_col(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
-static void chr_identify_runs_col(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
-static void raw_identify_runs_col(SEXP x,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
-static void list_identify_runs_col(SEXP x,
-                                   struct df_short_circuit_info* p_info,
-                                   int* p_out);
 
-static inline void vec_identify_runs_col(SEXP x,
-                                         struct df_short_circuit_info* p_info,
-                                         int* p_out) {
+static inline int vec_identify_runs_col(SEXP x,
+                                        int id,
+                                        struct df_short_circuit_info* p_info,
+                                        int* p_out) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical: lgl_identify_runs_col(x, p_info, p_out); break;
-  case vctrs_type_integer: int_identify_runs_col(x, p_info, p_out); break;
-  case vctrs_type_double: dbl_identify_runs_col(x, p_info, p_out); break;
-  case vctrs_type_complex: cpl_identify_runs_col(x, p_info, p_out); break;
-  case vctrs_type_character: chr_identify_runs_col(x, p_info, p_out); break;
-  case vctrs_type_raw: raw_identify_runs_col(x, p_info, p_out); break;
-  case vctrs_type_list: list_identify_runs_col(x, p_info, p_out); break;
+  case vctrs_type_logical: return lgl_identify_runs_col(x, id, p_info, p_out);
+  case vctrs_type_integer: return int_identify_runs_col(x, id, p_info, p_out);
+  case vctrs_type_double: return dbl_identify_runs_col(x, id, p_info, p_out);
+  case vctrs_type_complex: return cpl_identify_runs_col(x, id, p_info, p_out);
+  case vctrs_type_character: return chr_identify_runs_col(x, id, p_info, p_out);
+  case vctrs_type_raw: return raw_identify_runs_col(x, id, p_info, p_out);
+  case vctrs_type_list: return list_identify_runs_col(x, id, p_info, p_out);
   case vctrs_type_dataframe: stop_internal("vec_identify_runs_col", "Data frame columns should be flattened.");
   case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_identify_runs()`");
   default: Rf_error("Unimplemented type in `vec_identify_runs()`");
@@ -227,61 +248,76 @@ static inline void vec_identify_runs_col(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static inline void p_int_inc_between(int* p_x, const R_len_t i, const R_len_t j);
-
 #define VEC_IDENTIFY_RUNS_COL(CTYPE, CONST_DEREF, EQUAL_SCALAR) { \
-  CTYPE ref;                                                      \
+  CTYPE run_val;                                                  \
+  int run_id;                                                     \
   const CTYPE* p_x = CONST_DEREF(x);                              \
                                                                   \
   for (R_len_t i = 0; i < p_info->size; ++i) {                    \
     /* Start of new run */                                        \
     if (p_info->p_row_known[i]) {                                 \
-      ref = p_x[i];                                               \
+      run_val = p_x[i];                                           \
+      run_id = p_out[i];                                          \
       continue;                                                   \
     }                                                             \
                                                                   \
     const CTYPE elt = p_x[i];                                     \
-    const int eq = EQUAL_SCALAR(&elt, &ref);                      \
+    const int eq = EQUAL_SCALAR(&elt, &run_val);                  \
                                                                   \
-    if (eq == 0) {                                                \
-      p_int_inc_between(p_out, i, p_info->size);                  \
-      p_info->p_row_known[i] = true;                              \
-      --p_info->remaining;                                        \
-      ref = elt;                                                  \
+    /* Update ID of identical values */                           \
+    if (eq != 0) {                                                \
+      p_out[i] = run_id;                                          \
+      continue;                                                   \
+    }                                                             \
                                                                   \
-      if (p_info->remaining == 0) {                               \
-        break;                                                    \
-      }                                                           \
+    ++id;                                                         \
+    run_val = elt;                                                \
+    run_id = id;                                                  \
+    p_out[i] = id;                                                \
+                                                                  \
+    p_info->p_row_known[i] = true;                                \
+    --p_info->remaining;                                          \
+                                                                  \
+    if (p_info->remaining == 0) {                                 \
+      break;                                                      \
     }                                                             \
   }                                                               \
+                                                                  \
+  return id;                                                      \
 }
 
-static void lgl_identify_runs_col(SEXP x,
+static int lgl_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL(int, LOGICAL_RO, lgl_equal_scalar_na_equal);
 }
-static void int_identify_runs_col(SEXP x,
+static int int_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL(int, INTEGER_RO, int_equal_scalar_na_equal);
 }
-static void dbl_identify_runs_col(SEXP x,
+static int dbl_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL(double, REAL_RO, dbl_equal_scalar_na_equal);
 }
-static void cpl_identify_runs_col(SEXP x,
+static int cpl_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
 }
-static void chr_identify_runs_col(SEXP x,
+static int chr_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL(SEXP, STRING_PTR_RO, chr_equal_scalar_na_equal);
 }
-static void raw_identify_runs_col(SEXP x,
+static int raw_identify_runs_col(SEXP x,
+                                  R_len_t id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL(Rbyte, RAW_RO, raw_equal_scalar_na_equal);
@@ -290,42 +326,46 @@ static void raw_identify_runs_col(SEXP x,
 #undef VEC_IDENTIFY_RUNS_COL
 
 #define VEC_IDENTIFY_RUNS_COL_BARRIER(EQUAL_SCALAR) { \
-  R_len_t ref = 0;                                    \
+  int run_loc;                                        \
+  int run_id;                                         \
                                                       \
   for (R_len_t i = 0; i < p_info->size; ++i) {        \
     /* Start of new run */                            \
     if (p_info->p_row_known[i]) {                     \
-      ref = i;                                        \
+      run_loc = i;                                    \
+      run_id = p_out[i];                              \
       continue;                                       \
     }                                                 \
                                                       \
-    const int eq = EQUAL_SCALAR(x, i, x, ref);        \
+    const int eq = EQUAL_SCALAR(x, i, x, run_loc);    \
                                                       \
-    if (eq == 0) {                                    \
-      p_int_inc_between(p_out, i, p_info->size);      \
-      p_info->p_row_known[i] = true;                  \
-      --p_info->remaining;                            \
-      ref = i;                                        \
+    /* Update ID of identical values */               \
+    if (eq != 0) {                                    \
+      p_out[i] = run_id;                              \
+      continue;                                       \
+    }                                                 \
                                                       \
-      if (p_info->remaining == 0) {                   \
-        break;                                        \
-      }                                               \
+    ++id;                                             \
+    run_loc = i;                                      \
+    run_id = id;                                      \
+    p_out[i] = id;                                    \
+                                                      \
+    p_info->p_row_known[i] = true;                    \
+    --p_info->remaining;                              \
+                                                      \
+    if (p_info->remaining == 0) {                     \
+      break;                                          \
     }                                                 \
   }                                                   \
+                                                      \
+  return id;                                          \
 }
 
-static void list_identify_runs_col(SEXP x,
+static int list_identify_runs_col(SEXP x,
+                                  int id,
                                   struct df_short_circuit_info* p_info,
                                   int* p_out) {
   VEC_IDENTIFY_RUNS_COL_BARRIER(list_equal_scalar_na_equal);
 }
 
 #undef VEC_IDENTIFY_RUNS_COL_BARRIER
-
-// -----------------------------------------------------------------------------
-
-static inline void p_int_inc_between(int* p_x, const R_len_t i, const R_len_t j) {
-  for (R_len_t k = i; k < j; ++k) {
-    ++p_x[k];
-  }
-}
