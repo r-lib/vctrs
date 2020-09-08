@@ -136,9 +136,10 @@ int list_identify_runs(SEXP x, R_len_t size, int* p_out) {
 
 // -----------------------------------------------------------------------------
 
-static int df_identify_runs_impl(SEXP x,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
+static inline int vec_identify_runs_col(SEXP x,
+                                        int id,
+                                        struct df_short_circuit_info* p_info,
+                                        int* p_out);
 
 static
 int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
@@ -147,43 +148,29 @@ int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
   struct df_short_circuit_info info = new_df_short_circuit_info(size);
   PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
-  int id = df_identify_runs_impl(x, &info, p_out);
-
-  UNPROTECT(nprot);
-  return id;
-}
-
-static inline int vec_identify_runs_col(SEXP x,
-                                        int id,
-                                        struct df_short_circuit_info* p_info,
-                                        int* p_out);
-
-static
-int df_identify_runs_impl(SEXP x,
-                          struct df_short_circuit_info* p_info,
-                          int* p_out) {
   int id = 1;
   R_len_t n_col = Rf_length(x);
 
   // Define 0 column case to be a single run
   if (n_col == 0) {
-    r_p_int_fill(p_out, 1, p_info->size);
+    r_p_int_fill(p_out, id, size);
+    UNPROTECT(nprot);
     return id;
   }
 
   // Handle first case
   p_out[0] = id;
-  p_info->p_row_known[0] = true;
-  --p_info->remaining;
+  info.p_row_known[0] = true;
+  --info.remaining;
 
   // Compute non-sequential run IDs
   for (R_len_t i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(x, i);
 
-    id = vec_identify_runs_col(col, id, p_info, p_out);
+    id = vec_identify_runs_col(col, id, &info, p_out);
 
     // All values are unique
-    if (p_info->remaining == 0) {
+    if (info.remaining == 0) {
       break;
     }
   }
@@ -192,7 +179,7 @@ int df_identify_runs_impl(SEXP x,
   int previous = p_out[0];
 
   // Overwrite with sequential IDs
-  for (R_len_t i = 1; i < p_info->size; ++i) {
+  for (R_len_t i = 1; i < size; ++i) {
     const int current = p_out[i];
 
     if (current != previous) {
@@ -203,6 +190,7 @@ int df_identify_runs_impl(SEXP x,
     p_out[i] = id;
   }
 
+  UNPROTECT(nprot);
   return id;
 }
 
