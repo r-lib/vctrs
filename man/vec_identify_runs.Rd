@@ -2,17 +2,25 @@
 % Please edit documentation in R/runs.R
 \name{vec_identify_runs}
 \alias{vec_identify_runs}
+\alias{vec_locate_runs}
 \title{Runs}
 \usage{
 vec_identify_runs(x)
+
+vec_locate_runs(x, start = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
+
+\item{start}{A single logical specifying whether the start or end of each
+run should be detected.}
 }
 \value{
 \itemize{
 \item \code{vec_identify_runs()}: An integer vector with the same size as \code{x}. A
 scalar integer attribute, \code{n}, is attached.
+\item \code{vec_locate_runs()}: An integer vector with a size equal to the number
+of runs in \code{x}.
 }
 }
 \description{
@@ -20,6 +28,9 @@ scalar integer attribute, \code{n}, is attached.
 \item \code{vec_identify_runs()} returns a vector of identifiers for the elements of
 \code{x} that indicate which run of repeated values they fall in. The number of
 runs is also returned as an attribute, \code{n}.
+\item \code{vec_locate_runs()} returns a vector of locations corresponding to either
+the starting or ending location of each run, depending on the value of
+\code{start}.
 }
 }
 \details{
@@ -31,6 +42,12 @@ constructing runs. For example, \code{vec_identify_runs(c(NA, NA))} will return
 x <- c("a", "z", "z", "c", "a", "a")
 
 vec_identify_runs(x)
+
+# Starting location of each run
+vec_locate_runs(x)
+
+# Ending location of each run
+vec_locate_runs(x, start = FALSE)
 
 y <- c(1, 1, 1, 2, 2, 3)
 

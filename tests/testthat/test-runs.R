@@ -85,3 +85,30 @@ test_that("works with columns of various types", {
   expect_identical(vec_identify_runs(add_col(as.raw(c(1, 1, 2, 2, 3)))), expect)
   expect_identical(vec_identify_runs(add_col(list(1, 1, 2, 2, 3))), expect)
 })
+
+# vec_locate_runs --------------------------------------------------------------
+
+test_that("can locate run starts", {
+  expect_identical(
+    vec_locate_runs(c(1, 3, 3, 1, 5, 5, 6)),
+    c(1L, 2L, 4L, 5L, 7L)
+  )
+})
+
+test_that("can locate run ends", {
+  expect_identical(
+    vec_locate_runs(c(1, 3, 3, 1, 5, 5, 6), start = FALSE),
+    c(1L, 3L, 4L, 6L, 7L)
+  )
+})
+
+test_that("works with size zero input", {
+  expect_identical(vec_locate_runs(integer(), start = TRUE), integer())
+  expect_identical(vec_locate_runs(integer(), start = FALSE), integer())
+})
+
+test_that("validates `start`", {
+  expect_error(vec_locate_runs(1, start = "x"), "single `TRUE` or `FALSE`")
+  expect_error(vec_locate_runs(1, start = NA), "single `TRUE` or `FALSE`")
+  expect_error(vec_locate_runs(1, start = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")
+})
