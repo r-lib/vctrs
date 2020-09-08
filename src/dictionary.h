@@ -1,4 +1,4 @@
-#include "comparator.h"
+#include "poly-op.h"
 
 #define DICT_EMPTY -1
 
@@ -12,8 +12,9 @@
 struct dictionary {
   SEXP protect;
 
-  struct comparator* p_comparator;
-  struct comparator_vec* p_comparator_vec;
+  poly_binary_op_fn_t equal;
+  poly_unary_op_fn_t equal_missing;
+  struct poly_vec* p_poly_vec;
 
   uint32_t* hash;
   R_len_t* key;
@@ -41,12 +42,11 @@ struct dictionary_opts {
 struct dictionary* new_dictionary(SEXP x);
 struct dictionary* new_dictionary_partial(SEXP x);
 
-#define PROTECT_DICT(d, n) do {                    \
-  struct dictionary* d_ = (d);                     \
-  PROTECT_COMPARATOR(d_->p_comparator, n);         \
-  PROTECT_COMPARATOR_VEC(d_->p_comparator_vec, n); \
-  PROTECT(d_->protect);                            \
-  *(n) += 1;                                       \
+#define PROTECT_DICT(d, n) do {        \
+  struct dictionary* d_ = (d);         \
+  PROTECT_POLY_VEC(d_->p_poly_vec, n); \
+  PROTECT(d_->protect);                \
+  *(n) += 1;                           \
 } while(0)
 
 /**

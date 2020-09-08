@@ -57,8 +57,7 @@ SEXP vctrs_group_rle(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  struct comparator* p_comparator = d->p_comparator;
-  const void* d_vec_p = d->p_comparator_vec->vec_p;
+  const void* d_p_vec = d->p_poly_vec->p_vec;
 
   SEXP g = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_g = INTEGER(g);
@@ -86,7 +85,7 @@ SEXP vctrs_group_rle(SEXP x) {
   int loc = 1;
 
   for (int i = 1; i < n; ++i) {
-    if (p_comparator->equal(d_vec_p, i - 1, d_vec_p, i)) {
+    if (d->equal(d_p_vec, i - 1, d_p_vec, i)) {
       ++(*p_l);
       continue;
     }

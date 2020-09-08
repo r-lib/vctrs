@@ -59,13 +59,12 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
 
   d->protect = out;
 
-  struct comparator* p_comparator = new_comparator(x);
-  PROTECT_COMPARATOR(p_comparator, &nprot);
-  d->p_comparator = p_comparator;
+  struct poly_vec* p_poly_vec = new_poly_vec(x);
+  PROTECT_POLY_VEC(p_poly_vec, &nprot);
+  d->p_poly_vec = p_poly_vec;
 
-  struct comparator_vec* p_comparator_vec = new_comparator_vec(x);
-  PROTECT_COMPARATOR_VEC(p_comparator_vec, &nprot);
-  d->p_comparator_vec = p_comparator_vec;
+  d->equal = new_poly_op_equal_scalar_na_equal_p(x);
+  d->equal_missing = new_poly_op_equal_missing_p(x);
 
   d->used = 0;
 
@@ -111,9 +110,8 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
 uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
   uint32_t hash = x->hash[i];
 
-  struct comparator* p_comparator = d->p_comparator;
-  const void* d_vec_p = d->p_comparator_vec->vec_p;
-  const void* x_vec_p = x->p_comparator_vec->vec_p;
+  const void* d_p_vec = d->p_poly_vec->p_vec;
+  const void* x_p_vec = x->p_poly_vec->p_vec;
 
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
@@ -133,7 +131,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     }
 
     // Check for same value as there might be a collision
-    if (p_comparator->equal(d_vec_p, idx, x_vec_p, i)) {
+    if (d->equal(d_p_vec, idx, x_p_vec, i)) {
       return probe;
     }
 
@@ -150,7 +148,7 @@ uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
 
 bool dict_is_missing(struct dictionary* d, R_len_t i) {
   return d->hash[i] == HASH_MISSING &&
-    d->p_comparator->equal_missing(d->p_comparator_vec->vec_p, i);
+    d->equal_missing(d->p_poly_vec->p_vec, i);
 }
 
 
