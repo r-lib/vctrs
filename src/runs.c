@@ -276,6 +276,7 @@ int vec_identify_runs_col(SEXP x,
     run_id = id;                                                  \
     p_out[i] = id;                                                \
                                                                   \
+    /* This is a run change, so don't check this row again */     \
     p_info->p_row_known[i] = true;                                \
     --p_info->remaining;                                          \
                                                                   \
@@ -359,6 +360,8 @@ int raw_identify_runs_col(SEXP x,
     run_id = id;                                      \
     p_out[i] = id;                                    \
                                                       \
+    /* This is a run change, */                       \
+    /* so don't check this row again */               \
     p_info->p_row_known[i] = true;                    \
     --p_info->remaining;                              \
                                                       \
