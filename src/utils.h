@@ -222,6 +222,10 @@ void r_lgl_fill(SEXP x, int value, R_len_t n);
 void r_int_fill(SEXP x, int value, R_len_t n);
 void r_chr_fill(SEXP x, SEXP value, R_len_t n);
 
+void r_p_lgl_fill(int* p_x, int value, R_len_t n);
+void r_p_int_fill(int* p_x, int value, R_len_t n);
+void r_p_chr_fill(SEXP* p_x, SEXP value, R_len_t n);
+
 void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);
 bool r_int_any_na(SEXP x);
