@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* New `vec_identify_runs()` which returns a vector of identifiers for the
+  elements of `x` that indicate which run of repeated values they fall in
+  (#1081).
+  
 * Fixed an encoding translation bug with lists containing data frames which
   have columns where `vec_size()` is different from the low level
   `Rf_length()` (#1233).
