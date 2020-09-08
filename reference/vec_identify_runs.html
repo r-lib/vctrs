@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Count unique values in a vector — vec_count • vctrs</title>
+<title>Runs — vec_identify_runs • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,14 @@
 
 
 
-<meta property="og:title" content="Count unique values in a vector — vec_count" />
-<meta property="og:description" content="Count the number of unique values in a vector. vec_count() has two
-important differences to table(): it returns a data frame, and when
-given multiple inputs (as a data frame), it only counts combinations that
-appear in the input." />
+<meta property="og:title" content="Runs — vec_identify_runs" />
+<meta property="og:description" content="
+
+vec_identify_runs() returns a vector of identifiers for the elements of
+x that indicate which run of repeated values they fall in. The number of
+runs is also returned as an attribute, n.
+
+" />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -153,139 +156,68 @@ appear in the input." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Count unique values in a vector</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dictionary.R'><code>R/dictionary.R</code></a></small>
-    <div class="hidden name"><code>vec_count.Rd</code></div>
+    <h1>Runs</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/runs.R'><code>R/runs.R</code></a></small>
+    <div class="hidden name"><code>vec_identify_runs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Count the number of unique values in a vector. <code>vec_count()</code> has two
-important differences to <code><a href='table.html'>table()</a></code>: it returns a data frame, and when
-given multiple inputs (as a data frame), it only counts combinations that
-appear in the input.</p>
+    
+<ul>
+<li><p><code>vec_identify_runs()</code> returns a vector of identifiers for the elements of
+<code>x</code> that indicate which run of repeated values they fall in. The number of
+runs is also returned as an attribute, <code>n</code>.</p></li>
+</ul>
+
     </div>
 
-    <pre class="usage"><span class='fu'>vec_count</span>(<span class='kw'>x</span>, sort = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"count"</span>, <span class='st'>"key"</span>, <span class='st'>"location"</span>, <span class='st'>"none"</span>))</pre>
+    <pre class="usage"><span class='fu'>vec_identify_runs</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector (including a data frame).</p></td>
-    </tr>
-    <tr>
-      <th>sort</th>
-      <td><p>One of "count", "key", "location", or "none".</p><ul>
-<li><p>"count", the default, puts most frequent values at top</p></li>
-<li><p>"key", orders by the output key column (i.e. unique values of <code>x</code>)</p></li>
-<li><p>"location", orders by location where key first seen. This is useful
-if you want to match the counts up to other unique/duplicated functions.</p></li>
-<li><p>"none", leaves unordered.</p></li>
-</ul></td>
+      <td><p>A vector.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with columns <code>key</code> (same type as <code>x</code>) and
-<code>count</code> (an integer vector).</p>
-    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
-
     
-
 <ul>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code></p></li>
-<li><p><code><a href='vec_order.html'>vec_order()</a></code></p></li>
+<li><p><code>vec_identify_runs()</code>: An integer vector with the same size as <code>x</code>. A
+scalar integer attribute, <code>n</code>, is attached.</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Unlike <code><a href='https://rdrr.io/r/base/rle.html'>base::rle()</a></code>, adjacent missing values are considered identical when
+constructing runs. For example, <code>vec_identify_runs(c(NA, NA))</code> will return
+<code><a href='https://rdrr.io/r/base/c.html'>c(1, 1)</a></code>, not <code><a href='https://rdrr.io/r/base/c.html'>c(1, 2)</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_count</span>(<span class='kw'>mtcars</span><span class='op'>$</span><span class='kw'>vs</span>)
-</div><div class='output co'>#&gt;   key count
-#&gt; 1   0    18
-#&gt; 2   1    14</div><div class='input'><span class='fu'>vec_count</span>(<span class='kw'>iris</span><span class='op'>$</span><span class='kw'>Species</span>)
-</div><div class='output co'>#&gt;          key count
-#&gt; 1     setosa    50
-#&gt; 2 versicolor    50
-#&gt; 3  virginica    50</div><div class='input'>
-<span class='co'># If you count a data frame you'll get a data frame</span>
-<span class='co'># column in the output</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='fu'>vec_count</span>(<span class='kw'>mtcars</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"vs"</span>, <span class='st'>"am"</span>)]))
-</div><div class='output co'>#&gt; 'data.frame':	4 obs. of  2 variables:
-#&gt;  $ key  :'data.frame':	4 obs. of  2 variables:
-#&gt;   ..$ vs: num  0 1 1 0
-#&gt;   ..$ am: num  0 1 0 1
-#&gt;  $ count: int  12 7 7 6</div><div class='input'>
-<span class='co'># Sorting ---------------------------------------</span>
+    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"z"</span>, <span class='st'>"z"</span>, <span class='st'>"c"</span>, <span class='st'>"a"</span>, <span class='st'>"a"</span>)
 
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='kw'>letters</span>[<span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span>(<span class='fl'>100</span>, <span class='fl'>6</span>)]
-<span class='co'># default is to sort by frequency</span>
-<span class='fu'>vec_count</span>(<span class='kw'>x</span>)
-</div><div class='output co'>#&gt;    key count
-#&gt; 1    f    21
-#&gt; 2    e    19
-#&gt; 3    g    16
-#&gt; 4    d    14
-#&gt; 5    h     9
-#&gt; 6    b     6
-#&gt; 7    c     4
-#&gt; 8    j     3
-#&gt; 9    l     2
-#&gt; 10   k     2
-#&gt; 11   i     2
-#&gt; 12   a     1
-#&gt; 13   n     1</div><div class='input'>
-<span class='co'># by can sort by key</span>
-<span class='fu'>vec_count</span>(<span class='kw'>x</span>, sort = <span class='st'>"key"</span>)
-</div><div class='output co'>#&gt;    key count
-#&gt; 1    a     1
-#&gt; 2    b     6
-#&gt; 3    c     4
-#&gt; 4    d    14
-#&gt; 5    e    19
-#&gt; 6    f    21
-#&gt; 7    g    16
-#&gt; 8    h     9
-#&gt; 9    i     2
-#&gt; 10   j     3
-#&gt; 11   k     2
-#&gt; 12   l     2
-#&gt; 13   n     1</div><div class='input'>
-<span class='co'># or location of first value</span>
-<span class='fu'>vec_count</span>(<span class='kw'>x</span>, sort = <span class='st'>"location"</span>)
-</div><div class='output co'>#&gt;    key count
-#&gt; 1    e    19
-#&gt; 2    d    14
-#&gt; 3    c     4
-#&gt; 4    k     2
-#&gt; 5    g    16
-#&gt; 6    l     2
-#&gt; 7    b     6
-#&gt; 8    f    21
-#&gt; 9    j     3
-#&gt; 10   h     9
-#&gt; 11   i     2
-#&gt; 12   n     1
-#&gt; 13   a     1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='kw'>x</span>)
-</div><div class='output co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
-<span class='co'># or not at all</span>
-<span class='fu'>vec_count</span>(<span class='kw'>x</span>, sort = <span class='st'>"none"</span>)
-</div><div class='output co'>#&gt;    key count
-#&gt; 1    g    16
-#&gt; 2    b     6
-#&gt; 3    f    21
-#&gt; 4    d    14
-#&gt; 5    c     4
-#&gt; 6    a     1
-#&gt; 7    n     1
-#&gt; 8    h     9
-#&gt; 9    e    19
-#&gt; 10   l     2
-#&gt; 11   j     3
-#&gt; 12   k     2
-#&gt; 13   i     2</div></pre>
+<span class='fu'>vec_identify_runs</span>(<span class='kw'>x</span>)
+</div><div class='output co'>#&gt; [1] 1 2 2 3 4 4
+#&gt; attr(,"n")
+#&gt; [1] 4</div><div class='input'>
+<span class='kw'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>)
+
+<span class='co'># With multiple columns, the runs are constructed rowwise</span>
+<span class='kw'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='data_frame.html'>data_frame</a></span>(
+  x = <span class='kw'>x</span>,
+  y = <span class='kw'>y</span>
+)
+</div><div class='output co'>#&gt; <span class='warning'>Warning: `data_frame()` is deprecated as of tibble 1.1.0.</span>
+#&gt; <span class='warning'>Please use `tibble()` instead.</span>
+#&gt; <span class='warning'><span style='color: #555555;'>This warning is displayed once every 8 hours.</span><span></span>
+#&gt; <span class='warning'></span><span style='color: #555555;'>Call `lifecycle::last_warnings()` to see where this warning was generated.</span><span></span></div><div class='input'>
+<span class='fu'>vec_identify_runs</span>(<span class='kw'>df</span>)
+</div><div class='output co'>#&gt; [1] 1 2 2 3 4 5
+#&gt; attr(,"n")
+#&gt; [1] 5</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

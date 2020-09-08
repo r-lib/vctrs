@@ -158,7 +158,8 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
-<li>Fixed an encoding translation bug with lists containing data frames which have columns where <code><a href="../reference/vec_size.html">vec_size()</a></code> is different from the low level <code>Rf_length()</code> (<a href='https://github.com/r-lib/vctrs/issues/1233'>#1233</a>).</li>
+<li><p>New <code><a href="../reference/vec_identify_runs.html">vec_identify_runs()</a></code> which returns a vector of identifiers for the elements of <code>x</code> that indicate which run of repeated values they fall in (<a href='https://github.com/r-lib/vctrs/issues/1081'>#1081</a>).</p></li>
+<li><p>Fixed an encoding translation bug with lists containing data frames which have columns where <code><a href="../reference/vec_size.html">vec_size()</a></code> is different from the low level <code>Rf_length()</code> (<a href='https://github.com/r-lib/vctrs/issues/1233'>#1233</a>).</p></li>
 </ul>
 </div>
     <div id="vctrs-034" class="section level1">
