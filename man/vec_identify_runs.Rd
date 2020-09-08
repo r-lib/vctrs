@@ -17,9 +17,9 @@ scalar integer attribute, \code{n}, is attached.
 }
 \description{
 \itemize{
-\item \code{vec_identify_runs()} returns an identifier for the run of repeated values
-that each element of \code{x} falls in. The number of runs is also returned as
-an attribute, \code{n}.
+\item \code{vec_identify_runs()} returns a vector of identifiers for the elements of
+\code{x} that indicate which run of repeated values they fall in. The number of
+runs is also returned as an attribute, \code{n}.
 }
 }
 \details{

@@ -1,9 +1,9 @@
 #' Runs
 #'
 #' @description
-#' - `vec_identify_runs()` returns an identifier for the run of repeated values
-#'   that each element of `x` falls in. The number of runs is also returned as
-#'   an attribute, `n`.
+#' - `vec_identify_runs()` returns a vector of identifiers for the elements of
+#'   `x` that indicate which run of repeated values they fall in. The number of
+#'   runs is also returned as an attribute, `n`.
 #'
 #' @details
 #' Unlike [base::rle()], adjacent missing values are considered identical when
