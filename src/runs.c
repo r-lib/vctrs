@@ -145,6 +145,8 @@ static
 int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
   int nprot = 0;
 
+  const SEXP* p_x = VECTOR_PTR_RO(x);
+
   struct df_short_circuit_info info = new_df_short_circuit_info(size);
   PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
@@ -165,7 +167,7 @@ int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
 
   // Compute non-sequential run IDs
   for (R_len_t i = 0; i < n_col; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
+    SEXP col = p_x[i];
 
     id = vec_identify_runs_col(col, id, &info, p_out);
 
