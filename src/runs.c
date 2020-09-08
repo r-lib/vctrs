@@ -197,9 +197,9 @@ int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
 // -----------------------------------------------------------------------------
 
 static int lgl_identify_runs_col(SEXP x,
-                                int id,
-                                struct df_short_circuit_info* p_info,
-                                int* p_out);
+                                 int id,
+                                 struct df_short_circuit_info* p_info,
+                                 int* p_out);
 static int int_identify_runs_col(SEXP x,
                                  int id,
                                  struct df_short_circuit_info* p_info,
