@@ -124,19 +124,17 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install vctrs from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"vctrs"</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"vctrs"</span>)</pre></div>
 <p>Alternatively, if you need the development version, install it with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="co"># install.packages("devtools")</span>
-<span class="kw">devtools</span>::<span class="fu">install_github</span>(<span class="st">"r-lib/vctrs"</span>)
-</pre></div>
+<span class="kw">devtools</span>::<span class="fu">install_github</span>(<span class="st">"r-lib/vctrs"</span>)</pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://vctrs.r-lib.org">vctrs</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://vctrs.r-lib.org/">vctrs</a></span>)
 
 <span class="co"># Sizes</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="fu"><a href="reference/vec_size.html">vec_size_common</a></span>(<span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>))
@@ -153,8 +151,7 @@
 <span class="co">#&gt; List of 3</span>
 <span class="co">#&gt;  $ : num 0</span>
 <span class="co">#&gt;  $ : num 1</span>
-<span class="co">#&gt;  $ : num 2.5</span>
-</pre></div>
+<span class="co">#&gt;  $ : num 2.5</span></pre></div>
 </div>
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
@@ -172,8 +169,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">dt</span>, <span class="kw">dttm</span>)
 <span class="co">#&gt; [1] "2020-01-01"    "4321940-06-07"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">dttm</span>, <span class="kw">dt</span>)
-<span class="co">#&gt; [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"</span>
-</pre></div>
+<span class="co">#&gt; [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"</span></pre></div>
 <p>This behaviour arises because <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> has dual purposes: as well as its primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, <code><a href="https://rdrr.io/r/base/DateTimeClasses.html">?POSIXct</a></code> suggests that you should use <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> if you want to reset the timezone.</p>
 <p>The second problem is that <code><a href="https://dplyr.tidyverse.org/reference/bind.html">dplyr::bind_rows()</a></code> is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns, including lists of data frames, data frames, and matrices.</p>
 </div>
@@ -226,7 +222,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
 </div>
 
       </footer>

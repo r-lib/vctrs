@@ -1,8 +1,8 @@
 pandoc: 2.7.3
-pkgdown: 1.5.1.9000
-pkgdown_sha: ecce89ed7fc0bfe4a2ec6e2fdc9285f238e13e7c
+pkgdown: 1.6.0.9000
+pkgdown_sha: f3d5e4141b7893df4f0a122983f89a440d187625
 articles: []
-last_built: 2020-09-01T15:04Z
+last_built: 2020-09-08T13:05Z
 urls:
   reference: https://vctrs.r-lib.org/reference
   article: https://vctrs.r-lib.org/articles

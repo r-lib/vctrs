@@ -157,6 +157,9 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
+<ul>
+<li>Fixed an encoding translation bug with lists containing data frames which have columns where <code><a href="../reference/vec_size.html">vec_size()</a></code> is different from the low level <code>Rf_length()</code> (<a href='https://github.com/r-lib/vctrs/issues/1233'>#1233</a>).</li>
+</ul>
 </div>
     <div id="vctrs-034" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.4">
@@ -630,7 +633,7 @@ vec_rbind(df1, df2)
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
 </div>
 
       </footer>
