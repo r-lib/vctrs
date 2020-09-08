@@ -330,7 +330,7 @@ int raw_identify_runs_col(SEXP x,
 #undef VEC_IDENTIFY_RUNS_COL
 
 #define VEC_IDENTIFY_RUNS_COL_BARRIER(EQUAL_SCALAR) { \
-  int run_loc;                                        \
+  R_len_t run_loc;                                    \
   int run_id;                                         \
                                                       \
   for (R_len_t i = 0; i < p_info->size; ++i) {        \
