@@ -3,11 +3,14 @@
 \name{vec_identify_runs}
 \alias{vec_identify_runs}
 \alias{vec_locate_runs}
+\alias{vec_detect_runs}
 \title{Runs}
 \usage{
 vec_identify_runs(x)
 
 vec_locate_runs(x, start = TRUE)
+
+vec_detect_runs(x, start = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
@@ -21,6 +24,7 @@ run should be detected.}
 scalar integer attribute, \code{n}, is attached.
 \item \code{vec_locate_runs()}: An integer vector with a size equal to the number
 of runs in \code{x}.
+\item \code{vec_detect_runs()}: A logical vector with the same size as \code{x}.
 }
 }
 \description{
@@ -30,6 +34,9 @@ of runs in \code{x}.
 runs is also returned as an attribute, \code{n}.
 \item \code{vec_locate_runs()} returns a vector of locations corresponding to either
 the starting or ending location of each run, depending on the value of
+\code{start}.
+\item \code{vec_detect_runs()} returns a logical vector that detects either the
+starting or ending location of each run, depending on the value of
 \code{start}.
 }
 }
@@ -45,9 +52,11 @@ vec_identify_runs(x)
 
 # Starting location of each run
 vec_locate_runs(x)
+vec_detect_runs(x)
 
 # Ending location of each run
 vec_locate_runs(x, start = FALSE)
+vec_detect_runs(x, start = FALSE)
 
 y <- c(1, 1, 1, 2, 2, 3)
 

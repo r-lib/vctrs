@@ -8,6 +8,9 @@
     
   - `vec_locate_runs()` returns a vector of locations corresponding to either
     the starting or ending location of each run.
+    
+  - `vec_detect_runs()` returns a logical vector that detects either
+    the starting or ending location of each run.
   
 * Fixed an encoding translation bug with lists containing data frames which
   have columns where `vec_size()` is different from the low level

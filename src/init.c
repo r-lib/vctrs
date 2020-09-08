@@ -126,6 +126,7 @@ extern SEXP vctrs_data_frame(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_list(SEXP, SEXP, SEXP);
 extern SEXP vctrs_identify_runs(SEXP);
 extern SEXP vctrs_locate_runs(SEXP, SEXP);
+extern SEXP vctrs_detect_runs(SEXP, SEXP);
 
 
 // Maturing
@@ -269,6 +270,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_list",                    (DL_FUNC) &vctrs_df_list, 3},
   {"vctrs_identify_runs",              (DL_FUNC) &vctrs_identify_runs, 1},
   {"vctrs_locate_runs",                (DL_FUNC) &vctrs_locate_runs, 2},
+  {"vctrs_detect_runs",                (DL_FUNC) &vctrs_detect_runs, 2},
   {NULL, NULL, 0}
 };
 

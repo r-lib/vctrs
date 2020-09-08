@@ -9,6 +9,10 @@
 #'   the starting or ending location of each run, depending on the value of
 #'   `start`.
 #'
+#' - `vec_detect_runs()` returns a logical vector that detects either the
+#'   starting or ending location of each run, depending on the value of
+#'   `start`.
+#'
 #' @details
 #' Unlike [base::rle()], adjacent missing values are considered identical when
 #' constructing runs. For example, `vec_identify_runs(c(NA, NA))` will return
@@ -26,6 +30,8 @@
 #' - `vec_locate_runs()`: An integer vector with a size equal to the number
 #'   of runs in `x`.
 #'
+#' - `vec_detect_runs()`: A logical vector with the same size as `x`.
+#'
 #' @export
 #' @examples
 #' x <- c("a", "z", "z", "c", "a", "a")
@@ -34,9 +40,11 @@
 #'
 #' # Starting location of each run
 #' vec_locate_runs(x)
+#' vec_detect_runs(x)
 #'
 #' # Ending location of each run
 #' vec_locate_runs(x, start = FALSE)
+#' vec_detect_runs(x, start = FALSE)
 #'
 #' y <- c(1, 1, 1, 2, 2, 3)
 #'
@@ -55,4 +63,10 @@ vec_identify_runs <- function(x) {
 #' @export
 vec_locate_runs <- function(x, start = TRUE) {
   .Call(vctrs_locate_runs, x, start)
+}
+
+#' @rdname vec_identify_runs
+#' @export
+vec_detect_runs <- function(x, start = TRUE) {
+  .Call(vctrs_detect_runs, x, start)
 }
