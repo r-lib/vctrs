@@ -145,10 +145,9 @@ int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
   int nprot = 0;
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size);
-  struct df_short_circuit_info* p_info = &info;
-  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
+  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
-  int id = df_identify_runs_impl(x, p_info, p_out);
+  int id = df_identify_runs_impl(x, &info, p_out);
 
   UNPROTECT(nprot);
   return id;
