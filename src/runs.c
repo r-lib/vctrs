@@ -20,9 +20,9 @@ static int df_identify_runs(SEXP x, R_len_t size, int* p_out);
 
 static
 SEXP vec_identify_runs(SEXP x) {
-  x = PROTECT(vec_proxy_equal(x));
-  R_len_t size = vec_size(x);
-  x = PROTECT(obj_maybe_translate_encoding(x, size));
+  SEXP proxy = PROTECT(vec_proxy_equal(x));
+  R_len_t size = vec_size(proxy);
+  proxy = PROTECT(obj_maybe_translate_encoding(proxy, size));
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
@@ -35,19 +35,19 @@ SEXP vec_identify_runs(SEXP x) {
     return out;
   }
 
-  enum vctrs_type type = vec_proxy_typeof(x);
+  enum vctrs_type type = vec_proxy_typeof(proxy);
 
   int n;
 
   switch (type) {
-  case vctrs_type_logical: n = lgl_identify_runs(x, size, p_out); break;
-  case vctrs_type_integer: n = int_identify_runs(x, size, p_out); break;
-  case vctrs_type_double: n = dbl_identify_runs(x, size, p_out); break;
-  case vctrs_type_complex: n = cpl_identify_runs(x, size, p_out); break;
-  case vctrs_type_character: n = chr_identify_runs(x, size, p_out); break;
-  case vctrs_type_raw: n = raw_identify_runs(x, size, p_out); break;
-  case vctrs_type_list: n = list_identify_runs(x, size, p_out); break;
-  case vctrs_type_dataframe: n = df_identify_runs(x, size, p_out); break;
+  case vctrs_type_logical: n = lgl_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_integer: n = int_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_double: n = dbl_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_complex: n = cpl_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_character: n = chr_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_raw: n = raw_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_list: n = list_identify_runs(proxy, size, p_out); break;
+  case vctrs_type_dataframe: n = df_identify_runs(proxy, size, p_out); break;
   default: stop_unimplemented_vctrs_type("vec_identify_runs", type);
   }
 
