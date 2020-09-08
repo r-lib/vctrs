@@ -247,8 +247,11 @@ int vec_identify_runs_col(SEXP x,
 // -----------------------------------------------------------------------------
 
 #define VEC_IDENTIFY_RUNS_COL(CTYPE, CONST_DEREF, EQUAL_SCALAR) { \
+  /* First row is always known, so `run_val` and `run_id` */      \
+  /* will always be initialized below */                          \
   CTYPE run_val;                                                  \
   int run_id;                                                     \
+                                                                  \
   const CTYPE* p_x = CONST_DEREF(x);                              \
                                                                   \
   for (R_len_t i = 0; i < p_info->size; ++i) {                    \
@@ -330,6 +333,8 @@ int raw_identify_runs_col(SEXP x,
 #undef VEC_IDENTIFY_RUNS_COL
 
 #define VEC_IDENTIFY_RUNS_COL_BARRIER(EQUAL_SCALAR) { \
+  /* First row is always known, so `run_loc` */       \
+  /* and `run_id` will always be initialized below */ \
   R_len_t run_loc;                                    \
   int run_id;                                         \
                                                       \
