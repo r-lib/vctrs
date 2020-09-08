@@ -184,7 +184,7 @@ static
 SEXP vec_identify_runs(SEXP x) {
   SEXP proxy = PROTECT(vec_proxy_equal(x));
   R_len_t size = vec_size(proxy);
-  proxy = PROTECT(obj_maybe_translate_encoding(proxy, size));
+  proxy = PROTECT(proxy_normalize_encoding(proxy));
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);

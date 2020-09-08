@@ -87,8 +87,6 @@ extern SEXP vctrs_df_size(SEXP);
 extern SEXP vctrs_as_df_col(SEXP, SEXP);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unset_s4(SEXP);
-extern SEXP vctrs_maybe_translate_encoding(SEXP);
-extern SEXP vctrs_maybe_translate_encoding2(SEXP, SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
 extern SEXP vctrs_as_names(SEXP, SEXP, SEXP, SEXP);
@@ -130,6 +128,7 @@ extern SEXP vctrs_detect_runs(SEXP, SEXP);
 extern SEXP vctrs_df_slice_complete(SEXP);
 extern SEXP vctrs_df_locate_complete(SEXP);
 extern SEXP vctrs_df_detect_complete(SEXP);
+extern SEXP vctrs_normalize_encoding(SEXP);
 
 
 // Maturing
@@ -233,8 +232,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_df_col",                  (DL_FUNC) &vctrs_as_df_col, 2},
   {"vctrs_apply_name_spec",            (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                   (DL_FUNC) &vctrs_unset_s4, 1},
-  {"vctrs_maybe_translate_encoding",   (DL_FUNC) &vctrs_maybe_translate_encoding, 1},
-  {"vctrs_maybe_translate_encoding2",  (DL_FUNC) &vctrs_maybe_translate_encoding2, 2},
   {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
@@ -277,6 +274,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_slice_complete",          (DL_FUNC) &vctrs_df_slice_complete, 1},
   {"vctrs_df_locate_complete",         (DL_FUNC) &vctrs_df_locate_complete, 1},
   {"vctrs_df_detect_complete",         (DL_FUNC) &vctrs_df_detect_complete, 1},
+  {"vctrs_normalize_encoding",         (DL_FUNC) &vctrs_normalize_encoding, 1},
   {NULL, NULL, 0}
 };
 

@@ -586,8 +586,7 @@ SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
 // Character translation ---------------------------------------------
 
-SEXP obj_maybe_translate_encoding(SEXP x, r_ssize size);
-SEXP obj_maybe_translate_encoding2(SEXP x, r_ssize x_size, SEXP y, r_ssize y_size);
+SEXP proxy_normalize_encoding(SEXP x);
 
 // Growable vector ----------------------------------------------
 

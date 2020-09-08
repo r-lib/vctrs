@@ -372,7 +372,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(proxy_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -415,7 +415,7 @@ bool duplicated_any(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(proxy_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -443,7 +443,7 @@ SEXP vctrs_n_distinct(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(proxy_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -466,7 +466,7 @@ SEXP vctrs_id(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(proxy_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -535,14 +535,13 @@ SEXP vec_match_params(SEXP needles,
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
+  needles = PROTECT_N(proxy_normalize_encoding(needles), &nprot);
+
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
+  haystack = PROTECT_N(proxy_normalize_encoding(haystack), &nprot);
 
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
-
-  SEXP translated = PROTECT_N(obj_maybe_translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
-  needles = VECTOR_ELT(translated, 0);
-  haystack = VECTOR_ELT(translated, 1);
 
   struct dictionary* d = new_dictionary_params(haystack, false, na_equal);
   PROTECT_DICT(d, &nprot);
@@ -638,14 +637,13 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_,
   PROTECT_N(haystack, &nprot);
 
   needles = PROTECT_N(vec_proxy_equal(needles), &nprot);
+  needles = PROTECT_N(proxy_normalize_encoding(needles), &nprot);
+
   haystack = PROTECT_N(vec_proxy_equal(haystack), &nprot);
+  haystack = PROTECT_N(proxy_normalize_encoding(haystack), &nprot);
 
   R_len_t n_haystack = vec_size(haystack);
   R_len_t n_needle = vec_size(needles);
-
-  SEXP translated = PROTECT_N(obj_maybe_translate_encoding2(needles, n_needle, haystack, n_haystack), &nprot);
-  needles = VECTOR_ELT(translated, 0);
-  haystack = VECTOR_ELT(translated, 1);
 
   struct dictionary* d = new_dictionary_params(haystack, false, na_equal);
   PROTECT_DICT(d, &nprot);
@@ -687,7 +685,7 @@ SEXP vctrs_count(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(proxy_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -739,7 +737,7 @@ SEXP vctrs_duplicated(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(proxy_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
