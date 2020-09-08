@@ -222,3 +222,26 @@ test_that("translation is robust against scalar types contained in lists (#633)"
   y <- list(a = c ~ d, b = e ~ f)
   expect_equal(obj_maybe_translate_encoding2(x, y), list(x, y))
 })
+
+test_that("translation treats data frames elements of lists as lists (#1233)", {
+  encs <- encodings()
+
+  field <- c(encs$utf8, encs$latin1)
+
+  a <- new_rcrd(list(field = field))
+  df <- data.frame(a = a, b = 1:2)
+  x <- list(df)
+
+  # Recursive proxy won't proxy list elements,
+  # so the rcrd column in the data frame won't get proxied
+  x <- vec_proxy_equal(x)
+
+  result <- obj_maybe_translate_encoding(x)
+
+  expect_identical(result, x)
+
+  result_field <- field(result[[1]]$a, "field")
+  expect_field <- c(encs$utf8, encs$utf8)
+
+  expect_equal_encoding(result_field, expect_field)
+})
