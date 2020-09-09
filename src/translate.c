@@ -1,4 +1,4 @@
-#include "vctrs.h"
+#include "translate.h"
 
 // -----------------------------------------------------------------------------
 
@@ -63,9 +63,6 @@ SEXP proxy_normalize_encoding(SEXP proxy) {
 
 // -----------------------------------------------------------------------------
 
-static inline SEXP char_normalize(SEXP x);
-static inline bool char_is_normalized(SEXP x);
-
 static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
   x = PROTECT(r_clone_referenced(x));
   const SEXP* p_x = STRING_PTR_RO(x);
@@ -75,11 +72,11 @@ static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
   for (r_ssize i = start; i < size; ++i) {
     const SEXP elt = p_x[i];
 
-    if (char_is_normalized(elt)) {
+    if (string_is_normalized(elt)) {
       continue;
     }
 
-    SET_STRING_ELT(x, i, char_normalize(elt));
+    SET_STRING_ELT(x, i, string_normalize(elt));
   }
 
   vmaxset(vmax);
@@ -93,7 +90,7 @@ static r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
   for (r_ssize i = 0; i < size; ++i) {
     const SEXP elt = p_x[i];
 
-    if (char_is_normalized(elt)) {
+    if (string_is_normalized(elt)) {
       continue;
     }
 
@@ -180,36 +177,6 @@ static inline bool elt_all_normalized(SEXP x) {
     return true;
   }
   }
-}
-
-// -----------------------------------------------------------------------------
-
-static inline bool char_is_ascii_or_utf8(SEXP x);
-
-
-static inline SEXP char_normalize(SEXP x) {
-  return Rf_mkCharCE(Rf_translateCharUTF8(x), CE_UTF8);
-}
-static inline bool char_is_normalized(SEXP x) {
-  return char_is_ascii_or_utf8(x) || (x == NA_STRING);
-}
-
-
-static inline bool levels_is_ascii(int levels);
-static inline bool levels_is_utf8(int levels);
-
-// The first 128 values are ASCII, and are the same regardless of the encoding.
-// Otherwise we enforce UTF-8.
-static inline bool char_is_ascii_or_utf8(SEXP x) {
-  const int levels = LEVELS(x);
-  return levels_is_ascii(levels) || levels_is_utf8(levels);
-}
-
-static inline bool levels_is_ascii(int levels) {
-  return levels & 8;
-}
-static inline bool levels_is_utf8(int levels) {
-  return levels & 64;
 }
 
 // -----------------------------------------------------------------------------

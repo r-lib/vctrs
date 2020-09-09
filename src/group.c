@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "dictionary.h"
+#include "translate.h"
 #include "type-data-frame.h"
 #include "utils.h"
 

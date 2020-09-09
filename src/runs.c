@@ -1,6 +1,7 @@
 #include "vctrs.h"
 #include "utils.h"
 #include "equal.h"
+#include "translate.h"
 
 static SEXP vec_identify_runs(SEXP x);
 

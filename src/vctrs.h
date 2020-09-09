@@ -584,10 +584,6 @@ SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
 
-// Character translation ---------------------------------------------
-
-SEXP proxy_normalize_encoding(SEXP x);
-
 // Growable vector ----------------------------------------------
 
 struct growable {
