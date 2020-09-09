@@ -31,7 +31,7 @@ static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
  * Vectors with "bytes" encodings are not supported, as they cannot be
  * converted to UTF-8 by `Rf_translateCharUTF8()`.
  *
- * [[ include("vctrs.h") ]]
+ * [[ include("translate.h") ]]
  */
 SEXP proxy_normalize_encoding(SEXP proxy) {
   switch (TYPEOF(proxy)) {
