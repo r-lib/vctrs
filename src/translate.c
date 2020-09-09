@@ -13,16 +13,16 @@ static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
  *
  * A CHARSXP is considered normalized if:
  * - It is the NA_STRING
- * - It is ASCII, with any encoding (UTF-8, Latin-1, native)
- * - It is UTF-8
+ * - It is ASCII, which means the encoding will be unmarked
+ * - It is marked as UTF-8
  *
- * ASCII strings are the same regardless of the underlying encoding. This
- * allows us to avoid a large amount of overhead with the most common case
- * of having a native/unknown encoding. As long as the string is ASCII, we
- * won't ever need to translate it, even if we don't know that it is UTF-8.
+ * ASCII strings will never get marked with an encoding when they go
+ * through `Rf_mkCharLenCE()`, but they will get marked as ASCII. Since
+ * UTF-8 is fully compatible with ASCII and ASCII is by far the most common
+ * case, we let ASCII strings through without translating them.
  *
- * This converts vectors that are completely Latin-1 (but also not just ASCII)
- * to UTF-8. In theory we could leave these as Latin-1, and comparing within
+ * This converts vectors that are completely marked as Latin-1 to UTF-8. In
+ * theory we could leave these as Latin-1, and comparing within
  * a single vector would be fine, since the encoding would be consistent.
  * However, this makes comparing between vectors difficult because we then
  * have to normalize the vectors relative to each other's encodings.
