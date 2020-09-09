@@ -2,11 +2,11 @@
 
 // -----------------------------------------------------------------------------
 
-static bool chr_all_normalized(SEXP x, r_ssize size);
-static bool list_all_normalized(SEXP x, r_ssize size);
+static r_ssize chr_find_normalize_start(SEXP x, r_ssize size);
+static r_ssize list_find_normalize_start(SEXP x, r_ssize size);
 
-static SEXP chr_normalize_encoding(SEXP x, r_ssize size);
-static SEXP list_normalize_encoding(SEXP x, r_ssize size);
+static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
+static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
 
 /*
  * Recursively normalize encodings of character vectors.
@@ -37,20 +37,22 @@ SEXP proxy_normalize_encoding(SEXP proxy) {
   switch (TYPEOF(proxy)) {
   case STRSXP: {
     r_ssize size = r_length(proxy);
+    r_ssize start = chr_find_normalize_start(proxy, size);
 
-    if (chr_all_normalized(proxy, size)) {
+    if (size == start) {
       return proxy;
     } else {
-      return chr_normalize_encoding(proxy, size);
+      return chr_normalize_encoding(proxy, size, start);
     }
   }
   case VECSXP: {
     r_ssize size = r_length(proxy);
+    r_ssize start = list_find_normalize_start(proxy, size);
 
-    if (list_all_normalized(proxy, size)) {
+    if (size == start) {
       return proxy;
     } else {
-      return list_normalize_encoding(proxy, size);
+      return list_normalize_encoding(proxy, size, start);
     }
   }
   default: {
@@ -64,13 +66,13 @@ SEXP proxy_normalize_encoding(SEXP proxy) {
 static inline SEXP char_normalize(SEXP x);
 static inline bool char_is_normalized(SEXP x);
 
-static SEXP chr_normalize_encoding(SEXP x, r_ssize size) {
+static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
   x = PROTECT(r_clone_referenced(x));
   const SEXP* p_x = STRING_PTR_RO(x);
 
   const void* vmax = vmaxget();
 
-  for (r_ssize i = 0; i < size; ++i) {
+  for (r_ssize i = start; i < size; ++i) {
     const SEXP elt = p_x[i];
 
     if (char_is_normalized(elt)) {
@@ -85,7 +87,7 @@ static SEXP chr_normalize_encoding(SEXP x, r_ssize size) {
   return x;
 }
 
-static bool chr_all_normalized(SEXP x, r_ssize size) {
+static r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   for (r_ssize i = 0; i < size; ++i) {
@@ -95,40 +97,44 @@ static bool chr_all_normalized(SEXP x, r_ssize size) {
       continue;
     }
 
-    return false;
+    return i;
   }
 
-  return true;
+  return size;
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP list_normalize_encoding(SEXP x, r_ssize size) {
+static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
   x = PROTECT(r_clone_referenced(x));
   const SEXP* p_x = VECTOR_PTR_RO(x);
 
-  for (r_ssize i = 0; i < size; ++i) {
-    const SEXP elt = p_x[i];
+  for (r_ssize i = start; i < size; ++i) {
+    SEXP elt = p_x[i];
 
     switch (TYPEOF(elt)) {
     case STRSXP: {
-      r_ssize size = r_length(elt);
+      r_ssize elt_size = r_length(elt);
+      r_ssize elt_start = chr_find_normalize_start(elt, elt_size);
 
-      if (chr_all_normalized(elt, size)) {
+      if (elt_size == elt_start) {
         break;
       }
 
-      SET_VECTOR_ELT(x, i, chr_normalize_encoding(elt, size));
+      elt = chr_normalize_encoding(elt, elt_size, elt_start);
+      SET_VECTOR_ELT(x, i, elt);
       break;
     }
     case VECSXP: {
-      r_ssize size = r_length(elt);
+      r_ssize elt_size = r_length(elt);
+      r_ssize elt_start = list_find_normalize_start(elt, elt_size);
 
-      if (list_all_normalized(elt, size)) {
+      if (elt_size == elt_start) {
         break;
       }
 
-      SET_VECTOR_ELT(x, i, list_normalize_encoding(elt, size));
+      elt = list_normalize_encoding(elt, elt_size, elt_start);
+      SET_VECTOR_ELT(x, i, elt);
       break;
     }
     default:
@@ -142,7 +148,7 @@ static SEXP list_normalize_encoding(SEXP x, r_ssize size) {
 
 static inline bool elt_all_normalized(SEXP x);
 
-static bool list_all_normalized(SEXP x, r_ssize size) {
+static r_ssize list_find_normalize_start(SEXP x, r_ssize size) {
   const SEXP* p_x = VECTOR_PTR_RO(x);
 
   for (r_ssize i = 0; i < size; ++i) {
@@ -152,17 +158,27 @@ static bool list_all_normalized(SEXP x, r_ssize size) {
       continue;
     }
 
-    return false;
+    return i;
   }
 
-  return true;
+  return size;
 }
 
 static inline bool elt_all_normalized(SEXP x) {
   switch (TYPEOF(x)) {
-  case STRSXP: return chr_all_normalized(x, r_length(x));
-  case VECSXP: return list_all_normalized(x, r_length(x));
-  default: return true;
+  case STRSXP: {
+    r_ssize size = r_length(x);
+    r_ssize start = chr_find_normalize_start(x, size);
+    return size == start;
+  }
+  case VECSXP: {
+    r_ssize size = r_length(x);
+    r_ssize start = list_find_normalize_start(x, size);
+    return size == start;
+  }
+  default: {
+    return true;
+  }
   }
 }
 
