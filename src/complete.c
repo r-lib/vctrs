@@ -174,6 +174,35 @@ void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
   }
 }
 
+
+/*
+ * Avoid the temptation to add an extra if branch at the start of the for
+ * loop like:
+ *
+ * ```
+ * if (!p_out[i]) {
+ *   continue;
+ * }
+ * ```
+ *
+ * In theory this avoids calculations if we already know the row is incomplete,
+ * but in practice it can wreck performance. I imagine it is due to the cost
+ * of the extra branch + the volatility of this value, causing the result of
+ * the branch to be "guessed" incorrectly many times. For example, the vctrs
+ * result here gets 6x slower (i.e. slower than the R solution) by adding that
+ * branch.
+ *
+ * ```
+ * # Place many NA values randomly in the first column
+ * first <- sample(c(1, NA, 3), size = 1e6, replace = TRUE)
+ * cols <- rep_len(list(rep(1, 1e6)), 100)
+ * cols <- c(list(first), cols)
+ * names(cols) <- paste0("a", 1:length(cols))
+ * df <- new_data_frame(cols)
+ * bench::mark(vec_detect_complete(df), complete.cases(df))
+ * ```
+ */
+
 #define VEC_DETECT_COMPLETE_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL_MISSING) { \
   const CTYPE* p_x = CONST_DEREF(x);                                        \
                                                                             \
