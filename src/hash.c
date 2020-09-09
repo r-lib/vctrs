@@ -338,14 +338,14 @@ static inline void dbl_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(double, REAL_RO, dbl_hash_scalar);
 }
 static inline void dbl_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL_NA_PROPAGATE_CMP(double, REAL_RO, dbl_hash_scalar, dbl_equal_missing);
+  HASH_FILL_NA_PROPAGATE_CMP(double, REAL_RO, dbl_hash_scalar, dbl_scalar_equal_missing);
 }
 
 static inline void cpl_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
   HASH_FILL(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static inline void cpl_hash_fill_na_propagate(uint32_t* p, R_len_t size, SEXP x) {
-  HASH_FILL_NA_PROPAGATE_CMP(Rcomplex, COMPLEX_RO, cpl_hash_scalar, cpl_equal_missing);
+  HASH_FILL_NA_PROPAGATE_CMP(Rcomplex, COMPLEX_RO, cpl_hash_scalar, cpl_scalar_equal_missing);
 }
 
 static inline void chr_hash_fill_na_equal(uint32_t* p, R_len_t size, SEXP x) {
