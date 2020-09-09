@@ -1,6 +1,16 @@
 
 # vctrs (development version)
 
+* New family of functions related to complete values:
+
+  - `vec_slice_complete()` returns the complete elements in `x`.
+
+  - `vec_locate_complete()` returns a vector of locations corresponding to
+    the complete elements in `x`.
+
+  - `vec_detect_complete()` returns a logical vector that detects if elements
+    of `x` are complete.
+
 * New `vec_identify_runs()` which returns a vector of identifiers for the
   elements of `x` that indicate which run of repeated values they fall in
   (#1081).
