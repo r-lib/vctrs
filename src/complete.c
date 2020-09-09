@@ -9,7 +9,8 @@ struct complete_info {
   r_ssize n;
 };
 
-static inline struct complete_info new_complete_info(r_ssize size) {
+static inline
+struct complete_info new_complete_info(r_ssize size) {
   SEXP data = PROTECT(Rf_allocVector(LGLSXP, size));
   int* p_data = LOGICAL(data);
 
@@ -39,7 +40,8 @@ SEXP vctrs_slice_complete(SEXP x) {
 
 static SEXP vec_locate_complete(SEXP x);
 
-static SEXP vec_slice_complete(SEXP x) {
+static
+SEXP vec_slice_complete(SEXP x) {
   SEXP loc = PROTECT(vec_locate_complete(x));
 
   // Skip `vec_as_location()` in `vec_slice()`
@@ -60,7 +62,8 @@ static void proxy_detect_complete(SEXP proxy,
                                   R_len_t size,
                                   struct complete_info* p_info);
 
-static SEXP vec_locate_complete(SEXP x) {
+static
+SEXP vec_locate_complete(SEXP x) {
   int nprot = 0;
 
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
@@ -99,7 +102,8 @@ SEXP vctrs_detect_complete(SEXP x) {
   return vec_detect_complete(x);
 }
 
-static SEXP vec_detect_complete(SEXP x) {
+static
+SEXP vec_detect_complete(SEXP x) {
   int nprot = 0;
 
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
@@ -126,9 +130,10 @@ static inline void raw_detect_complete(SEXP x, R_len_t size, struct complete_inf
 static inline void list_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info);
 static void df_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info);
 
-static inline void proxy_detect_complete(SEXP proxy,
-                                         R_len_t size,
-                                         struct complete_info* p_info) {
+static inline
+void proxy_detect_complete(SEXP proxy,
+                           R_len_t size,
+                           struct complete_info* p_info) {
   switch (vec_proxy_typeof(proxy)) {
   case vctrs_type_logical: return lgl_detect_complete(proxy, size, p_info);
   case vctrs_type_integer: return int_detect_complete(proxy, size, p_info);
@@ -154,22 +159,28 @@ static inline void proxy_detect_complete(SEXP proxy,
   }                                                                     \
 }
 
-static inline void lgl_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void lgl_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE(int, LOGICAL_RO, lgl_scalar_equal_missing);
 }
-static inline void int_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void int_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE(int, INTEGER_RO, int_scalar_equal_missing);
 }
-static inline void dbl_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void dbl_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE(double, REAL_RO, dbl_scalar_equal_missing);
 }
-static inline void cpl_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void cpl_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE(Rcomplex, COMPLEX_RO, cpl_scalar_equal_missing);
 }
-static inline void chr_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void chr_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE(SEXP, STRING_PTR_RO, chr_scalar_equal_missing);
 }
-static inline void raw_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void raw_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE(Rbyte, RAW_RO, raw_scalar_equal_missing);
 }
 
@@ -183,7 +194,8 @@ static inline void raw_detect_complete(SEXP x, R_len_t size, struct complete_inf
   }                                                            \
 }
 
-static inline void list_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static inline
+void list_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   VEC_DETECT_COMPLETE_BARRIER(list_scalar_equal_missing);
 }
 
@@ -196,7 +208,8 @@ static inline void vec_detect_complete_col(SEXP x,
                                            int* p_out,
                                            struct df_short_circuit_info* p_df_info);
 
-static void df_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
+static
+void df_detect_complete(SEXP x, R_len_t size, struct complete_info* p_info) {
   int nprot = 0;
 
   int* p_out = p_info->p_data;
@@ -237,10 +250,11 @@ static void chr_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_
 static void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info);
 static void list_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info);
 
-static inline void vec_detect_complete_col(SEXP x,
-                                           R_len_t size,
-                                           int* p_out,
-                                           struct df_short_circuit_info* p_df_info) {
+static inline
+void vec_detect_complete_col(SEXP x,
+                             R_len_t size,
+                             int* p_out,
+                             struct df_short_circuit_info* p_df_info) {
   switch (vec_proxy_typeof(x)) {
   case vctrs_type_logical: return lgl_detect_complete_col(x, size, p_out, p_df_info);
   case vctrs_type_integer: return int_detect_complete_col(x, size, p_out, p_df_info);
@@ -284,22 +298,28 @@ static inline void vec_detect_complete_col(SEXP x,
   }                                                                         \
 }
 
-static void lgl_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void lgl_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL(int, LOGICAL_RO, lgl_scalar_equal_missing);
 }
-static void int_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void int_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL(int, INTEGER_RO, int_scalar_equal_missing);
 }
-static void dbl_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void dbl_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL(double, REAL_RO, dbl_scalar_equal_missing);
 }
-static void cpl_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void cpl_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL(Rcomplex, COMPLEX_RO, cpl_scalar_equal_missing);
 }
-static void chr_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void chr_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL(SEXP, STRING_PTR_RO, chr_scalar_equal_missing);
 }
-static void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL(Rbyte, RAW_RO, raw_scalar_equal_missing);
 }
 
@@ -331,7 +351,8 @@ static void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_
   }                                                             \
 }
 
-static void list_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
+static
+void list_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_df_info) {
   VEC_DETECT_COMPLETE_COL_BARRIER(list_scalar_equal_missing);
 }
 
