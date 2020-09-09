@@ -1,10 +1,10 @@
 # ------------------------------------------------------------------------------
-# vec_normalize_encoding()
+# proxy_normalize_encoding()
 
 test_that("can translate a character vector of various encodings (#553)", {
   x <- unlist(encodings(), use.names = FALSE)
 
-  results <- vec_normalize_encoding(x)
+  results <- proxy_normalize_encoding(x)
 
   expect_equal_encoding(results, encodings()$utf8)
 })
@@ -13,12 +13,12 @@ test_that("translates all encodings to UTF-8", {
   encs <- encodings()
 
   for (enc in encs) {
-    expect_equal_encoding(vec_normalize_encoding(enc), encodings()$utf8)
+    expect_equal_encoding(proxy_normalize_encoding(enc), encodings()$utf8)
   }
 })
 
 test_that("can translate a list containing character vectors with different encodings", {
-  results <- vec_normalize_encoding(encodings())
+  results <- proxy_normalize_encoding(encodings())
   results <- unlist(results)
 
   expect_equal_encoding(results, encodings()$utf8)
@@ -26,7 +26,7 @@ test_that("can translate a list containing character vectors with different enco
 
 test_that("translation fails purposefully with any bytes", {
   expect_error(
-    vec_normalize_encoding(encoding_bytes()),
+    proxy_normalize_encoding(encoding_bytes()),
     "translating strings with \"bytes\" encoding"
   )
 })
@@ -34,7 +34,7 @@ test_that("translation fails purposefully with any bytes", {
 test_that("translation fails purposefully when mixing with bytes with other encodings", {
   for (enc in encodings()) {
     x <- c(encoding_bytes(), enc)
-    expect_error(vec_normalize_encoding(x), "translating strings with \"bytes\" encoding")
+    expect_error(proxy_normalize_encoding(x), "translating strings with \"bytes\" encoding")
   }
 })
 
@@ -44,19 +44,19 @@ test_that("attributes are kept on translation (#599)", {
   x <- c(encs$utf8, encs$latin1)
   x <- structure(x, names = c("a", "b"), extra = 1)
 
-  expect_equal(attributes(vec_normalize_encoding(x)), attributes(x))
+  expect_equal(attributes(proxy_normalize_encoding(x)), attributes(x))
 })
 
 test_that("translation is robust against scalar types contained in lists (#633)", {
   x <- list(a = z ~ y, b = z ~ z)
-  expect_equal(vec_normalize_encoding(x), x)
+  expect_equal(proxy_normalize_encoding(x), x)
 })
 
 test_that("translation can still occur even if a scalar type is in a list", {
   encs <- encodings()
   x <- list(a = z ~ y, b = encs$latin1)
 
-  result <- vec_normalize_encoding(x)
+  result <- proxy_normalize_encoding(x)
 
   expect_equal_encoding(result$b, encs$utf8)
 })
@@ -67,7 +67,7 @@ test_that("translation occurs inside scalars contained in a list", {
   scalar <- structure(list(x = encs$latin1), class = "scalar_list")
   lst <- list(scalar)
 
-  result <- vec_normalize_encoding(lst)
+  result <- proxy_normalize_encoding(lst)
 
   expect_equal_encoding(result[[1]]$x, encs$utf8)
 })
@@ -83,7 +83,9 @@ test_that("translation treats data frames elements of lists as lists (#1233)", {
 
   # Recursive proxy won't proxy list elements,
   # so the rcrd column in the data frame won't get proxied
-  result <- vec_normalize_encoding(x)
+  proxy <- vec_proxy_equal(x)
+
+  result <- proxy_normalize_encoding(proxy)
 
   expect_identical(result, x)
 

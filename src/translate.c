@@ -216,9 +216,6 @@ static inline bool levels_is_utf8(int levels) {
 
 // For testing
 // [[ register() ]]
-SEXP vctrs_normalize_encoding(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy_equal(x));
-  SEXP out = proxy_normalize_encoding(proxy);
-  UNPROTECT(1);
-  return out;
+SEXP vctrs_proxy_normalize_encoding(SEXP proxy) {
+  return proxy_normalize_encoding(proxy);
 }
