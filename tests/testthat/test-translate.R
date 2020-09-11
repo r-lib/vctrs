@@ -94,3 +94,25 @@ test_that("translation treats data frames elements of lists as lists (#1233)", {
 
   expect_equal_encoding(result_field, expect_field)
 })
+
+# FIXME: Should we translate attributes to fix this? Can it be done efficiently?
+test_that("attributes are currently not translated", {
+  utf8 <- encodings()$utf8
+  latin1 <- encodings()$latin1
+
+  a <- structure(1, enc = utf8)
+  b <- structure(1, enc = latin1)
+  x <- list(a, b)
+
+  result <- vec_normalize_encoding(x)
+
+  a_enc <- attr(result[[1]], "enc")
+  b_enc <- attr(result[[2]], "enc")
+
+  # Ideally both would be utf8
+  expect_equal_encoding(a_enc, utf8)
+  expect_equal_encoding(b_enc, latin1)
+
+  # Ideally the list elements are considered duplicates
+  expect_identical(vec_unique(x), x)
+})
