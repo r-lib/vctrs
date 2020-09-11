@@ -89,3 +89,31 @@ test_that("takes the equality proxy of each column", {
 
   expect_identical(df_detect_complete(df), expect)
 })
+
+test_that("columns with a data frame proxy are only incomplete if all rows are incomplete", {
+  df <- data_frame(
+    x = c(NA, 1, 2, 3),
+    y = new_rcrd(list(a = c(1, 1, NA, NA), b = c(2, 2, 2, NA))),
+    z = new_rcrd(list(a = c(1, NA, 1, 1), b = c(2, NA, NA, 1)))
+  )
+
+  expect_identical(df_detect_complete(df), c(FALSE, FALSE, TRUE, FALSE))
+})
+
+test_that("can have rcrd fields of all types", {
+  add_rcrd_col <- function(col) {
+    data_frame(x = new_rcrd(list(col = col)))
+  }
+
+  expect <- c(TRUE, TRUE, FALSE, TRUE, FALSE)
+
+  expect_identical(df_detect_complete(add_rcrd_col(c(TRUE, TRUE, NA, FALSE, NA))), expect)
+  expect_identical(df_detect_complete(add_rcrd_col(c(1L, 1L, NA, 2L, NA))), expect)
+  expect_identical(df_detect_complete(add_rcrd_col(c(1, 1, NA, 2, NA))), expect)
+  expect_identical(df_detect_complete(add_rcrd_col(complex(real = c(1, 1, NA, 2, 2), imaginary = c(1, 1, 2, 2, NA)))), expect)
+  expect_identical(df_detect_complete(add_rcrd_col(c("a", "a", NA, "b", NA))), expect)
+  expect_identical(df_detect_complete(add_rcrd_col(list(1, 1, NULL, 2, NULL))), expect)
+
+  # No missing raw value
+  expect_identical(df_detect_complete(add_rcrd_col(as.raw(c(1, 1, 2, 2, 3)))), rep(TRUE, 5))
+})
