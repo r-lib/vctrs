@@ -73,8 +73,8 @@ SEXP vec_detect_complete(SEXP x) {
   case vctrs_type_raw: raw_detect_complete(proxy, size, p_out); break;
   case vctrs_type_list: list_detect_complete(proxy, size, p_out); break;
   case vctrs_type_dataframe: df_detect_complete(proxy, size, p_out); break;
-  case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't detect missing values in scalars with `vec_detect_complete()`.");
-  default: Rf_errorcall(R_NilValue, "Unimplemented type in `vec_detect_complete()`.");
+  case vctrs_type_scalar: stop_internal("vec_detect_complete", "Can't detect missing values in scalars.");
+  default: stop_unimplemented_vctrs_type("vec_detect_complete", vec_proxy_typeof(proxy));
   }
 
   UNPROTECT(2);
@@ -169,8 +169,8 @@ void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
   case vctrs_type_raw: raw_detect_complete_col(x, size, p_out); break;
   case vctrs_type_list: list_detect_complete_col(x, size, p_out); break;
   case vctrs_type_dataframe: stop_internal("vec_detect_complete_col", "Data frame columns should have been handled already.");
-  case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't detect missing values in scalars with `vec_detect_complete()`.");
-  default: Rf_errorcall(R_NilValue, "Unimplemented type in `vec_detect_complete()`.");
+  case vctrs_type_scalar: stop_internal("vec_detect_complete_col", "Can't detect missing values in scalars.");
+  default: stop_unimplemented_vctrs_type("vec_detect_complete_col", vec_proxy_typeof(x));
   }
 }
 
