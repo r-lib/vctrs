@@ -33,30 +33,30 @@ static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
  *
  * [[ include("translate.h") ]]
  */
-SEXP proxy_normalize_encoding(SEXP proxy) {
-  switch (TYPEOF(proxy)) {
+SEXP vec_normalize_encoding(SEXP x) {
+  switch (TYPEOF(x)) {
   case STRSXP: {
-    r_ssize size = r_length(proxy);
-    r_ssize start = chr_find_normalize_start(proxy, size);
+    r_ssize size = r_length(x);
+    r_ssize start = chr_find_normalize_start(x, size);
 
     if (size == start) {
-      return proxy;
+      return x;
     } else {
-      return chr_normalize_encoding(proxy, size, start);
+      return chr_normalize_encoding(x, size, start);
     }
   }
   case VECSXP: {
-    r_ssize size = r_length(proxy);
-    r_ssize start = list_find_normalize_start(proxy, size);
+    r_ssize size = r_length(x);
+    r_ssize start = list_find_normalize_start(x, size);
 
     if (size == start) {
-      return proxy;
+      return x;
     } else {
-      return list_normalize_encoding(proxy, size, start);
+      return list_normalize_encoding(x, size, start);
     }
   }
   default: {
-    return proxy;
+    return x;
   }
   }
 }
@@ -183,6 +183,6 @@ static inline bool elt_all_normalized(SEXP x) {
 
 // For testing
 // [[ register() ]]
-SEXP vctrs_proxy_normalize_encoding(SEXP proxy) {
-  return proxy_normalize_encoding(proxy);
+SEXP vctrs_normalize_encoding(SEXP x) {
+  return vec_normalize_encoding(x);
 }

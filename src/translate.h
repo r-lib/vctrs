@@ -4,9 +4,9 @@
 #include "vctrs.h"
 
 // -----------------------------------------------------------------------------
-// Proxy vector translation
+// Vector translation
 
-SEXP proxy_normalize_encoding(SEXP proxy);
+SEXP vec_normalize_encoding(SEXP x);
 
 // -----------------------------------------------------------------------------
 // Low-level string translation
