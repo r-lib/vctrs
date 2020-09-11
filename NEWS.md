@@ -1,16 +1,9 @@
 
 # vctrs (development version)
 
-* New family of functions related to runs of repeated values (#1081, #1210).
-
-  - `vec_identify_runs()` returns a vector of identifiers for the
-    elements of `x` that indicate which run of repeated values they fall in.
-    
-  - `vec_locate_runs()` returns a vector of locations corresponding to either
-    the starting or ending location of each run.
-    
-  - `vec_detect_runs()` returns a logical vector that detects either
-    the starting or ending location of each run.
+* New `vec_identify_runs()` which returns a vector of identifiers for the
+  elements of `x` that indicate which run of repeated values they fall in
+  (#1081).
   
 * Fixed an encoding translation bug with lists containing data frames which
   have columns where `vec_size()` is different from the low level
