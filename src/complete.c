@@ -92,27 +92,27 @@ SEXP vec_detect_complete(SEXP x) {
 
 static inline
 void lgl_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(int, LOGICAL_RO, lgl_scalar_equal_missing);
+  VEC_DETECT_COMPLETE(int, LOGICAL_RO, lgl_equal_missing_scalar);
 }
 static inline
 void int_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(int, INTEGER_RO, int_scalar_equal_missing);
+  VEC_DETECT_COMPLETE(int, INTEGER_RO, int_equal_missing_scalar);
 }
 static inline
 void dbl_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(double, REAL_RO, dbl_scalar_equal_missing);
+  VEC_DETECT_COMPLETE(double, REAL_RO, dbl_equal_missing_scalar);
 }
 static inline
 void cpl_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(Rcomplex, COMPLEX_RO, cpl_scalar_equal_missing);
+  VEC_DETECT_COMPLETE(Rcomplex, COMPLEX_RO, cpl_equal_missing_scalar);
 }
 static inline
 void chr_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(SEXP, STRING_PTR_RO, chr_scalar_equal_missing);
+  VEC_DETECT_COMPLETE(SEXP, STRING_PTR_RO, chr_equal_missing_scalar);
 }
 static inline
 void raw_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(Rbyte, RAW_RO, raw_scalar_equal_missing);
+  VEC_DETECT_COMPLETE(Rbyte, RAW_RO, raw_equal_missing_scalar);
 }
 
 #undef VEC_DETECT_COMPLETE
@@ -125,7 +125,7 @@ void raw_detect_complete(SEXP x, R_len_t size, int* p_out) {
 
 static inline
 void list_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_BARRIER(list_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_BARRIER(list_equal_missing_scalar);
 }
 
 #undef VEC_DETECT_COMPLETE_BARRIER
@@ -216,27 +216,27 @@ void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
 
 static inline
 void lgl_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(int, LOGICAL_RO, lgl_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL(int, LOGICAL_RO, lgl_equal_missing_scalar);
 }
 static inline
 void int_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(int, INTEGER_RO, int_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL(int, INTEGER_RO, int_equal_missing_scalar);
 }
 static inline
 void dbl_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(double, REAL_RO, dbl_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL(double, REAL_RO, dbl_equal_missing_scalar);
 }
 static inline
 void cpl_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(Rcomplex, COMPLEX_RO, cpl_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL(Rcomplex, COMPLEX_RO, cpl_equal_missing_scalar);
 }
 static inline
 void chr_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(SEXP, STRING_PTR_RO, chr_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL(SEXP, STRING_PTR_RO, chr_equal_missing_scalar);
 }
 static inline
 void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(Rbyte, RAW_RO, raw_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL(Rbyte, RAW_RO, raw_equal_missing_scalar);
 }
 
 #undef VEC_DETECT_COMPLETE_COL
@@ -251,7 +251,7 @@ void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
 
 static inline
 void list_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL_BARRIER(list_scalar_equal_missing);
+  VEC_DETECT_COMPLETE_COL_BARRIER(list_equal_missing_scalar);
 }
 
 #undef VEC_DETECT_COMPLETE_COL_BARRIER
