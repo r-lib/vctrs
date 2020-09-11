@@ -975,20 +975,20 @@ void r_vec_fill(SEXPTYPE type,
 #undef FILL
 
 
-R_len_t r_lgl_sum(SEXP x, bool na_true) {
+r_ssize r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
     stop_internal("r_lgl_sum", "Expected logical vector.");
   }
 
-  R_len_t n = Rf_length(x);
+  r_ssize n = r_length(x);
   const int* p_x = LOGICAL(x);
 
   // This can't overflow since `sum` is necessarily smaller or equal
-  // to the vector length expressed in `R_len_t`.
-  R_len_t sum = 0;
+  // to the vector length expressed in `r_ssize`.
+  r_ssize sum = 0;
 
   if (na_true) {
-    for (R_len_t i = 0; i < n; ++i) {
+    for (r_ssize i = 0; i < n; ++i) {
       const int elt = p_x[i];
 
       if (elt) {
@@ -996,7 +996,7 @@ R_len_t r_lgl_sum(SEXP x, bool na_true) {
       }
     }
   } else {
-    for (R_len_t i = 0; i < n; ++i) {
+    for (r_ssize i = 0; i < n; ++i) {
       const int elt = p_x[i];
 
       if (elt == 1) {
@@ -1013,16 +1013,16 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
     stop_internal("r_lgl_which", "Expected logical vector.");
   }
 
-  R_len_t n = Rf_length(x);
+  r_ssize n = r_length(x);
   const int* p_x = LOGICAL(x);
 
-  R_len_t out_n = r_lgl_sum(x, na_propagate);
+  r_ssize out_n = r_lgl_sum(x, na_propagate);
   SEXP out = PROTECT(Rf_allocVector(INTSXP, out_n));
   int* p_out = INTEGER(out);
-  R_len_t loc = 0;
+  r_ssize loc = 0;
 
   if (na_propagate) {
-    for (R_len_t i = 0; i < n; ++i) {
+    for (r_ssize i = 0; i < n; ++i) {
       const int elt = p_x[i];
 
       if (elt) {
@@ -1031,7 +1031,7 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
       }
     }
   } else {
-    for (R_len_t i = 0; i < n; ++i) {
+    for (r_ssize i = 0; i < n; ++i) {
       const int elt = p_x[i];
 
       if (elt) {
