@@ -28,9 +28,9 @@ of the result is equal to the number of complete elements.
 \description{
 These functions are for working with "complete" values. For atomic vectors,
 this is the same as \code{!vec_equal_na(x)}. For data frames, a row is only
-considered complete if \emph{all} elements of that row are non-missing.
-To compare, \code{!vec_equal_na(x)} for data frames detects if \emph{any} element in
-that row is non-missing.
+considered complete if all elements of that row are non-missing.
+To compare, \code{!vec_equal_na(x)} for data frames detects rows that have at
+least one non-missing value.
 \itemize{
 \item \code{vec_slice_complete()} returns a vector with the same type as \code{x} holding
 the complete elements.
@@ -53,7 +53,7 @@ df <- data_frame(x = x, y = y)
 
 # For data frames, this returns `TRUE` where all elements
 # of the row are non-missing. Compare that with `!vec_equal_na()`,
-# which detect where any elements of the row are non-missing.
+# which detects rows that have at least one non-missing value.
 df2 <- df
 df2$all_non_missing <- vec_detect_complete(df)
 df2$any_non_missing <- !vec_equal_na(df)
