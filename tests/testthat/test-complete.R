@@ -1,31 +1,23 @@
-# vec_slice_complete -----------------------------------------------------------
+# df_slice_complete ------------------------------------------------------------
 
 test_that("can slice complete", {
-  x <- c(1, NA, 3)
-  df <- data_frame(x = x, y = c(1, 2, NA))
-
-  expect_identical(vec_slice_complete(x), vec_slice(x, c(1, 3)))
-  expect_identical(vec_slice_complete(df), vec_slice(df, 1))
+  df <- data_frame(x = c(1, NA, 3), y = c(1, 2, NA))
+  expect_identical(df_slice_complete(df), vec_slice(df, 1))
 })
 
 test_that("works with size 0 input", {
-  expect_identical(vec_slice_complete(integer()), integer())
-  expect_identical(vec_slice_complete(data.frame()), data.frame())
+  expect_identical(df_slice_complete(data.frame()), data.frame())
 })
 
-# vec_locate_complete ----------------------------------------------------------
+# df_locate_complete -----------------------------------------------------------
 
 test_that("can locate complete", {
-  x <- c(1, NA, 3)
-  df <- data_frame(x = x, y = c(1, 2, NA))
-
-  expect_identical(vec_locate_complete(x), c(1L, 3L))
-  expect_identical(vec_locate_complete(df), 1L)
+  df <- data_frame(x = c(1, NA, 3), y = c(1, 2, NA))
+  expect_identical(df_locate_complete(df), 1L)
 })
 
 test_that("works with size 0 input", {
-  expect_identical(vec_locate_complete(integer()), integer())
-  expect_identical(vec_locate_complete(data.frame()), integer())
+  expect_identical(df_locate_complete(data.frame()), integer())
 })
 
 # df_detect_complete -----------------------------------------------------------
