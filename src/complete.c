@@ -145,8 +145,7 @@ void df_detect_complete(SEXP x, R_len_t size, int* p_out) {
   const SEXP* p_x = VECTOR_PTR_RO(x);
 
   for (R_len_t i = 0; i < n_col; ++i) {
-    const SEXP col = p_x[i];
-    vec_detect_complete_col(col, size, p_out);
+    vec_detect_complete_col(p_x[i], size, p_out);
   }
 }
 
