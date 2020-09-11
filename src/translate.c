@@ -11,6 +11,14 @@ static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
 /*
  * Recursively normalize encodings of character vectors.
  *
+ * This can be called on any vector, but is generally called on a proxy vector.
+ *
+ * Note that attributes are currently not translated. This means that it is
+ * often important to call this function on the proxy, rather than the original
+ * vector. For example, a list-rcrd with a vectorized character attribute must
+ * be proxied to have the attribute promoted to a data frame column first before
+ * calling `vec_normalize_encoding()`.
+ *
  * A CHARSXP is considered normalized if:
  * - It is the NA_STRING
  * - It is ASCII, which means the encoding will be unmarked
