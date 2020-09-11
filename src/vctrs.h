@@ -517,9 +517,6 @@ static inline void init_lazy_df_short_circuit_info(struct df_short_circuit_info*
   REPROTECT(p_info->row_known, p_info->row_known_pi);
 
   p_info->p_row_known = (bool*) RAW(p_info->row_known);
-
-  // To begin with, no rows have a known comparison value
-  memset(p_info->p_row_known, false, p_info->size * sizeof(bool));
 }
 
 // Missing values -----------------------------------------------

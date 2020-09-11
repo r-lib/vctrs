@@ -218,34 +218,18 @@ void df_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_ci
   // Ensure lazy memory is initialized
   init_lazy_df_short_circuit_info(p_info);
 
-  // Reset between each df-col
-  p_info->remaining = size;
-
-  // If `p_out[i] == true`, we don't yet know the row value since
-  // `true` was the default value. Otherwise we already know it to be an
-  // incomplete row and can skip.
-  for (r_ssize i = 0; i < size; ++i) {
-    const bool known = !p_out[i];
-    p_info->p_row_known[i] = known;
-    p_info->remaining -= known;
-  }
+  // Always reset to no rows being known between df-cols
+  memset(p_info->p_row_known, false, p_info->size * sizeof(bool));
 
   for (r_ssize i = 0; i < n_cols; ++i) {
-    SEXP col = p_x[i];
-
-    vec_detect_any_non_missing_col(col, size, p_info);
-
-    if (p_info->remaining == 0) {
-      break;
-    }
+    vec_detect_any_non_missing_col(p_x[i], size, p_info);
   }
 
-  // If we didn't know the row value before (`p_out[i] == true`),
-  // and we still don't (`p_row_known[i] == false`),
+  // If we don't know the row value,
   // then the entire row of this df-col is missing,
   // which we consider incomplete.
   for (r_ssize i = 0; i < size; ++i) {
-    if (p_out[i] && !p_info->p_row_known[i]) {
+    if (!p_info->p_row_known[i]) {
       p_out[i] = 0;
     }
   }
@@ -279,24 +263,11 @@ void vec_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circui
   const CTYPE* p_x = CONST_DEREF(x);                                           \
                                                                                \
   for (R_len_t i = 0; i < size; ++i) {                                         \
-    /* Known to be incomplete row */                                           \
-    if (p_info->p_row_known[i]) {                                              \
-      continue;                                                                \
-    }                                                                          \
-                                                                               \
     const CTYPE elt = p_x[i];                                                  \
                                                                                \
-    if (SCALAR_EQUAL_MISSING(elt)) {                                           \
-      continue;                                                                \
-    }                                                                          \
-                                                                               \
     /* At least one non-missing value exists */                                \
-    p_info->p_row_known[i] = true;                                             \
-    --p_info->remaining;                                                       \
-                                                                               \
-    /* All rows have at least one non-missing value */                         \
-    if (p_info->remaining == 0) {                                              \
-      break;                                                                   \
+    if (!SCALAR_EQUAL_MISSING(elt)) {                                          \
+      p_info->p_row_known[i] = true;                                           \
     }                                                                          \
   }                                                                            \
 }
@@ -331,22 +302,9 @@ void raw_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circui
 
 #define VEC_DETECT_ANY_NON_MISSING_BARRIER(SCALAR_EQUAL_MISSING) { \
   for (R_len_t i = 0; i < size; ++i) {                             \
-    /* Known to be incomplete row */                               \
-    if (p_info->p_row_known[i]) {                                  \
-      continue;                                                    \
-    }                                                              \
-                                                                   \
-    if (SCALAR_EQUAL_MISSING(x, i)) {                              \
-      continue;                                                    \
-    }                                                              \
-                                                                   \
     /* At least one non-missing value exists */                    \
-    p_info->p_row_known[i] = true;                                 \
-    --p_info->remaining;                                           \
-                                                                   \
-    /* All rows have at least one non-missing value */             \
-    if (p_info->remaining == 0) {                                  \
-      break;                                                       \
+    if (!SCALAR_EQUAL_MISSING(x, i)) {                             \
+      p_info->p_row_known[i] = true;                               \
     }                                                              \
   }                                                                \
 }
