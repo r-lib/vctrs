@@ -147,7 +147,7 @@ int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
 
   const SEXP* p_x = VECTOR_PTR_RO(x);
 
-  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
   PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
   int id = 1;

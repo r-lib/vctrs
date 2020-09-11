@@ -384,7 +384,7 @@ static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size) {
     p_out[i] = 1;
   }
 
-  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
   struct df_short_circuit_info* p_info = &info;
   PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 
@@ -638,7 +638,7 @@ static SEXP df_equal_na(SEXP x, R_len_t size) {
     p_out[i] = 1;
   }
 
-  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
   struct df_short_circuit_info* p_info = &info;
   PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
 

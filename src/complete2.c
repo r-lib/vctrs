@@ -33,7 +33,7 @@ SEXP df_detect_complete(SEXP x) {
     p_out[i] = 1;
   }
 
-  struct df_short_circuit_info info = new_df_short_circuit_info(size);
+  struct df_short_circuit_info info = new_df_short_circuit_info(size, true);
   PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
 
   const SEXP* p_x = VECTOR_PTR_RO(x);
@@ -175,6 +175,9 @@ static
 void df_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_info) {
   r_ssize n_cols = r_length(x);
   const SEXP* p_x = VECTOR_PTR_RO(x);
+
+  // Ensure lazy memory is initialized
+  init_lazy_df_short_circuit_info(p_info);
 
   // Reset between each df-col
   p_info->remaining = size;
