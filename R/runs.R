@@ -1,9 +1,9 @@
 #' Runs
 #'
 #' @description
-#' - `vec_identify_runs()` returns a vector of identifiers for the elements of
-#'   `x` that indicate which run of repeated values they fall in. The number of
-#'   runs is also returned as an attribute, `n`.
+#' `vec_identify_runs()` returns a vector of identifiers for the elements of
+#' `x` that indicate which run of repeated values they fall in. The number of
+#' runs is also returned as an attribute, `n`.
 #'
 #' @details
 #' Unlike [base::rle()], adjacent missing values are considered identical when
@@ -13,8 +13,8 @@
 #' @param x A vector.
 #'
 #' @return
-#' - `vec_identify_runs()`: An integer vector with the same size as `x`. A
-#'   scalar integer attribute, `n`, is attached.
+#' An integer vector with the same size as `x`. A scalar integer attribute,
+#' `n`, is attached.
 #'
 #' @export
 #' @examples
@@ -33,4 +33,12 @@
 #' vec_identify_runs(df)
 vec_identify_runs <- function(x) {
   .Call(vctrs_identify_runs, x)
+}
+
+vec_locate_runs <- function(x, start = TRUE) {
+  .Call(vctrs_locate_runs, x, start)
+}
+
+vec_detect_runs <- function(x, start = TRUE) {
+  .Call(vctrs_detect_runs, x, start)
 }

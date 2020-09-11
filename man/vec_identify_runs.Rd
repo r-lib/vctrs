@@ -10,17 +10,13 @@ vec_identify_runs(x)
 \item{x}{A vector.}
 }
 \value{
-\itemize{
-\item \code{vec_identify_runs()}: An integer vector with the same size as \code{x}. A
-scalar integer attribute, \code{n}, is attached.
-}
+An integer vector with the same size as \code{x}. A scalar integer attribute,
+\code{n}, is attached.
 }
 \description{
-\itemize{
-\item \code{vec_identify_runs()} returns a vector of identifiers for the elements of
+\code{vec_identify_runs()} returns a vector of identifiers for the elements of
 \code{x} that indicate which run of repeated values they fall in. The number of
 runs is also returned as an attribute, \code{n}.
-}
 }
 \details{
 Unlike \code{\link[base:rle]{base::rle()}}, adjacent missing values are considered identical when
