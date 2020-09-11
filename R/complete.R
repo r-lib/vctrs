@@ -65,3 +65,7 @@ vec_locate_complete <- function(x) {
 vec_detect_complete <- function(x) {
   .Call(vctrs_detect_complete, x)
 }
+
+df_detect_complete <- function(x) {
+  .Call(vctrs_df_detect_complete, x)
+}

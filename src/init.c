@@ -128,6 +128,7 @@ extern SEXP vctrs_identify_runs(SEXP);
 extern SEXP vctrs_slice_complete(SEXP);
 extern SEXP vctrs_detect_complete(SEXP);
 extern SEXP vctrs_locate_complete(SEXP);
+extern SEXP vctrs_df_detect_complete(SEXP);
 
 
 // Maturing
@@ -273,6 +274,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_slice_complete",             (DL_FUNC) &vctrs_slice_complete, 1},
   {"vctrs_locate_complete",            (DL_FUNC) &vctrs_locate_complete, 1},
   {"vctrs_detect_complete",            (DL_FUNC) &vctrs_detect_complete, 1},
+  {"vctrs_df_detect_complete",         (DL_FUNC) &vctrs_df_detect_complete, 1},
   {NULL, NULL, 0}
 };
 
