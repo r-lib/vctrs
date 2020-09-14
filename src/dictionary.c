@@ -78,10 +78,10 @@ static int raw_p_equal_missing(const void* x, R_len_t i) {
 }
 
 static int list_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return list_equal_scalar_na_equal(((const SEXP) x), i, ((const SEXP) y), j);
+  return list_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
 }
 static int list_p_equal_missing(const void* x, R_len_t i) {
-  return list_equal_scalar_na_equal(((const SEXP) x), i, vctrs_shared_na_list, 0);
+  return list_equal_scalar_na_equal(((const SEXP*) x) + i, &R_NilValue);
 }
 
 
@@ -121,7 +121,7 @@ static void init_dictionary_raw(struct dictionary* d) {
   d->equal_missing = &raw_p_equal_missing;
 }
 static void init_dictionary_list(struct dictionary* d) {
-  d->vec_p = (const void*) d->vec;
+  d->vec_p = (const void*) VECTOR_PTR_RO(d->vec);
   d->equal = &list_p_equal;
   d->equal_missing = &list_p_equal_missing;
 }
@@ -211,12 +211,7 @@ static void init_dictionary_df(struct dictionary* d) {
     enum vctrs_type col_type = vec_proxy_typeof(col);
 
     col_types[i] = col_type;
-
-    if (col_type == vctrs_type_list) {
-      col_ptrs[i] = col;
-    } else {
-      col_ptrs[i] = r_vec_deref_const(col);
-    }
+    col_ptrs[i] = r_vec_deref_const(col);
   }
 
   d->protect = handle;
