@@ -975,23 +975,33 @@ void r_vec_fill(SEXPTYPE type,
 #undef FILL
 
 
-R_len_t r_lgl_sum(SEXP x, bool na_true) {
+r_ssize r_lgl_sum(SEXP x, bool na_true) {
   if (TYPEOF(x) != LGLSXP) {
     stop_internal("r_lgl_sum", "Expected logical vector.");
   }
 
-  R_len_t n = Rf_length(x);
+  r_ssize n = r_length(x);
+  const int* p_x = LOGICAL(x);
 
-  R_len_t sum = 0;
-  int* ptr = LOGICAL(x);
+  // This can't overflow since `sum` is necessarily smaller or equal
+  // to the vector length expressed in `r_ssize`.
+  r_ssize sum = 0;
 
-  for (R_len_t i = 0; i < n; ++i, ++ptr) {
-    // This can't overflow since `sum` is necessarily smaller or equal
-    // to the vector length expressed in `R_len_t`.
-    if (na_true && *ptr) {
-      sum += 1;
-    } else if (*ptr == 1) {
-      sum += 1;
+  if (na_true) {
+    for (r_ssize i = 0; i < n; ++i) {
+      const int elt = p_x[i];
+
+      if (elt) {
+        ++sum;
+      }
+    }
+  } else {
+    for (r_ssize i = 0; i < n; ++i) {
+      const int elt = p_x[i];
+
+      if (elt == 1) {
+        ++sum;
+      }
     }
   }
 
@@ -1003,27 +1013,36 @@ SEXP r_lgl_which(SEXP x, bool na_propagate) {
     stop_internal("r_lgl_which", "Expected logical vector.");
   }
 
-  R_len_t n = Rf_length(x);
-  int* data = LOGICAL(x);
+  r_ssize n = r_length(x);
+  const int* p_x = LOGICAL(x);
 
-  R_len_t which_n = r_lgl_sum(x, na_propagate);
-  SEXP which = PROTECT(Rf_allocVector(INTSXP, which_n));
-  int* which_data = INTEGER(which);
+  r_ssize out_n = r_lgl_sum(x, na_propagate);
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, out_n));
+  int* p_out = INTEGER(out);
+  r_ssize loc = 0;
 
-  for (R_len_t i = 0; i < n; ++i, ++data) {
-    int elt = *data;
+  if (na_propagate) {
+    for (r_ssize i = 0; i < n; ++i) {
+      const int elt = p_x[i];
 
-    if (elt) {
-      if (na_propagate && elt == NA_LOGICAL) {
-        *which_data++ = NA_INTEGER;
-      } else if (elt != NA_LOGICAL) {
-        *which_data++ = i + 1;
+      if (elt) {
+        p_out[loc] = (elt == NA_LOGICAL) ? NA_INTEGER : i + 1;
+        ++loc;
+      }
+    }
+  } else {
+    for (r_ssize i = 0; i < n; ++i) {
+      const int elt = p_x[i];
+
+      if (elt) {
+        p_out[loc] = i + 1;
+        ++loc;
       }
     }
   }
 
   UNPROTECT(1);
-  return which;
+  return out;
 }
 
 #define FILL() {                      \

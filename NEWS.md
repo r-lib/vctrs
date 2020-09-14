@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* New `df_detect_complete()` which returns a logical vector that detects
+  if rows of `x` are complete, i.e. they have no missing values.
+
 * New `vec_identify_runs()` which returns a vector of identifiers for the
   elements of `x` that indicate which run of repeated values they fall in
   (#1081).

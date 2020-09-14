@@ -215,7 +215,7 @@ void r_vec_fill(SEXPTYPE type,
                 r_ssize src_i,
                 r_ssize n);
 
-R_len_t r_lgl_sum(SEXP lgl, bool na_true);
+r_ssize r_lgl_sum(SEXP lgl, bool na_true);
 SEXP r_lgl_which(SEXP x, bool na_true);
 
 void r_lgl_fill(SEXP x, int value, R_len_t n);

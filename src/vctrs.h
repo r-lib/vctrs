@@ -472,21 +472,30 @@ bool duplicated_any(SEXP names);
 struct df_short_circuit_info {
   SEXP row_known;
   bool* p_row_known;
+  PROTECT_INDEX row_known_pi;
   R_len_t remaining;
   R_len_t size;
 };
 
-#define PROTECT_DF_SHORT_CIRCUIT_INFO(info, n) do {  \
-  PROTECT((info)->row_known);                        \
-  *n += 1;                                           \
+#define PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, p_n) do {             \
+  PROTECT_WITH_INDEX((p_info)->row_known, &(p_info)->row_known_pi); \
+  *(p_n) += 1;                                                      \
 } while (0)
 
-static inline struct df_short_circuit_info new_df_short_circuit_info(R_len_t size) {
-  SEXP row_known = PROTECT(Rf_allocVector(RAWSXP, size * sizeof(bool)));
-  bool* p_row_known = (bool*) RAW(row_known);
+static inline struct df_short_circuit_info new_df_short_circuit_info(R_len_t size, bool lazy) {
+  SEXP row_known;
+  bool* p_row_known;
 
-  // To begin with, no rows have a known comparison value
-  memset(p_row_known, false, size * sizeof(bool));
+  if (lazy) {
+    row_known = PROTECT(R_NilValue);
+    p_row_known = NULL;
+  } else {
+    row_known = PROTECT(Rf_allocVector(RAWSXP, size * sizeof(bool)));
+    p_row_known = (bool*) RAW(row_known);
+
+    // To begin with, no rows have a known comparison value
+    memset(p_row_known, false, size * sizeof(bool));
+  }
 
   struct df_short_circuit_info info = {
     .row_known = row_known,
@@ -497,6 +506,17 @@ static inline struct df_short_circuit_info new_df_short_circuit_info(R_len_t siz
 
   UNPROTECT(1);
   return info;
+}
+
+static inline void init_lazy_df_short_circuit_info(struct df_short_circuit_info* p_info) {
+  if (p_info->row_known != R_NilValue) {
+    return;
+  }
+
+  p_info->row_known = Rf_allocVector(RAWSXP, p_info->size * sizeof(bool));
+  REPROTECT(p_info->row_known, p_info->row_known_pi);
+
+  p_info->p_row_known = (bool*) RAW(p_info->row_known);
 }
 
 // Missing values -----------------------------------------------
