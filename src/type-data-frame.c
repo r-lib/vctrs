@@ -856,7 +856,13 @@ static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter
 //
 // [[ register(); include("type-data-frame.h") ]]
 SEXP df_flatten(SEXP x) {
+  R_len_t n_cols = Rf_length(x);
   R_len_t width = df_flat_width(x);
+
+  if (n_cols == width) {
+    return x;
+  }
+
   SEXP out = PROTECT(Rf_allocVector(VECSXP, width));
   SEXP out_names = PROTECT(Rf_allocVector(STRSXP, width));
   r_poke_names(out, out_names);
