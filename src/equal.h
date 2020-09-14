@@ -155,24 +155,22 @@ static inline int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) 
   }
 }
 
-static inline bool list_equal_missing_scalar(SEXP x, R_len_t i) {
-  return VECTOR_ELT(x, i) == R_NilValue;
+static inline bool list_equal_missing_scalar(SEXP x) {
+  return x == R_NilValue;
 }
-static inline int list_equal_scalar_na_equal(SEXP x, R_len_t i, SEXP y, R_len_t j) {
-  const SEXP xi = VECTOR_ELT(x, i);
-  const SEXP yj = VECTOR_ELT(y, j);
-  return equal_object(xi, yj);
+static inline int list_equal_scalar_na_equal(const SEXP* x, const SEXP* y) {
+  return equal_object(*x, *y);
 }
-static inline int list_equal_scalar_na_propagate(SEXP x, R_len_t i, SEXP y, R_len_t j) {
-  const SEXP xi = VECTOR_ELT(x, i);
-  const SEXP yj = VECTOR_ELT(y, j);
+static inline int list_equal_scalar_na_propagate(const SEXP* x, const SEXP* y) {
+  const SEXP xi = *x;
+  const SEXP yj = *y;
   return (xi == R_NilValue || yj == R_NilValue) ? NA_LOGICAL : equal_object(xi, yj);
 }
-static inline int list_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
+static inline int list_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
   if (na_equal) {
-    return list_equal_scalar_na_equal(x, i, y, j);
+    return list_equal_scalar_na_equal(x, y);
   } else {
-    return list_equal_scalar_na_propagate(x, i, y, j);
+    return list_equal_scalar_na_propagate(x, y);
   }
 }
 

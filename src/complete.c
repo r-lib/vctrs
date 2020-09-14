@@ -182,23 +182,10 @@ static inline
 void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
   VEC_DETECT_COMPLETE_COL(Rbyte, RAW_RO, raw_equal_missing_scalar);
 }
-
-#undef VEC_DETECT_COMPLETE_COL
-
-#define VEC_DETECT_COMPLETE_COL_BARRIER(SCALAR_EQUAL_MISSING) { \
-  for (R_len_t i = 0; i < size; ++i) {                          \
-    if (SCALAR_EQUAL_MISSING(x, i)) {                           \
-      p_out[i] = 0;                                             \
-    }                                                           \
-  }                                                             \
-}
-
 static inline
 void list_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL_BARRIER(list_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(SEXP, VECTOR_PTR_RO, list_equal_missing_scalar);
 }
-
-#undef VEC_DETECT_COMPLETE_COL_BARRIER
 
 // -----------------------------------------------------------------------------
 
@@ -296,22 +283,7 @@ static inline
 void raw_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
   VEC_DETECT_ANY_NON_MISSING(Rbyte, RAW_RO, raw_equal_missing_scalar);
 }
-
-#undef VEC_DETECT_ANY_NON_MISSING
-
-
-#define VEC_DETECT_ANY_NON_MISSING_BARRIER(SCALAR_EQUAL_MISSING) { \
-  for (R_len_t i = 0; i < size; ++i) {                             \
-    /* At least one non-missing value exists */                    \
-    if (!SCALAR_EQUAL_MISSING(x, i)) {                             \
-      p_info->p_row_known[i] = true;                               \
-    }                                                              \
-  }                                                                \
-}
-
 static inline
 void list_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING_BARRIER(list_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(SEXP, VECTOR_PTR_RO, list_equal_missing_scalar);
 }
-
-#undef VEC_DETECT_ANY_NON_MISSING_BARRIER
