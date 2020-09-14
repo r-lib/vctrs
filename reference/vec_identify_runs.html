@@ -47,13 +47,9 @@
 
 
 <meta property="og:title" content="Runs — vec_identify_runs" />
-<meta property="og:description" content="
-
-vec_identify_runs() returns a vector of identifiers for the elements of
+<meta property="og:description" content="vec_identify_runs() returns a vector of identifiers for the elements of
 x that indicate which run of repeated values they fall in. The number of
-runs is also returned as an attribute, n.
-
-" />
+runs is also returned as an attribute, n." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -162,13 +158,9 @@ runs is also returned as an attribute, n.
     </div>
 
     <div class="ref-description">
-    
-<ul>
-<li><p><code>vec_identify_runs()</code> returns a vector of identifiers for the elements of
+    <p><code>vec_identify_runs()</code> returns a vector of identifiers for the elements of
 <code>x</code> that indicate which run of repeated values they fall in. The number of
-runs is also returned as an attribute, <code>n</code>.</p></li>
-</ul>
-
+runs is also returned as an attribute, <code>n</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>vec_identify_runs</span>(<span class='kw'>x</span>)</pre>
@@ -184,12 +176,8 @@ runs is also returned as an attribute, <code>n</code>.</p></li>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
-<ul>
-<li><p><code>vec_identify_runs()</code>: An integer vector with the same size as <code>x</code>. A
-scalar integer attribute, <code>n</code>, is attached.</p></li>
-</ul>
-
+    <p>An integer vector with the same size as <code>x</code>. A scalar integer attribute,
+<code>n</code>, is attached.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Unlike <code><a href='https://rdrr.io/r/base/rle.html'>base::rle()</a></code>, adjacent missing values are considered identical when
@@ -233,7 +221,7 @@ constructing runs. For example, <code>vec_identify_runs(c(NA, NA))</code> will r
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
