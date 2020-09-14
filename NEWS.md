@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* Functions that make comparisons within a single vector, such as
+  `vec_unique()`, or between two vectors, such as `vec_match()`, now
+  convert all character input to UTF-8 before making comparisons (#1246).
+
 * New `df_detect_complete()` which returns a logical vector that detects
   if rows of `x` are complete, i.e. they have no missing values.
 

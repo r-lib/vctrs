@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "dictionary.h"
+#include "translate.h"
 #include "type-data-frame.h"
 #include "utils.h"
 
@@ -10,7 +11,7 @@ SEXP vctrs_group_id(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -51,7 +52,7 @@ SEXP vctrs_group_rle(SEXP x) {
   R_len_t n = vec_size(x);
 
   x = PROTECT_N(vec_proxy_equal(x), &nprot);
-  x = PROTECT_N(obj_maybe_translate_encoding(x, n), &nprot);
+  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
 
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
@@ -142,7 +143,7 @@ SEXP vec_group_loc(SEXP x) {
   R_len_t n = vec_size(x);
 
   SEXP proxy = PROTECT_N(vec_proxy_equal(x), &nprot);
-  proxy = PROTECT_N(obj_maybe_translate_encoding(proxy, n), &nprot);
+  proxy = PROTECT_N(vec_normalize_encoding(proxy), &nprot);
 
   struct dictionary* d = new_dictionary(proxy);
   PROTECT_DICT(d, &nprot);
