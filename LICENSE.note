@@ -2,16 +2,8 @@ The implementation of vec_order() is inspired directly by data.table's
 forder() and by their contribution to R's order(). While no code from
 forder() or order() appear in the vctrs package, the implementation is
 similar enough to justify placing specific files in the vctrs package under
-the MPL-2.0 license used by data.table. Those specific files are:
-
-- order-groups.c
-- order-groups.h
-- order-lazy.h
-- order-sortedness.c
-- order-sortedness.h
-- order-truelength.c
-- order-truelength.h
-- order.c
+the MPL-2.0 license used by data.table. Files named with the pattern of
+`src/order-*.c` and `src/order-*.h` are additionally under the MPL-2.0 license.
 
 MPL-2.0 License ----------------------------------------------------------------
 
