@@ -364,6 +364,71 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   return out;
 }
 
+
+// Faster than `Rf_xlengthgets()` because that fills the new extended
+// locations with `NA`, which we don't need.
+// [[ include("utils.h") ]]
+SEXP p_int_resize(const int* p_x, r_ssize x_size, r_ssize size) {
+  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
+  int* p_out = INTEGER(out);
+
+  memcpy(p_out, p_x, x_size * sizeof(int));
+
+  UNPROTECT(1);
+  return out;
+}
+// [[ include("utils.h") ]]
+SEXP p_raw_resize(const Rbyte* p_x, r_ssize x_size, r_ssize size) {
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, size));
+  Rbyte* p_out = RAW(out);
+
+  memcpy(p_out, p_x, x_size * sizeof(Rbyte));
+
+  UNPROTECT(1);
+  return out;
+}
+// [[ include("utils.h") ]]
+SEXP p_chr_resize(const SEXP* p_x, r_ssize x_size, r_ssize size) {
+  SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
+
+  for (r_ssize i = 0; i < x_size; ++i) {
+    SET_STRING_ELT(out, i, p_x[i]);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+// [[ include("utils.h") ]]
+bool p_chr_any_reencode(const SEXP* p_x, r_ssize size) {
+  for (r_ssize i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    if (CHAR_NEEDS_REENCODE(elt)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// [[ include("utils.h") ]]
+void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, r_ssize size) {
+  const void* vmax = vmaxget();
+
+  for (r_ssize i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+
+    if (CHAR_NEEDS_REENCODE(elt)) {
+      SET_STRING_ELT(x_result, i, CHAR_REENCODE(elt));
+    } else {
+      SET_STRING_ELT(x_result, i, elt);
+    }
+  }
+
+  vmaxset(vmax);
+}
+
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Reached the unreachable.", fn);
 }
@@ -891,6 +956,19 @@ bool is_integer64(SEXP x) {
   return TYPEOF(x) == REALSXP && Rf_inherits(x, "integer64");
 }
 
+// [[ include("utils.h") ]]
+bool lgl_any_na(SEXP x) {
+  R_xlen_t size = Rf_xlength(x);
+  const int* p_x = LOGICAL_RO(x);
+
+  for (R_xlen_t i = 0; i < size; ++i) {
+    if (p_x[i] == NA_LOGICAL) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 void* r_vec_deref(SEXP x) {
   switch (TYPEOF(x)) {
@@ -2099,6 +2177,10 @@ void vctrs_init_utils(SEXP ns) {
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
   VCTRS_ASSERT(sizeof(double) == 2 * sizeof(int));
+
+  // We assume the following in `vec_order()`
+  VCTRS_ASSERT(sizeof(int) == sizeof(int32_t));
+  VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
 
   SEXP current_frame_body = PROTECT(r_parse_eval("as.call(list(sys.frame, -1))", R_BaseEnv));
   SEXP current_frame_fn = PROTECT(r_new_function(R_NilValue, current_frame_body, R_EmptyEnv));

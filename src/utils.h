@@ -114,6 +114,13 @@ bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
 
+SEXP p_int_resize(const int* p_x, r_ssize x_size, r_ssize size);
+SEXP p_raw_resize(const Rbyte* p_x, r_ssize x_size, r_ssize size);
+SEXP p_chr_resize(const SEXP* p_x, r_ssize x_size, r_ssize size);
+
+bool p_chr_any_reencode(const SEXP* p_x, r_ssize size);
+void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, r_ssize size);
+
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
 
@@ -190,6 +197,8 @@ SEXP compact_materialize(SEXP x);
 R_len_t vec_subscript_size(SEXP x);
 
 bool is_integer64(SEXP x);
+
+bool lgl_any_na(SEXP x);
 
 SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
@@ -483,6 +492,15 @@ intmax_t intmax_add(intmax_t x, intmax_t y) {
   }
 
   return x + y;
+}
+static inline
+intmax_t intmax_subtract(intmax_t x, intmax_t y) {
+  if ((y > 0 && x < (INTMAX_MIN + y)) ||
+      (y < 0 && x < (INTMAX_MAX + y))) {
+    stop_internal("intmax_subtract", "Subtraction resulted in overflow or underflow.");
+  }
+
+  return x - y;
 }
 
 static inline
