@@ -5,30 +5,16 @@
 \alias{vec_sort}
 \title{Order and sort vectors}
 \usage{
-vec_order(x, direction = "asc", na_value = "largest")
+vec_order(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 
-vec_sort(x, direction = "asc", na_value = "largest")
+vec_sort(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 }
 \arguments{
 \item{x}{A vector}
 
-\item{direction}{Direction to sort in.
-\itemize{
-\item A single \code{"asc"} or \code{"desc"} for ascending or descending order
-respectively.
-\item For data frames, a length \code{1} or \code{ncol(x)} character vector containing
-only \code{"asc"} or \code{"desc"}, specifying the direction for each column.
-}}
+\item{direction}{Direction to sort in. Defaults to \code{asc}ending.}
 
-\item{na_value}{Treatment of \code{NA} values. \code{NaN} values are treated as
-equivalent to \code{NA} values.
-\itemize{
-\item A single \code{"largest"} or \code{"smallest"} for treating \code{NA} values as the
-largest or smallest values respectively.
-\item For data frames, a length \code{1} or \code{ncol(x)} character vector containing
-only \code{"largest"} or \code{"smallest"}, specifying how \code{NA}s should be treated
-in each column.
-}}
+\item{na_value}{Should \code{NA}s be treated as the largest or smallest values?}
 }
 \value{
 \itemize{
@@ -37,27 +23,7 @@ in each column.
 }
 }
 \description{
-\code{vec_order()} computes the order of \code{x}. For data frames, the order is
-computed along the rows by computing the order of the first column and
-using subsequent columns to break ties.
-
-\code{vec_sort()} sorts \code{x} by computing its order and using \code{vec_slice()} to
-rearrange.
-}
-\details{
-Character vectors are ordered in the C-locale. This is different from
-\code{base::order()}, which respects \code{base::Sys.setlocale()}. Sorting in a
-consistent locale can produce more reproducible results between different
-sessions and platforms, however, the results of sorting in the C-locale
-can be surprising. For example, capital letters sort before lower case
-letters. Sorting \code{c("b", "C", "a")} with \code{vec_sort()} will return
-\code{c("C", "a", "b")}, but with \code{base::order()} will return \code{c("a", "b", "C")}
-unless \code{base::order(method = "radix")} is explicitly set, which also uses
-the C-locale. While sorting with the C-locale can be useful for
-algorithmic efficiency, in many real world uses it can be the cause of
-data analysis mistakes.
-
-Character vectors are always translated to UTF-8 before ordering.
+Order and sort vectors
 }
 \section{Dependencies of \code{vec_order()}}{
 
@@ -69,15 +35,14 @@ Character vectors are always translated to UTF-8 before ordering.
 \section{Dependencies of \code{vec_sort()}}{
 
 \itemize{
+\item \code{\link[=vec_proxy_order]{vec_proxy_order()}}
 \item \code{\link[=vec_order]{vec_order()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
 }
 }
 
 \examples{
-x <- round(sample(runif(5), 9, replace = TRUE), 3)
-x <- c(x, NA)
-
+x <- round(c(runif(9), NA), 3)
 vec_order(x)
 vec_sort(x)
 vec_sort(x, "desc")
@@ -87,12 +52,4 @@ df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 vec_order(df)
 vec_sort(df)
 vec_sort(df, "desc")
-
-# For data frames, `direction` and `na_value` are allowed to be vectors
-# with length equal to the number of columns in the data frame
-vec_sort(
-  df,
-  direction = c("desc", "asc"),
-  na_value = c("largest", "smallest")
-)
 }
