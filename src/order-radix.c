@@ -18,6 +18,7 @@
 
 #include "vctrs.h"
 #include "utils.h"
+#include "lazy.h"
 #include "type-data-frame.h"
 #include "order-groups.h"
 #include "order-truelength.h"
@@ -289,16 +290,16 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
   struct lazy_raw lazy_x_chunk = new_lazy_raw(size, n_bytes_lazy_raw);
-  PROTECT_LAZY_RAW(&lazy_x_chunk, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_x_chunk, p_n_prot);
 
   struct lazy_raw lazy_x_aux = new_lazy_raw(size, n_bytes_lazy_raw);
-  PROTECT_LAZY_RAW(&lazy_x_aux, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_x_aux, p_n_prot);
 
   struct lazy_raw lazy_o_aux = new_lazy_raw(size, sizeof(int));
-  PROTECT_LAZY_RAW(&lazy_o_aux, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_o_aux, p_n_prot);
 
   struct lazy_raw lazy_bytes = new_lazy_raw(size, sizeof(uint8_t));
-  PROTECT_LAZY_RAW(&lazy_bytes, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_bytes, p_n_prot);
 
   // Compute the maximum size of the `counts` vector needed during radix
   // ordering. 4 * 256 for integers, 8 * 256 for doubles.
@@ -306,7 +307,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   r_ssize size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
   struct lazy_raw lazy_counts = new_lazy_raw(size_lazy_counts, sizeof(r_ssize));
-  PROTECT_LAZY_RAW(&lazy_counts, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_counts, p_n_prot);
 
   // Determine if group tracking can be turned off.
   // We turn if off if ordering non-data frame input as long as
@@ -340,7 +341,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   PROTECT_TRUELENGTH_INFO(&truelength_info, p_n_prot);
 
   struct lazy_chr lazy_x_reencoded = new_lazy_chr(size);
-  PROTECT_LAZY_CHR(&lazy_x_reencoded, p_n_prot);
+  PROTECT_LAZY_VEC(&lazy_x_reencoded, p_n_prot);
 
   struct lazy_int lazy_o = new_lazy_int(size);
   PROTECT_LAZY_INT(&lazy_o, p_n_prot);
@@ -893,7 +894,7 @@ void int_order_chunk_impl(bool decreasing,
     return;
   }
 
-  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
   uint32_t range;
   int x_min;
@@ -924,12 +925,12 @@ void int_order_chunk_impl(bool decreasing,
     return;
   }
 
-  uint32_t* p_x_aux = (uint32_t*) lazy_raw_initialize(p_lazy_x_aux);
+  uint32_t* p_x_aux = (uint32_t*) init_lazy_raw(p_lazy_x_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
-  r_ssize* p_counts = (r_ssize*) lazy_raw_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
+  r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
+  memset(p_counts, 0, p_lazy_counts->size);
 
   int_adjust(decreasing, na_last, size, p_x);
 
@@ -972,7 +973,7 @@ void int_order_impl(const int* p_x,
 
     void* p_x_chunk;
     if (copy) {
-      p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
+      p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
       memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
     } else {
       p_x_chunk = p_lazy_x_chunk->p_data;
@@ -1022,18 +1023,18 @@ void int_order_impl(const int* p_x,
 
   int* p_o = lazy_order_initialize(p_lazy_o);
 
-  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
-  uint32_t* p_x_aux = (uint32_t*) lazy_raw_initialize(p_lazy_x_aux);
+  uint32_t* p_x_aux = (uint32_t*) init_lazy_raw(p_lazy_x_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
-  r_ssize* p_counts = (r_ssize*) lazy_raw_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
+  r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
+  memset(p_counts, 0, p_lazy_counts->size);
 
   void* p_x_chunk;
   if (copy) {
-    p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
+    p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
     memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
@@ -1897,14 +1898,14 @@ void dbl_order_chunk_impl(bool decreasing,
     return;
   }
 
-  uint64_t* p_x_aux = (uint64_t*) lazy_raw_initialize(p_lazy_x_aux);
+  uint64_t* p_x_aux = (uint64_t*) init_lazy_raw(p_lazy_x_aux);
 
-  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
-  r_ssize* p_counts = (r_ssize*) lazy_raw_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
+  r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
+  memset(p_counts, 0, p_lazy_counts->size);
 
   dbl_order_radix(
     size,
@@ -1962,7 +1963,7 @@ void dbl_order_impl(const double* p_x,
 
   void* p_x_chunk;
   if (copy) {
-    p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
+    p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
     memcpy(p_x_chunk, p_x, size * sizeof(*p_x));
   } else {
     p_x_chunk = p_lazy_x_chunk->p_data;
@@ -1975,14 +1976,14 @@ void dbl_order_impl(const double* p_x,
     return;
   }
 
-  uint64_t* p_x_aux = (uint64_t*) lazy_raw_initialize(p_lazy_x_aux);
+  uint64_t* p_x_aux = (uint64_t*) init_lazy_raw(p_lazy_x_aux);
 
-  int* p_o_aux = (int*) lazy_raw_initialize(p_lazy_o_aux);
+  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
-  r_ssize* p_counts = (r_ssize*) lazy_raw_initialize(p_lazy_counts);
-  memset(p_counts, 0, p_lazy_counts->n_bytes_data);
+  r_ssize* p_counts = (r_ssize*) init_lazy_raw(p_lazy_counts);
+  memset(p_counts, 0, p_lazy_counts->size);
 
   dbl_order_radix(
     size,
@@ -2508,7 +2509,7 @@ void cpl_order(SEXP x,
   // When a complex column is present,
   // `lazy_x_chunk` and `lazy_x_aux` are created to have the
   // size of a double vector.
-  double* p_x_chunk_dbl = (double*) lazy_raw_initialize(p_lazy_x_chunk);
+  double* p_x_chunk_dbl = (double*) init_lazy_raw(p_lazy_x_chunk);
 
   // Handle the real portion first
   for (r_ssize i = 0; i < size; ++i) {
@@ -2673,7 +2674,7 @@ void chr_order_chunk(bool decreasing,
     return;
   }
 
-  void* p_x_aux = lazy_raw_initialize(p_lazy_x_aux);
+  void* p_x_aux = init_lazy_raw(p_lazy_x_aux);
 
   // Move integer ordering into `p_x_aux`.
   // `p_x_aux` is allocated as the larger of `int` and `SEXP*`.
@@ -2869,7 +2870,7 @@ void chr_order_internal(SEXP x,
     p_x = p_lazy_x_reencoded->p_data;
   }
 
-  void* p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
+  void* p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
 
   // Move integer ordering into `p_x_chunk`.
   // `p_x_chunk` is allocated as the larger of `int` and `SEXP*`.
@@ -2974,7 +2975,7 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
     truelength_reset(p_truelength_info);
 
     // Initialize container for re-encoded result
-    lazy_chr_initialize(p_lazy_x_reencoded);
+    init_lazy_chr(p_lazy_x_reencoded);
 
     p_chr_copy_with_reencode(p_x, p_lazy_x_reencoded->data, size);
 
@@ -2987,9 +2988,9 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
 
   r_ssize n_uniques = p_truelength_info->size_used;
 
-  SEXP* p_x_aux = (SEXP*) lazy_raw_initialize(p_lazy_x_aux);
+  SEXP* p_x_aux = (SEXP*) init_lazy_raw(p_lazy_x_aux);
 
-  uint8_t* p_bytes = (uint8_t*) lazy_raw_initialize(p_lazy_bytes);
+  uint8_t* p_bytes = (uint8_t*) init_lazy_raw(p_lazy_bytes);
 
   // Sorts uniques in ascending order using `p_x_aux` for working memory.
   // Assumes no `NA`!
@@ -3678,7 +3679,7 @@ void df_order_internal(SEXP x,
     groups_swap(p_group_infos);
 
     // Ensure `x_chunk` is initialized to hold chunks
-    void* p_x_chunk = lazy_raw_initialize(p_lazy_x_chunk);
+    void* p_x_chunk = init_lazy_raw(p_lazy_x_chunk);
 
     // Iterate over this column's group chunks
     for (r_ssize group = 0; group < n_groups; ++group) {
