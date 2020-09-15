@@ -16,41 +16,39 @@
  * to R's `order()`. See LICENSE.note for more information.
  */
 
-#ifndef VCTRS_ORDER_LAZY_H
-#define VCTRS_ORDER_LAZY_H
+#ifndef VCTRS_ORDER_RADIX_H
+#define VCTRS_ORDER_RADIX_H
 
 #include "vctrs.h"
 
 // -----------------------------------------------------------------------------
 
 /*
- * `lazy_int` is a lazy integer vector intended to hold the ordering vector
- * in `vec_order()`. It is lazy not in the allocation, but in the initialization
- * of values. Typically it is initialized to a 1-based sequential ordering
- * which is rearranged by the internal algorithm. However, for the counting
- * order, the initialization is not required for the first integer column,
- * which can result in a nice performance improvement.
+ * `order` is an integer vector intended to hold the ordering vector
+ * in `vec_order()`. It is allocated eagerly, but the initialization of its
+ * values is done lazily. Typically, it is initialized to a 1-based sequential
+ * ordering which is rearranged by the internal algorithm. However, for the
+ * counting order, the initialization is not required for the first integer
+ * column, which can result in a nice performance improvement.
  */
-struct lazy_int {
+struct order {
   SEXP data;
   int* p_data;
-
   r_ssize size;
   bool initialized;
 };
 
-#define PROTECT_LAZY_INT(p_info, p_n) do { \
-  PROTECT((p_info)->data);                 \
-  *(p_n) += 1;                             \
+#define PROTECT_ORDER(p_order, p_n) do { \
+  PROTECT((p_order)->data);              \
+  *(p_n) += 1;                           \
 } while (0)
 
-
 static inline
-struct lazy_int new_lazy_int(r_ssize size) {
+struct order new_order(r_ssize size) {
   SEXP data = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_data = INTEGER(data);
 
-  struct lazy_int out = {
+  struct order out = {
     .data = data,
     .p_data = p_data,
     .size = size,
@@ -62,21 +60,19 @@ struct lazy_int new_lazy_int(r_ssize size) {
 }
 
 static inline
-int* lazy_order_initialize(struct lazy_int* p_lazy_o) {
-  if (p_lazy_o->initialized) {
-    return p_lazy_o->p_data;
+int* init_order(struct order* p_order) {
+  if (p_order->initialized) {
+    return p_order->p_data;
   }
-
-  r_ssize size = p_lazy_o->size;
 
   // Initialize `x` with sequential 1-based ordering
-  for (r_ssize i = 0; i < size; ++i) {
-    p_lazy_o->p_data[i] = i + 1;
+  for (r_ssize i = 0; i < p_order->size; ++i) {
+    p_order->p_data[i] = i + 1;
   }
 
-  p_lazy_o->initialized = true;
+  p_order->initialized = true;
 
-  return p_lazy_o->p_data;
+  return p_order->p_data;
 }
 
 // -----------------------------------------------------------------------------
