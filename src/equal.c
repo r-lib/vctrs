@@ -417,28 +417,20 @@ static void vec_equal_col(int* p_out,
 
 // -----------------------------------------------------------------------------
 
-static inline int lgl_equal_na_scalar(const int* x);
-static inline int int_equal_na_scalar(const int* x);
-static inline int dbl_equal_na_scalar(const double* x);
-static inline int cpl_equal_na_scalar(const Rcomplex* x);
-static inline int raw_equal_na_scalar(const Rbyte* x);
-static inline int chr_equal_na_scalar(const SEXP* x);
-static inline int list_equal_na_scalar(const SEXP* x);
-
-#define EQUAL_NA(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA)     \
-  do {                                                    \
-    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));     \
-    int* p_out = LOGICAL(out);                            \
-                                                          \
-    const CTYPE* p_x = CONST_DEREF(x);                    \
-                                                          \
-    for (R_len_t i = 0; i < size; ++i, ++p_x) {           \
-      p_out[i] = SCALAR_EQUAL_NA(p_x);                    \
-    }                                                     \
-                                                          \
-    UNPROTECT(2);                                         \
-    return out;                                           \
-  }                                                       \
+#define EQUAL_NA(CTYPE, CONST_DEREF, EQUAL_MISSING_SCALAR) \
+  do {                                                     \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));      \
+    int* p_out = LOGICAL(out);                             \
+                                                           \
+    const CTYPE* p_x = CONST_DEREF(x);                     \
+                                                           \
+    for (R_len_t i = 0; i < size; ++i) {                   \
+      p_out[i] = EQUAL_MISSING_SCALAR(p_x[i]);             \
+    }                                                      \
+                                                           \
+    UNPROTECT(2);                                          \
+    return out;                                            \
+  }                                                        \
   while (0)
 
 static SEXP df_equal_na(SEXP x, R_len_t size);
@@ -452,13 +444,13 @@ SEXP vctrs_equal_na(SEXP x) {
   enum vctrs_type type = vec_proxy_typeof(x);
 
   switch (type) {
-  case vctrs_type_logical:   EQUAL_NA(int, LOGICAL_RO, lgl_equal_na_scalar);
-  case vctrs_type_integer:   EQUAL_NA(int, INTEGER_RO, int_equal_na_scalar);
-  case vctrs_type_double:    EQUAL_NA(double, REAL_RO, dbl_equal_na_scalar);
-  case vctrs_type_complex:   EQUAL_NA(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar);
-  case vctrs_type_raw:       EQUAL_NA(Rbyte, RAW_RO, raw_equal_na_scalar);
-  case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_equal_na_scalar);
-  case vctrs_type_list:      EQUAL_NA(SEXP, VECTOR_PTR_RO, list_equal_na_scalar);
+  case vctrs_type_logical:   EQUAL_NA(int, LOGICAL_RO, lgl_equal_missing_scalar);
+  case vctrs_type_integer:   EQUAL_NA(int, INTEGER_RO, int_equal_missing_scalar);
+  case vctrs_type_double:    EQUAL_NA(double, REAL_RO, dbl_equal_missing_scalar);
+  case vctrs_type_complex:   EQUAL_NA(Rcomplex, COMPLEX_RO, cpl_equal_missing_scalar);
+  case vctrs_type_raw:       EQUAL_NA(Rbyte, RAW_RO, raw_equal_missing_scalar);
+  case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_equal_missing_scalar);
+  case vctrs_type_list:      EQUAL_NA(SEXP, VECTOR_PTR_RO, list_equal_missing_scalar);
   case vctrs_type_dataframe: {
     SEXP out = df_equal_na(x, size);
     UNPROTECT(1);
@@ -470,38 +462,6 @@ SEXP vctrs_equal_na(SEXP x) {
 }
 
 #undef EQUAL_NA
-
-static inline int lgl_equal_na_scalar(const int* x) {
-  return *x == NA_LOGICAL;
-}
-
-static inline int int_equal_na_scalar(const int* x) {
-  return *x == NA_INTEGER;
-}
-
-static inline int dbl_equal_na_scalar(const double* x) {
-  // is.na(NaN) is TRUE
-  // isnan() does not consistently return 1 and 0 on all platforms,
-  // but R's ISNAN() does
-  return ISNAN(*x);
-}
-
-static inline int cpl_equal_na_scalar(const Rcomplex* x) {
-  return ISNAN(x->r) || ISNAN(x->i);
-}
-
-// Raw vectors can never be `NA`
-static inline int raw_equal_na_scalar(const Rbyte* x) {
-  return false;
-}
-
-static inline int chr_equal_na_scalar(const SEXP* x) {
-  return *x == NA_STRING;
-}
-
-static inline int list_equal_na_scalar(const SEXP* x) {
-  return *x == R_NilValue;
-}
 
 // -----------------------------------------------------------------------------
 
@@ -550,39 +510,39 @@ static SEXP df_equal_na(SEXP x, R_len_t size) {
 
 // -----------------------------------------------------------------------------
 
-#define EQUAL_NA_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA) \
-do {                                                      \
-  const CTYPE* p_x = CONST_DEREF(x);                      \
-                                                          \
-  for (R_len_t i = 0; i < p_info->size; ++i, ++p_x) {     \
-    if (p_info->p_row_known[i]) {                         \
-      continue;                                           \
-    }                                                     \
-                                                          \
-    if (!SCALAR_EQUAL_NA(p_x)) {                          \
-      p_out[i] = 0;                                       \
-      p_info->p_row_known[i] = true;                      \
-      --p_info->remaining;                                \
-                                                          \
-      if (p_info->remaining == 0) {                       \
-        break;                                            \
-      }                                                   \
-    }                                                     \
-  }                                                       \
-}                                                         \
+#define EQUAL_NA_COL(CTYPE, CONST_DEREF, EQUAL_MISSING_SCALAR) \
+do {                                                           \
+  const CTYPE* p_x = CONST_DEREF(x);                           \
+                                                               \
+  for (R_len_t i = 0; i < p_info->size; ++i) {                 \
+    if (p_info->p_row_known[i]) {                              \
+      continue;                                                \
+    }                                                          \
+                                                               \
+    if (!EQUAL_MISSING_SCALAR(p_x[i])) {                       \
+      p_out[i] = 0;                                            \
+      p_info->p_row_known[i] = true;                           \
+      --p_info->remaining;                                     \
+                                                               \
+      if (p_info->remaining == 0) {                            \
+        break;                                                 \
+      }                                                        \
+    }                                                          \
+  }                                                            \
+}                                                              \
 while (0)
 
 static void vec_equal_na_col(int* p_out,
                              struct df_short_circuit_info* p_info,
                              SEXP x) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_na_scalar); break;
-  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_na_scalar); break;
-  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_na_scalar); break;
-  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_scalar); break;
-  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_na_scalar); break;
-  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_na_scalar); break;
-  case vctrs_type_list:      EQUAL_NA_COL(SEXP, VECTOR_PTR_RO, list_equal_na_scalar); break;
+  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_equal_missing_scalar); break;
+  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_equal_missing_scalar); break;
+  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_equal_missing_scalar); break;
+  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_equal_missing_scalar); break;
+  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_equal_missing_scalar); break;
+  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_equal_missing_scalar); break;
+  case vctrs_type_list:      EQUAL_NA_COL(SEXP, VECTOR_PTR_RO, list_equal_missing_scalar); break;
   case vctrs_type_dataframe: df_equal_na_impl(p_out, p_info, x); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal_na()`");
   default:                   Rf_error("Unimplemented type in `vec_equal_na()`");
