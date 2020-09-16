@@ -101,22 +101,26 @@ test_that("attributes are translated", {
 
   a <- structure(1, enc = utf8)
   b <- structure(1, enc = latin1)
-  c <- structure(1, enc = list(latin1))
+  c <- structure(1, enc1 = utf8, enc2 = list(latin1), enc3 = latin1)
   x <- list(a, b, c)
 
   result <- vec_normalize_encoding(x)
 
   a_enc <- attr(result[[1]], "enc")
   b_enc <- attr(result[[2]], "enc")
-  c_enc <- attr(result[[3]], "enc")[[1]]
+  c_enc1 <- attr(result[[3]], "enc1")
+  c_enc2 <- attr(result[[3]], "enc2")[[1]]
+  c_enc3 <- attr(result[[3]], "enc3")
 
   expect_equal_encoding(a_enc, utf8)
   expect_equal_encoding(b_enc, utf8)
-  expect_equal_encoding(c_enc, utf8)
+  expect_equal_encoding(c_enc1, utf8)
+  expect_equal_encoding(c_enc2, utf8)
+  expect_equal_encoding(c_enc3, utf8)
 
   expect <- list(
     structure(1, enc = utf8),
-    structure(1, enc = list(utf8))
+    structure(1, enc1 = utf8, enc2 = list(utf8), enc3 = utf8)
   )
 
   expect_identical(vec_unique(x), expect)
