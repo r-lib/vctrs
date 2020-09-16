@@ -2,8 +2,99 @@
 #include "utils.h"
 #include "equal.h"
 #include "translate.h"
+#include "type-data-frame.h"
 
 static SEXP vec_identify_runs(SEXP x);
+
+// -----------------------------------------------------------------------------
+
+static SEXP vec_rle(SEXP x);
+
+// [[register()]]
+SEXP vctrs_rle(SEXP x) {
+  return vec_rle(x);
+}
+
+static SEXP new_rle_data_frame(SEXP key, SEXP sizes, r_ssize size);
+
+static
+SEXP vec_rle(SEXP x) {
+  SEXP id = PROTECT(vec_identify_runs(x));
+  const int* p_id = INTEGER_RO(id);
+
+  r_ssize x_size = r_length(id);
+
+  if (x_size == 0) {
+    SEXP out = new_rle_data_frame(x, vctrs_shared_empty_int, 0);
+    UNPROTECT(1);
+    return out;
+  }
+
+  r_ssize out_size = (r_ssize) r_int_get(r_attrib_get(id, syms_n), 0);
+
+  // Size of each run
+  SEXP sizes = PROTECT(r_new_integer(out_size));
+  int* p_sizes = INTEGER(sizes);
+
+  // Location of the start of each run. For slicing `x`.
+  SEXP loc = PROTECT(r_new_integer(out_size));
+  int* p_loc = INTEGER(loc);
+
+  r_ssize idx = 0;
+  r_ssize previous = 0;
+
+  int reference = p_id[0];
+
+  // Handle first case
+  p_loc[idx] = 1;
+  ++idx;
+
+  for (r_ssize i = 1; i < x_size; ++i) {
+    const int elt = p_id[i];
+
+    if (elt == reference) {
+      continue;
+    }
+
+    reference = elt;
+
+    // Size of current run
+    p_sizes[idx - 1] = i - previous;
+    previous = i;
+
+    // 1-based location of the start of the new run
+    p_loc[idx] = i + 1;
+    ++idx;
+  }
+
+  // Handle last case
+  p_sizes[idx - 1] = x_size - previous;
+
+  SEXP key = PROTECT(vec_slice(x, loc));
+  SEXP out = new_rle_data_frame(key, sizes, out_size);
+
+  UNPROTECT(4);
+  return out;
+}
+
+static
+SEXP new_rle_data_frame(SEXP key, SEXP sizes, r_ssize size) {
+  SEXP out = PROTECT(r_new_list(2));
+
+  r_list_poke(out, 0, key);
+  r_list_poke(out, 1, sizes);
+
+  SEXP names = r_new_character(2);
+  r_poke_names(out, names);
+
+  r_chr_poke(names, 0, strings_key);
+  r_chr_poke(names, 1, strings_size);
+
+  init_data_frame(out, size);
+
+  UNPROTECT(1);
+  return out;
+}
 
 // -----------------------------------------------------------------------------
 
