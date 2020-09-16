@@ -424,29 +424,6 @@ static inline int cpl_equal_na_scalar(const Rcomplex* x);
 static inline int raw_equal_na_scalar(const Rbyte* x);
 static inline int chr_equal_na_scalar(const SEXP* x);
 static inline int list_equal_na_scalar(const SEXP* x);
-static inline int df_equal_na_scalar(SEXP x, R_len_t i);
-
-// If `x` is a data frame, it must have been recursively proxied
-// beforehand so we can safely use `TYPEOF(x)`
-int equal_na(SEXP x, R_len_t i) {
-  switch (TYPEOF(x)) {
-  case LGLSXP: return lgl_equal_na_scalar(LOGICAL_RO(x) + i);
-  case INTSXP: return int_equal_na_scalar(INTEGER_RO(x) + i);
-  case REALSXP: return dbl_equal_na_scalar(REAL_RO(x) + i);
-  case CPLXSXP: return cpl_equal_na_scalar(COMPLEX_RO(x) + i);
-  case RAWSXP: return raw_equal_na_scalar(RAW_RO(x) + i);
-  case STRSXP: return chr_equal_na_scalar(STRING_PTR_RO(x) + i);
-  default: break;
-  }
-
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_list: return list_equal_na_scalar(VECTOR_PTR_RO(x) + i);
-  case vctrs_type_dataframe: return df_equal_na_scalar(x, i);
-  default: break;
-  }
-
-  stop_unimplemented_vctrs_type("equal_na", vec_typeof(x));
-}
 
 #define EQUAL_NA(CTYPE, CONST_DEREF, SCALAR_EQUAL_NA)     \
   do {                                                    \
@@ -524,18 +501,6 @@ static inline int chr_equal_na_scalar(const SEXP* x) {
 
 static inline int list_equal_na_scalar(const SEXP* x) {
   return *x == R_NilValue;
-}
-
-static inline int df_equal_na_scalar(SEXP x, R_len_t i) {
-  int n_col = Rf_length(x);
-
-  for (int k = 0; k < n_col; ++k) {
-    if (!equal_na(VECTOR_ELT(x, k), i)) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 // -----------------------------------------------------------------------------
