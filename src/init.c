@@ -234,7 +234,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_df_col",                  (DL_FUNC) &vctrs_as_df_col, 2},
   {"vctrs_apply_name_spec",            (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                   (DL_FUNC) &vctrs_unset_s4, 1},
-  {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
+  {"vctrs_altrep_rle_Make",            (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
   {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 4},
