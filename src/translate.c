@@ -47,7 +47,8 @@ static SEXP chr_normalize_encoding(SEXP x);
 static SEXP list_normalize_encoding(SEXP x);
 static SEXP obj_attrib_normalize_encoding(SEXP x);
 
-static inline SEXP obj_normalize_encoding(SEXP x) {
+static inline
+SEXP obj_normalize_encoding(SEXP x) {
   x = PROTECT(obj_attrib_normalize_encoding(x));
 
   switch (TYPEOF(x)) {
@@ -64,7 +65,8 @@ static inline SEXP obj_normalize_encoding(SEXP x) {
 
 static inline r_ssize chr_find_normalize_start(SEXP x, r_ssize size);
 
-static SEXP chr_normalize_encoding(SEXP x) {
+static
+SEXP chr_normalize_encoding(SEXP x) {
   r_ssize size = r_length(x);
   r_ssize start = chr_find_normalize_start(x, size);
 
@@ -92,7 +94,8 @@ static SEXP chr_normalize_encoding(SEXP x) {
   return x;
 }
 
-static inline r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
+static inline
+r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   for (r_ssize i = 0; i < size; ++i) {
@@ -110,7 +113,8 @@ static inline r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP list_normalize_encoding(SEXP x) {
+static
+SEXP list_normalize_encoding(SEXP x) {
   int nprot = 0;
 
   r_ssize size = r_length(x);
@@ -143,7 +147,8 @@ static SEXP list_normalize_encoding(SEXP x) {
 
 static SEXP attrib_normalize_encoding(SEXP x);
 
-static SEXP obj_attrib_normalize_encoding(SEXP x) {
+static
+SEXP obj_attrib_normalize_encoding(SEXP x) {
   SEXP attrib_old = r_attrib(x);
 
   if (attrib_old == r_null) {
@@ -163,7 +168,8 @@ static SEXP obj_attrib_normalize_encoding(SEXP x) {
   return x;
 }
 
-static SEXP attrib_normalize_encoding(SEXP x) {
+static
+SEXP attrib_normalize_encoding(SEXP x) {
   int nprot = 0;
   r_ssize loc = 0;
 
