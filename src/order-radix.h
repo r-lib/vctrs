@@ -26,6 +26,7 @@
  * column, which can result in a nice performance improvement.
  */
 struct order {
+  SEXP self;
   SEXP data;
   int* p_data;
   r_ssize size;
@@ -33,24 +34,27 @@ struct order {
 };
 
 #define PROTECT_ORDER(p_order, p_n) do { \
+  PROTECT((p_order)->self);              \
   PROTECT((p_order)->data);              \
-  *(p_n) += 1;                           \
+  *(p_n) += 2;                           \
 } while (0)
 
 static inline
-struct order new_order(r_ssize size) {
+struct order* new_order(r_ssize size) {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct order)));
+  struct order* p_order = (struct order*) RAW(self);
+
   SEXP data = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_data = INTEGER(data);
 
-  struct order out = {
-    .data = data,
-    .p_data = p_data,
-    .size = size,
-    .initialized = false
-  };
+  p_order->self = self;
+  p_order->data = data;
+  p_order->p_data = p_data;
+  p_order->size = size;
+  p_order->initialized = false;
 
-  UNPROTECT(1);
-  return out;
+  UNPROTECT(2);
+  return p_order;
 }
 
 static inline
