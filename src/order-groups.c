@@ -17,7 +17,7 @@
 
 // Pair with `PROTECT_GROUP_INFO()` in the caller
 struct group_info* new_group_info() {
-  SEXP self = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct group_info)));
+  SEXP self = PROTECT(r_new_raw(sizeof(struct group_info)));
   struct group_info* p_group_info = (struct group_info*) RAW(self);
 
   p_group_info->self = self;
@@ -35,7 +35,7 @@ struct group_infos* new_group_infos(struct group_info** p_p_group_info,
                                     r_ssize max_data_size,
                                     bool requested,
                                     bool ignore) {
-  SEXP self = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct group_infos)));
+  SEXP self = PROTECT(r_new_raw(sizeof(struct group_infos)));
   struct group_infos* p_group_infos = (struct group_infos*) RAW(self);
 
   p_group_infos->self = self;
