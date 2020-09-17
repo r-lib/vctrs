@@ -26,6 +26,7 @@ struct group_info* new_group_info() {
   p_group_info->n_groups = 0;
   p_group_info->max_group_size = 0;
 
+  UNPROTECT(1);
   return p_group_info;
 }
 
@@ -46,6 +47,7 @@ struct group_infos* new_group_infos(struct group_info** p_p_group_info,
   p_group_infos->requested = requested;
   p_group_infos->ignore = ignore;
 
+  UNPROTECT(1);
   return p_group_infos;
 }
 
