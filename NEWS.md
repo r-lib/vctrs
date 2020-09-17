@@ -1,6 +1,8 @@
 
 # vctrs (development version)
 
+* vctrs has been relicensed as MIT (#1259).
+
 * Functions that make comparisons within a single vector, such as
   `vec_unique()`, or between two vectors, such as `vec_match()`, now
   convert all character input to UTF-8 before making comparisons (#1246).
