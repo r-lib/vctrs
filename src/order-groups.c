@@ -31,6 +31,7 @@ struct group_info* new_group_info() {
 
 // -----------------------------------------------------------------------------
 
+// Pair with `PROTECT_GROUP_INFOS()` in the caller
 struct group_infos* new_group_infos(struct group_info** p_p_group_info,
                                     r_ssize max_data_size,
                                     bool requested,
