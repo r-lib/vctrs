@@ -14,6 +14,9 @@
 #define VCTRS_ORDER_RADIX_H
 
 #include "vctrs.h"
+#include "lazy.h"
+#include "order-groups.h"
+#include "order-truelength.h"
 
 // -----------------------------------------------------------------------------
 
@@ -72,6 +75,62 @@ int* init_order(struct order* p_order) {
 
   return p_order->p_data;
 }
+
+// -----------------------------------------------------------------------------
+
+SEXP parse_na_value(SEXP na_value);
+SEXP parse_direction(SEXP direction);
+SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
+
+// -----------------------------------------------------------------------------
+
+/*
+ * `order_info` is a meta struct that holds all of the information used to
+ * call `vec_order()`. It is returned from `vec_order_info()` and can be
+ * used:
+ * - For just the ordering in `p_order`
+ * - For the additional group sizes in `p_group_infos`
+ * - To compute the ordering by appearance by calling `vec_order_opts()`
+ *   a second time with `p_order->data` as the input requiring ordering
+ */
+struct order_info {
+  SEXP self;
+  struct order* p_order;
+  struct lazy_raw* p_lazy_x_chunk;
+  struct lazy_raw* p_lazy_x_aux;
+  struct lazy_raw* p_lazy_o_aux;
+  struct lazy_raw* p_lazy_bytes;
+  struct lazy_raw* p_lazy_counts;
+  struct group_infos* p_group_infos;
+  struct lazy_chr* p_lazy_x_reencoded;
+  struct truelength_info* p_truelength_info;
+};
+
+#define PROTECT_ORDER_INFO(p_order_info, p_n) do {                    \
+  PROTECT((p_order_info)->self);                                      \
+  *(p_n) += 1;                                                        \
+  PROTECT_ORDER((p_order_info)->p_order, (p_n));                      \
+  PROTECT_LAZY_VEC((p_order_info)->p_lazy_x_chunk, (p_n));            \
+  PROTECT_LAZY_VEC((p_order_info)->p_lazy_x_aux, (p_n));              \
+  PROTECT_LAZY_VEC((p_order_info)->p_lazy_o_aux, (p_n));              \
+  PROTECT_LAZY_VEC((p_order_info)->p_lazy_bytes, (p_n));              \
+  PROTECT_LAZY_VEC((p_order_info)->p_lazy_counts, (p_n));             \
+  PROTECT_GROUP_INFOS((p_order_info)->p_group_infos, (p_n));          \
+  PROTECT_LAZY_VEC((p_order_info)->p_lazy_x_reencoded, (p_n));        \
+  PROTECT_TRUELENGTH_INFO((p_order_info)->p_truelength_info, (p_n));  \
+} while (0)
+
+struct order_info* new_order_info(SEXP proxy,
+                                  r_ssize size,
+                                  const enum vctrs_type type,
+                                  bool track);
+
+void vec_order_info(SEXP proxy,
+                    SEXP decreasing,
+                    SEXP na_last,
+                    r_ssize size,
+                    const enum vctrs_type type,
+                    struct order_info* p_info);
 
 // -----------------------------------------------------------------------------
 #endif

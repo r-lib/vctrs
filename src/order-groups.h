@@ -87,6 +87,7 @@ struct group_info {
  */
 struct group_infos {
   SEXP self;
+  SEXP p_p_group_info_data;
   struct group_info** p_p_group_info;
   r_ssize max_data_size;
   int current;
@@ -96,7 +97,8 @@ struct group_infos {
 
 #define PROTECT_GROUP_INFOS(p_info, p_n) do {               \
   PROTECT((p_info)->self);                                  \
-  *(p_n) += 1;                                              \
+  PROTECT((p_info)->p_p_group_info_data);                   \
+  *(p_n) += 2;                                              \
   PROTECT_GROUP_INFO((p_info)->p_p_group_info[0], (p_n));   \
   PROTECT_GROUP_INFO((p_info)->p_p_group_info[1], (p_n));   \
 } while(0)
@@ -105,7 +107,8 @@ struct group_infos {
 
 struct group_info* new_group_info();
 
-struct group_infos* new_group_infos(struct group_info** p_p_group_info,
+struct group_infos* new_group_infos(struct group_info* p_group_info0,
+                                    struct group_info* p_group_info1,
                                     r_ssize max_data_size,
                                     bool requested,
                                     bool ignore);

@@ -33,21 +33,29 @@ struct group_info* new_group_info() {
 // -----------------------------------------------------------------------------
 
 // Pair with `PROTECT_GROUP_INFOS()` in the caller
-struct group_infos* new_group_infos(struct group_info** p_p_group_info,
+struct group_infos* new_group_infos(struct group_info* p_group_info0,
+                                    struct group_info* p_group_info1,
                                     r_ssize max_data_size,
                                     bool requested,
                                     bool ignore) {
   SEXP self = PROTECT(r_new_raw(sizeof(struct group_infos)));
   struct group_infos* p_group_infos = (struct group_infos*) RAW(self);
 
+  SEXP p_p_group_info_data = PROTECT(r_new_raw(2 * sizeof(struct group_info*)));
+  struct group_info** p_p_group_info = (struct group_info**) RAW(p_p_group_info_data);
+
+  p_p_group_info[0] = p_group_info0;
+  p_p_group_info[1] = p_group_info1;
+
   p_group_infos->self = self;
+  p_group_infos->p_p_group_info_data = p_p_group_info_data;
   p_group_infos->p_p_group_info = p_p_group_info;
   p_group_infos->max_data_size = max_data_size;
   p_group_infos->current = 0;
   p_group_infos->requested = requested;
   p_group_infos->ignore = ignore;
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return p_group_infos;
 }
 
