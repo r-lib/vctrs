@@ -16,28 +16,36 @@
 // -----------------------------------------------------------------------------
 
 // Pair with `PROTECT_GROUP_INFO()` in the caller
-struct group_info new_group_info() {
-  return (struct group_info) {
-    .data_size = 0,
-    .data = R_NilValue,
-    .n_groups = 0,
-    .max_group_size = 0
-  };
+struct group_info* new_group_info() {
+  SEXP self = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct group_info)));
+  struct group_info* p_group_info = (struct group_info*) RAW(self);
+
+  p_group_info->self = self;
+  p_group_info->data_size = 0;
+  p_group_info->data = R_NilValue;
+  p_group_info->n_groups = 0;
+  p_group_info->max_group_size = 0;
+
+  return p_group_info;
 }
 
 // -----------------------------------------------------------------------------
 
-struct group_infos new_group_infos(struct group_info** p_p_group_info,
-                                   r_ssize max_data_size,
-                                   bool requested,
-                                   bool ignore) {
-  return (struct group_infos) {
-    .p_p_group_info = p_p_group_info,
-    .max_data_size = max_data_size,
-    .current = 0,
-    .requested = requested,
-    .ignore = ignore
-  };
+struct group_infos* new_group_infos(struct group_info** p_p_group_info,
+                                    r_ssize max_data_size,
+                                    bool requested,
+                                    bool ignore) {
+  SEXP self = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct group_infos)));
+  struct group_infos* p_group_infos = (struct group_infos*) RAW(self);
+
+  p_group_infos->self = self;
+  p_group_infos->p_p_group_info = p_p_group_info;
+  p_group_infos->max_data_size = max_data_size;
+  p_group_infos->current = 0;
+  p_group_infos->requested = requested;
+  p_group_infos->ignore = ignore;
+
+  return p_group_infos;
 }
 
 // -----------------------------------------------------------------------------
