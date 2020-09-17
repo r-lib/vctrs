@@ -304,7 +304,7 @@ static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_ty
 struct order_info* new_order_info(SEXP proxy,
                                   r_ssize size,
                                   const enum vctrs_type type,
-                                  bool track) {
+                                  bool force_tracking) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
@@ -337,8 +337,7 @@ struct order_info* new_order_info(SEXP proxy,
   // We turn if off if ordering non-data frame input as long as
   // locations haven't been requested by the user.
   // It is more efficient to ignore it when possible.
-  bool requested = track;
-  bool ignore = requested ? false : (is_data_frame(proxy) ? false : true);
+  bool ignore_tracking = force_tracking ? false : (is_data_frame(proxy) ? false : true);
 
   // Construct the two sets of group info needed for tracking groups.
   // We switch between them after each data frame column is processed.
@@ -352,8 +351,8 @@ struct order_info* new_order_info(SEXP proxy,
     p_group_info0,
     p_group_info1,
     size,
-    requested,
-    ignore
+    force_tracking,
+    ignore_tracking
   );
   PROTECT_GROUP_INFOS(p_group_infos, p_n_prot);
 
@@ -2491,13 +2490,14 @@ void cpl_order(SEXP x,
                struct group_infos* p_group_infos) {
   // We treat complex as a two column data frame, so we have to use group
   // information for at least the first column.
-  // - If a complex atomic vector is used, `ignore` will be true unless the
-  //   user also requested group information.
-  // - If the first column of a df is a complex column, `ignore` will be false.
-  bool reset_ignore = false;
-  if (p_group_infos->ignore) {
-    p_group_infos->ignore = false;
-    reset_ignore = true;
+  // - If a complex atomic vector is used, `ignore_tracking` will be true unless
+  //   the user also requested group information.
+  // - If the first column of a df is a complex column, `ignore_tracking` will
+  //   be false.
+  bool reset_ignore_tracking = false;
+  if (p_group_infos->ignore_tracking) {
+    p_group_infos->ignore_tracking = false;
+    reset_ignore_tracking = true;
   }
 
   const Rcomplex* p_x_cpl = COMPLEX_RO(x);
@@ -2538,11 +2538,11 @@ void cpl_order(SEXP x,
   // Ordering will now be initialized
   int* p_o = p_order->p_data;
 
-  // Reset `ignore` for the second pass if we don't need to track groups.
+  // Reset `ignore_tracking` for the second pass if we don't need to track groups.
   // This happens if an atomic complex vector is passed in and the user
   // hasn't requested group information.
-  if (reset_ignore) {
-    p_group_infos->ignore = true;
+  if (reset_ignore_tracking) {
+    p_group_infos->ignore_tracking = true;
   }
 
   // Get the number of group chunks from the first pass
@@ -3667,8 +3667,8 @@ void df_order_internal(SEXP x,
     // - We are on the last column
     // - The user didn't request group information
     // - That column isn't the first pass of a complex column
-    if (i == n_cols - 1 && !p_group_infos->requested && !rerun_complex) {
-      p_group_infos->ignore = true;
+    if (i == n_cols - 1 && !p_group_infos->force_tracking && !rerun_complex) {
+      p_group_infos->ignore_tracking = true;
     }
 
     // Swap to other group info to prepare for this column

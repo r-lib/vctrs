@@ -123,7 +123,7 @@ struct order_info {
 struct order_info* new_order_info(SEXP proxy,
                                   r_ssize size,
                                   const enum vctrs_type type,
-                                  bool track);
+                                  bool force_tracking);
 
 void vec_order_info(SEXP proxy,
                     SEXP decreasing,
