@@ -332,8 +332,8 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 
   // Used for character ordering - lazily generated to be fast
   // when not ordering character vectors
-  struct truelength_info truelength_info = new_truelength_info(size);
-  PROTECT_TRUELENGTH_INFO(&truelength_info, p_n_prot);
+  struct truelength_info* p_truelength_info = new_truelength_info(size);
+  PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
 
   struct lazy_chr lazy_x_reencoded = new_lazy_chr(size);
   PROTECT_LAZY_VEC(&lazy_x_reencoded, p_n_prot);
@@ -355,7 +355,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
     &lazy_counts,
     p_group_infos,
     &lazy_x_reencoded,
-    &truelength_info
+    p_truelength_info
   );
 
   // Return ordered location info rather than ordering

@@ -28,22 +28,28 @@
  *
  * Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
  */
-struct truelength_info new_truelength_info(r_ssize max_size_alloc) {
-  return (struct truelength_info) {
-    .strings = R_NilValue,
-    .lengths = R_NilValue,
-    .uniques = R_NilValue,
-    .sizes = R_NilValue,
-    .sizes_aux = R_NilValue,
+struct truelength_info* new_truelength_info(r_ssize max_size_alloc) {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct truelength_info)));
+  struct truelength_info* p_truelength_info = (struct truelength_info*) RAW(self);
 
-    .size_alloc = 0,
-    .max_size_alloc = max_size_alloc,
-    .size_used = 0,
+  p_truelength_info->self = self;
 
-    .max_string_size = 0,
+  p_truelength_info->strings = R_NilValue;
+  p_truelength_info->lengths = R_NilValue;
+  p_truelength_info->uniques = R_NilValue;
+  p_truelength_info->sizes = R_NilValue;
+  p_truelength_info->sizes_aux = R_NilValue;
 
-    .reencode = false
-  };
+  p_truelength_info->size_alloc = 0;
+  p_truelength_info->max_size_alloc = max_size_alloc;
+  p_truelength_info->size_used = 0;
+
+  p_truelength_info->max_string_size = 0;
+
+  p_truelength_info->reencode = false;
+
+  UNPROTECT(1);
+  return p_truelength_info;
 }
 
 // -----------------------------------------------------------------------------
