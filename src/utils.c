@@ -368,30 +368,54 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
 // Faster than `Rf_xlengthgets()` because that fills the new extended
 // locations with `NA`, which we don't need.
 // [[ include("utils.h") ]]
-SEXP p_int_resize(const int* p_x, r_ssize x_size, r_ssize size) {
+SEXP int_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  if (x_size == size) {
+    return x;
+  }
+
+  const int* p_x = INTEGER_RO(x);
+
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
   int* p_out = INTEGER(out);
 
-  memcpy(p_out, p_x, x_size * sizeof(int));
+  r_ssize copy_size = (size > x_size) ? x_size : size;
+
+  memcpy(p_out, p_x, copy_size * sizeof(int));
 
   UNPROTECT(1);
   return out;
 }
 // [[ include("utils.h") ]]
-SEXP p_raw_resize(const Rbyte* p_x, r_ssize x_size, r_ssize size) {
+SEXP raw_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  if (x_size == size) {
+    return x;
+  }
+
+  const Rbyte* p_x = RAW_RO(x);
+
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, size));
   Rbyte* p_out = RAW(out);
 
-  memcpy(p_out, p_x, x_size * sizeof(Rbyte));
+  r_ssize copy_size = (size > x_size) ? x_size : size;
+
+  memcpy(p_out, p_x, copy_size * sizeof(Rbyte));
 
   UNPROTECT(1);
   return out;
 }
 // [[ include("utils.h") ]]
-SEXP p_chr_resize(const SEXP* p_x, r_ssize x_size, r_ssize size) {
+SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  if (x_size == size) {
+    return x;
+  }
+
+  const SEXP* p_x = STRING_PTR_RO(x);
+
   SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
 
-  for (r_ssize i = 0; i < x_size; ++i) {
+  r_ssize copy_size = (size > x_size) ? x_size : size;
+
+  for (r_ssize i = 0; i < copy_size; ++i) {
     SET_STRING_ELT(out, i, p_x[i]);
   }
 
@@ -1766,6 +1790,8 @@ SEXP strings_val = NULL;
 SEXP strings_group = NULL;
 SEXP strings_length = NULL;
 SEXP strings_vctrs_vctr = NULL;
+SEXP strings_order = NULL;
+SEXP strings_sizes = NULL;
 
 SEXP chrs_subset = NULL;
 SEXP chrs_extract = NULL;
@@ -1911,7 +1937,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = r_new_shared_vector(STRSXP, 20);
+  strings = r_new_shared_vector(STRSXP, 22);
 
   strings_dots = Rf_mkChar("...");
   SET_STRING_ELT(strings, 0, strings_dots);
@@ -1972,6 +1998,12 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
   SET_STRING_ELT(strings, 19, strings_list);
+
+  strings_order = Rf_mkChar("order");
+  SET_STRING_ELT(strings, 20, strings_order);
+
+  strings_sizes = Rf_mkChar("sizes");
+  SET_STRING_ELT(strings, 21, strings_sizes);
 
 
   classes_data_frame = r_new_shared_vector(STRSXP, 1);
