@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_c()` now correctly returns a named result with named empty inputs
+  (#1263).
+
 * vctrs has been relicensed as MIT (#1259).
 
 * Functions that make comparisons within a single vector, such as
