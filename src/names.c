@@ -545,6 +545,9 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   }
 
   if (r_is_empty_names(inner)) {
+    if (n == 0) {
+      return vctrs_shared_empty_chr;
+    }
     if (n == 1) {
       return r_str_as_character(outer);
     }
