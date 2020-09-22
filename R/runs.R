@@ -42,7 +42,3 @@ vec_locate_runs <- function(x, start = TRUE) {
 vec_detect_runs <- function(x, start = TRUE) {
   .Call(vctrs_detect_runs, x, start)
 }
-
-vec_rle <- function(x) {
-  .Call(vctrs_rle, x)
-}

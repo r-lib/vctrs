@@ -392,6 +392,7 @@ SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
+SEXP vec_identify_runs(SEXP x);
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
                       struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
 
