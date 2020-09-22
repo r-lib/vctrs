@@ -79,6 +79,11 @@ int* init_order(struct order* p_order) {
 
 // -----------------------------------------------------------------------------
 
+SEXP parse_na_value(SEXP na_value);
+SEXP parse_direction(SEXP direction);
+
+// -----------------------------------------------------------------------------
+
 /*
  * `order_info` is a meta struct that holds all of the information used to
  * call `vec_order()`. It is returned from `vec_order_info()` and can be
