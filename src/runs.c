@@ -3,8 +3,6 @@
 #include "equal.h"
 #include "translate.h"
 
-static SEXP vec_identify_runs(SEXP x);
-
 // -----------------------------------------------------------------------------
 
 static SEXP vec_locate_runs(SEXP x, bool start);
@@ -181,7 +179,7 @@ static int raw_identify_runs(SEXP x, R_len_t size, int* p_out);
 static int list_identify_runs(SEXP x, R_len_t size, int* p_out);
 static int df_identify_runs(SEXP x, R_len_t size, int* p_out);
 
-static
+// [[ include("vctrs.h") ]]
 SEXP vec_identify_runs(SEXP x) {
   SEXP proxy = PROTECT(vec_proxy_equal(x));
   R_len_t size = vec_size(proxy);

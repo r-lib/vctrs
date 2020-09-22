@@ -58,3 +58,7 @@ vec_rep <- function(x, times) {
 vec_rep_each <- function(x, times) {
   .Call(vctrs_rep_each, x, times)
 }
+
+vec_unrep <- function(x) {
+  .Call(vctrs_unrep, x)
+}

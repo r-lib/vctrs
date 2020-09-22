@@ -86,3 +86,40 @@ test_that("rep functions generate informative error messages", {
     vec_rep_each(1:2, 1:3)
   })
 })
+
+# vec_unrep --------------------------------------------------------------------
+
+test_that("can unrep a vector", {
+  x <- c(1, 3, 3, 1, 5, 5, 6)
+
+  expect <- data_frame(
+    key = c(1, 3, 1, 5, 6),
+    times = c(1L, 2L, 1L, 2L, 1L)
+  )
+
+  expect_identical(vec_unrep(x), expect)
+})
+
+test_that("can unrep a data frame", {
+  df <- data_frame(
+    x = c(1, 1, 2, 2, 2),
+    y = c(1, 1, 1, 1, 2)
+  )
+
+  expect <- data_frame(
+    key = vec_slice(df, c(1, 3, 5)),
+    times = c(2L, 2L, 1L)
+  )
+
+  expect_identical(vec_unrep(df), expect)
+})
+
+test_that("works with size zero input", {
+  expect_identical(vec_unrep(integer()), data_frame(key = integer(), times = integer()))
+})
+
+test_that("works with data frames with rows but no columns", {
+  x <- data_frame(.size = 5)
+  expect <- data_frame(key = data_frame(.size = 1L), times = 5L)
+  expect_identical(vec_unrep(x), expect)
+})

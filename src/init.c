@@ -131,6 +131,7 @@ extern SEXP vctrs_df_detect_complete(SEXP);
 extern SEXP vctrs_normalize_encoding(SEXP);
 extern SEXP vctrs_order(SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_locs(SEXP, SEXP, SEXP);
+extern SEXP vctrs_unrep(SEXP);
 
 
 // Maturing
@@ -234,7 +235,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_df_col",                  (DL_FUNC) &vctrs_as_df_col, 2},
   {"vctrs_apply_name_spec",            (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                   (DL_FUNC) &vctrs_unset_s4, 1},
-  {"vctrs_rle",                        (DL_FUNC) &altrep_rle_Make, 1},
+  {"vctrs_altrep_rle_Make",            (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
   {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 4},
@@ -279,6 +280,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_normalize_encoding",         (DL_FUNC) &vctrs_normalize_encoding, 1},
   {"vctrs_order",                      (DL_FUNC) &vctrs_order, 3},
   {"vctrs_order_locs",                 (DL_FUNC) &vctrs_order_locs, 3},
+  {"vctrs_unrep",                      (DL_FUNC) &vctrs_unrep, 1},
   {NULL, NULL, 0}
 };
 

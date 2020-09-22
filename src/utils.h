@@ -552,6 +552,7 @@ extern SEXP strings_val;
 extern SEXP strings_group;
 extern SEXP strings_length;
 extern SEXP strings_vctrs_vctr;
+extern SEXP strings_times;
 
 extern SEXP chrs_subset;
 extern SEXP chrs_extract;

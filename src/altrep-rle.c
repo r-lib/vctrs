@@ -51,7 +51,7 @@ Rboolean altrep_rle_Inspect(SEXP x,
                             int deep,
                             int pvec,
                             void (*inspect_subtree)(SEXP, int, int, int)) {
-  Rprintf("vctrs_rle (len=%d, materialized=%s)\n",
+  Rprintf("vctrs_altrep_rle (len=%d, materialized=%s)\n",
           altrep_rle_Length(x),
           R_altrep_data2(x) != R_NilValue ? "T" : "F");
   return TRUE;
