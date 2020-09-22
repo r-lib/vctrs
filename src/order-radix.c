@@ -177,6 +177,11 @@
 
 // -----------------------------------------------------------------------------
 
+static SEXP parse_na_value(SEXP na_value);
+static SEXP parse_direction(SEXP direction);
+
+// -----------------------------------------------------------------------------
+
 static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last);
 
 // [[ register() ]]
@@ -192,24 +197,14 @@ SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value) {
 
 static
 SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last) {
-  int n_prot = 0;
+  struct order_info* p_info = vec_order_info(
+    x,
+    decreasing,
+    na_last,
+    ORDER_FORCE_TRACKING_false
+  );
 
-  // Called on `x` before `vec_proxy_order()` can flatten df-cols
-  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
-  decreasing = r_list_get(args, 0);
-  na_last = r_list_get(args, 1);
-
-  SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
-  const enum vctrs_type type = vec_proxy_typeof(proxy);
-  r_ssize size = vec_size(proxy);
-
-  struct order_info* p_info = new_order_info(proxy, size, type, false);
-  PROTECT_ORDER_INFO(p_info, &n_prot);
-
-  vec_order_info(proxy, decreasing, na_last, size, type, p_info);
-
-  UNPROTECT(n_prot);
-  return p_info->p_order->data;
+  return order_info_o(p_info);
 }
 
 // -----------------------------------------------------------------------------
@@ -231,63 +226,48 @@ static
 SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last) {
   int n_prot = 0;
 
-  // Called on `x` before `vec_proxy_order()` can flatten df-cols
-  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
-  decreasing = r_list_get(args, 0);
-  na_last = r_list_get(args, 1);
-
-  SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
-  const enum vctrs_type type = vec_proxy_typeof(proxy);
-  r_ssize size = vec_size(proxy);
-
-  struct order_info* p_info = new_order_info(proxy, size, type, true);
+  struct order_info* p_info = vec_order_info(
+    x,
+    decreasing,
+    na_last,
+    ORDER_FORCE_TRACKING_true
+  );
   PROTECT_ORDER_INFO(p_info, &n_prot);
 
-  vec_order_info(proxy, decreasing, na_last, size, type, p_info);
+  const int* p_o = order_info_p_o(p_info);
+  const int* p_group_sizes = order_info_p_group_sizes(p_info);
+  r_ssize n_groups = order_info_n_groups(p_info);
 
-  const struct group_info* p_group_info = groups_current(p_info->p_group_infos);
-  const int* p_sizes = p_group_info->p_data;
-  r_ssize n_groups = p_group_info->n_groups;
+  SEXP loc = PROTECT_N(r_new_list(n_groups), &n_prot);
 
-  const int* p_o = p_info->p_order->p_data;
-
-  SEXP loc = PROTECT_N(Rf_allocVector(VECSXP, n_groups), &n_prot);
-
-  SEXP key_loc = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &n_prot);
+  SEXP key_loc = PROTECT_N(r_new_integer(n_groups), &n_prot);
   int* p_key_loc = INTEGER(key_loc);
 
-  int start = 0;
-
   for (r_ssize i = 0; i < n_groups; ++i) {
-    p_key_loc[i] = p_o[start];
+    p_key_loc[i] = *p_o;
 
-    const int size = p_sizes[i];
+    const int group_size = p_group_sizes[i];
 
-    SEXP elt = Rf_allocVector(INTSXP, size);
-    SET_VECTOR_ELT(loc, i, elt);
+    SEXP elt = r_new_integer(group_size);
+    r_list_poke(loc, i, elt);
     int* p_elt = INTEGER(elt);
 
-    R_len_t k = 0;
-
-    for (int j = 0; j < size; ++j) {
-      p_elt[k] = p_o[start];
-      ++start;
-      ++k;
-    }
+    memcpy(p_elt, p_o, group_size * sizeof(int));
+    p_o += group_size;
   }
 
   SEXP key = PROTECT_N(vec_slice(x, key_loc), &n_prot);
 
   // Construct output data frame
-  SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &n_prot);
+  SEXP out = PROTECT_N(r_new_list(2), &n_prot);
   SET_VECTOR_ELT(out, 0, key);
   SET_VECTOR_ELT(out, 1, loc);
 
-  SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &n_prot);
+  SEXP names = PROTECT_N(r_new_character(2), &n_prot);
   SET_STRING_ELT(names, 0, strings_key);
   SET_STRING_ELT(names, 1, strings_loc);
 
-  Rf_setAttrib(out, R_NamesSymbol, names);
+  r_poke_names(out, names);
 
   out = new_data_frame(out, n_groups);
 
@@ -297,14 +277,145 @@ SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last) {
 
 // -----------------------------------------------------------------------------
 
-static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
-static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
+static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
 
-// [[ include("order-radix.h") ]]
 struct order_info* new_order_info(SEXP proxy,
                                   r_ssize size,
                                   const enum vctrs_type type,
-                                  bool force_tracking) {
+                                  const enum order_force_tracking force);
+
+static inline void vec_proxy_order_info(SEXP proxy,
+                                        SEXP decreasing,
+                                        SEXP na_last,
+                                        r_ssize size,
+                                        const enum vctrs_type type,
+                                        struct order_info* p_info);
+
+// [[ include("order-radix") ]]
+struct order_info* vec_order_info(SEXP x,
+                                  SEXP decreasing,
+                                  SEXP na_last,
+                                  const enum order_force_tracking force) {
+  int n_prot = 0;
+
+  // Called on `x` before `vec_proxy_order()` can flatten df-cols
+  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
+  decreasing = r_list_get(args, 0);
+  na_last = r_list_get(args, 1);
+
+  SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
+  const enum vctrs_type type = vec_proxy_typeof(proxy);
+  r_ssize size = vec_size(proxy);
+
+  struct order_info* p_info = new_order_info(proxy, size, type, force);
+  PROTECT_ORDER_INFO(p_info, &n_prot);
+
+  vec_proxy_order_info(proxy, decreasing, na_last, size, type, p_info);
+
+  UNPROTECT(n_prot);
+  return p_info;
+}
+
+static void vec_order_switch(SEXP x,
+                             SEXP decreasing,
+                             SEXP na_last,
+                             r_ssize size,
+                             const enum vctrs_type type,
+                             struct order* p_order,
+                             struct lazy_raw* p_lazy_x_chunk,
+                             struct lazy_raw* p_lazy_x_aux,
+                             struct lazy_raw* p_lazy_o_aux,
+                             struct lazy_raw* p_lazy_bytes,
+                             struct lazy_raw* p_lazy_counts,
+                             struct group_infos* p_group_infos,
+                             struct lazy_chr* p_lazy_x_reencoded,
+                             struct truelength_info* p_truelength_info);
+
+static inline
+void vec_proxy_order_info(SEXP proxy,
+                          SEXP decreasing,
+                          SEXP na_last,
+                          r_ssize size,
+                          const enum vctrs_type type,
+                          struct order_info* p_info) {
+  vec_order_switch(
+    proxy,
+    decreasing,
+    na_last,
+    size,
+    type,
+    p_info->p_order,
+    p_info->p_lazy_x_chunk,
+    p_info->p_lazy_x_aux,
+    p_info->p_lazy_o_aux,
+    p_info->p_lazy_bytes,
+    p_info->p_lazy_counts,
+    p_info->p_group_infos,
+    p_info->p_lazy_x_reencoded,
+    p_info->p_truelength_info
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+// [[ include("order-radix") ]]
+struct order_info* vec_order_uniques_by_appearance(const enum order_overwrite overwrite,
+                                                   SEXP o_unique,
+                                                   struct order_info* p_info) {
+  int n_prot = 0;
+
+  int* p_o_unique = INTEGER(o_unique);
+
+  int n_groups = order_info_n_groups(p_info);
+  int* p_group_sizes = order_info_p_group_sizes(p_info);
+  int* p_o = order_info_p_o(p_info);
+
+  int start = 0;
+
+  // Extract ordering of unique keys
+  for (r_ssize i = 0; i < n_groups; ++i) {
+    r_ssize group_size = p_group_sizes[i];
+    p_o_unique[i] = p_o[start];
+    start += group_size;
+  }
+
+  if (overwrite == ORDER_OVERWRITE_true) {
+    // Reset order where we use it
+    for (r_ssize i = 0; i < n_groups; ++i) {
+      p_o[i] = i + 1;
+    }
+  } else {
+    // New vector to store the ordering of the unique order vector
+    struct order* p_order_appear = new_order(n_groups);
+    PROTECT_ORDER(p_order_appear, &n_prot);
+    p_info->p_order = p_order_appear;
+  }
+
+  // Turn off group tracking, no longer needed
+  p_info->p_group_infos->force_tracking = false;
+  p_info->p_group_infos->ignore_tracking = true;
+
+  SEXP decreasing = vctrs_shared_false;
+  SEXP na_last = vctrs_shared_true;
+  enum vctrs_type type = vctrs_type_integer;
+
+  // Compute order of unique order locations
+  // (gives order by first appearance)
+  vec_proxy_order_info(o_unique, decreasing, na_last, n_groups, type, p_info);
+
+  UNPROTECT(n_prot);
+  return p_info;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
+static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
+
+struct order_info* new_order_info(SEXP proxy,
+                                  r_ssize size,
+                                  const enum vctrs_type type,
+                                  const enum order_force_tracking force) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
@@ -337,6 +448,7 @@ struct order_info* new_order_info(SEXP proxy,
   // We turn if off if ordering non-data frame input as long as
   // locations haven't been requested by the user.
   // It is more efficient to ignore it when possible.
+  bool force_tracking = (force == ORDER_FORCE_TRACKING_true);
   bool ignore_tracking = force_tracking ? false : (is_data_frame(proxy) ? false : true);
 
   // Construct the two sets of group info needed for tracking groups.
@@ -383,48 +495,6 @@ struct order_info* new_order_info(SEXP proxy,
 
   UNPROTECT(n_prot);
   return p_order_info;
-}
-
-// -----------------------------------------------------------------------------
-
-static void vec_order_switch(SEXP x,
-                             SEXP decreasing,
-                             SEXP na_last,
-                             r_ssize size,
-                             const enum vctrs_type type,
-                             struct order* p_order,
-                             struct lazy_raw* p_lazy_x_chunk,
-                             struct lazy_raw* p_lazy_x_aux,
-                             struct lazy_raw* p_lazy_o_aux,
-                             struct lazy_raw* p_lazy_bytes,
-                             struct lazy_raw* p_lazy_counts,
-                             struct group_infos* p_group_infos,
-                             struct lazy_chr* p_lazy_x_reencoded,
-                             struct truelength_info* p_truelength_info);
-
-// [[ include("order-radix.h") ]]
-void vec_order_info(SEXP proxy,
-                    SEXP decreasing,
-                    SEXP na_last,
-                    r_ssize size,
-                    const enum vctrs_type type,
-                    struct order_info* p_info) {
-  vec_order_switch(
-    proxy,
-    decreasing,
-    na_last,
-    size,
-    type,
-    p_info->p_order,
-    p_info->p_lazy_x_chunk,
-    p_info->p_lazy_x_aux,
-    p_info->p_lazy_o_aux,
-    p_info->p_lazy_bytes,
-    p_info->p_lazy_counts,
-    p_info->p_group_infos,
-    p_info->p_lazy_x_reencoded,
-    p_info->p_truelength_info
-  );
 }
 
 // -----------------------------------------------------------------------------
@@ -3965,7 +4035,7 @@ static SEXP df_expand_args(SEXP x, SEXP args);
  * or may arise from rcrd columns that have data frame proxies. The majority
  * of the code here is for tracking this expansion.
  */
-// [[ include("order-radix.h") ]]
+static
 SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last) {
   SEXP args = PROTECT(r_new_list(2));
   SET_VECTOR_ELT(args, 0, decreasing);
@@ -4156,7 +4226,7 @@ int df_decreasing_expansion(SEXP x) {
 
 static int parse_na_value_one(SEXP x);
 
-// [[ include("order-radix.h") ]]
+static
 SEXP parse_na_value(SEXP na_value) {
   // Don't care about length here, checked later, just type
   if (TYPEOF(na_value) != STRSXP) {
@@ -4198,7 +4268,7 @@ int parse_na_value_one(SEXP x) {
 
 static int parse_direction_one(SEXP x);
 
-// [[ include("order-radix.h") ]]
+static
 SEXP parse_direction(SEXP direction) {
   // Don't care about length here, checked later, just type
   if (TYPEOF(direction) != STRSXP) {
