@@ -122,23 +122,10 @@ SEXP vec_c_opts(SEXP xs,
   };
 
   for (R_len_t i = 0; i < n; ++i) {
+    SEXP x = VECTOR_ELT(xs, i);
     R_len_t size = p_sizes[i];
-    if (!size) {
-      continue;
-    }
-
-    struct cast_opts opts = (struct cast_opts) {
-      .x = VECTOR_ELT(xs, i),
-      .to = ptype,
-      .fallback = *fallback_opts
-    };
-    SEXP x = PROTECT(vec_cast_opts(&opts));
 
     init_compact_seq(p_loc, counter, size, true);
-
-    // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
-    REPROTECT(out, out_pi);
 
     if (assign_names) {
       SEXP outer = xs_is_named ? STRING_ELT(xs_names, i) : R_NilValue;
@@ -158,6 +145,21 @@ SEXP vec_c_opts(SEXP xs,
 
       UNPROTECT(2);
     }
+
+    if (!size) {
+      continue;
+    }
+
+    struct cast_opts opts = (struct cast_opts) {
+      .x = x,
+      .to = ptype,
+      .fallback = *fallback_opts
+    };
+    x = PROTECT(vec_cast_opts(&opts));
+
+    // Total ownership of `out` because it was freshly created with `vec_init()`
+    out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
+    REPROTECT(out, out_pi);
 
     counter += size;
     UNPROTECT(1);
