@@ -1766,7 +1766,7 @@ SEXP strings_val = NULL;
 SEXP strings_group = NULL;
 SEXP strings_length = NULL;
 SEXP strings_vctrs_vctr = NULL;
-SEXP strings_size = NULL;
+SEXP strings_times = NULL;
 
 SEXP chrs_subset = NULL;
 SEXP chrs_extract = NULL;
@@ -1974,8 +1974,8 @@ void vctrs_init_utils(SEXP ns) {
   strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
   SET_STRING_ELT(strings, 19, strings_vctrs_vctr);
 
-  strings_size = Rf_mkChar("size");
-  SET_STRING_ELT(strings, 20, strings_size);
+  strings_times = Rf_mkChar("times");
+  SET_STRING_ELT(strings, 20, strings_times);
 
 
   classes_data_frame = r_new_shared_vector(STRSXP, 1);

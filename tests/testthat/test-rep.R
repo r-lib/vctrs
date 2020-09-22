@@ -94,7 +94,7 @@ test_that("can unrep a vector", {
 
   expect <- data_frame(
     key = c(1, 3, 1, 5, 6),
-    size = c(1L, 2L, 1L, 2L, 1L)
+    times = c(1L, 2L, 1L, 2L, 1L)
   )
 
   expect_identical(vec_unrep(x), expect)
@@ -108,18 +108,18 @@ test_that("can unrep a data frame", {
 
   expect <- data_frame(
     key = vec_slice(df, c(1, 3, 5)),
-    size = c(2L, 2L, 1L)
+    times = c(2L, 2L, 1L)
   )
 
   expect_identical(vec_unrep(df), expect)
 })
 
 test_that("works with size zero input", {
-  expect_identical(vec_unrep(integer()), data_frame(key = integer(), size = integer()))
+  expect_identical(vec_unrep(integer()), data_frame(key = integer(), times = integer()))
 })
 
 test_that("works with data frames with rows but no columns", {
   x <- data_frame(.size = 5)
-  expect <- data_frame(key = data_frame(.size = 1L), size = 5L)
+  expect <- data_frame(key = data_frame(.size = 1L), times = 5L)
   expect_identical(vec_unrep(x), expect)
 })

@@ -284,7 +284,7 @@ SEXP vctrs_unrep(SEXP x) {
   return vec_unrep(x);
 }
 
-static SEXP new_unrep_data_frame(SEXP key, SEXP sizes, r_ssize size);
+static SEXP new_unrep_data_frame(SEXP key, SEXP times, r_ssize size);
 
 static
 SEXP vec_unrep(SEXP x) {
@@ -302,8 +302,8 @@ SEXP vec_unrep(SEXP x) {
   r_ssize out_size = (r_ssize) r_int_get(r_attrib_get(id, syms_n), 0);
 
   // Size of each run
-  SEXP sizes = PROTECT(r_new_integer(out_size));
-  int* p_sizes = INTEGER(sizes);
+  SEXP times = PROTECT(r_new_integer(out_size));
+  int* p_times = INTEGER(times);
 
   // Location of the start of each run. For slicing `x`.
   SEXP loc = PROTECT(r_new_integer(out_size));
@@ -328,7 +328,7 @@ SEXP vec_unrep(SEXP x) {
     reference = elt;
 
     // Size of current run
-    p_sizes[idx - 1] = i - previous;
+    p_times[idx - 1] = i - previous;
     previous = i;
 
     // 1-based location of the start of the new run
@@ -337,27 +337,27 @@ SEXP vec_unrep(SEXP x) {
   }
 
   // Handle last case
-  p_sizes[idx - 1] = x_size - previous;
+  p_times[idx - 1] = x_size - previous;
 
   SEXP key = PROTECT(vec_slice(x, loc));
-  SEXP out = new_unrep_data_frame(key, sizes, out_size);
+  SEXP out = new_unrep_data_frame(key, times, out_size);
 
   UNPROTECT(4);
   return out;
 }
 
 static
-SEXP new_unrep_data_frame(SEXP key, SEXP sizes, r_ssize size) {
+SEXP new_unrep_data_frame(SEXP key, SEXP times, r_ssize size) {
   SEXP out = PROTECT(r_new_list(2));
 
   r_list_poke(out, 0, key);
-  r_list_poke(out, 1, sizes);
+  r_list_poke(out, 1, times);
 
   SEXP names = r_new_character(2);
   r_poke_names(out, names);
 
   r_chr_poke(names, 0, strings_key);
-  r_chr_poke(names, 1, strings_size);
+  r_chr_poke(names, 1, strings_times);
 
   init_data_frame(out, size);
 
