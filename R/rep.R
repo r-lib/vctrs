@@ -59,6 +59,6 @@ vec_rep_each <- function(x, times) {
   .Call(vctrs_rep_each, x, times)
 }
 
-vec_rle <- function(x) {
-  .Call(vctrs_rle, x)
+vec_unrep <- function(x) {
+  .Call(vctrs_unrep, x)
 }

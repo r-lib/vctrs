@@ -87,9 +87,9 @@ test_that("rep functions generate informative error messages", {
   })
 })
 
-# vec_rle ----------------------------------------------------------------------
+# vec_unrep --------------------------------------------------------------------
 
-test_that("can run length encode a vector", {
+test_that("can unrep a vector", {
   x <- c(1, 3, 3, 1, 5, 5, 6)
 
   expect <- data_frame(
@@ -97,10 +97,10 @@ test_that("can run length encode a vector", {
     size = c(1L, 2L, 1L, 2L, 1L)
   )
 
-  expect_identical(vec_rle(x), expect)
+  expect_identical(vec_unrep(x), expect)
 })
 
-test_that("can run length encode a data frame", {
+test_that("can unrep a data frame", {
   df <- data_frame(
     x = c(1, 1, 2, 2, 2),
     y = c(1, 1, 1, 1, 2)
@@ -111,15 +111,15 @@ test_that("can run length encode a data frame", {
     size = c(2L, 2L, 1L)
   )
 
-  expect_identical(vec_rle(df), expect)
+  expect_identical(vec_unrep(df), expect)
 })
 
 test_that("works with size zero input", {
-  expect_identical(vec_rle(integer()), data_frame(key = integer(), size = integer()))
+  expect_identical(vec_unrep(integer()), data_frame(key = integer(), size = integer()))
 })
 
 test_that("works with data frames with rows but no columns", {
   x <- data_frame(.size = 5)
   expect <- data_frame(key = data_frame(.size = 1L), size = 5L)
-  expect_identical(vec_rle(x), expect)
+  expect_identical(vec_unrep(x), expect)
 })

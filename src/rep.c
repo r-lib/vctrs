@@ -277,24 +277,24 @@ static inline void stop_rep_times_size() {
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_rle(SEXP x);
+static SEXP vec_unrep(SEXP x);
 
 // [[register()]]
-SEXP vctrs_rle(SEXP x) {
-  return vec_rle(x);
+SEXP vctrs_unrep(SEXP x) {
+  return vec_unrep(x);
 }
 
-static SEXP new_rle_data_frame(SEXP key, SEXP sizes, r_ssize size);
+static SEXP new_unrep_data_frame(SEXP key, SEXP sizes, r_ssize size);
 
 static
-SEXP vec_rle(SEXP x) {
+SEXP vec_unrep(SEXP x) {
   SEXP id = PROTECT(vec_identify_runs(x));
   const int* p_id = INTEGER_RO(id);
 
   r_ssize x_size = r_length(id);
 
   if (x_size == 0) {
-    SEXP out = new_rle_data_frame(x, vctrs_shared_empty_int, 0);
+    SEXP out = new_unrep_data_frame(x, vctrs_shared_empty_int, 0);
     UNPROTECT(1);
     return out;
   }
@@ -340,14 +340,14 @@ SEXP vec_rle(SEXP x) {
   p_sizes[idx - 1] = x_size - previous;
 
   SEXP key = PROTECT(vec_slice(x, loc));
-  SEXP out = new_rle_data_frame(key, sizes, out_size);
+  SEXP out = new_unrep_data_frame(key, sizes, out_size);
 
   UNPROTECT(4);
   return out;
 }
 
 static
-SEXP new_rle_data_frame(SEXP key, SEXP sizes, r_ssize size) {
+SEXP new_unrep_data_frame(SEXP key, SEXP sizes, r_ssize size) {
   SEXP out = PROTECT(r_new_list(2));
 
   r_list_poke(out, 0, key);
