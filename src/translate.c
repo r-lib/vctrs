@@ -129,8 +129,9 @@ SEXP list_normalize_encoding(SEXP x) {
     }
     PROTECT(elt_new);
 
+    // Only cloned once, at which point `x` is free of references
     if (MAYBE_REFERENCED(x)) {
-      x = PROTECT(r_clone_referenced(x));
+      x = PROTECT(r_clone(x));
       ++nprot;
       p_x = VECTOR_PTR_RO(x);
     }
@@ -182,8 +183,9 @@ SEXP attrib_normalize_encoding(SEXP x) {
     }
     PROTECT(elt_new);
 
+    // Only cloned once, at which point `x` is free of references
     if (MAYBE_REFERENCED(x)) {
-      x = PROTECT(r_clone_referenced(x));
+      x = PROTECT(r_clone(x));
       ++nprot;
       node = x;
 
