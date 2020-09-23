@@ -86,7 +86,3 @@ vec_equal_na <- function(x) {
 obj_equal <- function(x, y) {
   .Call(vctrs_equal_object, x, y)
 }
-
-test_equal_scalar <- function(x, i, y, j, na_equal = FALSE) {
-  .Call(vctrs_equal_scalar, x, i, y, j, na_equal)
-}

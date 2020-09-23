@@ -196,29 +196,6 @@ test_that("can compare lists of expressions", {
   expect_equal(vec_equal(x, y), c(TRUE, FALSE))
 })
 
-test_that("equal_scalar() compares", {
-  expect_equal_implemented <- function(x, na) {
-    expect_false(test_equal_scalar(x, 0, x, 1))
-    expect_true(test_equal_scalar(x, 1, x, 1))
-
-    if (!is_null(na)) {
-      expect_false(test_equal_scalar(na, 0, x, 1, na_equal = TRUE))
-      expect_true(is.na(test_equal_scalar(na, 0, x, 1, na_equal = FALSE)))
-    }
-  }
-
-  expect_equal_implemented(c(FALSE, TRUE), NA)
-  expect_equal_implemented(c(0L, 1L), na_int)
-  expect_equal_implemented(c(0, 1), na_dbl)
-  expect_equal_implemented(c(0i, 1i), na_cpl)
-  expect_equal_implemented(c("foo", "bar"), na_chr)
-  expect_equal_implemented(as.raw(c(0, 1)), NULL)
-  expect_equal_implemented(list(0, 1), NULL)
-  expect_equal_implemented(mtcars, vec_init(mtcars))
-
-  expect_error(test_equal_scalar(expression(0), 0, expression(1), 1), "Unsupported")
-})
-
 test_that("vec_equal() silently falls back to base data frame", {
   expect_silent(expect_identical(
     vec_equal(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),

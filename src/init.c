@@ -98,7 +98,6 @@ extern SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_flat_width(SEXP);
 extern SEXP df_flatten(SEXP);
-extern SEXP vctrs_equal_scalar(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_linked_version();
 extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 extern SEXP vctrs_tib_cast(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
@@ -247,7 +246,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_as_subscript_result",        (DL_FUNC) &vctrs_as_subscript_result, 5},
   {"vctrs_df_flat_width",              (DL_FUNC) &vctrs_df_flat_width, 1},
   {"vctrs_df_flatten",                 (DL_FUNC) &df_flatten, 1},
-  {"vctrs_equal_scalar",               (DL_FUNC) &vctrs_equal_scalar, 5},
   {"vctrs_linked_version",             (DL_FUNC) &vctrs_linked_version, 0},
   {"vctrs_tib_ptype2",                 (DL_FUNC) &vctrs_tib_ptype2, 4},
   {"vctrs_tib_cast",                   (DL_FUNC) &vctrs_tib_cast, 4},

@@ -431,22 +431,6 @@ SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 bool equal_object(SEXP x, SEXP y);
 bool equal_names(SEXP x, SEXP y);
 
-/**
- * These functions are meant to be used in loops so it is the callers
- * responsibility to ensure that:
- *
- * - `x` and `y` have identical SEXTYPEs
- * - `i` is a valid index into `x`, and `j` is a valid index into `y`.
- *
- * The behaviour is undefined if these conditions are not true.
- */
-int equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
-int equal_scalar_na_equal_p(enum vctrs_type proxy_type,
-                            SEXP x, const void* x_p, R_len_t i,
-                            SEXP y, const void* y_p, R_len_t j);
-int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
-                                SEXP x, const void* x_p, R_len_t i,
-                                SEXP y, const void* y_p, R_len_t j);
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
 
 uint32_t hash_object(SEXP x);
