@@ -300,6 +300,11 @@ test_that("can propagate missing values while matching", {
   expect_identical(vec_match(bytes(0, 1, 0, 2), bytes(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))
 })
 
+test_that("can propagate NaN as a missing value (#1252)", {
+  expect_identical(vec_match(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE), int(NA, NA))
+  expect_identical(vec_in(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE), lgl(NA, NA))
+})
+
 test_that("missing values are propagated across columns", {
   for (na_value in list(NA, na_int, na_dbl, na_cpl, na_chr, list(NULL))) {
     df <- data_frame(x = 1, y = data_frame(foo = 2, bar = na_value), z = 3)
