@@ -199,18 +199,6 @@ static inline int list_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal)
 }
 
 
-static inline int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
-  for (int k = 0; k < n_col; ++k) {
-    int eq = equal_scalar(VECTOR_ELT(x, k), i, VECTOR_ELT(y, k), j, na_equal);
-
-    if (eq <= 0) {
-      return eq;
-    }
-  }
-
-  return true;
-}
-
 
 static inline bool p_equal_missing_scalar(const void* p_x,
                                           r_ssize i,

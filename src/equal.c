@@ -4,6 +4,8 @@
 #include "utils.h"
 
 
+static inline int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col);
+
 // If `x` is a data frame, it must have been recursively proxied
 // beforehand
 //
@@ -77,6 +79,18 @@ int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
   case vctrs_type_list: return list_equal_scalar_na_propagate(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
   default: stop_unimplemented_vctrs_type("equal_scalar_na_propagate_p", vec_typeof(x));
   }
+}
+
+static inline int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
+  for (int k = 0; k < n_col; ++k) {
+    int eq = equal_scalar(VECTOR_ELT(x, k), i, VECTOR_ELT(y, k), j, na_equal);
+
+    if (eq <= 0) {
+      return eq;
+    }
+  }
+
+  return true;
 }
 
 // -----------------------------------------------------------------------------
