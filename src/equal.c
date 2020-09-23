@@ -55,13 +55,13 @@ int equal_scalar_na_equal_p(enum vctrs_type proxy_type,
                             SEXP x, const void* x_p, R_len_t i,
                             SEXP y, const void* y_p, R_len_t j) {
   switch (proxy_type) {
-  case vctrs_type_logical: return lgl_equal_scalar_na_equal(((const int*) x_p) + i, ((const int*) y_p) + j);
-  case vctrs_type_integer: return int_equal_scalar_na_equal(((const int*) x_p) + i, ((const int*) y_p) + j);
-  case vctrs_type_double: return dbl_equal_scalar_na_equal(((const double*) x_p) + i, ((const double*) y_p) + j);
-  case vctrs_type_complex: return cpl_equal_scalar_na_equal(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j);
-  case vctrs_type_character: return chr_equal_scalar_na_equal(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
-  case vctrs_type_raw: return raw_equal_scalar_na_equal(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j);
-  case vctrs_type_list: return list_equal_scalar_na_equal(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
+  case vctrs_type_logical: return p_lgl_equal_scalar_na_equal(x_p, i, y_p, j);
+  case vctrs_type_integer: return p_int_equal_scalar_na_equal(x_p, i, y_p, j);
+  case vctrs_type_double: return p_dbl_equal_scalar_na_equal(x_p, i, y_p, j);
+  case vctrs_type_complex: return p_cpl_equal_scalar_na_equal(x_p, i, y_p, j);
+  case vctrs_type_character: return p_chr_equal_scalar_na_equal(x_p, i, y_p, j);
+  case vctrs_type_raw: return p_raw_equal_scalar_na_equal(x_p, i, y_p, j);
+  case vctrs_type_list: return p_list_equal_scalar_na_equal(x_p, i, y_p, j);
   default: stop_unimplemented_vctrs_type("equal_scalar_na_equal_p", vec_typeof(x));
   }
 }
@@ -70,13 +70,13 @@ int equal_scalar_na_propagate_p(enum vctrs_type proxy_type,
                                 SEXP x, const void* x_p, R_len_t i,
                                 SEXP y, const void* y_p, R_len_t j) {
   switch (proxy_type) {
-  case vctrs_type_logical: return lgl_equal_scalar_na_propagate(((const int*) x_p) + i, ((const int*) y_p) + j);
-  case vctrs_type_integer: return int_equal_scalar_na_propagate(((const int*) x_p) + i, ((const int*) y_p) + j);
-  case vctrs_type_double: return dbl_equal_scalar_na_propagate(((const double*) x_p) + i, ((const double*) y_p) + j);
-  case vctrs_type_complex: return cpl_equal_scalar_na_propagate(((const Rcomplex*) x_p) + i, ((const Rcomplex*) y_p) + j);
-  case vctrs_type_character: return chr_equal_scalar_na_propagate(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
-  case vctrs_type_raw: return raw_equal_scalar_na_propagate(((const Rbyte*) x_p) + i, ((const Rbyte*) y_p) + j);
-  case vctrs_type_list: return list_equal_scalar_na_propagate(((const SEXP*) x_p) + i, ((const SEXP*) y_p) + j);
+  case vctrs_type_logical: return p_lgl_equal_scalar_na_propagate(x_p, i, y_p, j);
+  case vctrs_type_integer: return p_int_equal_scalar_na_propagate(x_p, i, y_p, j);
+  case vctrs_type_double: return p_dbl_equal_scalar_na_propagate(x_p, i, y_p, j);
+  case vctrs_type_complex: return p_cpl_equal_scalar_na_propagate(x_p, i, y_p, j);
+  case vctrs_type_character: return p_chr_equal_scalar_na_propagate(x_p, i, y_p, j);
+  case vctrs_type_raw: return p_raw_equal_scalar_na_propagate(x_p, i, y_p, j);
+  case vctrs_type_list: return p_list_equal_scalar_na_propagate(x_p, i, y_p, j);
   default: stop_unimplemented_vctrs_type("equal_scalar_na_propagate_p", vec_typeof(x));
   }
 }
@@ -97,21 +97,21 @@ static inline int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_
 
 static SEXP df_equal(SEXP x, SEXP y, bool na_equal, R_len_t size);
 
-#define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)         \
-  do {                                                  \
-    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));   \
-    int* p_out = LOGICAL(out);                          \
-                                                        \
-    const CTYPE* p_x = CONST_DEREF(x);                  \
-    const CTYPE* p_y = CONST_DEREF(y);                  \
-                                                        \
-    for (R_len_t i = 0; i < size; ++i, ++p_x, ++p_y) {  \
-      p_out[i] = SCALAR_EQUAL(p_x, p_y, na_equal);      \
-    }                                                   \
-                                                        \
-    UNPROTECT(3);                                       \
-    return out;                                         \
-  }                                                     \
+#define EQUAL(CTYPE, CONST_DEREF, SCALAR_EQUAL)          \
+  do {                                                   \
+    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));    \
+    int* p_out = LOGICAL(out);                           \
+                                                         \
+    const CTYPE* p_x = CONST_DEREF(x);                   \
+    const CTYPE* p_y = CONST_DEREF(y);                   \
+                                                         \
+    for (R_len_t i = 0; i < size; ++i) {                 \
+      p_out[i] = SCALAR_EQUAL(p_x[i], p_y[i], na_equal); \
+    }                                                    \
+                                                         \
+    UNPROTECT(3);                                        \
+    return out;                                          \
+  }                                                      \
   while (0)
 
 // [[ register() ]]
@@ -158,8 +158,8 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
     const CTYPE* p_x = CONST_DEREF(x);                    \
     const CTYPE* p_y = CONST_DEREF(y);                    \
                                                           \
-    for (R_len_t i = 0; i < n; ++i, ++p_x, ++p_y) {       \
-      if (!SCALAR_EQUAL(p_x, p_y)) {                      \
+    for (R_len_t i = 0; i < n; ++i) {                     \
+      if (!SCALAR_EQUAL(p_x[i], p_y[i])) {                \
         return false;                                     \
       }                                                   \
     }                                                     \
@@ -388,12 +388,12 @@ do {                                                                 \
   const CTYPE* p_x = CONST_DEREF(x);                                 \
   const CTYPE* p_y = CONST_DEREF(y);                                 \
                                                                      \
-  for (R_len_t i = 0; i < p_info->size; ++i, ++p_x, ++p_y) {         \
+  for (R_len_t i = 0; i < p_info->size; ++i) {                       \
     if (p_info->p_row_known[i]) {                                    \
       continue;                                                      \
     }                                                                \
                                                                      \
-    int eq = SCALAR_EQUAL(p_x, p_y, na_equal);                       \
+    int eq = SCALAR_EQUAL(p_x[i], p_y[i], na_equal);                 \
                                                                      \
     if (eq <= 0) {                                                   \
       p_out[i] = eq;                                                 \

@@ -231,7 +231,7 @@ SEXP vec_identify_runs(SEXP x) {
   for (R_len_t i = 1; i < size; ++i) {                         \
     const CTYPE elt = p_x[i];                                  \
                                                                \
-    if (SCALAR_EQUAL(&elt, &ref) == 0) {                       \
+    if (SCALAR_EQUAL(elt, ref) == 0) {                         \
       ++id;                                                    \
       ref = elt;                                               \
     }                                                          \
@@ -404,7 +404,7 @@ int vec_identify_runs_col(SEXP x,
     }                                                             \
                                                                   \
     const CTYPE elt = p_x[i];                                     \
-    const int eq = EQUAL_SCALAR(&elt, &run_val);                  \
+    const int eq = EQUAL_SCALAR(elt, run_val);                    \
                                                                   \
     /* Update ID of identical values */                           \
     if (eq != 0) {                                                \

@@ -14,7 +14,7 @@ struct dictionary {
   SEXP vec;
   enum vctrs_type type;
 
-  int (*equal)(const void*, R_len_t i, const void*, R_len_t j);
+  int (*p_equal_scalar_na_equal)(const void*, r_ssize i, const void*, r_ssize j);
   bool (*p_equal_missing_scalar)(const void* p_x, r_ssize i);
   const void* vec_p;
 

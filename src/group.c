@@ -83,7 +83,7 @@ SEXP vctrs_group_rle(SEXP x) {
   int loc = 1;
 
   for (int i = 1; i < n; ++i) {
-    if (d->equal(d->vec_p, i - 1, d->vec_p, i)) {
+    if (d->p_equal_scalar_na_equal(d->vec_p, i - 1, d->vec_p, i)) {
       ++(*p_l);
       continue;
     }
