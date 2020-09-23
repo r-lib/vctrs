@@ -4,8 +4,15 @@
 #include "vctrs.h"
 
 
+static inline bool p_nil_equal_missing_scalar(const void* p_x, r_ssize i) {
+  stop_internal("p_nil_equal_missing_scalar", "Can't check NULL for missingness.");
+}
+
 static inline bool lgl_equal_missing_scalar(int x) {
   return x == NA_LOGICAL;
+}
+static inline bool p_lgl_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return lgl_equal_missing_scalar(((const int*) p_x)[i]);
 }
 static inline int lgl_equal_scalar_na_equal(const int* x, const int* y) {
   return *x == *y;
@@ -27,6 +34,9 @@ static inline int lgl_equal_scalar(const int* x, const int* y, bool na_equal) {
 static inline bool int_equal_missing_scalar(int x) {
   return x == NA_INTEGER;
 }
+static inline bool p_int_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return int_equal_missing_scalar(((const int*) p_x)[i]);
+}
 static inline int int_equal_scalar_na_equal(const int* x, const int* y) {
   return *x == *y;
 }
@@ -45,6 +55,9 @@ static inline int int_equal_scalar(const int* x, const int* y, bool na_equal) {
 
 static inline bool dbl_equal_missing_scalar(double x) {
   return isnan(x);
+}
+static inline bool p_dbl_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return dbl_equal_missing_scalar(((const double*) p_x)[i]);
 }
 static inline int dbl_equal_scalar_na_equal(const double* x, const double* y) {
   const double xi = *x;
@@ -81,6 +94,9 @@ static inline int dbl_equal_scalar(const double* x, const double* y, bool na_equ
 
 static inline bool cpl_equal_missing_scalar(Rcomplex x) {
   return dbl_equal_missing_scalar(x.r) || dbl_equal_missing_scalar(x.i);
+}
+static inline bool p_cpl_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return cpl_equal_missing_scalar(((const Rcomplex*) p_x)[i]);
 }
 static inline int cpl_equal_scalar_na_equal(const Rcomplex* x, const Rcomplex* y) {
   Rcomplex xi = *x;
@@ -137,6 +153,9 @@ static inline int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
 static inline bool chr_equal_missing_scalar(SEXP x) {
   return x == NA_STRING;
 }
+static inline bool p_chr_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return chr_equal_missing_scalar(((const SEXP*) p_x)[i]);
+}
 static inline int chr_equal_scalar_na_equal(const SEXP* x, const SEXP* y) {
   const SEXP xi = *x;
   const SEXP yj = *y;
@@ -158,6 +177,9 @@ static inline int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) 
 static inline bool list_equal_missing_scalar(SEXP x) {
   return x == R_NilValue;
 }
+static inline bool p_list_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return list_equal_missing_scalar(((const SEXP*) p_x)[i]);
+}
 static inline int list_equal_scalar_na_equal(const SEXP* x, const SEXP* y) {
   return equal_object(*x, *y);
 }
@@ -177,6 +199,9 @@ static inline int list_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal)
 // Raw vectors have no notion of missing value
 static inline bool raw_equal_missing_scalar(Rbyte x) {
   return false;
+}
+static inline bool p_raw_equal_missing_scalar(const void* p_x, r_ssize i) {
+  return raw_equal_missing_scalar(((const Rbyte*) p_x)[i]);
 }
 static inline int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
   return *x == *y;
@@ -201,5 +226,19 @@ static inline int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_
 }
 
 
+static inline bool p_equal_missing_scalar(const void* p_x,
+                                          r_ssize i,
+                                          const enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_logical: return p_lgl_equal_missing_scalar(p_x, i);
+  case vctrs_type_integer: return p_int_equal_missing_scalar(p_x, i);
+  case vctrs_type_double: return p_dbl_equal_missing_scalar(p_x, i);
+  case vctrs_type_complex: return p_cpl_equal_missing_scalar(p_x, i);
+  case vctrs_type_character: return p_chr_equal_missing_scalar(p_x, i);
+  case vctrs_type_raw: return p_raw_equal_missing_scalar(p_x, i);
+  case vctrs_type_list: return p_list_equal_missing_scalar(p_x, i);
+  default: stop_unimplemented_vctrs_type("p_equal_missing_scalar", type);
+  }
+}
 
 #endif
