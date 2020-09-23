@@ -364,40 +364,60 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   return out;
 }
 
+#define RESIZE(CONST_DEREF, DEREF, CTYPE, SEXPTYPE) do {       \
+  if (x_size == size) {                                        \
+    return x;                                                  \
+  }                                                            \
+                                                               \
+  const CTYPE* p_x = CONST_DEREF(x);                           \
+                                                               \
+  SEXP out = PROTECT(Rf_allocVector(SEXPTYPE, size));          \
+  CTYPE* p_out = DEREF(out);                                   \
+                                                               \
+  r_ssize copy_size = (size > x_size) ? x_size : size;         \
+                                                               \
+  memcpy(p_out, p_x, copy_size * sizeof(CTYPE));               \
+                                                               \
+  UNPROTECT(1);                                                \
+  return out;                                                  \
+} while (0)
+
+#define RESIZE_BARRIER(CONST_DEREF, SEXPTYPE, SET) do {        \
+  if (x_size == size) {                                        \
+    return x;                                                  \
+  }                                                            \
+                                                               \
+  const SEXP* p_x = CONST_DEREF(x);                            \
+                                                               \
+  SEXP out = PROTECT(Rf_allocVector(SEXPTYPE, size));          \
+                                                               \
+  r_ssize copy_size = (size > x_size) ? x_size : size;         \
+                                                               \
+  for (r_ssize i = 0; i < copy_size; ++i) {                    \
+    SET(out, i, p_x[i]);                                       \
+  }                                                            \
+                                                               \
+  UNPROTECT(1);                                                \
+  return out;                                                  \
+} while (0)
 
 // Faster than `Rf_xlengthgets()` because that fills the new extended
 // locations with `NA`, which we don't need.
 // [[ include("utils.h") ]]
-SEXP p_int_resize(const int* p_x, r_ssize x_size, r_ssize size) {
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_out = INTEGER(out);
-
-  memcpy(p_out, p_x, x_size * sizeof(int));
-
-  UNPROTECT(1);
-  return out;
+SEXP int_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  RESIZE(INTEGER_RO, INTEGER, int, INTSXP);
 }
 // [[ include("utils.h") ]]
-SEXP p_raw_resize(const Rbyte* p_x, r_ssize x_size, r_ssize size) {
-  SEXP out = PROTECT(Rf_allocVector(RAWSXP, size));
-  Rbyte* p_out = RAW(out);
-
-  memcpy(p_out, p_x, x_size * sizeof(Rbyte));
-
-  UNPROTECT(1);
-  return out;
+SEXP raw_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  RESIZE(RAW_RO, RAW, Rbyte, RAWSXP);
 }
 // [[ include("utils.h") ]]
-SEXP p_chr_resize(const SEXP* p_x, r_ssize x_size, r_ssize size) {
-  SEXP out = PROTECT(Rf_allocVector(STRSXP, size));
-
-  for (r_ssize i = 0; i < x_size; ++i) {
-    SET_STRING_ELT(out, i, p_x[i]);
-  }
-
-  UNPROTECT(1);
-  return out;
+SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size) {
+  RESIZE_BARRIER(STRING_PTR_RO, STRSXP, SET_STRING_ELT);
 }
+
+#undef RESIZE
+#undef RESIZE_BARRIER
 
 // [[ include("utils.h") ]]
 bool p_chr_any_reencode(const SEXP* p_x, r_ssize size) {
