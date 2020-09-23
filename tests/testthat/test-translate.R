@@ -125,3 +125,18 @@ test_that("attributes are translated", {
 
   expect_identical(vec_unique(x), expect)
 })
+
+test_that("attributes are translated recursively", {
+  utf8 <- encodings()$utf8
+  latin1 <- encodings()$latin1
+
+  nested <- structure(1, latin1 = latin1)
+  x <- structure(2, nested = nested, foo = 1, latin1 = latin1)
+
+  result <- vec_normalize_encoding(x)
+  attrib <- attributes(result)
+  attrib_nested <- attributes(attrib$nested)
+
+  expect_equal_encoding(attrib$latin1, utf8)
+  expect_equal_encoding(attrib_nested$latin1, utf8)
+})
