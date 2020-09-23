@@ -19,7 +19,7 @@
 struct group_info new_group_info() {
   return (struct group_info) {
     .data_size = 0,
-    .data = R_NilValue,
+    .data = vctrs_shared_empty_int,
     .n_groups = 0,
     .max_group_size = 0
   };
@@ -95,8 +95,8 @@ void group_realloc(r_ssize size, struct group_info* p_group_info) {
   }
 
   // Reallocate
-  p_group_info->data = p_int_resize(
-    p_group_info->p_data,
+  p_group_info->data = int_resize(
+    p_group_info->data,
     p_group_info->data_size,
     size
   );

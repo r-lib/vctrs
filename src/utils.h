@@ -114,9 +114,9 @@ bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
 
-SEXP p_int_resize(const int* p_x, r_ssize x_size, r_ssize size);
-SEXP p_raw_resize(const Rbyte* p_x, r_ssize x_size, r_ssize size);
-SEXP p_chr_resize(const SEXP* p_x, r_ssize x_size, r_ssize size);
+SEXP int_resize(SEXP x, r_ssize x_size, r_ssize size);
+SEXP raw_resize(SEXP x, r_ssize x_size, r_ssize size);
+SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size);
 
 bool p_chr_any_reencode(const SEXP* p_x, r_ssize size);
 void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, r_ssize size);
