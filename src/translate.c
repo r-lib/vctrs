@@ -169,12 +169,25 @@ SEXP obj_attrib_normalize_encoding(SEXP x) {
   return x;
 }
 
+/*
+ * If a copy of the attribute pairlist is required in
+ * `attrib_normalize_encoding()`, then we try to copy as little as possible.
+ * It will first copy up to the pairlist element that requires translation,
+ * insert that newly translated element, and then reuse the tail of the
+ * pairlist. If future elements also need translation, then it "knows" that
+ * it has already copied part of the pairlist and will only copy the middle
+ * section between the last copied node and the new node that needs translation.
+ */
 static
 SEXP attrib_normalize_encoding(SEXP x) {
   int nprot = 0;
-  r_ssize loc = 0;
 
-  for (SEXP node = x; node != r_null; node = r_node_cdr(node), ++loc) {
+  // Updatable positions of the head we have to start copying from
+  // and the head that we start copying to
+  SEXP head_from = x;
+  SEXP head_to = r_null;
+
+  for (SEXP node = x; node != r_null; node = r_node_cdr(node)) {
     SEXP elt_old = r_node_car(node);
 
     SEXP elt_new = obj_normalize_encoding(elt_old);
@@ -183,19 +196,49 @@ SEXP attrib_normalize_encoding(SEXP x) {
     }
     PROTECT(elt_new);
 
-    // Only cloned once, at which point `x` is free of references
-    if (MAYBE_REFERENCED(x)) {
-      x = PROTECT(r_clone(x));
-      ++nprot;
-      node = x;
-
-      // Restore original positioning post-clone
-      for (r_ssize i = 0; i < loc; ++i) {
-        node = r_node_cdr(node);
-      }
+    // Update directly if possible
+    if (!MAYBE_REFERENCED(node)) {
+      r_node_poke_car(node, elt_new);
+      UNPROTECT(1);
+      continue;
     }
 
-    r_node_poke_car(node, elt_new);
+    SEXP old;
+    SEXP new;
+
+    SEXP middle = R_NilValue;
+    SEXP next = r_node_cdr(node);
+
+    // Create a new middle section for the pairlist
+    for (old = head_from; old != next; old = r_node_cdr(old)) {
+      middle = r_new_node(R_NilValue, middle);
+    }
+
+    // Link to the middle section
+    if (head_to == r_null) {
+      // This is the first time we've had to copy
+      x = middle;
+      PROTECT_N(x, &nprot);
+    } else {
+      r_node_poke_cdr(head_to, middle);
+    }
+
+    // Copy values into that new middle section up to `elt_new`
+    for (old = head_from, new = middle; old != node; old = r_node_cdr(old), new = r_node_cdr(new)) {
+      r_node_poke_car(new, r_node_car(old));
+      r_node_poke_tag(new, r_node_tag(old));
+    }
+
+    // Insert `elt_new`
+    r_node_poke_car(new, elt_new);
+    r_node_poke_tag(new, r_node_tag(old));
+
+    head_from = next;
+    head_to = new;
+
+    // Reuse the tail
+    r_node_poke_cdr(head_to, head_from);
+
     UNPROTECT(1);
   }
 
