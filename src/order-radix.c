@@ -305,22 +305,20 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 
   // Construct the two sets of group info needed for tracking groups.
   // We switch between them after each data frame column is processed.
-  struct group_info group_info0 = new_group_info();
-  PROTECT_GROUP_INFO(&group_info0, p_n_prot);
+  struct group_info* p_group_info0 = new_group_info();
+  PROTECT_GROUP_INFO(p_group_info0, p_n_prot);
 
-  struct group_info group_info1 = new_group_info();
-  PROTECT_GROUP_INFO(&group_info1, p_n_prot);
+  struct group_info* p_group_info1 = new_group_info();
+  PROTECT_GROUP_INFO(p_group_info1, p_n_prot);
 
-  struct group_info* p_p_group_info[2];
-  p_p_group_info[0] = &group_info0;
-  p_p_group_info[1] = &group_info1;
-
-  struct group_infos group_infos = new_group_infos(
-    p_p_group_info,
+  struct group_infos* p_group_infos = new_group_infos(
+    p_group_info0,
+    p_group_info1,
     size,
     force_groups,
     ignore_groups
   );
+  PROTECT_GROUP_INFOS(p_group_infos, p_n_prot);
 
   // Used for character ordering - lazily generated to be fast
   // when not ordering character vectors
@@ -345,14 +343,14 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
     p_lazy_o_aux,
     p_lazy_bytes,
     p_lazy_counts,
-    &group_infos,
+    p_group_infos,
     p_lazy_x_reencoded,
     &truelength_info
   );
 
   // Return ordered location info rather than ordering
   if (locations) {
-    struct group_info* p_group_info = groups_current(&group_infos);
+    struct group_info* p_group_info = groups_current(p_group_infos);
     const int* p_sizes = p_group_info->p_data;
     r_ssize n_groups = p_group_info->n_groups;
 

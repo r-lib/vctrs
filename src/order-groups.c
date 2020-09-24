@@ -16,28 +16,46 @@
 // -----------------------------------------------------------------------------
 
 // Pair with `PROTECT_GROUP_INFO()` in the caller
-struct group_info new_group_info() {
-  return (struct group_info) {
-    .data_size = 0,
-    .data = vctrs_shared_empty_int,
-    .n_groups = 0,
-    .max_group_size = 0
-  };
+struct group_info* new_group_info() {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct group_info)));
+  struct group_info* p_group_info = (struct group_info*) RAW(self);
+
+  p_group_info->self = self;
+  p_group_info->data_size = 0;
+  p_group_info->data = vctrs_shared_empty_int;
+  p_group_info->n_groups = 0;
+  p_group_info->max_group_size = 0;
+
+  UNPROTECT(1);
+  return p_group_info;
 }
 
 // -----------------------------------------------------------------------------
 
-struct group_infos new_group_infos(struct group_info** p_p_group_info,
-                                   r_ssize max_data_size,
-                                   bool force_groups,
-                                   bool ignore_groups) {
-  return (struct group_infos) {
-    .p_p_group_info = p_p_group_info,
-    .max_data_size = max_data_size,
-    .current = 0,
-    .force_groups = force_groups,
-    .ignore_groups = ignore_groups
-  };
+struct group_infos* new_group_infos(struct group_info* p_group_info0,
+                                    struct group_info* p_group_info1,
+                                    r_ssize max_data_size,
+                                    bool force_groups,
+                                    bool ignore_groups) {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct group_infos)));
+  struct group_infos* p_group_infos = (struct group_infos*) RAW(self);
+
+  SEXP p_p_group_info_data = PROTECT(r_new_raw(2 * sizeof(struct group_info*)));
+  struct group_info** p_p_group_info = (struct group_info**) RAW(p_p_group_info_data);
+
+  p_p_group_info[0] = p_group_info0;
+  p_p_group_info[1] = p_group_info1;
+
+  p_group_infos->self = self;
+  p_group_infos->p_p_group_info_data = p_p_group_info_data;
+  p_group_infos->p_p_group_info = p_p_group_info;
+  p_group_infos->max_data_size = max_data_size;
+  p_group_infos->current = 0;
+  p_group_infos->force_groups = force_groups;
+  p_group_infos->ignore_groups = ignore_groups;
+
+  UNPROTECT(2);
+  return p_group_infos;
 }
 
 // -----------------------------------------------------------------------------
