@@ -17,6 +17,11 @@
 
 // -----------------------------------------------------------------------------
 
+SEXP parse_na_value(SEXP na_value);
+SEXP parse_direction(SEXP direction);
+
+// -----------------------------------------------------------------------------
+
 /*
  * `order` is an integer vector intended to hold the ordering vector
  * in `vec_order()`. It is allocated eagerly, but the initialization of its

@@ -181,9 +181,6 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP parse_na_value(SEXP na_value);
-static SEXP parse_direction(SEXP direction);
-
 static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last);
 
 // [[ register() ]]
@@ -4168,9 +4165,9 @@ int df_decreasing_expansion(SEXP x) {
 
 static int parse_na_value_one(SEXP x);
 
-// Don't care about length here, checked later
-static
+// [[ include("order-radix.h") ]]
 SEXP parse_na_value(SEXP na_value) {
+  // Don't care about length here, checked later
   if (TYPEOF(na_value) != STRSXP) {
     Rf_errorcall(R_NilValue, "`na_value` must be a character vector.");
   }
@@ -4208,9 +4205,9 @@ int parse_na_value_one(SEXP x) {
 
 static int parse_direction_one(SEXP x);
 
-// Don't care about length here, checked later
-static
+// [[ include("order-radix.h") ]]
 SEXP parse_direction(SEXP direction) {
+  // Don't care about length here, checked later
   if (TYPEOF(direction) != STRSXP) {
     Rf_errorcall(R_NilValue, "`direction` must be a character vector.");
   }
