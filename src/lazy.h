@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------
 
 /*
+ * @member self A RAWSXP for the struct memory.
  * @member data The RAWSXP that gets allocated lazily.
  * @member p_data A void pointer to the RAWSXP.
  * @member data_pi A protection index to `data` so it can reprotect itself
@@ -15,6 +16,7 @@
  *   is from `sizeof(<type>)`.
  */
 struct lazy_raw {
+  SEXP self;
   SEXP data;
   void* p_data;
   PROTECT_INDEX data_pi;
@@ -27,11 +29,16 @@ struct lazy_raw {
  *   memory for.
  */
 static inline
-struct lazy_raw new_lazy_raw(r_ssize size, size_t n_bytes) {
-  return (struct lazy_raw) {
-    .data = R_NilValue,
-    .size = size * n_bytes
-  };
+struct lazy_raw* new_lazy_raw(r_ssize size, size_t n_bytes) {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct lazy_raw)));
+  struct lazy_raw* p_out = (struct lazy_raw*) RAW(self);
+
+  p_out->self = self;
+  p_out->data = R_NilValue;
+  p_out->size = size * n_bytes;
+
+  UNPROTECT(1);
+  return p_out;
 }
 
 /*
@@ -55,6 +62,7 @@ void* init_lazy_raw(struct lazy_raw* p_x) {
 // -----------------------------------------------------------------------------
 
 /*
+ * @member self A RAWSXP for the struct memory.
  * @member data The STRSXP that gets allocated lazily.
  * @member p_data A constant pointer to `data`. Modification to `data` should
  *   be done using `SET_STRING_ELT()`.
@@ -63,6 +71,7 @@ void* init_lazy_raw(struct lazy_raw* p_x) {
  * @member size The total size of the STRSXP to allocate.
  */
 struct lazy_chr {
+  SEXP self;
   SEXP data;
   const SEXP* p_data;
   PROTECT_INDEX data_pi;
@@ -70,11 +79,16 @@ struct lazy_chr {
 };
 
 static inline
-struct lazy_chr new_lazy_chr(r_ssize size) {
-  return (struct lazy_chr) {
-    .data = R_NilValue,
-    .size = size
-  };
+struct lazy_chr* new_lazy_chr(r_ssize size) {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct lazy_chr)));
+  struct lazy_chr* p_out = (struct lazy_chr*) RAW(self);
+
+  p_out->self = self;
+  p_out->data = R_NilValue;
+  p_out->size = size;
+
+  UNPROTECT(1);
+  return p_out;
 }
 
 static inline
@@ -95,8 +109,9 @@ const SEXP* init_lazy_chr(struct lazy_chr* p_x) {
 
 
 #define PROTECT_LAZY_VEC(p_info, p_n) do {                \
+  PROTECT((p_info)->self);                                \
   PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi); \
-  *(p_n) += 1;                                            \
+  *(p_n) += 2;                                            \
 } while (0)
 
 
