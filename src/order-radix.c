@@ -232,7 +232,7 @@ static SEXP vec_order_locs_impl(SEXP x,
 
 static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
 static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
-static SEXP vec_order_check_args(SEXP x, SEXP args);
+static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
 
 static void vec_order_switch(SEXP x,
                              SEXP decreasing,
@@ -261,12 +261,8 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
-  SEXP args = PROTECT_N(Rf_allocVector(VECSXP, 2), p_n_prot);
-  SET_VECTOR_ELT(args, 0, decreasing);
-  SET_VECTOR_ELT(args, 1, na_last);
-
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
-  args = PROTECT_N(vec_order_check_args(x, args), p_n_prot);
+  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), p_n_prot);
   decreasing = VECTOR_ELT(args, 0);
   na_last = VECTOR_ELT(args, 1);
 
@@ -493,7 +489,7 @@ void vec_order_switch(SEXP x,
     Rf_errorcall(
       R_NilValue,
       "Internal error: Size of decreasing != 1, but "
-      "`vec_order_check_args()` didn't catch it."
+      "`vec_order_expand_args()` didn't catch it."
     );
   }
 
@@ -501,7 +497,7 @@ void vec_order_switch(SEXP x,
     Rf_errorcall(
       R_NilValue,
       "Internal error: Size of na_last != 1, but "
-      "`vec_order_check_args()` didn't catch it."
+      "`vec_order_expand_args()` didn't catch it."
     );
   }
 
@@ -3547,7 +3543,7 @@ void df_order_internal(SEXP x,
   } else {
     Rf_errorcall(
       R_NilValue,
-      "Internal error: `vec_order_check_args()` should expand "
+      "Internal error: `vec_order_expand_args()` should expand "
       "`decreasing` to have length 1 or length equal "
       "to the number of columns of `x` after calling `vec_proxy_order()`."
     );
@@ -3564,7 +3560,7 @@ void df_order_internal(SEXP x,
   } else {
     Rf_errorcall(
       R_NilValue,
-      "Internal error: `vec_order_check_args()` should expand "
+      "Internal error: `vec_order_expand_args()` should expand "
       "`na_last` to have length 1 or length equal "
       "to the number of columns of `x` after calling `vec_proxy_order()`."
     );
@@ -3937,10 +3933,10 @@ size_t df_compute_n_bytes_lazy_counts(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP df_check_args(SEXP x, SEXP args);
+static SEXP df_expand_args(SEXP x, SEXP args);
 
 /*
- * `vec_order_check_args()` checks the type and length of `decreasing` and
+ * `vec_order_expand_args()` checks the type and length of `decreasing` and
  * `na_last` and possibly expands them.
  *
  * `x` is expected to be the original input, before `vec_proxy_order()` is
@@ -3962,9 +3958,10 @@ static SEXP df_check_args(SEXP x, SEXP args);
  * of the code here is for tracking this expansion.
  */
 static
-SEXP vec_order_check_args(SEXP x, SEXP args) {
-  SEXP decreasing = VECTOR_ELT(args, 0);
-  SEXP na_last = VECTOR_ELT(args, 1);
+SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last) {
+  SEXP args = PROTECT(r_new_list(2));
+  SET_VECTOR_ELT(args, 0, decreasing);
+  SET_VECTOR_ELT(args, 1, na_last);
 
   // Don't check length here. These might be vectorized if `x` is a data frame.
   if (TYPEOF(decreasing) != LGLSXP) {
@@ -3982,7 +3979,9 @@ SEXP vec_order_check_args(SEXP x, SEXP args) {
   }
 
   if (is_data_frame(x)) {
-    return df_check_args(x, args);
+    args = df_expand_args(x, args);
+    UNPROTECT(1);
+    return args;
   }
 
   if (r_length(decreasing) != 1) {
@@ -3993,17 +3992,15 @@ SEXP vec_order_check_args(SEXP x, SEXP args) {
     Rf_errorcall(R_NilValue, "`na_value` must be a single value when `x` is not a data frame.");
   }
 
+  UNPROTECT(1);
   return args;
 }
 
-static SEXP df_expand_args(SEXP x,
-                           SEXP args,
-                           r_ssize n_cols,
-                           r_ssize n_decreasing,
-                           r_ssize n_na_last);
+static SEXP expand_arg(SEXP arg, const int* p_expansions, r_ssize arg_size, r_ssize size);
+static int vec_decreasing_expansion(SEXP x);
 
 static
-SEXP df_check_args(SEXP x, SEXP args) {
+SEXP df_expand_args(SEXP x, SEXP args) {
   SEXP decreasing = VECTOR_ELT(args, 0);
   SEXP na_last = VECTOR_ELT(args, 1);
 
@@ -4033,19 +4030,6 @@ SEXP df_check_args(SEXP x, SEXP args) {
     );
   }
 
-  return df_expand_args(x, args, n_cols, n_decreasing, n_na_last);
-}
-
-
-static SEXP expand_arg(SEXP arg, const int* p_expansions, r_ssize arg_size, r_ssize size);
-static int vec_decreasing_expansion(SEXP x);
-
-static
-SEXP df_expand_args(SEXP x,
-                    SEXP args,
-                    r_ssize n_cols,
-                    r_ssize n_decreasing,
-                    r_ssize n_na_last) {
   SEXP expansions = PROTECT(Rf_allocVector(INTSXP, n_cols));
   int* p_expansions = INTEGER(expansions);
 
@@ -4069,9 +4053,6 @@ SEXP df_expand_args(SEXP x,
     UNPROTECT(1);
     return args;
   }
-
-  SEXP decreasing = VECTOR_ELT(args, 0);
-  SEXP na_last = VECTOR_ELT(args, 1);
 
   decreasing = expand_arg(decreasing, p_expansions, n_decreasing, size);
   SET_VECTOR_ELT(args, 0, decreasing);
