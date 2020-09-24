@@ -328,8 +328,8 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   struct lazy_chr* p_lazy_x_reencoded = new_lazy_chr(size);
   PROTECT_LAZY_VEC(p_lazy_x_reencoded, p_n_prot);
 
-  struct order order = new_order(size);
-  PROTECT_ORDER(&order, p_n_prot);
+  struct order* p_order = new_order(size);
+  PROTECT_ORDER(p_order, p_n_prot);
 
   vec_order_switch(
     proxy,
@@ -337,7 +337,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
     na_last,
     size,
     type,
-    &order,
+    p_order,
     p_lazy_x_chunk,
     p_lazy_x_aux,
     p_lazy_o_aux,
@@ -354,7 +354,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
     const int* p_sizes = p_group_info->p_data;
     r_ssize n_groups = p_group_info->n_groups;
 
-    const int* p_o = order.p_data;
+    const int* p_o = p_order->p_data;
 
     SEXP out = vec_order_locs_impl(x, p_o, p_sizes, n_groups);
 
@@ -363,7 +363,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
   }
 
   UNPROTECT(n_prot);
-  return order.data;
+  return p_order->data;
 }
 
 // -----------------------------------------------------------------------------
