@@ -28,22 +28,28 @@
  *
  * Pair with `PROTECT_TRUELENGTH_INFO()` in the caller
  */
-struct truelength_info new_truelength_info(r_ssize max_size_alloc) {
-  return (struct truelength_info) {
-    .strings = vctrs_shared_empty_chr,
-    .lengths = vctrs_shared_empty_raw,
-    .uniques = vctrs_shared_empty_chr,
-    .sizes = vctrs_shared_empty_int,
-    .sizes_aux = vctrs_shared_empty_int,
+struct truelength_info* new_truelength_info(r_ssize max_size_alloc) {
+  SEXP self = PROTECT(r_new_raw(sizeof(struct truelength_info)));
+  struct truelength_info* p_truelength_info = (struct truelength_info*) RAW(self);
 
-    .size_alloc = 0,
-    .max_size_alloc = max_size_alloc,
-    .size_used = 0,
+  p_truelength_info->self = self;
 
-    .max_string_size = 0,
+  p_truelength_info->strings = vctrs_shared_empty_chr;
+  p_truelength_info->lengths = vctrs_shared_empty_raw;
+  p_truelength_info->uniques = vctrs_shared_empty_chr;
+  p_truelength_info->sizes = vctrs_shared_empty_int;
+  p_truelength_info->sizes_aux = vctrs_shared_empty_int;
 
-    .reencode = false
-  };
+  p_truelength_info->size_alloc = 0;
+  p_truelength_info->max_size_alloc = max_size_alloc;
+  p_truelength_info->size_used = 0;
+
+  p_truelength_info->max_string_size = 0;
+
+  p_truelength_info->reencode = false;
+
+  UNPROTECT(1);
+  return p_truelength_info;
 }
 
 // -----------------------------------------------------------------------------

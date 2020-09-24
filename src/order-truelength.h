@@ -28,6 +28,8 @@
  * Struct of information required to track truelengths of character vectors
  * when ordering them
  *
+ * @member self A RAWSXP for the struct memory.
+ *
  * @members strings,p_strings,strings_pi The unique CHARSXP seen during
  *   ordering.
  * @members lengths,p_lengths,lengths_pi The original truelengths of the
@@ -54,6 +56,8 @@
  *   copied and re-encoded.
  */
 struct truelength_info {
+  SEXP self;
+
   SEXP strings;
   SEXP* p_strings;
   PROTECT_INDEX strings_pi;
@@ -84,16 +88,17 @@ struct truelength_info {
 };
 
 #define PROTECT_TRUELENGTH_INFO(p_info, p_n) do {                   \
+  PROTECT((p_info)->self);                                          \
   PROTECT_WITH_INDEX((p_info)->strings, &(p_info)->strings_pi);     \
   PROTECT_WITH_INDEX((p_info)->lengths, &(p_info)->lengths_pi);     \
   PROTECT_WITH_INDEX((p_info)->uniques, &(p_info)->uniques_pi);     \
   PROTECT_WITH_INDEX((p_info)->sizes, &(p_info)->sizes_pi);         \
   PROTECT_WITH_INDEX((p_info)->sizes_aux, &(p_info)->sizes_aux_pi); \
-  *(p_n) += 5;                                                      \
+  *(p_n) += 6;                                                      \
 } while(0)
 
 
-struct truelength_info new_truelength_info(r_ssize max_size_alloc);
+struct truelength_info* new_truelength_info(r_ssize max_size_alloc);
 void truelength_reset(struct truelength_info* p_truelength_info);
 
 void truelength_save(SEXP x,
