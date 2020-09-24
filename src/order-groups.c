@@ -29,14 +29,14 @@ struct group_info new_group_info() {
 
 struct group_infos new_group_infos(struct group_info** p_p_group_info,
                                    r_ssize max_data_size,
-                                   bool requested,
-                                   bool ignore) {
+                                   bool force_groups,
+                                   bool ignore_groups) {
   return (struct group_infos) {
     .p_p_group_info = p_p_group_info,
     .max_data_size = max_data_size,
     .current = 0,
-    .requested = requested,
-    .ignore = ignore
+    .force_groups = force_groups,
+    .ignore_groups = ignore_groups
   };
 }
 
@@ -139,7 +139,7 @@ r_ssize groups_realloc_size(r_ssize data_size, r_ssize max_data_size) {
  * integer vector (because we don't know if it will get used or not).
  */
 void groups_swap(struct group_infos* p_group_infos) {
-  if (p_group_infos->ignore) {
+  if (p_group_infos->ignore_groups) {
     return;
   }
 

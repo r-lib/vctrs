@@ -73,19 +73,19 @@ struct group_info {
  *   `x`.
  * @member current The current `group_info` pointer we are using. This is
  *   either 0 or 1.
- * @member requested Was group information requested by the user? If so, we
+ * @member force_groups Was group information requested by the user? If so, we
  *   always have to track group information.
- * @member ignore Should group tracking be ignored? This is the default
+ * @member ignore_groups Should group tracking be ignored? This is the default
  *   for atomic vectors unless groups information is explicitly requested. For
  *   data frames, this is true over all columns except the last one (for
- *   performance) unless `requested` is true.
+ *   performance) unless `force_groups` is true.
  */
 struct group_infos {
   struct group_info** p_p_group_info;
   r_ssize max_data_size;
   int current;
-  bool requested;
-  bool ignore;
+  bool force_groups;
+  bool ignore_groups;
 };
 
 // -----------------------------------------------------------------------------
@@ -94,8 +94,8 @@ struct group_info new_group_info();
 
 struct group_infos new_group_infos(struct group_info** p_p_group_info,
                                    r_ssize max_data_size,
-                                   bool requested,
-                                   bool ignore);
+                                   bool force_groups,
+                                   bool ignore_groups);
 
 void groups_swap(struct group_infos* p_group_infos);
 
@@ -120,7 +120,7 @@ void groups_size_push(r_ssize size, struct group_infos* p_group_infos);
  */
 static inline
 void groups_size_maybe_push(r_ssize size, struct group_infos* p_group_infos) {
-  if (p_group_infos->ignore) {
+  if (p_group_infos->ignore_groups) {
     return;
   } else {
     groups_size_push(size, p_group_infos);
