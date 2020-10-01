@@ -404,6 +404,24 @@ test_that("can zap outer names from a name-spec (#1215)", {
   )
 })
 
+test_that("named empty vectors force named output (#1263)", {
+  x <- set_names(int(), chr())
+
+  expect_named(vec_c(x), chr())
+  expect_named(vec_c(x, x), chr())
+  expect_named(vec_c(x, 1L), "")
+  expect_named(vec_c(x, 1), "")
+
+  expect_named(vec_unchop(list(x), list(int())), chr())
+  expect_named(vec_unchop(list(x, x), list(int(), int())), chr())
+  expect_named(vec_unchop(list(x, 1L), list(int(), 1)), "")
+
+  # FIXME: `vec_cast_common()` dropped names
+  # https://github.com/r-lib/vctrs/issues/623
+  expect_failure(
+    expect_named(vec_unchop(list(x, 1), list(int(), 1)), "")
+  )
+})
 
 # Golden tests -------------------------------------------------------
 

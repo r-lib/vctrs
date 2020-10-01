@@ -133,10 +133,6 @@ static SEXP vec_unchop(SEXP xs,
 
     SEXP loc = VECTOR_ELT(locs, i);
 
-    // Total ownership of `proxy` because it was freshly created with `vec_init()`
-    proxy = vec_proxy_assign_opts(proxy, loc, x, VCTRS_OWNED_true, &unchop_assign_opts);
-    REPROTECT(proxy, proxy_pi);
-
     if (assign_names) {
       R_len_t size = Rf_length(loc);
       SEXP outer = xs_is_named ? STRING_ELT(xs_names, i) : R_NilValue;
@@ -156,6 +152,10 @@ static SEXP vec_unchop(SEXP xs,
 
       UNPROTECT(2);
     }
+
+    // Total ownership of `proxy` because it was freshly created with `vec_init()`
+    proxy = vec_proxy_assign_opts(proxy, loc, x, VCTRS_OWNED_true, &unchop_assign_opts);
+    REPROTECT(proxy, proxy_pi);
   }
 
   SEXP out_size_sexp = PROTECT(r_int(out_size));
