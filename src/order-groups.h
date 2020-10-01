@@ -27,6 +27,7 @@
 /*
  * Info related to 1 column / vector worth of groupings
  *
+ * @member self A RAWSXP for the struct memory.
  * @member data An integer vector of group sizes.
  * @member p_data A pointer to `data`.
  * @member data_pi The protection index for `data` which allows us to
@@ -37,6 +38,7 @@
  * @member max_group_size The maximum group size seen so far.
  */
 struct group_info {
+  SEXP self;
   SEXP data;
   int* p_data;
   PROTECT_INDEX data_pi;
@@ -48,8 +50,9 @@ struct group_info {
 };
 
 #define PROTECT_GROUP_INFO(p_info, p_n) do {              \
+  PROTECT((p_info)->self);                                \
   PROTECT_WITH_INDEX((p_info)->data, &(p_info)->data_pi); \
-  *(p_n) += 1;                                            \
+  *(p_n) += 2;                                            \
 } while(0)
 
 // -----------------------------------------------------------------------------
@@ -67,6 +70,8 @@ struct group_info {
  * groups) while also updating the group information of the chunks of
  * the current one.
  *
+ * @member self A RAWSXP for the struct memory.
+ * @member p_p_group_info_data A RAWSXP for the p_p_group_info array memory.
  * @member p_p_group_info A pointer to two `group_info` pointers.
  * @member max_data_size The maximum data size that can be allocated when
  *   reallocating an individual `p_group_info`. This is set to the size of
@@ -81,6 +86,8 @@ struct group_info {
  *   performance) unless `force_groups` is true.
  */
 struct group_infos {
+  SEXP self;
+  SEXP p_p_group_info_data;
   struct group_info** p_p_group_info;
   r_ssize max_data_size;
   int current;
@@ -88,14 +95,23 @@ struct group_infos {
   bool ignore_groups;
 };
 
+#define PROTECT_GROUP_INFOS(p_info, p_n) do {               \
+  PROTECT((p_info)->self);                                  \
+  PROTECT((p_info)->p_p_group_info_data);                   \
+  *(p_n) += 2;                                              \
+  PROTECT_GROUP_INFO((p_info)->p_p_group_info[0], (p_n));   \
+  PROTECT_GROUP_INFO((p_info)->p_p_group_info[1], (p_n));   \
+} while(0)
+
 // -----------------------------------------------------------------------------
 
-struct group_info new_group_info();
+struct group_info* new_group_info();
 
-struct group_infos new_group_infos(struct group_info** p_p_group_info,
-                                   r_ssize max_data_size,
-                                   bool force_groups,
-                                   bool ignore_groups);
+struct group_infos* new_group_infos(struct group_info* p_group_info0,
+                                    struct group_info* p_group_info1,
+                                    r_ssize max_data_size,
+                                    bool force_groups,
+                                    bool ignore_groups);
 
 void groups_swap(struct group_infos* p_group_infos);
 
