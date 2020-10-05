@@ -172,6 +172,7 @@ static
 SEXP attrib_normalize_encoding(SEXP x) {
   int nprot = 0;
   r_ssize loc = 0;
+  bool owned = false;
 
   for (SEXP node = x; node != r_null; node = r_node_cdr(node), ++loc) {
     SEXP elt_old = r_node_car(node);
@@ -182,9 +183,12 @@ SEXP attrib_normalize_encoding(SEXP x) {
     }
     PROTECT(elt_new);
 
-    // Cloned once, at which point `x` and all `node`s are free of references
-    if (MAYBE_REFERENCED(x)) {
+    if (!owned) {
+      // Shallow clone entire pairlist if not owned.
+      // Should be fast because these are generally short.
       x = PROTECT_N(r_clone(x), &nprot);
+      owned = true;
+
       node = x;
 
       // Restore original positioning post-clone
