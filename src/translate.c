@@ -1,28 +1,24 @@
 #include "translate.h"
+#include "vctrs.h"
+#include "utils.h"
 
-// -----------------------------------------------------------------------------
+// For testing
+// [[ register() ]]
+SEXP vctrs_normalize_encoding(SEXP x) {
+  return vec_normalize_encoding(x);
+}
 
-static r_ssize chr_find_normalize_start(SEXP x, r_ssize size);
-static r_ssize list_find_normalize_start(SEXP x, r_ssize size);
-
-static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
-static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
+static inline SEXP obj_normalize_encoding(SEXP x);
 
 /*
  * Recursively normalize encodings of character vectors.
- *
- * This can be called on any vector, but is generally called on a proxy vector.
- *
- * Note that attributes are currently not translated. This means that it is
- * often important to call this function on the proxy, rather than the original
- * vector. For example, a list-rcrd with a vectorized character attribute must
- * be proxied to have the attribute promoted to a data frame column first before
- * calling `vec_normalize_encoding()`.
  *
  * A CHARSXP is considered normalized if:
  * - It is the NA_STRING
  * - It is ASCII, which means the encoding will be unmarked
  * - It is marked as UTF-8
+ *
+ * Attributes are translated as well.
  *
  * ASCII strings will never get marked with an encoding when they go
  * through `Rf_mkCharLenCE()`, but they will get marked as ASCII. Since
@@ -42,36 +38,42 @@ static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start);
  * [[ include("translate.h") ]]
  */
 SEXP vec_normalize_encoding(SEXP x) {
-  switch (TYPEOF(x)) {
-  case STRSXP: {
-    r_ssize size = r_length(x);
-    r_ssize start = chr_find_normalize_start(x, size);
-
-    if (size == start) {
-      return x;
-    } else {
-      return chr_normalize_encoding(x, size, start);
-    }
-  }
-  case VECSXP: {
-    r_ssize size = r_length(x);
-    r_ssize start = list_find_normalize_start(x, size);
-
-    if (size == start) {
-      return x;
-    } else {
-      return list_normalize_encoding(x, size, start);
-    }
-  }
-  default: {
-    return x;
-  }
-  }
+  return obj_normalize_encoding(x);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
+static SEXP chr_normalize_encoding(SEXP x);
+static SEXP list_normalize_encoding(SEXP x);
+static SEXP obj_attrib_normalize_encoding(SEXP x);
+
+static inline
+SEXP obj_normalize_encoding(SEXP x) {
+  x = PROTECT(obj_attrib_normalize_encoding(x));
+
+  switch (TYPEOF(x)) {
+  case STRSXP: x = chr_normalize_encoding(x); break;
+  case VECSXP: x = list_normalize_encoding(x); break;
+  default: break;
+  }
+
+  UNPROTECT(1);
+  return x;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline r_ssize chr_find_normalize_start(SEXP x, r_ssize size);
+
+static
+SEXP chr_normalize_encoding(SEXP x) {
+  r_ssize size = r_length(x);
+  r_ssize start = chr_find_normalize_start(x, size);
+
+  if (size == start) {
+    return x;
+  }
+
   x = PROTECT(r_clone_referenced(x));
   const SEXP* p_x = STRING_PTR_RO(x);
 
@@ -92,7 +94,8 @@ static SEXP chr_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
   return x;
 }
 
-static r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
+static inline
+r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
   const SEXP* p_x = STRING_PTR_RO(x);
 
   for (r_ssize i = 0; i < size; ++i) {
@@ -110,87 +113,94 @@ static r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
 
 // -----------------------------------------------------------------------------
 
-static SEXP list_normalize_encoding(SEXP x, r_ssize size, r_ssize start) {
-  x = PROTECT(r_clone_referenced(x));
-  const SEXP* p_x = VECTOR_PTR_RO(x);
+static
+SEXP list_normalize_encoding(SEXP x) {
+  int nprot = 0;
 
-  for (r_ssize i = start; i < size; ++i) {
-    SEXP elt = p_x[i];
-
-    switch (TYPEOF(elt)) {
-    case STRSXP: {
-      r_ssize elt_size = r_length(elt);
-      r_ssize elt_start = chr_find_normalize_start(elt, elt_size);
-
-      if (elt_size == elt_start) {
-        break;
-      }
-
-      elt = chr_normalize_encoding(elt, elt_size, elt_start);
-      SET_VECTOR_ELT(x, i, elt);
-      break;
-    }
-    case VECSXP: {
-      r_ssize elt_size = r_length(elt);
-      r_ssize elt_start = list_find_normalize_start(elt, elt_size);
-
-      if (elt_size == elt_start) {
-        break;
-      }
-
-      elt = list_normalize_encoding(elt, elt_size, elt_start);
-      SET_VECTOR_ELT(x, i, elt);
-      break;
-    }
-    default:
-      continue;
-    }
-  }
-
-  UNPROTECT(1);
-  return x;
-}
-
-static inline bool elt_all_normalized(SEXP x);
-
-static r_ssize list_find_normalize_start(SEXP x, r_ssize size) {
+  r_ssize size = r_length(x);
   const SEXP* p_x = VECTOR_PTR_RO(x);
 
   for (r_ssize i = 0; i < size; ++i) {
-    const SEXP elt = p_x[i];
+    SEXP elt_old = p_x[i];
 
-    if (elt_all_normalized(elt)) {
+    SEXP elt_new = obj_normalize_encoding(elt_old);
+    if (elt_old == elt_new) {
       continue;
     }
+    PROTECT(elt_new);
 
-    return i;
+    // Cloned once, at which point `x` is free of references
+    if (MAYBE_REFERENCED(x)) {
+      x = PROTECT_N(r_clone(x), &nprot);
+      p_x = VECTOR_PTR_RO(x);
+    }
+
+    SET_VECTOR_ELT(x, i, elt_new);
+    UNPROTECT(1);
   }
 
-  return size;
-}
-
-static inline bool elt_all_normalized(SEXP x) {
-  switch (TYPEOF(x)) {
-  case STRSXP: {
-    r_ssize size = r_length(x);
-    r_ssize start = chr_find_normalize_start(x, size);
-    return size == start;
-  }
-  case VECSXP: {
-    r_ssize size = r_length(x);
-    r_ssize start = list_find_normalize_start(x, size);
-    return size == start;
-  }
-  default: {
-    return true;
-  }
-  }
+  UNPROTECT(nprot);
+  return x;
 }
 
 // -----------------------------------------------------------------------------
 
-// For testing
-// [[ register() ]]
-SEXP vctrs_normalize_encoding(SEXP x) {
-  return vec_normalize_encoding(x);
+static SEXP attrib_normalize_encoding(SEXP x);
+
+static
+SEXP obj_attrib_normalize_encoding(SEXP x) {
+  SEXP attrib_old = r_attrib(x);
+
+  if (attrib_old == r_null) {
+    return x;
+  }
+
+  SEXP attrib_new = attrib_normalize_encoding(attrib_old);
+  if (attrib_new == attrib_old) {
+    return x;
+  }
+  PROTECT(attrib_new);
+
+  x = PROTECT(r_clone_referenced(x));
+  r_poke_attrib(x, attrib_new);
+
+  UNPROTECT(2);
+  return x;
+}
+
+static
+SEXP attrib_normalize_encoding(SEXP x) {
+  int nprot = 0;
+  r_ssize loc = 0;
+  bool owned = false;
+
+  for (SEXP node = x; node != r_null; node = r_node_cdr(node), ++loc) {
+    SEXP elt_old = r_node_car(node);
+
+    SEXP elt_new = obj_normalize_encoding(elt_old);
+    if (elt_old == elt_new) {
+      continue;
+    }
+    PROTECT(elt_new);
+
+    if (!owned) {
+      // Shallow clone entire pairlist if not owned.
+      // Should be fast because these are generally short.
+      x = PROTECT_N(r_clone(x), &nprot);
+      owned = true;
+
+      node = x;
+
+      // Restore original positioning post-clone
+      for (r_ssize i = 0; i < loc; ++i) {
+        node = r_node_cdr(node);
+      }
+    }
+
+    r_node_poke_car(node, elt_new);
+    UNPROTECT(1);
+  }
+
+  UNPROTECT(nprot);
+  return x;
 }

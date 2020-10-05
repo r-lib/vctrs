@@ -95,24 +95,48 @@ test_that("translation treats data frames elements of lists as lists (#1233)", {
   expect_equal_encoding(result_field, expect_field)
 })
 
-# FIXME: Should we translate attributes to fix this? Can it be done efficiently?
-test_that("attributes are currently not translated", {
+test_that("attributes are translated", {
   utf8 <- encodings()$utf8
   latin1 <- encodings()$latin1
 
   a <- structure(1, enc = utf8)
   b <- structure(1, enc = latin1)
-  x <- list(a, b)
+  c <- structure(1, enc1 = utf8, enc2 = list(latin1), enc3 = latin1)
+  x <- list(a, b, c)
 
   result <- vec_normalize_encoding(x)
 
   a_enc <- attr(result[[1]], "enc")
   b_enc <- attr(result[[2]], "enc")
+  c_enc1 <- attr(result[[3]], "enc1")
+  c_enc2 <- attr(result[[3]], "enc2")[[1]]
+  c_enc3 <- attr(result[[3]], "enc3")
 
-  # Ideally both would be utf8
   expect_equal_encoding(a_enc, utf8)
-  expect_equal_encoding(b_enc, latin1)
+  expect_equal_encoding(b_enc, utf8)
+  expect_equal_encoding(c_enc1, utf8)
+  expect_equal_encoding(c_enc2, utf8)
+  expect_equal_encoding(c_enc3, utf8)
 
-  # Ideally the list elements are considered duplicates
-  expect_identical(vec_unique(x), x)
+  expect <- list(
+    structure(1, enc = utf8),
+    structure(1, enc1 = utf8, enc2 = list(utf8), enc3 = utf8)
+  )
+
+  expect_identical(vec_unique(x), expect)
+})
+
+test_that("attributes are translated recursively", {
+  utf8 <- encodings()$utf8
+  latin1 <- encodings()$latin1
+
+  nested <- structure(1, latin1 = latin1)
+  x <- structure(2, nested = nested, foo = 1, latin1 = latin1)
+
+  result <- vec_normalize_encoding(x)
+  attrib <- attributes(result)
+  attrib_nested <- attributes(attrib$nested)
+
+  expect_equal_encoding(attrib$latin1, utf8)
+  expect_equal_encoding(attrib_nested$latin1, utf8)
 })
