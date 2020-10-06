@@ -28,102 +28,45 @@ int32_t ceil2(int32_t x) {
 static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts);
 
 
-static int nil_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  stop_internal("nil_p_equal", "Can't compare NULL in dictionary.");
-}
-static int nil_p_equal_missing(const void* x, R_len_t i) {
-  stop_internal("nil_p_equal_missing", "Can't compare NULL in dictionary.");
-}
-
-static int lgl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return lgl_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
-}
-static int lgl_p_equal_missing(const void* x, R_len_t i) {
-  return lgl_equal_scalar_na_equal(((const int*) x) + i, &NA_LOGICAL);
-}
-
-static int int_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return int_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
-}
-static int int_p_equal_missing(const void* x, R_len_t i) {
-  return int_equal_scalar_na_equal(((const int*) x) + i, &NA_INTEGER);
-}
-
-static int dbl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return dbl_equal_scalar_na_equal(((const double*) x) + i, ((const double*) y) + j);
-}
-static int dbl_p_equal_missing(const void* x, R_len_t i) {
-  return dbl_equal_scalar_na_equal(((const double*) x) + i, &NA_REAL);
-}
-
-static int cpl_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, ((const Rcomplex*) y) + j);
-}
-static int cpl_p_equal_missing(const void* x, R_len_t i) {
-  return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, &vctrs_shared_na_cpl);
-}
-
-static int chr_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return chr_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
-}
-static int chr_p_equal_missing(const void* x, R_len_t i) {
-  return chr_equal_scalar_na_equal(((const SEXP*) x) + i, &NA_STRING);
-}
-
-static int raw_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return raw_equal_scalar_na_equal(((const Rbyte*) x) + i, ((const Rbyte*) y) + j);
-}
-static int raw_p_equal_missing(const void* x, R_len_t i) {
-  return false;
-}
-
-static int list_p_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return list_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
-}
-static int list_p_equal_missing(const void* x, R_len_t i) {
-  return list_equal_scalar_na_equal(((const SEXP*) x) + i, &R_NilValue);
-}
-
-
 static void init_dictionary_nil(struct dictionary* d) {
   d->vec_p = NULL;
-  d->equal = &nil_p_equal;
-  d->equal_missing = &nil_p_equal_missing;
+  d->p_equal_na_equal = &p_nil_equal_na_equal;
+  d->p_is_missing = &p_nil_is_missing;
 }
 static void init_dictionary_lgl(struct dictionary* d) {
   d->vec_p = (const void*) LOGICAL_RO(d->vec);
-  d->equal = &lgl_p_equal;
-  d->equal_missing = &lgl_p_equal_missing;
+  d->p_equal_na_equal = &p_lgl_equal_na_equal;
+  d->p_is_missing = &p_lgl_is_missing;
 }
 static void init_dictionary_int(struct dictionary* d) {
   d->vec_p = (const void*) INTEGER_RO(d->vec);
-  d->equal = &int_p_equal;
-  d->equal_missing = &int_p_equal_missing;
+  d->p_equal_na_equal = &p_int_equal_na_equal;
+  d->p_is_missing = &p_int_is_missing;
 }
 static void init_dictionary_dbl(struct dictionary* d) {
   d->vec_p = (const void*) REAL_RO(d->vec);
-  d->equal = dbl_p_equal;
-  d->equal_missing = &dbl_p_equal_missing;
+  d->p_equal_na_equal = p_dbl_equal_na_equal;
+  d->p_is_missing = &p_dbl_is_missing;
 }
 static void init_dictionary_cpl(struct dictionary* d) {
   d->vec_p = (const void*) COMPLEX_RO(d->vec);
-  d->equal = &cpl_p_equal;
-  d->equal_missing = &cpl_p_equal_missing;
+  d->p_equal_na_equal = &p_cpl_equal_na_equal;
+  d->p_is_missing = &p_cpl_is_missing;
 }
 static void init_dictionary_chr(struct dictionary* d) {
   d->vec_p = (const void*) STRING_PTR_RO(d->vec);
-  d->equal = &chr_p_equal;
-  d->equal_missing = &chr_p_equal_missing;
+  d->p_equal_na_equal = &p_chr_equal_na_equal;
+  d->p_is_missing = &p_chr_is_missing;
 }
 static void init_dictionary_raw(struct dictionary* d) {
   d->vec_p = (const void*) RAW_RO(d->vec);
-  d->equal = &raw_p_equal;
-  d->equal_missing = &raw_p_equal_missing;
+  d->p_equal_na_equal = &p_raw_equal_na_equal;
+  d->p_is_missing = &p_raw_is_missing;
 }
 static void init_dictionary_list(struct dictionary* d) {
   d->vec_p = (const void*) VECTOR_PTR_RO(d->vec);
-  d->equal = &list_p_equal;
-  d->equal_missing = &list_p_equal_missing;
+  d->p_equal_na_equal = &p_list_equal_na_equal;
+  d->p_is_missing = &p_list_is_missing;
 }
 
 struct dictionary_df_data {
@@ -132,13 +75,13 @@ struct dictionary_df_data {
   R_len_t n_col;
 };
 
-static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
-  struct dictionary_df_data* x_data = (struct dictionary_df_data*) x;
-  struct dictionary_df_data* y_data = (struct dictionary_df_data*) y;
+static int p_df_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  struct dictionary_df_data* x_data = (struct dictionary_df_data*) p_x;
+  struct dictionary_df_data* y_data = (struct dictionary_df_data*) p_y;
 
   R_len_t n_col = x_data->n_col;
   if (n_col != y_data->n_col) {
-    stop_internal("df_equal", "`x` and `y` must have the same number of columns.");
+    stop_internal("p_df_equal_na_equal", "`x` and `y` must have the same number of columns.");
   }
 
   enum vctrs_type* types = x_data->col_types;
@@ -148,9 +91,7 @@ static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   // `vec_proxy_equal()` flattens data frames so we don't need to
   // worry about df-cols
   for (R_len_t col = 0; col < n_col; ++col) {
-    if (!equal_scalar_na_equal_p(types[col],
-                                 R_NilValue, x_ptrs[col], i,
-                                 R_NilValue, y_ptrs[col], j)) {
+    if (!p_equal_na_equal(x_ptrs[col], i, y_ptrs[col], j, types[col])) {
       return false;
     }
   }
@@ -158,24 +99,15 @@ static int df_equal(const void* x, R_len_t i, const void* y, R_len_t j) {
   return true;
 }
 
-static int df_equal_missing(const void* x, R_len_t i) {
-  struct dictionary_df_data* x_data = (struct dictionary_df_data*) x;
+static bool p_df_is_missing(const void* p_x, r_ssize i) {
+  struct dictionary_df_data* x_data = (struct dictionary_df_data*) p_x;
 
   enum vctrs_type* types = x_data->col_types;
   const void** x_ptrs = x_data->col_ptrs;
   R_len_t n_col = x_data->n_col;
 
   for (R_len_t col = 0; col < n_col; ++col) {
-    enum vctrs_type type = types[col];
-
-    // Raw doesn't have missing values
-    if (type == vctrs_type_raw) {
-      continue;
-    }
-
-    if (equal_scalar_na_equal_p(type,
-                                R_NilValue, x_ptrs[col], i,
-                                R_NilValue, vec_type_missing_value(type), 0)) {
+    if (p_is_missing(x_ptrs[col], i, types[col])) {
       return true;
     }
   }
@@ -216,8 +148,8 @@ static void init_dictionary_df(struct dictionary* d) {
 
   d->protect = handle;
   d->vec_p = data;
-  d->equal = df_equal;
-  d->equal_missing = &df_equal_missing;
+  d->p_equal_na_equal = &p_df_equal_na_equal;
+  d->p_is_missing = &p_df_is_missing;
 
   UNPROTECT(4);
 }
@@ -333,7 +265,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     }
 
     // Check for same value as there might be a collision
-    if (d->equal(d->vec_p, idx, x->vec_p, i)) {
+    if (d->p_equal_na_equal(d->vec_p, idx, x->vec_p, i)) {
       return probe;
     }
 
@@ -349,7 +281,7 @@ uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
 }
 
 bool dict_is_missing(struct dictionary* d, R_len_t i) {
-  return d->hash[i] == HASH_MISSING && d->equal_missing(d->vec_p, i);
+  return d->hash[i] == HASH_MISSING && d->p_is_missing(d->vec_p, i);
 }
 
 

@@ -3,123 +3,99 @@
 
 #include "vctrs.h"
 
+// -----------------------------------------------------------------------------
 
-static inline bool lgl_equal_missing_scalar(int x) {
+static inline bool lgl_is_missing(int x) {
   return x == NA_LOGICAL;
 }
-static inline int lgl_equal_scalar_na_equal(const int* x, const int* y) {
-  return *x == *y;
-}
-static inline int lgl_equal_scalar_na_propagate(const int* x, const int* y) {
-  // Storing pointed values on the stack helps performance
-  const int xi = *x;
-  const int yj = *y;
-  return (xi == NA_LOGICAL || yj == NA_LOGICAL) ? NA_LOGICAL : xi == yj;
-}
-static inline int lgl_equal_scalar(const int* x, const int* y, bool na_equal) {
-  if (na_equal) {
-    return lgl_equal_scalar_na_equal(x, y);
-  } else {
-    return lgl_equal_scalar_na_propagate(x, y);
-  }
-}
-
-static inline bool int_equal_missing_scalar(int x) {
+static inline bool int_is_missing(int x) {
   return x == NA_INTEGER;
 }
-static inline int int_equal_scalar_na_equal(const int* x, const int* y) {
-  return *x == *y;
-}
-static inline int int_equal_scalar_na_propagate(const int* x, const int* y) {
-  const int xi = *x;
-  const int yj = *y;
-  return (xi == NA_INTEGER || yj == NA_INTEGER) ? NA_LOGICAL : xi == yj;
-}
-static inline int int_equal_scalar(const int* x, const int* y, bool na_equal) {
-  if (na_equal) {
-    return int_equal_scalar_na_equal(x, y);
-  } else {
-    return int_equal_scalar_na_propagate(x, y);
-  }
-}
-
-static inline bool dbl_equal_missing_scalar(double x) {
+static inline bool dbl_is_missing(double x) {
   return isnan(x);
 }
-static inline int dbl_equal_scalar_na_equal(const double* x, const double* y) {
-  const double xi = *x;
-  const double yj = *y;
+static inline bool cpl_is_missing(Rcomplex x) {
+  return dbl_is_missing(x.r) || dbl_is_missing(x.i);
+}
+static inline bool chr_is_missing(SEXP x) {
+  return x == NA_STRING;
+}
+static inline bool raw_is_missing(Rbyte x) {
+  return false;
+}
+static inline bool list_is_missing(SEXP x) {
+  return x == R_NilValue;
+}
 
-  switch (dbl_classify(xi)) {
+// -----------------------------------------------------------------------------
+
+#define P_IS_MISSING(CTYPE, IS_MISSING) do {   \
+  return IS_MISSING(((const CTYPE*) p_x)[i]);  \
+} while (0)
+
+static inline bool p_nil_is_missing(const void* p_x, r_ssize i) {
+  stop_internal("p_nil_is_missing", "Can't check NULL for missingness.");
+}
+static inline bool p_lgl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(int, lgl_is_missing);
+}
+static inline bool p_int_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(int, int_is_missing);
+}
+static inline bool p_dbl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(double, dbl_is_missing);
+}
+static inline bool p_cpl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(Rcomplex, cpl_is_missing);
+}
+static inline bool p_chr_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(SEXP, chr_is_missing);
+}
+static inline bool p_raw_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(Rbyte, raw_is_missing);
+}
+static inline bool p_list_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(SEXP, list_is_missing);
+}
+
+#undef P_IS_MISSING
+
+static inline bool p_is_missing(const void* p_x,
+                                r_ssize i,
+                                const enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_logical: return p_lgl_is_missing(p_x, i);
+  case vctrs_type_integer: return p_int_is_missing(p_x, i);
+  case vctrs_type_double: return p_dbl_is_missing(p_x, i);
+  case vctrs_type_complex: return p_cpl_is_missing(p_x, i);
+  case vctrs_type_character: return p_chr_is_missing(p_x, i);
+  case vctrs_type_raw: return p_raw_is_missing(p_x, i);
+  case vctrs_type_list: return p_list_is_missing(p_x, i);
+  default: stop_unimplemented_vctrs_type("p_is_missing", type);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+static inline int lgl_equal_na_equal(int x, int y) {
+  return x == y;
+}
+static inline int int_equal_na_equal(int x, int y) {
+  return x == y;
+}
+static inline int dbl_equal_na_equal(double x, double y) {
+  switch (dbl_classify(x)) {
   case vctrs_dbl_number: break;
-  case vctrs_dbl_missing: return dbl_classify(yj) == vctrs_dbl_missing;
-  case vctrs_dbl_nan: return dbl_classify(yj) == vctrs_dbl_nan;
+  case vctrs_dbl_missing: return dbl_classify(y) == vctrs_dbl_missing;
+  case vctrs_dbl_nan: return dbl_classify(y) == vctrs_dbl_nan;
   }
 
-  if (isnan(yj)) {
-    return false;
-  } else {
-    return xi == yj;
-  }
+  return isnan(y) ? false : x == y;
 }
-static inline int dbl_equal_scalar_na_propagate(const double* x, const double* y) {
-  const double xi = *x;
-  const double yj = *y;
-  if (dbl_equal_missing_scalar(xi) || dbl_equal_missing_scalar(yj)) {
-    return NA_LOGICAL;
-  } else {
-    return xi == yj;
-  }
+static inline int cpl_equal_na_equal(Rcomplex x, Rcomplex y) {
+  return dbl_equal_na_equal(x.r, y.r) && dbl_equal_na_equal(x.i, y.i);
 }
-static inline int dbl_equal_scalar(const double* x, const double* y, bool na_equal) {
-  if (na_equal) {
-    return dbl_equal_scalar_na_equal(x, y);
-  } else {
-    return dbl_equal_scalar_na_propagate(x, y);
-  }
-}
-
-static inline bool cpl_equal_missing_scalar(Rcomplex x) {
-  return dbl_equal_missing_scalar(x.r) || dbl_equal_missing_scalar(x.i);
-}
-static inline int cpl_equal_scalar_na_equal(const Rcomplex* x, const Rcomplex* y) {
-  Rcomplex xi = *x;
-  Rcomplex yj = *y;
-
-  int real_equal = dbl_equal_scalar_na_equal(&xi.r, &yj.r);
-  int imag_equal = dbl_equal_scalar_na_equal(&xi.i, &yj.i);
-
-  return real_equal && imag_equal;
-}
-static inline int cpl_equal_scalar_na_propagate(const Rcomplex* x, const Rcomplex* y) {
-  Rcomplex xi = *x;
-  Rcomplex yj = *y;
-
-  int real_equal = dbl_equal_scalar_na_propagate(&xi.r, &yj.r);
-  int imag_equal = dbl_equal_scalar_na_propagate(&xi.i, &yj.i);
-
-  if (real_equal == NA_LOGICAL || imag_equal == NA_LOGICAL) {
-    return NA_LOGICAL;
-  } else {
-    return real_equal && imag_equal;
-  }
-}
-static inline int cpl_equal_scalar(const Rcomplex* x, const Rcomplex* y, bool na_equal) {
-  if (na_equal) {
-    return cpl_equal_scalar_na_equal(x, y);
-  } else {
-    return cpl_equal_scalar_na_propagate(x, y);
-  }
-}
-
-// UTF-8 translation is successful in these cases:
-// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
-// UTF-8 translation fails purposefully in these cases:
-// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
-// UTF-8 translation is not attempted in these cases:
-// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
-
-static inline int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
+static inline int chr_equal_na_equal(SEXP x, SEXP y) {
   if (x == y) {
     return 1;
   }
@@ -133,73 +109,202 @@ static inline int chr_equal_scalar_impl(const SEXP x, const SEXP y) {
 
   return 0;
 }
+static inline int raw_equal_na_equal(Rbyte x, Rbyte y) {
+  return x == y;
+}
+static inline int list_equal_na_equal(SEXP x, SEXP y) {
+  return equal_object(x, y);
+}
 
-static inline bool chr_equal_missing_scalar(SEXP x) {
-  return x == NA_STRING;
+// -----------------------------------------------------------------------------
+
+#define P_EQUAL_NA_EQUAL(CTYPE, EQUAL_NA_EQUAL) do {                       \
+  return EQUAL_NA_EQUAL(((const CTYPE*) p_x)[i], ((const CTYPE*) p_y)[j]); \
+} while (0)
+
+static inline int p_nil_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  stop_internal("p_nil_equal_na_equal", "Can't compare NULL for equality.");
 }
-static inline int chr_equal_scalar_na_equal(const SEXP* x, const SEXP* y) {
-  const SEXP xi = *x;
-  const SEXP yj = *y;
-  return chr_equal_scalar_impl(xi, yj);
+static inline int p_lgl_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(int, lgl_equal_na_equal);
 }
-static inline int chr_equal_scalar_na_propagate(const SEXP* x, const SEXP* y) {
-  const SEXP xi = *x;
-  const SEXP yj = *y;
-  return (xi == NA_STRING || yj == NA_STRING) ? NA_LOGICAL : chr_equal_scalar_impl(xi, yj);
+static inline int p_int_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(int, int_equal_na_equal);
 }
-static inline int chr_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
-  if (na_equal) {
-    return chr_equal_scalar_na_equal(x, y);
+static inline int p_dbl_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(double, dbl_equal_na_equal);
+}
+static inline int p_cpl_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(Rcomplex, cpl_equal_na_equal);
+}
+static inline int p_chr_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(SEXP, chr_equal_na_equal);
+}
+static inline int p_raw_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(Rbyte, raw_equal_na_equal);
+}
+static inline int p_list_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_EQUAL(SEXP, list_equal_na_equal);
+}
+
+#undef P_EQUAL_NA_EQUAL
+
+static inline bool p_equal_na_equal(const void* p_x,
+                                    r_ssize i,
+                                    const void* p_y,
+                                    r_ssize j,
+                                    const enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_logical: return p_lgl_equal_na_equal(p_x, i, p_y, j);
+  case vctrs_type_integer: return p_int_equal_na_equal(p_x, i, p_y, j);
+  case vctrs_type_double: return p_dbl_equal_na_equal(p_x, i, p_y, j);
+  case vctrs_type_complex: return p_cpl_equal_na_equal(p_x, i, p_y, j);
+  case vctrs_type_character: return p_chr_equal_na_equal(p_x, i, p_y, j);
+  case vctrs_type_raw: return p_raw_equal_na_equal(p_x, i, p_y, j);
+  case vctrs_type_list: return p_list_equal_na_equal(p_x, i, p_y, j);
+  default: stop_unimplemented_vctrs_type("p_equal_na_equal", type);
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+static inline int lgl_equal_na_propagate(int x, int y) {
+  if (lgl_is_missing(x) || lgl_is_missing(y)) {
+    return NA_LOGICAL;
   } else {
-    return chr_equal_scalar_na_propagate(x, y);
+    return lgl_equal_na_equal(x, y);
   }
 }
-
-static inline bool list_equal_missing_scalar(SEXP x) {
-  return x == R_NilValue;
-}
-static inline int list_equal_scalar_na_equal(const SEXP* x, const SEXP* y) {
-  return equal_object(*x, *y);
-}
-static inline int list_equal_scalar_na_propagate(const SEXP* x, const SEXP* y) {
-  const SEXP xi = *x;
-  const SEXP yj = *y;
-  return (xi == R_NilValue || yj == R_NilValue) ? NA_LOGICAL : equal_object(xi, yj);
-}
-static inline int list_equal_scalar(const SEXP* x, const SEXP* y, bool na_equal) {
-  if (na_equal) {
-    return list_equal_scalar_na_equal(x, y);
+static inline int int_equal_na_propagate(int x, int y) {
+  if (int_is_missing(x) || int_is_missing(y)) {
+    return NA_LOGICAL;
   } else {
-    return list_equal_scalar_na_propagate(x, y);
+    return int_equal_na_equal(x, y);
+  }
+}
+static inline int dbl_equal_na_propagate(double x, double y) {
+  if (dbl_is_missing(x) || dbl_is_missing(y)) {
+    return NA_LOGICAL;
+  } else {
+    // Faster than `dbl_equal_na_equal()`,
+    // which has unneeded missing value checks
+    return x == y;
+  }
+}
+static inline int cpl_equal_na_propagate(Rcomplex x, Rcomplex y) {
+  int real_equal = dbl_equal_na_propagate(x.r, y.r);
+  int imag_equal = dbl_equal_na_propagate(x.i, y.i);
+
+  if (real_equal == NA_LOGICAL || imag_equal == NA_LOGICAL) {
+    return NA_LOGICAL;
+  } else {
+    return real_equal && imag_equal;
+  }
+}
+static inline int chr_equal_na_propagate(SEXP x, SEXP y) {
+  if (chr_is_missing(x) || chr_is_missing(y)) {
+    return NA_LOGICAL;
+  } else {
+    return chr_equal_na_equal(x, y);
+  }
+}
+static inline int raw_equal_na_propagate(Rbyte x, Rbyte y) {
+  return raw_equal_na_equal(x, y);
+}
+static inline int list_equal_na_propagate(SEXP x, SEXP y) {
+  if (list_is_missing(x) || list_is_missing(y)) {
+    return NA_LOGICAL;
+  } else {
+    return list_equal_na_equal(x, y);
   }
 }
 
-// Raw vectors have no notion of missing value
-static inline bool raw_equal_missing_scalar(Rbyte x) {
-  return false;
+// -----------------------------------------------------------------------------
+
+#define P_EQUAL_NA_PROPAGATE(CTYPE, EQUAL_NA_PROPAGATE) do {                   \
+  return EQUAL_NA_PROPAGATE(((const CTYPE*) p_x)[i], ((const CTYPE*) p_y)[j]); \
+} while (0)
+
+static inline int p_nil_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  stop_internal("p_nil_equal_na_propagate", "Can't compare NULL for equality.");
 }
-static inline int raw_equal_scalar(const Rbyte* x, const Rbyte* y, bool na_equal) {
-  return *x == *y;
+static inline int p_lgl_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(int, lgl_equal_na_propagate);
 }
-static inline int raw_equal_scalar_na_equal(const Rbyte* x, const Rbyte* y) {
-  return *x == *y;
+static inline int p_int_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(int, int_equal_na_propagate);
 }
-static inline int raw_equal_scalar_na_propagate(const Rbyte* x, const Rbyte* y) {
-  return *x == *y;
+static inline int p_dbl_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(double, dbl_equal_na_propagate);
+}
+static inline int p_cpl_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(Rcomplex, cpl_equal_na_propagate);
+}
+static inline int p_chr_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(SEXP, chr_equal_na_propagate);
+}
+static inline int p_raw_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(Rbyte, raw_equal_na_propagate);
+}
+static inline int p_list_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  P_EQUAL_NA_PROPAGATE(SEXP, list_equal_na_propagate);
 }
 
-static inline int df_equal_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
-  for (int k = 0; k < n_col; ++k) {
-    int eq = equal_scalar(VECTOR_ELT(x, k), i, VECTOR_ELT(y, k), j, na_equal);
+#undef P_EQUAL_NA_PROPAGATE
 
-    if (eq <= 0) {
-      return eq;
-    }
+static inline bool p_equal_na_propagate(const void* p_x,
+                                        r_ssize i,
+                                        const void* p_y,
+                                        r_ssize j,
+                                        const enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_logical: return p_lgl_equal_na_propagate(p_x, i, p_y, j);
+  case vctrs_type_integer: return p_int_equal_na_propagate(p_x, i, p_y, j);
+  case vctrs_type_double: return p_dbl_equal_na_propagate(p_x, i, p_y, j);
+  case vctrs_type_complex: return p_cpl_equal_na_propagate(p_x, i, p_y, j);
+  case vctrs_type_character: return p_chr_equal_na_propagate(p_x, i, p_y, j);
+  case vctrs_type_raw: return p_raw_equal_na_propagate(p_x, i, p_y, j);
+  case vctrs_type_list: return p_list_equal_na_propagate(p_x, i, p_y, j);
+  default: stop_unimplemented_vctrs_type("p_equal_na_propagate", type);
   }
-
-  return true;
 }
 
+// -----------------------------------------------------------------------------
 
+// FIXME: Remove these by rewriting `vctrs_equal()` to branch off `na_equal`
+
+#define EQUAL(EQUAL_NA_EQUAL, EQUAL_NA_PROPAGATE) do { \
+  if (na_equal) {                                      \
+    return EQUAL_NA_EQUAL(x, y);                       \
+  } else {                                             \
+    return EQUAL_NA_PROPAGATE(x, y);                   \
+  }                                                    \
+} while (0)
+
+static inline int lgl_equal(int x, int y, bool na_equal) {
+  EQUAL(lgl_equal_na_equal, lgl_equal_na_propagate);
+}
+static inline int int_equal(int x, int y, bool na_equal) {
+  EQUAL(int_equal_na_equal, int_equal_na_propagate);
+}
+static inline int dbl_equal(double x, double y, bool na_equal) {
+  EQUAL(dbl_equal_na_equal, dbl_equal_na_propagate);
+}
+static inline int cpl_equal(Rcomplex x, Rcomplex y, bool na_equal) {
+  EQUAL(cpl_equal_na_equal, cpl_equal_na_propagate);
+}
+static inline int chr_equal(SEXP x, SEXP y, bool na_equal) {
+  EQUAL(chr_equal_na_equal, chr_equal_na_propagate);
+}
+static inline int raw_equal(Rbyte x, Rbyte y, bool na_equal) {
+  EQUAL(raw_equal_na_equal, raw_equal_na_propagate);
+}
+static inline int list_equal(SEXP x, SEXP y, bool na_equal) {
+  EQUAL(list_equal_na_equal, list_equal_na_propagate);
+}
+
+#undef EQUAL
+
+// -----------------------------------------------------------------------------
 
 #endif
