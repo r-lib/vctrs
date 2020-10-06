@@ -16,9 +16,7 @@ struct poly_df_data {
 static int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j);
 
 // [[ include("poly-op.h") ]]
-poly_binary_int_fn_t new_poly_p_equal_na_equal(SEXP proxy) {
-  enum vctrs_type type = vec_proxy_typeof(proxy);
-
+poly_binary_int_fn_t new_poly_p_equal_na_equal(enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_equal_na_equal;
   case vctrs_type_logical: return p_lgl_equal_na_equal;
@@ -62,9 +60,7 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
 static bool p_df_is_missing(const void* x, r_ssize i);
 
 // [[ include("poly-op.h") ]]
-poly_unary_bool_fn_t new_poly_p_is_missing(SEXP proxy) {
-  enum vctrs_type type = vec_proxy_typeof(proxy);
-
+poly_unary_bool_fn_t new_poly_p_is_missing(enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_is_missing;
   case vctrs_type_logical: return p_lgl_is_missing;
@@ -109,14 +105,12 @@ static void init_list_poly_vec(struct poly_vec* p_poly_vec);
 static void init_df_poly_vec(struct poly_vec* p_poly_vec);
 
 // [[ include("poly-op.h") ]]
-struct poly_vec* new_poly_vec(SEXP proxy) {
+struct poly_vec* new_poly_vec(SEXP proxy, enum vctrs_type type) {
   SEXP self = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct poly_vec)));
   struct poly_vec* p_poly_vec = (struct poly_vec*) RAW(self);
 
   p_poly_vec->self = self;
   p_poly_vec->vec = proxy;
-
-  enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
   case vctrs_type_null: init_nil_poly_vec(p_poly_vec); break;
