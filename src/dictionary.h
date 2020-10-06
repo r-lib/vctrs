@@ -15,7 +15,7 @@ struct dictionary {
   enum vctrs_type type;
 
   int (*p_equal_scalar_na_equal)(const void*, r_ssize i, const void*, r_ssize j);
-  bool (*p_equal_missing_scalar)(const void* p_x, r_ssize i);
+  bool (*p_is_missing)(const void* p_x, r_ssize i);
   const void* vec_p;
 
   uint32_t* hash;

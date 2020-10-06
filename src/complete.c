@@ -146,45 +146,45 @@ void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_c
  * ```
  */
 
-#define VEC_DETECT_COMPLETE_COL(CTYPE, CONST_DEREF, SCALAR_EQUAL_MISSING) { \
-  const CTYPE* p_x = CONST_DEREF(x);                                        \
-                                                                            \
-  for (R_len_t i = 0; i < size; ++i) {                                      \
-    const CTYPE elt = p_x[i];                                               \
-                                                                            \
-    if (SCALAR_EQUAL_MISSING(elt)) {                                        \
-      p_out[i] = 0;                                                         \
-    }                                                                       \
-  }                                                                         \
+#define VEC_DETECT_COMPLETE_COL(CTYPE, CONST_DEREF, IS_MISSING) { \
+  const CTYPE* p_x = CONST_DEREF(x);                              \
+                                                                  \
+  for (R_len_t i = 0; i < size; ++i) {                            \
+    const CTYPE elt = p_x[i];                                     \
+                                                                  \
+    if (IS_MISSING(elt)) {                                        \
+      p_out[i] = 0;                                               \
+    }                                                             \
+  }                                                               \
 }
 
 static inline
 void lgl_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(int, LOGICAL_RO, lgl_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(int, LOGICAL_RO, lgl_is_missing);
 }
 static inline
 void int_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(int, INTEGER_RO, int_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(int, INTEGER_RO, int_is_missing);
 }
 static inline
 void dbl_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(double, REAL_RO, dbl_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(double, REAL_RO, dbl_is_missing);
 }
 static inline
 void cpl_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(Rcomplex, COMPLEX_RO, cpl_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(Rcomplex, COMPLEX_RO, cpl_is_missing);
 }
 static inline
 void chr_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(SEXP, STRING_PTR_RO, chr_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(SEXP, STRING_PTR_RO, chr_is_missing);
 }
 static inline
 void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(Rbyte, RAW_RO, raw_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(Rbyte, RAW_RO, raw_is_missing);
 }
 static inline
 void list_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE_COL(SEXP, VECTOR_PTR_RO, list_equal_missing_scalar);
+  VEC_DETECT_COMPLETE_COL(SEXP, VECTOR_PTR_RO, list_is_missing);
 }
 
 // -----------------------------------------------------------------------------
@@ -246,44 +246,44 @@ void vec_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circui
   }
 }
 
-#define VEC_DETECT_ANY_NON_MISSING(CTYPE, CONST_DEREF, SCALAR_EQUAL_MISSING) { \
-  const CTYPE* p_x = CONST_DEREF(x);                                           \
-                                                                               \
-  for (R_len_t i = 0; i < size; ++i) {                                         \
-    const CTYPE elt = p_x[i];                                                  \
-                                                                               \
-    /* At least one non-missing value exists */                                \
-    if (!SCALAR_EQUAL_MISSING(elt)) {                                          \
-      p_info->p_row_known[i] = true;                                           \
-    }                                                                          \
-  }                                                                            \
+#define VEC_DETECT_ANY_NON_MISSING(CTYPE, CONST_DEREF, IS_MISSING) { \
+  const CTYPE* p_x = CONST_DEREF(x);                                 \
+                                                                     \
+  for (R_len_t i = 0; i < size; ++i) {                               \
+    const CTYPE elt = p_x[i];                                        \
+                                                                     \
+    /* At least one non-missing value exists */                      \
+    if (!IS_MISSING(elt)) {                                          \
+      p_info->p_row_known[i] = true;                                 \
+    }                                                                \
+  }                                                                  \
 }
 
 static inline
 void lgl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(int, LOGICAL_RO, lgl_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(int, LOGICAL_RO, lgl_is_missing);
 }
 static inline
 void int_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(int, INTEGER_RO, int_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(int, INTEGER_RO, int_is_missing);
 }
 static inline
 void dbl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(double, REAL_RO, dbl_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(double, REAL_RO, dbl_is_missing);
 }
 static inline
 void cpl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(Rcomplex, COMPLEX_RO, cpl_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(Rcomplex, COMPLEX_RO, cpl_is_missing);
 }
 static inline
 void chr_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(SEXP, STRING_PTR_RO, chr_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(SEXP, STRING_PTR_RO, chr_is_missing);
 }
 static inline
 void raw_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(Rbyte, RAW_RO, raw_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(Rbyte, RAW_RO, raw_is_missing);
 }
 static inline
 void list_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(SEXP, VECTOR_PTR_RO, list_equal_missing_scalar);
+  VEC_DETECT_ANY_NON_MISSING(SEXP, VECTOR_PTR_RO, list_is_missing);
 }

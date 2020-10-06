@@ -5,73 +5,73 @@
 
 // -----------------------------------------------------------------------------
 
-static inline bool lgl_equal_missing_scalar(int x) {
+static inline bool lgl_is_missing(int x) {
   return x == NA_LOGICAL;
 }
-static inline bool int_equal_missing_scalar(int x) {
+static inline bool int_is_missing(int x) {
   return x == NA_INTEGER;
 }
-static inline bool dbl_equal_missing_scalar(double x) {
+static inline bool dbl_is_missing(double x) {
   return isnan(x);
 }
-static inline bool cpl_equal_missing_scalar(Rcomplex x) {
-  return dbl_equal_missing_scalar(x.r) || dbl_equal_missing_scalar(x.i);
+static inline bool cpl_is_missing(Rcomplex x) {
+  return dbl_is_missing(x.r) || dbl_is_missing(x.i);
 }
-static inline bool chr_equal_missing_scalar(SEXP x) {
+static inline bool chr_is_missing(SEXP x) {
   return x == NA_STRING;
 }
-static inline bool raw_equal_missing_scalar(Rbyte x) {
+static inline bool raw_is_missing(Rbyte x) {
   return false;
 }
-static inline bool list_equal_missing_scalar(SEXP x) {
+static inline bool list_is_missing(SEXP x) {
   return x == R_NilValue;
 }
 
 // -----------------------------------------------------------------------------
 
-#define P_EQUAL_MISSING_SCALAR(CTYPE, EQUAL_MISSING_SCALAR) do { \
-  return EQUAL_MISSING_SCALAR(((const CTYPE*) p_x)[i]);          \
+#define P_IS_MISSING(CTYPE, IS_MISSING) do {   \
+  return IS_MISSING(((const CTYPE*) p_x)[i]);  \
 } while (0)
 
-static inline bool p_nil_equal_missing_scalar(const void* p_x, r_ssize i) {
-  stop_internal("p_nil_equal_missing_scalar", "Can't check NULL for missingness.");
+static inline bool p_nil_is_missing(const void* p_x, r_ssize i) {
+  stop_internal("p_nil_is_missing", "Can't check NULL for missingness.");
 }
-static inline bool p_lgl_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(int, lgl_equal_missing_scalar);
+static inline bool p_lgl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(int, lgl_is_missing);
 }
-static inline bool p_int_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(int, int_equal_missing_scalar);
+static inline bool p_int_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(int, int_is_missing);
 }
-static inline bool p_dbl_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(double, dbl_equal_missing_scalar);
+static inline bool p_dbl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(double, dbl_is_missing);
 }
-static inline bool p_cpl_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(Rcomplex, cpl_equal_missing_scalar);
+static inline bool p_cpl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(Rcomplex, cpl_is_missing);
 }
-static inline bool p_chr_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(SEXP, chr_equal_missing_scalar);
+static inline bool p_chr_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(SEXP, chr_is_missing);
 }
-static inline bool p_raw_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(Rbyte, raw_equal_missing_scalar);
+static inline bool p_raw_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(Rbyte, raw_is_missing);
 }
-static inline bool p_list_equal_missing_scalar(const void* p_x, r_ssize i) {
-  P_EQUAL_MISSING_SCALAR(SEXP, list_equal_missing_scalar);
+static inline bool p_list_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(SEXP, list_is_missing);
 }
 
-#undef P_EQUAL_MISSING_SCALAR
+#undef P_IS_MISSING
 
-static inline bool p_equal_missing_scalar(const void* p_x,
-                                          r_ssize i,
-                                          const enum vctrs_type type) {
+static inline bool p_is_missing(const void* p_x,
+                                r_ssize i,
+                                const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_logical: return p_lgl_equal_missing_scalar(p_x, i);
-  case vctrs_type_integer: return p_int_equal_missing_scalar(p_x, i);
-  case vctrs_type_double: return p_dbl_equal_missing_scalar(p_x, i);
-  case vctrs_type_complex: return p_cpl_equal_missing_scalar(p_x, i);
-  case vctrs_type_character: return p_chr_equal_missing_scalar(p_x, i);
-  case vctrs_type_raw: return p_raw_equal_missing_scalar(p_x, i);
-  case vctrs_type_list: return p_list_equal_missing_scalar(p_x, i);
-  default: stop_unimplemented_vctrs_type("p_equal_missing_scalar", type);
+  case vctrs_type_logical: return p_lgl_is_missing(p_x, i);
+  case vctrs_type_integer: return p_int_is_missing(p_x, i);
+  case vctrs_type_double: return p_dbl_is_missing(p_x, i);
+  case vctrs_type_complex: return p_cpl_is_missing(p_x, i);
+  case vctrs_type_character: return p_chr_is_missing(p_x, i);
+  case vctrs_type_raw: return p_raw_is_missing(p_x, i);
+  case vctrs_type_list: return p_list_is_missing(p_x, i);
+  default: stop_unimplemented_vctrs_type("p_is_missing", type);
   }
 }
 
@@ -169,21 +169,21 @@ static inline bool p_equal_scalar_na_equal(const void* p_x,
 // -----------------------------------------------------------------------------
 
 static inline int lgl_equal_scalar_na_propagate(int x, int y) {
-  if (lgl_equal_missing_scalar(x) || lgl_equal_missing_scalar(y)) {
+  if (lgl_is_missing(x) || lgl_is_missing(y)) {
     return NA_LOGICAL;
   } else {
     return lgl_equal_scalar_na_equal(x, y);
   }
 }
 static inline int int_equal_scalar_na_propagate(int x, int y) {
-  if (int_equal_missing_scalar(x) || int_equal_missing_scalar(y)) {
+  if (int_is_missing(x) || int_is_missing(y)) {
     return NA_LOGICAL;
   } else {
     return int_equal_scalar_na_equal(x, y);
   }
 }
 static inline int dbl_equal_scalar_na_propagate(double x, double y) {
-  if (dbl_equal_missing_scalar(x) || dbl_equal_missing_scalar(y)) {
+  if (dbl_is_missing(x) || dbl_is_missing(y)) {
     return NA_LOGICAL;
   } else {
     // Faster than `dbl_equal_scalar_na_equal()`,
@@ -202,7 +202,7 @@ static inline int cpl_equal_scalar_na_propagate(Rcomplex x, Rcomplex y) {
   }
 }
 static inline int chr_equal_scalar_na_propagate(SEXP x, SEXP y) {
-  if (chr_equal_missing_scalar(x) || chr_equal_missing_scalar(y)) {
+  if (chr_is_missing(x) || chr_is_missing(y)) {
     return NA_LOGICAL;
   } else {
     return chr_equal_scalar_na_equal(x, y);
@@ -212,7 +212,7 @@ static inline int raw_equal_scalar_na_propagate(Rbyte x, Rbyte y) {
   return raw_equal_scalar_na_equal(x, y);
 }
 static inline int list_equal_scalar_na_propagate(SEXP x, SEXP y) {
-  if (list_equal_missing_scalar(x) || list_equal_missing_scalar(y)) {
+  if (list_is_missing(x) || list_is_missing(y)) {
     return NA_LOGICAL;
   } else {
     return list_equal_scalar_na_equal(x, y);
