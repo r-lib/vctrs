@@ -220,55 +220,55 @@ SEXP vec_identify_runs(SEXP x) {
 
 // -----------------------------------------------------------------------------
 
-#define VEC_IDENTIFY_RUNS(CTYPE, CONST_DEREF, SCALAR_EQUAL) {  \
-  int id = 1;                                                  \
-  const CTYPE* p_x = CONST_DEREF(x);                           \
-                                                               \
-  /* Handle first case */                                      \
-  CTYPE ref = p_x[0];                                          \
-  p_out[0] = id;                                               \
-                                                               \
-  for (R_len_t i = 1; i < size; ++i) {                         \
-    const CTYPE elt = p_x[i];                                  \
-                                                               \
-    if (SCALAR_EQUAL(elt, ref) == 0) {                         \
-      ++id;                                                    \
-      ref = elt;                                               \
-    }                                                          \
-                                                               \
-    p_out[i] = id;                                             \
-  }                                                            \
-                                                               \
-  return id;                                                   \
+#define VEC_IDENTIFY_RUNS(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL) {  \
+  int id = 1;                                                    \
+  const CTYPE* p_x = CONST_DEREF(x);                             \
+                                                                 \
+  /* Handle first case */                                        \
+  CTYPE ref = p_x[0];                                            \
+  p_out[0] = id;                                                 \
+                                                                 \
+  for (R_len_t i = 1; i < size; ++i) {                           \
+    const CTYPE elt = p_x[i];                                    \
+                                                                 \
+    if (EQUAL_NA_EQUAL(elt, ref) == 0) {                         \
+      ++id;                                                      \
+      ref = elt;                                                 \
+    }                                                            \
+                                                                 \
+    p_out[i] = id;                                               \
+  }                                                              \
+                                                                 \
+  return id;                                                     \
 }
 
 static
 int lgl_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(int, LOGICAL_RO, lgl_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(int, LOGICAL_RO, lgl_equal_na_equal);
 }
 static
 int int_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(int, INTEGER_RO, int_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(int, INTEGER_RO, int_equal_na_equal);
 }
 static
 int dbl_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(double, REAL_RO, dbl_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(double, REAL_RO, dbl_equal_na_equal);
 }
 static
 int cpl_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
 }
 static
 int chr_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(SEXP, STRING_PTR_RO, chr_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(SEXP, STRING_PTR_RO, chr_equal_na_equal);
 }
 static
 int raw_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(Rbyte, RAW_RO, raw_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(Rbyte, RAW_RO, raw_equal_na_equal);
 }
 static
 int list_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(SEXP, VECTOR_PTR_RO, list_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
 }
 
 #undef VEC_IDENTIFY_RUNS
@@ -387,46 +387,46 @@ int vec_identify_runs_col(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-#define VEC_IDENTIFY_RUNS_COL(CTYPE, CONST_DEREF, EQUAL_SCALAR) { \
-  /* First row is always known, so `run_val` and `run_id` */      \
-  /* will always be initialized below */                          \
-  CTYPE run_val;                                                  \
-  int run_id;                                                     \
-                                                                  \
-  const CTYPE* p_x = CONST_DEREF(x);                              \
-                                                                  \
-  for (R_len_t i = 0; i < p_info->size; ++i) {                    \
-    /* Start of new run */                                        \
-    if (p_info->p_row_known[i]) {                                 \
-      run_val = p_x[i];                                           \
-      run_id = p_out[i];                                          \
-      continue;                                                   \
-    }                                                             \
-                                                                  \
-    const CTYPE elt = p_x[i];                                     \
-    const int eq = EQUAL_SCALAR(elt, run_val);                    \
-                                                                  \
-    /* Update ID of identical values */                           \
-    if (eq != 0) {                                                \
-      p_out[i] = run_id;                                          \
-      continue;                                                   \
-    }                                                             \
-                                                                  \
-    ++id;                                                         \
-    run_val = elt;                                                \
-    run_id = id;                                                  \
-    p_out[i] = id;                                                \
-                                                                  \
-    /* This is a run change, so don't check this row again */     \
-    p_info->p_row_known[i] = true;                                \
-    --p_info->remaining;                                          \
-                                                                  \
-    if (p_info->remaining == 0) {                                 \
-      break;                                                      \
-    }                                                             \
-  }                                                               \
-                                                                  \
-  return id;                                                      \
+#define VEC_IDENTIFY_RUNS_COL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL) { \
+  /* First row is always known, so `run_val` and `run_id` */        \
+  /* will always be initialized below */                            \
+  CTYPE run_val;                                                    \
+  int run_id;                                                       \
+                                                                    \
+  const CTYPE* p_x = CONST_DEREF(x);                                \
+                                                                    \
+  for (R_len_t i = 0; i < p_info->size; ++i) {                      \
+    /* Start of new run */                                          \
+    if (p_info->p_row_known[i]) {                                   \
+      run_val = p_x[i];                                             \
+      run_id = p_out[i];                                            \
+      continue;                                                     \
+    }                                                               \
+                                                                    \
+    const CTYPE elt = p_x[i];                                       \
+    const int eq = EQUAL_NA_EQUAL(elt, run_val);                    \
+                                                                    \
+    /* Update ID of identical values */                             \
+    if (eq != 0) {                                                  \
+      p_out[i] = run_id;                                            \
+      continue;                                                     \
+    }                                                               \
+                                                                    \
+    ++id;                                                           \
+    run_val = elt;                                                  \
+    run_id = id;                                                    \
+    p_out[i] = id;                                                  \
+                                                                    \
+    /* This is a run change, so don't check this row again */       \
+    p_info->p_row_known[i] = true;                                  \
+    --p_info->remaining;                                            \
+                                                                    \
+    if (p_info->remaining == 0) {                                   \
+      break;                                                        \
+    }                                                               \
+  }                                                                 \
+                                                                    \
+  return id;                                                        \
 }
 
 static
@@ -434,49 +434,49 @@ int lgl_identify_runs_col(SEXP x,
                           int id,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(int, LOGICAL_RO, lgl_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(int, LOGICAL_RO, lgl_equal_na_equal);
 }
 static
 int int_identify_runs_col(SEXP x,
                           int id,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(int, INTEGER_RO, int_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(int, INTEGER_RO, int_equal_na_equal);
 }
 static
 int dbl_identify_runs_col(SEXP x,
                           int id,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(double, REAL_RO, dbl_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(double, REAL_RO, dbl_equal_na_equal);
 }
 static
 int cpl_identify_runs_col(SEXP x,
                           int id,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
 }
 static
 int chr_identify_runs_col(SEXP x,
                           int id,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(SEXP, STRING_PTR_RO, chr_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(SEXP, STRING_PTR_RO, chr_equal_na_equal);
 }
 static
 int raw_identify_runs_col(SEXP x,
                           R_len_t id,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(Rbyte, RAW_RO, raw_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(Rbyte, RAW_RO, raw_equal_na_equal);
 }
 static
 int list_identify_runs_col(SEXP x,
                            int id,
                            struct df_short_circuit_info* p_info,
                            int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(SEXP, VECTOR_PTR_RO, list_equal_scalar_na_equal);
+  VEC_IDENTIFY_RUNS_COL(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
 }
 
 #undef VEC_IDENTIFY_RUNS_COL

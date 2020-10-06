@@ -39,13 +39,13 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
   bool na_equal = r_bool_as_int(na_equal_);
 
   switch (type) {
-  case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal_scalar);
-  case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal_scalar);
-  case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal_scalar);
-  case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal_scalar);
-  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_scalar);
-  case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal_scalar);
-  case vctrs_type_list:      EQUAL(SEXP, VECTOR_PTR_RO, list_equal_scalar);
+  case vctrs_type_logical:   EQUAL(int, LOGICAL_RO, lgl_equal);
+  case vctrs_type_integer:   EQUAL(int, INTEGER_RO, int_equal);
+  case vctrs_type_double:    EQUAL(double, REAL_RO, dbl_equal);
+  case vctrs_type_raw:       EQUAL(Rbyte, RAW_RO, raw_equal);
+  case vctrs_type_complex:   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal);
+  case vctrs_type_character: EQUAL(SEXP, STRING_PTR_RO, chr_equal);
+  case vctrs_type_list:      EQUAL(SEXP, VECTOR_PTR_RO, list_equal);
   case vctrs_type_dataframe: {
     SEXP out = PROTECT(df_equal(x, y, na_equal, size));
     UNPROTECT(3);
@@ -63,13 +63,13 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal_) {
 // Missingness is never propagated through objects,
 // so `na_equal` is always `true` in these macros
 
-#define EQUAL_ALL(CTYPE, CONST_DEREF, SCALAR_EQUAL)       \
+#define EQUAL_ALL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL)     \
   do {                                                    \
     const CTYPE* p_x = CONST_DEREF(x);                    \
     const CTYPE* p_y = CONST_DEREF(y);                    \
                                                           \
     for (R_len_t i = 0; i < n; ++i) {                     \
-      if (!SCALAR_EQUAL(p_x[i], p_y[i])) {                \
+      if (!EQUAL_NA_EQUAL(p_x[i], p_y[i])) {              \
         return false;                                     \
       }                                                   \
     }                                                     \
@@ -177,14 +177,14 @@ bool equal_object(SEXP x, SEXP y) {
   }
 
   switch (type) {
-  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_scalar_na_equal);
-  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_scalar_na_equal);
-  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_scalar_na_equal);
-  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_scalar_na_equal);
-  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_scalar_na_equal);
-  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_scalar_na_equal);
+  case LGLSXP:  EQUAL_ALL(int, LOGICAL_RO, lgl_equal_na_equal);
+  case INTSXP:  EQUAL_ALL(int, INTEGER_RO, int_equal_na_equal);
+  case REALSXP: EQUAL_ALL(double, REAL_RO, dbl_equal_na_equal);
+  case STRSXP:  EQUAL_ALL(SEXP, STRING_PTR_RO, chr_equal_na_equal);
+  case RAWSXP:  EQUAL_ALL(Rbyte, RAW_RO, raw_equal_na_equal);
+  case CPLXSXP: EQUAL_ALL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
   case EXPRSXP:
-  case VECSXP:  EQUAL_ALL(SEXP, VECTOR_PTR_RO, list_equal_scalar_na_equal);
+  case VECSXP:  EQUAL_ALL(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
   default:      stop_unimplemented_type("equal_object", type);
   }
 }
@@ -324,13 +324,13 @@ static void vec_equal_col(int* p_out,
                           SEXP y,
                           bool na_equal) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal_scalar); break;
-  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal_scalar); break;
-  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal_scalar); break;
-  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal_scalar); break;
-  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_scalar); break;
-  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_scalar); break;
-  case vctrs_type_list:      EQUAL_COL(SEXP, VECTOR_PTR_RO, list_equal_scalar); break;
+  case vctrs_type_logical:   EQUAL_COL(int, LOGICAL_RO, lgl_equal); break;
+  case vctrs_type_integer:   EQUAL_COL(int, INTEGER_RO, int_equal); break;
+  case vctrs_type_double:    EQUAL_COL(double, REAL_RO, dbl_equal); break;
+  case vctrs_type_raw:       EQUAL_COL(Rbyte, RAW_RO, raw_equal); break;
+  case vctrs_type_complex:   EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal); break;
+  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal); break;
+  case vctrs_type_list:      EQUAL_COL(SEXP, VECTOR_PTR_RO, list_equal); break;
   case vctrs_type_dataframe: df_equal_impl(p_out, p_info, x, y, na_equal); break;
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_equal()`");
   default:                   Rf_error("Unimplemented type in `vctrs_equal()`");
