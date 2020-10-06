@@ -56,6 +56,7 @@ reference:
   contents:
   - vec_equal
   - vec_compare
+  - df_detect_complete
 
 - title: Sorting
   contents:
@@ -75,6 +76,7 @@ reference:
   - vec_rep
   - vec_rep_each
   - vec_seq_along
+  - vec_identify_runs
 
 - title: New classes
   contents:
@@ -104,5 +106,9 @@ reference:
   - vec_default_cast
   - vec_default_ptype2
   - vec_as_names
+  - vec_names
   - vec_as_location
   - vec_as_subscript
+  - data_frame
+  - new_data_frame
+  - df_list
