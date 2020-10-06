@@ -57,7 +57,7 @@ SEXP vctrs_group_rle(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  const void* d_p_vec = d->p_poly_vec->p_vec;
+  const void* p_vec = d->p_poly_vec->p_vec;
 
   SEXP g = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_g = INTEGER(g);
@@ -85,7 +85,7 @@ SEXP vctrs_group_rle(SEXP x) {
   int loc = 1;
 
   for (int i = 1; i < n; ++i) {
-    if (d->p_equal_na_equal(d_p_vec, i - 1, d_p_vec, i)) {
+    if (d->p_equal_na_equal(p_vec, i - 1, p_vec, i)) {
       ++(*p_l);
       continue;
     }

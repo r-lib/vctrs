@@ -112,8 +112,8 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
 uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
   uint32_t hash = x->hash[i];
 
-  const void* d_p_vec = d->p_poly_vec->p_vec;
-  const void* x_p_vec = x->p_poly_vec->p_vec;
+  const void* p_d_vec = d->p_poly_vec->p_vec;
+  const void* p_x_vec = x->p_poly_vec->p_vec;
 
   // Quadratic probing: will try every slot if d->size is power of 2
   // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
@@ -133,7 +133,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     }
 
     // Check for same value as there might be a collision
-    if (d->p_equal_na_equal(d_p_vec, idx, x_p_vec, i)) {
+    if (d->p_equal_na_equal(p_d_vec, idx, p_x_vec, i)) {
       return probe;
     }
 
