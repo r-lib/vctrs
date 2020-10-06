@@ -13,90 +13,43 @@ struct poly_df_data {
 
 // -----------------------------------------------------------------------------
 
-static int nil_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int lgl_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int int_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int dbl_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int cpl_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int chr_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int raw_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int list_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
-static int df_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j);
+static int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j);
 
 // [[ include("poly-op.h") ]]
-poly_binary_op_fn_t new_poly_op_equal_scalar_na_equal_p(SEXP proxy) {
+poly_binary_int_fn_t new_poly_p_equal_na_equal(SEXP proxy) {
   enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
-  case vctrs_type_null: return nil_equal_scalar_na_equal_p;
-  case vctrs_type_logical: return lgl_equal_scalar_na_equal_p;
-  case vctrs_type_integer: return int_equal_scalar_na_equal_p;
-  case vctrs_type_double: return dbl_equal_scalar_na_equal_p;
-  case vctrs_type_complex: return cpl_equal_scalar_na_equal_p;
-  case vctrs_type_character: return chr_equal_scalar_na_equal_p;
-  case vctrs_type_raw: return raw_equal_scalar_na_equal_p;
-  case vctrs_type_list: return list_equal_scalar_na_equal_p;
-  case vctrs_type_dataframe: return df_equal_scalar_na_equal_p;
-  default: stop_unimplemented_vctrs_type("new_poly_equal_scalar_na_equal_p", type);
+  case vctrs_type_null: return p_nil_equal_na_equal;
+  case vctrs_type_logical: return p_lgl_equal_na_equal;
+  case vctrs_type_integer: return p_int_equal_na_equal;
+  case vctrs_type_double: return p_dbl_equal_na_equal;
+  case vctrs_type_complex: return p_cpl_equal_na_equal;
+  case vctrs_type_character: return p_chr_equal_na_equal;
+  case vctrs_type_raw: return p_raw_equal_na_equal;
+  case vctrs_type_list: return p_list_equal_na_equal;
+  case vctrs_type_dataframe: return p_df_equal_na_equal;
+  default: stop_unimplemented_vctrs_type("new_poly_p_equal_na_equal", type);
   }
 }
 
 static
-int nil_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  stop_internal("nil_equal_scalar_na_equal_p", "Can't compare NULL.");
-}
-static
-int lgl_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return lgl_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
-}
-static
-int int_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return int_equal_scalar_na_equal(((const int*) x) + i, ((const int*) y) + j);
-}
-static
-int dbl_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return dbl_equal_scalar_na_equal(((const double*) x) + i, ((const double*) y) + j);
-}
-static
-int cpl_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, ((const Rcomplex*) y) + j);
-}
-static
-int chr_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return chr_equal_scalar_na_equal(((const SEXP*) x) + i, ((const SEXP*) y) + j);
-}
-static
-int raw_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return raw_equal_scalar_na_equal(((const Rbyte*) x) + i, ((const Rbyte*) y) + j);
-}
-static
-int list_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
-  return list_equal_scalar_na_equal(((const SEXP) x), i, ((const SEXP) y), j);
-}
-static
-int df_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t j) {
+int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
   struct poly_df_data* x_data = (struct poly_df_data*) x;
   struct poly_df_data* y_data = (struct poly_df_data*) y;
 
   R_len_t n_col = x_data->n_col;
   if (n_col != y_data->n_col) {
-    stop_internal("df_equal_scalar_na_equal_p", "`x` and `y` must have the same number of columns.");
+    stop_internal("p_df_equal_na_equal", "`x` and `y` must have the same number of columns.");
   }
 
   enum vctrs_type* types = x_data->col_types;
   const void** x_ptrs = x_data->col_ptrs;
   const void** y_ptrs = y_data->col_ptrs;
 
-  // `vec_proxy_equal()` flattens data frames so we don't need to
-  // worry about df-cols
+  // df-cols should already be flattened
   for (R_len_t col = 0; col < n_col; ++col) {
-    int eq = equal_scalar_na_equal_p(
-      types[col],
-      R_NilValue, x_ptrs[col], i,
-      R_NilValue, y_ptrs[col], j
-    );
-
-    if (!eq) {
+    if (!p_equal_na_equal(x_ptrs[col], i, y_ptrs[col], j, types[col])) {
       return false;
     }
   }
@@ -106,68 +59,28 @@ int df_equal_scalar_na_equal_p(const void* x, R_len_t i, const void* y, R_len_t 
 
 // -----------------------------------------------------------------------------
 
-static int nil_equal_missing_p(const void* x, R_len_t i);
-static int lgl_equal_missing_p(const void* x, R_len_t i);
-static int int_equal_missing_p(const void* x, R_len_t i);
-static int dbl_equal_missing_p(const void* x, R_len_t i);
-static int cpl_equal_missing_p(const void* x, R_len_t i);
-static int chr_equal_missing_p(const void* x, R_len_t i);
-static int raw_equal_missing_p(const void* x, R_len_t i);
-static int list_equal_missing_p(const void* x, R_len_t i);
-static int df_equal_missing_p(const void* x, R_len_t i);
+static bool p_df_is_missing(const void* x, r_ssize i);
 
 // [[ include("poly-op.h") ]]
-poly_unary_op_fn_t new_poly_op_equal_missing_p(SEXP proxy) {
+poly_unary_bool_fn_t new_poly_p_is_missing(SEXP proxy) {
   enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
-  case vctrs_type_null: return nil_equal_missing_p;
-  case vctrs_type_logical: return lgl_equal_missing_p;
-  case vctrs_type_integer: return int_equal_missing_p;
-  case vctrs_type_double: return dbl_equal_missing_p;
-  case vctrs_type_complex: return cpl_equal_missing_p;
-  case vctrs_type_character: return chr_equal_missing_p;
-  case vctrs_type_raw: return raw_equal_missing_p;
-  case vctrs_type_list: return list_equal_missing_p;
-  case vctrs_type_dataframe: return df_equal_missing_p;
-  default: stop_unimplemented_vctrs_type("new_poly_equal_missing_p", type);
+  case vctrs_type_null: return p_nil_is_missing;
+  case vctrs_type_logical: return p_lgl_is_missing;
+  case vctrs_type_integer: return p_int_is_missing;
+  case vctrs_type_double: return p_dbl_is_missing;
+  case vctrs_type_complex: return p_cpl_is_missing;
+  case vctrs_type_character: return p_chr_is_missing;
+  case vctrs_type_raw: return p_raw_is_missing;
+  case vctrs_type_list: return p_list_is_missing;
+  case vctrs_type_dataframe: return p_df_is_missing;
+  default: stop_unimplemented_vctrs_type("new_poly_p_is_missing", type);
   }
 }
 
 static
-int nil_equal_missing_p(const void* x, R_len_t i) {
-  stop_internal("nil_equal_missing_p", "Can't compare NULL.");
-}
-static
-int lgl_equal_missing_p(const void* x, R_len_t i) {
-  return lgl_equal_scalar_na_equal(((const int*) x) + i, &NA_LOGICAL);
-}
-static
-int int_equal_missing_p(const void* x, R_len_t i) {
-  return int_equal_scalar_na_equal(((const int*) x) + i, &NA_INTEGER);
-}
-static
-int dbl_equal_missing_p(const void* x, R_len_t i) {
-  return dbl_equal_scalar_na_equal(((const double*) x) + i, &NA_REAL);
-}
-static
-int cpl_equal_missing_p(const void* x, R_len_t i) {
-  return cpl_equal_scalar_na_equal(((const Rcomplex*) x) + i, &vctrs_shared_na_cpl);
-}
-static
-int chr_equal_missing_p(const void* x, R_len_t i) {
-  return chr_equal_scalar_na_equal(((const SEXP*) x) + i, &NA_STRING);
-}
-static
-int raw_equal_missing_p(const void* x, R_len_t i) {
-  return false;
-}
-static
-int list_equal_missing_p(const void* x, R_len_t i) {
-  return list_equal_scalar_na_equal(((const SEXP) x), i, vctrs_shared_na_list, 0);
-}
-static
-int df_equal_missing_p(const void* x, R_len_t i) {
+bool p_df_is_missing(const void* x, r_ssize i) {
   struct poly_df_data* x_data = (struct poly_df_data*) x;
 
   enum vctrs_type* types = x_data->col_types;
@@ -175,20 +88,7 @@ int df_equal_missing_p(const void* x, R_len_t i) {
   R_len_t n_col = x_data->n_col;
 
   for (R_len_t col = 0; col < n_col; ++col) {
-    enum vctrs_type type = types[col];
-
-    // Raw doesn't have missing values
-    if (type == vctrs_type_raw) {
-      continue;
-    }
-
-    int eq = equal_scalar_na_equal_p(
-      type,
-      R_NilValue, x_ptrs[col], i,
-      R_NilValue, vec_type_missing_value(type), 0
-    );
-
-    if (eq) {
+    if (p_is_missing(x_ptrs[col], i, types[col])) {
       return true;
     }
   }
@@ -268,7 +168,7 @@ void init_raw_poly_vec(struct poly_vec* p_poly_vec) {
 }
 static
 void init_list_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) p_poly_vec->vec;
+  p_poly_vec->p_vec = (const void*) VECTOR_PTR_RO(p_poly_vec->vec);
 }
 static
 void init_df_poly_vec(struct poly_vec* p_poly_vec) {
@@ -294,15 +194,8 @@ void init_df_poly_vec(struct poly_vec* p_poly_vec) {
 
   for (R_len_t i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(df, i);
-    enum vctrs_type col_type = vec_proxy_typeof(col);
-
-    col_types[i] = col_type;
-
-    if (col_type == vctrs_type_list) {
-      col_ptrs[i] = (void*) col;
-    } else {
-      col_ptrs[i] = r_vec_deref_const(col);
-    }
+    col_types[i] = vec_proxy_typeof(col);
+    col_ptrs[i] = r_vec_deref_const(col);
   }
 
   data->col_types = col_types;

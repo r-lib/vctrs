@@ -63,8 +63,8 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   PROTECT_POLY_VEC(p_poly_vec, &nprot);
   d->p_poly_vec = p_poly_vec;
 
-  d->equal = new_poly_op_equal_scalar_na_equal_p(x);
-  d->equal_missing = new_poly_op_equal_missing_p(x);
+  d->p_equal_na_equal = new_poly_p_equal_na_equal(x);
+  d->p_is_missing = new_poly_p_is_missing(x);
 
   d->used = 0;
 
@@ -131,7 +131,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     }
 
     // Check for same value as there might be a collision
-    if (d->equal(d_p_vec, idx, x_p_vec, i)) {
+    if (d->p_equal_na_equal(d_p_vec, idx, x_p_vec, i)) {
       return probe;
     }
 
@@ -148,7 +148,7 @@ uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
 
 bool dict_is_missing(struct dictionary* d, R_len_t i) {
   return d->hash[i] == HASH_MISSING &&
-    d->equal_missing(d->p_poly_vec->p_vec, i);
+    d->p_is_missing(d->p_poly_vec->p_vec, i);
 }
 
 

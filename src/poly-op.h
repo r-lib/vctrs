@@ -3,11 +3,11 @@
 
 #include "vctrs.h"
 
-typedef int (*poly_binary_op_fn_t)(const void* x, R_len_t i, const void* y, R_len_t j);
-poly_binary_op_fn_t new_poly_op_equal_scalar_na_equal_p(SEXP proxy);
+typedef int (*poly_binary_int_fn_t)(const void* x, r_ssize i, const void* y, r_ssize j);
+poly_binary_int_fn_t new_poly_p_equal_na_equal(SEXP proxy);
 
-typedef int (*poly_unary_op_fn_t)(const void* x, R_len_t i);
-poly_unary_op_fn_t new_poly_op_equal_missing_p(SEXP proxy);
+typedef bool (*poly_unary_bool_fn_t)(const void* x, r_ssize i);
+poly_unary_bool_fn_t new_poly_p_is_missing(SEXP proxy);
 
 
 struct poly_vec {
