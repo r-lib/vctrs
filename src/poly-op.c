@@ -8,7 +8,7 @@
 struct poly_df_data {
   enum vctrs_type* col_types;
   const void** col_ptrs;
-  R_len_t n_col;
+  r_ssize n_col;
 };
 
 // -----------------------------------------------------------------------------
@@ -38,7 +38,7 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
   struct poly_df_data* x_data = (struct poly_df_data*) x;
   struct poly_df_data* y_data = (struct poly_df_data*) y;
 
-  R_len_t n_col = x_data->n_col;
+  r_ssize n_col = x_data->n_col;
   if (n_col != y_data->n_col) {
     stop_internal("p_df_equal_na_equal", "`x` and `y` must have the same number of columns.");
   }
@@ -48,7 +48,7 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
   const void** y_ptrs = y_data->col_ptrs;
 
   // df-cols should already be flattened
-  for (R_len_t col = 0; col < n_col; ++col) {
+  for (r_ssize col = 0; col < n_col; ++col) {
     if (!p_equal_na_equal(x_ptrs[col], i, y_ptrs[col], j, types[col])) {
       return false;
     }
@@ -85,9 +85,9 @@ bool p_df_is_missing(const void* x, r_ssize i) {
 
   enum vctrs_type* types = x_data->col_types;
   const void** x_ptrs = x_data->col_ptrs;
-  R_len_t n_col = x_data->n_col;
+  r_ssize n_col = x_data->n_col;
 
-  for (R_len_t col = 0; col < n_col; ++col) {
+  for (r_ssize col = 0; col < n_col; ++col) {
     if (p_is_missing(x_ptrs[col], i, types[col])) {
       return true;
     }
@@ -173,7 +173,7 @@ void init_list_poly_vec(struct poly_vec* p_poly_vec) {
 static
 void init_df_poly_vec(struct poly_vec* p_poly_vec) {
   SEXP df = p_poly_vec->vec;
-  R_len_t n_col = Rf_length(df);
+  r_ssize n_col = Rf_xlength(df);
 
   SEXP self = PROTECT(Rf_allocVector(VECSXP, 4));
 
@@ -192,7 +192,7 @@ void init_df_poly_vec(struct poly_vec* p_poly_vec) {
   const void** col_ptrs = (const void**) RAW(col_ptrs_handle);
   SET_VECTOR_ELT(self, 3, col_ptrs_handle);
 
-  for (R_len_t i = 0; i < n_col; ++i) {
+  for (r_ssize i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(df, i);
     col_types[i] = vec_proxy_typeof(col);
     col_ptrs[i] = r_vec_deref_const(col);
