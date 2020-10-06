@@ -27,27 +27,27 @@ static SEXP df_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
  */
 static
 SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
-  x = PROTECT(vec_proxy_equal(x));
-  y = PROTECT(vec_proxy_equal(y));
+  SEXP x_proxy = PROTECT(vec_proxy_equal(x));
+  SEXP y_proxy = PROTECT(vec_proxy_equal(y));
 
-  R_len_t size = vec_size(x);
+  R_len_t size = vec_size(x_proxy);
+  enum vctrs_type type = vec_proxy_typeof(x_proxy);
 
-  enum vctrs_type type = vec_proxy_typeof(x);
-  if (type != vec_proxy_typeof(y) || size != vec_size(y)) {
+  if (type != vec_proxy_typeof(y_proxy) || size != vec_size(y_proxy)) {
     Rf_errorcall(R_NilValue, "`x` and `y` must have same types and lengths.");
   }
 
   SEXP out;
 
   switch (type) {
-  case vctrs_type_logical: out = lgl_equal(x, y, size, na_equal); break;
-  case vctrs_type_integer: out = int_equal(x, y, size, na_equal); break;
-  case vctrs_type_double: out = dbl_equal(x, y, size, na_equal); break;
-  case vctrs_type_complex: out = cpl_equal(x, y, size, na_equal); break;
-  case vctrs_type_character: out = chr_equal(x, y, size, na_equal); break;
-  case vctrs_type_raw: out = raw_equal(x, y, size, na_equal); break;
-  case vctrs_type_list: out = list_equal(x, y, size, na_equal); break;
-  case vctrs_type_dataframe: out = df_equal(x, y, size, na_equal); break;
+  case vctrs_type_logical: out = lgl_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_integer: out = int_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_double: out = dbl_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_complex: out = cpl_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_character: out = chr_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_raw: out = raw_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_list: out = list_equal(x_proxy, y_proxy, size, na_equal); break;
+  case vctrs_type_dataframe: out = df_equal(x_proxy, y_proxy, size, na_equal); break;
   case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
   default: stop_unimplemented_vctrs_type("vec_equal", type);
   }
