@@ -1,3 +1,4 @@
+#include "poly-op.h"
 
 #define DICT_EMPTY -1
 
@@ -11,12 +12,9 @@
 struct dictionary {
   SEXP protect;
 
-  SEXP vec;
-  enum vctrs_type type;
-
-  int (*p_equal_na_equal)(const void*, r_ssize i, const void*, r_ssize j);
-  bool (*p_is_missing)(const void* p_x, r_ssize i);
-  const void* vec_p;
+  poly_binary_int_fn_ptr p_equal_na_equal;
+  poly_unary_bool_fn_ptr p_is_missing;
+  struct poly_vec* p_poly_vec;
 
   uint32_t* hash;
   R_len_t* key;
@@ -44,12 +42,12 @@ struct dictionary_opts {
 struct dictionary* new_dictionary(SEXP x);
 struct dictionary* new_dictionary_partial(SEXP x);
 
-#define PROTECT_DICT(d, n) do {                 \
-    struct dictionary* d_ = (d);                \
-    PROTECT(d_->vec);                           \
-    PROTECT(d_->protect);                       \
-    *(n) += 2;                                  \
-  } while(0)
+#define PROTECT_DICT(d, n) do {        \
+  struct dictionary* d_ = (d);         \
+  PROTECT_POLY_VEC(d_->p_poly_vec, n); \
+  PROTECT(d_->protect);                \
+  *(n) += 1;                           \
+} while(0)
 
 /**
  * Find key hash for a vector element
