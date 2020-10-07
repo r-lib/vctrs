@@ -87,19 +87,19 @@ SEXP vec_proxy_complete(SEXP x) {
     return df_proxy(x, VCTRS_PROXY_KIND_complete);
   }
 
-  SEXP proxy = vec_proxy_equal(x);
+  SEXP proxy = PROTECT(vec_proxy_equal(x));
 
   // Arrays have stopgap data frame proxies,
   // but their completeness rules match normal data frames
   if (has_dim(x)) {
+    UNPROTECT(1);
     return proxy;
   }
 
   if (!is_data_frame(proxy)) {
+    UNPROTECT(1);
     return proxy;
   }
-
-  PROTECT(proxy);
 
   SEXP out = PROTECT(vec_equal_na(proxy));
   int* p_out = LOGICAL(out);
