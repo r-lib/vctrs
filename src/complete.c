@@ -48,23 +48,19 @@ SEXP vctrs_df_detect_complete(SEXP x) {
   return df_detect_complete(x);
 }
 
-static inline void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_info);
+static inline void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out);
 
 static
 SEXP df_detect_complete(SEXP x) {
-  int nprot = 0;
-
   if (!is_data_frame(x)) {
     r_abort("`x` must be a data frame.");
   }
 
-  // Flatten df-cols, but don't proxy
-  x = PROTECT_N(df_flatten(x), &nprot);
+  SEXP proxy = PROTECT(vec_proxy_complete(x));
 
-  R_len_t size = vec_size(x);
-  r_ssize n_cols = r_length(x);
+  R_len_t size = vec_size(proxy);
 
-  SEXP out = PROTECT_N(r_new_logical(size), &nprot);
+  SEXP out = PROTECT(r_new_logical(size));
   int* p_out = LOGICAL(out);
 
   // Initialize assuming fully complete
@@ -72,16 +68,21 @@ SEXP df_detect_complete(SEXP x) {
     p_out[i] = 1;
   }
 
-  struct df_short_circuit_info info = new_df_short_circuit_info(size, true);
-  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
-
-  const SEXP* p_x = VECTOR_PTR_RO(x);
-
-  for (r_ssize i = 0; i < n_cols; ++i) {
-    vec_detect_complete_col(p_x[i], size, p_out, &info);
+  // Proxy unwrapping might have flattened `x`
+  if (!is_data_frame(proxy)) {
+    vec_detect_complete_col(proxy, size, p_out);
+    UNPROTECT(2);
+    return out;
   }
 
-  UNPROTECT(nprot);
+  r_ssize n_cols = r_length(proxy);
+  const SEXP* p_proxy = VECTOR_PTR_RO(proxy);
+
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    vec_detect_complete_col(p_proxy[i], size, p_out);
+  }
+
+  UNPROTECT(2);
   return out;
 }
 
@@ -94,26 +95,21 @@ static inline void cpl_detect_complete_col(SEXP x, R_len_t size, int* p_out);
 static inline void chr_detect_complete_col(SEXP x, R_len_t size, int* p_out);
 static inline void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out);
 static inline void list_detect_complete_col(SEXP x, R_len_t size, int* p_out);
-static void df_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_info);
 
 static inline
-void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_info) {
-  SEXP proxy = PROTECT(vec_proxy_equal(x));
-
-  switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical: lgl_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_integer: int_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_double: dbl_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_complex: cpl_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_character: chr_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_raw: raw_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_list: list_detect_complete_col(proxy, size, p_out); break;
-  case vctrs_type_dataframe: df_detect_complete_col(proxy, size, p_out, p_info); break;
+void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
+  switch (vec_proxy_typeof(x)) {
+  case vctrs_type_logical: lgl_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_integer: int_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_double: dbl_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_complex: cpl_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_character: chr_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_raw: raw_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_list: list_detect_complete_col(x, size, p_out); break;
+  case vctrs_type_dataframe: stop_internal("vec_detect_complete_col", "Data frame columns should have been flattened by now.");
   case vctrs_type_scalar: stop_internal("vec_detect_complete_col", "Can't detect missing values in scalars.");
-  default: stop_unimplemented_vctrs_type("vec_detect_complete_col", vec_proxy_typeof(proxy));
+  default: stop_unimplemented_vctrs_type("vec_detect_complete_col", vec_proxy_typeof(x));
   }
-
-  UNPROTECT(1);
 }
 
 // -----------------------------------------------------------------------------
@@ -185,105 +181,4 @@ void raw_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
 static inline
 void list_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
   VEC_DETECT_COMPLETE_COL(SEXP, VECTOR_PTR_RO, list_is_missing);
-}
-
-// -----------------------------------------------------------------------------
-
-static void vec_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-
-/*
- * This data frame path occurs when a vector that isn't a data frame has a
- * data frame proxy, like a rcrd. In these cases, we consider a "complete"
- * row to be any row that has at least one non-missing value.
- */
-
-static
-void df_detect_complete_col(SEXP x, R_len_t size, int* p_out, struct df_short_circuit_info* p_info) {
-  r_ssize n_cols = r_length(x);
-  const SEXP* p_x = VECTOR_PTR_RO(x);
-
-  // Ensure lazy memory is initialized
-  init_lazy_df_short_circuit_info(p_info);
-
-  // Always reset to no rows being known between df-cols
-  memset(p_info->p_row_known, false, p_info->size * sizeof(bool));
-
-  for (r_ssize i = 0; i < n_cols; ++i) {
-    vec_detect_any_non_missing_col(p_x[i], size, p_info);
-  }
-
-  // If we don't know the row value,
-  // then the entire row of this df-col is missing,
-  // which we consider incomplete.
-  for (r_ssize i = 0; i < size; ++i) {
-    if (!p_info->p_row_known[i]) {
-      p_out[i] = 0;
-    }
-  }
-}
-
-static inline void lgl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-static inline void int_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-static inline void dbl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-static inline void cpl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-static inline void chr_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-static inline void raw_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-static inline void list_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info);
-
-static
-void vec_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical: lgl_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_integer: int_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_double: dbl_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_complex: cpl_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_character: chr_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_raw: raw_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_list: list_detect_any_non_missing_col(x, size, p_info); break;
-  case vctrs_type_dataframe: stop_internal("vec_detect_any_non_missing_col", "Data frame columns should have been handled already.");
-  case vctrs_type_scalar: stop_internal("vec_detect_any_non_missing_col", "Can't detect missing values in scalars.");
-  default: stop_unimplemented_vctrs_type("vec_detect_any_non_missing_col", vec_proxy_typeof(x));
-  }
-}
-
-#define VEC_DETECT_ANY_NON_MISSING(CTYPE, CONST_DEREF, IS_MISSING) { \
-  const CTYPE* p_x = CONST_DEREF(x);                                 \
-                                                                     \
-  for (R_len_t i = 0; i < size; ++i) {                               \
-    const CTYPE elt = p_x[i];                                        \
-                                                                     \
-    /* At least one non-missing value exists */                      \
-    if (!IS_MISSING(elt)) {                                          \
-      p_info->p_row_known[i] = true;                                 \
-    }                                                                \
-  }                                                                  \
-}
-
-static inline
-void lgl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(int, LOGICAL_RO, lgl_is_missing);
-}
-static inline
-void int_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(int, INTEGER_RO, int_is_missing);
-}
-static inline
-void dbl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(double, REAL_RO, dbl_is_missing);
-}
-static inline
-void cpl_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(Rcomplex, COMPLEX_RO, cpl_is_missing);
-}
-static inline
-void chr_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(SEXP, STRING_PTR_RO, chr_is_missing);
-}
-static inline
-void raw_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(Rbyte, RAW_RO, raw_is_missing);
-}
-static inline
-void list_detect_any_non_missing_col(SEXP x, R_len_t size, struct df_short_circuit_info* p_info) {
-  VEC_DETECT_ANY_NON_MISSING(SEXP, VECTOR_PTR_RO, list_is_missing);
 }
