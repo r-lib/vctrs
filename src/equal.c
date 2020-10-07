@@ -450,6 +450,11 @@ static SEXP df_equal_na(SEXP x, R_len_t size);
 
 // [[ register() ]]
 SEXP vctrs_equal_na(SEXP x) {
+  return vec_equal_na(x);
+}
+
+// [[ include("vctrs.h") ]]
+SEXP vec_equal_na(SEXP x) {
   R_len_t size = vec_size(x);
 
   x = PROTECT(vec_proxy_equal(x));
