@@ -75,10 +75,22 @@ reference:
   - vec_rep
   - vec_rep_each
   - vec_seq_along
+  - vec_identify_runs
 
 - title: New classes
   contents:
   - list_of
+
+- title: Data frame
+  contents:
+  - df_list
+  - new_data_frame
+  - data_frame
+  - df_ptype2
+  - df_cast
+  - tib_ptype2
+  - tib_cast
+  - df_detect_complete
 
 - title: User tools
   contents:
@@ -90,10 +102,6 @@ reference:
   - vec_list_cast
   - vec_ptype_full
   - vec_ptype_finalise
-  - df_ptype2
-  - df_cast
-  - tib_ptype2
-  - tib_cast
   - "vctrs-conditions"
   - rcrd
   - fields
@@ -104,5 +112,6 @@ reference:
   - vec_default_cast
   - vec_default_ptype2
   - vec_as_names
+  - vec_names
   - vec_as_location
   - vec_as_subscript
