@@ -271,40 +271,4 @@ static inline bool p_equal_na_propagate(const void* p_x,
 
 // -----------------------------------------------------------------------------
 
-// FIXME: Remove these by rewriting `vctrs_equal()` to branch off `na_equal`
-
-#define EQUAL(EQUAL_NA_EQUAL, EQUAL_NA_PROPAGATE) do { \
-  if (na_equal) {                                      \
-    return EQUAL_NA_EQUAL(x, y);                       \
-  } else {                                             \
-    return EQUAL_NA_PROPAGATE(x, y);                   \
-  }                                                    \
-} while (0)
-
-static inline int lgl_equal(int x, int y, bool na_equal) {
-  EQUAL(lgl_equal_na_equal, lgl_equal_na_propagate);
-}
-static inline int int_equal(int x, int y, bool na_equal) {
-  EQUAL(int_equal_na_equal, int_equal_na_propagate);
-}
-static inline int dbl_equal(double x, double y, bool na_equal) {
-  EQUAL(dbl_equal_na_equal, dbl_equal_na_propagate);
-}
-static inline int cpl_equal(Rcomplex x, Rcomplex y, bool na_equal) {
-  EQUAL(cpl_equal_na_equal, cpl_equal_na_propagate);
-}
-static inline int chr_equal(SEXP x, SEXP y, bool na_equal) {
-  EQUAL(chr_equal_na_equal, chr_equal_na_propagate);
-}
-static inline int raw_equal(Rbyte x, Rbyte y, bool na_equal) {
-  EQUAL(raw_equal_na_equal, raw_equal_na_propagate);
-}
-static inline int list_equal(SEXP x, SEXP y, bool na_equal) {
-  EQUAL(list_equal_na_equal, list_equal_na_propagate);
-}
-
-#undef EQUAL
-
-// -----------------------------------------------------------------------------
-
 #endif
