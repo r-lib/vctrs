@@ -56,7 +56,6 @@ reference:
   contents:
   - vec_equal
   - vec_compare
-  - df_detect_complete
 
 - title: Sorting
   contents:
@@ -82,6 +81,17 @@ reference:
   contents:
   - list_of
 
+- title: Data frame
+  contents:
+  - df_list
+  - new_data_frame
+  - data_frame
+  - df_ptype2
+  - df_cast
+  - tib_ptype2
+  - tib_cast
+  - df_detect_complete
+
 - title: User tools
   contents:
   - "`%0%`"
@@ -92,10 +102,6 @@ reference:
   - vec_list_cast
   - vec_ptype_full
   - vec_ptype_finalise
-  - df_ptype2
-  - df_cast
-  - tib_ptype2
-  - tib_cast
   - "vctrs-conditions"
   - rcrd
   - fields
@@ -109,6 +115,3 @@ reference:
   - vec_names
   - vec_as_location
   - vec_as_subscript
-  - data_frame
-  - new_data_frame
-  - df_list
