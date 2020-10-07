@@ -364,13 +364,15 @@ enum vctrs_proxy_kind {
   VCTRS_PROXY_KIND_default,
   VCTRS_PROXY_KIND_equal,
   VCTRS_PROXY_KIND_compare,
-  VCTRS_PROXY_KIND_order
+  VCTRS_PROXY_KIND_order,
+  VCTRS_PROXY_KIND_complete
 };
 
 SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
 SEXP vec_proxy_order(SEXP x);
+SEXP vec_proxy_complete(SEXP x);
 SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
 R_len_t vec_size(SEXP x);
