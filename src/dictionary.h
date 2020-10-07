@@ -12,8 +12,8 @@
 struct dictionary {
   SEXP protect;
 
-  poly_binary_int_fn_t p_equal_na_equal;
-  poly_unary_bool_fn_t p_is_missing;
+  poly_binary_int_fn_ptr p_equal_na_equal;
+  poly_unary_bool_fn_ptr p_is_missing;
   struct poly_vec* p_poly_vec;
 
   uint32_t* hash;

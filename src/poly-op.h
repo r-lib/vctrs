@@ -3,11 +3,11 @@
 
 #include "vctrs.h"
 
-typedef int (*poly_binary_int_fn_t)(const void* x, r_ssize i, const void* y, r_ssize j);
-poly_binary_int_fn_t new_poly_p_equal_na_equal(enum vctrs_type type);
+typedef int (*poly_binary_int_fn_ptr)(const void* x, r_ssize i, const void* y, r_ssize j);
+poly_binary_int_fn_ptr new_poly_p_equal_na_equal(enum vctrs_type type);
 
-typedef bool (*poly_unary_bool_fn_t)(const void* x, r_ssize i);
-poly_unary_bool_fn_t new_poly_p_is_missing(enum vctrs_type type);
+typedef bool (*poly_unary_bool_fn_ptr)(const void* x, r_ssize i);
+poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type);
 
 
 struct poly_vec {

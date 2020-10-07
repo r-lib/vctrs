@@ -16,7 +16,7 @@ struct poly_df_data {
 static int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j);
 
 // [[ include("poly-op.h") ]]
-poly_binary_int_fn_t new_poly_p_equal_na_equal(enum vctrs_type type) {
+poly_binary_int_fn_ptr new_poly_p_equal_na_equal(enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_equal_na_equal;
   case vctrs_type_logical: return p_lgl_equal_na_equal;
@@ -60,7 +60,7 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
 static bool p_df_is_missing(const void* x, r_ssize i);
 
 // [[ include("poly-op.h") ]]
-poly_unary_bool_fn_t new_poly_p_is_missing(enum vctrs_type type) {
+poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_is_missing;
   case vctrs_type_logical: return p_lgl_is_missing;
