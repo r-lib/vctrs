@@ -106,12 +106,6 @@ returns the result silently." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -177,21 +171,21 @@ unless it's been wrapped in <code><a href='vctrs-conditions.html'>allow_lossy_ca
 returns the result silently.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>maybe_lossy_cast</span>(
-  <span class='kw'>result</span>,
-  <span class='kw'>x</span>,
-  <span class='kw'>to</span>,
-  lossy = <span class='kw'>NULL</span>,
-  locations = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>,
-  loss_type = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"precision"</span>, <span class='st'>"generality"</span>),
-  <span class='kw'>x_arg</span>,
-  <span class='kw'>to_arg</span>,
-  details = <span class='kw'>NULL</span>,
-  message = <span class='kw'>NULL</span>,
-  class = <span class='kw'>NULL</span>,
-  .deprecation = <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>maybe_lossy_cast</span><span class='op'>(</span>
+  <span class='va'>result</span>,
+  <span class='va'>x</span>,
+  <span class='va'>to</span>,
+  lossy <span class='op'>=</span> <span class='cn'>NULL</span>,
+  locations <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>,
+  loss_type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"precision"</span>, <span class='st'>"generality"</span><span class='op'>)</span>,
+  <span class='va'>x_arg</span>,
+  <span class='va'>to_arg</span>,
+  details <span class='op'>=</span> <span class='cn'>NULL</span>,
+  message <span class='op'>=</span> <span class='cn'>NULL</span>,
+  class <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .deprecation <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

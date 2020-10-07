@@ -99,12 +99,6 @@ by coercing all input items." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -163,19 +157,19 @@ Modifying the list with <code><a href='https://rdrr.io/r/base/Extract.html'>$</a
 by coercing all input items.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>list_of</span>(<span class='kw'>...</span>, .ptype = <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>list_of</span><span class='op'>(</span><span class='va'>...</span>, .ptype <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
-<span class='fu'>as_list_of</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)
+<span class='fu'>as_list_of</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>validate_list_of</span>(<span class='kw'>x</span>)
+<span class='fu'>validate_list_of</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>is_list_of</span>(<span class='kw'>x</span>)
-
-<span class='co'># S3 method for vctrs_list_of</span>
-<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span>(<span class='kw'>x</span>, <span class='kw'>y</span>, <span class='kw'>...</span>, x_arg = <span class='st'>""</span>, y_arg = <span class='st'>""</span>)
+<span class='fu'>is_list_of</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
 <span class='co'># S3 method for vctrs_list_of</span>
-<span class='fu'><a href='vec_cast.html'>vec_cast</a></span>(<span class='kw'>x</span>, <span class='kw'>to</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, y_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
+
+<span class='co'># S3 method for vctrs_list_of</span>
+<span class='fu'><a href='vec_cast.html'>vec_cast</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -220,17 +214,17 @@ incompatible types (see <code><a href='vctrs-conditions.html'>stop_incompatible_
 does not remove it.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'>list_of</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>10</span><span class='op'>:</span><span class='fl'>15</span>)
-<span class='co'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"tibble"</span>, quietly = <span class='fl'>TRUE</span>)) {
-  <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='kw'>x</span>)
-}
+    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>list_of</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>10</span><span class='op'>:</span><span class='fl'>15</span><span class='op'>)</span>
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"tibble"</span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 3 x 1</span><span>
 #&gt;             x
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;list&lt;int&gt;&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>         </span><span style='color: #555555;'>[3]</span><span>
 #&gt; </span><span style='color: #555555;'>2</span><span>         </span><span style='color: #555555;'>[2]</span><span>
 #&gt; </span><span style='color: #555555;'>3</span><span>         </span><span style='color: #555555;'>[6]</span><span></div><div class='input'>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fu'>list_of</span>(<span class='fl'>1</span>, <span class='fl'>2</span>), <span class='fu'>list_of</span>(<span class='fl'>FALSE</span>, <span class='fl'>TRUE</span>))
+<span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>list_of</span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'>list_of</span><span class='op'>(</span><span class='cn'>FALSE</span>, <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; &lt;list_of&lt;double&gt;[4]&gt;
 #&gt; [[1]]
 #&gt; [1] 1

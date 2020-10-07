@@ -120,12 +120,6 @@ levels are nested." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -205,13 +199,13 @@ more).</p><ul>
 levels are nested.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_as_names</span>(
-  <span class='kw'>names</span>,
-  <span class='kw'>...</span>,
-  repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
-  repair_arg = <span class='st'>""</span>,
-  quiet = <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>vec_as_names</span><span class='op'>(</span>
+  <span class='va'>names</span>,
+  <span class='va'>...</span>,
+  repair <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span><span class='op'>)</span>,
+  repair_arg <span class='op'>=</span> <span class='st'>""</span>,
+  quiet <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -332,15 +326,15 @@ section in the "tidyverse package development principles".</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># By default, `vec_as_names()` returns minimal names:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>))
+<span class='fu'>vec_as_names</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='st'>"foo"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] ""    ""    "foo"</div><div class='input'>
 <span class='co'># You can make them unique:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='st'>"foo"</span>), repair = <span class='st'>"unique"</span>)
+<span class='fu'>vec_as_names</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='st'>"foo"</span><span class='op'>)</span>, repair <span class='op'>=</span> <span class='st'>"unique"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* NA -&gt; ...1</span>
 #&gt; <span class='message'>* NA -&gt; ...2</span></div><div class='output co'>#&gt; [1] "...1" "...2" "foo" </div><div class='input'>
 <span class='co'># Universal repairing fixes any non-syntactic name:</span>
-<span class='fu'>vec_as_names</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"_foo"</span>, <span class='st'>"+"</span>), repair = <span class='st'>"universal"</span>)
+<span class='fu'>vec_as_names</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"_foo"</span>, <span class='st'>"+"</span><span class='op'>)</span>, repair <span class='op'>=</span> <span class='st'>"universal"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* `_foo` -&gt; ._foo</span>
 #&gt; <span class='message'>* `+` -&gt; .</span></div><div class='output co'>#&gt; [1] "._foo" "."    </div></pre>

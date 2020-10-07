@@ -108,12 +108,6 @@ tibble::tibble(x = fit)
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -169,13 +163,13 @@ tibble::tibble(x = fit)
     <div class="ref-description">
     <p>This error occurs when a function expects a vector and gets a scalar
 object instead. This commonly happens when some code attempts to assign
-a scalar object as column in a data frame:<div class="r"></p><pre><span class='kw'>fn</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>() <span class='kw'>NULL</span>
-<span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='kw'>fn</span>)
+a scalar object as column in a data frame:<div class="r"></p><pre><span class='va'>fn</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='cn'>NULL</span>
+<span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>fn</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: All columns in a tibble must be vectors.</span>
 <span class='co'>#&gt; x Column `x` is a function.</span>
 
-<span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span>)
-<span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(x = <span class='kw'>fit</span>)
+<span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>fit</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: All columns in a tibble must be vectors.</span>
 <span class='co'>#&gt; x Column `x` is a `lm` object.</span>
 </pre><p></div></p>
@@ -191,15 +185,15 @@ considered a vector. The main question we ask ourselves to decide on the
 vectorness of a type is whether it makes sense to include that object as
 a column in a data frame.</p>
 <p>The main difference is that S3 lists are considered vectors by base R
-but in the tidyverse that’s not the case by default:<div class="r"></p><pre><span class='kw'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span>)
+but in the tidyverse that’s not the case by default:<div class="r"></p><pre><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/typeof.html'>typeof</a></span>(<span class='kw'>fit</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/typeof.html'>typeof</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] "list"</span>
-<span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='kw'>fit</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] "lm"</span>
 
 <span class='co'># S3 lists can be subset like a vector using base R:</span>
-<span class='kw'>fit</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>]
+<span class='va'>fit</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>]</span>
 <span class='co'>#&gt; $coefficients</span>
 <span class='co'>#&gt; (Intercept) </span>
 <span class='co'>#&gt;           2 </span>
@@ -213,17 +207,17 @@ but in the tidyverse that’s not the case by default:<div class="r"></p><pre><s
 <span class='co'>#&gt;  -3.4641016   0.3660254   1.3660254</span>
 
 <span class='co'># But not in vctrs</span>
-<span class='kw'>vctrs</span>::<span class='fu'><a href='vec_slice.html'>vec_slice</a></span>(<span class='kw'>fit</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
+<span class='fu'>vctrs</span><span class='fu'>::</span><span class='fu'><a href='vec_slice.html'>vec_slice</a></span><span class='op'>(</span><span class='va'>fit</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Input must be a vector, not a `lm` object.</span>
 </pre><p></div></p>
-<p>Defused function calls are another (more esoteric) example:<div class="r"></p><pre><span class='kw'>call</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>quote</a></span>(<span class='fu'>foo</span>(bar = <span class='fl'>TRUE</span>, baz = <span class='fl'>FALSE</span>))
-<span class='kw'>call</span>
+<p>Defused function calls are another (more esoteric) example:<div class="r"></p><pre><span class='va'>call</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>quote</a></span><span class='op'>(</span><span class='fu'>foo</span><span class='op'>(</span>bar <span class='op'>=</span> <span class='cn'>TRUE</span>, baz <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>call</span>
 <span class='co'>#&gt; foo(bar = TRUE, baz = FALSE)</span>
 
 <span class='co'># They can be subset like a vector using base R:</span>
-<span class='kw'>call</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>]
+<span class='va'>call</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>]</span>
 <span class='co'>#&gt; foo(bar = TRUE)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='kw'>call</span>, <span class='fu'>function</span>(<span class='kw'>x</span>) <span class='kw'>x</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>call</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='va'>x</span><span class='op'>)</span>
 <span class='co'>#&gt; [[1]]</span>
 <span class='co'>#&gt; foo</span>
 <span class='co'>#&gt; </span>
@@ -234,7 +228,7 @@ but in the tidyverse that’s not the case by default:<div class="r"></p><pre><s
 <span class='co'>#&gt; [1] FALSE</span>
 
 <span class='co'># But not with vctrs:</span>
-<span class='kw'>vctrs</span>::<span class='fu'><a href='vec_slice.html'>vec_slice</a></span>(<span class='kw'>call</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>)
+<span class='fu'>vctrs</span><span class='fu'>::</span><span class='fu'><a href='vec_slice.html'>vec_slice</a></span><span class='op'>(</span><span class='va'>call</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Input must be a vector, not a call.</span>
 </pre><p></div></p>
     <h2 class="hasAnchor" id="i-get-a-scalar-type-error-but-i-think-this-is-a-bug"><a class="anchor" href="#i-get-a-scalar-type-error-but-i-think-this-is-a-bug"></a>I get a scalar type error but I think this is a bug</h2>

@@ -112,12 +112,6 @@ holds:vec_unchop(vec_chop(x, indices), indices) == x
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -184,20 +178,20 @@ are combined. When no indices are supplied, it is identical to <code><a href='ve
 
 <p>If <code>indices</code> selects every value in <code>x</code> exactly once, in any order, then
 <code>vec_unchop()</code> is the inverse of <code>vec_chop()</code> and the following invariant
-holds:</p><pre><span class='fu'>vec_unchop</span>(<span class='fu'>vec_chop</span>(<span class='kw'>x</span>, <span class='kw'>indices</span>), <span class='kw'>indices</span>) <span class='op'>==</span> <span class='kw'>x</span>
+holds:</p><pre><span class='fu'>vec_unchop</span><span class='op'>(</span><span class='fu'>vec_chop</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>indices</span><span class='op'>)</span>, <span class='va'>indices</span><span class='op'>)</span> <span class='op'>==</span> <span class='va'>x</span>
 </pre>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_chop</span>(<span class='kw'>x</span>, indices = <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>vec_chop</span><span class='op'>(</span><span class='va'>x</span>, indices <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
-<span class='fu'>vec_unchop</span>(
-  <span class='kw'>x</span>,
-  indices = <span class='kw'>NULL</span>,
-  ptype = <span class='kw'>NULL</span>,
-  name_spec = <span class='kw'>NULL</span>,
-  name_repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span>)
-)</pre>
+<span class='fu'>vec_unchop</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  indices <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ptype <span class='op'>=</span> <span class='cn'>NULL</span>,
+  name_spec <span class='op'>=</span> <span class='cn'>NULL</span>,
+  name_repair <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -278,7 +272,7 @@ the indices are <code>NULL</code>, in which case the size is <code><a href='vec_
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_chop</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>)
+    <pre class="examples"><div class='input'><span class='fu'>vec_chop</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 1
 #&gt; 
@@ -293,13 +287,13 @@ the indices are <code>NULL</code>, in which case the size is <code><a href='vec_
 #&gt; 
 #&gt; [[5]]
 #&gt; [1] 5
-#&gt; </div><div class='input'><span class='fu'>vec_chop</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>))
+#&gt; </div><div class='input'><span class='fu'>vec_chop</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; [1] 1
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 1 2
-#&gt; </div><div class='input'><span class='fu'>vec_chop</span>(<span class='kw'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>:</span><span class='fl'>6</span>))
+#&gt; </div><div class='input'><span class='fu'>vec_chop</span><span class='op'>(</span><span class='va'>mtcars</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt;                mpg cyl disp  hp drat    wt  qsec vs am gear carb
 #&gt; Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
@@ -314,9 +308,9 @@ the indices are <code>NULL</code>, in which case the size is <code><a href='vec_
 #&gt; </div><div class='input'>
 <span class='co'># If `indices` selects every value in `x` exactly once,</span>
 <span class='co'># in any order, then `vec_unchop()` inverts `vec_chop()`</span>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"c"</span>, <span class='st'>"d"</span>)
-<span class='kw'>indices</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>1</span>), <span class='fl'>4</span>)
-<span class='fu'>vec_chop</span>(<span class='kw'>x</span>, <span class='kw'>indices</span>)
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"c"</span>, <span class='st'>"d"</span><span class='op'>)</span>
+<span class='va'>indices</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>4</span><span class='op'>)</span>
+<span class='fu'>vec_chop</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>indices</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; [1] "b"
 #&gt; 
@@ -325,31 +319,31 @@ the indices are <code>NULL</code>, in which case the size is <code><a href='vec_
 #&gt; 
 #&gt; [[3]]
 #&gt; [1] "d"
-#&gt; </div><div class='input'><span class='fu'>vec_unchop</span>(<span class='fu'>vec_chop</span>(<span class='kw'>x</span>, <span class='kw'>indices</span>), <span class='kw'>indices</span>)
+#&gt; </div><div class='input'><span class='fu'>vec_unchop</span><span class='op'>(</span><span class='fu'>vec_chop</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>indices</span><span class='op'>)</span>, <span class='va'>indices</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "a" "b" "c" "d"</div><div class='input'>
 <span class='co'># When unchopping, size 1 elements of `x` are recycled</span>
 <span class='co'># to the size of the corresponding index</span>
-<span class='fu'>vec_unchop</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span>), <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>4</span>)))
+<span class='fu'>vec_unchop</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 1 2 1 3 1</div><div class='input'>
 <span class='co'># Names are retained, and outer names can be combined with inner</span>
 <span class='co'># names through the use of a `name_spec`</span>
-<span class='kw'>lst</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(x = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>), y = <span class='fl'>1</span>)
-<span class='fu'>vec_unchop</span>(<span class='kw'>lst</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>2</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>4</span>)), name_spec = <span class='st'>"{outer}_{inner}"</span>)
+<span class='va'>lst</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>a <span class='op'>=</span> <span class='fl'>1</span>, b <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'>vec_unchop</span><span class='op'>(</span><span class='va'>lst</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>, name_spec <span class='op'>=</span> <span class='st'>"{outer}_{inner}"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; y_1 x_b x_a y_2 
 #&gt;   1   2   1   1 </div><div class='input'>
 <span class='co'># An alternative implementation of `ave()` can be constructed using</span>
 <span class='co'># `vec_chop()` and `vec_unchop()` in combination with `vec_group_loc()`</span>
-<span class='kw'>ave2</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>.x</span>, <span class='kw'>.by</span>, <span class='kw'>.f</span>, <span class='kw'>...</span>) {
-  <span class='kw'>indices</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vec_group.html'>vec_group_loc</a></span>(<span class='kw'>.by</span>)<span class='op'>$</span><span class='kw'>loc</span>
-  <span class='kw'>chopped</span> <span class='op'>&lt;-</span> <span class='fu'>vec_chop</span>(<span class='kw'>.x</span>, <span class='kw'>indices</span>)
-  <span class='kw'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='kw'>chopped</span>, <span class='kw'>.f</span>, <span class='kw'>...</span>)
-  <span class='fu'>vec_unchop</span>(<span class='kw'>out</span>, <span class='kw'>indices</span>)
-}
+<span class='va'>ave2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>.x</span>, <span class='va'>.by</span>, <span class='va'>.f</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>indices</span> <span class='op'>&lt;-</span> <span class='fu'><a href='vec_group.html'>vec_group_loc</a></span><span class='op'>(</span><span class='va'>.by</span><span class='op'>)</span><span class='op'>$</span><span class='va'>loc</span>
+  <span class='va'>chopped</span> <span class='op'>&lt;-</span> <span class='fu'>vec_chop</span><span class='op'>(</span><span class='va'>.x</span>, <span class='va'>indices</span><span class='op'>)</span>
+  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>chopped</span>, <span class='va'>.f</span>, <span class='va'>...</span><span class='op'>)</span>
+  <span class='fu'>vec_unchop</span><span class='op'>(</span><span class='va'>out</span>, <span class='va'>indices</span><span class='op'>)</span>
+<span class='op'>}</span>
 
-<span class='kw'>breaks</span> <span class='op'>&lt;-</span> <span class='kw'>warpbreaks</span><span class='op'>$</span><span class='kw'>breaks</span>
-<span class='kw'>wool</span> <span class='op'>&lt;-</span> <span class='kw'>warpbreaks</span><span class='op'>$</span><span class='kw'>wool</span>
+<span class='va'>breaks</span> <span class='op'>&lt;-</span> <span class='va'>warpbreaks</span><span class='op'>$</span><span class='va'>breaks</span>
+<span class='va'>wool</span> <span class='op'>&lt;-</span> <span class='va'>warpbreaks</span><span class='op'>$</span><span class='va'>wool</span>
 
-<span class='fu'>ave2</span>(<span class='kw'>breaks</span>, <span class='kw'>wool</span>, <span class='kw'>mean</span>)
+<span class='fu'>ave2</span><span class='op'>(</span><span class='va'>breaks</span>, <span class='va'>wool</span>, <span class='va'>mean</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  [1] 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704
 #&gt;  [9] 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704
 #&gt; [17] 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704 31.03704
@@ -357,10 +351,10 @@ the indices are <code>NULL</code>, in which case the size is <code><a href='vec_
 #&gt; [33] 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926
 #&gt; [41] 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926
 #&gt; [49] 25.25926 25.25926 25.25926 25.25926 25.25926 25.25926</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span>(
-  <span class='fu'>ave2</span>(<span class='kw'>breaks</span>, <span class='kw'>wool</span>, <span class='kw'>mean</span>),
-  <span class='fu'><a href='https://rdrr.io/r/stats/ave.html'>ave</a></span>(<span class='kw'>breaks</span>, <span class='kw'>wool</span>, FUN = <span class='kw'>mean</span>)
-)
+<span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span>
+  <span class='fu'>ave2</span><span class='op'>(</span><span class='va'>breaks</span>, <span class='va'>wool</span>, <span class='va'>mean</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/r/stats/ave.html'>ave</a></span><span class='op'>(</span><span class='va'>breaks</span>, <span class='va'>wool</span>, FUN <span class='op'>=</span> <span class='va'>mean</span><span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

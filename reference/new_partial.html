@@ -99,12 +99,6 @@ need to provide a vec_ptype_finalise() method." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -163,11 +157,11 @@ and use <code>is_partial()</code> to test if a type is partial. All subclasses
 need to provide a <code>vec_ptype_finalise()</code> method.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>new_partial</span>(<span class='kw'>...</span>, class = <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>())
+    <pre class="usage"><span class='fu'>new_partial</span><span class='op'>(</span><span class='va'>...</span>, class <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>is_partial</span>(<span class='kw'>x</span>)
+<span class='fu'>is_partial</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>vec_ptype_finalise</span>(<span class='kw'>x</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'>vec_ptype_finalise</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

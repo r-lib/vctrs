@@ -99,12 +99,6 @@ allow NA to specify missingness without requiring a type." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -163,7 +157,7 @@ that only contain <code>NA</code>. These require special handling because we wan
 allow <code>NA</code> to specify missingness without requiring a type.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>unspecified</span>(n = <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>unspecified</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,14 +170,14 @@ allow <code>NA</code> to specify missingness without requiring a type.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span>()
-</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span>(<span class='fl'>NA</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Prototype: NULL</div><div class='input'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span><span class='op'>(</span><span class='cn'>NA</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Prototype: logical</div><div class='input'>
-<span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"x"</span>))
+<span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"x"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] &lt;NA&gt; x   
-#&gt; Levels: x</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())
-</div><div class='output co'>#&gt; [1] NA           "2020-09-17"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())
-</div><div class='output co'>#&gt; [1] NA                        "2020-09-17 16:41:35 UTC"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span>(<span class='fl'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>))
+#&gt; Levels: x</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] NA           "2020-10-07"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] NA                        "2020-10-07 13:34:11 UTC"</div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
 #&gt; NULL
 #&gt; 

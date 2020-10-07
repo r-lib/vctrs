@@ -97,12 +97,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -159,12 +153,12 @@
     <p>Combine all arguments into a new vector of common type.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_c</span>(
-  <span class='kw'>...</span>,
-  .ptype = <span class='kw'>NULL</span>,
-  .name_spec = <span class='kw'>NULL</span>,
-  .name_repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>vec_c</span><span class='op'>(</span>
+  <span class='va'>...</span>,
+  .ptype <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .name_spec <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .name_repair <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -253,29 +247,29 @@ this class hierarchy.</p>
 or columns.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>vec_c</span>(<span class='fl'>FALSE</span>, <span class='fl'>1L</span>, <span class='fl'>1.5</span>)
+    <pre class="examples"><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='cn'>FALSE</span>, <span class='fl'>1L</span>, <span class='fl'>1.5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 0.0 1.0 1.5</div><div class='input'>
 <span class='co'># Date/times --------------------------</span>
-<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>(), <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())
-</div><div class='output co'>#&gt; [1] "2020-09-17" "2020-09-17"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>(), <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())
-</div><div class='output co'>#&gt; [1] "2020-09-17 16:41:39 UTC" "2020-09-17 00:00:00 UTC"</div><div class='input'>
-<span class='fu'>vec_c</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>(), <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>())
-</div><div class='output co'>#&gt; [1] "2020-09-17 00:00:00 UTC" "2020-09-17 16:41:39 UTC"</div><div class='input'><span class='fu'>vec_c</span>(<span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span>(), <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span>())
-</div><div class='output co'>#&gt; [1] "2020-09-17 16:41:39 UTC" "2020-09-17 00:00:00 UTC"</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2020-10-07" "2020-10-07"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2020-10-07 13:34:14 UTC" "2020-10-07 00:00:00 UTC"</div><div class='input'>
+<span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2020-10-07 00:00:00 UTC" "2020-10-07 13:34:14 UTC"</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2020-10-07 13:34:14 UTC" "2020-10-07 00:00:00 UTC"</div><div class='input'>
 <span class='co'># Factors -----------------------------</span>
-<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"b"</span>))
-</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'>vec_c</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"a"</span>), <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='st'>"b"</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] a b
 #&gt; Levels: a b</div><div class='input'>
 
 <span class='co'># By default, named inputs must be length 1:</span>
-<span class='fu'>vec_c</span>(name = <span class='fl'>1</span>)
+<span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; name 
-#&gt;    1 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/try.html'>try</a></span>(<span class='fu'>vec_c</span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>))
+#&gt;    1 </div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
 #&gt; Please supply a `.name_spec` specification.</div><div class='input'>
 <span class='co'># Pass a name specification to work around this:</span>
-<span class='fu'>vec_c</span>(name = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, .name_spec = <span class='st'>"{outer}_{inner}"</span>)
+<span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}_{inner}"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; name_1 name_2 name_3 
 #&gt;      1      2      3 </div><div class='input'>
 <span class='co'># See `?name_spec` for more examples of name specifications.</span>

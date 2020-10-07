@@ -100,12 +100,6 @@ across all arguments." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -165,20 +159,20 @@ across all arguments. Column-binding creates a data frame with common length
 across all arguments.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_rbind</span>(
-  <span class='kw'>...</span>,
-  .ptype = <span class='kw'>NULL</span>,
-  .names_to = <span class='kw'>rlang</span>::<span class='fu'><a href='https://rlang.r-lib.org/reference/zap.html'>zap</a></span>(),
-  .name_repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>),
-  .name_spec = <span class='kw'>NULL</span>
-)
+    <pre class="usage"><span class='fu'>vec_rbind</span><span class='op'>(</span>
+  <span class='va'>...</span>,
+  .ptype <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .names_to <span class='op'>=</span> <span class='fu'>rlang</span><span class='fu'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/zap.html'>zap</a></span><span class='op'>(</span><span class='op'>)</span>,
+  .name_repair <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span><span class='op'>)</span>,
+  .name_spec <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span>
 
-<span class='fu'>vec_cbind</span>(
-  <span class='kw'>...</span>,
-  .ptype = <span class='kw'>NULL</span>,
-  .size = <span class='kw'>NULL</span>,
-  .name_repair = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"minimal"</span>)
-)</pre>
+<span class='fu'>vec_cbind</span><span class='op'>(</span>
+  <span class='va'>...</span>,
+  .ptype <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  .name_repair <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"unique"</span>, <span class='st'>"universal"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"minimal"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -314,44 +308,44 @@ method implemented for this class hierarchy.</p>
     <pre class="examples"><div class='input'><span class='co'># row binding -----------------------------------------</span>
 
 <span class='co'># common columns are coerced to common class</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>FALSE</span>)
-)
+<span class='fu'>vec_rbind</span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;   x
 #&gt; 1 1
 #&gt; 2 0</div><div class='input'>
 <span class='co'># unique columns are filled with NAs</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y = <span class='st'>"x"</span>)
-)
+<span class='fu'>vec_rbind</span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='st'>"x"</span><span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;    x    y
 #&gt; 1  1 &lt;NA&gt;
 #&gt; 2 NA    x</div><div class='input'>
 <span class='co'># null inputs are ignored</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
-  <span class='kw'>NULL</span>,
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>2</span>)
-)
+<span class='fu'>vec_rbind</span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
+  <span class='cn'>NULL</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;   x
 #&gt; 1 1
 #&gt; 2 2</div><div class='input'>
 <span class='co'># bare vectors are treated as rows</span>
-<span class='fu'>vec_rbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(x = <span class='fl'>1</span>, y = <span class='fl'>2</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(x = <span class='fl'>3</span>)
-)
+<span class='fu'>vec_rbind</span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, y <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;   x  y
 #&gt; 1 1  2
 #&gt; 2 3 NA</div><div class='input'>
 <span class='co'># default names will be supplied if arguments are not named</span>
-<span class='fu'>vec_rbind</span>(
+<span class='fu'>vec_rbind</span><span class='op'>(</span>
   <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,
   <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
   <span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>
-)
+<span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* `` -&gt; ...1</span>
 #&gt; <span class='message'>* `` -&gt; ...2</span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
@@ -368,47 +362,47 @@ method implemented for this class hierarchy.</p>
 <span class='co'># column binding --------------------------------------</span>
 
 <span class='co'># each input is recycled to have common length</span>
-<span class='fu'>vec_cbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(y = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>)
-)
+<span class='fu'>vec_cbind</span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;   x y
 #&gt; 1 1 1
 #&gt; 2 1 2
 #&gt; 3 1 3</div><div class='input'>
 <span class='co'># bare vectors are treated as columns</span>
-<span class='fu'>vec_cbind</span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>),
-  y = <span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>]
-)
+<span class='fu'>vec_cbind</span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
+  y <span class='op'>=</span> <span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>]</span>
+<span class='op'>)</span>
 </div><div class='output co'>#&gt;   x y
 #&gt; 1 1 a
 #&gt; 2 1 b
 #&gt; 3 1 c</div><div class='input'>
 <span class='co'># if you supply a named data frame, it is packed in a single column</span>
-<span class='kw'>data</span> <span class='op'>&lt;-</span> <span class='fu'>vec_cbind</span>(
-  x = <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>),
-  y = <span class='fl'>1</span>
-)
-<span class='kw'>data</span>
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>vec_cbind</span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>a <span class='op'>=</span> <span class='fl'>1</span>, b <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,
+  y <span class='op'>=</span> <span class='fl'>1</span>
+<span class='op'>)</span>
+<span class='va'>data</span>
 </div><div class='output co'>#&gt;   x.a x.b y
 #&gt; 1   1   2 1</div><div class='input'>
 <span class='co'># Packed data frames are nested in a single column. This makes it</span>
 <span class='co'># possible to access it through a single name:</span>
-<span class='kw'>data</span><span class='op'>$</span><span class='kw'>x</span>
+<span class='va'>data</span><span class='op'>$</span><span class='va'>x</span>
 </div><div class='output co'>#&gt;   a b
 #&gt; 1 1 2</div><div class='input'>
 <span class='co'># since the base print method is suboptimal with packed data</span>
 <span class='co'># frames, it is recommended to use tibble to work with these:</span>
-<span class='co'>if</span> (<span class='kw'>rlang</span>::<span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span>(<span class='st'>"tibble"</span>)) {
-  <span class='fu'>vec_cbind</span>(x = <span class='kw'>tibble</span>::<span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span>(a = <span class='fl'>1</span>, b = <span class='fl'>2</span>), y = <span class='fl'>1</span>)
-}
+<span class='kw'>if</span> <span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span><span class='op'>(</span><span class='st'>"tibble"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>vec_cbind</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>a <span class='op'>=</span> <span class='fl'>1</span>, b <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1 x 2</span><span>
 #&gt;     x$a    $b     y
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span>     1     2     1</div><div class='input'>
 <span class='co'># duplicate names are flagged</span>
-<span class='fu'>vec_cbind</span>(x = <span class='fl'>1</span>, x = <span class='fl'>2</span>)
+<span class='fu'>vec_cbind</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, x <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>New names:</span>
 #&gt; <span class='message'>* x -&gt; x...1</span>
 #&gt; <span class='message'>* x -&gt; x...2</span></div><div class='output co'>#&gt;   x...1 x...2
