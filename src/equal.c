@@ -2,6 +2,7 @@
 #include "equal.h"
 #include "vctrs.h"
 #include "utils.h"
+#include "translate.h"
 
 // -----------------------------------------------------------------------------
 
@@ -30,6 +31,9 @@ SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
   SEXP x_proxy = PROTECT(vec_proxy_equal(x));
   SEXP y_proxy = PROTECT(vec_proxy_equal(y));
 
+  x_proxy = PROTECT(vec_normalize_encoding(x_proxy));
+  y_proxy = PROTECT(vec_normalize_encoding(y_proxy));
+
   R_len_t size = vec_size(x_proxy);
   enum vctrs_type type = vec_proxy_typeof(x_proxy);
 
@@ -52,7 +56,7 @@ SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
   default: stop_unimplemented_vctrs_type("vec_equal", type);
   }
 
-  UNPROTECT(2);
+  UNPROTECT(4);
   return out;
 }
 
