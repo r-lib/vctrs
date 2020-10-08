@@ -102,7 +102,7 @@ static inline int raw_equal_na_equal(Rbyte x, Rbyte y) {
   return x == y;
 }
 static inline int list_equal_na_equal(SEXP x, SEXP y) {
-  return equal_object(x, y);
+  return equal_object_normalized(x, y);
 }
 
 // -----------------------------------------------------------------------------

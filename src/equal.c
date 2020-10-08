@@ -260,6 +260,18 @@ static inline bool vec_equal_attrib(SEXP x, SEXP y);
 
 // [[ include("vctrs.h") ]]
 bool equal_object(SEXP x, SEXP y) {
+  x = PROTECT(vec_normalize_encoding(x));
+  y = PROTECT(vec_normalize_encoding(y));
+
+  bool out = equal_object_normalized(x, y);
+
+  UNPROTECT(2);
+  return out;
+}
+
+// Assumes `vec_normalize_encoding()` has already been called
+// [[ include("vctrs.h") ]]
+bool equal_object_normalized(SEXP x, SEXP y) {
   SEXPTYPE type = TYPEOF(x);
 
   if (type != TYPEOF(y)) {
@@ -299,18 +311,18 @@ bool equal_object(SEXP x, SEXP y) {
   case LANGSXP:
   case LISTSXP:
   case BCODESXP: {
-    if (!equal_object(ATTRIB(x), ATTRIB(y))) {
+    if (!equal_object_normalized(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
 
-    if (!equal_object(CAR(x), CAR(y))) {
+    if (!equal_object_normalized(CAR(x), CAR(y))) {
       return false;
     }
 
     x = CDR(x);
     y = CDR(y);
 
-    if (!equal_object(x, y)) {
+    if (!equal_object_normalized(x, y)) {
       return false;
     }
 
@@ -318,16 +330,16 @@ bool equal_object(SEXP x, SEXP y) {
   }
 
   case CLOSXP:
-    if (!equal_object(ATTRIB(x), ATTRIB(y))) {
+    if (!equal_object_normalized(ATTRIB(x), ATTRIB(y))) {
       return false;
     }
-    if (!equal_object(BODY(x), BODY(y))) {
+    if (!equal_object_normalized(BODY(x), BODY(y))) {
       return false;
     }
-    if (!equal_object(CLOENV(x), CLOENV(y))) {
+    if (!equal_object_normalized(CLOENV(x), CLOENV(y))) {
       return false;
     }
-    if (!equal_object(FORMALS(x), FORMALS(y))) {
+    if (!equal_object_normalized(FORMALS(x), FORMALS(y))) {
       return false;
     }
     return true;
@@ -340,10 +352,10 @@ bool equal_object(SEXP x, SEXP y) {
   case ENVSXP:
   case EXTPTRSXP:
     // These are handled above with pointer comparison
-    stop_internal("equal_object", "Unexpected reference type.");
+    stop_internal("equal_object_normalized", "Unexpected reference type.");
 
   default:
-    stop_unimplemented_type("equal_object", TYPEOF(x));
+    stop_unimplemented_type("equal_object_normalized", TYPEOF(x));
   }
 
   R_len_t n = Rf_length(x);
@@ -393,7 +405,7 @@ static inline bool vec_equal_attrib(SEXP x, SEXP y) {
       return false;
     }
 
-    if (!equal_object(CAR(x_attrs), CAR(y_attrs))) {
+    if (!equal_object_normalized(CAR(x_attrs), CAR(y_attrs))) {
       return false;
     }
 
