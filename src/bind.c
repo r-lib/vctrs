@@ -477,7 +477,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
     Rf_setAttrib(out, R_RowNamesSymbol, rownames);
   }
 
-  out = vec_restore(out, type, R_NilValue, VCTRS_OWNED_true);
+  out = vec_restore(out, type, Rf_ScalarInteger(nrow), VCTRS_OWNED_true);
 
   UNPROTECT(9);
   return out;

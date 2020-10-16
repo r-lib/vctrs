@@ -375,6 +375,11 @@ test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(data.frame(a = 1), NULL), data_frame(a = 1))
 })
 
+test_that("number of rows is preserved with zero column data frames (#1281)", {
+  df <- new_data_frame(n = 2L)
+  expect_size(vec_cbind(df, df), 2L)
+})
+
 test_that("NULL is idempotent", {
   df <- data_frame(x = 1)
   expect_equal(vec_cbind(df, NULL), df)
