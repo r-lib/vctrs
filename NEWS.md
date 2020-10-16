@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* `vec_cbind()` with only empty data frames now preserves the common size of
+  the inputs in the result (#1281).
+
 * `vec_c()` now correctly returns a named result with named empty inputs
   (#1263).
 
