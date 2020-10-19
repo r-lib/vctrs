@@ -152,6 +152,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> with only empty data frames now preserves the common size of the inputs in the result (<a href='https://github.com/r-lib/vctrs/issues/1281'>#1281</a>).</p></li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now correctly returns a named result with named empty inputs (<a href='https://github.com/r-lib/vctrs/issues/1263'>#1263</a>).</p></li>
 <li><p>vctrs has been relicensed as MIT (<a href='https://github.com/r-lib/vctrs/issues/1259'>#1259</a>).</p></li>
 <li><p>Functions that make comparisons within a single vector, such as <code><a href="../reference/vec_unique.html">vec_unique()</a></code>, or between two vectors, such as <code><a href="../reference/vec_match.html">vec_match()</a></code>, now convert all character input to UTF-8 before making comparisons (<a href='https://github.com/r-lib/vctrs/issues/1246'>#1246</a>).</p></li>
