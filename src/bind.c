@@ -428,6 +428,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   PROTECT_INDEX out_pi;
   SEXP out = Rf_allocVector(VECSXP, ncol);
   PROTECT_WITH_INDEX(out, &out_pi);
+  init_data_frame(out, nrow);
 
   PROTECT_INDEX names_pi;
   SEXP names = Rf_allocVector(STRSXP, ncol);
