@@ -30,11 +30,6 @@ SEXP vec_fill(SEXP x, const enum direction direction) {
   SEXP loc = PROTECT(r_new_integer(size));
   int* p_loc = INTEGER(loc);
 
-  // Initialize with sequential locations
-  for (r_ssize i = 0; i < size; ++i) {
-    p_loc[i] = i + 1;
-  }
-
   switch (direction) {
   case DIRECTION_down: vec_fill_down(p_na, size, false, p_loc); break;
   case DIRECTION_downup: vec_fill_down(p_na, size, true, p_loc); break;
@@ -68,11 +63,11 @@ void vec_fill_down(const int* p_na, r_ssize size, bool reverse, int* p_loc) {
   }
 
   for (r_ssize i = loc; i < size; ++i) {
-    if (p_na[i]) {
-      p_loc[i] = loc + 1;
-    } else {
+    if (!p_na[i]) {
       loc = i;
     }
+
+    p_loc[i] = loc + 1;
   }
 }
 
@@ -96,11 +91,11 @@ void vec_fill_up(const int* p_na, r_ssize size, bool reverse, int* p_loc) {
   }
 
   for (r_ssize i = loc; i >= 0; --i) {
-    if (p_na[i]) {
-      p_loc[i] = loc + 1;
-    } else {
+    if (!p_na[i]) {
       loc = i;
     }
+
+    p_loc[i] = loc + 1;
   }
 }
 
