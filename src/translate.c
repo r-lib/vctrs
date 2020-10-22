@@ -45,19 +45,24 @@ SEXP vec_normalize_encoding(SEXP x) {
 
 static SEXP chr_normalize_encoding(SEXP x);
 static SEXP list_normalize_encoding(SEXP x);
-static SEXP obj_attrib_normalize_encoding(SEXP x);
+static SEXP obj_attrib_normalize_encoding(SEXP x, SEXP attrib);
 
 static inline
 SEXP obj_normalize_encoding(SEXP x) {
-  x = PROTECT(obj_attrib_normalize_encoding(x));
-
   switch (TYPEOF(x)) {
   case STRSXP: x = chr_normalize_encoding(x); break;
   case VECSXP: x = list_normalize_encoding(x); break;
   default: break;
   }
 
-  UNPROTECT(1);
+  // For performance, avoid `PROTECT()` / `UNPROTECT()` when not needed
+  SEXP attrib = r_attrib(x);
+  if (attrib != r_null) {
+    PROTECT(x);
+    x = obj_attrib_normalize_encoding(x, attrib);
+    UNPROTECT(1);
+  }
+
   return x;
 }
 
@@ -148,15 +153,9 @@ SEXP list_normalize_encoding(SEXP x) {
 static SEXP attrib_normalize_encoding(SEXP x);
 
 static
-SEXP obj_attrib_normalize_encoding(SEXP x) {
-  SEXP attrib_old = r_attrib(x);
-
-  if (attrib_old == r_null) {
-    return x;
-  }
-
-  SEXP attrib_new = attrib_normalize_encoding(attrib_old);
-  if (attrib_new == attrib_old) {
+SEXP obj_attrib_normalize_encoding(SEXP x, SEXP attrib) {
+  SEXP attrib_new = attrib_normalize_encoding(attrib);
+  if (attrib_new == attrib) {
     return x;
   }
   PROTECT(attrib_new);
