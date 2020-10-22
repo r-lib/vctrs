@@ -1381,6 +1381,9 @@ bool r_is_number(SEXP x) {
     Rf_length(x) == 1 &&
     INTEGER(x)[0] != NA_INTEGER;
 }
+bool r_is_positive_number(SEXP x) {
+  return r_is_number(x) && INTEGER(x)[0] > 0;
+}
 
 SEXP r_peek_option(const char* option) {
   return Rf_GetOption1(Rf_install(option));
@@ -1870,6 +1873,7 @@ SEXP result_attrib = NULL;
 
 struct vctrs_arg args_empty_;
 struct vctrs_arg args_dot_ptype_;
+struct vctrs_arg args_max_gap_;
 
 
 SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
@@ -2158,6 +2162,7 @@ void vctrs_init_utils(SEXP ns) {
 
   args_empty_ = new_wrapper_arg(NULL, "");
   args_dot_ptype_ = new_wrapper_arg(NULL, ".ptype");
+  args_max_gap_ = new_wrapper_arg(NULL, "max_gap");
 
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");

@@ -171,6 +171,9 @@ static struct vctrs_arg* const args_empty = &args_empty_;
 extern struct vctrs_arg args_dot_ptype_;
 static struct vctrs_arg* const args_dot_ptype = &args_dot_ptype_;
 
+extern struct vctrs_arg args_max_gap_;
+static struct vctrs_arg* const args_max_gap = &args_max_gap_;
+
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
@@ -296,6 +299,7 @@ SEXP r_protect(SEXP x);
 bool r_is_true(SEXP x);
 bool r_is_string(SEXP x);
 bool r_is_number(SEXP x);
+bool r_is_positive_number(SEXP x);
 SEXP r_peek_option(const char* option);
 SEXP r_peek_frame();
 SEXP r_clone_referenced(SEXP x);
