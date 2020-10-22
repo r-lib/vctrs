@@ -118,6 +118,16 @@ test_that("works with size zero input", {
   expect_identical(vec_unrep(integer()), data_frame(key = integer(), times = integer()))
 })
 
+test_that("can roundtrip empty input", {
+  x <- integer()
+  compressed <- vec_unrep(x)
+  expect_identical(vec_rep_each(compressed$key, compressed$times), x)
+
+  x <- data_frame()
+  compressed <- vec_unrep(x)
+  expect_identical(vec_rep_each(compressed$key, compressed$times), x)
+})
+
 test_that("works with data frames with rows but no columns", {
   x <- data_frame(.size = 5)
   expect <- data_frame(key = data_frame(.size = 1L), times = 5L)
