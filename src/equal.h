@@ -96,24 +96,13 @@ static inline int cpl_equal_na_equal(Rcomplex x, Rcomplex y) {
   return dbl_equal_na_equal(x.r, y.r) && dbl_equal_na_equal(x.i, y.i);
 }
 static inline int chr_equal_na_equal(SEXP x, SEXP y) {
-  if (x == y) {
-    return 1;
-  }
-
-  if (Rf_getCharCE(x) != Rf_getCharCE(y)) {
-    const void *vmax = vmaxget();
-    int out = !strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
-    vmaxset(vmax);
-    return out;
-  }
-
-  return 0;
+  return x == y;
 }
 static inline int raw_equal_na_equal(Rbyte x, Rbyte y) {
   return x == y;
 }
 static inline int list_equal_na_equal(SEXP x, SEXP y) {
-  return equal_object(x, y);
+  return equal_object_normalized(x, y);
 }
 
 // -----------------------------------------------------------------------------

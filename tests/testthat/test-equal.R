@@ -167,12 +167,18 @@ test_that("can determine equality of strings with different encodings (#553)", {
 })
 
 test_that("equality can be determined when strings have identical encodings", {
-  encs <- encodings(bytes = TRUE)
+  encs <- encodings()
 
   for (enc in encs) {
     expect_true(vec_equal(enc, enc))
     expect_equal(vec_equal(enc, enc), enc == enc)
   }
+})
+
+test_that("equality is known to always fail with bytes", {
+  enc <- encoding_bytes()
+  error <- "translating strings with \"bytes\" encoding"
+  expect_error(vec_equal(enc, enc), error)
 })
 
 test_that("equality is known to fail when comparing bytes to other encodings", {

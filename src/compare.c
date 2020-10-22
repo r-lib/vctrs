@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "translate.h"
 #include <strings.h>
 
 static void stop_not_comparable(SEXP x, SEXP y, const char* message) {
@@ -18,33 +19,14 @@ static int dcmp(double x, double y) {
   return (x > y) - (x < y);
 }
 
-// UTF-8 translation is successful in these cases:
-// - (utf8 + latin1), (unknown + utf8), (unknown + latin1)
-// UTF-8 translation fails purposefully in these cases:
-// - (bytes + utf8), (bytes + latin1), (bytes + unknown)
-// UTF-8 translation is not attempted in these cases:
-// - (utf8 + utf8), (latin1 + latin1), (unknown + unknown), (bytes + bytes)
-
-static int scmp(SEXP x, SEXP y) {
+// Assume translation handled by `vec_normalize_encoding()`
+static inline int scmp(SEXP x, SEXP y) {
   if (x == y) {
     return 0;
   }
 
-  // Same encoding
-  if (Rf_getCharCE(x) == Rf_getCharCE(y)) {
-    int cmp = strcmp(CHAR(x), CHAR(y));
-    return cmp / abs(cmp);
-  }
-
-  const void *vmax = vmaxget();
-  int cmp = strcmp(Rf_translateCharUTF8(x), Rf_translateCharUTF8(y));
-  vmaxset(vmax);
-
-  if (cmp == 0) {
-    return cmp;
-  } else {
-    return cmp / abs(cmp);
-  }
+  int cmp = strcmp(CHAR(x), CHAR(y));
+  return cmp / abs(cmp);
 }
 
 // -----------------------------------------------------------------------------
@@ -190,7 +172,7 @@ do {                                                    \
     p_out[i] = SCALAR_COMPARE(p_x, p_y, na_equal);      \
   }                                                     \
                                                         \
-  UNPROTECT(1);                                         \
+  UNPROTECT(3);                                         \
   return out;                                           \
 }                                                       \
 while (0)
@@ -206,12 +188,19 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     stop_not_comparable(x, y, "must have the same types and lengths");
   }
 
+  x = PROTECT(vec_normalize_encoding(x));
+  y = PROTECT(vec_normalize_encoding(y));
+
   switch (type) {
   case vctrs_type_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_scalar);
   case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_scalar);
   case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_scalar);
   case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_scalar);
-  case vctrs_type_dataframe: return df_compare(x, y, na_equal, size);
+  case vctrs_type_dataframe: {
+    SEXP out = df_compare(x, y, na_equal, size);
+    UNPROTECT(2);
+    return out;
+  }
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
   case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
   default:                   Rf_error("Unimplemented type in `vctrs_compare()`");

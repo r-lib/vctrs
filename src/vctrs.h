@@ -429,6 +429,7 @@ SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 // equal_object() never propagates missingness, so
 // it can return a `bool`
 bool equal_object(SEXP x, SEXP y);
+bool equal_object_normalized(SEXP x, SEXP y);
 bool equal_names(SEXP x, SEXP y);
 
 int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
