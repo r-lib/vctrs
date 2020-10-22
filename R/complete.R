@@ -37,3 +37,7 @@ df_slice_complete <- function(x) {
 df_locate_complete <- function(x) {
   .Call(vctrs_df_locate_complete, x)
 }
+
+vec_proxy_complete <- function(x) {
+  .Call(vctrs_proxy_complete, x)
+}

@@ -2,6 +2,7 @@
 #include "type-data-frame.h"
 #include "dim.h"
 #include "utils.h"
+#include "equal.h"
 
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;
@@ -68,6 +69,51 @@ SEXP vec_proxy_order(SEXP x) {
   SEXP method = PROTECT(vec_proxy_order_method(x));
   SEXP out = vec_proxy_order_invoke(x, method);
   UNPROTECT(1);
+  return out;
+}
+
+static SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind);
+
+/*
+ * Specialized internal variant of `vec_proxy_equal()` that returns an
+ * alternative proxy for non data frame input that has a data frame proxy.
+ * These are special cased under the heuristic that the entire row has to be
+ * missing to be considered "incomplete". The easiest way to generate a
+ * completeness proxy following this heuristic is to generate a logical vector
+ * marked with `NA` where that row is completely missing.
+ */
+// [[ register() ]]
+SEXP vec_proxy_complete(SEXP x) {
+  if (is_data_frame(x)) {
+    return df_proxy(x, VCTRS_PROXY_KIND_complete);
+  }
+
+  SEXP proxy = PROTECT(vec_proxy_equal(x));
+
+  // Arrays have stopgap data frame proxies,
+  // but their completeness rules match normal data frames
+  if (has_dim(x)) {
+    UNPROTECT(1);
+    return proxy;
+  }
+
+  if (!is_data_frame(proxy)) {
+    UNPROTECT(1);
+    return proxy;
+  }
+
+  SEXP out = PROTECT(vec_equal_na(proxy));
+  int* p_out = LOGICAL(out);
+
+  r_ssize size = r_length(out);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    if (p_out[i]) {
+      p_out[i] = NA_LOGICAL;
+    }
+  }
+
+  UNPROTECT(2);
   return out;
 }
 
@@ -171,6 +217,7 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
   case VCTRS_PROXY_KIND_equal: DF_PROXY(vec_proxy_equal); break;
   case VCTRS_PROXY_KIND_compare: DF_PROXY(vec_proxy_compare); break;
   case VCTRS_PROXY_KIND_order: DF_PROXY(vec_proxy_order); break;
+  case VCTRS_PROXY_KIND_complete: DF_PROXY(vec_proxy_complete); break;
   }
 
   x = PROTECT(df_flatten(x));
