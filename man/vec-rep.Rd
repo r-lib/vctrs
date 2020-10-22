@@ -48,7 +48,7 @@ frames, this means that rows are repeated rather than columns.
 Using \code{vec_unrep()} and \code{vec_rep_each()} together is very similar to using
 \code{\link[base:rle]{base::rle()}} and \code{\link[base:rle]{base::inverse.rle()}}. The following invariant shows
 the relationship between the two functions:\preformatted{compressed <- vec_unrep(x)
-x == vec_rep_each(compressed$key, compressed$times)
+identical(x, vec_rep_each(compressed$key, compressed$times))
 }
 }
 \section{Dependencies}{

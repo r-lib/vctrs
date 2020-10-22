@@ -19,7 +19,7 @@
 #'
 #' ```
 #' compressed <- vec_unrep(x)
-#' x == vec_rep_each(compressed$key, compressed$times)
+#' identical(x, vec_rep_each(compressed$key, compressed$times))
 #' ```
 #'
 #' @param x A vector.
