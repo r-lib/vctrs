@@ -5,10 +5,22 @@
 #'
 #' - `vec_rep_each()` repeats each element of a vector a set number of `times`.
 #'
+#' - `vec_unrep()` compresses a vector with repeated values. The repeated values
+#'   are returned as a `key` alongside the number of `times` each key is
+#'   repeated.
+#'
 #' @details
-#' `vec_rep()` and `vec_rep_each()` work along the size of `x`, rather than
-#' its length. For data frames, this means that rows are repeated rather
-#' than columns.
+#' These functions work along the size of `x`, rather than its length. For data
+#' frames, this means that rows are repeated rather than columns.
+#'
+#' Using `vec_unrep()` and `vec_rep_each()` together is very similar to using
+#' [base::rle()] and [base::inverse.rle()]. The following invariant shows
+#' the relationship between the two functions:
+#'
+#' ```
+#' compressed <- vec_unrep(x)
+#' x == vec_rep_each(compressed$key, compressed$times)
+#' ```
 #'
 #' @param x A vector.
 #' @param times
@@ -25,6 +37,9 @@
 #' For `vec_rep_each()`, a vector the same type as `x` with size
 #' `sum(vec_recycle(times, vec_size(x)))`.
 #'
+#' For `vec_unrep()`, a data frame with two columns, `key` and `times`. `key`
+#' is a vector with the same type as `x`, and `times` is an integer vector.
+#'
 #' @section Dependencies:
 #' - [vec_slice()]
 #'
@@ -35,7 +50,12 @@
 #'
 #' # Repeat within each vector
 #' vec_rep_each(1:2, 3)
-#' vec_rep_each(1:2, c(3, 4))
+#' x <- vec_rep_each(1:2, c(3, 4))
+#' x
+#'
+#' # After using `vec_rep_each()`, you can recover the original vector
+#' # with `vec_unrep()`
+#' vec_unrep(x)
 #'
 #' df <- data.frame(x = 1:2, y = 3:4)
 #'
@@ -59,6 +79,8 @@ vec_rep_each <- function(x, times) {
   .Call(vctrs_rep_each, x, times)
 }
 
+#' @rdname vec-rep
+#' @export
 vec_unrep <- function(x) {
   .Call(vctrs_unrep, x)
 }
