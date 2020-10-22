@@ -395,7 +395,6 @@ SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
 SEXP vec_identify_runs(SEXP x);
-SEXP vec_equal_na(SEXP x);
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
                       struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
 

@@ -430,6 +430,11 @@ bool equal_names(SEXP x, SEXP y) {
 
 // -----------------------------------------------------------------------------
 
+// [[ register() ]]
+SEXP vctrs_equal_na(SEXP x) {
+  return vec_equal_na(x);
+}
+
 #define EQUAL_NA(CTYPE, CONST_DEREF, IS_MISSING)           \
   do {                                                     \
     SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));      \
@@ -448,12 +453,7 @@ bool equal_names(SEXP x, SEXP y) {
 
 static SEXP df_equal_na(SEXP x, R_len_t size);
 
-// [[ register() ]]
-SEXP vctrs_equal_na(SEXP x) {
-  return vec_equal_na(x);
-}
-
-// [[ include("vctrs.h") ]]
+// [[ include("equal.h") ]]
 SEXP vec_equal_na(SEXP x) {
   R_len_t size = vec_size(x);
 
