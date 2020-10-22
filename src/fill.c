@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "utils.h"
+#include "equal.h"
 
 static bool parse_direction(SEXP x);
 static SEXP vec_fill(SEXP x, bool down, bool leading);
