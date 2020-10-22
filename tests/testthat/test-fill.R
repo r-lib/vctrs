@@ -3,8 +3,8 @@ test_that("works with empty input", {
 
   expect_identical(vec_fill(x, direction = "down"), x)
   expect_identical(vec_fill(x, direction = "up"), x)
-  expect_identical(vec_fill(x, direction = "downup"), x)
-  expect_identical(vec_fill(x, direction = "updown"), x)
+  expect_identical(vec_fill(x, direction = "down", leading = TRUE), x)
+  expect_identical(vec_fill(x, direction = "up", leading = TRUE), x)
 })
 
 test_that("works with data frames with rows but no columns", {
@@ -12,8 +12,8 @@ test_that("works with data frames with rows but no columns", {
 
   expect_identical(vec_fill(x, direction = "down"), x)
   expect_identical(vec_fill(x, direction = "up"), x)
-  expect_identical(vec_fill(x, direction = "downup"), x)
-  expect_identical(vec_fill(x, direction = "updown"), x)
+  expect_identical(vec_fill(x, direction = "down", leading = TRUE), x)
+  expect_identical(vec_fill(x, direction = "up", leading = TRUE), x)
 })
 
 test_that("vectors with all missing values are left unchanged", {
@@ -21,8 +21,8 @@ test_that("vectors with all missing values are left unchanged", {
 
   expect_identical(vec_fill(x, direction = "down"), x)
   expect_identical(vec_fill(x, direction = "up"), x)
-  expect_identical(vec_fill(x, direction = "downup"), x)
-  expect_identical(vec_fill(x, direction = "updown"), x)
+  expect_identical(vec_fill(x, direction = "down", leading = TRUE), x)
+  expect_identical(vec_fill(x, direction = "up", leading = TRUE), x)
 })
 
 test_that("`NA_real_` and `NaN` are both considered missing", {
@@ -37,8 +37,8 @@ test_that("missings are filled correctly", {
 
   expect_identical(vec_fill(x, "down"), c(NA, 1, 1, 2, 2, 2))
   expect_identical(vec_fill(x, "up"), c(1, 1, 2, 2, NA, NA))
-  expect_identical(vec_fill(x, "downup"), c(1, 1, 1, 2, 2, 2))
-  expect_identical(vec_fill(x, "updown"), c(1, 1, 2, 2, 2, 2))
+  expect_identical(vec_fill(x, "down", leading = TRUE), c(1, 1, 1, 2, 2, 2))
+  expect_identical(vec_fill(x, "up", leading = TRUE), c(1, 1, 2, 2, 2, 2))
 })
 
 test_that("fills data frames", {
@@ -53,10 +53,15 @@ test_that("can fill rcrd types", {
 
   expect_identical(vec_fill(x, "down"), vec_slice(x, c(1, 2, 2)))
   expect_identical(vec_fill(x, "up"), vec_slice(x, c(1, 2, 3)))
-  expect_identical(vec_fill(x, "updown"), vec_slice(x, c(1, 2, 2)))
+  expect_identical(vec_fill(x, "up", leading = TRUE), vec_slice(x, c(1, 2, 2)))
 })
 
 test_that("validates `direction`", {
-  expect_error(vec_fill(1, 1), "must be one of")
-  expect_error(vec_fill(1, "foo"), "must be one of")
+  expect_error(vec_fill(1, 1), "`direction` must be either")
+  expect_error(vec_fill(1, "foo"), "`direction` must be either")
+})
+
+test_that("validates `leading`", {
+  expect_error(vec_fill(1, leading = NA), "`leading` must be")
+  expect_error(vec_fill(1, leading = c(TRUE, FALSE)), "`leading` must be")
 })
