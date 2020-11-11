@@ -1,5 +1,8 @@
 #' Fill in missing values with the previous or following value
 #'
+#' @description
+#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#'
 #' `vec_fill_missing()` fills gaps of missing values with the previous or
 #' following non-missing value.
 #'
@@ -10,7 +13,7 @@
 #'   sequential missing values that will be filled. If `NULL`, there is
 #'   no limit.
 #'
-#' @keywords internal
+#' @export
 #' @examples
 #' x <- c(NA, NA, 1, NA, NA, NA, 3, NA, NA)
 #'

@@ -21,6 +21,8 @@ sequential missing values that will be filled. If \code{NULL}, there is
 no limit.}
 }
 \description{
+\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+
 \code{vec_fill_missing()} fills gaps of missing values with the previous or
 following non-missing value.
 }
@@ -44,4 +46,3 @@ df
 
 vec_fill_missing(df)
 }
-\keyword{internal}
