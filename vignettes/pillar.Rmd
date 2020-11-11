@@ -262,71 +262,12 @@ print(data, width = 30)
 
 ## Testing
 
-If you want to test the output of your code, you can compare it with a known state recorded in a text file.
-The `testthat::verify_output()` function offers an easy way to test output-generating functions.
-It takes care about details such as Unicode, ANSI escapes, and output width.
-Furthermore it won't make the tests fail on CRAN.
-This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.
+If you want to test the output of your code, you can compare it with a known state recorded in a text file.  The `testthat::expect_snapshot()` function offers an easy way to test output-generating functions. It takes care about details such as Unicode, ANSI escapes, and output width. Furthermore it won't make the tests fail on CRAN. This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.
 
-The tests work best with the testthat package:
+Use this testthat expectation in one of your test files to create a snapshot test:
 
-```{r}
-library(testthat)
+```{r eval = FALSE}
+expect_snapshot(pillar_shaft(data$loc))
 ```
 
-```{r include = FALSE}
-unlink("latlon.txt")
-```
-
-The code below will compare the output of `pillar_shaft(data$loc)` with known output stored in the `latlon.txt` file.
-There is no need to put it in a `test_that()` block.
-
-The first run warns because the file doesn't exist yet.
-
-```{r error = TRUE, warning = TRUE}
-verify_output("latlon.txt", {
-  pillar_shaft(data$loc)
-})
-```
-
-From the second run on, the printing will be compared with the file:
-
-```{r}
-verify_output("latlon.txt", {
-  pillar_shaft(data$loc)
-})
-```
-
-By default, the file does not contain ANSI escapes.
-See `?verify_output` for more options.
-
-```{r}
-cat(readLines("latlon.txt"), sep = "\n")
-```
-
-Changing the code or the format method will give an error on the next run and update the reference file.
-Inspect the changes carefully before committing the new test and the updated reference file to version control.
-
-```{r error = TRUE}
-verify_output("latlon.txt", {
-  pillar_shaft(data$loc)
-  print(pillar_shaft(data$loc), width = 12)
-})
-```
-
-```{r}
-cat(readLines("latlon.txt"), sep = "\n")
-```
-
-From the second run on, no errors are shown again.
-
-```{r error = TRUE}
-verify_output("latlon.txt", {
-  pillar_shaft(data$loc)
-  print(pillar_shaft(data$loc), width = 12)
-})
-```
-
-```{r include = FALSE}
-unlink("latlon.txt")
-```
+See <https://testthat.r-lib.org/articles/snapshotting.html> for more information.
