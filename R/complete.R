@@ -12,7 +12,7 @@
 #' A logical vector with the same size as `x`.
 #'
 #' @seealso [stats::complete.cases()]
-#' @export
+#' @noRd
 #' @examples
 #' df <- data_frame(
 #'   x = c(1, 2, NA, 4, NA),
