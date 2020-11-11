@@ -42,13 +42,19 @@ repeated.
 }
 }
 \details{
-These functions work along the size of \code{x}, rather than its length. For data
-frames, this means that rows are repeated rather than columns.
-
-Using \code{vec_unrep()} and \code{vec_rep_each()} together is very similar to using
+Using \code{vec_unrep()} and \code{vec_rep_each()} together is similar to using
 \code{\link[base:rle]{base::rle()}} and \code{\link[base:rle]{base::inverse.rle()}}. The following invariant shows
 the relationship between the two functions:\preformatted{compressed <- vec_unrep(x)
 identical(x, vec_rep_each(compressed$key, compressed$times))
+}
+
+There are two main differences between \code{vec_unrep()} and \code{\link[base:rle]{base::rle()}}:
+\itemize{
+\item \code{vec_unrep()} treats adjacent missing values as equivalent, while \code{rle()}
+treats them as different values.
+\item \code{vec_unrep()} works along the size of \code{x}, while \code{rle()} works along its
+length. This means that \code{vec_unrep()} works on data frames by compressing
+repeated rows.
 }
 }
 \section{Dependencies}{
@@ -79,4 +85,11 @@ rep(df, each = 2)
 # `vec_rep()` and `vec_rep_each()` repeat rows, and return data frames
 vec_rep(df, 2)
 vec_rep_each(df, 2)
+
+# `rle()` treats adjacent missing values as different
+y <- c(1, NA, NA, 2)
+rle(y)
+
+# `vec_unrep()` treats them as equivalent
+vec_unrep(y)
 }

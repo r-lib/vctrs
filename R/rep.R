@@ -10,10 +10,7 @@
 #'   repeated.
 #'
 #' @details
-#' These functions work along the size of `x`, rather than its length. For data
-#' frames, this means that rows are repeated rather than columns.
-#'
-#' Using `vec_unrep()` and `vec_rep_each()` together is very similar to using
+#' Using `vec_unrep()` and `vec_rep_each()` together is similar to using
 #' [base::rle()] and [base::inverse.rle()]. The following invariant shows
 #' the relationship between the two functions:
 #'
@@ -21,6 +18,15 @@
 #' compressed <- vec_unrep(x)
 #' identical(x, vec_rep_each(compressed$key, compressed$times))
 #' ```
+#'
+#' There are two main differences between `vec_unrep()` and [base::rle()]:
+#'
+#' - `vec_unrep()` treats adjacent missing values as equivalent, while `rle()`
+#'   treats them as different values.
+#'
+#' - `vec_unrep()` works along the size of `x`, while `rle()` works along its
+#'   length. This means that `vec_unrep()` works on data frames by compressing
+#'   repeated rows.
 #'
 #' @param x A vector.
 #' @param times
@@ -65,6 +71,13 @@
 #' # `vec_rep()` and `vec_rep_each()` repeat rows, and return data frames
 #' vec_rep(df, 2)
 #' vec_rep_each(df, 2)
+#'
+#' # `rle()` treats adjacent missing values as different
+#' y <- c(1, NA, NA, 2)
+#' rle(y)
+#'
+#' # `vec_unrep()` treats them as equivalent
+#' vec_unrep(y)
 NULL
 
 #' @rdname vec-rep
