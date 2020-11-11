@@ -1,7 +1,7 @@
 #' Fill in missing values with the previous or following value
 #'
-#' `vec_fill()` fills gaps of missing values with the previous or following
-#' non-missing value.
+#' `vec_fill_missing()` fills gaps of missing values with the previous or
+#' following non-missing value.
 #'
 #' @param x A vector
 #' @param direction Direction in which to fill missing values. Must be either
@@ -14,9 +14,9 @@
 #'   no limit to the gap size.
 #'
 #' @keywords internal
-vec_fill <- function(x,
-                     direction = c("down", "up"),
-                     leading = FALSE,
-                     max_gap = NULL) {
-  .Call(vctrs_fill, x, direction, leading, max_gap)
+vec_fill_missing <- function(x,
+                             direction = c("down", "up"),
+                             leading = FALSE,
+                             max_gap = NULL) {
+  .Call(vctrs_fill_missing, x, direction, leading, max_gap)
 }
