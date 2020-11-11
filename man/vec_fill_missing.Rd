@@ -6,8 +6,7 @@
 \usage{
 vec_fill_missing(
   x,
-  direction = c("down", "up"),
-  leading = FALSE,
+  direction = c("down", "up", "downup", "updown"),
   max_gap = NULL
 )
 }
@@ -15,11 +14,7 @@ vec_fill_missing(
 \item{x}{A vector}
 
 \item{direction}{Direction in which to fill missing values. Must be either
-\code{"down"} or \code{"up"}.}
-
-\item{leading}{A logical specifying if leading missing values should be
-back-filled with the first non-missing value found in the chosen
-\code{direction}.}
+\code{"down"}, \code{"up"}, \code{"downup"}, or \code{"updown"}.}
 
 \item{max_gap}{A single positive integer specifying the maximum size of the
 gap of sequential missing values that will be filled. If \code{NULL}, there is

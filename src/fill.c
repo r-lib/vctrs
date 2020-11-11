@@ -4,22 +4,19 @@
 
 #define INFINITE_GAP -1
 
-static bool parse_direction(SEXP x);
+static void parse_direction(SEXP x, bool* p_down, bool* p_leading);
 static int parse_max_gap(SEXP x);
 static SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_gap);
 
 // [[ register() ]]
-SEXP vctrs_fill_missing(SEXP x, SEXP direction, SEXP leading, SEXP max_gap) {
-  bool c_down = parse_direction(direction);
-
-  if (!r_is_bool(leading)) {
-    r_abort("`leading` must be a single `TRUE` or `FALSE`.");
-  }
-  bool c_leading = r_lgl_get(leading, 0);
+SEXP vctrs_fill_missing(SEXP x, SEXP direction, SEXP max_gap) {
+  bool down;
+  bool leading;
+  parse_direction(direction, &down, &leading);
 
   int c_max_gap = parse_max_gap(max_gap);
 
-  return vec_fill_missing(x, c_down, c_leading, c_max_gap);
+  return vec_fill_missing(x, down, leading, c_max_gap);
 }
 
 static void vec_fill_missing_down(const int* p_na, r_ssize size, bool leading, int* p_loc);
@@ -210,15 +207,33 @@ void vec_fill_missing_up_with_max_gap(const int* p_na, r_ssize size, bool leadin
 static void stop_bad_direction();
 
 static
-bool parse_direction(SEXP x) {
+void parse_direction(SEXP x, bool* p_down, bool* p_leading) {
   if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
     stop_bad_direction();
   }
 
   const char* str = CHAR(STRING_ELT(x, 0));
 
-  if (!strcmp(str, "down")) return true;
-  if (!strcmp(str, "up")) return false;
+  if (!strcmp(str, "down")) {
+    *p_down = true;
+    *p_leading = false;
+    return;
+  }
+  if (!strcmp(str, "up")) {
+    *p_down = false;
+    *p_leading = false;
+    return;
+  }
+  if (!strcmp(str, "downup")) {
+    *p_down = true;
+    *p_leading = true;
+    return;
+  }
+  if (!strcmp(str, "updown")) {
+    *p_down = false;
+    *p_leading = true;
+    return;
+  }
 
   stop_bad_direction();
   never_reached("parse_direction");
@@ -226,7 +241,7 @@ bool parse_direction(SEXP x) {
 
 static
 void stop_bad_direction() {
-  r_abort("`direction` must be either \"down\" or \"up\".");
+  r_abort("`direction` must be one of \"down\", \"up\", \"downup\", or \"updown\".");
 }
 
 static
