@@ -606,10 +606,14 @@ static SEXP glue_as_name_spec(SEXP spec) {
                          syms_internal_spec, spec);
 }
 
+#define VCTRS_PASTE_BUFFER_MAX_SIZE 4096
+char vctrs_paste_buffer[VCTRS_PASTE_BUFFER_MAX_SIZE];
 
 // [[ include("names.h") ]]
 SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
-  names = PROTECT(Rf_shallow_duplicate(names));
+  int n_protect = 0;
+
+  names = PROTECT_N(Rf_shallow_duplicate(names), &n_protect);
   R_len_t n = Rf_length(names);
 
   int outer_len = strlen(prefix);
@@ -618,8 +622,15 @@ SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
   int sep_len = strlen(sep);
   int total_len = outer_len + names_len + sep_len + 1;
 
-  R_CheckStack2(total_len);
-  char buf[total_len];
+  char* buf = vctrs_paste_buffer;
+  if (total_len > VCTRS_PASTE_BUFFER_MAX_SIZE) {
+    SEXP buf_box = PROTECT_N(
+      Rf_allocVector(RAWSXP, total_len * sizeof(char)),
+      &n_protect
+    );
+    buf = (char*) RAW(buf_box);
+  }
+
   buf[total_len - 1] = '\0';
   char* bufp = buf;
 
@@ -641,8 +652,15 @@ SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
     SET_STRING_ELT(names, i, r_str(buf));
   }
 
-  UNPROTECT(1);
+  UNPROTECT(n_protect);
   return names;
+}
+
+// [[ register() ]]
+SEXP vctrs_chr_paste_prefix(SEXP names, SEXP prefix, SEXP sep) {
+  return r_chr_paste_prefix(names,
+                            r_chr_get_c_string(prefix, 0),
+                            r_chr_get_c_string(sep, 0));
 }
 
 // [[ include("names.h") ]]

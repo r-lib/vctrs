@@ -835,3 +835,20 @@ test_that("apply_name_spec() recycles return value not arguments (#1099)", {
   expect_identical(inner, c("a", "b", "c"))
   expect_identical(outer, "outer")
 })
+
+test_that("r_chr_paste_prefix() works", {
+  nms <- c("foo", "bar")
+
+  expect_equal(
+    .Call(vctrs_chr_paste_prefix, nms, "baz", "."),
+    c("baz.foo", "baz.bar")
+  )
+
+  # Greater than `VCTRS_PASTE_BUFFER_MAX_SIZE`
+  long_prefix <- strrep("a", 5000)
+
+  expect_equal(
+    .Call(vctrs_chr_paste_prefix, nms, long_prefix, "."),
+    paste0(long_prefix, ".", nms)
+  )
+})

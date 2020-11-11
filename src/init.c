@@ -133,6 +133,7 @@ extern SEXP vctrs_order(SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_locs(SEXP, SEXP, SEXP);
 extern SEXP vctrs_unrep(SEXP);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
+extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
 
 
 // Maturing
@@ -283,6 +284,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_order_locs",                 (DL_FUNC) &vctrs_order_locs, 3},
   {"vctrs_unrep",                      (DL_FUNC) &vctrs_unrep, 1},
   {"vctrs_fill_missing",               (DL_FUNC) &vctrs_fill_missing, 3},
+  {"vctrs_chr_paste_prefix",           (DL_FUNC) &vctrs_chr_paste_prefix, 3},
   {NULL, NULL, 0}
 };
 
