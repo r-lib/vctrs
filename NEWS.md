@@ -1,6 +1,11 @@
 
 # vctrs (development version)
 
+* New experimental `vec_fill_missing()` for filling in missing values with
+  the previous or following value. It is similar to `tidyr::fill()`, but
+  also works with data frames and has an additional `max_fill` argument to
+  limit the number of sequential missing values to fill.
+
 * New `vec_unrep()` to compress a vector with repeated values. It is very
   similar to run length encoding, and works nicely alongside `vec_rep_each()`
   as a way to invert the compression.
