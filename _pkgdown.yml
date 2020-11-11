@@ -54,6 +54,7 @@ reference:
 - title: Assigning
   contents:
   - vec_assign
+  - vec_fill_missing
 
 - title: Equality and ordering
   contents:
