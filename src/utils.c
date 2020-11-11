@@ -1873,7 +1873,7 @@ SEXP result_attrib = NULL;
 
 struct vctrs_arg args_empty_;
 struct vctrs_arg args_dot_ptype_;
-struct vctrs_arg args_max_gap_;
+struct vctrs_arg args_max_fill_;
 
 
 SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
@@ -2162,7 +2162,7 @@ void vctrs_init_utils(SEXP ns) {
 
   args_empty_ = new_wrapper_arg(NULL, "");
   args_dot_ptype_ = new_wrapper_arg(NULL, ".ptype");
-  args_max_gap_ = new_wrapper_arg(NULL, "max_gap");
+  args_max_fill_ = new_wrapper_arg(NULL, "max_fill");
 
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");

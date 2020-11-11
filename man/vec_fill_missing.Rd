@@ -7,7 +7,7 @@
 vec_fill_missing(
   x,
   direction = c("down", "up", "downup", "updown"),
-  max_gap = NULL
+  max_fill = NULL
 )
 }
 \arguments{
@@ -16,9 +16,9 @@ vec_fill_missing(
 \item{direction}{Direction in which to fill missing values. Must be either
 \code{"down"}, \code{"up"}, \code{"downup"}, or \code{"updown"}.}
 
-\item{max_gap}{A single positive integer specifying the maximum size of the
-gap of sequential missing values that will be filled. If \code{NULL}, there is
-no limit to the gap size.}
+\item{max_fill}{A single positive integer specifying the maximum number of
+sequential missing values that will be filled. If \code{NULL}, there is
+no limit.}
 }
 \description{
 \code{vec_fill_missing()} fills gaps of missing values with the previous or

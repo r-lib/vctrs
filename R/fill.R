@@ -6,13 +6,13 @@
 #' @param x A vector
 #' @param direction Direction in which to fill missing values. Must be either
 #'   `"down"`, `"up"`, `"downup"`, or `"updown"`.
-#' @param max_gap A single positive integer specifying the maximum size of the
-#'   gap of sequential missing values that will be filled. If `NULL`, there is
-#'   no limit to the gap size.
+#' @param max_fill A single positive integer specifying the maximum number of
+#'   sequential missing values that will be filled. If `NULL`, there is
+#'   no limit.
 #'
 #' @keywords internal
 vec_fill_missing <- function(x,
                              direction = c("down", "up", "downup", "updown"),
-                             max_gap = NULL) {
-  .Call(vctrs_fill_missing, x, direction, max_gap)
+                             max_fill = NULL) {
+  .Call(vctrs_fill_missing, x, direction, max_fill)
 }

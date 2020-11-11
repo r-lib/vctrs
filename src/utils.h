@@ -171,8 +171,8 @@ static struct vctrs_arg* const args_empty = &args_empty_;
 extern struct vctrs_arg args_dot_ptype_;
 static struct vctrs_arg* const args_dot_ptype = &args_dot_ptype_;
 
-extern struct vctrs_arg args_max_gap_;
-static struct vctrs_arg* const args_max_gap = &args_max_gap_;
+extern struct vctrs_arg args_max_fill_;
+static struct vctrs_arg* const args_max_fill = &args_max_fill_;
 
 void never_reached(const char* fn) __attribute__((noreturn));
 

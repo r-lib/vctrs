@@ -2,30 +2,30 @@
 #include "utils.h"
 #include "equal.h"
 
-#define INFINITE_GAP -1
+#define INFINITE_FILL -1
 
 static void parse_direction(SEXP x, bool* p_down, bool* p_leading);
-static int parse_max_gap(SEXP x);
-static SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_gap);
+static int parse_max_fill(SEXP x);
+static SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_fill);
 
 // [[ register() ]]
-SEXP vctrs_fill_missing(SEXP x, SEXP direction, SEXP max_gap) {
+SEXP vctrs_fill_missing(SEXP x, SEXP direction, SEXP max_fill) {
   bool down;
   bool leading;
   parse_direction(direction, &down, &leading);
 
-  int c_max_gap = parse_max_gap(max_gap);
+  int c_max_fill = parse_max_fill(max_fill);
 
-  return vec_fill_missing(x, down, leading, c_max_gap);
+  return vec_fill_missing(x, down, leading, c_max_fill);
 }
 
 static void vec_fill_missing_down(const int* p_na, r_ssize size, bool leading, int* p_loc);
-static void vec_fill_missing_down_with_max_gap(const int* p_na, r_ssize size, bool leading, int max_gap, int* p_loc);
+static void vec_fill_missing_down_with_max_fill(const int* p_na, r_ssize size, bool leading, int max_fill, int* p_loc);
 static void vec_fill_missing_up(const int* p_na, r_ssize size, bool leading, int* p_loc);
-static void vec_fill_missing_up_with_max_gap(const int* p_na, r_ssize size, bool leading, int max_gap, int* p_loc);
+static void vec_fill_missing_up_with_max_fill(const int* p_na, r_ssize size, bool leading, int max_fill, int* p_loc);
 
 static
-SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_gap) {
+SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_fill) {
   r_ssize size = vec_size(x);
 
   SEXP na = PROTECT(vec_equal_na(x));
@@ -34,17 +34,17 @@ SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_gap) {
   SEXP loc = PROTECT(r_new_integer(size));
   int* p_loc = INTEGER(loc);
 
-  const bool has_max_gap = max_gap != INFINITE_GAP;
+  const bool has_max_fill = max_fill != INFINITE_FILL;
 
   if (down) {
-    if (has_max_gap) {
-      vec_fill_missing_down_with_max_gap(p_na, size, leading, max_gap, p_loc);
+    if (has_max_fill) {
+      vec_fill_missing_down_with_max_fill(p_na, size, leading, max_fill, p_loc);
     } else {
       vec_fill_missing_down(p_na, size, leading, p_loc);
     }
   } else {
-    if (has_max_gap) {
-      vec_fill_missing_up_with_max_gap(p_na, size, leading, max_gap, p_loc);
+    if (has_max_fill) {
+      vec_fill_missing_up_with_max_fill(p_na, size, leading, max_fill, p_loc);
     } else {
       vec_fill_missing_up(p_na, size, leading, p_loc);
     }
@@ -85,7 +85,7 @@ void vec_fill_missing_down(const int* p_na, r_ssize size, bool leading, int* p_l
 }
 
 static
-void vec_fill_missing_down_with_max_gap(const int* p_na, r_ssize size, bool leading, int max_gap, int* p_loc) {
+void vec_fill_missing_down_with_max_fill(const int* p_na, r_ssize size, bool leading, int max_fill, int* p_loc) {
   r_ssize loc = 0;
 
   if (leading) {
@@ -97,34 +97,34 @@ void vec_fill_missing_down_with_max_gap(const int* p_na, r_ssize size, bool lead
       }
     }
 
-    // Back-fill with first non-missing value with a max_gap
-    r_ssize gap = 0;
+    // Back-fill with first non-missing value with a max_fill
+    r_ssize n_fill = 0;
 
     for (r_ssize i = loc - 1; i >= 0; --i) {
-      if (gap == max_gap) {
+      if (n_fill == max_fill) {
         p_loc[i] = i + 1;
       } else {
         p_loc[i] = loc + 1;
-        ++gap;
+        ++n_fill;
       }
     }
   }
 
-  r_ssize gap = 0;
+  r_ssize n_fill = 0;
 
   for (r_ssize i = loc; i < size; ++i) {
     if (!p_na[i]) {
       loc = i;
-      gap = 0;
+      n_fill = 0;
       p_loc[i] = i + 1;
       continue;
     }
 
-    if (gap == max_gap) {
+    if (n_fill == max_fill) {
       p_loc[i] = i + 1;
     } else {
       p_loc[i] = loc + 1;
-      ++gap;
+      ++n_fill;
     }
   }
 }
@@ -158,7 +158,7 @@ void vec_fill_missing_up(const int* p_na, r_ssize size, bool leading, int* p_loc
 }
 
 static
-void vec_fill_missing_up_with_max_gap(const int* p_na, r_ssize size, bool leading, int max_gap, int* p_loc) {
+void vec_fill_missing_up_with_max_fill(const int* p_na, r_ssize size, bool leading, int max_fill, int* p_loc) {
   r_ssize loc = size - 1;
 
   if (leading) {
@@ -170,34 +170,34 @@ void vec_fill_missing_up_with_max_gap(const int* p_na, r_ssize size, bool leadin
       }
     }
 
-    // Forward-fill with last non-missing value with a max_gap
-    r_ssize gap = 0;
+    // Forward-fill with last non-missing value with a max_fill
+    r_ssize n_fill = 0;
 
     for (r_ssize i = loc + 1; i < size; ++i) {
-      if (gap == max_gap) {
+      if (n_fill == max_fill) {
         p_loc[i] = i + 1;
       } else {
         p_loc[i] = loc + 1;
-        ++gap;
+        ++n_fill;
       }
     }
   }
 
-  r_ssize gap = 0;
+  r_ssize n_fill = 0;
 
   for (r_ssize i = loc; i >= 0; --i) {
     if (!p_na[i]) {
       loc = i;
-      gap = 0;
+      n_fill = 0;
       p_loc[i] = i + 1;
       continue;
     }
 
-    if (gap == max_gap) {
+    if (n_fill == max_fill) {
       p_loc[i] = i + 1;
     } else {
       p_loc[i] = loc + 1;
-      ++gap;
+      ++n_fill;
     }
   }
 }
@@ -245,15 +245,15 @@ void stop_bad_direction() {
 }
 
 static
-int parse_max_gap(SEXP x) {
+int parse_max_fill(SEXP x) {
   if (x == R_NilValue) {
-    return INFINITE_GAP;
+    return INFINITE_FILL;
   }
 
-  x = PROTECT(vec_cast(x, vctrs_shared_empty_int, args_max_gap, args_empty));
+  x = PROTECT(vec_cast(x, vctrs_shared_empty_int, args_max_fill, args_empty));
 
   if (!r_is_positive_number(x)) {
-    r_abort("`max_gap` must be `NULL` or a single positive integer.");
+    r_abort("`max_fill` must be `NULL` or a single positive integer.");
   }
 
   int out = r_int_get(x, 0);
