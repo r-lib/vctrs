@@ -172,6 +172,9 @@
     <loc>https://vctrs.r-lib.org/reference/vec_equal.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_fill_missing.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_group.html</loc>
   </url>
   <url>

@@ -152,6 +152,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>New experimental <code><a href="../reference/vec_fill_missing.html">vec_fill_missing()</a></code> for filling in missing values with the previous or following value. It is similar to <code>tidyr::fill()</code>, but also works with data frames and has an additional <code>max_fill</code> argument to limit the number of sequential missing values to fill.</p></li>
 <li><p>New <code><a href="../reference/vec-rep.html">vec_unrep()</a></code> to compress a vector with repeated values. It is very similar to run length encoding, and works nicely alongside <code><a href="../reference/vec-rep.html">vec_rep_each()</a></code> as a way to invert the compression.</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> with only empty data frames now preserves the common size of the inputs in the result (<a href='https://github.com/r-lib/vctrs/issues/1281'>#1281</a>).</p></li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code> now correctly returns a named result with named empty inputs (<a href='https://github.com/r-lib/vctrs/issues/1263'>#1263</a>).</p></li>
