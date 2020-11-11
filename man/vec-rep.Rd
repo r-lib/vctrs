@@ -4,11 +4,14 @@
 \alias{vec-rep}
 \alias{vec_rep}
 \alias{vec_rep_each}
+\alias{vec_unrep}
 \title{Repeat a vector}
 \usage{
 vec_rep(x, times)
 
 vec_rep_each(x, times)
+
+vec_unrep(x)
 }
 \arguments{
 \item{x}{A vector.}
@@ -25,17 +28,34 @@ For \code{vec_rep()}, a vector the same type as \code{x} with size
 
 For \code{vec_rep_each()}, a vector the same type as \code{x} with size
 \code{sum(vec_recycle(times, vec_size(x)))}.
+
+For \code{vec_unrep()}, a data frame with two columns, \code{key} and \code{times}. \code{key}
+is a vector with the same type as \code{x}, and \code{times} is an integer vector.
 }
 \description{
 \itemize{
 \item \code{vec_rep()} repeats an entire vector a set number of \code{times}.
 \item \code{vec_rep_each()} repeats each element of a vector a set number of \code{times}.
+\item \code{vec_unrep()} compresses a vector with repeated values. The repeated values
+are returned as a \code{key} alongside the number of \code{times} each key is
+repeated.
 }
 }
 \details{
-\code{vec_rep()} and \code{vec_rep_each()} work along the size of \code{x}, rather than
-its length. For data frames, this means that rows are repeated rather
-than columns.
+Using \code{vec_unrep()} and \code{vec_rep_each()} together is similar to using
+\code{\link[base:rle]{base::rle()}} and \code{\link[base:rle]{base::inverse.rle()}}. The following invariant shows
+the relationship between the two functions:\preformatted{compressed <- vec_unrep(x)
+identical(x, vec_rep_each(compressed$key, compressed$times))
+}
+
+There are two main differences between \code{vec_unrep()} and \code{\link[base:rle]{base::rle()}}:
+\itemize{
+\item \code{vec_unrep()} treats adjacent missing values as equivalent, while \code{rle()}
+treats them as different values.
+\item \code{vec_unrep()} works along the size of \code{x}, while \code{rle()} works along its
+length. This means that \code{vec_unrep()} works on data frames by compressing
+repeated rows.
+}
 }
 \section{Dependencies}{
 
@@ -50,7 +70,12 @@ vec_rep(1:2, 3)
 
 # Repeat within each vector
 vec_rep_each(1:2, 3)
-vec_rep_each(1:2, c(3, 4))
+x <- vec_rep_each(1:2, c(3, 4))
+x
+
+# After using `vec_rep_each()`, you can recover the original vector
+# with `vec_unrep()`
+vec_unrep(x)
 
 df <- data.frame(x = 1:2, y = 3:4)
 
@@ -60,4 +85,11 @@ rep(df, each = 2)
 # `vec_rep()` and `vec_rep_each()` repeat rows, and return data frames
 vec_rep(df, 2)
 vec_rep_each(df, 2)
+
+# `rle()` treats adjacent missing values as different
+y <- c(1, NA, NA, 2)
+rle(y)
+
+# `vec_unrep()` treats them as equivalent
+vec_unrep(y)
 }

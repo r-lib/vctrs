@@ -1,6 +1,10 @@
 
 # vctrs (development version)
 
+* New `vec_unrep()` to compress a vector with repeated values. It is very
+  similar to run length encoding, and works nicely alongside `vec_rep_each()`
+  as a way to invert the compression.
+
 * `vec_cbind()` with only empty data frames now preserves the common size of
   the inputs in the result (#1281).
 
