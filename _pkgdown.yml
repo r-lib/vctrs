@@ -48,9 +48,12 @@ reference:
   contents:
   - vec_init
   - vec_slice
-  - vec_assign
   - vec_recycle
   - vec_chop
+
+- title: Assigning
+  contents:
+  - vec_assign
 
 - title: Equality and ordering
   contents:
