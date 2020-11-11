@@ -1,5 +1,5 @@
 
-# vctrs (development version)
+# vctrs 0.3.5
 
 * New experimental `vec_fill_missing()` for filling in missing values with
   the previous or following value. It is similar to `tidyr::fill()`, but
