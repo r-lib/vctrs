@@ -1,10 +1,10 @@
 
-Attempt at fixing the gcc-asan error.
+Should fix the CRAN checks issues.
 
 ## Test environments
 
 * local macOS: release
-* Travis Ubuntu: 3.2, 3.3, 3.4, 3.5, 3.6, 4.0, devel
+* Travis Ubuntu: 3.3, 3.4, 3.5, 3.6, 4.0, devel
 * win-builder: release, devel
 * R-Hub: UBSAN, rchk, and valgrind builds
 
