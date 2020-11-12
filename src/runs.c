@@ -191,8 +191,9 @@ SEXP vec_identify_runs(SEXP x) {
   // Handle size 0 up front.
   // All implementations assume at least 1 element.
   if (size == 0) {
-    r_attrib_poke(out, syms_n, r_int(0));
-    UNPROTECT(3);
+    SEXP n = PROTECT(r_int(0));
+    r_attrib_poke(out, syms_n, n);
+    UNPROTECT(4);
     return out;
   }
 
@@ -212,9 +213,10 @@ SEXP vec_identify_runs(SEXP x) {
   default: stop_unimplemented_vctrs_type("vec_identify_runs", type);
   }
 
-  r_attrib_poke(out, syms_n, r_int(n));
+  SEXP r_n = PROTECT(r_int(n));
+  r_attrib_poke(out, syms_n, r_n);
 
-  UNPROTECT(3);
+  UNPROTECT(4);
   return out;
 }
 
