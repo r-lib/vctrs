@@ -1,6 +1,7 @@
 
 # vctrs (development version)
 
+* Fixed a GCC 11 issue revealed by CRAN checks.
 
 # vctrs 0.3.5
 
