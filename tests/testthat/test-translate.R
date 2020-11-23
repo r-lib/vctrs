@@ -140,3 +140,17 @@ test_that("attributes are translated recursively", {
   expect_equal_encoding(attrib$latin1, utf8)
   expect_equal_encoding(attrib_nested$latin1, utf8)
 })
+
+test_that("NAs aren't converted to 'NA' (#1291)", {
+  utf8 <- c(NA, encodings()$utf8)
+  latin1 <- c(NA, encodings()$latin1)
+
+  result1 <- vec_normalize_encoding(utf8)
+  result2 <- vec_normalize_encoding(latin1)
+
+  expect_equal_encoding(result1, utf8)
+  expect_equal_encoding(result2, utf8)
+
+  expect_identical(result1[[1]], NA_character_)
+  expect_identical(result2[[1]], NA_character_)
+})
