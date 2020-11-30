@@ -133,70 +133,69 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
   }
 }
 
+static inline
+SEXP vec_proxy_method_impl(SEXP x, const char* generic, SEXP fn_proxy_array) {
+  SEXP cls = PROTECT(s3_get_class(x));
+  SEXP method = s3_class_find_method(generic, cls, vctrs_method_table);
 
-#define VEC_PROXY_METHOD(GENERIC, FNS_PROXY_ARRAY) {                    \
-  SEXP cls = PROTECT(s3_get_class(x));                                  \
-  SEXP method = s3_class_find_method(GENERIC, cls, vctrs_method_table); \
-                                                                        \
-  if (method != R_NilValue) {                                           \
-    UNPROTECT(1);                                                       \
-    return method;                                                      \
-  }                                                                     \
-                                                                        \
-  /* FIXME: Stopgap check for bare arrays */                            \
-  /* which equality functions don't handle well */                      \
-  if (vec_dim_n(x) > 1) {                                               \
-    UNPROTECT(1);                                                       \
-    return FNS_PROXY_ARRAY;                                             \
-  }                                                                     \
-                                                                        \
-  UNPROTECT(1);                                                         \
-  return R_NilValue;                                                    \
+  if (method != R_NilValue) {
+    UNPROTECT(1);
+    return method;
+  }
+
+  /* FIXME: Stopgap check for bare arrays */
+  /* which equality functions don't handle well */
+  if (vec_dim_n(x) > 1) {
+    UNPROTECT(1);
+    return fn_proxy_array;
+  }
+
+  UNPROTECT(1);
+  return R_NilValue;
 }
 
 static inline
 SEXP vec_proxy_equal_method(SEXP x) {
-  VEC_PROXY_METHOD("vec_proxy_equal", fns_vec_proxy_equal_array);
+  return vec_proxy_method_impl(x, "vec_proxy_equal", fns_vec_proxy_equal_array);
 }
 static inline
 SEXP vec_proxy_compare_method(SEXP x) {
-  VEC_PROXY_METHOD("vec_proxy_compare", fns_vec_proxy_compare_array);
+  return vec_proxy_method_impl(x, "vec_proxy_compare", fns_vec_proxy_compare_array);
 }
 static inline
 SEXP vec_proxy_order_method(SEXP x) {
-  VEC_PROXY_METHOD("vec_proxy_order", fns_vec_proxy_order_array);
+  return vec_proxy_method_impl(x, "vec_proxy_order", fns_vec_proxy_order_array);
 }
 
-#undef VEC_PROXY_METHOD
+static inline
+SEXP vec_proxy_invoke_impl(SEXP x,
+                           SEXP method,
+                           SEXP vec_proxy_sym,
+                           SEXP (*vec_proxy_fn)(SEXP)) {
+  if (method != R_NilValue) {
+    return vctrs_dispatch1(vec_proxy_sym, method, syms_x, x);
+  }
 
-
-#define VEC_PROXY_INVOKE(SYMS_PROXY, PROXY_DEFAULT) {          \
-  if (method != R_NilValue) {                                  \
-    return vctrs_dispatch1(SYMS_PROXY, method, syms_x, x);     \
-  }                                                            \
-                                                               \
-  /* Fallback on S3 objects with no proxy */                   \
-  if (vec_typeof(x) == vctrs_type_s3) {                        \
-    return PROXY_DEFAULT(x);                                   \
-  } else {                                                     \
-    return x;                                                  \
-  }                                                            \
+  /* Fallback on S3 objects with no proxy */
+  if (vec_typeof(x) == vctrs_type_s3) {
+    return vec_proxy_fn(x);
+  } else {
+    return x;
+  }
 }
 
 static inline
 SEXP vec_proxy_equal_invoke(SEXP x, SEXP method) {
-  VEC_PROXY_INVOKE(syms_vec_proxy_equal, vec_proxy);
+  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_equal, vec_proxy);
 }
 static inline
 SEXP vec_proxy_compare_invoke(SEXP x, SEXP method) {
-  VEC_PROXY_INVOKE(syms_vec_proxy_compare, vec_proxy_equal);
+  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_compare, &vec_proxy_equal);
 }
 static inline
 SEXP vec_proxy_order_invoke(SEXP x, SEXP method) {
-  VEC_PROXY_INVOKE(syms_vec_proxy_order, vec_proxy_compare);
+  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_order, &vec_proxy_compare);
 }
-
-#undef VEC_PROXY_INVOKE
 
 
 #define DF_PROXY(PROXY) do {                                   \
