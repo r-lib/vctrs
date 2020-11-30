@@ -390,12 +390,13 @@ int vec_identify_runs_col(SEXP x,
 // -----------------------------------------------------------------------------
 
 #define VEC_IDENTIFY_RUNS_COL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL) { \
-  /* First row is always known, so `run_val` and `run_id` */        \
-  /* will always be initialized below */                            \
-  CTYPE run_val;                                                    \
-  int run_id;                                                       \
-                                                                    \
   const CTYPE* p_x = CONST_DEREF(x);                                \
+                                                                    \
+  /* First row is always known, so `run_val` and `run_id` */        \
+  /* will always be overwritten immediately below. */               \
+  /* But for gcc11 we have to initialize these variables. */        \
+  CTYPE run_val = p_x[0];                                           \
+  int run_id = 0;                                                   \
                                                                     \
   for (R_len_t i = 0; i < p_info->size; ++i) {                      \
     /* Start of new run */                                          \
