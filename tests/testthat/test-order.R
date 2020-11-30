@@ -68,3 +68,20 @@ test_that("classed proxies do not affect performance (tidyverse/dplyr#5423)", {
   x <- glue::glue("{1:10000}")
   expect_time_lt(vec_order(x), 0.2)
 })
+
+test_that("can order data frames that don't allow removing the column names (#1298)", {
+  skip_if_not_installed("withr")
+
+  local_methods(
+    `names<-.vctrs_foobar` = function(x, value) {
+      if (is.null(value)) {
+        abort("Cannot remove names.")
+      }
+      NextMethod()
+    }
+  )
+
+  df <- foobar(data.frame(x = 1, y = 2))
+
+  expect_silent(expect_identical(vec_order(df), 1L))
+})
