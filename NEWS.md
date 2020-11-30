@@ -1,6 +1,9 @@
 
 # vctrs (development version)
 
+* Fixed an issue with tibble 3.0.0 where removing column names with
+  `names(x) <- NULL` is now deprecated (#1298).
+
 * Fixed a GCC 11 issue revealed by CRAN checks.
 
 # vctrs 0.3.5
