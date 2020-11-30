@@ -68,3 +68,14 @@ test_that("classed proxies do not affect performance (tidyverse/dplyr#5423)", {
   x <- glue::glue("{1:10000}")
   expect_time_lt(vec_order(x), 0.2)
 })
+
+test_that("can order tibbles without names warning (#1298)", {
+  skip_if_not_installed("tibble", minimum_version = "3.0.0")
+  skip_if_not_installed("withr")
+
+  withr::local_envvar(c(RSTUDIO = NA_character_))
+  withr::local_options(list(lifecycle_verbosity = "error"))
+
+  df <- tibble::tibble(x = 1, y = 2)
+  expect_silent(expect_identical(vec_order(df), 1L))
+})
