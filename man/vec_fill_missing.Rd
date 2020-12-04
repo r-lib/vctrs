@@ -21,7 +21,7 @@ sequential missing values that will be filled. If \code{NULL}, there is
 no limit.}
 }
 \description{
-\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
 
 \code{vec_fill_missing()} fills gaps of missing values with the previous or
 following non-missing value.

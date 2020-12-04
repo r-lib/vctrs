@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' * `vec_group_id()` returns an identifier for the group that each element of
 #'   `x` falls in, constructed in the order that they appear. The number of

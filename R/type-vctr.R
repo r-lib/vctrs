@@ -56,7 +56,7 @@
 #' @param .data Foundation of class. Must be a vector
 #' @param ... Name-value pairs defining attributes
 #' @param class Name of subclass.
-#' @param inherit_base_type \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' @param inherit_base_type `r lifecycle::badge("experimental")`
 #'   A single logical, or `NULL`. Does this class extend the base type of
 #'   `.data`? i.e. does the resulting object extend the behaviour of the
 #'   underlying type? Defaults to `FALSE` for all types except lists, which

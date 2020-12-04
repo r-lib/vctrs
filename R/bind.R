@@ -204,7 +204,7 @@ as_df_col <- function(x, outer_name) {
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' This is an experimental generic that returns zero-columns variants
 #' of a data frame. It is needed for [vec_cbind()], to work around the

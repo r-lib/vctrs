@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("defunct")}
+#' `r lifecycle::badge("defunct")`
 #'
 #' This function is defunct, please use [vec_is_empty()].
 #'
@@ -21,7 +21,7 @@ vec_empty <- function(x) {
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("deprecated")}
+#' `r lifecycle::badge("deprecated")`
 #'
 #' These functions have been renamed:
 #'
@@ -54,7 +54,7 @@ vec_type2 <- function(x, y, ...) {
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+#' `r lifecycle::badge("soft-deprecated")`
 #'
 #' `vec_as_index()` has been renamed to [vec_as_location()] and is
 #' soft-deprecated as of vctrs 0.2.2.
@@ -88,7 +88,7 @@ vec_as_index <- function(i, n, names = NULL) {
 #' Expand the length of a vector
 #'
 #' @description
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+#' `r lifecycle::badge("soft-deprecated")`
 #'
 #' `vec_repeat()` has been replaced with [vec_rep()] and [vec_rep_each()] and is
 #' soft-deprecated as of vctrs 0.3.0.

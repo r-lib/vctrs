@@ -1,6 +1,6 @@
 #' @description
 #' \if{html}{\figure{logo.png}{options: align='right'}}
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("maturing")}
+#' `r lifecycle::badge("maturing")`
 #'
 #' Defines new notions of prototype and size that are
 #' used to provide tools for consistent and well-founded type-coercion

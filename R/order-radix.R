@@ -75,7 +75,7 @@ vec_order_radix <- function(x, direction = "asc", na_value = "largest") {
 #' Identify ordered groups
 #'
 #' @description
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' `vec_order_locs()` returns a data frame containing a `key` column with
 #' sorted unique groups, and a `loc` column with the locations of each

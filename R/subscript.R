@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' Convert `i` to the base type expected by [vec_as_location()] or
 #' [vec_as_location2()]. The values of the subscript type are

@@ -10,7 +10,7 @@ vec_empty(x)
 \item{x}{An object.}
 }
 \description{
-\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("defunct")}
+\ifelse{html}{\figure{lifecycle-defunct.svg}{options: alt='Defunct lifecycle'}}{\strong{Defunct}}
 
 This function is defunct, please use \code{\link[=vec_is_empty]{vec_is_empty()}}.
 }

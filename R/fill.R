@@ -1,7 +1,7 @@
 #' Fill in missing values with the previous or following value
 #'
 #' @description
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' `vec_fill_missing()` fills gaps of missing values with the previous or
 #' following non-missing value.

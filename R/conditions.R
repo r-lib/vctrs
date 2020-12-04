@@ -344,7 +344,7 @@ cnd_body.vctrs_error_incompatible_size <- function(cnd, ...) {
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' By default, lossy casts are an error. Use `allow_lossy_cast()` to
 #' silence these errors and continue with the partial results. In this

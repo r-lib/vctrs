@@ -7,7 +7,7 @@
 \title{vctrs: Vector Helpers}
 \description{
 \if{html}{\figure{logo.png}{options: align='right'}}
-\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("maturing")}
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#maturing'><img src='figures/lifecycle-maturing.svg' alt='Maturing lifecycle'></a>}}{\strong{Maturing}}
 
 Defines new notions of prototype and size that are
 used to provide tools for consistent and well-founded type-coercion

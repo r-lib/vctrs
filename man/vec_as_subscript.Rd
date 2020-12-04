@@ -50,7 +50,7 @@ informative error.}
 type of a function input.}
 }
 \description{
-\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
 
 Convert \code{i} to the base type expected by \code{\link[=vec_as_location]{vec_as_location()}} or
 \code{\link[=vec_as_location2]{vec_as_location2()}}. The values of the subscript type are

@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' `vec_proxy()` returns the data structure containing the values of a
 #' vector. This data structure is usually the vector itself. In this
@@ -148,7 +148,7 @@ vec_proxy.default <- function(x, ...) {
 
 #' @rdname vec_proxy
 #' @param to The original vector to restore to.
-#' @param n \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' @param n `r lifecycle::badge("experimental")`
 #'   The total size to restore to. This is currently passed by
 #'   `vec_slice()` to solve edge cases arising in data frame
 #'   restoration. In most cases you don't need this information and
@@ -178,7 +178,7 @@ vec_restore_default <- function(x, to, ...) {
 #'
 #' @description
 #'
-#' \Sexpr[results=rd, stage=render]{vctrs:::lifecycle("experimental")}
+#' `r lifecycle::badge("experimental")`
 #'
 #' Extract the data underlying an S3 vector object, i.e. the underlying
 #' (named) atomic vector, data frame, or list.

@@ -16,7 +16,7 @@ vec_type2(x, y, ...)
 \item{x, y, ..., .ptype}{Arguments for deprecated functions.}
 }
 \description{
-\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("deprecated")}
+\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}}
 
 These functions have been renamed:
 \itemize{

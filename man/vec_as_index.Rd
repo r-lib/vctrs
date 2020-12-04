@@ -21,7 +21,7 @@ not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 }
 \description{
-\Sexpr[results=rd, stage=render]{vctrs:::lifecycle("soft-deprecated")}
+\ifelse{html}{\figure{lifecycle-soft-deprecated.svg}{options: alt='Soft-deprecated lifecycle'}}{\strong{Soft-deprecated}}
 
 \code{vec_as_index()} has been renamed to \code{\link[=vec_as_location]{vec_as_location()}} and is
 soft-deprecated as of vctrs 0.2.2.
