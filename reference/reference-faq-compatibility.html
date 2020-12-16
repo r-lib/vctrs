@@ -62,14 +62,14 @@ All vctrs operations are based on four primitive generics described in
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.
-vec_slice() falls back to the base [ generic
-if no vec_proxy() method is implemented. This
-way foreign classes that do not implement
+vec_slice() falls back to the base [ generic if
+no vec_proxy() method is implemented. This way
+foreign classes that do not implement
 vec_restore() can restore attributes based on
 the new subsetted contents.
 vec_c() and vec_rbind() now fall
-back to base::c() if the inputs have a common
-parent class with a c() method (only if they have no self-to-self
+back to base::c() if the inputs have a common parent
+class with a c() method (only if they have no self-to-self
 vec_ptype2() method).
 vctrs works hard to make your c() method success in various
 situations (with NULL and NA inputs, even as first input which
@@ -86,8 +86,8 @@ The vctrs primitives
 Most functions in vctrs are aggregate operations: they call other vctrs
 functions which themselves call other vctrs functions. The dependencies
 of a vctrs functions are listed in the Dependencies section of its
-documentation page. Take a look at vec_count() for
-an example.
+documentation page. Take a look at vec_count() for an
+example.
 These dependencies form a tree whose leaves are the four vctrs
 primitives. Here is the diagram for vec_count():
 The coercion generics
@@ -165,7 +165,7 @@ inherit from list.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
       </span>
     </div>
 
@@ -202,7 +202,7 @@ inherit from list.
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/r-lib/vctrs/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -240,14 +240,14 @@ existing vector classes.</p><h3 class='hasAnchor' id='arguments'><a class='ancho
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.</p><ul>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> falls back to the base <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> generic
-if no <code><a href='vec_proxy.html'>vec_proxy()</a></code> method is implemented. This
-way foreign classes that do not implement
+<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> falls back to the base <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> generic if
+no <code><a href='vec_proxy.html'>vec_proxy()</a></code> method is implemented. This way
+foreign classes that do not implement
 <code><a href='vec_proxy.html'>vec_restore()</a></code> can restore attributes based on
 the new subsetted contents.</p></li>
 <li><p><code><a href='vec_c.html'>vec_c()</a></code> and <code><a href='vec_bind.html'>vec_rbind()</a></code> now fall
-back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if the inputs have a common
-parent class with a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method (only if they have no self-to-self
+back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if the inputs have a common parent
+class with a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method (only if they have no self-to-self
 <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method).</p>
 <p>vctrs works hard to make your <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method success in various
 situations (with <code>NULL</code> and <code>NA</code> inputs, even as first input which
@@ -264,8 +264,8 @@ coercion in <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>, and it
 <p>Most functions in vctrs are aggregate operations: they call other vctrs
 functions which themselves call other vctrs functions. The dependencies
 of a vctrs functions are listed in the Dependencies section of its
-documentation page. Take a look at <code><a href='vec_count.html'>vec_count()</a></code> for
-an example.</p>
+documentation page. Take a look at <code><a href='vec_count.html'>vec_count()</a></code> for an
+example.</p>
 <p>These dependencies form a tree whose leaves are the four vctrs
 primitives. Here is the diagram for <code><a href='vec_count.html'>vec_count()</a></code>:</p>
 <p><img src='figures/vec-count-deps.png' alt='' /></p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The coercion generics</h4>
