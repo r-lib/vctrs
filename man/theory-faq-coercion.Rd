@@ -215,8 +215,8 @@ The determination of the common type of data frames with \code{vec_ptype2()}
 happens in three steps:
 \enumerate{
 \item Match the columns of the two input data frames. If some columns
-don’t exist, they are created and filled with adequately typed
-\code{NA} values.
+don’t exist, they are created and filled with adequately typed \code{NA}
+values.
 \item Find the common type for each column by calling \code{vec_ptype2()} on
 each pair of matched columns.
 \item Find the common data frame type. For example the common type of a
