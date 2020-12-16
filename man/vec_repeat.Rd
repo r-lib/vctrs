@@ -17,9 +17,9 @@ vec_repeat(x, each = 1L, times = 1L)
 A vector the same type as \code{x} with size \code{vec_size(x) * times * each}.
 }
 \description{
-\ifelse{html}{\figure{lifecycle-soft-deprecated.svg}{options: alt='Soft-deprecated lifecycle'}}{\strong{Soft-deprecated}}
+\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}}
 
 \code{vec_repeat()} has been replaced with \code{\link[=vec_rep]{vec_rep()}} and \code{\link[=vec_rep_each]{vec_rep_each()}} and is
-soft-deprecated as of vctrs 0.3.0.
+deprecated as of vctrs 0.3.0.
 }
 \keyword{internal}
