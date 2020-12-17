@@ -1,3 +1,5 @@
+# vctrs (development version)
+
 # vctrs 0.3.6
 
 * Fixed an issue with tibble 3.0.0 where removing column names with
