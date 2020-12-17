@@ -1,6 +1,3 @@
-
-Should fix the CRAN checks issues.
-
 ## Test environments
 
 * local macOS: release
