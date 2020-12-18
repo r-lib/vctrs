@@ -10,5 +10,5 @@ AsIs objects throw cast errors with their underlying types
 ==========================================================
 
 > vec_cast(I(1), I(factor("x")))
-Error: Can't convert <double> to <factor<5a425>>.
+Error: Can't convert <double> to <factor<bf275>>.
 

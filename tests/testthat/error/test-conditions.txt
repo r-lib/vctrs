@@ -101,7 +101,7 @@ lossy cast from character to factor mentions loss of generality
 ===============================================================
 
 > vec_cast("a", factor("b"))
-Error: Can't convert from <character> to <factor<ddf10>> due to loss of generality.
+Error: Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
 * Locations: 1
 
 
@@ -109,7 +109,7 @@ ordered cast failures mention conversion
 ========================================
 
 > vec_cast(ordered("x"), ordered("y"))
-Error: Can't convert <ordered<5a425>> to <ordered<df698>>.
+Error: Can't convert <ordered<bf275>> to <ordered<fd1ad>>.
 
 
 incompatible size errors

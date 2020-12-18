@@ -19,6 +19,6 @@ Prototype: data.frame<
   Sepal.Width : double
   Petal.Length: double
   Petal.Width : double
-  Species     : factor<12d60>
+  Species     : factor<fb977>
 >
 
