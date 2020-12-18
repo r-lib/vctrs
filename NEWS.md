@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* Removed dependency on digest.
+* Removed dependency on digest in favor of `rlang::hash()`.
 
 * Fixed an issue where `vctrs_rcrd` objects were not being proxied correctly
   when used as a data frame column (#1318).
