@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Removed dependency on digest.
+
 * Fixed an issue where `vctrs_rcrd` objects were not being proxied correctly
   when used as a data frame column (#1318).
 
