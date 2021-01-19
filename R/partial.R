@@ -1,9 +1,13 @@
 #' Partial type
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Use `new_partial()` when constructing a new partial type subclass;
 #' and use `is_partial()` to test if a type is partial. All subclasses
 #' need to provide a `vec_ptype_finalise()` method.
 #'
+#' @details
 #' As the name suggests, a partial type _partially_ specifies a type, and
 #' it must be combined with data to yield a full type. A useful example
 #' of a partial type is [partial_frame()], which makes it possible to

@@ -18,6 +18,8 @@ vec_ptype_finalise(x, ...)
 \item{class}{Name of subclass.}
 }
 \description{
+\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+
 Use \code{new_partial()} when constructing a new partial type subclass;
 and use \code{is_partial()} to test if a type is partial. All subclasses
 need to provide a \code{vec_ptype_finalise()} method.

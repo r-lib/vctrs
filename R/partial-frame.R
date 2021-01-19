@@ -1,5 +1,8 @@
 #' Partially specify columns of a data frame
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' This special class can be passed to `.ptype` in order to specify the
 #' types of only some of the columns in a data frame.
 #'

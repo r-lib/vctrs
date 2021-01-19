@@ -1,5 +1,8 @@
 #' Partially specify a factor
 #'
+#' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' This special class can be passed as a `ptype` in order to specify that the
 #' result should be a factor that contains at least the specified levels.
 #'
