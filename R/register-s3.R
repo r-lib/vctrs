@@ -1,3 +1,5 @@
+# This source code file is licensed under the unlicense license found in the 
+# `LICENSE.unlicense` file in the root directory of this source tree.
 #' Register a method for a suggested dependency
 #'
 #' Generally, the recommend way to register an S3 method is to use the
@@ -21,7 +23,15 @@
 #'   S3method(package::generic, class)
 #' }
 #' ```
-#'
+#' 
+#' @section Usage in Other Packages:
+#' To avoid taking a dependency on vctrs, you can instead copy the
+#' [source of `s3_register()`](https://github.com/r-lib/vctrs/blob/master/R/register-s3.R)
+#' into your own source tree.
+#' The `register_s3()` source is licensed under the permissive
+#' [unlicense](https://choosealicense.com/licenses/unlicense/) to allow this.
+#' There's no need to copy that license into your source tree.
+#' 
 #' @param generic Name of the generic in the form `pkg::generic`.
 #' @param class Name of the class
 #' @param method Optionally, the implementation of the method. By default,
