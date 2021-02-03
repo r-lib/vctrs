@@ -1,5 +1,5 @@
-# This source code file is licensed under the unlicense license found in the 
-# `LICENSE.unlicense` file in the root directory of this source tree.
+# This source code file is licensed under the unlicense license 
+# https://unlicense.org
 #' Register a method for a suggested dependency
 #'
 #' Generally, the recommend way to register an S3 method is to use the
@@ -24,7 +24,7 @@
 #' }
 #' ```
 #' 
-#' @section Usage in Other Packages:
+#' @section Usage in other packages:
 #' To avoid taking a dependency on vctrs, you can instead copy the
 #' [source of `s3_register()`](https://github.com/r-lib/vctrs/blob/master/R/register-s3.R)
 #' into your own source tree.
