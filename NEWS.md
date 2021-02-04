@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `register_s3()` is now licensed with the "unlicense" which makes it very
+  clear that it's fine to copy and paste into your own package 
+  (@maxheld83, #1254).
+
 # vctrs 0.3.6
 
 * Fixed an issue with tibble 3.0.0 where removing column names with
