@@ -1,4 +1,4 @@
-# This source code file is licensed under the unlicense license 
+# This source code file is licensed under the unlicense license
 # https://unlicense.org
 #' Register a method for a suggested dependency
 #'
@@ -8,9 +8,7 @@
 #' be in an imported package, and sometimes you want to suggest a package,
 #' and only provide a method when that package is loaded. `s3_register()`
 #' can be called from your package's `.onLoad()` to dynamically register
-#' a method only if the generic's package is loaded. (To avoid taking a
-#' dependency on vctrs for this one function, please feel free to copy
-#' and paste the function source into your own package.)
+#' a method only if the generic's package is loaded.
 #'
 #' For R 3.5.0 and later, `s3_register()` is also useful when demonstrating
 #' class creation in a vignette, since method lookup no longer always involves
@@ -23,15 +21,15 @@
 #'   S3method(package::generic, class)
 #' }
 #' ```
-#' 
+#'
 #' @section Usage in other packages:
-#' To avoid taking a dependency on vctrs, you can instead copy the
-#' [source of `s3_register()`](https://github.com/r-lib/vctrs/blob/master/R/register-s3.R)
-#' into your own source tree.
-#' The `register_s3()` source is licensed under the permissive
-#' [unlicense](https://choosealicense.com/licenses/unlicense/) to allow this.
-#' There's no need to copy that license into your source tree.
-#' 
+#' To avoid taking a dependency on vctrs, you copy the source of
+#' [`s3_register()`](https://github.com/r-lib/vctrs/blob/master/R/register-s3.R)
+#' into your own package. It is licensed under the permissive
+#' [unlicense](https://choosealicense.com/licenses/unlicense/) to make it
+#' crystal clear that we're happy for you to do this. There's no need to include
+#' the license or even credit us when using this function.
+#'
 #' @param generic Name of the generic in the form `pkg::generic`.
 #' @param class Name of the class
 #' @param method Optionally, the implementation of the method. By default,

@@ -28,9 +28,7 @@ Generally, the recommend way to register an S3 method is to use the
 be in an imported package, and sometimes you want to suggest a package,
 and only provide a method when that package is loaded. \code{s3_register()}
 can be called from your package's \code{.onLoad()} to dynamically register
-a method only if the generic's package is loaded. (To avoid taking a
-dependency on vctrs for this one function, please feel free to copy
-and paste the function source into your own package.)
+a method only if the generic's package is loaded.
 }
 \details{
 For R 3.5.0 and later, \code{s3_register()} is also useful when demonstrating
@@ -44,12 +42,12 @@ by using "delayed method registration", i.e. placing the following in your
 }
 \section{Usage in other packages}{
 
-To avoid taking a dependency on vctrs, you can instead copy the
-\href{https://github.com/r-lib/vctrs/blob/master/R/register-s3.R}{source of \code{s3_register()}}
-into your own source tree.
-The \code{register_s3()} source is licensed under the permissive
-\href{https://choosealicense.com/licenses/unlicense/}{unlicense} to allow this.
-There's no need to copy that license into your source tree.
+To avoid taking a dependency on vctrs, you copy the source of
+\href{https://github.com/r-lib/vctrs/blob/master/R/register-s3.R}{\code{s3_register()}}
+into your own package. It is licensed under the permissive
+\href{https://choosealicense.com/licenses/unlicense/}{unlicense} to make it
+crystal clear that we're happy for you to do this. There's no need to include
+the license or even credit us when using this function.
 }
 
 \examples{
