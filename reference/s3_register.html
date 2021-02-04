@@ -53,9 +53,7 @@ S3Method() namespace directive (often generated automatically by the
 be in an imported package, and sometimes you want to suggest a package,
 and only provide a method when that package is loaded. s3_register()
 can be called from your package's .onLoad() to dynamically register
-a method only if the generic's package is loaded. (To avoid taking a
-dependency on vctrs for this one function, please feel free to copy
-and paste the function source into your own package.)" />
+a method only if the generic's package is loaded." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -166,9 +164,7 @@ and paste the function source into your own package.)" />
 be in an imported package, and sometimes you want to suggest a package,
 and only provide a method when that package is loaded. <code>s3_register()</code>
 can be called from your package's <code><a href='https://rdrr.io/r/base/ns-hooks.html'>.onLoad()</a></code> to dynamically register
-a method only if the generic's package is loaded. (To avoid taking a
-dependency on vctrs for this one function, please feel free to copy
-and paste the function source into your own package.)</p>
+a method only if the generic's package is loaded.</p>
     </div>
 
     <pre class="usage"><span class='fu'>s3_register</span><span class='op'>(</span><span class='va'>generic</span>, <span class='va'>class</span>, method <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
@@ -208,6 +204,16 @@ by using "delayed method registration", i.e. placing the following in your
 <span class='op'>}</span>
 </pre>
 
+    <h2 class="hasAnchor" id="usage-in-other-packages"><a class="anchor" href="#usage-in-other-packages"></a>Usage in other packages</h2>
+
+    
+
+<p>To avoid taking a dependency on vctrs, you copy the source of
+<a href='https://github.com/r-lib/vctrs/blob/master/R/register-s3.R'><code>s3_register()</code></a>
+into your own package. It is licensed under the permissive
+<a href='https://choosealicense.com/licenses/unlicense/'>unlicense</a> to make it
+crystal clear that we're happy for you to do this. There's no need to include
+the license or even credit us when using this function.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># A typical use case is to dynamically register tibble/pillar methods</span>

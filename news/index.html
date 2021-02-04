@@ -153,6 +153,10 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
+<ul>
+<li>
+<code>register_s3()</code> is now licensed with the “unlicense” which makes it very clear that it’s fine to copy and paste into your own package (<a href='https://github.com/maxheld83'>@maxheld83</a>, <a href='https://github.com/r-lib/vctrs/issues/1254'>#1254</a>).</li>
+</ul>
 </div>
     <div id="vctrs-036" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.6">
@@ -225,10 +229,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 <a href="#vctrs-032" class="anchor"></a>vctrs 0.3.2<small> 2020-07-15 </small>
 </h1>
 <ul>
-<li>
-<p>Fixed a performance issue in <code>bind_rows()</code> with S3 columns (<a href='https://github.com/r-lib/vctrs/issues/1122'>#1122</a>,</p>
-<p><a href='https://github.com/r-lib/vctrs/issues/1124'>#1124</a>, <a href='https://github.com/r-lib/vctrs/issues/1151'>#1151</a>, tidyverse/dplyr<a href='https://github.com/r-lib/vctrs/issues/5327'>#5327</a>).</p>
-</li>
+<li><p>Fixed a performance issue in <code>bind_rows()</code> with S3 columns (<a href='https://github.com/r-lib/vctrs/issues/1122'>#1122</a>, <a href='https://github.com/r-lib/vctrs/issues/1124'>#1124</a>, <a href='https://github.com/r-lib/vctrs/issues/1151'>#1151</a>, tidyverse/dplyr<a href='https://github.com/r-lib/vctrs/issues/5327'>#5327</a>).</p></li>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> now checks sizes of data frame columns in case the data structure is corrupt (<a href='https://github.com/r-lib/vctrs/issues/552'>#552</a>).</p></li>
 <li><p>The native routines in vctrs now dispatch and evaluate in the vctrs namespace. This improves the continuity of evaluation in backtraces.</p></li>
 <li><p><code><a href="../reference/new_data_frame.html">new_data_frame()</a></code> is now twice as fast when <code>class</code> is supplied.</p></li>
@@ -264,9 +265,9 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 <p>This version features an overhaul of the coercion system to make it more consistent and easier to implement. See the <em>Breaking changes</em> and <em>Type system</em> sections for details.</p>
 <p>There are three new documentation topics if you’d like to learn how to implement coercion methods to make your class compatible with tidyverse packages like dplyr:</p>
 <ul>
-<li><p><a href="https://vctrs.r-lib.org/reference/theory-faq-coercion.html" class="uri">https://vctrs.r-lib.org/reference/theory-faq-coercion.html</a> for an overview of the coercion mechanism in vctrs.</p></li>
-<li><p><a href="https://vctrs.r-lib.org/reference/howto-faq-coercion.html" class="uri">https://vctrs.r-lib.org/reference/howto-faq-coercion.html</a> for a practical guide about implementing methods for vectors.</p></li>
-<li><p><a href="https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html" class="uri">https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html</a> for a practical guide about implementing methods for data frames.</p></li>
+<li><p>https://vctrs.r-lib.org/reference/theory-faq-coercion.html for an overview of the coercion mechanism in vctrs.</p></li>
+<li><p>https://vctrs.r-lib.org/reference/howto-faq-coercion.html for a practical guide about implementing methods for vectors.</p></li>
+<li><p>https://vctrs.r-lib.org/reference/howto-faq-coercion-data-frame.html for a practical guide about implementing methods for data frames.</p></li>
 </ul>
 <div id="reverse-dependencies-troubleshooting" class="section level2">
 <h2 class="hasAnchor">
