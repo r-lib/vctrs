@@ -832,10 +832,10 @@ R_len_t df_flat_width(SEXP x) {
   R_len_t n = Rf_length(x);
   R_len_t out = n;
 
-  const SEXP* p_x = VECTOR_PTR_RO(x);
+  const SEXP* v_x = VECTOR_PTR_RO(x);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP col = p_x[i];
+    SEXP col = v_x[i];
     if (is_data_frame(col)) {
       out = out + df_flat_width(col) - 1;
     }
@@ -856,10 +856,10 @@ struct flatten_info df_flatten_info(SEXP x) {
   R_len_t n = Rf_length(x);
   R_len_t width = n;
 
-  const SEXP* p_x = VECTOR_PTR_RO(x);
+  const SEXP* v_x = VECTOR_PTR_RO(x);
 
   for (R_len_t i = 0; i < n; ++i) {
-    SEXP col = p_x[i];
+    SEXP col = v_x[i];
     if (is_data_frame(col)) {
       flatten = true;
       width = width + df_flat_width(col) - 1;
