@@ -844,11 +844,42 @@ R_len_t df_flat_width(SEXP x) {
   return out;
 }
 
-// [[ register() ]]
-SEXP vctrs_df_flat_width(SEXP x) {
-  return r_int(df_flat_width(x));
+struct flatten_info {
+  bool flatten;
+  R_len_t width;
+};
+
+static inline
+struct flatten_info df_flatten_info(SEXP x) {
+  bool flatten = false;
+
+  R_len_t n = Rf_length(x);
+  R_len_t width = n;
+
+  const SEXP* p_x = VECTOR_PTR_RO(x);
+
+  for (R_len_t i = 0; i < n; ++i) {
+    SEXP col = p_x[i];
+    if (is_data_frame(col)) {
+      flatten = true;
+      width = width + df_flat_width(col) - 1;
+    }
+  }
+
+  return (struct flatten_info){flatten, width};
 }
 
+// [[ register() ]]
+SEXP vctrs_df_flatten_info(SEXP x) {
+  struct flatten_info info = df_flatten_info(x);
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(out, 0, r_lgl(info.flatten));
+  SET_VECTOR_ELT(out, 1, r_int(info.width));
+
+  UNPROTECT(1);
+  return out;
+}
 
 static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter);
 
@@ -858,15 +889,14 @@ static R_len_t df_flatten_loop(SEXP x, SEXP out, SEXP out_names, R_len_t counter
 //
 // [[ register(); include("type-data-frame.h") ]]
 SEXP df_flatten(SEXP x) {
-  R_len_t n_cols = Rf_length(x);
-  R_len_t width = df_flat_width(x);
+  struct flatten_info info = df_flatten_info(x);
 
-  if (n_cols == width) {
+  if (!info.flatten) {
     return x;
   }
 
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, width));
-  SEXP out_names = PROTECT(Rf_allocVector(STRSXP, width));
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, info.width));
+  SEXP out_names = PROTECT(Rf_allocVector(STRSXP, info.width));
   r_poke_names(out, out_names);
 
   df_flatten_loop(x, out, out_names, 0);
