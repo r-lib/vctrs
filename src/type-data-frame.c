@@ -827,7 +827,7 @@ SEXP df_poke_at(SEXP x, SEXP name, SEXP value) {
   return x;
 }
 
-// [[ include("type-data-frame.h") ]]
+static inline
 R_len_t df_flat_width(SEXP x) {
   R_len_t n = Rf_length(x);
   R_len_t out = n;
