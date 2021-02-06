@@ -94,7 +94,8 @@ vec_ptype <- function(x, ..., x_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  .Call(vctrs_ptype, x, x_arg)
+  return(.Call(vctrs_ptype, x, x_arg))
+  UseMethod("vec_ptype")
 }
 
 #' @export
