@@ -377,14 +377,14 @@ test_that("`class` must be a character vector", {
   expect_error(new_data_frame(class = 1), "must be NULL or a character vector")
 })
 
-test_that("flat width is computed", {
-  df_flat_width <- function(x) {
-    .Call(vctrs_df_flat_width, x)
+test_that("flatten info is computed", {
+  df_flatten_info <- function(x) {
+    .Call(vctrs_df_flatten_info, x)
   }
-  expect_identical(df_flat_width(mtcars), ncol(mtcars))
+  expect_identical(df_flatten_info(mtcars), list(FALSE, ncol(mtcars)))
 
   df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
-  expect_identical(df_flat_width(df), 5L)
+  expect_identical(df_flatten_info(df), list(TRUE, 5L))
 })
 
 test_that("can flatten data frames", {
@@ -395,6 +395,12 @@ test_that("can flatten data frames", {
 
   df <- tibble(x = 1, y = tibble(x = 2, y = tibble(x = 3), z = 4), z = 5)
   expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
+})
+
+test_that("can flatten data frames with rcrd columns containing 1 field (#1318)", {
+  col <- new_rcrd(list(x = 1))
+  df <- data_frame(col = col, y = 1)
+  expect_identical(vec_proxy_equal(df), data_frame(x = 1, y = 1))
 })
 
 test_that("new_data_frame() zaps existing attributes", {

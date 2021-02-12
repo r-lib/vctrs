@@ -19,7 +19,6 @@ SEXP df_rownames(SEXP x) {
 bool is_native_df(SEXP x);
 SEXP df_poke(SEXP x, R_len_t i, SEXP value);
 SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
-R_len_t df_flat_width(SEXP x);
 SEXP df_flatten(SEXP x);
 SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair);
 
