@@ -512,7 +512,16 @@ fields(x)
 field(x, "n")
 ```
 
-This allows us to create a format method:
+Notice that we can't `print()` or `str()` the new rational vector `x`:
+
+```{r, error = TRUE}
+x
+str(x)
+```
+
+This is because R doesn't yet know how to display the record on the screen. Because there is no *one* base type, there is also no suitable default to fall back on.
+
+We can teach R how to display rationals by creating a format method, using the field accessors:
 
 ```{r}
 format.vctrs_rational <- function(x, ...) {
