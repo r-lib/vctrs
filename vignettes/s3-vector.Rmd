@@ -519,7 +519,7 @@ x
 str(x)
 ```
 
-This is because R doesn't yet know how to display the record on the screen. Because there is no *one* base type, there is also no suitable default to fall back on.
+This is because R doesn't yet know how to display our rational vector on the screen. Since there is no *one* base type for a record, there is also no suitable default to fall back on. If you want to look under the hood during development, you can always `unclass(x)`.
 
 We can teach R how to display rationals by creating a format method, using the field accessors:
 
