@@ -59,6 +59,12 @@ for any 1d vector type.
 See \link{internal-faq-ptype2-identity} for more information about
 identity values.
 
+For performance, when developing a new S3 class you might want to override
+the default behavior of \code{vec_ptype()}, which is to call \code{vec_slice(x, 0L)}.
+To do this, write a \code{vec_ptype()} S3 method for your class. The method should
+return a result equivalent to \code{vec_slice(x, 0L)}, but for many classes this
+is a static object.
+
 Because it may contain unspecified vectors, the prototype returned
 by \code{vec_ptype()} is said to be \strong{unfinalised}. Call
 \code{\link[=vec_ptype_finalise]{vec_ptype_finalise()}} to finalise it. Commonly you will need the

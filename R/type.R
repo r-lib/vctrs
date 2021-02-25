@@ -39,6 +39,12 @@
 #' See [internal-faq-ptype2-identity] for more information about
 #' identity values.
 #'
+#' For performance, when developing a new S3 class you might want to override
+#' the default behavior of `vec_ptype()`, which is to call `vec_slice(x, 0L)`.
+#' To do this, write a `vec_ptype()` S3 method for your class. The method should
+#' return a result equivalent to `vec_slice(x, 0L)`, but for many classes this
+#' is a static object.
+#'
 #' Because it may contain unspecified vectors, the prototype returned
 #' by `vec_ptype()` is said to be __unfinalised__. Call
 #' [vec_ptype_finalise()] to finalise it. Commonly you will need the
