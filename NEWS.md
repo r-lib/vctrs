@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_ptype()` is now generic. The default behavior for S3 classes continues
+  to use `vec_slice(x, 0L)`, but S3 methods can now be written to improve
+  performance as required for custom classes.
+  
 * New `vec_detect_complete()`, inspired by `stats::complete.cases()`. For most
   vectors, this is identical to `!vec_equal_na()`. For data frames and
   matrices, this detects rows that only contain non-missing values.
