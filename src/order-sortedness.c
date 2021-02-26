@@ -294,7 +294,6 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
-                                     bool check_encoding,
                                      struct group_infos* p_group_infos) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
@@ -308,16 +307,7 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
 
-  const void* vmax = vmaxget();
-
   SEXP previous = p_x[0];
-  PROTECT_INDEX previous_pi;
-
-  if (check_encoding && CHAR_NEEDS_REENCODE(previous)) {
-    previous = CHAR_REENCODE(previous);
-  }
-  PROTECT_WITH_INDEX(previous, &previous_pi);
-
   const char* c_previous = CHAR(previous);
 
   r_ssize count = 0;
@@ -326,12 +316,6 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
     SEXP current = p_x[i];
-
-    if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
-      current = CHAR_REENCODE(current);
-    }
-    PROTECT(current);
-
     const char* c_current = CHAR(current);
 
     int cmp = chr_cmp(
@@ -344,14 +328,10 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     );
 
     if (cmp >= 0) {
-      UNPROTECT(1);
       break;
     }
 
     previous = current;
-    REPROTECT(previous, previous_pi);
-    UNPROTECT(1);
-
     c_previous = c_current;
   }
 
@@ -361,16 +341,11 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     for (r_ssize j = 0; j < size; ++j) {
       groups_size_maybe_push(1, p_group_infos);
     }
-
-    vmaxset(vmax);
-    UNPROTECT(1);
     return VCTRS_SORTEDNESS_reversed;
   }
 
   // Was partially in expected order. Need to sort.
   if (count != 0) {
-    vmaxset(vmax);
-    UNPROTECT(1);
     return VCTRS_SORTEDNESS_unsorted;
   }
 
@@ -385,12 +360,6 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
     SEXP current = p_x[i];
-
-    if (check_encoding && CHAR_NEEDS_REENCODE(current)) {
-      current = CHAR_REENCODE(current);
-    }
-    PROTECT(current);
-
     const char* c_current = CHAR(current);
 
     int cmp = chr_cmp(
@@ -405,15 +374,10 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
     // Not expected ordering
     if (cmp < 0) {
       p_group_info->n_groups = original_n_groups;
-      vmaxset(vmax);
-      UNPROTECT(2);
       return VCTRS_SORTEDNESS_unsorted;
     }
 
     previous = current;
-    REPROTECT(previous, previous_pi);
-    UNPROTECT(1);
-
     c_previous = c_current;
 
     // Continue group run
@@ -431,8 +395,6 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
   groups_size_maybe_push(group_size, p_group_infos);
 
   // Expected ordering
-  vmaxset(vmax);
-  UNPROTECT(1);
   return VCTRS_SORTEDNESS_sorted;
 }
 

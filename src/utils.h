@@ -118,9 +118,6 @@ SEXP int_resize(SEXP x, r_ssize x_size, r_ssize size);
 SEXP raw_resize(SEXP x, r_ssize x_size, r_ssize size);
 SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size);
 
-bool p_chr_any_reencode(const SEXP* p_x, r_ssize size);
-void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, r_ssize size);
-
 SEXP vec_unique_names(SEXP x, bool quiet);
 SEXP vec_unique_colnames(SEXP x, bool quiet);
 
