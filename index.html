@@ -35,6 +35,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,8 +110,8 @@
 
 <p>There are three main goals to the vctrs package, each described in a vignette:</p>
 <ul>
-<li><p>To propose <code><a href="reference/vec_size.html">vec_size()</a></code> and <code><a href="reference/vec_ptype.html">vec_ptype()</a></code> as alternatives to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code> and <code><a href="https://rdrr.io/r/base/class.html">class()</a></code>; <code><a href="articles/type-size.html">vignette("type-size")</a></code>. These definitions are paired with a framework for size-recycling and type-coercion. <code>ptype</code> should evoke the notion of a prototype, i.e. the original or typical form of something.</p></li>
-<li><p>To define size- and type-stability as desirable function properties, use them to analyse existing base functions, and to propose better alternatives; <code><a href="articles/stability.html">vignette("stability")</a></code>. This work has been particularly motivated by thinking about the ideal properties of <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>, <code><a href="https://rdrr.io/r/base/ifelse.html">ifelse()</a></code>, and <code><a href="https://rdrr.io/r/base/cbind.html">rbind()</a></code>.</p></li>
+<li><p>To propose <code><a href="reference/vec_size.html">vec_size()</a></code> and <code><a href="reference/vec_ptype.html">vec_ptype()</a></code> as alternatives to <code><a href="https://rdrr.io/r/base/length.html" class="external-link">length()</a></code> and <code><a href="https://rdrr.io/r/base/class.html" class="external-link">class()</a></code>; <code><a href="articles/type-size.html">vignette("type-size")</a></code>. These definitions are paired with a framework for size-recycling and type-coercion. <code>ptype</code> should evoke the notion of a prototype, i.e. the original or typical form of something.</p></li>
+<li><p>To define size- and type-stability as desirable function properties, use them to analyse existing base functions, and to propose better alternatives; <code><a href="articles/stability.html">vignette("stability")</a></code>. This work has been particularly motivated by thinking about the ideal properties of <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>, <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code>, and <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code>.</p></li>
 <li><p>To provide a new <code>vctr</code> base class that makes it easy to create new S3 vectors; <code><a href="articles/s3-vector.html">vignette("s3-vector")</a></code>. vctrs provides methods for many base generics in terms of a few new vctrs generics, making implementation considerably simpler and more robust.</p></li>
 </ul>
 <p>vctrs is a developer-focussed package. Understanding and extending vctrs requires some effort from developers, but should be invisible to most users. It’s our hope that having an underlying theory will mean that users can build up an accurate mental model without explicitly learning the theory. vctrs will typically be used by other packages, making it easy for them to provide new classes of S3 vectors that are supported throughout the tidyverse (and beyond). For that reason, vctrs has few dependencies.</p>
@@ -118,7 +120,7 @@
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Install vctrs from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"vctrs"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"vctrs"</span><span class="op">)</span></code></pre></div>
 <p>Alternatively, if you need the development version, install it with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
@@ -128,20 +130,20 @@
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span>
 
 <span class="co"># Sizes</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  int 10</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_recycle.html">vec_recycle_common</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_recycle.html">vec_recycle_common</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ : num [1:10] 1 1 1 1 1 1 1 1 1 1</span>
 <span class="co">#&gt;  $ : int [1:10] 1 2 3 4 5 6 7 8 9 10</span>
 
 <span class="co"># Prototypes</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  num(0)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; List of 3</span>
 <span class="co">#&gt;  $ : num 0</span>
 <span class="co">#&gt;  $ : num 1</span>
@@ -150,29 +152,29 @@
 <div id="motivation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#motivation" class="anchor"></a>Motivation</h2>
-<p>The original motivation for vctrs comes from two separate but related problems. The first problem is that <code><a href="https://rdrr.io/r/base/c.html">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
+<p>The original motivation for vctrs comes from two separate but related problems. The first problem is that <code><a href="https://rdrr.io/r/base/c.html" class="external-link">base::c()</a></code> has rather undesirable behaviour when you mix different S3 vectors:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># combining factors makes integers</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1 1</span>
 
 <span class="co"># combining dates and date-times gives incorrect values; also, order matters</span>
-<span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>
-<span class="va">dttm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXct</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span>
+<span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>
+<span class="va">dttm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">dttm</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">dttm</span><span class="op">)</span>
 <span class="co">#&gt; [1] "2020-01-01"    "4321940-06-07"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">dttm</span>, <span class="va">dt</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dttm</span>, <span class="va">dt</span><span class="op">)</span>
 <span class="co">#&gt; [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"</span></code></pre></div>
-<p>This behaviour arises because <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> has dual purposes: as well as its primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, <code><a href="https://rdrr.io/r/base/DateTimeClasses.html">?POSIXct</a></code> suggests that you should use <code><a href="https://rdrr.io/r/base/c.html">c()</a></code> if you want to reset the timezone.</p>
-<p>The second problem is that <code><a href="https://dplyr.tidyverse.org/reference/bind.html">dplyr::bind_rows()</a></code> is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns, including lists of data frames, data frames, and matrices.</p>
+<p>This behaviour arises because <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> has dual purposes: as well as its primary duty of combining vectors, it has a secondary duty of stripping attributes. For example, <code><a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">?POSIXct</a></code> suggests that you should use <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> if you want to reset the timezone.</p>
+<p>The second problem is that <code><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">dplyr::bind_rows()</a></code> is not extensible by others. Currently, it handles arbitrary S3 classes using heuristics, but these often fail, and it feels like we really need to think through the problem in order to build a principled solution. This intersects with the need to cleanly support more types of data frame columns, including lists of data frames, data frames, and matrices.</p>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=vctrs">https://​cloud.r-project.org/​package=vctrs</a>
 </li>
@@ -182,42 +184,48 @@
 </li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
 <a href="http://hadley.nz">Hadley Wickham</a> <br><small class="roles"> Author </small>  </li>
 <li>Lionel Henry <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Davis Vaughan <br><small class="roles"> Author </small>  </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html">More on authors...</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://codecov.io/github/r-lib/vctrs?branch=master"><img src="https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
-<li><a href="https://github.com/r-lib/vctrs/actions"><img src="https://github.com/r-lib/vctrs/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/github/r-lib/vctrs?branch=master" class="external-link"><img src="https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
+<li><a href="https://github.com/r-lib/vctrs/actions" class="external-link"><img src="https://github.com/r-lib/vctrs/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://hadley.nz">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p></p>
+<p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
@@ -225,6 +233,8 @@
 
   
 
+
+  
 
   </body>
 </html>

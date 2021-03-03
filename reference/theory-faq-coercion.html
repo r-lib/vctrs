@@ -135,7 +135,7 @@ vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
 
 # But they are incompatible with integers
 vec_ptype2(factor(&quot;a&quot;), 1L)
-#&amp;gt; Error: Can't combine &amp;lt;factor&amp;lt;127a2&amp;gt;&amp;gt; and &amp;lt;integer&amp;gt;.
+#&amp;gt; Error: Can't combine &amp;lt;factor&amp;lt;4d52a&amp;gt;&amp;gt; and &amp;lt;integer&amp;gt;.
 
 
 Richness of type
@@ -327,9 +327,15 @@ class in R scripts.
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -413,7 +419,7 @@ subclasses, see
 <li><p>For a tutorial about implementing vctrs classes from scratch, see
 <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>.</p></li>
 </ul>
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Combination mechanism in vctrs</h3>
+<h3 class='hasAnchor' id='combination-mechanism-in-vctrs'><a class='anchor' href='#combination-mechanism-in-vctrs'></a>Combination mechanism in vctrs</h3>
 
 
 <p>The coercion system in vctrs is designed to make combination of multiple
@@ -460,7 +466,7 @@ implementations, unless the attributes of your class are constant and do
 not depend on the contents of the vector. We focus here on the first two
 steps, which require <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> implementations.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
+<h3 class='hasAnchor' id='list-vec-ptype-'><a class='anchor' href='#list-vec-ptype-'></a><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
 
 
 <p>Methods for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> are passed two <em>prototypes</em>, i.e. two inputs
@@ -472,7 +478,7 @@ resolution, return any of the two.</p></li>
 determined from the attributes that the types of the inputs are not
 compatible.</p></li>
 </ul>
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Type compatibility</h4>
+<h4 class='hasAnchor' id='type-compatibility'><a class='anchor' href='#type-compatibility'></a>Type compatibility</h4>
 
 
 <p>A type is <strong>compatible</strong> with another type if the values it represents
@@ -491,10 +497,10 @@ character vectors than to round numbers:<div class="r"></p><pre><span class='co'
 
 <span class='co'># But they are incompatible with integers</span>
 <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fl'>1L</span><span class='op'>)</span>
-<span class='co'>#&gt; Error: Can't combine &lt;factor&lt;127a2&gt;&gt; and &lt;integer&gt;.</span>
+<span class='co'>#&gt; Error: Can't combine &lt;factor&lt;4d52a&gt;&gt; and &lt;integer&gt;.</span>
 </pre><p></div></p>
 
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Richness of type</h4>
+<h4 class='hasAnchor' id='richness-of-type'><a class='anchor' href='#richness-of-type'></a>Richness of type</h4>
 
 
 <p>Richness of type is not a very precise notion. It can be about richer
@@ -517,7 +523,7 @@ decided to be laxer in vctrs because it is easy to inadvertently create
 factors instead of character vectors, especially with older versions of
 R where <code>stringsAsFactors</code> is still true by default.</p>
 
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Consistency and symmetry on permutation</h4>
+<h4 class='hasAnchor' id='consistency-and-symmetry-on-permutation'><a class='anchor' href='#consistency-and-symmetry-on-permutation'></a>Consistency and symmetry on permutation</h4>
 
 
 <p>Each ptype2 method should strive to have exactly the same behaviour when
@@ -533,7 +539,7 @@ levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href=
 <p>In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.</p>
 
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Coercion hierarchy</h4>
+<h4 class='hasAnchor' id='coercion-hierarchy'><a class='anchor' href='#coercion-hierarchy'></a>Coercion hierarchy</h4>
 
 
 <p>Coercible classes form a coercion (or subtyping) hierarchy. Here is a
@@ -559,7 +565,7 @@ manually. This is something we might make easier in the future.</p>
 
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a><code><a href='vec_cast.html'>vec_cast()</a></code></h3>
+<h3 class='hasAnchor' id='list-vec-cast-'><a class='anchor' href='#list-vec-cast-'></a><code><a href='vec_cast.html'>vec_cast()</a></code></h3>
 
 
 <p>The second generic, <code><a href='vec_cast.html'>vec_cast()</a></code>, is the one that looks at the data and
@@ -581,7 +587,7 @@ always returns the type of the right-hand side, or dies trying.</p></li>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Double dispatch</h3>
+<h3 class='hasAnchor' id='double-dispatch'><a class='anchor' href='#double-dispatch'></a>Double dispatch</h3>
 
 
 <p>The dispatch mechanism for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> looks like S3
@@ -597,7 +603,7 @@ explicitly if necessary.</p></li>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Data frames</h3>
+<h3 class='hasAnchor' id='data-frames'><a class='anchor' href='#data-frames'></a>Data frames</h3>
 
 
 <p>The determination of the common type of data frames with <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>
@@ -618,7 +624,7 @@ type that has fewer columns, this is an error.</p>
 <p>If you are implementing coercion methods for data frames, you will need
 to explicitly call the parent methods that perform the common type
 determination or the type conversion described above. These are exported
-as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>.</p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Data frame fallbacks</h4>
+as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>.</p><h4 class='hasAnchor' id='data-frame-fallbacks'><a class='anchor' href='#data-frame-fallbacks'></a>Data frame fallbacks</h4>
 
 
 <p>Being too strict with data frame combinations would cause too much pain
@@ -671,11 +677,11 @@ class in R scripts.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -683,6 +689,8 @@ class in R scripts.</p>
 
   
 
+
+  
 
   </body>
 </html>

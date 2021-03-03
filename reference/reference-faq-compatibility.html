@@ -151,9 +151,15 @@ inherit from list.
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -235,7 +241,7 @@ implement for compatibility.</p>
 <p>If you’re starting from scratch, we think you’ll find it easier to start
 using <code><a href='new_vctr.html'>new_vctr()</a></code> as documented in
 <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code>. This guide is aimed for developers with
-existing vector classes.</p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Aggregate operations with fallbacks</h3>
+existing vector classes.</p><h3 class='hasAnchor' id='aggregate-operations-with-fallbacks'><a class='anchor' href='#aggregate-operations-with-fallbacks'></a>Aggregate operations with fallbacks</h3>
 
 
 <p>All vctrs operations are based on four primitive generics described in
@@ -260,7 +266,7 @@ coercion in <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>, and it
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The vctrs primitives</h3>
+<h3 class='hasAnchor' id='the-vctrs-primitives'><a class='anchor' href='#the-vctrs-primitives'></a>The vctrs primitives</h3>
 
 
 <p>Most functions in vctrs are aggregate operations: they call other vctrs
@@ -270,7 +276,7 @@ documentation page. Take a look at <code><a href='vec_count.html'>vec_count()</a
 example.</p>
 <p>These dependencies form a tree whose leaves are the four vctrs
 primitives. Here is the diagram for <code><a href='vec_count.html'>vec_count()</a></code>:</p>
-<p><img src='figures/vec-count-deps.png' alt='' /></p><h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The coercion generics</h4>
+<p><img src='figures/vec-count-deps.png' alt='' /></p><h4 class='hasAnchor' id='the-coercion-generics'><a class='anchor' href='#the-coercion-generics'></a>The coercion generics</h4>
 
 
 <p>The coercion mechanism in vctrs is based on two generics:</p><ul>
@@ -286,7 +292,7 @@ differ, they throw an incompatible type error.</p>
 the <a href='howto-faq-coercion.html'>howto guide</a> if you need to implement methods
 for these generics.</p>
 
-<h4 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The proxy and restoration generics</h4>
+<h4 class='hasAnchor' id='the-proxy-and-restoration-generics'><a class='anchor' href='#the-proxy-and-restoration-generics'></a>The proxy and restoration generics</h4>
 
 <ul>
 <li><p><code><a href='vec_proxy.html'>vec_proxy()</a></code></p></li>
@@ -319,11 +325,11 @@ inherit from list.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -331,6 +337,8 @@ inherit from list.</p>
 
   
 
+
+  
 
   </body>
 </html>

@@ -79,9 +79,15 @@ across all arguments." />
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -281,7 +287,7 @@ effective size for the total number of rows is 1.</p>
 
     
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>vctrs dependencies</h3>
+<h3 class='hasAnchor' id='vctrs-dependencies'><a class='anchor' href='#vctrs-dependencies'></a>vctrs dependencies</h3>
 
 <ul>
 <li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code></p></li>
@@ -292,7 +298,15 @@ effective size for the total number of rows is 1.</p>
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>base dependencies of <code>vec_rbind()</code></h3>
+<h3 class='hasAnchor' id='base-dependencies-of-'><a class='anchor' href='#base-dependencies-of-'></a>base dependencies of <code>vec_rbind()</code></h3>
+
+<ul>
+<li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
+</ul>
+
+<p>If columns to combine inherit from a common class,
+<code>vec_rbind()</code> falls back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if there exists a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code>
+method implemented for this class hierarchy.</p><h3 class='hasAnchor' id='list-vec-rbind-'><a class='anchor' href='#list-vec-rbind-'></a>base dependencies of <code>vec_rbind()</code></h3>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
@@ -399,10 +413,10 @@ method implemented for this class hierarchy.</p>
 <span class='kw'>if</span> <span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span><span class='op'>(</span><span class='st'>"tibble"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>vec_cbind</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>a <span class='op'>=</span> <span class='fl'>1</span>, b <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1 x 2</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 x 2</span><span>
 #&gt;     x$a    $b     y
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>     1     2     1</div><div class='input'>
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2     1</div><div class='input'>
 <span class='co'># duplicate names are flagged</span>
 <span class='fu'>vec_cbind</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, x <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>New names:</span>
@@ -421,11 +435,11 @@ method implemented for this class hierarchy.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -433,6 +447,8 @@ method implemented for this class hierarchy.</p>
 
   
 
+
+  
 
   </body>
 </html>

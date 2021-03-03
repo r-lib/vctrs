@@ -76,9 +76,15 @@
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -224,7 +230,7 @@ inner and outer names are present, an error is thrown unless a
 
     
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>vctrs dependencies</h3>
+<h3 class='hasAnchor' id='vctrs-dependencies'><a class='anchor' href='#vctrs-dependencies'></a>vctrs dependencies</h3>
 
 <ul>
 <li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
@@ -233,7 +239,7 @@ inner and outer names are present, an error is thrown unless a
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>base dependencies</h3>
+<h3 class='hasAnchor' id='base-dependencies'><a class='anchor' href='#base-dependencies'></a>base dependencies</h3>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
@@ -253,11 +259,11 @@ or columns.</p></div>
 </div><div class='output co'>#&gt; [1] 0.0 1.0 1.5</div><div class='input'>
 <span class='co'># Date/times --------------------------</span>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-02-04" "2021-02-04"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-02-04 19:34:48 UTC" "2021-02-04 00:00:00 UTC"</div><div class='input'>
+</div><div class='output co'>#&gt; [1] "2021-03-03" "2021-03-03"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-03-03 17:28:59 UTC" "2021-03-03 00:00:00 UTC"</div><div class='input'>
 <span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-02-04 00:00:00 UTC" "2021-02-04 19:34:48 UTC"</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-02-04 19:34:48 UTC" "2021-02-04 00:00:00 UTC"</div><div class='input'>
+</div><div class='output co'>#&gt; [1] "2021-03-03 00:00:00 UTC" "2021-03-03 17:28:59 UTC"</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-03-03 17:28:59 UTC" "2021-03-03 00:00:00 UTC"</div><div class='input'>
 <span class='co'># Factors -----------------------------</span>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
@@ -287,11 +293,11 @@ or columns.</p></div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -299,6 +305,8 @@ or columns.</p></div>
 
   
 
+
+  
 
   </body>
 </html>

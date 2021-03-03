@@ -78,9 +78,15 @@ the foundation of type coercions in vctrs." />
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -234,7 +240,7 @@ subclasses, see
 
     
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>vctrs dependencies</h3>
+<h3 class='hasAnchor' id='vctrs-dependencies'><a class='anchor' href='#vctrs-dependencies'></a>vctrs dependencies</h3>
 
 <ul>
 <li><p><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></p></li>
@@ -242,7 +248,7 @@ subclasses, see
 </ul>
 
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>base dependencies</h3>
+<h3 class='hasAnchor' id='base-dependencies'><a class='anchor' href='#base-dependencies'></a>base dependencies</h3>
 
 
 <p>Some functions enable a base-class fallback for
@@ -278,7 +284,7 @@ attributes that an input can't be cast to the target type.</p></div>
 #&gt; * Locations: 2</div><div class='input'>
 <span class='co'># No sensible coercion is possible so an error is generated</span>
 <span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Error : Can't convert &lt;double&gt; to &lt;factor&lt;127a2&gt;&gt;.</div><div class='input'>
+</div><div class='output co'>#&gt; Error : Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</div><div class='input'>
 <span class='co'># Cast to common type</span>
 <span class='fu'>vec_cast_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [[1]]
@@ -300,11 +306,11 @@ attributes that an input can't be cast to the target type.</p></div>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -312,6 +318,8 @@ attributes that an input can't be cast to the target type.</p></div>
 
   
 
+
+  
 
   </body>
 </html>

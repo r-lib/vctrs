@@ -85,6 +85,42 @@ subsequent promotions:vec_ptype2(
   &quot;&quot;
 )
 #&amp;gt; character(0)
+The NULL identity
+
+
+As an identity element that shouldn’t influence the determination of the
+common type of a set of vectors, NULL is promoted to any type:vec_ptype2(NULL, &quot;&quot;)
+#&amp;gt; character(0)
+vec_ptype2(1L, NULL)
+#&amp;gt; integer(0)
+
+The common type of NULL and NULL is the identity NULL:vec_ptype2(NULL, NULL)
+#&amp;gt; NULL
+
+This way the result of vec_ptype2(NULL, NULL) does not influence
+subsequent promotions:vec_ptype2(
+  vec_ptype2(NULL, NULL),
+  &quot;&quot;
+)
+#&amp;gt; character(0)
+The NULL identity
+
+
+As an identity element that shouldn’t influence the determination of the
+common type of a set of vectors, NULL is promoted to any type:vec_ptype2(NULL, &quot;&quot;)
+#&amp;gt; character(0)
+vec_ptype2(1L, NULL)
+#&amp;gt; integer(0)
+
+The common type of NULL and NULL is the identity NULL:vec_ptype2(NULL, NULL)
+#&amp;gt; NULL
+
+This way the result of vec_ptype2(NULL, NULL) does not influence
+subsequent promotions:vec_ptype2(
+  vec_ptype2(NULL, NULL),
+  &quot;&quot;
+)
+#&amp;gt; character(0)
 
 
 Unspecified vectors
@@ -167,9 +203,15 @@ They are finalised with vec_ptype_finalise().
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -244,7 +286,7 @@ They are finalised with vec_ptype_finalise().
 
     <div class="ref-description">
     
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Promotion monoid</h3>
+<h3 class='hasAnchor' id='promotion-monoid'><a class='anchor' href='#promotion-monoid'></a>Promotion monoid</h3>
 
 
 <p>Promotions (i.e. automatic coercions) should always transform inputs to
@@ -263,7 +305,43 @@ the richer type of multiple elements is computed. As a monoid,
 change the result of the reduction. vctrs has two identity values,
 <code>NULL</code> and <strong>unspecified</strong> vectors.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>The <code>NULL</code> identity</h3>
+<h3 class='hasAnchor' id='the-'><a class='anchor' href='#the-'></a>The <code>NULL</code> identity</h3>
+
+
+<p>As an identity element that shouldn’t influence the determination of the
+common type of a set of vectors, <code>NULL</code> is promoted to any type:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='st'>""</span><span class='op'>)</span>
+<span class='co'>#&gt; character(0)</span>
+<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fl'>1L</span>, <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='co'>#&gt; integer(0)</span>
+</pre><p></div></p>
+<p>The common type of <code>NULL</code> and <code>NULL</code> is the identity <code>NULL</code>:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='co'>#&gt; NULL</span>
+</pre><p></div></p>
+<p>This way the result of <code><a href='vec_ptype2.logical.html'>vec_ptype2(NULL, NULL)</a></code> does not influence
+subsequent promotions:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span>
+  <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='cn'>NULL</span><span class='op'>)</span>,
+  <span class='st'>""</span>
+<span class='op'>)</span>
+<span class='co'>#&gt; character(0)</span>
+</pre><p></div></p><h3 class='hasAnchor' id='list-null-'><a class='anchor' href='#list-null-'></a>The <code>NULL</code> identity</h3>
+
+
+<p>As an identity element that shouldn’t influence the determination of the
+common type of a set of vectors, <code>NULL</code> is promoted to any type:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='st'>""</span><span class='op'>)</span>
+<span class='co'>#&gt; character(0)</span>
+<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fl'>1L</span>, <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='co'>#&gt; integer(0)</span>
+</pre><p></div></p>
+<p>The common type of <code>NULL</code> and <code>NULL</code> is the identity <code>NULL</code>:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='cn'>NULL</span><span class='op'>)</span>
+<span class='co'>#&gt; NULL</span>
+</pre><p></div></p>
+<p>This way the result of <code><a href='vec_ptype2.logical.html'>vec_ptype2(NULL, NULL)</a></code> does not influence
+subsequent promotions:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span>
+  <span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='cn'>NULL</span><span class='op'>)</span>,
+  <span class='st'>""</span>
+<span class='op'>)</span>
+<span class='co'>#&gt; character(0)</span>
+</pre><p></div></p><h3 class='hasAnchor' id='-identity'><a class='anchor' href='#-identity'></a>The <code>NULL</code> identity</h3>
 
 
 <p>As an identity element that shouldn’t influence the determination of the
@@ -283,7 +361,7 @@ subsequent promotions:<div class="r"></p><pre><span class='fu'><a href='vec_ptyp
 <span class='co'>#&gt; character(0)</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Unspecified vectors</h3>
+<h3 class='hasAnchor' id='unspecified-vectors'><a class='anchor' href='#unspecified-vectors'></a>Unspecified vectors</h3>
 
 
 <p>In the vctrs coercion system, logical vectors of missing values are also
@@ -307,7 +385,7 @@ natural fit for this.</p></li>
 <span class='co'>#&gt; integer(0)</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Finalising common types</h3>
+<h3 class='hasAnchor' id='finalising-common-types'><a class='anchor' href='#finalising-common-types'></a>Finalising common types</h3>
 
 
 <p>vctrs has an internal vector type of class <code>vctrs_unspecified</code>. Users
@@ -351,11 +429,11 @@ They are finalised with <code><a href='new_partial.html'>vec_ptype_finalise()</a
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -363,6 +441,8 @@ They are finalised with <code><a href='new_partial.html'>vec_ptype_finalise()</a
 
   
 
+
+  
 
   </body>
 </html>

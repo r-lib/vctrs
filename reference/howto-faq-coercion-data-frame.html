@@ -175,6 +175,142 @@ frames:vec_cbind(data.frame(x = 1:3), data.table(y = &quot;foo&quot;))
 #&amp;gt; 1: 1 foo
 #&amp;gt; 2: 2 foo
 #&amp;gt; 3: 3 foo
+A data.table example
+
+
+This example is the actual implementation of vctrs coercion methods for
+data.table. This is a simple example because we don’t have to keep
+track of attributes for this class or manage incompatibilities. See the
+tibble section for a more complicated example.
+We first create the dt_ptype2() and dt_cast() helpers. They wrap
+around the parent methods df_ptype2() and df_cast(), and transform
+the common type or converted input to a data table. You may want to
+export these helpers if you expect other packages to derive from your
+data frame class.
+These helpers should always return data tables. To this end we use the
+conversion generic as.data.table(). Depending on the tools available
+for the particular class at hand, a constructor might be appropriate as
+well.dt_ptype2 &amp;lt;- function(x, y, ...) {
+  as.data.table(df_ptype2(x, y, ...))
+}
+dt_cast &amp;lt;- function(x, to, ...) {
+  as.data.table(df_cast(x, to, ...))
+}
+
+We start with the self-self method:#' @export
+vec_ptype2.data.table.data.table &amp;lt;- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+
+Between a data frame and a data table, we consider the richer type to be
+data table. This decision is not based on the value coverage of each
+data structures, but on the idea that data tables have richer behaviour.
+Since data tables are the richer type, we call dt_type2() from the
+vec_ptype2() method. It always returns a data table, no matter the
+order of arguments:#' @export
+vec_ptype2.data.table.data.frame &amp;lt;- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+#' @export
+vec_ptype2.data.frame.data.table &amp;lt;- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+
+The vec_cast() methods follow the same pattern, but note how the
+method for coercing to data frame uses df_cast() rather than
+dt_cast().
+Also, please note that for historical reasons, the order of the classes
+in the method name is in reverse order of the arguments in the function
+signature. The first class represents to, whereas the second class
+represents x.#' @export
+vec_cast.data.table.data.table &amp;lt;- function(x, to, ...) {
+  dt_cast(x, to, ...)
+}
+#' @export
+vec_cast.data.table.data.frame &amp;lt;- function(x, to, ...) {
+  # `x` is a data.frame to be converted to a data.table
+  dt_cast(x, to, ...)
+}
+#' @export
+vec_cast.data.frame.data.table &amp;lt;- function(x, to, ...) {
+  # `x` is a data.table to be converted to a data.frame
+  df_cast(x, to, ...)
+}
+
+With these methods vctrs is now able to combine data tables with data
+frames:vec_cbind(data.frame(x = 1:3), data.table(y = &quot;foo&quot;))
+#&amp;gt;    x   y
+#&amp;gt; 1: 1 foo
+#&amp;gt; 2: 2 foo
+#&amp;gt; 3: 3 foo
+A data.table example
+
+
+This example is the actual implementation of vctrs coercion methods for
+data.table. This is a simple example because we don’t have to keep
+track of attributes for this class or manage incompatibilities. See the
+tibble section for a more complicated example.
+We first create the dt_ptype2() and dt_cast() helpers. They wrap
+around the parent methods df_ptype2() and df_cast(), and transform
+the common type or converted input to a data table. You may want to
+export these helpers if you expect other packages to derive from your
+data frame class.
+These helpers should always return data tables. To this end we use the
+conversion generic as.data.table(). Depending on the tools available
+for the particular class at hand, a constructor might be appropriate as
+well.dt_ptype2 &amp;lt;- function(x, y, ...) {
+  as.data.table(df_ptype2(x, y, ...))
+}
+dt_cast &amp;lt;- function(x, to, ...) {
+  as.data.table(df_cast(x, to, ...))
+}
+
+We start with the self-self method:#' @export
+vec_ptype2.data.table.data.table &amp;lt;- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+
+Between a data frame and a data table, we consider the richer type to be
+data table. This decision is not based on the value coverage of each
+data structures, but on the idea that data tables have richer behaviour.
+Since data tables are the richer type, we call dt_type2() from the
+vec_ptype2() method. It always returns a data table, no matter the
+order of arguments:#' @export
+vec_ptype2.data.table.data.frame &amp;lt;- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+#' @export
+vec_ptype2.data.frame.data.table &amp;lt;- function(x, y, ...) {
+  dt_ptype2(x, y, ...)
+}
+
+The vec_cast() methods follow the same pattern, but note how the
+method for coercing to data frame uses df_cast() rather than
+dt_cast().
+Also, please note that for historical reasons, the order of the classes
+in the method name is in reverse order of the arguments in the function
+signature. The first class represents to, whereas the second class
+represents x.#' @export
+vec_cast.data.table.data.table &amp;lt;- function(x, to, ...) {
+  dt_cast(x, to, ...)
+}
+#' @export
+vec_cast.data.table.data.frame &amp;lt;- function(x, to, ...) {
+  # `x` is a data.frame to be converted to a data.table
+  dt_cast(x, to, ...)
+}
+#' @export
+vec_cast.data.frame.data.table &amp;lt;- function(x, to, ...) {
+  # `x` is a data.table to be converted to a data.frame
+  df_cast(x, to, ...)
+}
+
+With these methods vctrs is now able to combine data tables with data
+frames:vec_cbind(data.frame(x = 1:3), data.table(y = &quot;foo&quot;))
+#&amp;gt;    x   y
+#&amp;gt; 1: 1 foo
+#&amp;gt; 2: 2 foo
+#&amp;gt; 3: 3 foo
 
 
 A tibble example
@@ -448,9 +584,15 @@ This completes the implementation:vec_rbind(red, data.frame(x = 10:12))
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -549,7 +691,7 @@ subclasses as soon as possible.</p>
 <p>We will see two examples in this guide. The first example is about a
 data frame subclass that has no particular attributes to manage. In the
 second example, we implement coercion methods for a tibble subclass that
-includes potentially incompatible attributes.</p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Roxygen workflow</h3>
+includes potentially incompatible attributes.</p><h3 class='hasAnchor' id='roxygen-workflow'><a class='anchor' href='#roxygen-workflow'></a>Roxygen workflow</h3>
 
 
 <p>To implement methods for generics, first import the generics in your
@@ -565,7 +707,7 @@ regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register()</a></code>.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Parent methods</h3>
+<h3 class='hasAnchor' id='parent-methods'><a class='anchor' href='#parent-methods'></a>Parent methods</h3>
 
 
 <p>Most of the common type determination should be performed by the parent
@@ -584,7 +726,143 @@ write similar functions for your subclass to avoid repetition in your
 code. You may want to export them as well if you are expecting other
 people to derive from your class.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>A <code>data.table</code> example</h3>
+<h3 class='hasAnchor' id='a-'><a class='anchor' href='#a-'></a>A <code>data.table</code> example</h3>
+
+
+<p>This example is the actual implementation of vctrs coercion methods for
+<code>data.table</code>. This is a simple example because we don’t have to keep
+track of attributes for this class or manage incompatibilities. See the
+tibble section for a more complicated example.</p>
+<p>We first create the <code>dt_ptype2()</code> and <code>dt_cast()</code> helpers. They wrap
+around the parent methods <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>, and transform
+the common type or converted input to a data table. You may want to
+export these helpers if you expect other packages to derive from your
+data frame class.</p>
+<p>These helpers should always return data tables. To this end we use the
+conversion generic <code>as.data.table()</code>. Depending on the tools available
+for the particular class at hand, a constructor might be appropriate as
+well.<div class="r"></p><pre><span class='va'>dt_ptype2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>as.data.table</span><span class='op'>(</span><span class='fu'><a href='df_ptype2.html'>df_ptype2</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='va'>dt_cast</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>as.data.table</span><span class='op'>(</span><span class='fu'><a href='df_ptype2.html'>df_cast</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>We start with the self-self method:<div class="r"></p><pre><span class='co'>#' @export</span>
+<span class='va'>vec_ptype2.data.table.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>Between a data frame and a data table, we consider the richer type to be
+data table. This decision is not based on the value coverage of each
+data structures, but on the idea that data tables have richer behaviour.
+Since data tables are the richer type, we call <code>dt_type2()</code> from the
+<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
+order of arguments:<div class="r"></p><pre><span class='co'>#' @export</span>
+<span class='va'>vec_ptype2.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'>#' @export</span>
+<span class='va'>vec_ptype2.data.frame.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>The <code><a href='vec_cast.html'>vec_cast()</a></code> methods follow the same pattern, but note how the
+method for coercing to data frame uses <code><a href='df_ptype2.html'>df_cast()</a></code> rather than
+<code>dt_cast()</code>.</p>
+<p>Also, please note that for historical reasons, the order of the classes
+in the method name is in reverse order of the arguments in the function
+signature. The first class represents <code>to</code>, whereas the second class
+represents <code>x</code>.<div class="r"></p><pre><span class='co'>#' @export</span>
+<span class='va'>vec_cast.data.table.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'>#' @export</span>
+<span class='va'>vec_cast.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='co'># `x` is a data.frame to be converted to a data.table</span>
+  <span class='fu'>dt_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'>#' @export</span>
+<span class='va'>vec_cast.data.frame.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='co'># `x` is a data.table to be converted to a data.frame</span>
+  <span class='fu'><a href='df_ptype2.html'>df_cast</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>With these methods vctrs is now able to combine data tables with data
+frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'>data.table</span><span class='op'>(</span>y <span class='op'>=</span> <span class='st'>"foo"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='co'>#&gt;    x   y</span>
+<span class='co'>#&gt; 1: 1 foo</span>
+<span class='co'>#&gt; 2: 2 foo</span>
+<span class='co'>#&gt; 3: 3 foo</span>
+</pre><p></div></p><h3 class='hasAnchor' id='list-data-table-'><a class='anchor' href='#list-data-table-'></a>A <code>data.table</code> example</h3>
+
+
+<p>This example is the actual implementation of vctrs coercion methods for
+<code>data.table</code>. This is a simple example because we don’t have to keep
+track of attributes for this class or manage incompatibilities. See the
+tibble section for a more complicated example.</p>
+<p>We first create the <code>dt_ptype2()</code> and <code>dt_cast()</code> helpers. They wrap
+around the parent methods <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_ptype2.html'>df_cast()</a></code>, and transform
+the common type or converted input to a data table. You may want to
+export these helpers if you expect other packages to derive from your
+data frame class.</p>
+<p>These helpers should always return data tables. To this end we use the
+conversion generic <code>as.data.table()</code>. Depending on the tools available
+for the particular class at hand, a constructor might be appropriate as
+well.<div class="r"></p><pre><span class='va'>dt_ptype2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>as.data.table</span><span class='op'>(</span><span class='fu'><a href='df_ptype2.html'>df_ptype2</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='va'>dt_cast</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>as.data.table</span><span class='op'>(</span><span class='fu'><a href='df_ptype2.html'>df_cast</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>We start with the self-self method:<div class="r"></p><pre><span class='co'>#' @export</span>
+<span class='va'>vec_ptype2.data.table.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>Between a data frame and a data table, we consider the richer type to be
+data table. This decision is not based on the value coverage of each
+data structures, but on the idea that data tables have richer behaviour.
+Since data tables are the richer type, we call <code>dt_type2()</code> from the
+<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
+order of arguments:<div class="r"></p><pre><span class='co'>#' @export</span>
+<span class='va'>vec_ptype2.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'>#' @export</span>
+<span class='va'>vec_ptype2.data.frame.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>The <code><a href='vec_cast.html'>vec_cast()</a></code> methods follow the same pattern, but note how the
+method for coercing to data frame uses <code><a href='df_ptype2.html'>df_cast()</a></code> rather than
+<code>dt_cast()</code>.</p>
+<p>Also, please note that for historical reasons, the order of the classes
+in the method name is in reverse order of the arguments in the function
+signature. The first class represents <code>to</code>, whereas the second class
+represents <code>x</code>.<div class="r"></p><pre><span class='co'>#' @export</span>
+<span class='va'>vec_cast.data.table.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'>dt_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'>#' @export</span>
+<span class='va'>vec_cast.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='co'># `x` is a data.frame to be converted to a data.table</span>
+  <span class='fu'>dt_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='co'>#' @export</span>
+<span class='va'>vec_cast.data.frame.data.table</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='co'># `x` is a data.table to be converted to a data.frame</span>
+  <span class='fu'><a href='df_ptype2.html'>df_cast</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
+<span class='op'>}</span>
+</pre><p></div></p>
+<p>With these methods vctrs is now able to combine data tables with data
+frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbind</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>, <span class='fu'>data.table</span><span class='op'>(</span>y <span class='op'>=</span> <span class='st'>"foo"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='co'>#&gt;    x   y</span>
+<span class='co'>#&gt; 1: 1 foo</span>
+<span class='co'>#&gt; 2: 2 foo</span>
+<span class='co'>#&gt; 3: 3 foo</span>
+</pre><p></div></p><h3 class='hasAnchor' id='-example'><a class='anchor' href='#-example'></a>A <code>data.table</code> example</h3>
 
 
 <p>This example is the actual implementation of vctrs coercion methods for
@@ -654,7 +932,7 @@ frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbin
 <span class='co'>#&gt; 3: 3 foo</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>A tibble example</h3>
+<h3 class='hasAnchor' id='a-tibble-example'><a class='anchor' href='#a-tibble-example'></a>A tibble example</h3>
 
 
 <p>In this example we implement coercion methods for a tibble subclass that
@@ -913,11 +1191,11 @@ haven’t explicitly specified the methods for this class:<div class="r"></p><pr
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
 </div>
 
       </footer>
@@ -925,6 +1203,8 @@ haven’t explicitly specified the methods for this class:<div class="r"></p><pr
 
   
 
+
+  
 
   </body>
 </html>
