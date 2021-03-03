@@ -95,7 +95,7 @@ vec_ptype2(factor("a"), "b")
 
 # But they are incompatible with integers
 vec_ptype2(factor("a"), 1L)
-#> Error: Can't combine <factor<127a2>> and <integer>.
+#> Error: Can't combine <factor<4d52a>> and <integer>.
 }\if{html}{\out{</div>}}
 }
 

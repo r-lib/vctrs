@@ -14,15 +14,15 @@ Instead, it has type <logical>.
 
 > vec_assert(lgl(), factor(levels = "foo")):
 
-Error: `lgl()` must be a vector with type <factor<bd40e>>.
+Error: `lgl()` must be a vector with type <factor<c1562>>.
 Instead, it has type <logical>.
 
 
 
 > vec_assert(factor(levels = "bar"), factor(levels = "foo")):
 
-Error: `factor(levels = "bar")` must be a vector with type <factor<bd40e>>.
-Instead, it has type <factor<cbd21>>.
+Error: `factor(levels = "bar")` must be a vector with type <factor<c1562>>.
+Instead, it has type <factor<9f154>>.
 
 
 

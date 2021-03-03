@@ -30,9 +30,8 @@ Depends:
     R (>= 3.3)
 Imports: 
     ellipsis (>= 0.2.0),
-    digest,
     glue,
-    rlang (>= 0.4.7)
+    rlang (>= 0.4.10)
 Suggests: 
     bit64,
     covr,
