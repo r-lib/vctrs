@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_order()` can now order complex vectors (#1330).
+
 * Removed dependency on digest in favor of `rlang::hash()`.
 
 * Fixed an issue where `vctrs_rcrd` objects were not being proxied correctly
