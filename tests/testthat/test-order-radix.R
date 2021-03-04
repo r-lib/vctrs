@@ -842,6 +842,27 @@ test_that("can order 2+ double column chunks with radix sort", {
 })
 
 # ------------------------------------------------------------------------------
+# vec_order_radix() - string_key
+
+test_that("`string_key` transforms string input", {
+  x <- c("b", "a", "A")
+  expect_identical(vec_order_radix(x, string_key = tolower), c(2L, 3L, 1L))
+  expect_identical(vec_order_radix(x, string_key = ~tolower(.x)), c(2L, 3L, 1L))
+})
+
+test_that("`string_key` works with data frame columns and is applied to all string columns", {
+  df <- data_frame(x = c(1, 1, 1), y = c("B", "a", "a"), z = c("a", "D", "c"))
+  expect_identical(vec_order_radix(df, string_key = tolower), c(3L, 2L, 1L))
+})
+
+test_that("`string_key` is validated", {
+  expect_error(vec_order_radix("x", string_key = 1), "Can't convert `string_key` to a function")
+  expect_error(vec_order_radix("x", string_key = ~c("y", "z")), "length 1, not 2")
+  expect_error(vec_order_radix("x", string_key = ~1), "character vector")
+  expect_error(vec_order_radix("x", string_key = function() {"y"}))
+})
+
+# ------------------------------------------------------------------------------
 # vec_order_radix() - error checking
 
 test_that("`na_value` is checked", {
@@ -944,6 +965,17 @@ test_that("`vec_order_locs()` is working", {
   )
 
   expect_identical(vec_order_locs(x), expect)
+})
+
+test_that("`string_key` can result in keys being seen as identical", {
+  x <- c("b", "A", "a")
+  y <- c("b", "a", "A")
+
+  x_expect <- data_frame(key = c("A", "b"), loc = list(c(2L, 3L), 1L))
+  y_expect <- data_frame(key = c("a", "b"), loc = list(c(2L, 3L), 1L))
+
+  expect_identical(vec_order_locs(x, string_key = tolower), x_expect)
+  expect_identical(vec_order_locs(y, string_key = tolower), y_expect)
 })
 
 # ------------------------------------------------------------------------------
