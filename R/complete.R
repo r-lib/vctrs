@@ -1,21 +1,34 @@
 #' Complete
 #'
 #' @description
-#' `vec_detect_complete()` detects "complete" rows of a data frame. A
-#' row is only considered complete if all elements of that row are non-missing.
-#' To compare, `!vec_equal_na(x)` detects rows that have at least one
-#' non-missing value.
+#' `vec_detect_complete()` detects "complete" observations. An observation is
+#' considered complete if it is non-missing. For most vectors, this implies that
+#' `vec_detect_complete(x) == !vec_equal_na(x)`.
 #'
-#' @param x A data frame
+#' For data frames and matrices, a row is only considered complete if all
+#' elements of that row are non-missing. To compare, `!vec_equal_na(x)` detects
+#' rows that have at least one non-missing value.
+#'
+#' @details
+#' A [record][new_rcrd] type vector is considered complete if any field is
+#' non-missing.
+#'
+#' @param x A vector
 #'
 #' @return
 #' A logical vector with the same size as `x`.
 #'
 #' @seealso [stats::complete.cases()]
-#' @noRd
+#' @export
 #' @examples
+#' x <- c(1, 2, NA, 4, NA)
+#'
+#' # For most vectors, this is identical to `!vec_equal_na(x)`
+#' vec_detect_complete(x)
+#' !vec_equal_na(x)
+#'
 #' df <- data_frame(
-#'   x = c(1, 2, NA, 4, NA),
+#'   x = x,
 #'   y = c("a", "b", NA, "d", "e")
 #' )
 #'
