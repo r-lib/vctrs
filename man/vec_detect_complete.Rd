@@ -13,10 +13,9 @@ vec_detect_complete(x)
 A logical vector with the same size as \code{x}.
 }
 \description{
-\code{vec_detect_complete()} detects "complete" observations.
-
-For most vectors, an observation is considered complete if it is non-missing.
-In these cases, \code{vec_detect_complete(x) == !vec_equal_na(x)}.
+\code{vec_detect_complete()} detects "complete" observations. An observation is
+considered complete if it is non-missing. For most vectors, this implies that
+\code{vec_detect_complete(x) == !vec_equal_na(x)}.
 
 For data frames and matrices, a row is only considered complete if all
 elements of that row are non-missing. To compare, \code{!vec_equal_na(x)} detects
