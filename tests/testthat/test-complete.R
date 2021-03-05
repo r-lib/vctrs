@@ -106,6 +106,14 @@ test_that("can have rcrd fields of all types", {
   expect_identical(vec_detect_complete(make_rcrd(as.raw(c(1, 1, 2, 2, 3)))), rep(TRUE, 5))
 })
 
+test_that("works with arrays", {
+  x <- array(c(1, 2, 3, NA), c(2, 2))
+  y <- array(c(1:3, NA, 5:8), c(2, 2, 2))
+
+  expect_identical(vec_detect_complete(x), c(TRUE, FALSE))
+  expect_identical(vec_detect_complete(y), c(TRUE, FALSE))
+})
+
 # vec_proxy_complete -----------------------------------------------------------
 
 test_that("generally returns equality proxy", {
