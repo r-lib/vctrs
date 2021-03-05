@@ -30,10 +30,6 @@ test_that("NA_real_ and NaN are both missing", {
   expect_identical(vec_detect_complete(data_frame(x = c(NA_real_, NaN))), c(FALSE, FALSE))
 })
 
-test_that("errors on non-data frame input", {
-  expect_error(vec_detect_complete(1), "must be a data frame")
-})
-
 test_that("works rowwise", {
   df <- data_frame(x = c(NA, 1, NA, 2), y = c(NA, NA, 2, 3))
   expect <- c(FALSE, FALSE, FALSE, TRUE)
