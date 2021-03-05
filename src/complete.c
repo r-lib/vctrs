@@ -4,18 +4,18 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP df_slice_complete(SEXP x);
+static SEXP vec_slice_complete(SEXP x);
 
 // [[ register() ]]
-SEXP vctrs_df_slice_complete(SEXP x) {
-  return df_slice_complete(x);
+SEXP vctrs_slice_complete(SEXP x) {
+  return vec_slice_complete(x);
 }
 
-static SEXP df_locate_complete(SEXP x);
+static SEXP vec_locate_complete(SEXP x);
 
 static
-SEXP df_slice_complete(SEXP x) {
-  SEXP loc = PROTECT(df_locate_complete(x));
+SEXP vec_slice_complete(SEXP x) {
+  SEXP loc = PROTECT(vec_locate_complete(x));
 
   // Skip `vec_as_location()` in `vec_slice()`
   SEXP out = vec_slice_impl(x, loc);
@@ -27,15 +27,15 @@ SEXP df_slice_complete(SEXP x) {
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_df_locate_complete(SEXP x) {
-  return df_locate_complete(x);
+SEXP vctrs_locate_complete(SEXP x) {
+  return vec_locate_complete(x);
 }
 
-static SEXP df_detect_complete(SEXP x);
+static SEXP vec_detect_complete(SEXP x);
 
 static
-SEXP df_locate_complete(SEXP x) {
-  SEXP where = PROTECT(df_detect_complete(x));
+SEXP vec_locate_complete(SEXP x) {
+  SEXP where = PROTECT(vec_detect_complete(x));
   SEXP out = r_lgl_which(where, false);
   UNPROTECT(1);
   return out;
@@ -44,14 +44,14 @@ SEXP df_locate_complete(SEXP x) {
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_df_detect_complete(SEXP x) {
-  return df_detect_complete(x);
+SEXP vctrs_detect_complete(SEXP x) {
+  return vec_detect_complete(x);
 }
 
 static inline void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out);
 
 static
-SEXP df_detect_complete(SEXP x) {
+SEXP vec_detect_complete(SEXP x) {
   if (!is_data_frame(x)) {
     r_abort("`x` must be a data frame.");
   }
@@ -138,7 +138,7 @@ void vec_detect_complete_col(SEXP x, R_len_t size, int* p_out) {
  * cols <- c(list(first), cols)
  * names(cols) <- paste0("a", 1:length(cols))
  * df <- new_data_frame(cols)
- * bench::mark(df_detect_complete(df), complete.cases(df))
+ * bench::mark(vec_detect_complete(df), complete.cases(df))
  * ```
  */
 
