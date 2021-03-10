@@ -3583,6 +3583,9 @@ void df_order_internal(SEXP x,
     int* p_o_col = p_order->p_data;
 
     col = VECTOR_ELT(x, i);
+    PROTECT_INDEX col_pi;
+    PROTECT_WITH_INDEX(col, &col_pi);
+
     type = vec_proxy_typeof(col);
 
     // If we are on the rerun pass, flip this back off so the
@@ -3594,7 +3597,8 @@ void df_order_internal(SEXP x,
     // Apply `string_key` and pre-sort unique characters once for
     // the whole column
     if (type == vctrs_type_character) {
-      col = PROTECT(string_key_invoke(col, string_key));
+      col = string_key_invoke(col, string_key);
+      REPROTECT(col, col_pi);
 
       const SEXP* p_col = STRING_PTR_RO(col);
 
@@ -3663,8 +3667,9 @@ void df_order_internal(SEXP x,
     // and unprotect result of applying `string_key`
     if (type == vctrs_type_character) {
       truelength_reset(p_truelength_info);
-      UNPROTECT(1);
     }
+
+    UNPROTECT(1);
   }
 }
 
