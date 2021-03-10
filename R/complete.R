@@ -7,7 +7,7 @@
 #'
 #' For data frames and matrices, a row is only considered complete if all
 #' elements of that row are non-missing. To compare, `!vec_equal_na(x)` detects
-#' rows that have at least one non-missing value.
+#' rows that are partially complete (they have at least one non-missing value).
 #'
 #' @details
 #' A [record][new_rcrd] type vector is considered complete if any field is
