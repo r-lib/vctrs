@@ -16,7 +16,7 @@ vec_restore(x, to, ..., n = NULL)
 
 \item{to}{The original vector to restore to.}
 
-\item{n}{\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\item{n}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 The total size to restore to. This is currently passed by
 \code{vec_slice()} to solve edge cases arising in data frame
 restoration. In most cases you don't need this information and
@@ -25,7 +25,7 @@ considered internal and experimental, it might change in the
 future.}
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{vec_proxy()} returns the data structure containing the values of a
 vector. This data structure is usually the vector itself. In this

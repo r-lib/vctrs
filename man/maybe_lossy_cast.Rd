@@ -64,7 +64,7 @@ to a stricter conversion scheme. The warning advises your users
 to wrap their code with \code{allow_lossy_cast()}.}
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 By default, lossy casts are an error. Use \code{allow_lossy_cast()} to
 silence these errors and continue with the partial results. In this

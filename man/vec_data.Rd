@@ -13,7 +13,7 @@ vec_data(x)
 The data underlying \code{x}, free from any attributes except the names.
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 Extract the data underlying an S3 vector object, i.e. the underlying
 (named) atomic vector, data frame, or list.

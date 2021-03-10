@@ -50,7 +50,7 @@ informative error.}
 type of a function input.}
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 Convert \code{i} to the base type expected by \code{\link[=vec_as_location]{vec_as_location()}} or
 \code{\link[=vec_as_location2]{vec_as_location2()}}. The values of the subscript type are
