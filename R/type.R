@@ -39,11 +39,13 @@
 #' See [internal-faq-ptype2-identity] for more information about
 #' identity values.
 #'
-#' For performance, when developing a new S3 class you might want to override
-#' the default behavior of `vec_ptype()`, which is to call `vec_slice(x, 0L)`.
-#' To do this, write a `vec_ptype()` S3 method for your class. The method should
-#' return a result equivalent to `vec_slice(x, 0L)`, but for many classes this
-#' is a static object.
+#' `vec_ptype()` is a _performance_ generic. It is not necessary to implement it
+#' because the default method will work for any vctrs type. However the default
+#' method builds around other vctrs primitives like `vec_slice()` which incurs
+#' performance costs. If your class has a static prototype, you might consider
+#' implementing a custom `vec_ptype()` method that returns a constant. This will
+#' improve the performance of your class in many cases ([common
+#' type][vec_ptype2] imputation in particular).
 #'
 #' Because it may contain unspecified vectors, the prototype returned
 #' by `vec_ptype()` is said to be __unfinalised__. Call
