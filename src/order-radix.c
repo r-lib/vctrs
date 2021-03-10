@@ -3560,7 +3560,14 @@ void df_order_internal(SEXP x,
 
   // Iterate over remaining columns by group chunk
   for (r_ssize i = 1; i < n_cols; ++i) {
-    col = VECTOR_ELT(x, i);
+    // Get the number of group chunks from previous column group info
+    struct group_info* p_group_info_pre = groups_current(p_group_infos);
+    r_ssize n_groups = p_group_info_pre->n_groups;
+
+    // If there were no ties, we are completely done
+    if (n_groups == size) {
+      break;
+    }
 
     if (!recycle_decreasing) {
       col_decreasing = p_decreasing[i];
@@ -3575,15 +3582,7 @@ void df_order_internal(SEXP x,
     // processed at least one column.
     int* p_o_col = p_order->p_data;
 
-    // Get the number of group chunks from previous column group info
-    struct group_info* p_group_info_pre = groups_current(p_group_infos);
-    r_ssize n_groups = p_group_info_pre->n_groups;
-
-    // If there were no ties, we are completely done
-    if (n_groups == size) {
-      break;
-    }
-
+    col = VECTOR_ELT(x, i);
     type = vec_proxy_typeof(col);
 
     // If we are on the rerun pass, flip this back off so the
