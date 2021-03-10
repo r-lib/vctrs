@@ -38,6 +38,17 @@ vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+
+  abbr <- vec_ptype_abbr_(x, prefix_named = prefix_named, suffix_shape = suffix_shape)
+
+  return(paste0(
+    if (prefix_named && !is.null(vec_names(x))) "named ",
+    abbr,
+    if (suffix_shape) vec_ptype_shape(x)
+  ))
+  UseMethod("vec_ptype_abbr")
+}
+vec_ptype_abbr_ <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   UseMethod("vec_ptype_abbr")
 }
 
@@ -61,15 +72,15 @@ vec_ptype_full.default <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
+vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
   } else if (is_list(x)) {
     named <- is_character(names(x))
     # Always print "named" even if !prefix_named, for compatibility
-    paste0(if (named) "named ", "list", vec_ptype_shape(x))
+    paste0(if (named && !prefix_named) "named ", "list")
   } else if (is_vector(x)) {
-    abbr <- switch(typeof(x),
+    switch(typeof(x),
       logical = "lgl",
       integer = "int",
       double = "dbl",
@@ -79,11 +90,6 @@ vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE, suffix_shape = 
       expression = "expr",
       raw = "raw",
       abbreviate(typeof(x))
-    )
-    paste0(
-      if (prefix_named && !is.null(x) && !is.null(vec_names(x))) "named ",
-      abbr,
-      if (suffix_shape) vec_ptype_shape(x)
     )
   } else {
     abort("Not a vector.")
