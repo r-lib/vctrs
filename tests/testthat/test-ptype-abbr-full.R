@@ -46,10 +46,10 @@ test_that("complex and factor as expected (#323)", {
 
 test_that("named lists are always tagged (#322)", {
   expect_identical(vec_ptype_abbr(list(x = 1, y = 2)), "named list")
-  expect_identical(vec_ptype_abbr(list(x = 1, y = 2), check_named = TRUE), "named list")
+  expect_identical(vec_ptype_abbr(list(x = 1, y = 2), prefix_named = TRUE), "named list")
 })
 
 test_that("named atomics are tagged optionally (#781)", {
-  expect_identical(vec_ptype_abbr(c(x = 1, y = 2), check_named = TRUE), "named dbl")
-  expect_identical(vec_ptype_abbr(c(x = 1L, y = 2L), check_named = TRUE), "named int")
+  expect_identical(vec_ptype_abbr(c(x = 1, y = 2), prefix_named = TRUE), "named dbl")
+  expect_identical(vec_ptype_abbr(c(x = 1L, y = 2L), prefix_named = TRUE), "named int")
 })

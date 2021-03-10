@@ -7,14 +7,14 @@
 \usage{
 vec_ptype_full(x, ...)
 
-vec_ptype_abbr(x, ..., check_named = FALSE, shape = TRUE)
+vec_ptype_abbr(x, ..., prefix_named = FALSE, shape = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{check_named}{Add a prefix for named vectors.}
+\item{prefix_named}{Add a prefix for named vectors.}
 
 \item{shape}{Include the shape of the vector.}
 }
