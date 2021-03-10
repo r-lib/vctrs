@@ -512,16 +512,23 @@ fields(x)
 field(x, "n")
 ```
 
-Notice that we can't `print()` or `str()` the new rational vector `x`:
+Notice that we can't `print()` or `str()` the new rational vector `x` yet. Printing causes an error:
 
 ```{r, error = TRUE}
 x
+
 str(x)
 ```
 
-This is because R doesn't yet know how to display our rational vector on the screen. Since there is no *one* base type for a record, there is also no suitable default to fall back on. If you want to look under the hood during development, you can always `unclass(x)`.
+This is because we haven't defined how our class can be printed from the underlying data. Note that if you want to look under the hood during development, you can always call `vec_data(x)`.
 
-We can teach R how to display rationals by creating a format method, using the field accessors:
+```{r}
+vec_data(x)
+
+str(vec_data(x))
+```
+
+It is generally best to define a formatting method early in the development of a class. The format method defines how to display the class so that it can be printed in the normal way:
 
 ```{r}
 format.vctrs_rational <- function(x, ...) {
