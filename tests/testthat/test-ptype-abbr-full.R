@@ -21,9 +21,9 @@ test_that("non objects default to type + shape", {
 })
 
 test_that("non objects can omit shape", {
-  expect_equal(vec_ptype_abbr(ones(10), shape = FALSE), "dbl")
-  expect_equal(vec_ptype_abbr(ones(0, 10), shape = FALSE), "dbl")
-  expect_equal(vec_ptype_abbr(ones(10, 0), shape = FALSE), "dbl")
+  expect_equal(vec_ptype_abbr(ones(10), suffix_shape = FALSE), "dbl")
+  expect_equal(vec_ptype_abbr(ones(0, 10), suffix_shape = FALSE), "dbl")
+  expect_equal(vec_ptype_abbr(ones(10, 0), suffix_shape = FALSE), "dbl")
 })
 
 test_that("objects default to first class", {

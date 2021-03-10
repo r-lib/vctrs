@@ -13,8 +13,8 @@
 #' characters where possible.
 #'
 #' @param x A vector.
-#' @param prefix_named Add a prefix for named vectors.
-#' @param shape Include the shape of the vector.
+#' @param prefix_named If `TRUE`, to add a prefix for named vectors.
+#' @param suffix_shape If `TRUE` (the default), append the shape of the vector.
 #' @inheritParams ellipsis::dots_empty
 #'
 #' @keywords internal
@@ -34,7 +34,7 @@ vec_ptype_full <- function(x, ...) {
 
 #' @export
 #' @rdname vec_ptype_full
-vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, shape = TRUE) {
+vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
@@ -61,7 +61,7 @@ vec_ptype_full.default <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE, shape = TRUE) {
+vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
   } else if (is_list(x)) {
@@ -83,7 +83,7 @@ vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE, shape = TRUE) {
     paste0(
       if (prefix_named && !is.null(x) && !is.null(vec_names(x))) "named ",
       abbr,
-      if (shape) vec_ptype_shape(x)
+      if (suffix_shape) vec_ptype_shape(x)
     )
   } else {
     abort("Not a vector.")
