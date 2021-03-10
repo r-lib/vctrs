@@ -42,7 +42,6 @@ enum vctrs_sortedness chr_sortedness(const SEXP* p_x,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
-                                     bool check_encoding,
                                      struct group_infos* p_group_infos);
 
 // -----------------------------------------------------------------------------
