@@ -4,6 +4,7 @@
 #include "ptype2.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "decl/ptype-decl.h"
 
 // Initialised at load time
 static SEXP syms_vec_ptype = NULL;
@@ -55,9 +56,6 @@ static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
     return vec_slice(x, R_NilValue);
   }
 }
-
-static inline SEXP vec_ptype_method(SEXP x);
-static inline SEXP vec_ptype_invoke(SEXP x, SEXP method);
 
 static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
   switch (class_type(x)) {
