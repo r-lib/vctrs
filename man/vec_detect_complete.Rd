@@ -19,7 +19,7 @@ considered complete if it is non-missing. For most vectors, this implies that
 
 For data frames and matrices, a row is only considered complete if all
 elements of that row are non-missing. To compare, \code{!vec_equal_na(x)} detects
-rows that have at least one non-missing value.
+rows that are partially complete (they have at least one non-missing value).
 }
 \details{
 A \link[=new_rcrd]{record} type vector is considered complete if any field is
