@@ -512,7 +512,23 @@ fields(x)
 field(x, "n")
 ```
 
-This allows us to create a format method:
+Notice that we can't `print()` or `str()` the new rational vector `x` yet. Printing causes an error:
+
+```{r, error = TRUE}
+x
+
+str(x)
+```
+
+This is because we haven't defined how our class can be printed from the underlying data. Note that if you want to look under the hood during development, you can always call `vec_data(x)`.
+
+```{r}
+vec_data(x)
+
+str(vec_data(x))
+```
+
+It is generally best to define a formatting method early in the development of a class. The format method defines how to display the class so that it can be printed in the normal way:
 
 ```{r}
 format.vctrs_rational <- function(x, ...) {
