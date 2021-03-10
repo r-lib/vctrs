@@ -22,12 +22,13 @@
 #' data analysis mistakes. To balance these trade-offs, you can supply a
 #' `chr_transform` to transform character vectors into an alternative
 #' representation that orders in the C-locale in a less surprising way. For
-#' example, providing [base::tolower()] as a string key will order the original
-#' string in a case-insensitive manner. Locale-aware ordering can be achieved
-#' by providing `stringi::stri_sort_key()` as a string key, setting the
+#' example, providing [base::tolower()] as a transform will order the original
+#' vector in a case-insensitive manner. Locale-aware ordering can be achieved
+#' by providing `stringi::stri_sort_key()` as a transform, setting the
 #' collation options as appropriate for your locale.
 #'
-#' Character vectors are always translated to UTF-8 before ordering.
+#' Character vectors are always translated to UTF-8 before ordering, and before
+#' any transform is applied by `chr_transform`.
 #'
 #' @param x A vector
 #' @param direction Direction to sort in.
