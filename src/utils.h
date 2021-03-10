@@ -631,7 +631,7 @@ extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
 extern SEXP syms_abort;
 extern SEXP syms_message;
-extern SEXP syms_string_key;
+extern SEXP syms_chr_transform;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

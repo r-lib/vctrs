@@ -183,15 +183,15 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP string_key);
+static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value, SEXP string_key) {
+SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
   SEXP decreasing = PROTECT(parse_direction(direction));
   SEXP na_last = PROTECT(parse_na_value(na_value));
-  string_key = PROTECT(as_string_key(string_key));
+  chr_transform = PROTECT(as_chr_transform(chr_transform));
 
-  SEXP out = vec_order(x, decreasing, na_last, string_key);
+  SEXP out = vec_order(x, decreasing, na_last, chr_transform);
 
   UNPROTECT(3);
   return out;
@@ -201,25 +201,25 @@ SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value, SEXP string_key) {
 static SEXP vec_order_impl(SEXP x,
                            SEXP decreasing,
                            SEXP na_last,
-                           SEXP string_key,
+                           SEXP chr_transform,
                            bool locations);
 
 static
-SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP string_key) {
-  return vec_order_impl(x, decreasing, na_last, string_key, false);
+SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform) {
+  return vec_order_impl(x, decreasing, na_last, chr_transform, false);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP string_key);
+static SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP string_key) {
+SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
   SEXP decreasing = PROTECT(parse_direction(direction));
   SEXP na_last = PROTECT(parse_na_value(na_value));
-  string_key = PROTECT(as_string_key(string_key));
+  chr_transform = PROTECT(as_chr_transform(chr_transform));
 
-  SEXP out = vec_order_locs(x, decreasing, na_last, string_key);
+  SEXP out = vec_order_locs(x, decreasing, na_last, chr_transform);
 
   UNPROTECT(3);
   return out;
@@ -227,8 +227,8 @@ SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP string_key) {
 
 
 static
-SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP string_key) {
-  return vec_order_impl(x, decreasing, na_last, string_key, true);
+SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform) {
+  return vec_order_impl(x, decreasing, na_last, chr_transform, true);
 }
 
 // -----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
 static void vec_order_switch(SEXP x,
                              SEXP decreasing,
                              SEXP na_last,
-                             SEXP string_key,
+                             SEXP chr_transform,
                              r_ssize size,
                              const enum vctrs_type type,
                              struct order* p_order,
@@ -265,7 +265,7 @@ static void vec_order_switch(SEXP x,
  * the locations in `x` corresponding to each key.
  */
 static
-SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP string_key, bool locations) {
+SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, bool locations) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
@@ -341,7 +341,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP string_key, bool
     proxy,
     decreasing,
     na_last,
-    string_key,
+    chr_transform,
     size,
     type,
     p_order,
@@ -428,7 +428,7 @@ SEXP vec_order_locs_impl(SEXP x,
 static void df_order(SEXP x,
                      SEXP decreasing,
                      SEXP na_last,
-                     SEXP string_key,
+                     SEXP chr_transform,
                      r_ssize size,
                      struct order* p_order,
                      struct lazy_raw* p_lazy_x_chunk,
@@ -442,7 +442,7 @@ static void df_order(SEXP x,
 static void vec_order_base_switch(SEXP x,
                                   bool decreasing,
                                   bool na_last,
-                                  SEXP string_key,
+                                  SEXP chr_transform,
                                   r_ssize size,
                                   const enum vctrs_type type,
                                   struct order* p_order,
@@ -458,7 +458,7 @@ static
 void vec_order_switch(SEXP x,
                       SEXP decreasing,
                       SEXP na_last,
-                      SEXP string_key,
+                      SEXP chr_transform,
                       r_ssize size,
                       const enum vctrs_type type,
                       struct order* p_order,
@@ -474,7 +474,7 @@ void vec_order_switch(SEXP x,
       x,
       decreasing,
       na_last,
-      string_key,
+      chr_transform,
       size,
       p_order,
       p_lazy_x_chunk,
@@ -512,7 +512,7 @@ void vec_order_switch(SEXP x,
     x,
     c_decreasing,
     c_na_last,
-    string_key,
+    chr_transform,
     size,
     type,
     p_order,
@@ -579,7 +579,7 @@ static void cpl_order(SEXP x,
 static void chr_order(SEXP x,
                       bool decreasing,
                       bool na_last,
-                      SEXP string_key,
+                      SEXP chr_transform,
                       r_ssize size,
                       struct order* p_order,
                       struct lazy_raw* p_lazy_x_chunk,
@@ -595,7 +595,7 @@ static
 void vec_order_base_switch(SEXP x,
                            bool decreasing,
                            bool na_last,
-                           SEXP string_key,
+                           SEXP chr_transform,
                            r_ssize size,
                            const enum vctrs_type type,
                            struct order* p_order,
@@ -680,7 +680,7 @@ void vec_order_base_switch(SEXP x,
       x,
       decreasing,
       na_last,
-      string_key,
+      chr_transform,
       size,
       p_order,
       p_lazy_x_chunk,
@@ -2688,7 +2688,7 @@ struct chr_order_info {
   SEXP x;
   bool decreasing;
   bool na_last;
-  SEXP string_key;
+  SEXP chr_transform;
   r_ssize size;
   struct order* p_order;
   struct lazy_raw* p_lazy_x_chunk;
@@ -2717,7 +2717,7 @@ static
 void chr_order(SEXP x,
                bool decreasing,
                bool na_last,
-               SEXP string_key,
+               SEXP chr_transform,
                r_ssize size,
                struct order* p_order,
                struct lazy_raw* p_lazy_x_chunk,
@@ -2731,7 +2731,7 @@ void chr_order(SEXP x,
     .x = x,
     .decreasing = decreasing,
     .na_last = na_last,
-    .string_key = string_key,
+    .chr_transform = chr_transform,
     .size = size,
     .p_order = p_order,
     .p_lazy_x_chunk = p_lazy_x_chunk,
@@ -2758,7 +2758,7 @@ void chr_order(SEXP x,
 static void chr_order_internal(SEXP x,
                                bool decreasing,
                                bool na_last,
-                               SEXP string_key,
+                               SEXP chr_transform,
                                r_ssize size,
                                struct order* p_order,
                                struct lazy_raw* p_lazy_x_chunk,
@@ -2777,7 +2777,7 @@ SEXP chr_order_exec(void* p_data) {
     p_info->x,
     p_info->decreasing,
     p_info->na_last,
-    p_info->string_key,
+    p_info->chr_transform,
     p_info->size,
     p_info->p_order,
     p_info->p_lazy_x_chunk,
@@ -2802,7 +2802,7 @@ static
 void chr_order_internal(SEXP x,
                         bool decreasing,
                         bool na_last,
-                        SEXP string_key,
+                        SEXP chr_transform,
                         r_ssize size,
                         struct order* p_order,
                         struct lazy_raw* p_lazy_x_chunk,
@@ -2812,7 +2812,7 @@ void chr_order_internal(SEXP x,
                         struct lazy_raw* p_lazy_counts,
                         struct group_infos* p_group_infos,
                         struct truelength_info* p_truelength_info) {
-  x = PROTECT(string_key_invoke(x, string_key));
+  x = PROTECT(chr_transform_invoke(x, chr_transform));
 
   const SEXP* p_x = STRING_PTR_RO(x);
 
@@ -3303,7 +3303,7 @@ struct df_order_info {
   SEXP x;
   SEXP decreasing;
   SEXP na_last;
-  SEXP string_key;
+  SEXP chr_transform;
   r_ssize size;
   struct order* p_order;
   struct lazy_raw* p_lazy_x_chunk;
@@ -3344,7 +3344,7 @@ static
 void df_order(SEXP x,
               SEXP decreasing,
               SEXP na_last,
-              SEXP string_key,
+              SEXP chr_transform,
               r_ssize size,
               struct order* p_order,
               struct lazy_raw* p_lazy_x_chunk,
@@ -3358,7 +3358,7 @@ void df_order(SEXP x,
     .x = x,
     .decreasing = decreasing,
     .na_last = na_last,
-    .string_key = string_key,
+    .chr_transform = chr_transform,
     .size = size,
     .p_order = p_order,
     .p_lazy_x_chunk = p_lazy_x_chunk,
@@ -3385,7 +3385,7 @@ void df_order(SEXP x,
 static void df_order_internal(SEXP x,
                               SEXP decreasing,
                               SEXP na_last,
-                              SEXP string_key,
+                              SEXP chr_transform,
                               r_ssize size,
                               struct order* p_order,
                               struct lazy_raw* p_lazy_x_chunk,
@@ -3404,7 +3404,7 @@ SEXP df_order_exec(void* p_data) {
     p_info->x,
     p_info->decreasing,
     p_info->na_last,
-    p_info->string_key,
+    p_info->chr_transform,
     p_info->size,
     p_info->p_order,
     p_info->p_lazy_x_chunk,
@@ -3477,7 +3477,7 @@ static
 void df_order_internal(SEXP x,
                        SEXP decreasing,
                        SEXP na_last,
-                       SEXP string_key,
+                       SEXP chr_transform,
                        r_ssize size,
                        struct order* p_order,
                        struct lazy_raw* p_lazy_x_chunk,
@@ -3540,7 +3540,7 @@ void df_order_internal(SEXP x,
     col,
     col_decreasing,
     col_na_last,
-    string_key,
+    chr_transform,
     size,
     type,
     p_order,
@@ -3594,10 +3594,10 @@ void df_order_internal(SEXP x,
       rerun_complex = rerun_complex ? false : true;
     }
 
-    // Apply `string_key` and pre-sort unique characters once for
+    // Apply `chr_transform` and pre-sort unique characters once for
     // the whole column
     if (type == vctrs_type_character) {
-      col = string_key_invoke(col, string_key);
+      col = chr_transform_invoke(col, chr_transform);
       REPROTECT(col, col_pi);
 
       const SEXP* p_col = STRING_PTR_RO(col);
@@ -3664,7 +3664,7 @@ void df_order_internal(SEXP x,
     }
 
     // Reset TRUELENGTHs between columns
-    // and unprotect result of applying `string_key`
+    // and unprotect result of applying `chr_transform`
     if (type == vctrs_type_character) {
       truelength_reset(p_truelength_info);
     }
@@ -4187,21 +4187,21 @@ int parse_direction_one(SEXP x) {
 // -----------------------------------------------------------------------------
 
 // [[ include("order-radix.h") ]]
-SEXP as_string_key(SEXP string_key) {
-  return string_key == r_null ? string_key : r_as_function(string_key, "string_key");
+SEXP as_chr_transform(SEXP chr_transform) {
+  return chr_transform == r_null ? chr_transform : r_as_function(chr_transform, "chr_transform");
 }
 
 // [[ include("order-radix.h") ]]
-SEXP string_key_invoke(SEXP x, SEXP string_key) {
-  if (string_key == r_null) {
+SEXP chr_transform_invoke(SEXP x, SEXP chr_transform) {
+  if (chr_transform == r_null) {
     return x;
   }
 
   // Don't use vctrs dispatch utils because we match argument positionally
-  SEXP call = PROTECT(Rf_lang2(syms_string_key, syms_x));
+  SEXP call = PROTECT(Rf_lang2(syms_chr_transform, syms_x));
 
   SEXP mask = PROTECT(r_new_environment(R_GlobalEnv));
-  Rf_defineVar(syms_string_key, string_key, mask);
+  Rf_defineVar(syms_chr_transform, chr_transform, mask);
   Rf_defineVar(syms_x, x, mask);
 
   SEXP out = PROTECT(Rf_eval(call, mask));
@@ -4209,7 +4209,7 @@ SEXP string_key_invoke(SEXP x, SEXP string_key) {
   if (vec_typeof(out) != vctrs_type_character) {
     Rf_errorcall(
       R_NilValue,
-      "`string_key` must return a character vector."
+      "`chr_transform` must return a character vector."
     );
   }
 
@@ -4219,7 +4219,7 @@ SEXP string_key_invoke(SEXP x, SEXP string_key) {
   if (x_size != out_size) {
     Rf_errorcall(
       R_NilValue,
-      "`string_key` must return a vector of the same length (%i, not %i).",
+      "`chr_transform` must return a vector of the same length (%i, not %i).",
       x_size,
       out_size
     );

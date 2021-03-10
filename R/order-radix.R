@@ -20,7 +20,7 @@
 #' the C-locale. While sorting with the C-locale can be useful for
 #' algorithmic efficiency, in many real world uses it can be the cause of
 #' data analysis mistakes. To balance these trade-offs, you can supply a
-#' `string_key` to transform character vectors into an alternative
+#' `chr_transform` to transform character vectors into an alternative
 #' representation that orders in the C-locale in a less surprising way. For
 #' example, providing [base::tolower()] as a string key will order the original
 #' string in a case-insensitive manner. Locale-aware ordering can be achieved
@@ -42,14 +42,15 @@
 #'   - For data frames, a length `1` or `ncol(x)` character vector containing
 #'     only `"largest"` or `"smallest"`, specifying how `NA`s should be treated
 #'     in each column.
-#' @param string_key Transformation of character vectors for sorting in
+#' @param chr_transform Transformation of character vectors for sorting in
 #'   alternate locales.
 #'   - If `NULL`, no transformation is done.
 #'   - Otherwise, this must be a function of one argument. The function will be
 #'     invoked with `x`, if it is a character vector, after it has been
 #'     translated to UTF-8, and should return a character vector with the same
 #'     length as `x`, also encoded as UTF-8.
-#'   - For data frames, `string_key` will be applied to all character columns.
+#'   - For data frames, `chr_transform` will be applied to all character
+#'     columns.
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
@@ -87,15 +88,15 @@
 #' y <- c("B", "A", "a")
 #' vec_sort(y)
 #'
-#' # To order in a case-insensitive manner, provide a `string_key` that
+#' # To order in a case-insensitive manner, provide a `chr_transform` that
 #' # transforms the strings to all lowercase
-#' vec_sort(y, string_key = tolower)
+#' vec_sort(y, chr_transform = tolower)
 #' @noRd
 vec_order_radix <- function(x,
                             direction = "asc",
                             na_value = "largest",
-                            string_key = NULL) {
-  .Call(vctrs_order, x, direction, na_value, string_key)
+                            chr_transform = NULL) {
+  .Call(vctrs_order, x, direction, na_value, chr_transform)
 }
 
 #' Identify ordered groups
@@ -133,6 +134,6 @@ vec_order_radix <- function(x,
 vec_order_locs <- function(x,
                            direction = "asc",
                            na_value = "largest",
-                           string_key = NULL) {
-  .Call(vctrs_order_locs, x, direction, na_value, string_key)
+                           chr_transform = NULL) {
+  .Call(vctrs_order_locs, x, direction, na_value, chr_transform)
 }

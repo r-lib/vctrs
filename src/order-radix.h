@@ -20,8 +20,8 @@
 SEXP parse_na_value(SEXP na_value);
 SEXP parse_direction(SEXP direction);
 
-SEXP as_string_key(SEXP string_key);
-SEXP string_key_invoke(SEXP x, SEXP string_key);
+SEXP as_chr_transform(SEXP chr_transform);
+SEXP chr_transform_invoke(SEXP x, SEXP chr_transform);
 
 // -----------------------------------------------------------------------------
 
