@@ -47,10 +47,6 @@ test_that("subsetting works", {
   expect_identical(unspecified(4)[2:3], unspecified(2))
 })
 
-test_that("subsetting works", {
-  expect_identical(unspecified(4)[2:3], unspecified(2))
-})
-
 test_that("has useful print method", {
   expect_known_output(unspecified(), print = TRUE, file = test_path("test-type-unspecified.txt"))
 })
@@ -112,4 +108,3 @@ test_that("monitoring test - casting unspecified input to NA unspecified results
   expect_identical(vec_cast(unspecified(1), NA), NA)
   expect_identical(vec_cast(NA, NA), NA)
 })
-

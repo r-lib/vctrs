@@ -11,7 +11,7 @@ test_that("vec_recycle recycles size 1 to any other size", {
   expect_equal(vec_recycle(x, 2), x2)
 })
 
-test_that("incompatible lengths get error messages", {
+test_that("vec_recycle(): incompatible lengths get error messages", {
   x2 <- c(1, 2)
 
   expect_error(vec_recycle(x2, 1), class = "vctrs_error_recycle_incompatible_size")
@@ -71,7 +71,7 @@ test_that("vec_recycle_common recycles size 1 to any other size", {
   expect_equal(vec_recycle_common(x1, x0), list(x0, x0))
 })
 
-test_that("incompatible lengths get error messages", {
+test_that("vec_recycle_common(): incompatible lengths get error messages", {
   expect_error(vec_recycle_common(1:2, 1:3), class = "vctrs_error_incompatible_size")
   expect_error(vec_recycle_common(1:3, 1:2), class = "vctrs_error_incompatible_size")
   expect_error(vec_recycle_common(numeric(), 1:2), class = "vctrs_error_incompatible_size")

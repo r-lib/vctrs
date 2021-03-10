@@ -46,7 +46,7 @@ test_that("data frames are split rowwise", {
   expect_equal(vec_chop(x), result)
 })
 
-test_that("data frame row names are kept", {
+test_that("vec_chop() keeps data frame row names", {
   x <- data_frame(x = 1:2, y = c("a", "b"))
   rownames(x) <- c("r1", "r2")
   result <- lapply(vec_chop(x), rownames)
@@ -405,7 +405,7 @@ test_that("not all inputs have to be named", {
   expect_named(vec_unchop(x, indices), c("", "a", "c"))
 })
 
-test_that("data frame row names are kept", {
+test_that("vec_unchop() keeps data frame row names", {
   df1 <- data.frame(x = 1:2, row.names = c("r1", "r2"))
   df2 <- data.frame(x = 3:4, row.names = c("r3", "r4"))
 

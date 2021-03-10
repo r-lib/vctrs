@@ -6,12 +6,12 @@ test_that("empty inputs return an empty data frame", {
   expect_equal(vec_rbind(NULL, NULL), data_frame())
 })
 
-test_that("NULL is idempotent", {
+test_that("vec_rbind(): NULL is idempotent", {
   df <- data_frame(x = 1)
   expect_equal(vec_rbind(df, NULL), df)
 })
 
-test_that("output is tibble if any input is tibble", {
+test_that("vec_rbind() output is tibble if any input is tibble", {
   df <- data_frame(x = 1)
   dt <- tibble::tibble(x = 1)
 
@@ -77,6 +77,9 @@ test_that("can bind data.frame columns", {
 })
 
 test_that("can rbind unspecified vectors", {
+  expect_identical(vec_rbind(NA), data_frame(...1 = NA))
+  expect_identical(vec_rbind(NA, NA), data_frame(...1 = lgl(NA, NA)))
+
   df <- data.frame(x = 1)
   expect_identical(vec_rbind(NA, df), data.frame(x = c(NA, 1)))
   expect_identical(vec_rbind(df, NA), data.frame(x = c(1, NA)))
@@ -159,11 +162,6 @@ test_that("can rbind table objects (#913)", {
 test_that("can rbind missing vectors", {
   expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
   expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
-})
-
-test_that("can rbind unspecified vectors", {
-  expect_identical(vec_rbind(NA), data_frame(...1 = NA))
-  expect_identical(vec_rbind(NA, NA), data_frame(...1 = lgl(NA, NA)))
 })
 
 test_that("vec_rbind() respects size invariants (#286)", {
@@ -380,7 +378,7 @@ test_that("number of rows is preserved with zero column data frames (#1281)", {
   expect_size(vec_cbind(df, df), 2L)
 })
 
-test_that("NULL is idempotent", {
+test_that("vec_cbind(): NULL is idempotent", {
   df <- data_frame(x = 1)
   expect_equal(vec_cbind(df, NULL), df)
 })
@@ -432,7 +430,7 @@ test_that("rows recycled to longest", {
   )
 })
 
-test_that("output is tibble if any input is tibble", {
+test_that("vec_cbind() output is tibble if any input is tibble", {
   df <- data.frame(x = 1)
   dt <- tibble::tibble(y = 2)
 

@@ -29,7 +29,7 @@ test_that("size is not considered in the ptype", {
   expect_identical(vec_ptype2(x, y), zap_dimnames(new_table()))
 })
 
-test_that("can broadcast table shapes", {
+test_that("vec_ptype2() can broadcast table shapes", {
   x <- new_table(dim = c(0L, 1L))
   y <- new_table(dim = c(0L, 2L))
 
@@ -55,7 +55,7 @@ test_that("errors on non-broadcastable dimensions", {
   expect_error(vec_ptype2(x, y), class = "vctrs_error_incompatible_type")
 })
 
-test_that("errors on non-tables", {
+test_that("vec_ptype2() errors on non-tables", {
   expect_error(vec_ptype2(new_table(), 1), class = "vctrs_error_incompatible_type")
   expect_error(vec_ptype2(new_table(), 1L), class = "vctrs_error_incompatible_type")
   expect_error(vec_ptype2(new_table(), "1"), class = "vctrs_error_incompatible_type")
@@ -99,7 +99,7 @@ test_that("can cast to an identically shaped table", {
   expect_identical(vec_cast(y, y), y)
 })
 
-test_that("can broadcast table shapes", {
+test_that("vec_cast() can broadcast table shapes", {
   # We test only the dim here and not the class because on R 3.2
   # the `[.table` method did not exist and `shape_broadcast()`
   # gives back a matrix, not a table.
@@ -129,7 +129,7 @@ test_that("cannot decrease dimensionality", {
   expect_error(vec_cast(x, y), "decrease dimensions", class = "vctrs_error_incompatible_type")
 })
 
-test_that("errors on non-tables", {
+test_that("vec_cast() errors on non-tables", {
   expect_error(vec_cast(new_table(), 1), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(new_table(), 1L), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(new_table(), "1"), class = "vctrs_error_incompatible_type")
