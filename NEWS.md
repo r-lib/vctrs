@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `vec_detect_complete()`, inspired by `stats::complete.cases()`. For most
+  vectors, this is identical to `!vec_equal_na()`. For data frames and
+  matrices, this detects rows that only contain non-missing values.
+  
 * `vec_order()` can now order complex vectors (#1330).
 
 * Removed dependency on digest in favor of `rlang::hash()`.
