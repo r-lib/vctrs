@@ -13,8 +13,12 @@
 #' characters where possible.
 #'
 #' @param x A vector.
-#' @param prefix_named If `TRUE`, to add a prefix for named vectors.
-#' @param suffix_shape If `TRUE` (the default), append the shape of the vector.
+#' @param prefix_named
+#'   If `TRUE`, to add a prefix for named vectors.
+#'   This argument is handled by the generic and will not be passed on to methods.
+#' @param suffix_shape
+#'   If `TRUE` (the default), append the shape of the vector.
+#'   This argument is handled by the generic and will not be passed on to methods.
 #' @inheritParams ellipsis::dots_empty
 #'
 #' @keywords internal
@@ -39,16 +43,16 @@ vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
     ellipsis::check_dots_empty()
   }
 
-  abbr <- vec_ptype_abbr_(x, prefix_named = prefix_named, suffix_shape = suffix_shape)
+  abbr <- vec_ptype_abbr_dispatch(x)
 
   return(paste0(
-    if (prefix_named && !is.null(vec_names(x))) "named ",
+    if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) "named ",
     abbr,
     if (suffix_shape) vec_ptype_shape(x)
   ))
   UseMethod("vec_ptype_abbr")
 }
-vec_ptype_abbr_ <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
+vec_ptype_abbr_dispatch <- function(x, ...) {
   UseMethod("vec_ptype_abbr")
 }
 
@@ -72,15 +76,12 @@ vec_ptype_full.default <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.default <- function(x, ..., prefix_named = FALSE) {
+vec_ptype_abbr.default <- function(x, ...) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
-  } else if (is_list(x)) {
-    named <- is_character(names(x))
-    # Always print "named" even if !prefix_named, for compatibility
-    paste0(if (named && !prefix_named) "named ", "list")
   } else if (is_vector(x)) {
     switch(typeof(x),
+      list = "list",
       logical = "lgl",
       integer = "int",
       double = "dbl",

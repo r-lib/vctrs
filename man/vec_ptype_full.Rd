@@ -7,16 +7,18 @@
 \usage{
 vec_ptype_full(x, ...)
 
-vec_ptype_abbr(x, ..., prefix_named = FALSE, shape = TRUE)
+vec_ptype_abbr(x, ..., prefix_named = FALSE, suffix_shape = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{prefix_named}{Add a prefix for named vectors.}
+\item{prefix_named}{If \code{TRUE}, to add a prefix for named vectors.
+This argument is handled by the generic and will not be passed on to methods.}
 
-\item{shape}{Include the shape of the vector.}
+\item{suffix_shape}{If \code{TRUE} (the default), append the shape of the vector.
+This argument is handled by the generic and will not be passed on to methods.}
 }
 \value{
 A string.
