@@ -857,7 +857,7 @@ test_that("`string_key` works with data frame columns and is applied to all stri
 
 test_that("`string_key` is validated", {
   expect_error(vec_order_radix("x", string_key = 1), "Can't convert `string_key` to a function")
-  expect_error(vec_order_radix("x", string_key = ~c("y", "z")), "length 1, not 2")
+  expect_error(vec_order_radix("x", string_key = ~c("y", "z")), "1, not 2")
   expect_error(vec_order_radix("x", string_key = ~1), "character vector")
   expect_error(vec_order_radix("x", string_key = function() {"y"}))
 })

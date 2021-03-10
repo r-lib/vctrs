@@ -4209,7 +4209,7 @@ SEXP string_key_invoke(SEXP x, SEXP string_key) {
   if (vec_typeof(out) != vctrs_type_character) {
     Rf_errorcall(
       R_NilValue,
-      "Applying `string_key` must result in a character vector."
+      "`string_key` must return a character vector."
     );
   }
 
@@ -4219,7 +4219,7 @@ SEXP string_key_invoke(SEXP x, SEXP string_key) {
   if (x_size != out_size) {
     Rf_errorcall(
       R_NilValue,
-      "Applying `string_key` must result in a vector with length %i, not %i.",
+      "`string_key` must return a vector of the same length (%i, not %i).",
       x_size,
       out_size
     );
