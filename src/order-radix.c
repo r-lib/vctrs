@@ -19,6 +19,7 @@
 #include "order-groups.h"
 #include "order-truelength.h"
 #include "order-sortedness.h"
+#include "order-transform.h"
 
 // -----------------------------------------------------------------------------
 
@@ -183,37 +184,41 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last);
+static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value) {
+SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
   SEXP decreasing = PROTECT(parse_direction(direction));
   SEXP na_last = PROTECT(parse_na_value(na_value));
 
-  SEXP out = vec_order(x, decreasing, na_last);
+  SEXP out = vec_order(x, decreasing, na_last, chr_transform);
 
   UNPROTECT(2);
   return out;
 }
 
 
-static SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations);
+static SEXP vec_order_impl(SEXP x,
+                           SEXP decreasing,
+                           SEXP na_last,
+                           SEXP chr_transform,
+                           bool locations);
 
 static
-SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last) {
-  return vec_order_impl(x, decreasing, na_last, false);
+SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform) {
+  return vec_order_impl(x, decreasing, na_last, chr_transform, false);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last);
+static SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value) {
+SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
   SEXP decreasing = PROTECT(parse_direction(direction));
   SEXP na_last = PROTECT(parse_na_value(na_value));
 
-  SEXP out = vec_order_locs(x, decreasing, na_last);
+  SEXP out = vec_order_locs(x, decreasing, na_last, chr_transform);
 
   UNPROTECT(2);
   return out;
@@ -221,8 +226,8 @@ SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value) {
 
 
 static
-SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last) {
-  return vec_order_impl(x, decreasing, na_last, true);
+SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform) {
+  return vec_order_impl(x, decreasing, na_last, chr_transform, true);
 }
 
 // -----------------------------------------------------------------------------
@@ -258,7 +263,7 @@ static void vec_order_switch(SEXP x,
  * the locations in `x` corresponding to each key.
  */
 static
-SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
+SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, bool locations) {
   int n_prot = 0;
   int* p_n_prot = &n_prot;
 
@@ -269,6 +274,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, bool locations) {
 
   SEXP proxy = PROTECT_N(vec_proxy_order(x), p_n_prot);
   proxy = PROTECT_N(vec_normalize_encoding(proxy), p_n_prot);
+  proxy = PROTECT_N(proxy_chr_transform(proxy, chr_transform), p_n_prot);
 
   r_ssize size = vec_size(proxy);
   const enum vctrs_type type = vec_proxy_typeof(proxy);
@@ -3526,7 +3532,14 @@ void df_order_internal(SEXP x,
 
   // Iterate over remaining columns by group chunk
   for (r_ssize i = 1; i < n_cols; ++i) {
-    col = VECTOR_ELT(x, i);
+    // Get the number of group chunks from previous column group info
+    struct group_info* p_group_info_pre = groups_current(p_group_infos);
+    r_ssize n_groups = p_group_info_pre->n_groups;
+
+    // If there were no ties, we are completely done
+    if (n_groups == size) {
+      break;
+    }
 
     if (!recycle_decreasing) {
       col_decreasing = p_decreasing[i];
@@ -3541,15 +3554,7 @@ void df_order_internal(SEXP x,
     // processed at least one column.
     int* p_o_col = p_order->p_data;
 
-    // Get the number of group chunks from previous column group info
-    struct group_info* p_group_info_pre = groups_current(p_group_infos);
-    r_ssize n_groups = p_group_info_pre->n_groups;
-
-    // If there were no ties, we are completely done
-    if (n_groups == size) {
-      break;
-    }
-
+    col = VECTOR_ELT(x, i);
     type = vec_proxy_typeof(col);
 
     // If we are on the rerun pass, flip this back off so the
@@ -3558,7 +3563,7 @@ void df_order_internal(SEXP x,
       rerun_complex = rerun_complex ? false : true;
     }
 
-    // Pre sort unique characters once for the whole column
+    // Pre-sort unique characters once for the whole column
     if (type == vctrs_type_character) {
       const SEXP* p_col = STRING_PTR_RO(col);
 

@@ -1835,6 +1835,7 @@ SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
 SEXP syms_abort = NULL;
 SEXP syms_message = NULL;
+SEXP syms_chr_transform = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -2110,6 +2111,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_fallback_class = Rf_install("fallback_class");
   syms_abort = Rf_install("abort");
   syms_message = Rf_install("message");
+  syms_chr_transform = Rf_install("chr_transform");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
