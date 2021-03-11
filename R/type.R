@@ -39,6 +39,14 @@
 #' See [internal-faq-ptype2-identity] for more information about
 #' identity values.
 #'
+#' `vec_ptype()` is a _performance_ generic. It is not necessary to implement it
+#' because the default method will work for any vctrs type. However the default
+#' method builds around other vctrs primitives like `vec_slice()` which incurs
+#' performance costs. If your class has a static prototype, you might consider
+#' implementing a custom `vec_ptype()` method that returns a constant. This will
+#' improve the performance of your class in many cases ([common
+#' type][vec_ptype2] imputation in particular).
+#'
 #' Because it may contain unspecified vectors, the prototype returned
 #' by `vec_ptype()` is said to be __unfinalised__. Call
 #' [vec_ptype_finalise()] to finalise it. Commonly you will need the
@@ -94,7 +102,8 @@ vec_ptype <- function(x, ..., x_arg = "") {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
-  .Call(vctrs_ptype, x, x_arg)
+  return(.Call(vctrs_ptype, x, x_arg))
+  UseMethod("vec_ptype")
 }
 
 #' @export

@@ -190,6 +190,13 @@ test_that("the type of a classed data frame with an unspecified column retains u
   expect_identical(vec_ptype(df2), expect)
 })
 
+test_that("vec_ptype() methods can be written", {
+  local_methods(
+    vec_ptype.vctrs_foobar = function(x, ...) "dispatch"
+  )
+  expect_identical(vec_ptype(foobar()), "dispatch")
+})
+
 test_that("vec_ptype_finalise() works with NULL", {
   expect_identical(vec_ptype_finalise(NULL), NULL)
 })
