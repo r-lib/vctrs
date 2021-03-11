@@ -52,6 +52,10 @@
 #'     length as `x`, also encoded as UTF-8.
 #'   - For data frames, `chr_transform` will be applied to all character
 #'     columns.
+#'
+#'   Common transformation functions include: `tolower()` for case-insensitive
+#'   ordering and `stringi::str_sort_key()` for locale-aware ordering. See the
+#'   Details section for more information.
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
