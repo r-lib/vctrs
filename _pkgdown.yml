@@ -59,6 +59,7 @@ reference:
 - title: Equality and ordering
   contents:
   - vec_equal
+  - vec_detect_complete
   - vec_compare
 
 - title: Sorting
@@ -94,7 +95,6 @@ reference:
   - df_cast
   - tib_ptype2
   - tib_cast
-  - df_detect_complete
 
 - title: User tools
   contents:

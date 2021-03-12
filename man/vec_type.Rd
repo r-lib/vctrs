@@ -16,7 +16,7 @@ vec_type2(x, y, ...)
 \item{x, y, ..., .ptype}{Arguments for deprecated functions.}
 }
 \description{
-\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 These functions have been renamed:
 \itemize{

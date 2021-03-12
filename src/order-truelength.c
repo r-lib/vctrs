@@ -46,8 +46,6 @@ struct truelength_info* new_truelength_info(r_ssize max_size_alloc) {
 
   p_truelength_info->max_string_size = 0;
 
-  p_truelength_info->reencode = false;
-
   UNPROTECT(1);
   return p_truelength_info;
 }
@@ -74,7 +72,6 @@ void truelength_reset(struct truelength_info* p_truelength_info) {
   // Also reset vector specific details
   p_truelength_info->size_used = 0;
   p_truelength_info->max_string_size = 0;
-  p_truelength_info->reencode = false;
 }
 
 // -----------------------------------------------------------------------------

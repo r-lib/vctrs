@@ -4,8 +4,11 @@
 #include "ptype2.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "decl/ptype-decl.h"
 
 // Initialised at load time
+static SEXP syms_vec_ptype = NULL;
+
 static SEXP syms_vec_ptype_finalise_dispatch = NULL;
 static SEXP fns_vec_ptype_finalise_dispatch = NULL;
 
@@ -53,6 +56,7 @@ static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
     return vec_slice(x, R_NilValue);
   }
 }
+
 static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:
@@ -75,8 +79,32 @@ static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
     return x;
   }
 
-  vec_assert(x, x_arg);
-  return vec_slice(x, R_NilValue);
+  SEXP method = PROTECT(vec_ptype_method(x));
+
+  SEXP out;
+
+  if (method == r_null) {
+    vec_assert(x, x_arg);
+    out = vec_slice(x, r_null);
+  } else {
+    out = vec_ptype_invoke(x, method);
+  }
+
+  UNPROTECT(1);
+  return out;
+}
+
+static inline
+SEXP vec_ptype_method(SEXP x) {
+  SEXP cls = PROTECT(s3_get_class(x));
+  SEXP method = s3_class_find_method("vec_ptype", cls, vctrs_method_table);
+  UNPROTECT(1);
+  return method;
+}
+
+static inline
+SEXP vec_ptype_invoke(SEXP x, SEXP method) {
+  return vctrs_dispatch1(syms_vec_ptype, method, syms_x, x);
 }
 
 SEXP df_ptype(SEXP x, bool bare) {
@@ -270,6 +298,8 @@ static SEXP vctrs_type2_common(SEXP current,
 
 
 void vctrs_init_type(SEXP ns) {
+  syms_vec_ptype = Rf_install("vec_ptype");
+
   syms_vec_ptype_finalise_dispatch = Rf_install("vec_ptype_finalise_dispatch");
   fns_vec_ptype_finalise_dispatch = Rf_findVar(syms_vec_ptype_finalise_dispatch, ns);
 }

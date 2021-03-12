@@ -6,6 +6,15 @@ test_that("can request NAs sorted first", {
   expect_equal(vec_order(c(1, NA), "desc", "smallest"), 1:2)
 })
 
+test_that("can order complex vectors", {
+  x <- complex(real = c(1, 2, 2, 3, 3), imaginary = c(5, 4, 3, 2, NA))
+
+  expect_equal(vec_order(x, direction = "asc", na_value = "largest"), c(1, 3, 2, 4, 5))
+  expect_equal(vec_order(x, direction = "desc", na_value = "largest"), rev(c(1, 3, 2, 4, 5)))
+  expect_equal(vec_order(x, direction = "asc", na_value = "smallest"), c(5, 1, 3, 2, 4))
+  expect_equal(vec_order(x, direction = "desc", na_value = "smallest"), rev(c(5, 1, 3, 2, 4)))
+})
+
 test_that("can sort data frames", {
   df <- data.frame(x = c(1, 2, 1), y = c(1, 2, 2))
 

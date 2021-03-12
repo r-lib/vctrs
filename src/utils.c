@@ -419,35 +419,6 @@ SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size) {
 #undef RESIZE
 #undef RESIZE_BARRIER
 
-// [[ include("utils.h") ]]
-bool p_chr_any_reencode(const SEXP* p_x, r_ssize size) {
-  for (r_ssize i = 0; i < size; ++i) {
-    SEXP elt = p_x[i];
-
-    if (CHAR_NEEDS_REENCODE(elt)) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// [[ include("utils.h") ]]
-void p_chr_copy_with_reencode(const SEXP* p_x, SEXP x_result, r_ssize size) {
-  const void* vmax = vmaxget();
-
-  for (r_ssize i = 0; i < size; ++i) {
-    SEXP elt = p_x[i];
-
-    if (CHAR_NEEDS_REENCODE(elt)) {
-      SET_STRING_ELT(x_result, i, CHAR_REENCODE(elt));
-    } else {
-      SET_STRING_ELT(x_result, i, elt);
-    }
-  }
-
-  vmaxset(vmax);
-}
 
 inline void never_reached(const char* fn) {
   Rf_error("Internal error in `%s()`: Reached the unreachable.", fn);
@@ -1864,6 +1835,7 @@ SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
 SEXP syms_abort = NULL;
 SEXP syms_message = NULL;
+SEXP syms_chr_transform = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -2139,6 +2111,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_fallback_class = Rf_install("fallback_class");
   syms_abort = Rf_install("abort");
   syms_message = Rf_install("message");
+  syms_chr_transform = Rf_install("chr_transform");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

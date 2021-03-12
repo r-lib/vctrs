@@ -14,7 +14,7 @@ new_vctr(.data, ..., class = character(), inherit_base_type = NULL)
 
 \item{class}{Name of subclass.}
 
-\item{inherit_base_type}{\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\item{inherit_base_type}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 A single logical, or \code{NULL}. Does this class extend the base type of
 \code{.data}? i.e. does the resulting object extend the behaviour of the
 underlying type? Defaults to \code{FALSE} for all types except lists, which

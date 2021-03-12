@@ -1,5 +1,16 @@
 # vctrs (development version)
 
+* `vec_ptype()` is now an optional _performance_ generic. It is not necessary
+  to implement, but if your class has a static prototype, you might consider
+  implementing a custom `vec_ptype()` method that returns a constant to
+  improve performance in some cases (such as common type imputation).
+  
+* New `vec_detect_complete()`, inspired by `stats::complete.cases()`. For most
+  vectors, this is identical to `!vec_equal_na()`. For data frames and
+  matrices, this detects rows that only contain non-missing values.
+  
+* `vec_order()` can now order complex vectors (#1330).
+
 * Removed dependency on digest in favor of `rlang::hash()`.
 
 * Fixed an issue where `vctrs_rcrd` objects were not being proxied correctly

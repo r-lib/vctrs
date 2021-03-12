@@ -21,7 +21,7 @@ not used. The default value of \code{NULL} will result in an error
 if \code{i} is a character vector.}
 }
 \description{
-\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 \code{vec_as_index()} has been renamed to \code{\link[=vec_as_location]{vec_as_location()}} and is
 deprecated as of vctrs 0.2.2.

@@ -34,7 +34,7 @@ Note that when using \code{vec_group_loc()} for complex types, the default
 into a tibble to better understand the output.
 }
 \description{
-\ifelse{html}{\out{<a href='https://www.tidyverse.org/lifecycle/#experimental'><img src='figures/lifecycle-experimental.svg' alt='Experimental lifecycle'></a>}}{\strong{Experimental}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 \itemize{
 \item \code{vec_group_id()} returns an identifier for the group that each element of
 \code{x} falls in, constructed in the order that they appear. The number of

@@ -66,7 +66,7 @@ order_proxy <- function(proxy, direction = "asc", na_value = "largest") {
       .x
     })
     exec("order", !!!args, decreasing = decreasing, na.last = na.last)
-  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy)) {
+  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy) || is.complex(proxy)) {
     if (is.object(proxy)) {
       proxy <- unstructure(proxy)
     }

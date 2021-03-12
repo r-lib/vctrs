@@ -19,9 +19,16 @@
 #' unless `base::order(method = "radix")` is explicitly set, which also uses
 #' the C-locale. While sorting with the C-locale can be useful for
 #' algorithmic efficiency, in many real world uses it can be the cause of
-#' data analysis mistakes.
+#' data analysis mistakes. To balance these trade-offs, you can supply a
+#' `chr_transform` to transform character vectors into an alternative
+#' representation that orders in the C-locale in a less surprising way. For
+#' example, providing [base::tolower()] as a transform will order the original
+#' vector in a case-insensitive manner. Locale-aware ordering can be achieved
+#' by providing `stringi::stri_sort_key()` as a transform, setting the
+#' collation options as appropriate for your locale.
 #'
-#' Character vectors are always translated to UTF-8 before ordering.
+#' Character vectors are always translated to UTF-8 before ordering, and before
+#' any transform is applied by `chr_transform`.
 #'
 #' @param x A vector
 #' @param direction Direction to sort in.
@@ -36,6 +43,19 @@
 #'   - For data frames, a length `1` or `ncol(x)` character vector containing
 #'     only `"largest"` or `"smallest"`, specifying how `NA`s should be treated
 #'     in each column.
+#' @param chr_transform Transformation of character vectors for sorting in
+#'   alternate locales.
+#'   - If `NULL`, no transformation is done.
+#'   - Otherwise, this must be a function of one argument. The function will be
+#'     invoked with `x`, if it is a character vector, after it has been
+#'     translated to UTF-8, and should return a character vector with the same
+#'     length as `x`, also encoded as UTF-8.
+#'   - For data frames, `chr_transform` will be applied to all character
+#'     columns.
+#'
+#'   Common transformation functions include: `tolower()` for case-insensitive
+#'   ordering and `stringi::str_sort_key()` for locale-aware ordering. See the
+#'   Details section for more information.
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
@@ -67,9 +87,21 @@
 #'   direction = c("desc", "asc"),
 #'   na_value = c("largest", "smallest")
 #' )
+#'
+#' # Character vectors are ordered in the C locale, which orders capital letters
+#' # below lowercase ones
+#' y <- c("B", "A", "a")
+#' vec_sort(y)
+#'
+#' # To order in a case-insensitive manner, provide a `chr_transform` that
+#' # transforms the strings to all lowercase
+#' vec_sort(y, chr_transform = tolower)
 #' @noRd
-vec_order_radix <- function(x, direction = "asc", na_value = "largest") {
-  .Call(vctrs_order, x, direction, na_value)
+vec_order_radix <- function(x,
+                            direction = "asc",
+                            na_value = "largest",
+                            chr_transform = NULL) {
+  .Call(vctrs_order, x, direction, na_value, chr_transform)
 }
 
 #' Identify ordered groups
@@ -104,6 +136,9 @@ vec_order_radix <- function(x, direction = "asc", na_value = "largest") {
 #'
 #' vec_group_loc(df)
 #' @noRd
-vec_order_locs <- function(x, direction = "asc", na_value = "largest") {
-  .Call(vctrs_order_locs, x, direction, na_value)
+vec_order_locs <- function(x,
+                           direction = "asc",
+                           na_value = "largest",
+                           chr_transform = NULL) {
+  .Call(vctrs_order_locs, x, direction, na_value, chr_transform)
 }
