@@ -53,3 +53,17 @@ test_that("named atomics are tagged optionally (#781)", {
   expect_identical(vec_ptype_abbr(c(x = 1, y = 2), prefix_named = TRUE), "named dbl")
   expect_identical(vec_ptype_abbr(c(x = 1L, y = 2L), prefix_named = TRUE), "named int")
 })
+
+test_that("vec_ptype_abbr() adds named tag in case of row names", {
+  expect_equal(
+    vec_ptype_abbr(mtcars, prefix_named = TRUE),
+    "named df[,11]"
+  )
+
+  mat <- matrix(1:4, 2)
+  rownames(mat) <- c("foo", "bar")
+  expect_equal(
+    vec_ptype_abbr(mat, prefix_named = TRUE),
+    "named int[,2]"
+  )
+})
