@@ -12,7 +12,14 @@
 #' to 8 characters. You should almost always override, aiming for 4-6
 #' characters where possible.
 #'
+#' These arguments are handled by the generic and not passed to methods:
+#' * `prefix_named`
+#' * `suffix_shape`
+#'
 #' @param x A vector.
+#' @param prefix_named If `TRUE`, add a prefix for named vectors.
+#' @param suffix_shape If `TRUE` (the default), append the shape of
+#'   the vector.
 #' @inheritParams ellipsis::dots_empty
 #'
 #' @keywords internal
@@ -32,10 +39,21 @@ vec_ptype_full <- function(x, ...) {
 
 #' @export
 #' @rdname vec_ptype_full
-vec_ptype_abbr <- function(x, ...) {
+vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+
+  abbr <- vec_ptype_abbr_dispatch(x)
+
+  return(paste0(
+    if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) "named ",
+    abbr,
+    if (suffix_shape) vec_ptype_shape(x)
+  ))
+  UseMethod("vec_ptype_abbr")
+}
+vec_ptype_abbr_dispatch <- function(x, ...) {
   UseMethod("vec_ptype_abbr")
 }
 
@@ -62,11 +80,9 @@ vec_ptype_full.default <- function(x, ...) {
 vec_ptype_abbr.default <- function(x, ...) {
   if (is.object(x)) {
     unname(abbreviate(vec_ptype_full(x), 8))
-  } else if (is_list(x)) {
-    named <- is_character(names(x))
-    paste0(if (named) "named ", "list", vec_ptype_shape(x))
   } else if (is_vector(x)) {
-    abbr <- switch(typeof(x),
+    switch(typeof(x),
+      list = "list",
       logical = "lgl",
       integer = "int",
       double = "dbl",
@@ -77,7 +93,6 @@ vec_ptype_abbr.default <- function(x, ...) {
       raw = "raw",
       abbreviate(typeof(x))
     )
-    paste0(abbr, vec_ptype_shape(x))
   } else {
     abort("Not a vector.")
   }

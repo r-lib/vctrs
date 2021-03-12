@@ -7,12 +7,17 @@
 \usage{
 vec_ptype_full(x, ...)
 
-vec_ptype_abbr(x, ...)
+vec_ptype_abbr(x, ..., prefix_named = FALSE, suffix_shape = TRUE)
 }
 \arguments{
 \item{x}{A vector.}
 
 \item{...}{These dots are for future extensions and must be empty.}
+
+\item{prefix_named}{If \code{TRUE}, add a prefix for named vectors.}
+
+\item{suffix_shape}{If \code{TRUE} (the default), append the shape of
+the vector.}
 }
 \value{
 A string.
@@ -30,6 +35,12 @@ be prominently displayed.
 The default method for \code{vec_ptype_abbr()} \code{\link[=abbreviate]{abbreviate()}}s \code{vec_ptype_full()}
 to 8 characters. You should almost always override, aiming for 4-6
 characters where possible.
+
+These arguments are handled by the generic and not passed to methods:
+\itemize{
+\item \code{prefix_named}
+\item \code{suffix_shape}
+}
 }
 
 \examples{

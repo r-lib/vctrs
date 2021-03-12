@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_ptype_abbr()` gains arguments to control whether to indicate
+  named vectors with a prefix (`prefix_named`) and indicate shaped
+  vectors with a suffix (`suffix_shape`) (#781, @krlmlr).
+
 * `vec_ptype()` is now an optional _performance_ generic. It is not necessary
   to implement, but if your class has a static prototype, you might consider
   implementing a custom `vec_ptype()` method that returns a constant to
