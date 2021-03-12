@@ -12,13 +12,14 @@
 #' to 8 characters. You should almost always override, aiming for 4-6
 #' characters where possible.
 #'
+#' These arguments are handled by the generic and not passed to methods:
+#' * `prefix_named`
+#' * `suffix_shape`
+#'
 #' @param x A vector.
-#' @param prefix_named
-#'   If `TRUE`, to add a prefix for named vectors.
-#'   This argument is handled by the generic and will not be passed on to methods.
-#' @param suffix_shape
-#'   If `TRUE` (the default), append the shape of the vector.
-#'   This argument is handled by the generic and will not be passed on to methods.
+#' @param prefix_named If `TRUE`, add a prefix for named vectors.
+#' @param suffix_shape If `TRUE` (the default), append the shape of
+#'   the vector.
 #' @inheritParams ellipsis::dots_empty
 #'
 #' @keywords internal
