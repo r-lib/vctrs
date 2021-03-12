@@ -31,12 +31,14 @@ test_that("`NA` order defaults to last", {
   expect_identical(vec_order_radix(x), c(1L, 3L, 2L))
 })
 
-test_that("`NA` order can be first", {
+test_that("integer, small: `NA` order can be first", {
   x <- c(1L, NA_integer_, 3L)
   expect_identical(vec_order_radix(x, na_value = "smallest"), c(2L, 1L, 3L))
 })
 
-test_that("`direction` can be set to `desc`", {
+test_that("double: `direction` can be set to `desc`", {
+  x <- c(1, 5, 3)
+  expect_identical(vec_order_radix(x, direction = "desc"), c(2L, 3L, 1L))
   x <- c(1L, .Machine$integer.max, 3L)
   expect_identical(vec_order_radix(x, direction = "desc"), c(2L, 3L, 1L))
 })
@@ -266,14 +268,9 @@ test_that("`NA` order defaults to last", {
   expect_identical(vec_order_radix(x), c(1L, 3L, 2L))
 })
 
-test_that("`NA` order can be first", {
+test_that("double: `NA` order can be first", {
   x <- c(1, NA_real_, 3)
   expect_identical(vec_order_radix(x, na_value = "smallest"), c(2L, 1L, 3L))
-})
-
-test_that("`direction` can be set to `desc`", {
-  x <- c(1, 5, 3)
-  expect_identical(vec_order_radix(x, direction = "desc"), c(2L, 3L, 1L))
 })
 
 test_that("all combinations of `direction` and `na_value` work", {
@@ -308,13 +305,13 @@ test_that("NA_real_ and NaN look identical for ordering", {
   expect_identical(vec_order_radix(x, na_value = "smallest"), c(1L, 2L))
 })
 
-test_that("-Inf / Inf order correctly", {
+test_that("double: -Inf / Inf order correctly", {
   x <- c(0, -Inf, Inf)
   expect_identical(vec_order_radix(x, direction = "asc"), c(2L, 1L, 3L))
   expect_identical(vec_order_radix(x, direction = "desc"), c(3L, 1L, 2L))
 })
 
-test_that("-0 and 0 order identically / stably", {
+test_that("double: -0 and 0 order identically / stably", {
   x <- c(0, -0)
   expect_identical(vec_order_radix(x, direction = "desc"), c(1L, 2L))
   expect_identical(vec_order_radix(x, direction = "asc"), c(1L, 2L))
@@ -407,7 +404,7 @@ test_that("-Inf / Inf order correctly", {
   expect_identical(vec_order_radix(x, direction = "desc"), order(x, decreasing = TRUE))
 })
 
-test_that("-0 and 0 order identically / stably", {
+test_that("double, large: -0 and 0 order identically / stably", {
   x <- c(rep(0, ORDER_INSERTION_BOUNDARY), -0)
   expect_identical(vec_order_radix(x, direction = "desc"), order(x, decreasing = TRUE))
   expect_identical(vec_order_radix(x, direction = "asc"), order(x, decreasing = FALSE))
@@ -518,12 +515,12 @@ test_that("`NA` order defaults to last", {
   expect_identical(vec_order_radix(x), c(1L, 3L, 2L))
 })
 
-test_that("`NA` order can be first", {
+test_that("character, small: `NA` order can be first", {
   x <- c("x", NA_character_, "y")
   expect_identical(vec_order_radix(x, na_value = "smallest"), c(2L, 1L, 3L))
 })
 
-test_that("`direction` can be set to `desc`", {
+test_that("character, small: `direction` can be set to `desc`", {
   x <- c("x", "abcde", "yz")
   expect_identical(vec_order_radix(x, direction = "desc"), c(3L, 1L, 2L))
 })
@@ -648,13 +645,13 @@ test_that("`NA` order defaults to last", {
   expect_identical(vec_order_radix(x)[length(x)], length(x) - 1L)
 })
 
-test_that("`NA` order can be first", {
+test_that("character, large: `NA` order can be first", {
   x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   x <- c(x, NA_character_, "y")
   expect_identical(vec_order_radix(x, na_value = "smallest")[[1L]], length(x) - 1L)
 })
 
-test_that("`direction` can be set to `desc`", {
+test_that("character, large: `direction` can be set to `desc`", {
   x <- paste0("x", seq(1L, ORDER_INSERTION_BOUNDARY + 1L))
   expect_identical(vec_order_radix(x, direction = "desc"), base_order(x, decreasing = TRUE))
 })

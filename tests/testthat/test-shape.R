@@ -1,7 +1,7 @@
 
 # common shape ------------------------------------------------------------
 
-test_that("recycling rules applied", {
+test_that("vec_shape2() applies recycling rules", {
   expect_equal(vec_shape2(shaped_int(1, 5, 5), shaped_int(1)),       c(0L, 5L, 5L))
   expect_equal(vec_shape2(shaped_int(1),       shaped_int(1, 5, 5)), c(0L, 5L, 5L))
   expect_equal(vec_shape2(shaped_int(1, 1),    shaped_int(1, 5, 5)), c(0L, 5L, 5L))
@@ -50,7 +50,7 @@ test_that("can broadcast to higher dimension, but not lower", {
   )
 })
 
-test_that("recycling rules applied", {
+test_that("shape_broadcast_() applies recycling rules", {
   expect_equal(
     shape_broadcast_(array(1:4, c(1, 1, 4)), shaped_int(0, 4, 4))[1, , ],
     matrix(1:4, 4, 4, byrow = TRUE)

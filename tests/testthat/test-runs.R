@@ -1,6 +1,6 @@
 # vec_identify_runs ------------------------------------------------------------
 
-test_that("works with size zero input", {
+test_that("vec_identify_runs() works with size zero input", {
   expect <- structure(integer(), n = 0L)
 
   expect_identical(vec_identify_runs(integer()), expect)
@@ -102,12 +102,12 @@ test_that("can locate run ends", {
   )
 })
 
-test_that("works with size zero input", {
+test_that("vec_locate_runs() works with size zero input", {
   expect_identical(vec_locate_runs(integer(), start = TRUE), integer())
   expect_identical(vec_locate_runs(integer(), start = FALSE), integer())
 })
 
-test_that("validates `start`", {
+test_that("vec_locate_runs() validates `start`", {
   expect_error(vec_locate_runs(1, start = "x"), "single `TRUE` or `FALSE`")
   expect_error(vec_locate_runs(1, start = NA), "single `TRUE` or `FALSE`")
   expect_error(vec_locate_runs(1, start = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")
@@ -129,12 +129,12 @@ test_that("can detect run ends", {
   )
 })
 
-test_that("works with size zero input", {
+test_that("vec_detect_runs() works with size zero input", {
   expect_identical(vec_detect_runs(integer(), start = TRUE), logical())
   expect_identical(vec_detect_runs(integer(), start = FALSE), logical())
 })
 
-test_that("validates `start`", {
+test_that("vec_detect_runs() validates `start`", {
   expect_error(vec_detect_runs(1, start = "x"), "single `TRUE` or `FALSE`")
   expect_error(vec_detect_runs(1, start = NA), "single `TRUE` or `FALSE`")
   expect_error(vec_detect_runs(1, start = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")

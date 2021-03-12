@@ -85,7 +85,7 @@ test_that("vec_ptype2(<factor>, NA) is symmetric (#687)", {
   )
 })
 
-test_that("vec_ptype2(<factor>, NA) is symmetric (#687)", {
+test_that("vec_ptype2(<integer64>, NA) is symmetric (#687)", {
   i64 <- bit64::integer64()
   expect_identical(
     vec_ptype2(i64, NA),

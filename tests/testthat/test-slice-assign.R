@@ -302,7 +302,7 @@ test_that("can use names to vec_slice<-() a named object", {
   expect_identical(x1, c(a = 3, a = 2))
 })
 
-test_that("can use names to vec_slice<-() a named object", {
+test_that("can't use names to vec_slice<-() an unnamed object", {
   x0 <- 1:3
 
   expect_error(

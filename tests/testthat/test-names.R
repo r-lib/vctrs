@@ -343,12 +343,12 @@ test_that("as_unique_names() eliminates emptiness and duplication", {
   expect_identical(as_unique_names(x), c("...1", "x...2", "y", "x...4"))
 })
 
-test_that("solo empty or NA gets suffix", {
+test_that("as_unique_names(): solo empty or NA gets suffix", {
   expect_identical(as_unique_names(""), "...1")
   expect_identical(as_unique_names(NA_character_), "...1")
 })
 
-test_that("ellipsis treated like empty string", {
+test_that("as_unique_names() treats ellipsis like empty string", {
   expect_identical(as_unique_names("..."), as_unique_names(""))
 })
 
@@ -458,12 +458,12 @@ test_that("dupes get a suffix", {
   )
 })
 
-test_that("solo empty or NA gets suffix", {
+test_that("as_universal_names(): solo empty or NA gets suffix", {
   expect_identical(as_universal_names(""), "...1")
   expect_identical(as_universal_names(NA_character_), "...1")
 })
 
-test_that("ellipsis treated like empty string", {
+test_that("as_universal_names() treats ellipsis like empty string", {
   expect_identical(as_universal_names("..."), as_universal_names(""))
 })
 

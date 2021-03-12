@@ -5,19 +5,19 @@ test_that("can slice complete", {
   expect_identical(vec_slice_complete(df), vec_slice(df, 1))
 })
 
-test_that("works with size 0 input", {
+test_that("vec_slice_complete() works with size 0 input", {
   expect_identical(vec_slice_complete(integer()), integer())
   expect_identical(vec_slice_complete(data.frame()), data.frame())
 })
 
 # vec_locate_complete ----------------------------------------------------------
 
-test_that("can locate complete", {
+test_that("vec_locate_complete() can locate complete", {
   df <- data_frame(x = c(1, NA, 3), y = c(1, 2, NA))
   expect_identical(vec_locate_complete(df), 1L)
 })
 
-test_that("works with size 0 input", {
+test_that("vec_locate_complete() works with size 0 input", {
   expect_identical(vec_locate_complete(logical()), integer())
   expect_identical(vec_locate_complete(data.frame()), integer())
 })
@@ -148,5 +148,3 @@ test_that("non data frame input that has a data frame equality proxy has the cor
   expect_identical(vec_proxy_complete(y), y_expect)
   expect_identical(vec_proxy_complete(df), df_expect)
 })
-
-
