@@ -79,6 +79,9 @@ inputs, and is designed for interactive exploration." />
 </script>
 
 
+<!-- dependencies from examples -->
+
+
   
 
   
@@ -224,6 +227,12 @@ for any 1d vector type.</p></li>
 
 <p>See <a href='internal-faq-ptype2-identity.html'>internal-faq-ptype2-identity</a> for more information about
 identity values.</p>
+<p><code>vec_ptype()</code> is a <em>performance</em> generic. It is not necessary to implement it
+because the default method will work for any vctrs type. However the default
+method builds around other vctrs primitives like <code><a href='vec_slice.html'>vec_slice()</a></code> which incurs
+performance costs. If your class has a static prototype, you might consider
+implementing a custom <code>vec_ptype()</code> method that returns a constant. This will
+improve the performance of your class in many cases (<a href='vec_ptype2.logical.html'>common type</a> imputation in particular).</p>
 <p>Because it may contain unspecified vectors, the prototype returned
 by <code>vec_ptype()</code> is said to be <strong>unfinalised</strong>. Call
 <code><a href='new_partial.html'>vec_ptype_finalise()</a></code> to finalise it. Commonly you will need the
@@ -322,7 +331,7 @@ a <a href='new_partial.html'>finalised</a> prototype.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>

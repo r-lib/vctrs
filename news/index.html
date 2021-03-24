@@ -75,6 +75,7 @@
 </script>
 
 
+
   
 
   
@@ -160,6 +161,10 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> gains arguments to control whether to indicate named vectors with a prefix (<code>prefix_named</code>) and indicate shaped vectors with a suffix (<code>suffix_shape</code>) (<a href='https://github.com/r-lib/vctrs/issues/781'>#781</a>, <a href='https://github.com/krlmlr'>@krlmlr</a>).</p></li>
+<li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> is now an optional <em>performance</em> generic. It is not necessary to implement, but if your class has a static prototype, you might consider implementing a custom <code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> method that returns a constant to improve performance in some cases (such as common type imputation).</p></li>
+<li><p>New <code><a href="../reference/vec_detect_complete.html">vec_detect_complete()</a></code>, inspired by <code><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">stats::complete.cases()</a></code>. For most vectors, this is identical to <code>!vec_equal_na()</code>. For data frames and matrices, this detects rows that only contain non-missing values.</p></li>
+<li><p><code><a href="../reference/vec_order.html">vec_order()</a></code> can now order complex vectors (<a href='https://github.com/r-lib/vctrs/issues/1330'>#1330</a>).</p></li>
 <li><p>Removed dependency on digest in favor of <code><a href="https://rlang.r-lib.org/reference/hash.html" class="external-link">rlang::hash()</a></code>.</p></li>
 <li><p>Fixed an issue where <code>vctrs_rcrd</code> objects were not being proxied correctly when used as a data frame column (<a href='https://github.com/r-lib/vctrs/issues/1318'>#1318</a>).</p></li>
 <li><p><code>register_s3()</code> is now licensed with the “unlicense” which makes it very clear that it’s fine to copy and paste into your own package (<a href='https://github.com/maxheld83'>@maxheld83</a>, <a href='https://github.com/r-lib/vctrs/issues/1254'>#1254</a>).</p></li>
@@ -658,7 +663,7 @@ vec_rbind(df1, df2)
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p></p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>

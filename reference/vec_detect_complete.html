@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Comparison and order proxy — vec_proxy_compare • vctrs</title>
+<title>Complete — vec_detect_complete • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,17 +46,13 @@
 
 
 
-<meta property="og:title" content="Comparison and order proxy — vec_proxy_compare" />
-<meta property="og:description" content="vec_proxy_compare() and vec_proxy_order() return proxy objects, i.e.
-an atomic vector or data frame of atomic vectors.
-For vctrs_vctr objects:
-vec_proxy_compare() determines the behavior of &amp;lt;, &amp;gt;, &amp;gt;=
-and &amp;lt;= (via vec_compare()); and min(), max(), median(), and
-quantile().
-vec_proxy_order() determines the behavior of order() and sort()
-(via xtfrm()).
-
-" />
+<meta property="og:title" content="Complete — vec_detect_complete" />
+<meta property="og:description" content="vec_detect_complete() detects &quot;complete&quot; observations. An observation is
+considered complete if it is non-missing. For most vectors, this implies that
+vec_detect_complete(x) == !vec_equal_na(x).
+For data frames and matrices, a row is only considered complete if all
+elements of that row are non-missing. To compare, !vec_equal_na(x) detects
+rows that are partially complete (they have at least one non-missing value)." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -164,80 +160,70 @@ vec_proxy_order() determines the behavior of order() and sort()
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Comparison and order proxy</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/compare.R'><code>R/compare.R</code></a></small>
-    <div class="hidden name"><code>vec_proxy_compare.Rd</code></div>
+    <h1>Complete</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/complete.R'><code>R/complete.R</code></a></small>
+    <div class="hidden name"><code>vec_detect_complete.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>vec_proxy_compare()</code> and <code>vec_proxy_order()</code> return proxy objects, i.e.
-an atomic vector or data frame of atomic vectors.</p>
-<p>For <code><a href='new_vctr.html'>vctrs_vctr</a></code> objects:</p><ul>
-<li><p><code>vec_proxy_compare()</code> determines the behavior of <code>&lt;</code>, <code>&gt;</code>, <code>&gt;=</code>
-and <code>&lt;=</code> (via <code><a href='vec_compare.html'>vec_compare()</a></code>); and <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>max()</a></code>, <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code>, and
-<code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>.</p></li>
-<li><p><code>vec_proxy_order()</code> determines the behavior of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> and <code><a href='https://rdrr.io/r/base/sort.html'>sort()</a></code>
-(via <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code>).</p></li>
-</ul>
-
+    <p><code>vec_detect_complete()</code> detects "complete" observations. An observation is
+considered complete if it is non-missing. For most vectors, this implies that
+<code>vec_detect_complete(x) == !vec_equal_na(x)</code>.</p>
+<p>For data frames and matrices, a row is only considered complete if all
+elements of that row are non-missing. To compare, <code>!vec_equal_na(x)</code> detects
+rows that are partially complete (they have at least one non-missing value).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_proxy_compare</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='fu'>vec_proxy_order</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>vec_detect_complete</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A vector x.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>These dots are for future extensions and must be empty.</p></td>
+      <td><p>A vector</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A 1d atomic vector or a data frame.</p>
+    <p>A logical vector with the same size as <code>x</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The default method of <code>vec_proxy_compare()</code> assumes that all classes built
-on top of atomic vectors or records are comparable. Internally the default
-calls <code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code>. If your class is not comparable, you will need
-to provide a <code>vec_proxy_compare()</code> method that throws an error.</p>
-<p>The behavior of <code>vec_proxy_order()</code> is identical to <code>vec_proxy_compare()</code>,
-with the exception of lists. Lists are not comparable, as comparing
-elements of different types is undefined. However, to allow ordering of
-data frames containing list-columns, the ordering proxy of a list is
-generated as an integer vector that can be used to order list elements
-by first appearance.</p>
-    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+    <p>A <a href='new_rcrd.html'>record</a> type vector is considered complete if any field is
+non-missing.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    
-
-<ul>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code> called by default in <code>vec_proxy_compare()</code></p></li>
-<li><p><code>vec_proxy_compare()</code> called by default in <code>vec_proxy_order()</code></p></li>
-</ul>
-
+    <div class='dont-index'><p><code><a href='https://rdrr.io/r/stats/complete.cases.html'>stats::complete.cases()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Lists are not comparable</span>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>3</span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vec_compare.html'>vec_compare</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Error : `vec_proxy_compare.list()` not supported.</div><div class='input'>
-<span class='co'># But lists are orderable by first appearance to allow for</span>
-<span class='co'># ordering data frames with list-cols</span>
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_data_frame.html'>new_data_frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='vec_order.html'>vec_sort</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;      x
-#&gt; 1 1, 2
-#&gt; 2 1, 2
-#&gt; 3    1
-#&gt; 4    3</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span>, <span class='cn'>NA</span>, <span class='fl'>4</span>, <span class='cn'>NA</span><span class='op'>)</span>
+
+<span class='co'># For most vectors, this is identical to `!vec_equal_na(x)`</span>
+<span class='fu'>vec_detect_complete</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1]  TRUE  TRUE FALSE  TRUE FALSE</div><div class='input'><span class='op'>!</span><span class='fu'><a href='vec_equal.html'>vec_equal_na</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1]  TRUE  TRUE FALSE  TRUE FALSE</div><div class='input'>
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='data_frame.html'>data_frame</a></span><span class='op'>(</span>
+  x <span class='op'>=</span> <span class='va'>x</span>,
+  y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='cn'>NA</span>, <span class='st'>"d"</span>, <span class='st'>"e"</span><span class='op'>)</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: `data_frame()` was deprecated in tibble 1.1.0.</span>
+#&gt; <span class='warning'>Please use `tibble()` instead.</span></div><div class='input'>
+<span class='co'># This returns `TRUE` where all elements of the row are non-missing.</span>
+<span class='co'># Compare that with `!vec_equal_na()`, which detects rows that have at</span>
+<span class='co'># least one non-missing value.</span>
+<span class='va'>df2</span> <span class='op'>&lt;-</span> <span class='va'>df</span>
+<span class='va'>df2</span><span class='op'>$</span><span class='va'>all_non_missing</span> <span class='op'>&lt;-</span> <span class='fu'>vec_detect_complete</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+<span class='va'>df2</span><span class='op'>$</span><span class='va'>any_non_missing</span> <span class='op'>&lt;-</span> <span class='op'>!</span><span class='fu'><a href='vec_equal.html'>vec_equal_na</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+<span class='va'>df2</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 4</span><span>
+#&gt;       x y     all_non_missing any_non_missing
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>          
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1 a     TRUE            TRUE           
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     2 b     TRUE            TRUE           
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span>    </span><span style='color: #BB0000;'>NA</span><span> </span><span style='color: #BB0000;'>NA</span><span>    FALSE           FALSE          
+#&gt; </span><span style='color: #BCBCBC;'>4</span><span>     4 d     TRUE            TRUE           
+#&gt; </span><span style='color: #BCBCBC;'>5</span><span>    </span><span style='color: #BB0000;'>NA</span><span> e     FALSE           TRUE           </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
