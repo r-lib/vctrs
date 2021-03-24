@@ -39,7 +39,7 @@ obj_print_data <- function(x, ...) {
 #' @export
 obj_print_data.default <- function(x, ...) {
   if (length(x) == 0)
-    return()
+    return(invisible(x))
 
   out <- stats::setNames(format(x), names(x))
   print(out, quote = FALSE)
@@ -163,4 +163,3 @@ obj_str_footer.default <- function(x, ...,
 
   invisible(x)
 }
-
