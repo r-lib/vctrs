@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.3.7
 
 * `vec_ptype_abbr()` gains arguments to control whether to indicate
   named vectors with a prefix (`prefix_named`) and indicate shaped
