@@ -1049,21 +1049,16 @@ vec_ptype_abbr.pizza_percent <- function(x, ...) {
 
 Finally, we implement methods for `vec_ptype2()` and `vec_cast()`.
 
-```{r}
+```{r, eval = FALSE}
 #' @export
 vec_ptype2.vctrs_percent.vctrs_percent <- function(x, y, ...) new_percent()
 #' @export
 vec_ptype2.double.vctrs_percent <- function(x, y, ...) double()
-```
 
-The exact same roxygen2 treatment is needed for `vec_cast()`, which yields:
-
-```{r eval = FALSE}
 #' @export
 vec_cast.pizza_percent.pizza_percent <- function(x, to, ...) x
 #' @export
 vec_cast.pizza_percent.double <- function(x, to, ...) percent(x)
-#' @method vec_cast.double pizza_percent
 #' @export
 vec_cast.double.pizza_percent <- function(x, to, ...) vec_data(x)
 ```
