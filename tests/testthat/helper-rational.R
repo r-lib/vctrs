@@ -57,5 +57,3 @@ rational_methods <- list(
 local_rational_class <- function(frame = caller_env()) {
   local_methods(.frame = frame, !!!rational_methods)
 }
-
-env_bind(global_env(), !!!rational_methods)
