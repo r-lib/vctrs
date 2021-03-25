@@ -1066,14 +1066,12 @@
 <code class="sourceCode R"><span class="co">#' @export</span>
 <span class="va">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_percent</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#' @export</span>
-<span class="va">vec_ptype2.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>The exact same roxygen2 treatment is needed for <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which yields:</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' @export</span>
+<span class="va">vec_ptype2.double.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="co">#' @export</span>
 <span class="va">vec_cast.pizza_percent.pizza_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span> <span class="va">x</span>
 <span class="co">#' @export</span>
 <span class="va">vec_cast.pizza_percent.double</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">percent</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="co">#' @method vec_cast.double pizza_percent</span>
 <span class="co">#' @export</span>
 <span class="va">vec_cast.double.pizza_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
 </div>
@@ -1088,7 +1086,7 @@
 <li><p>Check for method symmetry; use <code>expect_s3_class()</code>, probably with <code>exact = TRUE</code>, to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
 <li>
 <p>Use <code><a href="https://testthat.r-lib.org/reference/expect_error.html" class="external-link">testthat::expect_error()</a></code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">expect_error</span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"a"</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"vctrs_error_incompatible_type"</span><span class="op">)</span></code></pre></div>
 </li>
 </ul>
