@@ -1,4 +1,3 @@
-
 test_that("list_of inherits from list", {
   x1 <- list_of(1, 1)
   expect_s3_class(x1, "list")
@@ -41,6 +40,9 @@ test_that("is_list_of as expected", {
 
 test_that("print method gives human friendly output", {
   skip_on_cran() # Depends on tibble
+
+  # FIXME: Disable crayon until we switch to testthat 3e
+  local_options(crayon.enabled = FALSE)
 
   x <- list_of(1, 2:3)
 
