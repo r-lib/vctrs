@@ -265,16 +265,15 @@ static void vec_order_switch(SEXP x,
 static
 SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, bool locations) {
   int n_prot = 0;
-  int* p_n_prot = &n_prot;
 
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
-  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), p_n_prot);
+  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
   decreasing = VECTOR_ELT(args, 0);
   na_last = VECTOR_ELT(args, 1);
 
-  SEXP proxy = PROTECT_N(vec_proxy_order(x), p_n_prot);
-  proxy = PROTECT_N(vec_normalize_encoding(proxy), p_n_prot);
-  proxy = PROTECT_N(proxy_chr_transform(proxy, chr_transform), p_n_prot);
+  SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
+  proxy = PROTECT_N(vec_normalize_encoding(proxy), &n_prot);
+  proxy = PROTECT_N(proxy_chr_transform(proxy, chr_transform), &n_prot);
 
   r_ssize size = vec_size(proxy);
   const enum vctrs_type type = vec_proxy_typeof(proxy);
@@ -285,16 +284,16 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, b
   // Auxiliary vectors to hold intermediate results while ordering.
   // If `x` is a data frame we allocate enough room for the largest column type.
   struct lazy_raw* p_lazy_x_chunk = new_lazy_raw(size, n_bytes_lazy_raw);
-  PROTECT_LAZY_VEC(p_lazy_x_chunk, p_n_prot);
+  PROTECT_LAZY_VEC(p_lazy_x_chunk, &n_prot);
 
   struct lazy_raw* p_lazy_x_aux = new_lazy_raw(size, n_bytes_lazy_raw);
-  PROTECT_LAZY_VEC(p_lazy_x_aux, p_n_prot);
+  PROTECT_LAZY_VEC(p_lazy_x_aux, &n_prot);
 
   struct lazy_raw* p_lazy_o_aux = new_lazy_raw(size, sizeof(int));
-  PROTECT_LAZY_VEC(p_lazy_o_aux, p_n_prot);
+  PROTECT_LAZY_VEC(p_lazy_o_aux, &n_prot);
 
   struct lazy_raw* p_lazy_bytes = new_lazy_raw(size, sizeof(uint8_t));
-  PROTECT_LAZY_VEC(p_lazy_bytes, p_n_prot);
+  PROTECT_LAZY_VEC(p_lazy_bytes, &n_prot);
 
   // Compute the maximum size of the `counts` vector needed during radix
   // ordering. 4 * 256 for integers, 8 * 256 for doubles.
@@ -302,7 +301,7 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, b
   r_ssize size_lazy_counts = UINT8_MAX_SIZE * n_bytes_lazy_counts;
 
   struct lazy_raw* p_lazy_counts = new_lazy_raw(size_lazy_counts, sizeof(r_ssize));
-  PROTECT_LAZY_VEC(p_lazy_counts, p_n_prot);
+  PROTECT_LAZY_VEC(p_lazy_counts, &n_prot);
 
   // Determine if group tracking can be turned off.
   // We turn if off if ordering non-data frame input as long as
@@ -314,10 +313,10 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, b
   // Construct the two sets of group info needed for tracking groups.
   // We switch between them after each data frame column is processed.
   struct group_info* p_group_info0 = new_group_info();
-  PROTECT_GROUP_INFO(p_group_info0, p_n_prot);
+  PROTECT_GROUP_INFO(p_group_info0, &n_prot);
 
   struct group_info* p_group_info1 = new_group_info();
-  PROTECT_GROUP_INFO(p_group_info1, p_n_prot);
+  PROTECT_GROUP_INFO(p_group_info1, &n_prot);
 
   struct group_infos* p_group_infos = new_group_infos(
     p_group_info0,
@@ -326,15 +325,15 @@ SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, b
     force_groups,
     ignore_groups
   );
-  PROTECT_GROUP_INFOS(p_group_infos, p_n_prot);
+  PROTECT_GROUP_INFOS(p_group_infos, &n_prot);
 
   // Used for character ordering - lazily generated to be fast
   // when not ordering character vectors
   struct truelength_info* p_truelength_info = new_truelength_info(size);
-  PROTECT_TRUELENGTH_INFO(p_truelength_info, p_n_prot);
+  PROTECT_TRUELENGTH_INFO(p_truelength_info, &n_prot);
 
   struct order* p_order = new_order(size);
-  PROTECT_ORDER(p_order, p_n_prot);
+  PROTECT_ORDER(p_order, &n_prot);
 
   vec_order_switch(
     proxy,
