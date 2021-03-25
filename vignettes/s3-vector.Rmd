@@ -488,7 +488,7 @@ new_rational <- function(n = integer(), d = integer()) {
 Our user friendly constructor casts `n` and `d` to integers and recycles them to the same length.
 
 ```{r}
-rational <- function(n, d) {
+rational <- function(n = integer(), d = integer()) {
   c(n, d) %<-% vec_cast_common(n, d, .to = integer())
   c(n, d) %<-% vec_recycle_common(n, d)
 
