@@ -13,10 +13,10 @@ can override scalar vector error message for S3 types
 =====================================================
 
 > vec_ptype2(NULL, foobar(), y_arg = "foo")
-Error: `foo` must be a vector, not a `vctrs_foobar` object.
+Error: `foo` must be a vector, not a <vctrs_foobar> object.
 
 > vec_ptype2(foobar(), NULL, x_arg = "foo")
-Error: `foo` must be a vector, not a `vctrs_foobar` object.
+Error: `foo` must be a vector, not a <vctrs_foobar> object.
 
 
 ptype2 and cast errors when same class fallback is impossible are informative

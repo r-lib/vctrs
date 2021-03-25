@@ -34,10 +34,10 @@ scalar type errors are informative
 ==================================
 
 > vec_slice(foobar(list(1)), 1)
-Error: Input must be a vector, not a `vctrs_foobar` object.
+Error: Input must be a vector, not a <vctrs_foobar> object.
 
 > stop_scalar_type(foobar(list(1)), arg = "foo")
-Error: `foo` must be a vector, not a `vctrs_foobar` object.
+Error: `foo` must be a vector, not a <vctrs_foobar> object.
 
 
 empty names errors are informative
