@@ -120,7 +120,8 @@ r_ssize chr_find_normalize_start(SEXP x, r_ssize size) {
 
 static
 SEXP list_normalize_encoding(SEXP x) {
-  int nprot = 0;
+  PROTECT_INDEX pi;
+  PROTECT_WITH_INDEX(x, &pi);
 
   r_ssize size = r_length(x);
   const SEXP* p_x = VECTOR_PTR_RO(x);
@@ -136,7 +137,8 @@ SEXP list_normalize_encoding(SEXP x) {
 
     // Cloned once, at which point `x` is free of references
     if (MAYBE_REFERENCED(x)) {
-      x = PROTECT_N(r_clone(x), &nprot);
+      x = r_clone(x);
+      REPROTECT(x, pi);
       p_x = VECTOR_PTR_RO(x);
     }
 
@@ -144,7 +146,7 @@ SEXP list_normalize_encoding(SEXP x) {
     UNPROTECT(1);
   }
 
-  UNPROTECT(nprot);
+  UNPROTECT(1);
   return x;
 }
 
@@ -169,9 +171,11 @@ SEXP obj_attrib_normalize_encoding(SEXP x, SEXP attrib) {
 
 static
 SEXP attrib_normalize_encoding(SEXP x) {
-  int nprot = 0;
   r_ssize loc = 0;
   bool owned = false;
+
+  PROTECT_INDEX pi;
+  PROTECT_WITH_INDEX(x, &pi);
 
   for (SEXP node = x; node != r_null; node = r_node_cdr(node), ++loc) {
     SEXP elt_old = r_node_car(node);
@@ -185,7 +189,8 @@ SEXP attrib_normalize_encoding(SEXP x) {
     if (!owned) {
       // Shallow clone entire pairlist if not owned.
       // Should be fast because these are generally short.
-      x = PROTECT_N(r_clone(x), &nprot);
+      x = r_clone(x);
+      REPROTECT(x, pi);
       owned = true;
 
       node = x;
@@ -200,6 +205,6 @@ SEXP attrib_normalize_encoding(SEXP x) {
     UNPROTECT(1);
   }
 
-  UNPROTECT(nprot);
+  UNPROTECT(1);
   return x;
 }
