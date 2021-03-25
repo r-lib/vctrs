@@ -48,7 +48,7 @@ fit[1:3]
 
 # But not in vctrs
 vctrs::vec_slice(fit, 1:3)
-#> Error: Input must be a vector, not a `lm` object.
+#> Error: Input must be a vector, not a <lm> object.
 }\if{html}{\out{</div>}}
 
 Defused function calls are another (more esoteric) example:\if{html}{\out{<div class="r">}}\preformatted{call <- quote(foo(bar = TRUE, baz = FALSE))
