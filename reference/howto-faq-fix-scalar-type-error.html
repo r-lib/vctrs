@@ -92,10 +92,10 @@ class is not &quot;data.frame&quot;:my_df &amp;lt;- data.frame(x = 1)
 class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 
 vctrs::vec_assert(my_df)
-#&amp;gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.
+#&amp;gt; Error: `my_df` must be a vector, not a &amp;lt;data.frame/my_class&amp;gt; object.
 
 This is problematic as many tidyverse functions won’t work properly:dplyr::slice(my_df, 1)
-#&amp;gt; Error: Input must be a vector, not a `data.frame/my_class` object.
+#&amp;gt; Error: Input must be a vector, not a &amp;lt;data.frame/my_class&amp;gt; object.
 
 It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
@@ -266,10 +266,10 @@ class</em> is not <code>"data.frame"</code>:<div class="r"></p><pre><span class=
 <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='va'>my_df</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"data.frame"</span>, <span class='st'>"my_class"</span><span class='op'>)</span>
 
 <span class='fu'>vctrs</span><span class='fu'>::</span><span class='fu'><a href='vec_assert.html'>vec_assert</a></span><span class='op'>(</span><span class='va'>my_df</span><span class='op'>)</span>
-<span class='co'>#&gt; Error: `my_df` must be a vector, not a `data.frame/my_class` object.</span>
+<span class='co'>#&gt; Error: `my_df` must be a vector, not a &lt;data.frame/my_class&gt; object.</span>
 </pre><p></div></p>
 <p>This is problematic as many tidyverse functions won’t work properly:<div class="r"></p><pre><span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/slice.html'>slice</a></span><span class='op'>(</span><span class='va'>my_df</span>, <span class='fl'>1</span><span class='op'>)</span>
-<span class='co'>#&gt; Error: Input must be a vector, not a `data.frame/my_class` object.</span>
+<span class='co'>#&gt; Error: Input must be a vector, not a &lt;data.frame/my_class&gt; object.</span>
 </pre><p></div></p>
 <p>It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).

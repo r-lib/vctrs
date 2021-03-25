@@ -428,11 +428,11 @@
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt; [1] 2 9</span>
+<span class="co">#&gt; [1]  2 10</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt;   x</span>
-<span class="co">#&gt; 1 2</span>
-<span class="co">#&gt; 2 9</span></code></pre></div>
+<span class="co">#&gt;    x</span>
+<span class="co">#&gt; 1  2</span>
+<span class="co">#&gt; 2 10</span></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
