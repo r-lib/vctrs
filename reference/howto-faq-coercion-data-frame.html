@@ -667,7 +667,7 @@ This completes the implementation:vec_rbind(red, data.frame(x = 10:12))
     </div>
 
     <div class="ref-description">
-    <p>This guide provides a practical recipe for implementing <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>
+    <p>This guide provides a practical recipe for implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
 and <code><a href='vec_cast.html'>vec_cast()</a></code> methods for coercions of data frame subclasses. Related
 topics:</p><ul>
 <li><p>For an overview of the coercion mechanism in vctrs, see
@@ -714,13 +714,13 @@ your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register(
 <p>Most of the common type determination should be performed by the parent
 class. In vctrs, double dispatch is implemented in such a way that you
 need to call the methods for the parent class manually. For
-<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> this means you need to call <code><a href='df_ptype2.html'>df_ptype2()</a></code> (for data frame
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> this means you need to call <code><a href='df_ptype2.html'>df_ptype2()</a></code> (for data frame
 subclasses) or <code><a href='df_ptype2.html'>tib_ptype2()</a></code> (for tibble subclasses). Similarly,
 <code><a href='df_ptype2.html'>df_cast()</a></code> and <code><a href='df_ptype2.html'>tib_cast()</a></code> are the workhorses for <code><a href='vec_cast.html'>vec_cast()</a></code> methods
 of subtypes of <code>data.frame</code> and <code>tbl_df</code>. These functions take the union
 of the columns in <code>x</code> and <code>y</code>, and ensure shared columns have the same
 type.</p>
-<p>These functions are much less strict than <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and
+<p>These functions are much less strict than <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and
 <code><a href='vec_cast.html'>vec_cast()</a></code> as they accept any subclass of data frame as input. They
 always return a <code>data.frame</code> or a <code>tbl_df</code>. You will probably want to
 write similar functions for your subclass to avoid repetition in your
@@ -758,7 +758,7 @@ well.<div class="r"></p><pre><span class='va'>dt_ptype2</span> <span class='op'>
 data table. This decision is not based on the value coverage of each
 data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call <code>dt_type2()</code> from the
-<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
 order of arguments:<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -826,7 +826,7 @@ well.<div class="r"></p><pre><span class='va'>dt_ptype2</span> <span class='op'>
 data table. This decision is not based on the value coverage of each
 data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call <code>dt_type2()</code> from the
-<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
 order of arguments:<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -894,7 +894,7 @@ well.<div class="r"></p><pre><span class='va'>dt_ptype2</span> <span class='op'>
 data table. This decision is not based on the value coverage of each
 data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call <code>dt_type2()</code> from the
-<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method. It always returns a data table, no matter the
 order of arguments:<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.data.table.data.frame</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>dt_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>

@@ -257,7 +257,7 @@ the new subsetted contents.</p></li>
 <li><p><code><a href='vec_c.html'>vec_c()</a></code> and <code><a href='vec_bind.html'>vec_rbind()</a></code> now fall
 back to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code> if the inputs have a common parent
 class with a <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method (only if they have no self-to-self
-<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> method).</p>
+<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> method).</p>
 <p>vctrs works hard to make your <code><a href='https://rdrr.io/r/base/c.html'>c()</a></code> method success in various
 situations (with <code>NULL</code> and <code>NA</code> inputs, even as first input which
 would normally prevent dispatch to your method). The main downside
@@ -281,7 +281,7 @@ primitives. Here is the diagram for <code><a href='vec_count.html'>vec_count()</
 
 
 <p>The coercion mechanism in vctrs is based on two generics:</p><ul>
-<li><p><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></p></li>
+<li><p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code></p></li>
 <li><p><code><a href='vec_cast.html'>vec_cast()</a></code></p></li>
 </ul>
 

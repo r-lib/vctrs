@@ -410,7 +410,7 @@ class in R scripts.
     </div>
 
     <div class="ref-description">
-    <p>This is an overview of the usage of <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> and
+    <p>This is an overview of the usage of <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> and
 their role in the vctrs coercion mechanism. Related topics:</p><ul>
 <li><p>For an example of implementing coercion methods for simple vectors,
 see <code><a href='howto-faq-coercion.html'>?howto-faq-coercion</a></code>.</p></li>
@@ -448,12 +448,12 @@ functions that use the split-apply-combine strategy. For example:<div class="r">
 </pre><p></div></p>
 <p>One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
-relevant generics are <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>. They both take
+relevant generics are <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>. They both take
 two arguments and perform <strong>double dispatch</strong>, meaning that a method is
 selected based on the classes of both inputs.</p>
 <p>The general mechanism for combining multiple inputs is:</p><ol>
 <li><p>Find the common type of a set of inputs by reducing (as in
-<code><a href='https://rdrr.io/r/base/funprog.html'>base::Reduce()</a></code> or <code><a href='https://purrr.tidyverse.org/reference/reduce.html'>purrr::reduce()</a></code>) the <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> binary
+<code><a href='https://rdrr.io/r/base/funprog.html'>base::Reduce()</a></code> or <code><a href='https://purrr.tidyverse.org/reference/reduce.html'>purrr::reduce()</a></code>) the <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> binary
 function over the set.</p></li>
 <li><p>Convert all inputs to the common type with <code><a href='vec_cast.html'>vec_cast()</a></code>.</p></li>
 <li><p>Initialise the output vector as an instance of this common type with
@@ -465,12 +465,12 @@ function over the set.</p></li>
 <p>The last two steps may require <code><a href='vec_proxy.html'>vec_proxy()</a></code> and <code><a href='vec_proxy.html'>vec_restore()</a></code>
 implementations, unless the attributes of your class are constant and do
 not depend on the contents of the vector. We focus here on the first two
-steps, which require <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> implementations.</p>
+steps, which require <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> implementations.</p>
 
-<h3 class='hasAnchor' id='list-vec-ptype-'><a class='anchor' href='#list-vec-ptype-'></a><code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code></h3>
+<h3 class='hasAnchor' id='list-vec-ptype-'><a class='anchor' href='#list-vec-ptype-'></a><code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
 
 
-<p>Methods for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> are passed two <em>prototypes</em>, i.e. two inputs
+<p>Methods for <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> are passed two <em>prototypes</em>, i.e. two inputs
 emptied of their elements. They implement two behaviours:</p><ul>
 <li><p>If the types of their inputs are compatible, indicate which of them
 is the richer type by returning it. If the types are of equal
@@ -488,16 +488,16 @@ of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
 character vectors than to round numbers:<div class="r"></p><pre><span class='co'># Two factors are compatible</span>
-<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; factor(0)</span>
 <span class='co'>#&gt; Levels: a b</span>
 
 <span class='co'># Factors are compatible with a character</span>
-<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='st'>"b"</span><span class='op'>)</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='st'>"b"</span><span class='op'>)</span>
 <span class='co'>#&gt; character(0)</span>
 
 <span class='co'># But they are incompatible with integers</span>
-<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fl'>1L</span><span class='op'>)</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fl'>1L</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine &lt;factor&lt;4d52a&gt;&gt; and &lt;integer&gt;.</span>
 </pre><p></div></p>
 
@@ -511,7 +511,7 @@ vector), richer behaviour (a <code>data.table</code> has richer behaviour than a
 two types is richer, it probably means they shouldn’t be automatically
 coercible.</p>
 <p>Let’s look again at what happens when we combine a factor and a
-character:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='st'>"b"</span><span class='op'>)</span>
+character:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='st'>"b"</span><span class='op'>)</span>
 <span class='co'>#&gt; character(0)</span>
 </pre><p></div></p>
 <p>The ptype2 method for <code>&lt;character&gt;</code> and <code>&lt;factor&lt;"a"&gt;&gt;</code> returns
@@ -529,11 +529,11 @@ R where <code>stringsAsFactors</code> is still true by default.</p>
 
 <p>Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
+levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; factor(0)</span>
 <span class='co'>#&gt; Levels: a c b</span>
 
-<span class='fu'><a href='vec_ptype2.logical.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; factor(0)</span>
 <span class='co'>#&gt; Levels: b a c</span>
 </pre><p></div></p>
@@ -556,10 +556,10 @@ typically by adding parent nodes on top of the hierarchy (your class is
 richer), by adding children node at the root of the hierarchy (your
 class is more constrained), or by inserting a node in the tree.</p>
 <p>These coercion hierarchies are <em>implicit</em>, in the sense that they are
-implied by the <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> implementations. There is no structured
+implied by the <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> implementations. There is no structured
 way to create or modify a hierarchy, instead you need to implement the
 appropriate coercion methods for all the types in your hierarchy, and
-diligently return the richer type in each case. The <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>
+diligently return the richer type in each case. The <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
 implementations are not transitive nor inherited, so all pairwise
 methods between classes lying on a given path must be implemented
 manually. This is something we might make easier in the future.</p>
@@ -571,10 +571,10 @@ manually. This is something we might make easier in the future.</p>
 
 <p>The second generic, <code><a href='vec_cast.html'>vec_cast()</a></code>, is the one that looks at the data and
 actually performs the conversion. Because it has access to more
-information than <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>, it may be stricter and cause an error
+information than <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>, it may be stricter and cause an error
 in more cases. <code><a href='vec_cast.html'>vec_cast()</a></code> has three possible behaviours:</p><ul>
 <li><p>Determine that the prototypes of the two inputs are not compatible.
-This must be decided in exactly the same way as for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>.
+This must be decided in exactly the same way as for <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>.
 Call <code><a href='vctrs-conditions.html'>stop_incompatible_cast()</a></code> if you can determine from the
 attributes that the types are not compatible.</p></li>
 <li><p>Detect incompatible values. Usually this is because the target type
@@ -582,7 +582,7 @@ is too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.</p></li>
 <li><p>Return the input vector converted to the target type if all values
-are compatible. Whereas <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> must return the same type
+are compatible. Whereas <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> must return the same type
 when the inputs are permuted, <code><a href='vec_cast.html'>vec_cast()</a></code> is <em>directional</em>. It
 always returns the type of the right-hand side, or dies trying.</p></li>
 </ul>
@@ -591,7 +591,7 @@ always returns the type of the right-hand side, or dies trying.</p></li>
 <h3 class='hasAnchor' id='double-dispatch'><a class='anchor' href='#double-dispatch'></a>Double dispatch</h3>
 
 
-<p>The dispatch mechanism for <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> looks like S3
+<p>The dispatch mechanism for <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> looks like S3
 but is actually a custom mechanism. Compared to S3, it has the following
 differences:</p><ul>
 <li><p>It dispatches on the classes of the first two inputs.</p></li>
@@ -607,12 +607,12 @@ explicitly if necessary.</p></li>
 <h3 class='hasAnchor' id='data-frames'><a class='anchor' href='#data-frames'></a>Data frames</h3>
 
 
-<p>The determination of the common type of data frames with <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code>
+<p>The determination of the common type of data frames with <code><a href='vec_ptype2.html'>vec_ptype2()</a></code>
 happens in three steps:</p><ol>
 <li><p>Match the columns of the two input data frames. If some columns
 don’t exist, they are created and filled with adequately typed <code>NA</code>
 values.</p></li>
-<li><p>Find the common type for each column by calling <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> on
+<li><p>Find the common type for each column by calling <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> on
 each pair of matched columns.</p></li>
 <li><p>Find the common data frame type. For example the common type of a
 grouped tibble and a tibble is a grouped tibble because the latter

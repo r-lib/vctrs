@@ -233,7 +233,7 @@
 <p>The next set of methods you are likely to need are those related to coercion and casting. Coercion and casting are two sides of the same coin: changing the prototype of an existing object. When the change happens <em>implicitly</em> (e.g in <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>) we call it <strong>coercion</strong>; when the change happens <em>explicitly</em> (e.g. with <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer(x)</a></code>), we call it <strong>casting</strong>.</p>
 <p>One of the main goals of vctrs is to put coercion and casting on a robust theoretical footing so it’s possible to make accurate predictions about what (e.g.) <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c(x, y)</a></code> should do when <code>x</code> and <code>y</code> have different prototypes. vctrs achieves this goal through two generics:</p>
 <ul>
-<li><p><code><a href="../reference/vec_ptype2.logical.html">vec_ptype2(x, y)</a></code> defines possible set of coercions. It returns a prototype if <code>x</code> and <code>y</code> can be safely coerced to the same prototype; otherwise it returns an error. The set of automatic coercions is usually quite small because too many tend to make code harder to reason about and silently propagate mistakes.</p></li>
+<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2(x, y)</a></code> defines possible set of coercions. It returns a prototype if <code>x</code> and <code>y</code> can be safely coerced to the same prototype; otherwise it returns an error. The set of automatic coercions is usually quite small because too many tend to make code harder to reason about and silently propagate mistakes.</p></li>
 <li><p><code><a href="../reference/vec_cast.html">vec_cast(x, to)</a></code> defines the possible sets of casts. It returns <code>x</code> translated to have prototype <code>to</code>, or throws an error if the conversion isn’t possible. The set of possible casts is a superset of possible coercions because they’re requested explicitly.</p></li>
 </ul>
 <div id="double-dispatch" class="section level3">
@@ -250,17 +250,17 @@
 <h3 class="hasAnchor">
 <a href="#percent" class="anchor"></a>Percent class</h3>
 <p>We’ll make our percent class coercible back and forth with double vectors.</p>
-<p><code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> provides a user friendly error message if the coercion doesn’t exist and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
+<p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> provides a user friendly error message if the coercion doesn’t exist and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span><span class="op">(</span><span class="st">"bogus"</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="st">"bogus"</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error: Can't combine &lt;character&gt; and &lt;vctrs_percent&gt;.</span>
-<span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>
+<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>
 <span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
-<span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span></code></pre></div>
 <p>By default and in simple cases, an object of the same class is compatible with itself:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype2.logical.html">vec_ptype2</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="op">)</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="op">)</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span></code></pre></div>
 <p>However this only works if the attributes for both objects are the same. Also the default methods are a bit slower. It is always a good idea to provide an explicit coercion method for the case of identical classes. So we’ll start by saying that a <code>vctrs_percent</code> combined with a <code>vctrs_percent</code> yields a <code>vctrs_percent</code>, which we indicate by returning a prototype generated by the constructor.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -278,11 +278,11 @@
 <span class="co">#&gt; 0. (                 , &lt;vctrs_percent&gt; ) = &lt;vctrs_percent&gt;</span>
 <span class="co">#&gt; 1. ( &lt;vctrs_percent&gt; , &lt;double&gt;        ) = &lt;double&gt;       </span>
 <span class="co">#&gt; 2. ( &lt;double&gt;        , &lt;vctrs_percent&gt; ) = &lt;double&gt;</span></code></pre></div>
-<p>The <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> methods define which input is the richer type that vctrs should coerce to. However, they don’t perform any conversion. This is the job of <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which we implement next. We’ll provide a method to cast a percent to a percent:</p>
+<p>The <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> methods define which input is the richer type that vctrs should coerce to. However, they don’t perform any conversion. This is the job of <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, which we implement next. We’ll provide a method to cast a percent to a percent:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_cast.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span> <span class="va">x</span></code></pre></div>
 <p>And then for converting back and forth between doubles. To convert a double to a percent we use the <code>percent()</code> helper (not the constructor; this is unvalidated user input). To convert a <code>percent</code> to a double, we strip the attributes.</p>
-<p>Note that for historical reasons the order of argument in the signature is the opposite as for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>. The class for <code>to</code> comes first, and the class for <code>x</code> comes second.</p>
+<p>Note that for historical reasons the order of argument in the signature is the opposite as for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. The class for <code>to</code> comes first, and the class for <code>x</code> comes second.</p>
 <p>Again, the double dispatch mechanism requires us to refer to the underlying type, <code>double</code>, in the method name. Implementing <code>vec_cast.vctrs_percent.numeric()</code> has no effect.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_cast.vctrs_percent.double</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">percent</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
@@ -294,7 +294,7 @@
 <span class="co">#&gt; [1] 50%</span>
 <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 0.5</span></code></pre></div>
-<p>Once you’ve implemented <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, you get <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code>[&lt;-</code>, and <code>[[&lt;-</code> implementations for free.</p>
+<p>Once you’ve implemented <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, you get <code><a href="../reference/vec_c.html">vec_c()</a></code>, <code>[&lt;-</code>, and <code>[[&lt;-</code> implementations for free.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; [1] 0.5 1.0</span>
@@ -396,7 +396,7 @@
 <span class="va">x</span>
 <span class="co">#&gt; &lt;decimal&lt;1&gt;[10]&gt;</span>
 <span class="co">#&gt;  [1] 0.1 0.8 0.6 0.2 0.0 0.5 0.5 0.3 0.7 0.8</span></code></pre></div>
-<p>Now consider <code><a href="../reference/vec_cast.html">vec_cast()</a></code> and <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code>. Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
+<p>Now consider <code><a href="../reference/vec_cast.html">vec_cast()</a></code> and <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>. Casting and coercing from one decimal to another requires a little thought as the values of the <code>digits</code> attribute might be different, and we need some way to reconcile them. Here I’ve decided to chose the maximum of the two; other reasonable options are to take the value from the left-hand side or throw an error.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_ptype2.vctrs_decimal.vctrs_decimal</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu">new_decimal</span><span class="op">(</span>digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu">digits</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu">digits</span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -596,7 +596,7 @@
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt;  rtnl [1:10] 1/1, 1/2, 1/3, 1/4, 1/5, 1/6, 1/7, 1/8, 1/9, 1/10</span></code></pre></div>
-<p>For <code>rational</code>, <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> follow the same pattern as <code>percent()</code>. We allow coercion from integer and to doubles.</p>
+<p>For <code>rational</code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> follow the same pattern as <code>percent()</code>. We allow coercion from integer and to doubles.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_ptype2.vctrs_rational.vctrs_rational</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_rational</span><span class="op">(</span><span class="op">)</span>
 <span class="va">vec_ptype2.vctrs_rational.integer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_rational</span><span class="op">(</span><span class="op">)</span>
@@ -1061,7 +1061,7 @@
 <span class="va">vec_ptype_abbr.pizza_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="st">"prcnt"</span>
 <span class="op">}</span></code></pre></div>
-<p>Finally, we implement methods for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
+<p>Finally, we implement methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @export</span>
 <span class="va">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_percent</span><span class="op">(</span><span class="op">)</span>
