@@ -231,6 +231,7 @@ static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_ty
 static SEXP parse_na_value(SEXP na_value);
 static SEXP parse_direction(SEXP direction);
 static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
+static SEXP vec_order_flip_na_last(SEXP na_last, SEXP decreasing);
 
 static void vec_order_switch(SEXP x,
                              SEXP decreasing,
@@ -262,8 +263,13 @@ SEXP vec_order_impl(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform, b
 
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
   SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
+  R_len_t arg_size = vec_size_common(args, 0);
+  args = PROTECT_N(vec_recycle_common(args, arg_size), &n_prot);
+
   decreasing = VECTOR_ELT(args, 0);
   na_last = VECTOR_ELT(args, 1);
+
+  na_last = PROTECT_N(vec_order_flip_na_last(na_last, decreasing), &n_prot);
 
   SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
   proxy = PROTECT_N(vec_normalize_encoding(proxy), &n_prot);
@@ -4055,6 +4061,39 @@ int df_decreasing_expansion(SEXP x) {
   }
 
   return out;
+}
+
+// -----------------------------------------------------------------------------
+
+/*
+ * `na_value` -> `na_last` is originally parsed as:
+ * largest -> TRUE
+ * smallest -> FALSE
+ * We have to flip this if ordering in decreasing ordering.
+ */
+static
+SEXP vec_order_flip_na_last(SEXP na_last, SEXP decreasing) {
+  na_last = PROTECT(r_clone_referenced(na_last));
+  int* p_na_last = LOGICAL(na_last);
+
+  const int* p_decreasing = LOGICAL_RO(decreasing);
+
+  const r_ssize size = r_length(na_last);
+  if (size != r_length(decreasing)) {
+    stop_internal(
+      "vec_order_flip_na_last",
+      "`na_last` and `decreasing` should already match in size."
+    );
+  }
+
+  for (r_ssize i = 0; i < size; ++i) {
+    if (p_decreasing[i]) {
+      p_na_last[i] = !p_na_last[i];
+    }
+  }
+
+  UNPROTECT(1);
+  return na_last;
 }
 
 // -----------------------------------------------------------------------------
