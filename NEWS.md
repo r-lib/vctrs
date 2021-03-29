@@ -703,7 +703,7 @@ primitives.
 
 The API in 0.2.0 has been updated, please see a list of breaking
 changes below. vctrs has now graduated from experimental to a maturing
-package (see the [lifecycle of tidyverse packages](https://www.tidyverse.org/lifecycle/)).
+package.
 Please note that API changes are still planned for future releases,
 for instance `vec_ptype2()` and `vec_cast()` might need to return a
 sentinel instead of failing with an error when there is no common type
