@@ -17,6 +17,8 @@
 
 static inline int dbl_cmp(const double x,
                           const double y,
+                          const enum vctrs_dbl_class x_type,
+                          const enum vctrs_dbl_class y_type,
                           const int direction,
                           const int na_order,
                           const int na_nan_cmp);
@@ -52,6 +54,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   const int na_nan_cmp = nan_distinct ? na_order : 0;
 
   double previous = p_x[0];
+  enum vctrs_dbl_class previous_type = dbl_classify(previous);
 
   r_ssize count = 0;
 
@@ -59,10 +62,13 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
     double current = p_x[i];
+    enum vctrs_dbl_class current_type = dbl_classify(current);
 
     int cmp = dbl_cmp(
       current,
       previous,
+      current_type,
+      previous_type,
       direction,
       na_order,
       na_nan_cmp
@@ -73,6 +79,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
     }
 
     previous = current;
+    previous_type = current_type;
   }
 
   // Was in strictly opposite of expected order.
@@ -101,10 +108,13 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
     double current = p_x[i];
+    enum vctrs_dbl_class current_type = dbl_classify(current);
 
     int cmp = dbl_cmp(
       current,
       previous,
+      current_type,
+      previous_type,
       direction,
       na_order,
       na_nan_cmp
@@ -117,6 +127,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
     }
 
     previous = current;
+    previous_type = current_type;
 
     // Continue group run
     if (cmp == 0) {
@@ -144,12 +155,11 @@ static inline int dbl_cmp_numbers(double x, double y, const int direction);
 static inline
 int dbl_cmp(const double x,
             const double y,
+            const enum vctrs_dbl_class x_type,
+            const enum vctrs_dbl_class y_type,
             const int direction,
             const int na_order,
             const int na_nan_cmp) {
-  const enum vctrs_dbl_class x_type = dbl_classify(x);
-  const enum vctrs_dbl_class y_type = dbl_classify(y);
-
   switch (x_type) {
   case vctrs_dbl_number:
     switch (y_type) {
