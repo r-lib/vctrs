@@ -184,50 +184,38 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform);
+static SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform);
 
 // [[ register() ]]
 SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
-  SEXP decreasing = PROTECT(parse_direction(direction));
-  SEXP na_last = PROTECT(parse_na_value(na_value));
-
-  SEXP out = vec_order(x, decreasing, na_last, chr_transform);
-
-  UNPROTECT(2);
-  return out;
+  return vec_order(x, direction, na_value, chr_transform);
 }
 
 
 static SEXP vec_order_impl(SEXP x,
-                           SEXP decreasing,
-                           SEXP na_last,
+                           SEXP direction,
+                           SEXP na_value,
                            SEXP chr_transform,
                            bool locations);
 
 static
-SEXP vec_order(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform) {
-  return vec_order_impl(x, decreasing, na_last, chr_transform, false);
+SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
+  return vec_order_impl(x, direction, na_value, chr_transform, false);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform);
+static SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform);
 
 // [[ register() ]]
 SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
-  SEXP decreasing = PROTECT(parse_direction(direction));
-  SEXP na_last = PROTECT(parse_na_value(na_value));
-
-  SEXP out = vec_order_locs(x, decreasing, na_last, chr_transform);
-
-  UNPROTECT(2);
-  return out;
+  return vec_order_locs(x, direction, na_value, chr_transform);
 }
 
 
 static
-SEXP vec_order_locs(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform) {
-  return vec_order_impl(x, decreasing, na_last, chr_transform, true);
+SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
+  return vec_order_impl(x, direction, na_value, chr_transform, true);
 }
 
 // -----------------------------------------------------------------------------
@@ -239,6 +227,9 @@ static SEXP vec_order_locs_impl(SEXP x,
 
 static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
 static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
+
+static SEXP parse_na_value(SEXP na_value);
+static SEXP parse_direction(SEXP direction);
 static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
 
 static void vec_order_switch(SEXP x,
@@ -263,8 +254,11 @@ static void vec_order_switch(SEXP x,
  * the locations in `x` corresponding to each key.
  */
 static
-SEXP vec_order_impl(SEXP x, SEXP decreasing, SEXP na_last, SEXP chr_transform, bool locations) {
+SEXP vec_order_impl(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform, bool locations) {
   int n_prot = 0;
+
+  SEXP decreasing = PROTECT_N(parse_direction(direction), &n_prot);
+  SEXP na_last = PROTECT_N(parse_na_value(na_value), &n_prot);
 
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
   SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
@@ -4067,7 +4061,7 @@ int df_decreasing_expansion(SEXP x) {
 
 static int parse_na_value_one(SEXP x);
 
-// [[ include("order-radix.h") ]]
+static
 SEXP parse_na_value(SEXP na_value) {
   // Don't care about length here, checked later
   if (TYPEOF(na_value) != STRSXP) {
@@ -4107,7 +4101,7 @@ int parse_na_value_one(SEXP x) {
 
 static int parse_direction_one(SEXP x);
 
-// [[ include("order-radix.h") ]]
+static
 SEXP parse_direction(SEXP direction) {
   // Don't care about length here, checked later
   if (TYPEOF(direction) != STRSXP) {
