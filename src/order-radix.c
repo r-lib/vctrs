@@ -184,38 +184,59 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform);
+static inline bool parse_nan_distinct(SEXP nan_distinct);
+
+static SEXP vec_order(SEXP x,
+                      SEXP direction,
+                      SEXP na_value,
+                      bool nan_distinct,
+                      SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
-  return vec_order(x, direction, na_value, chr_transform);
+SEXP vctrs_order(SEXP x,
+                 SEXP direction,
+                 SEXP na_value,
+                 SEXP nan_distinct,
+                 SEXP chr_transform) {
+  bool c_nan_distinct = parse_nan_distinct(nan_distinct);
+  return vec_order(x, direction, na_value, c_nan_distinct, chr_transform);
 }
 
 
 static SEXP vec_order_impl(SEXP x,
                            SEXP direction,
                            SEXP na_value,
+                           bool nan_distinct,
                            SEXP chr_transform,
                            bool locations);
 
 static
-SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
-  return vec_order_impl(x, direction, na_value, chr_transform, false);
+SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
+  return vec_order_impl(x, direction, na_value, nan_distinct, chr_transform, false);
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform);
+static SEXP vec_order_locs(SEXP x,
+                           SEXP direction,
+                           SEXP na_value,
+                           bool nan_distinct,
+                           SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
-  return vec_order_locs(x, direction, na_value, chr_transform);
+SEXP vctrs_order_locs(SEXP x,
+                      SEXP direction,
+                      SEXP na_value,
+                      SEXP nan_distinct,
+                      SEXP chr_transform) {
+  bool c_nan_distinct = parse_nan_distinct(nan_distinct);
+  return vec_order_locs(x, direction, na_value, c_nan_distinct, chr_transform);
 }
 
 
 static
-SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform) {
-  return vec_order_impl(x, direction, na_value, chr_transform, true);
+SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
+  return vec_order_impl(x, direction, na_value, nan_distinct, chr_transform, true);
 }
 
 // -----------------------------------------------------------------------------
@@ -236,6 +257,7 @@ static SEXP vec_order_flip_na_last(SEXP na_last, SEXP decreasing);
 static void vec_order_switch(SEXP x,
                              SEXP decreasing,
                              SEXP na_last,
+                             bool nan_distinct,
                              r_ssize size,
                              const enum vctrs_type type,
                              struct order* p_order,
@@ -255,7 +277,12 @@ static void vec_order_switch(SEXP x,
  * the locations in `x` corresponding to each key.
  */
 static
-SEXP vec_order_impl(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform, bool locations) {
+SEXP vec_order_impl(SEXP x,
+                    SEXP direction,
+                    SEXP na_value,
+                    bool nan_distinct,
+                    SEXP chr_transform,
+                    bool locations) {
   int n_prot = 0;
 
   SEXP decreasing = PROTECT_N(parse_direction(direction), &n_prot);
@@ -339,6 +366,7 @@ SEXP vec_order_impl(SEXP x, SEXP direction, SEXP na_value, SEXP chr_transform, b
     proxy,
     decreasing,
     na_last,
+    nan_distinct,
     size,
     type,
     p_order,
@@ -425,6 +453,7 @@ SEXP vec_order_locs_impl(SEXP x,
 static void df_order(SEXP x,
                      SEXP decreasing,
                      SEXP na_last,
+                     bool nan_distinct,
                      r_ssize size,
                      struct order* p_order,
                      struct lazy_raw* p_lazy_x_chunk,
@@ -438,6 +467,7 @@ static void df_order(SEXP x,
 static void vec_order_base_switch(SEXP x,
                                   bool decreasing,
                                   bool na_last,
+                                  bool nan_distinct,
                                   r_ssize size,
                                   const enum vctrs_type type,
                                   struct order* p_order,
@@ -453,6 +483,7 @@ static
 void vec_order_switch(SEXP x,
                       SEXP decreasing,
                       SEXP na_last,
+                      bool nan_distinct,
                       r_ssize size,
                       const enum vctrs_type type,
                       struct order* p_order,
@@ -468,6 +499,7 @@ void vec_order_switch(SEXP x,
       x,
       decreasing,
       na_last,
+      nan_distinct,
       size,
       p_order,
       p_lazy_x_chunk,
@@ -505,6 +537,7 @@ void vec_order_switch(SEXP x,
     x,
     c_decreasing,
     c_na_last,
+    nan_distinct,
     size,
     type,
     p_order,
@@ -547,6 +580,7 @@ static void lgl_order(SEXP x,
 static void dbl_order(SEXP x,
                       bool decreasing,
                       bool na_last,
+                      bool nan_distinct,
                       r_ssize size,
                       struct order* p_order,
                       struct lazy_raw* p_lazy_x_chunk,
@@ -559,6 +593,7 @@ static void dbl_order(SEXP x,
 static void cpl_order(SEXP x,
                       bool decreasing,
                       bool na_last,
+                      bool nan_distinct,
                       r_ssize size,
                       struct order* p_order,
                       struct lazy_raw* p_lazy_x_chunk,
@@ -586,6 +621,7 @@ static
 void vec_order_base_switch(SEXP x,
                            bool decreasing,
                            bool na_last,
+                           bool nan_distinct,
                            r_ssize size,
                            const enum vctrs_type type,
                            struct order* p_order,
@@ -636,6 +672,7 @@ void vec_order_base_switch(SEXP x,
       x,
       decreasing,
       na_last,
+      nan_distinct,
       size,
       p_order,
       p_lazy_x_chunk,
@@ -653,6 +690,7 @@ void vec_order_base_switch(SEXP x,
       x,
       decreasing,
       na_last,
+      nan_distinct,
       size,
       p_order,
       p_lazy_x_chunk,
@@ -1722,6 +1760,7 @@ void lgl_order(SEXP x,
 
 static void dbl_order_chunk_impl(bool decreasing,
                                  bool na_last,
+                                 bool nan_distinct,
                                  r_ssize size,
                                  void* p_x,
                                  int* p_o,
@@ -1752,6 +1791,7 @@ static void dbl_order_chunk_impl(bool decreasing,
 static
 void dbl_order_chunk(bool decreasing,
                      bool na_last,
+                     bool nan_distinct,
                      r_ssize size,
                      int* p_o,
                      struct lazy_raw* p_lazy_x_chunk,
@@ -1765,6 +1805,7 @@ void dbl_order_chunk(bool decreasing,
   dbl_order_chunk_impl(
     decreasing,
     na_last,
+    nan_distinct,
     size,
     p_x_chunk,
     p_o,
@@ -1780,6 +1821,7 @@ void dbl_order_chunk(bool decreasing,
 static void dbl_order_impl(const double* p_x,
                            bool decreasing,
                            bool na_last,
+                           bool nan_distinct,
                            r_ssize size,
                            bool copy,
                            struct order* p_order,
@@ -1794,6 +1836,7 @@ static
 void dbl_order(SEXP x,
                bool decreasing,
                bool na_last,
+               bool nan_distinct,
                r_ssize size,
                struct order* p_order,
                struct lazy_raw* p_lazy_x_chunk,
@@ -1808,6 +1851,7 @@ void dbl_order(SEXP x,
     p_x,
     decreasing,
     na_last,
+    nan_distinct,
     size,
     true,
     p_order,
@@ -1823,6 +1867,7 @@ void dbl_order(SEXP x,
 
 static void dbl_adjust(const bool decreasing,
                        const bool na_last,
+                       const bool nan_distinct,
                        const r_ssize size,
                        void* p_x);
 
@@ -1850,6 +1895,7 @@ static void dbl_order_radix(const r_ssize size,
 static
 void dbl_order_chunk_impl(bool decreasing,
                           bool na_last,
+                          bool nan_distinct,
                           r_ssize size,
                           void* p_x,
                           int* p_o,
@@ -1863,6 +1909,7 @@ void dbl_order_chunk_impl(bool decreasing,
     size,
     decreasing,
     na_last,
+    nan_distinct,
     p_group_infos
   );
 
@@ -1871,7 +1918,7 @@ void dbl_order_chunk_impl(bool decreasing,
     return;
   }
 
-  dbl_adjust(decreasing, na_last, size, p_x);
+  dbl_adjust(decreasing, na_last, nan_distinct, size, p_x);
 
   if (size <= ORDER_INSERTION_BOUNDARY) {
     dbl_order_insertion(size, p_x, p_o, p_group_infos);
@@ -1914,6 +1961,7 @@ static
 void dbl_order_impl(const double* p_x,
                     bool decreasing,
                     bool na_last,
+                    bool nan_distinct,
                     r_ssize size,
                     bool copy,
                     struct order* p_order,
@@ -1928,6 +1976,7 @@ void dbl_order_impl(const double* p_x,
     size,
     decreasing,
     na_last,
+    nan_distinct,
     p_group_infos
   );
 
@@ -1949,7 +1998,7 @@ void dbl_order_impl(const double* p_x,
     p_x_chunk = p_lazy_x_chunk->p_data;
   }
 
-  dbl_adjust(decreasing, na_last, size, p_x_chunk);
+  dbl_adjust(decreasing, na_last, nan_distinct, size, p_x_chunk);
 
   if (size <= ORDER_INSERTION_BOUNDARY) {
     dbl_order_insertion(size, p_x_chunk, p_o, p_group_infos);
@@ -1979,7 +2028,17 @@ void dbl_order_impl(const double* p_x,
 
 // -----------------------------------------------------------------------------
 
-static inline uint64_t dbl_map_to_uint64(double x);
+static inline void dbl_adjust_nan_identical(const bool decreasing,
+                                            const bool na_last,
+                                            const r_ssize size,
+                                            double* p_x_dbl,
+                                            uint64_t* p_x_u64);
+
+static inline void dbl_adjust_nan_distinct(const bool decreasing,
+                                           const bool na_last,
+                                           const r_ssize size,
+                                           double* p_x_dbl,
+                                           uint64_t* p_x_u64);
 
 /*
  * When mapping double -> uint64_t:
@@ -1996,34 +2055,87 @@ static inline uint64_t dbl_map_to_uint64(double x);
  * One smaller is:
  * dbl_map_to_uint64(.Machine$double.xmax) -> 18442240474082181119
  *
- * This gives us room to manually map (depending on `na_last`):
- * dbl_map_to_uint64(NA_real_) -> UINT64_MAX (or 0 if `na_last = false`)
- * dbl_map_to_uint64(NaN) -> UINT64_MAX (or 0 if `na_last = false`)
+ * This gives us room to manually map:
+ * If (!nan_distinct):
+ *   dbl_map_to_uint64(NA_real_) -> UINT64_MAX (or 0 if `na_last = false`)
+ *   dbl_map_to_uint64(NaN) -> UINT64_MAX (or 0 if `na_last = false`)
+ * If (nan_distinct):
+ *   dbl_map_to_uint64(NA_real_) -> UINT64_MAX (or 0 if `na_last = false`)
+ *   dbl_map_to_uint64(NaN) -> UINT64_MAX - 1 (or 1 if `na_last = false`)
+ * When using `nan_distinct`, NaN is always ordered between NA_real_ and
+ * non-missing numbers, regardless of `decreasing`.
  */
 static
 void dbl_adjust(const bool decreasing,
                 const bool na_last,
+                const bool nan_distinct,
                 const r_ssize size,
                 void* p_x) {
-  const int direction = decreasing ? -1 : 1;
-  const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
-
   double* p_x_dbl = (double*) p_x;
   uint64_t* p_x_u64 = (uint64_t*) p_x;
 
+  if (nan_distinct) {
+    dbl_adjust_nan_distinct(decreasing, na_last, size, p_x_dbl, p_x_u64);
+  } else {
+    dbl_adjust_nan_identical(decreasing, na_last, size, p_x_dbl, p_x_u64);
+  }
+}
+
+static inline uint64_t dbl_map_to_uint64(double x);
+
+static inline
+void dbl_adjust_nan_identical(const bool decreasing,
+                              const bool na_last,
+                              const r_ssize size,
+                              double* p_x_dbl,
+                              uint64_t* p_x_u64) {
+  const int direction = decreasing ? -1 : 1;
+  const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
+
   for (r_ssize i = 0; i < size; ++i) {
-    // Flip direction ahead of time. Won't affect `NA_real`, `NaN` values.
-    double elt = p_x_dbl[i] * direction;
+    double elt = p_x_dbl[i];
 
     if (isnan(elt)) {
       p_x_u64[i] = na_u64;
       continue;
     }
 
+    elt = elt * direction;
     p_x_u64[i] = dbl_map_to_uint64(elt);
   }
 }
 
+static inline
+void dbl_adjust_nan_distinct(const bool decreasing,
+                             const bool na_last,
+                             const r_ssize size,
+                             double* p_x_dbl,
+                             uint64_t* p_x_u64) {
+  const int direction = decreasing ? -1 : 1;
+  const uint64_t na_u64 = na_last ? UINT64_MAX : 0;
+  const uint64_t nan_u64 = na_last ? UINT64_MAX - 1 : 1;
+
+  for (r_ssize i = 0; i < size; ++i) {
+    double elt = p_x_dbl[i];
+    const enum vctrs_dbl_class type = dbl_classify(elt);
+
+    switch (type) {
+    case vctrs_dbl_number: {
+      elt = elt * direction;
+      p_x_u64[i] = dbl_map_to_uint64(elt);
+      break;
+    }
+    case vctrs_dbl_missing: {
+      p_x_u64[i] = na_u64;
+      break;
+    }
+    case vctrs_dbl_nan: {
+      p_x_u64[i] = nan_u64;
+      break;
+    }
+    }
+  }
+}
 
 static inline uint64_t dbl_flip_uint64(uint64_t x);
 
@@ -2465,6 +2577,7 @@ static
 void cpl_order(SEXP x,
                bool decreasing,
                bool na_last,
+               bool nan_distinct,
                r_ssize size,
                struct order* p_order,
                struct lazy_raw* p_lazy_x_chunk,
@@ -2509,6 +2622,7 @@ void cpl_order(SEXP x,
     p_x_chunk_dbl,
     decreasing,
     na_last,
+    nan_distinct,
     size,
     false,
     p_order,
@@ -2564,6 +2678,7 @@ void cpl_order(SEXP x,
     dbl_order_chunk_impl(
       decreasing,
       na_last,
+      nan_distinct,
       group_size,
       p_x_chunk_dbl,
       p_o,
@@ -3281,6 +3396,7 @@ struct df_order_info {
   SEXP x;
   SEXP decreasing;
   SEXP na_last;
+  bool nan_distinct;
   r_ssize size;
   struct order* p_order;
   struct lazy_raw* p_lazy_x_chunk;
@@ -3321,6 +3437,7 @@ static
 void df_order(SEXP x,
               SEXP decreasing,
               SEXP na_last,
+              bool nan_distinct,
               r_ssize size,
               struct order* p_order,
               struct lazy_raw* p_lazy_x_chunk,
@@ -3334,6 +3451,7 @@ void df_order(SEXP x,
     .x = x,
     .decreasing = decreasing,
     .na_last = na_last,
+    .nan_distinct = nan_distinct,
     .size = size,
     .p_order = p_order,
     .p_lazy_x_chunk = p_lazy_x_chunk,
@@ -3360,6 +3478,7 @@ void df_order(SEXP x,
 static void df_order_internal(SEXP x,
                               SEXP decreasing,
                               SEXP na_last,
+                              bool nan_distinct,
                               r_ssize size,
                               struct order* p_order,
                               struct lazy_raw* p_lazy_x_chunk,
@@ -3378,6 +3497,7 @@ SEXP df_order_exec(void* p_data) {
     p_info->x,
     p_info->decreasing,
     p_info->na_last,
+    p_info->nan_distinct,
     p_info->size,
     p_info->p_order,
     p_info->p_lazy_x_chunk,
@@ -3401,6 +3521,7 @@ void df_order_cleanup(void* p_data) {
 
 static void vec_order_chunk_switch(bool decreasing,
                                    bool na_last,
+                                   bool nan_distinct,
                                    r_ssize size,
                                    const enum vctrs_type type,
                                    int* p_o,
@@ -3450,6 +3571,7 @@ static
 void df_order_internal(SEXP x,
                        SEXP decreasing,
                        SEXP na_last,
+                       bool nan_distinct,
                        r_ssize size,
                        struct order* p_order,
                        struct lazy_raw* p_lazy_x_chunk,
@@ -3512,6 +3634,7 @@ void df_order_internal(SEXP x,
     col,
     col_decreasing,
     col_na_last,
+    nan_distinct,
     size,
     type,
     p_order,
@@ -3613,6 +3736,7 @@ void df_order_internal(SEXP x,
       vec_order_chunk_switch(
         col_decreasing,
         col_na_last,
+        nan_distinct,
         group_size,
         type,
         p_o_col,
@@ -3646,6 +3770,7 @@ void df_order_internal(SEXP x,
 static
 void vec_order_chunk_switch(bool decreasing,
                             bool na_last,
+                            bool nan_distinct,
                             r_ssize size,
                             const enum vctrs_type type,
                             int* p_o,
@@ -3692,6 +3817,7 @@ void vec_order_chunk_switch(bool decreasing,
     dbl_order_chunk(
       decreasing,
       na_last,
+      nan_distinct,
       size,
       p_o,
       p_lazy_x_chunk,
@@ -3709,6 +3835,7 @@ void vec_order_chunk_switch(bool decreasing,
     dbl_order_chunk(
       decreasing,
       na_last,
+      nan_distinct,
       size,
       p_o,
       p_lazy_x_chunk,
@@ -4176,4 +4303,22 @@ int parse_direction_one(SEXP x) {
     R_NilValue,
     "`direction` must contain only \"asc\" or \"desc\"."
   );
+}
+
+static inline
+bool parse_nan_distinct(SEXP nan_distinct) {
+  if (TYPEOF(nan_distinct) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "`nan_distinct` must be a logical vector.");
+  }
+  if (Rf_length(nan_distinct) != 1) {
+    Rf_errorcall(R_NilValue, "`nan_distinct` must be length 1.");
+  }
+
+  int c_nan_distinct = LOGICAL_RO(nan_distinct)[0];
+
+  if (c_nan_distinct == NA_LOGICAL) {
+    Rf_errorcall(R_NilValue, "`nan_distinct` can't be missing.");
+  }
+
+  return (bool) c_nan_distinct;
 }

@@ -43,6 +43,9 @@
 #'   - For data frames, a length `1` or `ncol(x)` character vector containing
 #'     only `"largest"` or `"smallest"`, specifying how `NA`s should be treated
 #'     in each column.
+#' @param nan_distinct A single logical specifying whether or not `NaN` should
+#'   be considered distinct from `NA` for double and complex vectors. If `TRUE`,
+#'   `NaN` will always be ordered between `NA` and non-missing numbers.
 #' @param chr_transform Transformation of character vectors for sorting in
 #'   alternate locales.
 #'   - If `NULL`, no transformation is done.
@@ -100,8 +103,9 @@
 vec_order_radix <- function(x,
                             direction = "asc",
                             na_value = "largest",
+                            nan_distinct = FALSE,
                             chr_transform = NULL) {
-  .Call(vctrs_order, x, direction, na_value, chr_transform)
+  .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_transform)
 }
 
 #' Identify ordered groups
@@ -139,6 +143,7 @@ vec_order_radix <- function(x,
 vec_order_locs <- function(x,
                            direction = "asc",
                            na_value = "largest",
+                           nan_distinct = FALSE,
                            chr_transform = NULL) {
-  .Call(vctrs_order_locs, x, direction, na_value, chr_transform)
+  .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_transform)
 }

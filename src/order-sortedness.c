@@ -15,10 +15,15 @@
 
 // -----------------------------------------------------------------------------
 
-static inline int dbl_cmp(double x, double y, const int direction, const int na_order);
+static inline int dbl_cmp(const double x,
+                          const double y,
+                          const int direction,
+                          const int na_order,
+                          const int na_nan_cmp);
 
 /*
- * Check if a double vector is ordered, handling `decreasing` and `na_last`
+ * Check if a double vector is ordered, handling `decreasing`, `na_last`, and
+ * `nan_distinct`.
  *
  * If the double vector is in the expected ordering, no sorting needs to
  * occur. In these cases, if `p_x` is in exactly the expected ordering.
@@ -31,6 +36,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
+                                     bool nan_distinct,
                                      struct group_infos* p_group_infos) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
@@ -43,6 +49,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
 
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
+  const int na_nan_cmp = nan_distinct ? na_order : 0;
 
   double previous = p_x[0];
 
@@ -57,7 +64,8 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
       current,
       previous,
       direction,
-      na_order
+      na_order,
+      na_nan_cmp
     );
 
     if (cmp >= 0) {
@@ -98,7 +106,8 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
       current,
       previous,
       direction,
-      na_order
+      na_order,
+      na_nan_cmp
     );
 
     // Not expected ordering
@@ -127,25 +136,45 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   return VCTRS_SORTEDNESS_sorted;
 }
 
+static inline int dbl_cmp_numbers(double x, double y, const int direction);
+
 /*
- * Compare two doubles, handling `na_order` and `direction`
+ * Compare two doubles, handling `na_order`, `direction`, and `na_nan_cmp`
  */
 static inline
-int dbl_cmp(double x, double y, const int direction, const int na_order) {
-  if (isnan(x)) {
-    if (isnan(y)) {
-      return 0;
-    } else {
-      return na_order;
+int dbl_cmp(const double x,
+            const double y,
+            const int direction,
+            const int na_order,
+            const int na_nan_cmp) {
+  const enum vctrs_dbl_class x_type = dbl_classify(x);
+  const enum vctrs_dbl_class y_type = dbl_classify(y);
+
+  switch (x_type) {
+  case vctrs_dbl_number:
+    switch (y_type) {
+    case vctrs_dbl_number: return dbl_cmp_numbers(x, y, direction);
+    case vctrs_dbl_missing: return -na_order;
+    case vctrs_dbl_nan: return -na_order;
+    }
+  case vctrs_dbl_missing:
+    switch (y_type) {
+    case vctrs_dbl_number: return na_order;
+    case vctrs_dbl_missing: return 0;
+    case vctrs_dbl_nan: return na_nan_cmp;
+    }
+  case vctrs_dbl_nan:
+    switch (y_type) {
+    case vctrs_dbl_number: return na_order;
+    case vctrs_dbl_missing: return -na_nan_cmp;
+    case vctrs_dbl_nan: return 0;
     }
   }
+}
 
-  if (isnan(y)) {
-    return -na_order;
-  }
-
-  int cmp = (x > y) - (x < y);
-
+static inline
+int dbl_cmp_numbers(const double x, const double y, const int direction) {
+  const int cmp = (x > y) - (x < y);
   return cmp * direction;
 }
 
