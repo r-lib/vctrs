@@ -30,6 +30,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
+                                     bool nan_distinct,
                                      struct group_infos* p_group_infos);
 
 enum vctrs_sortedness int_sortedness(const int* p_x,
