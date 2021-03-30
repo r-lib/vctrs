@@ -453,18 +453,8 @@ SEXP vec_order_info_impl(SEXP x,
 
   if (group_sizes) {
     struct group_info* p_group_info = groups_current(p_group_infos);
-
     SEXP sizes = p_group_info->data;
-
-    // TODO: Replace with `r_int_resize()` from the rlang lib
-#if R_VERSION >= R_Version(3, 4, 0)
-    SETLENGTH(sizes, p_group_info->n_groups);
-    SET_TRUELENGTH(sizes, p_group_info->data_size);
-    SET_GROWABLE_BIT(sizes);
-#else
-    sizes = Rf_xlengthgets(sizes, p_group_info->n_groups);
-#endif
-
+    sizes = r_int_resize(sizes, p_group_info->n_groups);
     SET_VECTOR_ELT(out, 1, sizes);
   }
 
