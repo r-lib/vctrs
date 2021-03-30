@@ -147,3 +147,11 @@ vec_order_locs <- function(x,
                            chr_transform = NULL) {
   .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_transform)
 }
+
+vec_order_info <- function(x,
+                           direction = "asc",
+                           na_value = "largest",
+                           nan_distinct = FALSE,
+                           chr_transform = NULL) {
+  .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_transform)
+}

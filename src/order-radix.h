@@ -17,6 +17,14 @@
 
 // -----------------------------------------------------------------------------
 
+SEXP vec_order_info(SEXP x,
+                    SEXP direction,
+                    SEXP na_value,
+                    bool nan_distinct,
+                    SEXP chr_transform);
+
+// -----------------------------------------------------------------------------
+
 /*
  * `order` is an integer vector intended to hold the ordering vector
  * in `vec_order()`. It is allocated eagerly, but the initialization of its

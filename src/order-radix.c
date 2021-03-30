@@ -203,17 +203,20 @@ SEXP vctrs_order(SEXP x,
   return vec_order(x, direction, na_value, c_nan_distinct, chr_transform);
 }
 
-
-static SEXP vec_order_impl(SEXP x,
-                           SEXP direction,
-                           SEXP na_value,
-                           bool nan_distinct,
-                           SEXP chr_transform,
-                           bool locations);
+static SEXP vec_order_info_impl(SEXP x,
+                                SEXP direction,
+                                SEXP na_value,
+                                bool nan_distinct,
+                                SEXP chr_transform,
+                                bool group_sizes);
 
 static
 SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
-  return vec_order_impl(x, direction, na_value, nan_distinct, chr_transform, false);
+  const bool group_sizes = false;
+  SEXP info = PROTECT(vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, group_sizes));
+  SEXP out = VECTOR_ELT(info, 0);
+  UNPROTECT(1);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
@@ -237,15 +240,87 @@ SEXP vctrs_order_locs(SEXP x,
 
 static
 SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
-  return vec_order_impl(x, direction, na_value, nan_distinct, chr_transform, true);
+  SEXP info = PROTECT(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
+
+  SEXP o = VECTOR_ELT(info, 0);
+  const int* p_o = INTEGER_RO(o);
+
+  SEXP sizes = VECTOR_ELT(info, 1);
+  const int* p_sizes = INTEGER_RO(sizes);
+
+  r_ssize n_groups = r_length(sizes);
+
+  SEXP loc = PROTECT(Rf_allocVector(VECSXP, n_groups));
+
+  SEXP key_loc = PROTECT(Rf_allocVector(INTSXP, n_groups));
+  int* p_key_loc = INTEGER(key_loc);
+
+  int start = 0;
+
+  for (r_ssize i = 0; i < n_groups; ++i) {
+    p_key_loc[i] = p_o[start];
+
+    const int size = p_sizes[i];
+
+    SEXP elt = Rf_allocVector(INTSXP, size);
+    SET_VECTOR_ELT(loc, i, elt);
+    int* p_elt = INTEGER(elt);
+
+    R_len_t k = 0;
+
+    for (int j = 0; j < size; ++j) {
+      p_elt[k] = p_o[start];
+      ++start;
+      ++k;
+    }
+  }
+
+  SEXP key = PROTECT(vec_slice(x, key_loc));
+
+  // Construct output data frame
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(out, 0, key);
+  SET_VECTOR_ELT(out, 1, loc);
+
+  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, strings_key);
+  SET_STRING_ELT(names, 1, strings_loc);
+
+  Rf_setAttrib(out, R_NamesSymbol, names);
+
+  out = new_data_frame(out, n_groups);
+
+  UNPROTECT(6);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs_impl(SEXP x,
-                                const int* p_o,
-                                const int* p_sizes,
-                                r_ssize n_groups);
+/*
+ * Returns a list of size two.
+ * - The first element of the list contains the ordering as an integer vector.
+ * - The second element of the list contains the group sizes as an integer
+ *   vector.
+ */
+// [[ include("order-radix.h") ]]
+SEXP vec_order_info(SEXP x,
+                    SEXP direction,
+                    SEXP na_value,
+                    bool nan_distinct,
+                    SEXP chr_transform) {
+  const bool group_sizes = true;
+  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, group_sizes);
+}
+
+// [[ register() ]]
+SEXP vctrs_order_info(SEXP x,
+                      SEXP direction,
+                      SEXP na_value,
+                      SEXP nan_distinct,
+                      SEXP chr_transform) {
+  bool c_nan_distinct = parse_nan_distinct(nan_distinct);
+  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_transform);
+}
 
 static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
 static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type);
@@ -270,20 +345,13 @@ static void vec_order_switch(SEXP x,
                              struct group_infos* p_group_infos,
                              struct truelength_info* p_truelength_info);
 
-/*
- * Returns an integer vector of the ordering unless `locations` is true. In
- * that case it returns a data frame with two columns. The first is the
- * `key` which is a slice of `x` containing the ordered unique values, and
- * the second is `loc` which is a list column of integer vectors containing
- * the locations in `x` corresponding to each key.
- */
 static
-SEXP vec_order_impl(SEXP x,
-                    SEXP direction,
-                    SEXP na_value,
-                    bool nan_distinct,
-                    SEXP chr_transform,
-                    bool locations) {
+SEXP vec_order_info_impl(SEXP x,
+                         SEXP direction,
+                         SEXP na_value,
+                         bool nan_distinct,
+                         SEXP chr_transform,
+                         bool group_sizes) {
   int n_prot = 0;
 
   SEXP decreasing = PROTECT_N(parse_direction(direction), &n_prot);
@@ -335,7 +403,7 @@ SEXP vec_order_impl(SEXP x,
   // We turn if off if ordering non-data frame input as long as
   // locations haven't been requested by the user.
   // It is more efficient to ignore it when possible.
-  bool force_groups = locations;
+  bool force_groups = group_sizes;
   bool ignore_groups = force_groups ? false : (is_data_frame(proxy) ? false : true);
 
   // Construct the two sets of group info needed for tracking groups.
@@ -380,72 +448,27 @@ SEXP vec_order_impl(SEXP x,
     p_truelength_info
   );
 
-  // Return ordered location info rather than ordering
-  if (locations) {
+  SEXP out = PROTECT_N(r_new_list(2), &n_prot);
+  SET_VECTOR_ELT(out, 0, p_order->data);
+
+  if (group_sizes) {
     struct group_info* p_group_info = groups_current(p_group_infos);
-    const int* p_sizes = p_group_info->p_data;
-    r_ssize n_groups = p_group_info->n_groups;
 
-    const int* p_o = p_order->p_data;
+    SEXP sizes = p_group_info->data;
 
-    SEXP out = vec_order_locs_impl(x, p_o, p_sizes, n_groups);
+    // TODO: Replace with `r_int_resize()` from the rlang lib
+#if R_VERSION >= R_Version(3, 4, 0)
+    SETLENGTH(sizes, p_group_info->n_groups);
+    SET_TRUELENGTH(sizes, p_group_info->data_size);
+    SET_GROWABLE_BIT(sizes);
+#else
+    sizes = Rf_xlengthgets(sizes, p_group_info->n_groups);
+#endif
 
-    UNPROTECT(n_prot);
-    return out;
+    SET_VECTOR_ELT(out, 1, sizes);
   }
 
   UNPROTECT(n_prot);
-  return p_order->data;
-}
-
-// -----------------------------------------------------------------------------
-
-static
-SEXP vec_order_locs_impl(SEXP x,
-                         const int* p_o,
-                         const int* p_sizes,
-                         r_ssize n_groups) {
-  SEXP loc = PROTECT(Rf_allocVector(VECSXP, n_groups));
-
-  SEXP key_loc = PROTECT(Rf_allocVector(INTSXP, n_groups));
-  int* p_key_loc = INTEGER(key_loc);
-
-  int start = 0;
-
-  for (r_ssize i = 0; i < n_groups; ++i) {
-    p_key_loc[i] = p_o[start];
-
-    const int size = p_sizes[i];
-
-    SEXP elt = Rf_allocVector(INTSXP, size);
-    SET_VECTOR_ELT(loc, i, elt);
-    int* p_elt = INTEGER(elt);
-
-    R_len_t k = 0;
-
-    for (int j = 0; j < size; ++j) {
-      p_elt[k] = p_o[start];
-      ++start;
-      ++k;
-    }
-  }
-
-  SEXP key = PROTECT(vec_slice(x, key_loc));
-
-  // Construct output data frame
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(out, 0, key);
-  SET_VECTOR_ELT(out, 1, loc);
-
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(names, 0, strings_key);
-  SET_STRING_ELT(names, 1, strings_loc);
-
-  Rf_setAttrib(out, R_NamesSymbol, names);
-
-  out = new_data_frame(out, n_groups);
-
-  UNPROTECT(5);
   return out;
 }
 
