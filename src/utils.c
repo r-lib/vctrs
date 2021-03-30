@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
 #include "type-data-frame.h"
@@ -205,7 +206,7 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args,
     fn = fn_sym;
   }
 
-  SEXP body = PROTECT(r_call(fn, syms, syms));
+  SEXP body = PROTECT(r_call_n(fn, syms, syms));
   SEXP call_fn = PROTECT(r_new_function(R_NilValue, body, mask));
   SEXP call = PROTECT(Rf_lang1(call_fn));
 
@@ -961,30 +962,6 @@ bool lgl_any_na(SEXP x) {
   return false;
 }
 
-void* r_vec_deref(SEXP x) {
-  switch (TYPEOF(x)) {
-  case LGLSXP: return LOGICAL(x);
-  case INTSXP: return INTEGER(x);
-  case REALSXP: return REAL(x);
-  case CPLXSXP: return COMPLEX(x);
-  case RAWSXP: return RAW(x);
-  default: stop_unimplemented_type("r_vec_deref", TYPEOF(x));
-  }
-}
-
-const void* r_vec_deref_const(SEXP x) {
-  switch (TYPEOF(x)) {
-  case LGLSXP: return LOGICAL_RO(x);
-  case INTSXP: return INTEGER_RO(x);
-  case REALSXP: return REAL_RO(x);
-  case CPLXSXP: return COMPLEX_RO(x);
-  case STRSXP: return STRING_PTR_RO(x);
-  case RAWSXP: return RAW_RO(x);
-  case VECSXP: return VECTOR_PTR_RO(x);
-  default: stop_unimplemented_type("r_vec_deref_const", TYPEOF(x));
-  }
-}
-
 void* r_vec_deref_barrier(SEXP x) {
   switch (TYPEOF(x)) {
   case STRSXP:
@@ -1044,76 +1021,6 @@ void r_vec_fill(SEXPTYPE type,
 #undef FILL
 
 
-r_ssize r_lgl_sum(SEXP x, bool na_true) {
-  if (TYPEOF(x) != LGLSXP) {
-    stop_internal("r_lgl_sum", "Expected logical vector.");
-  }
-
-  r_ssize n = r_length(x);
-  const int* p_x = LOGICAL(x);
-
-  // This can't overflow since `sum` is necessarily smaller or equal
-  // to the vector length expressed in `r_ssize`.
-  r_ssize sum = 0;
-
-  if (na_true) {
-    for (r_ssize i = 0; i < n; ++i) {
-      const int elt = p_x[i];
-
-      if (elt) {
-        ++sum;
-      }
-    }
-  } else {
-    for (r_ssize i = 0; i < n; ++i) {
-      const int elt = p_x[i];
-
-      if (elt == 1) {
-        ++sum;
-      }
-    }
-  }
-
-  return sum;
-}
-
-SEXP r_lgl_which(SEXP x, bool na_propagate) {
-  if (TYPEOF(x) != LGLSXP) {
-    stop_internal("r_lgl_which", "Expected logical vector.");
-  }
-
-  r_ssize n = r_length(x);
-  const int* p_x = LOGICAL(x);
-
-  r_ssize out_n = r_lgl_sum(x, na_propagate);
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, out_n));
-  int* p_out = INTEGER(out);
-  r_ssize loc = 0;
-
-  if (na_propagate) {
-    for (r_ssize i = 0; i < n; ++i) {
-      const int elt = p_x[i];
-
-      if (elt) {
-        p_out[loc] = (elt == NA_LOGICAL) ? NA_INTEGER : i + 1;
-        ++loc;
-      }
-    }
-  } else {
-    for (r_ssize i = 0; i < n; ++i) {
-      const int elt = p_x[i];
-
-      if (elt) {
-        p_out[loc] = i + 1;
-        ++loc;
-      }
-    }
-  }
-
-  UNPROTECT(1);
-  return out;
-}
-
 #define FILL() {                      \
   for (R_len_t i = 0; i < n; ++i) {   \
     p_x[i] = value;                   \
@@ -1138,9 +1045,9 @@ void r_lgl_fill(SEXP x, int value, R_len_t n) {
 void r_int_fill(SEXP x, int value, R_len_t n) {
   r_p_int_fill(INTEGER(x), value, n);
 }
-void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
-  r_p_chr_fill(STRING_PTR(x), value, n);
-}
+// void r_chr_fill(SEXP x, SEXP value, R_len_t n) {
+//   r_p_chr_fill(STRING_PTR(x), value, n);
+// }
 
 
 void r_int_fill_seq(SEXP x, int start, R_len_t n) {
@@ -1246,38 +1153,6 @@ SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
 }
 
 
-#include <R_ext/Parse.h>
-
-static void abort_parse(SEXP code, const char* why) {
-  if (Rf_GetOption1(Rf_install("rlang__verbose_errors")) != R_NilValue) {
-   Rf_PrintValue(code);
-  }
-  stop_internal("r_parse", why);
-}
-
-SEXP r_parse(const char* str) {
-  SEXP str_ = PROTECT(Rf_mkString(str));
-
-  ParseStatus status;
-  SEXP out = PROTECT(R_ParseVector(str_, -1, &status, R_NilValue));
-  if (status != PARSE_OK) {
-    abort_parse(str_, "Parsing failed.");
-  }
-  if (Rf_length(out) != 1) {
-    abort_parse(str_, "Expected a single expression.");
-  }
-
-  out = VECTOR_ELT(out, 0);
-
-  UNPROTECT(2);
-  return out;
-}
-SEXP r_parse_eval(const char* str, SEXP env) {
-  SEXP out = Rf_eval(PROTECT(r_parse(str)), env);
-  UNPROTECT(1);
-  return out;
-}
-
 static SEXP new_env_call = NULL;
 static SEXP new_env__parent_node = NULL;
 static SEXP new_env__size_node = NULL;
@@ -1299,39 +1174,9 @@ SEXP r_new_environment(SEXP parent, R_len_t size) {
 }
 #endif
 
-static SEXP new_function_call = NULL;
-static SEXP new_function__formals_node = NULL;
-static SEXP new_function__body_node = NULL;
-
-#if 0
-SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
-  SETCAR(new_function__formals_node, formals);
-  SETCAR(new_function__body_node, body);
-
-  SEXP fn = Rf_eval(new_function_call, env);
-
-  // Free for gc
-  SETCAR(new_function__formals_node, R_NilValue);
-  SETCAR(new_function__body_node, R_NilValue);
-
-  return fn;
-}
-#endif
-
 // [[ include("utils.h") ]]
 SEXP r_protect(SEXP x) {
   return Rf_lang2(fns_quote, x);
-}
-
-// [[ include("utils.h") ]]
-bool r_is_bool(SEXP x) {
-  return
-    TYPEOF(x) == LGLSXP &&
-    Rf_length(x) == 1 &&
-    LOGICAL(x)[0] != NA_LOGICAL;
-}
-bool r_is_true(SEXP x) {
-  return r_is_bool(x) && LOGICAL(x)[0] == 1;
 }
 
 // [[ include("utils.h") ]]
@@ -1342,11 +1187,6 @@ int r_bool_as_int(SEXP x) {
   return LOGICAL(x)[0];
 }
 
-bool r_is_string(SEXP x) {
-  return TYPEOF(x) == STRSXP &&
-    Rf_length(x) == 1 &&
-    STRING_ELT(x, 0) != NA_STRING;
-}
 bool r_is_number(SEXP x) {
   return TYPEOF(x) == INTSXP &&
     Rf_length(x) == 1 &&
@@ -1354,19 +1194,6 @@ bool r_is_number(SEXP x) {
 }
 bool r_is_positive_number(SEXP x) {
   return r_is_number(x) && INTEGER(x)[0] > 0;
-}
-
-SEXP r_peek_option(const char* option) {
-  return Rf_GetOption1(Rf_install(option));
-}
-
-static SEXP peek_frame_call = NULL;
-
-// Calling `sys.frame()` has a cost of 1.5us compared to 300ns for
-// `R_GetCurrentEnv()`. However the latter is currently buggy, see
-// https://bugs.r-project.org/bugzilla/show_bug.cgi?id=17839.
-SEXP r_peek_frame() {
-  return Rf_eval(peek_frame_call, R_EmptyEnv);
 }
 
 
@@ -1379,7 +1206,7 @@ SEXP r_peek_frame() {
  *
  * [[ include("utils.h") ]]
  */
-SEXP r_pairlist(SEXP* tags, SEXP* cars) {
+SEXP _r_pairlist(SEXP* tags, SEXP* cars) {
   if (!cars) {
     stop_internal("r_pairlist", "NULL `cars`.");
   }
@@ -1403,8 +1230,8 @@ SEXP r_pairlist(SEXP* tags, SEXP* cars) {
   UNPROTECT(1);
   return CDR(list);
 }
-SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars) {
-  return Rf_lcons(fn, r_pairlist(tags, cars));
+SEXP r_call_n(SEXP fn, SEXP* tags, SEXP* cars) {
+  return Rf_lcons(fn, _r_pairlist(tags, cars));
 }
 
 bool r_has_name_at(SEXP names, R_len_t i) {
@@ -1473,17 +1300,6 @@ SEXP r_env_get(SEXP env, SEXP sym) {
   return obj;
 }
 
-bool r_is_function(SEXP x) {
-  switch (TYPEOF(x)) {
-  case CLOSXP:
-  case BUILTINSXP:
-  case SPECIALSXP:
-    return true;
-  default:
-    return false;
-  }
-}
-
 SEXP r_clone_referenced(SEXP x) {
   if (MAYBE_REFERENCED(x)) {
     return Rf_shallow_duplicate(x);
@@ -1536,32 +1352,6 @@ SEXP r_as_data_frame(SEXP x) {
     return x;
   } else {
     return vctrs_dispatch1(syms_as_data_frame2, fns_as_data_frame2, syms_x, x);
-  }
-}
-
-SEXP rlang_formula_formals = NULL;
-
-SEXP r_as_function(SEXP x, const char* arg) {
-  switch (TYPEOF(x)) {
-  case CLOSXP:
-  case BUILTINSXP:
-  case SPECIALSXP:
-    return x;
-  case LANGSXP:
-    if (CAR(x) == syms_tilde && CDDR(x) == R_NilValue) {
-      SEXP env = PROTECT(Rf_getAttrib(x, syms_dot_environment));
-      if (env == R_NilValue) {
-        Rf_errorcall(R_NilValue, "Can't transform formula to function because it doesn't have an environment.");
-      }
-
-      SEXP fn = r_new_function(rlang_formula_formals, CADR(x), env);
-
-      UNPROTECT(1);
-      return fn;
-    }
-    // else fallthrough;
-  default:
-    Rf_errorcall(R_NilValue, "Can't convert `%s` to a function", arg);
   }
 }
 
@@ -1634,7 +1424,7 @@ ERR r_try_catch(void (*fn)(void*),
     NULL
   };
 
-  SEXP call = PROTECT(r_call(syms_try_catch_impl, syms, args));
+  SEXP call = PROTECT(r_call_n(syms_try_catch_impl, syms, args));
   Rf_eval(call, vctrs_ns_env);
 
   UNPROTECT(3);
@@ -1657,7 +1447,7 @@ SEXP chr_c(SEXP x, SEXP y) {
   }
 
   r_ssize out_n = r_ssize_add(x_n, y_n);
-  SEXP out = PROTECT(r_new_vector(STRSXP, out_n));
+  SEXP out = PROTECT(r_alloc_vector(STRSXP, out_n));
 
   const SEXP* p_x = STRING_PTR_RO(x);
   const SEXP* p_y = STRING_PTR_RO(y);
@@ -1698,18 +1488,6 @@ SEXP vctrs_fast_c(SEXP x, SEXP y) {
                                                 \
     BUF[FMT_BUFSIZE - 1] = '\0';                \
   }
-
-__attribute__((noreturn))
-void r_abort(const char* fmt, ...) {
-  R_CheckStack2(FMT_BUFSIZE);
-  char msg[FMT_BUFSIZE];
-  FMT_INTERP(msg, fmt, ...);
-
-  SEXP r_msg = PROTECT(r_chr(msg));
-  vctrs_eval_mask1(syms_abort, syms_message, r_msg);
-
-  never_reached("r_abort");
-}
 
 __attribute__((noreturn))
 void stop_internal(const char* fn, const char* fmt, ...) {
@@ -1876,19 +1654,6 @@ void c_print_backtrace() {
 #else
   Rprintf("vctrs must be compliled with -DRLIB_DEBUG.");
 #endif
-}
-
-void r_browse(SEXP x) {
-  r_env_poke(R_GlobalEnv, Rf_install(".debug"), x);
-
-  Rprintf("Object saved in `.debug`:\n");
-  Rf_PrintValue(x);
-
-  // `browser()` can't be trailing due to ESS limitations
-  SEXP call = PROTECT(r_parse("{ base::browser(); NULL }"));
-  Rf_eval(call, R_GlobalEnv);
-
-  UNPROTECT(1);
 }
 
 void vctrs_init_utils(SEXP ns) {
@@ -2123,16 +1888,6 @@ void vctrs_init_utils(SEXP ns) {
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
 
-  new_function_call = r_parse_eval("as.call(list(`function`, NULL, NULL))", R_BaseEnv);
-  R_PreserveObject(new_function_call);
-
-  new_function__formals_node = CDR(new_function_call);
-  new_function__body_node = CDR(new_function__formals_node);
-
-  const char* formals_code = "pairlist2(... = , .x = quote(..1), .y = quote(..2), . = quote(..1))";
-  rlang_formula_formals = r_parse_eval(formals_code, ns);
-  R_PreserveObject(rlang_formula_formals);
-
   args_empty_ = new_wrapper_arg(NULL, "");
   args_dot_ptype_ = new_wrapper_arg(NULL, ".ptype");
   args_max_fill_ = new_wrapper_arg(NULL, "max_fill");
@@ -2183,10 +1938,4 @@ void vctrs_init_utils(SEXP ns) {
   // We assume the following in `vec_order()`
   VCTRS_ASSERT(sizeof(int) == sizeof(int32_t));
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
-
-  SEXP current_frame_body = PROTECT(r_parse_eval("as.call(list(sys.frame, -1))", R_BaseEnv));
-  SEXP current_frame_fn = PROTECT(r_new_function(R_NilValue, current_frame_body, R_EmptyEnv));
-  peek_frame_call = Rf_lcons(current_frame_fn, R_NilValue);
-  R_PreserveObject(peek_frame_call);
-  UNPROTECT(2);
 }

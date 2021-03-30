@@ -31,7 +31,7 @@ Depends:
 Imports: 
     ellipsis (>= 0.2.0),
     glue,
-    rlang (>= 0.4.10)
+    rlang (>= 0.4.10.9000)
 Suggests: 
     bit64,
     covr,
@@ -48,6 +48,8 @@ Suggests:
     xml2,
     waldo (>= 0.2.0),
     zeallot
+Remotes:
+    r-lib/rlang
 VignetteBuilder: 
     knitr
 Encoding: UTF-8

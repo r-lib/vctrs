@@ -1,8 +1,8 @@
 #ifndef VCTRS_UTILS_H
 #define VCTRS_UTILS_H
 
+#include <rlang.h>
 #include "arg-counter.h"
-#include "utils-rlang.h"
 
 
 #define SWAP(T, x, y) do {                      \
@@ -28,7 +28,6 @@ enum vctrs_class_type {
   vctrs_class_none
 };
 
-bool r_is_bool(SEXP x);
 int r_bool_as_int(SEXP x);
 
 SEXP vctrs_eval_mask_n(SEXP fn,
@@ -93,7 +92,6 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x5_sym, SEXP x5,
                      SEXP x6_sym, SEXP x6);
 
-__attribute__((noreturn)) void r_abort(const char* fmt, ...);
 __attribute__((noreturn)) void stop_internal(const char* fn, const char* fmt, ...);
 __attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
 
@@ -144,11 +142,6 @@ SEXP s4_class_find_method(SEXP class, SEXP table);
 bool vec_implements_ptype2(SEXP x);
 
 SEXP r_env_get(SEXP env, SEXP sym);
-
-static inline
-void r_env_poke(SEXP env, SEXP sym, SEXP value) {
-  Rf_defineVar(sym, value, env);
-}
 
 extern SEXP syms_s3_methods_table;
 static inline SEXP s3_get_table(SEXP env) {
@@ -212,8 +205,6 @@ extern SEXP (*rlang_unbox)(SEXP);
 extern SEXP (*rlang_env_dots_values)(SEXP);
 extern SEXP (*rlang_env_dots_list)(SEXP);
 
-void* r_vec_deref(SEXP x);
-const void* r_vec_deref_const(SEXP x);
 void* r_vec_deref_barrier(SEXP x);
 const void* r_vec_deref_barrier_const(SEXP x);
 
@@ -224,12 +215,8 @@ void r_vec_fill(SEXPTYPE type,
                 r_ssize src_i,
                 r_ssize n);
 
-r_ssize r_lgl_sum(SEXP lgl, bool na_true);
-SEXP r_lgl_which(SEXP x, bool na_true);
-
 void r_lgl_fill(SEXP x, int value, R_len_t n);
 void r_int_fill(SEXP x, int value, R_len_t n);
-void r_chr_fill(SEXP x, SEXP value, R_len_t n);
 
 void r_p_lgl_fill(int* p_x, int value, R_len_t n);
 void r_p_int_fill(int* p_x, int value, R_len_t n);
@@ -281,41 +268,13 @@ SEXP r_new_environment(SEXP parent) {
   return env;
 }
 
-static inline
-SEXP r_new_function(SEXP formals, SEXP body, SEXP env) {
-  SEXP fn = Rf_allocSExp(CLOSXP);
-  SET_FORMALS(fn, formals);
-  SET_BODY(fn, body);
-  SET_CLOENV(fn, env);
-  return fn;
-}
-
-SEXP r_as_function(SEXP x, const char* arg);
-
 SEXP r_protect(SEXP x);
-bool r_is_true(SEXP x);
-bool r_is_string(SEXP x);
 bool r_is_number(SEXP x);
 bool r_is_positive_number(SEXP x);
-SEXP r_peek_option(const char* option);
-SEXP r_peek_frame();
 SEXP r_clone_referenced(SEXP x);
 SEXP r_clone_shared(SEXP x);
 
-SEXP r_parse(const char* str);
-SEXP r_parse_eval(const char* str, SEXP env);
-
-static inline
-SEXP r_copy(SEXP x) {
-  return Rf_duplicate(x);
-}
-static inline
-SEXP r_clone(SEXP x) {
-  return Rf_shallow_duplicate(x);
-}
-
-SEXP r_pairlist(SEXP* tags, SEXP* cars);
-SEXP r_call(SEXP fn, SEXP* tags, SEXP* cars);
+SEXP r_call_n(SEXP fn, SEXP* tags, SEXP* cars);
 
 static inline SEXP r_poke_names(SEXP x, SEXP names) {
   return Rf_setAttrib(x, R_NamesSymbol, names);
@@ -342,40 +301,7 @@ bool r_has_name_at(SEXP names, R_len_t i);
 bool r_is_names(SEXP names);
 bool r_is_minimal_names(SEXP x);
 bool r_is_empty_names(SEXP x);
-bool r_is_function(SEXP x);
 bool r_chr_has_string(SEXP x, SEXP str);
-
-static inline const char* r_chr_get_c_string(SEXP chr, R_len_t i) {
-  return CHAR(STRING_ELT(chr, i));
-}
-
-static inline void r__vec_get_check(SEXP x, R_len_t i, const char* fn) {
-  if ((Rf_length(x) - 1) < i) {
-    stop_internal(fn, "Vector is too small.");
-  }
-}
-static inline int r_lgl_get(SEXP x, R_len_t i) {
-  r__vec_get_check(x, i, "r_lgl_get");
-  return LOGICAL(x)[i];
-}
-static inline int r_int_get(SEXP x, R_len_t i) {
-  r__vec_get_check(x, i, "r_int_get");
-  return INTEGER(x)[i];
-}
-static inline double r_dbl_get(SEXP x, R_len_t i) {
-  r__vec_get_check(x, i, "r_dbl_get");
-  return REAL(x)[i];
-}
-#define r_chr_get STRING_ELT
-#define r_list_get VECTOR_ELT
-#define r_chr_poke SET_STRING_ELT
-#define r_list_poke SET_VECTOR_ELT
-
-static inline
-void r_int_poke(SEXP x, R_len_t i, int value) {
-  r__vec_get_check(x, i, "r_int_poke");
-  INTEGER(x)[i] = value;
-}
 
 static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
   switch (type) {
@@ -390,17 +316,6 @@ static inline void* r_vec_unwrap(SEXPTYPE type, SEXP x) {
 #define r_chr Rf_mkString
 #define r_sym Rf_install
 
-static inline SEXP r_list(SEXP x) {
-  SEXP out = Rf_allocVector(VECSXP, 1);
-  SET_VECTOR_ELT(out, 0, x);
-  return out;
-}
-
-#define r_str_as_character Rf_ScalarString
-
-static inline SEXP r_sym_as_character(SEXP x) {
-  return r_str_as_character(PRINTNAME(x));
-}
 // This unserialises ASCII Unicode tags of the form `<U+xxxx>`
 extern SEXP (*rlang_sym_as_character)(SEXP x);
 
@@ -415,14 +330,6 @@ ERR r_try_catch(void (*fn)(void*),
                 SEXP cnd_sym,
                 void (*hnd)(void*),
                 void* hnd_data);
-
-extern SEXP vctrs_ns_env;
-extern SEXP syms_cnd_signal;
-static inline void r_cnd_signal(SEXP cnd) {
-  SEXP call = PROTECT(Rf_lang2(syms_cnd_signal, cnd));
-  Rf_eval(call, vctrs_ns_env);
-  UNPROTECT(1);
-}
 
 extern SEXP result_attrib;
 
@@ -485,7 +392,6 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
 }
 
 void c_print_backtrace();
-void r_browse(SEXP x);
 
 
 // Adapted from CERT C coding standards
@@ -506,17 +412,6 @@ intmax_t intmax_subtract(intmax_t x, intmax_t y) {
   }
 
   return x - y;
-}
-
-static inline
-r_ssize r_ssize_add(r_ssize x, r_ssize y) {
-  intmax_t out = intmax_add(x, y);
-
-  if (out > R_SSIZE_MAX) {
-    stop_internal("r_ssize_safe_add", "Result too large for an `r_ssize`.");
-  }
-
-  return (r_ssize) out;
 }
 
 SEXP chr_c(SEXP x, SEXP y);

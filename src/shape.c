@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "shape.h"
 #include "dim.h"
 

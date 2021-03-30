@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 
 // SEXP x and y must be CHARSXP

@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "translate.h"
 #include "vctrs.h"
 #include "utils.h"

@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 #include "c.h"
 #include "dim.h"
