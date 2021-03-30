@@ -251,8 +251,8 @@ static inline size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_ty
 
 static SEXP parse_na_value(SEXP na_value);
 static SEXP parse_direction(SEXP direction);
-static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last);
-static SEXP vec_order_flip_na_last(SEXP na_last, SEXP decreasing);
+static SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_largest);
+static SEXP vec_order_compute_na_last(SEXP na_largest, SEXP decreasing);
 
 static void vec_order_switch(SEXP x,
                              SEXP decreasing,
@@ -286,17 +286,17 @@ SEXP vec_order_impl(SEXP x,
   int n_prot = 0;
 
   SEXP decreasing = PROTECT_N(parse_direction(direction), &n_prot);
-  SEXP na_last = PROTECT_N(parse_na_value(na_value), &n_prot);
+  SEXP na_largest = PROTECT_N(parse_na_value(na_value), &n_prot);
 
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
-  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_last), &n_prot);
+  SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_largest), &n_prot);
   R_len_t arg_size = vec_size_common(args, 0);
   args = PROTECT_N(vec_recycle_common(args, arg_size), &n_prot);
 
   decreasing = VECTOR_ELT(args, 0);
-  na_last = VECTOR_ELT(args, 1);
+  na_largest = VECTOR_ELT(args, 1);
 
-  na_last = PROTECT_N(vec_order_flip_na_last(na_last, decreasing), &n_prot);
+  SEXP na_last = PROTECT_N(vec_order_compute_na_last(na_largest, decreasing), &n_prot);
 
   SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
   proxy = PROTECT_N(vec_normalize_encoding(proxy), &n_prot);
@@ -3984,17 +3984,17 @@ static SEXP df_expand_args(SEXP x, SEXP args);
 
 /*
  * `vec_order_expand_args()` checks the type and length of `decreasing` and
- * `na_last` and possibly expands them.
+ * `na_largest` and possibly expands them.
  *
  * `x` is expected to be the original input, before `vec_proxy_order()` is
  * called on it.
  *
- * If `x` is not a data frame, `decreasing` and `na_last` must be boolean
+ * If `x` is not a data frame, `decreasing` and `na_largest` must be boolean
  * values. If `x` is something like a rcrd type with a multi-column data frame
  * proxy, then restricting to a boolean argument is correct, and works because
  * the single value will be recycled across the columns.
  *
- * If `x` is a data frame, and `decreasing` or `na_last` is size 1, we return
+ * If `x` is a data frame, and `decreasing` or `na_largest` is size 1, we return
  * it untouched and it will be recycled correctly.
  *
  * If `x` is a data frame and the size of the arg matches the number of
@@ -4005,10 +4005,10 @@ static SEXP df_expand_args(SEXP x, SEXP args);
  * of the code here is for tracking this expansion.
  */
 static
-SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last) {
+SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_largest) {
   SEXP args = PROTECT(r_new_list(2));
   SET_VECTOR_ELT(args, 0, decreasing);
-  SET_VECTOR_ELT(args, 1, na_last);
+  SET_VECTOR_ELT(args, 1, na_largest);
 
   // Don't check length here. These might be vectorized if `x` is a data frame.
   if (TYPEOF(decreasing) != LGLSXP) {
@@ -4018,11 +4018,11 @@ SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last) {
     Rf_errorcall(R_NilValue, "Internal error: `decreasing` can't contain missing values.");
   }
 
-  if (TYPEOF(na_last) != LGLSXP) {
-    Rf_errorcall(R_NilValue, "Internal error: `na_last` must be logical");
+  if (TYPEOF(na_largest) != LGLSXP) {
+    Rf_errorcall(R_NilValue, "Internal error: `na_largest` must be logical");
   }
-  if (lgl_any_na(na_last)) {
-    Rf_errorcall(R_NilValue, "Internal error: `na_last` can't contain missing values.");
+  if (lgl_any_na(na_largest)) {
+    Rf_errorcall(R_NilValue, "Internal error: `na_largest` can't contain missing values.");
   }
 
   if (is_data_frame(x)) {
@@ -4035,7 +4035,7 @@ SEXP vec_order_expand_args(SEXP x, SEXP decreasing, SEXP na_last) {
     Rf_errorcall(R_NilValue, "`direction` must be a single value when `x` is not a data frame.");
   }
 
-  if (r_length(na_last) != 1) {
+  if (r_length(na_largest) != 1) {
     Rf_errorcall(R_NilValue, "`na_value` must be a single value when `x` is not a data frame.");
   }
 
@@ -4049,14 +4049,14 @@ static int vec_decreasing_expansion(SEXP x);
 static
 SEXP df_expand_args(SEXP x, SEXP args) {
   SEXP decreasing = VECTOR_ELT(args, 0);
-  SEXP na_last = VECTOR_ELT(args, 1);
+  SEXP na_largest = VECTOR_ELT(args, 1);
 
   r_ssize n_decreasing = r_length(decreasing);
-  r_ssize n_na_last = r_length(na_last);
+  r_ssize n_na_largest = r_length(na_largest);
   r_ssize n_cols = r_length(x);
 
   // They will be recycled correctly even if columns get flattened
-  if (n_decreasing == 1 && n_na_last == 1) {
+  if (n_decreasing == 1 && n_na_largest == 1) {
     return args;
   }
 
@@ -4069,7 +4069,7 @@ SEXP df_expand_args(SEXP x, SEXP args) {
     );
   }
 
-  if (n_na_last != 1 && n_na_last != n_cols) {
+  if (n_na_largest != 1 && n_na_largest != n_cols) {
     Rf_errorcall(
       R_NilValue,
       "`na_value` should have length 1 or length equal to the number of "
@@ -4104,8 +4104,8 @@ SEXP df_expand_args(SEXP x, SEXP args) {
   decreasing = expand_arg(decreasing, p_expansions, n_decreasing, size);
   SET_VECTOR_ELT(args, 0, decreasing);
 
-  na_last = expand_arg(na_last, p_expansions, n_na_last, size);
-  SET_VECTOR_ELT(args, 1, na_last);
+  na_largest = expand_arg(na_largest, p_expansions, n_na_largest, size);
+  SET_VECTOR_ELT(args, 1, na_largest);
 
   UNPROTECT(1);
   return args;
@@ -4193,30 +4193,30 @@ int df_decreasing_expansion(SEXP x) {
 // -----------------------------------------------------------------------------
 
 /*
- * `na_value` -> `na_last` is originally parsed as:
+ * `na_value` -> `na_largest` is parsed as:
  * largest -> TRUE
  * smallest -> FALSE
- * We have to flip this if ordering in decreasing ordering.
+ * `na_largest` maps directly to `na_last` unless we are in decreasing order,
+ * in which case `na_last = !na_largest`.
  */
 static
-SEXP vec_order_flip_na_last(SEXP na_last, SEXP decreasing) {
-  na_last = PROTECT(r_clone_referenced(na_last));
-  int* p_na_last = LOGICAL(na_last);
-
-  const int* p_decreasing = LOGICAL_RO(decreasing);
-
-  const r_ssize size = r_length(na_last);
+SEXP vec_order_compute_na_last(SEXP na_largest, SEXP decreasing) {
+  const r_ssize size = r_length(na_largest);
   if (size != r_length(decreasing)) {
     stop_internal(
-      "vec_order_flip_na_last",
-      "`na_last` and `decreasing` should already match in size."
+      "vec_order_compute_na_last",
+      "`na_largest` and `decreasing` should already match in size."
     );
   }
 
+  SEXP na_last = PROTECT(r_new_logical(size));
+  int* p_na_last = LOGICAL(na_last);
+
+  const int* p_na_largest = LOGICAL_RO(na_largest);
+  const int* p_decreasing = LOGICAL_RO(decreasing);
+
   for (r_ssize i = 0; i < size; ++i) {
-    if (p_decreasing[i]) {
-      p_na_last[i] = !p_na_last[i];
-    }
+    p_na_last[i] = p_decreasing[i] ? !p_na_largest[i] : p_na_largest[i];
   }
 
   UNPROTECT(1);
@@ -4237,15 +4237,15 @@ SEXP parse_na_value(SEXP na_value) {
   R_len_t size = Rf_length(na_value);
   const SEXP* p_na_value = STRING_PTR_RO(na_value);
 
-  SEXP na_last = PROTECT(Rf_allocVector(LGLSXP, size));
-  int* p_na_last = LOGICAL(na_last);
+  SEXP na_largest = PROTECT(Rf_allocVector(LGLSXP, size));
+  int* p_na_largest = LOGICAL(na_largest);
 
   for (R_len_t i = 0; i < size; ++i) {
-    p_na_last[i] = parse_na_value_one(p_na_value[i]);
+    p_na_largest[i] = parse_na_value_one(p_na_value[i]);
   }
 
   UNPROTECT(1);
-  return na_last;
+  return na_largest;
 }
 
 static
