@@ -180,6 +180,7 @@ int dbl_cmp(const double x,
     case vctrs_dbl_nan: return 0;
     }
   }
+  never_reached("dbl_cmp");
 }
 
 static inline
