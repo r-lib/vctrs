@@ -15,13 +15,13 @@
 
 // -----------------------------------------------------------------------------
 
-static inline int dbl_cmp(const double x,
-                          const double y,
-                          const enum vctrs_dbl_class x_type,
-                          const enum vctrs_dbl_class y_type,
-                          const int direction,
-                          const int na_order,
-                          const int na_nan_cmp);
+static inline int dbl_cmp(double x,
+                          double y,
+                          enum vctrs_dbl_class x_type,
+                          enum vctrs_dbl_class y_type,
+                          int direction,
+                          int na_order,
+                          int na_nan_cmp);
 
 /*
  * Check if a double vector is ordered, handling `decreasing`, `na_last`, and
@@ -147,19 +147,19 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   return VCTRS_SORTEDNESS_sorted;
 }
 
-static inline int dbl_cmp_numbers(double x, double y, const int direction);
+static inline int dbl_cmp_numbers(double x, double y, int direction);
 
 /*
  * Compare two doubles, handling `na_order`, `direction`, and `na_nan_cmp`
  */
 static inline
-int dbl_cmp(const double x,
-            const double y,
-            const enum vctrs_dbl_class x_type,
-            const enum vctrs_dbl_class y_type,
-            const int direction,
-            const int na_order,
-            const int na_nan_cmp) {
+int dbl_cmp(double x,
+            double y,
+            enum vctrs_dbl_class x_type,
+            enum vctrs_dbl_class y_type,
+            int direction,
+            int na_order,
+            int na_nan_cmp) {
   switch (x_type) {
   case vctrs_dbl_number:
     switch (y_type) {
@@ -184,7 +184,7 @@ int dbl_cmp(const double x,
 }
 
 static inline
-int dbl_cmp_numbers(const double x, const double y, const int direction) {
+int dbl_cmp_numbers(double x, double y, int direction) {
   const int cmp = (x > y) - (x < y);
   return cmp * direction;
 }
