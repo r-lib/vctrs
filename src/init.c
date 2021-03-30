@@ -1,5 +1,4 @@
-#include <R.h>
-#include <Rinternals.h>
+#include <rlang.h>
 #include <stdlib.h> // for NULL
 #include <stdbool.h>
 #include <R_ext/Rdynload.h>
@@ -360,6 +359,8 @@ void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
 
 SEXP vctrs_init_library(SEXP ns) {
+  r_init_library(ns);
+
   vctrs_init_bind(ns);
   vctrs_init_cast(ns);
   vctrs_init_data(ns);

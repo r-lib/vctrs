@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
 
@@ -39,7 +40,7 @@ void stop_incompatible_type(SEXP x,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(syms_stop_incompatible_type, syms, args));
+  SEXP call = PROTECT(r_call_n(syms_stop_incompatible_type, syms, args));
   Rf_eval(call, vctrs_ns_env);
 
   never_reached("stop_incompatible_type");
@@ -69,7 +70,7 @@ void stop_incompatible_size(SEXP x, SEXP y,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(syms_stop_incompatible_size, syms, args));
+  SEXP call = PROTECT(r_call_n(syms_stop_incompatible_size, syms, args));
   Rf_eval(call, vctrs_ns_env);
 
   never_reached("stop_incompatible_size");
@@ -90,7 +91,7 @@ void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(r_sym("stop_recycle_incompatible_size"), syms, args));
+  SEXP call = PROTECT(r_call_n(r_sym("stop_recycle_incompatible_size"), syms, args));
   Rf_eval(call, vctrs_ns_env);
 
   never_reached("stop_recycle_incompatible_size");
@@ -120,7 +121,7 @@ void stop_incompatible_shape(SEXP x, SEXP y,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(r_sym("stop_incompatible_shape"), syms, args));
+  SEXP call = PROTECT(r_call_n(r_sym("stop_incompatible_shape"), syms, args));
   Rf_eval(call, vctrs_ns_env);
 
   never_reached("stop_incompatible_shape");

@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 #include "equal.h"
 #include "type-data-frame.h"

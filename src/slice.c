@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 #include "altrep.h"
 #include "slice.h"

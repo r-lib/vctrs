@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include <math.h>
 #include "equal.h"
 #include "vctrs.h"

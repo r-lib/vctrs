@@ -1,3 +1,4 @@
+#include <rlang.h>
 #include "vctrs.h"
 #include "ptype2.h"
 #include "subscript.h"
@@ -322,7 +323,7 @@ static SEXP new_error_subscript_type(SEXP subscript,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(syms_new_error_subscript_type, syms, args));
+  SEXP call = PROTECT(r_call_n(syms_new_error_subscript_type, syms, args));
   SEXP out = Rf_eval(call, vctrs_ns_env);
 
   UNPROTECT(3);

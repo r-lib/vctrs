@@ -10,6 +10,7 @@
  * Copyright (c) 2020, Data table team
  */
 
+#include <rlang.h>
 #include "order-transform.h"
 #include "utils.h"
 
