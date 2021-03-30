@@ -21,7 +21,7 @@ static inline int dbl_cmp(double x,
                           enum vctrs_dbl_class y_type,
                           int direction,
                           int na_order,
-                          int na_nan_cmp);
+                          int na_nan_order);
 
 /*
  * Check if a double vector is ordered, handling `decreasing`, `na_last`, and
@@ -51,7 +51,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
 
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
-  const int na_nan_cmp = nan_distinct ? na_order : 0;
+  const int na_nan_order = nan_distinct ? na_order : 0;
 
   double previous = p_x[0];
   enum vctrs_dbl_class previous_type = dbl_classify(previous);
@@ -71,7 +71,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
       previous_type,
       direction,
       na_order,
-      na_nan_cmp
+      na_nan_order
     );
 
     if (cmp >= 0) {
@@ -117,7 +117,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
       previous_type,
       direction,
       na_order,
-      na_nan_cmp
+      na_nan_order
     );
 
     // Not expected ordering
@@ -150,7 +150,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
 static inline int dbl_cmp_numbers(double x, double y, int direction);
 
 /*
- * Compare two doubles, handling `na_order`, `direction`, and `na_nan_cmp`
+ * Compare two doubles, handling `na_order`, `direction`, and `na_nan_order`
  */
 static inline
 int dbl_cmp(double x,
@@ -159,7 +159,7 @@ int dbl_cmp(double x,
             enum vctrs_dbl_class y_type,
             int direction,
             int na_order,
-            int na_nan_cmp) {
+            int na_nan_order) {
   switch (x_type) {
   case vctrs_dbl_number:
     switch (y_type) {
@@ -171,12 +171,12 @@ int dbl_cmp(double x,
     switch (y_type) {
     case vctrs_dbl_number: return na_order;
     case vctrs_dbl_missing: return 0;
-    case vctrs_dbl_nan: return na_nan_cmp;
+    case vctrs_dbl_nan: return na_nan_order;
     }
   case vctrs_dbl_nan:
     switch (y_type) {
     case vctrs_dbl_number: return na_order;
-    case vctrs_dbl_missing: return -na_nan_cmp;
+    case vctrs_dbl_missing: return -na_nan_order;
     case vctrs_dbl_nan: return 0;
     }
   }
