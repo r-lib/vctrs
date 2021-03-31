@@ -238,20 +238,20 @@ SEXP vctrs_order_locs(SEXP x,
 
 static
 SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
-  SEXP info = PROTECT(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
+  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
 
-  SEXP o = VECTOR_ELT(info, 0);
-  const int* p_o = INTEGER_RO(o);
+  SEXP o = r_list_get(info, 0);
+  const int* p_o = r_int_deref_const(o);
 
-  SEXP sizes = VECTOR_ELT(info, 1);
-  const int* p_sizes = INTEGER_RO(sizes);
+  SEXP sizes = r_list_get(info, 1);
+  const int* p_sizes = r_int_deref_const(sizes);
 
   r_ssize n_groups = r_length(sizes);
 
-  SEXP loc = PROTECT(Rf_allocVector(VECSXP, n_groups));
+  SEXP loc = KEEP(r_alloc_list(n_groups));
 
-  SEXP key_loc = PROTECT(Rf_allocVector(INTSXP, n_groups));
-  int* p_key_loc = INTEGER(key_loc);
+  SEXP key_loc = KEEP(r_alloc_integer(n_groups));
+  int* p_key_loc = r_int_deref(key_loc);
 
   int start = 0;
 
@@ -260,9 +260,9 @@ SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SE
 
     const int size = p_sizes[i];
 
-    SEXP elt = Rf_allocVector(INTSXP, size);
-    SET_VECTOR_ELT(loc, i, elt);
-    int* p_elt = INTEGER(elt);
+    SEXP elt = r_alloc_integer(size);
+    r_list_poke(loc, i, elt);
+    int* p_elt = r_int_deref(elt);
 
     R_len_t k = 0;
 
@@ -273,22 +273,22 @@ SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SE
     }
   }
 
-  SEXP key = PROTECT(vec_slice(x, key_loc));
+  SEXP key = KEEP(vec_slice(x, key_loc));
 
   // Construct output data frame
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(out, 0, key);
-  SET_VECTOR_ELT(out, 1, loc);
+  SEXP out = KEEP(r_alloc_list(2));
+  r_list_poke(out, 0, key);
+  r_list_poke(out, 1, loc);
 
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(names, 0, strings_key);
-  SET_STRING_ELT(names, 1, strings_loc);
+  SEXP names = KEEP(r_alloc_character(2));
+  r_chr_poke(names, 0, strings_key);
+  r_chr_poke(names, 1, strings_loc);
 
-  Rf_setAttrib(out, R_NamesSymbol, names);
+  r_attrib_poke(out, r_syms.names, names);
 
   out = new_data_frame(out, n_groups);
 
-  UNPROTECT(6);
+  FREE(6);
   return out;
 }
 
@@ -446,14 +446,14 @@ SEXP vec_order_info_impl(SEXP x,
     p_truelength_info
   );
 
-  SEXP out = PROTECT_N(r_new_list(2), &n_prot);
-  SET_VECTOR_ELT(out, 0, p_order->data);
+  SEXP out = PROTECT_N(r_alloc_list(2), &n_prot);
+  r_list_poke(out, 0, p_order->data);
 
   if (group_sizes) {
     struct group_info* p_group_info = groups_current(p_group_infos);
     SEXP sizes = p_group_info->data;
     sizes = r_int_resize(sizes, p_group_info->n_groups);
-    SET_VECTOR_ELT(out, 1, sizes);
+    r_list_poke(out, 1, sizes);
   }
 
   UNPROTECT(n_prot);
