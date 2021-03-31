@@ -213,10 +213,8 @@ static SEXP vec_order_info_impl(SEXP x,
 static
 SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
   const bool group_sizes = false;
-  SEXP info = PROTECT(vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, group_sizes));
-  SEXP out = VECTOR_ELT(info, 0);
-  UNPROTECT(1);
-  return out;
+  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, group_sizes);
+  return r_list_get(info, 0);
 }
 
 // -----------------------------------------------------------------------------
