@@ -9,8 +9,7 @@ enum ties {
 };
 static inline enum ties parse_ties(sexp* ties);
 
-static sexp* r_lgl_negate(sexp* x, bool na_propagate);
-static bool r_lgl_any(sexp* x);
+static inline bool r_lgl_any(sexp* x);
 
 static sexp* vec_rank(sexp* x,
                       enum ties ties_type,
@@ -21,34 +20,22 @@ static sexp* vec_rank(sexp* x,
 
 static void vec_rank_min(const int* v_order,
                          const int* v_group_sizes,
-                         const int* v_locs,
-                         r_ssize size,
                          r_ssize n_groups,
-                         bool na_propagate,
-                         int* v_out);
+                         int* v_rank);
 
 static void vec_rank_max(const int* v_order,
                          const int* v_group_sizes,
-                         const int* v_locs,
-                         r_ssize size,
                          r_ssize n_groups,
-                         bool na_propagate,
-                         int* v_out);
+                         int* v_rank);
 
 static void vec_rank_sequential(const int* v_order,
                                 const int* v_group_sizes,
-                                const int* v_locs,
-                                r_ssize size,
                                 r_ssize n_groups,
-                                bool na_propagate,
-                                int* v_out);
+                                int* v_rank);
 
 static void vec_rank_dense(const int* v_order,
                            const int* v_group_sizes,
-                           const int* v_locs,
-                           r_ssize size,
                            r_ssize n_groups,
-                           bool na_propagate,
-                           int* v_out);
+                           int* v_rank);
 
 #endif

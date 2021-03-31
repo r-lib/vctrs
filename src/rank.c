@@ -34,46 +34,55 @@ sexp* vec_rank(sexp* x,
                sexp* chr_transform) {
   r_ssize size = vec_size(x);
 
-  sexp* out = KEEP(r_alloc_integer(size));
-  int* v_out = r_int_deref(out);
-
   r_keep_t pi_x;
   KEEP_HERE(x, &pi_x);
 
-  sexp* locs = R_NilValue;
-  r_keep_t pi_locs;
-  KEEP_HERE(locs, &pi_locs);
-  const int* v_locs = NULL;
+  sexp* missing = r_null;
+  r_keep_t pi_missing;
+  KEEP_HERE(missing, &pi_missing);
+  int* v_missing = NULL;
+
+  sexp* not_missing = r_null;
+  r_keep_t pi_not_missing;
+  KEEP_HERE(not_missing, &pi_not_missing);
+  int* v_not_missing = NULL;
+
+  r_ssize rank_size = -1;
 
   if (na_propagate) {
-    // Locate non-missing values and slice them out of `x`,
-    // retaining their locations in `locs` for later placement in `out`
-    locs = vec_equal_na(x);
-    KEEP_AT(locs, pi_locs);
+    // Slice out non-missing values of `x` to rank.
+    // Retain `non_missing` logical vector for constructing `out`.
+    missing = vec_equal_na(x);
+    KEEP_AT(missing, pi_missing);
+    v_missing = r_lgl_deref(missing);
 
-    bool any_missing = r_lgl_any(locs);
+    bool any_missing = r_lgl_any(missing);
     if (!any_missing) {
-      // Skipping random access into `v_locs` in `vec_rank_*()` when not
-      // required greatly improves performance
       na_propagate = false;
       goto skip_propagate;
     }
 
-    locs = r_lgl_negate(locs, false);
-    KEEP_AT(locs, pi_locs);
-    locs = r_lgl_which(locs, false);
-    KEEP_AT(locs, pi_locs);
+    for (r_ssize i = 0; i < size; ++i) {
+      v_missing[i] = !v_missing[i];
+    }
 
-    v_locs = r_int_deref_const(locs);
+    not_missing = missing;
+    KEEP_AT(not_missing, pi_not_missing);
+    v_not_missing = v_missing;
+    missing = NULL;
+    v_missing = NULL;
 
-    x = vec_slice_impl(x, locs);
+    x = vec_slice(x, not_missing);
     KEEP_AT(x, pi_x);
 
-    // Initialize to `NA` to "propagate" it
-    r_int_fill(out, r_globals.na_int, size);
+    rank_size = vec_size(x);
   } else {
     skip_propagate:;
+    rank_size = size;
   }
+
+  sexp* rank = KEEP(r_alloc_integer(rank_size));
+  int* v_rank = r_int_deref(rank);
 
   sexp* direction = KEEP(r_chr("asc"));
   sexp* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
@@ -86,13 +95,30 @@ sexp* vec_rank(sexp* x,
   r_ssize n_groups = r_length(group_sizes);
 
   switch (ties_type) {
-  case TIES_min: vec_rank_min(v_order, v_group_sizes, v_locs, size, n_groups, na_propagate, v_out); break;
-  case TIES_max: vec_rank_max(v_order, v_group_sizes, v_locs, size, n_groups, na_propagate, v_out); break;
-  case TIES_sequential: vec_rank_sequential(v_order, v_group_sizes, v_locs, size, n_groups, na_propagate, v_out); break;
-  case TIES_dense: vec_rank_dense(v_order, v_group_sizes, v_locs, size, n_groups, na_propagate, v_out); break;
+  case TIES_min: vec_rank_min(v_order, v_group_sizes, n_groups, v_rank); break;
+  case TIES_max: vec_rank_max(v_order, v_group_sizes, n_groups, v_rank); break;
+  case TIES_sequential: vec_rank_sequential(v_order, v_group_sizes, n_groups, v_rank); break;
+  case TIES_dense: vec_rank_dense(v_order, v_group_sizes, n_groups, v_rank); break;
   }
 
-  FREE(5);
+  sexp* out = r_null;
+  r_keep_t pi_out;
+  KEEP_HERE(out, &pi_out);
+
+  if (na_propagate) {
+    out = r_alloc_integer(size);
+    KEEP_AT(out, pi_out);
+    int* v_out = r_int_deref(out);
+    r_ssize j = 0;
+
+    for (r_ssize i = 0; i < size; ++i) {
+      v_out[i] = v_not_missing[i] ? v_rank[j++] : r_globals.na_int;
+    }
+  } else {
+    out = rank;
+  }
+
+  FREE(7);
   return out;
 }
 
@@ -101,11 +127,8 @@ sexp* vec_rank(sexp* x,
 static
 void vec_rank_min(const int* v_order,
                   const int* v_group_sizes,
-                  const int* v_locs,
-                  r_ssize size,
                   r_ssize n_groups,
-                  bool na_propagate,
-                  int* v_out) {
+                  int* v_rank) {
   r_ssize k = 0;
   r_ssize rank = 1;
 
@@ -114,10 +137,7 @@ void vec_rank_min(const int* v_order,
 
     for (r_ssize j = 0; j < group_size; ++j) {
       r_ssize loc = v_order[k] - 1;
-      if (na_propagate) {
-        loc = v_locs[loc] - 1;
-      }
-      v_out[loc] = rank;
+      v_rank[loc] = rank;
       ++k;
     }
 
@@ -128,11 +148,8 @@ void vec_rank_min(const int* v_order,
 static
 void vec_rank_max(const int* v_order,
                   const int* v_group_sizes,
-                  const int* v_locs,
-                  r_ssize size,
                   r_ssize n_groups,
-                  bool na_propagate,
-                  int* v_out) {
+                  int* v_rank) {
   r_ssize k = 0;
   r_ssize rank = 0;
 
@@ -142,10 +159,7 @@ void vec_rank_max(const int* v_order,
 
     for (r_ssize j = 0; j < group_size; ++j) {
       r_ssize loc = v_order[k] - 1;
-      if (na_propagate) {
-        loc = v_locs[loc] - 1;
-      }
-      v_out[loc] = rank;
+      v_rank[loc] = rank;
       ++k;
     }
   }
@@ -154,11 +168,8 @@ void vec_rank_max(const int* v_order,
 static
 void vec_rank_sequential(const int* v_order,
                          const int* v_group_sizes,
-                         const int* v_locs,
-                         r_ssize size,
                          r_ssize n_groups,
-                         bool na_propagate,
-                         int* v_out) {
+                         int* v_rank) {
   r_ssize k = 0;
   r_ssize rank = 1;
 
@@ -167,10 +178,7 @@ void vec_rank_sequential(const int* v_order,
 
     for (r_ssize j = 0; j < group_size; ++j) {
       r_ssize loc = v_order[k] - 1;
-      if (na_propagate) {
-        loc = v_locs[loc] - 1;
-      }
-      v_out[loc] = rank;
+      v_rank[loc] = rank;
       ++k;
       ++rank;
     }
@@ -180,11 +188,8 @@ void vec_rank_sequential(const int* v_order,
 static
 void vec_rank_dense(const int* v_order,
                     const int* v_group_sizes,
-                    const int* v_locs,
-                    r_ssize size,
                     r_ssize n_groups,
-                    bool na_propagate,
-                    int* v_out) {
+                    int* v_rank) {
   r_ssize k = 0;
   r_ssize rank = 1;
 
@@ -193,10 +198,7 @@ void vec_rank_dense(const int* v_order,
 
     for (r_ssize j = 0; j < group_size; ++j) {
       r_ssize loc = v_order[k] - 1;
-      if (na_propagate) {
-        loc = v_locs[loc] - 1;
-      }
-      v_out[loc] = rank;
+      v_rank[loc] = rank;
       ++k;
     }
 
@@ -227,35 +229,8 @@ enum ties parse_ties(sexp* ties) {
 
 // -----------------------------------------------------------------------------
 
-static
-sexp* r_lgl_negate(sexp* x, bool na_propagate) {
-  if (r_typeof(x) != R_TYPE_logical) {
-    r_abort("Internal error: Expected logical vector in `r_lgl_negate()`.");
-  }
-
-  const int* v_x = r_lgl_deref_const(x);
-  r_ssize size = r_length(x);
-
-  sexp* out = KEEP(r_new_logical(size));
-  int* v_out = r_lgl_deref(out);
-
-  if (na_propagate) {
-    for (r_ssize i = 0; i < size; ++i) {
-      const int elt = v_x[i];
-      v_out[i] = (elt == r_globals.na_lgl) ? r_globals.na_lgl : !elt;
-    }
-  } else {
-    for (r_ssize i = 0; i < size; ++i) {
-      v_out[i] = !v_x[i];
-    }
-  }
-
-  FREE(1);
-  return out;
-}
-
 // Treats missing values as `true`
-static
+static inline
 bool r_lgl_any(sexp* x) {
   if (r_typeof(x) != R_TYPE_logical) {
     r_abort("Internal error: Expected logical vector in `r_lgl_any()`.");
