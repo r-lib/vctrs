@@ -7,6 +7,14 @@
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
 #'
+#' @section Differences with `base::order()`:
+#' Unlike the `na.last` argument of `order()` which decides the
+#' positions of missing values irrespective of the `decreasing`
+#' argument, the `na_value` argument of `vec_order()` interacts with
+#' `direction`. If missing values are considered the largest value,
+#' they will appear last in ascending order, and first in descending
+#' order.
+#'
 #' @section Dependencies of `vec_order()`:
 #' * [vec_proxy_order()]
 #'
@@ -26,6 +34,11 @@
 #' vec_order(df)
 #' vec_sort(df)
 #' vec_sort(df, "desc")
+#'
+#' # Missing values interpreted as largest values are last when
+#' # in increasing order:
+#' vec_order(c(1, NA), na_value = "largest", direction = "asc")
+#' vec_order(c(1, NA), na_value = "largest", direction = "desc")
 vec_order <- function(x,
                       direction = c("asc", "desc"),
                       na_value = c("largest", "smallest")) {

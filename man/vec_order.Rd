@@ -25,6 +25,16 @@ vec_sort(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 \description{
 Order and sort vectors
 }
+\section{Differences with \code{base}{
+:order()}:
+Unlike the \code{na.last} argument of \code{order()} which decides the
+positions of missing values irrespective of the \code{decreasing}
+argument, the \code{na_value} argument of \code{vec_order()} interacts with
+\code{direction}. If missing values are considered the largest value,
+they will appear last in ascending order, and first in descending
+order.
+}
+
 \section{Dependencies of \code{vec_order()}}{
 
 \itemize{
@@ -52,4 +62,9 @@ df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 vec_order(df)
 vec_sort(df)
 vec_sort(df, "desc")
+
+# Missing values interpreted as largest values are last when
+# in increasing order:
+vec_order(c(1, NA), na_value = "largest", direction = "asc")
+vec_order(c(1, NA), na_value = "largest", direction = "desc")
 }
