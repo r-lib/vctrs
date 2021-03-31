@@ -193,6 +193,16 @@
 <li><p><code>vec_sort()</code> a vector with the same size and type as <code>x</code>.</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="differences-with-order-"><a class="anchor" href="#differences-with-order-"></a>Differences with <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code></h2>
+
+    
+
+<p>Unlike the <code>na.last</code> argument of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> which decides the
+positions of missing values irrespective of the <code>decreasing</code>
+argument, the <code>na_value</code> argument of <code>vec_order()</code> interacts with
+<code>direction</code>. If missing values are considered the largest value,
+they will appear last in ascending order, and first in descending
+order.</p>
     <h2 class="hasAnchor" id="dependencies-of-vec-order-"><a class="anchor" href="#dependencies-of-vec-order-"></a>Dependencies of <code>vec_order()</code></h2>
 
     
@@ -243,7 +253,12 @@
 #&gt; 7  1 0.634
 #&gt; 8  1 0.584
 #&gt; 9  1 0.500
-#&gt; 10 1 0.359</div></pre>
+#&gt; 10 1 0.359</div><div class='input'>
+<span class='co'># Missing values interpreted as largest values are last when</span>
+<span class='co'># in increasing order:</span>
+<span class='fu'>vec_order</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span><span class='op'>)</span>, na_value <span class='op'>=</span> <span class='st'>"largest"</span>, direction <span class='op'>=</span> <span class='st'>"asc"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 2</div><div class='input'><span class='fu'>vec_order</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span><span class='op'>)</span>, na_value <span class='op'>=</span> <span class='st'>"largest"</span>, direction <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 2 1</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
