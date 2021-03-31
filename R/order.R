@@ -7,7 +7,7 @@
 #' * `vec_order()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
 #'
-#' @section Differences with `base::order()`:
+#' @section Differences with `order()`:
 #' Unlike the `na.last` argument of `order()` which decides the
 #' positions of missing values irrespective of the `decreasing`
 #' argument, the `na_value` argument of `vec_order()` interacts with

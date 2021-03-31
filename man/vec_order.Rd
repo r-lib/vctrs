@@ -25,8 +25,8 @@ vec_sort(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
 \description{
 Order and sort vectors
 }
-\section{Differences with \code{base}{
-:order()}:
+\section{Differences with \code{order()}}{
+
 Unlike the \code{na.last} argument of \code{order()} which decides the
 positions of missing values irrespective of the \code{decreasing}
 argument, the \code{na_value} argument of \code{vec_order()} interacts with
