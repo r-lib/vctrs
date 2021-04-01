@@ -30,6 +30,8 @@
 #' Character vectors are always translated to UTF-8 before ordering, and before
 #' any transform is applied by `chr_transform`.
 #'
+#' @inheritParams ellipsis::dots_empty
+#'
 #' @param x A vector
 #' @param direction Direction to sort in.
 #'   - A single `"asc"` or `"desc"` for ascending or descending order
@@ -100,10 +102,14 @@
 #' vec_sort(y, chr_transform = tolower)
 #' @noRd
 vec_order_radix <- function(x,
+                            ...,
                             direction = "asc",
                             na_value = "largest",
                             nan_distinct = FALSE,
                             chr_transform = NULL) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_transform)
 }
 
@@ -140,18 +146,26 @@ vec_order_radix <- function(x,
 #' vec_group_loc(df)
 #' @noRd
 vec_order_locs <- function(x,
+                           ...,
                            direction = "asc",
                            na_value = "largest",
                            nan_distinct = FALSE,
                            chr_transform = NULL) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_transform)
 }
 
 vec_order_info <- function(x,
+                           ...,
                            direction = "asc",
                            na_value = "largest",
                            nan_distinct = FALSE,
                            chr_transform = NULL,
                            chr_ordered = TRUE) {
+  if (!missing(...)) {
+    ellipsis::check_dots_empty()
+  }
   .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_transform, chr_ordered)
 }

@@ -1035,11 +1035,11 @@ test_that("`chr_transform` can result in keys being seen as identical", {
 # `vec_order_radix()` - Pre-existing tests
 
 test_that("can request NAs sorted first", {
-  expect_equal(vec_order_radix(c(1, NA), "asc", "largest"), 1:2)
-  expect_equal(vec_order_radix(c(1, NA), "desc", "largest"), 2:1)
+  expect_equal(vec_order_radix(c(1, NA), direction = "asc", na_value = "largest"), 1:2)
+  expect_equal(vec_order_radix(c(1, NA), direction = "desc", na_value = "largest"), 2:1)
 
-  expect_equal(vec_order_radix(c(1, NA), "asc", "smallest"), 2:1)
-  expect_equal(vec_order_radix(c(1, NA), "desc", "smallest"), 1:2)
+  expect_equal(vec_order_radix(c(1, NA), direction = "asc", na_value = "smallest"), 2:1)
+  expect_equal(vec_order_radix(c(1, NA), direction = "desc", na_value = "smallest"), 1:2)
 })
 
 test_that("can sort data frames", {
