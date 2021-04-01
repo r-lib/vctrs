@@ -8,6 +8,7 @@
 sexp* vctrs_rank(sexp* x,
                  sexp* ties,
                  sexp* na_propagate,
+                 sexp* direction,
                  sexp* na_value,
                  sexp* nan_distinct,
                  sexp* chr_transform) {
@@ -19,6 +20,7 @@ sexp* vctrs_rank(sexp* x,
     x,
     c_ties,
     c_na_propagate,
+    direction,
     na_value,
     c_nan_distinct,
     chr_transform
@@ -29,6 +31,7 @@ static
 sexp* vec_rank(sexp* x,
                enum ties ties_type,
                bool na_propagate,
+               sexp* direction,
                sexp* na_value,
                bool nan_distinct,
                sexp* chr_transform) {
@@ -84,7 +87,6 @@ sexp* vec_rank(sexp* x,
   sexp* rank = KEEP(r_alloc_integer(rank_size));
   int* v_rank = r_int_deref(rank);
 
-  sexp* direction = KEEP(r_chr("asc"));
   sexp* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
 
   sexp* order = r_list_get(info, 0);
@@ -118,7 +120,7 @@ sexp* vec_rank(sexp* x,
     out = rank;
   }
 
-  FREE(7);
+  FREE(6);
   return out;
 }
 

@@ -14,6 +14,7 @@ static inline bool r_lgl_any(sexp* x);
 static sexp* vec_rank(sexp* x,
                       enum ties ties_type,
                       bool na_propagate,
+                      sexp* direction,
                       sexp* na_value,
                       bool nan_distinct,
                       sexp* chr_transform);
