@@ -1,12 +1,12 @@
 pandoc: 2.7.3
 pkgdown: 1.6.1.9001
-pkgdown_sha: 20c4390517f26189bf7743ae530cb0ec3f8e8800
+pkgdown_sha: 5b5baea274400b242e0a2194fe9d392f753d3508
 articles:
   pillar: pillar.html
   s3-vector: s3-vector.html
   stability: stability.html
   type-size: type-size.html
-last_built: 2021-03-31T20:48Z
+last_built: 2021-04-02T16:17Z
 urls:
   reference: https://vctrs.r-lib.org/reference
   article: https://vctrs.r-lib.org/articles
