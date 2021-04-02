@@ -107,56 +107,6 @@ static inline int chr_compare_scalar(const SEXP* x, const SEXP* y, bool na_equal
   }
 }
 
-static inline int df_compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal, int n_col) {
-  int cmp;
-
-  for (int k = 0; k < n_col; ++k) {
-    SEXP col_x = VECTOR_ELT(x, k);
-    SEXP col_y = VECTOR_ELT(y, k);
-
-    cmp = compare_scalar(col_x, i, col_y, j, na_equal);
-
-    if (cmp != 0) {
-      return cmp;
-    }
-  }
-
-  return cmp;
-}
-
-// -----------------------------------------------------------------------------
-
-// [[ include("vctrs.h") ]]
-int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal) {
-  switch (TYPEOF(x)) {
-  case LGLSXP: return lgl_compare_scalar(LOGICAL_RO(x) + i, LOGICAL_RO(y) + j, na_equal);
-  case INTSXP: return int_compare_scalar(INTEGER_RO(x) + i, INTEGER_RO(y) + j, na_equal);
-  case REALSXP: return dbl_compare_scalar(REAL_RO(x) + i, REAL_RO(y) + j, na_equal);
-  case STRSXP: return chr_compare_scalar(STRING_PTR_RO(x) + i, STRING_PTR_RO(y) + j, na_equal);
-  default: break;
-  }
-
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_list: stop_not_comparable(x, y, "lists are not comparable");
-  case vctrs_type_dataframe: {
-    int n_col = Rf_length(x);
-
-    if (n_col != Rf_length(y)) {
-      stop_not_comparable(x, y, "must have the same number of columns");
-    }
-
-    if (n_col == 0) {
-      stop_not_comparable(x, y, "data frame with zero columns");
-    }
-
-    return df_compare_scalar(x, i, y, j, na_equal, n_col);
-  }
-  default: break;
-  }
-
-  Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
-}
-
 // -----------------------------------------------------------------------------
 
 static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size);

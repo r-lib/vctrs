@@ -422,8 +422,6 @@ bool equal_object(SEXP x, SEXP y);
 bool equal_object_normalized(SEXP x, SEXP y);
 bool equal_names(SEXP x, SEXP y);
 
-int compare_scalar(SEXP x, R_len_t i, SEXP y, R_len_t j, bool na_equal);
-
 uint32_t hash_object(SEXP x);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);
 
