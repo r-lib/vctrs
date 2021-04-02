@@ -130,7 +130,7 @@ extern SEXP vctrs_detect_complete(SEXP);
 extern SEXP vctrs_normalize_encoding(SEXP);
 extern SEXP vctrs_order(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_locs(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unrep(SEXP);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
 extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
@@ -282,7 +282,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_normalize_encoding",         (DL_FUNC) &vctrs_normalize_encoding, 1},
   {"vctrs_order",                      (DL_FUNC) &vctrs_order, 5},
   {"vctrs_order_locs",                 (DL_FUNC) &vctrs_order_locs, 5},
-  {"vctrs_order_info",                 (DL_FUNC) &vctrs_order_info, 5},
+  {"vctrs_order_info",                 (DL_FUNC) &vctrs_order_info, 6},
   {"vctrs_unrep",                      (DL_FUNC) &vctrs_unrep, 1},
   {"vctrs_fill_missing",               (DL_FUNC) &vctrs_fill_missing, 3},
   {"vctrs_chr_paste_prefix",           (DL_FUNC) &vctrs_chr_paste_prefix, 3},
