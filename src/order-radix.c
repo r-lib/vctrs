@@ -3036,7 +3036,7 @@ void chr_mark_sorted_uniques(const SEXP* p_x,
                              struct truelength_info* p_truelength_info) {
   chr_mark_uniques(p_x, size, p_truelength_info);
 
-  r_ssize n_uniques = p_truelength_info->size_used;
+  r_ssize n_uniques = p_truelength_info->n_uniques_used;
 
   SEXP* p_x_aux = (SEXP*) init_lazy_raw(p_lazy_x_aux);
 
@@ -3076,21 +3076,28 @@ void chr_mark_uniques(const SEXP* p_x,
 
     r_ssize truelength = TRUELENGTH(elt);
 
-    // We have already seen and saved this string
     if (truelength < 0) {
+      // We have already seen and saved this string
       continue;
     }
 
-    r_ssize elt_size = r_length(elt);
+    if (truelength > 0) {
+      // Retain R's usage of TRUELENGTH. Normally defaults to 0, so if the value
+      // is positive, it means R is using it. Should be extremely rare.
+      truelength_save_string(elt, truelength, p_truelength_info);
+    }
+
+    // CHARSXP string lengths are never "long"
+    int elt_size = (int) r_length(elt);
 
     // Track max string size to know how deep to recurse
     if (p_truelength_info->max_string_size < elt_size) {
       p_truelength_info->max_string_size = elt_size;
     }
 
-    // Save the truelength so we can reset it later.
-    // Also saves this unique value so we can order uniques.
-    truelength_save(elt, truelength, elt_size, p_truelength_info);
+    // Save this unique value and its size so we can order uniques
+    truelength_save_unique(elt, p_truelength_info);
+    truelength_save_size(elt_size, p_truelength_info);
 
     // Mark as negative to note that we have seen this string.
     // R uses positive or zero truelengths.
