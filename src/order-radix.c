@@ -208,12 +208,14 @@ static SEXP vec_order_info_impl(SEXP x,
                                 SEXP na_value,
                                 bool nan_distinct,
                                 SEXP chr_transform,
+                                bool chr_ordered,
                                 bool group_sizes);
 
 static
 SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
+  const bool chr_ordered = true;
   const bool group_sizes = false;
-  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, group_sizes);
+  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, chr_ordered, group_sizes);
   return r_list_get(info, 0);
 }
 
@@ -238,7 +240,9 @@ SEXP vctrs_order_locs(SEXP x,
 
 static
 SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
-  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
+  const bool chr_ordered = true;
+
+  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform, chr_ordered));
 
   SEXP o = r_list_get(info, 0);
   const int* p_o = r_int_deref_const(o);
@@ -305,9 +309,10 @@ SEXP vec_order_info(SEXP x,
                     SEXP direction,
                     SEXP na_value,
                     bool nan_distinct,
-                    SEXP chr_transform) {
+                    SEXP chr_transform,
+                    bool chr_ordered) {
   const bool group_sizes = true;
-  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, group_sizes);
+  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, chr_ordered, group_sizes);
 }
 
 // [[ register() ]]
@@ -315,9 +320,11 @@ SEXP vctrs_order_info(SEXP x,
                       SEXP direction,
                       SEXP na_value,
                       SEXP nan_distinct,
-                      SEXP chr_transform) {
+                      SEXP chr_transform,
+                      SEXP chr_ordered) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_transform);
+  bool c_chr_ordered = r_bool_as_int(chr_ordered);
+  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_transform, c_chr_ordered);
 }
 
 static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
@@ -332,6 +339,7 @@ static void vec_order_switch(SEXP x,
                              SEXP decreasing,
                              SEXP na_last,
                              bool nan_distinct,
+                             bool chr_ordered,
                              r_ssize size,
                              const enum vctrs_type type,
                              struct order* p_order,
@@ -349,6 +357,7 @@ SEXP vec_order_info_impl(SEXP x,
                          SEXP na_value,
                          bool nan_distinct,
                          SEXP chr_transform,
+                         bool chr_ordered,
                          bool group_sizes) {
   int n_prot = 0;
 
@@ -434,6 +443,7 @@ SEXP vec_order_info_impl(SEXP x,
     decreasing,
     na_last,
     nan_distinct,
+    chr_ordered,
     size,
     type,
     p_order,
@@ -466,6 +476,7 @@ static void df_order(SEXP x,
                      SEXP decreasing,
                      SEXP na_last,
                      bool nan_distinct,
+                     bool chr_ordered,
                      r_ssize size,
                      struct order* p_order,
                      struct lazy_raw* p_lazy_x_chunk,
@@ -480,6 +491,7 @@ static void vec_order_base_switch(SEXP x,
                                   bool decreasing,
                                   bool na_last,
                                   bool nan_distinct,
+                                  bool chr_ordered,
                                   r_ssize size,
                                   const enum vctrs_type type,
                                   struct order* p_order,
@@ -496,6 +508,7 @@ void vec_order_switch(SEXP x,
                       SEXP decreasing,
                       SEXP na_last,
                       bool nan_distinct,
+                      bool chr_ordered,
                       r_ssize size,
                       const enum vctrs_type type,
                       struct order* p_order,
@@ -512,6 +525,7 @@ void vec_order_switch(SEXP x,
       decreasing,
       na_last,
       nan_distinct,
+      chr_ordered,
       size,
       p_order,
       p_lazy_x_chunk,
@@ -550,6 +564,7 @@ void vec_order_switch(SEXP x,
     c_decreasing,
     c_na_last,
     nan_distinct,
+    chr_ordered,
     size,
     type,
     p_order,
@@ -628,12 +643,26 @@ static void chr_order(SEXP x,
                       struct group_infos* p_group_infos,
                       struct truelength_info* p_truelength_info);
 
+static void chr_appearance(SEXP x,
+                           bool decreasing,
+                           bool na_last,
+                           r_ssize size,
+                           struct order* p_order,
+                           struct lazy_raw* p_lazy_x_chunk,
+                           struct lazy_raw* p_lazy_x_aux,
+                           struct lazy_raw* p_lazy_o_aux,
+                           struct lazy_raw* p_lazy_bytes,
+                           struct lazy_raw* p_lazy_counts,
+                           struct group_infos* p_group_infos,
+                           struct truelength_info* p_truelength_info);
+
 // Used on bare vectors and the first column of data frame `x`s
 static
 void vec_order_base_switch(SEXP x,
                            bool decreasing,
                            bool na_last,
                            bool nan_distinct,
+                           bool chr_ordered,
                            r_ssize size,
                            const enum vctrs_type type,
                            struct order* p_order,
@@ -716,20 +745,37 @@ void vec_order_base_switch(SEXP x,
     break;
   }
   case vctrs_type_character: {
-    chr_order(
-      x,
-      decreasing,
-      na_last,
-      size,
-      p_order,
-      p_lazy_x_chunk,
-      p_lazy_x_aux,
-      p_lazy_o_aux,
-      p_lazy_bytes,
-      p_lazy_counts,
-      p_group_infos,
-      p_truelength_info
-    );
+    if (chr_ordered) {
+      chr_order(
+        x,
+        decreasing,
+        na_last,
+        size,
+        p_order,
+        p_lazy_x_chunk,
+        p_lazy_x_aux,
+        p_lazy_o_aux,
+        p_lazy_bytes,
+        p_lazy_counts,
+        p_group_infos,
+        p_truelength_info
+      );
+    } else {
+      chr_appearance(
+        x,
+        decreasing,
+        na_last,
+        size,
+        p_order,
+        p_lazy_x_chunk,
+        p_lazy_x_aux,
+        p_lazy_o_aux,
+        p_lazy_bytes,
+        p_lazy_counts,
+        p_group_infos,
+        p_truelength_info
+      );
+    }
 
     break;
   }
@@ -3411,11 +3457,277 @@ bool chr_str_ge(SEXP x, SEXP y, int x_size, const R_len_t pass) {
 
 // -----------------------------------------------------------------------------
 
+static void chr_appearance_counting(const SEXP* p_x,
+                                    r_ssize size,
+                                    bool initialized,
+                                    int* p_o,
+                                    int* p_o_aux,
+                                    struct group_infos* p_group_infos,
+                                    struct truelength_info* p_truelength_info);
+
+static
+void chr_appearance_chunk(bool decreasing,
+                          bool na_last,
+                          r_ssize size,
+                          int* p_o,
+                          struct lazy_raw* p_lazy_x_chunk,
+                          struct lazy_raw* p_lazy_x_aux,
+                          struct lazy_raw* p_lazy_o_aux,
+                          struct lazy_raw* p_lazy_bytes,
+                          struct lazy_raw* p_lazy_counts,
+                          struct group_infos* p_group_infos,
+                          struct truelength_info* p_truelength_info) {
+  const SEXP* p_x_chunk = (const SEXP*) p_lazy_x_chunk->p_data;
+
+  const bool initialized = true;
+  int* p_o_aux = (int*) init_lazy_raw(p_lazy_o_aux);
+
+  chr_appearance_counting(
+    p_x_chunk,
+    size,
+    initialized,
+    p_o,
+    p_o_aux,
+    p_group_infos,
+    p_truelength_info
+  );
+}
+
+
+struct chr_appearance_info {
+  SEXP x;
+  bool decreasing;
+  bool na_last;
+  r_ssize size;
+  struct order* p_order;
+  struct lazy_raw* p_lazy_x_chunk;
+  struct lazy_raw* p_lazy_x_aux;
+  struct lazy_raw* p_lazy_o_aux;
+  struct lazy_raw* p_lazy_bytes;
+  struct lazy_raw* p_lazy_counts;
+  struct group_infos* p_group_infos;
+  struct truelength_info* p_truelength_info;
+};
+
+struct chr_appearance_cleanup_info {
+  struct truelength_info* p_truelength_info;
+};
+
+static SEXP chr_appearance_exec(void* p_data);
+static void chr_appearance_cleanup(void* p_data);
+
+/*
+ * `chr_appearance()` directly modifies the `TRUELENGTH()` values of the
+ * CHARSXPs in `x`. These must be reset after the call with
+ * `truelength_reset()`. In practice, `chr_appearance_counting()` will call
+ * `truelength_reset()` for us, however, to ensure that this function is called
+ * (even on a longjump), `R_ExecWithCleanup()` is used.
+ */
+static
+void chr_appearance(SEXP x,
+                    bool decreasing,
+                    bool na_last,
+                    r_ssize size,
+                    struct order* p_order,
+                    struct lazy_raw* p_lazy_x_chunk,
+                    struct lazy_raw* p_lazy_x_aux,
+                    struct lazy_raw* p_lazy_o_aux,
+                    struct lazy_raw* p_lazy_bytes,
+                    struct lazy_raw* p_lazy_counts,
+                    struct group_infos* p_group_infos,
+                    struct truelength_info* p_truelength_info) {
+  struct chr_appearance_info info = {
+   .x = x,
+   .decreasing = decreasing,
+   .na_last = na_last,
+   .size = size,
+   .p_order = p_order,
+   .p_lazy_x_chunk = p_lazy_x_chunk,
+   .p_lazy_x_aux = p_lazy_x_aux,
+   .p_lazy_o_aux = p_lazy_o_aux,
+   .p_lazy_bytes = p_lazy_bytes,
+   .p_lazy_counts = p_lazy_counts,
+   .p_group_infos = p_group_infos,
+   .p_truelength_info = p_truelength_info
+  };
+
+  struct chr_appearance_cleanup_info cleanup_info = {
+    .p_truelength_info = p_truelength_info
+  };
+
+  R_ExecWithCleanup(
+    chr_appearance_exec,
+    &info,
+    chr_appearance_cleanup,
+    &cleanup_info
+  );
+}
+
+static void chr_appearance_internal(SEXP x,
+                                    bool decreasing,
+                                    bool na_last,
+                                    r_ssize size,
+                                    struct order* p_order,
+                                    struct lazy_raw* p_lazy_x_chunk,
+                                    struct lazy_raw* p_lazy_x_aux,
+                                    struct lazy_raw* p_lazy_o_aux,
+                                    struct lazy_raw* p_lazy_bytes,
+                                    struct lazy_raw* p_lazy_counts,
+                                    struct group_infos* p_group_infos,
+                                    struct truelength_info* p_truelength_info);
+
+static
+SEXP chr_appearance_exec(void* p_data) {
+  struct chr_appearance_info* p_info = (struct chr_appearance_info*) p_data;
+
+  chr_appearance_internal(
+    p_info->x,
+    p_info->decreasing,
+    p_info->na_last,
+    p_info->size,
+    p_info->p_order,
+    p_info->p_lazy_x_chunk,
+    p_info->p_lazy_x_aux,
+    p_info->p_lazy_o_aux,
+    p_info->p_lazy_bytes,
+    p_info->p_lazy_counts,
+    p_info->p_group_infos,
+    p_info->p_truelength_info
+  );
+
+  return R_NilValue;
+}
+
+static
+void chr_appearance_cleanup(void* p_data) {
+  struct chr_appearance_cleanup_info* p_info = (struct chr_appearance_cleanup_info*) p_data;
+  truelength_reset(p_info->p_truelength_info);
+}
+
+static
+void chr_appearance_internal(SEXP x,
+                             bool decreasing,
+                             bool na_last,
+                             r_ssize size,
+                             struct order* p_order,
+                             struct lazy_raw* p_lazy_x_chunk,
+                             struct lazy_raw* p_lazy_x_aux,
+                             struct lazy_raw* p_lazy_o_aux,
+                             struct lazy_raw* p_lazy_bytes,
+                             struct lazy_raw* p_lazy_counts,
+                             struct group_infos* p_group_infos,
+                             struct truelength_info* p_truelength_info) {
+  const SEXP* p_x = STRING_PTR_RO(x);
+
+  const bool initialized = false;
+  int* p_o = p_order->p_data;
+  int* p_o_aux = NULL;
+
+  chr_appearance_counting(
+    p_x,
+    size,
+    initialized,
+    p_o,
+    p_o_aux,
+    p_group_infos,
+    p_truelength_info
+  );
+}
+
+
+/*
+ * `chr_appearance_counting()` groups elements of `p_x` in order
+ * of appearance using an algorithm that is extremely similar to the
+ * counting sort used in `int_order_counting()`.
+ *
+ * For algorithms that end up calling `vec_order()` twice to compute order by
+ * appearance, the first ordering can use appearance order for character
+ * vectors, which is faster than lexicographical order, while still actually
+ * sorting other atomic types. The final result after the second ordering will
+ * still end up being in appearance order.
+ */
+static
+void chr_appearance_counting(const SEXP* p_x,
+                             r_ssize size,
+                             bool initialized,
+                             int* p_o,
+                             int* p_o_aux,
+                             struct group_infos* p_group_infos,
+                             struct truelength_info* p_truelength_info) {
+  for (r_ssize i = 0; i < size; ++i) {
+    SEXP elt = p_x[i];
+    r_ssize truelength = TRUELENGTH(elt);
+
+    // We have already seen and saved this string, so "increment" its counter
+    if (truelength < 0) {
+      SET_TRUELENGTH(elt, truelength - 1);
+      continue;
+    }
+
+    if (truelength > 0) {
+      // Retain R's usage of TRUELENGTH. Normally defaults to 0, so if the value
+      // is positive, it means R is using it. Should be extremely rare.
+      truelength_save_string(elt, truelength, p_truelength_info);
+    }
+
+    // Save the unique string for appearance ordering below
+    truelength_save_unique(elt, p_truelength_info);
+
+    // Mark as negative to note that we have seen this string.
+    // R uses positive or zero truelengths.
+    SET_TRUELENGTH(elt, -1);
+  }
+
+  r_ssize cumulative = 0;
+
+  SEXP* p_uniques = p_truelength_info->p_uniques;
+  r_ssize n_uniques = p_truelength_info->n_uniques_used;
+
+  for (r_ssize i = 0; i < n_uniques; ++i) {
+    SEXP elt = p_uniques[i];
+    r_ssize group_size = -TRUELENGTH(elt);
+
+    // Push group sizes accumulated in order of appearance
+    groups_size_maybe_push(group_size, p_group_infos);
+
+    // Set cumulative value (i.e. group start location), then increment
+    SET_TRUELENGTH(elt, cumulative);
+    cumulative += group_size;
+  }
+
+  // If order is not initialized, we are on the first column / atomic vector
+  // and can place the order directly into the result. Much faster than
+  // initializing, placing in `p_o_aux`, and copying back over.
+  if (initialized) {
+    for (r_ssize i = 0; i < size; ++i) {
+      const SEXP elt = p_x[i];
+      const r_ssize loc = TRUELENGTH(elt);
+      SET_TRUELENGTH(elt, loc + 1);
+      p_o_aux[loc] = p_o[i];
+    }
+
+    memcpy(p_o, p_o_aux, size * sizeof(*p_o_aux));
+  } else {
+    for (r_ssize i = 0; i < size; ++i) {
+      const SEXP elt = p_x[i];
+      const r_ssize loc = TRUELENGTH(elt);
+      SET_TRUELENGTH(elt, loc + 1);
+      p_o[loc] = i + 1;
+    }
+  }
+
+  // Reset truelengths for next chunk/column
+  truelength_reset(p_truelength_info);
+}
+
+// -----------------------------------------------------------------------------
+
 struct df_order_info {
   SEXP x;
   SEXP decreasing;
   SEXP na_last;
   bool nan_distinct;
+  bool chr_ordered;
   r_ssize size;
   struct order* p_order;
   struct lazy_raw* p_lazy_x_chunk;
@@ -3457,6 +3769,7 @@ void df_order(SEXP x,
               SEXP decreasing,
               SEXP na_last,
               bool nan_distinct,
+              bool chr_ordered,
               r_ssize size,
               struct order* p_order,
               struct lazy_raw* p_lazy_x_chunk,
@@ -3471,6 +3784,7 @@ void df_order(SEXP x,
     .decreasing = decreasing,
     .na_last = na_last,
     .nan_distinct = nan_distinct,
+    .chr_ordered = chr_ordered,
     .size = size,
     .p_order = p_order,
     .p_lazy_x_chunk = p_lazy_x_chunk,
@@ -3498,6 +3812,7 @@ static void df_order_internal(SEXP x,
                               SEXP decreasing,
                               SEXP na_last,
                               bool nan_distinct,
+                              bool chr_ordered,
                               r_ssize size,
                               struct order* p_order,
                               struct lazy_raw* p_lazy_x_chunk,
@@ -3517,6 +3832,7 @@ SEXP df_order_exec(void* p_data) {
     p_info->decreasing,
     p_info->na_last,
     p_info->nan_distinct,
+    p_info->chr_ordered,
     p_info->size,
     p_info->p_order,
     p_info->p_lazy_x_chunk,
@@ -3541,6 +3857,7 @@ void df_order_cleanup(void* p_data) {
 static void vec_order_chunk_switch(bool decreasing,
                                    bool na_last,
                                    bool nan_distinct,
+                                   bool chr_ordered,
                                    r_ssize size,
                                    const enum vctrs_type type,
                                    int* p_o,
@@ -3549,7 +3866,8 @@ static void vec_order_chunk_switch(bool decreasing,
                                    struct lazy_raw* p_lazy_o_aux,
                                    struct lazy_raw* p_lazy_bytes,
                                    struct lazy_raw* p_lazy_counts,
-                                   struct group_infos* p_group_infos);
+                                   struct group_infos* p_group_infos,
+                                   struct truelength_info* p_truelength_info);
 
 
 #define DF_ORDER_EXTRACT_CHUNK(CONST_DEREF, CTYPE) do {          \
@@ -3591,6 +3909,7 @@ void df_order_internal(SEXP x,
                        SEXP decreasing,
                        SEXP na_last,
                        bool nan_distinct,
+                       bool chr_ordered,
                        r_ssize size,
                        struct order* p_order,
                        struct lazy_raw* p_lazy_x_chunk,
@@ -3654,6 +3973,7 @@ void df_order_internal(SEXP x,
     col_decreasing,
     col_na_last,
     nan_distinct,
+    chr_ordered,
     size,
     type,
     p_order,
@@ -3704,8 +4024,9 @@ void df_order_internal(SEXP x,
       rerun_complex = rerun_complex ? false : true;
     }
 
-    // Pre-sort unique characters once for the whole column
-    if (type == vctrs_type_character) {
+    // Pre-sort unique characters once for the whole column.
+    // Don't sort uniques if computing appearance ordering.
+    if (chr_ordered && type == vctrs_type_character) {
       const SEXP* p_col = STRING_PTR_RO(col);
 
       chr_mark_sorted_uniques(
@@ -3756,6 +4077,7 @@ void df_order_internal(SEXP x,
         col_decreasing,
         col_na_last,
         nan_distinct,
+        chr_ordered,
         group_size,
         type,
         p_o_col,
@@ -3764,14 +4086,17 @@ void df_order_internal(SEXP x,
         p_lazy_o_aux,
         p_lazy_bytes,
         p_lazy_counts,
-        p_group_infos
+        p_group_infos,
+        p_truelength_info
       );
 
       p_o_col += group_size;
     }
 
-    // Reset TRUELENGTHs between columns
-    if (type == vctrs_type_character) {
+    // Reset TRUELENGTHs between columns if ordering character vectors.
+    // When ordering by appearance, `chr_appearance_counting()` resets the
+    // TRUELENGTHs between chunks.
+    if (chr_ordered && type == vctrs_type_character) {
       truelength_reset(p_truelength_info);
     }
   }
@@ -3790,6 +4115,7 @@ static
 void vec_order_chunk_switch(bool decreasing,
                             bool na_last,
                             bool nan_distinct,
+                            bool chr_ordered,
                             r_ssize size,
                             const enum vctrs_type type,
                             int* p_o,
@@ -3798,7 +4124,8 @@ void vec_order_chunk_switch(bool decreasing,
                             struct lazy_raw* p_lazy_o_aux,
                             struct lazy_raw* p_lazy_bytes,
                             struct lazy_raw* p_lazy_counts,
-                            struct group_infos* p_group_infos) {
+                            struct group_infos* p_group_infos,
+                            struct truelength_info* p_truelength_info) {
   switch (type) {
   case vctrs_type_integer: {
     int_order_chunk(
@@ -3868,18 +4195,34 @@ void vec_order_chunk_switch(bool decreasing,
     break;
   }
   case vctrs_type_character: {
-    chr_order_chunk(
-      decreasing,
-      na_last,
-      size,
-      p_o,
-      p_lazy_x_chunk,
-      p_lazy_x_aux,
-      p_lazy_o_aux,
-      p_lazy_bytes,
-      p_lazy_counts,
-      p_group_infos
-    );
+    if (chr_ordered) {
+      chr_order_chunk(
+        decreasing,
+        na_last,
+        size,
+        p_o,
+        p_lazy_x_chunk,
+        p_lazy_x_aux,
+        p_lazy_o_aux,
+        p_lazy_bytes,
+        p_lazy_counts,
+        p_group_infos
+      );
+    } else {
+      chr_appearance_chunk(
+        decreasing,
+        na_last,
+        size,
+        p_o,
+        p_lazy_x_chunk,
+        p_lazy_x_aux,
+        p_lazy_o_aux,
+        p_lazy_bytes,
+        p_lazy_counts,
+        p_group_infos,
+        p_truelength_info
+      );
+    }
 
     break;
   }
