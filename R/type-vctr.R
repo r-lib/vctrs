@@ -475,10 +475,17 @@ quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
   # nocov end
 }
 
+vec_cast_or_na <- function(x, to, ...) {
+  tryCatch(
+    vctrs_error_incompatible_type = function(...) vec_cast(rep(NA, length(x)), to),
+    vec_cast(x, to)
+  )
+}
+
 #' @export
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (vec_is_empty(x)) {
-    return(vec_cast(Inf, x))
+    return(vec_cast_or_na(Inf, x))
   }
 
   # TODO: implement to do vec_arg_min()
@@ -486,6 +493,9 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
   if (isTRUE(na.rm)) {
     idx <- which.min(rank)
+    if (vec_is_empty(idx)) {
+      return(vec_cast_or_na(Inf, x))
+    }
   } else {
     idx <- which(vec_equal(rank, min(rank), na_equal = TRUE))
   }
@@ -496,7 +506,7 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 #' @export
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (vec_is_empty(x)) {
-    return(vec_cast(-Inf, x))
+    return(vec_cast_or_na(-Inf, x))
   }
 
   # TODO: implement to do vec_arg_max()
@@ -504,6 +514,9 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
   if (isTRUE(na.rm)) {
     idx <- which.max(rank)
+    if (vec_is_empty(idx)) {
+      return(vec_cast_or_na(-Inf, x))
+    }
   } else {
     idx <- which(vec_equal(rank, max(rank), na_equal = TRUE))
   }
@@ -514,7 +527,7 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 #' @export
 range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (vec_is_empty(x)) {
-    return(vec_cast(c(Inf, -Inf), x))
+    return(vec_cast_or_na(c(Inf, -Inf), x))
   }
 
   # Inline `min()` / `max()` to only call `xtfrm()` once
@@ -523,6 +536,9 @@ range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (isTRUE(na.rm)) {
     idx_min <- which.min(rank)
     idx_max <- which.max(rank)
+    if (vec_is_empty(idx_min) && vec_is_empty(idx_max)) {
+      return(vec_cast_or_na(c(Inf, -Inf), x))
+    }
   } else {
     idx_min <- which(vec_equal(rank, min(rank), na_equal = TRUE))
     idx_max <- which(vec_equal(rank, max(rank), na_equal = TRUE))

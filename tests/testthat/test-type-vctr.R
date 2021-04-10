@@ -584,3 +584,26 @@ test_that("xtfrm() returns a bare vector", {
 test_that("xtfrm() works with character subclass", {
   expect_identical(xtfrm(new_vctr(chr())), int())
 })
+
+test_that("Summary generics behave identically to base if na.rm = TRUE and all values are NA (#1357)", {
+  expect_warning(
+    expect_identical(
+      min(new_vctr(NA_real_), na.rm = TRUE),
+      new_vctr(min(NA_real_, na.rm = TRUE))
+    )
+  )
+
+  expect_warning(
+    expect_identical(
+      max(new_vctr(NA_real_), na.rm = TRUE),
+      new_vctr(max(NA_real_, na.rm = TRUE))
+    )
+  )
+
+  expect_warning(
+    expect_identical(
+      range(new_vctr(NA_real_), na.rm = TRUE),
+      new_vctr(range(NA_real_, na.rm = TRUE))
+    )
+  )
+})
