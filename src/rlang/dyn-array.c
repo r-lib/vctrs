@@ -4,22 +4,22 @@
 #define R_DYN_ARRAY_GROWTH_FACTOR 2
 
 static
-sexp* attribs_dyn_array = NULL;
+r_obj* attribs_dyn_array = NULL;
 
 
 struct r_dyn_array* r_new_dyn_vector(enum r_type type,
                                      r_ssize capacity) {
-  sexp* shelter = KEEP(r_alloc_list(2));
+  r_obj* shelter = KEEP(r_alloc_list(2));
   r_poke_attrib(shelter, attribs_dyn_array);
   r_mark_object(shelter);
 
-  sexp* vec_raw = r_alloc_raw(sizeof(struct r_dyn_array));
+  r_obj* vec_raw = r_alloc_raw(sizeof(struct r_dyn_array));
   r_list_poke(shelter, 0, vec_raw);
 
-  sexp* vec_data = r_alloc_vector(type, capacity);
+  r_obj* vec_data = r_alloc_vector(type, capacity);
   r_list_poke(shelter, 1, vec_data);
 
-  struct r_dyn_array* p_vec = r_raw_deref(vec_raw);
+  struct r_dyn_array* p_vec = r_raw_begin(vec_raw);
   p_vec->shelter = shelter;
   p_vec->count = 0;
   p_vec->capacity = capacity;
@@ -39,16 +39,16 @@ struct r_dyn_array* r_new_dyn_vector(enum r_type type,
     break;
   default:
     p_vec->barrier_set = NULL;
-    p_vec->v_data = r_vec_deref0(type, vec_data);
+    p_vec->v_data = r_vec_begin0(type, vec_data);
     break;
   }
-  p_vec->v_data_const = r_vec_deref_const0(type, vec_data);
+  p_vec->v_data_const = r_vec_cbegin0(type, vec_data);
 
   FREE(1);
   return p_vec;
 }
 
-sexp* r_arr_unwrap(struct r_dyn_array* p_arr) {
+r_obj* r_arr_unwrap(struct r_dyn_array* p_arr) {
   if (p_arr->type == R_TYPE_raw) {
     return r_raw_resize(p_arr->data, p_arr->count * p_arr->elt_byte_size);
   } else {
@@ -78,15 +78,15 @@ void r_arr_push_back(struct r_dyn_array* p_arr,
   }
 
   if (p_arr->barrier_set) {
-    sexp* value = *((sexp* const *) p_elt);
+    r_obj* value = *((r_obj* const *) p_elt);
     p_arr->barrier_set(p_arr->data, count - 1, value);
     return;
   }
 
   if (p_elt) {
-    memcpy(r_arr_ptr_back(p_arr), p_elt, p_arr->elt_byte_size);
+    memcpy(r_arr_last(p_arr), p_elt, p_arr->elt_byte_size);
   } else {
-    memset(r_arr_ptr_back(p_arr), 0, p_arr->elt_byte_size);
+    memset(r_arr_last(p_arr), 0, p_arr->elt_byte_size);
   }
 }
 
@@ -94,9 +94,9 @@ void r_arr_resize(struct r_dyn_array* p_arr,
                   r_ssize capacity) {
   enum r_type type = p_arr->type;
 
-  sexp* data = r_vec_resize0(type,
-                             r_list_get(p_arr->shelter, 1),
-                             p_arr->elt_byte_size * capacity);
+  r_obj* data = r_vec_resize0(type,
+                              r_list_get(p_arr->shelter, 1),
+                              p_arr->elt_byte_size * capacity);
   r_list_poke(p_arr->shelter, 1, data);
 
   p_arr->count = r_ssize_min(p_arr->count, capacity);
@@ -108,10 +108,10 @@ void r_arr_resize(struct r_dyn_array* p_arr,
   case R_TYPE_list:
     break;
   default:
-    p_arr->v_data = r_vec_deref0(type, data);
+    p_arr->v_data = r_vec_begin0(type, data);
     break;
   }
-  p_arr->v_data_const = r_vec_deref_const0(type, data);
+  p_arr->v_data_const = r_vec_cbegin0(type, data);
 }
 
 
