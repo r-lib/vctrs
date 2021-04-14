@@ -245,17 +245,17 @@ SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SE
   SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform, chr_ordered));
 
   SEXP o = r_list_get(info, 0);
-  const int* p_o = r_int_deref_const(o);
+  const int* p_o = r_int_cbegin(o);
 
   SEXP sizes = r_list_get(info, 1);
-  const int* p_sizes = r_int_deref_const(sizes);
+  const int* p_sizes = r_int_cbegin(sizes);
 
   r_ssize n_groups = r_length(sizes);
 
   SEXP loc = KEEP(r_alloc_list(n_groups));
 
   SEXP key_loc = KEEP(r_alloc_integer(n_groups));
-  int* p_key_loc = r_int_deref(key_loc);
+  int* p_key_loc = r_int_begin(key_loc);
 
   int start = 0;
 
@@ -266,7 +266,7 @@ SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SE
 
     SEXP elt = r_alloc_integer(size);
     r_list_poke(loc, i, elt);
-    int* p_elt = r_int_deref(elt);
+    int* p_elt = r_int_begin(elt);
 
     R_len_t k = 0;
 

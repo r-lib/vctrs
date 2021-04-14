@@ -190,7 +190,7 @@ void init_df_poly_vec(struct poly_vec* p_poly_vec) {
   for (r_ssize i = 0; i < n_col; ++i) {
     SEXP col = VECTOR_ELT(df, i);
     col_types[i] = vec_proxy_typeof(col);
-    col_ptrs[i] = r_vec_deref_const(col);
+    col_ptrs[i] = r_vec_cbegin(col);
   }
 
   data->col_types = col_types;

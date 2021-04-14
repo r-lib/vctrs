@@ -968,7 +968,7 @@ void* r_vec_deref_barrier(SEXP x) {
   case VECSXP:
     return (void*) x;
   default:
-    return r_vec_deref(x);
+    return r_vec_begin(x);
   }
 }
 
@@ -978,7 +978,7 @@ const void* r_vec_deref_barrier_const(SEXP x) {
   case VECSXP:
     return (const void*) x;
   default:
-    return r_vec_deref_const(x);
+    return r_vec_cbegin(x);
   }
 }
 
