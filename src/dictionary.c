@@ -13,6 +13,7 @@ struct vctrs_arg args_haystack;
 
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+static inline
 uint32_t ceil2(uint32_t x) {
   x--;
   x |= x >> 1;
@@ -52,6 +53,8 @@ static struct dictionary* new_dictionary_params(SEXP x, bool partial, bool na_eq
   return new_dictionary_opts(x, &opts);
 }
 
+static inline uint32_t dict_key_size(SEXP x);
+
 static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts) {
   int nprot = 0;
 
@@ -75,12 +78,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     d->key = NULL;
     d->size = 0;
   } else {
-    // assume worst case, that every value is distinct, aiming for a load factor
-    // of at most 77%. We round up to power of 2 to ensure quadratic probing
-    // strategy works.
-    // Rprintf("size: %i\n", size);
-    uint32_t size = ceil2(vec_size(x) / 0.77);
-    size = (size < 16) ? 16 : size;
+    uint32_t size = dict_key_size(x);
 
     d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
     memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
@@ -158,6 +156,24 @@ bool dict_is_missing(struct dictionary* d, R_len_t i) {
 void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
   d->key[hash] = i;
   d->used++;
+}
+
+// Assume worst case, that every value is distinct, aiming for a load factor
+// of at most 77%. We round up to power of 2 to ensure quadratic probing
+// strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
+// as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
+// would result in 2^32 to INT_MAX to ensure that our maximum ceiling value
+// is only 2^31. This will increase the load factor above 77% for `x` with
+// length greater than 1653562409 (2147483648 * .77), but it ensures that
+// it can run.
+static inline
+uint32_t dict_key_size(SEXP x) {
+  uint32_t size = (uint32_t)(vec_size(x) / 0.77);
+  size = size > (uint32_t)INT_MAX ? (uint32_t)INT_MAX : size;
+  size = ceil2(size);
+  size = (size < 16) ? 16 : size;
+  // Rprintf("size: %u\n", size);
+  return size;
 }
 
 // R interface -----------------------------------------------------------------
