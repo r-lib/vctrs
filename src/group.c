@@ -23,7 +23,7 @@ SEXP vctrs_group_id(SEXP x) {
   R_len_t g = 1;
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
     R_len_t key = d->key[hash];
 
     if (key == DICT_EMPTY) {
@@ -77,7 +77,7 @@ SEXP vctrs_group_rle(SEXP x) {
   int* p_map = INTEGER(map);
 
   // Initialize first value
-  int32_t hash = dict_hash_scalar(d, 0);
+  uint32_t hash = dict_hash_scalar(d, 0);
   dict_put(d, hash, 0);
   p_map[hash] = 0;
   *p_g = 1;
@@ -95,7 +95,7 @@ SEXP vctrs_group_rle(SEXP x) {
     *p_l = 1;
 
     // Check if we have seen this value before
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
@@ -158,7 +158,7 @@ SEXP vec_group_loc(SEXP x) {
 
   // Identify groups, this is essentially `vec_group_id()`
   for (int i = 0; i < n; ++i) {
-    const int32_t hash = dict_hash_scalar(d, i);
+    const uint32_t hash = dict_hash_scalar(d, i);
     const R_len_t key = d->key[hash];
 
     if (key == DICT_EMPTY) {

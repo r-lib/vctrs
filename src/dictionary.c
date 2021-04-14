@@ -13,7 +13,7 @@ struct vctrs_arg args_haystack;
 
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-int32_t ceil2(int32_t x) {
+uint32_t ceil2(uint32_t x) {
   x--;
   x |= x >> 1;
   x |= x >> 2;
@@ -79,7 +79,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     // of at most 77%. We round up to power of 2 to ensure quadratic probing
     // strategy works.
     // Rprintf("size: %i\n", size);
-    R_len_t size = ceil2(vec_size(x) / 0.77);
+    uint32_t size = ceil2(vec_size(x) / 0.77);
     size = (size < 16) ? 16 : size;
 
     d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
@@ -492,7 +492,7 @@ SEXP vctrs_count(SEXP x) {
   int* p_val = INTEGER(val);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
@@ -508,7 +508,7 @@ SEXP vctrs_count(SEXP x) {
   int* p_out_val = INTEGER(out_val);
 
   int i = 0;
-  for (int hash = 0; hash < d->size; ++hash) {
+  for (uint32_t hash = 0; hash < d->size; ++hash) {
     if (d->key[hash] == DICT_EMPTY)
       continue;
 
@@ -544,7 +544,7 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_val = INTEGER(val);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
@@ -558,7 +558,7 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
     p_out[i] = p_val[hash] != 1;
   }
 
