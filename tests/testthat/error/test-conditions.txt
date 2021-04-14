@@ -3,8 +3,8 @@ incompatible type error validates `action`
 ==========================================
 
 > stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = "conver")
-Error: `action` must be one of "combine" or "convert".
-Did you mean "convert"?
+Error: `action` must be one of "combine" or "convert", not "conver".
+i Did you mean "convert"?
 
 > stop_incompatible_type(1, 1, x_arg = "", y_arg = "", action = 1)
 Error: `action` must be a character vector.

@@ -157,7 +157,7 @@ vec_as_location2() UI
 =====================
 
 > vec_as_location2(1, 1L, missing = "bogus")
-Error: `missing` must be one of "error" or "propagate".
+Error: `missing` must be one of "error" or "propagate", not "bogus".
 
 
 vec_as_location2() requires integer or character inputs
