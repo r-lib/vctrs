@@ -1,12 +1,13 @@
 #include <rlang.h>
 #include "vctrs.h"
 #include "dictionary.h"
-#include "decl/dictionary-decl.h"
 #include "translate.h"
 #include "equal.h"
 #include "hash.h"
 #include "ptype2.h"
 #include "utils.h"
+
+#include "decl/dictionary-decl.h"
 
 // Initialised at load time
 struct vctrs_arg args_needles;
