@@ -1,6 +1,7 @@
 #include <rlang.h>
 #include "vctrs.h"
 #include "dictionary.h"
+#include "decl/dictionary-decl.h"
 #include "translate.h"
 #include "equal.h"
 #include "hash.h"
@@ -52,8 +53,6 @@ static struct dictionary* new_dictionary_params(SEXP x, bool partial, bool na_eq
   opts.na_equal = na_equal;
   return new_dictionary_opts(x, &opts);
 }
-
-static inline uint32_t dict_key_size(SEXP x);
 
 static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* opts) {
   int nprot = 0;
