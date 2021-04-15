@@ -111,23 +111,22 @@ r_obj* vec_rank(r_obj* x,
   }
 
   r_obj* out = r_null;
-  r_keep_t pi_out;
-  KEEP_HERE(out, &pi_out);
 
   if (na_propagate) {
-    out = r_alloc_integer(size);
-    KEEP_AT(out, pi_out);
+    out = KEEP(r_alloc_integer(size));
     int* v_out = r_int_begin(out);
     r_ssize j = 0;
 
     for (r_ssize i = 0; i < size; ++i) {
       v_out[i] = v_not_missing[i] ? v_rank[j++] : r_globals.na_int;
     }
+
+    FREE(1);
   } else {
     out = rank;
   }
 
-  FREE(6);
+  FREE(5);
   return out;
 }
 
