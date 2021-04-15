@@ -169,7 +169,7 @@ void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
 static inline
 uint32_t dict_key_size(SEXP x) {
   uint32_t size = (uint32_t)(vec_size(x) / 0.77);
-  size = size > (uint32_t)INT_MAX ? (uint32_t)INT_MAX : size;
+  size = size > INT_MAX ? INT_MAX : size;
   size = u32_ceil2(size);
   size = (size < 16) ? 16 : size;
   // Rprintf("size: %u\n", size);
