@@ -241,7 +241,7 @@ enum ties parse_ties(r_obj* ties) {
 static inline
 bool r_lgl_any(r_obj* x) {
   if (r_typeof(x) != R_TYPE_logical) {
-    r_abort("Internal error: Expected logical vector in `r_lgl_any()`.");
+    r_stop_internal("r_lgl_any", "`x` must be a logical vector.");
   }
 
   const int* v_x = r_lgl_cbegin(x);
