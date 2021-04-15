@@ -15,7 +15,7 @@ struct vctrs_arg args_haystack;
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 static inline
-uint32_t ceil2(uint32_t x) {
+uint32_t u32_ceil2(uint32_t x) {
   x--;
   x |= x >> 1;
   x |= x >> 2;
@@ -169,7 +169,7 @@ static inline
 uint32_t dict_key_size(SEXP x) {
   uint32_t size = (uint32_t)(vec_size(x) / 0.77);
   size = size > (uint32_t)INT_MAX ? (uint32_t)INT_MAX : size;
-  size = ceil2(size);
+  size = u32_ceil2(size);
   size = (size < 16) ? 16 : size;
   // Rprintf("size: %u\n", size);
   return size;
