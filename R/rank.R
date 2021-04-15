@@ -87,6 +87,9 @@ vec_rank <- function(x,
   if (!missing(...)) {
     ellipsis::check_dots_empty()
   }
+
+  ties <- arg_match0(ties, c("min", "max", "sequential", "dense"), "ties")
+
   .Call(
     vctrs_rank,
     x,

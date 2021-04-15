@@ -218,11 +218,8 @@ void vec_rank_dense(const int* v_order,
 
 static inline
 enum ties parse_ties(r_obj* ties) {
-  if (r_typeof(ties) != R_TYPE_character) {
-    r_abort("`ties` must be a character vector.");
-  }
-  if (r_length(ties) < 1) {
-    r_abort("`ties` must be at least length 1.");
+  if (!r_is_string(ties)) {
+    r_stop_internal("parse_ties", "`ties` must be a string.");
   }
 
   const char* c_ties = r_chr_get_c_string(ties, 0);
@@ -232,7 +229,10 @@ enum ties parse_ties(r_obj* ties) {
   if (!strcmp(c_ties, "sequential")) return TIES_sequential;
   if (!strcmp(c_ties, "dense")) return TIES_dense;
 
-  r_abort("`ties` must be one of: \"min\", \"max\", \"sequential\", or \"dense\".");
+  r_stop_internal(
+    "parse_ties",
+    "`ties` must be one of: \"min\", \"max\", \"sequential\", or \"dense\"."
+  );
 }
 
 // -----------------------------------------------------------------------------
