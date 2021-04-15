@@ -123,7 +123,7 @@ test_that("`ties` is validated", {
 })
 
 test_that("`na_propagate` is validated", {
-  expect_error(vec_rank(1, na_propagate = NA), "single `TRUE` or `FALSE`")
-  expect_error(vec_rank(1, na_propagate = c(TRUE, FALSE)), "single `TRUE` or `FALSE`")
-  expect_error(vec_rank(1, na_propagate = "foo"), "single `TRUE` or `FALSE`")
+  expect_error(vec_rank(1, na_propagate = NA), "must be a logical value")
+  expect_error(vec_rank(1, na_propagate = c(TRUE, FALSE)), "must be a logical value")
+  expect_error(vec_rank(1, na_propagate = "foo"), "must be a logical value")
 })

@@ -21,8 +21,8 @@ r_obj* vctrs_rank(r_obj* x,
                   r_obj* nan_distinct,
                   r_obj* chr_transform) {
   const enum ties c_ties = parse_ties(ties);
-  const bool c_na_propagate = r_bool_as_int(na_propagate);
-  const bool c_nan_distinct = r_bool_as_int(nan_distinct);
+  const bool c_na_propagate = r_as_bool(na_propagate);
+  const bool c_nan_distinct = r_as_bool(nan_distinct);
 
   return vec_rank(
     x,
