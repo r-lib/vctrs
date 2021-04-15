@@ -1,12 +1,6 @@
 #ifndef VCTRS_RANK_DECL_H
 #define VCTRS_RANK_DECL_H
 
-enum ties {
-  TIES_min,
-  TIES_max,
-  TIES_sequential,
-  TIES_dense
-};
 static inline enum ties parse_ties(r_obj* ties);
 
 static inline bool r_lgl_any(r_obj* x);

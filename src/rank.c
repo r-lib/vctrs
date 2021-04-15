@@ -2,6 +2,14 @@
 #include "vctrs.h"
 #include "equal.h"
 #include "order-radix.h"
+
+enum ties {
+  TIES_min,
+  TIES_max,
+  TIES_sequential,
+  TIES_dense
+};
+
 #include "decl/rank-decl.h"
 
 // [[ register() ]]
