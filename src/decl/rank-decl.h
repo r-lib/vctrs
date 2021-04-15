@@ -7,17 +7,17 @@ enum ties {
   TIES_sequential,
   TIES_dense
 };
-static inline enum ties parse_ties(sexp* ties);
+static inline enum ties parse_ties(r_obj* ties);
 
-static inline bool r_lgl_any(sexp* x);
+static inline bool r_lgl_any(r_obj* x);
 
-static sexp* vec_rank(sexp* x,
-                      enum ties ties_type,
-                      bool na_propagate,
-                      sexp* direction,
-                      sexp* na_value,
-                      bool nan_distinct,
-                      sexp* chr_transform);
+static r_obj* vec_rank(r_obj* x,
+                       enum ties ties_type,
+                       bool na_propagate,
+                       r_obj* direction,
+                       r_obj* na_value,
+                       bool nan_distinct,
+                       r_obj* chr_transform);
 
 static void vec_rank_min(const int* v_order,
                          const int* v_group_sizes,

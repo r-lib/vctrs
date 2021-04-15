@@ -5,13 +5,13 @@
 #include "decl/rank-decl.h"
 
 // [[ register() ]]
-sexp* vctrs_rank(sexp* x,
-                 sexp* ties,
-                 sexp* na_propagate,
-                 sexp* direction,
-                 sexp* na_value,
-                 sexp* nan_distinct,
-                 sexp* chr_transform) {
+r_obj* vctrs_rank(r_obj* x,
+                  r_obj* ties,
+                  r_obj* na_propagate,
+                  r_obj* direction,
+                  r_obj* na_value,
+                  r_obj* nan_distinct,
+                  r_obj* chr_transform) {
   const enum ties c_ties = parse_ties(ties);
   const bool c_na_propagate = r_bool_as_int(na_propagate);
   const bool c_nan_distinct = r_bool_as_int(nan_distinct);
@@ -28,24 +28,24 @@ sexp* vctrs_rank(sexp* x,
 }
 
 static
-sexp* vec_rank(sexp* x,
-               enum ties ties_type,
-               bool na_propagate,
-               sexp* direction,
-               sexp* na_value,
-               bool nan_distinct,
-               sexp* chr_transform) {
+r_obj* vec_rank(r_obj* x,
+                enum ties ties_type,
+                bool na_propagate,
+                r_obj* direction,
+                r_obj* na_value,
+                bool nan_distinct,
+                r_obj* chr_transform) {
   r_ssize size = vec_size(x);
 
   r_keep_t pi_x;
   KEEP_HERE(x, &pi_x);
 
-  sexp* missing = r_null;
+  r_obj* missing = r_null;
   r_keep_t pi_missing;
   KEEP_HERE(missing, &pi_missing);
   int* v_missing = NULL;
 
-  sexp* not_missing = r_null;
+  r_obj* not_missing = r_null;
   r_keep_t pi_not_missing;
   KEEP_HERE(not_missing, &pi_not_missing);
   int* v_not_missing = NULL;
@@ -57,7 +57,7 @@ sexp* vec_rank(sexp* x,
     // Retain `non_missing` logical vector for constructing `out`.
     missing = vec_equal_na(x);
     KEEP_AT(missing, pi_missing);
-    v_missing = r_lgl_deref(missing);
+    v_missing = r_lgl_begin(missing);
 
     bool any_missing = r_lgl_any(missing);
     if (!any_missing) {
@@ -84,16 +84,18 @@ sexp* vec_rank(sexp* x,
     rank_size = size;
   }
 
-  sexp* rank = KEEP(r_alloc_integer(rank_size));
-  int* v_rank = r_int_deref(rank);
+  r_obj* rank = KEEP(r_alloc_integer(rank_size));
+  int* v_rank = r_int_begin(rank);
 
-  sexp* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform));
+  const bool chr_ordered = true;
 
-  sexp* order = r_list_get(info, 0);
-  const int* v_order = r_int_deref_const(order);
+  r_obj* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform, chr_ordered));
 
-  sexp* group_sizes = r_list_get(info, 1);
-  const int* v_group_sizes = r_int_deref_const(group_sizes);
+  r_obj* order = r_list_get(info, 0);
+  const int* v_order = r_int_cbegin(order);
+
+  r_obj* group_sizes = r_list_get(info, 1);
+  const int* v_group_sizes = r_int_cbegin(group_sizes);
   r_ssize n_groups = r_length(group_sizes);
 
   switch (ties_type) {
@@ -103,14 +105,14 @@ sexp* vec_rank(sexp* x,
   case TIES_dense: vec_rank_dense(v_order, v_group_sizes, n_groups, v_rank); break;
   }
 
-  sexp* out = r_null;
+  r_obj* out = r_null;
   r_keep_t pi_out;
   KEEP_HERE(out, &pi_out);
 
   if (na_propagate) {
     out = r_alloc_integer(size);
     KEEP_AT(out, pi_out);
-    int* v_out = r_int_deref(out);
+    int* v_out = r_int_begin(out);
     r_ssize j = 0;
 
     for (r_ssize i = 0; i < size; ++i) {
@@ -211,7 +213,7 @@ void vec_rank_dense(const int* v_order,
 // -----------------------------------------------------------------------------
 
 static inline
-enum ties parse_ties(sexp* ties) {
+enum ties parse_ties(r_obj* ties) {
   if (r_typeof(ties) != R_TYPE_character) {
     r_abort("`ties` must be a character vector.");
   }
@@ -233,12 +235,12 @@ enum ties parse_ties(sexp* ties) {
 
 // Treats missing values as `true`
 static inline
-bool r_lgl_any(sexp* x) {
+bool r_lgl_any(r_obj* x) {
   if (r_typeof(x) != R_TYPE_logical) {
     r_abort("Internal error: Expected logical vector in `r_lgl_any()`.");
   }
 
-  const int* v_x = r_lgl_deref_const(x);
+  const int* v_x = r_lgl_cbegin(x);
   r_ssize size = r_length(x);
 
   for (r_ssize i = 0; i < size; ++i) {

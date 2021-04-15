@@ -134,7 +134,7 @@ extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unrep(SEXP);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
 extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
-extern sexp* vctrs_rank(sexp*, sexp*, sexp*, sexp*, sexp*, sexp*, sexp*);
+extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
