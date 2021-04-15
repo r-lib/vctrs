@@ -1,6 +1,3 @@
-#ifndef VCTRS_RANK_DECL_H
-#define VCTRS_RANK_DECL_H
-
 static inline enum ties parse_ties(r_obj* ties);
 
 static inline bool r_lgl_any(r_obj* x);
@@ -32,5 +29,3 @@ static void vec_rank_dense(const int* v_order,
                            const int* v_group_sizes,
                            r_ssize n_groups,
                            int* v_rank);
-
-#endif
