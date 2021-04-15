@@ -174,7 +174,13 @@ uint32_t dict_key_size(SEXP x) {
     stop_internal("dict_key_size", "Dictionary functions do not support long vectors.");
   }
 
-  uint32_t size = (uint32_t)(x_size / 0.77);
+  const double load_adjusted_size = x_size / 0.77;
+
+  if (load_adjusted_size > UINT32_MAX) {
+    stop_internal("dict_key_size", "Can't safely cast load adjusted size to a `uint32_t`.");
+  }
+
+  uint32_t size = (uint32_t)load_adjusted_size;
   size = size > INT_MAX ? INT_MAX : size;
   size = u32_ceil2(size);
   size = (size < 16) ? 16 : size;
