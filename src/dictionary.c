@@ -7,13 +7,16 @@
 #include "ptype2.h"
 #include "utils.h"
 
+#include "decl/dictionary-decl.h"
+
 // Initialised at load time
 struct vctrs_arg args_needles;
 struct vctrs_arg args_haystack;
 
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-int32_t ceil2(int32_t x) {
+static inline
+uint32_t u32_ceil2(uint32_t x) {
   x--;
   x |= x >> 1;
   x |= x >> 2;
@@ -75,12 +78,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     d->key = NULL;
     d->size = 0;
   } else {
-    // assume worst case, that every value is distinct, aiming for a load factor
-    // of at most 77%. We round up to power of 2 to ensure quadratic probing
-    // strategy works.
-    // Rprintf("size: %i\n", size);
-    R_len_t size = ceil2(vec_size(x) / 0.77);
-    size = (size < 16) ? 16 : size;
+    uint32_t size = dict_key_size(x);
 
     d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
     memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
@@ -158,6 +156,37 @@ bool dict_is_missing(struct dictionary* d, R_len_t i) {
 void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
   d->key[hash] = i;
   d->used++;
+}
+
+// Assume worst case, that every value is distinct, aiming for a load factor
+// of at most 77%. We round up to power of 2 to ensure quadratic probing
+// strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
+// as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
+// would result in 2^32 to INT_MAX to ensure that our maximum ceiling value
+// is only 2^31. This will increase the load factor above 77% for `x` with
+// length greater than 1653562409 (2147483648 * .77), but it ensures that
+// it can run.
+static inline
+uint32_t dict_key_size(SEXP x) {
+  const R_len_t x_size = vec_size(x);
+
+  if (x_size > R_LEN_T_MAX) {
+    stop_internal("dict_key_size", "Dictionary functions do not support long vectors.");
+  }
+
+  const double load_adjusted_size = x_size / 0.77;
+
+  if (load_adjusted_size > UINT32_MAX) {
+    stop_internal("dict_key_size", "Can't safely cast load adjusted size to a `uint32_t`.");
+  }
+
+  uint32_t size = (uint32_t)load_adjusted_size;
+  size = size > INT_MAX ? INT_MAX : size;
+  size = u32_ceil2(size);
+  size = (size < 16) ? 16 : size;
+
+  // Rprintf("size: %u\n", size);
+  return size;
 }
 
 // R interface -----------------------------------------------------------------
@@ -492,7 +521,7 @@ SEXP vctrs_count(SEXP x) {
   int* p_val = INTEGER(val);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
@@ -508,7 +537,7 @@ SEXP vctrs_count(SEXP x) {
   int* p_out_val = INTEGER(out_val);
 
   int i = 0;
-  for (int hash = 0; hash < d->size; ++hash) {
+  for (uint32_t hash = 0; hash < d->size; ++hash) {
     if (d->key[hash] == DICT_EMPTY)
       continue;
 
@@ -544,7 +573,7 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_val = INTEGER(val);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
@@ -558,7 +587,7 @@ SEXP vctrs_duplicated(SEXP x) {
   int* p_out = LOGICAL(out);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
     p_out[i] = p_val[hash] != 1;
   }
 

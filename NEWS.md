@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_group_loc()`, used for grouping in dplyr, now correctly handles
+  vectors with billions of elements (up to `.Machine$integer.max`) (#1133).
+
 # vctrs 0.3.7
 
 * `vec_ptype_abbr()` gains arguments to control whether to indicate
