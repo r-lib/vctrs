@@ -58,7 +58,7 @@ r_obj* vec_rank(r_obj* x,
   KEEP_HERE(not_missing, &pi_not_missing);
   int* v_not_missing = NULL;
 
-  r_ssize rank_size = -1;
+  r_ssize rank_size = size;
 
   if (na_propagate) {
     // Slice out non-missing values of `x` to rank.
@@ -68,28 +68,25 @@ r_obj* vec_rank(r_obj* x,
     v_missing = r_lgl_begin(missing);
 
     bool any_missing = r_lgl_any(missing);
-    if (!any_missing) {
+
+    if (any_missing) {
+      for (r_ssize i = 0; i < size; ++i) {
+        v_missing[i] = !v_missing[i];
+      }
+
+      not_missing = missing;
+      KEEP_AT(not_missing, pi_not_missing);
+      v_not_missing = v_missing;
+      missing = NULL;
+      v_missing = NULL;
+
+      x = vec_slice(x, not_missing);
+      KEEP_AT(x, pi_x);
+
+      rank_size = vec_size(x);
+    } else {
       na_propagate = false;
-      goto skip_propagate;
     }
-
-    for (r_ssize i = 0; i < size; ++i) {
-      v_missing[i] = !v_missing[i];
-    }
-
-    not_missing = missing;
-    KEEP_AT(not_missing, pi_not_missing);
-    v_not_missing = v_missing;
-    missing = NULL;
-    v_missing = NULL;
-
-    x = vec_slice(x, not_missing);
-    KEEP_AT(x, pi_x);
-
-    rank_size = vec_size(x);
-  } else {
-    skip_propagate:;
-    rank_size = size;
   }
 
   r_obj* rank = KEEP(r_alloc_integer(rank_size));
