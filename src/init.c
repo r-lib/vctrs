@@ -134,6 +134,7 @@ extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unrep(SEXP);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
 extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
+extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -286,6 +287,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_unrep",                      (DL_FUNC) &vctrs_unrep, 1},
   {"vctrs_fill_missing",               (DL_FUNC) &vctrs_fill_missing, 3},
   {"vctrs_chr_paste_prefix",           (DL_FUNC) &vctrs_chr_paste_prefix, 3},
+  {"vctrs_rank",                       (DL_FUNC) &vctrs_rank, 7},
   {NULL, NULL, 0}
 };
 

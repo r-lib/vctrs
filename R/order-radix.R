@@ -36,13 +36,12 @@
 #'     respectively.
 #'   - For data frames, a length `1` or `ncol(x)` character vector containing
 #'     only `"asc"` or `"desc"`, specifying the direction for each column.
-#' @param na_value Treatment of `NA` values. `NaN` values are treated as
-#'   equivalent to `NA` values.
-#'   - A single `"largest"` or `"smallest"` for treating `NA` values as the
+#' @param na_value Treatment of missing values.
+#'   - A single `"largest"` or `"smallest"` for treating missing values as the
 #'     largest or smallest values respectively.
 #'   - For data frames, a length `1` or `ncol(x)` character vector containing
-#'     only `"largest"` or `"smallest"`, specifying how `NA`s should be treated
-#'     in each column.
+#'     only `"largest"` or `"smallest"`, specifying how missing values should
+#'     be treated in each column.
 #' @param nan_distinct A single logical specifying whether or not `NaN` should
 #'   be considered distinct from `NA` for double and complex vectors. If `TRUE`,
 #'   `NaN` will always be ordered between `NA` and non-missing numbers.
