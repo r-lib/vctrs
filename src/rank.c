@@ -232,7 +232,7 @@ enum ties parse_ties(r_obj* ties) {
   if (!strcmp(c_ties, "sequential")) return TIES_sequential;
   if (!strcmp(c_ties, "dense")) return TIES_dense;
 
-  r_abort("`ties` must be one of: 'min', 'max', 'sequential', or 'dense'.");
+  r_abort("`ties` must be one of: \"min\", \"max\", \"sequential\", or \"dense\".");
 }
 
 // -----------------------------------------------------------------------------
