@@ -19,7 +19,7 @@
 
 // This seems to be a reasonable default to start with for tracking group sizes
 // and is what base R uses. It is expanded by 2x every time we need to
-// reallocate.
+// reallocate. It is also capped to the size of `x`.
 #define GROUP_DATA_SIZE_DEFAULT 100000
 
 // -----------------------------------------------------------------------------
