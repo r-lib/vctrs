@@ -16,7 +16,10 @@ struct vctrs_arg args_haystack;
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 static inline
-uint32_t u32_ceil2(uint32_t x) {
+uint32_t u32_safe_ceil2(uint32_t x) {
+  // Return 2^0 when `x` is 0
+  x += (x == 0);
+
   x--;
   x |= x >> 1;
   x |= x >> 2;
@@ -24,6 +27,14 @@ uint32_t u32_ceil2(uint32_t x) {
   x |= x >> 8;
   x |= x >> 16;
   x++;
+
+  if (x == 0) {
+    // INT32_MAX+2 <= x <= UINT32_MAX (i.e. 2^31+1 <= x <= 2^32-1) would attempt
+    // to ceiling to 2^32, which is 1 greater than `UINT32_MAX`, resulting in
+    // overflow wraparound to 0.
+    r_stop_internal("u32_safe_ceil2", "`x` results in an `uint32_t` overflow.");
+  }
+
   return x;
 }
 
@@ -162,7 +173,7 @@ void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
 // of at most 77%. We round up to power of 2 to ensure quadratic probing
 // strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
 // as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
-// would result in 2^32 to INT_MAX to ensure that our maximum ceiling value
+// would result in 2^32 to INT32_MAX to ensure that our maximum ceiling value
 // is only 2^31. This will increase the load factor above 77% for `x` with
 // length greater than 1653562409 (2147483648 * .77), but it ensures that
 // it can run.
@@ -171,19 +182,28 @@ uint32_t dict_key_size(SEXP x) {
   const R_len_t x_size = vec_size(x);
 
   if (x_size > R_LEN_T_MAX) {
-    stop_internal("dict_key_size", "Dictionary functions do not support long vectors.");
+    // Ensure we catch the switch to supporting long vectors in `vec_size()`
+    r_stop_internal("dict_key_size", "Dictionary functions do not support long vectors.");
   }
 
   const double load_adjusted_size = x_size / 0.77;
 
   if (load_adjusted_size > UINT32_MAX) {
-    stop_internal("dict_key_size", "Can't safely cast load adjusted size to a `uint32_t`.");
+    r_stop_internal("dict_key_size", "Can't safely cast load adjusted size to a `uint32_t`.");
   }
 
   uint32_t size = (uint32_t)load_adjusted_size;
-  size = size > INT_MAX ? INT_MAX : size;
-  size = u32_ceil2(size);
+  // Clamp to `INT32_MAX` to avoid overflow in `u32_safe_ceil2()`,
+  // at the cost of an increased maximum load factor for long input
+  size = size > INT32_MAX ? INT32_MAX : size;
+  size = u32_safe_ceil2(size);
   size = (size < 16) ? 16 : size;
+
+  if (x_size > size) {
+    // Should never happen with `R_len_t` sizes.
+    // This is a defensive check that will be useful when we support long vectors.
+    r_stop_internal("dict_key_size", "Hash table size must be at least as large as input to avoid a load factor of >100%.");
+  }
 
   // Rprintf("size: %u\n", size);
   return size;
