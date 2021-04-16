@@ -16,7 +16,10 @@ struct vctrs_arg args_haystack;
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 static inline
-uint32_t u32_ceil2(uint32_t x) {
+uint32_t u32_safe_ceil2(uint32_t x) {
+  // Return 2^0 when `x` is 0
+  x += (x == 0);
+
   x--;
   x |= x >> 1;
   x |= x >> 2;
@@ -24,6 +27,14 @@ uint32_t u32_ceil2(uint32_t x) {
   x |= x >> 8;
   x |= x >> 16;
   x++;
+
+  if (x == 0) {
+    // INT32_MAX+2 <= x <= UINT32_MAX (i.e. 2^31+1 <= x <= 2^32-1) would attempt
+    // to ceiling to 2^32, which is 1 greater than `UINT32_MAX`, resulting in
+    // overflow wraparound to 0.
+    r_stop_internal("u32_safe_ceil2", "`x` results in an `uint32_t` overflow.");
+  }
+
   return x;
 }
 
@@ -183,7 +194,7 @@ uint32_t dict_key_size(SEXP x) {
 
   uint32_t size = (uint32_t)load_adjusted_size;
   size = size > INT_MAX ? INT_MAX : size;
-  size = u32_ceil2(size);
+  size = u32_safe_ceil2(size);
   size = (size < 16) ? 16 : size;
 
   // Rprintf("size: %u\n", size);
