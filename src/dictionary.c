@@ -171,6 +171,7 @@ uint32_t dict_key_size(SEXP x) {
   const R_len_t x_size = vec_size(x);
 
   if (x_size > R_LEN_T_MAX) {
+    // Ensure we catch the switch to supporting long vectors in `vec_size()`
     r_stop_internal("dict_key_size", "Dictionary functions do not support long vectors.");
   }
 
