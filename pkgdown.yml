@@ -6,7 +6,7 @@ articles:
   s3-vector: s3-vector.html
   stability: stability.html
   type-size: type-size.html
-last_built: 2021-04-15T20:43Z
+last_built: 2021-04-16T14:30Z
 urls:
   reference: https://vctrs.r-lib.org/reference
   article: https://vctrs.r-lib.org/articles
