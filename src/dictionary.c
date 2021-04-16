@@ -173,7 +173,7 @@ void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
 // of at most 77%. We round up to power of 2 to ensure quadratic probing
 // strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
 // as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
-// would result in 2^32 to INT_MAX to ensure that our maximum ceiling value
+// would result in 2^32 to INT32_MAX to ensure that our maximum ceiling value
 // is only 2^31. This will increase the load factor above 77% for `x` with
 // length greater than 1653562409 (2147483648 * .77), but it ensures that
 // it can run.
@@ -193,7 +193,9 @@ uint32_t dict_key_size(SEXP x) {
   }
 
   uint32_t size = (uint32_t)load_adjusted_size;
-  size = size > INT_MAX ? INT_MAX : size;
+  // Clamp to `INT32_MAX` to avoid overflow in `u32_safe_ceil2()`,
+  // at the cost of an increased maximum load factor for long input
+  size = size > INT32_MAX ? INT32_MAX : size;
   size = u32_safe_ceil2(size);
   size = (size < 16) ? 16 : size;
 
