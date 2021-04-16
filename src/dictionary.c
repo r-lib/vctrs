@@ -197,6 +197,12 @@ uint32_t dict_key_size(SEXP x) {
   size = u32_safe_ceil2(size);
   size = (size < 16) ? 16 : size;
 
+  if (x_size > size) {
+    // Should never happen with `R_len_t` sizes.
+    // This is a defensive check that will be useful when we support long vectors.
+    r_stop_internal("dict_key_size", "Key size must be at least as large as `x` to avoid a load factor of >100%.");
+  }
+
   // Rprintf("size: %u\n", size);
   return size;
 }
