@@ -156,10 +156,10 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   PROTECT_PROXY_INFO(&value_info, &n_protect);
 
   if (TYPEOF(proxy) != TYPEOF(value_info.proxy)) {
-    stop_internal("vec_proxy_assign_opts",
-                  "`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
-                  Rf_type2char(TYPEOF(proxy)),
-                  Rf_type2char(TYPEOF(value_info.proxy)));
+    r_stop_internal("vec_proxy_assign_opts",
+                    "`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
+                    Rf_type2char(TYPEOF(proxy)),
+                    Rf_type2char(TYPEOF(value_info.proxy)));
   }
 
   // If a fallback is required, the `proxy` is identical to the output container
@@ -190,8 +190,8 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   int* index_data = INTEGER(index);                                     \
                                                                         \
   if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+    r_stop_internal("vec_assign",                                       \
+                    "`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
   const CTYPE* value_data = CONST_DEREF(value);                         \
@@ -216,8 +216,8 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   R_len_t step = index_data[2];                                         \
                                                                         \
   if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+    r_stop_internal("vec_assign",                                       \
+                    "`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
   const CTYPE* value_data = CONST_DEREF(value);                         \
@@ -268,8 +268,8 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned ow
   int* index_data = INTEGER(index);                                     \
                                                                         \
   if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+    r_stop_internal("vec_assign",                                       \
+                    "`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
   SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
@@ -291,8 +291,8 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned ow
   R_len_t step = index_data[2];                                         \
                                                                         \
   if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+    r_stop_internal("vec_assign",                                       \
+                    "`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
   SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
@@ -349,10 +349,10 @@ SEXP df_assign(SEXP x, SEXP index, SEXP value,
   R_len_t n = Rf_length(out);
 
   if (Rf_length(value) != n) {
-    stop_internal("df_assign",
-                  "Can't assign %d columns to df of length %d.",
-                  Rf_length(value),
-                  n);
+    r_stop_internal("df_assign",
+                    "Can't assign %d columns to df of length %d.",
+                    Rf_length(value),
+                    n);
   }
 
   for (R_len_t i = 0; i < n; ++i) {

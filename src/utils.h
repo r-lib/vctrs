@@ -92,13 +92,12 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x5_sym, SEXP x5,
                      SEXP x6_sym, SEXP x6);
 
-__attribute__((noreturn)) void stop_internal(const char* fn, const char* fmt, ...);
 __attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
 
 static inline
 __attribute__((noreturn))
 void stop_unimplemented_type(const char* fn, SEXPTYPE type) {
-  stop_internal(fn, "Unimplemented type `%s`.", Rf_type2char(type));
+  r_stop_internal(fn, "Unimplemented type `%s`.", Rf_type2char(type));
 }
 
 
@@ -399,7 +398,7 @@ static inline
 intmax_t intmax_add(intmax_t x, intmax_t y) {
   if ((y > 0 && x > (INTMAX_MAX - y)) ||
       (y < 0 && x < (INTMAX_MIN - y))) {
-    stop_internal("intmax_add", "Values too large to be added.");
+    r_stop_internal("intmax_add", "Values too large to be added.");
   }
 
   return x + y;
@@ -408,7 +407,7 @@ static inline
 intmax_t intmax_subtract(intmax_t x, intmax_t y) {
   if ((y > 0 && x < (INTMAX_MIN + y)) ||
       (y < 0 && x < (INTMAX_MAX + y))) {
-    stop_internal("intmax_subtract", "Subtraction resulted in overflow or underflow.");
+    r_stop_internal("intmax_subtract", "Subtraction resulted in overflow or underflow.");
   }
 
   return x - y;

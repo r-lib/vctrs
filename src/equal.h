@@ -38,7 +38,7 @@ static inline bool list_is_missing(SEXP x) {
 } while (0)
 
 static inline bool p_nil_is_missing(const void* p_x, r_ssize i) {
-  stop_internal("p_nil_is_missing", "Can't check NULL for missingness.");
+  r_stop_internal("p_nil_is_missing", "Can't check NULL for missingness.");
 }
 static inline bool p_lgl_is_missing(const void* p_x, r_ssize i) {
   P_IS_MISSING(int, lgl_is_missing);
@@ -116,7 +116,7 @@ static inline int list_equal_na_equal(SEXP x, SEXP y) {
 } while (0)
 
 static inline int p_nil_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
-  stop_internal("p_nil_equal_na_equal", "Can't compare NULL for equality.");
+  r_stop_internal("p_nil_equal_na_equal", "Can't compare NULL for equality.");
 }
 static inline int p_lgl_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
   P_EQUAL_NA_EQUAL(int, lgl_equal_na_equal);
@@ -219,7 +219,7 @@ static inline int list_equal_na_propagate(SEXP x, SEXP y) {
 } while (0)
 
 static inline int p_nil_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
-  stop_internal("p_nil_equal_na_propagate", "Can't compare NULL for equality.");
+  r_stop_internal("p_nil_equal_na_propagate", "Can't compare NULL for equality.");
 }
 static inline int p_lgl_equal_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
   P_EQUAL_NA_PROPAGATE(int, lgl_equal_na_propagate);

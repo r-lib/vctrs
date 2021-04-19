@@ -98,7 +98,7 @@ static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
 
   // Sanity check, should never be true
   if (max_dimensionality == 0) {
-    stop_internal("vec_shape2_impl", "`max_dimensionality` must have length.");
+    r_stop_internal("vec_shape2_impl", "`max_dimensionality` must have length.");
   }
 
   const int* p_x_dimensions = INTEGER_RO(x_dimensions);
@@ -141,11 +141,11 @@ static SEXP vec_shape(SEXP dimensions) {
   dimensions = PROTECT(r_clone_referenced(dimensions));
 
   if (Rf_length(dimensions) == 0) {
-    stop_internal("vec_shape", "`dimensions` must have length.");
+    r_stop_internal("vec_shape", "`dimensions` must have length.");
   }
 
   if (TYPEOF(dimensions) != INTSXP) {
-    stop_internal("vec_shape", "`dimensions` must be an integer vector.");
+    r_stop_internal("vec_shape", "`dimensions` must be an integer vector.");
   }
 
   INTEGER(dimensions)[0] = 0;

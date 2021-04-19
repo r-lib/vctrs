@@ -433,7 +433,7 @@ SEXP s3_paste_method_sym(const char* generic, const char* class) {
   int class_len = strlen(class);
   int dot_len = 1;
   if (gen_len + class_len + dot_len >= sizeof(s3_buf)) {
-    stop_internal("s3_paste_method_sym", "Generic or class name is too long.");
+    r_stop_internal("s3_paste_method_sym", "Generic or class name is too long.");
   }
 
   char* buf = s3_buf;
@@ -518,7 +518,7 @@ SEXP s3_get_class(SEXP x) {
   }
 
   if (!Rf_length(class)) {
-    stop_internal("s3_get_class", "Class must have length.");
+    r_stop_internal("s3_get_class", "Class must have length.");
   }
 
   return class;
@@ -735,7 +735,7 @@ SEXP node_compact_d(SEXP node) {
 // [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
   if (TYPEOF(levels) != STRSXP) {
-    stop_internal("new_empty_factor", "`level` must be a character vector.");
+    r_stop_internal("new_empty_factor", "`level` must be a character vector.");
   }
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
@@ -825,15 +825,15 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
 // `start` is 0-based
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   if (start < 0) {
-    stop_internal("compact_seq", "`start` must not be negative.");
+    r_stop_internal("compact_seq", "`start` must not be negative.");
   }
 
   if (size < 0) {
-    stop_internal("compact_seq", "`size` must not be negative.");
+    r_stop_internal("compact_seq", "`size` must not be negative.");
   }
 
   if (!increasing && size > start + 1) {
-    stop_internal("compact_seq", "`size` must not be larger than `start` for decreasing sequences.");
+    r_stop_internal("compact_seq", "`size` must not be larger than `start` for decreasing sequences.");
   }
 
   SEXP info = PROTECT(Rf_allocVector(INTSXP, 3));
@@ -881,7 +881,7 @@ void init_compact_rep(int* p, R_len_t i, R_len_t n) {
 // `i` should be an R-based index
 SEXP compact_rep(R_len_t i, R_len_t n) {
   if (n < 0) {
-    stop_internal("compact_rep", "Negative `n` in `compact_rep()`.");
+    r_stop_internal("compact_rep", "Negative `n` in `compact_rep()`.");
   }
 
   SEXP rep = PROTECT(Rf_allocVector(INTSXP, 2));
@@ -1061,7 +1061,7 @@ void r_int_fill_seq(SEXP x, int start, R_len_t n) {
 SEXP r_seq(R_len_t from, R_len_t to) {
   R_len_t n = to - from;
   if (n < 0) {
-    stop_internal("r_seq", "Negative length.");
+    r_stop_internal("r_seq", "Negative length.");
   }
 
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
@@ -1128,7 +1128,7 @@ int r_chr_max_len(SEXP x) {
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
   int prefix_len = strlen(prefix);
   if (len - 1 < prefix_len) {
-    stop_internal("r_chr_iota", "Prefix is larger than iota buffer.");
+    r_stop_internal("r_chr_iota", "Prefix is larger than iota buffer.");
   }
 
   memcpy(buf, prefix, prefix_len);
@@ -1208,7 +1208,7 @@ bool r_is_positive_number(SEXP x) {
  */
 SEXP _r_pairlist(SEXP* tags, SEXP* cars) {
   if (!cars) {
-    stop_internal("r_pairlist", "NULL `cars`.");
+    r_stop_internal("r_pairlist", "NULL `cars`.");
   }
 
   SEXP list = PROTECT(Rf_cons(R_NilValue, R_NilValue));
@@ -1241,7 +1241,7 @@ bool r_has_name_at(SEXP names, R_len_t i) {
 
   R_len_t n = Rf_length(names);
   if (n <= i) {
-    stop_internal("r_has_name_at", "Names shorter than expected: (%d/%d).", i + 1, n);
+    r_stop_internal("r_has_name_at", "Names shorter than expected: (%d/%d).", i + 1, n);
   }
 
   SEXP elt = STRING_ELT(names, i);
@@ -1476,30 +1476,6 @@ SEXP vctrs_fast_c(SEXP x, SEXP y) {
   default: stop_unimplemented_type("vctrs_fast_c", x_type);
   }
 }
-
-
-#define FMT_BUFSIZE 4096
-#define FMT_INTERP(BUF, FMT, DOTS)              \
-  {                                             \
-    va_list dots;                               \
-    va_start(dots, FMT);                        \
-    vsnprintf(BUF, FMT_BUFSIZE, FMT, dots);     \
-    va_end(dots);                               \
-                                                \
-    BUF[FMT_BUFSIZE - 1] = '\0';                \
-  }
-
-__attribute__((noreturn))
-void stop_internal(const char* fn, const char* fmt, ...) {
-  R_CheckStack2(FMT_BUFSIZE);
-  char msg[FMT_BUFSIZE];
-  FMT_INTERP(msg, fmt, ...);
-
-  r_abort("Internal error in `%s()`: %s", fn, msg);
-}
-
-#undef FMT_INTERP
-#undef FMT_BUFSIZE
 
 
 bool vctrs_debug_verbose = false;
