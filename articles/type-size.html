@@ -116,7 +116,7 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span></code></pre></div>
 <div id="prototype" class="section level2">
 <h2 class="hasAnchor">
-<a href="#prototype" class="anchor"></a>Prototype</h2>
+<a href="#prototype" class="anchor" aria-hidden="true"></a>Prototype</h2>
 <p>The idea of a prototype is to capture the metadata associated with a vector without capturing any data. Unfortunately, the <code><a href="https://rdrr.io/r/base/class.html" class="external-link">class()</a></code> of an object is inadequate for this purpose:</p>
 <ul>
 <li><p>The <code><a href="https://rdrr.io/r/base/class.html" class="external-link">class()</a></code> doesn’t include attributes. Attributes are important because, for example, they store the levels of a factor and the timezone of a <code>POSIXct</code>. You cannot combine two factors or two <code>POSIXct</code>s without thinking about the attributes.</p></li>
@@ -126,7 +126,7 @@
 <p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://rdrr.io/r/base/double.html" class="external-link">double()</a></code> and <code><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor(levels = c("a", "b"))</a></code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, and <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
 <div id="base-prototypes" class="section level3">
 <h3 class="hasAnchor">
-<a href="#base-prototypes" class="anchor"></a>Base prototypes</h3>
+<a href="#base-prototypes" class="anchor" aria-hidden="true"></a>Base prototypes</h3>
 <p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> creates a prototype from an existing object. However, many base vectors have uninformative printing methods for 0-length subsets, so vctrs also provides <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>, which prints the prototype in a friendly way (and returns nothing).</p>
 <p>Using <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> allows us to see the prototypes base R classes:</p>
 <ul>
@@ -205,7 +205,7 @@
 </div>
 <div id="coercing-to-common-type" class="section level3">
 <h3 class="hasAnchor">
-<a href="#coercing-to-common-type" class="anchor"></a>Coercing to common type</h3>
+<a href="#coercing-to-common-type" class="anchor" aria-hidden="true"></a>Coercing to common type</h3>
 <p>It’s often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>. <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> possesses the following invariants:</p>
 <ul>
 <li><p><code><a href="https://rdrr.io/r/base/class.html" class="external-link">class(vec_ptype_common(x, y))</a></code> equals <code><a href="https://rdrr.io/r/base/class.html" class="external-link">class(vec_ptype_common(y, x))</a></code>.</p></li>
@@ -332,7 +332,7 @@
 </div>
 <div id="casting-to-specified-type" class="section level3">
 <h3 class="hasAnchor">
-<a href="#casting-to-specified-type" class="anchor"></a>Casting to specified type</h3>
+<a href="#casting-to-specified-type" class="anchor" aria-hidden="true"></a>Casting to specified type</h3>
 <p><code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That’s the job of <code><a href="../reference/vec_cast.html">vec_cast_common()</a></code>:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span>
@@ -397,7 +397,7 @@
 </div>
 <div id="size" class="section level2">
 <h2 class="hasAnchor">
-<a href="#size" class="anchor"></a>Size</h2>
+<a href="#size" class="anchor" aria-hidden="true"></a>Size</h2>
 <p><code><a href="../reference/vec_size.html">vec_size()</a></code> was motivated by the need to have an invariant that describes the number of “observations” in a data structure. This is particularly important for data frames, as it’s useful to have some function such that <code>f(data.frame(x))</code> equals <code>f(x)</code>. No base function has this property:</p>
 <ul>
 <li><p><code><a href="https://rdrr.io/r/base/length.html" class="external-link">length(data.frame(x))</a></code> equals <code>1</code> because the length of a data frame is the number of columns.</p></li>
@@ -413,7 +413,7 @@
 <p>Given <code><a href="../reference/vec_size.html">vec_size()</a></code>, we can give a precise definition of a data frame: a data frame is a list of vectors where every vector has the same size. This has the desirable property of trivially supporting matrix and data frame columns.</p>
 <div id="slicing" class="section level3">
 <h3 class="hasAnchor">
-<a href="#slicing" class="anchor"></a>Slicing</h3>
+<a href="#slicing" class="anchor" aria-hidden="true"></a>Slicing</h3>
 <p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">[</a></code> is to <code><a href="https://rdrr.io/r/base/length.html" class="external-link">length()</a></code>; i.e., it allows you to select observations regardless of the dimensionality of the underlying object. <code><a href="../reference/vec_slice.html">vec_slice(x, i)</a></code> is equivalent to:</p>
 <ul>
 <li>
@@ -428,17 +428,17 @@
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt; [1]  7 10</span>
+<span class="co">#&gt; [1] 1 3</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt;    x</span>
-<span class="co">#&gt; 1  7</span>
-<span class="co">#&gt; 2 10</span></code></pre></div>
+<span class="co">#&gt;   x</span>
+<span class="co">#&gt; 1 1</span>
+<span class="co">#&gt; 2 3</span></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
 <div id="common-sizes-recycling-rules" class="section level3">
 <h3 class="hasAnchor">
-<a href="#common-sizes-recycling-rules" class="anchor"></a>Common sizes: recycling rules</h3>
+<a href="#common-sizes-recycling-rules" class="anchor" aria-hidden="true"></a>Common sizes: recycling rules</h3>
 <p>Closely related to the definition of size are the <strong>recycling rules</strong>. The recycling rules determine the size of the output when two vectors of different sizes are combined. In vctrs, the recycling rules are encoded in <code><a href="../reference/vec_size.html">vec_size_common()</a></code>, which gives the common size of a set of vectors:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
@@ -482,7 +482,7 @@
 </div>
 <div id="appendix-recycling-in-base-r" class="section level2">
 <h2 class="hasAnchor">
-<a href="#appendix-recycling-in-base-r" class="anchor"></a>Appendix: recycling in base R</h2>
+<a href="#appendix-recycling-in-base-r" class="anchor" aria-hidden="true"></a>Appendix: recycling in base R</h2>
 <p>The recycling rules in base R are described in <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Recycling-rules" class="external-link">The R Language Definition</a> but are not implemented in a single function and thus are not applied consistently. Here, I give a brief overview of their most common realisation, as well as showing some of the exceptions.</p>
 <p>Generally, in base R, when a pair of vectors is not the same length, the shorter vector is recycled to the same length as the longer:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">

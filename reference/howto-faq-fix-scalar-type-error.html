@@ -223,7 +223,7 @@ dplyr::slice(my_df, 1)
     <div class="ref-description">
     <p>The tidyverse is a bit stricter than base R regarding what kind of
 objects are considered as vectors (see the <a href='faq-error-scalar-type.html'>user FAQ</a> about this topic). Sometimes vctrs won’t
-treat your class as a vector when it should.</p><h3 class='hasAnchor' id='why-isn-t-my-list-class-considered-a-vector-'><a class='anchor' href='#why-isn-t-my-list-class-considered-a-vector-'></a>Why isn’t my list class considered a vector?</h3>
+treat your class as a vector when it should.</p><h3 class='hasAnchor' id='why-isn-t-my-list-class-considered-a-vector-'><a class='anchor' aria-hidden='true' href='#why-isn-t-my-list-class-considered-a-vector-'></a>Why isn’t my list class considered a vector?</h3>
 
 
 <p>By default, S3 lists are not considered to be vectors by vctrs:<div class="r"></p><pre><span class='va'>my_list</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, class <span class='op'>=</span> <span class='st'>"my_class"</span><span class='op'>)</span>
@@ -254,7 +254,7 @@ it possible for your class to dispatch on <code>list</code> methods of S3 generi
 <span class='co'>#&gt; [1] "dispatched!"</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='why-isn-t-my-data-frame-class-considered-a-vector-'><a class='anchor' href='#why-isn-t-my-data-frame-class-considered-a-vector-'></a>Why isn’t my data frame class considered a vector?</h3>
+<h3 class='hasAnchor' id='why-isn-t-my-data-frame-class-considered-a-vector-'><a class='anchor' aria-hidden='true' href='#why-isn-t-my-data-frame-class-considered-a-vector-'></a>Why isn’t my data frame class considered a vector?</h3>
 
 
 <p>The most likely explanation is that the data frame has not been properly

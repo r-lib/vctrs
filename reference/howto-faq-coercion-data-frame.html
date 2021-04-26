@@ -692,7 +692,7 @@ subclasses as soon as possible.</p>
 <p>We will see two examples in this guide. The first example is about a
 data frame subclass that has no particular attributes to manage. In the
 second example, we implement coercion methods for a tibble subclass that
-includes potentially incompatible attributes.</p><h3 class='hasAnchor' id='roxygen-workflow'><a class='anchor' href='#roxygen-workflow'></a>Roxygen workflow</h3>
+includes potentially incompatible attributes.</p><h3 class='hasAnchor' id='roxygen-workflow'><a class='anchor' aria-hidden='true' href='#roxygen-workflow'></a>Roxygen workflow</h3>
 
 
 <p>To implement methods for generics, first import the generics in your
@@ -708,7 +708,7 @@ regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register()</a></code>.</p>
 
-<h3 class='hasAnchor' id='parent-methods'><a class='anchor' href='#parent-methods'></a>Parent methods</h3>
+<h3 class='hasAnchor' id='parent-methods'><a class='anchor' aria-hidden='true' href='#parent-methods'></a>Parent methods</h3>
 
 
 <p>Most of the common type determination should be performed by the parent
@@ -727,7 +727,7 @@ write similar functions for your subclass to avoid repetition in your
 code. You may want to export them as well if you are expecting other
 people to derive from your class.</p>
 
-<h3 class='hasAnchor' id='a-'><a class='anchor' href='#a-'></a>A <code>data.table</code> example</h3>
+<h3 class='hasAnchor' id='a-'><a class='anchor' aria-hidden='true' href='#a-'></a>A <code>data.table</code> example</h3>
 
 
 <p>This example is the actual implementation of vctrs coercion methods for
@@ -795,7 +795,7 @@ frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbin
 <span class='co'>#&gt; 1: 1 foo</span>
 <span class='co'>#&gt; 2: 2 foo</span>
 <span class='co'>#&gt; 3: 3 foo</span>
-</pre><p></div></p><h3 class='hasAnchor' id='list-data-table-'><a class='anchor' href='#list-data-table-'></a>A <code>data.table</code> example</h3>
+</pre><p></div></p><h3 class='hasAnchor' id='list-data-table-'><a class='anchor' aria-hidden='true' href='#list-data-table-'></a>A <code>data.table</code> example</h3>
 
 
 <p>This example is the actual implementation of vctrs coercion methods for
@@ -863,7 +863,7 @@ frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbin
 <span class='co'>#&gt; 1: 1 foo</span>
 <span class='co'>#&gt; 2: 2 foo</span>
 <span class='co'>#&gt; 3: 3 foo</span>
-</pre><p></div></p><h3 class='hasAnchor' id='-example'><a class='anchor' href='#-example'></a>A <code>data.table</code> example</h3>
+</pre><p></div></p><h3 class='hasAnchor' id='-example'><a class='anchor' aria-hidden='true' href='#-example'></a>A <code>data.table</code> example</h3>
 
 
 <p>This example is the actual implementation of vctrs coercion methods for
@@ -933,7 +933,7 @@ frames:<div class="r"></p><pre><span class='fu'><a href='vec_bind.html'>vec_cbin
 <span class='co'>#&gt; 3: 3 foo</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='a-tibble-example'><a class='anchor' href='#a-tibble-example'></a>A tibble example</h3>
+<h3 class='hasAnchor' id='a-tibble-example'><a class='anchor' aria-hidden='true' href='#a-tibble-example'></a>A tibble example</h3>
 
 
 <p>In this example we implement coercion methods for a tibble subclass that

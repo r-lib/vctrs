@@ -117,7 +117,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nteetor/zeallot" class="external-link">zeallot</a></span><span class="op">)</span></code></pre></div>
 <div id="definitions" class="section level2">
 <h2 class="hasAnchor">
-<a href="#definitions" class="anchor"></a>Definitions</h2>
+<a href="#definitions" class="anchor" aria-hidden="true"></a>Definitions</h2>
 <p>We say a function is <strong>type-stable</strong> iff:</p>
 <ol style="list-style-type: decimal">
 <li>You can predict the output type knowing only the input types.</li>
@@ -137,7 +137,7 @@
 <p>The goal of these principles is to minimise cognitive overhead. Rather than having to memorise many special cases, you should be able to learn one set of principles and apply them again and again.</p>
 <div id="examples" class="section level3">
 <h3 class="hasAnchor">
-<a href="#examples" class="anchor"></a>Examples</h3>
+<a href="#examples" class="anchor" aria-hidden="true"></a>Examples</h3>
 <p>To make these ideas concrete, let’s apply them to a few base functions:</p>
 <ol style="list-style-type: decimal">
 <li><p><code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> is trivially type-stable and size-stable because it always returns a double vector of length 1 (or it throws an error).</p></li>
@@ -194,7 +194,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="c-and-vctrsvec_c" class="section level2">
 <h2 class="hasAnchor">
-<a href="#c-and-vctrsvec_c" class="anchor"></a><code>c()</code> and <code>vctrs::vec_c()</code>
+<a href="#c-and-vctrsvec_c" class="anchor" aria-hidden="true"></a><code>c()</code> and <code>vctrs::vec_c()</code>
 </h2>
 <p>In this section we’ll compare and contrast <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code>. <code><a href="../reference/vec_c.html">vec_c()</a></code> is both type- and size-stable because it possesses the following invariants:</p>
 <ul>
@@ -211,7 +211,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </ul>
 <div id="atomic-vectors" class="section level3">
 <h3 class="hasAnchor">
-<a href="#atomic-vectors" class="anchor"></a>Atomic vectors</h3>
+<a href="#atomic-vectors" class="anchor" aria-hidden="true"></a>Atomic vectors</h3>
 <p>If we only consider atomic vectors, <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> is type-stable because it uses a hierarchy of types: character &gt; complex &gt; double &gt; integer &gt; logical.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fl">1L</span>, <span class="fl">2.5</span><span class="op">)</span>
@@ -238,7 +238,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="incompatible-vectors-and-non-vectors" class="section level3">
 <h3 class="hasAnchor">
-<a href="#incompatible-vectors-and-non-vectors" class="anchor"></a>Incompatible vectors and non-vectors</h3>
+<a href="#incompatible-vectors-and-non-vectors" class="anchor" aria-hidden="true"></a>Incompatible vectors and non-vectors</h3>
 <p>In general, most base methods do not throw an error:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span><span class="op">)</span>
@@ -249,7 +249,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; function (x, ...) </span>
 <span class="co">#&gt; UseMethod("mean")</span>
-<span class="co">#&gt; &lt;bytecode: 0x7fca230445c0&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x7f9ece93c3c0&gt;</span>
 <span class="co">#&gt; &lt;environment: namespace:base&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
@@ -275,7 +275,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="factors" class="section level3">
 <h3 class="hasAnchor">
-<a href="#factors" class="anchor"></a>Factors</h3>
+<a href="#factors" class="anchor" aria-hidden="true"></a>Factors</h3>
 <p>Combining two factors returns an integer vector:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>
@@ -295,7 +295,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="date-times" class="section level3">
 <h3 class="hasAnchor">
-<a href="#date-times" class="anchor"></a>Date-times</h3>
+<a href="#date-times" class="anchor" aria-hidden="true"></a>Date-times</h3>
 <p><code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> strips the time zone associated with date-times:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">datetime_nz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2020-01-01 09:00"</span>, tz <span class="op">=</span> <span class="st">"Pacific/Auckland"</span><span class="op">)</span>
@@ -321,7 +321,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="dates-and-date-times" class="section level3">
 <h3 class="hasAnchor">
-<a href="#dates-and-date-times" class="anchor"></a>Dates and date-times</h3>
+<a href="#dates-and-date-times" class="anchor" aria-hidden="true"></a>Dates and date-times</h3>
 <p>Combining dates and date-times with <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> gives silently incorrect results:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>
@@ -341,7 +341,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="missing-values" class="section level3">
 <h3 class="hasAnchor">
-<a href="#missing-values" class="anchor"></a>Missing values</h3>
+<a href="#missing-values" class="anchor" aria-hidden="true"></a>Missing values</h3>
 <p>If a missing value comes at the beginning of the inputs, <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> falls back to the internal behaviour, which strips all attributes:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">fa</span><span class="op">)</span>
@@ -362,7 +362,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="data-frames" class="section level3">
 <h3 class="hasAnchor">
-<a href="#data-frames" class="anchor"></a>Data frames</h3>
+<a href="#data-frames" class="anchor" aria-hidden="true"></a>Data frames</h3>
 <p>Because it is <em>almost always</em> length-stable, <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> combines data frames column wise (into a list):</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
@@ -380,7 +380,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="matrices-and-arrays" class="section level3">
 <h3 class="hasAnchor">
-<a href="#matrices-and-arrays" class="anchor"></a>Matrices and arrays</h3>
+<a href="#matrices-and-arrays" class="anchor" aria-hidden="true"></a>Matrices and arrays</h3>
 <p>The same reasoning applies to matrices:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, nrow <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
@@ -405,7 +405,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="implementation" class="section level3">
 <h3 class="hasAnchor">
-<a href="#implementation" class="anchor"></a>Implementation</h3>
+<a href="#implementation" class="anchor" aria-hidden="true"></a>Implementation</h3>
 <p>The basic implementation of <code><a href="../reference/vec_c.html">vec_c()</a></code> is reasonably simple. We first figure out the properties of the output, i.e. the common type and total size, and then allocate it with <code><a href="../reference/vec_init.html">vec_init()</a></code>, and then insert each input into the correct place in the output.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_c</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span>
@@ -434,7 +434,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 </div>
 <div id="ifelse" class="section level2">
 <h2 class="hasAnchor">
-<a href="#ifelse" class="anchor"></a><code>ifelse()</code>
+<a href="#ifelse" class="anchor" aria-hidden="true"></a><code>ifelse()</code>
 </h2>
 <p>One of the functions that motivate the development of vctrs is <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code>. It has the surprising property that the result value is “A vector of the same length and attributes (including dimensions and class) as <code>test</code>”. To me, it seems more reasonable for the type of the output to be controlled by the type of the <code>yes</code> and <code>no</code> arguments.</p>
 <p>In <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code> I swung too far towards strictness: it throws an error if <code>yes</code> and <code>no</code> are not the same type. This is annoying in practice because it requires typed missing values (<code>NA_character_</code> etc), and because the checks are only on the class (not the full prototype), it’s easy to create invalid output.</p>
@@ -465,7 +465,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span>
 <span class="co">#&gt; Levels: small big</span>
 <span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">7</span><span class="op">)</span>
-<span class="co">#&gt; [1] NA           "2021-04-23" "2021-04-23" "2021-04-16" "2021-04-16"</span></code></pre></div>
+<span class="co">#&gt; [1] NA           "2021-05-03" "2021-05-03" "2021-04-26" "2021-04-26"</span></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>

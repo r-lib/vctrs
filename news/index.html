@@ -158,7 +158,7 @@
 
     <div id="vctrs-development-version" class="section level1">
 <h1 class="page-header" data-toc-text="development version">
-<a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
+<a href="#vctrs-development-version" class="anchor" aria-hidden="true"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
 <li>
@@ -167,7 +167,7 @@
 </div>
     <div id="vctrs-037" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.7">
-<a href="#vctrs-037" class="anchor"></a>vctrs 0.3.7<small> 2021-03-29 </small>
+<a href="#vctrs-037" class="anchor" aria-hidden="true"></a>vctrs 0.3.7<small> 2021-03-29 </small>
 </h1>
 <ul>
 <li><p><code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> gains arguments to control whether to indicate named vectors with a prefix (<code>prefix_named</code>) and indicate shaped vectors with a suffix (<code>suffix_shape</code>) (<a href='https://github.com/r-lib/vctrs/issues/781'>#781</a>, <a href='https://github.com/krlmlr'>@krlmlr</a>).</p></li>
@@ -181,7 +181,7 @@
 </div>
     <div id="vctrs-036" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.6">
-<a href="#vctrs-036" class="anchor"></a>vctrs 0.3.6<small> 2020-12-17 </small>
+<a href="#vctrs-036" class="anchor" aria-hidden="true"></a>vctrs 0.3.6<small> 2020-12-17 </small>
 </h1>
 <ul>
 <li><p>Fixed an issue with tibble 3.0.0 where removing column names with <code>names(x) &lt;- NULL</code> is now deprecated (<a href='https://github.com/r-lib/vctrs/issues/1298'>#1298</a>).</p></li>
@@ -190,7 +190,7 @@
 </div>
     <div id="vctrs-035" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.5">
-<a href="#vctrs-035" class="anchor"></a>vctrs 0.3.5<small> 2020-11-17 </small>
+<a href="#vctrs-035" class="anchor" aria-hidden="true"></a>vctrs 0.3.5<small> 2020-11-17 </small>
 </h1>
 <ul>
 <li><p>New experimental <code><a href="../reference/vec_fill_missing.html">vec_fill_missing()</a></code> for filling in missing values with the previous or following value. It is similar to <code>tidyr::fill()</code>, but also works with data frames and has an additional <code>max_fill</code> argument to limit the number of sequential missing values to fill.</p></li>
@@ -205,7 +205,7 @@
 </div>
     <div id="vctrs-034" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.4">
-<a href="#vctrs-034" class="anchor"></a>vctrs 0.3.4<small> 2020-08-29 </small>
+<a href="#vctrs-034" class="anchor" aria-hidden="true"></a>vctrs 0.3.4<small> 2020-08-29 </small>
 </h1>
 <ul>
 <li>Fixed a GCC sanitiser error revealed by CRAN checks.</li>
@@ -213,7 +213,7 @@
 </div>
     <div id="vctrs-033" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.3">
-<a href="#vctrs-033" class="anchor"></a>vctrs 0.3.3<small> 2020-08-27 </small>
+<a href="#vctrs-033" class="anchor" aria-hidden="true"></a>vctrs 0.3.3<small> 2020-08-27 </small>
 </h1>
 <ul>
 <li><p>The <code>table</code> class is now implemented as a wrapper type that delegates its coercion methods. It used to be restricted to integer tables (<a href='https://github.com/r-lib/vctrs/issues/1190'>#1190</a>).</p></li>
@@ -247,7 +247,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </div>
     <div id="vctrs-032" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.2">
-<a href="#vctrs-032" class="anchor"></a>vctrs 0.3.2<small> 2020-07-15 </small>
+<a href="#vctrs-032" class="anchor" aria-hidden="true"></a>vctrs 0.3.2<small> 2020-07-15 </small>
 </h1>
 <ul>
 <li><p>Fixed a performance issue in <code>bind_rows()</code> with S3 columns (<a href='https://github.com/r-lib/vctrs/issues/1122'>#1122</a>, <a href='https://github.com/r-lib/vctrs/issues/1124'>#1124</a>, <a href='https://github.com/r-lib/vctrs/issues/1151'>#1151</a>, tidyverse/dplyr<a href='https://github.com/r-lib/vctrs/issues/5327'>#5327</a>).</p></li>
@@ -259,7 +259,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </div>
     <div id="vctrs-031" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
-<a href="#vctrs-031" class="anchor"></a>vctrs 0.3.1<small> 2020-06-05 </small>
+<a href="#vctrs-031" class="anchor" aria-hidden="true"></a>vctrs 0.3.1<small> 2020-06-05 </small>
 </h1>
 <ul>
 <li><p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> no longer restores attributes of foreign objects for which a <code><a href="https://rdrr.io/r/base/Extract.html" class="external-link">[</a></code> method exist. This fixes an issue with <code>ts</code> objects which were previously incorrectly restored.</p></li>
@@ -272,7 +272,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </ul>
 <div id="cran-results" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cran-results" class="anchor"></a>CRAN results</h2>
+<a href="#cran-results" class="anchor" aria-hidden="true"></a>CRAN results</h2>
 <ul>
 <li>Fixed type declaration mismatches revealed by LTO build.</li>
 <li>Fixed r-devel issue with new <code>c.factor()</code> method.</li>
@@ -281,7 +281,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </div>
     <div id="vctrs-030" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
-<a href="#vctrs-030" class="anchor"></a>vctrs 0.3.0<small> 2020-05-11 </small>
+<a href="#vctrs-030" class="anchor" aria-hidden="true"></a>vctrs 0.3.0<small> 2020-05-11 </small>
 </h1>
 <p>This version features an overhaul of the coercion system to make it more consistent and easier to implement. See the <em>Breaking changes</em> and <em>Type system</em> sections for details.</p>
 <p>There are three new documentation topics if you’d like to learn how to implement coercion methods to make your class compatible with tidyverse packages like dplyr:</p>
@@ -292,7 +292,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </ul>
 <div id="reverse-dependencies-troubleshooting" class="section level2">
 <h2 class="hasAnchor">
-<a href="#reverse-dependencies-troubleshooting" class="anchor"></a>Reverse dependencies troubleshooting</h2>
+<a href="#reverse-dependencies-troubleshooting" class="anchor" aria-hidden="true"></a>Reverse dependencies troubleshooting</h2>
 <p>The following errors are caused by breaking changes.</p>
 <ul>
 <li>
@@ -311,7 +311,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </div>
 <div id="breaking-changes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<a href="#breaking-changes" class="anchor" aria-hidden="true"></a>Breaking changes</h2>
 <ul>
 <li>
 <p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are no longer inherited (<a href='https://github.com/r-lib/vctrs/issues/710'>#710</a>). Class implementers must implement one set of methods for each compatible class.</p>
@@ -332,7 +332,7 @@ names(vec_c(a = 1:2, c(b = 3L), .name_spec = zap_outer_spec))
 </div>
 <div id="type-system" class="section level2">
 <h2 class="hasAnchor">
-<a href="#type-system" class="anchor"></a>Type system</h2>
+<a href="#type-system" class="anchor" aria-hidden="true"></a>Type system</h2>
 <ul>
 <li>
 <p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. They no longer need any the boiler plate. Implementing a method for classes <code>foo</code> and <code>bar</code> is now as simple as:</p>
@@ -353,7 +353,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
 <div id="compatibility-and-fallbacks" class="section level2">
 <h2 class="hasAnchor">
-<a href="#compatibility-and-fallbacks" class="anchor"></a>Compatibility and fallbacks</h2>
+<a href="#compatibility-and-fallbacks" class="anchor" aria-hidden="true"></a>Compatibility and fallbacks</h2>
 <ul>
 <li>
 <p>With the double dispatch changes, the coercion methods are no longer inherited from parent classes. This is because the coercion hierarchy is in principle different from the S3 hierarchy. A consequence of this change is that subclasses that don’t implement coercion methods are now in principle incompatible.</p>
@@ -373,7 +373,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
 <div id="vector-operations" class="section level2">
 <h2 class="hasAnchor">
-<a href="#vector-operations" class="anchor"></a>Vector operations</h2>
+<a href="#vector-operations" class="anchor" aria-hidden="true"></a>Vector operations</h2>
 <ul>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_c.html">vec_c()</a></code> with data frame inputs now consistently preserve the names of list-columns, df-columns, and matrix-columns (<a href='https://github.com/r-lib/vctrs/issues/689'>#689</a>). This can cause some false positives in unit tests, if they are sensitive to internal names (<a href='https://github.com/r-lib/vctrs/issues/1007'>#1007</a>).</p></li>
 <li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> now repairs row names silently to avoid confusing messages when the row names are not informative and were not created on purpose.</p></li>
@@ -395,7 +395,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
 <div id="classes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#classes" class="anchor"></a>Classes</h2>
+<a href="#classes" class="anchor" aria-hidden="true"></a>Classes</h2>
 <ul>
 <li><p>vctrs now supports the <code>data.table</code> class. The common type of a data frame and a data table is a data table.</p></li>
 <li><p><code><a href="../reference/new_vctr.html">new_vctr()</a></code> now always appends a base <code>"list"</code> class to list <code>.data</code> to be compatible with changes to <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code>. This affects <code><a href="../reference/new_list_of.html">new_list_of()</a></code>, which now returns an object with a base class of <code>"list"</code>.</p></li>
@@ -409,7 +409,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
 <div id="indexing-and-names" class="section level2">
 <h2 class="hasAnchor">
-<a href="#indexing-and-names" class="anchor"></a>Indexing and names</h2>
+<a href="#indexing-and-names" class="anchor" aria-hidden="true"></a>Indexing and names</h2>
 <ul>
 <li><p><code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> now fails when the subscript is a matrix or an array, consistently with <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>.</p></li>
 <li><p>Improved error messages in <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> when subscript is a matrix or array (<a href='https://github.com/r-lib/vctrs/issues/936'>#936</a>).</p></li>
@@ -420,7 +420,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
 <div id="conditions" class="section level2">
 <h2 class="hasAnchor">
-<a href="#conditions" class="anchor"></a>Conditions</h2>
+<a href="#conditions" class="anchor" aria-hidden="true"></a>Conditions</h2>
 <ul>
 <li><p><code><a href="../reference/vctrs-conditions.html">stop_incompatible_type()</a></code> now has an <code>action</code> argument for customizing whether the coercion error came from <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> or <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. <code><a href="../reference/vctrs-conditions.html">stop_incompatible_cast()</a></code> is now a thin wrapper around <code><a href="../reference/vctrs-conditions.html">stop_incompatible_type(action = "convert")</a></code>.</p></li>
 <li><p><code>stop_</code> functions now take <code>details</code> after the dots. This argument can no longer be passed by position.</p></li>
@@ -433,7 +433,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
 <div id="cran-results-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#cran-results-1" class="anchor"></a>CRAN results</h2>
+<a href="#cran-results-1" class="anchor" aria-hidden="true"></a>CRAN results</h2>
 <ul>
 <li><p>Fixed clang-UBSAN error “nan is outside the range of representable values of type ‘int’” (<a href='https://github.com/r-lib/vctrs/issues/902'>#902</a>).</p></li>
 <li><p>Fixed compilation of stability vignette following the date conversion changes on R-devel.</p></li>
@@ -442,7 +442,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
     <div id="vctrs-024" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.4">
-<a href="#vctrs-024" class="anchor"></a>vctrs 0.2.4<small> 2020-03-10 </small>
+<a href="#vctrs-024" class="anchor" aria-hidden="true"></a>vctrs 0.2.4<small> 2020-03-10 </small>
 </h1>
 <ul>
 <li><p>Factors and dates methods are now implemented in C for efficiency.</p></li>
@@ -459,7 +459,7 @@ vec_ptype2.foo.bar &lt;- function(x, y, ...) new_foo()</code></pre>
 </div>
     <div id="vctrs-023" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.3">
-<a href="#vctrs-023" class="anchor"></a>vctrs 0.2.3<small> 2020-02-20 </small>
+<a href="#vctrs-023" class="anchor" aria-hidden="true"></a>vctrs 0.2.3<small> 2020-02-20 </small>
 </h1>
 <ul>
 <li><p>The main feature of this release is considerable performance improvements with factors and dates.</p></li>
@@ -488,7 +488,7 @@ x
 </div>
     <div id="vctrs-022" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.2">
-<a href="#vctrs-022" class="anchor"></a>vctrs 0.2.2<small> 2020-01-24 </small>
+<a href="#vctrs-022" class="anchor" aria-hidden="true"></a>vctrs 0.2.2<small> 2020-01-24 </small>
 </h1>
 <ul>
 <li><p>New <code><a href="../reference/vec_as_subscript.html">vec_as_subscript()</a></code> function to cast inputs to the base type of a subscript (logical, numeric, or character). <code><a href="../reference/vec_as_index.html">vec_as_index()</a></code> has been renamed to <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code>. Use <code><a href="../reference/vec_as_location.html">num_as_location()</a></code> if you need more options to control how numeric subscripts are converted to a vector of locations.</p></li>
@@ -522,19 +522,19 @@ x
 </div>
     <div id="vctrs-021" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.1">
-<a href="#vctrs-021" class="anchor"></a>vctrs 0.2.1<small> 2019-12-17 </small>
+<a href="#vctrs-021" class="anchor" aria-hidden="true"></a>vctrs 0.2.1<small> 2019-12-17 </small>
 </h1>
 <p>Maintenance release for CRAN checks.</p>
 </div>
     <div id="vctrs-020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
-<a href="#vctrs-020" class="anchor"></a>vctrs 0.2.0<small> 2019-07-05 </small>
+<a href="#vctrs-020" class="anchor" aria-hidden="true"></a>vctrs 0.2.0<small> 2019-07-05 </small>
 </h1>
 <p>With the 0.2.0 release, many vctrs functions have been rewritten with native C code to improve performance. Functions like <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_bind.html">vec_rbind()</a></code> should now be fast enough to be used in packages. This is an ongoing effort, for instance the handling of factors and dates has not been rewritten yet. These classes still slow down vctrs primitives.</p>
 <p>The API in 0.2.0 has been updated, please see a list of breaking changes below. vctrs has now graduated from experimental to a maturing package. Please note that API changes are still planned for future releases, for instance <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> might need to return a sentinel instead of failing with an error when there is no common type or possible cast.</p>
 <div id="breaking-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#breaking-changes-1" class="anchor"></a>Breaking changes</h2>
+<a href="#breaking-changes-1" class="anchor" aria-hidden="true"></a>Breaking changes</h2>
 <ul>
 <li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. Previously these were warnings. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/maybe_lossy_cast.html">maybe_lossy_cast()</a></code>.</p></li>
 <li>
@@ -577,7 +577,7 @@ vec_c(foo = c(a = 1), .name_spec = ~ paste(.x, .y, sep = "_"))</a></code></pre>
 </div>
 <div id="new-features" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>New features</h2>
+<a href="#new-features" class="anchor" aria-hidden="true"></a>New features</h2>
 <ul>
 <li>
 <p>New <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> generic. This is the main customisation point in vctrs along with <code><a href="../reference/vec_proxy.html">vec_restore()</a></code>. You should only implement it when your type is designed around a non-vector class (atomic vectors, bare lists, data frames). In this case, <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> should return such a vector class. The vctrs operations will be applied on the proxy and <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> is called to restore the original representation of your type.</p>
@@ -631,7 +631,7 @@ vec_rbind(df1, df2)
 </div>
 <div id="other-features-and-bug-fixes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#other-features-and-bug-fixes" class="anchor"></a>Other features and bug fixes</h2>
+<a href="#other-features-and-bug-fixes" class="anchor" aria-hidden="true"></a>Other features and bug fixes</h2>
 <ul>
 <li><p>Using classed errors of class <code>"vctrs_error_assert"</code> for failed assertions, and of class <code>"vctrs_error_incompatible"</code> (with subclasses <code>_type</code>, <code>_cast</code> and <code>_op</code>) for errors on incompatible types (<a href='https://github.com/r-lib/vctrs/issues/184'>#184</a>).</p></li>
 <li><p>Character indexing is now only supported for named objects, an error is raised for unnamed objects (<a href='https://github.com/r-lib/vctrs/issues/171'>#171</a>).</p></li>

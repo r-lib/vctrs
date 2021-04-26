@@ -136,7 +136,7 @@
 </ul>
 <div id="basics" class="section level2">
 <h2 class="hasAnchor">
-<a href="#basics" class="anchor"></a>Basics</h2>
+<a href="#basics" class="anchor" aria-hidden="true"></a>Basics</h2>
 <p>In this section you’ll learn how to create a new vctrs class by calling <code><a href="../reference/new_vctr.html">new_vctr()</a></code>. This creates an object with class <code>vctrs_vctr</code> which has a number of methods. These are designed to make your life as easy as possible. For example:</p>
 <ul>
 <li><p>The <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code> methods are defined in terms of <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> so you get a pleasant, consistent display as soon as you’ve made your <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method.</p></li>
@@ -146,7 +146,7 @@
 </ul>
 <div id="percent-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#percent-class" class="anchor"></a>Percent class</h3>
+<a href="#percent-class" class="anchor" aria-hidden="true"></a>Percent class</h3>
 <p>In this section, I’ll show you how to make a <code>percent</code> class, i.e., a double vector that is printed as a percentage. We start by defining a low-level <a href="https://adv-r.hadley.nz/s3.html#s3-constrcutor" class="external-link">constructor</a> that uses <code><a href="../reference/vec_assert.html">vec_assert()</a></code> to checks types and/or sizes then calls <code><a href="../reference/new_vctr.html">new_vctr()</a></code>.</p>
 <p><code>percent</code> is built on a double vector of any length and doesn’t have any attributes.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -183,7 +183,7 @@
 </div>
 <div id="format-method" class="section level3">
 <h3 class="hasAnchor">
-<a href="#format-method" class="anchor"></a><code>format()</code> method</h3>
+<a href="#format-method" class="anchor" aria-hidden="true"></a><code>format()</code> method</h3>
 <p>The first method for every class should almost always be a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method. This should return a character vector the same length as <code>x</code>. The easiest way to do this is to rely on one of R’s low-level formatting functions like <code><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">format.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
@@ -229,7 +229,7 @@
 </div>
 <div id="casting-and-coercion" class="section level2">
 <h2 class="hasAnchor">
-<a href="#casting-and-coercion" class="anchor"></a>Casting and coercion</h2>
+<a href="#casting-and-coercion" class="anchor" aria-hidden="true"></a>Casting and coercion</h2>
 <p>The next set of methods you are likely to need are those related to coercion and casting. Coercion and casting are two sides of the same coin: changing the prototype of an existing object. When the change happens <em>implicitly</em> (e.g in <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code>) we call it <strong>coercion</strong>; when the change happens <em>explicitly</em> (e.g. with <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer(x)</a></code>), we call it <strong>casting</strong>.</p>
 <p>One of the main goals of vctrs is to put coercion and casting on a robust theoretical footing so it’s possible to make accurate predictions about what (e.g.) <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c(x, y)</a></code> should do when <code>x</code> and <code>y</code> have different prototypes. vctrs achieves this goal through two generics:</p>
 <ul>
@@ -238,7 +238,7 @@
 </ul>
 <div id="double-dispatch" class="section level3">
 <h3 class="hasAnchor">
-<a href="#double-dispatch" class="anchor"></a>Double dispatch</h3>
+<a href="#double-dispatch" class="anchor" aria-hidden="true"></a>Double dispatch</h3>
 <p>Both generics use <strong><a href="https://en.wikipedia.org/wiki/Double_dispatch" class="external-link">double dispatch</a></strong> which means that the implementation is selected based on the class of two arguments, not just one. S3 does not natively support double dispatch, so we implement our own dispatch mechanism. In practice, this means:</p>
 <ul>
 <li><p>You end up with method names with two classes, like <code>vec_ptype2.foo.bar()</code>.</p></li>
@@ -248,7 +248,7 @@
 </div>
 <div id="percent" class="section level3">
 <h3 class="hasAnchor">
-<a href="#percent" class="anchor"></a>Percent class</h3>
+<a href="#percent" class="anchor" aria-hidden="true"></a>Percent class</h3>
 <p>We’ll make our percent class coercible back and forth with double vectors.</p>
 <p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> provides a user friendly error message if the coercion doesn’t exist and makes sure <code>NA</code> is handled in a standard way. <code>NA</code> is technically a logical vector, but we want to stand in for a missing value of any type.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -346,7 +346,7 @@
 </div>
 <div id="decimal-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#decimal-class" class="anchor"></a>Decimal class</h3>
+<a href="#decimal-class" class="anchor" aria-hidden="true"></a>Decimal class</h3>
 <p>Now that you’ve seen the basics with a very simple S3 class, we’ll gradually explore more complicated scenarios. This section creates a <code>decimal</code> class that prints with the specified number of decimal places. This is very similar to <code>percent</code> but now the class needs an attribute: the number of decimal places to display (an integer vector of length 1).</p>
 <p>We start off as before, defining a low-level constructor, a user-friendly constructor, a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method, and a <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code>. Note that additional object attributes are simply passed along to <code><a href="../reference/new_vctr.html">new_vctr()</a></code>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -433,7 +433,7 @@
 </div>
 <div id="cached-sum" class="section level3">
 <h3 class="hasAnchor">
-<a href="#cached-sum" class="anchor"></a>Cached sum class</h3>
+<a href="#cached-sum" class="anchor" aria-hidden="true"></a>Cached sum class</h3>
 <p>The next level up in complexity is an object that has data-dependent attributes. To explore this idea we’ll create a vector that caches the sum of its values. As usual, we start with low-level and user-friendly constructors:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_cached_sum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">sum</span> <span class="op">=</span> <span class="fl">0L</span><span class="op">)</span> <span class="op">{</span>
@@ -495,7 +495,7 @@
 </div>
 <div id="record-style-objects" class="section level2">
 <h2 class="hasAnchor">
-<a href="#record-style-objects" class="anchor"></a>Record-style objects</h2>
+<a href="#record-style-objects" class="anchor" aria-hidden="true"></a>Record-style objects</h2>
 <p>Record-style objects use a list of equal-length vectors to represent individual components of the object. The best example of this is <code>POSIXlt</code>, which underneath the hood is a list of 11 fields like year, month, and day. Record-style classes override <code><a href="https://rdrr.io/r/base/length.html" class="external-link">length()</a></code> and subsetting methods to conceal this implementation detail.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXlt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ISOdatetime.html" class="external-link">ISOdatetime</a></span><span class="op">(</span><span class="fl">2020</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
@@ -515,7 +515,7 @@
 <p>vctrs makes it easy to create new record-style classes using <code><a href="../reference/new_rcrd.html">new_rcrd()</a></code>, which has a wide selection of default methods.</p>
 <div id="rational-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#rational-class" class="anchor"></a>Rational class</h3>
+<a href="#rational-class" class="anchor" aria-hidden="true"></a>Rational class</h3>
 <p>A fraction, or rational number, can be represented by a pair of integer vectors representing the numerator (the number on top) and the denominator (the number on bottom), where the length of each vector must be the same. To represent such a data structure we turn to a new base data type: the record (or rcrd for short).</p>
 <p>As usual we start with low-level and user-friendly constructors. The low-level constructor calls <code><a href="../reference/new_rcrd.html">new_rcrd()</a></code>, which needs a named list of equal-length vectors.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -612,7 +612,7 @@
 </div>
 <div id="decimal2-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#decimal2-class" class="anchor"></a>Decimal2 class</h3>
+<a href="#decimal2-class" class="anchor" aria-hidden="true"></a>Decimal2 class</h3>
 <p>The previous implementation of <code>decimal</code> was built on top of doubles. This is a bad idea because decimal vectors are typically used when you care about precise values (i.e., dollars and cents in a bank account), and double values suffer from floating point problems.</p>
 <p>A better implementation of a decimal class would be to use pair of integers, one for the value to the left of the decimal point, and the other for the value to the right (divided by a <code>scale</code>). The following code is a very quick sketch of how you might start creating such a class:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
@@ -646,7 +646,7 @@
 </div>
 <div id="equality-and-comparison" class="section level2">
 <h2 class="hasAnchor">
-<a href="#equality-and-comparison" class="anchor"></a>Equality and comparison</h2>
+<a href="#equality-and-comparison" class="anchor" aria-hidden="true"></a>Equality and comparison</h2>
 <p>vctrs provides three “proxy” generics. Two of these let you control how your class determines equality and ordering:</p>
 <ul>
 <li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> returns a data vector suitable for comparison. It underpins <code><a href="https://rdrr.io/r/base/Comparison.html" class="external-link">==</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html" class="external-link">!=</a></code>, <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code>, <code><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">anyDuplicated()</a></code>, and <code><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na()</a></code>.</p></li>
@@ -661,7 +661,7 @@
 <p>These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.</p>
 <div id="rational-class-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#rational-class-1" class="anchor"></a>Rational class</h3>
+<a href="#rational-class-1" class="anchor" aria-hidden="true"></a>Rational class</h3>
 <p>Let’s explore these ideas by with the rational class we started on above. By default, <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> converts a record to a data frame, and the default comparison works column by column:</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">rational</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
@@ -725,7 +725,7 @@
 </div>
 <div id="polynomial-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#polynomial-class" class="anchor"></a>Polynomial class</h3>
+<a href="#polynomial-class" class="anchor" aria-hidden="true"></a>Polynomial class</h3>
 <p>A related problem occurs if we build our vector on top of a list. The following code defines a polynomial class that represents polynomials (like <code>1 + 3x - 2x^2</code>) using a list of integer vectors (like <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c(1, 3, -2)</a></code>). Note the use of <code><a href="../reference/new_list_of.html">new_list_of()</a></code> in the constructor.</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_poly</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
@@ -809,7 +809,7 @@
 </div>
 <div id="arithmetic" class="section level2">
 <h2 class="hasAnchor">
-<a href="#arithmetic" class="anchor"></a>Arithmetic</h2>
+<a href="#arithmetic" class="anchor" aria-hidden="true"></a>Arithmetic</h2>
 <p>vctrs also provides two mathematical generics that allow you to define a broad swath of mathematical behaviour at once:</p>
 <ul>
 <li><p><code><a href="../reference/vec_math.html">vec_math(fn, x, ...)</a></code> specifies the behaviour of mathematical functions like <code><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs()</a></code>, <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum()</a></code>, and <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code>. (Note that <code><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var()</a></code> and <code><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd()</a></code> can’t be overridden, see <code>?vec_math()</code> for the complete list supported by <code><a href="../reference/vec_math.html">vec_math()</a></code>.)</p></li>
@@ -826,7 +826,7 @@
 <span class="op">}</span></code></pre></div>
 <div id="cached-sum-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#cached-sum-class" class="anchor"></a>Cached sum class</h3>
+<a href="#cached-sum-class" class="anchor" aria-hidden="true"></a>Cached sum class</h3>
 <p>I showed an example of <code><a href="../reference/vec_math.html">vec_math()</a></code> to define <code><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum()</a></code> and <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> methods for <code>cached_sum</code>. Now let’s talk about exactly how it works. Most <code><a href="../reference/vec_math.html">vec_math()</a></code> functions will have a similar form. You use a switch statement to handle the methods that you care about and fall back to <code><a href="../reference/vec_math.html">vec_math_base()</a></code> for those that you don’t care about.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_math.vctrs_cached_sum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.fn</span>, <span class="va">.x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
@@ -839,7 +839,7 @@
 </div>
 <div id="meter-class" class="section level3">
 <h3 class="hasAnchor">
-<a href="#meter-class" class="anchor"></a>Meter class</h3>
+<a href="#meter-class" class="anchor" aria-hidden="true"></a>Meter class</h3>
 <p>To explore the infix arithmetic operators exposed by <code><a href="../reference/vec_arith.html">vec_arith()</a></code> I’ll create a new class that represents a measurement in <code>meter</code>s:</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_meter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
@@ -964,7 +964,7 @@
 </div>
 <div id="implementing-a-vctrs-s3-class-in-a-package" class="section level2">
 <h2 class="hasAnchor">
-<a href="#implementing-a-vctrs-s3-class-in-a-package" class="anchor"></a>Implementing a vctrs S3 class in a package</h2>
+<a href="#implementing-a-vctrs-s3-class-in-a-package" class="anchor" aria-hidden="true"></a>Implementing a vctrs S3 class in a package</h2>
 <p>Defining S3 methods interactively is fine for iteration and exploration, but if your class lives in a package, you need to do a few more things:</p>
 <ul>
 <li><p>Register the S3 methods by listing them in the <code>NAMESPACE</code> file.</p></li>
@@ -973,7 +973,7 @@
 <p>Let’s assume that the <code>percent</code> class is implemented in the pizza package in the file <code>R/percent.R</code>. Here we walk through the major sections of this hypothetical file. You’ve seen all of this code before, but now it’s augmented by the roxygen2 directives that produce the correct <code>NAMESPACE</code> entries and help topics.</p>
 <div id="getting-started" class="section level3">
 <h3 class="hasAnchor">
-<a href="#getting-started" class="anchor"></a>Getting started</h3>
+<a href="#getting-started" class="anchor" aria-hidden="true"></a>Getting started</h3>
 <p>First, the pizza package needs to include vctrs in the <code>Imports</code> section of its <code>DESCRIPTION</code> (perhaps by calling <code>usethis::use_package("vctrs")</code>. While vctrs is under very active development, it probably makes sense to state a minimum version.</p>
 <pre><code>Imports:
     a_package,
@@ -1001,7 +1001,7 @@
 </div>
 <div id="low-level-and-user-friendly-constructors" class="section level3">
 <h3 class="hasAnchor">
-<a href="#low-level-and-user-friendly-constructors" class="anchor"></a>Low-level and user-friendly constructors</h3>
+<a href="#low-level-and-user-friendly-constructors" class="anchor" aria-hidden="true"></a>Low-level and user-friendly constructors</h3>
 <p>Next we add our constructor:</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
@@ -1034,7 +1034,7 @@
 </div>
 <div id="other-helpers" class="section level3">
 <h3 class="hasAnchor">
-<a href="#other-helpers" class="anchor"></a>Other helpers</h3>
+<a href="#other-helpers" class="anchor" aria-hidden="true"></a>Other helpers</h3>
 <p>It’s a good idea to provide a function that tests if an object is of this class. If you do so, it makes sense to document it with the user-friendly constructor <code>percent()</code>:</p>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @export</span>
@@ -1077,7 +1077,7 @@
 </div>
 <div id="testing" class="section level3">
 <h3 class="hasAnchor">
-<a href="#testing" class="anchor"></a>Testing</h3>
+<a href="#testing" class="anchor" aria-hidden="true"></a>Testing</h3>
 <p>It’s good practice to test your new class. Specific recommendations:</p>
 <ul>
 <li><p><code>R/percent.R</code> is the type of file where you really do want 100% test coverage. You can use <code>devtools::test_coverage_file()</code> to check this.</p></li>

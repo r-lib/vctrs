@@ -576,7 +576,7 @@ subclasses, see
 <li><p>For a tutorial about implementing vctrs classes from scratch, see
 <code><a href='../articles/s3-vector.html'>vignette("s3-vector")</a></code></p></li>
 </ul>
-<h3 class='hasAnchor' id='the-natural-number-class'><a class='anchor' href='#the-natural-number-class'></a>The natural number class</h3>
+<h3 class='hasAnchor' id='the-natural-number-class'><a class='anchor' aria-hidden='true' href='#the-natural-number-class'></a>The natural number class</h3>
 
 
 <p>We’ll illustrate how to implement coercion methods with a simple class
@@ -614,7 +614,7 @@ subset.<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='co'>#&gt; [1]  1 NA</span>
 </pre><p></div></p>
 
-<h3 class='hasAnchor' id='roxygen-workflow'><a class='anchor' href='#roxygen-workflow'></a>Roxygen workflow</h3>
+<h3 class='hasAnchor' id='roxygen-workflow'><a class='anchor' aria-hidden='true' href='#roxygen-workflow'></a>Roxygen workflow</h3>
 
 
 <p>To implement methods for generics, first import the generics in your
@@ -630,9 +630,9 @@ regular S3 methods. In these examples we are using roxygen2 tags to
 register the methods, but you can also register the methods manually in
 your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register()</a></code>.</p>
 
-<h3 class='hasAnchor' id='implementing-'><a class='anchor' href='#implementing-'></a>Implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
+<h3 class='hasAnchor' id='implementing-'><a class='anchor' aria-hidden='true' href='#implementing-'></a>Implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
 
-<h4 class='hasAnchor' id='the-self-self-method'><a class='anchor' href='#the-self-self-method'></a>The self-self method</h4>
+<h4 class='hasAnchor' id='the-self-self-method'><a class='anchor' aria-hidden='true' href='#the-self-self-method'></a>The self-self method</h4>
 
 
 <p>The first method to implement is the one that signals that your class is
@@ -652,7 +652,7 @@ because this is how vctrs knows that a class that is implementing vctrs
 methods (for instance this disable fallbacks to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code>). Also, it
 makes your class a bit more efficient.</p>
 
-<h4 class='hasAnchor' id='the-parent-and-children-methods'><a class='anchor' href='#the-parent-and-children-methods'></a>The parent and children methods</h4>
+<h4 class='hasAnchor' id='the-parent-and-children-methods'><a class='anchor' aria-hidden='true' href='#the-parent-and-children-methods'></a>The parent and children methods</h4>
 
 
 <p>Our natural number class is conceptually a parent of <code>&lt;logical&gt;</code> and a
@@ -706,7 +706,7 @@ implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span
 <span class='op'>}</span>
 </pre><p></div></p>
 
-<h4 class='hasAnchor' id='incompatible-attributes'><a class='anchor' href='#incompatible-attributes'></a>Incompatible attributes</h4>
+<h4 class='hasAnchor' id='incompatible-attributes'><a class='anchor' aria-hidden='true' href='#incompatible-attributes'></a>Incompatible attributes</h4>
 
 
 <p>Most of the time, inputs are incompatible because they have different
@@ -731,9 +731,9 @@ create more informative error messages when the common type
 determination is for a column of a data frame. They are part of the
 generic signature but can usually be left out if not used.</p>
 
-<h3 class='hasAnchor' id='list-vec-ptype-'><a class='anchor' href='#list-vec-ptype-'></a>Implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
+<h3 class='hasAnchor' id='list-vec-ptype-'><a class='anchor' aria-hidden='true' href='#list-vec-ptype-'></a>Implementing <code><a href='vec_ptype2.html'>vec_ptype2()</a></code></h3>
 
-<h4 class='hasAnchor' id='the-self-self-method'><a class='anchor' href='#the-self-self-method'></a>The self-self method</h4>
+<h4 class='hasAnchor' id='the-self-self-method'><a class='anchor' aria-hidden='true' href='#the-self-self-method'></a>The self-self method</h4>
 
 
 <p>The first method to implement is the one that signals that your class is
@@ -753,7 +753,7 @@ because this is how vctrs knows that a class that is implementing vctrs
 methods (for instance this disable fallbacks to <code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code>). Also, it
 makes your class a bit more efficient.</p>
 
-<h4 class='hasAnchor' id='the-parent-and-children-methods'><a class='anchor' href='#the-parent-and-children-methods'></a>The parent and children methods</h4>
+<h4 class='hasAnchor' id='the-parent-and-children-methods'><a class='anchor' aria-hidden='true' href='#the-parent-and-children-methods'></a>The parent and children methods</h4>
 
 
 <p>Our natural number class is conceptually a parent of <code>&lt;logical&gt;</code> and a
@@ -807,7 +807,7 @@ implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span
 <span class='op'>}</span>
 </pre><p></div></p>
 
-<h4 class='hasAnchor' id='incompatible-attributes'><a class='anchor' href='#incompatible-attributes'></a>Incompatible attributes</h4>
+<h4 class='hasAnchor' id='incompatible-attributes'><a class='anchor' aria-hidden='true' href='#incompatible-attributes'></a>Incompatible attributes</h4>
 
 
 <p>Most of the time, inputs are incompatible because they have different
@@ -834,7 +834,7 @@ generic signature but can usually be left out if not used.</p>
 
 
 
-<h3 class='hasAnchor' id='implementing-'><a class='anchor' href='#implementing-'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
+<h3 class='hasAnchor' id='implementing-'><a class='anchor' aria-hidden='true' href='#implementing-'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
 
 
 <p>Corresponding <code><a href='vec_cast.html'>vec_cast()</a></code> methods must be implemented for all
@@ -903,7 +903,7 @@ methods for vctrs:<div class="r"></p><pre><span class='co'>#' @export</span>
 
 <span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] 1.5 1.0</span>
-</pre><p></div></p><h3 class='hasAnchor' id='list-vec-cast-'><a class='anchor' href='#list-vec-cast-'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
+</pre><p></div></p><h3 class='hasAnchor' id='list-vec-cast-'><a class='anchor' aria-hidden='true' href='#list-vec-cast-'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
 
 
 <p>Corresponding <code><a href='vec_cast.html'>vec_cast()</a></code> methods must be implemented for all

@@ -233,7 +233,7 @@ inner and outer names are present, an error is thrown unless a
 
     
 
-<h3 class='hasAnchor' id='vctrs-dependencies'><a class='anchor' href='#vctrs-dependencies'></a>vctrs dependencies</h3>
+<h3 class='hasAnchor' id='vctrs-dependencies'><a class='anchor' aria-hidden='true' href='#vctrs-dependencies'></a>vctrs dependencies</h3>
 
 <ul>
 <li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
@@ -242,7 +242,7 @@ inner and outer names are present, an error is thrown unless a
 </ul>
 
 
-<h3 class='hasAnchor' id='base-dependencies'><a class='anchor' href='#base-dependencies'></a>base dependencies</h3>
+<h3 class='hasAnchor' id='base-dependencies'><a class='anchor' aria-hidden='true' href='#base-dependencies'></a>base dependencies</h3>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
@@ -262,11 +262,11 @@ or columns.</p></div>
 </div><div class='output co'>#&gt; [1] 0.0 1.0 1.5</div><div class='input'>
 <span class='co'># Date/times --------------------------</span>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-04-16" "2021-04-16"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-04-16 14:30:37 UTC" "2021-04-16 00:00:00 UTC"</div><div class='input'>
+</div><div class='output co'>#&gt; [1] "2021-04-26" "2021-04-26"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-04-26 21:12:51 UTC" "2021-04-26 00:00:00 UTC"</div><div class='input'>
 <span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-04-16 00:00:00 UTC" "2021-04-16 14:30:37 UTC"</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2021-04-16 14:30:37 UTC" "2021-04-16 00:00:00 UTC"</div><div class='input'>
+</div><div class='output co'>#&gt; [1] "2021-04-26 00:00:00 UTC" "2021-04-26 21:12:51 UTC"</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-04-26 21:12:51 UTC" "2021-04-26 00:00:00 UTC"</div><div class='input'>
 <span class='co'># Factors -----------------------------</span>
 <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
