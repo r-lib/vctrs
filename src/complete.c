@@ -93,7 +93,7 @@ void vec_detect_complete_switch(SEXP x, R_len_t size, int* p_out) {
   case vctrs_type_raw: raw_detect_complete(x, size, p_out); break;
   case vctrs_type_list: list_detect_complete(x, size, p_out); break;
   case vctrs_type_dataframe: df_detect_complete(x, size, p_out); break;
-  case vctrs_type_scalar: stop_internal("vec_detect_complete", "Can't detect missing values in scalars.");
+  case vctrs_type_scalar: r_stop_internal("vec_detect_complete", "Can't detect missing values in scalars.");
   default: stop_unimplemented_vctrs_type("vec_detect_complete", vec_proxy_typeof(x));
   }
 }

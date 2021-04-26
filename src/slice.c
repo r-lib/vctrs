@@ -192,7 +192,7 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
     SEXP elt = VECTOR_ELT(x, i);
 
     if (vec_size(elt) != size) {
-      stop_internal("df_slice", "Columns must match the data frame size.");
+      r_stop_internal("df_slice", "Columns must match the data frame size.");
     }
 
     SEXP sliced = vec_slice_impl(elt, subscript);
@@ -265,7 +265,7 @@ SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
 // (and the empty string is persistently protected anyway).
 static void repair_na_names(SEXP names, SEXP subscript) {
   if (!NO_REFERENCES(names)) {
-    stop_internal("repair_na_names", "`names` can't be referenced.");
+    r_stop_internal("repair_na_names", "`names` can't be referenced.");
   }
 
   // No possible way to have `NA_integer_` in a compact seq
@@ -367,7 +367,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
 
   switch (info.type) {
   case vctrs_type_null:
-    stop_internal("vec_slice_impl", "Unexpected `NULL`.");
+    r_stop_internal("vec_slice_impl", "Unexpected `NULL`.");
 
   case vctrs_type_logical:
   case vctrs_type_integer:

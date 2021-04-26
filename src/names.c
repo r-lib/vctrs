@@ -390,7 +390,7 @@ static ptrdiff_t suffix_pos(const char* name) {
       goto done;
 
     default:
-      stop_internal("suffix_pos", "Unexpected state.");
+      r_stop_internal("suffix_pos", "Unexpected state.");
     }}
 
  done:
@@ -480,10 +480,10 @@ static void describe_repair(SEXP old_names, SEXP new_names) {
 // [[ register() ]]
 SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
   if (names != R_NilValue && TYPEOF(names) != STRSXP) {
-    stop_internal("vctrs_outer_names", "`names` must be `NULL` or a string.");
+    r_stop_internal("vctrs_outer_names", "`names` must be `NULL` or a string.");
   }
   if (!r_is_number(n)) {
-    stop_internal("vctrs_outer_names", "`n` must be a single integer.");
+    r_stop_internal("vctrs_outer_names", "`n` must be a single integer.");
   }
 
   if (outer != R_NilValue) {
@@ -499,7 +499,7 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
     return names;
   }
   if (TYPEOF(outer) != CHARSXP) {
-    stop_internal("outer_names", "`outer` must be a scalar string.");
+    r_stop_internal("outer_names", "`outer` must be a scalar string.");
   }
 
   if (outer == strings_empty || outer == NA_STRING) {
@@ -534,7 +534,7 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
     return inner;
   }
   if (TYPEOF(outer) != CHARSXP) {
-    stop_internal("apply_name_spec", "`outer` must be a scalar string.");
+    r_stop_internal("apply_name_spec", "`outer` must be a scalar string.");
   }
 
   if (outer == strings_empty || outer == NA_STRING) {
@@ -921,7 +921,7 @@ SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
 
   if (TYPEOF(n_) == INTSXP) {
     if (Rf_length(n_) != 1) {
-      stop_internal("vctrs_validate_minimal_names", "`n` must be a single number.");
+      r_stop_internal("vctrs_validate_minimal_names", "`n` must be a single number.");
     }
     n = INTEGER(n_)[0];
   }

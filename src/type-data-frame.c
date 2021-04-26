@@ -82,7 +82,7 @@ SEXP vctrs_new_data_frame(SEXP args) {
 
     // We might add dynamic dots later on
     if (tag == R_ClassSymbol) {
-      stop_internal("new_data_frame", "Can't supply `class` in `...`.");
+      r_stop_internal("new_data_frame", "Can't supply `class` in `...`.");
     }
 
     if (tag == R_NamesSymbol) {
@@ -229,7 +229,7 @@ static SEXP df_list_splice(SEXP x);
 
 SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
   if (TYPEOF(x) != VECSXP) {
-    stop_internal("df_list", "`x` must be a list.");
+    r_stop_internal("df_list", "`x` must be a list.");
   }
 
   x = PROTECT(vec_recycle_common(x, size));
@@ -361,7 +361,7 @@ static SEXP df_list_splice(SEXP x) {
     SEXP col_names = PROTECT(r_names(col));
 
     if (TYPEOF(col_names) != STRSXP) {
-      stop_internal(
+      r_stop_internal(
         "df_splice",
         "Encountered corrupt data frame. "
         "Data frames must have character column names."
@@ -666,7 +666,7 @@ SEXP df_cast_opts(const struct cast_opts* opts) {
   SEXP to_names = PROTECT(r_names(opts->to));
 
   if (x_names == R_NilValue || to_names == R_NilValue) {
-    stop_internal("df_cast_opts", "Data frame must have names.");
+    r_stop_internal("df_cast_opts", "Data frame must have names.");
   }
 
   SEXP out = R_NilValue;

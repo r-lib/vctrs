@@ -344,9 +344,9 @@ static SEXP date_validate(SEXP x) {
     // Keeps attributes
     return Rf_coerceVector(x, REALSXP);
   default:
-    stop_internal("date_validate",
-                  "Corrupt `Date` with unknown type %s.",
-                  Rf_type2char(TYPEOF(x)));
+    r_stop_internal("date_validate",
+                    "Corrupt `Date` with unknown type %s.",
+                    Rf_type2char(TYPEOF(x)));
   }
 }
 
@@ -388,9 +388,9 @@ static SEXP datetime_validate_type(SEXP x) {
     // Keeps attributes
     return Rf_coerceVector(x, REALSXP);
   default:
-    stop_internal("datetime_validate_type",
-                  "Corrupt `POSIXct` with unknown type %s.",
-                  Rf_type2char(TYPEOF(x)));
+    r_stop_internal("datetime_validate_type",
+                    "Corrupt `POSIXct` with unknown type %s.",
+                    Rf_type2char(TYPEOF(x)));
   }
 
   never_reached("datetime_validate_type");

@@ -151,7 +151,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     // quadratic probing.
   }
 
-  stop_internal("dict_hash_with", "Dictionary is full.");
+  r_stop_internal("dict_hash_with", "Dictionary is full.");
 }
 
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {

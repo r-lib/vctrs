@@ -232,7 +232,7 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
 // [[ register() ]]
 SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
   if (!r_is_number(kind)) {
-    stop_internal("vctrs_df_proxy", "`kind` must be a single integer.");
+    r_stop_internal("vctrs_df_proxy", "`kind` must be a single integer.");
   }
 
   enum vctrs_proxy_kind c_kind = r_int_get(kind, 0);

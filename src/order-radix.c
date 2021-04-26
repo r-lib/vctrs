@@ -4565,7 +4565,7 @@ static
 SEXP vec_order_compute_na_last(SEXP na_largest, SEXP decreasing) {
   const r_ssize size = r_length(na_largest);
   if (size != r_length(decreasing)) {
-    stop_internal(
+    r_stop_internal(
       "vec_order_compute_na_last",
       "`na_largest` and `decreasing` should already match in size."
     );
