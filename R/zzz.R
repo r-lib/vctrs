@@ -13,6 +13,8 @@ on_package_load <- function(pkg, expr) {
   check_linked_version(pkgname)
   ns <- ns_env("vctrs")
 
+  run_on_load()
+
   on_package_load("testthat", {
     s3_register("testthat::is_informative_error", "vctrs_error_cast_lossy")
     s3_register("testthat::is_informative_error", "vctrs_error_cast_lossy_dropped")
