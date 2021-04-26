@@ -6,7 +6,7 @@
 #include <strings.h>
 
 static void stop_not_comparable(SEXP x, SEXP y, const char* message) {
-  Rf_errorcall(R_NilValue, "`x` and `y` are not comparable: %s", message);
+  r_abort("`x` and `y` are not comparable: %s", message);
 }
 
 // -----------------------------------------------------------------------------
@@ -56,9 +56,9 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_equal);
     case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_equal);
     case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_equal);
-    case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
-    default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vctrs_compare", type);
     }
   } else {
     switch (type) {
@@ -66,9 +66,9 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_propagate);
     case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_propagate);
     case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_propagate);
-    case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
-    default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vctrs_compare", type);
     }
   }
 }
@@ -182,9 +182,9 @@ static void vec_compare_col(int* p_out,
     case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_na_equal); break;
     case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_na_equal); break;
     case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_na_equal); break;
-    case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
-    default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vec_compare_col", type);
     }
   } else {
     switch (type) {
@@ -192,9 +192,9 @@ static void vec_compare_col(int* p_out,
     case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_na_propagate); break;
     case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_na_propagate); break;
     case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_na_propagate); break;
-    case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      Rf_errorcall(R_NilValue, "Can't compare lists with `vctrs_compare()`");
-    default:                   Rf_error("Unimplemented type in `vctrs_compare()`");
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vec_compare_col", type);
     }
   }
 }
