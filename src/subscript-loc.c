@@ -1,6 +1,7 @@
 #include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
+#include "compare.h"
 #include "subscript.h"
 #include "subscript-loc.h"
 
@@ -150,9 +151,6 @@ static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero) {
   return out;
 }
 
-// From compare.c
-int qsort_icmp(const void* x, const void* y);
-
 static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
                                   const struct location_opts* opts) {
 
@@ -196,7 +194,7 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
 
   // Only the first i_extend entries of the array are populated,
   // the rest is never touched.
-  qsort(p_extended, i_extend, sizeof(int), &qsort_icmp);
+  qsort(p_extended, i_extend, sizeof(int), &qsort_int_compare_scalar);
 
   for (R_len_t i = 0; i < i_extend; ++i) {
     int elt = p_extended[i];
