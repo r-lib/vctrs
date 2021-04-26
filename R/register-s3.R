@@ -115,7 +115,7 @@ s3_register <- function(generic, class, method = NULL) {
 # Replace by rlang's version once it is available
 on_load({
   if ("s3_register" %in% getNamespaceImports("vctrs")$rlang) {
-    s3_register <- rlang::s3_register
+    s3_register <- evalq(s3_register, ns_env("rlang"))
   }
 })
 
