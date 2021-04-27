@@ -4,8 +4,6 @@
 bare_mtcars <- unrownames(mtcars)
 
 test_that("grouped-df is proxied and restored", {
-  skip("until vec_order_radix -> vec_order")
-
   gdf <- dplyr::group_by(bare_mtcars, cyl)
 
   expect_identical(vec_proxy(gdf), gdf)
@@ -21,8 +19,6 @@ test_that("grouped-df is proxied and restored", {
 })
 
 test_that("can take the common type of grouped tibbles and tibbles", {
-  skip("until vec_order_radix -> vec_order")
-
   gdf <- dplyr::group_by(bare_mtcars, cyl)
   expect_identical(vec_ptype2(gdf, data.frame()), vec_ptype(gdf))
   expect_identical(vec_ptype2(data.frame(), gdf), vec_ptype(gdf))
@@ -37,8 +33,6 @@ test_that("can take the common type of grouped tibbles and tibbles", {
 })
 
 test_that("the common type of grouped tibbles includes the union of grouping variables", {
-  skip("until vec_order_radix -> vec_order")
-
   gdf1 <- dplyr::group_by(bare_mtcars, cyl)
   gdf2 <- dplyr::group_by(bare_mtcars, am, vs)
   expect_identical(
@@ -48,8 +42,6 @@ test_that("the common type of grouped tibbles includes the union of grouping var
 })
 
 test_that("can cast to and from `grouped_df`", {
-  skip("until vec_order_radix -> vec_order")
-
   gdf <- dplyr::group_by(unrownames(bare_mtcars), cyl)
   input <- bare_mtcars[10]
   cast_gdf <- dplyr::group_by(vec_cast(bare_mtcars[10], bare_mtcars), cyl)
@@ -80,8 +72,6 @@ test_that("can cast to and from `grouped_df`", {
 })
 
 test_that("casting to `grouped_df` doesn't require grouping variables", {
-  skip("until vec_order_radix -> vec_order")
-
   expect_identical(
     vec_cast(bare_mtcars[10], dplyr::group_by(bare_mtcars, cyl)),
     dplyr::group_by(vec_cast(bare_mtcars[10], bare_mtcars), cyl)
@@ -89,15 +79,11 @@ test_that("casting to `grouped_df` doesn't require grouping variables", {
 })
 
 test_that("casting to `grouped_df` handles `drop`", {
-  skip("until vec_order_radix -> vec_order")
-
   gdf_nodrop <- dplyr::group_by(bare_mtcars, cyl, .drop = FALSE)
   expect_identical(vec_cast(bare_mtcars, gdf_nodrop), gdf_nodrop)
 })
 
 test_that("can cbind grouped data frames", {
-  skip("until vec_order_radix -> vec_order")
-
   gdf <- dplyr::group_by(bare_mtcars[-10], cyl)
   df <- unrownames(bare_mtcars)[10]
 
@@ -165,8 +151,6 @@ test_that("can cast to and from `rowwise_df`", {
 })
 
 test_that("can cbind rowwise data frames", {
-  skip("until vec_order_radix -> vec_order")
-
   df <- unrownames(bare_mtcars)
   rww <- dplyr::rowwise(df[-2])
   gdf <- dplyr::group_by(df[2], cyl)
@@ -179,8 +163,6 @@ test_that("can cbind rowwise data frames", {
 })
 
 test_that("no common type between rowwise and grouped data frames", {
-  skip("until vec_order_radix -> vec_order")
-
   expect_df_fallback_warning(
     out <- vec_ptype_common_df_fallback(dplyr::rowwise(bare_mtcars), dplyr::group_by(bare_mtcars, cyl))
   )
