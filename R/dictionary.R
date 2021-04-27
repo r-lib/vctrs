@@ -60,7 +60,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
 
   idx <- switch(sort,
     location = order(kv$key),
-    key = vec_order(df$key),
+    key = vec_order_radix(df$key),
     count = order(-kv$val)
   )
 
