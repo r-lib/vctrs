@@ -36,8 +36,7 @@
 #'     columns.
 #'
 #'   Common transformation functions include: `tolower()` for case-insensitive
-#'   ordering and `stringi::str_sort_key()` for locale-aware ordering. See the
-#'   Details section for more information.
+#'   ordering and `stringi::str_sort_key()` for locale-aware ordering.
 #'
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.

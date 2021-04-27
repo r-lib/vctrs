@@ -62,8 +62,7 @@ columns.
 }
 
 Common transformation functions include: \code{tolower()} for case-insensitive
-ordering and \code{stringi::str_sort_key()} for locale-aware ordering. See the
-Details section for more information.}
+ordering and \code{stringi::str_sort_key()} for locale-aware ordering.}
 }
 \value{
 \itemize{
