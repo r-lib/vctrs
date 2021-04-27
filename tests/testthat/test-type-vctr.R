@@ -585,25 +585,38 @@ test_that("xtfrm() works with character subclass", {
   expect_identical(xtfrm(new_vctr(chr())), int())
 })
 
-test_that("Summary generics behave identically to base if na.rm = TRUE and all values are NA (#1357)", {
-  expect_warning(
-    expect_identical(
-      min(new_vctr(NA_real_), na.rm = TRUE),
-      new_vctr(min(NA_real_, na.rm = TRUE))
-    )
-  )
+test_that("Summary generics behave as expected if na.rm = TRUE and all values are NA (#1357)", {
+  expect_identical(min(new_vctr(NA_real_), na.rm = TRUE), new_vctr(Inf))
+  expect_identical(max(new_vctr(NA_real_), na.rm = TRUE), new_vctr(-Inf))
+  expect_identical(range(new_vctr(NA_real_), na.rm = TRUE), new_vctr(c(Inf, -Inf)))
 
-  expect_warning(
-    expect_identical(
-      max(new_vctr(NA_real_), na.rm = TRUE),
-      new_vctr(max(NA_real_, na.rm = TRUE))
-    )
-  )
+  expect_identical(min(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(max(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(range(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(c(NA_integer_, NA_integer_)))
 
-  expect_warning(
-    expect_identical(
-      range(new_vctr(NA_real_), na.rm = TRUE),
-      new_vctr(range(NA_real_, na.rm = TRUE))
-    )
-  )
+  expect_identical(min(new_vctr(NA_character_), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(max(new_vctr(NA_character_), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(range(new_vctr(NA_character_), na.rm = TRUE), new_vctr(c(NA_character_, NA_character_)))
+
+  expect_identical(min(new_vctr(NA), na.rm = TRUE), new_vctr(NA))
+  expect_identical(max(new_vctr(NA), na.rm = TRUE), new_vctr(NA))
+  expect_identical(range(new_vctr(NA), na.rm = TRUE), new_vctr(c(NA, NA)))
+})
+
+test_that("Summary generics behave as expected for empty vctrs (#1357)", {
+  expect_identical(min(new_vctr(numeric()), na.rm = TRUE), new_vctr(Inf))
+  expect_identical(max(new_vctr(numeric()), na.rm = TRUE), new_vctr(-Inf))
+  expect_identical(range(new_vctr(numeric()), na.rm = TRUE), new_vctr(c(Inf, -Inf)))
+
+  expect_identical(min(new_vctr(integer()), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(max(new_vctr(integer()), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(range(new_vctr(integer()), na.rm = TRUE), new_vctr(c(NA_integer_, NA_integer_)))
+
+  expect_identical(min(new_vctr(character()), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(max(new_vctr(character()), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(range(new_vctr(character()), na.rm = TRUE), new_vctr(c(NA_character_, NA_character_)))
+
+  expect_identical(min(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
+  expect_identical(max(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
+  expect_identical(range(new_vctr(logical()), na.rm = TRUE), new_vctr(c(NA, NA)))
 })

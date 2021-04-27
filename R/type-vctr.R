@@ -477,7 +477,7 @@ quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
 
 vec_cast_or_na <- function(x, to, ...) {
   tryCatch(
-    vctrs_error_incompatible_type = function(...) vec_cast(rep(NA, length(x)), to),
+    vctrs_error_incompatible_type = function(...) vec_init(to, length(x)),
     vec_cast(x, to)
   )
 }
