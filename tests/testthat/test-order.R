@@ -1005,33 +1005,6 @@ test_that("ordering works with rcrd cols", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_order_locs()
-
-test_that("`vec_order_locs()` is working", {
-  x <- c(1, 3, 1, 5, 2, 5, 1)
-
-  expect <- new_data_frame(
-    list(
-      key = c(1, 2, 3, 5),
-      loc = list(c(1L, 3L, 7L), 5L, 2L, c(4L, 6L))
-    )
-  )
-
-  expect_identical(vec_order_locs(x), expect)
-})
-
-test_that("`chr_transform` can result in keys being seen as identical", {
-  x <- c("b", "A", "a")
-  y <- c("b", "a", "A")
-
-  x_expect <- data_frame(key = c("A", "b"), loc = list(c(2L, 3L), 1L))
-  y_expect <- data_frame(key = c("a", "b"), loc = list(c(2L, 3L), 1L))
-
-  expect_identical(vec_order_locs(x, chr_transform = tolower), x_expect)
-  expect_identical(vec_order_locs(y, chr_transform = tolower), y_expect)
-})
-
-# ------------------------------------------------------------------------------
 # `vec_order()` - Pre-existing tests
 
 test_that("can request NAs sorted first", {
@@ -1097,6 +1070,33 @@ test_that("can order data frames (and subclasses) with matrix columns", {
 
   df$x <- tibble::tibble(y = matrix(1:2, 2))
   expect_identical(vec_order(df), 1:2)
+})
+
+# ------------------------------------------------------------------------------
+# vec_order_locs()
+
+test_that("`vec_order_locs()` is working", {
+  x <- c(1, 3, 1, 5, 2, 5, 1)
+
+  expect <- new_data_frame(
+    list(
+      key = c(1, 2, 3, 5),
+      loc = list(c(1L, 3L, 7L), 5L, 2L, c(4L, 6L))
+    )
+  )
+
+  expect_identical(vec_order_locs(x), expect)
+})
+
+test_that("`chr_transform` can result in keys being seen as identical", {
+  x <- c("b", "A", "a")
+  y <- c("b", "a", "A")
+
+  x_expect <- data_frame(key = c("A", "b"), loc = list(c(2L, 3L), 1L))
+  y_expect <- data_frame(key = c("a", "b"), loc = list(c(2L, 3L), 1L))
+
+  expect_identical(vec_order_locs(x, chr_transform = tolower), x_expect)
+  expect_identical(vec_order_locs(y, chr_transform = tolower), y_expect)
 })
 
 # ------------------------------------------------------------------------------
