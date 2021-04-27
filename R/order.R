@@ -63,15 +63,13 @@ vec_order_base <- function(x,
   direction <- arg_match0(direction, c("asc", "desc"))
   na_value <- arg_match0(na_value, c("largest", "smallest"))
 
-  order_base_proxy(vec_proxy_order(x), direction = direction, na_value = na_value)
-}
-
-order_base_proxy <- function(proxy, direction = "asc", na_value = "largest") {
   decreasing <- !identical(direction, "asc")
   na.last <- identical(na_value, "largest")
   if (decreasing) {
     na.last <- !na.last
   }
+
+  proxy <- vec_proxy_order(x)
 
   if (is.data.frame(proxy)) {
     # Work around type-instability in `base::order()`
