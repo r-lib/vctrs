@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* The `xtfrm()` method for vctrs_vctr objects no longer accidentally breaks
+  ties (#1354).
+
 * `min()`, `max()` and `range()` no longer throw an error if `na.rm = TRUE` is
   set and all values are `NA` (@gorcha, #1357). In this case, and where an empty
   input is given, it will return `Inf`/`-Inf`, or `NA` if `Inf` can't be cast

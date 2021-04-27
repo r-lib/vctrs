@@ -446,17 +446,20 @@ anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
 #' @export
 xtfrm.vctrs_vctr <- function(x) {
   proxy <- vec_proxy_order(x)
+  type <- typeof(proxy)
 
-  if (is.object(proxy) && typeof(proxy) %in% c("integer", "double", "character")) {
+  if (type == "logical") {
     proxy <- unstructure(proxy)
+    proxy <- as.integer(proxy)
+    return(proxy)
   }
 
-  # order(order(x)) ~= rank(x)
-  if (typeof(proxy) %in% c("integer", "double")) {
-    proxy
-  } else {
-    vec_order(vec_order(proxy))
+  if (type %in% c("integer", "double")) {
+    proxy <- unstructure(proxy)
+    return(proxy)
   }
+
+  vec_rank(proxy, ties = "dense", na_propagate = TRUE)
 }
 
 #' @importFrom stats median
