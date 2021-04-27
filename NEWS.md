@@ -1,7 +1,13 @@
 # vctrs (development version)
 
+* `min()`, `max()` and `range()` no longer throw an error if `na.rm = TRUE` is
+  set and all values are `NA` (@gorcha, #1357). In this case, and where an empty
+  input is given, it will return `Inf`/`-Inf`, or `NA` if `Inf` can't be cast
+  to the input type.
+
 * `vec_group_loc()`, used for grouping in dplyr, now correctly handles
   vectors with billions of elements (up to `.Machine$integer.max`) (#1133).
+
 
 # vctrs 0.3.7
 
