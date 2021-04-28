@@ -2,7 +2,7 @@
 % Please edit documentation in R/order.R
 \name{vec_order_base}
 \alias{vec_order_base}
-\title{Order vectors}
+\title{Order vectors with base compatibility}
 \usage{
 vec_order_base(
   x,

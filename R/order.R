@@ -202,7 +202,7 @@ vec_order_info <- function(x,
 
 # ------------------------------------------------------------------------------
 
-#' Order vectors
+#' Order vectors with base compatibility
 #'
 #' @description
 #' `vec_order_base()` orders vectors using [base::order()], but can handle
