@@ -218,7 +218,7 @@ summarise with the following table:</p>
 <p>(Note <code>NULL</code>s are handled specially; they are treated like empty
 arguments and hence don't affect the size)</p>
 <p>This is a stricter set of rules than base R, which will usually
-return output of length <code><a href='https://rdrr.io/r/base/Extremes.html'>max(nx, ny)</a></code>, warning if the length of the longer
+return output of length <code>max(nx, ny)</code>, warning if the length of the longer
 vector is not an integer multiple of the length of the shorter.</p>
 <p>We say that two vectors have <strong>compatible size</strong> if they can be
 recycled to be the same length.</p>
@@ -234,13 +234,13 @@ recycled to be the same length.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Inputs with 1 observation are recycled</span>
 <span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
+</div><div class='co'>#&gt; [[1]]
 #&gt; [1] 1 2 3 4 5
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] 5 5 5 5 5
 #&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
+</div><div class='co'>#&gt; [[1]]
 #&gt; integer(0)
 #&gt; 
 #&gt; [[2]]
@@ -251,7 +251,7 @@ recycled to be the same length.</p>
 
 <span class='co'># Data frames and matrices are recycled along their rows</span>
 <span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
+</div><div class='co'>#&gt; [[1]]
 #&gt;   x
 #&gt; 1 1
 #&gt; 2 1
@@ -262,7 +262,7 @@ recycled to be the same length.</p>
 #&gt; [[2]]
 #&gt; [1] 1 2 3 4 5
 #&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
+</div><div class='co'>#&gt; [[1]]
 #&gt;      [,1] [,2]
 #&gt; [1,]    1    2
 #&gt; [2,]    1    2
@@ -273,7 +273,7 @@ recycled to be the same length.</p>
 #&gt; [[2]]
 #&gt; [1] 1 2 3 4 5
 #&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
+</div><div class='co'>#&gt; [[1]]
 #&gt; , , 1
 #&gt; 
 #&gt;      [,1] [,2] [,3]

@@ -207,7 +207,7 @@ will not appear in the output, but will affect the derived <code>.ptype</code>.<
       <td><p>If <code>NULL</code>, the default, the output type is determined by
 computing the common type across all elements of <code>...</code>.</p>
 <p>Alternatively, you can supply <code>.ptype</code> to give the output known type.
-If <code><a href='https://rdrr.io/r/base/options.html'>getOption("vctrs.no_guessing")</a></code> is <code>TRUE</code> you must supply this value:
+If <code>getOption("vctrs.no_guessing")</code> is <code>TRUE</code> you must supply this value:
 this is a convenient way to make production code demand fixed types.</p></td>
     </tr>
     <tr>
@@ -331,7 +331,7 @@ method implemented for this class hierarchy.</p>
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt;   x
+</div><div class='co'>#&gt;   x
 #&gt; 1 1
 #&gt; 2 0</div><div class='input'>
 <span class='co'># unique columns are filled with NAs</span>
@@ -339,7 +339,7 @@ method implemented for this class hierarchy.</p>
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='st'>"x"</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt;    x    y
+</div><div class='co'>#&gt;    x    y
 #&gt; 1  1 &lt;NA&gt;
 #&gt; 2 NA    x</div><div class='input'>
 <span class='co'># null inputs are ignored</span>
@@ -348,7 +348,7 @@ method implemented for this class hierarchy.</p>
   <span class='cn'>NULL</span>,
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt;   x
+</div><div class='co'>#&gt;   x
 #&gt; 1 1
 #&gt; 2 2</div><div class='input'>
 <span class='co'># bare vectors are treated as rows</span>
@@ -356,7 +356,7 @@ method implemented for this class hierarchy.</p>
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, y <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,
   <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt;   x  y
+</div><div class='co'>#&gt;   x  y
 #&gt; 1 1  2
 #&gt; 2 3 NA</div><div class='input'>
 <span class='co'># default names will be supplied if arguments are not named</span>
@@ -365,16 +365,16 @@ method implemented for this class hierarchy.</p>
   <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
   <span class='fl'>1</span><span class='op'>:</span><span class='fl'>4</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* `` -&gt; ...1</span>
-#&gt; <span class='message'>* `` -&gt; ...2</span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* `` -&gt; ...1</span>
-#&gt; <span class='message'>* `` -&gt; ...2</span>
-#&gt; <span class='message'>* `` -&gt; ...3</span></div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* `` -&gt; ...1</span>
-#&gt; <span class='message'>* `` -&gt; ...2</span>
-#&gt; <span class='message'>* `` -&gt; ...3</span>
-#&gt; <span class='message'>* `` -&gt; ...4</span></div><div class='output co'>#&gt;   ...1 ...2 ...3 ...4
+</div><div class='co'>#&gt; New names:
+#&gt; * `` -&gt; ...1
+#&gt; * `` -&gt; ...2</div><div class='co'>#&gt; New names:
+#&gt; * `` -&gt; ...1
+#&gt; * `` -&gt; ...2
+#&gt; * `` -&gt; ...3</div><div class='co'>#&gt; New names:
+#&gt; * `` -&gt; ...1
+#&gt; * `` -&gt; ...2
+#&gt; * `` -&gt; ...3
+#&gt; * `` -&gt; ...4</div><div class='co'>#&gt;   ...1 ...2 ...3 ...4
 #&gt; 1    1    2   NA   NA
 #&gt; 2    1    2    3   NA
 #&gt; 3    1    2    3    4</div><div class='input'>
@@ -385,7 +385,7 @@ method implemented for this class hierarchy.</p>
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt;   x y
+</div><div class='co'>#&gt;   x y
 #&gt; 1 1 1
 #&gt; 2 1 2
 #&gt; 3 1 3</div><div class='input'>
@@ -394,7 +394,7 @@ method implemented for this class hierarchy.</p>
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>,
   y <span class='op'>=</span> <span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>]</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt;   x y
+</div><div class='co'>#&gt;   x y
 #&gt; 1 1 a
 #&gt; 2 1 b
 #&gt; 3 1 c</div><div class='input'>
@@ -404,29 +404,29 @@ method implemented for this class hierarchy.</p>
   y <span class='op'>=</span> <span class='fl'>1</span>
 <span class='op'>)</span>
 <span class='va'>data</span>
-</div><div class='output co'>#&gt;   x.a x.b y
+</div><div class='co'>#&gt;   x.a x.b y
 #&gt; 1   1   2 1</div><div class='input'>
 <span class='co'># Packed data frames are nested in a single column. This makes it</span>
 <span class='co'># possible to access it through a single name:</span>
 <span class='va'>data</span><span class='op'>$</span><span class='va'>x</span>
-</div><div class='output co'>#&gt;   a b
+</div><div class='co'>#&gt;   a b
 #&gt; 1 1 2</div><div class='input'>
 <span class='co'># since the base print method is suboptimal with packed data</span>
 <span class='co'># frames, it is recommended to use tibble to work with these:</span>
 <span class='kw'>if</span> <span class='op'>(</span><span class='fu'>rlang</span><span class='fu'>::</span><span class='fu'><a href='https://rlang.r-lib.org/reference/is_installed.html'>is_installed</a></span><span class='op'>(</span><span class='st'>"tibble"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>vec_cbind</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>a <span class='op'>=</span> <span class='fl'>1</span>, b <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 x 2</span><span>
+</div><div class='co'>#&gt; <span style='color: #949494;'># A tibble: 1 x 2</span>
 #&gt;     x$a    $b     y
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1     2     1</div><div class='input'>
+#&gt;   <span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span><span>     1     2     1</span></div><div class='input'>
 <span class='co'># duplicate names are flagged</span>
 <span class='fu'>vec_cbind</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, x <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>New names:</span>
-#&gt; <span class='message'>* x -&gt; x...1</span>
-#&gt; <span class='message'>* x -&gt; x...2</span></div><div class='output co'>#&gt;   x...1 x...2
+</div><div class='co'>#&gt; New names:
+#&gt; * x -&gt; x...1
+#&gt; * x -&gt; x...2</div><div class='co'>#&gt;   x...1 x...2
 #&gt; 1     1     2</div><div class='input'>
-</div></span></pre>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

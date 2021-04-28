@@ -208,17 +208,17 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>$</span><span class='va'>vs</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   key count
+</div><div class='co'>#&gt;   key count
 #&gt; 1   0    18
 #&gt; 2   1    14</div><div class='input'><span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>$</span><span class='va'>Species</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          key count
+</div><div class='co'>#&gt;          key count
 #&gt; 1     setosa    50
 #&gt; 2 versicolor    50
 #&gt; 3  virginica    50</div><div class='input'>
 <span class='co'># If you count a data frame you'll get a data frame</span>
 <span class='co'># column in the output</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"vs"</span>, <span class='st'>"am"</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'data.frame':	4 obs. of  2 variables:
+</div><div class='co'>#&gt; 'data.frame':	4 obs. of  2 variables:
 #&gt;  $ key  :'data.frame':	4 obs. of  2 variables:
 #&gt;   ..$ vs: num  0 1 1 0
 #&gt;   ..$ am: num  0 1 0 1
@@ -228,7 +228,7 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='va'>letters</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/stats/Poisson.html'>rpois</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>6</span><span class='op'>)</span><span class='op'>]</span>
 <span class='co'># default is to sort by frequency</span>
 <span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    key count
+</div><div class='co'>#&gt;    key count
 #&gt; 1    f    21
 #&gt; 2    e    19
 #&gt; 3    g    16
@@ -244,7 +244,7 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 #&gt; 13   a     1</div><div class='input'>
 <span class='co'># by can sort by key</span>
 <span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>x</span>, sort <span class='op'>=</span> <span class='st'>"key"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    key count
+</div><div class='co'>#&gt;    key count
 #&gt; 1    a     1
 #&gt; 2    b     6
 #&gt; 3    c     4
@@ -260,7 +260,7 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 #&gt; 13   n     1</div><div class='input'>
 <span class='co'># or location of first value</span>
 <span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>x</span>, sort <span class='op'>=</span> <span class='st'>"location"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    key count
+</div><div class='co'>#&gt;    key count
 #&gt; 1    e    19
 #&gt; 2    d    14
 #&gt; 3    c     4
@@ -274,23 +274,23 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 #&gt; 11   i     2
 #&gt; 12   n     1
 #&gt; 13   a     1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
+</div><div class='co'>#&gt; [1] "e" "e" "d" "e" "c" "e"</div><div class='input'>
 <span class='co'># or not at all</span>
 <span class='fu'>vec_count</span><span class='op'>(</span><span class='va'>x</span>, sort <span class='op'>=</span> <span class='st'>"none"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    key count
-#&gt; 1    d    14
-#&gt; 2    i     2
-#&gt; 3    c     4
-#&gt; 4    j     3
-#&gt; 5    k     2
-#&gt; 6    n     1
-#&gt; 7    l     2
-#&gt; 8    h     9
-#&gt; 9    a     1
-#&gt; 10   g    16
-#&gt; 11   f    21
-#&gt; 12   e    19
-#&gt; 13   b     6</div></pre>
+</div><div class='co'>#&gt;    key count
+#&gt; 1    i     2
+#&gt; 2    h     9
+#&gt; 3    k     2
+#&gt; 4    b     6
+#&gt; 5    e    19
+#&gt; 6    c     4
+#&gt; 7    n     1
+#&gt; 8    a     1
+#&gt; 9    g    16
+#&gt; 10   f    21
+#&gt; 11   l     2
+#&gt; 12   d    14
+#&gt; 13   j     3</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

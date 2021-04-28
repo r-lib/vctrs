@@ -165,7 +165,7 @@ overcoming the limitations of the base Ops generic." />
 
     <div class="ref-description">
     <p>This generic provides a common double dispatch mechanism for all infix
-operators (<code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>/</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>*</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>^</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></code>, <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, <code>&amp;</code>, <code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>). It is used
+operators (<code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>, <code>^</code>, <code>%%</code>, <code>%/%</code>, <code>!</code>, <code>&amp;</code>, <code>|</code>). It is used
 to power the default arithmetic and boolean operators for <a href='new_vctr.html'>vctr</a>s objects,
 overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGeneric.html'>Ops</a> generic.</p>
     </div>
@@ -194,7 +194,7 @@ overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGene
     </tr>
     <tr>
       <th>x, y</th>
-      <td><p>A pair of vectors. For <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, unary <code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code> and unary <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code>y</code> will be
+      <td><p>A pair of vectors. For <code>!</code>, unary <code>+</code> and unary <code>-</code>, <code>y</code> will be
 a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</code>.</p></td>
     </tr>
     <tr>
@@ -208,7 +208,7 @@ a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</
     <p><code>vec_arith_base()</code> is provided as a convenience for writing methods. It
 recycles <code>x</code> and <code>y</code> to common length then calls the base operator with the
 underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
-<p><code>vec_arith()</code> is also used in <code>diff.vctrs_vctr()</code> method via <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>.</p>
+<p><code>vec_arith()</code> is also used in <code>diff.vctrs_vctr()</code> method via <code>-</code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='vctrs-conditions.html'>stop_incompatible_op()</a></code> for signalling that an arithmetic
@@ -222,18 +222,18 @@ functions.</p></div>
 <span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/difftime.html'>as.difftime</a></span><span class='op'>(</span><span class='fl'>12</span>, unit <span class='op'>=</span> <span class='st'>"hours"</span><span class='op'>)</span>
 
 <span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>d</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Time difference of 129600 secs</div><div class='input'>
+</div><div class='co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>d</span><span class='op'>)</span>
+</div><div class='co'>#&gt; Time difference of 129600 secs</div><div class='input'>
 <span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='fl'>86400</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Time difference of 24 hours</div><div class='input'>
+</div><div class='co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='co'>#&gt; Time difference of 24 hours</div><div class='input'>
 <span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Time difference of 6 hours</div><div class='input'>
+</div><div class='co'>#&gt; [1] 1</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span>
+</div><div class='co'>#&gt; Time difference of 6 hours</div><div class='input'>
 <span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"*"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Time difference of 24 hours</div></pre>
+</div><div class='co'>#&gt; Time difference of 24 hours</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
