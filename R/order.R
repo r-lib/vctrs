@@ -5,8 +5,7 @@
 #' computed along the rows by computing the order of the first column and
 #' using subsequent columns to break ties.
 #'
-#' `vec_sort()` sorts `x` by computing its order and using `vec_slice()` to
-#' rearrange.
+#' `vec_sort()` sorts `x`. It is equivalent to `vec_slice(x, vec_order(x))`.
 #'
 #' @inheritParams ellipsis::dots_empty
 #'

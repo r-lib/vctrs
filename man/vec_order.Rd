@@ -75,8 +75,7 @@ ordering and \code{stringi::str_sort_key()} for locale-aware ordering.}
 computed along the rows by computing the order of the first column and
 using subsequent columns to break ties.
 
-\code{vec_sort()} sorts \code{x} by computing its order and using \code{vec_slice()} to
-rearrange.
+\code{vec_sort()} sorts \code{x}. It is equivalent to \code{vec_slice(x, vec_order(x))}.
 }
 \section{Differences with \code{order()}}{
 
