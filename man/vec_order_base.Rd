@@ -28,7 +28,7 @@ vctrs principles.
 \code{vec_order_base()} is mainly provided for backwards compatibility with vctrs
 <= 0.3.7. New code should instead use \code{\link[=vec_order]{vec_order()}}, which has more
 capabilities. The main difference between the two is that \code{vec_order()}
-orders character vectors in the C locale (which is highly performance), while
+orders character vectors in the C locale (which is highly performant), while
 \code{vec_order_base()} respects the system locale.
 }
 \section{Differences with \code{order()}}{

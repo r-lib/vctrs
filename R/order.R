@@ -212,7 +212,7 @@ vec_order_info <- function(x,
 #' `vec_order_base()` is mainly provided for backwards compatibility with vctrs
 #' <= 0.3.7. New code should instead use [vec_order()], which has more
 #' capabilities. The main difference between the two is that `vec_order()`
-#' orders character vectors in the C locale (which is highly performance), while
+#' orders character vectors in the C locale (which is highly performant), while
 #' `vec_order_base()` respects the system locale.
 #'
 #' @param x A vector
