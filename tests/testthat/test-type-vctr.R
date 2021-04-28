@@ -577,12 +577,37 @@ test_that("generic predicates return logical vectors (#251)", {
   expect_identical(all(x), TRUE)
 })
 
-test_that("xtfrm() returns a bare vector", {
+test_that("xtfrm() converts logical types to integer", {
+  expect_identical(xtfrm(new_vctr(c(TRUE, FALSE, NA), foo = "bar")), c(1L, 0L, NA))
+})
+
+test_that("xtfrm() unwraps integer and double atomic types", {
   expect_identical(xtfrm(new_vctr(1:3, foo = "bar")), 1:3)
+  expect_identical(xtfrm(new_vctr(1:3 + 0, foo = "bar")), 1:3 + 0)
 })
 
 test_that("xtfrm() works with character subclass", {
   expect_identical(xtfrm(new_vctr(chr())), int())
+})
+
+test_that("xtfrm() maintains ties when falling through to vec_rank() (#1354)", {
+  x <- new_vctr(c("F", "F", "M", "A", "M", "A"))
+  expect_identical(xtfrm(x), c(2L, 2L, 3L, 1L, 3L, 1L))
+})
+
+test_that("xtfrm() propagates NAs when falling through to vec_rank()", {
+  x <- new_vctr(c("F", NA))
+  expect_identical(xtfrm(x), c(1L, NA))
+})
+
+test_that("xtfrm() uses C locale ordering with character proxies", {
+  x <- new_vctr(c("A", "a", "B"))
+  expect_identical(xtfrm(x), c(1L, 3L, 2L))
+})
+
+test_that("xtfrm() works on rcrd types", {
+  x <- new_rcrd(list(x = c(1, 2, 1, NA), y = c(2, 1, 1, NA)))
+  expect_identical(xtfrm(x), c(2L, 3L, 1L, NA))
 })
 
 test_that("Summary generics behave as expected if na.rm = TRUE and all values are NA (#1357)", {
