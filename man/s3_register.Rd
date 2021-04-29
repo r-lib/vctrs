@@ -3,9 +3,6 @@
 \name{s3_register}
 \alias{s3_register}
 \title{Register a method for a suggested dependency}
-\usage{
-s3_register(generic, class, method = NULL)
-}
 \arguments{
 \item{generic}{Name of the generic in the form \code{pkg::generic}.}
 

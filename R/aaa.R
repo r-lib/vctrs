@@ -5,7 +5,7 @@ on_load <- function(expr, env = parent.frame()) {
   ns$.__rlang_hook__. <- c(ns$.__rlang_hook__., list(callback))
 }
 
-run_on_load <- function(env = caller_env()) {
+run_on_load <- function(env = parent.frame()) {
   ns <- topenv(env)
 
   hook <- ns$.__rlang_hook__.
@@ -18,6 +18,14 @@ run_on_load <- function(env = caller_env()) {
   ns$.__rlang_hook__. <- NULL
 }
 
+replace_from <- function(what, pkg, to = topenv(caller_env())) {
+  if (what %in% getNamespaceExports(pkg)) {
+    env <- ns_env(pkg)
+  } else {
+    env <- to
+  }
+  env_get(env, what, inherit = TRUE)
+}
 
 # nocov start
 

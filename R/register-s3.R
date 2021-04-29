@@ -30,6 +30,7 @@
 #' crystal clear that we're happy for you to do this. There's no need to include
 #' the license or even credit us when using this function.
 #'
+#' @usage NULL
 #' @param generic Name of the generic in the form `pkg::generic`.
 #' @param class Name of the class
 #' @param method Optionally, the implementation of the method. By default,
@@ -112,6 +113,9 @@ s3_register <- function(generic, class, method = NULL) {
 
   invisible()
 }
+on_load({
+  s3_register <- replace_from("s3_register", "rlang")
+})
 
 # Replace by rlang's version once it is available
 on_load({
