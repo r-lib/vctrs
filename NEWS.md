@@ -1,3 +1,8 @@
+# vctrs 0.3.8
+
+* Compatibility with next version of rlang.
+
+
 # vctrs 0.3.7
 
 * `vec_ptype_abbr()` gains arguments to control whether to indicate
