@@ -12,6 +12,11 @@
   vectors with billions of elements (up to `.Machine$integer.max`) (#1133).
 
 
+# vctrs 0.3.8
+
+* Compatibility with next version of rlang.
+
+
 # vctrs 0.3.7
 
 * `vec_ptype_abbr()` gains arguments to control whether to indicate
