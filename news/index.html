@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.7.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8.9000</span>
       </span>
     </div>
 
@@ -164,6 +164,14 @@
 <li><p>The <code><a href="https://rdrr.io/r/base/xtfrm.html" class="external-link">xtfrm()</a></code> method for vctrs_vctr objects no longer accidentally breaks ties (<a href='https://github.com/r-lib/vctrs/issues/1354'>#1354</a>).</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min()</a></code>, <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code> and <code><a href="https://rdrr.io/r/base/range.html" class="external-link">range()</a></code> no longer throw an error if <code>na.rm = TRUE</code> is set and all values are <code>NA</code> (<a href='https://github.com/gorcha'>@gorcha</a>, <a href='https://github.com/r-lib/vctrs/issues/1357'>#1357</a>). In this case, and where an empty input is given, it will return <code>Inf</code>/<code>-Inf</code>, or <code>NA</code> if <code>Inf</code> can’t be cast to the input type.</p></li>
 <li><p><code><a href="../reference/vec_group.html">vec_group_loc()</a></code>, used for grouping in dplyr, now correctly handles vectors with billions of elements (up to <code>.Machine$integer.max</code>) (<a href='https://github.com/r-lib/vctrs/issues/1133'>#1133</a>).</p></li>
+</ul>
+</div>
+    <div id="vctrs-038" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.8">
+<a href="#vctrs-038" class="anchor" aria-hidden="true"></a>vctrs 0.3.8<small> 2021-04-29 </small>
+</h1>
+<ul>
+<li>Compatibility with next version of rlang.</li>
 </ul>
 </div>
     <div id="vctrs-037" class="section level1">
