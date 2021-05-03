@@ -56,7 +56,8 @@ alternate locales.
 \item Otherwise, this must be a function of one argument. The function will be
 invoked with \code{x}, if it is a character vector, after it has been
 translated to UTF-8, and should return a character vector with the same
-length as \code{x}, also encoded as UTF-8.
+length as \code{x}. The result should sort as expected in the C-locale,
+regardless of encoding.
 \item For data frames, \code{chr_transform} will be applied to all character
 columns.
 }

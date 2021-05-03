@@ -30,7 +30,8 @@
 #'   - Otherwise, this must be a function of one argument. The function will be
 #'     invoked with `x`, if it is a character vector, after it has been
 #'     translated to UTF-8, and should return a character vector with the same
-#'     length as `x`, also encoded as UTF-8.
+#'     length as `x`. The result should sort as expected in the C-locale,
+#'     regardless of encoding.
 #'   - For data frames, `chr_transform` will be applied to all character
 #'     columns.
 #'
