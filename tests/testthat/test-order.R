@@ -915,6 +915,35 @@ test_that("`chr_transform` is validated", {
   expect_error(vec_order("x", chr_transform = function() {"y"}))
 })
 
+test_that("`chr_transform` can return bytes-encoded strings (like `stringi::stri_sort_key()`)", {
+  x <- c("A", "a", "b", "B")
+
+  # Mimic stringi::stri_sort_key(x, locale = "en")
+  sort_key <- function(x) {
+    # dput(lapply(stringi::stri_sort_key(x, locale = "en"), charToRaw))
+    out <- list(
+      as.raw(c(0x2a, 0x01, 0x05, 0x01, 0xdc)),
+      as.raw(c(0x2a, 0x01, 0x05, 0x01, 0x05)),
+      as.raw(c(0x2c, 0x01, 0x05, 0x01, 0x05)),
+      as.raw(c(0x2c, 0x01, 0x05, 0x01, 0xdc))
+    )
+
+    out <- vapply(out, FUN.VALUE = character(1), function(x) {
+      # Uses native encoding
+      x <- rawToChar(x)
+      Encoding(x) <- "bytes"
+      x
+    })
+
+    out
+  }
+
+  expect_identical(
+    vec_order(x, chr_transform = sort_key),
+    c(2L, 1L, 3L, 4L)
+  )
+})
+
 # ------------------------------------------------------------------------------
 # vec_order() - error checking
 
