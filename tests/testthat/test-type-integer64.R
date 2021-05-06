@@ -208,7 +208,7 @@ test_that("can compare values with integer64", {
   expect_identical(vec_compare(x, y), c(1L, -1L))
 })
 
-test_that("integer64 <-> complex works as expected", {
+test_that("integer64 <-> data frame works as expected", {
   x <- bit64::as.integer64(c(-2, -1, 0, 1))
   proxy <- integer64_proxy(x)
 
