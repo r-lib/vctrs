@@ -232,61 +232,66 @@ recycled to be the same length.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Inputs with 1 observation are recycled</span>
-<span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>5</span><span class='op'>)</span>
-</div><div class='co'>#&gt; [[1]]
-#&gt; [1] 1 2 3 4 5
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 5 5 5 5 5
-#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>5</span><span class='op'>)</span>
-</div><div class='co'>#&gt; [[1]]
-#&gt; integer(0)
-#&gt; 
-#&gt; [[2]]
-#&gt; numeric(0)
-#&gt; </div><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
-<span class='op'>}</span>
-
-<span class='co'># Data frames and matrices are recycled along their rows</span>
-<span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='co'>#&gt; [[1]]
-#&gt;   x
-#&gt; 1 1
-#&gt; 2 1
-#&gt; 3 1
-#&gt; 4 1
-#&gt; 5 1
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3 4 5
-#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='co'>#&gt; [[1]]
-#&gt;      [,1] [,2]
-#&gt; [1,]    1    2
-#&gt; [2,]    1    2
-#&gt; [3,]    1    2
-#&gt; [4,]    1    2
-#&gt; [5,]    1    2
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3 4 5
-#&gt; </div><div class='input'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
-</div><div class='co'>#&gt; [[1]]
-#&gt; , , 1
-#&gt; 
-#&gt;      [,1] [,2] [,3]
-#&gt; [1,]    1    2    3
-#&gt; [2,]    1    2    3
-#&gt; [3,]    1    2    3
-#&gt; [4,]    1    2    3
-#&gt; [5,]    1    2    3
-#&gt; 
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] 1 2 3 4 5
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Inputs with 1 observation are recycled</span></span>
+<span class='r-in'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>5</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2 3 4 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 5 5 5 5 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fl'>5</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> integer(0)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> numeric(0)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Data frames and matrices are recycled along their rows</span></span>
+<span class='r-in'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   x</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2 3 4 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1] [,2]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1    2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1    2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1    2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1    2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5,]    1    2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2 3 4 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'>vec_recycle_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/array.html'>array</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>3</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> , , 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      [,1] [,2] [,3]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,]    1    2    3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [2,]    1    2    3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [3,]    1    2    3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [4,]    1    2    3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [5,]    1    2    3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2 3 4 5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
