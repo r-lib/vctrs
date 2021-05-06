@@ -135,8 +135,8 @@ extern SEXP vctrs_unrep(SEXP);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
 extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
 extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* vctrs_integer64_to_complex(r_obj*);
-extern r_obj* vctrs_complex_to_integer64(r_obj*);
+extern r_obj* vctrs_integer64_proxy(r_obj*);
+extern r_obj* vctrs_integer64_restore(r_obj*);
 
 
 // Maturing
@@ -290,8 +290,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_fill_missing",               (DL_FUNC) &vctrs_fill_missing, 3},
   {"vctrs_chr_paste_prefix",           (DL_FUNC) &vctrs_chr_paste_prefix, 3},
   {"vctrs_rank",                       (DL_FUNC) &vctrs_rank, 7},
-  {"vctrs_integer64_to_complex",       (DL_FUNC) &vctrs_integer64_to_complex, 1},
-  {"vctrs_complex_to_integer64",       (DL_FUNC) &vctrs_complex_to_integer64, 1},
+  {"vctrs_integer64_proxy",            (DL_FUNC) &vctrs_integer64_proxy, 1},
+  {"vctrs_integer64_restore",          (DL_FUNC) &vctrs_integer64_restore, 1},
   {NULL, NULL, 0}
 };
 

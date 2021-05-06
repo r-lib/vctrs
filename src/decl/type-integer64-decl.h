@@ -1,5 +1,5 @@
 static inline
-r_complex_t int64_to_r_complex(int64_t x);
+void int64_unpack(int64_t x, r_ssize i, double* v_left, double* v_right);
 
 static inline
-int64_t r_complex_to_int64(r_complex_t x);
+int64_t int64_pack(double left, double right);
