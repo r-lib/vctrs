@@ -99,7 +99,7 @@ r_obj* vctrs_integer64_restore(r_obj* x) {
     const double left = v_left[i];
     const double right = v_right[i];
 
-    if (left == r_globals.na_dbl) {
+    if (isnan(left)) {
       v_out[i] = r_na_llong;
       continue;
     }
