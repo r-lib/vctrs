@@ -667,7 +667,7 @@ test_that("can assign shaped base vectors with compact seqs", {
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
-  expect_identical(vec_assign_seq(mat(bytes(1, 2, 3)), bytes(1), start, size, increasing), mat(bytes(1, 1, 1)))
+  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
 })
 
@@ -681,7 +681,7 @@ test_that("can assign shaped base vectors with decreasing compact seqs", {
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
-  expect_identical(vec_assign_seq(mat(bytes(1, 2, 3)), bytes(1), start, size, increasing), mat(bytes(1, 1, 1)))
+  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
 })
 
@@ -696,7 +696,7 @@ test_that("can assign shaped base vectors with size 0 compact seqs", {
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, 2, 3)))
   expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, 2, 3)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", "2", "3")))
-  expect_identical(vec_assign_seq(mat(bytes(1, 2, 3)), bytes(1), start, size, increasing), mat(bytes(1, 2, 3)))
+  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 2, 3)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, 2, 3)))
 })
 

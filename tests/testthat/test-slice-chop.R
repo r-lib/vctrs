@@ -204,7 +204,7 @@ test_that("can chop base vectors with compact seqs", {
   expect_identical(vec_chop_seq(dbl(1, 2, 3), start, size), list(dbl(2, 3)))
   expect_identical(vec_chop_seq(cpl(1, 2, 3), start, size), list(cpl(2, 3)))
   expect_identical(vec_chop_seq(chr("1", "2", "3"), start, size), list(chr("2", "3")))
-  expect_identical(vec_chop_seq(bytes(1, 2, 3), start, size), list(bytes(2, 3)))
+  expect_identical(vec_chop_seq(raw2(1, 2, 3), start, size), list(raw2(2, 3)))
   expect_identical(vec_chop_seq(list(1, 2, 3), start, size), list(list(2, 3)))
 })
 

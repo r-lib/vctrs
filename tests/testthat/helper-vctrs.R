@@ -1,4 +1,3 @@
-
 testthat_import_from <- function(ns, names, env = caller_env()) {
   skip_if_not_installed(ns)
   import_from(ns, names, env = env)
@@ -63,4 +62,8 @@ expect_equal <- function(object, expected, ...,
   exp <- quasi_label(enquo(expected), expected.label, arg = "expected")
 
   expect_waldo_equal("equal", act, exp, info, ..., tolerance = tolerance)
+}
+
+raw2 <- function(...) {
+  as.raw(flatten_int(list2(...)))
 }

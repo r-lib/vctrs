@@ -17,7 +17,7 @@ test_that("can subset base vectors", {
   expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, 3))
   expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, 3))
   expect_identical(vec_slice(chr("1", "2", "3"), i), chr("2", "3"))
-  expect_identical(vec_slice(bytes(1, 2, 3), i), bytes(2, 3))
+  expect_identical(vec_slice(raw2(1, 2, 3), i), raw2(2, 3))
   expect_identical(vec_slice(list(1, 2, 3), i), list(2, 3))
 })
 
@@ -29,7 +29,7 @@ test_that("can subset shaped base vectors", {
   expect_identical(vec_slice(mat(dbl(1, 2, 3)), i), mat(dbl(2, 3)))
   expect_identical(vec_slice(mat(cpl(1, 2, 3)), i), mat(cpl(2, 3)))
   expect_identical(vec_slice(mat(chr("1", "2", "3")), i), mat(chr("2", "3")))
-  expect_identical(vec_slice(mat(bytes(1, 2, 3)), i), mat(bytes(2, 3)))
+  expect_identical(vec_slice(mat(raw2(1, 2, 3)), i), mat(raw2(2, 3)))
   expect_identical(vec_slice(mat(list(1, 2, 3)), i), mat(list(2, 3)))
 })
 
@@ -40,7 +40,7 @@ test_that("can subset with missing indices", {
     expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, NA))
     expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, NA))
     expect_identical(vec_slice(chr("1", "2", "3"), i), c("2", NA))
-    expect_identical(vec_slice(bytes(1, 2, 3), i), bytes(2, 0))
+    expect_identical(vec_slice(raw2(1, 2, 3), i), raw2(2, 0))
     expect_identical(vec_slice(list(1, 2, 3), i), list(2, NULL))
   }
 })
@@ -549,7 +549,7 @@ test_that("can subset base vectors with compact seqs", {
   expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl(2, 3))
   expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl(2, 3))
   expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr("2", "3"))
-  expect_identical(vec_slice_seq(bytes(1, 2, 3), start, size, increasing), bytes(2, 3))
+  expect_identical(vec_slice_seq(raw2(1, 2, 3), start, size, increasing), raw2(2, 3))
   expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list(2, 3))
 })
 
@@ -562,7 +562,7 @@ test_that("can subset base vectors with decreasing compact seqs", {
   expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl(3, 2))
   expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl(3, 2))
   expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr("3", "2"))
-  expect_identical(vec_slice_seq(bytes(1, 2, 3), start, size, increasing), bytes(3, 2))
+  expect_identical(vec_slice_seq(raw2(1, 2, 3), start, size, increasing), raw2(3, 2))
   expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list(3, 2))
 })
 
@@ -575,7 +575,7 @@ test_that("can subset base vectors with size 0 compact seqs", {
   expect_identical(vec_slice_seq(dbl(1, 2, 3), start, size, increasing), dbl())
   expect_identical(vec_slice_seq(cpl(1, 2, 3), start, size, increasing), cpl())
   expect_identical(vec_slice_seq(chr("1", "2", "3"), start, size, increasing), chr())
-  expect_identical(vec_slice_seq(bytes(1, 2, 3), start, size, increasing), bytes())
+  expect_identical(vec_slice_seq(raw2(1, 2, 3), start, size, increasing), raw2())
   expect_identical(vec_slice_seq(list(1, 2, 3), start, size, increasing), list())
 })
 
@@ -589,7 +589,7 @@ test_that("can subset shaped base vectors with compact seqs", {
   expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl(2, 3)))
   expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl(2, 3)))
   expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr("2", "3")))
-  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), start, size, increasing), mat(bytes(2, 3)))
+  expect_identical(vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing), mat(raw2(2, 3)))
   expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list(2, 3)))
 })
 
@@ -603,7 +603,7 @@ test_that("can subset shaped base vectors with decreasing compact seqs", {
   expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl(3, 2)))
   expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl(3, 2)))
   expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr("3", "2")))
-  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), start, size, increasing), mat(bytes(3, 2)))
+  expect_identical(vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing), mat(raw2(3, 2)))
   expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list(3, 2)))
 })
 
@@ -617,7 +617,7 @@ test_that("can subset shaped base vectors with size 0 compact seqs", {
   expect_identical(vec_slice_seq(mat(dbl(1, 2, 3)), start, size, increasing), mat(dbl()))
   expect_identical(vec_slice_seq(mat(cpl(1, 2, 3)), start, size, increasing), mat(cpl()))
   expect_identical(vec_slice_seq(mat(chr("1", "2", "3")), start, size, increasing), mat(chr()))
-  expect_identical(vec_slice_seq(mat(bytes(1, 2, 3)), start, size, increasing), mat(bytes()))
+  expect_identical(vec_slice_seq(mat(raw2(1, 2, 3)), start, size, increasing), mat(raw2()))
   expect_identical(vec_slice_seq(mat(list(1, 2, 3)), start, size, increasing), mat(list()))
 })
 
