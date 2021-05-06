@@ -1,7 +1,34 @@
 
 #' @export
+vec_proxy_equal.integer64 <- function(x, ...) {
+  x <- integer64_to_complex(x)
+  # Second call to `vec_proxy_equal()` to allow arrays
+  # to run through `vec_proxy_equal.array()` and become data frames
+  vec_proxy_equal(x)
+}
+
+#' @export
 vec_proxy_compare.integer64 <- function(x, ...) {
-  bit64::rank.integer64(x)
+  # Can't return a complex proxy, as complex types aren't comparable.
+  # TODO: Should complex proxies be comparable (real then imaginary)?
+  # We could supply a `vec_proxy_compare.complex()` that would abort?
+
+  if (has_dim(x)) {
+    # Convert array to data frame, then proxy each atomic integer64 column
+    x <- as.data.frame(x)
+    x <- vec_proxy_compare(x)
+    return(x)
+  }
+
+  x <- integer64_to_complex(x)
+
+  data_frame(high = Re(x), low = Im(x))
+}
+
+#' @export
+vec_proxy_order.integer64 <- function(x, ...) {
+  # Complex types are orderable by `vec_order()`, so use simpler equality proxy
+  vec_proxy_equal.integer64(x, ...)
 }
 
 # Print -------------------------------------------------------------------
@@ -107,4 +134,25 @@ vec_cast.integer64.double <- function(x, to, ...) {
 #' @method vec_cast.double integer64
 vec_cast.double.integer64 <- function(x, to, ...) {
   as.double(x)
+}
+
+# ------------------------------------------------------------------------------
+
+integer64_to_complex <- function(x) {
+  .Call(vctrs_integer64_to_complex, x)
+}
+complex_to_integer64 <- function(x) {
+  .Call(vctrs_complex_to_integer64, x)
+}
+
+# Utilities for displaying the conversion.
+# R's print method for `complex()` is a bit buggy, and it is more
+# reliable to extract the real/imaginary parts into their own columns.
+show_integer64_to_complex <- function(x) {
+  output <- integer64_to_complex(x)
+  data.frame(input = x, left = Re(output), right = Im(output))
+}
+show_complex_to_integer64 <- function(x) {
+  output <- complex_to_integer64(x)
+  data.frame(output = output, left = Re(x), right = Im(x))
 }
