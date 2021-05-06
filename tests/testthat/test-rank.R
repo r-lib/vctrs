@@ -119,7 +119,7 @@ test_that("`x` must be a vector", {
 
 test_that("`ties` is validated", {
   expect_error(vec_rank(1, ties = "foo"), 'must be one of "min", "max", "sequential", or "dense", not "foo".')
-  expect_error(vec_rank(1, ties = 1), "must be a character")
+  expect_error(vec_rank(1, ties = 1), "character")
 })
 
 test_that("`na_propagate` is validated", {
