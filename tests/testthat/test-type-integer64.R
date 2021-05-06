@@ -230,7 +230,7 @@ test_that("integer64 <-> data frame works as expected", {
   expect_identical(proxy$right, c(1, 2))
   expect_identical(integer64_restore(proxy), x)
 
-  x <- bit64::NA_integer64_
+  x <- bit64::as.integer64(NA)
   proxy <- integer64_proxy(x)
 
   expect_identical(proxy$left, NA_real_)
