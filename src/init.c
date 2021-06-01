@@ -139,6 +139,7 @@ extern r_obj* vctrs_integer64_restore(r_obj*);
 extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* nested_containment_order(r_obj*, r_obj*, r_obj*);
+extern r_obj* vctrs_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -298,6 +299,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_drop_empty",            (DL_FUNC) &vctrs_list_drop_empty, 1},
   {"vctrs_is_altrep",                  (DL_FUNC) &vctrs_is_altrep, 1},
   {"vctrs_nested_containment_order",   (DL_FUNC) &nested_containment_order, 3},
+  {"vctrs_matches",                    (DL_FUNC) &vctrs_matches, 8},
   {NULL, NULL, 0}
 };
 
