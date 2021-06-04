@@ -1667,7 +1667,7 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(strings, 4, strings_posixlt);
 
   strings_posixt = Rf_mkChar("POSIXt");
-  SET_STRING_ELT(strings, 5, strings_posixlt);
+  SET_STRING_ELT(strings, 5, strings_posixt);
 
   strings_none = Rf_mkChar("none");
   SET_STRING_ELT(strings, 6, strings_none);
