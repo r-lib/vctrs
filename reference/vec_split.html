@@ -78,9 +78,6 @@ the are returned in a separate parallel vector." />
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -168,7 +165,7 @@ not just factors. Instead of returning the keys in the character names,
 the are returned in a separate parallel vector.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_split</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>by</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_split</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>by</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,7 +200,7 @@ understand the output.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'>vec_split</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>$</span><span class='va'>cyl</span>, <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>vs</span><span class='op'>)</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'>vec_split</span><span class='op'>(</span><span class='va'>mtcars</span><span class='op'>$</span><span class='va'>cyl</span>, <span class='va'>mtcars</span><span class='op'>$</span><span class='va'>vs</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   key                                                  val</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 1   0 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 4, 8, 6, 8</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 2   1             4, 6, 6, 4, 4, 6, 6, 4, 4, 4, 4, 4, 4, 4</span>
@@ -219,13 +216,13 @@ understand the output.</p>
 <span class='r-in'>  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='fu'>vec_split</span><span class='op'>(</span><span class='va'>mtcars</span>, <span class='va'>mtcars</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"vs"</span>, <span class='st'>"am"</span><span class='op'>)</span><span class='op'>]</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='op'>}</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 4 x 2</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   key$vs   $am val                </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;list&gt;</span><span>             </span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span><span>      0     1 </span><span style='color: #949494;'>&lt;df[,11] [6 × 11]&gt;</span><span> </span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span><span>      1     1 </span><span style='color: #949494;'>&lt;df[,11] [7 × 11]&gt;</span><span> </span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span><span>      1     0 </span><span style='color: #949494;'>&lt;df[,11] [7 × 11]&gt;</span><span> </span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span><span>      0     0 </span><span style='color: #949494;'>&lt;df[,11] [12 × 11]&gt;</span></span>
-</pre>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   key$vs   $am val           </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;list&gt;</span>        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span>      0     1 <span style='color: #949494;'>&lt;df [6 × 11]&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span>      1     1 <span style='color: #949494;'>&lt;df [7 × 11]&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span>      1     0 <span style='color: #949494;'>&lt;df [7 × 11]&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span>      0     0 <span style='color: #949494;'>&lt;df [12 × 11]&gt;</span></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

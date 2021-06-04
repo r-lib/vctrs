@@ -483,7 +483,6 @@ vec_c(1.5, new_natural(1))
 </script>
 
 
-
   
 
   
@@ -582,7 +581,7 @@ subclasses, see
 <p>We’ll illustrate how to implement coercion methods with a simple class
 that represents natural numbers. In this scenario we have an existing
 class that already features a constructor and methods for <code><a href='https://rdrr.io/r/base/print.html'>print()</a></code> and
-subset.<div class="r"></p><pre><span class='co'>#' @export</span>
+subset.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>new_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>is.numeric</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>||</span> <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>is.logical</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span><span class='op'>(</span><span class='fu'>is_whole</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
@@ -606,21 +605,21 @@ subset.<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='va'>`[.my_natural`</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>new_natural</span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre><p></div><div class="r"></p><pre><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+</code></pre><p></div><div class="r"></p><pre class='sourceCode r'><code><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; [1] 1 2 3</span>
 <span class='fu'>new_natural</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; [1]  1 NA</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 
 <h3 class='hasAnchor' id='roxygen-workflow'><a class='anchor' aria-hidden='true' href='#roxygen-workflow'></a>Roxygen workflow</h3>
 
 
 <p>To implement methods for generics, first import the generics in your
-namespace and redocument:<div class="r"></p><pre><span class='co'>#' @importFrom vctrs vec_ptype2 vec_cast</span>
+namespace and redocument:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @importFrom vctrs vec_ptype2 vec_cast</span>
 <span class='cn'>NULL</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>Note that for each batches of methods that you add to your package, you
 need to export the methods and redocument immediately, even during
 development. Otherwise they won’t be in scope when you run unit tests
@@ -636,7 +635,7 @@ your NAMESPACE file or lazily with <code><a href='s3_register.html'>s3_register(
 
 
 <p>The first method to implement is the one that signals that your class is
-compatible with itself:<div class="r"></p><pre><span class='co'>#' @export</span>
+compatible with itself:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
@@ -644,7 +643,7 @@ compatible with itself:<div class="r"></p><pre><span class='co'>#' @export</span
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; integer(0)</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code> implements a fallback to try and be compatible with
 simple classes, so it may seem that you don’t need to implement the
 self-self coercion method. However, you must implement it explicitly
@@ -657,14 +656,14 @@ makes your class a bit more efficient.</p>
 
 <p>Our natural number class is conceptually a parent of <code>&lt;logical&gt;</code> and a
 child of <code>&lt;integer&gt;</code>, but the class is not compatible with logical,
-integer, or double vectors yet:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+integer, or double vectors yet:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine &lt;logical&gt; and &lt;my_natural&gt;.</span>
 
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine &lt;my_natural&gt; and &lt;integer&gt;.</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>We’ll specify the twin methods for each of these classes, returning the
-richer class in each case.<div class="r"></p><pre><span class='co'>#' @export</span>
+richer class in each case.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.logical</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># The order of the classes in the method name follows the order of</span>
   <span class='co'># the arguments in the function signature, so `x` is the natural</span>
@@ -676,8 +675,8 @@ richer class in each case.<div class="r"></p><pre><span class='co'>#' @export</s
   <span class='co'># In this case `y` is the richer natural number</span>
   <span class='va'>y</span>
 <span class='op'>}</span>
-</pre><p></div></p>
-<p>Between a natural number and an integer, the latter is the richer class:<div class="r"></p><pre><span class='co'>#' @export</span>
+</code></pre><p></div></p>
+<p>Between a natural number and an integer, the latter is the richer class:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.integer</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>y</span>
 <span class='op'>}</span>
@@ -685,18 +684,18 @@ richer class in each case.<div class="r"></p><pre><span class='co'>#' @export</s
 <span class='va'>vec_ptype2.integer.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
-<p>We no longer get common type errors for logical and integer:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre><p></div></p>
+<p>We no longer get common type errors for logical and integer:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; integer(0)</span>
 
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; integer(0)</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>We are not done yet. Pairwise coercion methods must be implemented for
 all the connected nodes in the coercion hierarchy, which include double
 vectors further up. The coercion methods for grand-parent types must be
-implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span>
+implemented separately:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>y</span>
 <span class='op'>}</span>
@@ -704,7 +703,7 @@ implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span
 <span class='va'>vec_ptype2.double.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 
 <h4 class='hasAnchor' id='incompatible-attributes'><a class='anchor' aria-hidden='true' href='#incompatible-attributes'></a>Incompatible attributes</h4>
 
@@ -716,7 +715,7 @@ incompatibility is signalled by calling <code><a href='vctrs-conditions.html'>st
 <p>In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of <code>&lt;factor&gt;</code> that has stricter combination
 semantics. The method throws when the levels of the two factors are not
-compatible.<div class="r"></p><pre><span class='co'>#' @export</span>
+compatible.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_strict_factor.my_strict_factor</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span>, <span class='va'>x_arg</span> <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>y_arg</span> <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='kw'>if</span> <span class='op'>(</span><span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setequal</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='fu'><a href='vctrs-conditions.html'>stop_incompatible_type</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, x_arg <span class='op'>=</span> <span class='va'>x_arg</span>, y_arg <span class='op'>=</span> <span class='va'>y_arg</span><span class='op'>)</span>
@@ -724,7 +723,7 @@ compatible.<div class="r"></p><pre><span class='co'>#' @export</span>
 
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>Note how the methods need to take <code>x_arg</code> and <code>y_arg</code> parameters and
 pass them on to <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>. These argument tags help
 create more informative error messages when the common type
@@ -737,7 +736,7 @@ generic signature but can usually be left out if not used.</p>
 
 
 <p>The first method to implement is the one that signals that your class is
-compatible with itself:<div class="r"></p><pre><span class='co'>#' @export</span>
+compatible with itself:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
@@ -745,7 +744,7 @@ compatible with itself:<div class="r"></p><pre><span class='co'>#' @export</span
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; integer(0)</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p><code><a href='vec_ptype2.html'>vec_ptype2()</a></code> implements a fallback to try and be compatible with
 simple classes, so it may seem that you don’t need to implement the
 self-self coercion method. However, you must implement it explicitly
@@ -758,14 +757,14 @@ makes your class a bit more efficient.</p>
 
 <p>Our natural number class is conceptually a parent of <code>&lt;logical&gt;</code> and a
 child of <code>&lt;integer&gt;</code>, but the class is not compatible with logical,
-integer, or double vectors yet:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+integer, or double vectors yet:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine &lt;logical&gt; and &lt;my_natural&gt;.</span>
 
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine &lt;my_natural&gt; and &lt;integer&gt;.</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>We’ll specify the twin methods for each of these classes, returning the
-richer class in each case.<div class="r"></p><pre><span class='co'>#' @export</span>
+richer class in each case.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.logical</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># The order of the classes in the method name follows the order of</span>
   <span class='co'># the arguments in the function signature, so `x` is the natural</span>
@@ -777,8 +776,8 @@ richer class in each case.<div class="r"></p><pre><span class='co'>#' @export</s
   <span class='co'># In this case `y` is the richer natural number</span>
   <span class='va'>y</span>
 <span class='op'>}</span>
-</pre><p></div></p>
-<p>Between a natural number and an integer, the latter is the richer class:<div class="r"></p><pre><span class='co'>#' @export</span>
+</code></pre><p></div></p>
+<p>Between a natural number and an integer, the latter is the richer class:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.integer</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>y</span>
 <span class='op'>}</span>
@@ -786,18 +785,18 @@ richer class in each case.<div class="r"></p><pre><span class='co'>#' @export</s
 <span class='va'>vec_ptype2.integer.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
-<p>We no longer get common type errors for logical and integer:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre><p></div></p>
+<p>We no longer get common type errors for logical and integer:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; integer(0)</span>
 
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>2</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; integer(0)</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>We are not done yet. Pairwise coercion methods must be implemented for
 all the connected nodes in the coercion hierarchy, which include double
 vectors further up. The coercion methods for grand-parent types must be
-implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span>
+implemented separately:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_natural.double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>y</span>
 <span class='op'>}</span>
@@ -805,7 +804,7 @@ implemented separately:<div class="r"></p><pre><span class='co'>#' @export</span
 <span class='va'>vec_ptype2.double.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 
 <h4 class='hasAnchor' id='incompatible-attributes'><a class='anchor' aria-hidden='true' href='#incompatible-attributes'></a>Incompatible attributes</h4>
 
@@ -817,7 +816,7 @@ incompatibility is signalled by calling <code><a href='vctrs-conditions.html'>st
 <p>In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of <code>&lt;factor&gt;</code> that has stricter combination
 semantics. The method throws when the levels of the two factors are not
-compatible.<div class="r"></p><pre><span class='co'>#' @export</span>
+compatible.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_ptype2.my_strict_factor.my_strict_factor</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span>, <span class='va'>x_arg</span> <span class='op'>=</span> <span class='st'>""</span>, <span class='va'>y_arg</span> <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='kw'>if</span> <span class='op'>(</span><span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setequal</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='fu'><a href='vctrs-conditions.html'>stop_incompatible_type</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, x_arg <span class='op'>=</span> <span class='va'>x_arg</span>, y_arg <span class='op'>=</span> <span class='va'>y_arg</span><span class='op'>)</span>
@@ -825,7 +824,7 @@ compatible.<div class="r"></p><pre><span class='co'>#' @export</span>
 
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>Note how the methods need to take <code>x_arg</code> and <code>y_arg</code> parameters and
 pass them on to <code><a href='vctrs-conditions.html'>stop_incompatible_type()</a></code>. These argument tags help
 create more informative error messages when the common type
@@ -846,14 +845,14 @@ method name is in reverse order of the arguments in the function
 signature. The first class represents <code>to</code>, whereas the second class
 represents <code>x</code>.</p>
 <p>The self-self method is easy in this case, it just returns the target
-input:<div class="r"></p><pre><span class='co'>#' @export</span>
+input:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_cast.my_natural.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>The other types need to be validated. We perform input validation in the
 <code>new_natural()</code> constructor, so that’s a good fit for our <code><a href='vec_cast.html'>vec_cast()</a></code>
-implementations.<div class="r"></p><pre><span class='co'>#' @export</span>
+implementations.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_cast.my_natural.logical</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># The order of the classes in the method name is in reverse order</span>
   <span class='co'># of the arguments in the function signature, so `to` is the natural</span>
@@ -866,22 +865,22 @@ implementations.<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='va'>vec_cast.my_natural.double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>new_natural</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>With these methods, vctrs is now able to combine logical and natural
 vectors. It properly returns the richer type of the two, a natural
-vector:<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='cn'>FALSE</span><span class='op'>)</span>
+vector:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; [1] 1 1 0</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>Because we haven’t implemented conversions <em>from</em> natural, it still
 doesn’t know how to combine natural with the richer integer and double
-types:<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
+types:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't convert &lt;my_natural&gt; to &lt;integer&gt;.</span>
 <span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't convert &lt;my_natural&gt; to &lt;double&gt;.</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>This is quick work which completes the implementation of coercion
-methods for vctrs:<div class="r"></p><pre><span class='co'>#' @export</span>
+methods for vctrs:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_cast.logical.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># In this case `to` is the logical and `x` is the natural number</span>
   <span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
@@ -897,13 +896,13 @@ methods for vctrs:<div class="r"></p><pre><span class='co'>#' @export</span>
   <span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
   <span class='fu'><a href='https://rdrr.io/r/base/double.html'>as.double</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre><p></div></p>
-<p>And we now get the expected combinations.<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
+</code></pre><p></div></p>
+<p>And we now get the expected combinations.<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
 <span class='co'>#&gt; [1]  1 10</span>
 
 <span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] 1.5 1.0</span>
-</pre><p></div></p><h3 class='hasAnchor' id='list-vec-cast-'><a class='anchor' aria-hidden='true' href='#list-vec-cast-'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
+</code></pre><p></div></p><h3 class='hasAnchor' id='list-vec-cast-'><a class='anchor' aria-hidden='true' href='#list-vec-cast-'></a>Implementing <code><a href='vec_cast.html'>vec_cast()</a></code></h3>
 
 
 <p>Corresponding <code><a href='vec_cast.html'>vec_cast()</a></code> methods must be implemented for all
@@ -915,14 +914,14 @@ method name is in reverse order of the arguments in the function
 signature. The first class represents <code>to</code>, whereas the second class
 represents <code>x</code>.</p>
 <p>The self-self method is easy in this case, it just returns the target
-input:<div class="r"></p><pre><span class='co'>#' @export</span>
+input:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_cast.my_natural.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>The other types need to be validated. We perform input validation in the
 <code>new_natural()</code> constructor, so that’s a good fit for our <code><a href='vec_cast.html'>vec_cast()</a></code>
-implementations.<div class="r"></p><pre><span class='co'>#' @export</span>
+implementations.<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_cast.my_natural.logical</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># The order of the classes in the method name is in reverse order</span>
   <span class='co'># of the arguments in the function signature, so `to` is the natural</span>
@@ -935,22 +934,22 @@ implementations.<div class="r"></p><pre><span class='co'>#' @export</span>
 <span class='va'>vec_cast.my_natural.double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'>new_natural</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>With these methods, vctrs is now able to combine logical and natural
 vectors. It properly returns the richer type of the two, a natural
-vector:<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='cn'>FALSE</span><span class='op'>)</span>
+vector:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='co'>#&gt; &lt;natural&gt;</span>
 <span class='co'>#&gt; [1] 1 1 0</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>Because we haven’t implemented conversions <em>from</em> natural, it still
 doesn’t know how to combine natural with the richer integer and double
-types:<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
+types:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't convert &lt;my_natural&gt; to &lt;integer&gt;.</span>
 <span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't convert &lt;my_natural&gt; to &lt;double&gt;.</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>This is quick work which completes the implementation of coercion
-methods for vctrs:<div class="r"></p><pre><span class='co'>#' @export</span>
+methods for vctrs:<div class="r"></p><pre class='sourceCode r'><code><span class='co'>#' @export</span>
 <span class='va'>vec_cast.logical.my_natural</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='co'># In this case `to` is the logical and `x` is the natural number</span>
   <span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
@@ -966,13 +965,13 @@ methods for vctrs:<div class="r"></p><pre><span class='co'>#' @export</span>
   <span class='fu'><a href='https://rdrr.io/r/base/attributes.html'>attributes</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='cn'>NULL</span>
   <span class='fu'><a href='https://rdrr.io/r/base/double.html'>as.double</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre><p></div></p>
-<p>And we now get the expected combinations.<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
+</code></pre><p></div></p>
+<p>And we now get the expected combinations.<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>, <span class='fl'>10L</span><span class='op'>)</span>
 <span class='co'>#&gt; [1]  1 10</span>
 
 <span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'>new_natural</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] 1.5 1.0</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 
     </div>
 

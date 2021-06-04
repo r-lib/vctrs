@@ -84,9 +84,6 @@ repeated.
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -180,11 +177,11 @@ repeated.</p></li>
 
     </div>
 
-    <pre class="usage"><span class='fu'>vec_rep</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>times</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_rep</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>times</span><span class='op'>)</span>
 
 <span class='fu'>vec_rep_each</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>times</span><span class='op'>)</span>
 
-<span class='fu'>vec_unrep</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+<span class='fu'>vec_unrep</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -214,9 +211,9 @@ is a vector with the same type as <code>x</code>, and <code>times</code> is an i
 
     <p>Using <code>vec_unrep()</code> and <code>vec_rep_each()</code> together is similar to using
 <code><a href='https://rdrr.io/r/base/rle.html'>base::rle()</a></code> and <code><a href='https://rdrr.io/r/base/rle.html'>base::inverse.rle()</a></code>. The following invariant shows
-the relationship between the two functions:</p><pre><span class='va'>compressed</span> <span class='op'>&lt;-</span> <span class='fu'>vec_unrep</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+the relationship between the two functions:</p><pre class='sourceCode r'><code><span class='va'>compressed</span> <span class='op'>&lt;-</span> <span class='fu'>vec_unrep</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/identical.html'>identical</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='fu'>vec_rep_each</span><span class='op'>(</span><span class='va'>compressed</span><span class='op'>$</span><span class='va'>key</span>, <span class='va'>compressed</span><span class='op'>$</span><span class='va'>times</span><span class='op'>)</span><span class='op'>)</span>
-</pre>
+</code></pre>
 
 <p>There are two main differences between <code>vec_unrep()</code> and <code><a href='https://rdrr.io/r/base/rle.html'>base::rle()</a></code>:</p><ul>
 <li><p><code>vec_unrep()</code> treats adjacent missing values as equivalent, while <code><a href='https://rdrr.io/r/base/rle.html'>rle()</a></code>
@@ -236,7 +233,7 @@ repeated rows.</p></li>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='co'># Repeat the entire vector</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># Repeat the entire vector</span></span>
 <span class='r-in'><span class='fu'>vec_rep</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>3</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2 1 2 1 2</span>
 <span class='r-in'></span>
@@ -298,7 +295,7 @@ repeated rows.</p></li>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 1   1     1</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 2  NA     2</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> 3   2     1</span>
-</pre>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

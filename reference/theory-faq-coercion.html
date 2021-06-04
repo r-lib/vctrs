@@ -327,7 +327,6 @@ class in R scripts.
 </script>
 
 
-
   
 
   
@@ -426,7 +425,7 @@ subclasses, see
 <p>The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
-functions that use the split-apply-combine strategy. For example:<div class="r"></p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fl'>1</span><span class='op'>)</span>
+functions that use the split-apply-combine strategy. For example:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='fl'>1</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] 1 1</span>
 
 <span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='fl'>1</span><span class='op'>)</span>
@@ -445,7 +444,7 @@ functions that use the split-apply-combine strategy. For example:<div class="r">
   <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, y <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine `..1$x` &lt;character&gt; and `..2$x` &lt;double&gt;.</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
 relevant generics are <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code>. They both take
@@ -487,7 +486,7 @@ are a subset or a superset of the values of the other type. The notion
 of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
-character vectors than to round numbers:<div class="r"></p><pre><span class='co'># Two factors are compatible</span>
+character vectors than to round numbers:<div class="r"></p><pre class='sourceCode r'><code><span class='co'># Two factors are compatible</span>
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; factor(0)</span>
 <span class='co'>#&gt; Levels: a b</span>
@@ -499,7 +498,7 @@ character vectors than to round numbers:<div class="r"></p><pre><span class='co'
 <span class='co'># But they are incompatible with integers</span>
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fl'>1L</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine &lt;factor&lt;4d52a&gt;&gt; and &lt;integer&gt;.</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 
 <h4 class='hasAnchor' id='richness-of-type'><a class='anchor' aria-hidden='true' href='#richness-of-type'></a>Richness of type</h4>
 
@@ -511,9 +510,9 @@ vector), richer behaviour (a <code>data.table</code> has richer behaviour than a
 two types is richer, it probably means they shouldn’t be automatically
 coercible.</p>
 <p>Let’s look again at what happens when we combine a factor and a
-character:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='st'>"b"</span><span class='op'>)</span>
+character:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='st'>"b"</span><span class='op'>)</span>
 <span class='co'>#&gt; character(0)</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>The ptype2 method for <code>&lt;character&gt;</code> and <code>&lt;factor&lt;"a"&gt;&gt;</code> returns
 <code>&lt;character&gt;</code> because the former is a richer type. The factor can only
 contain <code>"a"</code> strings, whereas the character can contain any strings. In
@@ -529,14 +528,14 @@ R where <code>stringsAsFactors</code> is still true by default.</p>
 
 <p>Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:<div class="r"></p><pre><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
+levels are aggregated in order:<div class="r"></p><pre class='sourceCode r'><code><span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; factor(0)</span>
 <span class='co'>#&gt; Levels: a c b</span>
 
 <span class='fu'><a href='vec_ptype2.html'>vec_ptype2</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"c"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 <span class='co'>#&gt; factor(0)</span>
 <span class='co'>#&gt; Levels: b a c</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.</p>
 
@@ -632,15 +631,15 @@ as <code><a href='df_ptype2.html'>df_ptype2()</a></code> and <code><a href='df_p
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:<div class="r"></p><pre><span class='va'>df1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+a base data frame:<div class="r"></p><pre class='sourceCode r'><code><span class='va'>df1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 <span class='va'>df2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span><span class='op'>(</span><span class='va'>df1</span>, class <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"foreign_df"</span>, <span class='st'>"data.frame"</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='fu'><a href='vec_bind.html'>vec_rbind</a></span><span class='op'>(</span><span class='va'>df1</span>, <span class='va'>df2</span><span class='op'>)</span>
 <span class='co'>#&gt;   x</span>
 <span class='co'>#&gt; 1 1</span>
 <span class='co'>#&gt; 2 1</span>
-</pre><p></div></p>
-<p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre><span class='va'>df3</span> <span class='op'>&lt;-</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>df1</span><span class='op'>)</span>
+</code></pre><p></div></p>
+<p>When a tibble is involved, we fall back to tibble:<div class="r"></p><pre class='sourceCode r'><code><span class='va'>df3</span> <span class='op'>&lt;-</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='va'>df1</span><span class='op'>)</span>
 
 <span class='fu'><a href='vec_bind.html'>vec_rbind</a></span><span class='op'>(</span><span class='va'>df1</span>, <span class='va'>df3</span><span class='op'>)</span>
 <span class='co'>#&gt; # A tibble: 2 x 1</span>
@@ -648,7 +647,7 @@ a base data frame:<div class="r"></p><pre><span class='va'>df1</span> <span clas
 <span class='co'>#&gt;   &lt;dbl&gt;</span>
 <span class='co'>#&gt; 1     1</span>
 <span class='co'>#&gt; 2     1</span>
-</pre><p></div></p>
+</code></pre><p></div></p>
 <p>These fallbacks are not ideal but they make sense because all data
 frames share a common data structure. This is not generally the case for
 vectors. For example factors and characters have different

@@ -77,9 +77,6 @@ provides an abbreviated summary suitable for use in a column heading." />
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -166,9 +163,9 @@ provides an abbreviated summary suitable for use in a column heading." />
 provides an abbreviated summary suitable for use in a column heading.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>vec_ptype_abbr</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, prefix_named <span class='op'>=</span> <span class='cn'>FALSE</span>, suffix_shape <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+<span class='fu'>vec_ptype_abbr</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span>, prefix_named <span class='op'>=</span> <span class='cn'>FALSE</span>, suffix_shape <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,7 +209,7 @@ characters where possible.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> integer</span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> data.frame&lt;</span>
@@ -225,7 +222,7 @@ characters where possible.</p>
 <span class='r-in'></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_abbr</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> int</span>
-</pre>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

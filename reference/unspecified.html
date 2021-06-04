@@ -78,9 +78,6 @@ allow NA to specify missingness without requiring a type." />
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -168,7 +165,7 @@ that only contain <code>NA</code>. These require special handling because we wan
 allow <code>NA</code> to specify missingness without requiring a type.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>unspecified</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span></pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>unspecified</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,7 +178,7 @@ allow <code>NA</code> to specify missingness without requiring a type.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span><span class='op'>(</span><span class='op'>)</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span><span class='op'>(</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Prototype: NULL</span>
 <span class='r-in'><span class='fu'><a href='vec_ptype.html'>vec_ptype_show</a></span><span class='op'>(</span><span class='cn'>NA</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Prototype: logical</span>
@@ -190,9 +187,9 @@ allow <code>NA</code> to specify missingness without requiring a type.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] &lt;NA&gt; x   </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: x</span>
 <span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA           "2021-05-06"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA           "2021-06-04"</span>
 <span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA                        "2021-05-06 14:48:40 UTC"</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA                        "2021-06-04 07:31:37 UTC"</span>
 <span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
@@ -203,7 +200,7 @@ allow <code>NA</code> to specify missingness without requiring a type.</p>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [[3]]</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 4 5</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
-</pre>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

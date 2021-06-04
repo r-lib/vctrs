@@ -249,7 +249,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; function (x, ...) </span>
 <span class="co">#&gt; UseMethod("mean")</span>
-<span class="co">#&gt; &lt;bytecode: 0x7f8522d4b348&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x7fe4ce987ae0&gt;</span>
 <span class="co">#&gt; &lt;environment: namespace:base&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
@@ -264,7 +264,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] "x"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; [1] 4 0 5</span></code></pre></div>
+<span class="co">#&gt; [1] 4 1 0</span></code></pre></div>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> throws an error if the inputs are not vectors or not automatically coercible:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="va">mean</span>, <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">globalenv</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
@@ -282,7 +282,8 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="va">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">fa</span>, <span class="va">fb</span><span class="op">)</span>
-<span class="co">#&gt; [1] 1 1</span></code></pre></div>
+<span class="co">#&gt; [1] a b</span>
+<span class="co">#&gt; Levels: a b</span></code></pre></div>
 <p>(This is documented in <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> but is still undesirable.)</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> returns a factor taking the union of the levels. This behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with <code><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">dplyr::bind_rows()</a></code>, which is stricter and is a common source of user difficulty.)</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
@@ -300,7 +301,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">datetime_nz</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2020-01-01 09:00"</span>, tz <span class="op">=</span> <span class="st">"Pacific/Auckland"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">datetime_nz</span><span class="op">)</span>
-<span class="co">#&gt; [1] "2019-12-31 20:00:00 UTC"</span></code></pre></div>
+<span class="co">#&gt; [1] "2020-01-01 09:00:00 NZDT"</span></code></pre></div>
 <p>This behaviour is documented in <code><a href="https://rdrr.io/r/base/DateTimeClasses.html" class="external-link">?DateTimeClasses</a></code> but is the source of considerable user pain.</p>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> preserves time zones:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
@@ -465,7 +466,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span>
 <span class="co">#&gt; Levels: small big</span>
 <span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">7</span><span class="op">)</span>
-<span class="co">#&gt; [1] NA           "2021-05-13" "2021-05-13" "2021-05-06" "2021-05-06"</span></code></pre></div>
+<span class="co">#&gt; [1] NA           "2021-06-11" "2021-06-11" "2021-06-04" "2021-06-04"</span></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>

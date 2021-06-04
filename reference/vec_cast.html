@@ -78,9 +78,6 @@ the foundation of type coercions in vctrs." />
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -168,7 +165,7 @@ vector to another. Along with <code><a href='vec_ptype2.html'>vec_ptype2()</a></
 the foundation of type coercions in vctrs.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, to_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, to_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
 
 <span class='fu'>vec_cast_common</span><span class='op'>(</span><span class='va'>...</span>, .to <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 
@@ -191,7 +188,7 @@ the foundation of type coercions in vctrs.</p>
 <span class='fu'>vec_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for list</span>
-<span class='fu'>vec_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>vec_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -265,17 +262,17 @@ the same base class.</p>
 attributes that an input can't be cast to the target type.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='co'># x is a double, but no information is lost</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># x is a double, but no information is lost</span></span>
 <span class='r-in'><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># When information is lost the cast fails</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span><span> Locations: 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span><span> Locations: 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># You can suppress this error and get the partial results</span></span>
 <span class='r-in'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
@@ -290,7 +287,7 @@ attributes that an input can't be cast to the target type.</p></div>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 1</span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span><span> Locations: 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># No sensible coercion is possible so an error is generated</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
@@ -306,7 +303,7 @@ attributes that an input can't be cast to the target type.</p></div>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] a b</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: a b</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
-</pre>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

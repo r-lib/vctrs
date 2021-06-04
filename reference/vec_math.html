@@ -79,9 +79,6 @@ mathematical functions like mean() (but not var() or sd())." />
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -170,9 +167,9 @@ Summary group generics, the Math group generics, and a handful of other
 mathematical functions like <code><a href='https://rdrr.io/r/base/mean.html'>mean()</a></code> (but not <code><a href='https://rdrr.io/r/stats/cor.html'>var()</a></code> or <code><a href='https://rdrr.io/r/stats/sd.html'>sd()</a></code>).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_math</span><span class='op'>(</span><span class='va'>.fn</span>, <span class='va'>.x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_math</span><span class='op'>(</span><span class='va'>.fn</span>, <span class='va'>.x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>vec_math_base</span><span class='op'>(</span><span class='va'>.fn</span>, <span class='va'>.x</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+<span class='fu'>vec_math_base</span><span class='op'>(</span><span class='va'>.fn</span>, <span class='va'>.x</span>, <span class='va'>...</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -220,7 +217,7 @@ classes.</p>
     <div class='dont-index'><p><code><a href='vec_arith.html'>vec_arith()</a></code> for the equivalent for the arithmetic infix operators.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_vctr.html'>new_vctr</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2.5</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='new_vctr.html'>new_vctr</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2.5</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>x</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;vctrs_vctr[3]&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1]  1.0  2.5 10.0</span>
@@ -234,7 +231,7 @@ classes.</p>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;vctrs_vctr[3]&gt;</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1]  1.0  3.5 13.5</span>
-</pre>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

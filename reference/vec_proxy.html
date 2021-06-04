@@ -115,7 +115,6 @@ if your class has attributes that depend on the data." />
 </script>
 
 
-
   
 
   
@@ -240,9 +239,9 @@ automatically. You only need to implement a <code>vec_restore()</code> method
 if your class has attributes that depend on the data.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_proxy</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_proxy</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
-<span class='fu'>vec_restore</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, n <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+<span class='fu'>vec_restore</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, n <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -292,16 +291,16 @@ for S3 lists. In vctrs, S3 lists are treated as scalars by
 default. This way we don't treat objects like model fits as
 vectors. To prevent vctrs from treating your S3 list as a scalar,
 unclass it in the <code>vec_proxy()</code> method. For instance, here is the
-definition for <code>list_of</code>:</p><pre><span class='va'>vec_proxy.vctrs_list_of</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
+definition for <code>list_of</code>:</p><pre class='sourceCode r'><code><span class='va'>vec_proxy.vctrs_list_of</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre>
+</code></pre>
 
 <p>Another case where you need to implement a proxy is <a href='new_rcrd.html'>record types</a>. Record types should return a data frame, as in
-the <code>POSIXlt</code> method:</p><pre><span class='va'>vec_proxy.POSIXlt</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
+the <code>POSIXlt</code> method:</p><pre class='sourceCode r'><code><span class='va'>vec_proxy.POSIXlt</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='new_data_frame.html'>new_data_frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
-</pre>
+</code></pre>
 
 <p>Note that you don't need to implement <code>vec_proxy()</code> when your class
 inherits from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code>.</p>

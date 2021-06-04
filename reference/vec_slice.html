@@ -78,9 +78,6 @@ that matches vec_size() instead of length()." />
 </script>
 
 
-<!-- dependencies from examples -->
-
-
   
 
   
@@ -168,11 +165,11 @@ for all vector types, regardless of dimensionality. It is an analog to <code>[</
 that matches <code><a href='vec_size.html'>vec_size()</a></code> instead of <code><a href='https://rdrr.io/r/base/length.html'>length()</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>vec_slice</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span><span class='op'>)</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_slice</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span><span class='op'>)</span>
 
 <span class='fu'>vec_slice</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>value</span>
 
-<span class='fu'>vec_assign</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span>, <span class='va'>value</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, value_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
+<span class='fu'>vec_assign</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>i</span>, <span class='va'>value</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, value_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -259,7 +256,7 @@ method, the vector is sliced with <code>[</code> instead.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span></span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>x</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]  9  3  1 10  5  6  8  4  7  2</span>
 <span class='r-in'><span class='fu'>vec_slice</span><span class='op'>(</span><span class='va'>x</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span></span>
@@ -312,15 +309,15 @@ method, the vector is sliced with <code>[</code> instead.</p>
 <span class='r-in'><span class='co'># But not fractional doubles:</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vec_cast.html'>vec_cast</a></span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span><span> Locations: 1</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 1</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># For this reason you can't assign fractional values in an integer</span></span>
 <span class='r-in'><span class='co'># vector:</span></span>
 <span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_slice</span><span class='op'>(</span><span class='va'>x</span>, <span class='fl'>2</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fl'>1.5</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span><span> Locations: 1</span></span>
-</pre>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 1</span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
