@@ -78,17 +78,17 @@ test_that("can control the direction per column", {
   )
 })
 
-test_that("completely missing rows can propagate NA", {
+test_that("NA propagation occurs if ANY row has a missing value (i.e. uses `vec_detect_complete()`)", {
   df <- data_frame(
-    x = c(1, NA, NA),
-    y = c(NA, NA, 1)
+    x = c(1, NA, NA, 1),
+    y = c(NA, NA, 1, 1)
   )
 
-  expect_identical(vec_rank(df, na_propagate = TRUE), c(1L, NA, 2L))
-  expect_identical(vec_rank(df, na_propagate = TRUE, direction = "desc"), c(2L, NA, 1L))
+  expect_identical(vec_rank(df, na_propagate = TRUE), c(NA, NA, NA, 1L))
+  expect_identical(vec_rank(df, na_propagate = TRUE, direction = "desc"), c(NA, NA, NA, 1L))
 })
 
-test_that("partially missing rows are controlled by `na_value`", {
+test_that("can control `na_value` per column", {
   df <- data_frame(
     x = c(1, 1, NA, NA, NA),
     y = c(3, NA, NA, 2, 1)
@@ -99,17 +99,18 @@ test_that("partially missing rows are controlled by `na_value`", {
     c(2L, 1L, 3L, 5L, 4L)
   )
   expect_identical(
-    vec_rank(df, na_value = c("largest", "smallest"), na_propagate = TRUE),
-    c(2L, 1L, NA, 4L, 3L)
-  )
-
-  expect_identical(
     vec_rank(df, na_value = c("largest", "smallest"), direction = "desc"),
     c(4L, 5L, 3L, 1L, 2L)
   )
+
+  # But `na_propagate = TRUE` overrules it
+  expect_identical(
+    vec_rank(df, na_value = c("largest", "smallest"), na_propagate = TRUE),
+    c(1L, NA, NA, NA, NA)
+  )
   expect_identical(
     vec_rank(df, na_value = c("largest", "smallest"), na_propagate = TRUE, direction = "desc"),
-    c(3L, 4L, NA, 1L, 2L)
+    c(1L, NA, NA, NA, NA)
   )
 })
 
