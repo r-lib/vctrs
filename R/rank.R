@@ -10,6 +10,9 @@
 #' `nan_distinct = FALSE`, `NaN` values are given the same rank as `NA`,
 #' otherwise they are given a rank that differentiates them from `NA`.
 #'
+#' For data frames, `na_propagate = TRUE` will propagate a missing value if
+#' any row is incomplete, as determined by [vec_detect_complete()].
+#'
 #' Like [vec_order_radix()], ordering is done in the C-locale. This can affect
 #' the ranks of character vectors, especially regarding how uppercase and
 #' lowercase letters are ranked. See the Details section of [vec_order_radix()]
