@@ -1,5 +1,4 @@
-#include <rlang.h>
-#include "vctrs.h"
+#include "complete.h"
 #include "equal.h"
 #include "type-data-frame.h"
 
@@ -32,8 +31,6 @@ SEXP vctrs_locate_complete(SEXP x) {
   return vec_locate_complete(x);
 }
 
-static SEXP vec_detect_complete(SEXP x);
-
 static
 SEXP vec_locate_complete(SEXP x) {
   SEXP where = PROTECT(vec_detect_complete(x));
@@ -51,7 +48,7 @@ SEXP vctrs_detect_complete(SEXP x) {
 
 static inline void vec_detect_complete_switch(SEXP x, R_len_t size, int* p_out);
 
-static
+// [[ include("complete.h") ]]
 SEXP vec_detect_complete(SEXP x) {
   SEXP proxy = PROTECT(vec_proxy_complete(x));
 
