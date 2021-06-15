@@ -1,6 +1,6 @@
 #include <rlang.h>
 #include "vctrs.h"
-#include "equal.h"
+#include "complete.h"
 #include "order-radix.h"
 
 enum ties {
@@ -48,44 +48,29 @@ r_obj* vec_rank(r_obj* x,
   r_keep_t pi_x;
   KEEP_HERE(x, &pi_x);
 
-  r_obj* missing = r_null;
-  r_keep_t pi_missing;
-  KEEP_HERE(missing, &pi_missing);
-  int* v_missing = NULL;
-
-  r_obj* not_missing = r_null;
-  r_keep_t pi_not_missing;
-  KEEP_HERE(not_missing, &pi_not_missing);
-  int* v_not_missing = NULL;
+  r_obj* complete = r_null;
+  r_keep_t pi_complete;
+  KEEP_HERE(complete, &pi_complete);
+  int* v_complete = NULL;
 
   r_ssize rank_size = size;
 
   if (na_propagate) {
-    // Slice out non-missing values of `x` to rank.
-    // Retain `non_missing` logical vector for constructing `out`.
-    missing = vec_equal_na(x);
-    KEEP_AT(missing, pi_missing);
-    v_missing = r_lgl_begin(missing);
+    // Slice out complete values of `x` to rank.
+    // Retain the logical vector for constructing `out`.
+    complete = vec_detect_complete(x);
+    KEEP_AT(complete, pi_complete);
+    v_complete = r_lgl_begin(complete);
 
-    bool any_missing = r_lgl_any(missing);
+    bool all_complete = r_lgl_all(complete);
 
-    if (any_missing) {
-      for (r_ssize i = 0; i < size; ++i) {
-        v_missing[i] = !v_missing[i];
-      }
-
-      not_missing = missing;
-      KEEP_AT(not_missing, pi_not_missing);
-      v_not_missing = v_missing;
-      missing = NULL;
-      v_missing = NULL;
-
-      x = vec_slice(x, not_missing);
+    if (all_complete) {
+      na_propagate = false;
+    } else {
+      x = vec_slice(x, complete);
       KEEP_AT(x, pi_x);
 
       rank_size = vec_size(x);
-    } else {
-      na_propagate = false;
     }
   }
 
@@ -118,7 +103,7 @@ r_obj* vec_rank(r_obj* x,
     r_ssize j = 0;
 
     for (r_ssize i = 0; i < size; ++i) {
-      v_out[i] = v_not_missing[i] ? v_rank[j++] : r_globals.na_int;
+      v_out[i] = v_complete[i] ? v_rank[j++] : r_globals.na_int;
     }
 
     FREE(1);
@@ -126,7 +111,7 @@ r_obj* vec_rank(r_obj* x,
     out = rank;
   }
 
-  FREE(5);
+  FREE(4);
   return out;
 }
 
@@ -239,19 +224,19 @@ enum ties parse_ties(r_obj* ties) {
 
 // Treats missing values as `true`
 static inline
-bool r_lgl_any(r_obj* x) {
+bool r_lgl_all(r_obj* x) {
   if (r_typeof(x) != R_TYPE_logical) {
-    r_stop_internal("r_lgl_any", "`x` must be a logical vector.");
+    r_stop_internal("r_lgl_all", "`x` must be a logical vector.");
   }
 
   const int* v_x = r_lgl_cbegin(x);
   r_ssize size = r_length(x);
 
   for (r_ssize i = 0; i < size; ++i) {
-    if (v_x[i]) {
-      return true;
+    if (!v_x[i]) {
+      return false;
     }
   }
 
-  return false;
+  return true;
 }
