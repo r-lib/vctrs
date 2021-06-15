@@ -112,64 +112,70 @@ static SEXP raw_slice(SEXP x, SEXP subscript) {
 #undef SLICE_COMPACT_SEQ
 #undef SLICE_SUBSCRIPT
 
-#define SLICE_BARRIER_SUBSCRIPT(RTYPE, GET, SET, NA_VALUE)      \
-  R_len_t n = Rf_length(subscript);                             \
-  int* subscript_data = INTEGER(subscript);                     \
-                                                                \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
-                                                                \
-  for (R_len_t i = 0; i < n; ++i, ++subscript_data) {           \
-    int j = *subscript_data;                                    \
-    SEXP elt = (j == NA_INTEGER) ? NA_VALUE : GET(x, j - 1);    \
-    SET(out, i, elt);                                           \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define SLICE_BARRIER_SUBSCRIPT(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE)  \
+  const CTYPE* data = CONST_DEREF(x);                                      \
+                                                                           \
+  R_len_t n = Rf_length(subscript);                                        \
+  int* subscript_data = INTEGER(subscript);                                \
+                                                                           \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                            \
+                                                                           \
+  for (R_len_t i = 0; i < n; ++i, ++subscript_data) {                      \
+    int j = *subscript_data;                                               \
+    SEXP elt = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];                 \
+    SET(out, i, elt);                                                      \
+  }                                                                        \
+                                                                           \
+  UNPROTECT(1);                                                            \
   return out
 
 
-#define SLICE_BARRIER_COMPACT_REP(RTYPE, GET, SET, NA_VALUE)    \
-  int* subscript_data = INTEGER(subscript);                     \
-  R_len_t j = subscript_data[0];                                \
-  R_len_t n = subscript_data[1];                                \
-                                                                \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
-                                                                \
-  SEXP elt = (j == NA_INTEGER) ? NA_VALUE : GET(x, j - 1);      \
-                                                                \
-  for (R_len_t i = 0; i < n; ++i) {                             \
-    SET(out, i, elt);                                           \
-  }                                                             \
-                                                                \
-  UNPROTECT(1);                                                 \
+#define SLICE_BARRIER_COMPACT_REP(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE)    \
+  const CTYPE* data = CONST_DEREF(x);                                          \
+                                                                               \
+  int* subscript_data = INTEGER(subscript);                                    \
+  R_len_t j = subscript_data[0];                                               \
+  R_len_t n = subscript_data[1];                                               \
+                                                                               \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                                \
+                                                                               \
+  SEXP elt = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];                       \
+                                                                               \
+  for (R_len_t i = 0; i < n; ++i) {                                            \
+    SET(out, i, elt);                                                          \
+  }                                                                            \
+                                                                               \
+  UNPROTECT(1);                                                                \
   return out
 
-#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, GET, SET)      \
-  int* subscript_data = INTEGER(subscript);             \
-  R_len_t start = subscript_data[0];                    \
-  R_len_t n = subscript_data[1];                        \
-  R_len_t step = subscript_data[2];                     \
-                                                        \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));         \
-                                                        \
-  for (R_len_t i = 0; i < n; ++i, start += step) {      \
-    SET(out, i, GET(x, start));                         \
-  }                                                     \
-                                                        \
-  UNPROTECT(1);                                         \
+#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, CTYPE, CONST_DEREF, SET)  \
+  const CTYPE* data = CONST_DEREF(x);                              \
+                                                                   \
+  int* subscript_data = INTEGER(subscript);                        \
+  R_len_t start = subscript_data[0];                               \
+  R_len_t n = subscript_data[1];                                   \
+  R_len_t step = subscript_data[2];                                \
+                                                                   \
+  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                    \
+                                                                   \
+  for (R_len_t i = 0; i < n; ++i, start += step) {                 \
+    SET(out, i, data[start]);                                      \
+  }                                                                \
+                                                                   \
+  UNPROTECT(1);                                                    \
   return out
 
-#define SLICE_BARRIER(RTYPE, GET, SET, NA_VALUE)                \
-  if (is_compact_rep(subscript)) {                              \
-    SLICE_BARRIER_COMPACT_REP(RTYPE, GET, SET, NA_VALUE);       \
-  } else if (is_compact_seq(subscript)) {                       \
-    SLICE_BARRIER_COMPACT_SEQ(RTYPE, GET, SET);                 \
-  } else {                                                      \
-    SLICE_BARRIER_SUBSCRIPT(RTYPE, GET, SET, NA_VALUE);         \
+#define SLICE_BARRIER(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE)          \
+  if (is_compact_rep(subscript)) {                                       \
+    SLICE_BARRIER_COMPACT_REP(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE); \
+  } else if (is_compact_seq(subscript)) {                                \
+    SLICE_BARRIER_COMPACT_SEQ(RTYPE, CTYPE, CONST_DEREF, SET);           \
+  } else {                                                               \
+    SLICE_BARRIER_SUBSCRIPT(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE);   \
   }
 
 static SEXP list_slice(SEXP x, SEXP subscript) {
-  SLICE_BARRIER(VECSXP, VECTOR_ELT, SET_VECTOR_ELT, R_NilValue);
+  SLICE_BARRIER(VECSXP, SEXP, VECTOR_PTR_RO, SET_VECTOR_ELT, R_NilValue);
 }
 
 #undef SLICE_BARRIER
