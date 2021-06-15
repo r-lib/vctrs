@@ -138,3 +138,108 @@ test_that("can chop integer64 objects with `NA_integer_` indices", {
 
   expect_identical(vec_chop(x, idx), expect)
 })
+
+test_that("equality proxy converts atomic input to data frames of doubles", {
+  x <- bit64::as.integer64(1)
+  expect_identical(
+    vec_proxy_equal(x),
+    data_frame(left = 2147483648, right = 1)
+  )
+})
+
+test_that("equality proxy works with 1-D arrays", {
+  x <- bit64::as.integer64(1:6)
+  y <- x
+  dim(y) <- 6
+
+  expect_identical(
+    vec_proxy_equal(x),
+    vec_proxy_equal(y)
+  )
+})
+
+test_that("equality proxy on >=2-D input converts to data frame and proxies each column", {
+  x <- bit64::as.integer64(1:8)
+  dim(x) <- c(2, 2, 2)
+
+  proxy1 <- integer64_proxy(x[1:2, 1, 1])
+  proxy2 <- integer64_proxy(x[1:2, 2, 1])
+  proxy3 <- integer64_proxy(x[1:2, 1, 2])
+  proxy4 <- integer64_proxy(x[1:2, 2, 2])
+
+  expect_identical(
+    vec_proxy_equal(x),
+    vec_cbind(proxy1, proxy2, proxy3, proxy4, .name_repair = "minimal")
+  )
+})
+
+test_that("can detect missing values with integer64 (#1304)", {
+  x <- bit64::as.integer64(c(NA, NA, 2, NA, 2, 2))
+
+  expect_identical(vec_equal_na(x), c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
+
+  dim(x) <- c(3, 2)
+  expect_identical(vec_equal_na(x), c(TRUE, FALSE, FALSE))
+})
+
+test_that("can fill missing values with integer64", {
+  x <- bit64::as.integer64(c(NA, NA, 2, NA, 2, 2))
+
+  expect <- bit64::as.integer64(c(NA, NA, 2, 2, 2, 2))
+  expect_identical(vec_fill_missing(x, "down"), expect)
+
+  dim(x) <- c(3, 2)
+  expect <- bit64::as.integer64(c(NA, NA, 2, 2, 2, 2))
+  dim(expect) <- c(3, 2)
+  expect_identical(vec_fill_missing(x, "up"), expect)
+})
+
+test_that("can compare values with integer64", {
+  x <- bit64::as.integer64(c(1, NA, 2))
+  y <- bit64::as.integer64(c(0, 2, 3))
+
+  expect_identical(vec_compare(x, y), c(1L, NA, -1L))
+
+  x <- bit64::as.integer64(1:8)
+  y <- bit64::as.integer64(c(1, 2, 1, 5, 1, 5, 1, 5))
+  dim(x) <- c(2, 2, 2)
+  dim(y) <- c(2, 2, 2)
+
+  expect_identical(vec_compare(x, y), c(1L, -1L))
+})
+
+test_that("integer64 <-> data frame works as expected", {
+  x <- bit64::as.integer64(c(-2, -1, 0, 1))
+  proxy <- integer64_proxy(x)
+
+  expect_identical(proxy$left, c(2147483647, 2147483647, 2147483648, 2147483648))
+  expect_identical(proxy$right, c(4294967294, 4294967295, 0, 1))
+  expect_identical(integer64_restore(proxy), x)
+
+  x <- bit64::as.integer64("9223372036854775807") + -1:0
+  proxy <- integer64_proxy(x)
+
+  expect_identical(proxy$left, c(4294967295, 4294967295))
+  expect_identical(proxy$right, c(4294967294, 4294967295))
+  expect_identical(integer64_restore(proxy), x)
+
+  x <- bit64::as.integer64("-9223372036854775807") + 0:1
+  proxy <- integer64_proxy(x)
+
+  expect_identical(proxy$left, c(0, 0))
+  expect_identical(proxy$right, c(1, 2))
+  expect_identical(integer64_restore(proxy), x)
+
+  x <- bit64::as.integer64(NA)
+  proxy <- integer64_proxy(x)
+
+  expect_identical(proxy$left, NA_real_)
+  expect_identical(proxy$right, NA_real_)
+  expect_identical(integer64_restore(proxy), x)
+})
+
+test_that("`integer64_proxy()` doesn't allow arrays", {
+  x <- bit64::as.integer64(1:6)
+  dim(x) <- c(3, 2)
+  expect_error(integer64_proxy(x), "should not have a `dim` attribute")
+})

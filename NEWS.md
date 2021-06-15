@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_equal_na()` and `vec_fill_missing()` now work with integer64 vectors
+  (#1304).
+
 * The `xtfrm()` method for vctrs_vctr objects no longer accidentally breaks
   ties (#1354).
 
