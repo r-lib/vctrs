@@ -33,6 +33,8 @@ r_obj* vctrs_integer64_proxy(r_obj* x) {
   }
 
   r_ssize size = r_length(x);
+  // Casting `const double*` to `const long long*` is UB, but we are mimicking
+  // what bit64 is doing, so if this ever breaks it means that bit64 is broken.
   const long long* v_x = (const long long*) r_dbl_cbegin(x);
 
   r_obj* nms = KEEP(r_chr_n(
@@ -91,6 +93,7 @@ r_obj* vctrs_integer64_restore(r_obj* x) {
   r_ssize size = r_length(left);
 
   r_obj* out = KEEP(r_alloc_double(size));
+  // See above comment about UB in this cast
   long long* v_out = (long long*) r_dbl_begin(out);
 
   r_attrib_poke_class(out, r_chr("integer64"));
