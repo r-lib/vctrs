@@ -299,10 +299,11 @@ SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SE
 // -----------------------------------------------------------------------------
 
 /*
- * Returns a list of size two.
+ * Returns a list of size three.
  * - The first element of the list contains the ordering as an integer vector.
  * - The second element of the list contains the group sizes as an integer
  *   vector.
+ * - The third element of the list contains the max group size as an integer.
  */
 // [[ include("order-radix.h") ]]
 SEXP vec_order_info(SEXP x,
@@ -456,7 +457,7 @@ SEXP vec_order_info_impl(SEXP x,
     p_truelength_info
   );
 
-  SEXP out = PROTECT_N(r_alloc_list(2), &n_prot);
+  SEXP out = PROTECT_N(r_alloc_list(3), &n_prot);
   r_list_poke(out, 0, p_order->data);
 
   if (group_sizes) {
@@ -464,6 +465,7 @@ SEXP vec_order_info_impl(SEXP x,
     SEXP sizes = p_group_info->data;
     sizes = r_int_resize(sizes, p_group_info->n_groups);
     r_list_poke(out, 1, sizes);
+    r_list_poke(out, 2, r_int((int) p_group_info->max_group_size));
   }
 
   UNPROTECT(n_prot);
