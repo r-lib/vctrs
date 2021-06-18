@@ -513,7 +513,7 @@ extern SEXP syms_stop_assert_size;
 extern SEXP syms_stop_matches_nothing;
 extern SEXP syms_stop_matches_remaining;
 extern SEXP syms_stop_matches_missing;
-extern SEXP syms_stop_matches_unique;
+extern SEXP syms_stop_matches_duplicates;
 extern SEXP syms_stop_matches_multiple;
 extern SEXP syms_warn_matches_multiple;
 extern SEXP syms_action;
