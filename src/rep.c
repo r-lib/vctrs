@@ -39,8 +39,16 @@ SEXP vctrs_rep(SEXP x, SEXP times) {
 static SEXP vec_rep(SEXP x, int times) {
   check_rep_times(times);
 
+  if (times == 1) {
+    return x;
+  }
+
   const R_len_t times_ = (R_len_t) times;
   const R_len_t x_size = vec_size(x);
+
+  if (x_size == 1) {
+    return vec_recycle(x, times_, args_empty);
+  }
 
   if (multiply_would_overflow(x_size, times_)) {
     stop_rep_size_oob();
@@ -86,7 +94,14 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
 
   if (times_size == 1) {
     const int times_ = r_int_get(times, 0);
-    out = vec_rep_each_uniform(x, times_);
+
+    if (times_ == 1) {
+      out = x;
+    } else if (times_ == 0) {
+      out = vec_ptype(x, args_empty);
+    } else {
+      out = vec_rep_each_uniform(x, times_);
+    }
   } else {
     out = vec_rep_each_impl(x, times, times_size);
   }

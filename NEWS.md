@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_rep()` and `vec_rep_each()` are much faster for `times = 0` and
+  `times = 1` (@mgirlich, #1392).
+
 * `vec_equal_na()` and `vec_fill_missing()` now work with integer64 vectors
   (#1304).
 
