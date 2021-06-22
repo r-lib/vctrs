@@ -199,6 +199,11 @@ test_that("can order with many NAs first", {
   expect_identical(vec_order_radix(x, na_value = "smallest"), base_order(x, na.last = FALSE))
 })
 
+test_that("subtraction in counting order range computation works correctly (#1399)", {
+  x <- c(rep(1L, ORDER_INSERTION_BOUNDARY), -2147483647L)
+  expect_identical(vec_order_radix(x), base_order(x))
+})
+
 # ------------------------------------------------------------------------------
 # vec_order_radix(<logical>)
 
