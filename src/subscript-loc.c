@@ -234,7 +234,7 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n,
     return out;
   }
 
-  /* A single `TRUE` or `FALSE` index is recycled_nms to the full vector
+  /* A single `TRUE` or `FALSE` index is recycled to the full vector
    * size. This means `TRUE` is synonym for missing index (subscript.e. no
    * subsetting) and `FALSE` is synonym for empty index.
    *
