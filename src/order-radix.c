@@ -1268,7 +1268,7 @@ void int_compute_range(const int* p_x,
    * - We need to go up to `intmax_t` to avoid intermediate overflow.
    * - `+ 1` to get an inclusive range on both ends.
    */
-  range = (uint32_t) intmax_add(intmax_subtract(x_max, x_min), 1);
+  range = (uint32_t) r__intmax_add(r__intmax_subtract(x_max, x_min), 1);
 
   *p_x_min = x_min;
   *p_range = range;
