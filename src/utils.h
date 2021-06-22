@@ -393,26 +393,6 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
 void c_print_backtrace();
 
 
-// Adapted from CERT C coding standards
-static inline
-intmax_t intmax_add(intmax_t x, intmax_t y) {
-  if ((y > 0 && x > (INTMAX_MAX - y)) ||
-      (y < 0 && x < (INTMAX_MIN - y))) {
-    r_stop_internal("intmax_add", "Values too large to be added.");
-  }
-
-  return x + y;
-}
-static inline
-intmax_t intmax_subtract(intmax_t x, intmax_t y) {
-  if ((y > 0 && x < (INTMAX_MIN + y)) ||
-      (y < 0 && x < (INTMAX_MAX + y))) {
-    r_stop_internal("intmax_subtract", "Subtraction resulted in overflow or underflow.");
-  }
-
-  return x - y;
-}
-
 SEXP chr_c(SEXP x, SEXP y);
 
 
