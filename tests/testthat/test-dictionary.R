@@ -300,6 +300,14 @@ test_that("can propagate missing values while matching", {
   expect_identical(vec_match(raw2(0, 1, 0, 2), raw2(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))
 })
 
+test_that("can propagate missingness of incomplete rcrd observations (#1386)", {
+  x <- new_rcrd(list(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA)))
+  expect_identical(vec_match(x, x, na_equal = FALSE), c(1L, NA, NA, NA))
+
+  # Matches `vec_detect_complete()` results
+  expect_identical(vec_detect_complete(x), c(TRUE, FALSE, FALSE, FALSE))
+})
+
 test_that("can propagate NaN as a missing value (#1252)", {
   expect_identical(vec_match(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE), int(NA, NA))
   expect_identical(vec_in(dbl(NaN, NA), c(NaN, NA), na_equal = FALSE), lgl(NA, NA))

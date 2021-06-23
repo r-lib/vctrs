@@ -78,7 +78,7 @@ test_that("can control the direction per column", {
   )
 })
 
-test_that("NA propagation occurs if ANY row has a missing value (i.e. uses `vec_detect_complete()`)", {
+test_that("NA propagation occurs if the observation is incomplete (i.e. uses `vec_detect_complete()`)", {
   df <- data_frame(
     x = c(1, NA, NA, 1),
     y = c(NA, NA, 1, 1)
@@ -86,6 +86,13 @@ test_that("NA propagation occurs if ANY row has a missing value (i.e. uses `vec_
 
   expect_identical(vec_rank(df, na_propagate = TRUE), c(NA, NA, NA, 1L))
   expect_identical(vec_rank(df, na_propagate = TRUE, direction = "desc"), c(NA, NA, NA, 1L))
+
+  x <- new_rcrd(list(
+    x = c(1, 1, NA, NA, 1),
+    y = c(1, NA, 1, NA, 1)
+  ))
+
+  expect_identical(vec_rank(x, na_propagate = TRUE), c(1L, NA, NA, NA, 1L))
 })
 
 test_that("can control `na_value` per column", {
