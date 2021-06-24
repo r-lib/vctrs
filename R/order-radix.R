@@ -30,6 +30,9 @@
 #' Character vectors are always translated to UTF-8 before ordering, and before
 #' any transform is applied by `chr_transform`.
 #'
+#' For complex vectors, if either the real or imaginary component is `NA` or
+#' `NaN`, then the entire observation is considered missing.
+#'
 #' @inheritParams ellipsis::dots_empty
 #'
 #' @param x A vector

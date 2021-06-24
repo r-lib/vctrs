@@ -2623,6 +2623,9 @@ uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
 
 // -----------------------------------------------------------------------------
 
+static inline
+r_complex_t cpl_normalise(r_complex_t x);
+
 /*
  * `cpl_order()` uses the fact that Rcomplex is really just a rcrd
  * type of two double vectors. It orders first on the real vector, and then on
@@ -2667,7 +2670,7 @@ void cpl_order(SEXP x,
 
   // Handle the real portion first
   for (r_ssize i = 0; i < size; ++i) {
-    p_x_chunk_dbl[i] = p_x_cpl[i].r;
+    p_x_chunk_dbl[i] = cpl_normalise(p_x_cpl[i]).r;
   }
 
   /*
@@ -2720,7 +2723,7 @@ void cpl_order(SEXP x,
   // Uses updated ordering to place it in sequential order.
   for (r_ssize i = 0; i < size; ++i) {
     const int loc = p_o[i] - 1;
-    p_x_chunk_dbl[i] = p_x_cpl[loc].i;
+    p_x_chunk_dbl[i] = cpl_normalise(p_x_cpl[loc]).i;
   }
 
   // Iterate over the group chunks from the first pass
@@ -2752,6 +2755,47 @@ void cpl_order(SEXP x,
     p_x_chunk_dbl += group_size;
     p_o += group_size;
   }
+}
+
+/*
+ * Normalises a complex value so that if one side is missing, both are. This
+ * ensures that all missing complex values are grouped together, no matter
+ * what type of missingness it is. NA and NaN can still be separated by
+ * `nan_distinct`, resulting in 4 different combinations of missingness. These
+ * 4 groups of missingness will still all be grouped together, either before
+ * or after any non-missing values have appeared.
+ * See issue #1403 for more information.
+ */
+static inline
+r_complex_t cpl_normalise(r_complex_t x) {
+  const double na = r_globals.na_dbl;
+  const double nan = R_NaN;
+
+  const enum vctrs_dbl_class r_type = dbl_classify(x.r);
+  const enum vctrs_dbl_class i_type = dbl_classify(x.i);
+
+  switch (r_type) {
+  case vctrs_dbl_number:
+    switch (i_type) {
+    case vctrs_dbl_number: return x;
+    case vctrs_dbl_missing: return (r_complex_t) {na, na};
+    case vctrs_dbl_nan: return (r_complex_t) {nan, nan};
+    }
+  case vctrs_dbl_missing:
+    switch (i_type) {
+    case vctrs_dbl_number: return (r_complex_t) {na, na};
+    case vctrs_dbl_missing: return x;
+    case vctrs_dbl_nan: return x;
+    }
+  case vctrs_dbl_nan:
+    switch (i_type) {
+    case vctrs_dbl_number: return (r_complex_t) {nan, nan};
+    case vctrs_dbl_missing: return x;
+    case vctrs_dbl_nan: return x;
+    }
+  }
+
+  never_reached("cpl_normalise");
 }
 
 // -----------------------------------------------------------------------------
@@ -3892,7 +3936,7 @@ static void vec_order_chunk_switch(bool decreasing,
     /* First pass - real */                                    \
     for (r_ssize j = 0; j < group_size; ++j) {                 \
       const int loc = p_o_col[j] - 1;                          \
-      p_x_chunk_col[j] = p_col[loc].r;                         \
+      p_x_chunk_col[j] = cpl_normalise(p_col[loc]).r;          \
     }                                                          \
                                                                \
     /* Decrement `i` to rerun column */                        \
@@ -3901,7 +3945,7 @@ static void vec_order_chunk_switch(bool decreasing,
     /* Second pass - imaginary */                              \
     for (r_ssize j = 0; j < group_size; ++j) {                 \
       const int loc = p_o_col[j] - 1;                          \
-      p_x_chunk_col[j] = p_col[loc].i;                         \
+      p_x_chunk_col[j] = cpl_normalise(p_col[loc]).i;          \
     }                                                          \
   }                                                            \
 } while (0)
