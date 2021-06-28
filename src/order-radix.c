@@ -2624,7 +2624,7 @@ uint8_t dbl_extract_uint64_byte(uint64_t x, uint8_t shift) {
 // -----------------------------------------------------------------------------
 
 static inline
-r_complex_t cpl_normalise(r_complex_t x);
+r_complex_t cpl_normalise_missing(r_complex_t x);
 
 /*
  * `cpl_order()` uses the fact that Rcomplex is really just a rcrd
@@ -2670,7 +2670,7 @@ void cpl_order(SEXP x,
 
   // Handle the real portion first
   for (r_ssize i = 0; i < size; ++i) {
-    p_x_chunk_dbl[i] = cpl_normalise(p_x_cpl[i]).r;
+    p_x_chunk_dbl[i] = cpl_normalise_missing(p_x_cpl[i]).r;
   }
 
   /*
@@ -2723,7 +2723,7 @@ void cpl_order(SEXP x,
   // Uses updated ordering to place it in sequential order.
   for (r_ssize i = 0; i < size; ++i) {
     const int loc = p_o[i] - 1;
-    p_x_chunk_dbl[i] = cpl_normalise(p_x_cpl[loc]).i;
+    p_x_chunk_dbl[i] = cpl_normalise_missing(p_x_cpl[loc]).i;
   }
 
   // Iterate over the group chunks from the first pass
@@ -2767,7 +2767,7 @@ void cpl_order(SEXP x,
  * See issue #1403 for more information.
  */
 static inline
-r_complex_t cpl_normalise(r_complex_t x) {
+r_complex_t cpl_normalise_missing(r_complex_t x) {
   const double na = r_globals.na_dbl;
   const double nan = R_NaN;
 
@@ -2795,7 +2795,7 @@ r_complex_t cpl_normalise(r_complex_t x) {
     }
   }
 
-  never_reached("cpl_normalise");
+  never_reached("cpl_normalise_missing");
 }
 
 // -----------------------------------------------------------------------------
@@ -3936,7 +3936,7 @@ static void vec_order_chunk_switch(bool decreasing,
     /* First pass - real */                                    \
     for (r_ssize j = 0; j < group_size; ++j) {                 \
       const int loc = p_o_col[j] - 1;                          \
-      p_x_chunk_col[j] = cpl_normalise(p_col[loc]).r;          \
+      p_x_chunk_col[j] = cpl_normalise_missing(p_col[loc]).r;  \
     }                                                          \
                                                                \
     /* Decrement `i` to rerun column */                        \
@@ -3945,7 +3945,7 @@ static void vec_order_chunk_switch(bool decreasing,
     /* Second pass - imaginary */                              \
     for (r_ssize j = 0; j < group_size; ++j) {                 \
       const int loc = p_o_col[j] - 1;                          \
-      p_x_chunk_col[j] = cpl_normalise(p_col[loc]).i;          \
+      p_x_chunk_col[j] = cpl_normalise_missing(p_col[loc]).i;  \
     }                                                          \
   }                                                            \
 } while (0)
