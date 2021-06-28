@@ -94,3 +94,10 @@ test_that("can order data frames that don't allow removing the column names (#12
 
   expect_silent(expect_identical(vec_order(df), 1L))
 })
+
+test_that("missing values in lists are respected (#1401)", {
+  x <- list(1, NULL, 2, NULL)
+  expect_identical(vec_order(x, na_value = "largest"), c(1L, 3L, 2L, 4L))
+  expect_identical(vec_order(x, na_value = "smallest"), c(2L, 4L, 1L, 3L))
+})
+

@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* The `na_value` argument of `vec_order()` and `vec_sort()` now correctly
+  respect missing values in lists (#1401).
+
 * `vec_rep()` and `vec_rep_each()` are much faster for `times = 0` and
   `times = 1` (@mgirlich, #1392).
 

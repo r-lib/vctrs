@@ -771,6 +771,12 @@ test_that("list elements are ordered by first appearance", {
   expect_identical(vec_order_radix(list(1:2, "a", 1:2)), c(1L, 3L, 2L))
 })
 
+test_that("missing values in lists are respected (#1401)", {
+  x <- list(1, NULL, 2, NULL)
+  expect_identical(vec_order_radix(x, na_value = "largest"), c(1L, 3L, 2L, 4L))
+  expect_identical(vec_order_radix(x, na_value = "smallest"), c(2L, 4L, 1L, 3L))
+})
+
 # ------------------------------------------------------------------------------
 # vec_order_radix(<data.frame>) - insertion
 
