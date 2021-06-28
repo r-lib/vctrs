@@ -525,27 +525,52 @@ test_that("all combinations of `direction` and `na_value` work", {
     x[order(x, na.last = FALSE, decreasing = FALSE)]
   )
 
-  # Base R is actually wrong here! It doesn't consider the imaginary part
-  # when ordering in decreasing order with `NA` real.
+  # In fixing #1403, we now align with base R
   expect_identical(
     x[vec_order_radix(x, na_value = "largest", direction = "desc")],
-    #x[order(x, na.last = FALSE, decreasing = TRUE)]
-    x[c(5L, 2L, 1L, 4L, 3L)]
+    x[order(x, na.last = FALSE, decreasing = TRUE)]
   )
   expect_identical(
     x[vec_order_radix(x, na_value = "smallest", direction = "desc")],
-    #x[order(x, na.last = FALSE, decreasing = TRUE)]
-    x[c(1L, 4L, 3L, 5L, 2L)]
+    x[order(x, na.last = TRUE, decreasing = TRUE)]
   )
 })
 
-test_that("can treat NaN and NA_real_ as distinct values", {
-  x <- complex(real = c(NA, NA, NaN, NaN), imaginary = c(NA, NaN, NaN, NA))
+test_that("full gambit of tests involving missing values are working as expected (#1403)", {
+  x <- complex(
+    real      = c(NaN, NA, NA,  NA, NaN, NaN, 1,  1,   1, 2),
+    imaginary = c(NA,  NA, NaN, 1,  NaN, 1,   NA, NaN, 1, NA)
+  )
 
-  expect_identical(vec_order_radix(x, direction = "asc", na_value = "largest", nan_distinct = TRUE), c(3L, 4L, 2L, 1L))
-  expect_identical(vec_order_radix(x, direction = "asc", na_value = "smallest", nan_distinct = TRUE), c(1L, 2L, 4L, 3L))
-  expect_identical(vec_order_radix(x, direction = "desc", na_value = "largest", nan_distinct = TRUE), c(1L, 2L, 4L, 3L))
-  expect_identical(vec_order_radix(x, direction = "desc", na_value = "smallest", nan_distinct = TRUE), c(3L, 4L, 2L, 1L))
+  df <- data_frame(a = rep(1L, length(x)), x = x)
+
+  # {number}, {NaN}, {NaN + NA}, {NA + NaN}, {NA}
+  expect <- c(9L,  5L, 6L, 8L,  1L,  3L,  2L, 4L, 7L, 10L)
+  expect_identical(vec_order_radix(x, direction = "asc",  na_value = "largest",  nan_distinct = TRUE), expect)
+  expect_identical(vec_order_radix(x, direction = "desc", na_value = "smallest", nan_distinct = TRUE), expect)
+  expect_identical(vec_order_radix(df, direction = "asc",  na_value = "largest",  nan_distinct = TRUE), expect)
+  expect_identical(vec_order_radix(df, direction = "desc", na_value = "smallest", nan_distinct = TRUE), expect)
+
+  # {NA}, {NA + NaN}, {NaN + NA}, {NaN}, {number}
+  expect <- c(2L, 4L, 7L, 10L,  3L,  1L,  5L, 6L, 8L,  9L)
+  expect_identical(vec_order_radix(x, direction = "asc",  na_value = "smallest", nan_distinct = TRUE), expect)
+  expect_identical(vec_order_radix(x, direction = "desc", na_value = "largest",  nan_distinct = TRUE), expect)
+  expect_identical(vec_order_radix(df, direction = "asc",  na_value = "smallest", nan_distinct = TRUE), expect)
+  expect_identical(vec_order_radix(df, direction = "desc", na_value = "largest",  nan_distinct = TRUE), expect)
+
+  # {number}, {NA or NaN}
+  expect <- c(9L, 1:7, 8L, 10L)
+  expect_identical(vec_order_radix(x, direction = "asc",  na_value = "largest",  nan_distinct = FALSE), expect)
+  expect_identical(vec_order_radix(x, direction = "desc", na_value = "smallest", nan_distinct = FALSE), expect)
+  expect_identical(vec_order_radix(df, direction = "asc",  na_value = "largest",  nan_distinct = FALSE), expect)
+  expect_identical(vec_order_radix(df, direction = "desc", na_value = "smallest", nan_distinct = FALSE), expect)
+
+  # {NA or NaN}, {number}
+  expect <- c(1:8, 10L, 9L)
+  expect_identical(vec_order_radix(x, direction = "asc",  na_value = "smallest", nan_distinct = FALSE), expect)
+  expect_identical(vec_order_radix(x, direction = "desc", na_value = "largest",  nan_distinct = FALSE), expect)
+  expect_identical(vec_order_radix(df, direction = "asc",  na_value = "smallest", nan_distinct = FALSE), expect)
+  expect_identical(vec_order_radix(df, direction = "desc", na_value = "largest",  nan_distinct = FALSE), expect)
 })
 
 # ------------------------------------------------------------------------------
