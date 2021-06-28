@@ -10,8 +10,8 @@
 #' rows that are partially complete (they have at least one non-missing value).
 #'
 #' @details
-#' A [record][new_rcrd] type vector is considered complete if any field is
-#' non-missing.
+#' A [record][new_rcrd] type vector is similar to a data frame, and is only
+#' considered complete if all fields are non-missing.
 #'
 #' @param x A vector
 #'
@@ -49,8 +49,4 @@ vec_slice_complete <- function(x) {
 
 vec_locate_complete <- function(x) {
   .Call(vctrs_locate_complete, x)
-}
-
-vec_proxy_complete <- function(x) {
-  .Call(vctrs_proxy_complete, x)
 }

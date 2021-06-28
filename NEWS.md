@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_detect_complete()` now computes completeness for `vctrs_rcrd` types in
+  the same way as data frames, which means that if any field is missing, the
+  entire record is considered incomplete (#1386).
+  
 * The `na_value` argument of `vec_order()` and `vec_sort()` now correctly
   respect missing values in lists (#1401).
 

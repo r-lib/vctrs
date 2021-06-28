@@ -50,7 +50,7 @@ static inline void vec_detect_complete_switch(SEXP x, R_len_t size, int* p_out);
 
 // [[ include("complete.h") ]]
 SEXP vec_detect_complete(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy_complete(x));
+  SEXP proxy = PROTECT(vec_proxy_equal(x));
 
   R_len_t size = vec_size(proxy);
 
