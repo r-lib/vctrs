@@ -26,6 +26,28 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
+# base methods ------------------------------------------------------------
+
+test_that("has no names", {
+  x <- new_rcrd(list(a = 1, b = 2L))
+
+  expect_null(names(x))
+  expect_null(vec_names(x))
+})
+
+test_that("removing names with `NULL` is a no-op (#1419)", {
+  x <- new_rcrd(list(a = 1, b = 2L))
+
+  expect_identical(`names<-`(x, NULL), x)
+  expect_identical(vec_set_names(x, NULL), x)
+})
+
+test_that("setting character names is an error (#1419)", {
+  x <- new_rcrd(list(a = 1, b = 2L))
+
+  expect_error(`names<-`(x, "x"), "Can't assign names")
+  expect_error(vec_set_names(x, "x"), "Can't assign names")
+})
 
 # coercion ----------------------------------------------------------------
 

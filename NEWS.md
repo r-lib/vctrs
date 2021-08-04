@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_set_names()` no longer corrupts `vctrs_rcrd` types (#1419).
+
 * `vec_detect_complete()` now computes completeness for `vctrs_rcrd` types in
   the same way as data frames, which means that if any field is missing, the
   entire record is considered incomplete (#1386).
