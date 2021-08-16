@@ -41,8 +41,10 @@ test_that("is_list_of as expected", {
 test_that("print method gives human friendly output", {
   skip_on_cran() # Depends on tibble
 
-  # FIXME: Disable crayon until we switch to testthat 3e
-  local_options(crayon.enabled = FALSE)
+  # FIXME:
+  # Disable crayon until we switch to testthat 3e
+  # Disable unicode in tibble header until we switch to testthat 3e
+  local_reproducible_output(crayon = FALSE, unicode = FALSE)
 
   x <- list_of(1, 2:3)
 
