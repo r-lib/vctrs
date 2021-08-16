@@ -51,6 +51,15 @@ names.vctrs_rcrd <- function(x) {
 }
 
 #' @export
+`names<-.vctrs_rcrd` <- function(x, value) {
+  if (is_null(value)) {
+    x
+  } else {
+    abort("Can't assign names to a <vctrs_rcrd>.")
+  }
+}
+
+#' @export
 format.vctrs_rcrd <- function(x, ...) {
   if (inherits(x, "vctrs_foobar")) {
     # For unit tests
