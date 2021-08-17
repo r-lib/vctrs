@@ -64,28 +64,28 @@ test_that("vec_as_subscript() works with vectors of dimensionality 1", {
   expect_identical(vec_as_subscript(arr), arr)
 })
 
-test_that("subscript functions have informative error messages", {
-  verify_output(test_path("error", "test-subscript.txt"), {
-    "# vec_as_subscript() forbids subscript types"
-    vec_as_subscript(1L, logical = "error", numeric = "error")
-    vec_as_subscript("foo", logical = "error", character = "error")
-    vec_as_subscript(TRUE, logical = "error")
-    vec_as_subscript("foo", character = "error")
-    vec_as_subscript(NULL, numeric = "error")
-    vec_as_subscript(quote(foo), character = "error")
+test_that("vec_as_subscript() forbids subscript types", {
+  expect_snapshot(error = TRUE, vec_as_subscript(1L, logical = "error", numeric = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript("foo", logical = "error", character = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript(TRUE, logical = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript("foo", character = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript(NULL, numeric = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript(quote(foo), character = "error"))
+})
 
-    "# vec_as_subscript2() forbids subscript types"
-    vec_as_subscript2(1L, numeric = "error", logical = "error")
-    vec_as_subscript2("foo", character = "error", logical = "error")
-    vec_as_subscript2(TRUE, logical = "error")
+test_that("vec_as_subscript2() forbids subscript types", {
+  expect_snapshot(error = TRUE, vec_as_subscript2(1L, numeric = "error", logical = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript2("foo", character = "error", logical = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript2(TRUE, logical = "error"))
+})
 
-    "# can customise subscript errors"
-    with_tibble_cols(vec_as_subscript(env()))
-    with_dm_tables(vec_as_subscript(env()))
+test_that("can customise subscript errors", {
+  expect_snapshot(error = TRUE, with_tibble_cols(vec_as_subscript(env())))
+  expect_snapshot(error = TRUE, with_dm_tables(vec_as_subscript(env())))
+})
 
-    "# vec_as_subscript() checks dimensionality"
-    vec_as_subscript(matrix(TRUE, nrow = 1))
-    vec_as_subscript(array(TRUE, dim = c(1, 1, 1)))
-    with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1)))
-  })
+test_that("vec_as_subscript() checks dimensionality", {
+  expect_snapshot(error = TRUE, vec_as_subscript(matrix(TRUE, nrow = 1)))
+  expect_snapshot(error = TRUE, vec_as_subscript(array(TRUE, dim = c(1, 1, 1))))
+  expect_snapshot(error = TRUE, with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))))
 })
