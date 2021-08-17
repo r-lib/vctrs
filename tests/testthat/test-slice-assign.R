@@ -720,27 +720,28 @@ test_that("can assign object of any dimensionality with compact seqs", {
 
 # Golden tests ------------------------------------------------------------
 
-test_that("slice and assign have informative errors", {
-  verify_output(test_path("error", "test-slice-assign.txt"), {
-    "# `vec_assign()` requires recyclable value"
-    vec_assign(1:3, 1:3, 1:2)
+test_that("`vec_assign()` requires recyclable value", {
+  expect_snapshot(error = TRUE, vec_assign(1:3, 1:3, 1:2))
+})
 
-    "# logical subscripts must match size of indexed vector"
-    vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
-    vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
+test_that("logical subscripts must match size of indexed vector", {
+  expect_snapshot(error = TRUE, vec_assign(1:2, c(TRUE, FALSE, TRUE), 5))
+  expect_snapshot(error = TRUE, vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]))
+})
 
-    "# must assign existing elements"
-    vec_assign(1:3, 5, 10)
-    vec_assign(1:3, "foo", 10)
-    vec_slice(letters, -100) <- "foo"
-    vec_assign(set_names(letters), "foo", "bar")
+test_that("must assign to existing elements", {
+  expect_snapshot(error = TRUE, vec_assign(1:3, 5, 10))
+  expect_snapshot(error = TRUE, vec_assign(1:3, "foo", 10))
+  expect_snapshot(error = TRUE, vec_slice(letters, -100) <- "foo")
+  expect_snapshot(error = TRUE, vec_assign(set_names(letters), "foo", "bar"))
+})
 
-    "# must assign with proper negative locations"
-    vec_assign(1:3, c(-1, 1), 1:2)
-    vec_assign(1:3, c(-1, NA), 1:2)
+test_that("must assign with proper negative locations", {
+  expect_snapshot(error = TRUE, vec_assign(1:3, c(-1, 1), 1:2))
+  expect_snapshot(error = TRUE, vec_assign(1:3, c(-1, NA), 1:2))
+})
 
-    "# `vec_assign()` error args can be overridden"
-    vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
-    vec_assign(1:2, 1L, 1:2, value_arg = "bar")
-  })
+test_that("`vec_assign()` error args can be overridden", {
+  expect_snapshot(error = TRUE, vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar"))
+  expect_snapshot(error = TRUE, vec_assign(1:2, 1L, 1:2, value_arg = "bar"))
 })
