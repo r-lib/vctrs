@@ -81,13 +81,11 @@ test_that("shape_broadcast_() applies recycling rules", {
 
 # --------------------------------------------------------------------------
 
-test_that("shape errors have informative output", {
-  verify_output(test_path("error", "test-shape.txt"), {
-    "# incompatible shapes throw errors"
-    vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1))
-    vec_shape2(shaped_int(1, 5, 0), shaped_int(1, 1, 5))
+test_that("incompatible shapes throw errors", {
+  expect_snapshot(error = TRUE, vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1)))
+  expect_snapshot(error = TRUE, vec_shape2(shaped_int(1, 5, 0), shaped_int(1, 1, 5)))
+})
 
-    "# can override error args"
-    vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1), x_arg = "foo", y_arg = "bar")
-  })
+test_that("can override error args", {
+  expect_snapshot(error = TRUE, vec_shape2(shaped_int(1, 0, 5), shaped_int(1, 5, 1), x_arg = "foo", y_arg = "bar"))
 })
