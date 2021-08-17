@@ -1,8 +1,10 @@
 # can customise subscript errors
 
     Code
-      with_tibble_cols(vec_as_subscript(env()))
-    Error <vctrs_error_subscript_type>
+      (expect_error(with_tibble_cols(vec_as_subscript(env())), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
       Must rename columns with a valid subscript vector.
       x Subscript `foo(bar)` has the wrong type `environment`.
       i It must be logical, numeric, or character.
@@ -10,8 +12,10 @@
 ---
 
     Code
-      with_dm_tables(vec_as_subscript(env()))
-    Error <vctrs_error_subscript_type>
+      (expect_error(with_dm_tables(vec_as_subscript(env())), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
       Must extract tables with a valid subscript vector.
       x Subscript `foo(bar)` has the wrong type `environment`.
       i It must be logical, numeric, or character.
@@ -19,24 +23,24 @@
 # vec_as_subscript() checks dimensionality
 
     Code
-      vec_as_subscript(matrix(TRUE, nrow = 1))
-    Error <vctrs_error_subscript_type>
+      (expect_error(vec_as_subscript(matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
       Must subset elements with a valid subscript vector.
       x Subscript must be a simple vector, not a matrix.
-
----
-
     Code
-      vec_as_subscript(array(TRUE, dim = c(1, 1, 1)))
-    Error <vctrs_error_subscript_type>
+      (expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
       Must subset elements with a valid subscript vector.
       x Subscript must be a simple vector, not an array.
-
----
-
     Code
-      with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1)))
-    Error <vctrs_error_subscript_type>
+      (expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))),
+      class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
       Must remove rows with a valid subscript vector.
       x Subscript `foo(bar)` must be a simple vector, not a matrix.
 

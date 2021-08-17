@@ -43,19 +43,26 @@ test_that("vec_as_subscript() handles symbols", {
 })
 
 test_that("can customise subscript errors", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       with_tibble_cols(vec_as_subscript(env())),
       class = "vctrs_error_subscript_type"
-    )
+    ))
+  })
+
+  expect_snapshot({
+    (expect_error(
+      with_dm_tables(vec_as_subscript(env())),
+      class = "vctrs_error_subscript_type"
+    ))
   })
 })
 
 test_that("vec_as_subscript() checks dimensionality", {
-  verify_errors({
-    expect_error(vec_as_subscript(matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
-    expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type")
-    expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))), class = "vctrs_error_subscript_type")
+  expect_snapshot({
+    (expect_error(vec_as_subscript(matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type"))
+    (expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type"))
+    (expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))), class = "vctrs_error_subscript_type"))
   })
 })
 
@@ -77,15 +84,4 @@ test_that("vec_as_subscript2() forbids subscript types", {
   expect_snapshot(error = TRUE, vec_as_subscript2(1L, numeric = "error", logical = "error"))
   expect_snapshot(error = TRUE, vec_as_subscript2("foo", character = "error", logical = "error"))
   expect_snapshot(error = TRUE, vec_as_subscript2(TRUE, logical = "error"))
-})
-
-test_that("can customise subscript errors", {
-  expect_snapshot(error = TRUE, with_tibble_cols(vec_as_subscript(env())))
-  expect_snapshot(error = TRUE, with_dm_tables(vec_as_subscript(env())))
-})
-
-test_that("vec_as_subscript() checks dimensionality", {
-  expect_snapshot(error = TRUE, vec_as_subscript(matrix(TRUE, nrow = 1)))
-  expect_snapshot(error = TRUE, vec_as_subscript(array(TRUE, dim = c(1, 1, 1))))
-  expect_snapshot(error = TRUE, with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))))
 })
