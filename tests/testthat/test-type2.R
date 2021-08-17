@@ -214,31 +214,34 @@ test_that("vec_is_subtype() determines subtyping relationship", {
 })
 
 test_that("can override scalar vector error message for base scalar types", {
-  verify_errors({
-    expect_error(vec_ptype2(NULL, quote(x), y_arg = "foo"), class = "vctrs_error_scalar_type")
-    expect_error(vec_ptype2(quote(x), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
+  expect_snapshot({
+    (expect_error(vec_ptype2(NULL, quote(x), y_arg = "foo"), class = "vctrs_error_scalar_type"))
+    (expect_error(vec_ptype2(quote(x), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type"))
   })
 })
 
 test_that("can override scalar vector error message for S3 types", {
-  verify_errors({
-    expect_error(vec_ptype2(NULL, foobar(), y_arg = "foo"), class = "vctrs_error_scalar_type")
-    expect_error(vec_ptype2(foobar(), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
+  expect_snapshot({
+    (expect_error(vec_ptype2(NULL, foobar(), y_arg = "foo"), class = "vctrs_error_scalar_type"))
+    (expect_error(vec_ptype2(foobar(), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type"))
   })
 })
 
 test_that("ptype2 and cast errors when same class fallback is impossible are informative", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE)),
       class = "vctrs_error_incompatible_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
+  })
+})
 
-    "Incompatible attributes bullets are not show when methods are implemented"
+test_that("Incompatible attributes bullets are not show when methods are implemented", {
+  expect_snapshot({
     with_foobar_cast <- function(expr ) {
       with_methods(
         vec_cast.vctrs_foobar = function(...) NULL,
@@ -253,43 +256,50 @@ test_that("ptype2 and cast errors when same class fallback is impossible are inf
         expr
       )
     }
-    expect_error(
+
+    (expect_error(
       with_foobar_cast(vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE))),
       class = "vctrs_error_incompatible_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE))),
-       class = "vctrs_error_incompatible_type"
-    )
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 
 test_that("common type errors don't mention columns if they are compatible", {
-  verify_errors({
+  expect_snapshot({
     df <- data.frame(x = 1, y = "")
+
     foo <- structure(df, class = c("vctrs_foo", "data.frame"))
     bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-    expect_error(
+
+    (expect_error(
       vec_cast_no_fallback(foo, bar),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
 test_that("common type warnings for data frames take attributes into account", {
-  verify_errors({
-    foobar_bud <- foobar(mtcars, bud = TRUE)
-    foobar_boo <- foobar(mtcars, boo = TRUE)
-    expect_df_fallback_warning(vec_ptype2_fallback(foobar_bud, foobar_boo))
+  foobar_bud <- foobar(mtcars, bud = TRUE)
+  foobar_boo <- foobar(mtcars, boo = TRUE)
+
+  expect_df_fallback_warning(vec_ptype2_fallback(foobar_bud, foobar_boo))
+  expect_df_fallback_warning(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
+
+  expect_snapshot({
+    vec_ptype2_fallback(foobar_bud, foobar_boo)
 
     "For reference, warning for incompatible classes"
-    expect_df_fallback_warning(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
+    vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
 
     "For reference, error when fallback is disabled"
-    expect_error(
+    (expect_error(
       vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
@@ -318,61 +328,6 @@ test_that("vec_ptype2() allows vec_ptype() to return another type", {
     vec_ptype2(foobar(1), foobar(2))
   )
   expect_identical(out, dbl())
-})
-
-test_that("can override scalar vector error message for base scalar types", {
-  expect_snapshot(error = TRUE, vec_ptype2(NULL, quote(x), y_arg = "foo"))
-  expect_snapshot(error = TRUE, vec_ptype2(quote(x), NULL, x_arg = "foo"))
-})
-
-test_that("can override scalar vector error message for S3 types", {
-  expect_snapshot(error = TRUE, vec_ptype2(NULL, foobar(), y_arg = "foo"))
-  expect_snapshot(error = TRUE, vec_ptype2(foobar(), NULL, x_arg = "foo"))
-})
-
-test_that("ptype2 and cast errors when same class fallback is impossible are informative", {
-  expect_snapshot(error = TRUE, vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
-  expect_snapshot(error = TRUE, vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
-})
-
-test_that("Incompatible attributes bullets are not show when methods are implemented", {
-  with_foobar_cast <- function(expr) {
-    with_methods(
-      vec_cast.vctrs_foobar = function(...) NULL,
-      vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) vec_default_cast(x, to, ...),
-      expr
-    )
-  }
-  with_foobar_ptype2 <- function(expr ) {
-    with_methods(
-      vec_ptype2.vctrs_foobar = function(...) NULL,
-      vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) vec_default_ptype2(x, y, ...),
-      expr
-    )
-  }
-
-  expect_snapshot(error = TRUE, {
-    with_foobar_cast(vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
-  })
-
-  expect_snapshot(error = TRUE, {
-    with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)))
-  })
-})
-
-test_that("common type errors don't mention columns if they are compatible", {
-  df <- data.frame(x = 1, y = "")
-  foo <- structure(df, class = c("vctrs_foo", "data.frame"))
-  bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-
-  expect_snapshot(error = TRUE, vec_cast_no_fallback(foo, bar))
-})
-
-test_that("common type warnings for data frames take attributes into account", {
-  foobar_bud <- foobar(mtcars, bud = TRUE)
-  foobar_boo <- foobar(mtcars, boo = TRUE)
-
-  expect_snapshot(vec_ptype2_fallback(foobar_bud, foobar_boo))
 })
 
 test_that("For reference, warning for incompatible classes", {
