@@ -68,10 +68,6 @@ try2 <- function(expr) {
   cat(conditionMessage(catch_cnd(expr, classes = "error")), "\n\n")
 }
 
-expect_known_output_nobang <- function(object, file, ...) {
-  expect_known_output(object, file, ...)
-}
-
 expect_syntactic <- function(name, exp_syn_name) {
   expect_identical(
     syn_name <- make_syntactic(name),
