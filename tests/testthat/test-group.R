@@ -132,7 +132,7 @@ test_that("can access number of groups", {
 
 test_that("print method is useful", {
   x <- new_group_rle(c(1L, 2L, 1L), c(3L, 2L, 1L), 2L)
-  expect_known_output(print(x), file = test_path("test-type-group-rle.txt"))
+  expect_snapshot(x)
 })
 
 # group loc --------------------------------------------------------------
