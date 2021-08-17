@@ -3,11 +3,8 @@
 
 test_that("data frames print nicely", {
   expect_equal(vec_ptype_abbr(mtcars), "df[,11]")
-
-  verify_output(test_path("test-type-data-frame.txt"), {
-    vec_ptype_show(mtcars)
-    vec_ptype_show(iris)
-  })
+  expect_snapshot(vec_ptype_show(mtcars))
+  expect_snapshot(vec_ptype_show(iris))
 })
 
 test_that("embedded data frames print nicely", {
@@ -16,9 +13,7 @@ test_that("embedded data frames print nicely", {
   df$b <- list_of(1, 2, 3)
   df$c <- as_list_of(split(data.frame(x = 1:3, y = letters[1:3]), 1:3))
 
-  verify_output(test_path("test-type-data-frame-embedded.txt"), {
-    vec_ptype_show(df)
-  })
+  expect_snapshot(vec_ptype_show(df))
 })
 
 # coercing ----------------------------------------------------------------
@@ -629,12 +624,12 @@ test_that("fallback is recursive", {
   expect_incompatible_df(vec_rbind(foo, baz), exp)
 })
 
-test_that("data frame output is informative", {
-  verify_output(test_path("error", "test-type-data-frame.txt"), {
-    "# combining data frames with foreign classes uses fallback"
-    foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
-    bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
-    baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
+test_that("combining data frames with foreign classes uses fallback", {
+  foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
+  bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
+  baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
+
+  expect_snapshot({
     vec_ptype_common_df_fallback(foo, bar, baz)
     vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar)
 
@@ -649,8 +644,15 @@ test_that("data frame output is informative", {
 
     with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1))))
     with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+  })
+})
 
-    "# falls back to tibble for tibble subclasses (#1025)"
+test_that("falls back to tibble for tibble subclasses (#1025)", {
+  foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
+  bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
+  baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
+
+  expect_snapshot({
     with_fallback_warning(
       invisible(vec_rbind(
         foobar(tibble::as_tibble(mtcars)),
