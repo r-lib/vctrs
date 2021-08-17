@@ -11,7 +11,7 @@ test_that("base coercions are symmetric and unchanging", {
   mat <- maxtype_mat(types)
 
   expect_true(isSymmetric(mat))
-  expect_known_output(mat, test_path("test-type2.txt"), print = TRUE)
+  expect_snapshot(mat)
 })
 
 test_that("new classes are uncoercible by default", {
@@ -119,14 +119,16 @@ test_that("vec_ptype2() methods forward args to stop_incompatible_type()", {
 })
 
 test_that("vec_ptype2() data frame methods builds argument tags", {
-  expect_known_output(file = test_path("test-type2-error-messages.txt"), {
-    cat_line("Bare objects:")
-    try2(vec_ptype2("foo", 10))
+  # Bare objects
+  expect_snapshot(error = TRUE, {
+    vec_ptype2("foo", 10)
+  })
 
-    cat_line("Nested dataframes:")
+  # Nested dataframes
+  expect_snapshot(error = TRUE, {
     df1 <- tibble(x = tibble(y = tibble(z = 1)))
     df2 <- tibble(x = tibble(y = tibble(z = "a")))
-    try2(vec_ptype2(df1, df2))
+    vec_ptype2(df1, df2)
   })
 })
 
