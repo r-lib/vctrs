@@ -75,11 +75,6 @@
     Warning <warning>
       Can't combine <foo> and <data.frame>; falling back to <data.frame>.
     Code
-      with_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
-    Warning <warning>
-      Can't combine <foo> and <baz>; falling back to <data.frame>.
-      Can't combine <data.frame> and <bar>; falling back to <data.frame>.
-    Code
       with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1))))
     Warning <warning>
       Can't combine <foo> and <data.frame>; falling back to <data.frame>.
@@ -89,10 +84,15 @@
       Can't combine <foo> and <data.frame>; falling back to <data.frame>.
       Can't combine <data.frame> and <bar>; falling back to <data.frame>.
     Code
+      with_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
+    Warning <warning>
+      Can't combine <foo> and <baz>; falling back to <data.frame>.
+      Can't combine <data.frame> and <bar>; falling back to <data.frame>.
+    Code
       with_fallback_quiet(invisible(vec_rbind(foo, data.frame(), foo)))
-      with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
       with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1))))
       with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
+      with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
 
 # falls back to tibble for tibble subclasses (#1025)
 
