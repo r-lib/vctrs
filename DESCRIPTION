@@ -42,7 +42,7 @@ Suggests:
     pillar (>= 1.4.4),
     pkgdown,
     rmarkdown,
-    testthat (>= 2.3.0),
+    testthat (>= 3.0.0),
     tibble (>= 3.1.3),
     withr,
     xml2,
@@ -58,3 +58,4 @@ Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Config/testthat/edition: 3
