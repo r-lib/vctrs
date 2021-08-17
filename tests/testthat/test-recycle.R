@@ -144,16 +144,12 @@ test_that("recycling data frames with matrices respects incompatible sizes", {
 })
 
 test_that("recycling to size 1 has informative error", {
-  verify_errors({
-    expect_error(vec_recycle(1:2, 1), class = "vctrs_error_recycle_incompatible_size")
+  expect_snapshot({
+    (expect_error(vec_recycle(1:2, 1), class = "vctrs_error_recycle_incompatible_size"))
   })
 })
 
 test_that("incompatible recycling size has informative error", {
   expect_snapshot(error = TRUE, vec_recycle(1:2, 4))
   expect_snapshot(error = TRUE, vec_recycle(1:2, 4, x_arg = "foo"))
-})
-
-test_that("recycling to size 1 has informative error", {
-  expect_snapshot(error = TRUE, vec_recycle(1:2, 1))
 })
