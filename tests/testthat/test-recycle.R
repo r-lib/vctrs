@@ -149,13 +149,11 @@ test_that("recycling to size 1 has informative error", {
   })
 })
 
-test_that("recycling has informative errors", {
-  verify_output(test_path("error", "test-recycle.txt"), {
-    "# incompatible recycling size has informative error"
-    vec_recycle(1:2, 4)
-    vec_recycle(1:2, 4, x_arg = "foo")
+test_that("incompatible recycling size has informative error", {
+  expect_snapshot(error = TRUE, vec_recycle(1:2, 4))
+  expect_snapshot(error = TRUE, vec_recycle(1:2, 4, x_arg = "foo"))
+})
 
-    "# recycling to size 1 has informative error"
-    vec_recycle(1:2, 1)
-  })
+test_that("recycling to size 1 has informative error", {
+  expect_snapshot(error = TRUE, vec_recycle(1:2, 1))
 })
