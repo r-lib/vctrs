@@ -153,16 +153,9 @@ test_that("print and str use format", {
   local_tuple_methods()
   r <- tuple(1, 1:100)
 
-  expect_known_output(
-    file = test_path("test-rcrd-format.txt"),
-    {
-      print(r)
-      cat("\n")
-      str(r[1:10])
-      cat("\n")
-      str(list(list(list(r, 1:100))))
-    }
-  )
+  expect_snapshot(r)
+  expect_snapshot(str(r[1:10]))
+  expect_snapshot(str(list(list(list(r, 1:100)))))
 })
 
 test_that("subsetting methods applied to each field", {
