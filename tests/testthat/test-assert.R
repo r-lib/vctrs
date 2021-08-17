@@ -191,10 +191,10 @@ test_that("unspecified is finalised before assertion", {
 })
 
 test_that("assertion failures are explained", {
-  expect_known_output(file = test_path("test-assert-explanations.txt"), {
-    local_no_stringsAsFactors()
-    local_options(rlang_backtrace_on_error = "none")
+  local_no_stringsAsFactors()
+  local_options(rlang_backtrace_on_error = "none")
 
+  expect_snapshot({
     try_cat(vec_assert(lgl(), chr()))
 
     try_cat(vec_assert(lgl(), factor()))
