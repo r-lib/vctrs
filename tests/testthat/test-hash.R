@@ -68,7 +68,7 @@ test_that("hashes are consistent from run to run", {
   }
 
   local_options(max.print = 99999)
-  expect_known_output(print(hash), file = test_path("test-hash-hash.txt"))
+  expect_snapshot(hash)
 })
 
 test_that("can hash list of non-vectors", {
