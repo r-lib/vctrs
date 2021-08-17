@@ -83,10 +83,8 @@ test_that("if not size 1, sizes must be identical", {
 })
 
 test_that("argument tags are forwarded", {
-  expect_known_output_nobang(file = test_path("test-type-vec-size-common-error.txt"), {
-    try2(vec_size_common(1:2, 1, 1:4))
-    try2(vec_size_common(foo = 1:2, 1, bar = 1:4))
-  })
+  expect_snapshot(error = TRUE, vec_size_common(1:2, 1, 1:4))
+  expect_snapshot(error = TRUE, vec_size_common(foo = 1:2, 1, bar = 1:4))
 })
 
 test_that("can pass size", {
