@@ -148,3 +148,77 @@
         ...1 ...2
       1    1    2
 
+# vec_rbind() fails with complex foreign S3 classes
+
+    Code
+      x <- structure(foobar(1), attr_foo = "foo")
+      y <- structure(foobar(2), attr_bar = "bar")
+      vec_rbind(set_names(x, "x"), set_names(y, "x"))
+    Error <vctrs_error_incompatible_type>
+      Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
+# # vec_rbind() fails with complex foreign S4 classes
+
+    Code
+      joe <- .Counts(1L, name = "Joe")
+      jane <- .Counts(2L, name = "Jane")
+      vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
+    Error <vctrs_error_incompatible_type>
+      Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
+# row-binding performs expected allocations
+
+    Code
+      ints <- rep(list(1L), 100)
+      named_ints <- rep(list(set_names(1:3, letters[1:3])), 100)
+      # Integers as rows
+      suppressMessages(with_memory_prof(vec_rbind_list(ints)))
+    Output
+      [1] 2.53KB
+    Code
+      suppressMessages(with_memory_prof(vec_rbind_list(named_ints)))
+    Output
+      [1] 3.41KB
+    Code
+      # Data frame with named columns
+      df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
+        "A", "B")), z = data_frame(Z = set_names(1:2, c("Za", "Zb"))))
+      dfs <- rep(list(df), 100)
+      with_memory_prof(vec_rbind_list(dfs))
+    Output
+      [1] 10.2KB
+    Code
+      # Data frame with rownames (non-repaired, non-recursive case)
+      df <- data_frame(x = 1:2)
+      dfs <- rep(list(df), 100)
+      dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+      with_memory_prof(vec_rbind_list(dfs))
+    Output
+      [1] 7.42KB
+    Code
+      # Data frame with rownames (repaired, non-recursive case)
+      dfs <- map(dfs, set_rownames_recursively)
+      with_memory_prof(vec_rbind_list(dfs))
+    Output
+      [1] 14.8KB
+    Code
+      # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
+      df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
+      dfs <- rep(list(df), 100)
+      dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
+      with_memory_prof(vec_rbind_list(dfs))
+    Output
+      [1] 1MB
+    Code
+      # FIXME (#1217): Data frame with rownames (repaired, recursive case)
+      dfs <- map(dfs, set_rownames_recursively)
+      with_memory_prof(vec_rbind_list(dfs))
+    Output
+      [1] 1.02MB
+

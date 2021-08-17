@@ -853,16 +853,18 @@ test_that("vec_rbind() falls back to c() if S3 method is available for S4 class"
   expect_identical(out$x, .Counts(1:3, name = "dispatched"))
 })
 
-test_that("vec_cbind() and vec_rbind() have informative error messages", {
-  skip_if_cant_set_names_on_s4()
-
-  verify_output(test_path("error", "test-bind.txt"), {
-    "# vec_rbind() fails with complex foreign S3 classes"
+test_that("vec_rbind() fails with complex foreign S3 classes", {
+  expect_snapshot(error = TRUE, {
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
     vec_rbind(set_names(x, "x"), set_names(y, "x"))
+  })
+})
 
-    "# vec_rbind() fails with complex foreign S4 classes"
+test_that("# vec_rbind() fails with complex foreign S4 classes", {
+  skip_if_cant_set_names_on_s4()
+
+  expect_snapshot(error = TRUE, {
     joe <- .Counts(1L, name = "Joe")
     jane <- .Counts(2L, name = "Jane")
     vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
@@ -993,14 +995,18 @@ test_that("column names are treated consistently in vec_rbind()", {
 
 # Golden tests -------------------------------------------------------
 
-test_that("rows-binding performs expected allocations", {
-  verify_output(test_path("performance", "test-bind.txt"), {
+test_that("row-binding performs expected allocations", {
+  vec_rbind_list <- function(x) {
+    vec_rbind(!!!x)
+  }
+
+  expect_snapshot({
     ints <- rep(list(1L), 1e2)
     named_ints <- rep(list(set_names(1:3, letters[1:3])), 1e2)
 
     "Integers as rows"
-    suppressMessages(with_memory_prof(vec_rbind(!!!ints)))
-    suppressMessages(with_memory_prof(vec_rbind(!!!named_ints)))
+    suppressMessages(with_memory_prof(vec_rbind_list(ints)))
+    suppressMessages(with_memory_prof(vec_rbind_list(named_ints)))
 
     "Data frame with named columns"
     df <- data_frame(
@@ -1009,17 +1015,17 @@ test_that("rows-binding performs expected allocations", {
       z = data_frame(Z = set_names(1:2, c("Za", "Zb")))
     )
     dfs <- rep(list(df), 1e2)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     "Data frame with rownames (non-repaired, non-recursive case)"
     df <- data_frame(x = 1:2)
     dfs <- rep(list(df), 1e2)
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     "Data frame with rownames (repaired, non-recursive case)"
     dfs <- map(dfs, set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     # FIXME: The following recursive cases duplicate rownames
     # excessively because df-cols are restored at each chunk
@@ -1031,10 +1037,10 @@ test_that("rows-binding performs expected allocations", {
     )
     dfs <- rep(list(df), 1e2)
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
     dfs <- map(dfs, set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
   })
 })
