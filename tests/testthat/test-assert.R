@@ -194,29 +194,28 @@ test_that("assertion failures are explained", {
   local_no_stringsAsFactors()
   local_options(rlang_backtrace_on_error = "none")
 
-  expect_snapshot({
-    try_cat(vec_assert(lgl(), chr()))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), chr()))
 
-    try_cat(vec_assert(lgl(), factor()))
-    try_cat(vec_assert(lgl(), factor(levels = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), factor()))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), factor(levels = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(factor(levels = "bar"), factor(levels = "foo")))
 
-    try_cat(vec_assert(factor(levels = "bar"), factor(levels = "foo")))
-    try_cat(vec_assert(factor(), chr()))
+  expect_snapshot(error = TRUE, vec_assert(factor(), chr()))
 
-    try_cat(vec_assert(lgl(), data.frame()))
-    try_cat(vec_assert(lgl(), data.frame(x = 1)))
-    try_cat(vec_assert(lgl(), data.frame(x = 1, y = 2)))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), data.frame()))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), data.frame(x = 1)))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), data.frame(x = 1, y = 2)))
 
-    try_cat(vec_assert(data.frame(), chr()))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(), chr()))
 
-    try_cat(vec_assert(data.frame(x = 1), chr()))
-    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo")))
-    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), chr()))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), data.frame(x = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
 
-    try_cat(vec_assert(data.frame(x = 1, y = 2), chr()))
-    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
-    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
-  })
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), chr()))
+
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
 })
 
 test_that("NULL is not a vector", {
