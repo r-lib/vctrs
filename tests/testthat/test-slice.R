@@ -432,32 +432,31 @@ test_that("vec_slice() works with Altrep classes with custom extract methods", {
   expect_equal(vec_slice(x, idx), c("foo", "foo", "bar"))
 })
 
-test_that("slice has informative error messages", {
-  verify_output(test_path("error", "test-slice.txt"), {
-    "# Unnamed vector with character subscript"
-    vec_slice(1:3, letters[1])
+test_that("Unnamed vector with character subscript is caught", {
+  expect_snapshot(error = TRUE, vec_slice(1:3, letters[1]))
+})
 
-    "# Negative subscripts are checked"
-    vec_slice(1:3, -c(1L, NA))
-    vec_slice(1:3, c(-1L, 1L))
+test_that("Negative subscripts are checked", {
+  expect_snapshot(error = TRUE, vec_slice(1:3, -c(1L, NA)))
+  expect_snapshot(error = TRUE, vec_slice(1:3, c(-1L, 1L)))
+})
 
-    "# oob error messages are properly constructed"
-    vec_slice(c(bar = 1), "foo")
+test_that("oob error messages are properly constructed", {
+  expect_snapshot(error = TRUE, vec_slice(c(bar = 1), "foo"))
 
-    "Multiple OOB indices"
-    vec_slice(letters, c(100, 1000))
-    vec_slice(letters, c(1, 100:103, 2, 104:110))
-    vec_slice(set_names(letters), c("foo", "bar"))
-    vec_slice(set_names(letters), toupper(letters))
+  # Multiple OOB indices
+  expect_snapshot(error = TRUE, vec_slice(letters, c(100, 1000)))
+  expect_snapshot(error = TRUE, vec_slice(letters, c(1, 100:103, 2, 104:110)))
+  expect_snapshot(error = TRUE, vec_slice(set_names(letters), c("foo", "bar")))
+  expect_snapshot(error = TRUE, vec_slice(set_names(letters), toupper(letters)))
 
-    "# Can't index beyond the end of a vector"
-    vec_slice(1:2, 3L)
-    vec_slice(1:2, -3L)
+  expect_snapshot(error = TRUE, vec_slice(1:2, 3L))
+  expect_snapshot(error = TRUE, vec_slice(1:2, -3L))
+})
 
-    "# vec_slice throws error with non-vector subscripts"
-    vec_slice(1:3, Sys.Date())
-    vec_slice(1:3, matrix(TRUE, ncol = 1))
-  })
+test_that("throws error with non-vector subscripts", {
+  expect_snapshot(error = TRUE, vec_slice(1:3, Sys.Date()))
+  expect_snapshot(error = TRUE, vec_slice(1:3, matrix(TRUE, ncol = 1)))
 })
 
 # vec_init ----------------------------------------------------------------
