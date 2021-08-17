@@ -157,6 +157,9 @@ SEXP node_compact_d(SEXP xs);
 extern struct vctrs_arg args_empty_;
 static struct vctrs_arg* const args_empty = &args_empty_;
 
+extern struct vctrs_arg args_n_;
+static struct vctrs_arg* const args_n = &args_n_;
+
 extern struct vctrs_arg args_dot_ptype_;
 static struct vctrs_arg* const args_dot_ptype = &args_dot_ptype_;
 
