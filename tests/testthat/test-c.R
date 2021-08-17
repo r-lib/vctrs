@@ -74,11 +74,9 @@ test_that("vec_c() includes index in argument tag", {
   df1 <- tibble(x = tibble(y = tibble(z = 1)))
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
 
-  expect_known_output(file = test_path("test-type-vec-c-error.txt"), {
-    try2(vec_c(df1, df2))
-    try2(vec_c(df1, df1, df2))
-    try2(vec_c(foo = df1, bar = df2))
-  })
+  expect_snapshot(error = TRUE, vec_c(df1, df2))
+  expect_snapshot(error = TRUE, vec_c(df1, df1, df2))
+  expect_snapshot(error = TRUE, vec_c(foo = df1, bar = df2))
 })
 
 test_that("vec_c() handles record classes", {
