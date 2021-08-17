@@ -619,9 +619,8 @@ test_that("vec_cbind() consistently handles unnamed outputs", {
   )
 })
 
-test_that("rbind() and cbind() have informative outputs when repairing names", {
-  verify_output(test_path("output", "bind-name-repair.txt"), {
-    "# vec_rbind()"
+test_that("vec_rbind() name repair messages are useful", {
+  expect_snapshot({
     vec_rbind(1, 2)
     vec_rbind(1, 2, .names_to = NULL)
 
@@ -633,14 +632,18 @@ test_that("rbind() and cbind() have informative outputs when repairing names", {
 
     vec_rbind(c(a = 1), c(b = 2))
     vec_rbind(c(a = 1), c(b = 2), .names_to = NULL)
+  })
+})
 
-    "Silent when assigning duplicate row names of df-cols"
-    df <- new_data_frame(list(x = mtcars[1:3, 1, drop = FALSE]))
-    vec_rbind(df, df)
+test_that("vec_rbind() is silent when assigning duplicate row names of df-cols", {
+  df <- new_data_frame(list(x = mtcars[1:3, 1, drop = FALSE]))
 
-    vec_rbind(mtcars[1:4, ], mtcars[1:3, ])
+  expect_snapshot(vec_rbind(df, df))
+  expect_snapshot(vec_rbind(mtcars[1:4, ], mtcars[1:3, ]))
+})
 
-    "# vec_cbind()"
+test_that("vec_cbind() name repair messages are useful", {
+  expect_snapshot({
     vec_cbind(1, 2)
     vec_cbind(1, 2, ...10 = 3)
     vec_cbind(a = 1, b = 2)
