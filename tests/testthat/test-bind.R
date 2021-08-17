@@ -723,21 +723,24 @@ test_that("vec_rbind() works with simple homogeneous foreign S4 classes", {
 })
 
 test_that("vec_rbind() fails with complex foreign S3 classes", {
-  verify_errors({
+  expect_snapshot({
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
-    expect_error(
+
+    (expect_error(
       vec_rbind(set_names(x, "x"), set_names(y, "x")),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
 test_that("vec_rbind() fails with complex foreign S4 classes", {
-  verify_errors({
+  skip_if_cant_set_names_on_s4()
+
+  expect_snapshot({
     joe <- .Counts(1L, name = "Joe")
     jane <- .Counts(2L, name = "Jane")
-    expect_error(vec_rbind(joe, jane), class = "vctrs_error_incompatible_type")
+    (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "y")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -851,24 +854,6 @@ test_that("vec_rbind() falls back to c() if S3 method is available for S4 class"
     vec_rbind(joe, jane)
   )
   expect_identical(out$x, .Counts(1:3, name = "dispatched"))
-})
-
-test_that("vec_rbind() fails with complex foreign S3 classes", {
-  expect_snapshot(error = TRUE, {
-    x <- structure(foobar(1), attr_foo = "foo")
-    y <- structure(foobar(2), attr_bar = "bar")
-    vec_rbind(set_names(x, "x"), set_names(y, "x"))
-  })
-})
-
-test_that("# vec_rbind() fails with complex foreign S4 classes", {
-  skip_if_cant_set_names_on_s4()
-
-  expect_snapshot(error = TRUE, {
-    joe <- .Counts(1L, name = "Joe")
-    jane <- .Counts(2L, name = "Jane")
-    vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
-  })
 })
 
 test_that("rbind supports names and inner names (#689)", {
