@@ -232,9 +232,6 @@ vec_index <- function(x, i, ...) {
 #' vec_init(Sys.Date(), 5)
 #' vec_init(mtcars, 2)
 vec_init <- function(x, n = 1L) {
-  n <- vec_cast(n, integer())
-  vec_assert(n, size = 1L)
-
   .Call(vctrs_init, x, n)
 }
 

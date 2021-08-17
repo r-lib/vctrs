@@ -504,6 +504,11 @@ test_that("vec_init() works with Altrep classes", {
   expect_equal(vec_init(x, 2), rep(NA_character_, 2))
 })
 
+test_that("vec_init() validates `n`", {
+  expect_error(vec_init(1L, 1.5), class = "vctrs_error_cast_lossy")
+  expect_error(vec_init(1L, c(1, 2)), "`n` must have size 1, not size 2.")
+})
+
 # vec_slice + compact_rep -------------------------------------------------
 
 # `i` is 1-based
