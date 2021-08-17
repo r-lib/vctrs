@@ -113,12 +113,7 @@ test_that("datetime coercions are symmetric and unchanging", {
   mat <- maxtype_mat(types)
 
   expect_true(isSymmetric(mat))
-  expect_known_output(
-    mat,
-    test_path("test-type-date-time.txt"),
-    print = TRUE,
-    width = 200
-  )
+  expect_snapshot(print(mat, width = 200))
 })
 
 test_that("tz comes from first non-empty", {
