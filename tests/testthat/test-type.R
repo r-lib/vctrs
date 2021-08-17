@@ -47,10 +47,10 @@ test_that("non-missing logical get correct type", {
 })
 
 test_that("output tests", {
-  expect_known_output(vec_ptype_show(), "out/vec-ptype-0.txt")
-  expect_known_output(vec_ptype_show(integer()), "out/vec-ptype-1.txt")
-  expect_known_output(vec_ptype_show(integer(), double()), "out/vec-ptype-2.txt")
-  expect_known_output(vec_ptype_show(logical(), integer(), double()), "out/vec-ptype-3.txt")
+  expect_snapshot(vec_ptype_show())
+  expect_snapshot(vec_ptype_show(integer()))
+  expect_snapshot(vec_ptype_show(integer(), double()))
+  expect_snapshot(vec_ptype_show(logical(), integer(), double()))
 })
 
 test_that("vec_ptype_common() handles matrices", {
@@ -67,31 +67,29 @@ test_that("vec_ptype_common() includes index in argument tag", {
   large_df1 <- set_names(df1, nm)
   large_df2 <- set_names(df2, nm)
 
-  expect_known_output_nobang(file = test_path("test-type-vec-type-common-error.txt"), {
-    try2(vec_ptype_common(df1, df2))
-    try2(vec_ptype_common(df1, df1, df2))
-    try2(vec_ptype_common(large_df1, large_df2))
+  expect_snapshot(error = TRUE, vec_ptype_common(df1, df2))
+  expect_snapshot(error = TRUE, vec_ptype_common(df1, df1, df2))
+  expect_snapshot(error = TRUE, vec_ptype_common(large_df1, large_df2))
 
-    # Names
-    try2(vec_ptype_common(foo = TRUE, bar = "foo"))
-    try2(vec_ptype_common(foo = TRUE, baz = FALSE, bar = "foo"))
-    try2(vec_ptype_common(foo = df1, bar = df2))
-    try2(vec_ptype_common(df1, df1, bar = df2))
+  # Names
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, bar = "foo"))
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, baz = FALSE, bar = "foo"))
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = df1, bar = df2))
+  expect_snapshot(error = TRUE, vec_ptype_common(df1, df1, bar = df2))
 
-    # One splice box
-    try2(vec_ptype_common(TRUE, !!!list(1, "foo")))
-    try2(vec_ptype_common(TRUE, !!!list(1, 2), "foo"))
-    try2(vec_ptype_common(1, !!!list(TRUE, FALSE), "foo"))
+  # One splice box
+  expect_snapshot(error = TRUE, vec_ptype_common(TRUE, !!!list(1, "foo")))
+  expect_snapshot(error = TRUE, vec_ptype_common(TRUE, !!!list(1, 2), "foo"))
+  expect_snapshot(error = TRUE, vec_ptype_common(1, !!!list(TRUE, FALSE), "foo"))
 
-    # One named splice box
-    try2(vec_ptype_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
-    try2(vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo")))
-    try2(vec_ptype_common(foo = TRUE, !!!list(bar = "foo")))
-    try2(vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"))
+  # One named splice box
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(FALSE, FALSE), bar = "foo"))
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo")))
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = "foo")))
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), baz = "chr"))
 
-    # Two splice boxes in next and current
-    try2(vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
-  })
+  # Two splice boxes in next and current
+  expect_snapshot(error = TRUE, vec_ptype_common(foo = TRUE, !!!list(bar = FALSE), !!!list(baz = "chr")))
 })
 
 test_that("proxied types are have s3 bare type", {
