@@ -438,28 +438,14 @@ test_that("base coercions default to vec_cast", {
 
 test_that("default print and str methods are useful", {
   h <- new_hidden(1:4)
-
-  expect_known_output(
-    {
-      print(h)
-      cat("\n")
-      print(h[0])
-      cat("\n")
-      str(h)
-    },
-    file = "test-vctr-print.txt",
-  )
+  expect_snapshot(h)
+  expect_snapshot(h[0])
+  expect_snapshot(str(h))
 })
 
 test_that("default print method shows names", {
   h <- new_hidden(c(A = 1, B = 2, C = 3))
-
-  expect_known_output(
-    {
-      print(h)
-    },
-    file = "test-vctr-print-names.txt",
-  )
+  expect_snapshot(h)
 })
 
 test_that("can't transpose", {
