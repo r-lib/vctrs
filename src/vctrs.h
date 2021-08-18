@@ -598,7 +598,10 @@ static inline void growable_push_int(struct growable* g, int i) {
 // Conditions ---------------------------------------------------
 
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
-void vec_assert(SEXP x, struct vctrs_arg* arg);
+__attribute__((noreturn))
+void stop_assert_size(r_ssize actual,
+                      r_ssize required,
+                      struct vctrs_arg* arg);
 __attribute__((noreturn))
 void stop_incompatible_size(SEXP x, SEXP y,
                             R_len_t x_size, R_len_t y_size,

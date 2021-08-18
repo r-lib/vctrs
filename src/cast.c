@@ -6,6 +6,7 @@
 #include "ptype-common.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "assert.h"
 
 static
 SEXP vec_cast_switch_native(const struct cast_opts* opts,
@@ -32,13 +33,13 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
 
   if (x == R_NilValue) {
     if (!vec_is_partial(to)) {
-      vec_assert(to, to_arg);
+      vec_assert_vector(to, to_arg);
     }
     return x;
   }
   if (to == R_NilValue) {
     if (!vec_is_partial(x)) {
-      vec_assert(x, x_arg);
+      vec_assert_vector(x, x_arg);
     }
     return x;
   }

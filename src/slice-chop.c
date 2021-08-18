@@ -6,6 +6,7 @@
 #include "type-data-frame.h"
 #include "owned.h"
 #include "utils.h"
+#include "assert.h"
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.
@@ -173,7 +174,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
     return chop_df(x, indices, info);
   }
   default:
-    vec_assert(x, args_empty);
+    vec_assert_vector(x, args_empty);
     stop_unimplemented_vctrs_type("vec_chop_base", proxy_info.type);
   }
 }

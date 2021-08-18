@@ -6,6 +6,7 @@
 #include "slice-assign.h"
 #include "subscript-loc.h"
 #include "utils.h"
+#include "assert.h"
 
 // Initialised at load time
 SEXP syms_vec_assign_fallback = NULL;
@@ -33,8 +34,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
     return R_NilValue;
   }
 
-  vec_assert(x, opts->x_arg);
-  vec_assert(value, opts->value_arg);
+  vec_assert_vector(x, opts->x_arg);
+  vec_assert_vector(value, opts->value_arg);
 
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),

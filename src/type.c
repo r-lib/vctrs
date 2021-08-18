@@ -5,6 +5,7 @@
 #include "ptype2.h"
 #include "type-data-frame.h"
 #include "utils.h"
+#include "assert.h"
 #include "decl/ptype-decl.h"
 
 // Initialised at load time
@@ -85,7 +86,7 @@ static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
   SEXP out;
 
   if (method == r_null) {
-    vec_assert(x, x_arg);
+    vec_assert_vector(x, x_arg);
     out = vec_slice(x, r_null);
   } else {
     out = vec_ptype_invoke(x, method);
@@ -136,7 +137,7 @@ SEXP vec_ptype_finalise(SEXP x) {
   }
 
   if (!OBJECT(x)) {
-    vec_assert(x, args_empty);
+    vec_assert_vector(x, args_empty);
     return x;
   }
 
@@ -148,7 +149,7 @@ SEXP vec_ptype_finalise(SEXP x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  vec_assert(x, args_empty);
+  vec_assert_vector(x, args_empty);
 
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:

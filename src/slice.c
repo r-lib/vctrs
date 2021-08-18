@@ -7,6 +7,7 @@
 #include "owned.h"
 #include "utils.h"
 #include "dim.h"
+#include "assert.h"
 
 // Initialised at load time
 SEXP syms_vec_slice_fallback = NULL;
@@ -347,7 +348,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
-      vec_assert(x, NULL);
+      vec_assert_vector(x, NULL);
     }
 
     if (is_compact(subscript)) {
@@ -452,7 +453,7 @@ bool vec_is_restored(SEXP x, SEXP to) {
 
 // [[ include("vctrs.h"); register() ]]
 SEXP vec_slice(SEXP x, SEXP subscript) {
-  vec_assert(x, args_empty);
+  vec_assert_vector(x, args_empty);
 
   subscript = PROTECT(vec_as_location(subscript, vec_size(x), PROTECT(vec_names(x))));
   SEXP out = vec_slice_impl(x, subscript);
@@ -463,7 +464,7 @@ SEXP vec_slice(SEXP x, SEXP subscript) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_init(SEXP x, R_len_t n) {
-  vec_assert(x, NULL);
+  vec_assert_vector(x, NULL);
 
   SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
 
