@@ -426,23 +426,27 @@ test_that("named empty vectors force named output (#1263)", {
 # Golden tests -------------------------------------------------------
 
 test_that("concatenation performs expected allocations", {
-  verify_output(test_path("performance", "test-c.txt"), {
+  vec_c_list <- function(x, ptype = NULL) {
+    vec_c(!!!x, .ptype = ptype)
+  }
+
+  expect_snapshot({
     ints <- rep(list(1L), 1e2)
     dbls <- rep(list(1), 1e2)
 
     # Extra allocations from `list2()`, see r-lib/rlang#937
     "# `vec_c()` "
     "Integers"
-    with_memory_prof(vec_c(!!!ints))
+    with_memory_prof(vec_c_list(ints))
 
     "Doubles"
-    with_memory_prof(vec_c(!!!dbls))
+    with_memory_prof(vec_c_list(dbls))
 
     "Integers to integer"
-    with_memory_prof(vec_c(!!!ints, ptype = int()))
+    with_memory_prof(vec_c_list(ints, ptype = int()))
 
     "Doubles to integer"
-    with_memory_prof(vec_c(!!!dbls, ptype = int()))
+    with_memory_prof(vec_c_list(dbls, ptype = int()))
 
 
     "# `vec_unchop()` "
