@@ -124,7 +124,9 @@ test_that("list coercions are symmetric and unchanging", {
   mat <- maxtype_mat(types)
 
   expect_true(isSymmetric(mat))
-  expect_snapshot(print(mat, width = 200))
+
+  local_options(width = 200)
+  expect_snapshot(print(mat))
 })
 
 test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {

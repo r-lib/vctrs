@@ -1,7 +1,7 @@
 # datetime coercions are symmetric and unchanging
 
     Code
-      print(mat, width = 200)
+      print(mat)
     Output
                            date                   datetime<local>        datetime<US/Central>   POSIXlt<US/Central>    duration<mins>   duration<secs>  
       date                 "date"                 "datetime<local>"      "datetime<US/Central>" "datetime<US/Central>" NA               NA              

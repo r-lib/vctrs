@@ -69,7 +69,7 @@
 # list coercions are symmetric and unchanging
 
     Code
-      print(mat, width = 200)
+      print(mat)
     Output
                          list   list_of<integer>   list_of<double>   list_of<character>  
       list               "list" NA                 NA                NA                  
