@@ -477,11 +477,7 @@ SEXP vec_init(SEXP x, R_len_t n) {
 // [[ register() ]]
 SEXP vctrs_init(SEXP x, SEXP n) {
   n = PROTECT(vec_cast(n, vctrs_shared_empty_int, args_n, args_empty));
-
-  if (r_length(n) != 1) {
-    r_abort("`n` must have size 1, not size %i.", r_length(n));
-  }
-
+  vec_assert_size(n, 1, args_n);
   R_len_t n_ = r_int_get(n, 0);
 
   SEXP out = vec_init(x, n_);
