@@ -425,16 +425,6 @@ bullets <- function(..., header = NULL) {
   info
 }
 
-tick <- function(x) {
-  ifelse(is.na(x), "NA", encodeString(x, quote = "`"))
-}
-
-is_syntactic <- function(x) {
-  ret <- (make_syntactic(x) == x)
-  ret[is.na(x)] <- FALSE
-  ret
-}
-
 # Used in names.c
 set_rownames_fallback <- function(x, names) {
   rownames(x) <- names
