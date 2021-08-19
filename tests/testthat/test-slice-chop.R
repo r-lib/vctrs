@@ -475,15 +475,15 @@ test_that("name repair is respected and happens after ordering according to `ind
 })
 
 test_that("vec_unchop() errors on unsupported location values", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_unchop(list(1, 2), list(c(1, 2), 0)),
       class = "vctrs_error_subscript_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_unchop(list(1), list(-1)),
       class = "vctrs_error_subscript_type"
-    )
+    ))
   })
 })
 
@@ -499,18 +499,18 @@ test_that("vec_unchop() works with simple homogeneous foreign S3 classes", {
 })
 
 test_that("vec_unchop() fails with complex foreign S3 classes", {
-  verify_errors({
+  expect_snapshot({
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
-    expect_error(vec_unchop(list(x, y)), class = "vctrs_error_incompatible_type")
+    (expect_error(vec_unchop(list(x, y)), class = "vctrs_error_incompatible_type"))
   })
 })
 
 test_that("vec_unchop() fails with complex foreign S4 classes", {
-  verify_errors({
+  expect_snapshot({
     joe <- .Counts(c(1L, 2L), name = "Joe")
     jane <- .Counts(3L, name = "Jane")
-    expect_error(vec_unchop(list(joe, jane)), class = "vctrs_error_incompatible_type")
+    (expect_error(vec_unchop(list(joe, jane)), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -617,11 +617,11 @@ test_that("vec_unchop() falls back for S4 classes with a registered c() method",
   joe <- .Counts(c(1L, 2L), name = "Joe")
   jane <- .Counts(3L, name = "Jane")
 
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_unchop(list(joe, 1, jane), list(c(1, 2), 3, 4)),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 
   local_c_counts()
@@ -649,18 +649,18 @@ test_that("vec_unchop() falls back for S4 classes with a registered c() method",
 })
 
 test_that("vec_unchop() fallback doesn't support `name_spec` or `ptype`", {
-  verify_errors({
+  expect_snapshot({
     foo <- structure(foobar(1), foo = "foo")
     bar <- structure(foobar(2), bar = "bar")
-    expect_error(
+    (expect_error(
       with_c_foobar(vec_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
       "name specification"
-    )
+    ))
     # Used to be an error about `ptype`
-    expect_error(
+    (expect_error(
       with_c_foobar(vec_unchop(list(foobar(1)), ptype = "")),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
@@ -675,15 +675,15 @@ test_that("vec_unchop() supports numeric S3 indices", {
 })
 
 test_that("vec_unchop() does not support non-numeric S3 indices", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_unchop(list(1), list(factor("x"))),
       class = "vctrs_error_subscript_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_unchop(list(1), list(foobar(1L))),
       class = "vctrs_error_subscript_type"
-    )
+    ))
   })
 })
 
@@ -702,19 +702,19 @@ test_that("can ignore names in `vec_unchop()` by providing a `zap()` name-spec (
     c(2L, 1L, 3L)
   )
 
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_unchop(list(a = c(b = letters), b = 3L), name_spec = zap()),
       class = "vctrs_error_incompatible_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_unchop(
         list(a = c(foo = 1:2), b = c(bar = "")),
         indices = list(2:1, 3),
         name_spec = zap()
       ),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
@@ -772,45 +772,4 @@ test_that("vec_unchop() fails if foreign classes are not homogeneous and there i
     vec_unchop(xs, list(c(2, 1), 3)),
     class = "vctrs_error_incompatible_type"
   )
-})
-
-test_that("vec_unchop() has informative error messages", {
-  verify_output(test_path("error", "test-unchop.txt"), {
-    "# vec_unchop() errors on unsupported location values"
-    vec_unchop(list(1, 2), list(c(1, 2), 0))
-    vec_unchop(list(1), list(-1))
-
-    "# vec_unchop() fails with complex foreign S3 classes"
-    x <- structure(foobar(1), attr_foo = "foo")
-    y <- structure(foobar(2), attr_bar = "bar")
-    vec_unchop(list(x, y))
-
-    "# vec_unchop() fails with complex foreign S4 classes"
-    joe <- .Counts(c(1L, 2L), name = "Joe")
-    jane <- .Counts(3L, name = "Jane")
-    vec_unchop(list(joe, jane))
-
-    "# vec_unchop() falls back for S4 classes with a registered c() method"
-    joe1 <- .Counts(c(1L, 2L), name = "Joe")
-    joe2 <- .Counts(3L, name = "Joe")
-    vec_unchop(list(joe1, 1, joe2), list(c(1, 2), 3, 4))
-
-    "# vec_unchop() fallback doesn't support `name_spec` or `ptype`"
-    foo <- structure(foobar(1), foo = "foo")
-    bar <- structure(foobar(2), bar = "bar")
-    with_c_foobar(vec_unchop(list(foo, bar), name_spec = "{outer}_{inner}"))
-    with_c_foobar(vec_unchop(list(foobar(1)), ptype = ""))
-
-    "# vec_unchop() does not support non-numeric S3 indices"
-    vec_unchop(list(1), list(factor("x")))
-    vec_unchop(list(1), list(foobar(1L)))
-
-    "# can ignore names in `vec_unchop()` by providing a `zap()` name-spec (#232)"
-    vec_unchop(list(a = c(b = letters), b = 3L), name_spec = zap())
-    vec_unchop(
-        list(a = c(foo = 1:2), b = c(bar = "")),
-        indices = list(2:1, 3),
-        name_spec = zap()
-      )
-  })
 })

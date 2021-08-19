@@ -1,28 +1,16 @@
 
 test_that("has ok print method", {
   partial <- partial_factor("x")
-  expect_known_output(
-    print(partial),
-    test_path("test-partial-factor-print-partial.txt")
-  )
+  expect_snapshot(partial)
 
   both <- vec_ptype2(partial, factor("y"))
-  expect_known_output(
-    print(both),
-    test_path("test-partial-factor-print-both.txt")
-  )
+  expect_snapshot(both)
 
   empty <- partial_factor()
-  expect_known_output(
-    print(empty),
-    test_path("test-partial-factor-print-empty.txt")
-  )
+  expect_snapshot(empty)
 
   learned <- vec_ptype2(empty, factor("y"))
-  expect_known_output(
-    print(learned),
-    test_path("test-partial-factor-print-learned.txt")
-  )
+  expect_snapshot(learned)
 
   expect_equal(vec_ptype_abbr(partial), "prtl_fctr")
 })

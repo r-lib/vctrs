@@ -40,41 +40,18 @@ test_that("is_list_of as expected", {
 
 test_that("print method gives human friendly output", {
   skip_on_cran() # Depends on tibble
-
-  # FIXME:
-  # Disable crayon until we switch to testthat 3e
-  # Disable unicode in tibble header until we switch to testthat 3e
-  local_reproducible_output(crayon = FALSE, unicode = FALSE)
-
-  x <- list_of(1, 2:3)
-
-  expect_known_output({
-      print(x)
-      cat("\n")
-      print(tibble::tibble(x))
-    },
-    file = test_path("test-list_of-print.txt")
-  )
+  expect_snapshot(list_of(1, 2:3))
+  expect_snapshot(tibble::tibble(x = list_of(1, 2:3)))
 })
 
 test_that("str method is reasonably correct", {
   x <- list_of(1, 2:3)
 
-  expect_known_output({
-      str(x)
-      cat("\n")
-      str(list(list(x, y = 2:1)))
-    },
-    file = test_path("test-list_of-str.txt")
-  )
+  expect_snapshot(str(x))
+  expect_snapshot(str(list(list(x, y = 2:1))))
 
-  expect_known_output({
-      str(x[0])
-      cat("\n")
-      str(list(list(x, y = 2:1)))
-    },
-    file = test_path("test-list_of-str-empty.txt")
-  )
+  expect_snapshot(str(x[0]))
+  expect_snapshot(str(list(list(x[0], y = 2:1))))
 })
 
 test_that("constructor requires list input", {
@@ -147,12 +124,9 @@ test_that("list coercions are symmetric and unchanging", {
   mat <- maxtype_mat(types)
 
   expect_true(isSymmetric(mat))
-  expect_known_output(
-    mat,
-    test_path("test-list_of-type.txt"),
-    print = TRUE,
-    width = 200
-  )
+
+  local_options(width = 200)
+  expect_snapshot(print(mat))
 })
 
 test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {

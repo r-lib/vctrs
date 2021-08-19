@@ -63,15 +63,6 @@ replace_triple_bang <- function(expr) {
   node_poke_car(node_cadr(node_cadr(expr)), sym("+"))
 }
 
-try2 <- function(expr) {
-  cat(paste0("\n", as_label2(substitute(expr)), ":\n\n"))
-  cat(conditionMessage(catch_cnd(expr, classes = "error")), "\n\n")
-}
-
-expect_known_output_nobang <- function(object, file, ...) {
-  expect_known_output(object, file, ...)
-}
-
 expect_syntactic <- function(name, exp_syn_name) {
   expect_identical(
     syn_name <- make_syntactic(name),

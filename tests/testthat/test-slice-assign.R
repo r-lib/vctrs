@@ -423,67 +423,74 @@ test_that("`vec_assign()` validates `value_arg`", {
 })
 
 test_that("`vec_assign()` requires recyclable value", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:3, 1:3, 1:2),
       class = "vctrs_error_recycle_incompatible_size"
-    )
+    ))
   })
 })
 
 test_that("logical subscripts must match size of indexed vector", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:2, c(TRUE, FALSE, TRUE), 5),
       class = "vctrs_error_subscript_size"
-    )
+    ))
   })
+
+  expect_snapshot(
+    (expect_error(
+      vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]),
+      class = "vctrs_error_subscript_size"
+    ))
+  )
 })
 
 test_that("must assign existing elements", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:3, 5, 10),
       class = "vctrs_error_subscript_oob"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(1:3, "foo", 10),
       "unnamed vector"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_slice(letters, -100) <- "foo",
       class = "vctrs_error_subscript_oob"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(set_names(letters), "foo", "bar"),
       class = "vctrs_error_subscript_oob"
-    )
+    ))
   })
 })
 
 test_that("must assign with proper negative locations", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:3, c(-1, 1), 1:2),
       class = "vctrs_error_subscript_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(1:3, c(-1, NA), 1:2),
       class = "vctrs_error_subscript_type"
-    )
+    ))
   })
 })
 
 test_that("`vec_assign()` error args can be overridden", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar"),
       class = "vctrs_error_incompatible_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(1:2, 1L, 1:2, value_arg = "bar"),
       class = "vctrs_error_recycle_incompatible_size"
-    )
+    ))
   })
 })
 
@@ -715,32 +722,4 @@ test_that("can assign object of any dimensionality with compact seqs", {
   expect_identical(vec_assign_seq(x2, 2, start, size, increasing), array(rep(c(2, 2, 1), 4), dim = c(3, 4)))
   expect_identical(vec_assign_seq(x3, 2, start, size, increasing), array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5)))
   expect_identical(vec_assign_seq(x4, 2, start, size, increasing), array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6)))
-})
-
-
-# Golden tests ------------------------------------------------------------
-
-test_that("slice and assign have informative errors", {
-  verify_output(test_path("error", "test-slice-assign.txt"), {
-    "# `vec_assign()` requires recyclable value"
-    vec_assign(1:3, 1:3, 1:2)
-
-    "# logical subscripts must match size of indexed vector"
-    vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
-    vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
-
-    "# must assign existing elements"
-    vec_assign(1:3, 5, 10)
-    vec_assign(1:3, "foo", 10)
-    vec_slice(letters, -100) <- "foo"
-    vec_assign(set_names(letters), "foo", "bar")
-
-    "# must assign with proper negative locations"
-    vec_assign(1:3, c(-1, 1), 1:2)
-    vec_assign(1:3, c(-1, NA), 1:2)
-
-    "# `vec_assign()` error args can be overridden"
-    vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
-    vec_assign(1:2, 1L, 1:2, value_arg = "bar")
-  })
 })

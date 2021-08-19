@@ -1,12 +1,8 @@
 
-test_that("vec_cast() has helpful error messages", {
-  verify_output(test_path("error", "test-cast.txt"), {
-    "# Casting to named argument mentions 'match type <foo>'"
-    vec_cast(1, "", x_arg = "foo", to_arg = "bar")
-    vec_cast(1, "", x_arg = "foo")
-  })
+test_that("Casting to named argument mentions 'match type <foo>'", {
+  expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo", to_arg = "bar"))
+  expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo"))
 })
-
 
 # vec_cast ---------------------------------------------------------------
 
@@ -55,27 +51,31 @@ test_that("cast common preserves names", {
 })
 
 test_that("cast errors create helpful messages (#57, #225)", {
-  expect_known_output(file = test_path("test-cast-error-nested.txt"), {
-    # Lossy cast
-    try2(vec_cast("foo", 10))
+  # Lossy cast
+  expect_snapshot(error = TRUE, vec_cast(1.5, 10L))
 
-    # Incompatible cast
-    try2(vec_cast(factor("foo"), 10))
+  # Incompatible cast
+  expect_snapshot(error = TRUE, vec_cast(factor("foo"), 10))
 
+  # Nested data frames - Lossy cast
+  expect_snapshot(error = TRUE, {
+    x <- tibble(a = tibble(b = 1.5))
+    y <- tibble(a = tibble(b = 10L))
+    vec_cast(x, y)
+  })
 
-    ## Nested data frames
-
-    # Lossy cast
-    x <- tibble(a = tibble(b = "foo"))
-    y <- tibble(a = tibble(b = 10))
-    try2(vec_cast(x, y))
-
-    # Incompatible cast
+  # Nested data frames - Incompatible cast
+  expect_snapshot(error = TRUE, {
     x <- tibble(a = tibble(b = factor("foo")))
-    try2(vec_cast(x, y))
+    y <- tibble(a = tibble(b = 10))
+    vec_cast(x, y)
+  })
 
-    # Common cast error
-    try2(vec_cast_common(x, y))
+  # Nested data frames - Common cast error
+  expect_snapshot(error = TRUE, {
+    x <- tibble(a = tibble(b = factor("foo")))
+    y <- tibble(a = tibble(b = 10))
+    vec_cast_common(x, y)
   })
 })
 

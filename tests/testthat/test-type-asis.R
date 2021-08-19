@@ -33,8 +33,8 @@ test_that("can take the common type of identical AsIs objects", {
 })
 
 test_that("AsIs objects throw ptype2 errors with their underlying types", {
-  verify_errors({
-    expect_error(vec_ptype2(I(1), I("x")), class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    (expect_error(vec_ptype2(I(1), I("x")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -52,8 +52,8 @@ test_that("can cast one AsIs to another AsIs", {
 })
 
 test_that("AsIs objects throw cast errors with their underlying types", {
-  verify_errors({
-    expect_error(vec_cast(I(1), I(factor("x"))), class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    (expect_error(vec_cast(I(1), I(factor("x"))), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -76,17 +76,3 @@ test_that("can `vec_c()` with only AsIs objects", {
 test_that("can `vec_c()` with AsIs objects mixed with other types", {
   expect_identical(vec_c(I(1L), 1), I(c(1, 1)))
 })
-
-# ------------------------------------------------------------------------------
-# Errors
-
-test_that("AsIs handling has meaningful errors", {
-  verify_output(test_path("error/test-type-asis.txt"), {
-    "# AsIs objects throw ptype2 errors with their underlying types"
-    vec_ptype2(I(1), I("x"))
-
-    "# AsIs objects throw cast errors with their underlying types"
-    vec_cast(I(1), I(factor("x")))
-  })
-})
-

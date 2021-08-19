@@ -110,7 +110,7 @@ test_that("vec_as_names() repairs names before invoking repair function", {
 })
 
 test_that("vec_as_names() is noisy by default", {
-  verify_output(test_path("output", "test-vec-as-names.txt"), {
+  expect_snapshot({
     # Noisy name repair
     vec_as_names(c("x", "x"), repair = "unique")
 
@@ -118,7 +118,9 @@ test_that("vec_as_names() is noisy by default", {
     vec_as_names(c("x", "x"), repair = "unique", quiet = TRUE)
 
     # Hint at repair argument, if known
-    vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
+    (expect_error(
+      vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
+    ))
   })
 })
 

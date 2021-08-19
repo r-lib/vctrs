@@ -1,4 +1,0 @@
-Prototype: <double>
-0. (           , <logical> ) = <logical>
-1. ( <logical> , <integer> ) = <integer>
-2. ( <integer> , <double>  ) = <double> 
