@@ -262,6 +262,16 @@ test_that("na.omit() returns its input unchanged if there are no missing values"
   expect_identical(na.omit(x), x)
 })
 
+test_that("na.exclude() works and retains metadata", {
+  x <- new_vctr(c(a = 1, b = NA, c = 2))
+  result <- na.exclude(x)
+
+  expect <- vec_slice(x, c(1, 3))
+  attr(expect, "na.action") <- structure(c(b = 2L), class = "exclude")
+
+  expect_identical(result, expect)
+})
+
 # names -------------------------------------------------------------------
 
 test_that("all elements must be named if any are named", {

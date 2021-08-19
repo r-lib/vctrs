@@ -398,25 +398,38 @@ is.na.vctrs_vctr <- function(x) {
 #' @importFrom stats na.omit
 #' @export
 na.omit.vctrs_vctr <- function(object, ...) {
-  missing <- vec_equal_na(object)
+  na_remove(object, "omit")
+}
+
+#' @importFrom stats na.exclude
+#' @export
+na.exclude.vctrs_vctr <- function(object, ...) {
+  na_remove(object, "exclude")
+}
+
+na_remove <- function(x, type) {
+  # The only difference between `na.omit()` and `na.exclude()` is the class
+  # of the `na.action` attribute
+
+  missing <- vec_equal_na(x)
 
   if (!any(missing)) {
-    return(object)
+    return(x)
   }
 
-  # `na.omit()` attaches the locations of the omitted values to the result
+  # `na.omit/exclude()` attach the locations of the omitted values to the result
   loc <- which(missing)
 
-  names <- vec_names(object)
+  names <- vec_names(x)
   if (!is_null(names)) {
-    # `na.omit()` retains the original names, if applicable
+    # `na.omit/exclude()` retain the original names, if applicable
     names <- vec_slice(names, loc)
     loc <- vec_set_names(loc, names)
   }
 
-  attr(loc, "class") <- "omit"
+  attr(loc, "class") <- type
 
-  out <- vec_slice(object, !missing)
+  out <- vec_slice(x, !missing)
   attr(out, "na.action") <- loc
   out
 }
