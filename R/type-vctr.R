@@ -395,6 +395,19 @@ is.na.vctrs_vctr <- function(x) {
   vec_equal_na(x)
 }
 
+#' @importFrom stats na.fail
+#' @export
+na.fail.vctrs_vctr <- function(object, ...) {
+  missing <- vec_equal_na(object)
+
+  if (any(missing)) {
+    # Return the same error as `na.fail.default()`
+    stop("missing values in object")
+  }
+
+  object
+}
+
 #' @importFrom stats na.omit
 #' @export
 na.omit.vctrs_vctr <- function(object, ...) {

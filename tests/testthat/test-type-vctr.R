@@ -272,6 +272,14 @@ test_that("na.exclude() works and retains metadata", {
   expect_identical(result, expect)
 })
 
+test_that("na.fail() works", {
+  x <- new_vctr(c(a = 1, b = 2))
+  expect_identical(na.fail(x), x)
+
+  x <- new_vctr(c(a = 1, b = NA, c = 2))
+  expect_snapshot(error = TRUE, na.fail(x))
+})
+
 # names -------------------------------------------------------------------
 
 test_that("all elements must be named if any are named", {

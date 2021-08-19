@@ -59,6 +59,15 @@ test_that("na.omit() works and retains metadata (#1413)", {
   expect_identical(result, expect)
 })
 
+test_that("na.fail() works", {
+  # Only considered missing if all fields are missing
+  x <- new_rcrd(list(a = c(1, 1, NA), b = c(1, NA, 1)))
+  expect_identical(na.fail(x), x)
+
+  x <- new_rcrd(list(a = c(1, 1, NA, NA), b = c(1, NA, 1, NA)))
+  expect_snapshot(error = TRUE, na.fail(x))
+})
+
 # coercion ----------------------------------------------------------------
 
 test_that("can't cast list to rcrd", {
