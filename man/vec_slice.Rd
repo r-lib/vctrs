@@ -39,6 +39,12 @@ This provides a common interface to extracting and modifying observations
 for all vector types, regardless of dimensionality. It is an analog to \code{[}
 that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
+\details{
+For performance critical code, it is recommended to use \code{vec_assign()} over
+\verb{vec_slice<-()} due to the fact that in some cases R forces all \verb{<-()}
+assignment functions to make an unavoidable extra copy of \code{x} before
+performing the assignment.
+}
 \section{Genericity}{
 
 

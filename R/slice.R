@@ -19,6 +19,12 @@
 #' @param ... These dots are for future extensions and must be empty.
 #' @return A vector of the same type as `x`.
 #'
+#' @details
+#' For performance critical code, it is recommended to use `vec_assign()` over
+#' `vec_slice<-()` due to the fact that in some cases R forces all `<-()`
+#' assignment functions to make an unavoidable extra copy of `x` before
+#' performing the assignment.
+#'
 #' @section Genericity:
 #'
 #' Support for S3 objects depends on whether the object implements a
