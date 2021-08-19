@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_init()` is now slightly faster (#1423).
+
 * `vec_set_names()` no longer corrupts `vctrs_rcrd` types (#1419).
 
 * `vec_detect_complete()` now computes completeness for `vctrs_rcrd` types in

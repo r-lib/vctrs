@@ -466,6 +466,10 @@ SEXP vec_slice(SEXP x, SEXP subscript) {
 SEXP vec_init(SEXP x, R_len_t n) {
   vec_assert_vector(x, NULL);
 
+  if (n < 0) {
+    r_abort("`n` must be a positive integer.");
+  }
+
   SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
 
   SEXP out = vec_slice_impl(x, i);
@@ -476,8 +480,14 @@ SEXP vec_init(SEXP x, R_len_t n) {
 
 // [[ register() ]]
 SEXP vctrs_init(SEXP x, SEXP n) {
+  n = PROTECT(vec_cast(n, vctrs_shared_empty_int, args_n, args_empty));
+  vec_assert_size(n, 1, args_n);
   R_len_t n_ = r_int_get(n, 0);
-  return vec_init(x, n_);
+
+  SEXP out = vec_init(x, n_);
+
+  UNPROTECT(1);
+  return out;
 }
 
 // Exported for testing
