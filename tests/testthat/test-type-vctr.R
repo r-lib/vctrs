@@ -247,6 +247,21 @@ test_that("diff matches base R", {
   expect_equal(diff(x2, differences = 11), x2[0L])
 })
 
+test_that("na.omit() works and retains metadata", {
+  x <- new_vctr(c(a = 1, b = NA, c = 2))
+  result <- na.omit(x)
+
+  expect <- vec_slice(x, c(1, 3))
+  attr(expect, "na.action") <- structure(c(b = 2L), class = "omit")
+
+  expect_identical(result, expect)
+})
+
+test_that("na.omit() returns its input unchanged if there are no missing values", {
+  x <- new_vctr(c(a = 1, b = 2))
+  expect_identical(na.omit(x), x)
+})
+
 # names -------------------------------------------------------------------
 
 test_that("all elements must be named if any are named", {

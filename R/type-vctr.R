@@ -395,6 +395,32 @@ is.na.vctrs_vctr <- function(x) {
   vec_equal_na(x)
 }
 
+#' @importFrom stats na.omit
+#' @export
+na.omit.vctrs_vctr <- function(object, ...) {
+  missing <- vec_equal_na(object)
+
+  if (!any(missing)) {
+    return(object)
+  }
+
+  # `na.omit()` attaches the locations of the omitted values to the result
+  loc <- which(missing)
+
+  names <- vec_names(object)
+  if (!is_null(names)) {
+    # `na.omit()` retains the original names, if applicable
+    names <- vec_slice(names, loc)
+    loc <- vec_set_names(loc, names)
+  }
+
+  attr(loc, "class") <- "omit"
+
+  out <- vec_slice(object, !missing)
+  attr(out, "na.action") <- loc
+  out
+}
+
 #' @export
 anyNA.vctrs_vctr <- if (getRversion() >= "3.2") {
   function(x, recursive = FALSE) {

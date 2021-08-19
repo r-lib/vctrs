@@ -49,6 +49,16 @@ test_that("setting character names is an error (#1419)", {
   expect_error(vec_set_names(x, "x"), "Can't assign names")
 })
 
+test_that("na.omit() works and retains metadata (#1413)", {
+  x <- new_rcrd(list(a = c(1, 1, NA, NA), b = c(1, NA, 1, NA)))
+  result <- na.omit(x)
+
+  expect <- vec_slice(x, 1:3)
+  attr(expect, "na.action") <- structure(4L, class = "omit")
+
+  expect_identical(result, expect)
+})
+
 # coercion ----------------------------------------------------------------
 
 test_that("can't cast list to rcrd", {
