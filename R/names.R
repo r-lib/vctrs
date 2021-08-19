@@ -404,25 +404,7 @@ re_match <- function(text, pattern, perl = TRUE, ...) {
 
 
 describe_repair <- function(orig_names, names) {
-  if (is_null(orig_names)) {
-    orig_names <- rep_along(names, "")
-  }
-  if (length(orig_names) != length(names)) {
-    stop("Internal error: New names and old names don't have same length")
-  }
-
-  new_names <- names != as_minimal_names(orig_names)
-  if (any(new_names)) {
-    msg <- bullets(
-      header = "New names:",
-      paste0(
-        tick_if_needed(orig_names[new_names]),
-        " -> ",
-        tick_if_needed(names[new_names])
-      )
-    )
-    message(msg)
-  }
+  names_inform_repair(orig_names, names)
 }
 
 bullets <- function(..., header = NULL) {
@@ -451,12 +433,6 @@ is_syntactic <- function(x) {
   ret <- (make_syntactic(x) == x)
   ret[is.na(x)] <- FALSE
   ret
-}
-
-tick_if_needed <- function(x) {
-  needs_ticks <- !is_syntactic(x)
-  x[needs_ticks] <- tick(x[needs_ticks])
-  x
 }
 
 # Used in names.c
