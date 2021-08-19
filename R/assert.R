@@ -93,18 +93,35 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
     size <- vec_recycle(vec_cast(size, integer()), 1L)
     x_size <- vec_size(x)
     if (!identical(x_size, size)) {
-      msg <- paste0("`", arg, "` must have size ", size, ", not size ", x_size, ".")
-      abort(
-        msg,
-        class = c("vctrs_error_assert_size", "vctrs_error_assert"),
-        required = size,
-        actual = x_size
-      )
+      stop_assert_size(x_size, size, arg)
     }
   }
 
   invisible(x)
 }
+
+# Also thrown from C
+stop_assert_size <- function(actual, required, arg) {
+  if (!nzchar(arg)) {
+    arg <- "Input"
+  } else {
+    arg <- glue::backtick(arg)
+  }
+
+  message <- glue::glue("{arg} must have size {required}, not size {actual}.")
+
+  stop_assert(
+    message,
+    class = "vctrs_error_assert_size",
+    actual = actual,
+    required = required
+  )
+}
+
+stop_assert <- function(message = NULL, class = NULL, ...) {
+  stop_vctrs(message, class = c(class, "vctrs_error_assert"), ...)
+}
+
 #' @rdname vec_assert
 #' @export
 vec_is <- function(x, ptype = NULL, size = NULL) {

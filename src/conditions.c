@@ -2,7 +2,7 @@
 #include "vctrs.h"
 #include "utils.h"
 
-
+// [[ include("vctrs.h") ]]
 void stop_scalar_type(SEXP x, struct vctrs_arg* arg) {
   SEXP call = PROTECT(Rf_lang3(Rf_install("stop_scalar_type"),
                                PROTECT(r_protect(x)),
@@ -11,10 +11,27 @@ void stop_scalar_type(SEXP x, struct vctrs_arg* arg) {
   never_reached("stop_scalar_type");
 }
 
-void vec_assert(SEXP x, struct vctrs_arg* arg) {
-  if (!vec_is_vector(x)) {
-    stop_scalar_type(x, arg);
-  }
+// [[ include("vctrs.h") ]]
+void stop_assert_size(r_ssize actual,
+                      r_ssize required,
+                      struct vctrs_arg* arg) {
+  r_obj* syms[4] = {
+   syms_actual,
+   syms_required,
+   syms_arg,
+   NULL
+  };
+  r_obj* args[4] = {
+    KEEP(r_int(actual)),
+    KEEP(r_int(required)),
+    KEEP(vctrs_arg(arg)),
+    NULL
+  };
+
+  r_obj* call = KEEP(r_call_n(syms_stop_assert_size, syms, args));
+  r_eval(call, vctrs_ns_env);
+
+  never_reached("stop_assert_size");
 }
 
 // [[ include("vctrs.h") ]]
