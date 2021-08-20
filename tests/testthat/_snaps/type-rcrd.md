@@ -1,3 +1,10 @@
+# na.fail() works
+
+    Code
+      na.fail(x)
+    Error <simpleError>
+      missing values in object
+
 # print and str use format
 
     Code
