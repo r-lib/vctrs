@@ -16,7 +16,7 @@
 #include "lazy.h"
 #include "type-data-frame.h"
 #include "translate.h"
-#include "order-radix.h"
+#include "order.h"
 #include "order-groups.h"
 #include "order-truelength.h"
 #include "order-sortedness.h"
@@ -305,7 +305,7 @@ SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SE
  *   vector.
  * - The third element of the list contains the max group size as an integer.
  */
-// [[ include("order-radix.h") ]]
+// [[ include("order.h") ]]
 SEXP vec_order_info(SEXP x,
                     SEXP direction,
                     SEXP na_value,
