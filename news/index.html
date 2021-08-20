@@ -158,7 +158,8 @@
     <div id="vctrs-development-version" class="section level1">
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vctrs-development-version" class="anchor" aria-hidden="true"></a>vctrs (development version)<small> Unreleased </small></h1>
-<ul><li><p><code><a href="../reference/vec_init.html">vec_init()</a></code> is now slightly faster (<a href='https://github.com/r-lib/vctrs/issues/1423'>#1423</a>).</p></li>
+<ul><li><p><code>vctrs_vctr</code> methods for <code><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit()</a></code>, <code><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.exclude()</a></code>, and <code><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.fail()</a></code> have been added (<a href='https://github.com/r-lib/vctrs/issues/1413'>#1413</a>).</p></li>
+<li><p><code><a href="../reference/vec_init.html">vec_init()</a></code> is now slightly faster (<a href='https://github.com/r-lib/vctrs/issues/1423'>#1423</a>).</p></li>
 <li><p><code><a href="../reference/vec_names.html">vec_set_names()</a></code> no longer corrupts <code>vctrs_rcrd</code> types (<a href='https://github.com/r-lib/vctrs/issues/1419'>#1419</a>).</p></li>
 <li><p><code><a href="../reference/vec_detect_complete.html">vec_detect_complete()</a></code> now computes completeness for <code>vctrs_rcrd</code> types in the same way as data frames, which means that if any field is missing, the entire record is considered incomplete (<a href='https://github.com/r-lib/vctrs/issues/1386'>#1386</a>).</p></li>
 <li><p>The <code>na_value</code> argument of <code><a href="../reference/vec_order.html">vec_order()</a></code> and <code><a href="../reference/vec_order.html">vec_sort()</a></code> now correctly respect missing values in lists (<a href='https://github.com/r-lib/vctrs/issues/1401'>#1401</a>).</p></li>
