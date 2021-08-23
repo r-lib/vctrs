@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Find matching observations across vectors — vec_match • vctrs</title>
+<title>Order vectors with base compatibility — vec_order_base • vctrs</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,10 +46,15 @@
 
 
 
-<meta property="og:title" content="Find matching observations across vectors — vec_match" />
-<meta property="og:description" content="vec_in() returns a logical vector based on whether needle is found in
-haystack. vec_match() returns an integer vector giving location of
-needle in haystack, or NA if it's not found." />
+<meta property="og:title" content="Order vectors with base compatibility — vec_order_base" />
+<meta property="og:description" content="vec_order_base() orders vectors using base::order(), but can handle
+more complex types, like data frames and vctrs_vctr objects, using
+vctrs principles.
+vec_order_base() is mainly provided for backwards compatibility with vctrs
+&amp;lt;= 0.3.7. New code should instead use vec_order(), which has more
+capabilities. The main difference between the two is that vec_order()
+orders character vectors in the C locale (which is highly performant), while
+vec_order_base() respects the system locale." />
 <meta property="og:image" content="https://vctrs.r-lib.org/logo.png" />
 
 
@@ -154,104 +159,86 @@ needle in haystack, or NA if it's not found." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Find matching observations across vectors</h1>
-    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/dictionary.R'><code>R/dictionary.R</code></a></small>
-    <div class="hidden name"><code>vec_match.Rd</code></div>
+    <h1>Order vectors with base compatibility</h1>
+    <small class="dont-index">Source: <a href='https://github.com/r-lib/vctrs/blob/master/R/order.R'><code>R/order.R</code></a></small>
+    <div class="hidden name"><code>vec_order_base.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>vec_in()</code> returns a logical vector based on whether <code>needle</code> is found in
-haystack. <code>vec_match()</code> returns an integer vector giving location of
-<code>needle</code> in <code>haystack</code>, or <code>NA</code> if it's not found.</p>
+    <p><code>vec_order_base()</code> orders vectors using <code><a href='https://rdrr.io/r/base/order.html'>base::order()</a></code>, but can handle
+more complex types, like data frames and <code><a href='new_vctr.html'>vctrs_vctr</a></code> objects, using
+vctrs principles.</p>
+<p><code>vec_order_base()</code> is mainly provided for backwards compatibility with vctrs
+&lt;= 0.3.7. New code should instead use <code><a href='vec_order.html'>vec_order()</a></code>, which has more
+capabilities. The main difference between the two is that <code><a href='vec_order.html'>vec_order()</a></code>
+orders character vectors in the C locale (which is highly performant), while
+<code>vec_order_base()</code> respects the system locale.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_match</span><span class='op'>(</span>
-  <span class='va'>needles</span>,
-  <span class='va'>haystack</span>,
-  <span class='va'>...</span>,
-  na_equal <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  needles_arg <span class='op'>=</span> <span class='st'>""</span>,
-  haystack_arg <span class='op'>=</span> <span class='st'>""</span>
-<span class='op'>)</span>
-
-<span class='fu'>vec_in</span><span class='op'>(</span>
-  <span class='va'>needles</span>,
-  <span class='va'>haystack</span>,
-  <span class='va'>...</span>,
-  na_equal <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  needles_arg <span class='op'>=</span> <span class='st'>""</span>,
-  haystack_arg <span class='op'>=</span> <span class='st'>""</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_order_base</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  direction <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"asc"</span>, <span class='st'>"desc"</span><span class='op'>)</span>,
+  na_value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"largest"</span>, <span class='st'>"smallest"</span><span class='op'>)</span>
 <span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>needles, haystack</th>
-      <td><p>Vector of <code>needles</code> to search for in vector haystack.
-<code>haystack</code> should usually be unique; if not <code>vec_match()</code> will only
-return the location of the first match.</p>
-<p><code>needles</code> and <code>haystack</code> are coerced to the same type prior to
-comparison.</p></td>
+      <th>x</th>
+      <td><p>A vector</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>These dots are for future extensions and must be empty.</p></td>
+      <th>direction</th>
+      <td><p>Direction to sort in. Defaults to <code>asc</code>ending.</p></td>
     </tr>
     <tr>
-      <th>na_equal</th>
-      <td><p>If <code>TRUE</code>, missing values in <code>needles</code> can be
-matched to missing values in <code>haystack</code>. If <code>FALSE</code>, they
-propagate, missing values in <code>needles</code> are represented as <code>NA</code> in
-the return value.</p></td>
-    </tr>
-    <tr>
-      <th>needles_arg, haystack_arg</th>
-      <td><p>Argument tags for <code>needles</code> and
-<code>haystack</code> used in error messages.</p></td>
+      <th>na_value</th>
+      <td><p>Should <code>NA</code>s be treated as the largest or smallest values?</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector the same length as <code>needles</code>. <code>vec_in()</code> returns a
-logical vector; <code>vec_match()</code> returns an integer vector.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p><code>vec_in()</code> is equivalent to <a href='https://rdrr.io/r/base/match.html'>%in%</a>; <code>vec_match()</code> is equivalent to <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code>.</p>
-    <h2 class="hasAnchor" id="missing-values"><a class="anchor" href="#missing-values"></a>Missing values</h2>
+    <p>An integer vector the same size as <code>x</code>.</p>
+    <h2 class="hasAnchor" id="differences-with-order-"><a class="anchor" href="#differences-with-order-"></a>Differences with <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code></h2>
 
     
 
-<p>In most cases places in R, missing values are not considered to be equal,
-i.e. <code>NA == NA</code> is not <code>TRUE</code>. The exception is in matching functions
-like <code><a href='https://rdrr.io/r/base/match.html'>match()</a></code> and <code><a href='https://rdrr.io/r/base/merge.html'>merge()</a></code>, where an <code>NA</code> will match another <code>NA</code>.
-By <code>vec_match()</code> and <code>vec_in()</code> will match <code>NA</code>s; but you can control
-this behaviour with the <code>na_equal</code> argument.</p>
-    <h2 class="hasAnchor" id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+<p>Unlike the <code>na.last</code> argument of <code><a href='https://rdrr.io/r/base/order.html'>order()</a></code> which decides the positions of
+missing values irrespective of the <code>decreasing</code> argument, the <code>na_value</code>
+argument of <code>vec_order_base()</code> interacts with <code>direction</code>. If missing values
+are considered the largest value, they will appear last in ascending order,
+and first in descending order.</p>
+    <h2 class="hasAnchor" id="dependencies-of-vec-order-base-"><a class="anchor" href="#dependencies-of-vec-order-base-"></a>Dependencies of <code>vec_order_base()</code></h2>
 
     
 
 <ul>
-<li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
-<li><p><code><a href='vec_proxy_equal.html'>vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href='vec_proxy_compare.html'>vec_proxy_order()</a></code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>hadley</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span><span class='op'>(</span><span class='st'>"hadley"</span>, <span class='st'>""</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span></span>
-<span class='r-in'><span class='fu'>vec_match</span><span class='op'>(</span><span class='va'>hadley</span>, <span class='va'>letters</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1]  8  1  4 12  5 25</span>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>9</span><span class='op'>)</span>, <span class='cn'>NA</span><span class='op'>)</span>, <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>vec_order_base</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]  3  1  9  5  4  8  7  6  2 10</span>
+<span class='r-in'><span class='fu'>vec_order_base</span><span class='op'>(</span><span class='va'>x</span>, <span class='st'>"desc"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] 10  2  6  7  8  4  5  9  1  3</span>
 <span class='r-in'></span>
-<span class='r-in'><span class='va'>vowels</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"e"</span>, <span class='st'>"i"</span>, <span class='st'>"o"</span>, <span class='st'>"u"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>vec_match</span><span class='op'>(</span><span class='va'>hadley</span>, <span class='va'>vowels</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA  1 NA NA  2 NA</span>
-<span class='r-in'><span class='fu'>vec_in</span><span class='op'>(</span><span class='va'>hadley</span>, <span class='va'>vowels</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] FALSE  TRUE FALSE FALSE  TRUE FALSE</span>
+<span class='r-in'><span class='co'># Can also handle data frames</span></span>
+<span class='r-in'><span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>g <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>10</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, x <span class='op'>=</span> <span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>vec_order_base</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]  9  4  6  2  3  1  5  8  7 10</span>
+<span class='r-in'><span class='fu'>vec_order_base</span><span class='op'>(</span><span class='va'>df</span>, <span class='st'>"desc"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] 10  7  8  5  1  3  2  6  4  9</span>
 <span class='r-in'></span>
-<span class='r-in'><span class='co'># Only the first index of duplicates is returned</span></span>
-<span class='r-in'><span class='fu'>vec_match</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"a"</span>, <span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># Missing values interpreted as largest values are last when</span></span>
+<span class='r-in'><span class='co'># in increasing order:</span></span>
+<span class='r-in'><span class='fu'>vec_order_base</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span><span class='op'>)</span>, na_value <span class='op'>=</span> <span class='st'>"largest"</span>, direction <span class='op'>=</span> <span class='st'>"asc"</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 2</span>
+<span class='r-in'><span class='fu'>vec_order_base</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span><span class='op'>)</span>, na_value <span class='op'>=</span> <span class='st'>"largest"</span>, direction <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 2 1</span>
 </code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

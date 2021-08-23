@@ -97,7 +97,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8.9001</span>
       </span>
     </div>
 
@@ -158,7 +158,14 @@
     <div id="vctrs-development-version" class="section level1">
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vctrs-development-version" class="anchor" aria-hidden="true"></a>vctrs (development version)<small> Unreleased </small></h1>
-<ul><li><p>Name repair messages are now signaled by <code><a href="https://rlang.r-lib.org/reference/names_inform_repair.html" class="external-link">rlang::names_inform_repair()</a></code>. This means that the messages are now sent to stdout by default rather than to stderr, resulting in prettier messages. Additionally, name repair messages can now be silenced through the global option <code>rlib_name_repair_verbosity</code>, which is useful for testing purposes. See <code>?names_inform_repair</code> for more information (<a href='https://github.com/r-lib/vctrs/issues/1429'>#1429</a>).</p></li>
+<ul><li>
+<p><code><a href="../reference/vec_order.html">vec_order()</a></code> and <code><a href="../reference/vec_order.html">vec_sort()</a></code> now use a custom radix sort algorithm, rather than relying on <code><a href="https://rdrr.io/r/base/order.html" class="external-link">order()</a></code>. The implementation is based on data.table’s <code>forder()</code> and their earlier contribution to R’s <code><a href="https://rdrr.io/r/base/order.html" class="external-link">order()</a></code>. There are four major changes, outlined below, the first two of which are breaking changes. If you need to retain the old ordering behavior, use <code><a href="../reference/vec_order_base.html">vec_order_base()</a></code>.</p>
+<ul><li><p>Character vectors now order in the C locale by default, which is <em>much</em> faster than ordering in the system’s locale. To order in a specific locale, you can provide a transformation function through <code>chr_transform</code>, such as <code><a href="https://rdrr.io/pkg/stringi/man/stri_sort_key.html" class="external-link">stringi::stri_sort_key()</a></code>.</p></li>
+<li><p>Optional arguments, such as <code>direction</code> and <code>na_value</code>, must now be specified by name. Specifying by position will result in an error.</p></li>
+<li><p>When ordering data frames, you can now control the behavior of <code>direction</code> and <code>na_value</code> on a per column basis.</p></li>
+<li><p>There is a new <code>nan_distinct</code> argument for differentiating between <code>NaN</code> and <code>NA</code> in double and complex vectors.</p></li>
+</ul></li>
+<li><p>Name repair messages are now signaled by <code><a href="https://rlang.r-lib.org/reference/names_inform_repair.html" class="external-link">rlang::names_inform_repair()</a></code>. This means that the messages are now sent to stdout by default rather than to stderr, resulting in prettier messages. Additionally, name repair messages can now be silenced through the global option <code>rlib_name_repair_verbosity</code>, which is useful for testing purposes. See <code>?names_inform_repair</code> for more information (<a href='https://github.com/r-lib/vctrs/issues/1429'>#1429</a>).</p></li>
 <li><p><code>vctrs_vctr</code> methods for <code><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit()</a></code>, <code><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.exclude()</a></code>, and <code><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.fail()</a></code> have been added (<a href='https://github.com/r-lib/vctrs/issues/1413'>#1413</a>).</p></li>
 <li><p><code><a href="../reference/vec_init.html">vec_init()</a></code> is now slightly faster (<a href='https://github.com/r-lib/vctrs/issues/1423'>#1423</a>).</p></li>
 <li><p><code><a href="../reference/vec_names.html">vec_set_names()</a></code> no longer corrupts <code>vctrs_rcrd</code> types (<a href='https://github.com/r-lib/vctrs/issues/1419'>#1419</a>).</p></li>
