@@ -50,8 +50,8 @@
       as_universal_names(c("a b", "b c"))
     Message <rlib_message_name_repair>
       New names:
-      * a b -> `a.b`
-      * b c -> `b.c`
+      * `a b` -> `a.b`
+      * `b c` -> `b.c`
     Output
       [1] "a.b" "b.c"
 
@@ -61,7 +61,7 @@
       vec_repair_names(set_names(1, "a:b"), "universal")
     Message <rlib_message_name_repair>
       New names:
-      * a:b -> `a.b`
+      * `a:b` -> `a.b`
     Output
       a.b 
         1 
@@ -72,7 +72,7 @@
       vec_repair_names(set_names(1, "a:b"), ~ make.names(.))
     Message <rlib_message_name_repair>
       New names:
-      * a:b -> `a.b`
+      * `a:b` -> `a.b`
     Output
       a.b 
         1 

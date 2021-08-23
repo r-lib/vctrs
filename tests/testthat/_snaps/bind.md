@@ -203,7 +203,7 @@
       # Integers as rows
       suppressMessages(with_memory_prof(vec_rbind_list(ints)))
     Output
-      [1] 22.1KB
+      [1] 2.53KB
     Code
       suppressMessages(with_memory_prof(vec_rbind_list(named_ints)))
     Output
