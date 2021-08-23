@@ -426,8 +426,8 @@ test_that("unique-ification has an 'algebraic'-y property", {
 })
 
 test_that("unique_names() and as_unique_names() are verbose or silent", {
-  expect_message(unique_names(1:2), "-> ...1", fixed = TRUE)
-  expect_message(as_unique_names(c("", "")), "-> ...1", fixed = TRUE)
+  expect_snapshot(unique_names(1:2))
+  expect_snapshot(as_unique_names(c("", "")))
 
   expect_message(regexp = NA, unique_names(1:2, quiet = TRUE))
   expect_message(regexp = NA, as_unique_names(c("", ""), quiet = TRUE))
@@ -514,11 +514,7 @@ test_that("complicated inputs", {
 })
 
 test_that("message", {
-  expect_message(
-    as_universal_names(c("a b", "b c")),
-    "New names:\n* `a b` -> a.b\n* `b c` -> b.c\n",
-    fixed = TRUE
-  )
+  expect_snapshot(as_universal_names(c("a b", "b c")))
 })
 
 test_that("quiet", {
@@ -550,17 +546,8 @@ test_that("unnamed input gives uniquely named output", {
 })
 
 test_that("messages by default", {
-  expect_message(
-    vec_repair_names(set_names(1, "a:b"), "universal"),
-    "New names:\n* `a:b` -> a.b\n",
-    fixed = TRUE
-  )
-
-  expect_message(
-    vec_repair_names(set_names(1, "a:b"), ~ make.names(.)),
-    "New names:\n* `a:b` -> a.b\n",
-    fixed = TRUE
-  )
+  expect_snapshot(vec_repair_names(set_names(1, "a:b"), "universal"))
+  expect_snapshot(vec_repair_names(set_names(1, "a:b"), ~ make.names(.)))
 })
 
 test_that("quiet = TRUE", {

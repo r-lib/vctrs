@@ -1,36 +1,58 @@
+# duplicate names are de-deduplicated
+
+    Code
+      (expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")))
+    Message <rlib_message_name_repair>
+      New names:
+      * `x` -> `x...1`
+      * `x` -> `x...2`
+    Output
+        x...1 x...2
+      1     1     1
+    Code
+      (expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1",
+        "x...2")))
+    Message <rlib_message_name_repair>
+      New names:
+      * `x` -> `x...1`
+      * `x` -> `x...2`
+    Output
+        x...1 x...2
+      1     1     1
+
 # vec_rbind() name repair messages are useful
 
     Code
       vec_rbind(1, 2)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
     Output
         ...1
       1    1
       2    2
     Code
       vec_rbind(1, 2, .names_to = NULL)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
     Output
         ...1
       1    1
       2    2
     Code
       vec_rbind(1, 2, ...10 = 3)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
     Output
         ...1
       1    1
@@ -38,13 +60,13 @@
       3    3
     Code
       vec_rbind(1, 2, ...10 = 3, .names_to = NULL)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
     Output
            ...1
       ...1    1
@@ -52,22 +74,22 @@
       ...3    3
     Code
       vec_rbind(a = 1, b = 2)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
     Output
         ...1
       1    1
       2    2
     Code
       vec_rbind(a = 1, b = 2, .names_to = NULL)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
+      * `` -> `...1`
       New names:
-      * `` -> ...1
+      * `` -> `...1`
     Output
         ...1
       a    1
@@ -116,20 +138,20 @@
 
     Code
       vec_cbind(1, 2)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
-      * `` -> ...2
+      * `` -> `...1`
+      * `` -> `...2`
     Output
         ...1 ...2
       1    1    2
     Code
       vec_cbind(1, 2, ...10 = 3)
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
-      * `` -> ...2
-      * ...10 -> ...3
+      * `` -> `...1`
+      * `` -> `...2`
+      * `...10` -> `...3`
     Output
         ...1 ...2 ...3
       1    1    2    3
@@ -140,10 +162,10 @@
       1 1 2
     Code
       vec_cbind(c(a = 1), c(b = 2))
-    Message <simpleMessage>
+    Message <rlib_message_name_repair>
       New names:
-      * `` -> ...1
-      * `` -> ...2
+      * `` -> `...1`
+      * `` -> `...2`
     Output
         ...1 ...2
       1    1    2

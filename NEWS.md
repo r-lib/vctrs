@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* Name repair messages are now signaled by `rlang::names_inform_repair()`. This
+  means that the messages are now sent to stdout by default rather than to
+  stderr, resulting in prettier messages. Additionally, name repair messages can
+  now be silenced through the global option `rlib_name_repair_verbosity`, which
+  is useful for testing purposes. See `?names_inform_repair` for more
+  information (#1429).
+  
 * `vctrs_vctr` methods for `na.omit()`, `na.exclude()`, and `na.fail()` have
   been added (#1413).
 
