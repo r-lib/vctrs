@@ -62,6 +62,7 @@ test_that("names are supplied if needed", {
 })
 
 test_that("matrix becomes data frame and has names properly repaired", {
+  local_name_repair_quiet()
   x <- matrix(1:4, nrow = 2)
   expect_equal(vec_rbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 })
@@ -77,6 +78,8 @@ test_that("can bind data.frame columns", {
 })
 
 test_that("can rbind unspecified vectors", {
+  local_name_repair_quiet()
+
   expect_identical(vec_rbind(NA), data_frame(...1 = NA))
   expect_identical(vec_rbind(NA, NA), data_frame(...1 = lgl(NA, NA)))
 
@@ -121,6 +124,8 @@ test_that("can rbind lists", {
 })
 
 test_that("can rbind factors", {
+  local_name_repair_quiet()
+
   fctr <- factor(c("a", "b"))
   expect_equal(vec_rbind(fctr), data_frame(...1 = fctr[1], ...2 = fctr[2]))
 
@@ -129,6 +134,8 @@ test_that("can rbind factors", {
 })
 
 test_that("can rbind dates", {
+  local_name_repair_quiet()
+
   date <- new_date(c(0, 1))
   expect_equal(vec_rbind(date), data_frame(...1 = date[1], ...2 = date[2]))
 
@@ -137,6 +144,8 @@ test_that("can rbind dates", {
 })
 
 test_that("can rbind POSIXlt objects into POSIXct objects", {
+  local_name_repair_quiet()
+
   datetime <- as.POSIXlt(new_datetime(0))
   expect_s3_class(vec_rbind(datetime, datetime)[[1]], "POSIXct")
 
@@ -160,20 +169,22 @@ test_that("can rbind table objects (#913)", {
 })
 
 test_that("can rbind missing vectors", {
-  expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
-  expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
+  expect_identical(vec_rbind(c(x = na_int)), data_frame(x = na_int))
+  expect_identical(vec_rbind(c(x = na_int), c(x = na_int)), data_frame(x = int(na_int, na_int)))
 })
 
 test_that("vec_rbind() respects size invariants (#286)", {
   expect_identical(vec_rbind(), new_data_frame(n = 0L))
 
   expect_identical(vec_rbind(int(), int()), new_data_frame(n = 2L))
-  expect_identical(vec_rbind(int(), TRUE), new_data_frame(list(...1 = lgl(NA, TRUE))))
+  expect_identical(vec_rbind(c(x = int()), c(x = TRUE)), new_data_frame(list(x = lgl(NA, TRUE))))
 
   expect_identical(vec_rbind(int(), new_data_frame(n = 2L), int()), new_data_frame(n = 4L))
 })
 
 test_that("can repair names in `vec_rbind()` (#229)", {
+  local_name_repair_quiet()
+
   expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`")
   expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`")
 
@@ -333,6 +344,8 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
 })
 
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
+  local_name_repair_quiet()
+
   df <- new_data_frame(list(x = 1, x = 1))
   expect <- new_data_frame(list(x = 1, x = 1))
 
@@ -393,10 +406,13 @@ test_that("inner names are respected", {
 })
 
 test_that("nameless vectors get tidy defaults", {
+  local_name_repair_quiet()
   expect_named(vec_cbind(1:2, 1), c("...1", "...2"))
 })
 
 test_that("matrix becomes data frame", {
+  local_name_repair_quiet()
+
   x <- matrix(1:4, nrow = 2)
   expect_equal(vec_cbind(x), data.frame(...1 = 1:2, ...2 = 3:4))
 
@@ -438,10 +454,12 @@ test_that("vec_cbind() output is tibble if any input is tibble", {
 })
 
 test_that("can override default .nrow", {
-  expect_dim(vec_cbind(1, .size = 3), c(3, 1))
+  expect_dim(vec_cbind(x = 1, .size = 3), c(3, 1))
 })
 
 test_that("can repair names in `vec_cbind()` (#227)", {
+  local_name_repair_quiet()
+
   expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`")
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "unique"), c("a...1", "a...2"))
@@ -508,23 +526,27 @@ test_that("vec_cbind() packs named data frames (#446)", {
 })
 
 test_that("vec_cbind() packs 1d arrays", {
+  local_name_repair_quiet()
   a <- array(1:2)
   expect_identical(vec_cbind(a), data_frame(...1 = 1:2))
   expect_identical(vec_cbind(x = a), data_frame(x = a))
 })
 
 test_that("vec_cbind() packs named matrices", {
+  local_name_repair_quiet()
   m <- matrix(1:4, 2)
   expect_identical(vec_cbind(m), data_frame(...1 = 1:2, ...2 = 3:4))
   expect_identical(vec_cbind(x = m), data_frame(x = m))
 })
 
 test_that("vec_cbind() never packs named vectors", {
+  local_name_repair_quiet()
   expect_identical(vec_cbind(1:2), data_frame(...1 = 1:2))
   expect_identical(vec_cbind(x = 1:2), data_frame(x = 1:2))
 })
 
 test_that("names are repaired late if unpacked", {
+  local_name_repair_quiet()
   df <- data_frame(b = 2, b = 3, .name_repair = "minimal")
   out1 <- vec_cbind(a = 1, df)
   out2 <- vec_cbind(a = 1, as.matrix(df))
@@ -556,6 +578,8 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
 })
 
 test_that("monitoring: name repair while cbinding doesn't modify in place", {
+  local_name_repair_quiet()
+
   df <- new_data_frame(list(x = 1, x = 1))
   expect <- new_data_frame(list(x = 1, x = 1))
 
@@ -567,6 +591,8 @@ test_that("monitoring: name repair while cbinding doesn't modify in place", {
 })
 
 test_that("vec_rbind() consistently handles unnamed outputs", {
+  local_name_repair_quiet()
+
   # Name repair of columns is a little weird but unclear we can do better
   expect_identical(
     vec_rbind(1, 2, .names_to = NULL),
@@ -599,6 +625,8 @@ test_that("vec_rbind() ignores named inputs by default (#966)", {
 })
 
 test_that("vec_cbind() consistently handles unnamed outputs", {
+  local_name_repair_quiet()
+
   expect_identical(
     vec_cbind(1, 2),
     data.frame(...1 = 1, ...2 = 2)
@@ -650,6 +678,8 @@ test_that("vec_cbind() name repair messages are useful", {
 })
 
 test_that("cbind() deals with row names", {
+  local_name_repair_quiet()
+
   expect_identical(
     vec_cbind(mtcars[1:3], foo = 1),
     cbind(mtcars[1:3], foo = 1)
@@ -690,6 +720,8 @@ test_that("can rbind data frames with matrix columns (#625)", {
 })
 
 test_that("rbind repairs names of data frames (#704)", {
+  local_name_repair_quiet()
+
   df <- data_frame(x = 1, x = 2, .name_repair = "minimal")
   df_repaired <- data_frame(x...1 = 1, x...2 = 2)
   expect_identical(vec_rbind(df), df_repaired)
@@ -892,10 +924,11 @@ test_that("rbind supports names and inner names (#689)", {
 })
 
 test_that("vec_rbind() doesn't fall back to c() with proxied classes (#1119)", {
+  local_name_repair_quiet()
+
   foobar_rcrd <- function(x, y) new_rcrd(list(x = x, y = y), class = "vctrs_foobar")
 
   x <- foobar_rcrd(x = 1:2, y = 3:4)
-  y <- foobar_rcrd(x = 5L, y = 6L)
 
   out <- vec_rbind(x, x)
   exp <- data_frame(

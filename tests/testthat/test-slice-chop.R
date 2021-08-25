@@ -467,6 +467,8 @@ test_that("index values are validated", {
 })
 
 test_that("name repair is respected and happens after ordering according to `indices`", {
+  local_name_repair_quiet()
+
   x <- list(c(a = 1), c(a = 2))
   indices <- list(2, 1)
 
