@@ -268,10 +268,12 @@ attributes that an input can't be cast to the target type.</p></div>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># When information is lost the cast fails</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs() : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs() : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># You can suppress this error and get the partial results</span></span>
@@ -286,12 +288,13 @@ attributes that an input can't be cast to the target type.</p></div>
 <span class='r-in'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 1</span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs() : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># No sensible coercion is possible so an error is generated</span></span>
 <span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs() : Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># Cast to common type</span></span>
 <span class='r-in'><span class='fu'>vec_cast_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
