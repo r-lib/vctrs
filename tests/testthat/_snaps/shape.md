@@ -7,6 +7,7 @@
       <error/vctrs_error_incompatible_type>
       Can't combine <integer[,0,5]> and <integer[,5,1]>.
       x Incompatible sizes 0 and 5 along axis 2.
+      Call: `stop_vctrs()`
     Code
       (expect_error(vec_shape2(shaped_int(1, 5, 0), shaped_int(1, 1, 5)), class = "vctrs_error_incompatible_type")
       )
@@ -14,6 +15,7 @@
       <error/vctrs_error_incompatible_type>
       Can't combine <integer[,5,0]> and <integer[,1,5]>.
       x Incompatible sizes 0 and 5 along axis 3.
+      Call: `stop_vctrs()`
 
 # can override error args
 
@@ -24,4 +26,5 @@
       <error/vctrs_error_incompatible_type>
       Can't combine `foo` <integer[,0,5]> and `bar` <integer[,5,1]>.
       x Incompatible sizes 0 and 5 along axis 2.
+      Call: `stop_vctrs()`
 

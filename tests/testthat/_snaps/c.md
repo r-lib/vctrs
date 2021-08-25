@@ -31,6 +31,7 @@
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+      Call: `stop_vctrs()`
 
 # vec_c() fails with complex foreign S4 classes
 
@@ -44,6 +45,7 @@
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+      Call: `stop_vctrs()`
 
 # vec_c() fallback doesn't support `name_spec` or `ptype`
 
@@ -60,6 +62,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Can't convert <vctrs_foobar> to <character>.
+      Call: `stop_vctrs()`
 
 # can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)
 
@@ -69,6 +72,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Can't combine `a` <character> and `b` <double>.
+      Call: `stop_vctrs()`
 
 # concatenation performs expected allocations
 

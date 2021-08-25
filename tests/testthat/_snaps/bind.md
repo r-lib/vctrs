@@ -183,6 +183,7 @@
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+      Call: `stop_vctrs()`
 
 # vec_rbind() fails with complex foreign S4 classes
 
@@ -194,6 +195,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+      Call: `stop_vctrs()`
 
 # row-binding performs expected allocations
 

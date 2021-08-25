@@ -127,6 +127,7 @@
       | x Can't convert from <double> to <integer> due to loss of precision.
       \-<error/vctrs_error_cast_lossy>
         Can't convert from <double> to <integer> due to loss of precision.
+      Call: `stop_vctrs()`
     Code
       (expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -178,6 +179,7 @@
       | x Can't convert from `foo` <double> to <integer> due to loss of precision.
       \-<error/vctrs_error_cast_lossy>
         Can't convert from `foo` <double> to <integer> due to loss of precision.
+      Call: `stop_vctrs()`
 
 # vec_as_location() and variants check for OOB elements
 
@@ -189,6 +191,7 @@
       Can't subset elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
+      Call: `stop_subscript()`
     Code
       (expect_error(vec_as_location(-10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
@@ -196,6 +199,7 @@
       Can't negate elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
+      Call: `stop_subscript()`
     Code
       (expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
@@ -203,6 +207,7 @@
       Can't subset elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
+      Call: `stop_subscript()`
     Code
       # Character indexing
       (expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
@@ -211,6 +216,7 @@
       <error/vctrs_error_subscript_oob>
       Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
+      Call: `stop_subscript()`
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
       )
@@ -218,6 +224,7 @@
       <error/vctrs_error_subscript_oob>
       Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
+      Call: `stop_subscript()`
 
 # vec_as_location2() requires length 1 inputs
 
@@ -416,6 +423,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 1.
       x Subscript contains non-consecutive location 3.
+      Call: `stop_subscript()`
     Code
       (expect_error(num_as_location(c(1, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -424,6 +432,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 1.
       x Subscript contains non-consecutive location 3.
+      Call: `stop_subscript()`
     Code
       (expect_error(num_as_location(c(1:5, 7), 3, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -432,6 +441,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 3.
       x Subscript contains non-consecutive locations 4 and 7.
+      Call: `stop_subscript()`
     Code
       (expect_error(num_as_location(c(1:5, 7, 1), 3, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -440,6 +450,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 3.
       x Subscript contains non-consecutive locations 4 and 7.
+      Call: `stop_subscript()`
     Code
       (expect_error(class = "vctrs_error_subscript_oob", num_as_location(c(1:5, 7, 1,
       10), 3, oob = "extend")))
@@ -448,6 +459,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 3.
       x Subscript contains non-consecutive locations 4, 7, and 10.
+      Call: `stop_subscript()`
 
 # missing values are supported in error formatters
 
@@ -459,6 +471,7 @@
       Can't subset elements that don't exist.
       x Locations 2 and 3 don't exist.
       i There are only 1 element.
+      Call: `stop_subscript()`
     Code
       (expect_error(num_as_location(c(1, NA, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -467,6 +480,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 1.
       x Subscript contains non-consecutive location 3.
+      Call: `stop_subscript()`
 
 # can disallow missing values
 
@@ -565,6 +579,7 @@
       Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 2.
       x Subscript `foo` contains non-consecutive location 4.
+      Call: `stop_subscript()`
     Code
       (expect_error(num_as_location(0, 1, zero = "error", arg = "foo"), class = "vctrs_error_subscript_type")
       )
@@ -641,6 +656,7 @@
       Can't rename columns beyond the end with non-consecutive locations.
       i Input has size 2.
       x Subscript `foo(bar)` contains non-consecutive location 4.
+      Call: `stop_subscript()`
     Code
       (expect_error(with_tibble_cols(num_as_location(0, 1, zero = "error")), class = "vctrs_error_subscript_type")
       )
@@ -659,6 +675,7 @@
       <error/vctrs_error_subscript_oob>
       Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
+      Call: `stop_subscript()`
     Code
       # With custom `arg`
       (expect_error(vec_as_location(30, length(letters), arg = "foo"), class = "vctrs_error_subscript_oob")
@@ -668,6 +685,7 @@
       Can't subset elements that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 elements.
+      Call: `stop_subscript()`
     Code
       (expect_error(vec_as_location("foo", NULL, letters, arg = "foo"), class = "vctrs_error_subscript_oob")
       )
@@ -675,6 +693,7 @@
       <error/vctrs_error_subscript_oob>
       Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
+      Call: `stop_subscript()`
     Code
       # With tibble columns
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), "foo")), class = "vctrs_error_subscript_oob")
@@ -683,6 +702,7 @@
       <error/vctrs_error_subscript_oob>
       Can't rename columns that don't exist.
       x Column `foo` doesn't exist.
+      Call: `stop_subscript()`
     Code
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), 30)), class = "vctrs_error_subscript_oob")
       )
@@ -691,6 +711,7 @@
       Can't rename columns that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 columns.
+      Call: `stop_subscript()`
     Code
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), -30)), class = "vctrs_error_subscript_oob")
       )
@@ -699,6 +720,7 @@
       Can't rename columns that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 columns.
+      Call: `stop_subscript()`
     Code
       # With tibble rows
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar"))),
@@ -707,6 +729,7 @@
       <error/vctrs_error_subscript_oob>
       Can't remove rows that don't exist.
       x Rows `foo` and `bar` don't exist.
+      Call: `stop_subscript()`
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), 1:30)), class = "vctrs_error_subscript_oob")
       )
@@ -715,6 +738,7 @@
       Can't remove rows that don't exist.
       x Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
+      Call: `stop_subscript()`
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), -(1:30))), class = "vctrs_error_subscript_oob")
       )
@@ -723,6 +747,7 @@
       Can't remove rows that don't exist.
       x Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
+      Call: `stop_subscript()`
 
 # vec_as_location() checks dimensionality
 
@@ -788,5 +813,5 @@
     Code
       vec_as_location2(1, 1L, missing = "bogus")
     Error <rlang_error>
-      `missing` must be one of "error" or "propagate", not "bogus".
+      `bogus` must be one of "error" or "propagate", not "bogus".
 
