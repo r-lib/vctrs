@@ -1,3 +1,4 @@
+local_name_repair_quiet()
 
 # vec_names() ---------------------------------------------------------
 
@@ -25,7 +26,6 @@ test_that("vec_names() dispatches", {
 # vec_names2() -------------------------------------------------------------
 
 test_that("vec_names2() repairs names", {
-  local_name_repair_quiet()
   expect_identical(vec_names2(1:2), c("", ""))
   expect_identical(vec_names2(1:2, repair = "unique"), c("...1", "...2"))
   expect_identical(vec_names2(set_names(1:2, c("_foo", "_bar")), repair = "universal"), c("._foo", "._bar"))
@@ -42,7 +42,6 @@ test_that("vec_names2() treats data frames and arrays as vectors", {
 })
 
 test_that("vec_names2() accepts and checks repair function", {
-  local_name_repair_quiet()
   expect_identical(vec_names2(1:2, repair = function(nms) rep_along(nms, "foo")), c("foo", "foo"))
   expect_error(vec_names2(1:2, repair = function(nms) "foo"), "length 1 instead of length 2")
 })
@@ -65,7 +64,6 @@ test_that("vec_as_names() validates `repair`", {
 })
 
 test_that("vec_as_names() repairs names", {
-  local_name_repair_quiet()
   expect_identical(vec_as_names(chr(NA, NA)), c("", ""))
   expect_identical(vec_as_names(chr(NA, NA), repair = "unique"), c("...1", "...2"))
   expect_identical(vec_as_names(chr("_foo", "_bar"), repair = "universal"), c("._foo", "._bar"))
@@ -81,8 +79,6 @@ test_that("vec_as_names() checks unique names", {
 })
 
 test_that("vec_as_names() keeps the names of a named vector", {
-  local_name_repair_quiet()
-
   x_unnamed <- c(NA, "", "..1", "...2")
   x_names <- letters[1:4]
   x <- set_names(x_unnamed, x_names)
@@ -115,6 +111,8 @@ test_that("vec_as_names() repairs names before invoking repair function", {
 })
 
 test_that("vec_as_names() is noisy by default", {
+  local_name_repair_verbose()
+
   expect_snapshot({
     # Noisy name repair
     vec_as_names(c("x", "x"), repair = "unique")
@@ -168,14 +166,12 @@ test_that("vec_as_names() is quiet when function is supplied (#1018)", {
 # vec_repair_names() -------------------------------------------------------
 
 test_that("vec_repair_names() repairs names", {
-  local_name_repair_quiet()
   expect_identical(vec_repair_names(1:2), set_names(1:2, c("", "")))
   expect_identical(vec_repair_names(1:2, "unique"), set_names(1:2, c("...1", "...2")))
   expect_identical(vec_repair_names(set_names(1:2, c("_foo", "_bar")), "universal"), set_names(1:2, c("._foo", "._bar")))
 })
 
 test_that("vec_repair_names() handles data frames and arrays", {
-  local_name_repair_quiet()
   df <- data.frame(x = 1:2)
   expect_identical(vec_repair_names(df), df)
   expect_identical(row.names(vec_repair_names(as.matrix(df))), c("", ""))
@@ -337,7 +333,6 @@ test_that("as_minimal_names() copies on write", {
 # unique names -------------------------------------------------------------
 
 test_that("unique_names() handles unnamed vectors", {
-  local_name_repair_quiet()
   expect_identical(unique_names(1:3), c("...1", "...2", "...3"))
 })
 
@@ -349,19 +344,16 @@ test_that("as_unique_names() is a no-op when no repairs are needed", {
 })
 
 test_that("as_unique_names() eliminates emptiness and duplication", {
-  local_name_repair_quiet()
   x <- c("", "x", "y", "x")
   expect_identical(as_unique_names(x), c("...1", "x...2", "y", "x...4"))
 })
 
 test_that("as_unique_names(): solo empty or NA gets suffix", {
-  local_name_repair_quiet()
   expect_identical(as_unique_names(""), "...1")
   expect_identical(as_unique_names(NA_character_), "...1")
 })
 
 test_that("as_unique_names() treats ellipsis like empty string", {
-  local_name_repair_quiet()
   expect_identical(as_unique_names("..."), as_unique_names(""))
 })
 
@@ -373,13 +365,10 @@ test_that("two_three_dots() does its job and no more", {
 })
 
 test_that("two dots then number treated like three dots then number", {
-  local_name_repair_quiet()
   expect_identical(as_unique_names("..2"), as_unique_names("...5"))
 })
 
 test_that("as_unique_names() strips positional suffixes, re-applies as needed", {
-  local_name_repair_quiet()
-
   x <- c("...20", "a...1", "b", "", "a...2...34")
   expect_identical(as_unique_names(x), c("...1", "a...2", "b", "...4", "a...5"))
 
@@ -391,15 +380,11 @@ test_that("as_unique_names() strips positional suffixes, re-applies as needed", 
 })
 
 test_that("as_unique_names() is idempotent", {
-  local_name_repair_quiet()
-
   x <- c("...20", "a...1", "b", "", "a...2")
   expect_identical(as_unique_names(!!x), as_unique_names(as_unique_names(!!x)))
 })
 
 test_that("unique-ification has an 'algebraic'-y property", {
-  local_name_repair_quiet()
-
   ## inspired by, but different from, this guarantee about base::make.unique()
   ## make.unique(c(A, B)) == make.unique(c(make.unique(A), B))
   ## If A is already unique, then make.unique(c(A, B)) preserves A.
@@ -444,6 +429,8 @@ test_that("unique-ification has an 'algebraic'-y property", {
 })
 
 test_that("unique_names() and as_unique_names() are verbose or silent", {
+  local_name_repair_verbose()
+
   expect_snapshot(unique_names(1:2))
   expect_snapshot(as_unique_names(c("", "")))
 
@@ -452,7 +439,6 @@ test_that("unique_names() and as_unique_names() are verbose or silent", {
 })
 
 test_that("names with only duplicates are repaired", {
-  local_name_repair_quiet()
   expect_identical(unique_names(list(x = NA, x = NA)), c("x...1", "x...2"))
 })
 
@@ -468,13 +454,11 @@ test_that("universal names are not changed", {
 })
 
 test_that("as_universal_names() is idempotent", {
-  local_name_repair_quiet()
   x <- c(NA, "", "x", "x", "a1:", "_x_y}")
   expect_identical(as_universal_names(x), as_universal_names(as_universal_names(x)))
 })
 
 test_that("dupes get a suffix", {
-  local_name_repair_quiet()
   expect_equal(
     as_universal_names(c("a", "b", "a", "c", "b")),
     c("a...1", "b...2", "a...3", "c", "b...5")
@@ -482,13 +466,11 @@ test_that("dupes get a suffix", {
 })
 
 test_that("as_universal_names(): solo empty or NA gets suffix", {
-  local_name_repair_quiet()
   expect_identical(as_universal_names(""), "...1")
   expect_identical(as_universal_names(NA_character_), "...1")
 })
 
 test_that("as_universal_names() treats ellipsis like empty string", {
-  local_name_repair_quiet()
   expect_identical(as_universal_names("..."), as_universal_names(""))
 })
 
@@ -497,49 +479,39 @@ test_that("solo dot is unchanged", {
 })
 
 test_that("dot, dot gets suffix", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c(".", ".")), c("....1", "....2"))
 })
 
 test_that("dot-dot, dot-dot gets suffix", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c("..", "..")), c(".....1", ".....2"))
 })
 
 test_that("empty, dot becomes suffix, dot", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c("", ".")), c("...1", "."))
 })
 
 test_that("empty, empty, dot becomes suffix, suffix, dot", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c("", "", ".")), c("...1", "...2", "."))
 })
 
 test_that("dot, dot, empty becomes suffix, suffix, suffix", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c(".", ".", "")), c("....1", "....2", "...3"))
 })
 
 test_that("dot, empty, dot becomes suffix, suffix, suffix", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c(".", "", ".")), c("....1", "...2", "....3"))
 })
 
 test_that("empty, dot, empty becomes suffix, dot, suffix", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c("", ".", "")), c("...1", ".", "...3"))
 })
 
 test_that("'...j' gets stripped then names are modified", {
-  local_name_repair_quiet()
   expect_equal(as_universal_names(c("...6", "...1...2")), c("...1", "...2"))
   expect_equal(as_universal_names("if...2"), ".if")
 })
 
 test_that("complicated inputs", {
-  local_name_repair_quiet()
-
   expect_equal(
     as_universal_names(c("", ".", NA, "if...4", "if", "if...8", "for", "if){]1")),
     c("...1", ".", "...3", ".if...4", ".if...5", ".if...6", ".for", "if...1")
@@ -547,6 +519,7 @@ test_that("complicated inputs", {
 })
 
 test_that("message", {
+  local_name_repair_verbose()
   expect_snapshot(as_universal_names(c("a b", "b c")))
 })
 
@@ -558,8 +531,6 @@ test_that("quiet", {
 })
 
 test_that("unique then universal is universal, with shuffling", {
-  local_name_repair_quiet()
-
   x <- c("", ".2", "..3", "...4", "....5", ".....6", "......7", "...")
   expect_identical(as_universal_names(as_unique_names(x)), as_universal_names(x))
 
@@ -576,13 +547,12 @@ test_that("zero-length inputs given character names", {
 })
 
 test_that("unnamed input gives uniquely named output", {
-  local_name_repair_quiet()
-
   out <- vec_repair_names(1:3, "universal")
   expect_equal(names(out), c("...1", "...2", "...3"))
 })
 
 test_that("messages by default", {
+  local_name_repair_verbose()
   expect_snapshot(vec_repair_names(set_names(1, "a:b"), "universal"))
   expect_snapshot(vec_repair_names(set_names(1, "a:b"), ~ make.names(.)))
 })
@@ -592,8 +562,6 @@ test_that("quiet = TRUE", {
 })
 
 test_that("non-universal names", {
-  local_name_repair_quiet()
-
   out <- vec_repair_names(set_names(1, "a b"), "universal")
   expect_equal(names(out), "a.b")
 
@@ -729,8 +697,6 @@ test_that("Minimal name repair duplicates if needed", {
 })
 
 test_that("Unique name repair duplicates if needed", {
-  local_name_repair_quiet()
-
   x1 <- "fa\u00e7ile"
 
   x3 <- c(x1, x1)
@@ -744,8 +710,6 @@ test_that("Unique name repair duplicates if needed", {
 # Encoding -------------------------------------------------------------
 
 test_that("Name repair works with non-UTF-8 names", {
-  local_name_repair_quiet()
-
   x1 <- "fa\u00e7ile"
   skip_if_not(Encoding(x1) == "UTF-8")
 
