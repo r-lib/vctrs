@@ -24,6 +24,7 @@
       Can't subset elements that don't exist.
       x Location 3 doesn't exist.
       i There are only 2 elements.
+      Call: `stop_subscript()`
     Code
       (expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob"))
     Output
@@ -31,6 +32,7 @@
       Can't negate elements that don't exist.
       x Location 3 doesn't exist.
       i There are only 2 elements.
+      Call: `stop_subscript()`
 
 # Unnamed vector with character subscript is caught
 

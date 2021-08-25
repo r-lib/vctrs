@@ -28,6 +28,7 @@
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+      Call: `stop_vctrs()`
 
 # vec_unchop() fails with complex foreign S4 classes
 
@@ -42,6 +43,7 @@
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+      Call: `stop_vctrs()`
 
 # vec_unchop() falls back for S4 classes with a registered c() method
 
@@ -51,6 +53,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Can't combine `..1` <vctrs_Counts> and `..2` <double>.
+      Call: `stop_vctrs()`
 
 # vec_unchop() fallback doesn't support `name_spec` or `ptype`
 
@@ -69,6 +72,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Can't convert <vctrs_foobar> to <character>.
+      Call: `stop_vctrs()`
 
 # vec_unchop() does not support non-numeric S3 indices
 
@@ -97,10 +101,12 @@
     Output
       <error/vctrs_error_incompatible_type>
       Can't combine `a` <character> and `b` <integer>.
+      Call: `stop_vctrs()`
     Code
       (expect_error(vec_unchop(list(a = c(foo = 1:2), b = c(bar = "")), indices = list(
         2:1, 3), name_spec = zap()), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Can't combine `a` <integer> and `b` <character>.
+      Call: `stop_vctrs()`
 
