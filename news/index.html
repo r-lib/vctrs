@@ -158,7 +158,8 @@
     <div id="vctrs-development-version" class="section level1">
 <h1 class="page-header" data-toc-text="development version">
 <a href="#vctrs-development-version" class="anchor" aria-hidden="true"></a>vctrs (development version)<small> Unreleased </small></h1>
-<ul><li>
+<ul><li><p><code><a href="../reference/vec_size.html">list_sizes()</a></code> now propagates the names of the list onto the result.</p></li>
+<li>
 <p><code><a href="../reference/vec_order.html">vec_order()</a></code> and <code><a href="../reference/vec_order.html">vec_sort()</a></code> now use a custom radix sort algorithm, rather than relying on <code><a href="https://rdrr.io/r/base/order.html" class="external-link">order()</a></code>. The implementation is based on data.table’s <code>forder()</code> and their earlier contribution to R’s <code><a href="https://rdrr.io/r/base/order.html" class="external-link">order()</a></code>. There are four major changes, outlined below, the first two of which are breaking changes. If you need to retain the old ordering behavior, use <code><a href="../reference/vec_order_base.html">vec_order_base()</a></code>.</p>
 <ul><li><p>Character vectors now order in the C locale by default, which is <em>much</em> faster than ordering in the system’s locale. To order in a specific locale, you can provide a transformation function through <code>chr_transform</code>, such as <code><a href="https://rdrr.io/pkg/stringi/man/stri_sort_key.html" class="external-link">stringi::stri_sort_key()</a></code>.</p></li>
 <li><p>Optional arguments, such as <code>direction</code> and <code>na_value</code>, must now be specified by name. Specifying by position will result in an error.</p></li>
