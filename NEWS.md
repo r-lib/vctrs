@@ -1,7 +1,7 @@
 # vctrs (development version)
 
-* New `vec_sorted_group_locs()` for returning the locations of duplicate values
-  in sorted order. This is equivalent to, but faster than, calling
+* New `vec_locate_sorted_groups()` for returning the locations of groups in
+  sorted order. This is equivalent to, but faster than, calling
   `vec_group_loc()` and then sorting by the `key` column of the result.
 
 * `list_sizes()` now propagates the names of the list onto the result.

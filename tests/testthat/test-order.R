@@ -1138,9 +1138,9 @@ test_that("can order data frames (and subclasses) with matrix columns", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_sorted_group_locs()
+# vec_locate_sorted_groups()
 
-test_that("`vec_sorted_group_locs()` is working", {
+test_that("`vec_locate_sorted_groups()` is working", {
   x <- c(1, 3, 1, 5, 2, 5, 1)
 
   expect <- new_data_frame(
@@ -1150,7 +1150,7 @@ test_that("`vec_sorted_group_locs()` is working", {
     )
   )
 
-  expect_identical(vec_sorted_group_locs(x), expect)
+  expect_identical(vec_locate_sorted_groups(x), expect)
 })
 
 test_that("`chr_transform` can result in keys being seen as identical", {
@@ -1160,8 +1160,8 @@ test_that("`chr_transform` can result in keys being seen as identical", {
   x_expect <- data_frame(key = c("A", "b"), loc = list(c(2L, 3L), 1L))
   y_expect <- data_frame(key = c("a", "b"), loc = list(c(2L, 3L), 1L))
 
-  expect_identical(vec_sorted_group_locs(x, chr_transform = tolower), x_expect)
-  expect_identical(vec_sorted_group_locs(y, chr_transform = tolower), y_expect)
+  expect_identical(vec_locate_sorted_groups(x, chr_transform = tolower), x_expect)
+  expect_identical(vec_locate_sorted_groups(y, chr_transform = tolower), y_expect)
 })
 
 # ------------------------------------------------------------------------------
