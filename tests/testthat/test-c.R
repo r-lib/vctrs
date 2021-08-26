@@ -95,6 +95,8 @@ test_that("can mix named and unnamed vectors (#271)", {
 })
 
 test_that("vec_c() repairs names", {
+  local_name_repair_quiet()
+
   # Default minimal repair
   expect_named(vec_c(a = 1, a = 2, `_` = 3), c("a", "a", "_"))
   out <- vec_c(!!!set_names(1, NA))

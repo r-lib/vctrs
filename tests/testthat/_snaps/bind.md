@@ -1,3 +1,11 @@
+# names are supplied if needed
+
+    Code
+      out <- vec_rbind(data_frame(...1 = 1), 1)
+    Message <rlib_message_name_repair>
+      New names:
+      * `` -> `...1`
+
 # duplicate names are de-deduplicated
 
     Code

@@ -1,3 +1,4 @@
+local_name_repair_quiet()
 
 # vec_names() ---------------------------------------------------------
 
@@ -110,6 +111,8 @@ test_that("vec_as_names() repairs names before invoking repair function", {
 })
 
 test_that("vec_as_names() is noisy by default", {
+  local_name_repair_verbose()
+
   expect_snapshot({
     # Noisy name repair
     vec_as_names(c("x", "x"), repair = "unique")
@@ -426,6 +429,8 @@ test_that("unique-ification has an 'algebraic'-y property", {
 })
 
 test_that("unique_names() and as_unique_names() are verbose or silent", {
+  local_name_repair_verbose()
+
   expect_snapshot(unique_names(1:2))
   expect_snapshot(as_unique_names(c("", "")))
 
@@ -514,6 +519,7 @@ test_that("complicated inputs", {
 })
 
 test_that("message", {
+  local_name_repair_verbose()
   expect_snapshot(as_universal_names(c("a b", "b c")))
 })
 
@@ -546,6 +552,7 @@ test_that("unnamed input gives uniquely named output", {
 })
 
 test_that("messages by default", {
+  local_name_repair_verbose()
   expect_snapshot(vec_repair_names(set_names(1, "a:b"), "universal"))
   expect_snapshot(vec_repair_names(set_names(1, "a:b"), ~ make.names(.)))
 })

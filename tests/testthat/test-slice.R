@@ -46,6 +46,8 @@ test_that("can subset with missing indices", {
 })
 
 test_that("can subset with a recycled NA", {
+  local_name_repair_quiet()
+
   expect_identical(vec_slice(1:3, NA), int(NA, NA, NA))
   expect_identical(vec_slice(new_vctr(1:3), NA), new_vctr(int(NA, NA, NA)))
 
