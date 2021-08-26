@@ -221,25 +221,29 @@ SEXP vec_order(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP ch
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x,
-                           SEXP direction,
-                           SEXP na_value,
-                           bool nan_distinct,
-                           SEXP chr_transform);
+static SEXP vec_sorted_group_locs(SEXP x,
+                                  SEXP direction,
+                                  SEXP na_value,
+                                  bool nan_distinct,
+                                  SEXP chr_transform);
 
 // [[ register() ]]
-SEXP vctrs_order_locs(SEXP x,
-                      SEXP direction,
-                      SEXP na_value,
-                      SEXP nan_distinct,
-                      SEXP chr_transform) {
+SEXP vctrs_sorted_group_locs(SEXP x,
+                             SEXP direction,
+                             SEXP na_value,
+                             SEXP nan_distinct,
+                             SEXP chr_transform) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  return vec_order_locs(x, direction, na_value, c_nan_distinct, chr_transform);
+  return vec_sorted_group_locs(x, direction, na_value, c_nan_distinct, chr_transform);
 }
 
 
 static
-SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
+SEXP vec_sorted_group_locs(SEXP x,
+                           SEXP direction,
+                           SEXP na_value,
+                           bool nan_distinct,
+                           SEXP chr_transform) {
   const bool chr_ordered = true;
 
   SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform, chr_ordered));

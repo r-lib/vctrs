@@ -148,7 +148,7 @@ vec_sort <- function(x,
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' `vec_order_locs()` returns a data frame containing a `key` column with
+#' `vec_sorted_group_locs()` returns a data frame containing a `key` column with
 #' sorted unique groups, and a `loc` column with the locations of each
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
@@ -160,7 +160,7 @@ vec_sort <- function(x,
 #'   * A `key` column of type `vec_ptype(x)`.
 #'   * A `loc` column of type list, with elements of type integer.
 #'
-#' @section Dependencies of `vec_order_locs()`:
+#' @section Dependencies of `vec_sorted_group_locs()`:
 #' * [vec_proxy_order()]
 #'
 #' @examples
@@ -169,20 +169,20 @@ vec_sort <- function(x,
 #'   x = c(NA, sample(5, 9, replace = TRUE))
 #' )
 #'
-#' # `vec_order_locs()` is similar to `vec_group_loc()`, except keys are
+#' # `vec_sorted_group_locs()` is similar to `vec_group_loc()`, except keys are
 #' # returned ordered rather than by first appearance.
-#' vec_order_locs(df)
+#' vec_sorted_group_locs(df)
 #'
 #' vec_group_loc(df)
 #' @noRd
-vec_order_locs <- function(x,
-                           ...,
-                           direction = "asc",
-                           na_value = "largest",
-                           nan_distinct = FALSE,
-                           chr_transform = NULL) {
+vec_sorted_group_locs <- function(x,
+                                  ...,
+                                  direction = "asc",
+                                  na_value = "largest",
+                                  nan_distinct = FALSE,
+                                  chr_transform = NULL) {
   check_dots_empty0(...)
-  .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_transform)
+  .Call(vctrs_sorted_group_locs, x, direction, na_value, nan_distinct, chr_transform)
 }
 
 vec_order_info <- function(x,
