@@ -143,7 +143,7 @@ vec_sort <- function(x,
   vec_slice(x, idx)
 }
 
-#' Identify ordered groups
+#' Identify sorted groups
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -152,6 +152,14 @@ vec_sort <- function(x,
 #' sorted unique groups, and a `loc` column with the locations of each
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
+#'
+#' @details
+#' `vec_sorted_group_locs(x)` is equivalent to, but faster than:
+#'
+#' ```
+#' info <- vec_group_loc(x)
+#' vec_slice(info, vec_order(info$key))
+#' ```
 #'
 #' @inheritParams vec_order
 #'
@@ -163,6 +171,7 @@ vec_sort <- function(x,
 #' @section Dependencies of `vec_sorted_group_locs()`:
 #' * [vec_proxy_order()]
 #'
+#' @export
 #' @examples
 #' df <- data.frame(
 #'   g = sample(2, 10, replace = TRUE),
@@ -174,7 +183,6 @@ vec_sort <- function(x,
 #' vec_sorted_group_locs(df)
 #'
 #' vec_group_loc(df)
-#' @noRd
 vec_sorted_group_locs <- function(x,
                                   ...,
                                   direction = "asc",
