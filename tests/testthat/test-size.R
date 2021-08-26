@@ -106,6 +106,19 @@ test_that("computes element sizes", {
   expect_identical(list_sizes(list(1, 1:3, c("a", "b"))), c(1L, 3L, 2L))
 })
 
+test_that("retains list names", {
+  x <- list(1, x = 2, a = 3)
+  expect_named(list_sizes(x), c("", "x", "a"))
+
+  x <- list_of(y = 1, x = 2, a = 3)
+  expect_named(list_sizes(x), c("y", "x", "a"))
+})
+
+test_that("retains names of empty lists", {
+  x <- structure(list(), names = character())
+  expect_named(list_sizes(x), character())
+})
+
 # sequences ---------------------------------------------------------------
 
 test_that("vec_seq_along returns size-0 output for size-0 input", {

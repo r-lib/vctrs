@@ -68,12 +68,15 @@ SEXP list_sizes(SEXP x) {
 
   R_len_t size = vec_size(x);
 
+  const SEXP* v_x = r_list_cbegin(x);
+
   SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_out = INTEGER(out);
+  int* v_out = INTEGER(out);
+
+  r_poke_names(out, vec_names(x));
 
   for (R_len_t i = 0; i < size; ++i) {
-    SEXP elt = VECTOR_ELT(x, i);
-    p_out[i] = vec_size(elt);
+    v_out[i] = vec_size(v_x[i]);
   }
 
   UNPROTECT(1);

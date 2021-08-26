@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_sizes()` now propagates the names of the list onto the result.
+
 * `vec_order()` and `vec_sort()` now use a custom radix sort algorithm, rather
    than relying on `order()`. The implementation is based on data.table’s
    `forder()` and their earlier contribution to R’s `order()`. There are four
