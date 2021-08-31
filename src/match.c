@@ -7,7 +7,7 @@
 #include "compare.h"
 #include "ptype2.h"
 #include "translate.h"
-#include "order-radix.h"
+#include "order.h"
 #include "order-transform.h"
 #include "match-compare.h"
 

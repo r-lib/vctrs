@@ -206,7 +206,7 @@ static SEXP vec_order_info_impl(SEXP x,
                                 bool chr_ordered,
                                 bool group_sizes);
 
-// [[ include("order-radix.h") ]]
+// [[ include("order.h") ]]
 SEXP vec_order(SEXP x,
                SEXP direction,
                SEXP na_value,
