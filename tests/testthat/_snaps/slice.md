@@ -4,7 +4,7 @@
       (expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Must subset elements with a valid subscript vector.
+      Error: Must subset elements with a valid subscript vector.
       x Subscript has the wrong type `date`.
       i It must be logical, numeric, or character.
     Code
@@ -12,7 +12,7 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Must subset elements with a valid subscript vector.
+      Error: Must subset elements with a valid subscript vector.
       x Subscript must be a simple vector, not a matrix.
 
 # can't index beyond the end of a vector
@@ -21,18 +21,16 @@
       (expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Can't subset elements that don't exist.
+      Error in `stop_subscript()`: Can't subset elements that don't exist.
       x Location 3 doesn't exist.
       i There are only 2 elements.
-      Call: `stop_subscript()`
     Code
       (expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Can't negate elements that don't exist.
+      Error in `stop_subscript()`: Can't negate elements that don't exist.
       x Location 3 doesn't exist.
       i There are only 2 elements.
-      Call: `stop_subscript()`
 
 # Unnamed vector with character subscript is caught
 

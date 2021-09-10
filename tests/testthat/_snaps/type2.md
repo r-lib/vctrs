@@ -34,15 +34,13 @@
       )
     Output
       <error/vctrs_error_scalar_type>
-      `foo` must be a vector, not a symbol.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: `foo` must be a vector, not a symbol.
     Code
       (expect_error(vec_ptype2(quote(x), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
       )
     Output
       <error/vctrs_error_scalar_type>
-      `foo` must be a vector, not a symbol.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: `foo` must be a vector, not a symbol.
 
 # can override scalar vector error message for S3 types
 
@@ -51,15 +49,13 @@
       )
     Output
       <error/vctrs_error_scalar_type>
-      `foo` must be a vector, not a <vctrs_foobar> object.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: `foo` must be a vector, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_ptype2(foobar(), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
       )
     Output
       <error/vctrs_error_scalar_type>
-      `foo` must be a vector, not a <vctrs_foobar> object.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: `foo` must be a vector, not a <vctrs_foobar> object.
 
 # ptype2 and cast errors when same class fallback is impossible are informative
 
@@ -68,21 +64,19 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Can't convert <vctrs_foobar> to <vctrs_foobar>.
+      Error in `stop_vctrs()`: Can't convert <vctrs_foobar> to <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
-      Call: `stop_vctrs()`
     Code
       (expect_error(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)), class = "vctrs_error_incompatible_type")
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Can't combine <vctrs_foobar> and <vctrs_foobar>.
+      Error in `stop_vctrs()`: Can't combine <vctrs_foobar> and <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
-      Call: `stop_vctrs()`
 
 # Incompatible attributes bullets are not show when methods are implemented
 
@@ -101,15 +95,13 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Can't convert <vctrs_foobar> to <vctrs_foobar>.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: Can't convert <vctrs_foobar> to <vctrs_foobar>.
     Code
       (expect_error(with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2,
         baz = TRUE))), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Can't combine <vctrs_foobar> and <vctrs_foobar>.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: Can't combine <vctrs_foobar> and <vctrs_foobar>.
 
 # common type errors don't mention columns if they are compatible
 
@@ -121,8 +113,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Can't convert <vctrs_foo> to <vctrs_bar>.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: Can't convert <vctrs_foo> to <vctrs_bar>.
 
 # common type warnings for data frames take attributes into account
 
@@ -150,8 +141,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Can't combine <vctrs_foobar> and <vctrs_foobaz>.
-      Call: `stop_vctrs()`
+      Error in `stop_vctrs()`: Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 
 # For reference, warning for incompatible classes
 

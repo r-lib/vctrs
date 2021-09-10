@@ -5,7 +5,7 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Must rename columns with a valid subscript vector.
+      Error: Must rename columns with a valid subscript vector.
       x Subscript `foo(bar)` has the wrong type `environment`.
       i It must be logical, numeric, or character.
 
@@ -16,7 +16,7 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Must extract tables with a valid subscript vector.
+      Error: Must extract tables with a valid subscript vector.
       x Subscript `foo(bar)` has the wrong type `environment`.
       i It must be logical, numeric, or character.
 
@@ -27,21 +27,21 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Must subset elements with a valid subscript vector.
+      Error: Must subset elements with a valid subscript vector.
       x Subscript must be a simple vector, not a matrix.
     Code
       (expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
-      Must subset elements with a valid subscript vector.
+      Error: Must subset elements with a valid subscript vector.
       x Subscript must be a simple vector, not an array.
     Code
       (expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Must remove rows with a valid subscript vector.
+      Error: Must remove rows with a valid subscript vector.
       x Subscript `foo(bar)` must be a simple vector, not a matrix.
 
 # vec_as_subscript() forbids subscript types
