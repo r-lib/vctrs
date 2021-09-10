@@ -35,11 +35,15 @@ enum vctrs_ops {
   VCTRS_OPS_lte = 4
 };
 
-enum vctrs_missing_needle {
-  VCTRS_MISSING_NEEDLE_match = 0,
-  VCTRS_MISSING_NEEDLE_propagate = 1,
-  VCTRS_MISSING_NEEDLE_drop = 2,
-  VCTRS_MISSING_NEEDLE_error = 3
+enum vctrs_missing_needle_action {
+  VCTRS_MISSING_NEEDLE_ACTION_match = 0,
+  VCTRS_MISSING_NEEDLE_ACTION_value = 1,
+  VCTRS_MISSING_NEEDLE_ACTION_drop = 2,
+  VCTRS_MISSING_NEEDLE_ACTION_error = 3
+};
+struct vctrs_missing_needle {
+  enum vctrs_missing_needle_action action;
+  int value;
 };
 
 struct vctrs_no_match {
@@ -70,7 +74,7 @@ r_obj* vctrs_matches(r_obj* needles,
                      r_obj* chr_transform,
                      r_obj* needles_arg,
                      r_obj* haystack_arg) {
-  enum vctrs_missing_needle c_missing = parse_missing(missing);
+  const struct vctrs_missing_needle c_missing = parse_missing(missing);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match, "no_match");
   const struct vctrs_no_match c_remaining = parse_no_match(remaining, "remaining");
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
@@ -88,7 +92,7 @@ r_obj* vctrs_matches(r_obj* needles,
     haystack,
     condition,
     filter,
-    c_missing,
+    &c_missing,
     &c_no_match,
     &c_remaining,
     c_multiple,
@@ -104,7 +108,7 @@ r_obj* vec_matches(r_obj* needles,
                    r_obj* haystack,
                    r_obj* condition,
                    r_obj* filter,
-                   enum vctrs_missing_needle missing,
+                   const struct vctrs_missing_needle* missing,
                    const struct vctrs_no_match* no_match,
                    const struct vctrs_no_match* remaining,
                    enum vctrs_multiple multiple,
@@ -192,9 +196,9 @@ r_obj* vec_matches(r_obj* needles,
   }
 
   const bool missing_propagate =
-    missing == VCTRS_MISSING_NEEDLE_propagate ||
-    missing == VCTRS_MISSING_NEEDLE_drop ||
-    missing == VCTRS_MISSING_NEEDLE_error;
+    missing->action == VCTRS_MISSING_NEEDLE_ACTION_value ||
+    missing->action == VCTRS_MISSING_NEEDLE_ACTION_drop ||
+    missing->action == VCTRS_MISSING_NEEDLE_ACTION_error;
 
   // Compute the locations of missing values for each column if computing ranks
   // later on is going to replace the missing values with integer ranks
@@ -250,7 +254,7 @@ r_obj* df_matches(r_obj* needles,
                   r_obj* haystack_complete,
                   r_ssize size_needles,
                   r_ssize size_haystack,
-                  enum vctrs_missing_needle missing,
+                  const struct vctrs_missing_needle* missing,
                   bool missing_propagate,
                   const struct vctrs_no_match* no_match,
                   const struct vctrs_no_match* remaining,
@@ -1487,19 +1491,42 @@ void parse_condition(r_obj* condition, enum vctrs_ops* v_ops, r_ssize n_cols) {
 // -----------------------------------------------------------------------------
 
 static inline
-enum vctrs_missing_needle parse_missing(r_obj* missing) {
-  if (!r_is_string(missing)) {
-    r_abort("`missing` must be a string.");
+struct vctrs_missing_needle parse_missing(r_obj* missing) {
+  if (r_is_string(missing)) {
+    const char* c_missing = r_chr_get_c_string(missing, 0);
+
+    if (!strcmp(c_missing, "match")) {
+      return (struct vctrs_missing_needle) {
+        .action = VCTRS_MISSING_NEEDLE_ACTION_match,
+        .value = -1
+      };
+    }
+
+    if (!strcmp(c_missing, "drop")) {
+      return (struct vctrs_missing_needle) {
+        .action = VCTRS_MISSING_NEEDLE_ACTION_drop,
+        .value = -1
+      };
+    }
+
+    if (!strcmp(c_missing, "error")) {
+      return (struct vctrs_missing_needle) {
+        .action = VCTRS_MISSING_NEEDLE_ACTION_error,
+        .value = -1
+      };
+    }
   }
 
-  const char* c_missing = r_chr_get_c_string(missing, 0);
+  if (r_typeof(missing) == R_TYPE_integer && r_length(missing) == 1) {
+    int c_missing = r_int_get(missing, 0);
 
-  if (!strcmp(c_missing, "match")) return VCTRS_MISSING_NEEDLE_match;
-  if (!strcmp(c_missing, "propagate")) return VCTRS_MISSING_NEEDLE_propagate;
-  if (!strcmp(c_missing, "drop")) return VCTRS_MISSING_NEEDLE_drop;
-  if (!strcmp(c_missing, "error")) return VCTRS_MISSING_NEEDLE_error;
+    return (struct vctrs_missing_needle) {
+      .action = VCTRS_MISSING_NEEDLE_ACTION_value,
+      .value = c_missing
+    };
+  }
 
-  r_abort("`missing` must be one of \"match\", \"propagate\", \"drop\", or \"error\".");
+  r_abort("`missing` must be a length 1 integer, \"match\", \"drop\", or \"error\".");
 }
 
 // -----------------------------------------------------------------------------
@@ -1789,7 +1816,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               struct r_dyn_array* p_locs_needles,
                               bool skip_match_sizes,
                               bool skip_locs_needles,
-                              enum vctrs_missing_needle missing,
+                              const struct vctrs_missing_needle* missing,
                               bool missing_propagate,
                               const struct vctrs_no_match* no_match,
                               const struct vctrs_no_match* remaining,
@@ -1893,21 +1920,21 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         );
       }
 
-      switch (missing) {
-      case VCTRS_MISSING_NEEDLE_propagate: {
+      switch (missing->action) {
+      case VCTRS_MISSING_NEEDLE_ACTION_value: {
         v_out_needles[loc_out] = loc_needles;
-        v_out_haystack[loc_out] = r_globals.na_int;
+        v_out_haystack[loc_out] = missing->value;
         ++loc_out;
         break;
       }
-      case VCTRS_MISSING_NEEDLE_drop: {
+      case VCTRS_MISSING_NEEDLE_ACTION_drop: {
         // Do not increment `loc_out`, do not store locations
         break;
       }
-      case VCTRS_MISSING_NEEDLE_error: {
+      case VCTRS_MISSING_NEEDLE_ACTION_error: {
         stop_matches_missing(loc_needles - 1, needles_arg);
       }
-      case VCTRS_MISSING_NEEDLE_match: {
+      case VCTRS_MISSING_NEEDLE_ACTION_match: {
         r_stop_internal(
           "expand_compact_indices",
           "Needles should never be marked as `SIGNAL_NA_PROPAGATE` when `missing = 'match'."
