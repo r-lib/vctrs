@@ -27,18 +27,18 @@ change the result of the reduction. vctrs has two identity values,
 \subsection{The \code{NULL} identity}{
 
 As an identity element that shouldn’t influence the determination of the
-common type of a set of vectors, \code{NULL} is promoted to any type:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(NULL, "")
+common type of a set of vectors, \code{NULL} is promoted to any type:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(NULL, "")
 #> character(0)
 vec_ptype2(1L, NULL)
 #> integer(0)
 }\if{html}{\out{</div>}}
 
-The common type of \code{NULL} and \code{NULL} is the identity \code{NULL}:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(NULL, NULL)
+The common type of \code{NULL} and \code{NULL} is the identity \code{NULL}:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(NULL, NULL)
 #> NULL
 }\if{html}{\out{</div>}}
 
 This way the result of \code{vec_ptype2(NULL, NULL)} does not influence
-subsequent promotions:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(
+subsequent promotions:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(
   vec_ptype2(NULL, NULL),
   ""
 )
@@ -54,7 +54,7 @@ automatically promoted to the type of any other vector, just like
 semantics of unspecified vectors serve two purposes:
 \enumerate{
 \item It makes it possible to assign vectors of \code{NA} inside any type of
-vectors, even when they are not coercible with logical:\if{html}{\out{<div class="r">}}\preformatted{x <- letters[1:5]
+vectors, even when they are not coercible with logical:\if{html}{\out{<div class="sourceCode r">}}\preformatted{x <- letters[1:5]
 vec_assign(x, 1:2, c(NA, NA))
 #> [1] NA  NA  "c" "d" "e"
 }\if{html}{\out{</div>}}
@@ -64,7 +64,7 @@ natural fit for this.
 }
 
 Unspecified vectors are thus promoted to any other type, just like
-\code{NULL}:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(NA, "")
+\code{NULL}:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(NA, "")
 #> character(0)
 vec_ptype2(1L, c(NA, NA))
 #> integer(0)
@@ -76,7 +76,7 @@ vec_ptype2(1L, c(NA, NA))
 vctrs has an internal vector type of class \code{vctrs_unspecified}. Users
 normally don’t see such vectors in the wild, but they do come up when
 taking the common type of an unspecified vector with another identity
-value:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(NA, NA)
+value:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(NA, NA)
 #> <unspecified> [0]
 vec_ptype2(NA, NULL)
 #> <unspecified> [0]
@@ -87,12 +87,12 @@ vec_ptype2(NULL, NA)
 We can’t return \code{NA} here because \code{vec_ptype2()} normally returns empty
 vectors. We also can’t return \code{NULL} because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
-end of the reduction.\if{html}{\out{<div class="r">}}\preformatted{vec_ptype_finalise(vec_ptype2(NULL, NA))
+end of the reduction.\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype_finalise(vec_ptype2(NULL, NA))
 #> logical(0)
 }\if{html}{\out{</div>}}
 
 See the output of \code{vec_ptype_common()} which performs the reduction and
-finalises the type, ready to be used by the caller:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype_common(NULL, NULL)
+finalises the type, ready to be used by the caller:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype_common(NULL, NULL)
 #> NULL
 vec_ptype_common(NA, NULL)
 #> logical(0)
