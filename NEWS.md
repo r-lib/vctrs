@@ -1,7 +1,6 @@
 # vctrs (development version)
 
-* New `list_compact()` for removing missing or empty elements from a list
-  (#1395).
+* New `list_drop_empty()` for removing empty elements from a list (#1395).
 
 * `list_sizes()` now propagates the names of the list onto the result.
 
