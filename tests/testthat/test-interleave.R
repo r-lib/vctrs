@@ -76,6 +76,9 @@ test_that("uses recycling errors", {
 })
 
 test_that("errors if the result would be a long vector", {
+  # Internal multiplication overflows `r_ssize` resulting in a different error
+  skip_on_os("windows")
+
   expect_snapshot(
     error = TRUE,
     vec_interleave_indices(3L, 1e9L)
