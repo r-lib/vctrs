@@ -119,7 +119,7 @@
 
     Code
       vec_ptype2_fallback(foobar_bud, foobar_boo)
-    Warning <warning>
+    Warning <rlang_warning>
       Can't combine <vctrs_foobar> and <vctrs_foobar>; falling back to <data.frame>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -130,7 +130,7 @@
     Code
       # For reference, warning for incompatible classes
       vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
-    Warning <warning>
+    Warning <rlang_warning>
       Can't combine <vctrs_foobar> and <vctrs_foobaz>; falling back to <data.frame>.
     Output
        [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
@@ -147,7 +147,7 @@
 
     Code
       vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
-    Warning <warning>
+    Warning <rlang_warning>
       Can't combine <vctrs_foobar> and <vctrs_foobaz>; falling back to <data.frame>.
     Output
        [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
