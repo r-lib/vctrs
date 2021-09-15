@@ -78,6 +78,6 @@ test_that("uses recycling errors", {
 test_that("errors if the result would be a long vector", {
   expect_snapshot(
     error = TRUE,
-    vec_interleave(seq_len(1e9), seq_len(1e9), seq_len(1e9))
+    vec_interleave_indices(3L, 1e9L)
   )
 })

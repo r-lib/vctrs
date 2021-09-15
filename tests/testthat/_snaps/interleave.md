@@ -20,7 +20,7 @@
 # errors if the result would be a long vector
 
     Code
-      vec_interleave(seq_len(1e+09), seq_len(1e+09), seq_len(1e+09))
+      vec_interleave_indices(3L, 1000000000L)
     Error <rlang_error>
       Long vectors are not yet supported in `vec_interleave()`. Result from interleaving would have size 3000000000, which is larger than the maximum supported size of 2^31 - 1.
 
