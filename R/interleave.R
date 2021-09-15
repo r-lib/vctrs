@@ -4,6 +4,13 @@ vec_interleave <- function(...,
                            .name_repair = c("minimal", "unique", "check_unique", "universal")) {
   args <- list2(...)
 
+  # TODO: Use `vec_drop_missing()`
+  # `NULL`s must be dropped up front to generate appropriate indices
+  missing <- vec_equal_na(args)
+  if (any(missing)) {
+    args <- vec_slice(args, !missing)
+  }
+
   n <- length(args)
   size <- vec_size_common(!!!args)
 

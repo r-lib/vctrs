@@ -19,6 +19,13 @@ test_that("data frames can be interleaved", {
   )
 })
 
+test_that("works with `NULL` inputs", {
+  expect_identical(
+    vec_interleave(1:3, NULL, 4:6),
+    vec_interleave(1:3, 4:6)
+  )
+})
+
 test_that("allows for name repair", {
   x <- c(x = 1)
 
