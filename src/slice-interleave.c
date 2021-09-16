@@ -1,5 +1,5 @@
 #include <rlang.h>
-#include "decl/interleave-decl.h"
+#include "decl/slice-interleave-decl.h"
 
 // [[ register() ]]
 r_obj* vctrs_interleave_indices(r_obj* n, r_obj* size) {
