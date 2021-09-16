@@ -129,3 +129,10 @@ test_that("vec_seq_along returns size-0 output for size-0 input", {
 test_that("vec_init_along can be called with single argument", {
   expect_equal(vec_init_along(1:3), rep(NA_integer_, 3))
 })
+
+# %0% --------------------------------------------------------------------
+
+test_that("uses y when x is empty", {
+  expect_equal(1 %0% 2, 1)
+  expect_equal(1[0] %0% 2, 2)
+})

@@ -50,6 +50,7 @@ reference:
   - vec_slice
   - vec_recycle
   - vec_chop
+  - list_drop_empty
 
 - title: Assigning
   contents:

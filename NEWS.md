@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `list_drop_empty()` for removing empty elements from a list (#1395).
+
 * `list_sizes()` now propagates the names of the list onto the result.
 
 * `vec_order()` and `vec_sort()` now use a custom radix sort algorithm, rather
