@@ -4,6 +4,9 @@
 #' elements along with empty vectors, like `integer(0)`. This is equivalent to,
 #' but faster than, `vec_slice(x, list_sizes(x) != 0L)`.
 #'
+#' @section Dependencies:
+#' - [vec_slice()]
+#'
 #' @param x A list.
 #'
 #' @export

@@ -14,6 +14,13 @@ list_drop_empty(x)
 elements along with empty vectors, like \code{integer(0)}. This is equivalent to,
 but faster than, \code{vec_slice(x, list_sizes(x) != 0L)}.
 }
+\section{Dependencies}{
+
+\itemize{
+\item \code{\link[=vec_slice]{vec_slice()}}
+}
+}
+
 \examples{
 x <- list(1, NULL, integer(), 2)
 list_drop_empty(x)
