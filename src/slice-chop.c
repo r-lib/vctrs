@@ -191,7 +191,14 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       ++(*info.p_index);
     }
 
-    SEXP elt = PROTECT(vec_slice_base(info.proxy_info.type, proxy, info.index));
+    // Always materialize ALTREP vectors when chopping to avoid inefficiently
+    // creating a large amount of small ALTREP objects (#1450)
+    SEXP elt = PROTECT(vec_slice_base(
+      info.proxy_info.type,
+      proxy,
+      info.index,
+      VCTRS_MATERIALIZE_true
+    ));
 
     if (names != R_NilValue) {
       SEXP elt_names = PROTECT(slice_names(names, info.index));

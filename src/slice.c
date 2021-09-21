@@ -73,7 +73,7 @@ SEXP fns_vec_slice_dispatch_integer64 = NULL;
   return out
 
 #define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)                   \
-  if (ALTREP(x)) {                                                          \
+  if (!materialize && ALTREP(x)) {                                          \
     SEXP alt_subscript = PROTECT(compact_materialize(subscript));           \
     SEXP out = ALTVEC_EXTRACT_SUBSET_PROXY(x, alt_subscript, R_NilValue);   \
     UNPROTECT(1);                                                           \
@@ -89,22 +89,22 @@ SEXP fns_vec_slice_dispatch_integer64 = NULL;
     SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);            \
   }
 
-static SEXP lgl_slice(SEXP x, SEXP subscript) {
+static SEXP lgl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
 }
-static SEXP int_slice(SEXP x, SEXP subscript) {
+static SEXP int_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(INTSXP, int, INTEGER, INTEGER_RO, NA_INTEGER);
 }
-static SEXP dbl_slice(SEXP x, SEXP subscript) {
+static SEXP dbl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(REALSXP, double, REAL, REAL_RO, NA_REAL);
 }
-static SEXP cpl_slice(SEXP x, SEXP subscript) {
+static SEXP cpl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(CPLXSXP, Rcomplex, COMPLEX, COMPLEX_RO, vctrs_shared_na_cpl);
 }
-static SEXP chr_slice(SEXP x, SEXP subscript) {
+static SEXP chr_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, NA_STRING);
 }
-static SEXP raw_slice(SEXP x, SEXP subscript) {
+static SEXP raw_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(RAWSXP, Rbyte, RAW, RAW_RO, 0);
 }
 
@@ -253,14 +253,18 @@ bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info) {
     info.type != vctrs_type_dataframe;
 }
 
-SEXP vec_slice_base(enum vctrs_type type, SEXP x, SEXP subscript) {
+// [[ include("slice.h") ]]
+SEXP vec_slice_base(enum vctrs_type type,
+                    SEXP x,
+                    SEXP subscript,
+                    enum vctrs_materialize materialize) {
   switch (type) {
-  case vctrs_type_logical:   return lgl_slice(x, subscript);
-  case vctrs_type_integer:   return int_slice(x, subscript);
-  case vctrs_type_double:    return dbl_slice(x, subscript);
-  case vctrs_type_complex:   return cpl_slice(x, subscript);
-  case vctrs_type_character: return chr_slice(x, subscript);
-  case vctrs_type_raw:       return raw_slice(x, subscript);
+  case vctrs_type_logical:   return lgl_slice(x, subscript, materialize);
+  case vctrs_type_integer:   return int_slice(x, subscript, materialize);
+  case vctrs_type_double:    return dbl_slice(x, subscript, materialize);
+  case vctrs_type_complex:   return cpl_slice(x, subscript, materialize);
+  case vctrs_type_character: return chr_slice(x, subscript, materialize);
+  case vctrs_type_raw:       return raw_slice(x, subscript, materialize);
   case vctrs_type_list:      return list_slice(x, subscript);
   default: stop_unimplemented_vctrs_type("vec_slice_base", type);
   }
@@ -313,7 +317,7 @@ SEXP slice_names(SEXP names, SEXP subscript) {
     return names;
   }
 
-  names = PROTECT(chr_slice(names, subscript));
+  names = PROTECT(chr_slice(names, subscript, VCTRS_MATERIALIZE_false));
 
   repair_na_names(names, subscript);
 
@@ -325,7 +329,7 @@ SEXP slice_rownames(SEXP names, SEXP subscript) {
     return names;
   }
 
-  names = PROTECT(chr_slice(names, subscript));
+  names = PROTECT(chr_slice(names, subscript, VCTRS_MATERIALIZE_false));
 
   // Rownames can't contain `NA` or duplicates
   names = vec_as_unique_names(names, true);
@@ -397,7 +401,7 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
         Rf_setAttrib(out, R_DimNamesSymbol, names);
       }
     } else {
-      out = PROTECT_N(vec_slice_base(info.type, data, subscript), &nprot);
+      out = PROTECT_N(vec_slice_base(info.type, data, subscript, VCTRS_MATERIALIZE_false), &nprot);
 
       SEXP names = PROTECT_N(Rf_getAttrib(x, R_NamesSymbol), &nprot);
       names = PROTECT_N(slice_names(names, subscript), &nprot);
