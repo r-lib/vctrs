@@ -161,6 +161,7 @@ SEXP vctrs_init_library(SEXP);
 
 // Defined in altrep-rle.h
 extern SEXP altrep_rle_Make(SEXP);
+extern SEXP altrep_rle_is_materialized(SEXP);
 void vctrs_init_altrep_rle(DllInfo* dll);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -242,6 +243,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_apply_name_spec",            (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                   (DL_FUNC) &vctrs_unset_s4, 1},
   {"vctrs_altrep_rle_Make",            (DL_FUNC) &altrep_rle_Make, 1},
+  {"vctrs_altrep_rle_is_materialized", (DL_FUNC) &altrep_rle_is_materialized, 1},
   {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
   {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 4},
