@@ -137,6 +137,7 @@ extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*)
 extern r_obj* vctrs_integer64_proxy(r_obj*);
 extern r_obj* vctrs_integer64_restore(r_obj*);
 extern r_obj* vctrs_list_drop_empty(r_obj*);
+extern r_obj* vctrs_is_altrep(r_obj* x);
 
 
 // Maturing
@@ -292,6 +293,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_integer64_proxy",            (DL_FUNC) &vctrs_integer64_proxy, 1},
   {"vctrs_integer64_restore",          (DL_FUNC) &vctrs_integer64_restore, 1},
   {"vctrs_list_drop_empty",            (DL_FUNC) &vctrs_list_drop_empty, 1},
+  {"vctrs_is_altrep",                  (DL_FUNC) &vctrs_is_altrep, 1},
   {NULL, NULL, 0}
 };
 
