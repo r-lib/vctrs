@@ -64,8 +64,6 @@ tibble::tibble(x = fit)
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -87,15 +85,9 @@ tibble::tibble(x = fit)
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -116,6 +108,12 @@ tibble::tibble(x = fit)
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -171,7 +169,7 @@ tibble::tibble(x = fit)
     <div class="ref-description">
     <p>This error occurs when a function expects a vector and gets a scalar
 object instead. This commonly happens when some code attempts to assign
-a scalar object as column in a data frame:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span class='va'>fn</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='cn'>NULL</span>
+a scalar object as column in a data frame:<div class="sourceCode r"></p><pre><span class='va'>fn</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='cn'>NULL</span>
 <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>fn</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: All columns in a tibble must be vectors.</span>
 <span class='co'>#&gt; x Column `x` is a function.</span>
@@ -180,7 +178,7 @@ a scalar object as column in a data frame:<div class="sourceCode r"></p><pre cla
 <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>fit</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: All columns in a tibble must be vectors.</span>
 <span class='co'>#&gt; x Column `x` is a `lm` object.</span>
-</code></pre><p></div></p>
+</pre><p></div></p>
     </div>
 
 
@@ -193,7 +191,7 @@ considered a vector. The main question we ask ourselves to decide on the
 vectorness of a type is whether it makes sense to include that object as
 a column in a data frame.</p>
 <p>The main difference is that S3 lists are considered vectors by base R
-but in the tidyverse that’s not the case by default:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span><span class='op'>)</span>
+but in the tidyverse that’s not the case by default:<div class="sourceCode r"></p><pre><span class='va'>fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span> <span class='op'>~</span> <span class='fl'>1</span><span class='op'>)</span>
 
 <span class='fu'><a href='https://rdrr.io/r/base/typeof.html'>typeof</a></span><span class='op'>(</span><span class='va'>fit</span><span class='op'>)</span>
 <span class='co'>#&gt; [1] "list"</span>
@@ -217,8 +215,8 @@ but in the tidyverse that’s not the case by default:<div class="sourceCode r">
 <span class='co'># But not in vctrs</span>
 <span class='fu'>vctrs</span><span class='fu'>::</span><span class='fu'><a href='vec_slice.html'>vec_slice</a></span><span class='op'>(</span><span class='va'>fit</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Input must be a vector, not a &lt;lm&gt; object.</span>
-</code></pre><p></div></p>
-<p>Defused function calls are another (more esoteric) example:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span class='va'>call</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>quote</a></span><span class='op'>(</span><span class='fu'>foo</span><span class='op'>(</span>bar <span class='op'>=</span> <span class='cn'>TRUE</span>, baz <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+</pre><p></div></p>
+<p>Defused function calls are another (more esoteric) example:<div class="sourceCode r"></p><pre><span class='va'>call</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>quote</a></span><span class='op'>(</span><span class='fu'>foo</span><span class='op'>(</span>bar <span class='op'>=</span> <span class='cn'>TRUE</span>, baz <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>call</span>
 <span class='co'>#&gt; foo(bar = TRUE, baz = FALSE)</span>
 
@@ -238,7 +236,7 @@ but in the tidyverse that’s not the case by default:<div class="sourceCode r">
 <span class='co'># But not with vctrs:</span>
 <span class='fu'>vctrs</span><span class='fu'>::</span><span class='fu'><a href='vec_slice.html'>vec_slice</a></span><span class='op'>(</span><span class='va'>call</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Input must be a vector, not a call.</span>
-</code></pre><p></div></p>
+</pre><p></div></p>
     <h2 class="hasAnchor" id="i-get-a-scalar-type-error-but-i-think-this-is-a-bug"><a class="anchor" href="#i-get-a-scalar-type-error-but-i-think-this-is-a-bug"></a>I get a scalar type error but I think this is a bug</h2>
 
     <p>It’s possible the author of the class needs to do some work to declare
@@ -257,11 +255,11 @@ help them fix the issue.</p>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -269,8 +267,6 @@ help them fix the issue.</p>
 
   
 
-
-  
 
   </body>
 </html>

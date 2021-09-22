@@ -58,8 +58,6 @@ type error when the columns are not compatible." />
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -81,15 +79,9 @@ type error when the columns are not compatible." />
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -110,6 +102,12 @@ type error when the columns are not compatible." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -164,20 +162,20 @@ type error when the columns are not compatible." />
 
     <div class="ref-description">
     <p><code>df_ptype2()</code> and <code>df_cast()</code> are the two functions you need to
-call from <code><a href='vec_ptype2.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> methods for data frame
+call from <code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> and <code><a href='vec_cast.html'>vec_cast()</a></code> methods for data frame
 subclasses. See <a href='howto-faq-coercion-data-frame.html'>?howto-faq-coercion-data-frame</a>.
 Their main job is to determine the common type of two data frames,
 adding and coercing columns as needed, or throwing an incompatible
 type error when the columns are not compatible.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>df_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, y_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>df_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, y_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
 
 <span class='fu'>df_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, to_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
 
 <span class='fu'>tib_ptype2</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, y_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
 
-<span class='fu'>tib_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, to_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></code></pre></div>
+<span class='fu'>tib_cast</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>to</span>, <span class='va'>...</span>, x_arg <span class='op'>=</span> <span class='st'>""</span>, to_arg <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,7 +187,7 @@ type error when the columns are not compatible.</p>
     <tr>
       <th>...</th>
       <td><p>If you call <code>df_ptype2()</code> or <code>df_cast()</code> from a
-<code><a href='vec_ptype2.html'>vec_ptype2()</a></code> or <code><a href='vec_cast.html'>vec_cast()</a></code> method, you must forward the dots
+<code><a href='vec_ptype2.logical.html'>vec_ptype2()</a></code> or <code><a href='vec_cast.html'>vec_cast()</a></code> method, you must forward the dots
 passed to your method on to <code>df_ptype2()</code> or <code>df_cast()</code>.</p></td>
     </tr>
     <tr>
@@ -235,11 +233,11 @@ as a bare tibble.</p></li>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -247,8 +245,6 @@ as a bare tibble.</p></li>
 
   
 
-
-  
 
   </body>
 </html>

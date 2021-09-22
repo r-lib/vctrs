@@ -59,8 +59,6 @@ other hand, integer and character vectors are not compatible." />
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -82,15 +80,9 @@ other hand, integer and character vectors are not compatible." />
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -111,6 +103,12 @@ other hand, integer and character vectors are not compatible." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -180,14 +178,14 @@ other hand, integer and character vectors are not compatible.</p>
     <p>There are two possible outcomes when multiple vectors of different types
 are combined into a larger vector:</p><ul>
 <li><p>An incompatible type error is thrown because some of the types are
-not compatible:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span class='va'>df1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+not compatible:<div class="sourceCode r"></p><pre><span class='va'>df1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>df2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='st'>"foo"</span><span class='op'>)</span>
 <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span><span class='va'>df1</span>, <span class='va'>df2</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't combine `..1$x` &lt;integer&gt; and `..2$x` &lt;character&gt;.</span>
-</code></pre><p></div></p></li>
+</pre><p></div></p></li>
 <li><p>The vectors are combined into a vector that has the common type of
 all inputs. In this example, the common type of integer and logical
-is integer:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span class='va'>df1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
+is integer:<div class="sourceCode r"></p><pre><span class='va'>df1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span>
 <span class='va'>df2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span><span class='va'>df1</span>, <span class='va'>df2</span><span class='op'>)</span>
 <span class='co'>#&gt;   x</span>
@@ -195,7 +193,7 @@ is integer:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span c
 <span class='co'>#&gt; 2 2</span>
 <span class='co'>#&gt; 3 3</span>
 <span class='co'>#&gt; 4 0</span>
-</code></pre><p></div></p></li>
+</pre><p></div></p></li>
 </ul>
 
 <p>In general, the common type is the <em>richer</em> type, in other words the
@@ -214,11 +212,11 @@ double vectors are compatible, but double vectors can’t be converted to
 integer if they contain fractional values.</p>
 <p>When vctrs can’t convert a vector because the target type is not as rich
 as the source type, it throws a lossy cast error. Assigning a fractional
-number to an integer vector is a typical example of a lossy cast error:<div class="sourceCode r"></p><pre class='sourceCode r'><code><span class='va'>int_vector</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>
+number to an integer vector is a typical example of a lossy cast error:<div class="sourceCode r"></p><pre><span class='va'>int_vector</span> <span class='op'>&lt;-</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>
 <span class='fu'><a href='vec_slice.html'>vec_assign</a></span><span class='op'>(</span><span class='va'>int_vector</span>, <span class='fl'>2</span>, <span class='fl'>0.001</span><span class='op'>)</span>
 <span class='co'>#&gt; Error: Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
 <span class='co'>#&gt; * Locations: 1</span>
-</code></pre><p></div></p>
+</pre><p></div></p>
     <h2 class="hasAnchor" id="how-to-make-two-vector-classes-compatible-"><a class="anchor" href="#how-to-make-two-vector-classes-compatible-"></a>How to make two vector classes compatible?</h2>
 
     <p>If you encounter two vector types that you think should be compatible,
@@ -246,11 +244,11 @@ subclasses, see
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -258,8 +256,6 @@ subclasses, see
 
   
 
-
-  
 
   </body>
 </html>

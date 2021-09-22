@@ -56,8 +56,6 @@ overcoming the limitations of the base Ops generic." />
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -79,15 +77,9 @@ overcoming the limitations of the base Ops generic." />
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -108,6 +100,12 @@ overcoming the limitations of the base Ops generic." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -162,12 +160,12 @@ overcoming the limitations of the base Ops generic." />
 
     <div class="ref-description">
     <p>This generic provides a common double dispatch mechanism for all infix
-operators (<code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>, <code>^</code>, <code>%%</code>, <code>%/%</code>, <code>!</code>, <code>&amp;</code>, <code>|</code>). It is used
+operators (<code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>/</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>*</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>^</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></code>, <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, <code>&amp;</code>, <code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>). It is used
 to power the default arithmetic and boolean operators for <a href='new_vctr.html'>vctr</a>s objects,
 overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGeneric.html'>Ops</a> generic.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_arith</span><span class='op'>(</span><span class='va'>op</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>vec_arith</span><span class='op'>(</span><span class='va'>op</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for default</span>
 <span class='fu'>vec_arith</span><span class='op'>(</span><span class='va'>op</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -180,7 +178,7 @@ overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGene
 
 <span class='fu'>vec_arith_base</span><span class='op'>(</span><span class='va'>op</span>, <span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
 
-<span class='fu'>MISSING</span><span class='op'>(</span><span class='op'>)</span></code></pre></div>
+<span class='fu'>MISSING</span><span class='op'>(</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,7 +189,7 @@ overcoming the limitations of the base <a href='https://rdrr.io/r/base/groupGene
     </tr>
     <tr>
       <th>x, y</th>
-      <td><p>A pair of vectors. For <code>!</code>, unary <code>+</code> and unary <code>-</code>, <code>y</code> will be
+      <td><p>A pair of vectors. For <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, unary <code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code> and unary <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code>y</code> will be
 a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</code>.</p></td>
     </tr>
     <tr>
@@ -205,7 +203,7 @@ a sentinel object of class <code>MISSING</code>, as created by <code>MISSING()</
     <p><code>vec_arith_base()</code> is provided as a convenience for writing methods. It
 recycles <code>x</code> and <code>y</code> to common length then calls the base operator with the
 underlying <code><a href='vec_data.html'>vec_data()</a></code>.</p>
-<p><code>vec_arith()</code> is also used in <code>diff.vctrs_vctr()</code> method via <code>-</code>.</p>
+<p><code>vec_arith()</code> is also used in <code>diff.vctrs_vctr()</code> method via <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='vctrs-conditions.html'>stop_incompatible_op()</a></code> for signalling that an arithmetic
@@ -214,32 +212,23 @@ operation is not permitted/supported.</p>
 functions.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2018-01-01"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>dt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='st'>"2018-01-02 12:00"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/difftime.html'>as.difftime</a></span><span class='op'>(</span><span class='fl'>12</span>, unit <span class='op'>=</span> <span class='st'>"hours"</span><span class='op'>)</span></span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='fl'>1</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2018-01-02 11:59:59 UTC"</span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2018-01-02 UTC"</span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>d</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Time difference of 129600 secs</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='fl'>86400</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2018-01-03 12:00:00 UTC"</span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2018-01-03 UTC"</span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Time difference of 24 hours</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1</span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Time difference of 6 hours</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"*"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Time difference of 24 hours</span>
-</code></pre></div>
+    <pre class="examples"><div class='input'><span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2018-01-01"</span><span class='op'>)</span>
+<span class='va'>dt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct</a></span><span class='op'>(</span><span class='st'>"2018-01-02 12:00"</span><span class='op'>)</span>
+<span class='va'>t</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/difftime.html'>as.difftime</a></span><span class='op'>(</span><span class='fl'>12</span>, unit <span class='op'>=</span> <span class='st'>"hours"</span><span class='op'>)</span>
+
+<span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2018-01-02 11:59:59 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2018-01-02 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"-"</span>, <span class='va'>dt</span>, <span class='va'>d</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Time difference of 129600 secs</div><div class='input'>
+<span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='fl'>86400</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2018-01-03 12:00:00 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>dt</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2018-01-03 UTC"</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"+"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Time difference of 24 hours</div><div class='input'>
+<span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='va'>t</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"/"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Time difference of 6 hours</div><div class='input'>
+<span class='fu'>vec_arith</span><span class='op'>(</span><span class='st'>"*"</span>, <span class='va'>t</span>, <span class='fl'>2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Time difference of 24 hours</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -251,11 +240,11 @@ functions.</p></div>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -263,8 +252,6 @@ functions.</p></div>
 
   
 
-
-  
 
   </body>
 </html>

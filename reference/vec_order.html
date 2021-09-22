@@ -56,8 +56,6 @@ vec_sort() sorts x. It is equivalent to vec_slice(x, vec_order(x))." />
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -79,15 +77,9 @@ vec_sort() sorts x. It is equivalent to vec_slice(x, vec_order(x))." />
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -108,6 +100,12 @@ vec_sort() sorts x. It is equivalent to vec_slice(x, vec_order(x))." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -164,10 +162,10 @@ vec_sort() sorts x. It is equivalent to vec_slice(x, vec_order(x))." />
     <p><code>vec_order()</code> computes the order of <code>x</code>. For data frames, the order is
 computed along the rows by computing the order of the first column and
 using subsequent columns to break ties.</p>
-<p><code>vec_sort()</code> sorts <code>x</code>. It is equivalent to <code>vec_slice(x, vec_order(x))</code>.</p>
+<p><code>vec_sort()</code> sorts <code>x</code>. It is equivalent to <code><a href='vec_slice.html'>vec_slice(x, vec_order(x))</a></code>.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_order</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>vec_order</span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>...</span>,
   direction <span class='op'>=</span> <span class='st'>"asc"</span>,
@@ -183,7 +181,7 @@ using subsequent columns to break ties.</p>
   na_value <span class='op'>=</span> <span class='st'>"largest"</span>,
   nan_distinct <span class='op'>=</span> <span class='cn'>FALSE</span>,
   chr_transform <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></code></pre></div>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,7 +199,7 @@ using subsequent columns to break ties.</p>
       <td><p>Direction to sort in.</p><ul>
 <li><p>A single <code>"asc"</code> or <code>"desc"</code> for ascending or descending order
 respectively.</p></li>
-<li><p>For data frames, a length <code>1</code> or <code>ncol(x)</code> character vector containing
+<li><p>For data frames, a length <code>1</code> or <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(x)</a></code> character vector containing
 only <code>"asc"</code> or <code>"desc"</code>, specifying the direction for each column.</p></li>
 </ul></td>
     </tr>
@@ -210,7 +208,7 @@ only <code>"asc"</code> or <code>"desc"</code>, specifying the direction for eac
       <td><p>Treatment of missing values.</p><ul>
 <li><p>A single <code>"largest"</code> or <code>"smallest"</code> for treating missing values as the
 largest or smallest values respectively.</p></li>
-<li><p>For data frames, a length <code>1</code> or <code>ncol(x)</code> character vector containing
+<li><p>For data frames, a length <code>1</code> or <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(x)</a></code> character vector containing
 only <code>"largest"</code> or <code>"smallest"</code>, specifying how missing values should
 be treated in each column.</p></li>
 </ul></td>
@@ -263,9 +261,9 @@ and first in descending order.</p>
 consistent locale can produce more reproducible results between different
 sessions and platforms, however, the results of sorting in the C-locale
 can be surprising. For example, capital letters sort before lower case
-letters. Sorting <code>c("b", "C", "a")</code> with <code>vec_sort()</code> will return
-<code>c("C", "a", "b")</code>, but with <code><a href='https://rdrr.io/r/base/order.html'>base::order()</a></code> will return <code>c("a", "b", "C")</code>
-unless <code>base::order(method = "radix")</code> is explicitly set, which also uses
+letters. Sorting <code><a href='https://rdrr.io/r/base/c.html'>c("b", "C", "a")</a></code> with <code>vec_sort()</code> will return
+<code><a href='https://rdrr.io/r/base/c.html'>c("C", "a", "b")</a></code>, but with <code><a href='https://rdrr.io/r/base/order.html'>base::order()</a></code> will return <code><a href='https://rdrr.io/r/base/c.html'>c("a", "b", "C")</a></code>
+unless <code><a href='https://rdrr.io/r/base/order.html'>base::order(method = "radix")</a></code> is explicitly set, which also uses
 the C-locale. While sorting with the C-locale can be useful for
 algorithmic efficiency, in many real world uses it can be the cause of
 data analysis mistakes. To balance these trade-offs, you can supply a
@@ -298,75 +296,66 @@ any transform is applied by <code>chr_transform</code>.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span>, <span class='fl'>9</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='fl'>3</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='cn'>NA</span><span class='op'>)</span></span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>vec_order</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]  7  5  2  4  1  6  9  3  8 10</span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] 0.359 0.500 0.775 0.775 0.888 0.888 0.888 0.996 0.996    NA</span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>x</span>, direction <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]    NA 0.996 0.996 0.888 0.888 0.888 0.775 0.775 0.500 0.359</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Can also handle data frames</span></span>
-<span class='r-in'><span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>g <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>10</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, x <span class='op'>=</span> <span class='va'>x</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>vec_order</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1]  7  2  4  1  6  9  3  8 10  5</span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    g     x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1  1 0.359</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2  1 0.775</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3  1 0.775</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 7  1 0.996</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 8  1 0.996</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 9  1    NA</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10 2 0.500</span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>df</span>, direction <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    g     x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1  2 0.500</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2  1    NA</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3  1 0.996</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4  1 0.996</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 7  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 8  1 0.775</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 9  1 0.775</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10 1 0.359</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># For data frames, `direction` and `na_value` are allowed to be vectors</span></span>
-<span class='r-in'><span class='co'># with length equal to the number of columns in the data frame</span></span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span></span>
-<span class='r-in'>  <span class='va'>df</span>,</span>
-<span class='r-in'>  direction <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"desc"</span>, <span class='st'>"asc"</span><span class='op'>)</span>,</span>
-<span class='r-in'>  na_value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"largest"</span>, <span class='st'>"smallest"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    g     x</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 1  2 0.500</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 2  1    NA</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 3  1 0.359</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 4  1 0.775</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 5  1 0.775</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 6  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 7  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 8  1 0.888</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 9  1 0.996</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> 10 1 0.996</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Character vectors are ordered in the C locale, which orders capital letters</span></span>
-<span class='r-in'><span class='co'># below lowercase ones</span></span>
-<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"B"</span>, <span class='st'>"A"</span>, <span class='st'>"a"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "A" "B" "a"</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># To order in a case-insensitive manner, provide a `chr_transform` that</span></span>
-<span class='r-in'><span class='co'># transforms the strings to all lowercase</span></span>
-<span class='r-in'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span>, chr_transform <span class='op'>=</span> <span class='va'>tolower</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "A" "a" "B"</span>
-</code></pre></div>
+    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>5</span><span class='op'>)</span>, <span class='fl'>9</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='fl'>3</span><span class='op'>)</span>
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='cn'>NA</span><span class='op'>)</span>
+
+<span class='fu'>vec_order</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1]  7  5  2  4  1  6  9  3  8 10</div><div class='input'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] 0.359 0.500 0.775 0.775 0.888 0.888 0.888 0.996 0.996    NA</div><div class='input'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>x</span>, direction <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1]    NA 0.996 0.996 0.888 0.888 0.888 0.775 0.775 0.500 0.359</div><div class='input'>
+<span class='co'># Can also handle data frames</span>
+<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>g <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>10</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, x <span class='op'>=</span> <span class='va'>x</span><span class='op'>)</span>
+<span class='fu'>vec_order</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1]  7  2  4  1  6  9  3  8 10  5</div><div class='input'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    g     x
+#&gt; 1  1 0.359
+#&gt; 2  1 0.775
+#&gt; 3  1 0.775
+#&gt; 4  1 0.888
+#&gt; 5  1 0.888
+#&gt; 6  1 0.888
+#&gt; 7  1 0.996
+#&gt; 8  1 0.996
+#&gt; 9  1    NA
+#&gt; 10 2 0.500</div><div class='input'><span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>df</span>, direction <span class='op'>=</span> <span class='st'>"desc"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    g     x
+#&gt; 1  2 0.500
+#&gt; 2  1    NA
+#&gt; 3  1 0.996
+#&gt; 4  1 0.996
+#&gt; 5  1 0.888
+#&gt; 6  1 0.888
+#&gt; 7  1 0.888
+#&gt; 8  1 0.775
+#&gt; 9  1 0.775
+#&gt; 10 1 0.359</div><div class='input'>
+<span class='co'># For data frames, `direction` and `na_value` are allowed to be vectors</span>
+<span class='co'># with length equal to the number of columns in the data frame</span>
+<span class='fu'>vec_sort</span><span class='op'>(</span>
+  <span class='va'>df</span>,
+  direction <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"desc"</span>, <span class='st'>"asc"</span><span class='op'>)</span>,
+  na_value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"largest"</span>, <span class='st'>"smallest"</span><span class='op'>)</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt;    g     x
+#&gt; 1  2 0.500
+#&gt; 2  1    NA
+#&gt; 3  1 0.359
+#&gt; 4  1 0.775
+#&gt; 5  1 0.775
+#&gt; 6  1 0.888
+#&gt; 7  1 0.888
+#&gt; 8  1 0.888
+#&gt; 9  1 0.996
+#&gt; 10 1 0.996</div><div class='input'>
+<span class='co'># Character vectors are ordered in the C locale, which orders capital letters</span>
+<span class='co'># below lowercase ones</span>
+<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"B"</span>, <span class='st'>"A"</span>, <span class='st'>"a"</span><span class='op'>)</span>
+<span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "A" "B" "a"</div><div class='input'>
+<span class='co'># To order in a case-insensitive manner, provide a `chr_transform` that</span>
+<span class='co'># transforms the strings to all lowercase</span>
+<span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span>, chr_transform <span class='op'>=</span> <span class='va'>tolower</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "A" "a" "B"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -378,11 +367,11 @@ any transform is applied by <code>chr_transform</code>.</p>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -390,8 +379,6 @@ any transform is applied by <code>chr_transform</code>.</p>
 
   
 
-
-  
 
   </body>
 </html>

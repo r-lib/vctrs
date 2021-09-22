@@ -60,8 +60,6 @@ doesn't conform.
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -83,15 +81,9 @@ doesn't conform.
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -112,6 +104,12 @@ doesn't conform.
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -175,9 +173,9 @@ doesn't conform.</p></li>
 
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_assert</span><span class='op'>(</span><span class='va'>x</span>, ptype <span class='op'>=</span> <span class='cn'>NULL</span>, size <span class='op'>=</span> <span class='cn'>NULL</span>, arg <span class='op'>=</span> <span class='fu'>as_label</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>vec_assert</span><span class='op'>(</span><span class='va'>x</span>, ptype <span class='op'>=</span> <span class='cn'>NULL</span>, size <span class='op'>=</span> <span class='cn'>NULL</span>, arg <span class='op'>=</span> <span class='fu'>as_label</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>vec_is</span><span class='op'>(</span><span class='va'>x</span>, ptype <span class='op'>=</span> <span class='cn'>NULL</span>, size <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+<span class='fu'>vec_is</span><span class='op'>(</span><span class='va'>x</span>, ptype <span class='op'>=</span> <span class='cn'>NULL</span>, size <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,7 +189,7 @@ doesn't conform.</p></li>
       <td><p>Prototype to compare against. If the prototype has a
 class, its <code><a href='vec_ptype.html'>vec_ptype()</a></code> is compared to that of <code>x</code> with
 <code><a href='https://rdrr.io/r/base/identical.html'>identical()</a></code>. Otherwise, its <code><a href='https://rdrr.io/r/base/typeof.html'>typeof()</a></code> is compared to that of
-<code>x</code> with <code>==</code>.</p></td>
+<code>x</code> with <code><a href='https://rdrr.io/r/base/Comparison.html'>==</a></code>.</p></td>
     </tr>
     <tr>
       <th>size</th>
@@ -226,7 +224,7 @@ object.</p></li>
 <li><p>The base type is <code>"list"</code>, and one of:</p><ul>
 <li><p>The object is a bare <code>"list"</code> without a <code>"class"</code> attribute.</p></li>
 <li><p>The object explicitly inherits from <code>"list"</code>. That is, the
-<code>"class"</code> attribute contains <code>"list"</code> and <code>inherits(x, "list")</code> is <code>TRUE</code>.</p></li>
+<code>"class"</code> attribute contains <code>"list"</code> and <code><a href='https://rdrr.io/r/base/class.html'>inherits(x, "list")</a></code> is <code>TRUE</code>.</p></li>
 </ul></li>
 </ul>
 
@@ -270,11 +268,11 @@ always prepend your class to the <code>"class"</code> attribute for correct disp
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -282,8 +280,6 @@ always prepend your class to the <code>"class"</code> attribute for correct disp
 
   
 
-
-  
 
   </body>
 </html>

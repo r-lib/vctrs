@@ -56,8 +56,6 @@ vector classes." />
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -79,15 +77,9 @@ vector classes." />
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -108,6 +100,12 @@ vector classes." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -167,7 +165,7 @@ considerably easier to get started with a new S3 vector class. See
 vector classes.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>new_vctr</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span>, class <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>, inherit_base_type <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></code></pre></div>
+    <pre class="usage"><span class='fu'>new_vctr</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span>, class <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span><span class='op'>(</span><span class='op'>)</span>, inherit_base_type <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -208,25 +206,25 @@ an error is thrown.</p>
 set of generics defined by this package. Generally, you should think
 carefully before overriding any of the methods that vctrs implements for
 you as they've been carefully planned to be internally consistent.</p><ul>
-<li><p><code>[[</code> and <code>[</code> use <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> dispatch to the underlying base function,
+<li><p><code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> and <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> use <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code> dispatch to the underlying base function,
 then restore attributes with <code><a href='vec_proxy.html'>vec_restore()</a></code>.
 <code><a href='https://rdrr.io/r/base/rep.html'>rep()</a></code> and <code>length&lt;-</code> work similarly.</p></li>
 <li><p><code>[[&lt;-</code> and <code>[&lt;-</code> cast <code>value</code> to same type as <code>x</code>, then call
 <code><a href='https://rdrr.io/r/base/UseMethod.html'>NextMethod()</a></code>.</p></li>
 <li><p><code><a href='https://rdrr.io/r/base/logical.html'>as.logical()</a></code>, <code><a href='https://rdrr.io/r/base/integer.html'>as.integer()</a></code>, <code><a href='https://rdrr.io/r/base/numeric.html'>as.numeric()</a></code>, <code><a href='https://rdrr.io/r/base/character.html'>as.character()</a></code>,
 <code><a href='https://rdrr.io/r/base/as.Date.html'>as.Date()</a></code> and <code><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXct()</a></code> methods call <code><a href='vec_cast.html'>vec_cast()</a></code>.
-The <code><a href='https://rdrr.io/r/base/list.html'>as.list()</a></code> method calls <code>[[</code> repeatedly, and the <code><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame()</a></code>
+The <code><a href='https://rdrr.io/r/base/list.html'>as.list()</a></code> method calls <code><a href='https://rdrr.io/r/base/Extract.html'>[[</a></code> repeatedly, and the <code><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame()</a></code>
 method uses a standard technique to wrap a vector in a data frame.</p></li>
 <li><p><code><a href='https://rdrr.io/r/base/factor.html'>as.factor()</a></code>, <code><a href='https://rdrr.io/r/base/factor.html'>as.ordered()</a></code> and <code><a href='https://rdrr.io/r/base/difftime.html'>as.difftime()</a></code> are not generic functions
 in base R, but have been reimplemented as generics in the <code>generics</code>
 package. <code>vctrs</code> extends these and calls <code><a href='vec_cast.html'>vec_cast()</a></code>. To inherit this
 behaviour in a package, import and re-export the generic of interest
 from <code>generics</code>.</p></li>
-<li><p><code>==</code>, <code>!=</code>, <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>anyDuplicated()</a></code>, and <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> use
+<li><p><code><a href='https://rdrr.io/r/base/Comparison.html'>==</a></code>, <code><a href='https://rdrr.io/r/base/Comparison.html'>!=</a></code>, <code><a href='https://rdrr.io/r/base/unique.html'>unique()</a></code>, <code><a href='https://rdrr.io/r/base/duplicated.html'>anyDuplicated()</a></code>, and <code><a href='https://rdrr.io/r/base/NA.html'>is.na()</a></code> use
 <code><a href='vec_proxy.html'>vec_proxy()</a></code>.</p></li>
 <li><p><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>&gt;</code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>min()</a></code>, <code><a href='https://rdrr.io/r/base/Extremes.html'>max()</a></code>, <code><a href='https://rdrr.io/r/base/range.html'>range()</a></code>, <code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code>,
 <code><a href='https://rdrr.io/r/stats/quantile.html'>quantile()</a></code>, and <code><a href='https://rdrr.io/r/base/xtfrm.html'>xtfrm()</a></code> methods use <code><a href='vec_proxy_compare.html'>vec_proxy_compare()</a></code>.</p></li>
-<li><p><code>+</code>, <code>-</code>, <code>/</code>, <code>*</code>, <code>^</code>, <code>%%</code>, <code>%/%</code>, <code>!</code>, <code>&amp;</code>, and <code>|</code> operators
+<li><p><code><a href='https://rdrr.io/r/base/Arithmetic.html'>+</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>/</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>*</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>^</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></code>, <code><a href='https://rdrr.io/r/base/Arithmetic.html'>%/%</a></code>, <code><a href='https://rdrr.io/r/base/Logic.html'>!</a></code>, <code>&amp;</code>, and <code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code> operators
 use <code><a href='vec_arith.html'>vec_arith()</a></code>.</p></li>
 <li><p>Mathematical operations including the Summary group generics (<code><a href='https://rdrr.io/r/base/prod.html'>prod()</a></code>,
 <code><a href='https://rdrr.io/r/base/sum.html'>sum()</a></code>, <code><a href='https://rdrr.io/r/base/any.html'>any()</a></code>, <code><a href='https://rdrr.io/r/base/all.html'>all()</a></code>), the Math group generics (<code><a href='https://rdrr.io/r/base/MathFun.html'>abs()</a></code>, <code><a href='https://rdrr.io/r/base/sign.html'>sign()</a></code>,
@@ -248,11 +246,11 @@ use <code><a href='vec_math.html'>vec_math()</a></code>.</p></li>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -260,8 +258,6 @@ use <code><a href='vec_math.html'>vec_math()</a></code>.</p></li>
 
   
 
-
-  
 
   </body>
 </html>

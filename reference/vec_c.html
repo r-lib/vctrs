@@ -53,8 +53,6 @@
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -76,15 +74,9 @@
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -105,6 +97,12 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -161,12 +159,12 @@
     <p>Combine all arguments into a new vector of common type.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>vec_c</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>vec_c</span><span class='op'>(</span>
   <span class='va'>...</span>,
   .ptype <span class='op'>=</span> <span class='cn'>NULL</span>,
   .name_spec <span class='op'>=</span> <span class='cn'>NULL</span>,
   .name_repair <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"minimal"</span>, <span class='st'>"unique"</span>, <span class='st'>"check_unique"</span>, <span class='st'>"universal"</span><span class='op'>)</span>
-<span class='op'>)</span></code></pre></div>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,7 +178,7 @@
       <td><p>If <code>NULL</code>, the default, the output type is determined by
 computing the common type across all elements of <code>...</code>.</p>
 <p>Alternatively, you can supply <code>.ptype</code> to give the output known type.
-If <code>getOption("vctrs.no_guessing")</code> is <code>TRUE</code> you must supply this value:
+If <code><a href='https://rdrr.io/r/base/options.html'>getOption("vctrs.no_guessing")</a></code> is <code>TRUE</code> you must supply this value:
 this is a convenient way to make production code demand fixed types.</p></td>
     </tr>
     <tr>
@@ -230,7 +228,7 @@ inner and outer names are present, an error is thrown unless a
 
     
 
-<h3 class='hasAnchor' id='vctrs-dependencies'><a class='anchor' aria-hidden='true' href='#vctrs-dependencies'></a>vctrs dependencies</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>vctrs dependencies</h3>
 
 <ul>
 <li><p><code><a href='vec_cast.html'>vec_cast_common()</a></code> with fallback</p></li>
@@ -239,7 +237,7 @@ inner and outer names are present, an error is thrown unless a
 </ul>
 
 
-<h3 class='hasAnchor' id='base-dependencies'><a class='anchor' aria-hidden='true' href='#base-dependencies'></a>base dependencies</h3>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>base dependencies</h3>
 
 <ul>
 <li><p><code><a href='https://rdrr.io/r/base/c.html'>base::c()</a></code></p></li>
@@ -255,44 +253,34 @@ this class hierarchy.</p>
 or columns.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'>vec_c</span><span class='op'>(</span><span class='cn'>FALSE</span>, <span class='fl'>1L</span>, <span class='fl'>1.5</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0.0 1.0 1.5</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Date/times --------------------------</span></span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2021-09-16" "2021-09-16"</span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2021-09-16 21:19:28 UTC" "2021-09-16 00:00:00 UTC"</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2021-09-16 00:00:00 UTC" "2021-09-16 21:19:28 UTC"</span>
-<span class='r-in'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "2021-09-16 21:19:28 UTC" "2021-09-16 00:00:00 UTC"</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Factors -----------------------------</span></span>
-<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] a b</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: a b</span>
-<span class='r-in'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] a b</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: a b</span>
-<span class='r-in'></span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># By default, named inputs must be length 1:</span></span>
-<span class='r-in'><span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> name </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    1 </span>
-<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't merge the outer name `name` with a vector of length &gt; 1.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Please supply a `.name_spec` specification.</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Pass a name specification to work around this:</span></span>
-<span class='r-in'><span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}_{inner}"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> name_1 name_2 name_3 </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>      1      2      3 </span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># See `?name_spec` for more examples of name specifications.</span></span>
-</code></pre></div>
+    <pre class="examples"><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='cn'>FALSE</span>, <span class='fl'>1L</span>, <span class='fl'>1.5</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 0.0 1.0 1.5</div><div class='input'>
+<span class='co'># Date/times --------------------------</span>
+<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-09-22" "2021-09-22"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-09-22 15:19:26 UTC" "2021-09-22 00:00:00 UTC"</div><div class='input'>
+<span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-09-22 00:00:00 UTC" "2021-09-22 15:19:26 UTC"</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "2021-09-22 15:19:26 UTC" "2021-09-22 00:00:00 UTC"</div><div class='input'>
+<span class='co'># Factors -----------------------------</span>
+<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] a b
+#&gt; Levels: a b</div><div class='input'><span class='fu'>vec_c</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] a b
+#&gt; Levels: a b</div><div class='input'>
+
+<span class='co'># By default, named inputs must be length 1:</span>
+<span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; name 
+#&gt;    1 </div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
+#&gt; Please supply a `.name_spec` specification.</div><div class='input'>
+<span class='co'># Pass a name specification to work around this:</span>
+<span class='fu'>vec_c</span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}_{inner}"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; name_1 name_2 name_3 
+#&gt;      1      2      3 </div><div class='input'>
+<span class='co'># See `?name_spec` for more examples of name specifications.</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -304,11 +292,11 @@ or columns.</p></div>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -316,8 +304,6 @@ or columns.</p></div>
 
   
 
-
-  
 
   </body>
 </html>

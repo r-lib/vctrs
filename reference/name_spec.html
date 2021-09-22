@@ -72,8 +72,6 @@ integer from 1 to the size of the vector if it is unnamed.
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -95,15 +93,9 @@ integer from 1 to the size of the vector if it is unnamed.
 </script>
 
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -124,6 +116,12 @@ integer from 1 to the size of the vector if it is unnamed.
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -180,10 +178,10 @@ integer from 1 to the size of the vector if it is unnamed.
     <p>A name specification describes how to combine an inner and outer
 names. This sort of name combination arises when concatenating
 vectors or flattening lists. There are two possible cases:</p><ul>
-<li><p>Named vector:</p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>outer <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>inner1 <span class='op'>=</span> <span class='fl'>1</span>, inner2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre></li>
-<li><p>Unnamed vector:</p><pre class='sourceCode r'><code><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>outer <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
-</code></pre></li>
+<li><p>Named vector:</p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>outer <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>inner1 <span class='op'>=</span> <span class='fl'>1</span>, inner2 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+</pre></li>
+<li><p>Unnamed vector:</p><pre><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>outer <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span><span class='op'>)</span>
+</pre></li>
 </ul>
 
 <p>In r-lib and tidyverse packages, these cases are errors by default,
@@ -226,39 +224,32 @@ names are ignored and the result is unnamed.</p></li>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># By default, named inputs must be length 1:</span></span>
-<span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>         <span class='co'># ok</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> name </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>    1 </span>
-<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'># bad</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't merge the outer name `name` with a vector of length &gt; 1.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Please supply a `.name_spec` specification.</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># They also can't have internal names, even if scalar:</span></span>
-<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>internal <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'># bad</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Error : Can't merge the outer name `name` with a vector of length &gt; 1.</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> Please supply a `.name_spec` specification.</span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Pass a name specification to work around this. A specification</span></span>
-<span class='r-in'><span class='co'># can be a glue string referring to `outer` and `inner`:</span></span>
-<span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  name  name  name other other </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>     1     2     3     4     5 </span>
-<span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}_{inner}"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  name_1  name_2  name_3 other_1 other_2 </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>       1       2       3       4       5 </span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># They can also be functions:</span></span>
-<span class='r-in'><span class='va'>my_spec</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>outer</span>, <span class='va'>inner</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>outer</span>, <span class='va'>inner</span>, sep <span class='op'>=</span> <span class='st'>"_"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='va'>my_spec</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  name_1  name_2  name_3 other_1 other_2 </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>       1       2       3       4       5 </span>
-<span class='r-in'></span>
-<span class='r-in'><span class='co'># Or purrr-style formulas for anonymous functions:</span></span>
-<span class='r-in'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>.x</span>, <span class='va'>.y</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  name1  name2  name3 other1 other2 </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>      1      2      3      4      5 </span>
-</code></pre></div>
+    <pre class="examples"><div class='input'><span class='co'># By default, named inputs must be length 1:</span>
+<span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>         <span class='co'># ok</span>
+</div><div class='output co'>#&gt; name 
+#&gt;    1 </div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'># bad</span>
+</div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
+#&gt; Please supply a `.name_spec` specification.</div><div class='input'>
+<span class='co'># They also can't have internal names, even if scalar:</span>
+<span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>internal <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>  <span class='co'># bad</span>
+</div><div class='output co'>#&gt; Error : Can't merge the outer name `name` with a vector of length &gt; 1.
+#&gt; Please supply a `.name_spec` specification.</div><div class='input'>
+<span class='co'># Pass a name specification to work around this. A specification</span>
+<span class='co'># can be a glue string referring to `outer` and `inner`:</span>
+<span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  name  name  name other other 
+#&gt;     1     2     3     4     5 </div><div class='input'><span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='st'>"{outer}_{inner}"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  name_1  name_2  name_3 other_1 other_2 
+#&gt;       1       2       3       4       5 </div><div class='input'>
+<span class='co'># They can also be functions:</span>
+<span class='va'>my_spec</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>outer</span>, <span class='va'>inner</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>outer</span>, <span class='va'>inner</span>, sep <span class='op'>=</span> <span class='st'>"_"</span><span class='op'>)</span>
+<span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='va'>my_spec</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  name_1  name_2  name_3 other_1 other_2 
+#&gt;       1       2       3       4       5 </div><div class='input'>
+<span class='co'># Or purrr-style formulas for anonymous functions:</span>
+<span class='fu'><a href='vec_c.html'>vec_c</a></span><span class='op'>(</span>name <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, other <span class='op'>=</span> <span class='fl'>4</span><span class='op'>:</span><span class='fl'>5</span>, .name_spec <span class='op'>=</span> <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>.x</span>, <span class='va'>.y</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  name1  name2  name3 other1 other2 
+#&gt;      1      2      3      4      5 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -270,11 +261,11 @@ names are ignored and the result is unnamed.</p></li>
 
       <footer>
       <div class="copyright">
-  <p><p>Developed by <a href="http://hadley.nz" class="external-link">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p></p>
+  <p>Developed by <a href='http://hadley.nz'>Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
@@ -282,8 +273,6 @@ names are ignored and the result is unnamed.</p></li>
 
   
 
-
-  
 
   </body>
 </html>
