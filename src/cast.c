@@ -91,9 +91,12 @@ SEXP vec_cast_switch_native(const struct cast_opts* opts,
   switch (type2) {
 
   case vctrs_type2_logical_logical:
-  case vctrs_type2_double_double:
-  case vctrs_type2_character_character:
   case vctrs_type2_integer_integer:
+  case vctrs_type2_double_double:
+  case vctrs_type2_complex_complex:
+  case vctrs_type2_raw_raw:
+  case vctrs_type2_character_character:
+  case vctrs_type2_list_list:
     return x;
 
   case vctrs_type2_logical_integer:
