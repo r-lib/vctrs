@@ -129,10 +129,10 @@ test_that("can signal deprecation warnings for lossy casts", {
     )
   }
 
-  expect_true(expect_warning(lossy_cast(), "detected a lossy transformation"))
-  expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast())))
-  expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
-  expect_true(expect_warning(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
+  expect_warning(expect_true(lossy_cast()), "detected a lossy transformation")
+  expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast())))
+  expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
+  expect_warning(expect_true(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
 })
 
 

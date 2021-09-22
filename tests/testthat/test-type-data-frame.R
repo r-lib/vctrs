@@ -57,22 +57,17 @@ test_that("combining data frames with foreign classes uses fallback", {
   expect_identical(vec_ptype_common(foo, foo, foo), foo)
   expect_incompatible_df(vec_ptype_common(foo, foo, df, foo), df)
 
-  expect_identical(
-    expect_df_fallback_warning(vec_ptype2_fallback(foo, df)),
-    new_fallback_df(df, c("vctrs_foobar", "data.frame"))
-  )
-  expect_identical(
-    expect_df_fallback_warning(vec_ptype2_fallback(df, foo)),
-    new_fallback_df(df, c("data.frame", "vctrs_foobar"))
-  )
-  expect_identical(
-    expect_df_fallback_warning(vec_ptype_common_df_fallback(foo, df)),
-    df
-  )
-  expect_identical(
-    expect_df_fallback_warning(vec_ptype_common_df_fallback(df, foo)),
-    df
-  )
+  expect_df_fallback_warning(res <- vec_ptype2_fallback(foo, df))
+  expect_identical(res, new_fallback_df(df, c("vctrs_foobar", "data.frame")))
+
+  expect_df_fallback_warning(res <- vec_ptype2_fallback(df, foo))
+  expect_identical(res, new_fallback_df(df, c("data.frame", "vctrs_foobar")))
+
+  expect_df_fallback_warning(res <- vec_ptype_common_df_fallback(foo, df))
+  expect_identical(res, df)
+
+  expect_df_fallback_warning(res <- vec_ptype_common_df_fallback(df, foo))
+  expect_identical(res, df)
 
   cnds <- list()
   withCallingHandlers(
@@ -489,24 +484,18 @@ test_that("`.size` can force a desired size", {
 })
 
 test_that("`.name_repair` repairs names", {
-  expect_named(
-    expect_message(data_frame(x = 1, x = 1, .name_repair = "unique")),
-    c("x...1", "x...2")
-  )
+  expect_message(res <- data_frame(x = 1, x = 1, .name_repair = "unique"))
+  expect_named(res, c("x...1", "x...2"))
 })
 
 test_that("`.name_repair` happens after auto-naming with empty strings", {
-  expect_named(
-    expect_message(data_frame(1, 2, .name_repair = "unique")),
-    c("...1", "...2")
-  )
+  expect_message(res <- data_frame(1, 2, .name_repair = "unique"))
+  expect_named(res, c("...1", "...2"))
 })
 
 test_that("`.name_repair` happens after splicing", {
-  expect_named(
-    expect_message(data_frame(x = 1, data_frame(x = 2), .name_repair = "unique")),
-    c("x...1", "x...2")
-  )
+  expect_message(res <- data_frame(x = 1, data_frame(x = 2), .name_repair = "unique"))
+  expect_named(res, c("x...1", "x...2"))
 })
 
 # fallback ----------------------------------------------------------------
