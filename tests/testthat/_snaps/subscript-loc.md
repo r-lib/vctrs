@@ -828,5 +828,5 @@
     Code
       vec_as_location2(1, 1L, missing = "bogus")
     Error <rlang_error>
-      `bogus` must be one of "error" or "propagate", not "bogus".
+      `missing` must be one of "error" or "propagate", not "bogus".
 
