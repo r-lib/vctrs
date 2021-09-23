@@ -158,6 +158,7 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p><code><a href="../reference/vec_chop.html">vec_chop()</a></code> now materializes ALTREP vectors before chopping, which is more efficient than creating many small ALTREP pieces (<a href='https://github.com/r-lib/vctrs/issues/1450'>#1450</a>).</p></li>
 <li><p>New <code><a href="../reference/list_drop_empty.html">list_drop_empty()</a></code> for removing empty elements from a list (<a href='https://github.com/r-lib/vctrs/issues/1395'>#1395</a>).</p></li>
 <li><p><code><a href="../reference/vec_size.html">list_sizes()</a></code> now propagates the names of the list onto the result.</p></li>
 <li>
