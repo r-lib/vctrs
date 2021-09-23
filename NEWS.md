@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_chop()` now materializes ALTREP vectors before chopping, which is more
+  efficient than creating many small ALTREP pieces (#1450).
+
 * New `list_drop_empty()` for removing empty elements from a list (#1395).
 
 * `list_sizes()` now propagates the names of the list onto the result.
