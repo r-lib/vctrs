@@ -1,4 +1,4 @@
-#' Rank vectors
+#' Compute ranks
 #'
 #' `vec_rank()` computes the sample ranks of a vector. For data frames, ranks
 #' are computed along the rows, using all columns after the first to break
@@ -40,11 +40,10 @@
 #'   values should be propagated. If `TRUE`, all missing values are given
 #'   the rank `NA`.
 #'
-#' @section Dependencies of `vec_rank()`:
+#' @section Dependencies:
 #'
-#' - `vec_order()`
-#'
-#' - `vec_slice()`
+#' - [vec_order()]
+#' - [vec_slice()]
 #'
 #' @examples
 #' x <- c(5L, 6L, 3L, 3L, 5L, 3L)
