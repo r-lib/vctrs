@@ -569,13 +569,8 @@ test_that("`missing = <integer> / 'drop'` still propagates/drops NAs in future c
 })
 
 test_that("`missing` can error informatively", {
-  verify_output(test_path("error", "test-matches-missing.txt"), {
-    "# default message"
-    vec_matches(NA, 1, missing = "error")
-
-    "# can control arg names"
-    vec_matches(NA, 1, missing = "error", needles_arg = "foo")
-  })
+  expect_snapshot(error = TRUE, vec_matches(NA, 1, missing = "error"))
+  expect_snapshot(error = TRUE, vec_matches(NA, 1, missing = "error", needles_arg = "foo"))
 })
 
 test_that("`missing` error is classed", {
@@ -652,39 +647,27 @@ test_that("duplicate needles match the same haystack locations", {
 })
 
 test_that("`multiple` can error informatively", {
-  verify_output(test_path("error", "test-matches-multiple.txt"), {
-    "# default message"
-    vec_matches(1L, c(1L, 1L), multiple = "error")
-
-    "# can control arg names"
-    vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo")
-    vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar")
-
-    "# with `condition = NULL`"
-    vec_matches(1, 1:2, multiple = "error", condition = NULL)
-  })
+  expect_snapshot(error = TRUE, vec_matches(1L, c(1L, 1L), multiple = "error"))
+  expect_snapshot(error = TRUE, vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo"))
+  expect_snapshot(error = TRUE, vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar"))
+  expect_snapshot(error = TRUE, vec_matches(1, 1:2, multiple = "error", condition = NULL))
 })
 
 test_that("`multiple` can warn informatively", {
-  verify_output(test_path("error", "test-matches-multiple-warning.txt"), {
-    "# default message"
-    vec_matches(1L, c(1L, 1L), multiple = "warning")
-
-    "# can control arg names"
-    vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo")
-    vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar")
-
-    "# with `condition = NULL`"
-    vec_matches(1, 1:2, multiple = "warning", condition = NULL)
-  })
+  expect_snapshot(vec_matches(1L, c(1L, 1L), multiple = "warning"))
+  expect_snapshot(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo"))
+  expect_snapshot(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar"))
+  expect_snapshot(vec_matches(1, 1:2, multiple = "warning", condition = NULL))
 })
 
 test_that("warning falls back to 'all'", {
+  expect_warning(
+    result <- vec_matches(c(1L, 3L, 1L, 3L), c(1L, 3L, 1L), multiple = "warning"),
+    class = "vctrs_warning_matches_multiple"
+  )
+
   expect_identical(
-    expect_warning(
-      vec_matches(c(1L, 3L, 1L, 3L), c(1L, 3L, 1L), multiple = "warning"),
-      class = "vctrs_warning_matches_multiple"
-    ),
+    result,
     vec_matches(c(1L, 3L, 1L, 3L), c(1L, 3L, 1L), multiple = "all")
   )
 })
@@ -750,17 +733,10 @@ test_that("can differentiate between `no_match` and propagated NAs", {
 })
 
 test_that("`no_match` can error informatively", {
-  verify_output(test_path("error", "test-matches-nothing.txt"), {
-    "# default message"
-    vec_matches(1, 2, no_match = "error")
-
-    "# can control arg names"
-    vec_matches(1, 2, no_match = "error", needles_arg = "foo")
-    vec_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar")
-
-    "# with `condition = NULL`"
-    vec_matches(1, double(), no_match = "error", condition = NULL)
-  })
+  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "error"))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "error", needles_arg = "foo"))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar"))
+  expect_snapshot(error = TRUE, vec_matches(1, double(), no_match = "error", condition = NULL))
 })
 
 test_that("`no_match = 'error'` passes propagated NAs through untouched", {
@@ -851,17 +827,10 @@ test_that("`remaining` combined with the haystack reordering retains appearance 
 })
 
 test_that("`remaining` can error informatively", {
-  verify_output(test_path("error", "test-matches-remaining.txt"), {
-    "# default message"
-    vec_matches(1, 2, remaining = "error")
-
-    "# can control arg names"
-    vec_matches(1, 2, remaining = "error", needles_arg = "foo")
-    vec_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar")
-
-    "# with `condition = NULL`"
-    vec_matches(double(), c(1, 2), remaining = "error", condition = NULL)
-  })
+  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "error"))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "error", needles_arg = "foo"))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar"))
+  expect_snapshot(error = TRUE, vec_matches(double(), c(1, 2), remaining = "error", condition = NULL))
 })
 
 test_that("`remaining` is validated", {
@@ -1071,8 +1040,8 @@ test_that("`condition = NULL` is correct in all possible cases", {
   expect_identical(matches(two, two, multiple = "all"), exp(c(1, 1, 2, 2), c(1, 2, 1, 2)))
 
   expect_identical(matches(zero, two, multiple = "warning"), exp(integer(), integer()))
-  expect_identical(expect_warning(matches(one,  two, multiple = "warning")), exp(c(1, 1), c(1, 2)))
-  expect_identical(expect_warning(matches(two,  two, multiple = "warning")), exp(c(1, 1, 2, 2), c(1, 2, 1, 2)))
+  expect_warning(expect_identical(matches(one,  two, multiple = "warning"), exp(c(1, 1), c(1, 2))))
+  expect_warning(expect_identical(matches(two,  two, multiple = "warning"), exp(c(1, 1, 2, 2), c(1, 2, 1, 2))))
 
   expect_identical(matches(zero, two, multiple = "error"), exp(integer(), integer()))
   expect_error(matches(one, two, multiple = "error"), "multiple matches")
@@ -1140,13 +1109,8 @@ test_that("potential overflow on large output size is caught informatively", {
   # intermediate `r_ssize` will be too large
   skip_if(.Machine$sizeof.pointer < 8L, message = "No long vector support")
 
-  verify_output(test_path("error", "test-matches-overflow-output.txt"), {
-    "# catches potential overflow"
-    vec_matches(1:1e7, 1:1e7, condition = ">=")
-
-    "# catches overflow with `condition = NULL`"
-    vec_matches(1:1e7, 1:1e7, condition = NULL)
-  })
+  expect_snapshot(error = TRUE, vec_matches(1:1e7, 1:1e7, condition = ">="))
+  expect_snapshot(error = TRUE, vec_matches(1:1e7, 1:1e7, condition = NULL))
 })
 
 # ------------------------------------------------------------------------------
