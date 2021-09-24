@@ -14,7 +14,7 @@
 #'
 #' @includeRmd man/faq/developer/links-coercion.Rmd
 #'
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #' @param x,y Vector types.
 #' @param x_arg,y_arg Argument names for `x` and `y`. These are used
 #'   in error messages to inform the user about the locations of
@@ -177,7 +177,7 @@ check_ptype2_dots_empty <- function(...,
                                     `vctrs:::from_dispatch`,
                                     `vctrs:::df_fallback`,
                                     `vctrs:::s3_fallback`) {
-  ellipsis::check_dots_empty()
+  check_dots_empty0(...)
 }
 match_fallback_opts <- function(...,
                                 `vctrs:::df_fallback` = NULL,
@@ -282,9 +282,7 @@ vec_is_coercible <- function(x,
                              opts = fallback_opts(),
                              x_arg = "",
                              y_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
 
   .Call(
     vctrs_is_coercible,

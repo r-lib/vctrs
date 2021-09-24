@@ -228,7 +228,7 @@ vec_unique_count <- function(x) {
 #'
 #'   `needles` and `haystack` are coerced to the same type prior to
 #'   comparison.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #' @param na_equal If `TRUE`, missing values in `needles` can be
 #'   matched to missing values in `haystack`. If `FALSE`, they
 #'   propagate, missing values in `needles` are represented as `NA` in
@@ -259,7 +259,7 @@ vec_match <- function(needles,
                       na_equal = TRUE,
                       needles_arg = "",
                       haystack_arg = "") {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
   .Call(vctrs_match, needles, haystack, na_equal, needles_arg, haystack_arg)
 }
 
@@ -271,6 +271,6 @@ vec_in <- function(needles,
                    na_equal = TRUE,
                    needles_arg = "",
                    haystack_arg = "") {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
   .Call(vctrs_in, needles, haystack, na_equal, needles_arg, haystack_arg)
 }

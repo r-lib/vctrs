@@ -41,12 +41,10 @@ is_partial <- function(x) {
 }
 
 #' @rdname new_partial
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #' @export
 vec_ptype_finalise <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   return(.Call(vctrs_ptype_finalise, x))
   UseMethod("vec_ptype_finalise")
 }

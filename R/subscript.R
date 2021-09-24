@@ -30,7 +30,7 @@ vec_as_subscript <- function(i,
                              numeric = c("cast", "error"),
                              character = c("cast", "error"),
                              arg = NULL) {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
 
   .Call(
     vctrs_as_subscript,
@@ -61,7 +61,7 @@ vec_as_subscript2 <- function(i,
                               numeric = c("cast", "error"),
                               character = c("cast", "error"),
                               arg = NULL) {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
   result_get(vec_as_subscript2_result(
     i,
     arg,

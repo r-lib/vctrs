@@ -29,7 +29,7 @@
 #' by first appearance.
 #'
 #' @param x A vector x.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #' @return A 1d atomic vector or a data frame.
 #'
 #' @section Dependencies:
@@ -53,7 +53,7 @@ vec_proxy_compare <- function(x, ...) {
     if (match_relax(...)) {
       return(vec_proxy_order(x))
     }
-    ellipsis::check_dots_empty()
+    check_dots_empty0(...)
   }
   return(.Call(vctrs_proxy_compare, x))
   UseMethod("vec_proxy_compare")
@@ -70,9 +70,7 @@ match_relax <- function(..., relax = FALSE) {
 #' @rdname vec_proxy_compare
 #' @export
 vec_proxy_order <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   return(.Call(vctrs_proxy_order, x))
   UseMethod("vec_proxy_order")
 }

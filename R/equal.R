@@ -15,7 +15,7 @@
 #' recursively applied on all columns as well.
 #'
 #' @param x A vector x.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @return A 1d atomic vector or a data frame.
 #' @keywords internal
@@ -25,9 +25,7 @@
 #'
 #' @export
 vec_proxy_equal <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   return(.Call(vctrs_proxy_equal, x))
   UseMethod("vec_proxy_equal")
 }

@@ -59,7 +59,7 @@ vec_as_location <- function(i,
                             ...,
                             missing = c("propagate", "error"),
                             arg = NULL) {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
 
   .Call(
     vctrs_as_location,
@@ -91,7 +91,7 @@ num_as_location <- function(i,
                             oob = c("error", "extend"),
                             zero = c("remove", "error", "ignore"),
                             arg = NULL) {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
 
   if (is.object(i) || !(is_integer(i) || is_double(i))) {
     abort("`i` must be a numeric vector.")
@@ -117,7 +117,7 @@ vec_as_location2 <- function(i,
                              ...,
                              missing = c("error", "propagate"),
                              arg = NULL) {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
   result_get(vec_as_location2_result(
     i,
     n = n,
@@ -137,7 +137,7 @@ num_as_location2 <- function(i,
                              negative = c("error", "ignore"),
                              missing = c("error", "propagate"),
                              arg = NULL) {
-  if (!missing(...)) ellipsis::check_dots_empty()
+  check_dots_empty0(...)
 
   if (!is_integer(i) && !is_double(i)) {
     abort("`i` must be a numeric vector.")
