@@ -45,6 +45,7 @@
 #' - [vec_order()]
 #' - [vec_slice()]
 #'
+#' @export
 #' @examples
 #' x <- c(5L, 6L, 3L, 3L, 5L, 3L)
 #'
@@ -77,7 +78,6 @@
 #' df
 #'
 #' vec_rank(df)
-#' @noRd
 vec_rank <- function(x,
                      ...,
                      ties = c("min", "max", "sequential", "dense"),
