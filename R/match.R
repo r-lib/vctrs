@@ -1,16 +1,18 @@
 #' Find observations matching specified conditions
 #'
 #' @description
-#' `vec_matches()` is a more flexible version of [vec_match()] used to determine
+#' `vec_matches()` is a more flexible version of [vec_match()] used to identify
 #' locations where each observation of `needles` matches one or multiple
 #' observations in `haystack`. Unlike `vec_match()`, `vec_matches()` returns all
 #' matches by default, and can match on binary conditions other than equality,
 #' such as `>`, `>=`, `<`, and `<=`.
 #'
 #' @details
-#' [vec_match()] is identical to (but often slightly faster than)
-#' `vec_matches(needles, haystack, condition = "==", multiple = "first",
-#' nan_distinct = TRUE)`.
+#' [vec_match()] is identical to (but often slightly faster than):
+#'
+#' ```
+#' vec_matches(needles, haystack, condition = "==", multiple = "first", nan_distinct = TRUE)
+#' ```
 #'
 #' `vec_matches()` is extremely similar to a SQL join between `needles` and
 #' `haystack`, with the default being most similar to a left join. Using
@@ -33,7 +35,7 @@
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams ellipsis::dots_empty
-#' @inheritParams vec_order_radix
+#' @inheritParams vec_order
 #'
 #' @param needles,haystack Vectors used for matching.
 #'   - `needles` represents the vector to search for.
@@ -41,9 +43,9 @@
 #'
 #'   Prior to comparison, `needles` and `haystack` are coerced to the same type.
 #'
-#' @param condition Condition used to match on.
-#'   - One of `"=="`, `">"`, `">="`, `"<"`, or `"<="` controlling how `needles`
-#'     should be compared against `haystack` to determine a successful match.
+#' @param condition Condition controlling how `needles` should be compared
+#'   against `haystack` to identify a successful match.
+#'   - One of: `"=="`, `">"`, `">="`, `"<"`, or `"<="`.
 #'   - For data frames, a length `1` or `ncol(needles)` character vector
 #'     containing only the above options, specifying how matching is determined
 #'     for each column.
@@ -53,11 +55,11 @@
 #'     of `filter`.
 #'
 #' @param filter Filter to be applied to the matched results.
-#'   - If `"none"`, no filter is applied.
-#'   - If `"min"`, only the minimum haystack value matching the current needle
-#'     is returned.
-#'   - If `"max"`, only the maximum haystack value matching the current needle
-#'     is returned.
+#'   - `"none"` doesn't apply any filter.
+#'   - `"min"` returns only the minimum haystack value matching the current
+#'     needle.
+#'   - `"max"` returns only the maximum haystack value matching the current
+#'     needle.
 #'   - For data frames, a length `1` or `ncol(needles)` character vector
 #'     containing only the above options, specifying a filter to apply to
 #'     each column.
@@ -70,8 +72,8 @@
 #'   can be further controlled with `multiple`.
 #'
 #' @param missing Treatment of missing values in `needles`.
-#'   - `"match"` matches missing values in `needles` against missing values
-#'     in `haystack`. `nan_distinct` determines whether a `NA` is allowed
+#'   - `"match"` matches missing values in `needles` to missing values in
+#'     `haystack`. `nan_distinct` determines whether a `NA` is allowed
 #'     to match a `NaN`.
 #'   - `"drop"` drops missing values in `needles` from the result.
 #'   - `"error"` throws an error if any `needles` are missing.
@@ -84,23 +86,22 @@
 #'   missing value, then the entire row is considered missing.
 #'
 #' @param no_match Handling of `needles` without a match.
+#'   - `"drop"` drops `needles` with zero matches from the result.
+#'   - `"error"` throws an error if any `needles` have zero matches.
 #'   - If a single integer is provided, this represents the value returned in
 #'     the `haystack` column for observations of `needles` that have zero
 #'     matches. The default represents an unmatched needle with `NA`.
-#'   - If `"drop"`, `needles` with zero matches are completely dropped from
-#'     the result.
-#'   - If `"error"`, an error will be thrown if any `needles` have zero matches.
 #'
 #' @param remaining Handling of `haystack` values that `needles` never matched.
-#'   - If `"drop"`, remaining `haystack` values are completely dropped
-#'     from the result. Typically, this is the desired behavior if you only
-#'     care when `needles` has a match.
+#'   - `"drop"` drops remaining `haystack` values from the result.
+#'     Typically, this is the desired behavior if you only care when `needles`
+#'     has a match.
+#'   - `"error"` throws an error if there are any remaining `haystack`
+#'     values.
 #'   - If a single integer is provided (often `NA`), this represents the value
 #'     returned in the `needles` column for the remaining `haystack` values
 #'     that `needles` never matched. Remaining `haystack` values are always
 #'     returned at the end of the result.
-#'   - If `"error"`, an error will be thrown if there are any remaining
-#'     `haystack` values.
 #'
 #' @param multiple Handling of `needles` with multiple matches. For each needle:
 #'   - `"all"` returns every match detected in `haystack`.
@@ -175,7 +176,8 @@
 #' matches <- vec_matches(x, y, condition = ">=", filter = "max")
 #'
 #' # Here, the matches for the `3` needle value have been filtered down to
-#' # only include the maximum haystack value of those matches, `2`.
+#' # only include the maximum haystack value of those matches, `2`. This is
+#' # often referred to as a rolling join.
 #' data_frame(
 #'   x = vec_slice(x, matches$needles),
 #'   y = vec_slice(y, matches$haystack)
@@ -209,15 +211,6 @@
 #'   lower = vec_slice(lower, matches$haystack),
 #'   value = vec_slice(values, matches$needle),
 #'   upper = vec_slice(upper, matches$haystack)
-#' )
-#'
-#' # We can return only the most recent lower bound by applying a filter.
-#' # This is also known as a rolling join.
-#' matches <- vec_matches(values, lower, condition = ">=", filter = "max")
-#'
-#' data_frame(
-#'   value = vec_slice(values, matches$needle),
-#'   most_recent_lower = vec_slice(lower, matches$haystack),
 #' )
 #' @noRd
 vec_matches <- function(needles,
