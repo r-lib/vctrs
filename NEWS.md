@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_rank()` to compute various types of sample ranks.
+
 * `vec_chop()` now materializes ALTREP vectors before chopping, which is more
   efficient than creating many small ALTREP pieces (#1450).
 
