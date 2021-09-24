@@ -226,9 +226,7 @@ vec_matches <- function(needles,
                         chr_transform = NULL,
                         needles_arg = "",
                         haystack_arg = "") {
-  if (!missing(...)) {
-    check_dots_empty()
-  }
+  check_dots_empty0(...)
 
   .Call(
     vctrs_matches,
