@@ -2,6 +2,10 @@
 struct vctrs_arg args_missing_;
 static struct vctrs_arg* const args_missing = &args_missing_;
 
+struct vctrs_arg args_remaining_;
+static struct vctrs_arg* const args_remaining = &args_remaining_;
+
+
 static
 r_obj* vec_matches(r_obj* needles,
                    r_obj* haystack,
@@ -9,7 +13,7 @@ r_obj* vec_matches(r_obj* needles,
                    r_obj* filter,
                    const struct vctrs_missing_needle* missing,
                    const struct vctrs_no_match* no_match,
-                   const struct vctrs_no_match* remaining,
+                   const struct vctrs_remaining* remaining,
                    enum vctrs_multiple multiple,
                    bool nan_distinct,
                    r_obj* chr_transform,
@@ -26,7 +30,7 @@ r_obj* df_matches(r_obj* needles,
                   const struct vctrs_missing_needle* missing,
                   bool missing_propagate,
                   const struct vctrs_no_match* no_match,
-                  const struct vctrs_no_match* remaining,
+                  const struct vctrs_remaining* remaining,
                   enum vctrs_multiple multiple,
                   bool any_filters,
                   const enum vctrs_filter* v_filters,
@@ -119,6 +123,9 @@ static inline
 struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg);
 
 static inline
+struct vctrs_remaining parse_remaining(r_obj* remaining);
+
+static inline
 struct vctrs_missing_needle parse_missing(r_obj* missing);
 
 static inline
@@ -135,7 +142,7 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
                                r_ssize size_haystack,
                                enum vctrs_multiple multiple,
                                const struct vctrs_no_match* no_match,
-                               const struct vctrs_no_match* remaining,
+                               const struct vctrs_remaining* remaining,
                                struct vctrs_arg* needles_arg,
                                struct vctrs_arg* haystack_arg);
 
@@ -149,7 +156,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const struct vctrs_missing_needle* missing,
                               bool missing_propagate,
                               const struct vctrs_no_match* no_match,
-                              const struct vctrs_no_match* remaining,
+                              const struct vctrs_remaining* remaining,
                               enum vctrs_multiple multiple,
                               r_ssize size_needles,
                               r_ssize size_haystack,

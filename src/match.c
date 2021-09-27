@@ -52,6 +52,16 @@ struct vctrs_no_match {
   int value;
 };
 
+enum vctrs_remaining_action {
+  VCTRS_REMAINING_ACTION_drop = 0,
+  VCTRS_REMAINING_ACTION_error = 1,
+  VCTRS_REMAINING_ACTION_value = 2
+};
+struct vctrs_remaining {
+  enum vctrs_remaining_action action;
+  int value;
+};
+
 #define SIGNAL_NO_MATCH r_globals.na_int
 #define SIGNAL_NA_PROPAGATE -1
 
@@ -76,7 +86,7 @@ r_obj* vctrs_matches(r_obj* needles,
                      r_obj* haystack_arg) {
   const struct vctrs_missing_needle c_missing = parse_missing(missing);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match, "no_match");
-  const struct vctrs_no_match c_remaining = parse_no_match(remaining, "remaining");
+  const struct vctrs_remaining c_remaining = parse_remaining(remaining);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
 
   if (!r_is_bool(nan_distinct)) {
@@ -110,7 +120,7 @@ r_obj* vec_matches(r_obj* needles,
                    r_obj* filter,
                    const struct vctrs_missing_needle* missing,
                    const struct vctrs_no_match* no_match,
-                   const struct vctrs_no_match* remaining,
+                   const struct vctrs_remaining* remaining,
                    enum vctrs_multiple multiple,
                    bool nan_distinct,
                    r_obj* chr_transform,
@@ -257,7 +267,7 @@ r_obj* df_matches(r_obj* needles,
                   const struct vctrs_missing_needle* missing,
                   bool missing_propagate,
                   const struct vctrs_no_match* no_match,
-                  const struct vctrs_no_match* remaining,
+                  const struct vctrs_remaining* remaining,
                   enum vctrs_multiple multiple,
                   bool any_filters,
                   const enum vctrs_filter* v_filters,
@@ -1652,6 +1662,43 @@ struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg) {
 
 // -----------------------------------------------------------------------------
 
+static inline
+struct vctrs_remaining parse_remaining(r_obj* remaining) {
+  if (r_length(remaining) != 1) {
+    r_abort("`remaining` must be length 1, not length %i.", r_length(remaining));
+  }
+
+  if (r_is_string(remaining)) {
+    const char* c_remaining = r_chr_get_c_string(remaining, 0);
+
+    if (!strcmp(c_remaining, "error")) {
+      return (struct vctrs_remaining) {
+        .action = VCTRS_REMAINING_ACTION_error,
+        .value = -1
+      };
+    }
+
+    if (!strcmp(c_remaining, "drop")) {
+      return (struct vctrs_remaining) {
+        .action = VCTRS_REMAINING_ACTION_drop,
+        .value = -1
+      };
+    }
+
+    r_abort("`remaining` must be either \"drop\" or \"error\".");
+  }
+
+  remaining = vec_cast(remaining, vctrs_shared_empty_int, args_remaining, args_empty);
+  int c_remaining = r_int_get(remaining, 0);
+
+  return (struct vctrs_remaining) {
+    .action = VCTRS_REMAINING_ACTION_value,
+    .value = c_remaining
+  };
+}
+
+// -----------------------------------------------------------------------------
+
 static
 const char* v_matches_df_names_c_strings[] = {
   "needles",
@@ -1706,7 +1753,7 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
                                r_ssize size_haystack,
                                enum vctrs_multiple multiple,
                                const struct vctrs_no_match* no_match,
-                               const struct vctrs_no_match* remaining,
+                               const struct vctrs_remaining* remaining,
                                struct vctrs_arg* needles_arg,
                                struct vctrs_arg* haystack_arg) {
   if (size_haystack == 0) {
@@ -1738,12 +1785,15 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
     return out;
   }
 
-  if (size_needles == 0 && !remaining->drop) {
+  if (size_needles == 0 && remaining->action != VCTRS_REMAINING_ACTION_drop) {
     // Handle empty `needles` up front
     // All elements of `haystack` are "remaining"
 
-    if (remaining->error) {
+    if (remaining->action == VCTRS_REMAINING_ACTION_error) {
       stop_matches_remaining(0, needles_arg, haystack_arg);
+    }
+    if (remaining->action != VCTRS_REMAINING_ACTION_value) {
+      r_stop_internal("expand_match_on_nothing", "`remaining->action` must be `value`.");
     }
 
     const r_ssize size_out = size_haystack;
@@ -1827,7 +1877,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const struct vctrs_missing_needle* missing,
                               bool missing_propagate,
                               const struct vctrs_no_match* no_match,
-                              const struct vctrs_no_match* remaining,
+                              const struct vctrs_remaining* remaining,
                               enum vctrs_multiple multiple,
                               r_ssize size_needles,
                               r_ssize size_haystack,
@@ -1893,15 +1943,15 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     v_o_locs_needles = r_int_cbegin(o_locs_needles);
   }
 
-  const bool has_no_match_haystack = !remaining->drop;
-  int* v_detect_no_match_haystack = NULL;
-  if (has_no_match_haystack) {
-    r_obj* detect_no_match_haystack = KEEP_N(r_alloc_integer(size_haystack), &n_prot);
-    v_detect_no_match_haystack = r_int_begin(detect_no_match_haystack);
+  const bool retain_remaining_haystack = (remaining->action != VCTRS_REMAINING_ACTION_drop);
+  int* v_detect_remaining_haystack = NULL;
+  if (retain_remaining_haystack) {
+    r_obj* detect_remaining_haystack = KEEP_N(r_alloc_integer(size_haystack), &n_prot);
+    v_detect_remaining_haystack = r_int_begin(detect_remaining_haystack);
 
     for (r_ssize i = 0; i < size_haystack; ++i) {
-      // Initialize to no-match
-      v_detect_no_match_haystack[i] = 1;
+      // Initialize to remaining (i.e. unmatched)
+      v_detect_remaining_haystack[i] = 1;
     }
   }
 
@@ -2015,8 +2065,8 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       v_out_needles[loc_out] = loc_needles;
       v_out_haystack[loc_out] = loc_haystack;
 
-      if (has_no_match_haystack) {
-        v_detect_no_match_haystack[loc_haystack - 1] = 0;
+      if (retain_remaining_haystack) {
+        v_detect_remaining_haystack[loc_haystack - 1] = 0;
       }
 
       ++loc_out;
@@ -2069,24 +2119,26 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     KEEP_AT(out_haystack, out_haystack_pi);
   }
 
-  if (has_no_match_haystack) {
-    r_ssize n_no_match_haystack = 0;
+  if (retain_remaining_haystack) {
+    r_ssize n_remaining_haystack = 0;
 
     for (r_ssize i = 0; i < size_haystack; ++i) {
-      if (v_detect_no_match_haystack[i]) {
-        if (remaining->error) {
-          stop_matches_remaining(i, needles_arg, haystack_arg);
-        }
-
-        // Overwrite with location, this moves all no-match locs up to the front
-        v_detect_no_match_haystack[n_no_match_haystack] = i + 1;
-        ++n_no_match_haystack;
+      if (!v_detect_remaining_haystack[i]) {
+        continue;
       }
+
+      if (remaining->action == VCTRS_REMAINING_ACTION_error) {
+        stop_matches_remaining(i, needles_arg, haystack_arg);
+      }
+
+      // Overwrite with location, this moves all remaining locs up to the front
+      v_detect_remaining_haystack[n_remaining_haystack] = i + 1;
+      ++n_remaining_haystack;
     }
 
-    if (n_no_match_haystack > 0) {
-      // Resize to have enough room for haystack no-matches at the end
-      r_ssize new_size_out = r_ssize_add(size_out, n_no_match_haystack);
+    if (n_remaining_haystack > 0) {
+      // Resize to have enough room for haystack remainings at the end
+      r_ssize new_size_out = r_ssize_add(size_out, n_remaining_haystack);
 
       out_needles = r_int_resize(out_needles, new_size_out);
       KEEP_AT(out_needles, out_needles_pi);
@@ -2098,7 +2150,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       for (r_ssize i = size_out, j = 0; i < new_size_out; ++i, ++j) {
         v_out_needles[i] = remaining->value;
-        v_out_haystack[i] = v_detect_no_match_haystack[j];
+        v_out_haystack[i] = v_detect_remaining_haystack[j];
       }
 
       size_out = new_size_out;
@@ -2671,6 +2723,7 @@ void warn_matches_multiple(r_ssize i,
 
 void vctrs_init_match(r_obj* ns) {
   args_missing_ = new_wrapper_arg(NULL, "missing");
+  args_remaining_ = new_wrapper_arg(NULL, "remaining");
 }
 
 // -----------------------------------------------------------------------------
