@@ -34,7 +34,7 @@
 #' * [vec_c()]
 #' * [vec_detect_complete()]
 #'
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #' @inheritParams vec_order
 #'
 #' @param needles,haystack Vectors used for matching.
