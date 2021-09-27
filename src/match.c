@@ -15,8 +15,8 @@
 
 enum vctrs_multiple {
   VCTRS_MULTIPLE_all = 0,
-  VCTRS_MULTIPLE_warning = 1, // Collects multiple matches like all, warns if there are any
-  VCTRS_MULTIPLE_error = 2, // Collects multiple matches like all, errors if there are any
+  VCTRS_MULTIPLE_warning = 1,
+  VCTRS_MULTIPLE_error = 2,
   VCTRS_MULTIPLE_first = 3,
   VCTRS_MULTIPLE_last = 4
 };
@@ -93,6 +93,7 @@ r_obj* vctrs_matches(r_obj* needles,
   const struct vctrs_remaining c_remaining = parse_remaining(remaining);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
 
+  // TODO: Use `r_arg_as_bool()`
   if (!r_is_bool(nan_distinct)) {
     r_abort("`nan_distinct` must be a single `TRUE` or `FALSE`.");
   }
