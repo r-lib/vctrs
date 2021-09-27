@@ -144,15 +144,23 @@ int p_df_order_compare_na_equal(const void* x,
 
   // df-cols should already be flattened
   for (r_ssize col = 0; col < n_col; ++col) {
-    int cmp = p_order_compare_na_equal(x_ptrs[col], i, y_ptrs[col], j, nan_distinct, types[col]);
+    int cmp = p_order_compare_na_equal(
+      x_ptrs[col], i,
+      y_ptrs[col], j,
+      nan_distinct,
+      types[col]
+    );
 
     if (cmp == 0) {
+      // Equal values for this column
       continue;
     }
 
+    // Difference detected
     return cmp;
   }
 
+  // All columns were equal
   return 0;
 }
 
