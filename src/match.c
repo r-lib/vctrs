@@ -1612,6 +1612,10 @@ void parse_filter(r_obj* filter,
 
 static inline
 struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg) {
+  if (r_length(no_match) != 1) {
+    r_abort("`%s` must be length 1, not length %i.", arg, r_length(no_match));
+  }
+
   if (r_is_string(no_match)) {
     const char* c_no_match = r_chr_get_c_string(no_match, 0);
 
@@ -1630,19 +1634,20 @@ struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg) {
         .value = SIGNAL_NO_MATCH
       };
     }
+
+    r_abort("`%s` must be either \"drop\" or \"error\".", arg);
   }
 
-  if (r_typeof(no_match) == R_TYPE_integer && r_length(no_match) == 1) {
-    int c_no_match = r_int_get(no_match, 0);
+  struct vctrs_arg p_args_no_match = new_wrapper_arg(NULL, arg);
 
-    return (struct vctrs_no_match) {
-      .error = false,
-      .drop = false,
-      .value = c_no_match
-    };
-  }
+  no_match = vec_cast(no_match, vctrs_shared_empty_int, &p_args_no_match, args_empty);
+  int c_no_match = r_int_get(no_match, 0);
 
-  r_abort("`%s` must be a length 1 integer, \"drop\", or \"error\".", arg);
+  return (struct vctrs_no_match) {
+    .error = false,
+    .drop = false,
+    .value = c_no_match
+  };
 }
 
 // -----------------------------------------------------------------------------

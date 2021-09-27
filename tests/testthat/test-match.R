@@ -754,46 +754,47 @@ test_that("`no_match = 'drop'` passes propagated NAs through untouched", {
 })
 
 test_that("`no_match` is validated", {
-  expect_error(vec_matches(1, 2, no_match = 1.5), "length 1 integer, \"drop\", or \"error\"")
-  expect_error(vec_matches(1, 2, no_match = c(1L, 2L)), "length 1 integer, \"drop\", or \"error\"")
+  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = 1.5))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = c(1L, 2L)))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "x"))
 })
 
 # ------------------------------------------------------------------------------
 # vec_matches() - `remaining`
 
 test_that("`remaining` can retain `haystack` values that `needles` didn't match", {
-  res <- vec_matches(1, 0:2, remaining = NA_integer_)
+  res <- vec_matches(1, 0:2, remaining = NA)
   expect_identical(res$needles, c(1L, NA, NA))
   expect_identical(res$haystack, c(2L, 1L, 3L))
 
-  res <- vec_matches(1, 0:2, remaining = NA_integer_, condition = ">=")
+  res <- vec_matches(1, 0:2, remaining = NA, condition = ">=")
   expect_identical(res$needles, c(1L, 1L, NA))
   expect_identical(res$haystack, c(1L, 2L, 3L))
 
-  res <- vec_matches(1, 0:2, remaining = NA_integer_, condition = "<")
+  res <- vec_matches(1, 0:2, remaining = NA, condition = "<")
   expect_identical(res$needles, c(1L, NA, NA))
   expect_identical(res$haystack, c(3L, 1L, 2L))
 })
 
 test_that("`missing` affects `needles` but not `haystack`", {
   # Matches NA to NA, so nothing remaining
-  res <- vec_matches(c(1, NA), c(NA, 1), missing = "match", remaining = NA_integer_)
+  res <- vec_matches(c(1, NA), c(NA, 1), missing = "match", remaining = NA)
   expect_identical(res$needles, c(1L, 2L))
   expect_identical(res$haystack, c(2L, 1L))
 
   # `needles` NA value is propagated, so `haystack` is left with a remaining value
-  res <- vec_matches(c(1, NA), c(NA, 1), missing = NA, remaining = NA_integer_)
+  res <- vec_matches(c(1, NA), c(NA, 1), missing = NA, remaining = NA)
   expect_identical(res$needles, c(1L, 2L, NA))
   expect_identical(res$haystack, c(2L, NA, 1L))
 
   # `needles` NA value is dropped, so `haystack` is left with a remaining value
-  res <- vec_matches(c(1, NA), c(NA, 1), missing = "drop", remaining = NA_integer_)
+  res <- vec_matches(c(1, NA), c(NA, 1), missing = "drop", remaining = NA)
   expect_identical(res$needles, c(1L, NA))
   expect_identical(res$haystack, c(2L, 1L))
 })
 
 test_that("`remaining` works with `condition = NULL` and empty `needles`", {
-  res <- vec_matches(integer(), 1:5, condition = NULL, remaining = NA_integer_)
+  res <- vec_matches(integer(), 1:5, condition = NULL, remaining = NA)
   expect_identical(res$needles, rep(NA_integer_, 5))
   expect_identical(res$haystack, 1:5)
 })
@@ -802,11 +803,11 @@ test_that("`remaining` combined with `multiple = 'first/last'` treats non-first/
   x <- c(1, 2)
   y <- c(1, 2, 2)
 
-  res <- vec_matches(x, y, remaining = NA_integer_, multiple = "first")
+  res <- vec_matches(x, y, remaining = NA, multiple = "first")
   expect_identical(res$needles, c(1L, 2L, NA))
   expect_identical(res$haystack, c(1L, 2L, 3L))
 
-  res <- vec_matches(x, y, remaining = NA_integer_, multiple = "last")
+  res <- vec_matches(x, y, remaining = NA, multiple = "last")
   expect_identical(res$needles, c(1L, 2L, NA))
   expect_identical(res$haystack, c(1L, 3L, 2L))
 })
@@ -821,7 +822,7 @@ test_that("`remaining` combined with the haystack reordering retains appearance 
   expect_identical(res$haystack, c(1L, 2L))
 
   # Retain that appearance order of the matches, with remaining values appended
-  res <- vec_matches(x, y, condition = c("<=", ">="), remaining = NA_integer_)
+  res <- vec_matches(x, y, condition = c("<=", ">="), remaining = NA)
   expect_identical(res$needles, c(1L, 1L, NA))
   expect_identical(res$haystack, c(1L, 2L, 3L))
 })
@@ -834,8 +835,9 @@ test_that("`remaining` can error informatively", {
 })
 
 test_that("`remaining` is validated", {
-  expect_error(vec_matches(1, 2, remaining = 1.5), "length 1 integer, \"drop\", or \"error\"")
-  expect_error(vec_matches(1, 2, remaining = c(1L, 2L)), "length 1 integer, \"drop\", or \"error\"")
+  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = 1.5))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = c(1L, 2L)))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "x"))
 })
 
 # ------------------------------------------------------------------------------
@@ -1007,7 +1009,7 @@ test_that("zero row `haystack` still allows needle NA propagation", {
 })
 
 test_that("`condition = NULL` is correct in all possible cases", {
-  matches <- function(needles, haystack, multiple, no_match = NA_integer_) {
+  matches <- function(needles, haystack, multiple, no_match = NA) {
     vec_matches(needles, haystack, condition = NULL, multiple = multiple, no_match = no_match)
   }
   exp <- function(needles, haystack) {

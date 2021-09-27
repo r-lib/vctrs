@@ -150,6 +150,28 @@
       Each element must have a match.
       x The element at location 1 does not have a match.
 
+# `no_match` is validated
+
+    Code
+      vec_matches(1, 2, no_match = 1.5)
+    Error <vctrs_error_cast_lossy>
+      Can't convert from `no_match` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      vec_matches(1, 2, no_match = c(1L, 2L))
+    Error <rlang_error>
+      `no_match` must be length 1, not length 2.
+
+---
+
+    Code
+      vec_matches(1, 2, no_match = "x")
+    Error <rlang_error>
+      `no_match` must be either "drop" or "error".
+
 # `remaining` can error informatively
 
     Code
@@ -181,6 +203,28 @@
     Error <vctrs_error_matches_remaining>
       Each haystack value must be matched.
       x The value at location 1 was not matched.
+
+# `remaining` is validated
+
+    Code
+      vec_matches(1, 2, remaining = 1.5)
+    Error <vctrs_error_cast_lossy>
+      Can't convert from `remaining` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      vec_matches(1, 2, remaining = c(1L, 2L))
+    Error <rlang_error>
+      `remaining` must be length 1, not length 2.
+
+---
+
+    Code
+      vec_matches(1, 2, remaining = "x")
+    Error <rlang_error>
+      `remaining` must be either "drop" or "error".
 
 # potential overflow on large output size is caught informatively
 
