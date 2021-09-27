@@ -1492,6 +1492,10 @@ void parse_condition(r_obj* condition, enum vctrs_ops* v_ops, r_ssize n_cols) {
 
 static inline
 struct vctrs_missing_needle parse_missing(r_obj* missing) {
+  if (r_length(missing) != 1) {
+    r_abort("`missing` must be length 1, not length %i.", r_length(missing));
+  }
+
   if (r_is_string(missing)) {
     const char* c_missing = r_chr_get_c_string(missing, 0);
 
@@ -1515,18 +1519,17 @@ struct vctrs_missing_needle parse_missing(r_obj* missing) {
         .value = -1
       };
     }
+
+    r_abort("`missing` must be one of: \"match\", \"drop\", or \"error\".");
   }
 
-  if (r_typeof(missing) == R_TYPE_integer && r_length(missing) == 1) {
-    int c_missing = r_int_get(missing, 0);
+  missing = vec_cast(missing, vctrs_shared_empty_int, args_missing, args_empty);
+  int c_missing = r_int_get(missing, 0);
 
-    return (struct vctrs_missing_needle) {
-      .action = VCTRS_MISSING_NEEDLE_ACTION_value,
-      .value = c_missing
-    };
-  }
-
-  r_abort("`missing` must be a length 1 integer, \"match\", \"drop\", or \"error\".");
+  return (struct vctrs_missing_needle) {
+    .action = VCTRS_MISSING_NEEDLE_ACTION_value,
+    .value = c_missing
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -2657,6 +2660,12 @@ void warn_matches_multiple(r_ssize i,
   r_obj* call = KEEP(r_call_n(syms_warn_matches_multiple, syms, args));
   Rf_eval(call, vctrs_ns_env);
   FREE(4);
+}
+
+// -----------------------------------------------------------------------------
+
+void vctrs_init_match(r_obj* ns) {
+  args_missing_ = new_wrapper_arg(NULL, "missing");
 }
 
 // -----------------------------------------------------------------------------

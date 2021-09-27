@@ -14,6 +14,28 @@
       No element of `foo` can be missing.
       x The element at location 1 is missing.
 
+# `missing` is validated
+
+    Code
+      vec_matches(1, 2, missing = 1.5)
+    Error <vctrs_error_cast_lossy>
+      Can't convert from `missing` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      vec_matches(1, 2, missing = c("match", "drop"))
+    Error <rlang_error>
+      `missing` must be length 1, not length 2.
+
+---
+
+    Code
+      vec_matches(1, 2, missing = "x")
+    Error <rlang_error>
+      `missing` must be one of: "match", "drop", or "error".
+
 # `multiple` can error informatively
 
     Code

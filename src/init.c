@@ -358,6 +358,7 @@ void vctrs_init_bind(SEXP ns);
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
 void vctrs_init_dictionary(SEXP ns);
+void vctrs_init_match(r_obj* ns);
 void vctrs_init_names(SEXP ns);
 void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
@@ -381,6 +382,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
+  vctrs_init_match(ns);
   vctrs_init_names(ns);
   vctrs_init_proxy_restore(ns);
   vctrs_init_slice(ns);

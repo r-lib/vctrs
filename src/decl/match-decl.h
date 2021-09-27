@@ -1,3 +1,7 @@
+// Initialised at load time
+struct vctrs_arg args_missing_;
+static struct vctrs_arg* const args_missing = &args_missing_;
+
 static
 r_obj* vec_matches(r_obj* needles,
                    r_obj* haystack,

@@ -146,19 +146,19 @@
 #' vec_matches(x, y, nan_distinct = TRUE)
 #'
 #' # If you don't want any missing values in `needles` to match missing values
-#' # in `haystack`, set `missing = NA_integer_` to propagate missing values in
+#' # in `haystack`, set `missing = NA` to propagate missing values in
 #' # `needles` as unmatched NAs in the result
-#' vec_matches(x, y, missing = NA_integer_)
+#' vec_matches(x, y, missing = NA)
 #'
 #' # `no_match` allows you to specify the returned value for a needle with
 #' # zero matches. Note that this is different from a propagated missing value,
 #' # so specifying `no_match` allows you to differentiate between propagated
 #' # missing values and unmatched values.
-#' vec_matches(x, y, missing = NA_integer_, no_match = 0L)
+#' vec_matches(x, y, missing = NA, no_match = 0L)
 #'
 #' # If you want to require that every `needle` has at least 1 match, set
 #' # `no_match` to `"error"`:
-#' try(vec_matches(x, y, missing = NA_integer_, no_match = "error"))
+#' try(vec_matches(x, y, missing = NA, no_match = "error"))
 #'
 #' # By default, `vec_matches()` detects equality between `needles` and
 #' # `haystack`. Using `condition`, you can detect where an inequality holds
