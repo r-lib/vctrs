@@ -166,17 +166,18 @@ r_obj* vec_matches(r_obj* needles,
 
   // Support non-data frame types by wrapping them in a 1-col data frame
   if (!is_data_frame(needles)) {
-    needles = KEEP_N(r_list(needles), &n_prot);
-    r_poke_names(needles, r_chr("x"));
-    r_init_data_frame(needles, size_needles);
-
-    haystack = KEEP_N(r_list(haystack), &n_prot);
-    r_poke_names(haystack, r_chr("x"));
-    r_init_data_frame(haystack, size_haystack);
-
     ptype = KEEP_N(r_list(ptype), &n_prot);
-    r_poke_names(ptype, r_chr("x"));
+    needles = KEEP_N(r_list(needles), &n_prot);
+    haystack = KEEP_N(r_list(haystack), &n_prot);
+
+    r_obj* names = KEEP_N(r_chr("x"), &n_prot);
+    r_poke_names(ptype, names);
+    r_poke_names(needles, names);
+    r_poke_names(haystack, names);
+
     r_init_data_frame(ptype, 0);
+    r_init_data_frame(needles, size_needles);
+    r_init_data_frame(haystack, size_haystack);
   }
 
   if (condition == r_null) {
