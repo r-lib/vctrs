@@ -2,6 +2,9 @@
 struct vctrs_arg args_missing_;
 static struct vctrs_arg* const args_missing = &args_missing_;
 
+struct vctrs_arg args_no_match_;
+static struct vctrs_arg* const args_no_match = &args_no_match_;
+
 struct vctrs_arg args_remaining_;
 static struct vctrs_arg* const args_remaining = &args_remaining_;
 
@@ -120,7 +123,7 @@ static inline
 void parse_condition(r_obj* condition, enum vctrs_ops* v_ops, r_ssize n_cols);
 
 static inline
-struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg);
+struct vctrs_no_match parse_no_match(r_obj* no_match);
 
 static inline
 struct vctrs_remaining parse_remaining(r_obj* remaining);

@@ -46,9 +46,13 @@ struct vctrs_missing_needle {
   int value;
 };
 
+enum vctrs_no_match_action {
+  VCTRS_NO_MATCH_ACTION_drop = 0,
+  VCTRS_NO_MATCH_ACTION_error = 1,
+  VCTRS_NO_MATCH_ACTION_value = 2
+};
 struct vctrs_no_match {
-  bool error;
-  bool drop;
+  enum vctrs_no_match_action action;
   int value;
 };
 
@@ -85,7 +89,7 @@ r_obj* vctrs_matches(r_obj* needles,
                      r_obj* needles_arg,
                      r_obj* haystack_arg) {
   const struct vctrs_missing_needle c_missing = parse_missing(missing);
-  const struct vctrs_no_match c_no_match = parse_no_match(no_match, "no_match");
+  const struct vctrs_no_match c_no_match = parse_no_match(no_match);
   const struct vctrs_remaining c_remaining = parse_remaining(remaining);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
 
@@ -1621,9 +1625,9 @@ void parse_filter(r_obj* filter,
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg) {
+struct vctrs_no_match parse_no_match(r_obj* no_match) {
   if (r_length(no_match) != 1) {
-    r_abort("`%s` must be length 1, not length %i.", arg, r_length(no_match));
+    r_abort("`no_match` must be length 1, not length %i.", r_length(no_match));
   }
 
   if (r_is_string(no_match)) {
@@ -1631,31 +1635,26 @@ struct vctrs_no_match parse_no_match(r_obj* no_match, const char* arg) {
 
     if (!strcmp(c_no_match, "error")) {
       return (struct vctrs_no_match) {
-        .error = true,
-        .drop = false,
-        .value = SIGNAL_NO_MATCH
+        .action = VCTRS_NO_MATCH_ACTION_error,
+        .value = -1
       };
     }
 
     if (!strcmp(c_no_match, "drop")) {
       return (struct vctrs_no_match) {
-        .error = false,
-        .drop = true,
-        .value = SIGNAL_NO_MATCH
+        .action = VCTRS_NO_MATCH_ACTION_drop,
+        .value = -1
       };
     }
 
-    r_abort("`%s` must be either \"drop\" or \"error\".", arg);
+    r_abort("`no_match` must be either \"drop\" or \"error\".");
   }
 
-  struct vctrs_arg p_args_no_match = new_wrapper_arg(NULL, arg);
-
-  no_match = vec_cast(no_match, vctrs_shared_empty_int, &p_args_no_match, args_empty);
+  no_match = vec_cast(no_match, vctrs_shared_empty_int, args_no_match, args_empty);
   int c_no_match = r_int_get(no_match, 0);
 
   return (struct vctrs_no_match) {
-    .error = false,
-    .drop = false,
+    .action = VCTRS_NO_MATCH_ACTION_value,
     .value = c_no_match
   };
 }
@@ -1760,13 +1759,13 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
     // Handle empty `haystack` up front
     // `no_match` everywhere, retaining size of `needles`
 
-    if (no_match->error && size_needles > 0) {
+    if (no_match->action == VCTRS_NO_MATCH_ACTION_error && size_needles > 0) {
       stop_matches_nothing(0, needles_arg, haystack_arg);
     }
 
     // If `no_match = "drop"`, since everything is a no-match there are
     // no results
-    const r_ssize size_out = no_match->drop ? 0 : size_needles;
+    const r_ssize size_out = (no_match->action == VCTRS_NO_MATCH_ACTION_drop) ? 0 : size_needles;
 
     r_obj* out = KEEP(new_vec_matches_result(size_out));
     int* v_out_needles = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_needles));
@@ -2011,15 +2010,24 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         );
       }
 
-      if (no_match->error) {
+      switch (no_match->action) {
+      case VCTRS_NO_MATCH_ACTION_value: {
+        v_out_needles[loc_out] = loc_needles;
+        v_out_haystack[loc_out] = no_match->value;
+        ++loc_out;
+        break;
+      }
+      case VCTRS_NO_MATCH_ACTION_drop: {
+        break;
+      }
+      case VCTRS_NO_MATCH_ACTION_error: {
         stop_matches_nothing(i, needles_arg, haystack_arg);
-      } else if (no_match->drop) {
-        continue;
+      }
+      default: {
+        r_stop_internal("expand_compact_indices", "Unknown `no_match->action`.");
+      }
       }
 
-      v_out_needles[loc_out] = loc_needles;
-      v_out_haystack[loc_out] = no_match->value;
-      ++loc_out;
       continue;
     }
 
@@ -2723,6 +2731,7 @@ void warn_matches_multiple(r_ssize i,
 
 void vctrs_init_match(r_obj* ns) {
   args_missing_ = new_wrapper_arg(NULL, "missing");
+  args_no_match_ = new_wrapper_arg(NULL, "no_match");
   args_remaining_ = new_wrapper_arg(NULL, "remaining");
 }
 
