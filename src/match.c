@@ -1486,22 +1486,29 @@ void parse_condition(r_obj* condition, enum vctrs_ops* v_ops, r_ssize n_cols) {
   r_ssize size_condition = vec_size(condition);
 
   if (size_condition == 1) {
-    const char* elt = CHAR(v_condition[0]);
+    const char* elt = r_str_c_string(v_condition[0]);
     enum vctrs_ops op = parse_condition_one(elt);
+
     for (r_ssize i = 0; i < n_cols; ++i) {
       v_ops[i] = op;
     }
-  } else if (size_condition == n_cols) {
+
+    return;
+  }
+
+  if (size_condition == n_cols) {
     for (r_ssize i = 0; i < n_cols; ++i) {
-      const char* elt = CHAR(v_condition[i]);
+      const char* elt = r_str_c_string(v_condition[i]);
       v_ops[i] = parse_condition_one(elt);
     }
-  } else {
-    r_abort(
-      "If `condition` is a character vector, it must be length 1, or the same "
-      "length as the number of columns of the input."
-    );
+
+    return;
   }
+
+  r_abort(
+    "If `condition` is a character vector, it must be length 1, or the same "
+    "length as the number of columns of the input."
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -1599,7 +1606,7 @@ void parse_filter(r_obj* filter,
   r_ssize size_filter = vec_size(filter);
 
   if (size_filter == 1) {
-    const char* elt = CHAR(v_filter[0]);
+    const char* elt = r_str_c_string(v_filter[0]);
     enum vctrs_filter elt_filter = parse_filter_one(elt, p_any_filters);
 
     for (r_ssize i = 0; i < n_cols; ++i) {
@@ -1611,7 +1618,7 @@ void parse_filter(r_obj* filter,
 
   if (size_filter == n_cols) {
     for (r_ssize i = 0; i < n_cols; ++i) {
-      const char* elt = CHAR(v_filter[i]);
+      const char* elt = r_str_c_string(v_filter[i]);
       v_filters[i] = parse_filter_one(elt, p_any_filters);
     }
 
