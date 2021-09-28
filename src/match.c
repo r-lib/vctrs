@@ -299,7 +299,10 @@ r_obj* df_matches(r_obj* needles,
 
   // In the case of possible multiple matches that fall in separate
   // nested containers, allocate ~20% extra room
-  r_ssize initial_capacity = (n_nested_groups == 1) ? size_needles : size_needles * 1.2;
+  r_ssize initial_capacity =
+    (n_nested_groups == 1) ?
+    size_needles :
+    r_double_as_ssize(r_ssize_as_double(size_needles) * 1.2);
 
   struct r_dyn_array* p_locs_start_o_haystack = r_new_dyn_vector(R_TYPE_integer, initial_capacity);
   KEEP_N(p_locs_start_o_haystack->shelter, &n_prot);
