@@ -97,12 +97,12 @@ test_that("NA and NaN never match each other in non-equi conditions if treated a
   expect_identical(res$haystack, c(2L, 1L, 3L, 2L))
 })
 
-test_that("NA and NaN both propagate with `missing = NA` no matter the value of `nan_distinct`", {
-  res <- vec_matches(c(NA, NaN), c(NA, NaN), missing = NA, nan_distinct = FALSE)
+test_that("NA and NaN are both considered incomplete no matter the value of `nan_distinct`", {
+  res <- vec_matches(c(NA, NaN), c(NA, NaN), incomplete = NA, nan_distinct = FALSE)
   expect_identical(res$needles, 1:2)
   expect_identical(res$haystack, c(NA_integer_, NA_integer_))
 
-  res <- vec_matches(c(NA, NaN), c(NA, NaN), missing = NA, nan_distinct = TRUE)
+  res <- vec_matches(c(NA, NaN), c(NA, NaN), incomplete = NA, nan_distinct = TRUE)
   expect_identical(res$needles, 1:2)
   expect_identical(res$haystack, c(NA_integer_, NA_integer_))
 })
@@ -133,29 +133,29 @@ test_that("complex order lexicographically", {
   expect_identical(res$haystack, c(2L, 3L, 2L, 3L, NA))
 })
 
-test_that("complex missing values match correctly", {
+test_that("complex incomplete values match correctly", {
   x <- complex(real = c(NA, NA, NaN, NaN), imaginary = c(NA, NaN, NA, NaN))
   y <- complex(real = c(NA, NA, NaN, NaN), imaginary = c(NA, NaN, NA, NaN))
 
   # Missings can match, and all missing values should be treated equally
-  res <- vec_matches(x, y, condition = "==", missing = "match", nan_distinct = FALSE)
+  res <- vec_matches(x, y, condition = "==", incomplete = "match", nan_distinct = FALSE)
   expect_identical(res$needles, rep(1:4, each = 4))
   expect_identical(res$haystack, rep(1:4, times = 4))
 
   # Missings can match, but all combinations are different
-  res <- vec_matches(x, y, condition = "==", missing = "match", nan_distinct = TRUE)
+  res <- vec_matches(x, y, condition = "==", incomplete = "match", nan_distinct = TRUE)
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, 1:4)
 
-  # Missings propagate
-  res <- vec_matches(x, y, condition = "==", missing = NA)
+  # Missings don't match
+  res <- vec_matches(x, y, condition = "==", incomplete = NA)
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, rep(NA_integer_, 4))
 
-  # Propagated missings are never considered no-matches
+  # Missings don't match, but are never considered no-matches
   expect_identical(
-    vec_matches(x, y, condition = "==", missing = NA, no_match = "error"),
-    vec_matches(x, y, condition = "==", missing = NA)
+    vec_matches(x, y, condition = "==", incomplete = NA, no_match = "error"),
+    vec_matches(x, y, condition = "==", incomplete = NA)
   )
 })
 
@@ -222,8 +222,8 @@ test_that("lists can be matched", {
   expect_identical(res$haystack, c(1L, 2L, NA, 1L, 2L, 4L))
 })
 
-test_that("list missingness propagates", {
-  res <- vec_matches(list(NULL), list(NULL), missing = NA)
+test_that("list incompleteness is detected", {
+  res <- vec_matches(list(NULL), list(NULL), incomplete = NA)
 
   expect_identical(res$needles, 1L)
   expect_identical(res$haystack, NA_integer_)
@@ -340,16 +340,16 @@ test_that("ensure that matching works if outer runs are present (i.e. `==` comes
 test_that("df-cols propagate an NA if any columns are incomplete", {
   df <- data_frame(x = 1, y = data_frame(x = c(1, 1, NA), y = c(1, NA, 2)))
 
-  res <- vec_matches(df, df, missing = "match")
+  res <- vec_matches(df, df, incomplete = "match")
   expect_identical(res$needles, 1:3)
   expect_identical(res$haystack, 1:3)
 
-  # 2nd and 3rd rows aren't fully complete, so their missing values propagate
-  res <- vec_matches(df, df, missing = NA)
+  # 2nd and 3rd rows aren't fully complete
+  res <- vec_matches(df, df, incomplete = NA)
   expect_identical(res$needles, 1:3)
   expect_identical(res$haystack, c(1L, NA, NA))
 
-  res <- vec_matches(df, df, missing = "drop")
+  res <- vec_matches(df, df, incomplete = "drop")
   expect_identical(res$needles, 1L)
   expect_identical(res$haystack, 1L)
 })
@@ -395,19 +395,19 @@ test_that("rcrd type matching works with rcrd-cols", {
   expect_identical(res$haystack, c(NA, 1L, 2L))
 })
 
-test_that("rcrd type missingness is propagated correctly", {
+test_that("rcrd type incompleteness is handled correctly", {
   x <- new_rcrd(list(x = c(1L, NA), y = c(NA_integer_, NA_integer_)))
   y <- new_rcrd(list(x = c(1L, 2L, NA), y = c(NA, 5L, NA)))
 
-  # When `missing = "match"`, the types of incompleteness still must
+  # When `incomplete = "match"`, the types of incompleteness still must
   # match exactly to have a match. i.e. (x=1L, y=NA) doesn't match (x=NA, y=1L).
   # This is the same as the rule for data frames.
-  res <- vec_matches(x, y, condition = "==", missing = "match")
+  res <- vec_matches(x, y, condition = "==", incomplete = "match")
   expect_identical(res$needles, c(1L, 2L))
   expect_identical(res$haystack, c(1L, 3L))
 
   # If any field contains NA, the entire observation is incomplete.
-  res <- vec_matches(x, y, condition = "==", missing = NA)
+  res <- vec_matches(x, y, condition = "==", incomplete = NA)
   expect_identical(res$needles, c(1L, 2L))
   expect_identical(res$haystack, c(NA_integer_, NA_integer_))
 })
@@ -495,92 +495,92 @@ test_that("double needles can't match NAs or NaNs in the haystack", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_matches() - `missing`
+# vec_matches() - `incomplete`
 
-test_that("can propagate needle NAs with `missing = <integer>`", {
+test_that("can handle incomplete needles with `incomplete = <integer>`", {
   x <- c(1L, NA, 2L)
   y <- c(NA, 1L, 1L)
 
-  res <- vec_matches(x, y, condition = "==", missing = NA)
+  res <- vec_matches(x, y, condition = "==", incomplete = NA)
 
   expect_identical(res$needles, c(1L, 1L, 2L, 3L))
   expect_identical(res$haystack, c(2L, 3L, NA, NA))
 
-  res <- vec_matches(x, y, condition = "<=", missing = 0L)
+  res <- vec_matches(x, y, condition = "<=", incomplete = 0L)
 
   expect_identical(res$needles, c(1L, 1L, 2L, 3L))
   expect_identical(res$haystack, c(2L, 3L, 0L, NA))
 
-  res <- vec_matches(x, y, condition = ">=", missing = -1L)
+  res <- vec_matches(x, y, condition = ">=", incomplete = -1L)
 
   expect_identical(res$needles, c(1L, 1L, 2L, 3L, 3L))
   expect_identical(res$haystack, c(2L, 3L, -1L, 2L, 3L))
 })
 
-test_that("can drop missing needle rows with `missing = 'drop'", {
+test_that("can drop incomplete needle rows with `incomplete = 'drop'", {
   x <- c(1L, NA, 2L)
   y <- c(NA, 1L, 1L)
 
-  res <- vec_matches(x, y, condition = "==", missing = "drop")
+  res <- vec_matches(x, y, condition = "==", incomplete = "drop")
   expect_identical(res$needles, c(1L, 1L, 3L))
   expect_identical(res$haystack, c(2L, 3L, NA))
 })
 
-test_that("if `missing = <integer>`, an NA in any column results in the value", {
+test_that("if `incomplete = <integer>`, an NA in any column results in the value", {
   df1 <- data_frame(x = c(1L, NA, 2L, 1L, 1L), y = c(2L, 2L, NA, 1L, 1L))
   df2 <- data_frame(x = c(1L, 1L, 2L), y = c(1L, 1L, NA))
 
-  res <- vec_matches(df1, df2, condition = c("==", "=="), missing = NA)
+  res <- vec_matches(df1, df2, condition = c("==", "=="), incomplete = NA)
 
   expect_identical(res$needles, c(1L, 2L, 3L, 4L, 4L, 5L, 5L))
   expect_identical(res$haystack, c(NA, NA, NA, 1L, 2L, 1L, 2L))
 
-  res <- vec_matches(df1, df2, condition = c(">=", ">="), missing = NA)
+  res <- vec_matches(df1, df2, condition = c(">=", ">="), incomplete = NA)
 
   expect_identical(res$needles, c(1L, 1L, 2L, 3L, 4L, 4L, 5L, 5L))
   expect_identical(res$haystack, c(1L, 2L, NA, NA, 1L, 2L, 1L, 2L))
 })
 
-test_that("`missing = <integer> / 'drop'` still propagates/drops NAs in future columns when an earlier column has no matches", {
+test_that("`incomplete = <integer> / 'drop'` still handles NAs in future columns when an earlier column has no matches", {
   df1 <- data_frame(x = c(1, 1, 2, 3), y = c(1, NA, NA, 4))
   df2 <- data_frame(x = c(1, 3), y = c(1, 5))
 
   # The 2 in row 3 of df1 has no match, but the NA in the 2nd column still propagates
-  res <- vec_matches(df1, df2, missing = NA, no_match = -1L)
+  res <- vec_matches(df1, df2, incomplete = NA, no_match = -1L)
 
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, c(1L, NA, NA, -1L))
 
-  res <- vec_matches(df1, df2, missing = "drop", no_match = -1L)
+  res <- vec_matches(df1, df2, incomplete = "drop", no_match = -1L)
 
   expect_identical(res$needles, c(1L, 4L))
   expect_identical(res$haystack, c(1L, -1L))
 
   # The 1 in row 1 and 2 of df1 have no match, but the NA in row 2 of the 2nd column propagates
-  res <- vec_matches(df1, df2, missing = NA, no_match = -1L, condition = ">")
+  res <- vec_matches(df1, df2, incomplete = NA, no_match = -1L, condition = ">")
 
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, c(-1L, NA, NA, 1L))
 
-  res <- vec_matches(df1, df2, missing = "drop", no_match = -1L, condition = ">")
+  res <- vec_matches(df1, df2, incomplete = "drop", no_match = -1L, condition = ">")
 
   expect_identical(res$needles, c(1L, 4L))
   expect_identical(res$haystack, c(-1L, 1L))
 })
 
-test_that("`missing` can error informatively", {
-  expect_snapshot(error = TRUE, vec_matches(NA, 1, missing = "error"))
-  expect_snapshot(error = TRUE, vec_matches(NA, 1, missing = "error", needles_arg = "foo"))
+test_that("`incomplete` can error informatively", {
+  expect_snapshot(error = TRUE, vec_matches(NA, 1, incomplete = "error"))
+  expect_snapshot(error = TRUE, vec_matches(NA, 1, incomplete = "error", needles_arg = "foo"))
 })
 
-test_that("`missing` error is classed", {
-  expect_error(vec_matches(NA, 1, missing = "error"), class = "vctrs_error_matches_missing")
+test_that("`incomplete` error is classed", {
+  expect_error(vec_matches(NA, 1, incomplete = "error"), class = "vctrs_error_matches_incomplete")
 })
 
-test_that("`missing` is validated", {
-  expect_snapshot(error = TRUE, vec_matches(1, 2, missing = 1.5))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, missing = c("match", "drop")))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, missing = "x"))
+test_that("`incomplete` is validated", {
+  expect_snapshot(error = TRUE, vec_matches(1, 2, incomplete = 1.5))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, incomplete = c("match", "drop")))
+  expect_snapshot(error = TRUE, vec_matches(1, 2, incomplete = "x"))
 })
 
 # ------------------------------------------------------------------------------
@@ -711,7 +711,7 @@ test_that("can drop unmatched needles", {
   expect_identical(x$haystack, 1L)
 })
 
-test_that("can drop unmatched missings when not propagating them", {
+test_that("can drop unmatched missings when `incomplete = 'match'`", {
   x <- vec_matches(c(NaN, 2, NA), 2, no_match = "drop")
   expect_identical(x$needles, 2L)
   expect_identical(x$haystack, 1L)
@@ -725,8 +725,8 @@ test_that("can drop unmatched missings when not propagating them", {
   expect_identical(x$haystack, 1L)
 })
 
-test_that("can differentiate between `no_match` and propagated NAs", {
-  res <- vec_matches(c(1, NA), 2, missing = NA, no_match = -1L)
+test_that("can differentiate between `no_match` and `incomplete`", {
+  res <- vec_matches(c(1, NA), 2, incomplete = NA, no_match = -1L)
 
   expect_identical(res$needles, 1:2)
   expect_identical(res$haystack, c(-1L, NA))
@@ -739,15 +739,15 @@ test_that("`no_match` can error informatively", {
   expect_snapshot(error = TRUE, vec_matches(1, double(), no_match = "error", condition = NULL))
 })
 
-test_that("`no_match = 'error'` passes propagated NAs through untouched", {
-  res <- vec_matches(c(NA, NaN, NA, 1), c(NA, 1), missing = NA, no_match = "error")
+test_that("`no_match = 'error'` doesn't error on handled incomplete values", {
+  res <- vec_matches(c(NA, NaN, NA, 1), c(NA, 1), incomplete = NA, no_match = "error")
 
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, c(rep(NA, 3), 2L))
 })
 
-test_that("`no_match = 'drop'` passes propagated NAs through untouched", {
-  res <- vec_matches(c(NA, NaN, NA, 1), c(NA, 1), missing = NA, no_match = "drop")
+test_that("`no_match = 'drop'` doesn't drop handled incomplete values", {
+  res <- vec_matches(c(NA, NaN, NA, 1), c(NA, 1), incomplete = NA, no_match = "drop")
 
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, c(rep(NA, 3), 2L))
@@ -776,19 +776,19 @@ test_that("`remaining` can retain `haystack` values that `needles` didn't match"
   expect_identical(res$haystack, c(3L, 1L, 2L))
 })
 
-test_that("`missing` affects `needles` but not `haystack`", {
+test_that("`incomplete` affects `needles` but not `haystack`", {
   # Matches NA to NA, so nothing remaining
-  res <- vec_matches(c(1, NA), c(NA, 1), missing = "match", remaining = NA)
+  res <- vec_matches(c(1, NA), c(NA, 1), incomplete = "match", remaining = NA)
   expect_identical(res$needles, c(1L, 2L))
   expect_identical(res$haystack, c(2L, 1L))
 
   # `needles` NA value is propagated, so `haystack` is left with a remaining value
-  res <- vec_matches(c(1, NA), c(NA, 1), missing = NA, remaining = NA)
+  res <- vec_matches(c(1, NA), c(NA, 1), incomplete = NA, remaining = NA)
   expect_identical(res$needles, c(1L, 2L, NA))
   expect_identical(res$haystack, c(2L, NA, 1L))
 
   # `needles` NA value is dropped, so `haystack` is left with a remaining value
-  res <- vec_matches(c(1, NA), c(NA, 1), missing = "drop", remaining = NA)
+  res <- vec_matches(c(1, NA), c(NA, 1), incomplete = "drop", remaining = NA)
   expect_identical(res$needles, c(1L, NA))
   expect_identical(res$haystack, c(2L, 1L))
 })
@@ -933,19 +933,19 @@ test_that("different `filter`s can be used per column", {
   expect_identical(res$haystack, c(NA, 1L, 2L, 5L, NA))
 })
 
-test_that("`filter` works with missing values", {
+test_that("`filter` works with incomplete values", {
   needles <- c(1, NA, 4, NA)
   haystack <- c(NA, 1, NA, 1, 3)
 
-  res <- vec_matches(needles, haystack, condition = ">=", filter = "max", missing = "match")
+  res <- vec_matches(needles, haystack, condition = ">=", filter = "max", incomplete = "match")
   expect_identical(res$needles, c(1L, 1L, 2L, 2L, 3L, 4L, 4L))
   expect_identical(res$haystack, c(2L, 4L, 1L, 3L, 5L, 1L, 3L))
 
-  res <- vec_matches(needles, haystack, condition = ">=", filter = "max", missing = "match", multiple = "first")
+  res <- vec_matches(needles, haystack, condition = ">=", filter = "max", incomplete = "match", multiple = "first")
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, c(2L, 1L, 5L, 1L))
 
-  res <- vec_matches(needles, haystack, condition = ">=", filter = "max", missing = NA)
+  res <- vec_matches(needles, haystack, condition = ">=", filter = "max", incomplete = NA)
   expect_identical(res$needles, c(1L, 1L, 2L, 3L, 4L))
   expect_identical(res$haystack, c(2L, 4L, NA, 5L, NA))
 })
@@ -954,11 +954,11 @@ test_that("`filter` works with mixed NA and NaN", {
   needles <- c(1, NA, 4, NaN)
   haystack <- c(NA, 1, NaN, 1, 3)
 
-  res <- vec_matches(needles, haystack, condition = ">=", filter = "min", missing = "match", nan_distinct = FALSE)
+  res <- vec_matches(needles, haystack, condition = ">=", filter = "min", incomplete = "match", nan_distinct = FALSE)
   expect_identical(res$needles, c(1L, 1L, 2L, 2L, 3L, 3L, 4L, 4L))
   expect_identical(res$haystack, c(2L, 4L, 1L, 3L, 2L, 4L, 1L, 3L))
 
-  res <- vec_matches(needles, haystack, condition = ">=", filter = "min", missing = "match", nan_distinct = TRUE)
+  res <- vec_matches(needles, haystack, condition = ">=", filter = "min", incomplete = "match", nan_distinct = TRUE)
   expect_identical(res$needles, c(1L, 1L, 2L, 3L, 3L, 4L))
   expect_identical(res$haystack, c(2L, 4L, 1L, 2L, 4L, 3L))
 })
@@ -996,13 +996,13 @@ test_that("zero row `haystack` results in no-matches for all needles", {
   expect_identical(res$haystack, rep(NA_integer_, 3))
 })
 
-test_that("zero row `haystack` still allows needle NA propagation", {
-  res <- vec_matches(c(1, NA), integer(), missing = NA, no_match = 0L)
+test_that("zero row `haystack` still allows needle incomplete handling", {
+  res <- vec_matches(c(1, NA), integer(), incomplete = NA, no_match = 0L)
 
   expect_identical(res$needles, 1:2)
   expect_identical(res$haystack, c(0L, NA))
 
-  res <- vec_matches(c(1, NA), integer(), missing = NA, no_match = 0L, condition = "<")
+  res <- vec_matches(c(1, NA), integer(), incomplete = NA, no_match = 0L, condition = "<")
 
   expect_identical(res$needles, 1:2)
   expect_identical(res$haystack, c(0L, NA))

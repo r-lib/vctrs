@@ -35,14 +35,14 @@ enum vctrs_ops {
   VCTRS_OPS_lte = 4
 };
 
-enum vctrs_missing_needle_action {
-  VCTRS_MISSING_NEEDLE_ACTION_match = 0,
-  VCTRS_MISSING_NEEDLE_ACTION_value = 1,
-  VCTRS_MISSING_NEEDLE_ACTION_drop = 2,
-  VCTRS_MISSING_NEEDLE_ACTION_error = 3
+enum vctrs_incomplete_action {
+  VCTRS_INCOMPLETE_ACTION_match = 0,
+  VCTRS_INCOMPLETE_ACTION_value = 1,
+  VCTRS_INCOMPLETE_ACTION_drop = 2,
+  VCTRS_INCOMPLETE_ACTION_error = 3
 };
-struct vctrs_missing_needle {
-  enum vctrs_missing_needle_action action;
+struct vctrs_incomplete {
+  enum vctrs_incomplete_action action;
   int value;
 };
 
@@ -67,7 +67,7 @@ struct vctrs_remaining {
 };
 
 #define SIGNAL_NO_MATCH r_globals.na_int
-#define SIGNAL_NA_PROPAGATE -1
+#define SIGNAL_INCOMPLETE -1
 
 // -----------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ r_obj* vctrs_matches(r_obj* needles,
                      r_obj* haystack,
                      r_obj* condition,
                      r_obj* filter,
-                     r_obj* missing,
+                     r_obj* incomplete,
                      r_obj* no_match,
                      r_obj* remaining,
                      r_obj* multiple,
@@ -88,7 +88,7 @@ r_obj* vctrs_matches(r_obj* needles,
                      r_obj* chr_transform,
                      r_obj* needles_arg,
                      r_obj* haystack_arg) {
-  const struct vctrs_missing_needle c_missing = parse_missing(missing);
+  const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match);
   const struct vctrs_remaining c_remaining = parse_remaining(remaining);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
@@ -107,7 +107,7 @@ r_obj* vctrs_matches(r_obj* needles,
     haystack,
     condition,
     filter,
-    &c_missing,
+    &c_incomplete,
     &c_no_match,
     &c_remaining,
     c_multiple,
@@ -123,7 +123,7 @@ r_obj* vec_matches(r_obj* needles,
                    r_obj* haystack,
                    r_obj* condition,
                    r_obj* filter,
-                   const struct vctrs_missing_needle* missing,
+                   const struct vctrs_incomplete* incomplete,
                    const struct vctrs_no_match* no_match,
                    const struct vctrs_remaining* remaining,
                    enum vctrs_multiple multiple,
@@ -211,13 +211,8 @@ r_obj* vec_matches(r_obj* needles,
     r_abort("Must have at least 1 column to match on unless `condition = NULL`.");
   }
 
-  const bool propagate_incomplete_needle =
-    missing->action == VCTRS_MISSING_NEEDLE_ACTION_value ||
-    missing->action == VCTRS_MISSING_NEEDLE_ACTION_drop ||
-    missing->action == VCTRS_MISSING_NEEDLE_ACTION_error;
-
-  // Compute the locations of missing values for each column if computing ranks
-  // later on is going to replace the missing values with integer ranks
+  // Compute the locations of incomplete values for each column if computing
+  // ranks later on is going to replace the incomplete values with integer ranks
   r_obj* needles_complete = df_detect_complete_by_col(needles, size_needles, n_cols);
   KEEP_N(needles_complete, &n_prot);
 
@@ -245,8 +240,7 @@ r_obj* vec_matches(r_obj* needles,
     haystack_complete,
     size_needles,
     size_haystack,
-    missing,
-    propagate_incomplete_needle,
+    incomplete,
     no_match,
     remaining,
     multiple,
@@ -270,8 +264,7 @@ r_obj* df_matches(r_obj* needles,
                   r_obj* haystack_complete,
                   r_ssize size_needles,
                   r_ssize size_haystack,
-                  const struct vctrs_missing_needle* missing,
-                  bool propagate_incomplete_needle,
+                  const struct vctrs_incomplete* incomplete,
                   const struct vctrs_no_match* no_match,
                   const struct vctrs_remaining* remaining,
                   enum vctrs_multiple multiple,
@@ -411,7 +404,7 @@ r_obj* df_matches(r_obj* needles,
         p_haystack_complete,
         v_o_needles,
         v_o_haystack,
-        propagate_incomplete_needle,
+        incomplete,
         multiple,
         any_filters,
         v_filters,
@@ -436,7 +429,7 @@ r_obj* df_matches(r_obj* needles,
         p_haystack_complete,
         v_o_needles,
         v_o_haystack,
-        propagate_incomplete_needle,
+        incomplete,
         multiple,
         any_filters,
         v_filters,
@@ -457,8 +450,7 @@ r_obj* df_matches(r_obj* needles,
     p_locs_needles,
     skip_match_sizes,
     skip_locs_needles,
-    missing,
-    propagate_incomplete_needle,
+    incomplete,
     no_match,
     remaining,
     multiple,
@@ -491,7 +483,7 @@ void df_matches_recurse(r_ssize col,
                         const struct poly_df_data* p_haystack_complete,
                         const int* v_o_needles,
                         const int* v_o_haystack,
-                        bool propagate_incomplete_needle,
+                        const struct vctrs_incomplete* incomplete,
                         enum vctrs_multiple multiple,
                         bool any_filters,
                         const enum vctrs_filter* v_filters,
@@ -536,13 +528,13 @@ void df_matches_recurse(r_ssize col,
     loc_group_upper_o_needles
   );
 
-  if (propagate_incomplete_needle && !needle_is_complete) {
-    // Propagate NA, don't recursive into further columns.
+  if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && !needle_is_complete) {
+    // Signal incomplete needle, don't recursive into further columns.
     for (r_ssize i = loc_group_lower_o_needles; i <= loc_group_upper_o_needles; ++i) {
       // Will always be the first and only time the output is touched for this
       // needle, so we can poke directly into it
       const int loc_needles = v_o_needles[i] - 1;
-      R_ARR_POKE(int, p_locs_start_o_haystack, loc_needles, SIGNAL_NA_PROPAGATE);
+      R_ARR_POKE(int, p_locs_start_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
     }
 
     // Learned nothing about haystack!
@@ -565,7 +557,7 @@ void df_matches_recurse(r_ssize col,
         p_haystack_complete,
         v_o_needles,
         v_o_haystack,
-        propagate_incomplete_needle,
+        incomplete,
         multiple,
         any_filters,
         v_filters,
@@ -593,7 +585,7 @@ void df_matches_recurse(r_ssize col,
         p_haystack_complete,
         v_o_needles,
         v_o_haystack,
-        propagate_incomplete_needle,
+        incomplete,
         multiple,
         any_filters,
         v_filters,
@@ -785,7 +777,7 @@ void df_matches_recurse(r_ssize col,
         p_haystack_complete,
         v_o_needles,
         v_o_haystack,
-        propagate_incomplete_needle,
+        incomplete,
         multiple,
         any_filters,
         v_filters,
@@ -926,7 +918,7 @@ void df_matches_recurse(r_ssize col,
         }
       }
     }
-  } else if (propagate_incomplete_needle && col < n_col - 1) {
+  } else if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && col < n_col - 1) {
     // Miss! This `needles` column group has no matches in the corresponding
     // `haystack` column. However, we still need to propagate any potential
     // NAs that might occur in future columns of this `needles` group. If
@@ -940,7 +932,7 @@ void df_matches_recurse(r_ssize col,
         const bool future_needle_is_complete = v_future_needles_complete[loc_needles];
 
         if (!future_needle_is_complete) {
-          R_ARR_POKE(int, p_locs_start_o_haystack, loc_needles, SIGNAL_NA_PROPAGATE);
+          R_ARR_POKE(int, p_locs_start_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
           break;
         }
       }
@@ -1014,7 +1006,7 @@ void df_matches_recurse(r_ssize col,
       p_haystack_complete,
       v_o_needles,
       v_o_haystack,
-      propagate_incomplete_needle,
+      incomplete,
       multiple,
       any_filters,
       v_filters,
@@ -1039,7 +1031,7 @@ void df_matches_recurse(r_ssize col,
       p_haystack_complete,
       v_o_needles,
       v_o_haystack,
-      propagate_incomplete_needle,
+      incomplete,
       multiple,
       any_filters,
       v_filters,
@@ -1068,7 +1060,7 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
                                    const struct poly_df_data* p_haystack_complete,
                                    const int* v_o_needles,
                                    const int* v_o_haystack,
-                                   bool propagate_incomplete_needle,
+                                   const struct vctrs_incomplete* incomplete,
                                    enum vctrs_multiple multiple,
                                    bool any_filters,
                                    const enum vctrs_filter* v_filters,
@@ -1130,7 +1122,7 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
       p_haystack_complete,
       v_o_needles,
       v_o_haystack,
-      propagate_incomplete_needle,
+      incomplete,
       multiple,
       any_filters,
       v_filters,
@@ -1514,44 +1506,44 @@ void parse_condition(r_obj* condition, enum vctrs_ops* v_ops, r_ssize n_cols) {
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_missing_needle parse_missing(r_obj* missing) {
-  if (r_length(missing) != 1) {
-    r_abort("`missing` must be length 1, not length %i.", r_length(missing));
+struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
+  if (r_length(incomplete) != 1) {
+    r_abort("`incomplete` must be length 1, not length %i.", r_length(incomplete));
   }
 
-  if (r_is_string(missing)) {
-    const char* c_missing = r_chr_get_c_string(missing, 0);
+  if (r_is_string(incomplete)) {
+    const char* c_incomplete = r_chr_get_c_string(incomplete, 0);
 
-    if (!strcmp(c_missing, "match")) {
-      return (struct vctrs_missing_needle) {
-        .action = VCTRS_MISSING_NEEDLE_ACTION_match,
+    if (!strcmp(c_incomplete, "match")) {
+      return (struct vctrs_incomplete) {
+        .action = VCTRS_INCOMPLETE_ACTION_match,
         .value = -1
       };
     }
 
-    if (!strcmp(c_missing, "drop")) {
-      return (struct vctrs_missing_needle) {
-        .action = VCTRS_MISSING_NEEDLE_ACTION_drop,
+    if (!strcmp(c_incomplete, "drop")) {
+      return (struct vctrs_incomplete) {
+        .action = VCTRS_INCOMPLETE_ACTION_drop,
         .value = -1
       };
     }
 
-    if (!strcmp(c_missing, "error")) {
-      return (struct vctrs_missing_needle) {
-        .action = VCTRS_MISSING_NEEDLE_ACTION_error,
+    if (!strcmp(c_incomplete, "error")) {
+      return (struct vctrs_incomplete) {
+        .action = VCTRS_INCOMPLETE_ACTION_error,
         .value = -1
       };
     }
 
-    r_abort("`missing` must be one of: \"match\", \"drop\", or \"error\".");
+    r_abort("`incomplete` must be one of: \"match\", \"drop\", or \"error\".");
   }
 
-  missing = vec_cast(missing, vctrs_shared_empty_int, args_missing, args_empty);
-  int c_missing = r_int_get(missing, 0);
+  incomplete = vec_cast(incomplete, vctrs_shared_empty_int, args_incomplete, args_empty);
+  int c_incomplete = r_int_get(incomplete, 0);
 
-  return (struct vctrs_missing_needle) {
-    .action = VCTRS_MISSING_NEEDLE_ACTION_value,
-    .value = c_missing
+  return (struct vctrs_incomplete) {
+    .action = VCTRS_INCOMPLETE_ACTION_value,
+    .value = c_incomplete
   };
 }
 
@@ -1882,8 +1874,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               struct r_dyn_array* p_locs_needles,
                               bool skip_match_sizes,
                               bool skip_locs_needles,
-                              const struct vctrs_missing_needle* missing,
-                              bool propagate_incomplete_needle,
+                              const struct vctrs_incomplete* incomplete,
                               const struct vctrs_no_match* no_match,
                               const struct vctrs_remaining* remaining,
                               enum vctrs_multiple multiple,
@@ -1913,7 +1904,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     for (r_ssize i = 0; i < n_used; ++i) {
       // This could get extremely large with improperly specified non-equi joins.
       // May over-allocate in the case of `filters` with `multiple = "all"`,
-      // or when `no_match = "drop"` or `missing = "drop"`.
+      // or when `no_match = "drop"` or `incomplete = "drop"`.
       dbl_size_out += (double) v_match_sizes[i];
     }
 
@@ -1971,6 +1962,8 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     multiple == VCTRS_MULTIPLE_error ||
     multiple == VCTRS_MULTIPLE_warning;
 
+  const bool match_incomplete = incomplete->action == VCTRS_INCOMPLETE_ACTION_match;
+
   for (r_ssize i = 0; i < n_used; ++i) {
     const int loc = skip_locs_needles ? i : v_o_locs_needles[i] - 1;
 
@@ -1978,32 +1971,32 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     const int match_size = skip_match_sizes ? 1 : v_match_sizes[loc];
     const int loc_needles = skip_locs_needles ? loc + 1 : v_locs_needles[loc];
 
-    if (propagate_incomplete_needle && loc_start_o_haystack == SIGNAL_NA_PROPAGATE) {
+    if (!match_incomplete && loc_start_o_haystack == SIGNAL_INCOMPLETE) {
       if (match_size != 1) {
         r_stop_internal(
           "expand_compact_indices",
-          "`match_size` should always be 1 in the case of NA propagation."
+          "`match_size` should always be 1 in the case of incomplete values."
         );
       }
 
-      switch (missing->action) {
-      case VCTRS_MISSING_NEEDLE_ACTION_value: {
+      switch (incomplete->action) {
+      case VCTRS_INCOMPLETE_ACTION_value: {
         v_out_needles[loc_out] = loc_needles;
-        v_out_haystack[loc_out] = missing->value;
+        v_out_haystack[loc_out] = incomplete->value;
         ++loc_out;
         break;
       }
-      case VCTRS_MISSING_NEEDLE_ACTION_drop: {
+      case VCTRS_INCOMPLETE_ACTION_drop: {
         // Do not increment `loc_out`, do not store locations
         break;
       }
-      case VCTRS_MISSING_NEEDLE_ACTION_error: {
-        stop_matches_missing(loc_needles - 1, needles_arg);
+      case VCTRS_INCOMPLETE_ACTION_error: {
+        stop_matches_incomplete(loc_needles - 1, needles_arg);
       }
-      case VCTRS_MISSING_NEEDLE_ACTION_match: {
+      case VCTRS_INCOMPLETE_ACTION_match: {
         r_stop_internal(
           "expand_compact_indices",
-          "Needles should never be marked as `SIGNAL_NA_PROPAGATE` when `missing = 'match'."
+          "Needles should never be marked as `SIGNAL_INCOMPLETE` when `incomplete = 'match'`."
         );
       }
       }
@@ -2095,7 +2088,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     // Can happen with a `filter` and `multiple = "all"`, where it is possible
     // for potential matches coming from a different nested containment group
     // to be filtered out in the above loop.
-    // Can also happen with `no_match = "drop"` or `missing = "drop"`.
+    // Can also happen with `no_match = "drop"` or `incomplete = "drop"`.
     // Resize should be free by setting truelength and growable bit.
     size_out = loc_out;
 
@@ -2673,7 +2666,7 @@ void stop_matches_remaining(r_ssize i,
 }
 
 static inline
-void stop_matches_missing(r_ssize i, struct vctrs_arg* needles_arg) {
+void stop_matches_incomplete(r_ssize i, struct vctrs_arg* needles_arg) {
   r_obj* syms[3] = {
     syms_i,
     syms_needles_arg,
@@ -2685,10 +2678,10 @@ void stop_matches_missing(r_ssize i, struct vctrs_arg* needles_arg) {
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_missing, syms, args));
+  r_obj* call = KEEP(r_call_n(syms_stop_matches_incomplete, syms, args));
   Rf_eval(call, vctrs_ns_env);
 
-  never_reached("stop_matches_missing");
+  never_reached("stop_matches_incomplete");
 }
 
 static inline
@@ -2739,7 +2732,7 @@ void warn_matches_multiple(r_ssize i,
 // -----------------------------------------------------------------------------
 
 void vctrs_init_match(r_obj* ns) {
-  args_missing_ = new_wrapper_arg(NULL, "missing");
+  args_incomplete_ = new_wrapper_arg(NULL, "incomplete");
   args_no_match_ = new_wrapper_arg(NULL, "no_match");
   args_remaining_ = new_wrapper_arg(NULL, "remaining");
 }
@@ -2747,4 +2740,4 @@ void vctrs_init_match(r_obj* ns) {
 // -----------------------------------------------------------------------------
 
 #undef SIGNAL_NO_MATCH
-#undef SIGNAL_NA_PROPAGATE
+#undef SIGNAL_INCOMPLETE

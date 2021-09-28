@@ -1,40 +1,40 @@
-# `missing` can error informatively
+# `incomplete` can error informatively
 
     Code
-      vec_matches(NA, 1, missing = "error")
-    Error <vctrs_error_matches_missing>
-      No element can be missing.
-      x The element at location 1 is missing.
+      vec_matches(NA, 1, incomplete = "error")
+    Error <vctrs_error_matches_incomplete>
+      No element can contain missing values.
+      x The element at location 1 contains missing values.
 
 ---
 
     Code
-      vec_matches(NA, 1, missing = "error", needles_arg = "foo")
-    Error <vctrs_error_matches_missing>
-      No element of `foo` can be missing.
-      x The element at location 1 is missing.
+      vec_matches(NA, 1, incomplete = "error", needles_arg = "foo")
+    Error <vctrs_error_matches_incomplete>
+      No element of `foo` can contain missing values.
+      x The element at location 1 contains missing values.
 
-# `missing` is validated
+# `incomplete` is validated
 
     Code
-      vec_matches(1, 2, missing = 1.5)
+      vec_matches(1, 2, incomplete = 1.5)
     Error <vctrs_error_cast_lossy>
-      Can't convert from `missing` <double> to <integer> due to loss of precision.
+      Can't convert from `incomplete` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 ---
 
     Code
-      vec_matches(1, 2, missing = c("match", "drop"))
+      vec_matches(1, 2, incomplete = c("match", "drop"))
     Error <rlang_error>
-      `missing` must be length 1, not length 2.
+      `incomplete` must be length 1, not length 2.
 
 ---
 
     Code
-      vec_matches(1, 2, missing = "x")
+      vec_matches(1, 2, incomplete = "x")
     Error <rlang_error>
-      `missing` must be one of: "match", "drop", or "error".
+      `incomplete` must be one of: "match", "drop", or "error".
 
 # `multiple` can error informatively
 

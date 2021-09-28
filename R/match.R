@@ -19,8 +19,8 @@
 #' `condition` is analogous to specifying a SQL ON statement, and `condition =
 #' NULL` is identical to specifying a join without an ON statement.
 #'
-#' When `missing = "match"`, missing values are allowed to exactly match other
-#' missing values, but will not match any other values. This implies that
+#' When `incomplete = "match"`, missing values are allowed to exactly match
+#' other missing values, but will not match any other values. This implies that
 #' `NA >= NA` is a match, but `NA > NA` is not. Similarly, both `NA >= 1` and
 #' `1 >= NA` result in an unmatched needle.
 #'
@@ -71,19 +71,17 @@
 #'   if the maximum or minimum haystack value is duplicated in `haystack`. These
 #'   can be further controlled with `multiple`.
 #'
-#' @param missing Treatment of missing values in `needles`.
-#'   - `"match"` matches missing values in `needles` to missing values in
-#'     `haystack`. `nan_distinct` determines whether a `NA` is allowed
-#'     to match a `NaN`.
-#'   - `"drop"` drops missing values in `needles` from the result.
-#'   - `"error"` throws an error if any `needles` are missing.
+#' @param incomplete Handling of [incomplete][vec_detect_complete] observations
+#'   in `needles`.
+#'   - `"match"` matches incomplete observations in `needles` to incomplete
+#'     observations in `haystack`. `nan_distinct` determines whether a `NA` is
+#'     allowed to match a `NaN`.
+#'   - `"drop"` drops incomplete observations in `needles` from the result.
+#'   - `"error"` throws an error if any `needles` are incomplete.
 #'   - If a single integer is provided, this represents the value returned
-#'     in the `haystack` column for observations of `needles` that contain
-#'     a missing value. If `no_match = NA`, setting `missing = NA` forces
-#'     missing values in `needles` to be treated like unmatched values.
-#'
-#'   For data frame input, if _any_ column in a particular row contains a
-#'   missing value, then the entire row is considered missing.
+#'     in the `haystack` column for observations of `needles` that are
+#'     incomplete. If `no_match = NA`, setting `incomplete = NA` forces
+#'     incomplete observations in `needles` to be treated like unmatched values.
 #'
 #' @param no_match Handling of `needles` without a match.
 #'   - `"drop"` drops `needles` with zero matches from the result.
@@ -145,20 +143,20 @@
 #' # different values, so NA can only match NA, and NaN can only match NaN.
 #' vec_matches(x, y, nan_distinct = TRUE)
 #'
-#' # If you don't want any missing values in `needles` to match missing values
-#' # in `haystack`, set `missing = NA` to propagate missing values in
-#' # `needles` as unmatched NAs in the result
-#' vec_matches(x, y, missing = NA)
+#' # If you never want missing values to match, set `incomplete = NA` to return
+#' # `NA` in the `haystack` column anytime there was an incomplete observation
+#' # in `needles`.
+#' vec_matches(x, y, incomplete = NA)
 #'
 #' # `no_match` allows you to specify the returned value for a needle with
-#' # zero matches. Note that this is different from a propagated missing value,
-#' # so specifying `no_match` allows you to differentiate between propagated
-#' # missing values and unmatched values.
-#' vec_matches(x, y, missing = NA, no_match = 0L)
+#' # zero matches. Note that this is different from an incomplete value,
+#' # so specifying `no_match` allows you to differentiate between incomplete
+#' # values and unmatched values.
+#' vec_matches(x, y, incomplete = NA, no_match = 0L)
 #'
 #' # If you want to require that every `needle` has at least 1 match, set
 #' # `no_match` to `"error"`:
-#' try(vec_matches(x, y, missing = NA, no_match = "error"))
+#' try(vec_matches(x, y, incomplete = NA, no_match = "error"))
 #'
 #' # By default, `vec_matches()` detects equality between `needles` and
 #' # `haystack`. Using `condition`, you can detect where an inequality holds
@@ -218,7 +216,7 @@ vec_matches <- function(needles,
                         ...,
                         condition = "==",
                         filter = "none",
-                        missing = "match",
+                        incomplete = "match",
                         no_match = NA_integer_,
                         remaining = "drop",
                         multiple = "all",
@@ -234,7 +232,7 @@ vec_matches <- function(needles,
     haystack,
     condition,
     filter,
-    missing,
+    incomplete,
     no_match,
     remaining,
     multiple,
@@ -334,28 +332,28 @@ cnd_body.vctrs_error_matches_remaining <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_missing <- function(i, needles_arg) {
+stop_matches_incomplete <- function(i, needles_arg) {
   stop_matches(
-    class = "vctrs_error_matches_missing",
+    class = "vctrs_error_matches_incomplete",
     i = i,
     needles_arg = needles_arg
   )
 }
 
 #' @export
-cnd_header.vctrs_error_matches_missing <- function(cnd, ...) {
+cnd_header.vctrs_error_matches_incomplete <- function(cnd, ...) {
   if (nzchar(cnd$needles_arg)) {
     needles_name <- glue::glue(" of `{cnd$needles_arg}` ")
   } else {
     needles_name <- " "
   }
 
-  glue::glue("No element{needles_name}can be missing.")
+  glue::glue("No element{needles_name}can contain missing values.")
 }
 
 #' @export
-cnd_body.vctrs_error_matches_missing <- function(cnd, ...) {
-  bullet <- glue::glue("The element at location {cnd$i} is missing.")
+cnd_body.vctrs_error_matches_incomplete <- function(cnd, ...) {
+  bullet <- glue::glue("The element at location {cnd$i} contains missing values.")
   bullet <- c(x = bullet)
   format_error_bullets(bullet)
 }
