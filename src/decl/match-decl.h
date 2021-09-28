@@ -134,10 +134,7 @@ static inline
 enum vctrs_multiple parse_multiple(r_obj* multiple);
 
 static inline
-void parse_filter(r_obj* filter,
-                  r_ssize n_cols,
-                  enum vctrs_filter* v_filters,
-                  bool* p_any_filters);
+void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters);
 
 static
 r_obj* expand_match_on_nothing(r_ssize size_needles,

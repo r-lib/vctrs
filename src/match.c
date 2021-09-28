@@ -201,9 +201,16 @@ r_obj* vec_matches(r_obj* needles,
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, v_ops, n_cols);
 
-  bool any_filters = false;
   enum vctrs_filter* v_filters = (enum vctrs_filter*) R_alloc(n_cols, sizeof(enum vctrs_filter));
-  parse_filter(filter, n_cols, v_filters, &any_filters);
+  parse_filter(filter, n_cols, v_filters);
+
+  bool any_filters = false;
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    if (v_filters[i] != VCTRS_FILTER_none) {
+      any_filters = true;
+      break;
+    }
+  }
 
   if (n_cols == 0) {
     // If we have a match `condition`, but there are no columns, this operation
@@ -1569,27 +1576,16 @@ enum vctrs_multiple parse_multiple(r_obj* multiple) {
 // -----------------------------------------------------------------------------
 
 static inline
-enum vctrs_filter parse_filter_one(const char* filter, bool* p_any_filters) {
-  if (!strcmp(filter, "none")) {
-    return VCTRS_FILTER_none;
-  }
-  if (!strcmp(filter, "min")) {
-    *p_any_filters = true;
-    return VCTRS_FILTER_min;
-  }
-  if (!strcmp(filter, "max")) {
-    *p_any_filters = true;
-    return VCTRS_FILTER_max;
-  }
+enum vctrs_filter parse_filter_one(const char* filter) {
+  if (!strcmp(filter, "none")) return VCTRS_FILTER_none;
+  if (!strcmp(filter, "min")) return VCTRS_FILTER_min;
+  if (!strcmp(filter, "max")) return VCTRS_FILTER_max;
 
   r_abort("`filter` must be one of \"none\", \"min\", or \"max\".");
 }
 
 static inline
-void parse_filter(r_obj* filter,
-                  r_ssize n_cols,
-                  enum vctrs_filter* v_filters,
-                  bool* p_any_filters) {
+void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters) {
   if (r_typeof(filter) != R_TYPE_character) {
     r_abort("`filter` must be a character vector.");
   }
@@ -1599,7 +1595,7 @@ void parse_filter(r_obj* filter,
 
   if (size_filter == 1) {
     const char* elt = r_str_c_string(v_filter[0]);
-    enum vctrs_filter elt_filter = parse_filter_one(elt, p_any_filters);
+    enum vctrs_filter elt_filter = parse_filter_one(elt);
 
     for (r_ssize i = 0; i < n_cols; ++i) {
       v_filters[i] = elt_filter;
@@ -1611,7 +1607,7 @@ void parse_filter(r_obj* filter,
   if (size_filter == n_cols) {
     for (r_ssize i = 0; i < n_cols; ++i) {
       const char* elt = r_str_c_string(v_filter[i]);
-      v_filters[i] = parse_filter_one(elt, p_any_filters);
+      v_filters[i] = parse_filter_one(elt);
     }
 
     return;
