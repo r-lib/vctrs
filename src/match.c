@@ -1,7 +1,6 @@
 #include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
-#include "rank.h"
 #include "complete.h"
 #include "poly-op.h"
 #include "compare.h"
