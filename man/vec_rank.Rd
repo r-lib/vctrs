@@ -8,7 +8,7 @@ vec_rank(
   x,
   ...,
   ties = c("min", "max", "sequential", "dense"),
-  na_propagate = FALSE,
+  incomplete = c("rank", "na"),
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
@@ -34,9 +34,13 @@ non-duplicate value will have a rank incremented by \code{1}, effectively
 removing any gaps in the ranking.
 }}
 
-\item{na_propagate}{A single logical specifying whether or not missing
-values should be propagated. If \code{TRUE}, all missing values are given
-the rank \code{NA}.}
+\item{incomplete}{Treatment of \link[=vec_detect_complete]{incomplete} values.
+\itemize{
+\item \code{"rank"}: Give incomplete values a numeric rank, which is affected
+by \code{na_value} and \code{nan_distinct}.
+\item \code{"na"}: Give incomplete values a rank of \code{NA}, regardless of the value
+of any other argument.
+}}
 
 \item{direction}{Direction to sort in.
 \itemize{
@@ -82,13 +86,10 @@ are computed along the rows, using all columns after the first to break
 ties.
 }
 \details{
-Unlike \code{\link[base:rank]{base::rank()}}, when \code{na_propagate = FALSE} all \code{NA} values are
+Unlike \code{\link[base:rank]{base::rank()}}, when \code{incomplete = "rank"} all missing values are
 given the same rank, rather than an increasing sequence of ranks. When
 \code{nan_distinct = FALSE}, \code{NaN} values are given the same rank as \code{NA},
 otherwise they are given a rank that differentiates them from \code{NA}.
-
-For data frames, \code{na_propagate = TRUE} will propagate a missing value if
-any row is incomplete, as determined by \code{\link[=vec_detect_complete]{vec_detect_complete()}}.
 
 Like \code{\link[=vec_order]{vec_order()}}, ordering is done in the C-locale. This can affect
 the ranks of character vectors, especially regarding how uppercase and
@@ -118,7 +119,8 @@ vec_rank(x, ties = "dense")
 
 y <- c(NA, x, NA, NaN)
 
-# Missing values match other missing values
+# Incomplete values match other incomplete values by default, and their
+# overall position can be adjusted with `na_value`
 vec_rank(y, na_value = "largest")
 vec_rank(y, na_value = "smallest")
 
@@ -128,6 +130,9 @@ vec_rank(y, nan_distinct = TRUE)
 # Rank in descending order. Since missing values are the largest value,
 # they are given a rank of `1` when ranking in descending order.
 vec_rank(y, direction = "desc", na_value = "largest")
+
+# Give incomplete values a rank of `NA` by setting `incomplete = "na"`
+vec_rank(y, incomplete = "na")
 
 # Can also rank data frames, using columns after the first to break ties
 z <- c(2L, 3L, 4L, 4L, 5L, 2L)

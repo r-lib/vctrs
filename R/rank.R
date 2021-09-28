@@ -5,13 +5,10 @@
 #' ties.
 #'
 #' @details
-#' Unlike [base::rank()], when `na_propagate = FALSE` all `NA` values are
+#' Unlike [base::rank()], when `incomplete = "rank"` all missing values are
 #' given the same rank, rather than an increasing sequence of ranks. When
 #' `nan_distinct = FALSE`, `NaN` values are given the same rank as `NA`,
 #' otherwise they are given a rank that differentiates them from `NA`.
-#'
-#' For data frames, `na_propagate = TRUE` will propagate a missing value if
-#' any row is incomplete, as determined by [vec_detect_complete()].
 #'
 #' Like [vec_order()], ordering is done in the C-locale. This can affect
 #' the ranks of character vectors, especially regarding how uppercase and
@@ -36,9 +33,13 @@
 #'   non-duplicate value will have a rank incremented by `1`, effectively
 #'   removing any gaps in the ranking.
 #'
-#' @param na_propagate A single logical specifying whether or not missing
-#'   values should be propagated. If `TRUE`, all missing values are given
-#'   the rank `NA`.
+#' @param incomplete Treatment of [incomplete][vec_detect_complete] values.
+#'
+#'   - `"rank"`: Give incomplete values a numeric rank, which is affected
+#'   by `na_value` and `nan_distinct`.
+#'
+#'   - `"na"`: Give incomplete values a rank of `NA`, regardless of the value
+#'   of any other argument.
 #'
 #' @section Dependencies:
 #'
@@ -61,7 +62,8 @@
 #'
 #' y <- c(NA, x, NA, NaN)
 #'
-#' # Missing values match other missing values
+#' # Incomplete values match other incomplete values by default, and their
+#' # overall position can be adjusted with `na_value`
 #' vec_rank(y, na_value = "largest")
 #' vec_rank(y, na_value = "smallest")
 #'
@@ -72,6 +74,9 @@
 #' # they are given a rank of `1` when ranking in descending order.
 #' vec_rank(y, direction = "desc", na_value = "largest")
 #'
+#' # Give incomplete values a rank of `NA` by setting `incomplete = "na"`
+#' vec_rank(y, incomplete = "na")
+#'
 #' # Can also rank data frames, using columns after the first to break ties
 #' z <- c(2L, 3L, 4L, 4L, 5L, 2L)
 #' df <- data_frame(x = x, z = z)
@@ -81,7 +86,7 @@
 vec_rank <- function(x,
                      ...,
                      ties = c("min", "max", "sequential", "dense"),
-                     na_propagate = FALSE,
+                     incomplete = c("rank", "na"),
                      direction = "asc",
                      na_value = "largest",
                      nan_distinct = FALSE,
@@ -89,12 +94,13 @@ vec_rank <- function(x,
   check_dots_empty0(...)
 
   ties <- arg_match0(ties, c("min", "max", "sequential", "dense"), "ties")
+  incomplete <- arg_match0(incomplete, c("rank", "na"), "incomplete")
 
   .Call(
     vctrs_rank,
     x,
     ties,
-    na_propagate,
+    incomplete,
     direction,
     na_value,
     nan_distinct,

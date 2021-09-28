@@ -10,24 +10,29 @@ enum ties {
   TIES_dense
 };
 
+enum incomplete {
+  INCOMPLETE_rank,
+  INCOMPLETE_na
+};
+
 #include "decl/rank-decl.h"
 
 // [[ register() ]]
 r_obj* vctrs_rank(r_obj* x,
                   r_obj* ties,
-                  r_obj* na_propagate,
+                  r_obj* incomplete,
                   r_obj* direction,
                   r_obj* na_value,
                   r_obj* nan_distinct,
                   r_obj* chr_proxy_collate) {
   const enum ties c_ties = parse_ties(ties);
-  const bool c_na_propagate = r_as_bool(na_propagate);
+  const enum incomplete c_incomplete = parse_incomplete(incomplete);
   const bool c_nan_distinct = r_as_bool(nan_distinct);
 
   return vec_rank(
     x,
     c_ties,
-    c_na_propagate,
+    c_incomplete,
     direction,
     na_value,
     c_nan_distinct,
@@ -38,7 +43,7 @@ r_obj* vctrs_rank(r_obj* x,
 static
 r_obj* vec_rank(r_obj* x,
                 enum ties ties_type,
-                bool na_propagate,
+                enum incomplete incomplete_type,
                 r_obj* direction,
                 r_obj* na_value,
                 bool nan_distinct,
@@ -54,8 +59,9 @@ r_obj* vec_rank(r_obj* x,
   int* v_complete = NULL;
 
   r_ssize rank_size = size;
+  bool rank_incomplete_with_na = (incomplete_type == INCOMPLETE_na);
 
-  if (na_propagate) {
+  if (rank_incomplete_with_na) {
     // Slice out complete values of `x` to rank.
     // Retain the logical vector for constructing `out`.
     complete = vec_detect_complete(x);
@@ -65,7 +71,8 @@ r_obj* vec_rank(r_obj* x,
     bool all_complete = r_lgl_all(complete);
 
     if (all_complete) {
-      na_propagate = false;
+      // No incomplete values to rank
+      rank_incomplete_with_na = false;
     } else {
       x = vec_slice(x, complete);
       KEEP_AT(x, pi_x);
@@ -97,7 +104,7 @@ r_obj* vec_rank(r_obj* x,
 
   r_obj* out = r_null;
 
-  if (na_propagate) {
+  if (rank_incomplete_with_na) {
     out = KEEP(r_alloc_integer(size));
     int* v_out = r_int_begin(out);
     r_ssize j = 0;
@@ -217,6 +224,25 @@ enum ties parse_ties(r_obj* ties) {
   r_stop_internal(
     "parse_ties",
     "`ties` must be one of: \"min\", \"max\", \"sequential\", or \"dense\"."
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+static inline
+enum incomplete parse_incomplete(r_obj* incomplete) {
+  if (!r_is_string(incomplete)) {
+    r_stop_internal("parse_incomplete", "`incomplete` must be a string.");
+  }
+
+  const char* c_incomplete = r_chr_get_c_string(incomplete, 0);
+
+  if (!strcmp(c_incomplete, "rank")) return INCOMPLETE_rank;
+  if (!strcmp(c_incomplete, "na")) return INCOMPLETE_na;
+
+  r_stop_internal(
+    "parse_incomplete",
+    "`incomplete` must be either \"rank\" or \"na\"."
   );
 }
 
