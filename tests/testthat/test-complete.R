@@ -78,7 +78,7 @@ test_that("takes the equality proxy", {
   expect_identical(vec_detect_complete(df), expect)
 })
 
-test_that("columns with a data frame proxy are incomplete if any columns of the proxy are incomplete", {
+test_that("columns with a data frame proxy are incomplete if any columns of the proxy are incomplete (#1404)", {
   df <- data_frame(
     x = c(NA, 0, 1, 2, 3),
     y = new_rcrd(list(a = c(1, 1, 1, NA, NA), b = c(2, 2, 2, 2, NA))),
