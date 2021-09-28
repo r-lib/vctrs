@@ -163,16 +163,13 @@ r_obj* vec_matches(r_obj* needles,
 
   // Support non-data frame types by wrapping them in a 1-col data frame
   if (!is_data_frame(needles)) {
-    ptype = KEEP_N(r_list(ptype), &n_prot);
     needles = KEEP_N(r_list(needles), &n_prot);
     haystack = KEEP_N(r_list(haystack), &n_prot);
 
     r_obj* names = KEEP_N(r_chr("x"), &n_prot);
-    r_poke_names(ptype, names);
     r_poke_names(needles, names);
     r_poke_names(haystack, names);
 
-    r_init_data_frame(ptype, 0);
     r_init_data_frame(needles, size_needles);
     r_init_data_frame(haystack, size_haystack);
   }
@@ -231,7 +228,6 @@ r_obj* vec_matches(r_obj* needles,
     size_needles,
     size_haystack,
     n_cols,
-    ptype,
     nan_distinct,
     chr_transform
   ), &n_prot);
@@ -1224,7 +1220,6 @@ r_obj* df_joint_xtfrm_by_col(r_obj* x,
                              r_ssize x_size,
                              r_ssize y_size,
                              r_ssize n_cols,
-                             r_obj* ptype,
                              bool nan_distinct,
                              r_obj* chr_transform) {
   r_obj* out = KEEP(r_alloc_list(2));
