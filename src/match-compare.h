@@ -10,8 +10,8 @@
  * returned from:
  * `vec_order(x, direction = "asc", na_value = "smallest", nan_distinct = nan_distinct)`
  *
- * They are intended for internal use in `vec_matches()`, which uses that
- * exact setup to call `vec_order()`.
+ * They are intended for internal use in `vec_joint_xtfrm()`, which uses that
+ * exact setup to call `vec_order_info()`.
  *
  * In particular, double and complex types match the ordering results from
  * using `nan_distinct`. If `false`, they are treated equally. If `true`,
