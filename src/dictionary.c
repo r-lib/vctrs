@@ -589,26 +589,37 @@ SEXP vctrs_duplicated(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
-  int* p_val = INTEGER(val);
+  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
+  int* p_out = LOGICAL(out);
+  memset(p_out, 0, n * sizeof(int));
 
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
+  uint32_t* p_hashes = (uint32_t*) R_alloc(n, sizeof(uint32_t));
+
+  // Forward pass
+  for (R_len_t i = 0; i < n; ++i) {
+    const uint32_t hash = dict_hash_scalar(d, i);
+    p_hashes[i] = hash;
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
-      p_val[hash] = 0;
+    } else {
+      p_out[i] = 1;
     }
-    p_val[hash]++;
   }
 
-  // Create output
-  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
-  int* p_out = LOGICAL(out);
+  for (uint32_t i = 0; i < d->size; ++i) {
+    d->key[i] = DICT_EMPTY;
+  }
 
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-    p_out[i] = p_val[hash] != 1;
+  // Reverse pass
+  for (R_len_t i = n - 1; i >= 0; --i) {
+    const uint32_t hash = p_hashes[i];
+
+    if (d->key[hash] == DICT_EMPTY) {
+      dict_put(d, hash, i);
+    } else {
+      p_out[i] = 1;
+    }
   }
 
   UNPROTECT(nprot);
