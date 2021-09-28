@@ -42,10 +42,10 @@ r_obj* df_matches(r_obj* needles,
 
 static
 void df_matches_recurse(r_ssize col,
-                        r_ssize loc_lower_o_needles,
-                        r_ssize loc_upper_o_needles,
-                        r_ssize loc_lower_o_haystack,
-                        r_ssize loc_upper_o_haystack,
+                        r_ssize loc_lower_bound_o_needles,
+                        r_ssize loc_upper_bound_o_needles,
+                        r_ssize loc_lower_bound_o_haystack,
+                        r_ssize loc_upper_bound_o_haystack,
                         const struct poly_df_data* p_needles,
                         const struct poly_df_data* p_haystack,
                         const struct poly_df_data* p_needles_complete,
@@ -68,8 +68,8 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
                                    int n_nested_groups,
                                    const int* v_nested_groups,
                                    r_ssize col,
-                                   r_ssize loc_lower_o_needles,
-                                   r_ssize loc_upper_o_needles,
+                                   r_ssize loc_lower_bound_o_needles,
+                                   r_ssize loc_upper_bound_o_needles,
                                    const struct poly_df_data* p_needles,
                                    const struct poly_df_data* p_haystack,
                                    const struct poly_df_data* p_needles_complete,
@@ -90,20 +90,20 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
 static inline
 r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
                                     const int* v_o_haystack,
-                                    r_ssize loc_lower_o_haystack,
-                                    r_ssize loc_upper_o_haystack);
+                                    r_ssize loc_lower_bound_o_haystack,
+                                    r_ssize loc_upper_bound_o_haystack);
 static inline
 r_ssize int_lower_duplicate(int needle,
                             const int* v_haystack,
                             const int* v_o_haystack,
-                            r_ssize loc_lower_o_haystack,
-                            r_ssize loc_upper_o_haystack);
+                            r_ssize loc_lower_bound_o_haystack,
+                            r_ssize loc_upper_bound_o_haystack);
 static inline
 r_ssize int_upper_duplicate(int needle,
                             const int* v_haystack,
                             const int* v_o_haystack,
-                            r_ssize loc_lower_o_haystack,
-                            r_ssize loc_upper_o_haystack);
+                            r_ssize loc_lower_bound_o_haystack,
+                            r_ssize loc_upper_bound_o_haystack);
 
 static
 r_obj* df_joint_xtfrm_by_col(r_obj* x,
