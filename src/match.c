@@ -199,7 +199,7 @@ r_obj* vec_matches(r_obj* needles,
   r_ssize n_cols = r_length(needles);
 
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
-  parse_condition(condition, v_ops, n_cols);
+  parse_condition(condition, n_cols, v_ops);
 
   enum vctrs_filter* v_filters = (enum vctrs_filter*) R_alloc(n_cols, sizeof(enum vctrs_filter));
   parse_filter(filter, n_cols, v_filters);
@@ -1476,7 +1476,7 @@ enum vctrs_ops parse_condition_one(const char* condition) {
 }
 
 static inline
-void parse_condition(r_obj* condition, enum vctrs_ops* v_ops, r_ssize n_cols) {
+void parse_condition(r_obj* condition, r_ssize n_cols, enum vctrs_ops* v_ops) {
   if (r_typeof(condition) != R_TYPE_character) {
     r_abort("`condition` must be a character vector, or `NULL`.");
   }
@@ -2177,7 +2177,7 @@ r_obj* vctrs_test_compute_nested_containment_info(r_obj* haystack,
                                                   r_obj* multiple) {
   r_ssize n_cols = r_length(haystack);
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
-  parse_condition(condition, v_ops, n_cols);
+  parse_condition(condition, n_cols, v_ops);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
   struct vctrs_arg haystack_arg = new_wrapper_arg(NULL, "haystack");
   return compute_nested_containment_info(haystack, c_multiple, v_ops, &haystack_arg);
