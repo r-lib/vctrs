@@ -11,7 +11,7 @@
  */
 
 #include <rlang.h>
-#include "order-transform.h"
+#include "order-collate.h"
 #include "utils.h"
 
 // -----------------------------------------------------------------------------
@@ -19,7 +19,7 @@
 static SEXP chr_apply_transform(SEXP x, SEXP chr_proxy_collate);
 static SEXP df_apply_transform(SEXP x, SEXP chr_proxy_collate);
 
-// [[ include("order-transform.h") ]]
+// [[ include("order-collate.h") ]]
 SEXP proxy_chr_transform(SEXP proxy, SEXP chr_proxy_collate) {
   if (chr_proxy_collate == r_null) {
     return proxy;

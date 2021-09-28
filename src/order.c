@@ -21,7 +21,7 @@
 #include "order-groups.h"
 #include "order-truelength.h"
 #include "order-sortedness.h"
-#include "order-transform.h"
+#include "order-collate.h"
 
 // -----------------------------------------------------------------------------
 
