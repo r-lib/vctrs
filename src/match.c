@@ -295,7 +295,7 @@ r_obj* df_matches(r_obj* needles,
   const int* v_nested_groups = r_int_cbegin(nested_groups);
 
   int n_nested_groups = r_as_int(r_list_get(info, 2));
-  bool any_directional = r_as_bool(r_list_get(info, 3));
+  bool any_non_equi = r_as_bool(r_list_get(info, 3));
 
   // In the case of possible multiple matches that fall in separate
   // nested containers, allocate ~20% extra room
@@ -457,7 +457,7 @@ r_obj* df_matches(r_obj* needles,
     multiple,
     size_needles,
     size_haystack,
-    any_directional,
+    any_non_equi,
     has_locs_filter_match_haystack,
     v_filters,
     v_locs_filter_match_haystack,
@@ -1680,7 +1680,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               enum vctrs_multiple multiple,
                               r_ssize size_needles,
                               r_ssize size_haystack,
-                              bool any_directional,
+                              bool any_non_equi,
                               bool has_locs_filter_match_haystack,
                               const enum vctrs_filter* v_filters,
                               const int* v_locs_filter_match_haystack,
@@ -1901,7 +1901,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     v_out_haystack = r_int_begin(out_haystack);
   }
 
-  if (any_multiple && any_directional) {
+  if (any_multiple && any_non_equi) {
     // If we had multiple matches and we were doing a non-equi join, then
     // the needles column will be correct, but any group of multiple matches in
     // the haystack column will be ordered incorrectly within the needle group.
@@ -2001,24 +2001,24 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   r_obj* out = KEEP_N(r_alloc_list(4), &n_prot);
 
   // Are there any directional ops (>, >=, <, <=)? And where is the first?
-  bool any_directional = false;
+  bool any_non_equi = false;
   int first_directional = 0;
   for (r_ssize i = 0; i < n_cols; ++i) {
     enum vctrs_ops op = v_ops[i];
     if (op == VCTRS_OPS_eq) {
       continue;
     }
-    any_directional = true;
+    any_non_equi = true;
     first_directional = i;
     break;
   }
 
-  if (!any_directional) {
+  if (!any_non_equi) {
     // Nested group info isn't required for only `==`
     r_list_poke(out, 0, vec_order(haystack, chrs_asc, chrs_smallest, true, r_null));
     r_list_poke(out, 1, vctrs_shared_empty_int);
     r_list_poke(out, 2, r_int(1));
-    r_list_poke(out, 3, r_lgl(any_directional));
+    r_list_poke(out, 3, r_lgl(any_non_equi));
     FREE(n_prot);
     return out;
   }
@@ -2096,7 +2096,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     r_list_poke(out, 0, o_haystack);
     r_list_poke(out, 1, vctrs_shared_empty_int);
     r_list_poke(out, 2, r_int(1));
-    r_list_poke(out, 3, r_lgl(any_directional));
+    r_list_poke(out, 3, r_lgl(any_non_equi));
     FREE(n_prot);
     return out;
   }
@@ -2132,7 +2132,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   r_list_poke(out, 0, o_haystack);
   r_list_poke(out, 1, nested_groups);
   r_list_poke(out, 2, r_int(n_nested_groups));
-  r_list_poke(out, 3, r_lgl(any_directional));
+  r_list_poke(out, 3, r_lgl(any_non_equi));
 
   FREE(n_prot);
   return out;
