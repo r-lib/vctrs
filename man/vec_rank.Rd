@@ -12,7 +12,7 @@ vec_rank(
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
-  chr_transform = NULL
+  chr_proxy_collate = NULL
 )
 }
 \arguments{
@@ -59,7 +59,7 @@ be treated in each column.
 be considered distinct from \code{NA} for double and complex vectors. If \code{TRUE},
 \code{NaN} will always be ordered between \code{NA} and non-missing numbers.}
 
-\item{chr_transform}{Transformation of character vectors for sorting in
+\item{chr_proxy_collate}{Transformation of character vectors for sorting in
 alternate locales.
 \itemize{
 \item If \code{NULL}, no transformation is done.
@@ -68,7 +68,7 @@ invoked with \code{x}, if it is a character vector, after it has been
 translated to UTF-8, and should return a character vector with the same
 length as \code{x}. The result should sort as expected in the C-locale,
 regardless of encoding.
-\item For data frames, \code{chr_transform} will be applied to all character
+\item For data frames, \code{chr_proxy_collate} will be applied to all character
 columns.
 }
 

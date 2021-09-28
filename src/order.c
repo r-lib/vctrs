@@ -193,16 +193,16 @@ SEXP vctrs_order(SEXP x,
                  SEXP direction,
                  SEXP na_value,
                  SEXP nan_distinct,
-                 SEXP chr_transform) {
+                 SEXP chr_proxy_collate) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  return vec_order(x, direction, na_value, c_nan_distinct, chr_transform);
+  return vec_order(x, direction, na_value, c_nan_distinct, chr_proxy_collate);
 }
 
 static SEXP vec_order_info_impl(SEXP x,
                                 SEXP direction,
                                 SEXP na_value,
                                 bool nan_distinct,
-                                SEXP chr_transform,
+                                SEXP chr_proxy_collate,
                                 bool chr_ordered,
                                 bool group_sizes);
 
@@ -211,10 +211,10 @@ SEXP vec_order(SEXP x,
                SEXP direction,
                SEXP na_value,
                bool nan_distinct,
-               SEXP chr_transform) {
+               SEXP chr_proxy_collate) {
   const bool chr_ordered = true;
   const bool group_sizes = false;
-  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, chr_ordered, group_sizes);
+  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered, group_sizes);
   return r_list_get(info, 0);
 }
 
@@ -224,24 +224,24 @@ static SEXP vec_order_locs(SEXP x,
                            SEXP direction,
                            SEXP na_value,
                            bool nan_distinct,
-                           SEXP chr_transform);
+                           SEXP chr_proxy_collate);
 
 // [[ register() ]]
 SEXP vctrs_order_locs(SEXP x,
                       SEXP direction,
                       SEXP na_value,
                       SEXP nan_distinct,
-                      SEXP chr_transform) {
+                      SEXP chr_proxy_collate) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  return vec_order_locs(x, direction, na_value, c_nan_distinct, chr_transform);
+  return vec_order_locs(x, direction, na_value, c_nan_distinct, chr_proxy_collate);
 }
 
 
 static
-SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_transform) {
+SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_proxy_collate) {
   const bool chr_ordered = true;
 
-  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform, chr_ordered));
+  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered));
 
   SEXP o = r_list_get(info, 0);
   const int* p_o = r_int_cbegin(o);
@@ -309,10 +309,10 @@ SEXP vec_order_info(SEXP x,
                     SEXP direction,
                     SEXP na_value,
                     bool nan_distinct,
-                    SEXP chr_transform,
+                    SEXP chr_proxy_collate,
                     bool chr_ordered) {
   const bool group_sizes = true;
-  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_transform, chr_ordered, group_sizes);
+  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered, group_sizes);
 }
 
 // [[ register() ]]
@@ -320,11 +320,11 @@ SEXP vctrs_order_info(SEXP x,
                       SEXP direction,
                       SEXP na_value,
                       SEXP nan_distinct,
-                      SEXP chr_transform,
+                      SEXP chr_proxy_collate,
                       SEXP chr_ordered) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
   bool c_chr_ordered = r_bool_as_int(chr_ordered);
-  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_transform, c_chr_ordered);
+  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_proxy_collate, c_chr_ordered);
 }
 
 static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
@@ -356,7 +356,7 @@ SEXP vec_order_info_impl(SEXP x,
                          SEXP direction,
                          SEXP na_value,
                          bool nan_distinct,
-                         SEXP chr_transform,
+                         SEXP chr_proxy_collate,
                          bool chr_ordered,
                          bool group_sizes) {
   int n_prot = 0;
@@ -376,7 +376,7 @@ SEXP vec_order_info_impl(SEXP x,
 
   SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
   proxy = PROTECT_N(vec_normalize_encoding(proxy), &n_prot);
-  proxy = PROTECT_N(proxy_chr_transform(proxy, chr_transform), &n_prot);
+  proxy = PROTECT_N(proxy_chr_transform(proxy, chr_proxy_collate), &n_prot);
 
   r_ssize size = vec_size(proxy);
   const enum vctrs_type type = vec_proxy_typeof(proxy);

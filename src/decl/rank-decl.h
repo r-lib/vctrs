@@ -8,7 +8,7 @@ static r_obj* vec_rank(r_obj* x,
                        r_obj* direction,
                        r_obj* na_value,
                        bool nan_distinct,
-                       r_obj* chr_transform);
+                       r_obj* chr_proxy_collate);
 
 static void vec_rank_min(const int* v_order,
                          const int* v_group_sizes,

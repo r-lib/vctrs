@@ -931,27 +931,27 @@ test_that("can order 2+ double column chunks with radix sort", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_order() - chr_transform
+# vec_order() - chr_proxy_collate
 
-test_that("`chr_transform` transforms string input", {
+test_that("`chr_proxy_collate` transforms string input", {
   x <- c("b", "a", "A")
-  expect_identical(vec_order(x, chr_transform = tolower), c(2L, 3L, 1L))
-  expect_identical(vec_order(x, chr_transform = ~tolower(.x)), c(2L, 3L, 1L))
+  expect_identical(vec_order(x, chr_proxy_collate = tolower), c(2L, 3L, 1L))
+  expect_identical(vec_order(x, chr_proxy_collate = ~tolower(.x)), c(2L, 3L, 1L))
 })
 
-test_that("`chr_transform` works with data frame columns and is applied to all string columns", {
+test_that("`chr_proxy_collate` works with data frame columns and is applied to all string columns", {
   df <- data_frame(x = c(1, 1, 1), y = c("B", "a", "a"), z = c("a", "D", "c"))
-  expect_identical(vec_order(df, chr_transform = tolower), c(3L, 2L, 1L))
+  expect_identical(vec_order(df, chr_proxy_collate = tolower), c(3L, 2L, 1L))
 })
 
-test_that("`chr_transform` is validated", {
-  expect_error(vec_order("x", chr_transform = 1), "Can't convert `chr_transform` to a function")
-  expect_error(vec_order("x", chr_transform = ~c("y", "z")), "1, not 2")
-  expect_error(vec_order("x", chr_transform = ~1), "character vector")
-  expect_error(vec_order("x", chr_transform = function() {"y"}))
+test_that("`chr_proxy_collate` is validated", {
+  expect_error(vec_order("x", chr_proxy_collate = 1), "Can't convert `chr_proxy_collate` to a function")
+  expect_error(vec_order("x", chr_proxy_collate = ~c("y", "z")), "1, not 2")
+  expect_error(vec_order("x", chr_proxy_collate = ~1), "character vector")
+  expect_error(vec_order("x", chr_proxy_collate = function() {"y"}))
 })
 
-test_that("`chr_transform` can return bytes-encoded strings (like `stringi::stri_sort_key()`)", {
+test_that("`chr_proxy_collate` can return bytes-encoded strings (like `stringi::stri_sort_key()`)", {
   x <- c("A", "a", "b", "B")
 
   # Mimic stringi::stri_sort_key(x, locale = "en")
@@ -975,7 +975,7 @@ test_that("`chr_transform` can return bytes-encoded strings (like `stringi::stri
   }
 
   expect_identical(
-    vec_order(x, chr_transform = sort_key),
+    vec_order(x, chr_proxy_collate = sort_key),
     c(2L, 1L, 3L, 4L)
   )
 })
@@ -1153,15 +1153,15 @@ test_that("`vec_order_locs()` is working", {
   expect_identical(vec_order_locs(x), expect)
 })
 
-test_that("`chr_transform` can result in keys being seen as identical", {
+test_that("`chr_proxy_collate` can result in keys being seen as identical", {
   x <- c("b", "A", "a")
   y <- c("b", "a", "A")
 
   x_expect <- data_frame(key = c("A", "b"), loc = list(c(2L, 3L), 1L))
   y_expect <- data_frame(key = c("a", "b"), loc = list(c(2L, 3L), 1L))
 
-  expect_identical(vec_order_locs(x, chr_transform = tolower), x_expect)
-  expect_identical(vec_order_locs(y, chr_transform = tolower), y_expect)
+  expect_identical(vec_order_locs(x, chr_proxy_collate = tolower), x_expect)
+  expect_identical(vec_order_locs(y, chr_proxy_collate = tolower), y_expect)
 })
 
 # ------------------------------------------------------------------------------

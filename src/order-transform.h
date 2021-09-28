@@ -18,7 +18,7 @@
 // -----------------------------------------------------------------------------
 
 /*
- * `proxy_chr_transform()` iterates over `proxy`, applying `chr_transform`
+ * `proxy_chr_transform()` iterates over `proxy`, applying `chr_proxy_collate`
  * on any character vectors that it detects.
  *
  * It expects that:
@@ -27,7 +27,7 @@
  * - All character vectors in `proxy` have already been normalized to UTF-8
  *   by `vec_normalize_encoding()`.
  */
-SEXP proxy_chr_transform(SEXP proxy, SEXP chr_transform);
+SEXP proxy_chr_transform(SEXP proxy, SEXP chr_proxy_collate);
 
 // -----------------------------------------------------------------------------
 #endif

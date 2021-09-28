@@ -24,7 +24,7 @@
 #' @param nan_distinct A single logical specifying whether or not `NaN` should
 #'   be considered distinct from `NA` for double and complex vectors. If `TRUE`,
 #'   `NaN` will always be ordered between `NA` and non-missing numbers.
-#' @param chr_transform Transformation of character vectors for sorting in
+#' @param chr_proxy_collate Transformation of character vectors for sorting in
 #'   alternate locales.
 #'   - If `NULL`, no transformation is done.
 #'   - Otherwise, this must be a function of one argument. The function will be
@@ -32,7 +32,7 @@
 #'     translated to UTF-8, and should return a character vector with the same
 #'     length as `x`. The result should sort as expected in the C-locale,
 #'     regardless of encoding.
-#'   - For data frames, `chr_transform` will be applied to all character
+#'   - For data frames, `chr_proxy_collate` will be applied to all character
 #'     columns.
 #'
 #'   Common transformation functions include: `tolower()` for case-insensitive
@@ -61,7 +61,7 @@
 #' the C-locale. While sorting with the C-locale can be useful for
 #' algorithmic efficiency, in many real world uses it can be the cause of
 #' data analysis mistakes. To balance these trade-offs, you can supply a
-#' `chr_transform` to transform character vectors into an alternative
+#' `chr_proxy_collate` to transform character vectors into an alternative
 #' representation that orders in the C-locale in a less surprising way. For
 #' example, providing [base::tolower()] as a transform will order the original
 #' vector in a case-insensitive manner. Locale-aware ordering can be achieved
@@ -69,7 +69,7 @@
 #' collation options as appropriate for your locale.
 #'
 #' Character vectors are always translated to UTF-8 before ordering, and before
-#' any transform is applied by `chr_transform`.
+#' any transform is applied by `chr_proxy_collate`.
 #'
 #' For complex vectors, if either the real or imaginary component is `NA` or
 #' `NaN`, then the entire observation is considered missing.
@@ -109,17 +109,17 @@
 #' y <- c("B", "A", "a")
 #' vec_sort(y)
 #'
-#' # To order in a case-insensitive manner, provide a `chr_transform` that
+#' # To order in a case-insensitive manner, provide a `chr_proxy_collate` that
 #' # transforms the strings to all lowercase
-#' vec_sort(y, chr_transform = tolower)
+#' vec_sort(y, chr_proxy_collate = tolower)
 vec_order <- function(x,
                       ...,
                       direction = "asc",
                       na_value = "largest",
                       nan_distinct = FALSE,
-                      chr_transform = NULL) {
+                      chr_proxy_collate = NULL) {
   check_dots_empty0(...)
-  .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_transform)
+  .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_proxy_collate)
 }
 
 #' @export
@@ -129,7 +129,7 @@ vec_sort <- function(x,
                      direction = "asc",
                      na_value = "largest",
                      nan_distinct = FALSE,
-                     chr_transform = NULL) {
+                     chr_proxy_collate = NULL) {
   check_dots_empty0(...)
 
   idx <- vec_order(
@@ -137,7 +137,7 @@ vec_sort <- function(x,
     direction = direction,
     na_value = na_value,
     nan_distinct = nan_distinct,
-    chr_transform = chr_transform
+    chr_proxy_collate = chr_proxy_collate
   )
 
   vec_slice(x, idx)
@@ -180,9 +180,9 @@ vec_order_locs <- function(x,
                            direction = "asc",
                            na_value = "largest",
                            nan_distinct = FALSE,
-                           chr_transform = NULL) {
+                           chr_proxy_collate = NULL) {
   check_dots_empty0(...)
-  .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_transform)
+  .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_proxy_collate)
 }
 
 vec_order_info <- function(x,
@@ -190,10 +190,10 @@ vec_order_info <- function(x,
                            direction = "asc",
                            na_value = "largest",
                            nan_distinct = FALSE,
-                           chr_transform = NULL,
+                           chr_proxy_collate = NULL,
                            chr_ordered = TRUE) {
   check_dots_empty0(...)
-  .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_transform, chr_ordered)
+  .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered)
 }
 
 # ------------------------------------------------------------------------------

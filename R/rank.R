@@ -85,7 +85,7 @@ vec_rank <- function(x,
                      direction = "asc",
                      na_value = "largest",
                      nan_distinct = FALSE,
-                     chr_transform = NULL) {
+                     chr_proxy_collate = NULL) {
   check_dots_empty0(...)
 
   ties <- arg_match0(ties, c("min", "max", "sequential", "dense"), "ties")
@@ -98,6 +98,6 @@ vec_rank <- function(x,
     direction,
     na_value,
     nan_distinct,
-    chr_transform
+    chr_proxy_collate
   )
 }

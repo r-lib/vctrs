@@ -22,8 +22,8 @@
 
    * Character vectors now order in the C locale by default, which is _much_
      faster than ordering in the system's locale. To order in a specific locale,
-     you can provide a transformation function through `chr_transform`, such as
-     `stringi::stri_sort_key()`.
+     you can provide a character proxy function through `chr_proxy_collate`,
+     such as `stringi::stri_sort_key()`.
 
    * Optional arguments, such as `direction` and `na_value`, must now be
      specified by name. Specifying by position will result in an error.
