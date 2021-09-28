@@ -523,7 +523,7 @@ xtfrm.vctrs_vctr <- function(x) {
     return(proxy)
   }
 
-  vec_rank(proxy, ties = "dense", na_propagate = TRUE)
+  vec_rank(proxy, ties = "dense", incomplete = "na")
 }
 
 #' @importFrom stats median
