@@ -218,8 +218,9 @@ r_obj* vec_matches(r_obj* needles,
     r_abort("Must have at least 1 column to match on unless `condition = NULL`.");
   }
 
-  // Compute the locations of incomplete values for each column if computing
-  // ranks later on is going to replace the incomplete values with integer ranks
+  // Compute the locations of incomplete values per column since computing
+  // joint ranks per column is going to replace the incomplete values with
+  // integer ranks
   r_obj* needles_complete = df_detect_complete_by_col(needles, size_needles, n_cols);
   KEEP_N(needles_complete, &n_prot);
 
