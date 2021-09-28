@@ -24,8 +24,9 @@
 #' @param nan_distinct A single logical specifying whether or not `NaN` should
 #'   be considered distinct from `NA` for double and complex vectors. If `TRUE`,
 #'   `NaN` will always be ordered between `NA` and non-missing numbers.
-#' @param chr_proxy_collate Transformation of character vectors for sorting in
-#'   alternate locales.
+#' @param chr_proxy_collate A function generating an alternate representation
+#'   of character vectors to use for collation, often used for locale-aware
+#'   ordering.
 #'   - If `NULL`, no transformation is done.
 #'   - Otherwise, this must be a function of one argument. The function will be
 #'     invoked with `x`, if it is a character vector, after it has been
@@ -36,7 +37,7 @@
 #'     columns.
 #'
 #'   Common transformation functions include: `tolower()` for case-insensitive
-#'   ordering and `stringi::str_sort_key()` for locale-aware ordering.
+#'   ordering and `stringi::stri_sort_key()` for locale-aware ordering.
 #'
 #' @return
 #' * `vec_order()` an integer vector the same size as `x`.
@@ -61,11 +62,11 @@
 #' the C-locale. While sorting with the C-locale can be useful for
 #' algorithmic efficiency, in many real world uses it can be the cause of
 #' data analysis mistakes. To balance these trade-offs, you can supply a
-#' `chr_proxy_collate` to transform character vectors into an alternative
-#' representation that orders in the C-locale in a less surprising way. For
-#' example, providing [base::tolower()] as a transform will order the original
-#' vector in a case-insensitive manner. Locale-aware ordering can be achieved
-#' by providing `stringi::stri_sort_key()` as a transform, setting the
+#' `chr_proxy_collate` function to transform character vectors into an
+#' alternative representation that orders in the C-locale in a less surprising
+#' way. For example, providing [base::tolower()] as a transform will order the
+#' original vector in a case-insensitive manner. Locale-aware ordering can be
+#' achieved by providing `stringi::stri_sort_key()` as a transform, setting the
 #' collation options as appropriate for your locale.
 #'
 #' Character vectors are always translated to UTF-8 before ordering, and before
@@ -109,8 +110,8 @@
 #' y <- c("B", "A", "a")
 #' vec_sort(y)
 #'
-#' # To order in a case-insensitive manner, provide a `chr_proxy_collate` that
-#' # transforms the strings to all lowercase
+#' # To order in a case-insensitive manner, provide a `chr_proxy_collate`
+#' # function that transforms the strings to all lowercase
 #' vec_sort(y, chr_proxy_collate = tolower)
 vec_order <- function(x,
                       ...,
