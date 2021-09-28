@@ -18,8 +18,8 @@
 // -----------------------------------------------------------------------------
 
 /*
- * `proxy_chr_transform()` iterates over `proxy`, applying `chr_proxy_collate`
- * on any character vectors that it detects.
+ * `proxy_apply_chr_proxy_collate()` iterates over `proxy`, applying
+ * `chr_proxy_collate` on any character vectors that it detects.
  *
  * It expects that:
  * - If `proxy` is a data frame, it has been flattened by its corresponding
@@ -27,7 +27,7 @@
  * - All character vectors in `proxy` have already been normalized to UTF-8
  *   by `vec_normalize_encoding()`.
  */
-SEXP proxy_chr_transform(SEXP proxy, SEXP chr_proxy_collate);
+SEXP proxy_apply_chr_proxy_collate(SEXP proxy, SEXP chr_proxy_collate);
 
 // -----------------------------------------------------------------------------
 #endif

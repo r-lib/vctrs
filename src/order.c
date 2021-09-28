@@ -376,7 +376,7 @@ SEXP vec_order_info_impl(SEXP x,
 
   SEXP proxy = PROTECT_N(vec_proxy_order(x), &n_prot);
   proxy = PROTECT_N(vec_normalize_encoding(proxy), &n_prot);
-  proxy = PROTECT_N(proxy_chr_transform(proxy, chr_proxy_collate), &n_prot);
+  proxy = PROTECT_N(proxy_apply_chr_proxy_collate(proxy, chr_proxy_collate), &n_prot);
 
   r_ssize size = vec_size(proxy);
   const enum vctrs_type type = vec_proxy_typeof(proxy);

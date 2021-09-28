@@ -16,11 +16,11 @@
 
 // -----------------------------------------------------------------------------
 
-static SEXP chr_apply_transform(SEXP x, SEXP chr_proxy_collate);
-static SEXP df_apply_transform(SEXP x, SEXP chr_proxy_collate);
+static SEXP chr_apply(SEXP x, SEXP chr_proxy_collate);
+static SEXP df_apply(SEXP x, SEXP chr_proxy_collate);
 
 // [[ include("order-collate.h") ]]
-SEXP proxy_chr_transform(SEXP proxy, SEXP chr_proxy_collate) {
+SEXP proxy_apply_chr_proxy_collate(SEXP proxy, SEXP chr_proxy_collate) {
   if (chr_proxy_collate == r_null) {
     return proxy;
   }
@@ -30,8 +30,8 @@ SEXP proxy_chr_transform(SEXP proxy, SEXP chr_proxy_collate) {
   SEXP out;
 
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_character: out = chr_apply_transform(proxy, chr_proxy_collate); break;
-  case vctrs_type_dataframe: out = df_apply_transform(proxy, chr_proxy_collate); break;
+  case vctrs_type_character: out = chr_apply(proxy, chr_proxy_collate); break;
+  case vctrs_type_dataframe: out = df_apply(proxy, chr_proxy_collate); break;
   default: out = proxy;
   }
 
@@ -42,7 +42,7 @@ SEXP proxy_chr_transform(SEXP proxy, SEXP chr_proxy_collate) {
 // -----------------------------------------------------------------------------
 
 static
-SEXP chr_apply_transform(SEXP x, SEXP chr_proxy_collate) {
+SEXP chr_apply(SEXP x, SEXP chr_proxy_collate) {
   // Don't use vctrs dispatch utils because we match argument positionally
   SEXP call = PROTECT(Rf_lang2(syms_chr_proxy_collate, syms_x));
 
@@ -78,7 +78,7 @@ SEXP chr_apply_transform(SEXP x, SEXP chr_proxy_collate) {
 // -----------------------------------------------------------------------------
 
 static
-SEXP df_apply_transform(SEXP x, SEXP chr_proxy_collate) {
+SEXP df_apply(SEXP x, SEXP chr_proxy_collate) {
   const r_ssize n_cols = r_length(x);
   const SEXP* v_x = VECTOR_PTR_RO(x);
 
@@ -105,7 +105,7 @@ SEXP df_apply_transform(SEXP x, SEXP chr_proxy_collate) {
       continue;
     }
 
-    col = chr_apply_transform(col, chr_proxy_collate);
+    col = chr_apply(col, chr_proxy_collate);
     SET_VECTOR_ELT(out, i, col);
   }
 
