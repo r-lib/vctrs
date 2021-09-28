@@ -28,8 +28,7 @@ URL: https://vctrs.r-lib.org/
 BugReports: https://github.com/r-lib/vctrs/issues
 Depends: 
     R (>= 3.3)
-Imports: 
-    ellipsis (>= 0.2.0),
+Imports:
     glue,
     rlang (>= 0.4.11.9000)
 Suggests: 

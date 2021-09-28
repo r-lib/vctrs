@@ -50,9 +50,7 @@
 #' vec_recycle_common(array(1:2, c(1, 2)), 1:5)
 #' vec_recycle_common(array(1:3, c(1, 3, 1)), 1:5)
 vec_recycle <- function(x, size, ..., x_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   .Call(vctrs_recycle, x, size, x_arg)
 }
 

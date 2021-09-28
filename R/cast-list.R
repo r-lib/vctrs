@@ -10,14 +10,13 @@
 #'
 #' @param x A list
 #' @param to Type to coerce to
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @export
 #' @keywords internal
 vec_list_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
+
   ns <- map_int(x, vec_size)
 
   n <- vec_size(x)

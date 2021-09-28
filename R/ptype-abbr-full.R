@@ -20,7 +20,7 @@
 #' @param prefix_named If `TRUE`, add a prefix for named vectors.
 #' @param suffix_shape If `TRUE` (the default), append the shape of
 #'   the vector.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @keywords internal
 #' @return A string.
@@ -31,18 +31,14 @@
 #'
 #' cat(vec_ptype_abbr(1:10))
 vec_ptype_full <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   UseMethod("vec_ptype_full")
 }
 
 #' @export
 #' @rdname vec_ptype_full
 vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
 
   abbr <- vec_ptype_abbr_dispatch(x)
 

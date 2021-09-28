@@ -57,7 +57,7 @@
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
 #'   messages.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @section `minimal` names:
 #'
@@ -155,9 +155,7 @@ vec_as_names <- function(names,
                          repair = c("minimal", "unique", "universal", "check_unique"),
                          repair_arg = "",
                          quiet = FALSE) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   .Call(vctrs_as_names, names, repair, repair_arg, quiet)
 }
 
@@ -242,9 +240,7 @@ vec_names2 <- function(x,
                        ...,
                        repair = c("minimal", "unique", "universal", "check_unique"),
                        quiet = FALSE) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   repair <- validate_name_repair_arg(repair)
 
   if (is_function(repair)) {

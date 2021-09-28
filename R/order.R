@@ -7,7 +7,7 @@
 #'
 #' `vec_sort()` sorts `x`. It is equivalent to `vec_slice(x, vec_order(x))`.
 #'
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @param x A vector
 #' @param direction Direction to sort in.

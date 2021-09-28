@@ -211,7 +211,7 @@ as_df_col <- function(x, outer_name) {
 #' lack of colwise primitives in vctrs. Expect changes.
 #'
 #' @param x A data frame.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @keywords internal
 #' @export

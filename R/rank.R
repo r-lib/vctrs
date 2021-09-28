@@ -19,7 +19,7 @@
 #' for more information.
 #'
 #' @inheritParams vec_order
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @param ties Treatment of duplicate values.
 #'   - `"min"`: Use the current rank for all duplicates. The next non-duplicate
@@ -87,9 +87,7 @@ vec_rank <- function(x,
                      na_value = "largest",
                      nan_distinct = FALSE,
                      chr_transform = NULL) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
 
   ties <- arg_match0(ties, c("min", "max", "sequential", "dense"), "ties")
 

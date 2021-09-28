@@ -8,16 +8,12 @@ new_shape <- function(type, shape = integer()) {
 }
 
 vec_shaped_ptype  <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   .Call(vctrs_shaped_ptype, ptype, x, y, x_arg, y_arg)
 }
 
 vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   .Call(vctrs_shape2, x, y, x_arg, y_arg)
 }
 
