@@ -1,3 +1,17 @@
+# `ties` is validated
+
+    Code
+      vec_rank(1, ties = "foo")
+    Error <rlang_error>
+      `ties` must be one of "min", "max", "sequential", or "dense", not "foo".
+
+---
+
+    Code
+      vec_rank(1, ties = 1)
+    Error <rlang_error>
+      `ties` must be a string or character vector.
+
 # `incomplete` is validated
 
     Code

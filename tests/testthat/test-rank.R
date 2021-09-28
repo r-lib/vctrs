@@ -126,8 +126,8 @@ test_that("`x` must be a vector", {
 })
 
 test_that("`ties` is validated", {
-  expect_error(vec_rank(1, ties = "foo"), 'must be one of "min", "max", "sequential", or "dense", not "foo".')
-  expect_error(vec_rank(1, ties = 1), "character")
+  expect_snapshot(error = TRUE, vec_rank(1, ties = "foo"))
+  expect_snapshot(error = TRUE, vec_rank(1, ties = 1))
 })
 
 test_that("`incomplete` is validated", {
