@@ -63,6 +63,11 @@ struct vctrs_remaining {
   int value;
 };
 
+struct vctrs_match_bounds {
+  r_ssize lower;
+  r_ssize upper;
+};
+
 #define SIGNAL_NO_MATCH r_globals.na_int
 #define SIGNAL_INCOMPLETE -1
 
@@ -600,40 +605,16 @@ void df_matches_recurse(r_ssize col,
     return;
   }
 
-  r_ssize loc_lower_match_o_haystack = loc_lower_bound_o_haystack;
-  r_ssize loc_upper_match_o_haystack = loc_upper_bound_o_haystack;
+  const struct vctrs_match_bounds bounds = int_locate_match(
+    val_needle,
+    v_haystack,
+    v_o_haystack,
+    loc_lower_bound_o_haystack,
+    loc_upper_bound_o_haystack
+  );
 
-  while (loc_lower_match_o_haystack <= loc_upper_match_o_haystack) {
-    const r_ssize loc_mid_match_o_haystack = midpoint(loc_lower_match_o_haystack, loc_upper_match_o_haystack);
-    const r_ssize loc_mid_match_haystack = v_o_haystack[loc_mid_match_o_haystack] - 1;
-    const int val_haystack = v_haystack[loc_mid_match_haystack];
-
-    const int cmp = int_compare_na_equal(val_needle, val_haystack);
-
-    if (cmp == 1) {
-      loc_lower_match_o_haystack = loc_mid_match_o_haystack + 1;
-    } else if (cmp == -1) {
-      loc_upper_match_o_haystack = loc_mid_match_o_haystack - 1;
-    } else {
-      // Hit!
-      // Find lower and upper match bounds for the haystack value
-      loc_lower_match_o_haystack = int_lower_duplicate(
-        val_haystack,
-        v_haystack,
-        v_o_haystack,
-        loc_lower_match_o_haystack,
-        loc_mid_match_o_haystack
-      );
-      loc_upper_match_o_haystack = int_upper_duplicate(
-        val_haystack,
-        v_haystack,
-        v_o_haystack,
-        loc_mid_match_o_haystack,
-        loc_upper_match_o_haystack
-      );
-      break;
-    }
-  }
+  r_ssize loc_lower_match_o_haystack = bounds.lower;
+  r_ssize loc_upper_match_o_haystack = bounds.upper;
 
   // Adjust bounds based on non-equi condition.
   // If needle is NA, never extend the bounds to capture values past it.
@@ -1196,6 +1177,52 @@ r_ssize int_upper_duplicate(int needle,
   }
 
   return loc_upper_bound_o_haystack;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline
+struct vctrs_match_bounds int_locate_match(int val_needle,
+                                           const int* v_haystack,
+                                           const int* v_o_haystack,
+                                           r_ssize loc_lower_bound_o_haystack,
+                                           r_ssize loc_upper_bound_o_haystack) {
+  while (loc_lower_bound_o_haystack <= loc_upper_bound_o_haystack) {
+    const r_ssize loc_mid_bound_o_haystack = midpoint(loc_lower_bound_o_haystack, loc_upper_bound_o_haystack);
+    const r_ssize loc_mid_bound_haystack = v_o_haystack[loc_mid_bound_o_haystack] - 1;
+    const int val_haystack = v_haystack[loc_mid_bound_haystack];
+
+    const int cmp = int_compare_na_equal(val_needle, val_haystack);
+
+    if (cmp == 1) {
+      loc_lower_bound_o_haystack = loc_mid_bound_o_haystack + 1;
+    } else if (cmp == -1) {
+      loc_upper_bound_o_haystack = loc_mid_bound_o_haystack - 1;
+    } else {
+      // Hit!
+      // Find lower and upper duplicate bounds for the haystack value
+      loc_lower_bound_o_haystack = int_lower_duplicate(
+        val_haystack,
+        v_haystack,
+        v_o_haystack,
+        loc_lower_bound_o_haystack,
+        loc_mid_bound_o_haystack
+      );
+      loc_upper_bound_o_haystack = int_upper_duplicate(
+        val_haystack,
+        v_haystack,
+        v_o_haystack,
+        loc_mid_bound_o_haystack,
+        loc_upper_bound_o_haystack
+      );
+      break;
+    }
+  }
+
+  return (struct vctrs_match_bounds) {
+    loc_lower_bound_o_haystack,
+    loc_upper_bound_o_haystack
+  };
 }
 
 // -----------------------------------------------------------------------------

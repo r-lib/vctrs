@@ -103,6 +103,13 @@ r_ssize int_upper_duplicate(int needle,
                             r_ssize loc_lower_bound_o_haystack,
                             r_ssize loc_upper_bound_o_haystack);
 
+static inline
+struct vctrs_match_bounds int_locate_match(int val_needle,
+                                           const int* v_haystack,
+                                           const int* v_o_haystack,
+                                           r_ssize loc_lower_bound_o_haystack,
+                                           r_ssize loc_upper_bound_o_haystack);
+
 static
 r_obj* df_joint_xtfrm_by_col(r_obj* x,
                              r_obj* y,
