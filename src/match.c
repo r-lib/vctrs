@@ -516,14 +516,14 @@ void df_matches_recurse(r_ssize col,
   const bool needle_is_complete = v_needles_complete[loc_mid_bound_needles];
 
   // Find lower and upper duplicate location for this needle
-  const r_ssize loc_lower_duplicate_o_needles = int_lower_duplicate(
+  const r_ssize loc_lower_duplicate_o_needles = int_locate_lower_duplicate(
     val_needle,
     v_needles,
     v_o_needles,
     loc_lower_bound_o_needles,
     loc_mid_bound_o_needles
   );
-  const r_ssize loc_upper_duplicate_o_needles = int_upper_duplicate(
+  const r_ssize loc_upper_duplicate_o_needles = int_locate_upper_duplicate(
     val_needle,
     v_needles,
     v_o_needles,
@@ -698,7 +698,7 @@ void df_matches_recurse(r_ssize col,
       const int val_upper_match_haystack = v_haystack[loc_upper_match_haystack];
 
       if (val_lower_match_haystack != val_upper_match_haystack) {
-        loc_lower_match_o_haystack = int_lower_duplicate(
+        loc_lower_match_o_haystack = int_locate_lower_duplicate(
           val_upper_match_haystack,
           v_haystack,
           v_o_haystack,
@@ -727,7 +727,7 @@ void df_matches_recurse(r_ssize col,
       const int val_upper_match_haystack = v_haystack[loc_upper_match_haystack];
 
       if (val_lower_match_haystack != val_upper_match_haystack) {
-        loc_upper_match_o_haystack = int_upper_duplicate(
+        loc_upper_match_o_haystack = int_locate_upper_duplicate(
           val_lower_match_haystack,
           v_haystack,
           v_o_haystack,
@@ -1061,14 +1061,14 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
       } else {
         // Hit!
         // Find lower and upper group bounds
-        loc_lower_match_o_haystack = int_lower_duplicate(
+        loc_lower_match_o_haystack = int_locate_lower_duplicate(
           val_haystack,
           v_haystack,
           v_o_haystack,
           loc_lower_match_o_haystack,
           loc_mid_match_o_haystack
         );
-        loc_upper_match_o_haystack = int_upper_duplicate(
+        loc_upper_match_o_haystack = int_locate_upper_duplicate(
           val_haystack,
           v_haystack,
           v_o_haystack,
@@ -1135,11 +1135,11 @@ r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
 
 // Find the smallest contiguous location containing `needle`
 static inline
-r_ssize int_lower_duplicate(int val_needle,
-                            const int* v_haystack,
-                            const int* v_o_haystack,
-                            r_ssize loc_lower_bound_o_haystack,
-                            r_ssize loc_upper_bound_o_haystack) {
+r_ssize int_locate_lower_duplicate(int val_needle,
+                                   const int* v_haystack,
+                                   const int* v_o_haystack,
+                                   r_ssize loc_lower_bound_o_haystack,
+                                   r_ssize loc_upper_bound_o_haystack) {
   while (loc_lower_bound_o_haystack <= loc_upper_bound_o_haystack) {
     const r_ssize loc_mid_bound_o_haystack = midpoint(loc_lower_bound_o_haystack, loc_upper_bound_o_haystack);
     const r_ssize loc_mid_bound_haystack = v_o_haystack[loc_mid_bound_o_haystack] - 1;
@@ -1159,11 +1159,11 @@ r_ssize int_lower_duplicate(int val_needle,
 
 // Find the largest contiguous location containing `needle`
 static inline
-r_ssize int_upper_duplicate(int val_needle,
-                            const int* v_haystack,
-                            const int* v_o_haystack,
-                            r_ssize loc_lower_bound_o_haystack,
-                            r_ssize loc_upper_bound_o_haystack) {
+r_ssize int_locate_upper_duplicate(int val_needle,
+                                   const int* v_haystack,
+                                   const int* v_o_haystack,
+                                   r_ssize loc_lower_bound_o_haystack,
+                                   r_ssize loc_upper_bound_o_haystack) {
   while (loc_lower_bound_o_haystack <= loc_upper_bound_o_haystack) {
     const r_ssize loc_mid_bound_o_haystack = midpoint(loc_lower_bound_o_haystack, loc_upper_bound_o_haystack);
     const r_ssize loc_mid_bound_haystack = v_o_haystack[loc_mid_bound_o_haystack] - 1;
@@ -1201,14 +1201,14 @@ struct vctrs_match_bounds int_locate_match(int val_needle,
     } else {
       // Hit!
       // Find lower and upper duplicate bounds for the haystack value
-      loc_lower_bound_o_haystack = int_lower_duplicate(
+      loc_lower_bound_o_haystack = int_locate_lower_duplicate(
         val_haystack,
         v_haystack,
         v_o_haystack,
         loc_lower_bound_o_haystack,
         loc_mid_bound_o_haystack
       );
-      loc_upper_bound_o_haystack = int_upper_duplicate(
+      loc_upper_bound_o_haystack = int_locate_upper_duplicate(
         val_haystack,
         v_haystack,
         v_o_haystack,
