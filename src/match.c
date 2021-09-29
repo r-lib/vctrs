@@ -2244,25 +2244,26 @@ r_obj* nested_containment_order(r_obj* x,
   r_list_poke(out, 0, ids);
   int* v_ids = r_int_begin(ids);
 
-  r_obj* n_ids = r_alloc_integer(1);
-  r_list_poke(out, 1, n_ids);
-  int* p_n_ids = r_int_begin(n_ids);
-  *p_n_ids = 1;
+  r_obj* n_nested_groups = r_alloc_integer(1);
+  r_list_poke(out, 1, n_nested_groups);
+  int* p_n_nested_groups = r_int_begin(n_nested_groups);
 
-  for (r_ssize i = 0; i < size; ++i) {
-    v_ids[i] = 0;
-  }
+  // Initialize ids to 0, which is always our first id value.
+  // This means we start with 1 nested group.
+  memset(v_ids, 0, size * sizeof(int));
+  *p_n_nested_groups = 1;
 
   if (size == 0) {
     // Algorithm requires at least 1 row
     FREE(n_prot);
     return out;
   }
+
   if (n_cols == 1 && !enforce_row_order) {
     // If there is only 1 column, `x` is in increasing order already when
-    // ordered by `order`. If we don't require that the actual row numbers also
-    // be in order, then we are done.
-    // If `outer_group_sizes` were supplied, each individual group will
+    // ordered by `v_order`. If we don't require that the actual row numbers
+    // also be in order, then we are done.
+    // If `v_outer_group_sizes` were supplied, each nested group of `x` will
     // be in increasing order (since the single `x` column is the one that
     // broke any ties), and that is all that is required.
     FREE(n_prot);
@@ -2272,44 +2273,41 @@ r_obj* nested_containment_order(r_obj* x,
   struct r_dyn_array* p_prev_rows = r_new_dyn_vector(R_TYPE_integer, 10000);
   KEEP_N(p_prev_rows->shelter, &n_prot);
 
-  struct poly_vec* p_poly_vec = new_poly_vec(x, vctrs_type_dataframe);
-  PROTECT_POLY_VEC(p_poly_vec, &n_prot);
-  const void* v_x = p_poly_vec->p_vec;
+  struct poly_vec* p_poly_x = new_poly_vec(x, vctrs_type_dataframe);
+  PROTECT_POLY_VEC(p_poly_x, &n_prot);
+  const void* v_x = p_poly_x->p_vec;
 
-  int i_order_group_start = 0;
-  int group_size = v_group_sizes[0];
-  int i_order = i_order_group_start + ((multiple == VCTRS_MULTIPLE_last) ? group_size - 1 : 0);
-
-  const int first_row = v_order[i_order] - 1;
-  p_prev_rows->count = 1;
-  R_ARR_POKE(int, p_prev_rows, 0, first_row);
-
-  r_ssize loc_next_outer_group_start = 0;
+  // Will be used if `has_outer_group_sizes` is `true`
   r_ssize loc_outer_group_sizes = 0;
-  if (has_outer_group_sizes) {
-    // If no outer groups exist, `loc_next_outer_group_start == 0`
-    // will never match `i_order_group_start` since the first group size is at least 1.
-    // Otherwise the `loc_next_outer_group_start` is the first outer group size.
-    loc_next_outer_group_start = v_outer_group_sizes[loc_outer_group_sizes];
-    ++loc_outer_group_sizes;
-  }
+  r_ssize loc_next_outer_group_start = 0;
 
-  for (r_ssize i_group = 1; i_group < n_groups; ++i_group) {
-    // Catch group start index up to current group using previous group size
-    i_order_group_start += group_size;
-    // Update to size of current group
-    group_size = v_group_sizes[i_group];
-    // Update index into order to point to either start / end of this group
-    i_order = i_order_group_start + ((multiple == VCTRS_MULTIPLE_last) ? group_size - 1 : 0);
+  r_ssize loc_group_start = 0;
 
-    int cur_row = v_order[i_order] - 1;
+  for (r_ssize i = 0; i < n_groups; ++i) {
+    if (has_outer_group_sizes && loc_next_outer_group_start == loc_group_start) {
+      // Start of a new outer group. Clear all stored previous rows.
+      p_prev_rows->count = 0;
+      loc_next_outer_group_start += v_outer_group_sizes[loc_outer_group_sizes];
+      ++loc_outer_group_sizes;
+    }
+
+    const r_ssize group_size = v_group_sizes[i];
+
+    // For `multiple = "last"`, the reference row is the end of the group.
+    // This ensures the row order check works correctly.
+    const r_ssize loc_group_reference =
+      (multiple == VCTRS_MULTIPLE_last) ?
+      loc_group_start + group_size - 1 :
+      loc_group_start;
+
+    const int cur_row = v_order[loc_group_reference] - 1;
 
     bool new_id = true;
-    int prev_row_id = 0;
-    int max_prev_row_id = p_prev_rows->count;
+    int i_prev_rows = 0;
+    const int n_prev_rows = p_prev_rows->count;
 
-    for (; prev_row_id < max_prev_row_id; ++prev_row_id) {
-      int prev_row = R_ARR_GET(int, p_prev_rows, prev_row_id);
+    for (; i_prev_rows < n_prev_rows; ++i_prev_rows) {
+      const int prev_row = R_ARR_GET(int, p_prev_rows, i_prev_rows);
 
       if (enforce_row_order && cur_row < prev_row) {
         // Can't add to current group, `multiple = "first"/"last"`
@@ -2323,30 +2321,24 @@ r_obj* nested_containment_order(r_obj* x,
       }
     }
 
-    int id;
-    if (loc_next_outer_group_start == i_order_group_start) {
-      // Start of a new outer group
-      id = 0;
-      loc_next_outer_group_start += v_outer_group_sizes[loc_outer_group_sizes];
-      ++loc_outer_group_sizes;
-      p_prev_rows->count = 1;
-      R_ARR_POKE(int, p_prev_rows, 0, cur_row);
-    } else if (new_id) {
-      // Completely new id for this outer group, which we add to the end
-      id = max_prev_row_id;
+    if (new_id) {
+      // New id for this outer group, which we add to the end
       r_arr_push_back(p_prev_rows, &cur_row);
 
-      if (p_prev_rows->count > *p_n_ids) {
-        *p_n_ids = p_prev_rows->count;
+      if (p_prev_rows->count > *p_n_nested_groups) {
+        *p_n_nested_groups = p_prev_rows->count;
       }
     } else {
-      // Update existing row location to the current row, since it is larger
-      id = prev_row_id;
-      R_ARR_POKE(int, p_prev_rows, prev_row_id, cur_row);
+      // Update stored row location to the current row,
+      // since the current row is larger
+      R_ARR_POKE(int, p_prev_rows, i_prev_rows, cur_row);
     }
 
-    for (int i = 0; i < group_size; ++i) {
-      v_ids[v_order[i_order_group_start + i] - 1] = id;
+    const int id = i_prev_rows;
+
+    for (r_ssize j = 0; j < group_size; ++j) {
+      v_ids[v_order[loc_group_start] - 1] = id;
+      ++loc_group_start;
     }
   }
 
