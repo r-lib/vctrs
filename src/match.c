@@ -2159,35 +2159,49 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     return out;
   }
 
-  // Otherwise, we have to recompute haystack ordering with `nested_groups` as
-  // the first column.
+  // Otherwise, we need to recompute the haystack ordering accounting for
+  // `nested_groups`. One way to do this is to append `nested_groups` to the
+  // front of the `haystack` data frame and recompute the order, but since
+  // we already have `o_haystack` and `group_sizes`, we can build a simpler
+  // proxy for `haystack` that orders the exact same, but faster. So we end
+  // up with a two column data frame of `nested_groups` and `haystack_proxy`
+  // to compute the new order for.
   r_obj* nested_groups = r_list_get(nested_info, 0);
 
-  r_obj* const* v_haystack = r_list_cbegin(haystack);
-  r_obj* const* v_haystack_names = r_chr_cbegin(r_names(haystack));
+  r_obj* haystack_proxy = KEEP_N(r_alloc_integer(size_haystack), &n_prot);
+  int* v_haystack_proxy = r_int_begin(haystack_proxy);
 
-  r_obj* haystack_with_nesting = KEEP_N(r_alloc_list(n_cols + 1), &n_prot);
-  r_obj* haystack_with_nesting_names = r_alloc_character(n_cols + 1);
-  r_poke_names(haystack_with_nesting, haystack_with_nesting_names);
-  r_init_data_frame(haystack_with_nesting, size_haystack);
+  r_ssize loc_o_haystack = 0;
 
-  r_list_poke(haystack_with_nesting, 0, nested_groups);
-  r_chr_poke(haystack_with_nesting_names, 0, r_str("..nested_groups.."));
-
-  for (r_ssize i = 0; i < n_cols; ++i) {
-    r_list_poke(haystack_with_nesting, i + 1, v_haystack[i]);
-    r_chr_poke(haystack_with_nesting_names, i + 1, v_haystack_names[i]);
+  // Insert group number as the proxy value
+  for (r_ssize i = 0; i < n_groups; ++i) {
+    const r_ssize group_size = v_group_sizes[i];
+    for (r_ssize j = 0; j < group_size; ++j) {
+      v_haystack_proxy[v_o_haystack[loc_o_haystack] - 1] = i;
+      ++loc_o_haystack;
+    }
   }
 
-  r_obj* o_haystack_nested_containment = KEEP_N(vec_order(
-    haystack_with_nesting,
+  r_obj* df = KEEP_N(r_alloc_list(2), &n_prot);
+  r_list_poke(df, 0, nested_groups);
+  r_list_poke(df, 1, haystack_proxy);
+
+  r_obj* df_names = r_alloc_character(2);
+  r_poke_names(df, df_names);
+  r_chr_poke(df_names, 0, r_str("nested_groups"));
+  r_chr_poke(df_names, 1, r_str("haystack_proxy"));
+
+  r_init_data_frame(df, size_haystack);
+
+  o_haystack = KEEP_N(vec_order(
+    df,
     chrs_asc,
     chrs_smallest,
     true,
     r_null
   ), &n_prot);
 
-  r_list_poke(out, 0, o_haystack_nested_containment);
+  r_list_poke(out, 0, o_haystack);
   r_list_poke(out, 1, nested_groups);
   r_list_poke(out, 2, r_int(n_nested_groups));
   r_list_poke(out, 3, r_lgl(any_non_equi));
