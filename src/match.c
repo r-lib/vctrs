@@ -330,6 +330,7 @@ r_obj* df_matches(r_obj* needles,
       // No need to initialize extra buffer
       v_size_match[i] = 1;
     }
+
     p_size_match->count = size_needles;
   }
 
@@ -346,6 +347,7 @@ r_obj* df_matches(r_obj* needles,
       // No need to initialize extra buffer
       v_loc_needles[i] = i;
     }
+
     p_loc_needles->count = size_needles;
   }
 
