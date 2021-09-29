@@ -344,7 +344,7 @@ r_obj* df_matches(r_obj* needles,
     int* v_loc_needles = (int*) r_arr_begin(p_loc_needles);
     for (r_ssize i = 0; i < size_needles; ++i) {
       // No need to initialize extra buffer
-      v_loc_needles[i] = i + 1;
+      v_loc_needles[i] = i;
     }
     p_loc_needles->count = size_needles;
   }
@@ -870,7 +870,6 @@ void df_matches_recurse(r_ssize col,
         case VCTRS_MULTIPLE_error:
         case VCTRS_MULTIPLE_warning: {
           const int size_match = loc_upper_match_o_haystack - loc_lower_match_o_haystack + 1;
-          const int loc_needles_new = loc_needles + 1;
 
           if (first_touch) {
             R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
@@ -907,7 +906,7 @@ void df_matches_recurse(r_ssize col,
 
           r_arr_push_back(p_loc_first_match_o_haystack, &loc_lower_match_o_haystack);
           r_arr_push_back(p_size_match, &size_match);
-          r_arr_push_back(p_loc_needles, &loc_needles_new);
+          r_arr_push_back(p_loc_needles, &loc_needles);
           ++(*p_n_extra);
           break;
         }
@@ -1764,7 +1763,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
     int loc_first_match_o_haystack = v_loc_first_match_o_haystack[loc];
     const int size_match = skip_size_match ? 1 : v_size_match[loc];
-    const int loc_needles = skip_loc_needles ? loc + 1 : v_loc_needles[loc];
+    const int loc_needles = skip_loc_needles ? loc : v_loc_needles[loc];
 
     if (!match_incomplete && loc_first_match_o_haystack == SIGNAL_INCOMPLETE) {
       if (size_match != 1) {
@@ -1776,7 +1775,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       switch (incomplete->action) {
       case VCTRS_INCOMPLETE_ACTION_value: {
-        v_out_needles[loc_out] = loc_needles;
+        v_out_needles[loc_out] = loc_needles + 1;
         v_out_haystack[loc_out] = incomplete->value;
         ++loc_out;
         break;
@@ -1786,7 +1785,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         break;
       }
       case VCTRS_INCOMPLETE_ACTION_error: {
-        stop_matches_incomplete(loc_needles - 1, needles_arg);
+        stop_matches_incomplete(loc_needles, needles_arg);
       }
       case VCTRS_INCOMPLETE_ACTION_match: {
         r_stop_internal(
@@ -1809,7 +1808,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       switch (no_match->action) {
       case VCTRS_NO_MATCH_ACTION_value: {
-        v_out_needles[loc_out] = loc_needles;
+        v_out_needles[loc_out] = loc_needles + 1;
         v_out_haystack[loc_out] = no_match->value;
         ++loc_out;
         break;
@@ -1830,7 +1829,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
     if (has_locs_filter_match_haystack) {
       const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
-      const int loc_filter_match_haystack = v_locs_filter_match_haystack[loc_needles - 1];
+      const int loc_filter_match_haystack = v_locs_filter_match_haystack[loc_needles];
 
       const bool equal = p_matches_df_equal_na_equal(
         p_haystack,
@@ -1857,9 +1856,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       if (any_multiple) {
         if (multiple == VCTRS_MULTIPLE_error) {
-          stop_matches_multiple(loc_needles - 1, needles_arg, haystack_arg);
+          stop_matches_multiple(loc_needles, needles_arg, haystack_arg);
         } else if (multiple == VCTRS_MULTIPLE_warning) {
-          warn_matches_multiple(loc_needles - 1, needles_arg, haystack_arg);
+          warn_matches_multiple(loc_needles, needles_arg, haystack_arg);
         }
       }
     }
@@ -1867,13 +1866,13 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     int loc_o_haystack = loc_first_match_o_haystack;
 
     for (r_ssize j = 0; j < size_match; ++j) {
-      const int loc_haystack = v_o_haystack[loc_o_haystack];
+      const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
 
-      v_out_needles[loc_out] = loc_needles;
-      v_out_haystack[loc_out] = loc_haystack;
+      v_out_needles[loc_out] = loc_needles + 1;
+      v_out_haystack[loc_out] = loc_haystack + 1;
 
       if (retain_remaining_haystack) {
-        v_detect_remaining_haystack[loc_haystack - 1] = 0;
+        v_detect_remaining_haystack[loc_haystack] = 0;
       }
 
       ++loc_out;
