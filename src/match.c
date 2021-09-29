@@ -513,15 +513,15 @@ void df_matches_recurse(r_ssize col,
   const int val_needle = v_needles[loc_mid_bound_needles];
   const bool needle_is_complete = v_needles_complete[loc_mid_bound_needles];
 
-  // Find lower and upper initial match bounds for the needle value
-  r_ssize loc_lower_match_o_needles = int_lower_duplicate(
+  // Find lower and upper duplicate location for this needle
+  r_ssize loc_lower_duplicate_o_needles = int_lower_duplicate(
     val_needle,
     v_needles,
     v_o_needles,
     loc_lower_bound_o_needles,
     loc_mid_bound_o_needles
   );
-  r_ssize loc_upper_match_o_needles = int_upper_duplicate(
+  r_ssize loc_upper_duplicate_o_needles = int_upper_duplicate(
     val_needle,
     v_needles,
     v_o_needles,
@@ -531,7 +531,7 @@ void df_matches_recurse(r_ssize col,
 
   if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && !needle_is_complete) {
     // Signal incomplete needle, don't recursive into further columns.
-    for (r_ssize i = loc_lower_match_o_needles; i <= loc_upper_match_o_needles; ++i) {
+    for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
       // Will always be the first and only time the output is touched for this
       // needle, so we can poke directly into it
       const int loc_needles = v_o_needles[i] - 1;
@@ -539,12 +539,12 @@ void df_matches_recurse(r_ssize col,
     }
 
     // Learned nothing about haystack!
-    bool do_lhs = loc_lower_match_o_needles > loc_lower_bound_o_needles;
-    bool do_rhs = loc_upper_match_o_needles < loc_upper_bound_o_needles;
+    bool do_lhs = loc_lower_duplicate_o_needles > loc_lower_bound_o_needles;
+    bool do_rhs = loc_upper_duplicate_o_needles < loc_upper_bound_o_needles;
 
     if (do_lhs) {
       const r_ssize lhs_loc_lower_bound_o_needles = loc_lower_bound_o_needles;
-      const r_ssize lhs_loc_upper_bound_o_needles = loc_lower_match_o_needles - 1;
+      const r_ssize lhs_loc_upper_bound_o_needles = loc_lower_duplicate_o_needles - 1;
 
       df_matches_recurse(
         col,
@@ -571,7 +571,7 @@ void df_matches_recurse(r_ssize col,
       );
     }
     if (do_rhs) {
-      const r_ssize rhs_loc_lower_bound_o_needles = loc_upper_match_o_needles + 1;
+      const r_ssize rhs_loc_lower_bound_o_needles = loc_upper_duplicate_o_needles + 1;
       const r_ssize rhs_loc_upper_bound_o_needles = loc_upper_bound_o_needles;
 
       df_matches_recurse(
@@ -768,8 +768,8 @@ void df_matches_recurse(r_ssize col,
       // Recurse into next column on this subgroup
       df_matches_recurse(
         col + 1,
-        loc_lower_match_o_needles,
-        loc_upper_match_o_needles,
+        loc_lower_duplicate_o_needles,
+        loc_upper_duplicate_o_needles,
         loc_lower_match_o_haystack,
         loc_upper_match_o_haystack,
         p_needles,
@@ -790,7 +790,7 @@ void df_matches_recurse(r_ssize col,
         p_n_extra
       );
     } else {
-      for (r_ssize i = loc_lower_match_o_needles; i <= loc_upper_match_o_needles; ++i) {
+      for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
         const int loc_needles = v_o_needles[i] - 1;
         const int loc_first_match_o_haystack = R_ARR_GET(int, p_loc_first_match_o_haystack, loc_needles);
         const bool first_touch = loc_first_match_o_haystack == r_globals.na_int;
@@ -925,7 +925,7 @@ void df_matches_recurse(r_ssize col,
     // NAs that might occur in future columns of this `needles` group. If
     // `val_needles` was an NA, it would have been caught above, so we only
     // need to look at future columns.
-    for (r_ssize i = loc_lower_match_o_needles; i <= loc_upper_match_o_needles; ++i) {
+    for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
       const r_ssize loc_needles = v_o_needles[i] - 1;
 
       for (r_ssize j = col + 1; j < n_col; ++j) {
@@ -957,19 +957,19 @@ void df_matches_recurse(r_ssize col,
   switch (op) {
   case VCTRS_OPS_eq: {
     do_lhs =
-      (loc_lower_match_o_needles > loc_lower_bound_o_needles) &&
+      (loc_lower_duplicate_o_needles > loc_lower_bound_o_needles) &&
       (loc_lower_match_o_haystack > loc_lower_bound_o_haystack);
     do_rhs =
-      (loc_upper_match_o_needles < loc_upper_bound_o_needles) &&
+      (loc_upper_duplicate_o_needles < loc_upper_bound_o_needles) &&
       (loc_upper_match_o_haystack < loc_upper_bound_o_haystack);
 
     // Limit bounds of both needle and haystack using existing info
     if (do_lhs) {
-      lhs_loc_upper_bound_o_needles = loc_lower_match_o_needles - 1;
+      lhs_loc_upper_bound_o_needles = loc_lower_duplicate_o_needles - 1;
       lhs_loc_upper_bound_o_haystack = loc_lower_match_o_haystack - 1;
     }
     if (do_rhs) {
-      rhs_loc_lower_bound_o_needles = loc_upper_match_o_needles + 1;
+      rhs_loc_lower_bound_o_needles = loc_upper_duplicate_o_needles + 1;
       rhs_loc_lower_bound_o_haystack = loc_upper_match_o_haystack + 1;
     }
 
@@ -980,14 +980,14 @@ void df_matches_recurse(r_ssize col,
   case VCTRS_OPS_gt:
   case VCTRS_OPS_gte: {
     // Can't update haystack here, as nested containment groups make this impossible
-    do_lhs = loc_lower_match_o_needles > loc_lower_bound_o_needles;
-    do_rhs = loc_upper_match_o_needles < loc_upper_bound_o_needles;
+    do_lhs = loc_lower_duplicate_o_needles > loc_lower_bound_o_needles;
+    do_rhs = loc_upper_duplicate_o_needles < loc_upper_bound_o_needles;
 
     if (do_lhs) {
-      lhs_loc_upper_bound_o_needles = loc_lower_match_o_needles - 1;
+      lhs_loc_upper_bound_o_needles = loc_lower_duplicate_o_needles - 1;
     }
     if (do_rhs) {
-      rhs_loc_lower_bound_o_needles = loc_upper_match_o_needles + 1;
+      rhs_loc_lower_bound_o_needles = loc_upper_duplicate_o_needles + 1;
     }
 
     break;
