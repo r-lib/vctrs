@@ -1732,7 +1732,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       );
     }
 
-    size_out = (r_ssize) dbl_size_out;
+    size_out = r_double_as_ssize(dbl_size_out);
   }
 
   r_keep_t out_needles_pi;
@@ -1750,6 +1750,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
   const int* v_o_loc_needles = NULL;
   if (!skip_loc_needles) {
+    // `loc_needles` is used when locating "all" matches. The first
+    // `size_needles` elements will be in order, but locations after that
+    // are extra matches from nested containment groups and won't be in order.
     r_obj* loc_needles = KEEP_N(r_arr_unwrap(p_loc_needles), &n_prot);
     r_obj* o_loc_needles = KEEP_N(vec_order(loc_needles, chrs_asc, chrs_smallest, true, r_null), &n_prot);
     v_o_loc_needles = r_int_cbegin(o_loc_needles);
@@ -1770,21 +1773,19 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   r_ssize loc_out = 0;
 
   bool any_multiple = false;
-  bool maybe_multiple =
+  bool check_for_multiple =
     multiple == VCTRS_MULTIPLE_all ||
     multiple == VCTRS_MULTIPLE_error ||
     multiple == VCTRS_MULTIPLE_warning;
 
-  const bool match_incomplete = incomplete->action == VCTRS_INCOMPLETE_ACTION_match;
-
   for (r_ssize i = 0; i < n_used; ++i) {
     const int loc = skip_loc_needles ? i : v_o_loc_needles[i] - 1;
 
-    int loc_first_match_o_haystack = v_loc_first_match_o_haystack[loc];
+    const int loc_first_match_o_haystack = v_loc_first_match_o_haystack[loc];
     const int size_match = skip_size_match ? 1 : v_size_match[loc];
     const int loc_needles = skip_loc_needles ? loc : v_loc_needles[loc];
 
-    if (!match_incomplete && loc_first_match_o_haystack == SIGNAL_INCOMPLETE) {
+    if (loc_first_match_o_haystack == SIGNAL_INCOMPLETE) {
       if (size_match != 1) {
         r_stop_internal(
           "expand_compact_indices",
@@ -1797,11 +1798,11 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         v_out_needles[loc_out] = loc_needles + 1;
         v_out_haystack[loc_out] = incomplete->value;
         ++loc_out;
-        break;
+        continue;
       }
       case VCTRS_INCOMPLETE_ACTION_drop: {
         // Do not increment `loc_out`, do not store locations
-        break;
+        continue;
       }
       case VCTRS_INCOMPLETE_ACTION_error: {
         stop_matches_incomplete(loc_needles, needles_arg);
@@ -1812,9 +1813,10 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
           "Needles should never be marked as `SIGNAL_INCOMPLETE` when `incomplete = 'match'`."
         );
       }
+      default: {
+        r_stop_internal("expand_compact_indices", "Unknown `incomplete->action`.");
       }
-
-      continue;
+      }
     }
 
     if (loc_first_match_o_haystack == SIGNAL_NO_MATCH) {
@@ -1830,10 +1832,10 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         v_out_needles[loc_out] = loc_needles + 1;
         v_out_haystack[loc_out] = no_match->value;
         ++loc_out;
-        break;
+        continue;
       }
       case VCTRS_NO_MATCH_ACTION_drop: {
-        break;
+        continue;
       }
       case VCTRS_NO_MATCH_ACTION_error: {
         stop_matches_nothing(i, needles_arg, haystack_arg);
@@ -1842,30 +1844,38 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         r_stop_internal("expand_compact_indices", "Unknown `no_match->action`.");
       }
       }
-
-      continue;
     }
 
     if (has_loc_filter_match_haystack) {
+      // When recording matches, if we updated the filter match value for a
+      // particular needle, then we weren't able to remove the old match from
+      // `p_loc_first_match_o_haystack`. So we need to check that the current
+      // match value in the haystack is the same as the recorded filter match
+      // value for this needle. If it is the same, we continue, otherwise we
+      // move on to the next value.
       const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
       const int loc_filter_match_haystack = v_loc_filter_match_haystack[loc_needles];
 
-      const bool equal = p_matches_df_equal_na_equal(
-        p_haystack,
-        loc_first_match_haystack,
-        p_haystack,
-        loc_filter_match_haystack,
-        v_filters
-      );
+      bool equal = false;
+
+      if (loc_first_match_haystack == loc_filter_match_haystack) {
+        equal = true;
+      } else {
+        equal = p_matches_df_equal_na_equal(
+          p_haystack,
+          loc_first_match_haystack,
+          p_haystack,
+          loc_filter_match_haystack,
+          v_filters
+        );
+      }
 
       if (!equal) {
-        // Potential haystack match doesn't aligned with known filtered match.
-        // This can happen if the potential match came from a different nested group.
         continue;
       }
     }
 
-    if (maybe_multiple && !any_multiple) {
+    if (check_for_multiple) {
       if (i < size_needles) {
         any_multiple = size_match > 1;
       } else {
@@ -1879,6 +1889,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         } else if (multiple == VCTRS_MULTIPLE_warning) {
           warn_matches_multiple(loc_needles, needles_arg, haystack_arg);
         }
+
+        // We know there are multiple and don't need to continue checking
+        check_for_multiple = false;
       }
     }
 
@@ -1891,6 +1904,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       v_out_haystack[loc_out] = loc_haystack + 1;
 
       if (retain_remaining_haystack) {
+        // This haystack value was a match, so it isn't "remaining"
         v_detect_remaining_haystack[loc_haystack] = 0;
       }
 
@@ -1902,9 +1916,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   if (loc_out < size_out) {
     // Can happen with a `filter` and `multiple = "all"`, where it is possible
     // for potential matches coming from a different nested containment group
-    // to be filtered out in the above loop.
+    // to be skipped over in the `has_loc_filter_match_haystack` section.
     // Can also happen with `no_match = "drop"` or `incomplete = "drop"`.
-    // Resize should be free by setting truelength and growable bit.
+    // This resize should be essentially free by setting truelength/growable.
     size_out = loc_out;
 
     out_needles = r_int_resize(out_needles, size_out);
@@ -1928,19 +1942,21 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     r_obj* both = KEEP(new_vec_matches_result_from_columns(out_needles, out_haystack));
 
     r_obj* o_haystack_appearance = KEEP(vec_order(both, chrs_asc, chrs_smallest, true, r_null));
-    const int* v_o_haystack_appearance = r_int_cbegin(o_haystack_appearance);
+    int* v_o_haystack_appearance = r_int_begin(o_haystack_appearance);
 
-    r_obj* out_haystack2 = KEEP(r_alloc_integer(size_out));
-    int* v_out_haystack2 = r_int_begin(out_haystack2);
+    // Avoid a second allocation by reusing the appearance order vector,
+    // which has the same size and type as the output and we won't overwrite it
+    r_obj* out_haystack_reordered = o_haystack_appearance;
+    int* v_out_haystack_reordered = v_o_haystack_appearance;
 
     for (r_ssize i = 0; i < size_out; ++i) {
-      v_out_haystack2[i] = v_out_haystack[v_o_haystack_appearance[i] - 1];
+      v_out_haystack_reordered[i] = v_out_haystack[v_o_haystack_appearance[i] - 1];
     }
 
-    out_haystack = out_haystack2;
-    v_out_haystack = v_out_haystack2;
+    out_haystack = out_haystack_reordered;
+    v_out_haystack = v_out_haystack_reordered;
 
-    FREE(3);
+    FREE(2);
     KEEP_AT(out_haystack, out_haystack_pi);
   }
 
@@ -1956,13 +1972,14 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         stop_matches_remaining(i, needles_arg, haystack_arg);
       }
 
-      // Overwrite with location, this moves all remaining locs up to the front
+      // Overwrite with location, this moves all "remaining" locations to the
+      // front so we can loop over them sequentially
       v_detect_remaining_haystack[n_remaining_haystack] = i;
       ++n_remaining_haystack;
     }
 
     if (n_remaining_haystack > 0) {
-      // Resize to have enough room for haystack remainings at the end
+      // Resize to have enough room for "remaining" haystack values at the end
       r_ssize new_size_out = r_ssize_add(size_out, n_remaining_haystack);
 
       out_needles = r_int_resize(out_needles, new_size_out);
@@ -1973,6 +1990,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       KEEP_AT(out_haystack, out_haystack_pi);
       v_out_haystack = r_int_begin(out_haystack);
 
+      // Add in "remaining" values at the end of the output
       for (r_ssize i = size_out, j = 0; i < new_size_out; ++i, ++j) {
         v_out_needles[i] = remaining->value;
         v_out_haystack[i] = v_detect_remaining_haystack[j] + 1;
