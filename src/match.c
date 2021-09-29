@@ -2355,12 +2355,12 @@ int p_matches_df_compare_na_equal(const void* x,
                                   r_ssize j,
                                   const enum vctrs_filter* v_filters) {
   // First broken tie wins.
-  // All columns are integer vectors (ranks).
+  // All columns are integer vectors (approximate ranks).
 
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
-  struct poly_df_data* y_data = (struct poly_df_data*) y;
+  const struct poly_df_data* x_data = (struct poly_df_data*) x;
+  const struct poly_df_data* y_data = (struct poly_df_data*) y;
 
-  r_ssize n_col = x_data->n_col;
+  const r_ssize n_col = x_data->n_col;
 
   const void** x_ptrs = x_data->col_ptrs;
   const void** y_ptrs = y_data->col_ptrs;
@@ -2373,30 +2373,30 @@ int p_matches_df_compare_na_equal(const void* x,
       break;
     }
     case VCTRS_FILTER_max: {
-      int cmp = p_int_compare_na_equal(x_ptrs[col], i, y_ptrs[col], j);
-      if (cmp == 1) {
-        // Signal replace
-        return 1;
-      } else if (cmp == -1) {
-        return -1;
+      const int cmp = p_int_compare_na_equal(x_ptrs[col], i, y_ptrs[col], j);
+      if (cmp != 0) {
+        // Want max, new value is greater (1), signal replace (1)
+        // Want max, new value is smaller (-1), signal keep (-1)
+        return cmp;
       }
       break;
     }
     case VCTRS_FILTER_min: {
-      int cmp = p_int_compare_na_equal(x_ptrs[col], i, y_ptrs[col], j);
-      if (cmp == -1) {
-        // Signal replace
-        return 1;
-      } else if (cmp == 1) {
-        return -1;
+      const int cmp = p_int_compare_na_equal(x_ptrs[col], i, y_ptrs[col], j);
+      if (cmp != 0) {
+        // Want min, new value is smaller (-1), signal replace (1)
+        // Want min, new value is larger (1), signal keep (-1)
+        return -cmp;
       }
       break;
+    }
+    default: {
+      r_stop_internal("p_matches_df_compare_na_equal", "Unknown `filter`.");
     }
     }
   }
 
-  // All columns are equal, or no columns.
-  // In the all equal case, we don't need to update.
+  // All columns are equal, or no columns. No need to update anything.
   return 0;
 }
 
@@ -2406,12 +2406,12 @@ bool p_matches_df_equal_na_equal(const void* x,
                                  const void* y,
                                  r_ssize j,
                                  const enum vctrs_filter* v_filters) {
-  // All columns are integer vectors (ranks).
+  // All columns are integer vectors (approximate ranks).
 
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
-  struct poly_df_data* y_data = (struct poly_df_data*) y;
+  const struct poly_df_data* x_data = (struct poly_df_data*) x;
+  const struct poly_df_data* y_data = (struct poly_df_data*) y;
 
-  r_ssize n_col = x_data->n_col;
+  const r_ssize n_col = x_data->n_col;
 
   const void** x_ptrs = x_data->col_ptrs;
   const void** y_ptrs = y_data->col_ptrs;
