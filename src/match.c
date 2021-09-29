@@ -511,14 +511,14 @@ void df_matches_recurse(r_ssize col,
   const bool needle_is_complete = v_needles_complete[loc_mid_bound_needles];
 
   // Find lower and upper duplicate location for this needle
-  r_ssize loc_lower_duplicate_o_needles = int_lower_duplicate(
+  const r_ssize loc_lower_duplicate_o_needles = int_lower_duplicate(
     val_needle,
     v_needles,
     v_o_needles,
     loc_lower_bound_o_needles,
     loc_mid_bound_o_needles
   );
-  r_ssize loc_upper_duplicate_o_needles = int_upper_duplicate(
+  const r_ssize loc_upper_duplicate_o_needles = int_upper_duplicate(
     val_needle,
     v_needles,
     v_o_needles,
@@ -528,6 +528,8 @@ void df_matches_recurse(r_ssize col,
 
   if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && !needle_is_complete) {
     // Signal incomplete needle, don't recursive into further columns.
+    // Early return at the end of this branch.
+
     for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
       // Will always be the first and only time the output is touched for this
       // needle, so we can poke directly into it
@@ -535,7 +537,8 @@ void df_matches_recurse(r_ssize col,
       R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
     }
 
-    // Learned nothing about haystack!
+    // Learned nothing about haystack, so just update lhs/rhs bounds for
+    // `o_needles` as needed and continue on
     bool do_lhs = loc_lower_duplicate_o_needles > loc_lower_bound_o_needles;
     bool do_rhs = loc_upper_duplicate_o_needles < loc_upper_bound_o_needles;
 
