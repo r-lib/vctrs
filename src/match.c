@@ -294,12 +294,12 @@ r_obj* df_matches(r_obj* needles,
   r_obj* nested_groups = r_list_get(info, 1);
   const int* v_nested_groups = r_int_cbegin(nested_groups);
 
-  int n_nested_groups = r_as_int(r_list_get(info, 2));
-  bool any_non_equi = r_as_bool(r_list_get(info, 3));
+  const int n_nested_groups = r_as_int(r_list_get(info, 2));
+  const bool any_non_equi = r_as_bool(r_list_get(info, 3));
 
   // In the case of possible multiple matches that fall in separate
   // nested containers, allocate ~20% extra room
-  r_ssize initial_capacity =
+  const r_ssize initial_capacity =
     (n_nested_groups == 1) ?
     size_needles :
     r_double_as_ssize(r_ssize_as_double(size_needles) * 1.2);
@@ -355,7 +355,7 @@ r_obj* df_matches(r_obj* needles,
   // nested containment group of the haystack. `loc_filter_match_haystack`
   // keeps track of the overall filtered match loc for a needle across all
   // nested groups in the haystack.
-  bool has_loc_filter_match_haystack =
+  const bool has_loc_filter_match_haystack =
     any_filters &&
     (multiple == VCTRS_MULTIPLE_all ||
      multiple == VCTRS_MULTIPLE_warning ||
