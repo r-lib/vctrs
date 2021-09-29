@@ -1723,13 +1723,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
     if (dbl_size_out > R_LEN_T_MAX) {
       // TODO: Update this after a switch to long vector support
-      r_abort(
-        "Match procedure results in an allocation larger than 2^31-1 elements. "
-        "Attempted allocation size was %.0lf. "
-        "Please report this to the vctrs maintainers at "
-        "<https://github.com/r-lib/vctrs/issues>.",
-        dbl_size_out
-      );
+      stop_matches_overflow(dbl_size_out);
     }
 
     size_out = r_double_as_ssize(dbl_size_out);
