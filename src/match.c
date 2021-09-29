@@ -1590,14 +1590,12 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
     r_obj* out = KEEP(new_vec_matches_result(size_out));
     int* v_out_needles = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_needles));
     int* v_out_haystack = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_haystack));
-    r_ssize loc_out = 0;
 
     const int loc_haystack = no_match->value;
 
     for (r_ssize i = 0; i < size_out; ++i) {
-      v_out_needles[loc_out] = i + 1;
-      v_out_haystack[loc_out] = loc_haystack;
-      ++loc_out;
+      v_out_needles[i] = i + 1;
+      v_out_haystack[i] = loc_haystack;
     }
 
     FREE(1);
@@ -1620,14 +1618,12 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
     r_obj* out = KEEP(new_vec_matches_result(size_out));
     int* v_out_needles = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_needles));
     int* v_out_haystack = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_haystack));
-    r_ssize loc_out = 0;
 
     const int loc_needles = remaining->value;
 
     for (r_ssize i = 0; i < size_out; ++i) {
-      v_out_needles[loc_out] = loc_needles;
-      v_out_haystack[loc_out] = i + 1;
-      ++loc_out;
+      v_out_needles[i] = loc_needles;
+      v_out_haystack[i] = i + 1;
     }
 
     FREE(1);
@@ -1639,14 +1635,12 @@ r_obj* expand_match_on_nothing(r_ssize size_needles,
     r_obj* out = KEEP(new_vec_matches_result(size_needles));
     int* v_out_needles = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_needles));
     int* v_out_haystack = r_int_begin(r_list_get(out, MATCHES_DF_LOCS_haystack));
-    r_ssize loc_out = 0;
 
     const int loc_haystack = (multiple == VCTRS_MULTIPLE_first) ? 1 : size_haystack;
 
     for (r_ssize i = 0; i < size_needles; ++i) {
-      v_out_needles[loc_out] = i + 1;
-      v_out_haystack[loc_out] = loc_haystack;
-      ++loc_out;
+      v_out_needles[i] = i + 1;
+      v_out_haystack[i] = loc_haystack;
     }
 
     FREE(1);
