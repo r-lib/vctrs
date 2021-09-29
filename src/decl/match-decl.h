@@ -63,12 +63,13 @@ void df_matches_recurse(r_ssize col,
                         int* v_loc_filter_match_haystack);
 
 static
-void df_matches_with_nested_groups(r_ssize size_haystack,
-                                   int n_nested_groups,
+void df_matches_with_nested_groups(int n_nested_groups,
                                    const int* v_nested_groups,
                                    r_ssize col,
                                    r_ssize loc_lower_bound_o_needles,
                                    r_ssize loc_upper_bound_o_needles,
+                                   r_ssize loc_lower_bound_o_haystack,
+                                   r_ssize loc_upper_bound_o_haystack,
                                    const struct poly_df_data* p_needles,
                                    const struct poly_df_data* p_haystack,
                                    const struct poly_df_data* p_needles_complete,

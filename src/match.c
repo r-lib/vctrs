@@ -396,11 +396,10 @@ r_obj* df_matches(r_obj* needles,
     const r_ssize col = 0;
     const r_ssize loc_lower_bound_o_needles = 0;
     const r_ssize loc_upper_bound_o_needles = size_needles - 1;
+    const r_ssize loc_lower_bound_o_haystack = 0;
+    const r_ssize loc_upper_bound_o_haystack = size_haystack - 1;
 
     if (n_nested_groups == 1) {
-      const r_ssize loc_lower_bound_o_haystack = 0;
-      const r_ssize loc_upper_bound_o_haystack = size_haystack - 1;
-
       df_matches_recurse(
         col,
         loc_lower_bound_o_needles,
@@ -425,12 +424,13 @@ r_obj* df_matches(r_obj* needles,
       );
     } else {
       df_matches_with_nested_groups(
-        size_haystack,
         n_nested_groups,
         v_nested_groups,
         col,
         loc_lower_bound_o_needles,
         loc_upper_bound_o_needles,
+        loc_lower_bound_o_haystack,
+        loc_upper_bound_o_haystack,
         p_needles,
         p_haystack,
         p_needles_complete,
@@ -1039,12 +1039,13 @@ void df_matches_recurse(r_ssize col,
 // -----------------------------------------------------------------------------
 
 static
-void df_matches_with_nested_groups(r_ssize size_haystack,
-                                   int n_nested_groups,
+void df_matches_with_nested_groups(int n_nested_groups,
                                    const int* v_nested_groups,
                                    r_ssize col,
                                    r_ssize loc_lower_bound_o_needles,
                                    r_ssize loc_upper_bound_o_needles,
+                                   r_ssize loc_lower_bound_o_haystack,
+                                   r_ssize loc_upper_bound_o_haystack,
                                    const struct poly_df_data* p_needles,
                                    const struct poly_df_data* p_haystack,
                                    const struct poly_df_data* p_needles_complete,
@@ -1062,43 +1063,19 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
                                    int* v_loc_filter_match_haystack) {
   const int* v_haystack = v_nested_groups;
 
-  r_ssize loc_lower_match_o_haystack = 0;
-  r_ssize loc_upper_match_o_haystack = size_haystack - 1;
-
   for (int i = 0; i < n_nested_groups; ++i) {
     const int val_needle = i;
 
-    while (loc_lower_match_o_haystack <= loc_upper_match_o_haystack) {
-      const r_ssize loc_mid_match_o_haystack = midpoint(loc_lower_match_o_haystack, loc_upper_match_o_haystack);
-      const r_ssize loc_mid_match_haystack = v_o_haystack[loc_mid_match_o_haystack] - 1;
-      const int val_haystack = v_haystack[loc_mid_match_haystack];
+    const struct vctrs_match_bounds bounds = int_locate_match(
+      val_needle,
+      v_haystack,
+      v_o_haystack,
+      loc_lower_bound_o_haystack,
+      loc_upper_bound_o_haystack
+    );
 
-      const int cmp = int_compare_na_equal(val_needle, val_haystack);
-
-      if (cmp == 1) {
-        loc_lower_match_o_haystack = loc_mid_match_o_haystack + 1;
-      } else if (cmp == -1) {
-        loc_upper_match_o_haystack = loc_mid_match_o_haystack - 1;
-      } else {
-        // Hit!
-        // Find lower and upper group bounds
-        loc_lower_match_o_haystack = int_locate_lower_duplicate(
-          val_haystack,
-          v_haystack,
-          v_o_haystack,
-          loc_lower_match_o_haystack,
-          loc_mid_match_o_haystack
-        );
-        loc_upper_match_o_haystack = int_locate_upper_duplicate(
-          val_haystack,
-          v_haystack,
-          v_o_haystack,
-          loc_mid_match_o_haystack,
-          loc_upper_match_o_haystack
-        );
-        break;
-      }
-     }
+    const r_ssize loc_lower_match_o_haystack = bounds.lower;
+    const r_ssize loc_upper_match_o_haystack = bounds.upper;
 
     df_matches_recurse(
       col,
@@ -1123,9 +1100,8 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
       v_loc_filter_match_haystack
     );
 
-    // Update bounds for next group
-    loc_lower_match_o_haystack = loc_upper_match_o_haystack + 1;
-    loc_upper_match_o_haystack = size_haystack - 1;
+    // Advance lower bound for next nested group
+    loc_lower_bound_o_haystack = loc_upper_match_o_haystack + 1;
   }
 }
 
