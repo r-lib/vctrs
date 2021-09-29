@@ -1938,7 +1938,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       }
 
       // Overwrite with location, this moves all remaining locs up to the front
-      v_detect_remaining_haystack[n_remaining_haystack] = i + 1;
+      v_detect_remaining_haystack[n_remaining_haystack] = i;
       ++n_remaining_haystack;
     }
 
@@ -1956,7 +1956,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       for (r_ssize i = size_out, j = 0; i < new_size_out; ++i, ++j) {
         v_out_needles[i] = remaining->value;
-        v_out_haystack[i] = v_detect_remaining_haystack[j];
+        v_out_haystack[i] = v_detect_remaining_haystack[j] + 1;
       }
 
       size_out = new_size_out;
