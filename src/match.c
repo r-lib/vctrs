@@ -1107,7 +1107,9 @@ void df_matches_with_nested_groups(int n_nested_groups,
 
 // -----------------------------------------------------------------------------
 
-// Find the largest contiguous location containing an incomplete value
+// In a sorted array, binary search between
+// [loc_lower_bound_o_haystack, loc_upper_bound_o_haystack]
+// to find the last incomplete value
 static inline
 r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
                                     const int* v_o_haystack,
@@ -1130,7 +1132,9 @@ r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
 
 // -----------------------------------------------------------------------------
 
-// Find the smallest contiguous location containing `needle`
+// In a sorted array, binary search between
+// [loc_lower_bound_o_haystack, loc_upper_bound_o_haystack]
+// to find the first occurrence of `val_needle`
 static inline
 r_ssize int_locate_lower_duplicate(int val_needle,
                                    const int* v_haystack,
@@ -1154,7 +1158,9 @@ r_ssize int_locate_lower_duplicate(int val_needle,
 
 // -----------------------------------------------------------------------------
 
-// Find the largest contiguous location containing `needle`
+// In a sorted array, binary search between
+// [loc_lower_bound_o_haystack, loc_upper_bound_o_haystack]
+// to find the last occurrence of `val_needle`
 static inline
 r_ssize int_locate_upper_duplicate(int val_needle,
                                    const int* v_haystack,
@@ -1178,6 +1184,9 @@ r_ssize int_locate_upper_duplicate(int val_needle,
 
 // -----------------------------------------------------------------------------
 
+// In a sorted array, binary search between
+// [loc_lower_bound_o_haystack, loc_upper_bound_o_haystack]
+// to find the first and last occurrence of `val_needle`
 static inline
 struct vctrs_match_bounds int_locate_match(int val_needle,
                                            const int* v_haystack,
