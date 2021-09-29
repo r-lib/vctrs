@@ -656,14 +656,16 @@ void df_matches_recurse(r_ssize col,
       (op == VCTRS_OPS_gt || op == VCTRS_OPS_gte) &&
       (loc_lower_match_o_haystack <= loc_upper_match_o_haystack)) {
     // In this specific case, a non-NA needle may match an NA in the haystack
-    // from the condition adjustments made above. If there was an NA in the
-    // haystack, we avoid including it by shifting the lower bound to 1 past
-    // the final NA.
+    // after applying the non-equi adjustments above because NA values are
+    // always ordered as the "smallest" values, and we set
+    // `loc_lower_match_o_haystack` to be `loc_lower_bound_o_haystack`, which
+    // may capture NAs at the lower bound. If there is an NA on the lower bound,
+    // we avoid it by finding the last NA and then going 1 location beyond it.
     const r_ssize loc_lower_match_haystack = v_o_haystack[loc_lower_match_o_haystack] - 1;
     const bool lower_match_haystack_is_complete = v_haystack_complete[loc_lower_match_haystack];
 
     if (!lower_match_haystack_is_complete) {
-      /* If there was an NA in the haystack, find the last NA */
+      // Find the last incomplete value
       loc_lower_match_o_haystack = int_locate_upper_incomplete(
         v_haystack_complete,
         v_o_haystack,
@@ -671,7 +673,7 @@ void df_matches_recurse(r_ssize col,
         loc_upper_match_o_haystack
       );
 
-      /* Exclude it and all before it */
+      // Exclude it and all before it
       ++loc_lower_match_o_haystack;
     }
   }
@@ -682,11 +684,11 @@ void df_matches_recurse(r_ssize col,
     switch (filter) {
     case VCTRS_FILTER_max: {
       if (!needle_is_complete || op == VCTRS_OPS_eq) {
-        // Lower bound value will already equal upper bound value
+        // Lower match value will already equal upper match value
         break;
       }
       if (multiple == VCTRS_MULTIPLE_last) {
-        // "last" only requires the upper bound, which already points to "max"
+        // "last" only requires the upper match, which already points to "max"
         break;
       }
 
@@ -711,11 +713,11 @@ void df_matches_recurse(r_ssize col,
     }
     case VCTRS_FILTER_min: {
       if (!needle_is_complete || op == VCTRS_OPS_eq) {
-        // Lower bound value will already equal upper bound value
+        // Lower match value will already equal upper match value
         break;
       }
       if (multiple == VCTRS_MULTIPLE_first) {
-        // "first" only requires the lower bound, which already points to "min"
+        // "first" only requires the lower match, which already points to "min"
         break;
       }
 
@@ -744,7 +746,10 @@ void df_matches_recurse(r_ssize col,
     }
 
     if (col < n_col - 1) {
-      // Recurse into next column on this subgroup
+      // For this column, we've bounded the needles locations to the upper/lower
+      // duplicates of the current needle, and the haystack locations to the
+      // upper/lower matches of that needle. Now recurse into the next column
+      // to further refine the boundaries.
       df_matches_recurse(
         col + 1,
         loc_lower_duplicate_o_needles,
@@ -768,6 +773,9 @@ void df_matches_recurse(r_ssize col,
         v_loc_filter_match_haystack
       );
     } else {
+      // We just finished locating matches for the last column,
+      // and we still have at least 1 hit, so record it
+
       for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
         const int loc_needles = v_o_needles[i] - 1;
         const int loc_first_match_o_haystack = R_ARR_GET(int, p_loc_first_match_o_haystack, loc_needles);
@@ -792,18 +800,19 @@ void df_matches_recurse(r_ssize col,
               v_filters
             );
 
+            // -1 = New haystack value "loses", nothing to update
+            //  1 = New haystack value "wins", it becomes new match
+            //  0 = Equal values, fall through and decide based on location
             if (cmp == -1) {
-              // New haystack value loses vs previous one, do nothing
               break;
             } else if (cmp == 1) {
-              // New haystack value wins vs previous one, automatically update like first_touch
               R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
               break;
             }
           }
 
           if (loc_lower_match_haystack < loc_first_match_haystack) {
-            // New start is before current one
+            // New match is before current one
             R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
           }
 
@@ -827,18 +836,19 @@ void df_matches_recurse(r_ssize col,
               v_filters
             );
 
+            // -1 = New haystack value "loses", nothing to update
+            //  1 = New haystack value "wins", it becomes new match
+            //  0 = Equal values, fall through and decide based on location
             if (cmp == -1) {
-              // New haystack value loses vs previous one, do nothing
               break;
             } else if (cmp == 1) {
-              // New haystack value wins vs previous one, automatically update like first_touch
               R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_upper_match_o_haystack);
               break;
             }
           }
 
           if (loc_upper_match_haystack > loc_first_match_haystack) {
-            // New start is after current one
+            // New match is after current one
             R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_upper_match_o_haystack);
           }
 
@@ -873,12 +883,17 @@ void df_matches_recurse(r_ssize col,
               v_filters
             );
 
-            if (cmp == 1) {
-              // Update filter match location for later use
-              v_loc_filter_match_haystack[loc_needles] = loc_upper_match_haystack;
-            } else if (cmp == -1) {
-              // Not a valid match, as another previous match wins over this one
+            // -1 = New haystack value "loses", nothing to update
+            //  1 = New haystack value "wins", it becomes new filter match
+            //  0 = Equal values, fall through and append this set of matches
+            // Note that in the 1 case, we have no way to invalidate the old
+            // match at this point in time. Instead, we record all matches and
+            // in `expand_compact_indices()` we skip the ones that aren't
+            // equivalent to the filter match.
+            if (cmp == -1) {
               break;
+            } else if (cmp == 1) {
+              v_loc_filter_match_haystack[loc_needles] = loc_upper_match_haystack;
             }
           }
 
@@ -891,11 +906,11 @@ void df_matches_recurse(r_ssize col,
       }
     }
   } else if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && col < n_col - 1) {
-    // Miss! This `needles` column group has no matches in the corresponding
-    // `haystack` column. However, we still need to propagate any potential
-    // NAs that might occur in future columns of this `needles` group. If
-    // `val_needles` was an NA, it would have been caught above, so we only
-    // need to look at future columns.
+    // This branch occurs if there is no match in `haystack` for this needle,
+    // but we aren't on the last column and we are tracking incomplete needles.
+    // Before we move on from this needle, we check its future columns for
+    // incomplete values. If the current `val_needles` was incomplete, it would
+    // have already been caught above, so we only look at future columns.
     for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
       const r_ssize loc_needles = v_o_needles[i] - 1;
 
@@ -911,6 +926,12 @@ void df_matches_recurse(r_ssize col,
     }
   }
 
+  // At this point we have finished recording matches for the current needle in
+  // this column, and we need to move on to other needles on the LHS and RHS
+  // of the current needle (remember the current needle is the midpoint). For
+  // the `==` op case we can also limit the haystack bounds we search in for
+  // needles on the LHS/RHS, since those needles won't ever match the current
+  // haystack values.
   bool do_lhs;
   bool do_rhs;
 
