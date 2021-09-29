@@ -1135,7 +1135,7 @@ r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
 
 // Find the smallest contiguous location containing `needle`
 static inline
-r_ssize int_lower_duplicate(int needle,
+r_ssize int_lower_duplicate(int val_needle,
                             const int* v_haystack,
                             const int* v_o_haystack,
                             r_ssize loc_lower_bound_o_haystack,
@@ -1145,7 +1145,7 @@ r_ssize int_lower_duplicate(int needle,
     const r_ssize loc_mid_bound_haystack = v_o_haystack[loc_mid_bound_o_haystack] - 1;
     const int val_haystack = v_haystack[loc_mid_bound_haystack];
 
-    if (int_equal_na_equal(needle, val_haystack)) {
+    if (int_equal_na_equal(val_needle, val_haystack)) {
       loc_upper_bound_o_haystack = loc_mid_bound_o_haystack - 1;
     } else {
       loc_lower_bound_o_haystack = loc_mid_bound_o_haystack + 1;
@@ -1159,7 +1159,7 @@ r_ssize int_lower_duplicate(int needle,
 
 // Find the largest contiguous location containing `needle`
 static inline
-r_ssize int_upper_duplicate(int needle,
+r_ssize int_upper_duplicate(int val_needle,
                             const int* v_haystack,
                             const int* v_o_haystack,
                             r_ssize loc_lower_bound_o_haystack,
@@ -1167,9 +1167,9 @@ r_ssize int_upper_duplicate(int needle,
   while (loc_lower_bound_o_haystack <= loc_upper_bound_o_haystack) {
     const r_ssize loc_mid_bound_o_haystack = midpoint(loc_lower_bound_o_haystack, loc_upper_bound_o_haystack);
     const r_ssize loc_mid_bound_haystack = v_o_haystack[loc_mid_bound_o_haystack] - 1;
-    const int elt_haystack = v_haystack[loc_mid_bound_haystack];
+    const int val_haystack = v_haystack[loc_mid_bound_haystack];
 
-    if (int_equal_na_equal(needle, elt_haystack)) {
+    if (int_equal_na_equal(val_needle, val_haystack)) {
       loc_lower_bound_o_haystack = loc_mid_bound_o_haystack + 1;
     } else {
       loc_upper_bound_o_haystack = loc_mid_bound_o_haystack - 1;

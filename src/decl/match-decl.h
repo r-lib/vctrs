@@ -91,13 +91,13 @@ r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
                                     r_ssize loc_lower_bound_o_haystack,
                                     r_ssize loc_upper_bound_o_haystack);
 static inline
-r_ssize int_lower_duplicate(int needle,
+r_ssize int_lower_duplicate(int val_needle,
                             const int* v_haystack,
                             const int* v_o_haystack,
                             r_ssize loc_lower_bound_o_haystack,
                             r_ssize loc_upper_bound_o_haystack);
 static inline
-r_ssize int_upper_duplicate(int needle,
+r_ssize int_upper_duplicate(int val_needle,
                             const int* v_haystack,
                             const int* v_o_haystack,
                             r_ssize loc_lower_bound_o_haystack,
