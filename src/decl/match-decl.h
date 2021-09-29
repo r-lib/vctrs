@@ -173,15 +173,19 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
 static
 r_obj* compute_nested_containment_info(r_obj* haystack,
+                                       r_ssize size_haystack,
                                        enum vctrs_multiple multiple,
                                        const enum vctrs_ops* v_ops,
                                        struct vctrs_arg* haystack_arg);
 
 static
 r_obj* nested_containment_order(r_obj* x,
-                                r_obj* order,
-                                r_obj* group_sizes,
-                                r_obj* outer_run_sizes,
+                                const int* v_order,
+                                const int* v_group_sizes,
+                                const int* v_outer_group_sizes,
+                                r_ssize size,
+                                r_ssize n_groups,
+                                bool has_outer_group_sizes,
                                 enum vctrs_multiple multiple);
 
 static inline

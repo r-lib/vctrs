@@ -286,6 +286,7 @@ r_obj* df_matches(r_obj* needles,
 
   r_obj* info = KEEP_N(compute_nested_containment_info(
     haystack,
+    size_haystack,
     multiple,
     v_ops,
     haystack_arg
@@ -2010,34 +2011,38 @@ r_obj* vctrs_test_compute_nested_containment_info(r_obj* haystack,
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, n_cols, v_ops);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
+  const r_ssize size_haystack = vec_size(haystack);
   struct vctrs_arg haystack_arg = new_wrapper_arg(NULL, "haystack");
-  return compute_nested_containment_info(haystack, c_multiple, v_ops, &haystack_arg);
+  return compute_nested_containment_info(haystack, size_haystack, c_multiple, v_ops, &haystack_arg);
 }
 
 static
 r_obj* compute_nested_containment_info(r_obj* haystack,
+                                       r_ssize size_haystack,
                                        enum vctrs_multiple multiple,
                                        const enum vctrs_ops* v_ops,
                                        struct vctrs_arg* haystack_arg) {
   r_ssize n_prot = 0;
 
-  r_ssize n_cols = r_length(haystack);
-  r_ssize size_haystack = vec_size(haystack);
+  const r_ssize n_cols = r_length(haystack);
 
-  // Haystack order, nested groups, number of nested groups, and any directional
+  // Outputs:
+  // - `haystack` order
+  // - Nested groups vector
+  // - Number of nested groups as a scalar
+  // - Boolean for if there are any-non-equi conditions
   r_obj* out = KEEP_N(r_alloc_list(4), &n_prot);
 
-  // Are there any directional ops (>, >=, <, <=)? And where is the first?
   bool any_non_equi = false;
-  int first_directional = 0;
+  int first_non_equi = 0;
   for (r_ssize i = 0; i < n_cols; ++i) {
-    enum vctrs_ops op = v_ops[i];
-    if (op == VCTRS_OPS_eq) {
-      continue;
+    const enum vctrs_ops op = v_ops[i];
+
+    if (op != VCTRS_OPS_eq) {
+      any_non_equi = true;
+      first_non_equi = i;
+      break;
     }
-    any_non_equi = true;
-    first_directional = i;
-    break;
   }
 
   if (!any_non_equi) {
@@ -2050,50 +2055,68 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     return out;
   }
 
-  r_obj* info = KEEP_N(vec_order_info(haystack, chrs_asc, chrs_smallest, true, r_null, true), &n_prot);
+  r_obj* info = KEEP_N(vec_order_info(
+    haystack,
+    chrs_asc,
+    chrs_smallest,
+    true,
+    r_null,
+    true
+  ), &n_prot);
 
   r_obj* o_haystack = r_list_get(info, 0);
-  r_obj* group_sizes_haystack = r_list_get(info, 1);
+  const int* v_o_haystack = r_int_cbegin(o_haystack);
 
-  r_keep_t haystack_inner_pi;
-  r_obj* haystack_inner = haystack;
-  KEEP_HERE(haystack_inner, &haystack_inner_pi);
+  r_obj* group_sizes = r_list_get(info, 1);
+  const int* v_group_sizes = r_int_cbegin(group_sizes);
+  const r_ssize n_groups = r_length(group_sizes);
+
+  // This is the haystack we compute nested containment order with.
+  // This is initially the whole `haystack`, but will be adjusted to contain
+  // fewer columns if there are `==` conditions before the first non-equi
+  // condition.
+  r_keep_t haystack_containment_pi;
+  r_obj* haystack_containment = haystack;
+  KEEP_HERE(haystack_containment, &haystack_containment_pi);
   ++n_prot;
 
-  r_keep_t outer_run_sizes_pi;
-  r_obj* outer_run_sizes = vctrs_shared_empty_int;
-  KEEP_HERE(outer_run_sizes, &outer_run_sizes_pi);
-  ++n_prot;
+  // If there are `==` conditions before the first non-equi condition,
+  // we separate those columns from the haystack and compute their group sizes,
+  // which are used for computing the nested containment order.
+  bool has_outer_group_sizes = false;
+  const int* v_outer_group_sizes = NULL;
 
-  if (first_directional != 0) {
-    // We have equality comparisons before the first directional comparison.
+  if (first_non_equi != 0) {
+    // We have equality comparisons before the first non-equi comparison.
     // In this case, we can skip nested containment ordering for the equality
-    // comparisons before the first directional comparison if we pass on the
-    // group sizes of the ordered equality columns.
+    // comparisons before the first non-equi comparison if we pass on the
+    // group sizes of the ordered equality columns as `outer_group_sizes`.
     r_obj* const* v_haystack = r_list_cbegin(haystack);
     r_obj* const* v_haystack_names = r_chr_cbegin(r_names(haystack));
 
-    // "Outer" data frame columns
-    r_obj* haystack_outer = KEEP_N(r_alloc_list(first_directional), &n_prot);
-    r_obj* haystack_outer_names = r_alloc_character(first_directional);
+    // "Outer" data frame columns before the first non-equi condition
+    r_obj* haystack_outer = KEEP_N(r_alloc_list(first_non_equi), &n_prot);
+    r_obj* haystack_outer_names = r_alloc_character(first_non_equi);
     r_poke_names(haystack_outer, haystack_outer_names);
     r_init_data_frame(haystack_outer, size_haystack);
-    for (r_ssize i = 0; i < first_directional; ++i) {
+    for (r_ssize i = 0; i < first_non_equi; ++i) {
       r_list_poke(haystack_outer, i, v_haystack[i]);
       r_chr_poke(haystack_outer_names, i, v_haystack_names[i]);
     }
 
-    // "Inner" data frame columns
-    haystack_inner = r_alloc_list(n_cols - first_directional);
-    KEEP_AT(haystack_inner, haystack_inner_pi);
-    r_obj* haystack_inner_names = r_alloc_character(n_cols - first_directional);
+    // "Inner" data frame columns at and after the first non-equi condition
+    r_obj* haystack_inner = KEEP_N(r_alloc_list(n_cols - first_non_equi), &n_prot);
+    r_obj* haystack_inner_names = r_alloc_character(n_cols - first_non_equi);
     r_poke_names(haystack_inner, haystack_inner_names);
     r_init_data_frame(haystack_inner, size_haystack);
-    for (r_ssize i = first_directional, j = 0; i < n_cols; ++i, ++j) {
+    for (r_ssize i = first_non_equi, j = 0; i < n_cols; ++i, ++j) {
       r_list_poke(haystack_inner, j, v_haystack[i]);
       r_chr_poke(haystack_inner_names, j, v_haystack_names[i]);
     }
 
+    // Compute the ordering info of the outer columns,
+    // just to pluck off the group sizes. These automatically create
+    // a set of nested groups that "surround" the non-equi columns.
     r_obj* info = vec_order_info(
       haystack_outer,
       chrs_asc,
@@ -2102,24 +2125,32 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
       r_null,
       true
     );
-    outer_run_sizes = r_list_get(info, 1);
-    KEEP_AT(outer_run_sizes, outer_run_sizes_pi);
+    r_obj* outer_group_sizes = KEEP_N(r_list_get(info, 1), &n_prot);
+    v_outer_group_sizes = r_int_cbegin(outer_group_sizes);
+    has_outer_group_sizes = true;
+
+    // Inner columns become the new containment haystack
+    haystack_containment = haystack_inner;
+    KEEP_AT(haystack_containment, haystack_containment_pi);
   }
 
   r_obj* nested_info = KEEP_N(nested_containment_order(
-    haystack_inner,
-    o_haystack,
-    group_sizes_haystack,
-    outer_run_sizes,
+    haystack_containment,
+    v_o_haystack,
+    v_group_sizes,
+    v_outer_group_sizes,
+    size_haystack,
+    n_groups,
+    has_outer_group_sizes,
     multiple
   ), &n_prot);
 
-  int n_nested_groups = r_as_int(r_list_get(nested_info, 1));
+  const int n_nested_groups = r_as_int(r_list_get(nested_info, 1));
 
   if (n_nested_groups == 1) {
-    // If only a single nested group exists, we hit the somewhat rare case of
-    // having a >1 col data frame that is already in nested containment order.
-    // In that case, original haystack ordering is sufficient.
+    // If only a single nested group exists at this point, we hit the somewhat
+    // rare case of having a >1 col data frame that is already in nested
+    // containment order. In that case, original haystack ordering is sufficient.
     r_list_poke(out, 0, o_haystack);
     r_list_poke(out, 1, vctrs_shared_empty_int);
     r_list_poke(out, 2, r_int(1));
@@ -2148,7 +2179,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     r_chr_poke(haystack_with_nesting_names, i + 1, v_haystack_names[i]);
   }
 
-  o_haystack = KEEP_N(vec_order(
+  r_obj* o_haystack_nested_containment = KEEP_N(vec_order(
     haystack_with_nesting,
     chrs_asc,
     chrs_smallest,
@@ -2156,7 +2187,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     r_null
   ), &n_prot);
 
-  r_list_poke(out, 0, o_haystack);
+  r_list_poke(out, 0, o_haystack_nested_containment);
   r_list_poke(out, 1, nested_groups);
   r_list_poke(out, 2, r_int(n_nested_groups));
   r_list_poke(out, 3, r_lgl(any_non_equi));
@@ -2170,9 +2201,12 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
 
 static
 r_obj* nested_containment_order(r_obj* x,
-                                r_obj* order,
-                                r_obj* group_sizes,
-                                r_obj* outer_run_sizes,
+                                const int* v_order,
+                                const int* v_group_sizes,
+                                const int* v_outer_group_sizes,
+                                r_ssize size,
+                                r_ssize n_groups,
+                                bool has_outer_group_sizes,
                                 enum vctrs_multiple multiple) {
   if (!is_data_frame(x)) {
     r_stop_internal("nested_containment_order", "`x` must be a data frame.");
@@ -2180,8 +2214,7 @@ r_obj* nested_containment_order(r_obj* x,
 
   int n_prot = 0;
 
-  r_ssize n_cols = r_length(x);
-  r_ssize size = r_length(order);
+  const r_ssize n_cols = r_length(x);
 
   // For first/last, we require not only increasing order for each
   // column, but also increasing row order as well. This can generate more
@@ -2215,18 +2248,12 @@ r_obj* nested_containment_order(r_obj* x,
     // If there is only 1 column, `x` is in increasing order already when
     // ordered by `order`. If we don't require that the actual row numbers also
     // be in order, then we are done.
-    // If `outer_run_sizes` were supplied, each individual run group will
+    // If `outer_group_sizes` were supplied, each individual group will
     // be in increasing order (since the single `x` column is the one that
     // broke any ties), and that is all that is required.
     FREE(n_prot);
     return out;
   }
-
-  const int* v_order = r_int_cbegin(order);
-  const int* v_group_sizes = r_int_cbegin(group_sizes);
-  const int* v_outer_run_sizes = r_int_cbegin(outer_run_sizes);
-
-  r_ssize n_groups = r_length(group_sizes);
 
   struct r_dyn_array* p_prev_rows = r_new_dyn_vector(R_TYPE_integer, 10000);
   KEEP_N(p_prev_rows->shelter, &n_prot);
@@ -2243,13 +2270,14 @@ r_obj* nested_containment_order(r_obj* x,
   p_prev_rows->count = 1;
   R_ARR_POKE(int, p_prev_rows, 0, first_row);
 
-  r_ssize next_outer_run_start = 0;
-  r_ssize outer_run_sizes_loc = 0;
-  if (r_length(outer_run_sizes) > 0) {
-    // If no outer runs exist, `integer(0)` is used and `next_outer_run_start = 0`
+  r_ssize loc_next_outer_group_start = 0;
+  r_ssize loc_outer_group_sizes = 0;
+  if (has_outer_group_sizes) {
+    // If no outer groups exist, `loc_next_outer_group_start == 0`
     // will never match `i_order_group_start` since the first group size is at least 1.
-    next_outer_run_start = v_outer_run_sizes[outer_run_sizes_loc];
-    ++outer_run_sizes_loc;
+    // Otherwise the `loc_next_outer_group_start` is the first outer group size.
+    loc_next_outer_group_start = v_outer_group_sizes[loc_outer_group_sizes];
+    ++loc_outer_group_sizes;
   }
 
   for (r_ssize i_group = 1; i_group < n_groups; ++i_group) {
@@ -2282,15 +2310,15 @@ r_obj* nested_containment_order(r_obj* x,
     }
 
     int id;
-    if (next_outer_run_start == i_order_group_start) {
-      // Start of a new outer run
+    if (loc_next_outer_group_start == i_order_group_start) {
+      // Start of a new outer group
       id = 0;
-      next_outer_run_start += v_outer_run_sizes[outer_run_sizes_loc];
-      ++outer_run_sizes_loc;
+      loc_next_outer_group_start += v_outer_group_sizes[loc_outer_group_sizes];
+      ++loc_outer_group_sizes;
       p_prev_rows->count = 1;
       R_ARR_POKE(int, p_prev_rows, 0, cur_row);
     } else if (new_id) {
-      // Completely new id for this outer run, which we add to the end
+      // Completely new id for this outer group, which we add to the end
       id = max_prev_row_id;
       r_arr_push_back(p_prev_rows, &cur_row);
 
