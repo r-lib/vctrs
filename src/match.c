@@ -383,8 +383,6 @@ r_obj* df_matches(r_obj* needles,
   PROTECT_POLY_VEC(p_poly_haystack_complete, &n_prot);
   const struct poly_df_data* p_haystack_complete = (const struct poly_df_data*) p_poly_haystack_complete->p_vec;
 
-  r_ssize n_extra = 0;
-
   if (size_needles > 0) {
     // Recursion requires at least 1 row in needles.
     // In the case of size 0 needles, there is nothing to do, but this avoids
@@ -418,8 +416,7 @@ r_obj* df_matches(r_obj* needles,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack,
-        &n_extra
+        v_loc_filter_match_haystack
       );
     } else {
       df_matches_with_nested_groups(
@@ -443,8 +440,7 @@ r_obj* df_matches(r_obj* needles,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack,
-        &n_extra
+        v_loc_filter_match_haystack
       );
     }
   }
@@ -497,8 +493,7 @@ void df_matches_recurse(r_ssize col,
                         struct r_dyn_array* p_loc_first_match_o_haystack,
                         struct r_dyn_array* p_size_match,
                         struct r_dyn_array* p_loc_needles,
-                        int* v_loc_filter_match_haystack,
-                        r_ssize* p_n_extra) {
+                        int* v_loc_filter_match_haystack) {
   const enum vctrs_ops op = v_ops[col];
   const enum vctrs_filter filter = v_filters[col];
   const r_ssize n_col = p_needles->n_col;
@@ -568,8 +563,7 @@ void df_matches_recurse(r_ssize col,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack,
-        p_n_extra
+        v_loc_filter_match_haystack
       );
     }
     if (do_rhs) {
@@ -596,8 +590,7 @@ void df_matches_recurse(r_ssize col,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack,
-        p_n_extra
+        v_loc_filter_match_haystack
       );
     }
 
@@ -788,8 +781,7 @@ void df_matches_recurse(r_ssize col,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack,
-        p_n_extra
+        v_loc_filter_match_haystack
       );
     } else {
       for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
@@ -909,7 +901,6 @@ void df_matches_recurse(r_ssize col,
           r_arr_push_back(p_loc_first_match_o_haystack, &loc_lower_match_o_haystack);
           r_arr_push_back(p_size_match, &size_match);
           r_arr_push_back(p_loc_needles, &loc_needles);
-          ++(*p_n_extra);
           break;
         }
         }
@@ -1011,8 +1002,7 @@ void df_matches_recurse(r_ssize col,
       p_loc_first_match_o_haystack,
       p_size_match,
       p_loc_needles,
-      v_loc_filter_match_haystack,
-      p_n_extra
+      v_loc_filter_match_haystack
     );
   }
   if (do_rhs) {
@@ -1036,8 +1026,7 @@ void df_matches_recurse(r_ssize col,
       p_loc_first_match_o_haystack,
       p_size_match,
       p_loc_needles,
-      v_loc_filter_match_haystack,
-      p_n_extra
+      v_loc_filter_match_haystack
     );
   }
 }
@@ -1065,8 +1054,7 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
                                    struct r_dyn_array* p_loc_first_match_o_haystack,
                                    struct r_dyn_array* p_size_match,
                                    struct r_dyn_array* p_loc_needles,
-                                   int* v_loc_filter_match_haystack,
-                                   r_ssize* p_n_extra) {
+                                   int* v_loc_filter_match_haystack) {
   const int* v_haystack = v_nested_groups;
 
   r_ssize loc_lower_match_o_haystack = 0;
@@ -1127,8 +1115,7 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
       p_loc_first_match_o_haystack,
       p_size_match,
       p_loc_needles,
-      v_loc_filter_match_haystack,
-      p_n_extra
+      v_loc_filter_match_haystack
     );
 
     // Update bounds for next group

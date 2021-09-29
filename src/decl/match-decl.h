@@ -60,8 +60,7 @@ void df_matches_recurse(r_ssize col,
                         struct r_dyn_array* p_loc_first_match_o_haystack,
                         struct r_dyn_array* p_size_match,
                         struct r_dyn_array* p_loc_needles,
-                        int* v_loc_filter_match_haystack,
-                        r_ssize* p_n_extra);
+                        int* v_loc_filter_match_haystack);
 
 static
 void df_matches_with_nested_groups(r_ssize size_haystack,
@@ -84,8 +83,7 @@ void df_matches_with_nested_groups(r_ssize size_haystack,
                                    struct r_dyn_array* p_loc_first_match_o_haystack,
                                    struct r_dyn_array* p_size_match,
                                    struct r_dyn_array* p_loc_needles,
-                                   int* v_loc_filter_match_haystack,
-                                   r_ssize* p_n_extra);
+                                   int* v_loc_filter_match_haystack);
 
 static inline
 r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
