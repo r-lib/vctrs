@@ -284,7 +284,7 @@ r_obj* df_matches(r_obj* needles,
   r_obj* o_needles = KEEP_N(vec_order(needles, chrs_asc, chrs_smallest, true, r_null), &n_prot);
   const int* v_o_needles = r_int_cbegin(o_needles);
 
-  r_obj* info = KEEP_N(compute_nested_containment_info(
+  r_obj* container_info = KEEP_N(compute_nesting_container_info(
     haystack,
     size_haystack,
     multiple,
@@ -292,21 +292,21 @@ r_obj* df_matches(r_obj* needles,
     haystack_arg
   ), &n_prot);
 
-  r_obj* o_haystack = r_list_get(info, 0);
+  r_obj* o_haystack = r_list_get(container_info, 0);
   const int* v_o_haystack = r_int_cbegin(o_haystack);
 
-  // Will be `integer()` if no nesting info is required.
-  // In that case, `n_nested_groups == 1`.
-  r_obj* nested_groups = r_list_get(info, 1);
-  const int* v_nested_groups = r_int_cbegin(nested_groups);
+  // Will be `integer()` if no container ids are required.
+  // In that case, `n_containers == 1`.
+  r_obj* container_ids = r_list_get(container_info, 1);
+  const int* v_container_ids = r_int_cbegin(container_ids);
 
-  const int n_nested_groups = r_as_int(r_list_get(info, 2));
-  const bool any_non_equi = r_as_bool(r_list_get(info, 3));
+  const int n_containers = r_as_int(r_list_get(container_info, 2));
+  const bool any_non_equi = r_as_bool(r_list_get(container_info, 3));
 
   // In the case of possible multiple matches that fall in separate
-  // nested containers, allocate ~20% extra room
+  // nesting containers, allocate ~20% extra room
   const r_ssize initial_capacity =
-    (n_nested_groups == 1) ?
+    (n_containers == 1) ?
     size_needles :
     r_double_as_ssize(r_ssize_as_double(size_needles) * 1.2);
 
@@ -358,9 +358,9 @@ r_obj* df_matches(r_obj* needles,
   }
 
   // When filtering, we find the filtered match for a particular needle in each
-  // nested containment group of the haystack. `loc_filter_match_haystack`
+  // nesting container of the haystack. `loc_filter_match_haystack`
   // keeps track of the overall filtered match loc for a needle across all
-  // nested groups in the haystack.
+  // nesting containers in the haystack.
   const bool has_loc_filter_match_haystack =
     any_filters &&
     (multiple == VCTRS_MULTIPLE_all ||
@@ -400,7 +400,7 @@ r_obj* df_matches(r_obj* needles,
     const r_ssize loc_lower_bound_o_haystack = 0;
     const r_ssize loc_upper_bound_o_haystack = size_haystack - 1;
 
-    if (n_nested_groups == 1) {
+    if (n_containers == 1) {
       df_matches_recurse(
         col,
         loc_lower_bound_o_needles,
@@ -424,9 +424,9 @@ r_obj* df_matches(r_obj* needles,
         v_loc_filter_match_haystack
       );
     } else {
-      df_matches_with_nested_groups(
-        n_nested_groups,
-        v_nested_groups,
+      df_matches_with_containers(
+        n_containers,
+        v_container_ids,
         col,
         loc_lower_bound_o_needles,
         loc_upper_bound_o_needles,
@@ -972,7 +972,7 @@ void df_matches_recurse(r_ssize col,
   case VCTRS_OPS_lte:
   case VCTRS_OPS_gt:
   case VCTRS_OPS_gte: {
-    // Can't update haystack here, as nested containment groups make this impossible
+    // Can't update haystack here, as nesting containers make this impossible
     do_lhs = loc_lower_duplicate_o_needles > loc_lower_bound_o_needles;
     do_rhs = loc_upper_duplicate_o_needles < loc_upper_bound_o_needles;
 
@@ -1040,31 +1040,31 @@ void df_matches_recurse(r_ssize col,
 // -----------------------------------------------------------------------------
 
 static
-void df_matches_with_nested_groups(int n_nested_groups,
-                                   const int* v_nested_groups,
-                                   r_ssize col,
-                                   r_ssize loc_lower_bound_o_needles,
-                                   r_ssize loc_upper_bound_o_needles,
-                                   r_ssize loc_lower_bound_o_haystack,
-                                   r_ssize loc_upper_bound_o_haystack,
-                                   const struct poly_df_data* p_needles,
-                                   const struct poly_df_data* p_haystack,
-                                   const struct poly_df_data* p_needles_complete,
-                                   const struct poly_df_data* p_haystack_complete,
-                                   const int* v_o_needles,
-                                   const int* v_o_haystack,
-                                   const struct vctrs_incomplete* incomplete,
-                                   enum vctrs_multiple multiple,
-                                   bool any_filters,
-                                   const enum vctrs_filter* v_filters,
-                                   const enum vctrs_ops* v_ops,
-                                   struct r_dyn_array* p_loc_first_match_o_haystack,
-                                   struct r_dyn_array* p_size_match,
-                                   struct r_dyn_array* p_loc_needles,
-                                   int* v_loc_filter_match_haystack) {
-  const int* v_haystack = v_nested_groups;
+void df_matches_with_containers(int n_containers,
+                                const int* v_container_ids,
+                                r_ssize col,
+                                r_ssize loc_lower_bound_o_needles,
+                                r_ssize loc_upper_bound_o_needles,
+                                r_ssize loc_lower_bound_o_haystack,
+                                r_ssize loc_upper_bound_o_haystack,
+                                const struct poly_df_data* p_needles,
+                                const struct poly_df_data* p_haystack,
+                                const struct poly_df_data* p_needles_complete,
+                                const struct poly_df_data* p_haystack_complete,
+                                const int* v_o_needles,
+                                const int* v_o_haystack,
+                                const struct vctrs_incomplete* incomplete,
+                                enum vctrs_multiple multiple,
+                                bool any_filters,
+                                const enum vctrs_filter* v_filters,
+                                const enum vctrs_ops* v_ops,
+                                struct r_dyn_array* p_loc_first_match_o_haystack,
+                                struct r_dyn_array* p_size_match,
+                                struct r_dyn_array* p_loc_needles,
+                                int* v_loc_filter_match_haystack) {
+  const int* v_haystack = v_container_ids;
 
-  for (int i = 0; i < n_nested_groups; ++i) {
+  for (int i = 0; i < n_containers; ++i) {
     const int val_needle = i;
 
     const struct vctrs_match_bounds bounds = int_locate_match(
@@ -1101,7 +1101,7 @@ void df_matches_with_nested_groups(int n_nested_groups,
       v_loc_filter_match_haystack
     );
 
-    // Advance lower bound for next nested group
+    // Advance lower bound for next container
     loc_lower_bound_o_haystack = loc_upper_match_o_haystack + 1;
   }
 }
@@ -1747,7 +1747,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   if (!skip_loc_needles) {
     // `loc_needles` is used when locating "all" matches. The first
     // `size_needles` elements will be in order, but locations after that
-    // are extra matches from nested containment groups and won't be in order.
+    // are extra matches across different nesting containers and won't be in order.
     r_obj* loc_needles = KEEP_N(r_arr_unwrap(p_loc_needles), &n_prot);
     r_obj* o_loc_needles = KEEP_N(vec_order(loc_needles, chrs_asc, chrs_smallest, true, r_null), &n_prot);
     v_o_loc_needles = r_int_cbegin(o_loc_needles);
@@ -1910,7 +1910,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
   if (loc_out < size_out) {
     // Can happen with a `filter` and `multiple = "all"`, where it is possible
-    // for potential matches coming from a different nested containment group
+    // for potential matches coming from a different nesting container
     // to be skipped over in the `has_loc_filter_match_haystack` section.
     // Can also happen with `no_match = "drop"` or `incomplete = "drop"`.
     // This resize should be essentially free by setting truelength/growable.
@@ -2004,32 +2004,32 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-r_obj* vctrs_test_compute_nested_containment_info(r_obj* haystack,
-                                                  r_obj* condition,
-                                                  r_obj* multiple) {
+r_obj* vctrs_test_compute_nesting_container_info(r_obj* haystack,
+                                                 r_obj* condition,
+                                                 r_obj* multiple) {
   r_ssize n_cols = r_length(haystack);
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, n_cols, v_ops);
   enum vctrs_multiple c_multiple = parse_multiple(multiple);
   const r_ssize size_haystack = vec_size(haystack);
   struct vctrs_arg haystack_arg = new_wrapper_arg(NULL, "haystack");
-  return compute_nested_containment_info(haystack, size_haystack, c_multiple, v_ops, &haystack_arg);
+  return compute_nesting_container_info(haystack, size_haystack, c_multiple, v_ops, &haystack_arg);
 }
 
 static
-r_obj* compute_nested_containment_info(r_obj* haystack,
-                                       r_ssize size_haystack,
-                                       enum vctrs_multiple multiple,
-                                       const enum vctrs_ops* v_ops,
-                                       struct vctrs_arg* haystack_arg) {
+r_obj* compute_nesting_container_info(r_obj* haystack,
+                                      r_ssize size_haystack,
+                                      enum vctrs_multiple multiple,
+                                      const enum vctrs_ops* v_ops,
+                                      struct vctrs_arg* haystack_arg) {
   r_ssize n_prot = 0;
 
   const r_ssize n_cols = r_length(haystack);
 
   // Outputs:
   // - `haystack` order
-  // - Nested groups vector
-  // - Number of nested groups as a scalar
+  // - Container id vector
+  // - Number of containers as a scalar
   // - Boolean for if there are any-non-equi conditions
   r_obj* out = KEEP_N(r_alloc_list(4), &n_prot);
 
@@ -2046,7 +2046,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   }
 
   if (!any_non_equi) {
-    // Nested group info isn't required for only `==`
+    // Container info isn't required for only `==`
     r_list_poke(out, 0, vec_order(haystack, chrs_asc, chrs_smallest, true, r_null));
     r_list_poke(out, 1, vctrs_shared_empty_int);
     r_list_poke(out, 2, r_int(1));
@@ -2071,18 +2071,18 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   const int* v_group_sizes = r_int_cbegin(group_sizes);
   const r_ssize n_groups = r_length(group_sizes);
 
-  // This is the haystack we compute nested containment order with.
+  // This is the haystack we compute container ids with.
   // This is initially the whole `haystack`, but will be adjusted to contain
   // fewer columns if there are `==` conditions before the first non-equi
   // condition.
-  r_keep_t haystack_containment_pi;
-  r_obj* haystack_containment = haystack;
-  KEEP_HERE(haystack_containment, &haystack_containment_pi);
+  r_keep_t haystack_container_pi;
+  r_obj* haystack_container = haystack;
+  KEEP_HERE(haystack_container, &haystack_container_pi);
   ++n_prot;
 
   // If there are `==` conditions before the first non-equi condition,
   // we separate those columns from the haystack and compute their group sizes,
-  // which are used for computing the nested containment order.
+  // which are used for computing the container ids.
   bool has_outer_group_sizes = false;
   const int* v_outer_group_sizes = NULL;
 
@@ -2090,7 +2090,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     // We have equality comparisons before the first non-equi comparison.
     // In this case, we can skip nested containment ordering for the equality
     // comparisons before the first non-equi comparison if we pass on the
-    // group sizes of the ordered equality columns as `outer_group_sizes`.
+    // group sizes of the ordered equality columns as `v_outer_group_sizes`.
     r_obj* const* v_haystack = r_list_cbegin(haystack);
     r_obj* const* v_haystack_names = r_chr_cbegin(r_names(haystack));
 
@@ -2114,9 +2114,9 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
       r_chr_poke(haystack_inner_names, j, v_haystack_names[i]);
     }
 
-    // Compute the ordering info of the outer columns,
-    // just to pluck off the group sizes. These automatically create
-    // a set of nested groups that "surround" the non-equi columns.
+    // Compute the order info of the outer columns, just to pluck off the
+    // group sizes. These automatically create a set of groups that
+    // "surround" the non-equi columns.
     r_obj* info = vec_order_info(
       haystack_outer,
       chrs_asc,
@@ -2129,13 +2129,13 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     v_outer_group_sizes = r_int_cbegin(outer_group_sizes);
     has_outer_group_sizes = true;
 
-    // Inner columns become the new containment haystack
-    haystack_containment = haystack_inner;
-    KEEP_AT(haystack_containment, haystack_containment_pi);
+    // Inner columns become the new container haystack
+    haystack_container = haystack_inner;
+    KEEP_AT(haystack_container, haystack_container_pi);
   }
 
-  r_obj* nested_info = KEEP_N(compute_nested_containment_ids(
-    haystack_containment,
+  r_obj* container_ids_info = KEEP_N(compute_nesting_container_ids(
+    haystack_container,
     v_o_haystack,
     v_group_sizes,
     v_outer_group_sizes,
@@ -2145,12 +2145,15 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     multiple
   ), &n_prot);
 
-  const int n_nested_groups = r_as_int(r_list_get(nested_info, 1));
+  const int n_containers = r_as_int(r_list_get(container_ids_info, 1));
 
-  if (n_nested_groups == 1) {
-    // If only a single nested group exists at this point, we hit the somewhat
-    // rare case of having a >1 col data frame that is already in nested
-    // containment order. In that case, original haystack ordering is sufficient.
+  if (n_containers == 1) {
+    // If only a single container exists at this point, either there was
+    // only 1 non-equi column which must already be in order (and we aren't
+    // doing multiple=first/last), or we hit the somewhat rare case of having
+    // a >1 col `haystack_container` data frame that is already in nested
+    // containment order. In that case, original haystack ordering is sufficient
+    // and we don't need the ids.
     r_list_poke(out, 0, o_haystack);
     r_list_poke(out, 1, vctrs_shared_empty_int);
     r_list_poke(out, 2, r_int(1));
@@ -2160,13 +2163,13 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   }
 
   // Otherwise, we need to recompute the haystack ordering accounting for
-  // `nested_groups`. One way to do this is to append `nested_groups` to the
+  // `container_ids`. One way to do this is to append `container_ids` to the
   // front of the `haystack` data frame and recompute the order, but since
   // we already have `o_haystack` and `group_sizes`, we can build a simpler
   // proxy for `haystack` that orders the exact same, but faster. So we end
-  // up with a two column data frame of `nested_groups` and `haystack_proxy`
+  // up with a two column data frame of `container_ids` and `haystack_proxy`
   // to compute the new order for.
-  r_obj* nested_groups = r_list_get(nested_info, 0);
+  r_obj* container_ids = r_list_get(container_ids_info, 0);
 
   r_obj* haystack_proxy = KEEP_N(r_alloc_integer(size_haystack), &n_prot);
   int* v_haystack_proxy = r_int_begin(haystack_proxy);
@@ -2183,12 +2186,12 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   }
 
   r_obj* df = KEEP_N(r_alloc_list(2), &n_prot);
-  r_list_poke(df, 0, nested_groups);
+  r_list_poke(df, 0, container_ids);
   r_list_poke(df, 1, haystack_proxy);
 
   r_obj* df_names = r_alloc_character(2);
   r_poke_names(df, df_names);
-  r_chr_poke(df_names, 0, r_str("nested_groups"));
+  r_chr_poke(df_names, 0, r_str("container_ids"));
   r_chr_poke(df_names, 1, r_str("haystack_proxy"));
 
   r_init_data_frame(df, size_haystack);
@@ -2202,8 +2205,8 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
   ), &n_prot);
 
   r_list_poke(out, 0, o_haystack);
-  r_list_poke(out, 1, nested_groups);
-  r_list_poke(out, 2, r_int(n_nested_groups));
+  r_list_poke(out, 1, container_ids);
+  r_list_poke(out, 2, r_int(n_containers));
   r_list_poke(out, 3, r_lgl(any_non_equi));
 
   FREE(n_prot);
@@ -2214,16 +2217,16 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
 // -----------------------------------------------------------------------------
 
 static
-r_obj* compute_nested_containment_ids(r_obj* x,
-                                      const int* v_order,
-                                      const int* v_group_sizes,
-                                      const int* v_outer_group_sizes,
-                                      r_ssize size,
-                                      r_ssize n_groups,
-                                      bool has_outer_group_sizes,
-                                      enum vctrs_multiple multiple) {
+r_obj* compute_nesting_container_ids(r_obj* x,
+                                     const int* v_order,
+                                     const int* v_group_sizes,
+                                     const int* v_outer_group_sizes,
+                                     r_ssize size,
+                                     r_ssize n_groups,
+                                     bool has_outer_group_sizes,
+                                     enum vctrs_multiple multiple) {
   if (!is_data_frame(x)) {
-    r_stop_internal("compute_nested_containment_ids", "`x` must be a data frame.");
+    r_stop_internal("compute_nesting_container_ids", "`x` must be a data frame.");
   }
 
   int n_prot = 0;
@@ -2232,7 +2235,7 @@ r_obj* compute_nested_containment_ids(r_obj* x,
 
   // For first/last, we require not only increasing order for each
   // column, but also increasing row order as well. This can generate more
-  // groups, but ensures that the assignment loop of `df_matches_recurse()`
+  // containers, but ensures that the assignment loop of `df_matches_recurse()`
   // works correctly for these cases.
   const bool enforce_increasing_row_order =
     multiple == VCTRS_MULTIPLE_first ||
@@ -2240,18 +2243,18 @@ r_obj* compute_nested_containment_ids(r_obj* x,
 
   r_obj* out = KEEP_N(r_alloc_list(2), &n_prot);
 
-  r_obj* ids = r_alloc_integer(size);
-  r_list_poke(out, 0, ids);
-  int* v_ids = r_int_begin(ids);
+  r_obj* container_ids = r_alloc_integer(size);
+  r_list_poke(out, 0, container_ids);
+  int* v_container_ids = r_int_begin(container_ids);
 
-  r_obj* n_ids_overall = r_alloc_integer(1);
-  r_list_poke(out, 1, n_ids_overall);
-  int* p_n_ids_overall = r_int_begin(n_ids_overall);
+  r_obj* n_container_ids = r_alloc_integer(1);
+  r_list_poke(out, 1, n_container_ids);
+  int* p_n_container_ids = r_int_begin(n_container_ids);
 
-  // Initialize ids to 0, which is always our first id value.
-  // This means we start with 1 unique id.
-  memset(v_ids, 0, size * sizeof(int));
-  *p_n_ids_overall = 1;
+  // Initialize ids to 0, which is always our first container id value.
+  // This means we start with 1 container.
+  memset(v_container_ids, 0, size * sizeof(int));
+  *p_n_container_ids = 1;
 
   if (size == 0) {
     // Algorithm requires at least 1 row
@@ -2263,7 +2266,7 @@ r_obj* compute_nested_containment_ids(r_obj* x,
     // If there is only 1 column, `x` is in increasing order already when
     // ordered by `v_order`. If we don't require that the actual row numbers
     // also be in order, then we are done.
-    // If `v_outer_group_sizes` were supplied, each nested group of `x` will
+    // If `v_outer_group_sizes` were supplied, within each group `x` will
     // be in increasing order (since the single `x` column is the one that
     // broke any ties), and that is all that is required.
     FREE(n_prot);
@@ -2302,44 +2305,44 @@ r_obj* compute_nested_containment_ids(r_obj* x,
 
     const int cur_row = v_order[loc_group_reference] - 1;
 
-    int id = 0;
-    int n_ids = p_prev_rows->count;
+    int container_id = 0;
+    int n_container_ids_group = p_prev_rows->count;
 
-    for (; id < n_ids; ++id) {
-      const int prev_row = R_ARR_GET(int, p_prev_rows, id);
+    for (; container_id < n_container_ids_group; ++container_id) {
+      const int prev_row = R_ARR_GET(int, p_prev_rows, container_id);
 
       if (enforce_increasing_row_order && cur_row < prev_row) {
         // Current row's location comes before the previous row.
         // Since `multiple = "first"/"last"` require increasing row order per
-        // group, this means we can't add this to the current `id` group.
+        // container, this means we can't add this to the current container.
         continue;
       }
 
-      if (p_nested_containment_df_compare_fully_ge_na_equal(v_x, cur_row, v_x, prev_row)) {
+      if (p_nesting_container_df_compare_fully_ge_na_equal(v_x, cur_row, v_x, prev_row)) {
         // Current row is fully greater than or equal to previous row.
-        // Meaning it is not a new `id`, and it falls in the current `id` group.
+        // Meaning it is not a new `container_id`, and it falls in the current container.
         break;
       }
     }
 
-    if (id == n_ids) {
-      // New id for this outer group, which we add to the end
+    if (container_id == n_container_ids_group) {
+      // New `container_id` for this outer group, which we add to the end
       r_arr_push_back(p_prev_rows, &cur_row);
-      ++n_ids;
+      ++n_container_ids_group;
 
-      if (n_ids > *p_n_ids_overall) {
+      if (n_container_ids_group > *p_n_container_ids) {
         // `p_prev_rows` is reset for each outer group,
         // so we have to keep a running overall count
-        *p_n_ids_overall = n_ids;
+        *p_n_container_ids = n_container_ids_group;
       }
     } else {
       // Update stored row location to the current row,
       // since the current row is greater than or equal to it
-      R_ARR_POKE(int, p_prev_rows, id, cur_row);
+      R_ARR_POKE(int, p_prev_rows, container_id, cur_row);
     }
 
     for (r_ssize j = 0; j < group_size; ++j) {
-      v_ids[v_order[loc_group_start] - 1] = id;
+      v_container_ids[v_order[loc_group_start] - 1] = container_id;
       ++loc_group_start;
     }
   }
@@ -2349,10 +2352,10 @@ r_obj* compute_nested_containment_ids(r_obj* x,
 }
 
 static inline
-bool p_nested_containment_df_compare_fully_ge_na_equal(const void* x,
-                                                       r_ssize i,
-                                                       const void* y,
-                                                       r_ssize j) {
+bool p_nesting_container_df_compare_fully_ge_na_equal(const void* x,
+                                                      r_ssize i,
+                                                      const void* y,
+                                                      r_ssize j) {
   // Checks if EVERY column of `x` is `>=` `y`.
   // Assumes original input that `x` and `y` came from is ordered, and that
   // `x` comes after `y` in terms of row location in that original input. This

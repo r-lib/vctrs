@@ -599,7 +599,7 @@ test_that("multiple matches from a non-equi condition are returned in first appe
   expect_identical(res$haystack, c(2L, 4L))
 })
 
-test_that("multiple matches from a non-equi condition are returned in first appearance order when the matches are in different nested groups", {
+test_that("multiple matches from a non-equi condition are returned in first appearance order when the matches are in different nesting containers", {
   df <- data_frame(x = 0, y = 0)
   df2 <- data_frame(x = 2:1, y = 1:2)
 
@@ -672,7 +672,7 @@ test_that("warning falls back to 'all'", {
   )
 })
 
-test_that("errors on multiple matches that come from different nested containment groups", {
+test_that("errors on multiple matches that come from different nesting containers", {
   df <- data_frame(x = 0, y = 0)
   df2 <- data_frame(x = 1:2, y = 2:1)
 
@@ -886,20 +886,20 @@ test_that("haystack duplicates can be controlled by `multiple`", {
   expect_identical(res$haystack, c(6L, 3L, 4L))
 })
 
-test_that("`filter` works when valid matches are in different nested containment groups", {
+test_that("`filter` works when valid matches are in different nesting containers", {
   needles <- data_frame(x = 0L, y = 1L, z = 2L)
   haystack <- data_frame(x = c(1L, 2L, 1L, 0L), y = c(2L, 1L, 2L, 3L), z = c(3L, 3L, 2L, 2L))
 
-  info <- compute_nested_containment_info(haystack, c("<=", "<=", "<="), "all")
+  info <- compute_nesting_container_info(haystack, c("<=", "<=", "<="), "all")
   haystack_order <- info[[1]]
-  nested_groups <- info[[2]]
+  container_ids <- info[[2]]
 
-  # Rows 1 and 2 of haystack are in different nested containment groups, but
+  # Rows 1 and 2 of haystack are in different nesting containers, but
   # both have the "max" filter value of `z=3` so both should be in the result.
-  # Row 4 is in its own containment group, so it will be considered the "max"
+  # Row 4 is in its own container, so it will be considered the "max"
   # of its group, but it is less than rows 1 and 2 so it will ultimately be
   # filtered out.
-  expect_identical(nested_groups, c(1L, 2L, 1L, 0L))
+  expect_identical(container_ids, c(1L, 2L, 1L, 0L))
   expect_identical(haystack_order, c(4L, 3L, 1L, 2L))
 
   res <- vec_matches(needles, haystack, condition = c("<=", "<=", "<="), filter = c("none", "none", "max"))
@@ -1116,19 +1116,19 @@ test_that("potential overflow on large output size is caught informatively", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_matches() - nested containment
+# vec_matches() - nesting containers
 
-test_that("`multiple = 'first' doesn't require nested groups if completely ordered", {
-  # Single nested containment group.
+test_that("`multiple = 'first' doesn't require nesting containers if completely ordered", {
+  # Single nesting container.
   # It is already completely ordered (in ascending order by value and row number).
   df <- data_frame(x = c(1L, 1L, 2L, 3L))
-  res <- compute_nested_containment_info(df, ">=", "first")
-  nested_groups <- res[[2]]
-  expect_identical(nested_groups, integer())
+  res <- compute_nesting_container_info(df, ">=", "first")
+  container_ids <- res[[2]]
+  expect_identical(container_ids, integer())
 })
 
 test_that("`multiple = 'first'` requires increasing row order, and looks at group starts", {
-  # 2 different nested groups:
+  # 2 different containers:
   # - We are doing multiple = "first", so we are looking at group starts
   # - Look at the 1 at location 2, it becomes the first group along with its
   #   group partner at location 4.
@@ -1138,13 +1138,13 @@ test_that("`multiple = 'first'` requires increasing row order, and looks at grou
   #   but is smaller in row number. It becomes a new group with its partner at
   #   location 5.
   df <- data_frame(x = c(3L, 1L, 2L, 1L, 3L))
-  res <- compute_nested_containment_info(df, ">=", "first")
-  nested_groups <- res[[2]]
-  expect_identical(nested_groups, c(1L, 0L, 0L, 0L, 1L))
+  res <- compute_nesting_container_info(df, ">=", "first")
+  container_ids <- res[[2]]
+  expect_identical(container_ids, c(1L, 0L, 0L, 0L, 1L))
 })
 
 test_that("`multiple = 'last'` requires increasing row order, and looks at group ends", {
-  # 2 different nested groups:
+  # 2 different containers:
   # - We are doing multiple = "last", so we are looking at group ends
   # - Look at the 1 at location 4, it becomes the first group along with its
   #   group partner at location 2.
@@ -1153,8 +1153,8 @@ test_that("`multiple = 'last'` requires increasing row order, and looks at group
   # - Look at the 3 at location 5, it is greater than the 1 at location 4 in
   #   both size and row number. It joins that group.
   df <- data_frame(x = c(3L, 1L, 2L, 1L, 3L))
-  res <- compute_nested_containment_info(df, ">=", "last")
-  nested_groups <- res[[2]]
-  expect_identical(nested_groups, c(0L, 0L, 1L, 0L, 0L))
+  res <- compute_nesting_container_info(df, ">=", "last")
+  container_ids <- res[[2]]
+  expect_identical(container_ids, c(0L, 0L, 1L, 0L, 0L))
 })
 

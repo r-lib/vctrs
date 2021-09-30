@@ -63,28 +63,28 @@ void df_matches_recurse(r_ssize col,
                         int* v_loc_filter_match_haystack);
 
 static
-void df_matches_with_nested_groups(int n_nested_groups,
-                                   const int* v_nested_groups,
-                                   r_ssize col,
-                                   r_ssize loc_lower_bound_o_needles,
-                                   r_ssize loc_upper_bound_o_needles,
-                                   r_ssize loc_lower_bound_o_haystack,
-                                   r_ssize loc_upper_bound_o_haystack,
-                                   const struct poly_df_data* p_needles,
-                                   const struct poly_df_data* p_haystack,
-                                   const struct poly_df_data* p_needles_complete,
-                                   const struct poly_df_data* p_haystack_complete,
-                                   const int* v_o_needles,
-                                   const int* v_o_haystack,
-                                   const struct vctrs_incomplete* incomplete,
-                                   enum vctrs_multiple multiple,
-                                   bool any_filters,
-                                   const enum vctrs_filter* v_filters,
-                                   const enum vctrs_ops* v_ops,
-                                   struct r_dyn_array* p_loc_first_match_o_haystack,
-                                   struct r_dyn_array* p_size_match,
-                                   struct r_dyn_array* p_loc_needles,
-                                   int* v_loc_filter_match_haystack);
+void df_matches_with_containers(int n_containers,
+                                const int* v_container_ids,
+                                r_ssize col,
+                                r_ssize loc_lower_bound_o_needles,
+                                r_ssize loc_upper_bound_o_needles,
+                                r_ssize loc_lower_bound_o_haystack,
+                                r_ssize loc_upper_bound_o_haystack,
+                                const struct poly_df_data* p_needles,
+                                const struct poly_df_data* p_haystack,
+                                const struct poly_df_data* p_needles_complete,
+                                const struct poly_df_data* p_haystack_complete,
+                                const int* v_o_needles,
+                                const int* v_o_haystack,
+                                const struct vctrs_incomplete* incomplete,
+                                enum vctrs_multiple multiple,
+                                bool any_filters,
+                                const enum vctrs_filter* v_filters,
+                                const enum vctrs_ops* v_ops,
+                                struct r_dyn_array* p_loc_first_match_o_haystack,
+                                struct r_dyn_array* p_size_match,
+                                struct r_dyn_array* p_loc_needles,
+                                int* v_loc_filter_match_haystack);
 
 static inline
 r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
@@ -172,27 +172,27 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               struct vctrs_arg* haystack_arg);
 
 static
-r_obj* compute_nested_containment_info(r_obj* haystack,
-                                       r_ssize size_haystack,
-                                       enum vctrs_multiple multiple,
-                                       const enum vctrs_ops* v_ops,
-                                       struct vctrs_arg* haystack_arg);
+r_obj* compute_nesting_container_info(r_obj* haystack,
+                                      r_ssize size_haystack,
+                                      enum vctrs_multiple multiple,
+                                      const enum vctrs_ops* v_ops,
+                                      struct vctrs_arg* haystack_arg);
 
 static
-r_obj* compute_nested_containment_ids(r_obj* x,
-                                      const int* v_order,
-                                      const int* v_group_sizes,
-                                      const int* v_outer_group_sizes,
-                                      r_ssize size,
-                                      r_ssize n_groups,
-                                      bool has_outer_group_sizes,
-                                      enum vctrs_multiple multiple);
+r_obj* compute_nesting_container_ids(r_obj* x,
+                                     const int* v_order,
+                                     const int* v_group_sizes,
+                                     const int* v_outer_group_sizes,
+                                     r_ssize size,
+                                     r_ssize n_groups,
+                                     bool has_outer_group_sizes,
+                                     enum vctrs_multiple multiple);
 
 static inline
-bool p_nested_containment_df_compare_fully_ge_na_equal(const void* x,
-                                                       r_ssize i,
-                                                       const void* y,
-                                                       r_ssize j);
+bool p_nesting_container_df_compare_fully_ge_na_equal(const void* x,
+                                                      r_ssize i,
+                                                      const void* y,
+                                                      r_ssize j);
 
 static inline
 int p_matches_df_compare_na_equal(const void* x,
