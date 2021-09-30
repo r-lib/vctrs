@@ -179,20 +179,20 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
                                        struct vctrs_arg* haystack_arg);
 
 static
-r_obj* nested_containment_order(r_obj* x,
-                                const int* v_order,
-                                const int* v_group_sizes,
-                                const int* v_outer_group_sizes,
-                                r_ssize size,
-                                r_ssize n_groups,
-                                bool has_outer_group_sizes,
-                                enum vctrs_multiple multiple);
+r_obj* compute_nested_containment_ids(r_obj* x,
+                                      const int* v_order,
+                                      const int* v_group_sizes,
+                                      const int* v_outer_group_sizes,
+                                      r_ssize size,
+                                      r_ssize n_groups,
+                                      bool has_outer_group_sizes,
+                                      enum vctrs_multiple multiple);
 
 static inline
-int p_df_nested_containment_compare_ge_na_equal(const void* x,
-                                                r_ssize i,
-                                                const void* y,
-                                                r_ssize j);
+bool p_nested_containment_df_compare_fully_ge_na_equal(const void* x,
+                                                       r_ssize i,
+                                                       const void* y,
+                                                       r_ssize j);
 
 static inline
 int p_matches_df_compare_na_equal(const void* x,

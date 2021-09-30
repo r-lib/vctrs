@@ -2134,7 +2134,7 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
     KEEP_AT(haystack_containment, haystack_containment_pi);
   }
 
-  r_obj* nested_info = KEEP_N(nested_containment_order(
+  r_obj* nested_info = KEEP_N(compute_nested_containment_ids(
     haystack_containment,
     v_o_haystack,
     v_group_sizes,
@@ -2214,16 +2214,16 @@ r_obj* compute_nested_containment_info(r_obj* haystack,
 // -----------------------------------------------------------------------------
 
 static
-r_obj* nested_containment_order(r_obj* x,
-                                const int* v_order,
-                                const int* v_group_sizes,
-                                const int* v_outer_group_sizes,
-                                r_ssize size,
-                                r_ssize n_groups,
-                                bool has_outer_group_sizes,
-                                enum vctrs_multiple multiple) {
+r_obj* compute_nested_containment_ids(r_obj* x,
+                                      const int* v_order,
+                                      const int* v_group_sizes,
+                                      const int* v_outer_group_sizes,
+                                      r_ssize size,
+                                      r_ssize n_groups,
+                                      bool has_outer_group_sizes,
+                                      enum vctrs_multiple multiple) {
   if (!is_data_frame(x)) {
-    r_stop_internal("nested_containment_order", "`x` must be a data frame.");
+    r_stop_internal("compute_nested_containment_ids", "`x` must be a data frame.");
   }
 
   int n_prot = 0;
@@ -2234,7 +2234,7 @@ r_obj* nested_containment_order(r_obj* x,
   // column, but also increasing row order as well. This can generate more
   // groups, but ensures that the assignment loop of `df_matches_recurse()`
   // works correctly for these cases.
-  const bool enforce_row_order =
+  const bool enforce_increasing_row_order =
     multiple == VCTRS_MULTIPLE_first ||
     multiple == VCTRS_MULTIPLE_last;
 
@@ -2244,14 +2244,14 @@ r_obj* nested_containment_order(r_obj* x,
   r_list_poke(out, 0, ids);
   int* v_ids = r_int_begin(ids);
 
-  r_obj* n_nested_groups = r_alloc_integer(1);
-  r_list_poke(out, 1, n_nested_groups);
-  int* p_n_nested_groups = r_int_begin(n_nested_groups);
+  r_obj* n_ids_overall = r_alloc_integer(1);
+  r_list_poke(out, 1, n_ids_overall);
+  int* p_n_ids_overall = r_int_begin(n_ids_overall);
 
   // Initialize ids to 0, which is always our first id value.
-  // This means we start with 1 nested group.
+  // This means we start with 1 unique id.
   memset(v_ids, 0, size * sizeof(int));
-  *p_n_nested_groups = 1;
+  *p_n_ids_overall = 1;
 
   if (size == 0) {
     // Algorithm requires at least 1 row
@@ -2259,7 +2259,7 @@ r_obj* nested_containment_order(r_obj* x,
     return out;
   }
 
-  if (n_cols == 1 && !enforce_row_order) {
+  if (n_cols == 1 && !enforce_increasing_row_order) {
     // If there is only 1 column, `x` is in increasing order already when
     // ordered by `v_order`. If we don't require that the actual row numbers
     // also be in order, then we are done.
@@ -2302,39 +2302,41 @@ r_obj* nested_containment_order(r_obj* x,
 
     const int cur_row = v_order[loc_group_reference] - 1;
 
-    bool new_id = true;
-    int i_prev_rows = 0;
-    const int n_prev_rows = p_prev_rows->count;
+    int id = 0;
+    int n_ids = p_prev_rows->count;
 
-    for (; i_prev_rows < n_prev_rows; ++i_prev_rows) {
-      const int prev_row = R_ARR_GET(int, p_prev_rows, i_prev_rows);
+    for (; id < n_ids; ++id) {
+      const int prev_row = R_ARR_GET(int, p_prev_rows, id);
 
-      if (enforce_row_order && cur_row < prev_row) {
-        // Can't add to current group, `multiple = "first"/"last"`
-        // require increasing row indices per group
+      if (enforce_increasing_row_order && cur_row < prev_row) {
+        // Current row's location comes before the previous row.
+        // Since `multiple = "first"/"last"` require increasing row order per
+        // group, this means we can't add this to the current `id` group.
         continue;
       }
 
-      if (p_df_nested_containment_compare_ge_na_equal(v_x, cur_row, v_x, prev_row)) {
-        new_id = false;
+      if (p_nested_containment_df_compare_fully_ge_na_equal(v_x, cur_row, v_x, prev_row)) {
+        // Current row is fully greater than or equal to previous row.
+        // Meaning it is not a new `id`, and it falls in the current `id` group.
         break;
       }
     }
 
-    if (new_id) {
+    if (id == n_ids) {
       // New id for this outer group, which we add to the end
       r_arr_push_back(p_prev_rows, &cur_row);
+      ++n_ids;
 
-      if (p_prev_rows->count > *p_n_nested_groups) {
-        *p_n_nested_groups = p_prev_rows->count;
+      if (n_ids > *p_n_ids_overall) {
+        // `p_prev_rows` is reset for each outer group,
+        // so we have to keep a running overall count
+        *p_n_ids_overall = n_ids;
       }
     } else {
       // Update stored row location to the current row,
-      // since the current row is larger
-      R_ARR_POKE(int, p_prev_rows, i_prev_rows, cur_row);
+      // since the current row is greater than or equal to it
+      R_ARR_POKE(int, p_prev_rows, id, cur_row);
     }
-
-    const int id = i_prev_rows;
 
     for (r_ssize j = 0; j < group_size; ++j) {
       v_ids[v_order[loc_group_start] - 1] = id;
@@ -2347,20 +2349,23 @@ r_obj* nested_containment_order(r_obj* x,
 }
 
 static inline
-int p_df_nested_containment_compare_ge_na_equal(const void* x,
-                                                r_ssize i,
-                                                const void* y,
-                                                r_ssize j) {
-  // Checks if each column of `x` is `>=` `y`.
-  // Assumes inputs are ordered, so first column can be ignored.
-  // Iterates backwards to ideally maximize chance of hitting the fastest
+bool p_nested_containment_df_compare_fully_ge_na_equal(const void* x,
+                                                       r_ssize i,
+                                                       const void* y,
+                                                       r_ssize j) {
+  // Checks if EVERY column of `x` is `>=` `y`.
+  // Assumes original input that `x` and `y` came from is ordered, and that
+  // `x` comes after `y` in terms of row location in that original input. This
+  // means that the first column of `x` is always `>=` the first column of `y`,
+  // so we can ignore it in the comparison.
+  // Iterates backwards to (ideally) maximize chance of hitting the fastest
   // varying column.
   // All columns are integer vectors (ranks).
 
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
-  struct poly_df_data* y_data = (struct poly_df_data*) y;
+  const struct poly_df_data* x_data = (const struct poly_df_data*) x;
+  const struct poly_df_data* y_data = (const struct poly_df_data*) y;
 
-  r_ssize n_col = x_data->n_col;
+  const r_ssize n_col = x_data->n_col;
 
   const void** x_ptrs = x_data->col_ptrs;
   const void** y_ptrs = y_data->col_ptrs;
@@ -2385,8 +2390,8 @@ int p_matches_df_compare_na_equal(const void* x,
   // First broken tie wins.
   // All columns are integer vectors (approximate ranks).
 
-  const struct poly_df_data* x_data = (struct poly_df_data*) x;
-  const struct poly_df_data* y_data = (struct poly_df_data*) y;
+  const struct poly_df_data* x_data = (const struct poly_df_data*) x;
+  const struct poly_df_data* y_data = (const struct poly_df_data*) y;
 
   const r_ssize n_col = x_data->n_col;
 
@@ -2436,8 +2441,8 @@ bool p_matches_df_equal_na_equal(const void* x,
                                  const enum vctrs_filter* v_filters) {
   // All columns are integer vectors (approximate ranks).
 
-  const struct poly_df_data* x_data = (struct poly_df_data*) x;
-  const struct poly_df_data* y_data = (struct poly_df_data*) y;
+  const struct poly_df_data* x_data = (const struct poly_df_data*) x;
+  const struct poly_df_data* y_data = (const struct poly_df_data*) y;
 
   const r_ssize n_col = x_data->n_col;
 
