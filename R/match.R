@@ -116,6 +116,7 @@
 #'   - `haystack` is an integer vector containing the location of the
 #'     corresponding match in the haystack for the current needle.
 #'
+#' @export
 #' @examples
 #' x <- c(1, 2, NA, 3, NaN)
 #' y <- c(2, 1, 4, NA, 1, 2, NaN)
@@ -208,7 +209,6 @@
 #'   value = vec_slice(values, matches$needle),
 #'   upper = vec_slice(upper, matches$haystack)
 #' )
-#' @noRd
 vec_matches <- function(needles,
                         haystack,
                         ...,
