@@ -29,9 +29,7 @@
 #' large number of matches.
 #'
 #' @section Dependencies of `vec_matches()`:
-#' * [vec_rank()]
-#' * [vec_slice()]
-#' * [vec_c()]
+#' * [vec_order()]
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
