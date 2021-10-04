@@ -151,3 +151,25 @@
           y: double
         >>
 
+# vec_assert() validates `size` (#1470)
+
+    Code
+      vec_assert(1, size = c(2, 3))
+    Error <vctrs_error_incompatible_size>
+      Can't recycle `size` (size 2) to size 1.
+
+---
+
+    Code
+      vec_assert(1, size = 1.5)
+    Error <vctrs_error_cast_lossy>
+      Can't convert from `size` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      vec_assert(1, size = "x")
+    Error <vctrs_error_incompatible_type>
+      Can't convert `size` <character> to <integer>.
+

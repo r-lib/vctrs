@@ -90,7 +90,8 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
   }
 
   if (!is_null(size)) {
-    size <- vec_recycle(vec_cast(size, integer()), 1L)
+    size <- vec_cast(size, integer(), x_arg = "size")
+    size <- vec_recycle(size, 1L, x_arg = "size")
     x_size <- vec_size(x)
     if (!identical(x_size, size)) {
       stop_assert_size(x_size, size, arg)

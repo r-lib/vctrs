@@ -218,6 +218,12 @@ test_that("assertion failures are explained", {
   expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
 })
 
+test_that("vec_assert() validates `size` (#1470)", {
+  expect_snapshot(error = TRUE, vec_assert(1, size = c(2, 3)))
+  expect_snapshot(error = TRUE, vec_assert(1, size = 1.5))
+  expect_snapshot(error = TRUE, vec_assert(1, size = "x"))
+})
+
 test_that("NULL is not a vector", {
   expect_false(vec_is_vector(NULL))
   expect_false(vec_is(NULL))

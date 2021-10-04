@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_assert()` produces a more informative error when `size` is invalid
+  (#1470).
+
 * `vec_duplicate_detect()` is a bit faster when there are many unique values.
 
 * New `vec_rank()` to compute various types of sample ranks.
