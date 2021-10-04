@@ -155,8 +155,8 @@
 
     Code
       vec_assert(1, size = c(2, 3))
-    Error <vctrs_error_incompatible_size>
-      Can't recycle `size` (size 2) to size 1.
+    Error <rlang_error>
+      `size` must be length 1, not length 2.
 
 ---
 
