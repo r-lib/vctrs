@@ -61,7 +61,7 @@
 #'   class, its [vec_ptype()] is compared to that of `x` with
 #'   `identical()`. Otherwise, its [typeof()] is compared to that of
 #'   `x` with `==`.
-#' @param size A single integer size to compare against.
+#' @param size A single integer size against which to compare.
 #' @param arg Name of argument being checked. This is used in error
 #'   messages. The label of the expression passed as `x` is taken as
 #'   default.

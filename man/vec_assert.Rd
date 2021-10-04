@@ -17,7 +17,7 @@ class, its \code{\link[=vec_ptype]{vec_ptype()}} is compared to that of \code{x}
 \code{identical()}. Otherwise, its \code{\link[=typeof]{typeof()}} is compared to that of
 \code{x} with \code{==}.}
 
-\item{size}{A single integer size to compare against.}
+\item{size}{A single integer size against which to compare.}
 
 \item{arg}{Name of argument being checked. This is used in error
 messages. The label of the expression passed as \code{x} is taken as
