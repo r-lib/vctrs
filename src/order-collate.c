@@ -11,27 +11,27 @@
  */
 
 #include <rlang.h>
-#include "order-transform.h"
+#include "order-collate.h"
 #include "utils.h"
 
 // -----------------------------------------------------------------------------
 
-static SEXP chr_apply_transform(SEXP x, SEXP chr_transform);
-static SEXP df_apply_transform(SEXP x, SEXP chr_transform);
+static SEXP chr_apply(SEXP x, SEXP chr_proxy_collate);
+static SEXP df_apply(SEXP x, SEXP chr_proxy_collate);
 
-// [[ include("order-transform.h") ]]
-SEXP proxy_chr_transform(SEXP proxy, SEXP chr_transform) {
-  if (chr_transform == r_null) {
+// [[ include("order-collate.h") ]]
+SEXP proxy_apply_chr_proxy_collate(SEXP proxy, SEXP chr_proxy_collate) {
+  if (chr_proxy_collate == r_null) {
     return proxy;
   }
 
-  chr_transform = PROTECT(r_as_function(chr_transform, "chr_transform"));
+  chr_proxy_collate = PROTECT(r_as_function(chr_proxy_collate, "chr_proxy_collate"));
 
   SEXP out;
 
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_character: out = chr_apply_transform(proxy, chr_transform); break;
-  case vctrs_type_dataframe: out = df_apply_transform(proxy, chr_transform); break;
+  case vctrs_type_character: out = chr_apply(proxy, chr_proxy_collate); break;
+  case vctrs_type_dataframe: out = df_apply(proxy, chr_proxy_collate); break;
   default: out = proxy;
   }
 
@@ -42,12 +42,12 @@ SEXP proxy_chr_transform(SEXP proxy, SEXP chr_transform) {
 // -----------------------------------------------------------------------------
 
 static
-SEXP chr_apply_transform(SEXP x, SEXP chr_transform) {
+SEXP chr_apply(SEXP x, SEXP chr_proxy_collate) {
   // Don't use vctrs dispatch utils because we match argument positionally
-  SEXP call = PROTECT(Rf_lang2(syms_chr_transform, syms_x));
+  SEXP call = PROTECT(Rf_lang2(syms_chr_proxy_collate, syms_x));
 
   SEXP mask = PROTECT(r_new_environment(R_GlobalEnv));
-  Rf_defineVar(syms_chr_transform, chr_transform, mask);
+  Rf_defineVar(syms_chr_proxy_collate, chr_proxy_collate, mask);
   Rf_defineVar(syms_x, x, mask);
 
   SEXP out = PROTECT(Rf_eval(call, mask));
@@ -55,7 +55,7 @@ SEXP chr_apply_transform(SEXP x, SEXP chr_transform) {
   if (vec_typeof(out) != vctrs_type_character) {
     Rf_errorcall(
       R_NilValue,
-      "`chr_transform` must return a character vector."
+      "`chr_proxy_collate` must return a character vector."
     );
   }
 
@@ -65,7 +65,7 @@ SEXP chr_apply_transform(SEXP x, SEXP chr_transform) {
   if (x_size != out_size) {
     Rf_errorcall(
       R_NilValue,
-      "`chr_transform` must return a vector of the same length (%i, not %i).",
+      "`chr_proxy_collate` must return a vector of the same length (%i, not %i).",
       x_size,
       out_size
     );
@@ -78,7 +78,7 @@ SEXP chr_apply_transform(SEXP x, SEXP chr_transform) {
 // -----------------------------------------------------------------------------
 
 static
-SEXP df_apply_transform(SEXP x, SEXP chr_transform) {
+SEXP df_apply(SEXP x, SEXP chr_proxy_collate) {
   const r_ssize n_cols = r_length(x);
   const SEXP* v_x = VECTOR_PTR_RO(x);
 
@@ -105,7 +105,7 @@ SEXP df_apply_transform(SEXP x, SEXP chr_transform) {
       continue;
     }
 
-    col = chr_apply_transform(col, chr_transform);
+    col = chr_apply(col, chr_proxy_collate);
     SET_VECTOR_ELT(out, i, col);
   }
 

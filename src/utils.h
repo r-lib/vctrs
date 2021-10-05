@@ -509,7 +509,7 @@ extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
 extern SEXP syms_abort;
 extern SEXP syms_message;
-extern SEXP syms_chr_transform;
+extern SEXP syms_chr_proxy_collate;
 extern SEXP syms_actual;
 extern SEXP syms_required;
 

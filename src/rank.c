@@ -19,7 +19,7 @@ r_obj* vctrs_rank(r_obj* x,
                   r_obj* direction,
                   r_obj* na_value,
                   r_obj* nan_distinct,
-                  r_obj* chr_transform) {
+                  r_obj* chr_proxy_collate) {
   const enum ties c_ties = parse_ties(ties);
   const bool c_na_propagate = r_as_bool(na_propagate);
   const bool c_nan_distinct = r_as_bool(nan_distinct);
@@ -31,7 +31,7 @@ r_obj* vctrs_rank(r_obj* x,
     direction,
     na_value,
     c_nan_distinct,
-    chr_transform
+    chr_proxy_collate
   );
 }
 
@@ -42,7 +42,7 @@ r_obj* vec_rank(r_obj* x,
                 r_obj* direction,
                 r_obj* na_value,
                 bool nan_distinct,
-                r_obj* chr_transform) {
+                r_obj* chr_proxy_collate) {
   r_ssize size = vec_size(x);
 
   r_keep_t pi_x;
@@ -79,7 +79,7 @@ r_obj* vec_rank(r_obj* x,
 
   const bool chr_ordered = true;
 
-  r_obj* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_transform, chr_ordered));
+  r_obj* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered));
 
   r_obj* order = r_list_get(info, 0);
   const int* v_order = r_int_cbegin(order);

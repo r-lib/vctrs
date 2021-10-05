@@ -12,7 +12,7 @@ vec_rank(
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
-  chr_transform = NULL
+  chr_proxy_collate = NULL
 )
 }
 \arguments{
@@ -59,8 +59,9 @@ be treated in each column.
 be considered distinct from \code{NA} for double and complex vectors. If \code{TRUE},
 \code{NaN} will always be ordered between \code{NA} and non-missing numbers.}
 
-\item{chr_transform}{Transformation of character vectors for sorting in
-alternate locales.
+\item{chr_proxy_collate}{A function generating an alternate representation
+of character vectors to use for collation, often used for locale-aware
+ordering.
 \itemize{
 \item If \code{NULL}, no transformation is done.
 \item Otherwise, this must be a function of one argument. The function will be
@@ -68,12 +69,12 @@ invoked with \code{x}, if it is a character vector, after it has been
 translated to UTF-8, and should return a character vector with the same
 length as \code{x}. The result should sort as expected in the C-locale,
 regardless of encoding.
-\item For data frames, \code{chr_transform} will be applied to all character
+\item For data frames, \code{chr_proxy_collate} will be applied to all character
 columns.
 }
 
 Common transformation functions include: \code{tolower()} for case-insensitive
-ordering and \code{stringi::str_sort_key()} for locale-aware ordering.}
+ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
 }
 \description{
 \code{vec_rank()} computes the sample ranks of a vector. For data frames, ranks

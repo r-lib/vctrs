@@ -1590,7 +1590,7 @@ SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
 SEXP syms_abort = NULL;
 SEXP syms_message = NULL;
-SEXP syms_chr_transform = NULL;
+SEXP syms_chr_proxy_collate = NULL;
 SEXP syms_actual = NULL;
 SEXP syms_required = NULL;
 
@@ -1857,7 +1857,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_fallback_class = Rf_install("fallback_class");
   syms_abort = Rf_install("abort");
   syms_message = Rf_install("message");
-  syms_chr_transform = Rf_install("chr_transform");
+  syms_chr_proxy_collate = Rf_install("chr_proxy_collate");
   syms_actual = Rf_install("actual");
   syms_required = Rf_install("required");
 

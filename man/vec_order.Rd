@@ -11,7 +11,7 @@ vec_order(
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
-  chr_transform = NULL
+  chr_proxy_collate = NULL
 )
 
 vec_sort(
@@ -20,7 +20,7 @@ vec_sort(
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
-  chr_transform = NULL
+  chr_proxy_collate = NULL
 )
 }
 \arguments{
@@ -49,8 +49,9 @@ be treated in each column.
 be considered distinct from \code{NA} for double and complex vectors. If \code{TRUE},
 \code{NaN} will always be ordered between \code{NA} and non-missing numbers.}
 
-\item{chr_transform}{Transformation of character vectors for sorting in
-alternate locales.
+\item{chr_proxy_collate}{A function generating an alternate representation
+of character vectors to use for collation, often used for locale-aware
+ordering.
 \itemize{
 \item If \code{NULL}, no transformation is done.
 \item Otherwise, this must be a function of one argument. The function will be
@@ -58,12 +59,12 @@ invoked with \code{x}, if it is a character vector, after it has been
 translated to UTF-8, and should return a character vector with the same
 length as \code{x}. The result should sort as expected in the C-locale,
 regardless of encoding.
-\item For data frames, \code{chr_transform} will be applied to all character
+\item For data frames, \code{chr_proxy_collate} will be applied to all character
 columns.
 }
 
 Common transformation functions include: \code{tolower()} for case-insensitive
-ordering and \code{stringi::str_sort_key()} for locale-aware ordering.}
+ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
 }
 \value{
 \itemize{
@@ -98,15 +99,15 @@ unless \code{base::order(method = "radix")} is explicitly set, which also uses
 the C-locale. While sorting with the C-locale can be useful for
 algorithmic efficiency, in many real world uses it can be the cause of
 data analysis mistakes. To balance these trade-offs, you can supply a
-\code{chr_transform} to transform character vectors into an alternative
-representation that orders in the C-locale in a less surprising way. For
-example, providing \code{\link[base:chartr]{base::tolower()}} as a transform will order the original
-vector in a case-insensitive manner. Locale-aware ordering can be achieved
-by providing \code{stringi::stri_sort_key()} as a transform, setting the
+\code{chr_proxy_collate} function to transform character vectors into an
+alternative representation that orders in the C-locale in a less surprising
+way. For example, providing \code{\link[base:chartr]{base::tolower()}} as a transform will order the
+original vector in a case-insensitive manner. Locale-aware ordering can be
+achieved by providing \code{stringi::stri_sort_key()} as a transform, setting the
 collation options as appropriate for your locale.
 
 Character vectors are always translated to UTF-8 before ordering, and before
-any transform is applied by \code{chr_transform}.
+any transform is applied by \code{chr_proxy_collate}.
 
 For complex vectors, if either the real or imaginary component is \code{NA} or
 \code{NaN}, then the entire observation is considered missing.
@@ -154,7 +155,7 @@ vec_sort(
 y <- c("B", "A", "a")
 vec_sort(y)
 
-# To order in a case-insensitive manner, provide a `chr_transform` that
-# transforms the strings to all lowercase
-vec_sort(y, chr_transform = tolower)
+# To order in a case-insensitive manner, provide a `chr_proxy_collate`
+# function that transforms the strings to all lowercase
+vec_sort(y, chr_proxy_collate = tolower)
 }
