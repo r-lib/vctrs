@@ -10,8 +10,8 @@ typedef bool (*poly_unary_bool_fn_ptr)(const void* x, r_ssize i);
 poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type);
 
 struct poly_df_data {
-  enum vctrs_type* col_types;
-  const void** col_ptrs;
+  enum vctrs_type* v_col_type;
+  const void** v_col_ptr;
   r_ssize n_col;
 };
 
