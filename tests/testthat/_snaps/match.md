@@ -1,242 +1,200 @@
 # `incomplete` can error informatively
 
     Code
-      vec_matches(NA, 1, incomplete = "error")
-    Error <vctrs_error_matches_incomplete>
-      No element can contain missing values.
+      (expect_error(vec_matches(NA, 1, incomplete = "error")))
+    Output
+      <error/vctrs_error_matches_incomplete>
+      Error in `stop_vctrs()`: No element can contain missing values.
       x The element at location 1 contains missing values.
-
----
-
     Code
-      vec_matches(NA, 1, incomplete = "error", needles_arg = "foo")
-    Error <vctrs_error_matches_incomplete>
-      No element of `foo` can contain missing values.
+      (expect_error(vec_matches(NA, 1, incomplete = "error", needles_arg = "foo")))
+    Output
+      <error/vctrs_error_matches_incomplete>
+      Error in `stop_vctrs()`: No element of `foo` can contain missing values.
       x The element at location 1 contains missing values.
 
 # `incomplete` is validated
 
     Code
-      vec_matches(1, 2, incomplete = 1.5)
-    Error <vctrs_error_cast_lossy>
-      Can't convert from `incomplete` <double> to <integer> due to loss of precision.
+      (expect_error(vec_matches(1, 2, incomplete = 1.5)))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `stop_vctrs()`: Can't convert from `incomplete` <double> to <integer> due to loss of precision.
       * Locations: 1
-
----
-
     Code
-      vec_matches(1, 2, incomplete = c("match", "drop"))
-    Error <rlang_error>
-      `incomplete` must be length 1, not length 2.
-
----
-
+      (expect_error(vec_matches(1, 2, incomplete = c("match", "drop"))))
+    Output
+      <error/rlang_error>
+      Error: `incomplete` must be length 1, not length 2.
     Code
-      vec_matches(1, 2, incomplete = "x")
-    Error <rlang_error>
-      `incomplete` must be one of: "match", "drop", or "error".
+      (expect_error(vec_matches(1, 2, incomplete = "x")))
+    Output
+      <error/rlang_error>
+      Error: `incomplete` must be one of: "match", "drop", or "error".
 
 # `multiple` can error informatively
 
     Code
-      vec_matches(1L, c(1L, 1L), multiple = "error")
-    Error <vctrs_error_matches_multiple>
-      Each element can match at most 1 observation.
+      (expect_error(vec_matches(1L, c(1L, 1L), multiple = "error")))
+    Output
+      <error/vctrs_error_matches_multiple>
+      Error in `stop_vctrs()`: Each element can match at most 1 observation.
       x The element at location 1 has multiple matches.
-
----
-
     Code
-      vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo")
-    Error <vctrs_error_matches_multiple>
-      Each element of `foo` can match at most 1 observation.
+      (expect_error(vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo"))
+      )
+    Output
+      <error/vctrs_error_matches_multiple>
+      Error in `stop_vctrs()`: Each element of `foo` can match at most 1 observation.
       x The element at location 1 has multiple matches.
-
----
-
     Code
-      vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo",
-      haystack_arg = "bar")
-    Error <vctrs_error_matches_multiple>
-      Each element of `foo` can match at most 1 observation from `bar`.
+      (expect_error(vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo",
+      haystack_arg = "bar")))
+    Output
+      <error/vctrs_error_matches_multiple>
+      Error in `stop_vctrs()`: Each element of `foo` can match at most 1 observation from `bar`.
       x The element at location 1 has multiple matches.
-
----
-
     Code
-      vec_matches(1, 1:2, multiple = "error", condition = NULL)
-    Error <vctrs_error_matches_multiple>
-      Each element can match at most 1 observation.
+      (expect_error(vec_matches(1, 1:2, multiple = "error", condition = NULL)))
+    Output
+      <error/vctrs_error_matches_multiple>
+      Error in `stop_vctrs()`: Each element can match at most 1 observation.
       x The element at location 1 has multiple matches.
 
 # `multiple` can warn informatively
 
     Code
-      vec_matches(1L, c(1L, 1L), multiple = "warning")
-    Warning <vctrs_warning_matches_multiple>
-      Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      (expect_warning(vec_matches(1L, c(1L, 1L), multiple = "warning")))
     Output
-        needles haystack
-      1       1        1
-      2       1        2
-
----
-
+      <warning/vctrs_warning_matches_multiple>
+      Warning: Each element can match at most 1 observation.
+      x The element at location 1 has multiple matches.
     Code
-      vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo")
-    Warning <vctrs_warning_matches_multiple>
-      Each element of `foo` can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      (expect_warning(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo"))
+      )
     Output
-        needles haystack
-      1       1        1
-      2       1        2
-
----
-
+      <warning/vctrs_warning_matches_multiple>
+      Warning: Each element of `foo` can match at most 1 observation.
+      x The element at location 1 has multiple matches.
     Code
-      vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo",
-      haystack_arg = "bar")
-    Warning <vctrs_warning_matches_multiple>
-      Each element of `foo` can match at most 1 observation from `bar`.
-      x The element at location 1 has multiple matches.
+      (expect_warning(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo",
+      haystack_arg = "bar")))
     Output
-        needles haystack
-      1       1        1
-      2       1        2
-
----
-
+      <warning/vctrs_warning_matches_multiple>
+      Warning: Each element of `foo` can match at most 1 observation from `bar`.
+      x The element at location 1 has multiple matches.
     Code
-      vec_matches(1, 1:2, multiple = "warning", condition = NULL)
-    Warning <vctrs_warning_matches_multiple>
-      Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      (expect_warning(vec_matches(1, 1:2, multiple = "warning", condition = NULL)))
     Output
-        needles haystack
-      1       1        1
-      2       1        2
+      <warning/vctrs_warning_matches_multiple>
+      Warning: Each element can match at most 1 observation.
+      x The element at location 1 has multiple matches.
 
 # `no_match` can error informatively
 
     Code
-      vec_matches(1, 2, no_match = "error")
-    Error <vctrs_error_matches_nothing>
-      Each element must have a match.
+      (expect_error(vec_matches(1, 2, no_match = "error")))
+    Output
+      <error/vctrs_error_matches_nothing>
+      Error in `stop_vctrs()`: Each element must have a match.
       x The element at location 1 does not have a match.
-
----
-
     Code
-      vec_matches(1, 2, no_match = "error", needles_arg = "foo")
-    Error <vctrs_error_matches_nothing>
-      Each element of `foo` must have a match.
+      (expect_error(vec_matches(1, 2, no_match = "error", needles_arg = "foo")))
+    Output
+      <error/vctrs_error_matches_nothing>
+      Error in `stop_vctrs()`: Each element of `foo` must have a match.
       x The element at location 1 does not have a match.
-
----
-
     Code
-      vec_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar")
-    Error <vctrs_error_matches_nothing>
-      Each element of `foo` must have a match in `bar`.
+      (expect_error(vec_matches(1, 2, no_match = "error", needles_arg = "foo",
+        haystack_arg = "bar")))
+    Output
+      <error/vctrs_error_matches_nothing>
+      Error in `stop_vctrs()`: Each element of `foo` must have a match in `bar`.
       x The element at location 1 does not have a match.
-
----
-
     Code
-      vec_matches(1, double(), no_match = "error", condition = NULL)
-    Error <vctrs_error_matches_nothing>
-      Each element must have a match.
+      (expect_error(vec_matches(1, double(), no_match = "error", condition = NULL)))
+    Output
+      <error/vctrs_error_matches_nothing>
+      Error in `stop_vctrs()`: Each element must have a match.
       x The element at location 1 does not have a match.
 
 # `no_match` is validated
 
     Code
-      vec_matches(1, 2, no_match = 1.5)
-    Error <vctrs_error_cast_lossy>
-      Can't convert from `no_match` <double> to <integer> due to loss of precision.
+      (expect_error(vec_matches(1, 2, no_match = 1.5)))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `stop_vctrs()`: Can't convert from `no_match` <double> to <integer> due to loss of precision.
       * Locations: 1
-
----
-
     Code
-      vec_matches(1, 2, no_match = c(1L, 2L))
-    Error <rlang_error>
-      `no_match` must be length 1, not length 2.
-
----
-
+      (expect_error(vec_matches(1, 2, no_match = c(1L, 2L))))
+    Output
+      <error/rlang_error>
+      Error: `no_match` must be length 1, not length 2.
     Code
-      vec_matches(1, 2, no_match = "x")
-    Error <rlang_error>
-      `no_match` must be either "drop" or "error".
+      (expect_error(vec_matches(1, 2, no_match = "x")))
+    Output
+      <error/rlang_error>
+      Error: `no_match` must be either "drop" or "error".
 
 # `remaining` can error informatively
 
     Code
-      vec_matches(1, 2, remaining = "error")
-    Error <vctrs_error_matches_remaining>
-      Each haystack value must be matched.
+      (expect_error(vec_matches(1, 2, remaining = "error")))
+    Output
+      <error/vctrs_error_matches_remaining>
+      Error in `stop_vctrs()`: Each haystack value must be matched.
       x The value at location 1 was not matched.
-
----
-
     Code
-      vec_matches(1, 2, remaining = "error", needles_arg = "foo")
-    Error <vctrs_error_matches_remaining>
-      Each haystack value must be matched by `foo`.
+      (expect_error(vec_matches(1, 2, remaining = "error", needles_arg = "foo")))
+    Output
+      <error/vctrs_error_matches_remaining>
+      Error in `stop_vctrs()`: Each haystack value must be matched by `foo`.
       x The value at location 1 was not matched.
-
----
-
     Code
-      vec_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar")
-    Error <vctrs_error_matches_remaining>
-      Each haystack value of `bar` must be matched by `foo`.
+      (expect_error(vec_matches(1, 2, remaining = "error", needles_arg = "foo",
+        haystack_arg = "bar")))
+    Output
+      <error/vctrs_error_matches_remaining>
+      Error in `stop_vctrs()`: Each haystack value of `bar` must be matched by `foo`.
       x The value at location 1 was not matched.
-
----
-
     Code
-      vec_matches(double(), c(1, 2), remaining = "error", condition = NULL)
-    Error <vctrs_error_matches_remaining>
-      Each haystack value must be matched.
+      (expect_error(vec_matches(double(), c(1, 2), remaining = "error", condition = NULL))
+      )
+    Output
+      <error/vctrs_error_matches_remaining>
+      Error in `stop_vctrs()`: Each haystack value must be matched.
       x The value at location 1 was not matched.
 
 # `remaining` is validated
 
     Code
-      vec_matches(1, 2, remaining = 1.5)
-    Error <vctrs_error_cast_lossy>
-      Can't convert from `remaining` <double> to <integer> due to loss of precision.
+      (expect_error(vec_matches(1, 2, remaining = 1.5)))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `stop_vctrs()`: Can't convert from `remaining` <double> to <integer> due to loss of precision.
       * Locations: 1
-
----
-
     Code
-      vec_matches(1, 2, remaining = c(1L, 2L))
-    Error <rlang_error>
-      `remaining` must be length 1, not length 2.
-
----
-
+      (expect_error(vec_matches(1, 2, remaining = c(1L, 2L))))
+    Output
+      <error/rlang_error>
+      Error: `remaining` must be length 1, not length 2.
     Code
-      vec_matches(1, 2, remaining = "x")
-    Error <rlang_error>
-      `remaining` must be either "drop" or "error".
+      (expect_error(vec_matches(1, 2, remaining = "x")))
+    Output
+      <error/rlang_error>
+      Error: `remaining` must be either "drop" or "error".
 
 # potential overflow on large output size is caught informatively
 
     Code
-      vec_matches(1:1e+07, 1:1e+07, condition = ">=")
-    Error <rlang_error>
-      Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
-
----
-
+      (expect_error(vec_matches(1:1e+07, 1:1e+07, condition = ">=")))
+    Output
+      <error/rlang_error>
+      Error: Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
     Code
-      vec_matches(1:1e+07, 1:1e+07, condition = NULL)
-    Error <rlang_error>
-      Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 100000000000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
+      (expect_error(vec_matches(1:1e+07, 1:1e+07, condition = NULL)))
+    Output
+      <error/rlang_error>
+      Error: Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 100000000000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
 

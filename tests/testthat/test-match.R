@@ -569,8 +569,10 @@ test_that("`incomplete = <integer> / 'drop'` still handles NAs in future columns
 })
 
 test_that("`incomplete` can error informatively", {
-  expect_snapshot(error = TRUE, vec_matches(NA, 1, incomplete = "error"))
-  expect_snapshot(error = TRUE, vec_matches(NA, 1, incomplete = "error", needles_arg = "foo"))
+  expect_snapshot({
+    (expect_error(vec_matches(NA, 1, incomplete = "error")))
+    (expect_error(vec_matches(NA, 1, incomplete = "error", needles_arg = "foo")))
+  })
 })
 
 test_that("`incomplete` error is classed", {
@@ -578,9 +580,11 @@ test_that("`incomplete` error is classed", {
 })
 
 test_that("`incomplete` is validated", {
-  expect_snapshot(error = TRUE, vec_matches(1, 2, incomplete = 1.5))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, incomplete = c("match", "drop")))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, incomplete = "x"))
+  expect_snapshot({
+    (expect_error(vec_matches(1, 2, incomplete = 1.5)))
+    (expect_error(vec_matches(1, 2, incomplete = c("match", "drop"))))
+    (expect_error(vec_matches(1, 2, incomplete = "x")))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -647,17 +651,21 @@ test_that("duplicate needles match the same haystack locations", {
 })
 
 test_that("`multiple` can error informatively", {
-  expect_snapshot(error = TRUE, vec_matches(1L, c(1L, 1L), multiple = "error"))
-  expect_snapshot(error = TRUE, vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo"))
-  expect_snapshot(error = TRUE, vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar"))
-  expect_snapshot(error = TRUE, vec_matches(1, 1:2, multiple = "error", condition = NULL))
+  expect_snapshot({
+    (expect_error(vec_matches(1L, c(1L, 1L), multiple = "error")))
+    (expect_error(vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo")))
+    (expect_error(vec_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar")))
+    (expect_error(vec_matches(1, 1:2, multiple = "error", condition = NULL)))
+  })
 })
 
 test_that("`multiple` can warn informatively", {
-  expect_snapshot(vec_matches(1L, c(1L, 1L), multiple = "warning"))
-  expect_snapshot(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo"))
-  expect_snapshot(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar"))
-  expect_snapshot(vec_matches(1, 1:2, multiple = "warning", condition = NULL))
+  expect_snapshot({
+    (expect_warning(vec_matches(1L, c(1L, 1L), multiple = "warning")))
+    (expect_warning(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo")))
+    (expect_warning(vec_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar")))
+    (expect_warning(vec_matches(1, 1:2, multiple = "warning", condition = NULL)))
+  })
 })
 
 test_that("warning falls back to 'all'", {
@@ -733,10 +741,12 @@ test_that("can differentiate between `no_match` and `incomplete`", {
 })
 
 test_that("`no_match` can error informatively", {
-  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "error"))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "error", needles_arg = "foo"))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar"))
-  expect_snapshot(error = TRUE, vec_matches(1, double(), no_match = "error", condition = NULL))
+  expect_snapshot({
+    (expect_error(vec_matches(1, 2, no_match = "error")))
+    (expect_error(vec_matches(1, 2, no_match = "error", needles_arg = "foo")))
+    (expect_error(vec_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar")))
+    (expect_error(vec_matches(1, double(), no_match = "error", condition = NULL)))
+  })
 })
 
 test_that("`no_match = 'error'` doesn't error on handled incomplete values", {
@@ -754,9 +764,11 @@ test_that("`no_match = 'drop'` doesn't drop handled incomplete values", {
 })
 
 test_that("`no_match` is validated", {
-  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = 1.5))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = c(1L, 2L)))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, no_match = "x"))
+  expect_snapshot({
+    (expect_error(vec_matches(1, 2, no_match = 1.5)))
+    (expect_error(vec_matches(1, 2, no_match = c(1L, 2L))))
+    (expect_error(vec_matches(1, 2, no_match = "x")))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -828,16 +840,20 @@ test_that("`remaining` combined with the haystack reordering retains appearance 
 })
 
 test_that("`remaining` can error informatively", {
-  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "error"))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "error", needles_arg = "foo"))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar"))
-  expect_snapshot(error = TRUE, vec_matches(double(), c(1, 2), remaining = "error", condition = NULL))
+  expect_snapshot({
+    (expect_error(vec_matches(1, 2, remaining = "error")))
+    (expect_error(vec_matches(1, 2, remaining = "error", needles_arg = "foo")))
+    (expect_error(vec_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar")))
+    (expect_error(vec_matches(double(), c(1, 2), remaining = "error", condition = NULL)))
+  })
 })
 
 test_that("`remaining` is validated", {
-  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = 1.5))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = c(1L, 2L)))
-  expect_snapshot(error = TRUE, vec_matches(1, 2, remaining = "x"))
+  expect_snapshot({
+    (expect_error(vec_matches(1, 2, remaining = 1.5)))
+    (expect_error(vec_matches(1, 2, remaining = c(1L, 2L))))
+    (expect_error(vec_matches(1, 2, remaining = "x")))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -1111,8 +1127,10 @@ test_that("potential overflow on large output size is caught informatively", {
   # intermediate `r_ssize` will be too large
   skip_if(.Machine$sizeof.pointer < 8L, message = "No long vector support")
 
-  expect_snapshot(error = TRUE, vec_matches(1:1e7, 1:1e7, condition = ">="))
-  expect_snapshot(error = TRUE, vec_matches(1:1e7, 1:1e7, condition = NULL))
+  expect_snapshot({
+    (expect_error(vec_matches(1:1e7, 1:1e7, condition = ">=")))
+    (expect_error(vec_matches(1:1e7, 1:1e7, condition = NULL)))
+  })
 })
 
 # ------------------------------------------------------------------------------
