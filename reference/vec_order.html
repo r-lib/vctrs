@@ -171,7 +171,7 @@ using subsequent columns to break ties.</p>
   direction <span class='op'>=</span> <span class='st'>"asc"</span>,
   na_value <span class='op'>=</span> <span class='st'>"largest"</span>,
   nan_distinct <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  chr_transform <span class='op'>=</span> <span class='cn'>NULL</span>
+  chr_proxy_collate <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span>
 
 <span class='fu'>vec_sort</span><span class='op'>(</span>
@@ -180,7 +180,7 @@ using subsequent columns to break ties.</p>
   direction <span class='op'>=</span> <span class='st'>"asc"</span>,
   na_value <span class='op'>=</span> <span class='st'>"largest"</span>,
   nan_distinct <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  chr_transform <span class='op'>=</span> <span class='cn'>NULL</span>
+  chr_proxy_collate <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -220,21 +220,22 @@ be considered distinct from <code>NA</code> for double and complex vectors. If <
 <code>NaN</code> will always be ordered between <code>NA</code> and non-missing numbers.</p></td>
     </tr>
     <tr>
-      <th>chr_transform</th>
-      <td><p>Transformation of character vectors for sorting in
-alternate locales.</p><ul>
+      <th>chr_proxy_collate</th>
+      <td><p>A function generating an alternate representation
+of character vectors to use for collation, often used for locale-aware
+ordering.</p><ul>
 <li><p>If <code>NULL</code>, no transformation is done.</p></li>
 <li><p>Otherwise, this must be a function of one argument. The function will be
 invoked with <code>x</code>, if it is a character vector, after it has been
 translated to UTF-8, and should return a character vector with the same
 length as <code>x</code>. The result should sort as expected in the C-locale,
 regardless of encoding.</p></li>
-<li><p>For data frames, <code>chr_transform</code> will be applied to all character
+<li><p>For data frames, <code>chr_proxy_collate</code> will be applied to all character
 columns.</p></li>
 </ul>
 
 <p>Common transformation functions include: <code><a href='https://rdrr.io/r/base/chartr.html'>tolower()</a></code> for case-insensitive
-ordering and <code>stringi::str_sort_key()</code> for locale-aware ordering.</p></td>
+ordering and <code><a href='https://rdrr.io/pkg/stringi/man/stri_sort_key.html'>stringi::stri_sort_key()</a></code> for locale-aware ordering.</p></td>
     </tr>
     </table>
 
@@ -267,14 +268,14 @@ unless <code><a href='https://rdrr.io/r/base/order.html'>base::order(method = "r
 the C-locale. While sorting with the C-locale can be useful for
 algorithmic efficiency, in many real world uses it can be the cause of
 data analysis mistakes. To balance these trade-offs, you can supply a
-<code>chr_transform</code> to transform character vectors into an alternative
-representation that orders in the C-locale in a less surprising way. For
-example, providing <code><a href='https://rdrr.io/r/base/chartr.html'>base::tolower()</a></code> as a transform will order the original
-vector in a case-insensitive manner. Locale-aware ordering can be achieved
-by providing <code><a href='https://rdrr.io/pkg/stringi/man/stri_sort_key.html'>stringi::stri_sort_key()</a></code> as a transform, setting the
+<code>chr_proxy_collate</code> function to transform character vectors into an
+alternative representation that orders in the C-locale in a less surprising
+way. For example, providing <code><a href='https://rdrr.io/r/base/chartr.html'>base::tolower()</a></code> as a transform will order the
+original vector in a case-insensitive manner. Locale-aware ordering can be
+achieved by providing <code><a href='https://rdrr.io/pkg/stringi/man/stri_sort_key.html'>stringi::stri_sort_key()</a></code> as a transform, setting the
 collation options as appropriate for your locale.</p>
 <p>Character vectors are always translated to UTF-8 before ordering, and before
-any transform is applied by <code>chr_transform</code>.</p>
+any transform is applied by <code>chr_proxy_collate</code>.</p>
 <p>For complex vectors, if either the real or imaginary component is <code>NA</code> or
 <code>NaN</code>, then the entire observation is considered missing.</p>
     <h2 class="hasAnchor" id="dependencies-of-vec-order-"><a class="anchor" href="#dependencies-of-vec-order-"></a>Dependencies of <code>vec_order()</code></h2>
@@ -352,9 +353,9 @@ any transform is applied by <code>chr_transform</code>.</p>
 <span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"B"</span>, <span class='st'>"A"</span>, <span class='st'>"a"</span><span class='op'>)</span>
 <span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "A" "B" "a"</div><div class='input'>
-<span class='co'># To order in a case-insensitive manner, provide a `chr_transform` that</span>
-<span class='co'># transforms the strings to all lowercase</span>
-<span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span>, chr_transform <span class='op'>=</span> <span class='va'>tolower</span><span class='op'>)</span>
+<span class='co'># To order in a case-insensitive manner, provide a `chr_proxy_collate`</span>
+<span class='co'># function that transforms the strings to all lowercase</span>
+<span class='fu'>vec_sort</span><span class='op'>(</span><span class='va'>y</span>, chr_proxy_collate <span class='op'>=</span> <span class='va'>tolower</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] "A" "a" "B"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

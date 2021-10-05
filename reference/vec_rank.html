@@ -171,7 +171,7 @@ ties.</p>
   direction <span class='op'>=</span> <span class='st'>"asc"</span>,
   na_value <span class='op'>=</span> <span class='st'>"largest"</span>,
   nan_distinct <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  chr_transform <span class='op'>=</span> <span class='cn'>NULL</span>
+  chr_proxy_collate <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -232,21 +232,22 @@ be considered distinct from <code>NA</code> for double and complex vectors. If <
 <code>NaN</code> will always be ordered between <code>NA</code> and non-missing numbers.</p></td>
     </tr>
     <tr>
-      <th>chr_transform</th>
-      <td><p>Transformation of character vectors for sorting in
-alternate locales.</p><ul>
+      <th>chr_proxy_collate</th>
+      <td><p>A function generating an alternate representation
+of character vectors to use for collation, often used for locale-aware
+ordering.</p><ul>
 <li><p>If <code>NULL</code>, no transformation is done.</p></li>
 <li><p>Otherwise, this must be a function of one argument. The function will be
 invoked with <code>x</code>, if it is a character vector, after it has been
 translated to UTF-8, and should return a character vector with the same
 length as <code>x</code>. The result should sort as expected in the C-locale,
 regardless of encoding.</p></li>
-<li><p>For data frames, <code>chr_transform</code> will be applied to all character
+<li><p>For data frames, <code>chr_proxy_collate</code> will be applied to all character
 columns.</p></li>
 </ul>
 
 <p>Common transformation functions include: <code><a href='https://rdrr.io/r/base/chartr.html'>tolower()</a></code> for case-insensitive
-ordering and <code>stringi::str_sort_key()</code> for locale-aware ordering.</p></td>
+ordering and <code><a href='https://rdrr.io/pkg/stringi/man/stri_sort_key.html'>stringi::stri_sort_key()</a></code> for locale-aware ordering.</p></td>
     </tr>
     </table>
 
