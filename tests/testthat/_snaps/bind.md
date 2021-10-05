@@ -237,7 +237,7 @@
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 14.8KB
+      [1] 13.6KB
     Code
       # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
@@ -245,11 +245,11 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 1MB
+      [1] 909KB
     Code
       # FIXME (#1217): Data frame with rownames (repaired, recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 1.02MB
+      [1] 921KB
 
