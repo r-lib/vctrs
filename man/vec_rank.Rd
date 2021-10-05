@@ -34,12 +34,14 @@ non-duplicate value will have a rank incremented by \code{1}, effectively
 removing any gaps in the ranking.
 }}
 
-\item{incomplete}{Treatment of \link[=vec_detect_complete]{incomplete} values.
+\item{incomplete}{Treatment of \link[=vec_detect_complete]{incomplete}
+observations.
 \itemize{
-\item \code{"rank"}: Give incomplete values a numeric rank, which is affected
-by \code{na_value} and \code{nan_distinct}.
-\item \code{"na"}: Give incomplete values a rank of \code{NA}, regardless of the value
-of any other argument.
+\item \code{"rank"}: Rank incomplete observations normally. Missing values will
+be affected by \code{na_value} and \code{nan_distinct}.
+\item \code{"na"}: Don't rank incomplete observations at all. Instead, they are
+given a rank of \code{NA}. In this case, \code{na_value} and \code{nan_distinct} have
+no effect.
 }}
 
 \item{direction}{Direction to sort in.

@@ -33,13 +33,15 @@
 #'   non-duplicate value will have a rank incremented by `1`, effectively
 #'   removing any gaps in the ranking.
 #'
-#' @param incomplete Treatment of [incomplete][vec_detect_complete] values.
+#' @param incomplete Treatment of [incomplete][vec_detect_complete]
+#'   observations.
 #'
-#'   - `"rank"`: Give incomplete values a numeric rank, which is affected
-#'   by `na_value` and `nan_distinct`.
+#'   - `"rank"`: Rank incomplete observations normally. Missing values will
+#'   be affected by `na_value` and `nan_distinct`.
 #'
-#'   - `"na"`: Give incomplete values a rank of `NA`, regardless of the value
-#'   of any other argument.
+#'   - `"na"`: Don't rank incomplete observations at all. Instead, they are
+#'   given a rank of `NA`. In this case, `na_value` and `nan_distinct` have
+#'   no effect.
 #'
 #' @section Dependencies:
 #'
