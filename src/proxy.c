@@ -78,11 +78,12 @@ static r_obj* df_joint_proxy_order(r_obj* x, r_obj* y);
 static r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method);
 
 /*
- * Specialized internal variant of `vec_proxy_order()` used in `vec_matches()`.
- * It generally just calls `vec_proxy_order()`, except in the case where we
- * are taking the order-proxy of a list. This generates a proxy that orders
- * by first appearance, so we need to combine `x` and `y` to jointly compute
- * the proxy for comparisons to be correct in `vec_matches()`.
+ * Specialized internal variant of `vec_proxy_order()` used in
+ * `vec_locate_matches()`. It generally just calls `vec_proxy_order()`,except
+ * in the case where we are taking the order-proxy of a list. This generates a
+ * proxy that orders by first appearance, so we need to combine `x` and `y` to
+ * jointly compute the proxy for comparisons to be correct in
+ * `vec_locate_matches()`.
  *
  * For example
  * x <- list(1.5, 2)
@@ -182,7 +183,8 @@ r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method) {
 
   // Combine
   // NOTE: Without long vector support, this limits the maximum allowed
-  // size of `vec_matches()` input to `vec_size(x) + vec_size(y) <= INT_MAX`
+  // size of `vec_locate_matches()` input to
+  // `vec_size(x) + vec_size(y) <= INT_MAX`
   // when list columns are used. This should be incredibly rare.
   r_obj* combined = KEEP(vec_c(out, ptype, zap, p_no_repair_silent_ops));
 

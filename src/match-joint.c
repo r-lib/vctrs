@@ -58,10 +58,11 @@
  * `vec_rank(vec_c(x, y), ties = "dense")`
  * followed by splitting the ranks back up into two vectors matching the sizes
  * of x and y. The reason we don't do that is because it limits the maximum size
- * that `vec_matches()` can work on to `vec_size(x) + vec_size(y) <= INT_MAX`,
+ * that `vec_locate_matches()` can work on to
+ * `vec_size(x) + vec_size(y) <= INT_MAX`,
  * since you have to combine the vectors together.
  *
- * The sole purpose of this function is to support `vec_matches()`.
+ * The sole purpose of this function is to support `vec_locate_matches()`.
  *
  * # For example:
  * x <- c(2, 1.5, 1)

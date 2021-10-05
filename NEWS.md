@@ -1,10 +1,10 @@
 # vctrs (development version)
 
-* New `vec_matches()` for locating where each observation in one vector matches
-  one or more observations in another vector. It is similar to `vec_match()`,
-  but returns all matches by default (rather than just the first), and can
-  match on binary conditions other than equality. The algorithm is inspired by
-  data.table's very fast binary merge procedure.
+* New `vec_locate_matches()` for locating where each observation in one vector
+  matches one or more observations in another vector. It is similar to
+  `vec_match()`, but returns all matches by default (rather than just the
+  first), and can match on binary conditions other than equality. The algorithm
+  is inspired by data.table's very fast binary merge procedure.
 
 * `vec_duplicate_detect()` is a bit faster when there are many unique values.
 

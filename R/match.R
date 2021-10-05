@@ -1,21 +1,27 @@
-#' Find observations matching specified conditions
+#' Locate observations matching specified conditions
 #'
 #' @description
-#' `vec_matches()` is a more flexible version of [vec_match()] used to identify
-#' locations where each observation of `needles` matches one or multiple
-#' observations in `haystack`. Unlike `vec_match()`, `vec_matches()` returns all
-#' matches by default, and can match on binary conditions other than equality,
-#' such as `>`, `>=`, `<`, and `<=`.
+#' `vec_locate_matches()` is a more flexible version of [vec_match()] used to
+#' identify locations where each observation of `needles` matches one or
+#' multiple observations in `haystack`. Unlike `vec_match()`,
+#' `vec_locate_matches()` returns all matches by default, and can match on
+#' binary conditions other than equality, such as `>`, `>=`, `<`, and `<=`.
 #'
 #' @details
 #' [vec_match()] is identical to (but often slightly faster than):
 #'
 #' ```
-#' vec_matches(needles, haystack, condition = "==", multiple = "first", nan_distinct = TRUE)
+#' vec_locate_matches(
+#'   needles,
+#'   haystack,
+#'   condition = "==",
+#'   multiple = "first",
+#'   nan_distinct = TRUE
+#' )
 #' ```
 #'
-#' `vec_matches()` is extremely similar to a SQL join between `needles` and
-#' `haystack`, with the default being most similar to a left join. Using
+#' `vec_locate_matches()` is extremely similar to a SQL join between `needles`
+#' and `haystack`, with the default being most similar to a left join. Using
 #' `condition` is analogous to specifying a SQL ON statement, and `condition =
 #' NULL` is identical to specifying a join without an ON statement.
 #'
@@ -28,7 +34,7 @@
 #' mis-specified, it is very easy to accidentally generate an exponentially
 #' large number of matches.
 #'
-#' @section Dependencies of `vec_matches()`:
+#' @section Dependencies of `vec_locate_matches()`:
 #' * [vec_order()]
 #' * [vec_detect_complete()]
 #'
@@ -123,7 +129,7 @@
 #'
 #' # By default, for each element of `x`, all matching locations in `y` are
 #' # returned
-#' matches <- vec_matches(x, y)
+#' matches <- vec_locate_matches(x, y)
 #' matches
 #'
 #' # The result can be used to slice the inputs to align them
@@ -133,34 +139,34 @@
 #' )
 #'
 #' # If multiple matches are present, control which is returned with `multiple`
-#' vec_matches(x, y, multiple = "first")
-#' vec_matches(x, y, multiple = "last")
-#' try(vec_matches(x, y, multiple = "error"))
+#' vec_locate_matches(x, y, multiple = "first")
+#' vec_locate_matches(x, y, multiple = "last")
+#' try(vec_locate_matches(x, y, multiple = "error"))
 #'
 #' # By default, NA is allowed to match other NA values, and NA is treated
 #' # as being identical to NaN. Using `nan_distinct = TRUE` treats NA and NaN as
 #' # different values, so NA can only match NA, and NaN can only match NaN.
-#' vec_matches(x, y, nan_distinct = TRUE)
+#' vec_locate_matches(x, y, nan_distinct = TRUE)
 #'
 #' # If you never want missing values to match, set `incomplete = NA` to return
 #' # `NA` in the `haystack` column anytime there was an incomplete observation
 #' # in `needles`.
-#' vec_matches(x, y, incomplete = NA)
+#' vec_locate_matches(x, y, incomplete = NA)
 #'
 #' # `no_match` allows you to specify the returned value for a needle with
 #' # zero matches. Note that this is different from an incomplete value,
 #' # so specifying `no_match` allows you to differentiate between incomplete
 #' # values and unmatched values.
-#' vec_matches(x, y, incomplete = NA, no_match = 0L)
+#' vec_locate_matches(x, y, incomplete = NA, no_match = 0L)
 #'
 #' # If you want to require that every `needle` has at least 1 match, set
 #' # `no_match` to `"error"`:
-#' try(vec_matches(x, y, incomplete = NA, no_match = "error"))
+#' try(vec_locate_matches(x, y, incomplete = NA, no_match = "error"))
 #'
-#' # By default, `vec_matches()` detects equality between `needles` and
+#' # By default, `vec_locate_matches()` detects equality between `needles` and
 #' # `haystack`. Using `condition`, you can detect where an inequality holds
 #' # true instead. For example, to find every location where `x[[i]] >= y`:
-#' matches <- vec_matches(x, y, condition = ">=")
+#' matches <- vec_locate_matches(x, y, condition = ">=")
 #'
 #' data_frame(
 #'   x = vec_slice(x, matches$needles),
@@ -170,7 +176,7 @@
 #' # You can limit which matches are returned with a `filter`. For example,
 #' # with the above example you can filter the matches returned by `x[[i]] >= y`
 #' # down to only the ones containing the maximum `y` value of those matches.
-#' matches <- vec_matches(x, y, condition = ">=", filter = "max")
+#' matches <- vec_locate_matches(x, y, condition = ">=", filter = "max")
 #'
 #' # Here, the matches for the `3` needle value have been filtered down to
 #' # only include the maximum haystack value of those matches, `2`. This is
@@ -183,7 +189,7 @@
 #' # You can also specify `condition = NULL` to generate a cross match where
 #' # every observation in `needles` matches all observations in `haystack`.
 #' # This ignores the actual values, and depends only on the size of the inputs.
-#' matches <- vec_matches(x, y, condition = NULL)
+#' matches <- vec_locate_matches(x, y, condition = NULL)
 #' vec_size(x) * vec_size(y)
 #' nrow(matches)
 #' head(matches, n = 10)
@@ -202,30 +208,30 @@
 #' haystack <- data_frame(lower = lower, upper = upper)
 #'
 #' # (values >= lower) & (values <= upper)
-#' matches <- vec_matches(needles, haystack, condition = c(">=", "<="))
+#' matches <- vec_locate_matches(needles, haystack, condition = c(">=", "<="))
 #'
 #' data_frame(
 #'   lower = vec_slice(lower, matches$haystack),
 #'   value = vec_slice(values, matches$needle),
 #'   upper = vec_slice(upper, matches$haystack)
 #' )
-vec_matches <- function(needles,
-                        haystack,
-                        ...,
-                        condition = "==",
-                        filter = "none",
-                        incomplete = "match",
-                        no_match = NA_integer_,
-                        remaining = "drop",
-                        multiple = "all",
-                        nan_distinct = FALSE,
-                        chr_transform = NULL,
-                        needles_arg = "",
-                        haystack_arg = "") {
+vec_locate_matches <- function(needles,
+                               haystack,
+                               ...,
+                               condition = "==",
+                               filter = "none",
+                               incomplete = "match",
+                               no_match = NA_integer_,
+                               remaining = "drop",
+                               multiple = "all",
+                               nan_distinct = FALSE,
+                               chr_transform = NULL,
+                               needles_arg = "",
+                               haystack_arg = "") {
   check_dots_empty0(...)
 
   .Call(
-    vctrs_matches,
+    vctrs_locate_matches,
     needles,
     haystack,
     condition,
