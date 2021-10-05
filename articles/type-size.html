@@ -227,6 +227,7 @@
 <span class="co">#&gt; 0. (           , &lt;logical&gt; ) = &lt;logical&gt;</span>
 <span class="co">#&gt; 1. ( &lt;logical&gt; , &lt;integer&gt; ) = &lt;integer&gt;</span>
 <span class="co">#&gt; 2. ( &lt;integer&gt; , &lt;double&gt;  ) = &lt;double&gt;</span>
+
 <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error: Can't combine &lt;logical&gt; and &lt;character&gt;.</span></code></pre></div>
 </li>
@@ -240,6 +241,7 @@
 <span class="co">#&gt; Prototype: &lt;double[,2]&gt;</span>
 <span class="co">#&gt; 0. (              , &lt;double[,1]&gt; ) = &lt;double[,1]&gt;</span>
 <span class="co">#&gt; 1. ( &lt;double[,1]&gt; , &lt;double[,2]&gt; ) = &lt;double[,2]&gt;</span>
+
 <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, 
   <span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,
@@ -346,6 +348,7 @@
 <span class="co">#&gt;  $ : num 0</span>
 <span class="co">#&gt;  $ : num [1:5] 1 2 3 4 5</span>
 <span class="co">#&gt;  $ : num 2.5</span>
+
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, 
   <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="st">"y"</span><span class="op">)</span>
@@ -353,6 +356,7 @@
 <span class="co">#&gt; List of 2</span>
 <span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 1</span>
 <span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 2</span>
+
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
   <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>
@@ -369,6 +373,7 @@
 <code class="sourceCode R"><span class="co"># Cast succeeds</span>
 <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1 2</span>
+
 <span class="co"># Cast fails</span>
 <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error: Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span></code></pre></div>
@@ -427,11 +432,11 @@
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt; [1] 7 9</span>
+<span class="co">#&gt; [1] 2 5</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
 <span class="co">#&gt;   x</span>
-<span class="co">#&gt; 1 7</span>
-<span class="co">#&gt; 2 9</span></code></pre></div>
+<span class="co">#&gt; 1 2</span>
+<span class="co">#&gt; 2 5</span></code></pre></div>
 <p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
@@ -522,17 +527,21 @@
 <span class="co">#&gt; numeric(0)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">pmax</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; integer(0)</span>
+
 <span class="co"># dropped</span>
 <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;      [,1]</span>
 <span class="co">#&gt; [1,]    1</span>
 <span class="co">#&gt; [2,]    2</span>
+
 <span class="co"># recycled to length of first</span>
 <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] NA NA NA NA</span>
+
 <span class="co"># preserved-ish</span>
 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "1 " "2 "</span>
+
 <span class="co"># Errors</span>
 <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error in data.frame(1:2, integer()): arguments imply differing number of rows: 2, 0</span></code></pre></div>
