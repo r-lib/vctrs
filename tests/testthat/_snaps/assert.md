@@ -151,3 +151,22 @@
           y: double
         >>
 
+# vec_assert() validates `size` (#1470)
+
+    Code
+      (expect_error(vec_assert(1, size = c(2, 3))))
+    Output
+      <error/rlang_error>
+      Error in `vec_assert()`: `size` must be length 1, not length 2.
+    Code
+      (expect_error(vec_assert(1, size = 1.5)))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `stop_vctrs()`: Can't convert from `size` <double> to <integer> due to loss of precision.
+      * Locations: 1
+    Code
+      (expect_error(vec_assert(1, size = "x")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `stop_vctrs()`: Can't convert `size` <character> to <integer>.
+

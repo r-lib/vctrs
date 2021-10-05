@@ -61,7 +61,7 @@
 #'   class, its [vec_ptype()] is compared to that of `x` with
 #'   `identical()`. Otherwise, its [typeof()] is compared to that of
 #'   `x` with `==`.
-#' @param size Size to compare against
+#' @param size A single integer size against which to compare.
 #' @param arg Name of argument being checked. This is used in error
 #'   messages. The label of the expression passed as `x` is taken as
 #'   default.
@@ -90,7 +90,13 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
   }
 
   if (!is_null(size)) {
-    size <- vec_recycle(vec_cast(size, integer()), 1L)
+    size <- vec_cast(size, integer(), x_arg = "size")
+
+    n_size <- length(size)
+    if (n_size != 1L) {
+      abort(glue::glue("`size` must be length 1, not length {n_size}."))
+    }
+
     x_size <- vec_size(x)
     if (!identical(x_size, size)) {
       stop_assert_size(x_size, size, arg)
