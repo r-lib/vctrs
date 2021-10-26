@@ -604,7 +604,7 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides three "proxy" generics. Two of these let you control how your class determines equality and ordering:
+vctrs provides four "proxy" generics. Three of these let you control how your class determines equality and ordering:
 
 * `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
