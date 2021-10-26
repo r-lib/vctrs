@@ -751,17 +751,16 @@ Equality works out of the box because we can tell if two integer vectors are equ
 p == poly(c(1, 0, 1))
 ```
 
-By default, list ordering works by first occurrence:
+We can't compare individual elements, because by default lists are not comparable:
 
-```{r}
-sort(p)
-sort(p[c(1:3, 1:2)])
+```{r, error = TRUE}
+p < p[2]
 ```
 
-For an alternative ordering by the coefficients, we define a `vec_proxy_order()` method:
+To enable comparison, we implement a `vec_proxy_compare()` method:
 
 ```{r}
-vec_proxy_order.vctrs_poly <- function(x, ...) {
+vec_proxy_compare.vctrs_poly <- function(x, ...) {
   x_raw <- vec_data(x)
   # First figure out the maximum length
   n <- max(vapply(x_raw, length, integer(1)))
@@ -773,23 +772,24 @@ vec_proxy_order.vctrs_poly <- function(x, ...) {
   as.data.frame(do.call(rbind, full))
 }
 
-sort(p)
-```
-
-However, we still can't compare individual elements because by default lists are not comparable:
-
-```{r, error = TRUE}
 p < p[2]
 ```
 
-To enable comparison, we implement `vec_proxy_compare()` and forward to `vec_proxy_order()`:
+Often, this is sufficient to also implement `sort()`. However, for lists, there is already a default `vec_proxy_order()` method that sorts by first occurrence:
 
 ```{r}
-vec_proxy_compare.vctrs_poly <- function(x, ...) {
-  vec_proxy_order(x, ...)
+sort(p)
+sort(p[c(1:3, 1:2)])
+```
+
+To ensure consistency between ordering and comparison, we forward `vec_proxy_order()` to `vec_proxy_compare()`:
+
+```{r}
+vec_proxy_order.vctrs_poly <- function(x, ...) {
+  vec_proxy_compare(x, ...)
 }
 
-p < p[2]
+sort(p)
 ```
 
 
