@@ -362,8 +362,6 @@ test_that("can't touch protected attributes", {
 
   expect_error(dim(x) <- c(2, 2), class = "vctrs_error_unsupported")
   expect_error(dimnames(x) <- list("x"), class = "vctrs_error_unsupported")
-
-  expect_error(levels(x), class = "vctrs_error_unsupported")
   expect_error(levels(x) <- "x", class = "vctrs_error_unsupported")
 
   # but it's ok to set names to NULL; this happens at least in vec_c
@@ -419,6 +417,19 @@ test_that("c passes on to vec_c", {
 
   expect_equal(c(h, 1), rep(h, 2))
   expect_equal(c(h, h), rep(h, 2))
+})
+
+test_that("rbind is supported", {
+  local_hidden()
+
+  h <- new_hidden(1)
+  df <- data_frame(h = h)
+
+  expect_equal(rbind(df), df)
+  expect_equal(rbind(df, NULL), df)
+
+  expect_equal(rbind(df, data_frame(h = 1)), unrownames(df[c(1, 1), , drop = FALSE]))
+  expect_equal(rbind(df, df), unrownames(df[c(1, 1), , drop = FALSE]))
 })
 
 test_that("summaries preserve class", {

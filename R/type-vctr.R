@@ -717,7 +717,7 @@ summary.vctrs_vctr <- function(object, ...) {
 
 #' @export
 levels.vctrs_vctr <- function(x) {
-  stop_unsupported(x, "levels")
+  NULL
 }
 
 #' @export
