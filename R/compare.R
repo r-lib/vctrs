@@ -28,6 +28,14 @@
 #' generated as an integer vector that can be used to order list elements
 #' by first appearance.
 #'
+#' If a class implements a `vec_proxy_compare()` method, it usually doesn't need
+#' to provide a `vec_proxy_order()` method, because the latter is implemented
+#' by forwarding to `vec_proxy_compare()` by default. Classes inheriting from
+#' list are an exception: due to the default `vec_proxy_order()` implementation,
+#' `vec_proxy_compare()` and `vec_proxy_order()` should be provided for such
+#' classes (with identical implementations) to avoid mismatches between
+#' comparison and sorting.
+#'
 #' @param x A vector x.
 #' @inheritParams rlang::args_dots_empty
 #' @return A 1d atomic vector or a data frame.
@@ -86,7 +94,7 @@ vec_proxy_order.default <- function(x, ...) {
 #'
 #' @section S3 dispatch:
 #' `vec_compare()` is not generic for performance; instead it uses
-#' [vec_proxy_compare()] to
+#' [vec_proxy_compare()] to create a proxy that is used in the comparison.
 #'
 #' @param x,y Vectors with compatible types and lengths.
 #' @param na_equal Should `NA` values be considered equal?

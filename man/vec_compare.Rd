@@ -24,7 +24,7 @@ Compare two vectors
 \section{S3 dispatch}{
 
 \code{vec_compare()} is not generic for performance; instead it uses
-\code{\link[=vec_proxy_compare]{vec_proxy_compare()}} to
+\code{\link[=vec_proxy_compare]{vec_proxy_compare()}} to create a proxy that is used in the comparison.
 }
 
 \section{Dependencies}{
