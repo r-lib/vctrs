@@ -11,14 +11,13 @@ test_that("vec_as_location2() requires integer or character inputs", {
     (expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript_type"))
     (expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript_type"))
     (expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript_type"))
-    # FIXME: Uncomment tests after https://github.com/r-lib/rlang/issues/1248
-    # (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
-    # (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
-    # (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type"))
+    (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
+    (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
+    (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type"))
 
     "Idem with custom `arg`"
     (expect_error(vec_as_location2(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript_type"))
-    #(expect_error(vec_as_location2(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_type"))
+    (expect_error(vec_as_location2(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_type"))
     (expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type"))
   })
 })
