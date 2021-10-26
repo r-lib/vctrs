@@ -419,12 +419,14 @@ test_that("c passes on to vec_c", {
   expect_equal(c(h, h), rep(h, 2))
 })
 
-test_that("rbind is supported", {
+test_that("rbind does not fail with an unclear message (#1186)", {
   local_hidden()
 
   h <- new_hidden(1)
   df <- data_frame(h = h)
 
+  # In general, vec_rbind() should be preferred. In many cases rbind() does
+  # the right thing, this test exists to alert us if this changes in the future.
   expect_equal(rbind(df), df)
   expect_equal(rbind(df, NULL), df)
 
