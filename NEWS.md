@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_as_location(missing = "error")` now fails with `NA` and `NA_character_`
+  in addition to `NA_integer_` (#1420, @krlmlr).
+
 * Starting with rlang 1.0.0, errors are displayed with the contextual
   function call. Several vctrs operations gain a `call` argument that
   makes it possible to report the correct context in error messages.

@@ -553,6 +553,42 @@
       ! Must rename columns with a valid subscript vector.
       x Subscript `foo(bar)` can't contain missing values.
       x It has missing values at locations 2 and 4.
+    Code
+      (expect_error(with_tibble_cols(vec_as_location(NA, 1, missing = "error")),
+      class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Must rename columns with a valid subscript vector.
+      x Subscript `foo(bar)` can't contain missing values.
+      x It has a missing value at location 1.
+    Code
+      (expect_error(with_tibble_cols(vec_as_location(NA, 3, missing = "error")),
+      class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Must rename columns with a valid subscript vector.
+      x Subscript `foo(bar)` can't contain missing values.
+      x It has a missing value at location 1.
+    Code
+      (expect_error(with_tibble_cols(vec_as_location(c(TRUE, NA, FALSE), 3, missing = "error")),
+      class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Must rename columns with a valid subscript vector.
+      x Subscript `foo(bar)` can't contain missing values.
+      x It has a missing value at location 2.
+    Code
+      (expect_error(with_tibble_cols(vec_as_location(NA_character_, 2, missing = "error",
+        names = c("x", "y"))), class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Must rename columns with a valid subscript vector.
+      x Subscript `foo(bar)` can't contain missing values.
+      x It has a missing value at location 1.
 
 # can customise subscript type errors
 
