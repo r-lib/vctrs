@@ -745,7 +745,7 @@ Equality works out of the box because we can tell if two integer vectors are equ
 p == poly(c(1, 0, 1))
 ```
 
-Ordering works by default, by first occurrence:
+By default, list ordering works by first occurrence:
 
 ```{r}
 sort(p)
@@ -770,7 +770,7 @@ vec_proxy_order.vctrs_poly <- function(x, ...) {
 sort(p)
 ```
 
-However, we still can't compare individual elements, because by default lists are not comparable:
+However, we still can't compare individual elements because by default lists are not comparable:
 
 ```{r, error = TRUE}
 p < p[2]
@@ -780,7 +780,7 @@ To enable comparison, we implement `vec_proxy_compare()` and forward to `vec_pro
 
 ```{r}
 vec_proxy_compare.vctrs_poly <- function(x, ...) {
-  vec_proxy_order(x)
+  vec_proxy_order(x, ...)
 }
 
 p < p[2]
