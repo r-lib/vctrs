@@ -614,9 +614,13 @@ vctrs provides four "proxy" generics. Three of these let you control how your cl
 
     This proxy was added to implement the behaviour of lists, which are sortable (their order proxy sorts by first occurrence) but not comparable (comparison operators cause an error).
 
-By default, `vec_proxy_equal()`, `vec_proxy_compare()`, and `vec_proxy_order()` just call `vec_proxy()`.
-
 * `vec_proxy()` returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn't need to implement `vec_proxy()`.
+
+The default behavior is as follows:
+
+- `vec_proxy_equal()` calls `vec_proxy()`
+- `vec_proxy_compare()` calls `vec_proxy_equal()`
+- `vec_proxy_order()` calls `vec_proxy_compare()`
 
 You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
 
