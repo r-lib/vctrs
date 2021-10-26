@@ -1,7 +1,6 @@
 # vctrs (development version)
 
-* `levels.vctrs_vctr()` returns `NULL` to support `rbind()` for data frame
-  columns of type `"vctrs_vctr"` (#1186, @krlmlr).
+* `levels.vctrs_vctr()` now returns `NULL` instead of failing (#1186, @krlmlr).
 
 * `vec_assert()` produces a more informative error when `size` is invalid
   (#1470).
