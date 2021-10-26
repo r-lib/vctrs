@@ -77,6 +77,46 @@
         x Subscript has the wrong type `vctrs_foobar`.
         i It must be numeric or character.
     Code
+      (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error in `stop_vctrs()`: 
+        Can't convert from <double> to <integer> due to loss of precision.
+        * Locations: 1
+    Code
+      (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error in `stop_vctrs()`: 
+        Can't convert from <double> to <integer> due to loss of precision.
+        * Locations: 1
+    Code
+      (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
+      Error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error in `stop_vctrs()`: 
+        Can't convert from <double> to <integer> due to loss of precision.
+        * Locations: 1
+    Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript_type")
       )
@@ -90,6 +130,20 @@
         Must extract element with a single valid subscript.
         x Subscript `foo` has the wrong type `vctrs_foobar`.
         i It must be numeric or character.
+    Code
+      (expect_error(vec_as_location2(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
+      Error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from `foo` <double> to <integer> due to loss of precision.
+      Caused by error: 
+        Must extract element with a single valid subscript.
+        x Can't convert from `foo` <double> to <integer> due to loss of precision.
+      Caused by error in `stop_vctrs()`: 
+        Can't convert from `foo` <double> to <integer> due to loss of precision.
+        * Locations: 1
     Code
       (expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type")
       )
