@@ -604,15 +604,17 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides four "proxy" generics. Three of these let you control how your class determines equality and ordering:
+vctrs provides four "proxy" generics. Two of these let you control how your class determines equality and comparison:
 
 * `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
+* `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, and `quantile()`.
+
+Two other proxy generic are used for sorting for unordered data types and for accessing the raw data for exotic storage formats:
+
 * `vec_proxy_order()` specifies how to sort the elements of your vector. It is used in `xtfrm()`, which in turn is called by the `order()` and `sort()` functions.
 
-*   `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, and `quantile()`. Its default implementation calls `vec_proxy_order()` and you normally don't need to implement this proxy.
-
-    This proxy was added to implement the behaviour of lists, which are sortable (their order proxy sorts by first occurrence) but not comparable (comparison operators cause an error).
+    This proxy was added to implement the behaviour of lists, which are sortable (their order proxy sorts by first occurrence) but not comparable (comparison operators cause an error). Its default implementation for other classes calls `vec_proxy_compare()` and you normally don't need to implement this proxy.
 
 * `vec_proxy()` returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn't need to implement `vec_proxy()`.
 
