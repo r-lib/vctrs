@@ -11,13 +11,13 @@
 \alias{obj_str_footer}
 \title{\code{print()} and \code{str()} generics.}
 \usage{
-obj_print(x, ...)
+obj_print(x, ..., max = NULL)
 
-obj_print_header(x, ...)
+obj_print_header(x, ..., max = NULL)
 
-obj_print_data(x, ...)
+obj_print_data(x, ..., max)
 
-obj_print_footer(x, ...)
+obj_print_footer(x, ..., max = NULL)
 
 obj_str(x, ...)
 
@@ -32,6 +32,9 @@ obj_str_footer(x, ...)
 
 \item{...}{Additional arguments passed on to methods. See \code{\link[=print]{print()}} and
 \code{\link[=str]{str()}} for commonly used options}
+
+\item{max}{The maximum number of items to print, defaults to
+\code{getOption("print.max")}.}
 }
 \description{
 These are constructed to be more easily extensible since you can override
