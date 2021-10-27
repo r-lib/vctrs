@@ -285,9 +285,10 @@ named <- function(x) {
   x
 }
 
-# copied from piller
-# function for the thousand separator,
-# returns "," unless it's used for the decimal point, in which case returns "."
+# Copied from pillar.
+#
+# Function for the thousand separator, returns "," unless it's used for the
+# decimal point, in which case returns "."
 big_mark <- function(x) {
   # The thousand separator,
   # "," unless it's used for the decimal point, in which case "."
