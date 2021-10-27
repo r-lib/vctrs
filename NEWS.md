@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* `obj_print()`, `obj_print_header()`, `obj_print_data()` and
+  `obj_print_footer()` gain `max` argument that controls the maximum number
+  of items to print. By default, `getOption("max.print")` is consulted
+  (#1355, @krlmlr).
+
 * `vec_assert()` produces a more informative error when `size` is invalid
   (#1470).
 
