@@ -41,6 +41,7 @@ test_that("is_list_of as expected", {
 test_that("print method gives human friendly output", {
   skip_on_cran() # Depends on tibble
   expect_snapshot(list_of(1, 2:3))
+  expect_snapshot(print(list_of(1, 2:3), max = 1))
   expect_snapshot(tibble::tibble(x = list_of(1, 2:3)))
 })
 
