@@ -435,6 +435,9 @@ test_that("rbind does not fail with an unclear message (#1186)", {
 
   expect_equal(rbind(df, data_frame(h = 1)), unrownames(df[c(1, 1), , drop = FALSE]))
   expect_equal(rbind(df, df), unrownames(df[c(1, 1), , drop = FALSE]))
+  # An example where the result differs, to alert us if the rbind() contract
+  # changes
+  expect_equal(rbind(data_frame(h = 1), df), data_frame(h = c(1, 1)))
 })
 
 test_that("summaries preserve class", {
