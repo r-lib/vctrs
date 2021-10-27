@@ -420,10 +420,12 @@ test_that("c passes on to vec_c", {
 })
 
 test_that("rbind does not fail with an unclear message (#1186)", {
-  local_hidden()
-
   # In general, vec_rbind() should be preferred. In many cases rbind() does
   # the right thing, this test exists to alert us if this changes in the future.
+  skip_on_cran()
+
+  local_hidden()
+
   h <- new_hidden(1)
   # A failure in levels() for vctrs_vctr classes was the underlying issue.
   expect_null(levels(h))
