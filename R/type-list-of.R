@@ -101,11 +101,14 @@ vec_proxy.vctrs_list_of <- function(x, ...) {
 # Formatting --------------------------------------------------------------
 
 #' @export
-obj_print_data.vctrs_list_of <- function(x, ...) {
-  if (length(x) == 0)
-    return()
+obj_print_data.vctrs_list_of <- function(x, ..., max) {
+  out <- vec_data(x)
+  if (max < length(out)) {
+    out <- out[seq_len(max)]
+  }
 
-  print(vec_data(x))
+  print(out)
+  invisible(x)
 }
 
 #' @export
