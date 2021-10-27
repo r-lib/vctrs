@@ -14,7 +14,7 @@
 #' @keywords internal
 #' @export
 obj_print <- function(x, ..., max = NULL) {
-  max <- get_max_print(max)
+  max <- local_max_print(max)
   obj_print_header_dispatch(x, ..., max = max)
   obj_print_data_dispatch(x, ..., max = max)
   obj_print_footer_dispatch(x, ..., max = max)
@@ -24,7 +24,7 @@ obj_print <- function(x, ..., max = NULL) {
 #' @export
 #' @rdname obj_print
 obj_print_header <- function(x, ..., max = NULL) {
-  max <- get_max_print(max)
+  max <- local_max_print(max)
   return(obj_print_header_dispatch(x, ..., max = max))
   UseMethod("obj_print_header")
 }
@@ -41,7 +41,7 @@ obj_print_header.default <- function(x, ...) {
 #' @export
 #' @rdname obj_print
 obj_print_data <- function(x, ..., max) {
-  max <- get_max_print(max)
+  max <- local_max_print(max)
   return(obj_print_data_dispatch(x, ..., max = max))
   UseMethod("obj_print_data")
 }
@@ -75,7 +75,7 @@ obj_print_data.default <- function(x, ..., max) {
 #' @export
 #' @rdname obj_print
 obj_print_footer <- function(x, ..., max = NULL) {
-  max <- get_max_print(max)
+  max <- local_max_print(max)
   return(obj_print_footer_dispatch(x, ..., max = max))
   UseMethod("obj_print_footer")
 }
@@ -96,7 +96,7 @@ obj_print_footer.default <- function(x, ..., max = NULL) {
   invisible(x)
 }
 
-get_max_print <- function(max, frame = parent.frame()) {
+local_max_print <- function(max, frame = parent.frame()) {
   max_print <- getOption("max.print")
   if (is.null(max)) {
     return(max_print)
