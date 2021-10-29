@@ -40,7 +40,7 @@ obj_print_header.default <- function(x, ...) {
 
 #' @export
 #' @rdname obj_print
-obj_print_data <- function(x, ..., max) {
+obj_print_data <- function(x, ..., max = NULL) {
   max <- local_max_print(max)
   return(obj_print_data_dispatch(x, ..., max = max))
   UseMethod("obj_print_data")
@@ -84,7 +84,7 @@ obj_print_footer_dispatch <- function(x, ..., max) {
 }
 
 #' @export
-obj_print_footer.default <- function(x, ..., max = NULL) {
+obj_print_footer.default <- function(x, ..., max) {
   if (!vec_is(x)) {
     return(invisible(x))
   }
