@@ -237,6 +237,10 @@ test_that("character subscripts require named vectors", {
   })
 })
 
+test_that("arg is evaluated lazily (#1150)", {
+  expect_silent(vec_as_location(1, 1, arg = { writeLines("oof"); "boo" }))
+})
+
 test_that("can optionally extend beyond the end", {
   expect_error(num_as_location(1:5, 3), class = "vctrs_error_subscript_oob")
 
