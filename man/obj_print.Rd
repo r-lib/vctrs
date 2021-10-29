@@ -15,7 +15,7 @@ obj_print(x, ..., max = NULL)
 
 obj_print_header(x, ..., max = NULL)
 
-obj_print_data(x, ..., max)
+obj_print_data(x, ..., max = NULL)
 
 obj_print_footer(x, ..., max = NULL)
 
