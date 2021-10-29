@@ -70,7 +70,7 @@ vec_as_location <- function(i,
     loc_oob = "error",
     loc_zero = "remove",
     missing = missing,
-    arg = arg
+    env = environment()
   )
 }
 #' @rdname vec_as_location
@@ -105,7 +105,7 @@ num_as_location <- function(i,
     loc_oob = oob,
     loc_zero = zero,
     missing = missing,
-    arg = arg
+    env = environment()
   )
 }
 

@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_as_location()` evaluates `arg` only in case of error, for performance
+  (#1150, @krlmlr).
+
 * `levels.vctrs_vctr()` now returns `NULL` instead of failing (#1186, @krlmlr).
 
 * `vec_assert()` produces a more informative error when `size` is invalid

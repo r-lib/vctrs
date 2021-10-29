@@ -72,6 +72,9 @@ vec_as_index <- function(i, n, names = NULL) {
   vec_assert(n, integer(), 1L)
   i <- vec_as_subscript(i)
 
+  # Picked up from the environment at the C level
+  arg <- NULL
+
   .Call(
     vctrs_as_location,
     i = i,
@@ -81,7 +84,7 @@ vec_as_index <- function(i, n, names = NULL) {
     loc_oob = "error",
     loc_zero = "remove",
     missing = "propagate",
-    arg = NULL
+    env = environment()
   )
 }
 

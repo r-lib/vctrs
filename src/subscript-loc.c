@@ -406,7 +406,7 @@ static enum num_loc_zero parse_loc_zero(SEXP x) {
 // [[ register() ]]
 SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
                        SEXP loc_negative, SEXP loc_oob, SEXP loc_zero,
-                       SEXP missing, SEXP arg_) {
+                       SEXP missing, SEXP env) {
   R_len_t n = 0;
 
   if (n_ == R_NilValue && TYPEOF(subscript) == STRSXP) {
@@ -425,7 +425,8 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
     UNPROTECT(1);
   }
 
-  struct vctrs_arg arg = vec_as_arg(arg_);
+  struct arg_data_lazy arg_ = new_lazy_arg_data(env, "arg");
+  struct vctrs_arg arg = new_lazy_arg(&arg_);
 
   struct subscript_opts subscript_opts = {
     .subscript_arg  = &arg

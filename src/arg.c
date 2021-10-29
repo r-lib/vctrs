@@ -2,6 +2,8 @@
 #include "vctrs.h"
 #include "utils.h"
 
+#include "decl/arg-decl.h"
+
 
 // Materialising argument tags ------------------------------------------
 
@@ -107,10 +109,61 @@ static r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining) {
 }
 
 
+// Wrapper that accesses a symbol in an environment, for lazy evaluation
+static r_ssize lazy_arg_fill(void* data, char* buf, r_ssize remaining);
+
+struct vctrs_arg new_lazy_arg(struct arg_data_lazy* data) {
+  return (struct vctrs_arg) {
+    .parent = NULL,
+    .fill = &lazy_arg_fill,
+    .data = data
+  };
+}
+
+struct arg_data_lazy new_lazy_arg_data(SEXP environment, const char* arg_name) {
+  if (environment == R_NilValue) {
+    r_stop_internal("new_lazy_arg_data", "`env` can't be NULL.");
+  }
+
+  return (struct arg_data_lazy) {
+    .environment = environment,
+    .arg_name = arg_name
+  };
+}
+
+static r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
+  struct arg_data_lazy* data = (struct arg_data_lazy*) data_;
+
+  SEXP arg_name = r_sym(data->arg_name);
+  SEXP value = PROTECT(r_env_get(data->environment, arg_name));
+  const char* c_value;
+
+  // NULL values are mapped to an empty string. We also silently ignore
+  // non-character values or zero-length vectors and take the first element of a
+  // character vector. We could do better with a warning or a combined error.
+  if (!r_is_string(value) || r_length(value) < 1) {
+    c_value = "";
+  } else {
+    c_value = r_chr_get_c_string(value, 0);
+  }
+
+  size_t len = strlen(c_value);
+
+  if (len >= remaining) {
+    UNPROTECT(1);
+    return -1;
+  }
+
+  memcpy(buf, c_value, len);
+  buf[len] = '\0';
+
+  UNPROTECT(1);
+  return len;
+}
+
+
 // Wrapper around a counter representing the current position of the
 // argument
-
-static r_ssize counter_arg_fill(void* data, char* buf, r_ssize remaining);
 
 struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
                                  struct arg_data_counter* data) {
