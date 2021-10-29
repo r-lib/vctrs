@@ -107,7 +107,11 @@ obj_print_data.vctrs_list_of <- function(x, ..., max) {
     out <- out[seq_len(max)]
   }
 
-  print(out)
+  # Zero-length lists handled by header and footer
+  if (length(out) > 0) {
+    print(out)
+  }
+
   invisible(x)
 }
 

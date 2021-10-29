@@ -14,6 +14,13 @@
 ---
 
     Code
+      list_of(.ptype = integer())
+    Output
+      <list_of<integer>[0]>
+
+---
+
+    Code
       print(list_of(1, 2:3), max = 1)
     Output
       <list_of<double>[2]>
@@ -21,6 +28,15 @@
       [1] 1
       
       ... and 1 more
+      Set `max` to a larger value to show all items.
+
+---
+
+    Code
+      print(list_of(1, 2:3), max = 0)
+    Output
+      <list_of<double>[2]>
+      ... and 2 more
       Set `max` to a larger value to show all items.
 
 ---
