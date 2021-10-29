@@ -651,15 +651,30 @@
 <div id="equality-and-comparison" class="section level2">
 <h2 class="hasAnchor">
 <a href="#equality-and-comparison" class="anchor"></a>Equality and comparison</h2>
-<p>vctrs provides three “proxy” generics. Two of these let you control how your class determines equality and ordering:</p>
+<p>vctrs provides four “proxy” generics. Two of these let you control how your class determines equality and comparison:</p>
 <ul>
 <li><p><code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> returns a data vector suitable for comparison. It underpins <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">!=</a></code>, <code><a href="https://rdrr.io/r/base/unique.html">unique()</a></code>, <code><a href="https://rdrr.io/r/base/duplicated.html">anyDuplicated()</a></code>, and <code><a href="https://rdrr.io/r/base/NA.html">is.na()</a></code>.</p></li>
-<li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> specifies how to compare the elements of your vector. This proxy is used in <code><a href="https://rdrr.io/r/base/Comparison.html">&lt;</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&lt;=</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;=</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;</a></code>, <code><a href="https://rdrr.io/r/base/Extremes.html">min()</a></code>, <code><a href="https://rdrr.io/r/base/Extremes.html">max()</a></code>, <code><a href="https://rdrr.io/r/stats/median.html">median()</a></code>, <code><a href="https://rdrr.io/r/stats/quantile.html">quantile()</a></code>, and <code><a href="https://rdrr.io/r/base/xtfrm.html">xtfrm()</a></code> (used in <code><a href="https://rdrr.io/r/base/order.html">order()</a></code> and <code><a href="https://rdrr.io/r/base/sort.html">sort()</a></code>) methods.</p></li>
+<li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> specifies how to compare the elements of your vector. This proxy is used in <code><a href="https://rdrr.io/r/base/Comparison.html">&lt;</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&lt;=</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;=</a></code>, <code><a href="https://rdrr.io/r/base/Comparison.html">&gt;</a></code>, <code><a href="https://rdrr.io/r/base/Extremes.html">min()</a></code>, <code><a href="https://rdrr.io/r/base/Extremes.html">max()</a></code>, <code><a href="https://rdrr.io/r/stats/median.html">median()</a></code>, and <code><a href="https://rdrr.io/r/stats/quantile.html">quantile()</a></code>.</p></li>
 </ul>
-<p>By default, <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> and <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> just call <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code>.</p>
+<p>Two other proxy generic are used for sorting for unordered data types and for accessing the raw data for exotic storage formats:</p>
 <ul>
 <li>
-<code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn’t need to implement <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code>.</li>
+<p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> specifies how to sort the elements of your vector. It is used in <code><a href="https://rdrr.io/r/base/xtfrm.html">xtfrm()</a></code>, which in turn is called by the <code><a href="https://rdrr.io/r/base/order.html">order()</a></code> and <code><a href="https://rdrr.io/r/base/sort.html">sort()</a></code> functions.</p>
+<p>This proxy was added to implement the behaviour of lists, which are sortable (their order proxy sorts by first occurrence) but not comparable (comparison operators cause an error). Its default implementation for other classes calls <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> and you normally don’t need to implement this proxy.</p>
+</li>
+<li><p><code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn’t need to implement <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code>.</p></li>
+</ul>
+<p>The default behavior is as follows:</p>
+<ul>
+<li>
+<code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code> calls <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code>
+</li>
+<li>
+<code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> calls <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code>
+</li>
+<li>
+<code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> calls <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>
+</li>
 </ul>
 <p>You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.</p>
 <p>These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.</p>
@@ -711,18 +726,23 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; &lt;rational[3]&gt;</span>
 <span class="co">#&gt; [1] 1/1 2/1 1/2</span></code></pre></div>
-<p>We now need to fix <code><a href="https://rdrr.io/r/base/sort.html">sort()</a></code> similarly, since it currently sorts by <code>n</code>, then by <code>d</code>:</p>
+<p>We now need to fix the comparison operations similarly, since comparison currently happens lexicographically by <code>n</code>, then by <code>d</code>:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="co">#&gt; &lt;rational[4]&gt;</span>
-<span class="co">#&gt; [1] 1/1 1/2 2/1 2/2</span></code></pre></div>
-<p>The easiest fix is to convert the fraction to a decimal and then sort that:</p>
+<code class="sourceCode R"><span class="fu">rational</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span>
+<span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
+<span class="co">#&gt; [1] FALSE</span></code></pre></div>
+<p>The easiest fix is to convert the fraction to a floating point number and use this as a proxy:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_proxy_compare.vctrs_rational</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="../reference/fields.html">field</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"n"</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="../reference/fields.html">field</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"d"</span><span class="op">)</span>
 <span class="op">}</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+<span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>This also fixes <code><a href="https://rdrr.io/r/base/sort.html">sort()</a></code>, because the default implementation of <code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> calls <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>.</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; &lt;rational[4]&gt;</span>
 <span class="co">#&gt; [1] 1/2 1/1 2/2 2/1</span></code></pre></div>
 <p>(We could have used the same approach in <code><a href="../reference/vec_proxy_equal.html">vec_proxy_equal()</a></code>, but when working with floating point numbers it’s not necessarily true that <code>x == y</code> implies that <code>d * x == d * y</code>.)</p>
@@ -731,7 +751,7 @@
 <h3 class="hasAnchor">
 <a href="#polynomial-class" class="anchor"></a>Polynomial class</h3>
 <p>A related problem occurs if we build our vector on top of a list. The following code defines a polynomial class that represents polynomials (like <code>1 + 3x - 2x^2</code>) using a list of integer vectors (like <code><a href="https://rdrr.io/r/base/c.html">c(1, 3, -2)</a></code>). Note the use of <code><a href="../reference/new_list_of.html">new_list_of()</a></code> in the constructor.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_poly</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="../reference/new_list_of.html">new_list_of</a></span><span class="op">(</span><span class="va">x</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"vctrs_poly"</span><span class="op">)</span>
 <span class="op">}</span>
@@ -767,30 +787,29 @@
   <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="op">}</span>
 
-<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
+<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
 <span class="va">p</span>
 <span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span></code></pre></div>
+<span class="co">#&gt; [1] 1         1⋅x^4 + 2 1⋅x^2 + 1</span></code></pre></div>
 <p>The resulting objects will inherit from the <code>vctrs_list_of</code> class, which provides tailored methods for <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>, <code><a href="https://rdrr.io/r/base/Extract.html">[[</a></code>, the corresponding assignment operators, and other methods.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
 <span class="co">#&gt; [1] "vctrs_poly"    "vctrs_list_of" "vctrs_vctr"    "list"</span>
 <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
 <span class="co">#&gt; &lt;polynomial[1]&gt;</span>
-<span class="co">#&gt; [1] 1⋅x^2 + 1</span>
+<span class="co">#&gt; [1] 1⋅x^4 + 2</span>
 <span class="va">p</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; [1] 1 0 1</span></code></pre></div>
+<span class="co">#&gt; [1] 1 0 0 0 2</span></code></pre></div>
 <p>Equality works out of the box because we can tell if two integer vectors are equal:</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">p</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE  TRUE FALSE</span></code></pre></div>
-<p>But we can’t order them because lists are not comparable:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
-<span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span></code></pre></div>
-<p>So we need to define a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
+<code class="sourceCode R"><span class="va">p</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] FALSE FALSE  TRUE</span></code></pre></div>
+<p>We can’t compare individual elements, because by default lists are not comparable:</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
+<span class="co">#&gt; Error: `vec_proxy_compare.vctrs_poly()` not supported.</span></code></pre></div>
+<p>To enable comparison, we implement a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_proxy_compare.vctrs_poly</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">x_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
   <span class="co"># First figure out the maximum length</span>
@@ -803,12 +822,25 @@
   <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">full</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">p</span> <span class="op">&lt;</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
+<span class="co">#&gt; [1]  TRUE FALSE  TRUE</span></code></pre></div>
+<p>Often, this is sufficient to also implement <code><a href="https://rdrr.io/r/base/sort.html">sort()</a></code>. However, for lists, there is already a default <code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> method that sorts by first occurrence:</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
 <span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 3 2 1</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] 1         1⋅x^4 + 2 1⋅x^2 + 1</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; &lt;polynomial[5]&gt;</span>
+<span class="co">#&gt; [1] 1         1         1⋅x^4 + 2 1⋅x^4 + 2 1⋅x^2 + 1</span></code></pre></div>
+<p>To ensure consistency between ordering and comparison, we forward <code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> to <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code>:</p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">vec_proxy_order.vctrs_poly</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="../reference/vec_proxy_compare.html">vec_proxy_compare</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
+<span class="op">}</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>
 <span class="co">#&gt; &lt;polynomial[3]&gt;</span>
-<span class="co">#&gt; [1] 1     1⋅x^2 1⋅x^1</span></code></pre></div>
+<span class="co">#&gt; [1] 1         1⋅x^2 + 1 1⋅x^4 + 2</span></code></pre></div>
 </div>
 </div>
 <div id="arithmetic" class="section level2">
@@ -821,7 +853,7 @@
 </ul>
 <p>Both generics define the behaviour for multiple functions because <code>sum.vctrs_vctr(x)</code> calls <code>vec_math.vctrs_vctr("sum", x)</code>, and <code>x + y</code> calls <code>vec_math.x_class.y_class("+", x, y)</code>. They’re accompanied by <code><a href="../reference/vec_math.html">vec_math_base()</a></code> and <code><a href="../reference/vec_arith.html">vec_arith_base()</a></code> which make it easy to call the underlying base R functions.</p>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> uses double dispatch and needs the following standard boilerplate:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_arith.MYCLASS</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span><span class="op">(</span><span class="st">"vec_arith.MYCLASS"</span>, <span class="va">y</span><span class="op">)</span>
 <span class="op">}</span>
@@ -832,7 +864,7 @@
 <h3 class="hasAnchor">
 <a href="#cached-sum-class" class="anchor"></a>Cached sum class</h3>
 <p>I showed an example of <code><a href="../reference/vec_math.html">vec_math()</a></code> to define <code><a href="https://rdrr.io/r/base/sum.html">sum()</a></code> and <code><a href="https://rdrr.io/r/base/mean.html">mean()</a></code> methods for <code>cached_sum</code>. Now let’s talk about exactly how it works. Most <code><a href="../reference/vec_math.html">vec_math()</a></code> functions will have a similar form. You use a switch statement to handle the methods that you care about and fall back to <code><a href="../reference/vec_math.html">vec_math_base()</a></code> for those that you don’t care about.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_math.vctrs_cached_sum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">.fn</span>, <span class="va">.x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/switch.html">switch</a></span><span class="op">(</span><span class="va">.fn</span>,
     sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html">attr</a></span><span class="op">(</span><span class="va">.x</span>, <span class="st">"sum"</span><span class="op">)</span>,
@@ -845,7 +877,7 @@
 <h3 class="hasAnchor">
 <a href="#meter-class" class="anchor"></a>Meter class</h3>
 <p>To explore the infix arithmetic operators exposed by <code><a href="../reference/vec_arith.html">vec_arith()</a></code> I’ll create a new class that represents a measurement in <code>meter</code>s:</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_meter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/double.html">is.double</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
   <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span><span class="op">(</span><span class="va">x</span>, class <span class="op">=</span> <span class="st">"vctrs_meter"</span><span class="op">)</span>
@@ -865,7 +897,7 @@
 <span class="co">#&gt; &lt;vctrs_meter[10]&gt;</span>
 <span class="co">#&gt;  [1]  1 m  2 m  3 m  4 m  5 m  6 m  7 m  8 m  9 m 10 m</span></code></pre></div>
 <p>Because <code>meter</code> is built on top of a double vector, basic mathematic operations work:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 55 m</span>
@@ -873,7 +905,7 @@
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 5.5 m</span></code></pre></div>
 <p>But we can’t do arithmetic:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>
 <span class="co">#&gt; Error: &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span>
 <span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
@@ -886,7 +918,7 @@
 <li><p>For a combination of meter and number multiplication and division by a number are acceptable. Addition and subtraction don’t make much sense as we, strictly speaking, are dealing with objects of different nature.</p></li>
 </ul>
 <p><code><a href="../reference/vec_arith.html">vec_arith()</a></code> is another function that uses double dispatch, so as usual we start with a template.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_arith.vctrs_meter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html">UseMethod</a></span><span class="op">(</span><span class="st">"vec_arith.vctrs_meter"</span>, <span class="va">y</span><span class="op">)</span>
 <span class="op">}</span>
@@ -894,7 +926,7 @@
   <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>Then write the method for two meter objects. We use a switch statement to cover the cases we care about and <code><a href="../reference/vctrs-conditions.html">stop_incompatible_op()</a></code> to throw an informative error message for everything else.</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_arith.vctrs_meter.vctrs_meter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/switch.html">switch</a></span><span class="op">(</span>
     <span class="va">op</span>,
@@ -916,7 +948,7 @@
 <span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; Error: &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span></code></pre></div>
 <p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (and neither do addition and subtraction). To support both doubles and integers as operands, we dispatch over <code>numeric</code> here instead of <code>double</code>.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_arith.vctrs_meter.numeric</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/switch.html">switch</a></span><span class="op">(</span>
     <span class="va">op</span>,
@@ -950,7 +982,7 @@
 <span class="fu">meter</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">+</span> <span class="fl">10</span>
 <span class="co">#&gt; Error: &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span></code></pre></div>
 <p>For completeness, we also need <code>vec_arith.vctrs_meter.MISSING</code> for the unary <code><a href="https://rdrr.io/r/base/Arithmetic.html">+</a></code> and <code><a href="https://rdrr.io/r/base/Arithmetic.html">-</a></code> operators:</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_arith.vctrs_meter.MISSING</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="kw"><a href="https://rdrr.io/r/base/switch.html">switch</a></span><span class="op">(</span><span class="va">op</span>,
     `-` <span class="op">=</span> <span class="va">x</span> <span class="op">*</span> <span class="op">-</span><span class="fl">1</span>,
@@ -992,7 +1024,7 @@
 <li><p>In <code>R/percent.R</code>. This makes the most sense when the vctrs S3 class is a modest and self-contained part of the overall package.</p></li>
 </ul>
 <p>We also must use one of these locations to dump some internal documentation that’s needed to avoid <code>R CMD check</code> complaints. We don’t expect any human to ever read this documentation. Here’s how this dummy documentation should look, combined with the <code>#' @import vctrs</code> directive described above.</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' Internal vctrs methods</span>
 <span class="co">#'</span>
 <span class="co">#' @import vctrs</span>
@@ -1007,19 +1039,19 @@
 <h3 class="hasAnchor">
 <a href="#low-level-and-user-friendly-constructors" class="anchor"></a>Low-level and user-friendly constructors</h3>
 <p>Next we add our constructor:</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">new_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
   <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span><span class="op">(</span><span class="va">x</span>, class <span class="op">=</span> <span class="st">"pizza_percent"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>Note that the name of the package must be included in the class name (<code>pizza_percent</code>), but it does not need to be included in the constructor name. You do not need to export the constructor, unless you want people to extend your class.</p>
 <p>We can also add a call to <code>setOldClass()</code> for compatibility with S4:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># for compatibility with the S4 system</span>
 <span class="fu">methods</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/methods/setOldClass.html">setOldClass</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"pizza_percent"</span>, <span class="st">"vctrs_vctr"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Because we’ve used a function from the methods package, you’ll also need to add methods to <code>Imports</code>, with (e.g.) <code>usethis::use_package("methods")</code>. This is a “free” dependency because methods is bundled with every R install.</p>
 <p>Next we implement, export, and document a user-friendly helper: <code>percent()</code>.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' `percent` vector</span>
 <span class="co">#'</span>
 <span class="co">#' This creates a double vector that represents percentages so when it is</span>
@@ -1040,19 +1072,19 @@
 <h3 class="hasAnchor">
 <a href="#other-helpers" class="anchor"></a>Other helpers</h3>
 <p>It’s a good idea to provide a function that tests if an object is of this class. If you do so, it makes sense to document it with the user-friendly constructor <code>percent()</code>:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @export</span>
 <span class="co">#' @rdname percent</span>
 <span class="va">is_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/class.html">inherits</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"pizza_percent"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>You’ll also need to update the <code>percent()</code> documentation to reflect that <code>x</code> now means two different things:</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @param x</span>
 <span class="co">#'  * For `percent()`: A numeric vector</span>
 <span class="co">#'  * For `is_percent()`: An object to test.</span></code></pre></div>
 <p>Next we provide the key methods to make printing work. These are S3 methods, so they don’t need to be documented, but they do need to be exported.</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @export</span>
 <span class="va">format.pizza_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_data.html">vec_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
@@ -1066,7 +1098,7 @@
   <span class="st">"prcnt"</span>
 <span class="op">}</span></code></pre></div>
 <p>Finally, we implement methods for <code><a href="../reference/vec_ptype2.logical.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code>.</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @export</span>
 <span class="va">vec_ptype2.vctrs_percent.vctrs_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_percent</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#' @export</span>
@@ -1090,7 +1122,7 @@
 <li><p>Check for method symmetry; use <code>expect_s3_class()</code>, probably with <code>exact = TRUE</code>, to ensure that <code><a href="../reference/vec_c.html">vec_c(x, y)</a></code> and <code><a href="../reference/vec_c.html">vec_c(y, x)</a></code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
 <li>
 <p>Use <code><a href="https://testthat.r-lib.org/reference/expect_error.html">testthat::expect_error()</a></code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">expect_error</span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"a"</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"vctrs_error_incompatible_type"</span><span class="op">)</span></code></pre></div>
 </li>
 </ul>

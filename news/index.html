@@ -161,6 +161,7 @@
 <li><p><code>levels.vctrs_vctr()</code> now returns <code>NULL</code> instead of failing (<a href='https://github.com/r-lib/vctrs/issues/1186'>#1186</a>, <a href='https://github.com/krlmlr'>@krlmlr</a>).</p></li>
 <li><p><code><a href="../reference/vec_assert.html">vec_assert()</a></code> produces a more informative error when <code>size</code> is invalid (<a href='https://github.com/r-lib/vctrs/issues/1470'>#1470</a>).</p></li>
 <li><p><code><a href="../reference/vec_duplicate.html">vec_duplicate_detect()</a></code> is a bit faster when there are many unique values.</p></li>
+<li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> is described in <code>vignette("s3-vectors")</code> (<a href='https://github.com/r-lib/vctrs/issues/1373'>#1373</a>, <a href='https://github.com/krlmlr'>@krlmlr</a>).</p></li>
 <li><p>New <code><a href="../reference/vec_rank.html">vec_rank()</a></code> to compute various types of sample ranks.</p></li>
 <li><p><code><a href="../reference/vec_chop.html">vec_chop()</a></code> now materializes ALTREP vectors before chopping, which is more efficient than creating many small ALTREP pieces (<a href='https://github.com/r-lib/vctrs/issues/1450'>#1450</a>).</p></li>
 <li><p>New <code><a href="../reference/list_drop_empty.html">list_drop_empty()</a></code> for removing empty elements from a list (<a href='https://github.com/r-lib/vctrs/issues/1395'>#1395</a>).</p></li>
