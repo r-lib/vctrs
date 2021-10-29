@@ -1539,6 +1539,31 @@ SEXP chrs_error = NULL;
 SEXP chrs_combine = NULL;
 SEXP chrs_convert = NULL;
 
+SEXP chrs_FALSE = NULL;
+SEXP chrs_TRUE = NULL;
+SEXP chrs_asc = NULL;
+SEXP chrs_condition = NULL;
+SEXP chrs_dense = NULL;
+SEXP chrs_desc = NULL;
+SEXP chrs_down = NULL;
+SEXP chrs_downup = NULL;
+SEXP chrs_extend = NULL;
+SEXP chrs_false = NULL;
+SEXP chrs_ignore = NULL;
+SEXP chrs_interrupt = NULL;
+SEXP chrs_invert = NULL;
+SEXP chrs_largest = NULL;
+SEXP chrs_max = NULL;
+SEXP chrs_message = NULL;
+SEXP chrs_min = NULL;
+SEXP chrs_propagate = NULL;
+SEXP chrs_sequential = NULL;
+SEXP chrs_smallest = NULL;
+SEXP chrs_true = NULL;
+SEXP chrs_up = NULL;
+SEXP chrs_updown = NULL;
+SEXP chrs_warning = NULL;
+
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
 SEXP syms_x = NULL;
@@ -1759,6 +1784,31 @@ void vctrs_init_utils(SEXP ns) {
   chrs_error = r_new_shared_character("error");
   chrs_combine = r_new_shared_character("combine");
   chrs_convert = r_new_shared_character("convert");
+
+  chrs_FALSE = r_new_shared_character("FALSE");
+  chrs_TRUE = r_new_shared_character("TRUE");
+  chrs_asc = r_new_shared_character("asc");
+  chrs_condition = r_new_shared_character("condition");
+  chrs_dense = r_new_shared_character("dense");
+  chrs_desc = r_new_shared_character("desc");
+  chrs_down = r_new_shared_character("down");
+  chrs_downup = r_new_shared_character("downup");
+  chrs_extend = r_new_shared_character("extend");
+  chrs_false = r_new_shared_character("false");
+  chrs_ignore = r_new_shared_character("ignore");
+  chrs_interrupt = r_new_shared_character("interrupt");
+  chrs_invert = r_new_shared_character("invert");
+  chrs_largest = r_new_shared_character("largest");
+  chrs_max = r_new_shared_character("max");
+  chrs_message = r_new_shared_character("message");
+  chrs_min = r_new_shared_character("min");
+  chrs_propagate = r_new_shared_character("propagate");
+  chrs_sequential = r_new_shared_character("sequential");
+  chrs_smallest = r_new_shared_character("smallest");
+  chrs_true = r_new_shared_character("true");
+  chrs_up = r_new_shared_character("up");
+  chrs_updown = r_new_shared_character("updown");
+  chrs_warning = r_new_shared_character("warning");
 
   classes_tibble = r_new_shared_vector(STRSXP, 3);
 
