@@ -132,7 +132,7 @@ struct arg_data_lazy new_lazy_arg_data(SEXP environment, const char* arg_name) {
 static r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
   struct arg_data_lazy* data = (struct arg_data_lazy*) data_;
 
-  SEXP arg_name = Rf_install(data->arg_name);
+  SEXP arg_name = r_sym(data->arg_name);
   SEXP value = PROTECT(r_env_get(data->environment, arg_name));
   const char* c_value;
 
