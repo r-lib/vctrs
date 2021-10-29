@@ -364,7 +364,10 @@ test_that("can't touch protected attributes", {
   expect_error(dimnames(x) <- list("x"), class = "vctrs_error_unsupported")
   expect_error(levels(x) <- "x", class = "vctrs_error_unsupported")
 
-  # but it's ok to set names to NULL; this happens at least in vec_c
+  # It is expected that unimplemented `levels()` returns `NULL`
+  expect_null(levels(x))
+
+  # But it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of
   # strictness in the future
   expect_error(names(x) <- NULL, NA)
