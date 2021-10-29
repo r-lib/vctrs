@@ -91,7 +91,17 @@ obj_print_footer.default <- function(x, ..., max) {
 
   delta <- vec_size(x) - max
   if (delta > 0) {
+    max_print <- attr(max, "max_print")
+    if (is.null(max_print)) {
+      max_print <- getOption("max.print")
+    }
+
     cat_line("... and ", big_mark(delta), " more")
+    if (max < max_print) {
+      cat_line("Set `max` to a larger value to show all items.")
+    } else {
+      cat_line("Set `options(max.print = )` to a larger value to show all items.")
+    }
   }
   invisible(x)
 }
@@ -99,7 +109,7 @@ obj_print_footer.default <- function(x, ..., max) {
 local_max_print <- function(max, frame = parent.frame()) {
   max_print <- getOption("max.print")
   if (is.null(max)) {
-    return(max_print)
+    max <- max_print
   }
 
   stopifnot(is_integerish(max, 1L, finite = TRUE), max >= 0)
@@ -107,7 +117,8 @@ local_max_print <- function(max, frame = parent.frame()) {
     # Avoid truncation in case we're forwarding to print()
     local_options(max.print = max, .frame = frame)
   }
-  max
+
+  structure(max, max_print = max_print)
 }
 
 

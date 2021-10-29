@@ -21,6 +21,7 @@
       [1] 1
       
       ... and 1 more
+      Set `max` to a larger value to show all items.
 
 ---
 

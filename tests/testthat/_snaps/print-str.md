@@ -38,6 +38,7 @@
       <vctrs_vctr[26]>
       [1] a b c d e
       ... and 21 more
+      Set `max` to a larger value to show all items.
     Code
       print(x, max = 30)
     Output
@@ -53,6 +54,7 @@
       <vctrs_vctr[26]>
       [1] a b c d e
       ... and 21 more
+      Set `options(max.print = )` to a larger value to show all items.
 
 # large max.print option (#1355)
 
@@ -72,12 +74,14 @@
       <vctrs_vctr[26]>
       [1] a b c d e
       ... and 21 more
+      Set `max` to a larger value to show all items.
     Code
       print(x, max = 20)
     Output
       <vctrs_vctr[26]>
        [1] a b c d e f g h i j k l m n o p q r s t
       ... and 6 more
+      Set `options(max.print = )` to a larger value to show all items.
     Code
       print(x, max = 30)
     Output
