@@ -136,7 +136,10 @@ static r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
   SEXP value = PROTECT(r_env_get(data->environment, arg_name));
   const char* c_value;
 
-  if (value == R_NilValue) {
+  // NULL values are mapped to an empty string. We also silently ignore
+  // non-character values or zero-length vectors and take the first element of a
+  // character vector. We could do better with a warning or a combined error.
+  if (!r_is_string(value) || r_length(value) < 1) {
     c_value = "";
   } else {
     c_value = r_chr_get_c_string(value, 0);
