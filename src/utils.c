@@ -1539,6 +1539,34 @@ SEXP chrs_error = NULL;
 SEXP chrs_combine = NULL;
 SEXP chrs_convert = NULL;
 
+SEXP strs_FALSE = NULL;
+SEXP strs_TRUE = NULL;
+SEXP strs_asc = NULL;
+SEXP strs_cast = NULL;
+SEXP strs_condition = NULL;
+SEXP strs_dense = NULL;
+SEXP strs_desc = NULL;
+SEXP strs_down = NULL;
+SEXP strs_downup = NULL;
+SEXP strs_error = NULL;
+SEXP strs_extend = NULL;
+SEXP strs_false = NULL;
+SEXP strs_ignore = NULL;
+SEXP strs_interrupt = NULL;
+SEXP strs_invert = NULL;
+SEXP strs_largest = NULL;
+SEXP strs_max = NULL;
+SEXP strs_message = NULL;
+SEXP strs_min = NULL;
+SEXP strs_propagate = NULL;
+SEXP strs_remove = NULL;
+SEXP strs_sequential = NULL;
+SEXP strs_smallest = NULL;
+SEXP strs_true = NULL;
+SEXP strs_up = NULL;
+SEXP strs_updown = NULL;
+SEXP strs_warning = NULL;
+
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
 SEXP syms_x = NULL;
@@ -1614,6 +1642,12 @@ SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
 }
 SEXP r_new_shared_character(const char* name) {
   SEXP out = Rf_mkString(name);
+  R_PreserveObject(out);
+  MARK_NOT_MUTABLE(out);
+  return out;
+}
+SEXP r_new_shared_string(const char* name) {
+  SEXP out = Rf_mkChar(name);
   R_PreserveObject(out);
   MARK_NOT_MUTABLE(out);
   return out;
@@ -1759,6 +1793,34 @@ void vctrs_init_utils(SEXP ns) {
   chrs_error = r_new_shared_character("error");
   chrs_combine = r_new_shared_character("combine");
   chrs_convert = r_new_shared_character("convert");
+
+  strs_FALSE = r_new_shared_string("FALSE");
+  strs_TRUE = r_new_shared_string("TRUE");
+  strs_asc = r_new_shared_string("asc");
+  strs_cast = r_new_shared_string("cast");
+  strs_condition = r_new_shared_string("condition");
+  strs_dense = r_new_shared_string("dense");
+  strs_desc = r_new_shared_string("desc");
+  strs_down = r_new_shared_string("down");
+  strs_downup = r_new_shared_string("downup");
+  strs_error = r_new_shared_string("error");
+  strs_extend = r_new_shared_string("extend");
+  strs_false = r_new_shared_string("false");
+  strs_ignore = r_new_shared_string("ignore");
+  strs_interrupt = r_new_shared_string("interrupt");
+  strs_invert = r_new_shared_string("invert");
+  strs_largest = r_new_shared_string("largest");
+  strs_max = r_new_shared_string("max");
+  strs_message = r_new_shared_string("message");
+  strs_min = r_new_shared_string("min");
+  strs_propagate = r_new_shared_string("propagate");
+  strs_remove = r_new_shared_string("remove");
+  strs_sequential = r_new_shared_string("sequential");
+  strs_smallest = r_new_shared_string("smallest");
+  strs_true = r_new_shared_string("true");
+  strs_up = r_new_shared_string("up");
+  strs_updown = r_new_shared_string("updown");
+  strs_warning = r_new_shared_string("warning");
 
   classes_tibble = r_new_shared_vector(STRSXP, 3);
 
