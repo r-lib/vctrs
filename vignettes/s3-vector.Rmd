@@ -604,15 +604,25 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides three "proxy" generics. Two of these let you control how your class determines equality and ordering:
+vctrs provides four "proxy" generics. Two of these let you control how your class determines equality and comparison:
 
 * `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
-* `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`, and `xtfrm()` (used in `order()` and `sort()`) methods.
+* `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, and `quantile()`.
 
-By default, `vec_proxy_equal()` and `vec_proxy_compare()` just call `vec_proxy()`.
+Two other proxy generic are used for sorting for unordered data types and for accessing the raw data for exotic storage formats:
+
+* `vec_proxy_order()` specifies how to sort the elements of your vector. It is used in `xtfrm()`, which in turn is called by the `order()` and `sort()` functions.
+
+    This proxy was added to implement the behaviour of lists, which are sortable (their order proxy sorts by first occurrence) but not comparable (comparison operators cause an error). Its default implementation for other classes calls `vec_proxy_compare()` and you normally don't need to implement this proxy.
 
 * `vec_proxy()` returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn't need to implement `vec_proxy()`.
+
+The default behavior is as follows:
+
+- `vec_proxy_equal()` calls `vec_proxy()`
+- `vec_proxy_compare()` calls `vec_proxy_equal()`
+- `vec_proxy_order()` calls `vec_proxy_compare()`
 
 You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
 
@@ -659,19 +669,26 @@ x == rational(1, 1)
 unique(x)
 ```
 
-We now need to fix `sort()` similarly, since it currently sorts by `n`, then by `d`:
+We now need to fix the comparison operations similarly, since comparison currently happens lexicographically by `n`, then by `d`:
 
 ```{r}
-sort(x)
+rational(1, 2) < rational(2, 3)
+rational(2, 4) < rational(2, 3)
 ```
 
-The easiest fix is to convert the fraction to a decimal and then sort that:
+The easiest fix is to convert the fraction to a floating point number and use this as a proxy:
 
 ```{r}
 vec_proxy_compare.vctrs_rational <- function(x, ...) {
   field(x, "n") / field(x, "d")
 }
 
+rational(2, 4) < rational(2, 3)
+```
+
+This also fixes `sort()`, because the default implementation of `vec_proxy_order()` calls `vec_proxy_compare()`.
+
+```{r}
 sort(x)
 ```
 
@@ -718,7 +735,7 @@ obj_print_data.vctrs_poly <- function(x, ...) {
   print(format(x), quote = FALSE)
 }
 
-p <- poly(1, c(1, 0, 1), c(1, 0, 0, 0, 2))
+p <- poly(1, c(1, 0, 0, 0, 2), c(1, 0, 1))
 p
 ```
 
@@ -736,13 +753,13 @@ Equality works out of the box because we can tell if two integer vectors are equ
 p == poly(c(1, 0, 1))
 ```
 
-But we can't order them because lists are not comparable:
+We can't compare individual elements, because by default lists are not comparable:
 
 ```{r, error = TRUE}
-sort(p)
+p < p[2]
 ```
 
-So we need to define a `vec_proxy_compare()` method:
+To enable comparison, we implement a `vec_proxy_compare()` method:
 
 ```{r}
 vec_proxy_compare.vctrs_poly <- function(x, ...) {
@@ -757,8 +774,24 @@ vec_proxy_compare.vctrs_poly <- function(x, ...) {
   as.data.frame(do.call(rbind, full))
 }
 
-sort(poly(3, 2, 1))
-sort(poly(1, c(1, 0, 0), c(1, 0)))
+p < p[2]
+```
+
+Often, this is sufficient to also implement `sort()`. However, for lists, there is already a default `vec_proxy_order()` method that sorts by first occurrence:
+
+```{r}
+sort(p)
+sort(p[c(1:3, 1:2)])
+```
+
+To ensure consistency between ordering and comparison, we forward `vec_proxy_order()` to `vec_proxy_compare()`:
+
+```{r}
+vec_proxy_order.vctrs_poly <- function(x, ...) {
+  vec_proxy_compare(x, ...)
+}
+
+sort(p)
 ```
 
 

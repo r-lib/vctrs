@@ -7,6 +7,8 @@
 
 * `vec_duplicate_detect()` is a bit faster when there are many unique values.
 
+* `vec_proxy_order()` is described in `vignette("s3-vectors")` (#1373, @krlmlr).
+
 * New `vec_rank()` to compute various types of sample ranks.
 
 * `vec_chop()` now materializes ALTREP vectors before chopping, which is more
