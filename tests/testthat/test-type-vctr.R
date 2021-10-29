@@ -362,11 +362,12 @@ test_that("can't touch protected attributes", {
 
   expect_error(dim(x) <- c(2, 2), class = "vctrs_error_unsupported")
   expect_error(dimnames(x) <- list("x"), class = "vctrs_error_unsupported")
-
-  expect_error(levels(x), class = "vctrs_error_unsupported")
   expect_error(levels(x) <- "x", class = "vctrs_error_unsupported")
 
-  # but it's ok to set names to NULL; this happens at least in vec_c
+  # It is expected that unimplemented `levels()` returns `NULL`
+  expect_null(levels(x))
+
+  # But it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of
   # strictness in the future
   expect_error(names(x) <- NULL, NA)
@@ -419,6 +420,29 @@ test_that("c passes on to vec_c", {
 
   expect_equal(c(h, 1), rep(h, 2))
   expect_equal(c(h, h), rep(h, 2))
+})
+
+test_that("rbind does not fail with an unclear message (#1186)", {
+  # In general, vec_rbind() should be preferred. In many cases rbind() does
+  # the right thing, this test exists to alert us if this changes in the future.
+  skip_on_cran()
+
+  local_hidden()
+
+  h <- new_hidden(1)
+  # A failure in levels() for vctrs_vctr classes was the underlying issue.
+  expect_null(levels(h))
+
+  df <- data_frame(h = h)
+
+  expect_equal(rbind(df), df)
+  expect_equal(rbind(df, NULL), df)
+
+  expect_equal(rbind(df, data_frame(h = 1)), unrownames(df[c(1, 1), , drop = FALSE]))
+  expect_equal(rbind(df, df), unrownames(df[c(1, 1), , drop = FALSE]))
+  # An example where the result differs, to alert us if the rbind() contract
+  # changes
+  expect_equal(rbind(data_frame(h = 1), df), data_frame(h = c(1, 1)))
 })
 
 test_that("summaries preserve class", {
