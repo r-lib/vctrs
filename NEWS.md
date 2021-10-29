@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `levels.vctrs_vctr()` now returns `NULL` instead of failing (#1186, @krlmlr).
+
 * `vec_assert()` produces a more informative error when `size` is invalid
   (#1470).
 
