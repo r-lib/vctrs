@@ -12,6 +12,9 @@
 #' is a scalar integer that accurately describes the maximum number of items
 #' to print, and that `getOption("max.print")` is set to at least that value.
 #'
+#' All methods receive `x` unchanged when called from `obj_print()`.
+#' `obj_print_data()` should print only the first `max` elements.
+#'
 #' @param x A vector
 #' @param ... Additional arguments passed on to methods. See [print()] and
 #'   [str()] for commonly used options

@@ -46,5 +46,8 @@ If you are implementing \code{obj_print_header()}, \code{obj_print_data()} or
 \code{obj_print_footer()}, your method can assume that the \code{max} argument
 is a scalar integer that accurately describes the maximum number of items
 to print, and that \code{getOption("max.print")} is set to at least that value.
+
+All methods receive \code{x} unchanged when called from \code{obj_print()}.
+\code{obj_print_data()} should print only the first \code{max} elements.
 }
 \keyword{internal}
