@@ -41,4 +41,10 @@ These are constructed to be more easily extensible since you can override
 the \verb{_header()}, \verb{_data()} or \verb{_footer()} components individually. The
 default methods are built on top of \code{format()}.
 }
+\details{
+If you are implementing \code{obj_print_header()}, \code{obj_print_data()} or
+\code{obj_print_footer()}, your method can assume that the \code{max} argument
+is a scalar integer that accurately describes the maximum number of items
+to print, and that \code{getOption("max.print")} is set to at least that value.
+}
 \keyword{internal}

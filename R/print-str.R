@@ -6,6 +6,12 @@
 #' the `_header()`, `_data()` or `_footer()` components individually. The
 #' default methods are built on top of `format()`.
 #'
+#' @details
+#' If you are implementing `obj_print_header()`, `obj_print_data()` or
+#' `obj_print_footer()`, your method can assume that the `max` argument
+#' is a scalar integer that accurately describes the maximum number of items
+#' to print, and that `getOption("max.print")` is set to at least that value.
+#'
 #' @param x A vector
 #' @param ... Additional arguments passed on to methods. See [print()] and
 #'   [str()] for commonly used options
@@ -112,7 +118,9 @@ local_max_print <- function(max, frame = parent.frame()) {
     max <- max_print
   }
 
-  stopifnot(is_integerish(max, 1L, finite = TRUE), max >= 0)
+  stopifnot(is_integerish(max, 1L, finite = TRUE), max >= 0, max < 2147483648)
+  max <- as.integer(max)
+
   if (max > max_print) {
     # Avoid truncation in case we're forwarding to print()
     local_options(max.print = max, .frame = frame)
