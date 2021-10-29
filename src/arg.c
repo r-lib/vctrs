@@ -2,6 +2,8 @@
 #include "vctrs.h"
 #include "utils.h"
 
+#include "decl/arg-decl.h"
+
 
 // Materialising argument tags ------------------------------------------
 
@@ -162,8 +164,6 @@ static r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
 
 // Wrapper around a counter representing the current position of the
 // argument
-
-static r_ssize counter_arg_fill(void* data, char* buf, r_ssize remaining);
 
 struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
                                  struct arg_data_counter* data) {
