@@ -241,6 +241,10 @@ test_that("arg is evaluated lazily (#1150)", {
   expect_silent(vec_as_location(1, 1, arg = { writeLines("oof"); "boo" }))
 })
 
+test_that("arg works for complex expressions (#1150)", {
+  expect_error(vec_as_location(mean, 1, arg = paste0("foo", "bar")), "foobar")
+})
+
 test_that("can optionally extend beyond the end", {
   expect_error(num_as_location(1:5, 3), class = "vctrs_error_subscript_oob")
 
