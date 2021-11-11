@@ -139,6 +139,7 @@ as.list.vctrs_list_of <- function(x, ...) {
 }
 #' @export
 as.character.vctrs_list_of <- function(x, ...) {
+  # For compatibility with the RStudio Viewer. See tidyverse/tidyr#654.
   map_chr(x, function(elt) paste0("<", vec_ptype_abbr(elt), ">"))
 }
 
