@@ -26,8 +26,9 @@ list_of <- function(..., .ptype = NULL) {
     abort("Could not find common type for elements of `x`.")
   }
 
-  x <- map(args, vec_cast, to = ptype)
-  new_list_of(x, ptype)
+  args <- vec_cast_common(!!!args, .to = ptype)
+
+  new_list_of(args, ptype)
 }
 
 #' @export
