@@ -286,7 +286,7 @@ test_that("all elements must be named if any are named", {
   expect_error(new_vctr(setNames(1:2, c("a", NA))), "must not be `NA`")
 })
 
-test_that("the empty string is an allowed name", {
+test_that("the empty string is an allowed name (#784)", {
   expect_named(new_vctr(set_names(1, "")), "")
   expect_named(new_vctr(set_names(1:2, c("", "x"))), c("", "x"))
 })
@@ -299,7 +299,7 @@ test_that("can not provide invalid names", {
   expect_error(names(x) <- NULL, NA)
 })
 
-test_that("can set names to the empty string", {
+test_that("can set names to the empty string (#784)", {
   x <- new_vctr(c(a = 1, b = 2))
 
   names(x) <- c("", "")
