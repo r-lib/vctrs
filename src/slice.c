@@ -104,6 +104,9 @@ static SEXP cpl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize
 static SEXP chr_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, NA_STRING);
 }
+static SEXP chr_names_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
+  SLICE(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, strings_empty);
+}
 static SEXP raw_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
   SLICE(RAWSXP, Rbyte, RAW, RAW_RO, 0);
 }
@@ -270,59 +273,13 @@ SEXP vec_slice_base(enum vctrs_type type,
   }
 }
 
-// Replace any `NA` name caused by `NA` subscript with the empty
-// string. It's ok mutate the names vector since it is freshly
-// created, but we make an additional check for that anyways
-// (and the empty string is persistently protected anyway).
-static void repair_na_names(SEXP names, SEXP subscript) {
-  if (!NO_REFERENCES(names)) {
-    r_stop_internal("repair_na_names", "`names` can't be referenced.");
-  }
-
-  // No possible way to have `NA_integer_` in a compact seq
-  if (is_compact_seq(subscript)) {
-    return;
-  }
-
-  R_len_t n = Rf_length(names);
-
-  if (n == 0) {
-    return;
-  }
-
-  const int* p_subscript = INTEGER_RO(subscript);
-
-  // Special handling for a compact_rep object with repeated `NA`
-  if (is_compact_rep(subscript)) {
-    if (p_subscript[0] != NA_INTEGER) {
-      return;
-    }
-
-    for (R_len_t i = 0; i < n; ++i) {
-      SET_STRING_ELT(names, i, strings_empty);
-    }
-
-    return;
-  }
-
-  for (R_len_t i = 0; i < n; ++i) {
-    if (p_subscript[i] == NA_INTEGER) {
-      SET_STRING_ELT(names, i, strings_empty);
-    }
-  }
-}
-
 SEXP slice_names(SEXP names, SEXP subscript) {
   if (names == R_NilValue) {
     return names;
+  } else {
+    // Ensures `NA_integer_` subscripts utilize `""` as the name
+    return chr_names_slice(names, subscript, VCTRS_MATERIALIZE_false);
   }
-
-  names = PROTECT(chr_slice(names, subscript, VCTRS_MATERIALIZE_false));
-
-  repair_na_names(names, subscript);
-
-  UNPROTECT(1);
-  return names;
 }
 SEXP slice_rownames(SEXP names, SEXP subscript) {
   if (names == R_NilValue) {
