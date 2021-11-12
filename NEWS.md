@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* If `NA_character_` is specified as a name for `vctrs_vctr` objects, it is
+  now automatically repaired to `""` (#780).
+
 * `""` is now an allowed name for `vctrs_vctr` objects (#780).
 
 * `list_of()` is now much faster when many values are provided.
