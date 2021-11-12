@@ -5,7 +5,7 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_recycle_incompatible_size()`: 
+      Error in `stop_recycle_incompatible_size()`:
       Can't recycle input of size 2 to size 3.
 
 # logical subscripts must match size of indexed vector
@@ -91,6 +91,6 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_recycle_incompatible_size()`: 
+      Error in `stop_recycle_incompatible_size()`:
       Can't recycle `bar` (size 2) to size 1.
 

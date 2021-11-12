@@ -5,11 +5,11 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `logical`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `logical`.
         i It must be numeric or character.
@@ -18,7 +18,7 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `data.frame<
           mpg : double
@@ -34,7 +34,7 @@
           carb: double
         >`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `data.frame<
           mpg : double
@@ -55,11 +55,11 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `environment`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `environment`.
         i It must be numeric or character.
@@ -68,11 +68,11 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `vctrs_foobar`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `vctrs_foobar`.
         i It must be numeric or character.
@@ -80,26 +80,26 @@
       (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_lossy_cast()`: 
+      Caused by error in `stop_lossy_cast()`:
         Can't convert from <double> to <integer> due to loss of precision.
         * Locations: 1
     Code
       (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_lossy_cast()`: 
+      Caused by error in `stop_lossy_cast()`:
         Can't convert from <double> to <integer> due to loss of precision.
         * Locations: 1
     Code
@@ -107,13 +107,13 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_lossy_cast()`: 
+      Caused by error in `stop_lossy_cast()`:
         Can't convert from <double> to <integer> due to loss of precision.
         * Locations: 1
     Code
@@ -122,11 +122,11 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Subscript `foo` has the wrong type `vctrs_foobar`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript `foo` has the wrong type `vctrs_foobar`.
         i It must be numeric or character.
@@ -135,13 +135,13 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error in `stop_lossy_cast()`: 
+      Caused by error in `stop_lossy_cast()`:
         Can't convert from `foo` <double> to <integer> due to loss of precision.
         * Locations: 1
     Code
@@ -149,11 +149,11 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must remove row with a single valid subscript.
         x Subscript `foo(bar)` has the wrong type `logical`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript has the wrong type `logical`.
         i It must be numeric or character.
@@ -200,10 +200,10 @@
       (expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must subset elements with a valid subscript vector.
         x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_lossy_cast()`: 
+      Caused by error in `stop_lossy_cast()`:
         Can't convert from <double> to <integer> due to loss of precision.
         * Locations: 1
     Code
@@ -252,10 +252,10 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must subset elements with a valid subscript vector.
         x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error in `stop_lossy_cast()`: 
+      Caused by error in `stop_lossy_cast()`:
         Can't convert from `foo` <double> to <integer> due to loss of precision.
         * Locations: 1
 
@@ -327,7 +327,7 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: 
+      Error:
         Must extract element with a single valid subscript.
         x Subscript `foo` has the wrong type `data.frame<
           mpg : double
@@ -343,7 +343,7 @@
           carb: double
         >`.
         i It must be numeric or character.
-      Caused by error: 
+      Caused by error:
         Must extract element with a single valid subscript.
         x Subscript `foo` has the wrong type `data.frame<
           mpg : double
