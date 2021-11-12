@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_of()` is now much faster when many values are provided.
+
 * `vec_as_location()` evaluates `arg` only in case of error, for performance
   (#1150, @krlmlr).
 
