@@ -127,7 +127,7 @@
 <li><p>The <code><a href="https://rdrr.io/r/base/class.html">class()</a></code> of a matrix is “matrix” and doesn’t include the type of the underlying vector or the dimensionality.</p></li>
 </ul>
 <p>Instead, vctrs takes advantage of R’s vectorised nature and uses a <strong>prototype</strong>, a 0-observation slice of the vector (this is basically <code>x[0]</code> but with some subtleties we’ll come back to later). This is a miniature version of the vector that contains all of the attributes but none of the data.</p>
-<p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://rdrr.io/r/base/double.html">double()</a></code> and <code><a href="https://rdrr.io/r/base/factor.html">factor(levels = c("a", "b"))</a></code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, and <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
+<p>Conveniently, you can create many prototypes using existing base functions (e.g, <code><a href="https://rdrr.io/r/base/double.html">double()</a></code> and <code>factor(levels = c("a", "b"))</code>). vctrs provides a few helpers (e.g. <code><a href="../reference/new_date.html">new_date()</a></code>, <code><a href="../reference/new_date.html">new_datetime()</a></code>, and <code><a href="../reference/new_date.html">new_duration()</a></code>) where the equivalents in base R are missing.</p>
 <div id="base-prototypes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#base-prototypes" class="anchor"></a>Base prototypes</h3>
@@ -212,8 +212,8 @@
 <a href="#coercing-to-common-type" class="anchor"></a>Coercing to common type</h3>
 <p>It’s often important to combine vectors with multiple types. vctrs provides a consistent set of rules for coercion, via <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code>. <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> possesses the following invariants:</p>
 <ul>
-<li><p><code><a href="https://rdrr.io/r/base/class.html">class(vec_ptype_common(x, y))</a></code> equals <code><a href="https://rdrr.io/r/base/class.html">class(vec_ptype_common(y, x))</a></code>.</p></li>
-<li><p><code>class(vec_ptype_common(x, vec_ptype_common(y, z))</code> equals <code><a href="https://rdrr.io/r/base/class.html">class(vec_ptype_common(vec_ptype_common(x, y), z))</a></code>.</p></li>
+<li><p><code>class(vec_ptype_common(x, y))</code> equals <code>class(vec_ptype_common(y, x))</code>.</p></li>
+<li><p><code>class(vec_ptype_common(x, vec_ptype_common(y, z))</code> equals <code>class(vec_ptype_common(vec_ptype_common(x, y), z))</code>.</p></li>
 <li><p><code>vec_ptype_common(x, NULL) == vec_ptype(x)</code>.</p></li>
 </ul>
 <p>i.e., <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> is both commutative and associative (with respect to class) and has an identity element, <code>NULL</code>; i.e., it’s a <strong>commutative monoid</strong>. This means the underlying implementation is quite simple: we can find the common type of any number of objects by progressively finding the common type of pairs of objects.</p>
@@ -404,9 +404,9 @@
 <a href="#size" class="anchor"></a>Size</h2>
 <p><code><a href="../reference/vec_size.html">vec_size()</a></code> was motivated by the need to have an invariant that describes the number of “observations” in a data structure. This is particularly important for data frames, as it’s useful to have some function such that <code>f(data.frame(x))</code> equals <code>f(x)</code>. No base function has this property:</p>
 <ul>
-<li><p><code><a href="https://rdrr.io/r/base/length.html">length(data.frame(x))</a></code> equals <code>1</code> because the length of a data frame is the number of columns.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/nrow.html">nrow(data.frame(x))</a></code> does not equal <code><a href="https://rdrr.io/r/base/nrow.html">nrow(x)</a></code> because <code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code> of a vector is <code>NULL</code>.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/nrow.html">NROW(data.frame(x))</a></code> equals <code><a href="https://rdrr.io/r/base/nrow.html">NROW(x)</a></code> for vector <code>x</code>, so is almost what we want. But because <code><a href="https://rdrr.io/r/base/nrow.html">NROW()</a></code> is defined in terms of <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, it returns a value for every object, even types that can’t go in a data frame, e.g. <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(mean)</a></code> errors even though <code><a href="https://rdrr.io/r/base/nrow.html">NROW(mean)</a></code> is <code>1</code>.</p></li>
+<li><p><code>length(data.frame(x))</code> equals <code>1</code> because the length of a data frame is the number of columns.</p></li>
+<li><p><code>nrow(data.frame(x))</code> does not equal <code>nrow(x)</code> because <code><a href="https://rdrr.io/r/base/nrow.html">nrow()</a></code> of a vector is <code>NULL</code>.</p></li>
+<li><p><code>NROW(data.frame(x))</code> equals <code>NROW(x)</code> for vector <code>x</code>, so is almost what we want. But because <code><a href="https://rdrr.io/r/base/nrow.html">NROW()</a></code> is defined in terms of <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>, it returns a value for every object, even types that can’t go in a data frame, e.g. <code>data.frame(mean)</code> errors even though <code>NROW(mean)</code> is <code>1</code>.</p></li>
 </ul>
 <p>We define <code><a href="../reference/vec_size.html">vec_size()</a></code> as follows:</p>
 <ul>
@@ -418,7 +418,7 @@
 <div id="slicing" class="section level3">
 <h3 class="hasAnchor">
 <a href="#slicing" class="anchor"></a>Slicing</h3>
-<p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code><a href="https://rdrr.io/r/base/Extract.html">[</a></code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>; i.e., it allows you to select observations regardless of the dimensionality of the underlying object. <code><a href="../reference/vec_slice.html">vec_slice(x, i)</a></code> is equivalent to:</p>
+<p><code><a href="../reference/vec_slice.html">vec_slice()</a></code> is to <code><a href="../reference/vec_size.html">vec_size()</a></code> as <code>[</code> is to <code><a href="https://rdrr.io/r/base/length.html">length()</a></code>; i.e., it allows you to select observations regardless of the dimensionality of the underlying object. <code>vec_slice(x, i)</code> is equivalent to:</p>
 <ul>
 <li>
 <code>x[i]</code> when <code>x</code> is a vector.</li>
@@ -432,13 +432,13 @@
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt; [1] 5 3</span>
+<span class="co">#&gt; [1] 10  4</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt;   x</span>
-<span class="co">#&gt; 1 5</span>
-<span class="co">#&gt; 2 3</span></code></pre></div>
-<p><code><a href="../reference/vec_slice.html">vec_slice(data.frame(x), i)</a></code> equals <code><a href="https://rdrr.io/r/base/data.frame.html">data.frame(vec_slice(x, i))</a></code> (modulo variable and row names).</p>
-<p>Prototypes are generated with <code><a href="../reference/vec_slice.html">vec_slice(x, 0L)</a></code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
+<span class="co">#&gt;    x</span>
+<span class="co">#&gt; 1 10</span>
+<span class="co">#&gt; 2  4</span></code></pre></div>
+<p><code>vec_slice(data.frame(x), i)</code> equals <code>data.frame(vec_slice(x, i))</code> (modulo variable and row names).</p>
+<p>Prototypes are generated with <code>vec_slice(x, 0L)</code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
 <div id="common-sizes-recycling-rules" class="section level3">
 <h3 class="hasAnchor">

@@ -260,43 +260,52 @@ the same base class.</p>
 attributes that an input can't be cast to the target type.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># x is a double, but no information is lost</span>
-<span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
-<span class='co'># When information is lost the cast fails</span>
-<span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Error in stop_vctrs(message, x = x, y = to, to = to, result = result,  : 
-#&gt;   Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.
-#&gt; <span style='color: #00BBBB;'>•</span> Locations: 2</div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Error in stop_vctrs(message, x = x, y = to, to = to, result = result,  : 
-#&gt;   Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.
-#&gt; <span style='color: #00BBBB;'>•</span> Locations: 2</div><div class='input'>
-<span class='co'># You can suppress this error and get the partial results</span>
-<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] TRUE TRUE</div><div class='input'>
-<span class='co'># By default this suppress all lossy cast errors without</span>
-<span class='co'># distinction, but you can be specific about what cast is allowed</span>
-<span class='co'># by supplying prototypes</span>
-<span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1 1</div><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Error in stop_vctrs(message, x = x, y = to, to = to, result = result,  : 
-#&gt;   Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.
-#&gt; <span style='color: #00BBBB;'>•</span> Locations: 2</div><div class='input'>
-<span class='co'># No sensible coercion is possible so an error is generated</span>
-<span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; Error in stop_vctrs(message, class = c(class, "vctrs_error_incompatible"),  : 
-#&gt;   Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</div><div class='input'>
-<span class='co'># Cast to common type</span>
-<span class='fu'>vec_cast_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] a
-#&gt; Levels: a b
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] a b
-#&gt; Levels: a b
-#&gt; </div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># x is a double, but no information is lost</span></span>
+<span class='r-in'><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># When information is lost the cast fails</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs(message, x = x, y = to, to = to, result = result,  : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs(message, x = x, y = to, to = to, result = result,  : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># You can suppress this error and get the partial results</span></span>
+<span class='r-in'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 1</span>
+<span class='r-in'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># By default this suppress all lossy cast errors without</span></span>
+<span class='r-in'><span class='co'># distinction, but you can be specific about what cast is allowed</span></span>
+<span class='r-in'><span class='co'># by supplying prototypes</span></span>
+<span class='r-in'><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1.5</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 1</span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'><a href='vctrs-conditions.html'>allow_lossy_cast</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/logical.html'>logical</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>, to_ptype <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs(message, x = x, y = to, to = to, result = result,  : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert from &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>•</span> Locations: 2</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># No sensible coercion is possible so an error is generated</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/try.html'>try</a></span><span class='op'>(</span><span class='fu'>vec_cast</span><span class='op'>(</span><span class='fl'>1.5</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Error in stop_vctrs(message, class = c(class, "vctrs_error_incompatible"),  : </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Cast to common type</span></span>
+<span class='r-in'><span class='fu'>vec_cast_common</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='st'>"a"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"a"</span>, <span class='st'>"b"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[1]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] a</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: a b</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [[2]]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] a b</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: a b</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

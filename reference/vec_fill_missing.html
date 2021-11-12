@@ -191,47 +191,52 @@ no limit.</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='fl'>1</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='fl'>3</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span><span class='op'>)</span>
-
-<span class='co'># Filling down replaces missing values with the previous non-missing value</span>
-<span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>x</span>, direction <span class='op'>=</span> <span class='st'>"down"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] NA NA  1  1  1  1  3  3  3</div><div class='input'>
-<span class='co'># To also fill leading missing values, use `"downup"`</span>
-<span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>x</span>, direction <span class='op'>=</span> <span class='st'>"downup"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1 1 1 1 1 1 3 3 3</div><div class='input'>
-<span class='co'># Limit the number of sequential missing values to fill with `max_fill`</span>
-<span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>x</span>, max_fill <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] NA NA  1  1 NA NA  3  3 NA</div><div class='input'>
-<span class='co'># Data frames are filled rowwise. Rows are only considered missing</span>
-<span class='co'># if all elements of that row are missing.</span>
-<span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span>, <span class='fl'>2</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='cn'>NA</span>, <span class='fl'>5</span><span class='op'>)</span>
-<span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='data_frame.html'>data_frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, y <span class='op'>=</span> <span class='va'>y</span><span class='op'>)</span>
-<span class='va'>df</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 9 × 2</span>
-#&gt;       x     y
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'>1</span>    <span style='color: #BB0000;'>NA</span>     1
-#&gt; <span style='color: #BCBCBC;'>2</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>
-#&gt; <span style='color: #BCBCBC;'>3</span>     1     2
-#&gt; <span style='color: #BCBCBC;'>4</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>
-#&gt; <span style='color: #BCBCBC;'>5</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>
-#&gt; <span style='color: #BCBCBC;'>6</span>    <span style='color: #BB0000;'>NA</span>     3
-#&gt; <span style='color: #BCBCBC;'>7</span>     3     4
-#&gt; <span style='color: #BCBCBC;'>8</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span>
-#&gt; <span style='color: #BCBCBC;'>9</span>    <span style='color: #BB0000;'>NA</span>     5</div><div class='input'>
-<span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 9 × 2</span>
-#&gt;       x     y
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'>1</span>    <span style='color: #BB0000;'>NA</span>     1
-#&gt; <span style='color: #BCBCBC;'>2</span>    <span style='color: #BB0000;'>NA</span>     1
-#&gt; <span style='color: #BCBCBC;'>3</span>     1     2
-#&gt; <span style='color: #BCBCBC;'>4</span>     1     2
-#&gt; <span style='color: #BCBCBC;'>5</span>     1     2
-#&gt; <span style='color: #BCBCBC;'>6</span>    <span style='color: #BB0000;'>NA</span>     3
-#&gt; <span style='color: #BCBCBC;'>7</span>     3     4
-#&gt; <span style='color: #BCBCBC;'>8</span>     3     4
-#&gt; <span style='color: #BCBCBC;'>9</span>    <span style='color: #BB0000;'>NA</span>     5</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='fl'>1</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='fl'>3</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Filling down replaces missing values with the previous non-missing value</span></span>
+<span class='r-in'><span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>x</span>, direction <span class='op'>=</span> <span class='st'>"down"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA NA  1  1  1  1  3  3  3</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># To also fill leading missing values, use `"downup"`</span></span>
+<span class='r-in'><span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>x</span>, direction <span class='op'>=</span> <span class='st'>"downup"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 1 1 1 1 1 1 3 3 3</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Limit the number of sequential missing values to fill with `max_fill`</span></span>
+<span class='r-in'><span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>x</span>, max_fill <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] NA NA  1  1 NA NA  3  3 NA</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Data frames are filled rowwise. Rows are only considered missing</span></span>
+<span class='r-in'><span class='co'># if all elements of that row are missing.</span></span>
+<span class='r-in'><span class='va'>y</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='cn'>NA</span>, <span class='fl'>2</span>, <span class='cn'>NA</span>, <span class='cn'>NA</span>, <span class='fl'>3</span>, <span class='fl'>4</span>, <span class='cn'>NA</span>, <span class='fl'>5</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='data_frame.html'>data_frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, y <span class='op'>=</span> <span class='va'>y</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>df</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 9 × 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       x     y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span>    <span style='color: #BB0000;'>NA</span>     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span>     1     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span>    <span style='color: #BB0000;'>NA</span>     3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>7</span>     3     4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>8</span>    <span style='color: #BB0000;'>NA</span>    <span style='color: #BB0000;'>NA</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>9</span>    <span style='color: #BB0000;'>NA</span>     5</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>vec_fill_missing</span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 9 × 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       x     y</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span>    <span style='color: #BB0000;'>NA</span>     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span>    <span style='color: #BB0000;'>NA</span>     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span>     1     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span>     1     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>5</span>     1     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>6</span>    <span style='color: #BB0000;'>NA</span>     3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>7</span>     3     4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>8</span>     3     4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>9</span>    <span style='color: #BB0000;'>NA</span>     5</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

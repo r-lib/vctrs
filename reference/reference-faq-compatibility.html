@@ -246,7 +246,7 @@ existing vector classes.</p><h3 class='hasAnchor' id='arguments'><a class='ancho
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.</p><ul>
-<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> falls back to the base <code><a href='https://rdrr.io/r/base/Extract.html'>[</a></code> generic if
+<li><p><code><a href='vec_slice.html'>vec_slice()</a></code> falls back to the base <code>[</code> generic if
 no <code><a href='vec_proxy.html'>vec_proxy()</a></code> method is implemented. This way
 foreign classes that do not implement
 <code><a href='vec_proxy.html'>vec_restore()</a></code> can restore attributes based on

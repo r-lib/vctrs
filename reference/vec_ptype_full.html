@@ -207,17 +207,20 @@ characters where possible.</p>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; integer</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; data.frame&lt;
-#&gt;   Sepal.Length: double
-#&gt;   Sepal.Width : double
-#&gt;   Petal.Length: double
-#&gt;   Petal.Width : double
-#&gt;   Species     : factor&lt;fb977&gt;
-#&gt; &gt;</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_abbr</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; int</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> integer</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_full</span><span class='op'>(</span><span class='va'>iris</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> data.frame&lt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Sepal.Length: double</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Sepal.Width : double</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Petal.Length: double</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Petal.Width : double</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Species     : factor&lt;fb977&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &gt;</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'>vec_ptype_abbr</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> int</span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
