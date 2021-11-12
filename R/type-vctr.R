@@ -72,8 +72,6 @@ new_vctr <- function(.data,
     abort("`.data` must be a vector type.")
   }
 
-  nms <- validate_names(.data)
-
   if (is_list(.data)) {
     if (is.data.frame(.data)) {
       abort("`.data` can't be a data frame.")
@@ -91,27 +89,30 @@ new_vctr <- function(.data,
     inherit_base_type <- FALSE
   }
 
+  names <- names(.data)
+  names <- names_repair_missing(names)
+
   class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
-  attrib <- list(names = nms, ..., class = class)
+  attrib <- list(names = names, ..., class = class)
 
   vec_set_attributes(.data, attrib)
 }
 
-validate_names <- function(.data) {
-  nms <- names(.data)
-
-  if (any_na_names(nms)) {
-    abort("The names of `.data` must not be `NA`.")
+names_repair_missing <- function(x) {
+  if (is.null(x)) {
+    return(x)
   }
 
-  nms
-}
-any_na_names <- function(names) {
-  if (is.null(names)) {
-    FALSE
-  } else {
-    any(is.na(names))
+  missing <- vec_equal_na(x)
+
+  if (any(missing)) {
+    # We never want to allow `NA_character_` names to slip through, but
+    # erroring on them has caused issues. Instead, we repair them to the
+    # empty string (#784).
+    x <- vec_assign(x, missing, "")
   }
+
+  x
 }
 
 #' @export
@@ -269,9 +270,9 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
   if (length(value) != 0 && length(value) != length(x)) {
     abort("`names()` must be the same length as x.")
   }
-  if (any_na_names(value)) {
-    abort("Names must not be `NA`.")
-  }
+
+  value <- names_repair_missing(value)
+
   NextMethod()
 }
 # Coercion ----------------------------------------------------------------
