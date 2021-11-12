@@ -187,7 +187,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      Error in `stop_incompatible()`: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -201,7 +201,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+      Error in `stop_incompatible()`: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 
 # row-binding performs expected allocations
 

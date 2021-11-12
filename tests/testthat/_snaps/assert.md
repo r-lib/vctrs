@@ -162,11 +162,11 @@
       (expect_error(vec_assert(1, size = 1.5)))
     Output
       <error/vctrs_error_cast_lossy>
-      Error in `stop_vctrs()`: Can't convert from `size` <double> to <integer> due to loss of precision.
+      Error in `stop_lossy_cast()`: Can't convert from `size` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
       (expect_error(vec_assert(1, size = "x")))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't convert `size` <character> to <integer>.
+      Error in `stop_incompatible()`: Can't convert `size` <character> to <integer>.
 

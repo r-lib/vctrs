@@ -42,13 +42,13 @@
       (expect_error(vec_slice(foobar(list(1)), 1), class = "vctrs_error_scalar_type"))
     Output
       <error/vctrs_error_scalar_type>
-      Error in `stop_vctrs()`: Input must be a vector, not a <vctrs_foobar> object.
+      Error in `stop_scalar_type()`: Input must be a vector, not a <vctrs_foobar> object.
     Code
       (expect_error(stop_scalar_type(foobar(list(1)), arg = "foo"), class = "vctrs_error_scalar_type")
       )
     Output
       <error/vctrs_error_scalar_type>
-      Error in `stop_vctrs()`: `foo` must be a vector, not a <vctrs_foobar> object.
+      Error in `stop_scalar_type()`: `foo` must be a vector, not a <vctrs_foobar> object.
 
 # empty names errors are informative
 
@@ -57,21 +57,21 @@
       )
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error in `stop_vctrs()`: Names can't be empty.
+      Error in `stop_names()`: Names can't be empty.
       x Empty name found at location 2.
     Code
       (expect_error(vec_as_names(c("x", "", "y", ""), repair = "check_unique"),
       class = "vctrs_error_names_cannot_be_empty"))
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error in `stop_vctrs()`: Names can't be empty.
+      Error in `stop_names()`: Names can't be empty.
       x Empty names found at locations 2 and 4.
     Code
       (expect_error(vec_as_names(rep("", 10), repair = "check_unique"), class = "vctrs_error_names_cannot_be_empty")
       )
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error in `stop_vctrs()`: Names can't be empty.
+      Error in `stop_names()`: Names can't be empty.
       x Empty names found at locations 1, 2, 3, 4, 5, etc.
 
 # dot dot names errors are informative
@@ -81,7 +81,7 @@
       class = "vctrs_error_names_cannot_be_dot_dot"))
     Output
       <error/vctrs_error_names_cannot_be_dot_dot>
-      Error in `stop_vctrs()`: Names can't be of the form `...` or `..j`.
+      Error in `stop_names()`: Names can't be of the form `...` or `..j`.
       x These names are invalid:
         * "..1" at locations 1, 2, and 3.
         * "..." at location 4.
@@ -91,7 +91,7 @@
       )
     Output
       <error/vctrs_error_names_cannot_be_dot_dot>
-      Error in `stop_vctrs()`: Names can't be of the form `...` or `..j`.
+      Error in `stop_names()`: Names can't be of the form `...` or `..j`.
       x These names are invalid:
         * "..1" at locations 1, 2, 3, 4, 5, etc.
         * "..2" at locations 21 and 26.
@@ -107,7 +107,7 @@
       class = "vctrs_error_names_must_be_unique"))
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error in `stop_vctrs()`: Names must be unique.
+      Error in `stop_names()`: Names must be unique.
       x These names are duplicated:
         * "x" at locations 1, 2, and 3.
         * "y" at locations 4 and 5.
@@ -116,7 +116,7 @@
       repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error in `stop_vctrs()`: Names must be unique.
+      Error in `stop_names()`: Names must be unique.
       x These names are duplicated:
         * "x" at locations 1, 2, 3, 4, 5, etc.
         * "a" at locations 21 and 26.
@@ -131,7 +131,7 @@
       (expect_error(vec_cast("a", factor("b")), class = "vctrs_error_cast_lossy"))
     Output
       <error/vctrs_error_cast_lossy>
-      Error in `stop_vctrs()`: Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
+      Error in `stop_lossy_cast()`: Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
       * Locations: 1
 
 # ordered cast failures mention conversion
@@ -141,7 +141,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't convert <ordered<bf275>> to <ordered<fd1ad>>.
+      Error in `stop_incompatible()`: Can't convert <ordered<bf275>> to <ordered<fd1ad>>.
 
 # incompatible size errors
 
@@ -149,23 +149,23 @@
       (expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "")))
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle input of size 2 to size 3.
+      Error in `stop_incompatible()`: Can't recycle input of size 2 to size 3.
     Code
       (expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo),
       y_arg = "")))
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle `foo` (size 2) to size 3.
+      Error in `stop_incompatible()`: Can't recycle `foo` (size 2) to size 3.
     Code
       (expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = "", y_arg = "bar"))
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle input of size 2 to match `bar` (size 3).
+      Error in `stop_incompatible()`: Can't recycle input of size 2 to match `bar` (size 3).
     Code
       (expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo),
       y_arg = quote(bar))))
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle `foo` (size 2) to match `bar` (size 3).
+      Error in `stop_incompatible()`: Can't recycle `foo` (size 2) to match `bar` (size 3).
 

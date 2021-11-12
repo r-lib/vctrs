@@ -56,8 +56,8 @@
 #' @name vctrs-conditions
 NULL
 
-stop_vctrs <- function(message = NULL, class = NULL, ...) {
-  abort(message, class = c(class, "vctrs_error"), ...)
+stop_vctrs <- function(message = NULL, class = NULL, call = caller_env(), ...) {
+  abort(message, class = c(class, "vctrs_error"), call = call, ...)
 }
 warn_vctrs <- function(message = NULL, class = NULL, ...) {
   warn(message, class = c(class, "vctrs_warning"), ...)

@@ -27,7 +27,7 @@
       (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      Error in `stop_incompatible()`: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -40,7 +40,7 @@
       (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      Error in `stop_incompatible()`: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -59,7 +59,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't convert <vctrs_foobar> to <character>.
+      Error in `stop_incompatible()`: Can't convert <vctrs_foobar> to <character>.
 
 # can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)
 
@@ -68,7 +68,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `a` <character> and `b` <double>.
+      Error in `stop_incompatible()`: Can't combine `a` <character> and `b` <double>.
 
 # concatenation performs expected allocations
 

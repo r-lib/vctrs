@@ -5,7 +5,8 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle input of size 2 to size 1.
+      Error in `stop_recycle_incompatible_size()`: 
+      Can't recycle input of size 2 to size 1.
 
 # incompatible recycling size has informative error
 
