@@ -30,7 +30,7 @@ Depends:
     R (>= 3.3)
 Imports:
     glue,
-    rlang (>= 0.4.11.9000)
+    rlang (>= 0.99.0.9000)
 Suggests: 
     bit64,
     covr,
