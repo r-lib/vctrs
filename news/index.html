@@ -158,6 +158,8 @@
 <a href="#vctrs-development-version" class="anchor"></a>vctrs (development version)<small> Unreleased </small>
 </h1>
 <ul>
+<li><p>If <code>NA_character_</code> is specified as a name for <code>vctrs_vctr</code> objects, it is now automatically repaired to <code>""</code> (<a href='https://github.com/r-lib/vctrs/issues/780'>#780</a>).</p></li>
+<li><p><code>""</code> is now an allowed name for <code>vctrs_vctr</code> objects (<a href='https://github.com/r-lib/vctrs/issues/780'>#780</a>).</p></li>
 <li><p><code><a href="../reference/list_of.html">list_of()</a></code> is now much faster when many values are provided.</p></li>
 <li><p><code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> evaluates <code>arg</code> only in case of error, for performance (<a href='https://github.com/r-lib/vctrs/issues/1150'>#1150</a>, <a href='https://github.com/krlmlr'>@krlmlr</a>).</p></li>
 <li><p><code>levels.vctrs_vctr()</code> now returns <code>NULL</code> instead of failing (<a href='https://github.com/r-lib/vctrs/issues/1186'>#1186</a>, <a href='https://github.com/krlmlr'>@krlmlr</a>).</p></li>
