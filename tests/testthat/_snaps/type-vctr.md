@@ -1,3 +1,29 @@
+# `class` must be a character vector
+
+    Code
+      (expect_error(new_vctr(1, class = 1)))
+    Output
+      <error/rlang_error>
+      Error: `class` must be a character vector.
+
+# `inherit_base_type` is validated
+
+    Code
+      (expect_error(new_vctr(1, inherit_base_type = 1)))
+    Output
+      <error/rlang_error>
+      Error: `inherit_base_type` must be `NULL` or a single `TRUE` or `FALSE`.
+    Code
+      (expect_error(new_vctr(1, inherit_base_type = NA)))
+    Output
+      <error/rlang_error>
+      Error: `inherit_base_type` must be `NULL` or a single `TRUE` or `FALSE`.
+    Code
+      (expect_error(new_vctr(1, inherit_base_type = c(TRUE, FALSE))))
+    Output
+      <error/rlang_error>
+      Error: `inherit_base_type` must be `NULL` or a single `TRUE` or `FALSE`.
+
 # na.fail() works
 
     Code
