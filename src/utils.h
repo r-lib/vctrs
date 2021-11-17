@@ -414,6 +414,8 @@ void c_print_backtrace();
 
 SEXP chr_c(SEXP x, SEXP y);
 
+SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n);
+
 
 extern SEXP vctrs_ns_env;
 extern SEXP vctrs_shared_empty_str;
