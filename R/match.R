@@ -25,10 +25,11 @@
 #' `condition` is analogous to specifying a SQL ON statement, and `condition =
 #' NULL` is identical to specifying a join without an ON statement.
 #'
-#' When `incomplete = "match"`, missing values are allowed to exactly match
-#' other missing values, but will not match any other values. This implies that
-#' `NA >= NA` is a match, but `NA > NA` is not. Similarly, both `NA >= 1` and
-#' `1 >= NA` result in an unmatched needle.
+#' When `incomplete = "match"`, missing values are allowed to match other
+#' missing values, but will not match any other values. Regardless of
+#' the `condition`, missing values will be matched exactly. For example, even
+#' with `<`, a missing value in `needles` will match a missing value in
+#' `haystack`.
 #'
 #' Be very careful when specifying match `condition`s. If a condition is
 #' mis-specified, it is very easy to accidentally generate an exponentially
@@ -78,8 +79,9 @@
 #' @param incomplete Handling of [incomplete][vec_detect_complete] observations
 #'   in `needles`.
 #'   - `"match"` matches incomplete observations in `needles` to incomplete
-#'     observations in `haystack`. `nan_distinct` determines whether a `NA` is
-#'     allowed to match a `NaN`.
+#'     observations in `haystack`. Incomplete observations will be matched
+#'     exactly, regardless of the `condition`. `nan_distinct` determines whether
+#'     a `NA` is allowed to match a `NaN`.
 #'   - `"drop"` drops incomplete observations in `needles` from the result.
 #'   - `"error"` throws an error if any `needles` are incomplete.
 #'   - If a single integer is provided, this represents the value returned

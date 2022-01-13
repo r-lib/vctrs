@@ -618,39 +618,33 @@ void df_locate_matches_recurse(r_ssize col,
   r_ssize loc_upper_match_o_haystack = bounds.upper;
 
   // Adjust bounds based on non-equi condition.
-  // If needle is NA, never extend the bounds to capture values past it.
-  switch (op) {
-  case VCTRS_OPS_lt: {
-    // Exclude found needle
-    loc_lower_match_o_haystack = loc_upper_match_o_haystack + 1;
-    if (needle_is_complete) {
+  // If needle is NA, we always treat it like an equi condition
+  if (needle_is_complete) {
+    switch (op) {
+    case VCTRS_OPS_lt: {
+      // Exclude found needle
+      loc_lower_match_o_haystack = loc_upper_match_o_haystack + 1;
       loc_upper_match_o_haystack = loc_upper_bound_o_haystack;
+      break;
     }
-    break;
-  }
-  case VCTRS_OPS_lte: {
-    if (needle_is_complete) {
+    case VCTRS_OPS_lte: {
       loc_upper_match_o_haystack = loc_upper_bound_o_haystack;
+      break;
     }
-    break;
-  }
-  case VCTRS_OPS_gt: {
-    // Exclude found needle
-    loc_upper_match_o_haystack = loc_lower_match_o_haystack - 1;
-    if (needle_is_complete) {
+    case VCTRS_OPS_gt: {
+      // Exclude found needle
+      loc_upper_match_o_haystack = loc_lower_match_o_haystack - 1;
       loc_lower_match_o_haystack = loc_lower_bound_o_haystack;
+      break;
     }
-    break;
-  }
-  case VCTRS_OPS_gte: {
-    if (needle_is_complete) {
+    case VCTRS_OPS_gte: {
       loc_lower_match_o_haystack = loc_lower_bound_o_haystack;
+      break;
     }
-    break;
-  }
-  case VCTRS_OPS_eq: {
-    break;
-  }
+    case VCTRS_OPS_eq: {
+      break;
+    }
+    }
   }
 
   if (needle_is_complete &&
