@@ -142,15 +142,6 @@ static inline
 void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters);
 
 static
-r_obj* expand_match_on_nothing(r_ssize size_needles,
-                               r_ssize size_haystack,
-                               enum vctrs_multiple multiple,
-                               const struct vctrs_no_match* no_match,
-                               const struct vctrs_remaining* remaining,
-                               struct vctrs_arg* needles_arg,
-                               struct vctrs_arg* haystack_arg);
-
-static
 r_obj* expand_compact_indices(const int* v_o_haystack,
                               struct r_dyn_array* p_loc_first_match_o_haystack,
                               struct r_dyn_array* p_size_match,

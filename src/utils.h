@@ -456,6 +456,8 @@ extern SEXP strings_group;
 extern SEXP strings_length;
 extern SEXP strings_vctrs_vctr;
 extern SEXP strings_times;
+extern SEXP strings_needles;
+extern SEXP strings_haystack;
 
 extern SEXP chrs_subset;
 extern SEXP chrs_extract;
