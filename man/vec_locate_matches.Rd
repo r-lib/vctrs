@@ -67,8 +67,9 @@ can be further controlled with \code{multiple}.}
 in \code{needles}.
 \itemize{
 \item \code{"match"} matches incomplete observations in \code{needles} to incomplete
-observations in \code{haystack}. \code{nan_distinct} determines whether a \code{NA} is
-allowed to match a \code{NaN}.
+observations in \code{haystack}. Incomplete observations will be matched
+exactly, regardless of the \code{condition}. \code{nan_distinct} determines whether
+a \code{NA} is allowed to match a \code{NaN}.
 \item \code{"drop"} drops incomplete observations in \code{needles} from the result.
 \item \code{"error"} throws an error if any \code{needles} are incomplete.
 \item If a single integer is provided, this represents the value returned
@@ -163,10 +164,11 @@ binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, an
 and \code{haystack}, with the default being most similar to a left join. Using
 \code{condition} is analogous to specifying a SQL ON statement, and \code{condition = NULL} is identical to specifying a join without an ON statement.
 
-When \code{incomplete = "match"}, missing values are allowed to exactly match
-other missing values, but will not match any other values. This implies that
-\code{NA >= NA} is a match, but \code{NA > NA} is not. Similarly, both \code{NA >= 1} and
-\code{1 >= NA} result in an unmatched needle.
+When \code{incomplete = "match"}, missing values are allowed to match other
+missing values, but will not match any other values. Regardless of
+the \code{condition}, missing values will be matched exactly. For example, even
+with \code{<}, a missing value in \code{needles} will match a missing value in
+\code{haystack}.
 
 Be very careful when specifying match \code{condition}s. If a condition is
 mis-specified, it is very easy to accidentally generate an exponentially
