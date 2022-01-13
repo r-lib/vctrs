@@ -102,7 +102,7 @@ static r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method);
  */
 // [[ include("vctrs.h") ]]
 r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
-  if (vec_typeof(x) != vec_typeof(y)) {
+  if (r_typeof(x) != r_typeof(y)) {
     r_stop_internal("vec_joint_proxy_order", "`x` and `y` should have the same type.");
   }
 

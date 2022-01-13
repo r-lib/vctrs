@@ -1,4 +1,17 @@
 # ------------------------------------------------------------------------------
+# vec_locate_matches() - logicals
+
+test_that("isn't confused by unspecified logical vectors", {
+  x <- vec_locate_matches(logical(), NA)
+  expect_identical(x$needles, integer())
+  expect_identical(x$haystack, integer())
+
+  x <- vec_locate_matches(NA, logical())
+  expect_identical(x$needles, 1L)
+  expect_identical(x$haystack, NA_integer_)
+})
+
+# ------------------------------------------------------------------------------
 # vec_locate_matches() - integers
 
 test_that("can match in increasing order", {
