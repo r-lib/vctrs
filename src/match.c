@@ -15,7 +15,8 @@ enum vctrs_multiple {
   VCTRS_MULTIPLE_warning = 1,
   VCTRS_MULTIPLE_error = 2,
   VCTRS_MULTIPLE_first = 3,
-  VCTRS_MULTIPLE_last = 4
+  VCTRS_MULTIPLE_last = 4,
+  VCTRS_MULTIPLE_any = 5
 };
 
 enum vctrs_filter {
@@ -327,7 +328,7 @@ r_obj* df_locate_matches(r_obj* needles,
   }
 
   // If we can skip, `size_match` will always be `1`
-  const bool skip_size_match = false;
+  const bool skip_size_match = (multiple == VCTRS_MULTIPLE_any);
 
   struct r_dyn_array* p_size_match = NULL;
   if (!skip_size_match) {
@@ -344,7 +345,7 @@ r_obj* df_locate_matches(r_obj* needles,
   }
 
   // If we can skip, `loc_needles` will always be an increasing sequence of values
-  const bool skip_loc_needles = false;
+  const bool skip_loc_needles = (multiple == VCTRS_MULTIPLE_any);
 
   struct r_dyn_array* p_loc_needles = NULL;
   if (!skip_loc_needles) {
@@ -774,6 +775,35 @@ void df_locate_matches_recurse(r_ssize col,
         const bool first_touch = loc_first_match_o_haystack == r_globals.na_int;
 
         switch (multiple) {
+        case VCTRS_MULTIPLE_any: {
+          if (first_touch) {
+            // Arbitrarily record the lower match
+            R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
+            break;
+          }
+
+          if (any_filters) {
+            const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
+            const int loc_lower_match_haystack = v_o_haystack[loc_lower_match_o_haystack] - 1;
+
+            const int cmp = p_matches_df_compare_na_equal(
+              p_haystack,
+              loc_lower_match_haystack,
+              p_haystack,
+              loc_first_match_haystack,
+              v_filters
+            );
+
+            // -1 = New haystack value "loses", nothing to update
+            //  1 = New haystack value "wins", it becomes new match
+            //  0 = Equal values, nothing to update
+            if (cmp == 1) {
+              R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
+            }
+          }
+
+          break;
+        }
         case VCTRS_MULTIPLE_all:
         case VCTRS_MULTIPLE_error:
         case VCTRS_MULTIPLE_warning:
@@ -1310,12 +1340,13 @@ enum vctrs_multiple parse_multiple(r_obj* multiple) {
   const char* c_multiple = r_chr_get_c_string(multiple, 0);
 
   if (!strcmp(c_multiple, "all")) return VCTRS_MULTIPLE_all;
-  if (!strcmp(c_multiple, "warning")) return VCTRS_MULTIPLE_warning;
+  if (!strcmp(c_multiple, "any")) return VCTRS_MULTIPLE_any;
   if (!strcmp(c_multiple, "first")) return VCTRS_MULTIPLE_first;
   if (!strcmp(c_multiple, "last")) return VCTRS_MULTIPLE_last;
+  if (!strcmp(c_multiple, "warning")) return VCTRS_MULTIPLE_warning;
   if (!strcmp(c_multiple, "error")) return VCTRS_MULTIPLE_error;
 
-  r_abort("`multiple` must be one of \"all\", \"first\", \"last\", \"warning\", or \"error\".");
+  r_abort("`multiple` must be one of \"all\", \"any\", \"first\", \"last\", \"warning\", or \"error\".");
 }
 
 // -----------------------------------------------------------------------------
@@ -1490,6 +1521,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   const int* v_loc_needles = skip_loc_needles ? NULL : (const int*) r_arr_cbegin(p_loc_needles);
 
   const bool one_match_per_needle =
+    multiple == VCTRS_MULTIPLE_any ||
     multiple == VCTRS_MULTIPLE_first ||
     multiple == VCTRS_MULTIPLE_last;
 
@@ -1687,7 +1719,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         // be available when finding the first/last match
         r_stop_internal(
           "expand_compact_indices",
-          "`skip_loc_needles` should never be `true` with `multiple = 'first'/'last'."
+          "`skip_loc_needles` should never be `true` with `multiple = 'first'/'last'`."
         );
       }
 
@@ -1736,7 +1768,8 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     }
     case VCTRS_MULTIPLE_all:
     case VCTRS_MULTIPLE_error:
-    case VCTRS_MULTIPLE_warning: {
+    case VCTRS_MULTIPLE_warning:
+    case VCTRS_MULTIPLE_any: {
       for (r_ssize j = 0; j < size_match; ++j) {
         const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
 

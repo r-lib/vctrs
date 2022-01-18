@@ -102,7 +102,10 @@ returned at the end of the result.
 
 \item{multiple}{Handling of \code{needles} with multiple matches. For each needle:
 \itemize{
-\item \code{"all"} returns every match detected in \code{haystack}.
+\item \code{"all"} returns all matches detected in \code{haystack}.
+\item \code{"any"} returns any match detected in \code{haystack} with no guarantees on
+which match will be returned. It is often faster than \code{"first"} and
+\code{"last"} if you just need to detect if there is at least one match.
 \item \code{"first"} returns the first match detected in \code{haystack}.
 \item \code{"last"} returns the last match detected in \code{haystack}.
 \item \code{"warning"} throws a warning if multiple matches are detected, but

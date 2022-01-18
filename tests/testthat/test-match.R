@@ -477,6 +477,11 @@ test_that("integer missing value matches can be limited by `multiple`", {
 
   expect_identical(res$needles, 1L)
   expect_identical(res$haystack, 4L)
+
+  res <- vec_locate_matches(NA_integer_, c(1L, NA, 2L, NA), condition = "<", multiple = "any")
+
+  expect_identical(res$needles, 1L)
+  expect_identical(res$haystack, 2L)
 })
 
 test_that("missing values match within columns", {
@@ -703,6 +708,13 @@ test_that("can get last match", {
   expect_identical(x$haystack, 3:4)
 })
 
+test_that("can get any match", {
+  x <- vec_locate_matches(c(1L, 3L), c(1L, 3L, 1L, 3L), multiple = "any")
+
+  expect_identical(x$needles, 1:2)
+  expect_identical(x$haystack, 1:2)
+})
+
 test_that("duplicate needles match the same haystack locations", {
   x <- vec_locate_matches(c(1L, 3L, 1L, 3L), c(1L, 3L, 1L), multiple = "all")
 
@@ -791,7 +803,7 @@ test_that("correctly gets all matches when they come from different nesting cont
   )
 })
 
-test_that("correctly gets first/last match when they come from different nesting containers", {
+test_that("correctly gets first/last/any match when they come from different nesting containers", {
   needles <- data_frame(
     a = c(1, 8),
     b = c(2, 9)
@@ -810,11 +822,19 @@ test_that("correctly gets first/last match when they come from different nesting
     data_frame(needles = c(1L, 2L), haystack = c(2L, NA))
   )
   expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "any"),
+    data_frame(needles = c(1L, 2L), haystack = c(2L, NA))
+  )
+  expect_identical(
     vec_locate_matches(needles, haystack, condition = "<", multiple = "first", remaining = NA_integer_),
     data_frame(needles = c(1L, 2L, NA, NA), haystack = c(1L, NA, 2L, 3L))
   )
   expect_identical(
     vec_locate_matches(needles, haystack, condition = "<", multiple = "last", remaining = NA_integer_),
+    data_frame(needles = c(1L, 2L, NA, NA), haystack = c(2L, NA, 1L, 3L))
+  )
+  expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "any", remaining = NA_integer_),
     data_frame(needles = c(1L, 2L, NA, NA), haystack = c(2L, NA, 1L, 3L))
   )
 })
@@ -828,7 +848,7 @@ test_that("`multiple = 'error'` doesn't error errneously on the last observation
 test_that("`multiple` is validated", {
   expect_error(vec_locate_matches(1, 2, multiple = 1.5), "`multiple` must be a string")
   expect_error(vec_locate_matches(1, 2, multiple = c("first", "last")), "`multiple` must be a string")
-  expect_error(vec_locate_matches(1, 2, multiple = "x"), '`multiple` must be one of "all", "first", "last", "warning", or "error"')
+  expect_error(vec_locate_matches(1, 2, multiple = "x"), '`multiple` must be one of "all", "any", "first", "last", "warning", or "error"')
 })
 
 # ------------------------------------------------------------------------------
@@ -951,6 +971,10 @@ test_that("`remaining` combined with `multiple = 'first/last'` treats non-first/
   res <- vec_locate_matches(x, y, remaining = NA, multiple = "last")
   expect_identical(res$needles, c(1L, 2L, NA))
   expect_identical(res$haystack, c(1L, 3L, 2L))
+
+  res <- vec_locate_matches(x, y, remaining = NA, multiple = "any")
+  expect_identical(res$needles, c(1L, 2L, NA))
+  expect_identical(res$haystack, c(1L, 2L, 3L))
 })
 
 test_that("`remaining` combined with the haystack reordering retains appearance order", {
@@ -1029,6 +1053,10 @@ test_that("haystack duplicates can be controlled by `multiple`", {
   res <- vec_locate_matches(needles, haystack, condition = ">=", filter = "max", multiple = "last")
   expect_identical(res$needles, 1:3)
   expect_identical(res$haystack, c(6L, 3L, 4L))
+
+  res <- vec_locate_matches(needles, haystack, condition = ">=", filter = "max", multiple = "any")
+  expect_identical(res$needles, 1:3)
+  expect_identical(res$haystack, c(2L, 1L, 4L))
 })
 
 test_that("`filter` works when valid matches are in different nesting containers", {
@@ -1056,6 +1084,9 @@ test_that("`filter` works when valid matches are in different nesting containers
 
   res <- vec_locate_matches(needles, haystack, condition = c("<=", "<=", "<="), filter = c("none", "none", "max"), multiple = "last")
   expect_identical(res$haystack, 2L)
+
+  res <- vec_locate_matches(needles, haystack, condition = c("<=", "<=", "<="), filter = c("none", "none", "max"), multiple = "any")
+  expect_identical(res$haystack, 1L)
 })
 
 test_that("single filter is applied to all columns", {
@@ -1087,6 +1118,10 @@ test_that("`filter` works with incomplete values", {
   expect_identical(res$haystack, c(2L, 4L, 1L, 3L, 5L, 1L, 3L))
 
   res <- vec_locate_matches(needles, haystack, condition = ">=", filter = "max", incomplete = "match", multiple = "first")
+  expect_identical(res$needles, 1:4)
+  expect_identical(res$haystack, c(2L, 1L, 5L, 1L))
+
+  res <- vec_locate_matches(needles, haystack, condition = ">=", filter = "max", incomplete = "match", multiple = "any")
   expect_identical(res$needles, 1:4)
   expect_identical(res$haystack, c(2L, 1L, 5L, 1L))
 
@@ -1165,7 +1200,7 @@ test_that("`condition = NULL` is correct in all possible cases", {
   one <- data_frame(.size = 1L)
   two <- data_frame(.size = 2L)
 
-  multiples <- c("all", "warning", "error", "first", "last")
+  multiples <- c("all", "warning", "error", "first", "last", "any")
 
   for (multiple in multiples) {
     # `zero` haystack
@@ -1201,6 +1236,10 @@ test_that("`condition = NULL` is correct in all possible cases", {
   expect_identical(matches(zero, two, multiple = "last"), exp(integer(), integer()))
   expect_identical(matches(one, two, multiple = "last"), exp(1, 2))
   expect_identical(matches(two, two, multiple = "last"), exp(1:2, c(2, 2)))
+
+  expect_identical(matches(zero, two, multiple = "any"), exp(integer(), integer()))
+  expect_identical(matches(one, two, multiple = "any"), exp(1, 1))
+  expect_identical(matches(two, two, multiple = "any"), exp(1:2, c(1, 1)))
 
   for (multiple in multiples) {
     # `zero` haystack with `no_match = "error"`

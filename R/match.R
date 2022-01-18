@@ -108,7 +108,10 @@
 #'     returned at the end of the result.
 #'
 #' @param multiple Handling of `needles` with multiple matches. For each needle:
-#'   - `"all"` returns every match detected in `haystack`.
+#'   - `"all"` returns all matches detected in `haystack`.
+#'   - `"any"` returns any match detected in `haystack` with no guarantees on
+#'     which match will be returned. It is often faster than `"first"` and
+#'     `"last"` if you just need to detect if there is at least one match.
 #'   - `"first"` returns the first match detected in `haystack`.
 #'   - `"last"` returns the last match detected in `haystack`.
 #'   - `"warning"` throws a warning if multiple matches are detected, but
