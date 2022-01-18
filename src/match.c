@@ -1728,7 +1728,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     }
 
     if (check_for_multiple) {
-      if (i < size_needles) {
+      if (loc < size_needles) {
         any_multiple = size_match > 1;
       } else {
         // Guaranteed second match if in the "extra" matches section

@@ -750,6 +750,31 @@ test_that("errors on multiple matches that come from different nesting container
   )
 })
 
+test_that("errors when a match from a different nesting container is processed early on", {
+  # Row 1 has 2 matches
+  # Row 2 has 0 matches
+  needles <- data_frame(
+    a = c(1, 8),
+    b = c(2, 9)
+  )
+
+  # Rows 1 and 2 end up in different nesting containers
+  haystack <- data_frame(
+    a = c(5, 6),
+    b = c(7, 6)
+  )
+
+  # needles[1,] records the haystack[1,] match first, which is in the 1st
+  # value of `loc_first_match_o_haystack`, then records the haystack[3,] match
+  # which is in the 3rd value of `loc_first_match_o_haystack` even though it
+  # is processed 2nd (i.e. we need to use `loc` rather than `i` when detecting
+  # multiple matches)
+  expect_error(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "error"),
+    "multiple matches"
+  )
+})
+
 test_that("`multiple = 'error'` doesn't error errneously on the last observation", {
   expect_error(res <- vec_locate_matches(1:2, 1:2, multiple = "error"), NA)
   expect_identical(res$needles, 1:2)
