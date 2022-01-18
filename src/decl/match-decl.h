@@ -165,7 +165,6 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 static
 r_obj* compute_nesting_container_info(r_obj* haystack,
                                       r_ssize size_haystack,
-                                      enum vctrs_multiple multiple,
                                       const enum vctrs_ops* v_ops,
                                       struct vctrs_arg* haystack_arg);
 
@@ -176,8 +175,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
                                      const int* v_outer_group_sizes,
                                      r_ssize size,
                                      r_ssize n_groups,
-                                     bool has_outer_group_sizes,
-                                     enum vctrs_multiple multiple);
+                                     bool has_outer_group_sizes);
 
 static inline
 bool p_nesting_container_df_compare_fully_ge_na_equal(const void* x,

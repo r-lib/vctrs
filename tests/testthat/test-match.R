@@ -775,6 +775,50 @@ test_that("errors when a match from a different nesting container is processed e
   )
 })
 
+test_that("correctly gets all matches when they come from different nesting containers", {
+  needles <- data_frame(
+    a = c(1, 8),
+    b = c(2, 9)
+  )
+  haystack <- data_frame(
+    a = c(6, 5),
+    b = c(6, 7)
+  )
+
+  expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "all"),
+    data_frame(needles = c(1L, 1L, 2L), haystack = c(1L, 2L, NA))
+  )
+})
+
+test_that("correctly gets first/last match when they come from different nesting containers", {
+  needles <- data_frame(
+    a = c(1, 8),
+    b = c(2, 9)
+  )
+  haystack <- data_frame(
+    a = c(6, 5, 0),
+    b = c(6, 7, 1)
+  )
+
+  expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "first"),
+    data_frame(needles = c(1L, 2L), haystack = c(1L, NA))
+  )
+  expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "last"),
+    data_frame(needles = c(1L, 2L), haystack = c(2L, NA))
+  )
+  expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "first", remaining = NA_integer_),
+    data_frame(needles = c(1L, 2L, NA, NA), haystack = c(1L, NA, 2L, 3L))
+  )
+  expect_identical(
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "last", remaining = NA_integer_),
+    data_frame(needles = c(1L, 2L, NA, NA), haystack = c(2L, NA, 1L, 3L))
+  )
+})
+
 test_that("`multiple = 'error'` doesn't error errneously on the last observation", {
   expect_error(res <- vec_locate_matches(1:2, 1:2, multiple = "error"), NA)
   expect_identical(res$needles, 1:2)
@@ -991,7 +1035,7 @@ test_that("`filter` works when valid matches are in different nesting containers
   needles <- data_frame(x = 0L, y = 1L, z = 2L)
   haystack <- data_frame(x = c(1L, 2L, 1L, 0L), y = c(2L, 1L, 2L, 3L), z = c(3L, 3L, 2L, 2L))
 
-  info <- compute_nesting_container_info(haystack, c("<=", "<=", "<="), "all")
+  info <- compute_nesting_container_info(haystack, c("<=", "<=", "<="))
   haystack_order <- info[[1]]
   container_ids <- info[[2]]
 
@@ -1216,47 +1260,4 @@ test_that("potential overflow on large output size is caught informatively", {
     (expect_error(vec_locate_matches(1:1e7, 1:1e7, condition = ">=")))
     (expect_error(vec_locate_matches(1:1e7, 1:1e7, condition = NULL)))
   })
-})
-
-# ------------------------------------------------------------------------------
-# vec_locate_matches() - nesting containers
-
-test_that("`multiple = 'first' doesn't require nesting containers if completely ordered", {
-  # Single nesting container.
-  # It is already completely ordered (in ascending order by value and row number).
-  df <- data_frame(x = c(1L, 1L, 2L, 3L))
-  res <- compute_nesting_container_info(df, ">=", "first")
-  container_ids <- res[[2]]
-  expect_identical(container_ids, integer())
-})
-
-test_that("`multiple = 'first'` requires increasing row order, and looks at group starts", {
-  # 2 different containers:
-  # - We are doing multiple = "first", so we are looking at group starts
-  # - Look at the 1 at location 2, it becomes the first group along with its
-  #   group partner at location 4.
-  # - Look at the 2 at location 3, it is greater than the 1 at location 1 in
-  #   both size and row number. It joins that group.
-  # - Look at the 3 at location 1, it is greater than the 1 at location 1,
-  #   but is smaller in row number. It becomes a new group with its partner at
-  #   location 5.
-  df <- data_frame(x = c(3L, 1L, 2L, 1L, 3L))
-  res <- compute_nesting_container_info(df, ">=", "first")
-  container_ids <- res[[2]]
-  expect_identical(container_ids, c(1L, 0L, 0L, 0L, 1L))
-})
-
-test_that("`multiple = 'last'` requires increasing row order, and looks at group ends", {
-  # 2 different containers:
-  # - We are doing multiple = "last", so we are looking at group ends
-  # - Look at the 1 at location 4, it becomes the first group along with its
-  #   group partner at location 2.
-  # - Look at the 2 at location 3, it is greater than the 1 at location 4,
-  #   but is smaller in row number. It becomes a new group.
-  # - Look at the 3 at location 5, it is greater than the 1 at location 4 in
-  #   both size and row number. It joins that group.
-  df <- data_frame(x = c(3L, 1L, 2L, 1L, 3L))
-  res <- compute_nesting_container_info(df, ">=", "last")
-  container_ids <- res[[2]]
-  expect_identical(container_ids, c(0L, 0L, 1L, 0L, 0L))
 })

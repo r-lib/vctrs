@@ -291,7 +291,6 @@ r_obj* df_locate_matches(r_obj* needles,
   r_obj* container_info = KEEP_N(compute_nesting_container_info(
     haystack,
     size_haystack,
-    multiple,
     v_ops,
     haystack_arg
   ), &n_prot);
@@ -328,7 +327,7 @@ r_obj* df_locate_matches(r_obj* needles,
   }
 
   // If we can skip, `size_match` will always be `1`
-  const bool skip_size_match = (multiple == VCTRS_MULTIPLE_first || multiple == VCTRS_MULTIPLE_last);
+  const bool skip_size_match = false;
 
   struct r_dyn_array* p_size_match = NULL;
   if (!skip_size_match) {
@@ -345,7 +344,7 @@ r_obj* df_locate_matches(r_obj* needles,
   }
 
   // If we can skip, `loc_needles` will always be an increasing sequence of values
-  const bool skip_loc_needles = (multiple == VCTRS_MULTIPLE_first || multiple == VCTRS_MULTIPLE_last);
+  const bool skip_loc_needles = false;
 
   struct r_dyn_array* p_loc_needles = NULL;
   if (!skip_loc_needles) {
@@ -369,7 +368,9 @@ r_obj* df_locate_matches(r_obj* needles,
     any_filters &&
     (multiple == VCTRS_MULTIPLE_all ||
      multiple == VCTRS_MULTIPLE_warning ||
-     multiple == VCTRS_MULTIPLE_error);
+     multiple == VCTRS_MULTIPLE_error ||
+     multiple == VCTRS_MULTIPLE_first ||
+     multiple == VCTRS_MULTIPLE_last);
 
   int* v_loc_filter_match_haystack = NULL;
   if (has_loc_filter_match_haystack) {
@@ -686,10 +687,6 @@ void df_locate_matches_recurse(r_ssize col,
         // Lower match value will already equal upper match value
         break;
       }
-      if (multiple == VCTRS_MULTIPLE_last) {
-        // "last" only requires the upper match, which already points to "max"
-        break;
-      }
 
       // We want the max values of this group. That's the upper match of the
       // haystack and its corresponding lower duplicate.
@@ -713,10 +710,6 @@ void df_locate_matches_recurse(r_ssize col,
     case VCTRS_FILTER_min: {
       if (!needle_is_complete || op == VCTRS_OPS_eq) {
         // Lower match value will already equal upper match value
-        break;
-      }
-      if (multiple == VCTRS_MULTIPLE_first) {
-        // "first" only requires the lower match, which already points to "min"
         break;
       }
 
@@ -781,81 +774,11 @@ void df_locate_matches_recurse(r_ssize col,
         const bool first_touch = loc_first_match_o_haystack == r_globals.na_int;
 
         switch (multiple) {
-        case VCTRS_MULTIPLE_first: {
-          if (first_touch) {
-            R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
-            break;
-          }
-
-          const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
-          const int loc_lower_match_haystack = v_o_haystack[loc_lower_match_o_haystack] - 1;
-
-          if (any_filters) {
-            int cmp = p_matches_df_compare_na_equal(
-              p_haystack,
-              loc_lower_match_haystack,
-              p_haystack,
-              loc_first_match_haystack,
-              v_filters
-            );
-
-            // -1 = New haystack value "loses", nothing to update
-            //  1 = New haystack value "wins", it becomes new match
-            //  0 = Equal values, fall through and decide based on location
-            if (cmp == -1) {
-              break;
-            } else if (cmp == 1) {
-              R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
-              break;
-            }
-          }
-
-          if (loc_lower_match_haystack < loc_first_match_haystack) {
-            // New match is before current one
-            R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
-          }
-
-          break;
-        }
-        case VCTRS_MULTIPLE_last: {
-          if (first_touch) {
-            R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_upper_match_o_haystack);
-            break;
-          }
-
-          const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
-          const int loc_upper_match_haystack = v_o_haystack[loc_upper_match_o_haystack] - 1;
-
-          if (any_filters) {
-            int cmp = p_matches_df_compare_na_equal(
-              p_haystack,
-              loc_upper_match_haystack,
-              p_haystack,
-              loc_first_match_haystack,
-              v_filters
-            );
-
-            // -1 = New haystack value "loses", nothing to update
-            //  1 = New haystack value "wins", it becomes new match
-            //  0 = Equal values, fall through and decide based on location
-            if (cmp == -1) {
-              break;
-            } else if (cmp == 1) {
-              R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_upper_match_o_haystack);
-              break;
-            }
-          }
-
-          if (loc_upper_match_haystack > loc_first_match_haystack) {
-            // New match is after current one
-            R_ARR_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_upper_match_o_haystack);
-          }
-
-          break;
-        }
         case VCTRS_MULTIPLE_all:
         case VCTRS_MULTIPLE_error:
-        case VCTRS_MULTIPLE_warning: {
+        case VCTRS_MULTIPLE_warning:
+        case VCTRS_MULTIPLE_first:
+        case VCTRS_MULTIPLE_last: {
           const int size_match = loc_upper_match_o_haystack - loc_lower_match_o_haystack + 1;
 
           if (first_touch) {
@@ -1566,9 +1489,13 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   const int* v_size_match = skip_size_match ? NULL : (const int*) r_arr_cbegin(p_size_match);
   const int* v_loc_needles = skip_loc_needles ? NULL : (const int*) r_arr_cbegin(p_loc_needles);
 
+  const bool one_match_per_needle =
+    multiple == VCTRS_MULTIPLE_first ||
+    multiple == VCTRS_MULTIPLE_last;
+
   r_ssize size_out = 0;
-  if (skip_size_match) {
-    size_out = n_used;
+  if (one_match_per_needle) {
+    size_out = size_needles;
   } else {
     double dbl_size_out = 0;
 
@@ -1602,7 +1529,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
   const int* v_o_loc_needles = NULL;
   if (!skip_loc_needles) {
-    // `loc_needles` is used when locating "all" matches. The first
+    // `loc_needles` is used when we compactly recorded all matches. The first
     // `size_needles` elements will be in order, but locations after that
     // are extra matches across different nesting containers and won't be in order.
     r_obj* loc_needles = KEEP_N(r_arr_unwrap(p_loc_needles), &n_prot);
@@ -1622,13 +1549,16 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     }
   }
 
-  r_ssize loc_out = 0;
-
   bool any_multiple = false;
   bool check_for_multiple =
     multiple == VCTRS_MULTIPLE_all ||
     multiple == VCTRS_MULTIPLE_error ||
     multiple == VCTRS_MULTIPLE_warning;
+
+  // For multiple = "first" / "last"
+  r_ssize loc_haystack_overall = r_globals.na_int;
+
+  r_ssize loc_out = 0;
 
   for (r_ssize i = 0; i < n_used; ++i) {
     const int loc = skip_loc_needles ? i : v_o_loc_needles[i] - 1;
@@ -1749,19 +1679,81 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
     int loc_o_haystack = loc_first_match_o_haystack;
 
-    for (r_ssize j = 0; j < size_match; ++j) {
-      const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
-
-      v_out_needles[loc_out] = loc_needles + 1;
-      v_out_haystack[loc_out] = loc_haystack + 1;
-
-      if (retain_remaining_haystack) {
-        // This haystack value was a match, so it isn't "remaining"
-        v_detect_remaining_haystack[loc_haystack] = 0;
+    switch (multiple) {
+    case VCTRS_MULTIPLE_first:
+    case VCTRS_MULTIPLE_last: {
+      if (skip_loc_needles) {
+        // We use `v_loc_needles` unconditionally below because it should always
+        // be available when finding the first/last match
+        r_stop_internal(
+          "expand_compact_indices",
+          "`skip_loc_needles` should never be `true` with `multiple = 'first'/'last'."
+        );
       }
 
-      ++loc_out;
-      ++loc_o_haystack;
+      for (r_ssize j = 0; j < size_match; ++j) {
+        const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
+
+        const bool loc_is_new_overall =
+          (loc_haystack_overall == r_globals.na_int) ||
+          (multiple == VCTRS_MULTIPLE_first && loc_haystack_overall > loc_haystack) ||
+          (multiple == VCTRS_MULTIPLE_last && loc_haystack_overall < loc_haystack);
+
+        if (loc_is_new_overall) {
+          loc_haystack_overall = loc_haystack;
+        }
+
+        ++loc_o_haystack;
+      }
+
+      const bool at_end_of_all_matches = (i == n_used - 1);
+
+      // Check if we are at the end of the vector or if the next needle location
+      // is different from this one, at which point we can record the match
+      // corresponding to the first/last result
+      bool at_end_of_needle_matches = true;
+
+      if (!at_end_of_all_matches) {
+        const int loc_next = v_o_loc_needles[i + 1] - 1;
+        const int loc_needles_next = v_loc_needles[loc_next];
+        at_end_of_needle_matches = (loc_needles != loc_needles_next);
+      }
+
+      if (at_end_of_needle_matches) {
+        v_out_needles[loc_out] = loc_needles + 1;
+        v_out_haystack[loc_out] = loc_haystack_overall + 1;
+
+        if (retain_remaining_haystack) {
+          // This haystack value was a match, so it isn't "remaining"
+          v_detect_remaining_haystack[loc_haystack_overall] = 0;
+        }
+
+        ++loc_out;
+        loc_haystack_overall = r_globals.na_int;
+      }
+
+      break;
+    }
+    case VCTRS_MULTIPLE_all:
+    case VCTRS_MULTIPLE_error:
+    case VCTRS_MULTIPLE_warning: {
+      for (r_ssize j = 0; j < size_match; ++j) {
+        const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
+
+        v_out_needles[loc_out] = loc_needles + 1;
+        v_out_haystack[loc_out] = loc_haystack + 1;
+
+        if (retain_remaining_haystack) {
+          // This haystack value was a match, so it isn't "remaining"
+          v_detect_remaining_haystack[loc_haystack] = 0;
+        }
+
+        ++loc_out;
+        ++loc_o_haystack;
+      }
+
+      break;
+    }
     }
   }
 
@@ -1862,21 +1854,18 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
 // [[ register() ]]
 r_obj* vctrs_test_compute_nesting_container_info(r_obj* haystack,
-                                                 r_obj* condition,
-                                                 r_obj* multiple) {
+                                                 r_obj* condition) {
   r_ssize n_cols = r_length(haystack);
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, n_cols, v_ops);
-  enum vctrs_multiple c_multiple = parse_multiple(multiple);
   const r_ssize size_haystack = vec_size(haystack);
   struct vctrs_arg haystack_arg = new_wrapper_arg(NULL, "haystack");
-  return compute_nesting_container_info(haystack, size_haystack, c_multiple, v_ops, &haystack_arg);
+  return compute_nesting_container_info(haystack, size_haystack, v_ops, &haystack_arg);
 }
 
 static
 r_obj* compute_nesting_container_info(r_obj* haystack,
                                       r_ssize size_haystack,
-                                      enum vctrs_multiple multiple,
                                       const enum vctrs_ops* v_ops,
                                       struct vctrs_arg* haystack_arg) {
   r_ssize n_prot = 0;
@@ -1998,19 +1987,17 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
     v_outer_group_sizes,
     size_haystack,
     n_groups,
-    has_outer_group_sizes,
-    multiple
+    has_outer_group_sizes
   ), &n_prot);
 
   const int n_containers = r_as_int(r_list_get(container_ids_info, 1));
 
   if (n_containers == 1) {
     // If only a single container exists at this point, either there was
-    // only 1 non-equi column which must already be in order (and we aren't
-    // doing multiple=first/last), or we hit the somewhat rare case of having
-    // a >1 col `haystack_container` data frame that is already in nested
-    // containment order. In that case, original haystack ordering is sufficient
-    // and we don't need the ids.
+    // only 1 non-equi column which must already be in order, or we hit the
+    // somewhat rare case of having a >1 col `haystack_container` data frame
+    // that is already in nested containment order. In that case, original
+    // haystack ordering is sufficient and we don't need the ids.
     r_list_poke(out, 0, o_haystack);
     r_list_poke(out, 1, vctrs_shared_empty_int);
     r_list_poke(out, 2, r_int(1));
@@ -2080,8 +2067,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
                                      const int* v_outer_group_sizes,
                                      r_ssize size,
                                      r_ssize n_groups,
-                                     bool has_outer_group_sizes,
-                                     enum vctrs_multiple multiple) {
+                                     bool has_outer_group_sizes) {
   if (!is_data_frame(x)) {
     r_stop_internal("compute_nesting_container_ids", "`x` must be a data frame.");
   }
@@ -2089,14 +2075,6 @@ r_obj* compute_nesting_container_ids(r_obj* x,
   int n_prot = 0;
 
   const r_ssize n_cols = r_length(x);
-
-  // For first/last, we require not only increasing order for each
-  // column, but also increasing row order as well. This can generate more
-  // containers, but ensures that the assignment loop of `df_matches_recurse()`
-  // works correctly for these cases.
-  const bool enforce_increasing_row_order =
-    multiple == VCTRS_MULTIPLE_first ||
-    multiple == VCTRS_MULTIPLE_last;
 
   r_obj* out = KEEP_N(r_alloc_list(2), &n_prot);
 
@@ -2119,10 +2097,9 @@ r_obj* compute_nesting_container_ids(r_obj* x,
     return out;
   }
 
-  if (n_cols == 1 && !enforce_increasing_row_order) {
+  if (n_cols == 1) {
     // If there is only 1 column, `x` is in increasing order already when
-    // ordered by `v_order`. If we don't require that the actual row numbers
-    // also be in order, then we are done.
+    // ordered by `v_order`.
     // If `v_outer_group_sizes` were supplied, within each group `x` will
     // be in increasing order (since the single `x` column is the one that
     // broke any ties), and that is all that is required.
@@ -2153,27 +2130,13 @@ r_obj* compute_nesting_container_ids(r_obj* x,
 
     const r_ssize group_size = v_group_sizes[i];
 
-    // For `multiple = "last"`, the reference row is the end of the group.
-    // This ensures the row order check works correctly.
-    const r_ssize loc_group_reference =
-      (multiple == VCTRS_MULTIPLE_last) ?
-      loc_group_start + group_size - 1 :
-      loc_group_start;
-
-    const int cur_row = v_order[loc_group_reference] - 1;
+    const int cur_row = v_order[loc_group_start] - 1;
 
     int container_id = 0;
     int n_container_ids_group = p_prev_rows->count;
 
     for (; container_id < n_container_ids_group; ++container_id) {
       const int prev_row = R_ARR_GET(int, p_prev_rows, container_id);
-
-      if (enforce_increasing_row_order && cur_row < prev_row) {
-        // Current row's location comes before the previous row.
-        // Since `multiple = "first"/"last"` require increasing row order per
-        // container, this means we can't add this to the current container.
-        continue;
-      }
 
       if (p_nesting_container_df_compare_fully_ge_na_equal(v_x, cur_row, v_x, prev_row)) {
         // Current row is fully greater than or equal to previous row.

@@ -140,7 +140,7 @@ extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
 extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
-extern r_obj* vctrs_test_compute_nesting_container_info(r_obj*, r_obj*, r_obj*);
+extern r_obj* vctrs_test_compute_nesting_container_info(r_obj*, r_obj*);
 extern r_obj* vctrs_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 
@@ -301,7 +301,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_drop_empty",                        (DL_FUNC) &vctrs_list_drop_empty, 1},
   {"vctrs_is_altrep",                              (DL_FUNC) &vctrs_is_altrep, 1},
   {"ffi_interleave_indices",                       (DL_FUNC) &ffi_interleave_indices, 2},
-  {"vctrs_test_compute_nesting_container_info",    (DL_FUNC) &vctrs_test_compute_nesting_container_info, 3},
+  {"vctrs_test_compute_nesting_container_info",    (DL_FUNC) &vctrs_test_compute_nesting_container_info, 2},
   {"vctrs_locate_matches",                         (DL_FUNC) &vctrs_locate_matches, 12},
   {NULL, NULL, 0}
 };
