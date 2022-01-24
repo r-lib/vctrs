@@ -107,7 +107,10 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
 }
 
 # Also thrown from C
-stop_assert_size <- function(actual, required, arg) {
+stop_assert_size <- function(actual,
+                             required,
+                             arg,
+                             call = caller_env()) {
   if (!nzchar(arg)) {
     arg <- "Input"
   } else {
@@ -120,12 +123,21 @@ stop_assert_size <- function(actual, required, arg) {
     message,
     class = "vctrs_error_assert_size",
     actual = actual,
-    required = required
+    required = required,
+    call = call
   )
 }
 
-stop_assert <- function(message = NULL, class = NULL, ...) {
-  stop_vctrs(message, class = c(class, "vctrs_error_assert"), ...)
+stop_assert <- function(message = NULL,
+                        class = NULL,
+                        ...,
+                        call = caller_env()) {
+  stop_vctrs(
+    message,
+    class = c(class, "vctrs_error_assert"),
+    ...,
+    call = call
+  )
 }
 
 #' @rdname vec_assert

@@ -3,7 +3,7 @@
     Code
       vec_rep(1, "x")
     Condition
-      Error in `stop_vctrs()`:
+      Error in `vec_default_cast()`:
       ! Can't convert `times` <character> to <integer>.
 
 ---
@@ -35,7 +35,7 @@
     Code
       vec_rep_each(1, "x")
     Condition
-      Error in `stop_vctrs()`:
+      Error in `vec_default_cast()`:
       ! Can't convert `times` <character> to <integer>.
 
 ---
@@ -75,6 +75,6 @@
     Code
       vec_rep_each(1:2, 1:3)
     Condition
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't recycle `times` (size 3) to size 2.
 

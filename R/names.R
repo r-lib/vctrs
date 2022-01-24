@@ -159,27 +159,31 @@ vec_as_names <- function(names,
   .Call(vctrs_as_names, names, repair, repair_arg, quiet)
 }
 
+# TODO! Error calls
 validate_name_repair_arg <- function(repair) {
   .Call(vctrs_validate_name_repair_arg, repair)
 }
 validate_minimal_names <- function(names, n = NULL) {
   .Call(vctrs_validate_minimal_names, names, n)
 }
-validate_unique <- function(names, arg = "", n = NULL) {
+validate_unique <- function(names,
+                            arg = "",
+                            n = NULL,
+                            call = caller_env()) {
   validate_minimal_names(names, n)
 
   empty_names <- detect_empty_names(names)
   if (has_length(empty_names)) {
-    stop_names_cannot_be_empty(names)
+    stop_names_cannot_be_empty(names, call = call)
   }
 
   dot_dot_name <- detect_dot_dot(names)
   if (has_length(dot_dot_name)) {
-    stop_names_cannot_be_dot_dot(names)
+    stop_names_cannot_be_dot_dot(names, call = call)
   }
 
   if (anyDuplicated(names)) {
-    stop_names_must_be_unique(names, arg)
+    stop_names_must_be_unique(names, arg, call = call)
   }
 
   invisible(names)

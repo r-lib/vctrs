@@ -17,7 +17,7 @@
       )
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error in `stop_vctrs()`:
+      Error:
       ! Names must be unique.
       x These names are duplicated:
         * "x" at locations 1 and 2.

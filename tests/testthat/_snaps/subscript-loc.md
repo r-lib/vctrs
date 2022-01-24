@@ -86,7 +86,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_vctrs()`:
+      Caused by error in `vec_cast.integer.double()`:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -99,7 +99,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_vctrs()`:
+      Caused by error in `vec_cast.integer.double()`:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -113,7 +113,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_vctrs()`:
+      Caused by error in `vec_cast.integer.double()`:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -141,7 +141,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error in `stop_vctrs()`:
+      Caused by error in `vec_cast.integer.double()`:
       ! Can't convert from `foo` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -206,7 +206,7 @@
       Error:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `stop_vctrs()`:
+      Caused by error in `vec_cast.integer.double()`:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -263,7 +263,7 @@
       Error:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error in `stop_vctrs()`:
+      Caused by error in `vec_cast.integer.double()`:
       ! Can't convert from `foo` <double> to <integer> due to loss of precision.
       * Locations: 1
 
@@ -274,7 +274,7 @@
       (expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
@@ -282,7 +282,7 @@
       (expect_error(vec_as_location(-10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't negate elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
@@ -290,7 +290,7 @@
       (expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
@@ -300,7 +300,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code
@@ -308,7 +308,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
 
@@ -538,7 +538,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 1.
       x Subscript contains non-consecutive location 3.
@@ -547,7 +547,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 1.
       x Subscript contains non-consecutive location 3.
@@ -556,7 +556,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 3.
       x Subscript contains non-consecutive locations 4 and 7.
@@ -565,7 +565,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 3.
       x Subscript contains non-consecutive locations 4 and 7.
@@ -574,7 +574,7 @@
       10), 3, oob = "extend")))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 3.
       x Subscript contains non-consecutive locations 4, 7, and 10.
@@ -586,7 +586,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Locations 2 and 3 don't exist.
       i There are only 1 element.
@@ -595,7 +595,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 1.
       x Subscript contains non-consecutive location 3.
@@ -705,7 +705,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 2.
       x Subscript `foo` contains non-consecutive location 4.
@@ -791,7 +791,7 @@
       class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't rename columns beyond the end with non-consecutive locations.
       i Input has size 2.
       x Subscript `foo(bar)` contains non-consecutive location 4.
@@ -812,7 +812,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code
@@ -821,7 +821,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 elements.
@@ -830,7 +830,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code
@@ -839,7 +839,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't rename columns that don't exist.
       x Column `foo` doesn't exist.
     Code
@@ -847,7 +847,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't rename columns that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 columns.
@@ -856,7 +856,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't rename columns that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 columns.
@@ -866,7 +866,7 @@
       class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't remove rows that don't exist.
       x Rows `foo` and `bar` don't exist.
     Code
@@ -874,7 +874,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't remove rows that don't exist.
       x Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
@@ -883,7 +883,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't remove rows that don't exist.
       x Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.

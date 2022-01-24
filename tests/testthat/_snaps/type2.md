@@ -16,7 +16,7 @@
     Code
       vec_ptype2("foo", 10)
     Condition
-      Error in `stop_vctrs()`:
+      Error in `vec_default_ptype2()`:
       ! Can't combine <character> and <double>.
 
 ---
@@ -26,7 +26,7 @@
       df2 <- tibble(x = tibble(y = tibble(z = "a")))
       vec_ptype2(df1, df2)
     Condition
-      Error in `stop_vctrs()`:
+      Error in `vec_default_ptype2()`:
       ! Can't combine `x$y$z` <double> and `x$y$z` <character>.
 
 # can override scalar vector error message for base scalar types
@@ -36,14 +36,14 @@
       )
     Output
       <error/vctrs_error_scalar_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! `foo` must be a vector, not a symbol.
     Code
       (expect_error(vec_ptype2(quote(x), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
       )
     Output
       <error/vctrs_error_scalar_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! `foo` must be a vector, not a symbol.
 
 # can override scalar vector error message for S3 types
@@ -53,14 +53,14 @@
       )
     Output
       <error/vctrs_error_scalar_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_ptype2(foobar(), NULL, x_arg = "foo"), class = "vctrs_error_scalar_type")
       )
     Output
       <error/vctrs_error_scalar_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! `foo` must be a vector, not a <vctrs_foobar> object.
 
 # ptype2 and cast errors when same class fallback is impossible are informative
@@ -70,7 +70,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error in `vec_default_cast()`:
       ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -80,7 +80,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error in `vec_default_ptype2()`:
       ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -103,14 +103,14 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error in `vec_default_cast()`:
       ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
     Code
       (expect_error(with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2,
         baz = TRUE))), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error in `vec_default_ptype2()`:
       ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
 
 # common type errors don't mention columns if they are compatible
@@ -123,7 +123,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error in `vec_default_cast()`:
       ! Can't convert <vctrs_foo> to <vctrs_bar>.
 
 # common type warnings for data frames take attributes into account
@@ -154,7 +154,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error in `vec_default_ptype2()`:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 
 # For reference, warning for incompatible classes
@@ -173,6 +173,6 @@
     Code
       vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))
     Condition
-      Error in `stop_vctrs()`:
+      Error in `vec_default_ptype2()`:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 
