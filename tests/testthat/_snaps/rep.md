@@ -3,7 +3,7 @@
     Code
       vec_rep(1, "x")
     Condition
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `times` <character> to <integer>.
 
 ---
@@ -35,7 +35,7 @@
     Code
       vec_rep_each(1, "x")
     Condition
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `times` <character> to <integer>.
 
 ---

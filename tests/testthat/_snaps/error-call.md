@@ -13,7 +13,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert <double> to <character>.
 
 # lossy cast reports correct error call

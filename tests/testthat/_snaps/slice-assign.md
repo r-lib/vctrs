@@ -92,7 +92,7 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `bar` <character> to match type of `foo` <integer>.
     Code
       (expect_error(vec_assign(1:2, 1L, 1:2, value_arg = "bar"), class = "vctrs_error_recycle_incompatible_size")

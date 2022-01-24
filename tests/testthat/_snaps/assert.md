@@ -185,6 +185,6 @@
       (expect_error(vec_assert(1, size = "x")))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `size` <character> to <integer>.
 

@@ -228,10 +228,10 @@ vector:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(TRUE, new_
 Because we haven’t implemented conversions \emph{from} natural, it still
 doesn’t know how to combine natural with the richer integer and double
 types:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(new_natural(1), 10L)
-#> Error in `vec_default_cast()`:
+#> Error:
 #> ! Can't convert <my_natural> to <integer>.
 vec_c(1.5, new_natural(1))
-#> Error in `vec_default_cast()`:
+#> Error:
 #> ! Can't convert <my_natural> to <double>.
 }\if{html}{\out{</div>}}
 

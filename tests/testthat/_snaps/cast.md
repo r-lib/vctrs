@@ -3,7 +3,7 @@
     Code
       vec_cast(1, "", x_arg = "foo", to_arg = "bar")
     Condition
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `foo` <double> to match type of `bar` <character>.
 
 ---
@@ -11,7 +11,7 @@
     Code
       vec_cast(1, "", x_arg = "foo")
     Condition
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `foo` <double> to <character>.
 
 # cast errors create helpful messages (#57, #225)
@@ -28,7 +28,7 @@
     Code
       vec_cast(factor("foo"), 10)
     Condition
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert <factor<c1562>> to <double>.
 
 ---
@@ -49,7 +49,7 @@
       y <- tibble(a = tibble(b = 10))
       vec_cast(x, y)
     Condition
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert `a$b` <factor<c1562>> to match type of `a$b` <double>.
 
 ---

@@ -64,7 +64,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert <vctrs_foobar> to <character>.
 
 # can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)

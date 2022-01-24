@@ -70,7 +70,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -103,7 +103,7 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error in `vec_cast.vctrs_foobar.vctrs_foobar()`:
       ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
     Code
       (expect_error(with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2,
@@ -123,7 +123,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert <vctrs_foo> to <vctrs_bar>.
 
 # common type warnings for data frames take attributes into account

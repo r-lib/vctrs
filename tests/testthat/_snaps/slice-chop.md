@@ -73,7 +73,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_cast()`:
+      Error:
       ! Can't convert <vctrs_foobar> to <character>.
 
 # vec_unchop() does not support non-numeric S3 indices

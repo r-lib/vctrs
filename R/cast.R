@@ -108,16 +108,39 @@ vec_cast_common_fallback <- function(..., .to = NULL) {
 #' @rdname vec_default_ptype2
 #' @inheritParams vec_cast
 #' @export
-vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_default_cast <- function(x,
+                             to,
+                             ...,
+                             x_arg = "",
+                             to_arg = "",
+                             call = caller_env()) {
   if (is_asis(x)) {
-    return(vec_cast_from_asis(x, to, x_arg = x_arg, to_arg = to_arg))
+    return(vec_cast_from_asis(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      call = call
+    ))
   }
   if (is_asis(to)) {
-    return(vec_cast_to_asis(x, to, x_arg = x_arg, to_arg = to_arg))
+    return(vec_cast_to_asis(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      call = call
+    ))
   }
 
   if (inherits(to, "vctrs_vctr") && !inherits(to, c("vctrs_rcrd", "vctrs_list_of"))) {
-    return(vctr_cast(x, to, x_arg = x_arg, to_arg = to_arg))
+    return(vctr_cast(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      call = call
+    ))
   }
 
   opts <- match_fallback_opts(...)
@@ -158,7 +181,8 @@ vec_default_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
     to,
     x_arg = x_arg,
     to_arg = to_arg,
-    `vctrs:::from_dispatch` = match_from_dispatch(...)
+    `vctrs:::from_dispatch` = match_from_dispatch(...),
+    call = call
   )
 }
 
