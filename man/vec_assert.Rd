@@ -5,7 +5,13 @@
 \alias{vec_is}
 \title{Assert an argument has known prototype and/or size}
 \usage{
-vec_assert(x, ptype = NULL, size = NULL, arg = as_label(substitute(x)))
+vec_assert(
+  x,
+  ptype = NULL,
+  size = NULL,
+  arg = caller_arg(x),
+  call = caller_env()
+)
 
 vec_is(x, ptype = NULL, size = NULL)
 }
@@ -22,6 +28,11 @@ class, its \code{\link[=vec_ptype]{vec_ptype()}} is compared to that of \code{x}
 \item{arg}{Name of argument being checked. This is used in error
 messages. The label of the expression passed as \code{x} is taken as
 default.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 \code{vec_is()} returns \code{TRUE} or \code{FALSE}. \code{vec_assert()} either

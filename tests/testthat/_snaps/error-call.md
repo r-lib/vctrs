@@ -68,6 +68,25 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_scalar_type>
-      Error in `vec_assert()`:
+      Error in `my_function()`:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_assert_ptype>
+      Error in `my_function()`:
+      ! `1:2` must be a vector with type <double>.
+      Instead, it has type <integer>.
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_assert_size>
+      Error in `my_function()`:
+      ! `1:2` must have size 1, not size 2.
 

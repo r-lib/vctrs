@@ -56,6 +56,8 @@
 #'
 #' Both errors inherit from `"vctrs_error_assert"`.
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x A vector argument to check.
 #' @param ptype Prototype to compare against. If the prototype has a
 #'   class, its [vec_ptype()] is compared to that of `x` with
@@ -70,9 +72,13 @@
 #'   throws a typed error (see section on error types) or returns `x`,
 #'   invisibly.
 #' @export
-vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x))) {
+vec_assert <- function(x,
+                       ptype = NULL,
+                       size = NULL,
+                       arg = caller_arg(x),
+                       call = caller_env()) {
   if (!vec_is_vector(x)) {
-    stop_scalar_type(x, arg)
+    stop_scalar_type(x, arg, call = call)
   }
 
   if (!is_null(ptype)) {
@@ -84,7 +90,8 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
         msg,
         class = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
         required = ptype,
-        actual = x_type
+        actual = x_type,
+        call = call
       )
     }
   }
@@ -99,7 +106,12 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
 
     x_size <- vec_size(x)
     if (!identical(x_size, size)) {
-      stop_assert_size(x_size, size, arg)
+      stop_assert_size(
+        x_size,
+        size,
+        arg,
+        call = call
+      )
     }
   }
 

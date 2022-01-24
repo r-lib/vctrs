@@ -34,4 +34,10 @@ test_that("unsupported error reports correct error call", {
 test_that("scalar error reports correct error call", {
   my_function <- function() vec_assert(foobar())
   expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_assert(1:2, dbl())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_assert(1:2, size = 1)
+  expect_snapshot((expect_error(my_function())))
 })
