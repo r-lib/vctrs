@@ -8,12 +8,14 @@ This error occurs when a function expects a vector and gets a scalar
 object instead. This commonly happens when some code attempts to assign
 a scalar object as column in a data frame:\if{html}{\out{<div class="sourceCode r">}}\preformatted{fn <- function() NULL
 tibble::tibble(x = fn)
-#> Error: All columns in a tibble must be vectors.
+#> Error:
+#> ! All columns in a tibble must be vectors.
 #> x Column `x` is a function.
 
 fit <- lm(1:3 ~ 1)
 tibble::tibble(x = fit)
-#> Error: All columns in a tibble must be vectors.
+#> Error:
+#> ! All columns in a tibble must be vectors.
 #> x Column `x` is a `lm` object.
 }\if{html}{\out{</div>}}
 }
@@ -48,7 +50,8 @@ fit[1:3]
 
 # But not in vctrs
 vctrs::vec_slice(fit, 1:3)
-#> Error: Input must be a vector, not a <lm> object.
+#> Error in `stop_vctrs()`:
+#> ! Input must be a vector, not a <lm> object.
 }\if{html}{\out{</div>}}
 
 Defused function calls are another (more esoteric) example:\if{html}{\out{<div class="sourceCode r">}}\preformatted{call <- quote(foo(bar = TRUE, baz = FALSE))
@@ -70,7 +73,8 @@ lapply(call, function(x) x)
 
 # But not with vctrs:
 vctrs::vec_slice(call, 1:2)
-#> Error: Input must be a vector, not a call.
+#> Error in `stop_vctrs()`:
+#> ! Input must be a vector, not a call.
 }\if{html}{\out{</div>}}
 }
 

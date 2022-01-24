@@ -24,7 +24,8 @@ functions that use the split-apply-combine strategy. For example:\if{html}{\out{
 #> [1] 1 1
 
 vec_c("a", 1)
-#> Error: Can't combine `..1` <character> and `..2` <double>.
+#> Error in `stop_vctrs()`:
+#> ! Can't combine `..1` <character> and `..2` <double>.
 
 vec_rbind(
   data.frame(x = TRUE),
@@ -38,7 +39,8 @@ vec_rbind(
   data.frame(x = "a"),
   data.frame(x = 1, y = 2)
 )
-#> Error: Can't combine `..1$x` <character> and `..2$x` <double>.
+#> Error in `stop_vctrs()`:
+#> ! Can't combine `..1$x` <character> and `..2$x` <double>.
 }\if{html}{\out{</div>}}
 
 One major goal of vctrs is to provide a central place for implementing
@@ -95,7 +97,8 @@ vec_ptype2(factor("a"), "b")
 
 # But they are incompatible with integers
 vec_ptype2(factor("a"), 1L)
-#> Error: Can't combine <factor<4d52a>> and <integer>.
+#> Error in `stop_vctrs()`:
+#> ! Can't combine <factor<4d52a>> and <integer>.
 }\if{html}{\out{</div>}}
 }
 

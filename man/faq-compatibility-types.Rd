@@ -21,7 +21,8 @@ are combined into a larger vector:
 not compatible:\if{html}{\out{<div class="sourceCode r">}}\preformatted{df1 <- data.frame(x = 1:3)
 df2 <- data.frame(x = "foo")
 dplyr::bind_rows(df1, df2)
-#> Error: Can't combine `..1$x` <integer> and `..2$x` <character>.
+#> Error in `dplyr::bind_rows()`:
+#> ! Can't combine `..1$x` <integer> and `..2$x` <character>.
 }\if{html}{\out{</div>}}
 \item The vectors are combined into a vector that has the common type of
 all inputs. In this example, the common type of integer and logical
@@ -57,7 +58,8 @@ When vctrs can’t convert a vector because the target type is not as rich
 as the source type, it throws a lossy cast error. Assigning a fractional
 number to an integer vector is a typical example of a lossy cast error:\if{html}{\out{<div class="sourceCode r">}}\preformatted{int_vector <- 1:3
 vec_assign(int_vector, 2, 0.001)
-#> Error: Can't convert from <double> to <integer> due to loss of precision.
+#> Error in `stop_vctrs()`:
+#> ! Can't convert from <double> to <integer> due to loss of precision.
 #> * Locations: 1
 }\if{html}{\out{</div>}}
 }

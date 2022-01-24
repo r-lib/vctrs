@@ -98,10 +98,12 @@ makes your class a bit more efficient.
 Our natural number class is conceptually a parent of \verb{<logical>} and a
 child of \verb{<integer>}, but the class is not compatible with logical,
 integer, or double vectors yet:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
-#> Error: Can't combine <logical> and <my_natural>.
+#> Error in `stop_vctrs()`:
+#> ! Can't combine <logical> and <my_natural>.
 
 vec_ptype2(new_natural(1), 2:3)
-#> Error: Can't combine <my_natural> and <integer>.
+#> Error in `stop_vctrs()`:
+#> ! Can't combine <my_natural> and <integer>.
 }\if{html}{\out{</div>}}
 
 We’ll specify the twin methods for each of these classes, returning the
@@ -226,9 +228,11 @@ vector:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(TRUE, new_
 Because we haven’t implemented conversions \emph{from} natural, it still
 doesn’t know how to combine natural with the richer integer and double
 types:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(new_natural(1), 10L)
-#> Error: Can't convert <my_natural> to <integer>.
+#> Error in `stop_vctrs()`:
+#> ! Can't convert <my_natural> to <integer>.
 vec_c(1.5, new_natural(1))
-#> Error: Can't convert <my_natural> to <double>.
+#> Error in `stop_vctrs()`:
+#> ! Can't convert <my_natural> to <double>.
 }\if{html}{\out{</div>}}
 
 This is quick work which completes the implementation of coercion
