@@ -4,7 +4,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine <double> and <character>.
 
 # failing cast reports correct error call

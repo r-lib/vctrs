@@ -16,7 +16,7 @@
     Code
       vec_ptype2("foo", 10)
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine <character> and <double>.
 
 ---
@@ -26,7 +26,7 @@
       df2 <- tibble(x = tibble(y = tibble(z = "a")))
       vec_ptype2(df1, df2)
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `x$y$z` <double> and `x$y$z` <character>.
 
 # can override scalar vector error message for base scalar types
@@ -80,7 +80,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -110,7 +110,7 @@
         baz = TRUE))), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error in `vec_ptype2.vctrs_foobar.vctrs_foobar()`:
       ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
 
 # common type errors don't mention columns if they are compatible
@@ -154,7 +154,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 
 # For reference, warning for incompatible classes
@@ -173,6 +173,6 @@
     Code
       vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 

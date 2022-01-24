@@ -5,9 +5,9 @@
 \alias{vec_default_ptype2}
 \title{Default cast and ptype2 methods}
 \usage{
-vec_default_cast(x, to, ..., x_arg = "", to_arg = "")
+vec_default_cast(x, to, ..., x_arg = "", to_arg = "", call = caller_env())
 
-vec_default_ptype2(x, y, ..., x_arg = "", y_arg = "")
+vec_default_ptype2(x, y, ..., x_arg = "", y_arg = "", call = caller_env())
 }
 \arguments{
 \item{x}{Vectors to cast.}

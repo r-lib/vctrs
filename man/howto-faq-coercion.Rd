@@ -98,11 +98,11 @@ makes your class a bit more efficient.
 Our natural number class is conceptually a parent of \verb{<logical>} and a
 child of \verb{<integer>}, but the class is not compatible with logical,
 integer, or double vectors yet:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
-#> Error in `vec_default_ptype2()`:
+#> Error:
 #> ! Can't combine <logical> and <my_natural>.
 
 vec_ptype2(new_natural(1), 2:3)
-#> Error in `vec_default_ptype2()`:
+#> Error:
 #> ! Can't combine <my_natural> and <integer>.
 }\if{html}{\out{</div>}}
 

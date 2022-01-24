@@ -59,6 +59,6 @@
       y <- tibble(a = tibble(b = 10))
       vec_cast_common(x, y)
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `..1$a$b` <factor<c1562>> and `..2$a$b` <double>.
 

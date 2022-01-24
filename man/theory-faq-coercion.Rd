@@ -24,7 +24,7 @@ functions that use the split-apply-combine strategy. For example:\if{html}{\out{
 #> [1] 1 1
 
 vec_c("a", 1)
-#> Error in `vec_default_ptype2()`:
+#> Error:
 #> ! Can't combine `..1` <character> and `..2` <double>.
 
 vec_rbind(
@@ -39,7 +39,7 @@ vec_rbind(
   data.frame(x = "a"),
   data.frame(x = 1, y = 2)
 )
-#> Error in `vec_default_ptype2()`:
+#> Error:
 #> ! Can't combine `..1$x` <character> and `..2$x` <double>.
 }\if{html}{\out{</div>}}
 
@@ -97,7 +97,7 @@ vec_ptype2(factor("a"), "b")
 
 # But they are incompatible with integers
 vec_ptype2(factor("a"), 1L)
-#> Error in `vec_default_ptype2()`:
+#> Error:
 #> ! Can't combine <factor<4d52a>> and <integer>.
 }\if{html}{\out{</div>}}
 }

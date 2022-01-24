@@ -3,7 +3,7 @@
     Code
       vec_c(df1, df2)
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `..1$x$y$z` <double> and `..2$x$y$z` <character>.
 
 ---
@@ -11,7 +11,7 @@
     Code
       vec_c(df1, df1, df2)
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `..1$x$y$z` <double> and `..3$x$y$z` <character>.
 
 ---
@@ -19,7 +19,7 @@
     Code
       vec_c(foo = df1, bar = df2)
     Condition
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `foo$x$y$z` <double> and `bar$x$y$z` <character>.
 
 # vec_c() fails with complex foreign S3 classes
@@ -30,7 +30,7 @@
       (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -44,7 +44,7 @@
       (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -74,7 +74,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_default_ptype2()`:
+      Error:
       ! Can't combine `a` <character> and `b` <double>.
 
 # concatenation performs expected allocations
