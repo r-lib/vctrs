@@ -2,7 +2,7 @@
 
     Code
       out <- vec_rbind(data_frame(...1 = 1), 1)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
 
@@ -10,7 +10,7 @@
 
     Code
       (expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `x` -> `x...1`
       * `x` -> `x...2`
@@ -20,7 +20,7 @@
     Code
       (expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1",
         "x...2")))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `x` -> `x...1`
       * `x` -> `x...2`
@@ -32,7 +32,7 @@
 
     Code
       vec_rbind(1, 2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -43,7 +43,7 @@
       2    2
     Code
       vec_rbind(1, 2, .names_to = NULL)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -54,7 +54,7 @@
       2    2
     Code
       vec_rbind(1, 2, ...10 = 3)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -68,7 +68,7 @@
       3    3
     Code
       vec_rbind(1, 2, ...10 = 3, .names_to = NULL)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -82,7 +82,7 @@
       ...3    3
     Code
       vec_rbind(a = 1, b = 2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -93,7 +93,7 @@
       2    2
     Code
       vec_rbind(a = 1, b = 2, .names_to = NULL)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -146,7 +146,7 @@
 
     Code
       vec_cbind(1, 2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -155,7 +155,7 @@
       1    1    2
     Code
       vec_cbind(1, 2, ...10 = 3)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -170,7 +170,7 @@
       1 1 2
     Code
       vec_cbind(c(a = 1), c(b = 2))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -187,7 +187,8 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      Error in `stop_vctrs()`:
+      ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -201,7 +202,8 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+      Error in `stop_vctrs()`:
+      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 
 # row-binding performs expected allocations
 

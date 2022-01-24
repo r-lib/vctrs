@@ -5,7 +5,8 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine <double> and <character>.
+      Error in `stop_vctrs()`:
+      ! Can't combine <double> and <character>.
 
 # AsIs objects throw cast errors with their underlying types
 
@@ -14,5 +15,6 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't convert <double> to <factor<bf275>>.
+      Error in `stop_vctrs()`:
+      ! Can't convert <double> to <factor<bf275>>.
 
