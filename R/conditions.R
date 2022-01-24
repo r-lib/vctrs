@@ -436,10 +436,10 @@ maybe_lossy_cast <- function(result, x, to,
                              loss_type = c("precision", "generality"),
                              x_arg,
                              to_arg,
+                             call = caller_env(),
                              details = NULL,
                              message = NULL,
                              class = NULL,
-                             error_call = caller_env(),
                              .deprecation = FALSE) {
   if (!any(lossy)) {
     return(result)
@@ -465,7 +465,7 @@ maybe_lossy_cast <- function(result, x, to,
       details = details,
       message = message,
       class = class,
-      call = error_call
+      call = call
     )
   )
 }
@@ -825,6 +825,7 @@ ensure_full_stop <- function(x) {
 }
 
 
+# TODO! cli + .internal
 stop_native_implementation <- function(fn) {
   abort(paste_line(
     glue::glue("`{fn}()` is implemented at C level."),

@@ -230,7 +230,7 @@ vec_index <- function(x, i, ...) {
 #' vec_init(Sys.Date(), 5)
 #' vec_init(mtcars, 2)
 vec_init <- function(x, n = 1L) {
-  .Call(vctrs_init, x, n)
+  .Call(ffi_init, x, n, environment())
 }
 
 # Exposed for testing (`start` is 0-based)

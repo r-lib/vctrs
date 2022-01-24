@@ -86,7 +86,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `vec_cast.integer.double()`:
+      Caused by error:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -99,7 +99,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `vec_cast.integer.double()`:
+      Caused by error:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -113,7 +113,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `vec_cast.integer.double()`:
+      Caused by error:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -141,7 +141,7 @@
       Caused by error:
       ! Must extract element with a single valid subscript.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error in `vec_cast.integer.double()`:
+      Caused by error:
       ! Can't convert from `foo` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -206,7 +206,7 @@
       Error:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error in `vec_cast.integer.double()`:
+      Caused by error:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -263,7 +263,7 @@
       Error:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error in `vec_cast.integer.double()`:
+      Caused by error:
       ! Can't convert from `foo` <double> to <integer> due to loss of precision.
       * Locations: 1
 

@@ -12,7 +12,7 @@ ones <- function(...) {
 }
 
 vec_coerce_bare <- function(x, type) {
-  # Unexported wrapper around Rf_coerceVector()
+  # FIXME! Unexported wrapper around Rf_coerceVector()
   coerce <- env_get(ns_env("rlang"), "vec_coerce")
   coerce(x, type)
 }

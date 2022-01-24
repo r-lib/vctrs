@@ -37,11 +37,15 @@ vec_ptype2 <- function(x,
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
   }
-  # FIXME! Error call
-  return(.Call(vctrs_ptype2, x, y, x_arg, y_arg))
+  return(.Call(ffi_ptype2, x, y, x_arg, y_arg, environment()))
   UseMethod("vec_ptype2")
 }
-vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2_dispatch_s3 <- function(x,
+                                   y,
+                                   ...,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   call = caller_env()) {
   UseMethod("vec_ptype2")
 }
 

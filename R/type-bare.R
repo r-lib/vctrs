@@ -177,19 +177,57 @@ vec_cast.logical.logical <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.logical integer
-vec_cast.logical.integer <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.integer <- function(x,
+                                     to,
+                                     ...,
+                                     x_arg = "",
+                                     to_arg = "",
+                                     call = caller_env()) {
   out <- vec_coerce_bare(x, "logical")
-  out <- shape_broadcast(out, to, x_arg = x_arg, to_arg = to_arg)
+  out <- shape_broadcast(
+    out,
+    to,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    call = call
+  )
   lossy <- !x %in% c(0L, 1L, NA_integer_)
-  maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+  maybe_lossy_cast(
+    out,
+    x,
+    to,
+    lossy,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    call = call
+  )
 }
 #' @export
 #' @method vec_cast.logical double
-vec_cast.logical.double <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.logical.double <- function(x,
+                                    to,
+                                    ...,
+                                    x_arg = "",
+                                    to_arg = "",
+                                    call = caller_env()) {
   out <- vec_coerce_bare(x, "logical")
-  out <- shape_broadcast(out, to, x_arg = x_arg, to_arg = to_arg)
+  out <- shape_broadcast(
+    out,
+    to,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    call = call
+  )
   lossy <- !x %in% c(0, 1, NA_real_)
-  maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+  maybe_lossy_cast(
+    out,
+    x,
+    to,
+    lossy,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    call = call
+  )
 }
 
 #' @export
@@ -212,12 +250,32 @@ vec_cast.integer.integer <- function(x, to, ...) {
 }
 #' @export
 #' @method vec_cast.integer double
-vec_cast.integer.double <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast.integer.double <- function(x,
+                                    to,
+                                    ...,
+                                    x_arg = "",
+                                    to_arg = "",
+                                    call = caller_env()) {
   out <- suppressWarnings(vec_coerce_bare(x, "integer"))
   x_na <- is.na(x)
   lossy <- (out != x & !x_na) | xor(x_na, is.na(out))
-  out <- shape_broadcast(out, to, x_arg = x_arg, to_arg = to_arg)
-  maybe_lossy_cast(out, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+
+  out <- shape_broadcast(
+    out,
+    to,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    call = call
+  )
+  maybe_lossy_cast(
+    out,
+    x,
+    to,
+    lossy,
+    x_arg = x_arg,
+    to_arg = to_arg,
+    call = call
+  )
 }
 
 #' @export

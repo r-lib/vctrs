@@ -43,7 +43,7 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                                        location_default_assign_opts));
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg));
+  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, r_lazy_null));
   value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));
@@ -424,7 +424,7 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
   const struct vec_assign_opts* opts = &vec_assign_default_opts;
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg));
+  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, r_lazy_null));
   value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
 
   SEXP proxy = PROTECT(vec_proxy(x));

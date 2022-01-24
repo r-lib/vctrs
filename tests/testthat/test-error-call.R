@@ -41,3 +41,18 @@ test_that("scalar error reports correct error call", {
   my_function <- function() vec_assert(1:2, size = 1)
   expect_snapshot((expect_error(my_function())))
 })
+
+test_that("bare casts report correct error call", {
+  my_function <- function() vec_cast(1.5, int())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_cast(1.5, lgl())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_cast(2L, lgl())
+  expect_snapshot((expect_error(my_function())))
+
+  # Passing call to `shape_broadcast()`
+  my_function <- function() vec_cast(matrix(TRUE), dbl())
+  expect_snapshot((expect_error(my_function())))
+})

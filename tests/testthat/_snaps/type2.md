@@ -103,14 +103,14 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_cast.vctrs_foobar.vctrs_foobar()`:
+      Error:
       ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
     Code
       (expect_error(with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2,
         baz = TRUE))), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `vec_ptype2.vctrs_foobar.vctrs_foobar()`:
+      Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
 
 # common type errors don't mention columns if they are compatible

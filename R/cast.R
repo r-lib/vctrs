@@ -8,6 +8,7 @@
 #'
 #' @includeRmd man/faq/developer/links-coercion.Rmd
 #'
+#' @inheritParams rlang::args_error_context
 #' @param x Vectors to cast.
 #' @param ... For `vec_cast_common()`, vectors to cast. For
 #'   `vec_cast()`, `vec_cast_default()`, and `vec_restore()`, these
@@ -62,11 +63,16 @@
 #'
 #' # Cast to common type
 #' vec_cast_common(factor("a"), factor(c("a", "b")))
-vec_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+vec_cast <- function(x,
+                     to,
+                     ...,
+                     x_arg = "",
+                     to_arg = "",
+                     call = caller_env()) {
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
   }
-  return(.Call(vctrs_cast, x, to, x_arg, to_arg))
+  return(.Call(ffi_cast, x, to, x_arg, to_arg, environment()))
   UseMethod("vec_cast", to)
 }
 vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {

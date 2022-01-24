@@ -385,12 +385,17 @@ SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
                       struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
 
 #include "cast.h"
-static inline SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+static inline r_obj* vec_cast(r_obj* x,
+                              r_obj* to,
+                              struct vctrs_arg* x_arg,
+                              struct vctrs_arg* to_arg,
+                              struct r_lazy call) {
   struct cast_opts opts = {
     .x = x,
     .to = to,
     .x_arg = x_arg,
-    .to_arg = to_arg
+    .to_arg = to_arg,
+    .call = call
   };
   return vec_cast_opts(&opts);
 }

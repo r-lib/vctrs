@@ -19,7 +19,7 @@
     Code
       vec_cast(1.5, 10L)
     Condition
-      Error in `vec_cast.integer.double()`:
+      Error:
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
 
@@ -38,7 +38,7 @@
       y <- tibble(a = tibble(b = 10L))
       vec_cast(x, y)
     Condition
-      Error in `vec_cast.integer.double()`:
+      Error:
       ! Can't convert from `a$b` <double> to `a$b` <integer> due to loss of precision.
       * Locations: 1
 

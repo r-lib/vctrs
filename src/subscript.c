@@ -73,9 +73,17 @@ SEXP vec_as_subscript_opts(SEXP subscript,
   if (opts->logical == SUBSCRIPT_TYPE_ACTION_ERROR && vec_is_unspecified(subscript)) {
     struct vctrs_arg* arg = opts->subscript_arg;
     if (opts->numeric == SUBSCRIPT_TYPE_ACTION_CAST) {
-      subscript = vec_cast(subscript, vctrs_shared_empty_int, arg, NULL);
+      subscript = vec_cast(subscript,
+                           vctrs_shared_empty_int,
+                           arg,
+                           NULL,
+                           r_lazy_null);
     } else {
-      subscript = vec_cast(subscript, vctrs_shared_empty_chr, arg, NULL);
+      subscript = vec_cast(subscript,
+                           vctrs_shared_empty_chr,
+                           arg,
+                           NULL,
+                           r_lazy_null);
     }
   }
   REPROTECT(subscript, subscript_pi);

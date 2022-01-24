@@ -22,7 +22,11 @@ static SEXP vec_rep(SEXP x, int times);
 
 // [[ register() ]]
 SEXP vctrs_rep(SEXP x, SEXP times) {
-  times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
+  times = PROTECT(vec_cast(times,
+                           vctrs_shared_empty_int,
+                           args_times,
+                           args_empty,
+                           r_lazy_null));
 
   if (vec_size(times) != 1) {
     stop_rep_times_size();
@@ -86,7 +90,11 @@ static SEXP vec_rep_each_uniform(SEXP x, int times);
 static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size);
 
 static SEXP vec_rep_each(SEXP x, SEXP times) {
-  times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
+  times = PROTECT(vec_cast(times,
+                           vctrs_shared_empty_int,
+                           args_times,
+                           args_empty,
+                           r_lazy_null));
 
   const R_len_t times_size = vec_size(times);
 

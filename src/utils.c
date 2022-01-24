@@ -1593,6 +1593,7 @@ SEXP syms_message = NULL;
 SEXP syms_chr_proxy_collate = NULL;
 SEXP syms_actual = NULL;
 SEXP syms_required = NULL;
+SEXP syms_call = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1635,6 +1636,8 @@ void c_print_backtrace() {
   Rprintf("vctrs must be compliled with -DRLIB_DEBUG.");
 #endif
 }
+
+struct r_lazy r_lazy_null = (struct r_lazy) { 0 };
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -1860,6 +1863,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_chr_proxy_collate = Rf_install("chr_proxy_collate");
   syms_actual = Rf_install("actual");
   syms_required = Rf_install("required");
+  syms_call = Rf_install("call");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

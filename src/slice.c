@@ -483,14 +483,22 @@ SEXP vec_init(SEXP x, R_len_t n) {
 }
 
 // [[ register() ]]
-SEXP vctrs_init(SEXP x, SEXP n) {
-  n = PROTECT(vec_cast(n, vctrs_shared_empty_int, args_n, args_empty));
-  vec_assert_size(n, 1, args_n);
-  R_len_t n_ = r_int_get(n, 0);
+r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
+  struct r_lazy frame = { .x = ffi_frame, .env = r_null };
 
-  SEXP out = vec_init(x, n_);
+  ffi_n = KEEP(vec_cast(ffi_n,
+                        vctrs_shared_empty_int,
+                        args_n,
+                        args_empty,
+                        frame));
+  // TODO! Pass `frame`
+  vec_assert_size(ffi_n, 1, args_n);
 
-  UNPROTECT(1);
+  // TODO! Pass `frame`
+  r_ssize n = r_int_get(ffi_n, 0);
+  r_obj* out = vec_init(x, n);
+
+  FREE(1);
   return out;
 }
 

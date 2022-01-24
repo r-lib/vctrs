@@ -22,7 +22,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_cast_lossy>
-      Error in `vec_cast.logical.double()`:
+      Error in `my_function()`:
       ! Can't convert from <double> to <logical> due to loss of precision.
       * Locations: 1
 
@@ -89,4 +89,44 @@
       <error/vctrs_error_assert_size>
       Error in `my_function()`:
       ! `1:2` must have size 1, not size 2.
+
+# bare casts report correct error call
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from <double> to <logical> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from <integer> to <logical> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't convert <double[,1]> to <double>.
+      Cannot decrease dimensions.
 

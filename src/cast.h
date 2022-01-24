@@ -4,10 +4,11 @@
 #include "ptype2.h"
 
 struct cast_opts {
-  SEXP x;
-  SEXP to;
+  r_obj* x;
+  r_obj* to;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* to_arg;
+  struct r_lazy call;
   struct fallback_opts fallback;
 };
 

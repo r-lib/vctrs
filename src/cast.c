@@ -17,11 +17,17 @@ SEXP vec_cast_switch_native(const struct cast_opts* opts,
 static SEXP vec_cast_dispatch_s3(const struct cast_opts* opts);
 
 // [[ register() ]]
-SEXP vctrs_cast(SEXP x, SEXP to, SEXP x_arg_, SEXP to_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg to_arg = vec_as_arg(to_arg_);
+r_obj* ffi_cast(r_obj* x,
+                r_obj* to,
+                r_obj* ffi_x_arg,
+                r_obj* ffi_to_arg,
+                r_obj* frame) {
+  struct vctrs_arg x_arg = vec_as_arg(ffi_x_arg);
+  struct vctrs_arg to_arg = vec_as_arg(ffi_to_arg);
 
-  return vec_cast(x, to, &x_arg, &to_arg);
+  struct r_lazy call = { .x = syms_call, .env = frame };
+
+  return vec_cast(x, to, &x_arg, &to_arg, call);
 }
 
 // [[ include("cast.h") ]]
@@ -192,12 +198,13 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
     return out;
   }
 
-  SEXP out = vec_invoke_coerce_method(method_sym, method,
-                                      syms_x, x,
-                                      syms_to, to,
-                                      syms_x_arg, r_x_arg,
-                                      syms_to_arg, r_to_arg,
-                                      &(opts->fallback));
+  r_obj* out = vec_invoke_coerce_method(method_sym, method,
+                                        syms_x, x,
+                                        syms_to, to,
+                                        syms_x_arg, r_x_arg,
+                                        syms_to_arg, r_to_arg,
+                                        opts->call,
+                                        &(opts->fallback));
 
   UNPROTECT(3);
   return out;

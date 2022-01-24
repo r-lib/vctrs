@@ -178,7 +178,7 @@
       (expect_error(vec_assert(1, size = 1.5)))
     Output
       <error/vctrs_error_cast_lossy>
-      Error in `vec_cast.integer.double()`:
+      Error in `vec_assert()`:
       ! Can't convert from `size` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code

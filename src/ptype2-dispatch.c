@@ -138,38 +138,46 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
                                       syms_y, y,
                                       syms_x_arg, r_x_arg,
                                       syms_y_arg, r_y_arg,
+                                      opts->call,
                                       &(opts->fallback));
 
   UNPROTECT(5);
   return out;
 }
 
-SEXP vec_invoke_coerce_method(SEXP method_sym, SEXP method,
-                              SEXP x_sym, SEXP x,
-                              SEXP y_sym, SEXP y,
-                              SEXP x_arg_sym, SEXP x_arg,
-                              SEXP y_arg_sym, SEXP y_arg,
-                              const struct fallback_opts* opts) {
+r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
+                                r_obj* x_sym, r_obj* x,
+                                r_obj* y_sym, r_obj* y,
+                                r_obj* x_arg_sym, r_obj* x_arg,
+                                r_obj* y_arg_sym, r_obj* y_arg,
+                                struct r_lazy lazy_call,
+                                const struct fallback_opts* opts) {
+  r_obj* call = KEEP(r_lazy_eval(lazy_call));
+
   if (opts->df != DF_FALLBACK_DEFAULT ||
       opts->s3 != S3_FALLBACK_DEFAULT) {
-    SEXP df_fallback_obj = PROTECT(r_int(opts->df));
-    SEXP s3_fallback_obj = PROTECT(r_int(opts->s3));
+    r_obj* df_fallback_obj = KEEP(r_int(opts->df));
+    r_obj* s3_fallback_obj = KEEP(r_int(opts->s3));
 
-    SEXP out = vctrs_dispatch6(method_sym, method,
-                               x_sym, x,
-                               y_sym, y,
-                               x_arg_sym, x_arg,
-                               y_arg_sym, y_arg,
-                               syms_df_fallback, df_fallback_obj,
-                               syms_s3_fallback, s3_fallback_obj);
-    UNPROTECT(2);
+    r_obj* out = vctrs_dispatch7(method_sym, method,
+                                 x_sym, x,
+                                 y_sym, y,
+                                 x_arg_sym, x_arg,
+                                 y_arg_sym, y_arg,
+                                 syms_call, call,
+                                 syms_df_fallback, df_fallback_obj,
+                                 syms_s3_fallback, s3_fallback_obj);
+    FREE(3);
     return out;
   } else {
-    return vctrs_dispatch4(method_sym, method,
-                           x_sym, x,
-                           y_sym, y,
-                           x_arg_sym, x_arg,
-                           y_arg_sym, y_arg);
+    r_obj* out = vctrs_dispatch5(method_sym, method,
+                                 x_sym, x,
+                                 y_sym, y,
+                                 x_arg_sym, x_arg,
+                                 y_arg_sym, y_arg,
+                                 syms_call, call);
+    FREE(1);
+    return out;
   }
 }
 
