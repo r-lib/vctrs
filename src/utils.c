@@ -135,6 +135,19 @@ SEXP vctrs_eval_mask7(SEXP fn,
   SEXP args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
   return vctrs_eval_mask_n(fn, syms, args);
 }
+r_obj* vctrs_eval_mask8(r_obj* fn,
+                        r_obj* x1_sym, r_obj* x1,
+                        r_obj* x2_sym, r_obj* x2,
+                        r_obj* x3_sym, r_obj* x3,
+                        r_obj* x4_sym, r_obj* x4,
+                        r_obj* x5_sym, r_obj* x5,
+                        r_obj* x6_sym, r_obj* x6,
+                        r_obj* x7_sym, r_obj* x7,
+                        r_obj* x8_sym, r_obj* x8) {
+  r_obj* syms[9] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, x8_sym, NULL };
+  r_obj* args[9] = { x1, x2, x3, x4, x5, x6, x7, x8, NULL };
+  return vctrs_eval_mask_n(fn, syms, args);
+}
 
 /**
  * Dispatch in the current environment

@@ -4,7 +4,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `my_function()`:
       ! Can't combine <double> and <character>.
 
 # failing cast reports correct error call

@@ -51,22 +51,25 @@ SEXP vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
 static SEXP syms_vec_ptype2_default = NULL;
 
 static inline
-SEXP vec_ptype2_default(SEXP x,
-                        SEXP y,
-                        SEXP x_arg,
-                        SEXP y_arg,
-                        const struct fallback_opts* opts) {
-  SEXP df_fallback_obj = PROTECT(r_int(opts->df));
-  SEXP s3_fallback_obj = PROTECT(r_int(opts->s3));
-  SEXP out = vctrs_eval_mask7(syms_vec_ptype2_default,
-                              syms_x, x,
-                              syms_y, y,
-                              syms_x_arg, x_arg,
-                              syms_y_arg, y_arg,
-                              syms_from_dispatch, vctrs_shared_true,
-                              syms_df_fallback, df_fallback_obj,
-                              syms_s3_fallback, s3_fallback_obj);
-  UNPROTECT(2);
+r_obj* vec_ptype2_default(r_obj* x,
+                          r_obj* y,
+                          r_obj* x_arg,
+                          r_obj* y_arg,
+                          struct r_lazy call,
+                          const struct fallback_opts* opts) {
+  r_obj* df_fallback_obj = KEEP(r_int(opts->df));
+  r_obj* s3_fallback_obj = KEEP(r_int(opts->s3));
+  r_obj* ffi_call = KEEP(r_lazy_eval(call));
+  r_obj* out = vctrs_eval_mask8(syms_vec_ptype2_default,
+                                syms_x, x,
+                                syms_y, y,
+                                syms_x_arg, x_arg,
+                                syms_y_arg, y_arg,
+                                syms_call, ffi_call,
+                                syms_from_dispatch, vctrs_shared_true,
+                                syms_df_fallback, df_fallback_obj,
+                                syms_s3_fallback, s3_fallback_obj);
+  FREE(3);
   return out;
 }
 
@@ -128,7 +131,12 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x, y, r_x_arg, r_y_arg, &(opts->fallback));
+    SEXP out = vec_ptype2_default(x,
+                                  y,
+                                  r_x_arg,
+                                  r_y_arg,
+                                  opts->call,
+                                  &(opts->fallback));
     UNPROTECT(5);
     return out;
   }
@@ -197,7 +205,12 @@ SEXP vctrs_ptype2_dispatch_native(SEXP x,
   SEXP out = vec_ptype2_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(y), &_left);
 
   if (out == R_NilValue) {
-    return vec_ptype2_default(x, y, x_arg, y_arg, &c_opts.fallback);
+    return vec_ptype2_default(x,
+                              y,
+                              x_arg,
+                              y_arg,
+                              c_opts.call,
+                              &c_opts.fallback);
   } else {
     return out;
   }

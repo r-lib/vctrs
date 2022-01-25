@@ -73,7 +73,8 @@ r_obj* vec_ptype2(r_obj* x,
     .x = x,
     .y = y,
     .x_arg = x_arg,
-    .y_arg = y_arg
+    .y_arg = y_arg,
+    .call = call
   };
   return vec_ptype2_opts(&opts, left);
 }
