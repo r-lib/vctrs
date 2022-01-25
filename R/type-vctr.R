@@ -414,7 +414,7 @@ na.fail.vctrs_vctr <- function(object, ...) {
 
   if (any(missing)) {
     # Return the same error as `na.fail.default()`
-    stop("missing values in object")
+    abort("missing values in object")
   }
 
   object
