@@ -76,7 +76,7 @@ extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
 extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
-extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
+extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_assign_seq(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
@@ -232,7 +232,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
   {"vctrs_bare_df_restore",            (DL_FUNC) &vctrs_bare_df_restore, 3},
-  {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 3},
+  {"ffi_recycle",                      (DL_FUNC) &ffi_recycle, 4},
   {"vctrs_assign",                     (DL_FUNC) &vctrs_assign, 5},
   {"vctrs_assign_seq",                 (DL_FUNC) &vctrs_assign_seq, 5},
   {"vctrs_set_attributes",             (DL_FUNC) &vctrs_set_attributes, 2},

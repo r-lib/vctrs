@@ -32,7 +32,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `my_function()`:
       ! Can't recycle input of size 2 to size 10.
 
 ---

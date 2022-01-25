@@ -151,7 +151,10 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
   const R_len_t x_size = vec_size(x);
 
   if (x_size != times_size) {
-    stop_recycle_incompatible_size(times_size, x_size, args_times);
+    stop_recycle_incompatible_size(times_size,
+                                   x_size,
+                                   args_times,
+                                   r_lazy_null);
   }
 
   const int* p_times = INTEGER_RO(times);

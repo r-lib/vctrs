@@ -17,6 +17,7 @@ test_that("failing common size reports correct error call", {
   my_function <- function() vec_recycle(1:2, 10)
   expect_snapshot((expect_error(my_function())))
 
+  # FIXME
   my_function <- function() vec_size_common(1:2, 1:10)
   expect_snapshot((expect_error(my_function())))
 })

@@ -93,23 +93,27 @@ void stop_incompatible_size(SEXP x, SEXP y,
   never_reached("stop_incompatible_size");
 }
 
-void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
-                                    struct vctrs_arg* x_arg) {
-  SEXP syms[4] = {
+void stop_recycle_incompatible_size(r_ssize x_size,
+                                    r_ssize size,
+                                    struct vctrs_arg* x_arg,
+                                    struct r_lazy call) {
+  r_obj* syms[5] = {
     r_sym("x_size"),
     r_sym("size"),
     r_sym("x_arg"),
+    syms_call,
     NULL
   };
-  SEXP args[4] = {
-    PROTECT(r_int(x_size)),
-    PROTECT(r_int(size)),
-    PROTECT(vctrs_arg(x_arg)),
+  r_obj* args[5] = {
+    KEEP(r_int(x_size)),
+    KEEP(r_int(size)),
+    KEEP(vctrs_arg(x_arg)),
+    KEEP(r_lazy_eval(call)),
     NULL
   };
 
-  SEXP call = PROTECT(r_call_n(r_sym("stop_recycle_incompatible_size"), syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* stop_call = KEEP(r_call_n(r_sym("stop_recycle_incompatible_size"), syms, args));
+  r_eval(stop_call, vctrs_ns_env);
 
   never_reached("stop_recycle_incompatible_size");
 }
