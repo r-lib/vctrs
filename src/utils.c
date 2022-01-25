@@ -1637,7 +1637,7 @@ void c_print_backtrace() {
 #endif
 }
 
-struct r_lazy r_lazy_null = (struct r_lazy) { 0 };
+struct r_lazy r_lazy_null;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -1918,6 +1918,8 @@ void vctrs_init_utils(SEXP ns) {
     MARK_NOT_MUTABLE(result_attrib);
     UNPROTECT(4);
   }
+
+  r_lazy_null = (struct r_lazy) { 0 };
 
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));
