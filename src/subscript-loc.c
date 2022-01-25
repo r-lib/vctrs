@@ -315,29 +315,31 @@ SEXP vec_as_location(SEXP subscript, R_len_t n, SEXP names) {
                               location_default_opts);
 }
 
-SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
-                          const struct location_opts* opts) {
+r_obj* vec_as_location_opts(r_obj* subscript,
+                            r_ssize n,
+                            r_obj* names,
+                            const struct location_opts* opts) {
 
   ERR err = NULL;
   subscript = vec_as_subscript_opts(subscript, opts->subscript_opts, &err);
-  PROTECT2(subscript, err);
+  KEEP2(subscript, err);
 
   if (err) {
     r_cnd_signal(err);
     never_reached("vec_as_location_opts");
   }
 
-  SEXP out = R_NilValue;
-  switch (TYPEOF(subscript)) {
-  case NILSXP: out = vctrs_shared_empty_int; break;
-  case INTSXP: out = int_as_location(subscript, n, opts); break;
-  case REALSXP: out = dbl_as_location(subscript, n, opts); break;
-  case LGLSXP: out = lgl_as_location(subscript, n, opts); break;
-  case STRSXP: out = chr_as_location(subscript, names, opts); break;
-  default: stop_unimplemented_type("vec_as_location_opts", TYPEOF(subscript));
+  r_obj* out = r_null;
+  switch (r_typeof(subscript)) {
+  case R_TYPE_null: out = vctrs_shared_empty_int; break;
+  case R_TYPE_integer: out = int_as_location(subscript, n, opts); break;
+  case R_TYPE_double: out = dbl_as_location(subscript, n, opts); break;
+  case R_TYPE_logical: out = lgl_as_location(subscript, n, opts); break;
+  case R_TYPE_character: out = chr_as_location(subscript, names, opts); break;
+  default: r_stop_unimplemented_type("vec_as_location_opts", r_typeof(subscript));
   }
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
@@ -410,32 +412,37 @@ static enum num_loc_zero parse_loc_zero(SEXP x) {
 }
 
 // [[ register() ]]
-SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
-                       SEXP loc_negative, SEXP loc_oob, SEXP loc_zero,
-                       SEXP missing, SEXP env) {
+r_obj* ffi_as_location(r_obj* subscript,
+                       r_obj* ffi_n,
+                       r_obj* names,
+                       r_obj* loc_negative,
+                       r_obj* loc_oob,
+                       r_obj* loc_zero,
+                       r_obj* missing,
+                       r_obj* frame) {
   R_len_t n = 0;
 
-  if (n_ == R_NilValue && TYPEOF(subscript) == STRSXP) {
-    n = Rf_length(subscript);
+  if (ffi_n == r_null && r_typeof(subscript) == R_TYPE_character) {
+    n = r_length(subscript);
   } else {
-    if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
-      n_ = vec_cast(n_,
-                    vctrs_shared_empty_int,
-                    args_empty,
-                    args_empty,
-                    r_lazy_null);
+    if (r_is_object(ffi_n) || r_typeof(ffi_n) != R_TYPE_integer) {
+      ffi_n = vec_cast(ffi_n,
+                       vctrs_shared_empty_int,
+                       args_empty,
+                       args_empty,
+                       r_lazy_null);
     }
-    PROTECT(n_);
+    KEEP(ffi_n);
 
-    if (Rf_length(n_) != 1) {
-      r_stop_internal("vctrs_as_location", "`n` must be a scalar number.");
+    if (r_length(ffi_n) != 1) {
+      r_stop_internal("ffi_as_location", "`n` must be a scalar number.");
     }
 
-    n = r_int_get(n_, 0);
-    UNPROTECT(1);
+    n = r_int_get(ffi_n, 0);
+    FREE(1);
   }
 
-  struct arg_data_lazy arg_ = new_lazy_arg_data(env, "arg");
+  struct arg_data_lazy arg_ = new_lazy_arg_data(frame, "arg");
   struct vctrs_arg arg = new_lazy_arg(&arg_);
 
   struct subscript_opts subscript_opts = {

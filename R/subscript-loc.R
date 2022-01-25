@@ -58,11 +58,12 @@ vec_as_location <- function(i,
                             names = NULL,
                             ...,
                             missing = c("propagate", "error"),
-                            arg = NULL) {
+                            arg = NULL,
+                            call = caller_env()) {
   check_dots_empty0(...)
 
   .Call(
-    vctrs_as_location,
+    ffi_as_location,
     i = i,
     n = n,
     names = names,
@@ -70,7 +71,7 @@ vec_as_location <- function(i,
     loc_oob = "error",
     loc_zero = "remove",
     missing = missing,
-    env = environment()
+    frame = environment()
   )
 }
 #' @rdname vec_as_location
@@ -97,7 +98,7 @@ num_as_location <- function(i,
     abort("`i` must be a numeric vector.")
   }
   .Call(
-    vctrs_as_location,
+    ffi_as_location,
     i = i,
     n = n,
     names = NULL,
