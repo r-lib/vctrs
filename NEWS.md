@@ -1,5 +1,22 @@
 # vctrs (development version)
 
+* Starting with rlang 1.0.0, errors are displayed with the contextual
+  function call. Several vctrs operations gain a `call` argument that
+  makes it possible to report the correct context in error messages.
+  This concerns:
+
+  - `vec_cast()` and `vec_ptype2()`
+  - `vec_default_cast()` and `vec_default_ptype2()`
+  - `vec_assert()`
+  - `vec_as_names()`
+  - `stop_` constructors like `stop_incompatible_type()`
+
+  Note that default `vec_cast()` and `vec_ptype2()` methods
+  automatically support this if they pass `...` to the corresponding
+  `vec_default_` functions. If you throw a non-internal error from a
+  non-default method add a `call = caller_env()` argument in the
+  method and pass it to `rlang::abort()`.
+
 * If `NA_character_` is specified as a name for `vctrs_vctr` objects, it is
   now automatically repaired to `""` (#780).
 
