@@ -14,7 +14,7 @@
   Note that default `vec_cast()` and `vec_ptype2()` methods
   automatically support this if they pass `...` to the corresponding
   `vec_default_` functions. If you throw a non-internal error from a
-  non-default method add a `call = caller_env()` argument in the
+  non-default method, add a `call = caller_env()` argument in the
   method and pass it to `rlang::abort()`.
 
 * If `NA_character_` is specified as a name for `vctrs_vctr` objects, it is
