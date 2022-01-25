@@ -689,7 +689,7 @@ stop_names_cannot_be_empty <- function(names, call = caller_env()) {
   stop_names(
     class = "vctrs_error_names_cannot_be_empty",
     names = names,
-    call = caller_env()
+    call = call
   )
 }
 

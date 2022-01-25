@@ -56,3 +56,14 @@ test_that("bare casts report correct error call", {
   my_function <- function() vec_cast(matrix(TRUE), dbl())
   expect_snapshot((expect_error(my_function())))
 })
+
+test_that("names validation reports correct error call", {
+  my_function <- function() vec_as_names(c("x", "", "y"), repair = "check_unique")
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_as_names("...", repair = "check_unique", repair_arg = "repair")
+  expect_snapshot((expect_error(my_function())))
+})

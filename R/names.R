@@ -32,6 +32,9 @@
 #' levels are nested.
 #'
 #'
+#' @inheritParams rlang::args_error_context
+#' @inheritParams rlang::args_dots_empty
+#'
 #' @param names A character vector.
 #' @param repair Either a string or a function. If a string, it must
 #'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
@@ -57,7 +60,6 @@
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
 #'   messages.
-#' @inheritParams rlang::args_dots_empty
 #'
 #' @section `minimal` names:
 #'
@@ -154,9 +156,17 @@ vec_as_names <- function(names,
                          ...,
                          repair = c("minimal", "unique", "universal", "check_unique"),
                          repair_arg = "",
-                         quiet = FALSE) {
+                         quiet = FALSE,
+                         call = caller_env()) {
   check_dots_empty0(...)
-  .Call(vctrs_as_names, names, repair, repair_arg, quiet)
+  .Call(
+    ffi_as_names,
+    names,
+    repair,
+    repair_arg,
+    quiet,
+    environment()
+  )
 }
 
 # TODO! Error calls
@@ -258,7 +268,8 @@ vec_names2 <- function(x,
     return(new_names)
   }
 
-  switch(repair,
+  switch(
+    repair,
     minimal = minimal_names(x),
     unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet),

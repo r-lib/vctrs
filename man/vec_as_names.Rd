@@ -9,7 +9,8 @@ vec_as_names(
   ...,
   repair = c("minimal", "unique", "universal", "check_unique"),
   repair_arg = "",
-  quiet = FALSE
+  quiet = FALSE,
+  call = caller_env()
 )
 }
 \arguments{
@@ -42,6 +43,11 @@ will include a hint to set the \code{repair_arg}.}
 caused by repairing the names. This only concerns unique and
 universal repairing. Set \code{quiet} to \code{TRUE} to silence the
 messages.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{vec_as_names()} takes a character vector of names and repairs it

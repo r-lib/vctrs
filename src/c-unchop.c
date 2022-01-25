@@ -19,7 +19,10 @@ static SEXP vec_unchop(SEXP x,
 
 // [[ register() ]]
 SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec, SEXP name_repair) {
-  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
+                                                                  args_empty,
+                                                                  false,
+                                                                  r_lazy_null);
   KEEP(name_repair_opts.shelter);
 
   SEXP out = vec_unchop(x, indices, ptype, name_spec, &name_repair_opts);

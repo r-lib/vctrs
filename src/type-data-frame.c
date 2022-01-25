@@ -180,7 +180,10 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
 // [[ register() ]]
 SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
-  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
+                                                                  args_empty,
+                                                                  false,
+                                                                  r_lazy_null);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
@@ -208,7 +211,10 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
 // [[ register() ]]
 SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
-  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
+                                                                  args_empty,
+                                                                  false,
+                                                                  r_lazy_null);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;

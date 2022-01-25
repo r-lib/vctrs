@@ -578,7 +578,10 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
 }
 
 struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
-  struct name_repair_opts opts = new_name_repair_opts(name_repair, args_empty, false);
+  struct name_repair_opts opts = new_name_repair_opts(name_repair,
+                                                      args_empty,
+                                                      false,
+                                                      r_lazy_null);
 
   switch (opts.type) {
   case name_repair_custom:

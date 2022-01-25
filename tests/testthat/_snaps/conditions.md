@@ -64,7 +64,7 @@
       )
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error in `validate_unique()`:
+      Error:
       ! Names can't be empty.
       x Empty name found at location 2.
     Code
@@ -72,7 +72,7 @@
       class = "vctrs_error_names_cannot_be_empty"))
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error in `validate_unique()`:
+      Error:
       ! Names can't be empty.
       x Empty names found at locations 2 and 4.
     Code
@@ -80,7 +80,7 @@
       )
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error in `validate_unique()`:
+      Error:
       ! Names can't be empty.
       x Empty names found at locations 1, 2, 3, 4, 5, etc.
 

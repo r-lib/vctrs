@@ -130,3 +130,36 @@
       ! Can't convert <double[,1]> to <double>.
       Cannot decrease dimensions.
 
+# names validation reports correct error call
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_names_cannot_be_empty>
+      Error in `my_function()`:
+      ! Names can't be empty.
+      x Empty name found at location 2.
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `my_function()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "x" at locations 1 and 2.
+      i Use argument `repair` to specify repair strategy.
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_names_cannot_be_dot_dot>
+      Error in `my_function()`:
+      ! Names can't be of the form `...` or `..j`.
+      x These names are invalid:
+        * "..." at location 1.
+
