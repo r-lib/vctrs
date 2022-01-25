@@ -73,3 +73,8 @@ test_that("names validation reports correct error call", {
   my_function <- function() vec_as_names("...", repair = "check_unique", repair_arg = "repair")
   expect_snapshot((expect_error(my_function())))
 })
+
+test_that("subscript validation reports correct error calls", {
+  my_function <- function() vctrs::num_as_location(1, 1L, missing = "bogus")
+  expect_snapshot((expect_error(my_function())))
+})

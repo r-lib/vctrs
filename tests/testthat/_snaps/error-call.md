@@ -173,3 +173,12 @@
       x These names are invalid:
         * "..." at location 1.
 
+# subscript validation reports correct error calls
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/rlang_error>
+      Error in `my_function()`:
+      ! `missing` must be one of "propagate" or "error".
+

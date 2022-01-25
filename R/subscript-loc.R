@@ -17,6 +17,8 @@
 #'   for extracting with `[[`.
 #'
 #' @inheritParams vec_slice
+#' @inheritParams rlang::args_error_context
+#'
 #' @param n A single integer representing the total size of the
 #'   object that `i` is meant to index into.
 #' @param names If `i` is a character vector, `names` should be a character
@@ -91,7 +93,8 @@ num_as_location <- function(i,
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "extend"),
                             zero = c("remove", "error", "ignore"),
-                            arg = NULL) {
+                            arg = NULL,
+                            call = caller_env()) {
   check_dots_empty0(...)
 
   if (is.object(i) || !(is_integer(i) || is_double(i))) {

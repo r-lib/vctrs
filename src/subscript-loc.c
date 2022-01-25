@@ -5,6 +5,8 @@
 #include "subscript.h"
 #include "subscript-loc.h"
 
+#include "decl/subscript-loc-decl.h"
+
 static SEXP int_invert_location(SEXP subscript, R_len_t n,
                                 const struct location_opts* opts);
 static SEXP int_filter_zero(SEXP subscript, R_len_t n_zero);
@@ -343,74 +345,6 @@ r_obj* vec_as_location_opts(r_obj* subscript,
   return out;
 }
 
-static void stop_subscript_arg_missing() {
-  Rf_errorcall(R_NilValue, "`missing` must be one of \"propagate\" or \"error\".");
-}
-static void stop_bad_negative() {
-  Rf_errorcall(R_NilValue, "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
-}
-static void stop_bad_oob() {
-  Rf_errorcall(R_NilValue, "`oob` must be one of \"error\" or \"extend\".");
-}
-static void stop_bad_zero() {
-  Rf_errorcall(R_NilValue, "`zero` must be one of \"remove\", \"error\", or \"ignore\".");
-}
-
-static enum subscript_missing parse_subscript_arg_missing(SEXP x) {
-  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
-    stop_subscript_arg_missing();
-  }
-
-  const char* str = CHAR(STRING_ELT(x, 0));
-
-  if (!strcmp(str, "propagate")) return SUBSCRIPT_MISSING_PROPAGATE;
-  if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
-  stop_subscript_arg_missing();
-
-  never_reached("stop_subscript_arg_missing");
-}
-static enum num_loc_negative parse_loc_negative(SEXP x) {
-  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
-    stop_bad_negative();
-  }
-
-  const char* str = CHAR(STRING_ELT(x, 0));
-
-  if (!strcmp(str, "invert")) return LOC_NEGATIVE_INVERT;
-  if (!strcmp(str, "error")) return LOC_NEGATIVE_ERROR;
-  if (!strcmp(str, "ignore")) return LOC_NEGATIVE_IGNORE;
-  stop_bad_negative();
-
-  never_reached("stop_bad_negative");
-}
-static enum num_loc_oob parse_loc_oob(SEXP x) {
-  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
-    stop_bad_oob();
-  }
-
-  const char* str = CHAR(STRING_ELT(x, 0));
-
-  if (!strcmp(str, "error")) return LOC_OOB_ERROR;
-  if (!strcmp(str, "extend")) return LOC_OOB_EXTEND;
-  stop_bad_oob();
-
-  never_reached("stop_bad_oob");
-}
-static enum num_loc_zero parse_loc_zero(SEXP x) {
-  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
-    stop_bad_zero();
-  }
-
-  const char* str = CHAR(STRING_ELT(x, 0));
-
-  if (!strcmp(str, "remove")) return LOC_ZERO_REMOVE;
-  if (!strcmp(str, "error")) return LOC_ZERO_ERROR;
-  if (!strcmp(str, "ignore")) return LOC_ZERO_IGNORE;
-  stop_bad_zero();
-
-  never_reached("parse_loc_zero");
-}
-
 // [[ register() ]]
 r_obj* ffi_as_location(r_obj* subscript,
                        r_obj* ffi_n,
@@ -445,18 +379,101 @@ r_obj* ffi_as_location(r_obj* subscript,
   struct arg_data_lazy arg_ = new_lazy_arg_data(frame, "arg");
   struct vctrs_arg arg = new_lazy_arg(&arg_);
 
+  struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
+
   struct subscript_opts subscript_opts = {
-    .subscript_arg  = &arg
+    .subscript_arg = &arg,
+    .call          = call
   };
   struct location_opts opts = {
     .subscript_opts = &subscript_opts,
-    .missing        = parse_subscript_arg_missing(missing),
-    .loc_negative   = parse_loc_negative(loc_negative),
-    .loc_oob        = parse_loc_oob(loc_oob),
-    .loc_zero       = parse_loc_zero(loc_zero)
+    .missing        = parse_subscript_arg_missing(missing, call),
+    .loc_negative   = parse_loc_negative(loc_negative, call),
+    .loc_oob        = parse_loc_oob(loc_oob, call),
+    .loc_zero       = parse_loc_zero(loc_zero, call)
   };
 
   return vec_as_location_opts(subscript, n, names, &opts);
+}
+
+static
+enum subscript_missing parse_subscript_arg_missing(r_obj* x,
+                                                   struct r_lazy call) {
+  if (r_typeof(x) != R_TYPE_character || r_length(x) == 0) {
+    stop_subscript_arg_missing(call);
+  }
+
+  const char* str = r_chr_get_c_string(x, 0);
+
+  if (!strcmp(str, "propagate")) return SUBSCRIPT_MISSING_PROPAGATE;
+  if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
+  stop_subscript_arg_missing(call);
+
+  never_reached("stop_subscript_arg_missing");
+}
+static
+enum num_loc_negative parse_loc_negative(r_obj* x,
+                                         struct r_lazy call) {
+  if (r_typeof(x) != R_TYPE_character || r_length(x) == 0) {
+    stop_bad_negative(call);
+  }
+
+  const char* str = r_chr_get_c_string(x, 0);
+
+  if (!strcmp(str, "invert")) return LOC_NEGATIVE_INVERT;
+  if (!strcmp(str, "error")) return LOC_NEGATIVE_ERROR;
+  if (!strcmp(str, "ignore")) return LOC_NEGATIVE_IGNORE;
+  stop_bad_negative(call);
+
+  never_reached("stop_bad_negative");
+}
+static
+enum num_loc_oob parse_loc_oob(SEXP x,
+                               struct r_lazy call) {
+  if (r_typeof(x) != R_TYPE_character || r_length(x) == 0) {
+    stop_bad_oob(call);
+  }
+
+  const char* str = r_chr_get_c_string(x, 0);
+
+  if (!strcmp(str, "error")) return LOC_OOB_ERROR;
+  if (!strcmp(str, "extend")) return LOC_OOB_EXTEND;
+  stop_bad_oob(call);
+
+  never_reached("stop_bad_oob");
+}
+static
+enum num_loc_zero parse_loc_zero(SEXP x,
+                                 struct r_lazy call) {
+  if (r_typeof(x) != R_TYPE_character || r_length(x) == 0) {
+    stop_bad_zero(call);
+  }
+
+  const char* str = r_chr_get_c_string(x, 0);
+
+  if (!strcmp(str, "remove")) return LOC_ZERO_REMOVE;
+  if (!strcmp(str, "error")) return LOC_ZERO_ERROR;
+  if (!strcmp(str, "ignore")) return LOC_ZERO_IGNORE;
+  stop_bad_zero(call);
+
+  never_reached("parse_loc_zero");
+}
+
+static
+void stop_subscript_arg_missing(struct r_lazy call) {
+  r_abort_call(KEEP(r_lazy_eval(call)), "`missing` must be one of \"propagate\" or \"error\".");
+}
+static
+void stop_bad_negative(struct r_lazy call) {
+  r_abort_call(KEEP(r_lazy_eval(call)), "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
+}
+static
+void stop_bad_oob(struct r_lazy call) {
+  r_abort_call(KEEP(r_lazy_eval(call)), "`oob` must be one of \"error\" or \"extend\".");
+}
+static
+void stop_bad_zero(struct r_lazy call) {
+  r_abort_call(KEEP(r_lazy_eval(call)), "`zero` must be one of \"remove\", \"error\", or \"ignore\".");
 }
 
 static void stop_subscript_missing(SEXP i) {
