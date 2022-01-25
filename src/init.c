@@ -116,7 +116,7 @@ extern SEXP vctrs_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_s3_find_method(SEXP, SEXP, SEXP);
 extern SEXP vctrs_implements_ptype2(SEXP);
 extern SEXP vctrs_ptype2_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_fast_c(SEXP, SEXP);
 extern SEXP vctrs_data_frame(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_list(SEXP, SEXP, SEXP);
@@ -274,7 +274,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_s3_find_method",             (DL_FUNC) &vctrs_s3_find_method, 3},
   {"vctrs_implements_ptype2",          (DL_FUNC) &vctrs_implements_ptype2, 1},
   {"vctrs_ptype2_dispatch_native",     (DL_FUNC) &vctrs_ptype2_dispatch_native, 5},
-  {"vctrs_cast_dispatch_native",       (DL_FUNC) &vctrs_cast_dispatch_native, 5},
+  {"ffi_cast_dispatch_native",         (DL_FUNC) &ffi_cast_dispatch_native, 6},
   {"vctrs_fast_c",                     (DL_FUNC) &vctrs_fast_c, 2},
   {"vctrs_data_frame",                 (DL_FUNC) &vctrs_data_frame, 3},
   {"vctrs_df_list",                    (DL_FUNC) &vctrs_df_list, 3},

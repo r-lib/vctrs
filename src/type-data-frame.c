@@ -651,7 +651,13 @@ SEXP vctrs_df_cast_opts(SEXP x, SEXP to, SEXP opts, SEXP x_arg, SEXP to_arg) {
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_to_arg = vec_as_arg(to_arg);
 
-  const struct cast_opts c_opts = new_cast_opts(x, to, &c_x_arg, &c_to_arg, opts);
+  // FIXME! Error call
+  struct cast_opts c_opts = new_cast_opts(x,
+                                          to,
+                                          &c_x_arg,
+                                          &c_to_arg,
+                                          r_lazy_null,
+                                          opts);
 
   return df_cast_opts(&c_opts);
 }

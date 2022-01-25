@@ -140,22 +140,25 @@ SEXP vec_cast_switch_native(const struct cast_opts* opts,
 static SEXP syms_vec_cast_default = NULL;
 
 // [[ include("cast.h") ]]
-SEXP vec_cast_default(SEXP x,
-                      SEXP to,
-                      SEXP x_arg,
-                      SEXP to_arg,
-                      const struct fallback_opts* opts) {
-  SEXP df_fallback = PROTECT(r_int(opts->df));
-  SEXP s3_fallback = PROTECT(r_int(opts->s3));
-  SEXP out = vctrs_eval_mask7(syms_vec_cast_default,
-                              syms_x, x,
-                              syms_to, to,
-                              syms_x_arg, x_arg,
-                              syms_to_arg, to_arg,
-                              syms_from_dispatch, vctrs_shared_true,
-                              syms_df_fallback, df_fallback,
-                              syms_s3_fallback, s3_fallback);
-  UNPROTECT(2);
+r_obj* vec_cast_default(r_obj* x,
+                        r_obj* to,
+                        r_obj* x_arg,
+                        r_obj* to_arg,
+                        struct r_lazy call,
+                        const struct fallback_opts* opts) {
+  r_obj* df_fallback = KEEP(r_int(opts->df));
+  r_obj* s3_fallback = KEEP(r_int(opts->s3));
+  r_obj* ffi_call = KEEP(r_lazy_eval(call));
+  r_obj* out = vctrs_eval_mask8(syms_vec_cast_default,
+                                syms_x, x,
+                                syms_to, to,
+                                syms_x_arg, x_arg,
+                                syms_to_arg, to_arg,
+                                syms_call, ffi_call,
+                                syms_from_dispatch, vctrs_shared_true,
+                                syms_df_fallback, df_fallback,
+                                syms_s3_fallback, s3_fallback);
+  FREE(3);
   return out;
 }
 
@@ -193,7 +196,12 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
   PROTECT(method);
 
   if (method == R_NilValue) {
-    SEXP out = vec_cast_default(x, to, r_x_arg, r_to_arg, &(opts->fallback));
+    SEXP out = vec_cast_default(x,
+                                to,
+                                r_x_arg,
+                                r_to_arg,
+                                opts->call,
+                                &(opts->fallback));
     UNPROTECT(3);
     return out;
   }
@@ -308,16 +316,18 @@ SEXP vctrs_cast_common_opts(SEXP call, SEXP op, SEXP args, SEXP env) {
 }
 
 // [[ include("cast.h") ]]
-struct cast_opts new_cast_opts(SEXP x,
-                               SEXP to,
+struct cast_opts new_cast_opts(r_obj* x,
+                               r_obj* to,
                                struct vctrs_arg* x_arg,
                                struct vctrs_arg* to_arg,
-                               SEXP opts) {
+                               struct r_lazy call,
+                               r_obj* opts) {
   return (struct cast_opts) {
     .x = x,
     .to = to,
     .x_arg = x_arg,
     .to_arg = to_arg,
+    .call = call,
     .fallback = {
       .df = r_int_get(r_list_get(opts, 0), 0),
       .s3 = r_int_get(r_list_get(opts, 1), 0)

@@ -13,7 +13,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `my_function()`:
       ! Can't convert <double> to <character>.
 
 # lossy cast reports correct error call

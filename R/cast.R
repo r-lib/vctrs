@@ -82,9 +82,21 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
 vec_cast_no_fallback <- function(x, to) {
   vec_cast_common_params(x = x, .to = to, .df_fallback = DF_FALLBACK_none)$x
 }
-vec_cast_dispatch_native <- function(x, to, ..., x_arg = "", to_arg = "") {
-  fallback_opts <- match_fallback_opts(...)
-  .Call(vctrs_cast_dispatch_native, x, to, fallback_opts, x_arg, to_arg)
+vec_cast_dispatch_native <- function(x,
+                                     to,
+                                     ...,
+                                     x_arg = "",
+                                     to_arg = "",
+                                     call = caller_env()) {
+  .Call(
+    ffi_cast_dispatch_native,
+    x,
+    to,
+    match_fallback_opts(...),
+    x_arg,
+    to_arg,
+    environment()
+  )
 }
 
 #' @export
