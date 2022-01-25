@@ -130,6 +130,16 @@
       ! Can't convert <double[,1]> to <double>.
       Cannot decrease dimensions.
 
+# base S3 casts report correct error call
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
+      * Locations: 1
+
 # names validation reports correct error call
 
     Code

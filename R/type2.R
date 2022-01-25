@@ -148,6 +148,24 @@ vec_default_ptype2 <- function(x,
   )
 }
 
+# This wrapper for `stop_incompatible_type()` matches error context
+# arguments. It is useful to pass ptype2 arguments through dots
+# without risking unknown arguments getting stored as condition fields.
+vec_incompatible_ptype2 <- function(x,
+                                    y,
+                                    ...,
+                                    x_arg = "",
+                                    y_arg = "",
+                                    call = caller_env()) {
+  stop_incompatible_type(
+    x,
+    y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    call = call
+  )
+}
+
 # We can't check for a proxy or ptype2 method to determine whether a
 # class is foreign, because we implement these generics for many base
 # classes and we still need to allow base fallbacks with subclasses.

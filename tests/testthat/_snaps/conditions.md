@@ -145,7 +145,7 @@
       (expect_error(vec_cast("a", factor("b")), class = "vctrs_error_cast_lossy"))
     Output
       <error/vctrs_error_cast_lossy>
-      Error in `fct_cast_impl()`:
+      Error:
       ! Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
       * Locations: 1
 
