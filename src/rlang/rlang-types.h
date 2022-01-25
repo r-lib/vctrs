@@ -12,6 +12,14 @@
 // symbol clashes.
 #define r_visible attribute_visible extern
 
+#ifdef __GNUC__
+#define r_unused __attribute__ ((unused))
+#else
+#define r_unused
+#endif
+
+#define r_no_return __attribute__ ((noreturn))
+
 typedef struct SEXPREC r_obj;
 typedef Rcomplex r_complex_t;
 
@@ -68,6 +76,11 @@ struct r_triple {
 struct r_pair_ptr_ssize {
   void* ptr;
   r_ssize size;
+};
+
+struct r_pair_callback {
+  r_obj* (*fn)(void* data);
+  void* data;
 };
 
 

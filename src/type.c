@@ -165,9 +165,9 @@ SEXP vec_ptype_finalise(SEXP x) {
       UNPROTECT(1);
 
       if (seen_tibble) {
-        r_poke_class(x, classes_tibble);
+        r_attrib_poke_class(x, classes_tibble);
       } else {
-        r_poke_class(x, classes_data_frame);
+        r_attrib_poke_class(x, classes_data_frame);
       }
 
       Rf_setAttrib(x, Rf_install("known_classes"), R_NilValue);

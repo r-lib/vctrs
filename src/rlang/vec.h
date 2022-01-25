@@ -164,6 +164,8 @@ void r_list_poke(r_obj* x, r_ssize i, r_obj* y) {
   SET_VECTOR_ELT(x, i, y);
 }
 
+#define r_chr_poke(X, I, Y) SET_STRING_ELT(X, I, Y)
+#define r_list_poke(X, I, Y) SET_VECTOR_ELT(X, I, Y)
 
 static inline
 r_obj* r_alloc_vector(enum r_type type, r_ssize n) {
@@ -221,12 +223,19 @@ r_obj* r_dbl(double x) {
   return Rf_ScalarReal(x);
 }
 static inline
+r_obj* r_cpl(r_complex_t x) {
+  return Rf_ScalarComplex(x);
+}
+static inline
 r_obj* r_str(const char* c_string) {
-  return Rf_mkChar(c_string);
+  return Rf_mkCharCE(c_string, CE_UTF8);
 }
 static inline
 r_obj* r_chr(const char* c_string) {
-  return Rf_mkString(c_string);
+  r_obj* out = KEEP(r_alloc_character(1));
+  r_chr_poke(out, 0, r_str(c_string));
+  FREE(1);
+  return out;
 }
 static inline
 r_obj* r_list(r_obj* x) {
@@ -273,11 +282,11 @@ bool r_is_int(r_obj* x) {
 }
 static inline
 bool r_is_true(r_obj* x) {
-  if (r_is_bool(x)) {
-    return r_lgl_get(x, 0);
-  } else {
-    return false;
-  }
+  return r_is_bool(x) && r_lgl_get(x, 0);
+}
+static inline
+bool r_is_false(r_obj* x) {
+  return r_is_bool(x) && !r_lgl_get(x, 0);
 }
 static inline
 bool r_is_string(r_obj* x) {
@@ -288,18 +297,26 @@ bool r_is_string(r_obj* x) {
 }
 
 static inline
-bool r_as_bool(r_obj* x) {
+bool r_arg_as_bool(r_obj* x, const char* arg) {
   if (!r_is_bool(x)) {
-    r_abort("`x` must be a logical value");
+    r_abort("`%s` must be a logical value.", arg);
   }
   return r_lgl_get(x, 0);
 }
 static inline
-int r_as_int(r_obj* x) {
+bool r_as_bool(r_obj* x) {
+  return r_arg_as_bool(x, "x");
+}
+static inline
+int r_arg_as_int(r_obj* x, const char* arg) {
   if (!r_is_int(x)) {
-    r_abort("`x` must be an integer value");
+    r_abort("`%s` must be an integer value.", arg);
   }
   return r_int_get(x, 0);
+}
+static inline
+int r_as_int(r_obj* x) {
+  return r_arg_as_int(x, "x");
 }
 
 r_obj* r_lgl_resize(r_obj* x, r_ssize size);

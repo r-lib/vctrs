@@ -245,7 +245,7 @@ SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_
   // Unnamed columns are auto-named with `""`
   if (r_names(x) == R_NilValue) {
     SEXP names = PROTECT(r_new_character(n_cols));
-    r_poke_names(x, names);
+    r_attrib_poke_names(x, names);
     UNPROTECT(1);
   }
 
@@ -254,7 +254,7 @@ SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_
 
   SEXP names = PROTECT(r_names(x));
   names = PROTECT(vec_as_names(names, p_name_repair_opts));
-  r_poke_names(x, names);
+  r_attrib_poke_names(x, names);
 
   UNPROTECT(5);
   return x;
@@ -290,7 +290,7 @@ static SEXP df_list_drop_null(SEXP x) {
     }
   }
 
-  r_poke_names(out, out_names);
+  r_attrib_poke_names(out, out_names);
 
   UNPROTECT(3);
   return out;
@@ -388,7 +388,7 @@ static SEXP df_list_splice(SEXP x) {
     UNPROTECT(1);
   }
 
-  r_poke_names(out, out_names);
+  r_attrib_poke_names(out, out_names);
 
   UNPROTECT(4);
   return out;
@@ -910,7 +910,7 @@ SEXP df_flatten(SEXP x) {
 
   SEXP out = PROTECT(Rf_allocVector(VECSXP, info.width));
   SEXP out_names = PROTECT(Rf_allocVector(STRSXP, info.width));
-  r_poke_names(out, out_names);
+  r_attrib_poke_names(out, out_names);
 
   df_flatten_loop(x, out, out_names, 0);
   init_data_frame(out, df_size(x));
@@ -948,7 +948,7 @@ SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair) {
   // renamed?
   if (nms != repaired) {
     x = PROTECT(r_clone_referenced(x));
-    r_poke_names(x, repaired);
+    r_attrib_poke_names(x, repaired);
     UNPROTECT(1);
   }
 

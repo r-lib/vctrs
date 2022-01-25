@@ -205,7 +205,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
     if (names != R_NilValue) {
       SEXP elt_names = PROTECT(slice_names(names, info.index));
-      r_poke_names(elt, elt_names);
+      r_attrib_poke_names(elt, elt_names);
       UNPROTECT(1);
     }
 

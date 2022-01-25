@@ -28,7 +28,7 @@ SEXP vec_shaped_ptype(SEXP ptype,
 
   ptype = PROTECT(r_clone_referenced(ptype));
 
-  r_poke_dim(ptype, ptype_dimensions);
+  r_attrib_poke_dim(ptype, ptype_dimensions);
 
   UNPROTECT(2);
   return ptype;

@@ -381,7 +381,7 @@ SEXP new_unrep_data_frame(SEXP key, SEXP times, r_ssize size) {
   r_list_poke(out, 1, times);
 
   SEXP names = PROTECT(r_new_character(2));
-  r_poke_names(out, names);
+  r_attrib_poke_names(out, names);
 
   r_chr_poke(names, 0, strings_key);
   r_chr_poke(names, 1, strings_times);

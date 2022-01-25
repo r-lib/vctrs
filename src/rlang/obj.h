@@ -14,8 +14,21 @@ enum r_type r_typeof(r_obj* x) {
   return (enum r_type) TYPEOF(x);
 }
 
-void r_preserve(r_obj* x);
-void r_unpreserve(r_obj* x);
+void _r_preserve(r_obj* x);
+void _r_unpreserve(r_obj* x);
+
+static r_unused
+r_obj* _r_placeholder = NULL;
+
+#define r_preserve(X)                           \
+  (R_PreserveObject(_r_placeholder = X),        \
+   (_r_preserve)(_r_placeholder),               \
+   (void) NULL)
+
+#define r_unpreserve(X)                         \
+  (R_ReleaseObject(_r_placeholder = X),         \
+   (_r_unpreserve)(_r_placeholder),             \
+   (void) NULL)
 
 static inline
 void r_mark_shared(r_obj* x) {
@@ -27,11 +40,15 @@ bool r_is_shared(r_obj* x) {
 }
 
 static inline
-r_obj* r_preserve_global(r_obj* x) {
-  r_preserve(x);
+void _r_preserve_global(r_obj* x) {
+  (_r_preserve)(x);
   r_mark_shared(x);
-  return x;
 }
+
+#define r_preserve_global(X)                    \
+  (R_PreserveObject(_r_placeholder = X),        \
+   (_r_preserve_global)(_r_placeholder),         \
+   (void) NULL)
 
 static inline
 void r_mark_object(r_obj* x) {
@@ -58,6 +75,10 @@ r_obj* r_copy(r_obj* x) {
 static inline
 r_obj* r_clone(r_obj* x) {
   return Rf_shallow_duplicate(x);
+}
+static inline
+r_obj* r_clone_shared(r_obj* x) {
+  return r_is_shared(x) ? r_clone(x) : x;
 }
 
 static inline
@@ -107,5 +128,11 @@ bool r_is_identical(r_obj* x, r_obj* y) {
 }
 
 r_obj* r_obj_address(r_obj* x);
+
+
+extern r_obj* (*r_obj_encode_utf8)(r_obj* x);
+
+r_obj* r_as_label(r_obj* x);
+
 
 #endif

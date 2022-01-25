@@ -281,8 +281,8 @@ static SEXP new_date(SEXP x) {
 
   SET_ATTRIB(out, R_NilValue);
 
-  r_poke_names(out, names);
-  r_poke_class(out, classes_date);
+  r_attrib_poke_names(out, names);
+  r_attrib_poke_class(out, classes_date);
 
   UNPROTECT(2);
   return out;
@@ -315,8 +315,8 @@ static SEXP new_datetime(SEXP x, SEXP tzone) {
 
   SET_ATTRIB(out, R_NilValue);
 
-  r_poke_names(out, names);
-  r_poke_class(out, classes_posixct);
+  r_attrib_poke_names(out, names);
+  r_attrib_poke_class(out, classes_posixct);
   Rf_setAttrib(out, syms_tzone, tzone);
 
   UNPROTECT(2);

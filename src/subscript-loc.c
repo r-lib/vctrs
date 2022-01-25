@@ -232,7 +232,7 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n,
     SEXP nms = PROTECT(r_names(subscript));
     if (nms != R_NilValue) {
       nms = PROTECT(vec_slice(nms, out));
-      r_poke_names(out, nms);
+      r_attrib_poke_names(out, nms);
       UNPROTECT(1);
     }
 
@@ -267,7 +267,7 @@ static SEXP lgl_as_location(SEXP subscript, R_len_t n,
     if (nms != R_NilValue) {
       SEXP recycled_nms = PROTECT(Rf_allocVector(STRSXP, n));
       r_chr_fill(recycled_nms, r_chr_get(nms, 0), n);
-      r_poke_names(out, recycled_nms);
+      r_attrib_poke_names(out, recycled_nms);
       UNPROTECT(1);
     }
 
@@ -302,7 +302,7 @@ static SEXP chr_as_location(SEXP subscript, SEXP names,
     }
   }
 
-  r_poke_names(matched, PROTECT(r_names(subscript))); UNPROTECT(1);
+  r_attrib_poke_names(matched, PROTECT(r_names(subscript))); UNPROTECT(1);
 
   UNPROTECT(1);
   return matched;

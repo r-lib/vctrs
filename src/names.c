@@ -87,7 +87,7 @@ r_obj* check_unique_names(r_obj* names,
                                     syms_call, ffi_call));
 
   // Restore visibility
-  r_eval(r_null, r_empty_env);
+  r_eval(r_null, r_envs.empty);
 
   FREE(3);
   return out;

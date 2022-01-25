@@ -28,7 +28,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 
   if (names_to != R_NilValue) {
     if (Rf_inherits(names_to, "rlang_zap")) {
-      r_poke_names(xs, R_NilValue);
+      r_attrib_poke_names(xs, R_NilValue);
       names_to = R_NilValue;
     } else if (r_is_string(names_to)) {
       names_to = r_chr_get(names_to, 0);
@@ -272,7 +272,7 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
   if (ndim == 2) {
     SEXP names = PROTECT_N(vec_unique_colnames(x, name_repair->quiet), &nprot);
     SEXP out = PROTECT_N(r_as_data_frame(x), &nprot);
-    r_poke_names(out, names);
+    r_attrib_poke_names(out, names);
     UNPROTECT(nprot);
     return out;
   }
@@ -298,7 +298,7 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
 
   x = PROTECT_N(vec_chop(x, R_NilValue), &nprot);
 
-  r_poke_names(x, nms);
+  r_attrib_poke_names(x, nms);
 
   x = new_data_frame(x, 1);
 
@@ -327,7 +327,7 @@ static SEXP cbind_names_to(bool has_names, SEXP names_to, SEXP ptype) {
   SET_STRING_ELT(tmp_nms, 0, names_to);
   SET_STRING_ELT(tmp_nms, 1, strings_empty);
 
-  r_poke_names(tmp, tmp_nms);
+  r_attrib_poke_names(tmp, tmp_nms);
 
   SEXP out = vec_cbind(tmp, R_NilValue, R_NilValue, NULL);
 
@@ -554,7 +554,7 @@ static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
 
   // Remove names if they were repaired by `as.data.frame()`
   if (colnames(x) == R_NilValue) {
-    r_poke_names(out, R_NilValue);
+    r_attrib_poke_names(out, R_NilValue);
   }
 
   UNPROTECT(1);
