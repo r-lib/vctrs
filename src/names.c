@@ -34,7 +34,7 @@ SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
   case name_repair_minimal: return vctrs_as_minimal_names(names);
   case name_repair_unique: return vec_as_unique_names(names, opts->quiet);
   case name_repair_universal: return vec_as_universal_names(names, opts->quiet);
-  case name_repair_check_unique: return vec_validate_unique_names(names, opts->arg);
+  case name_repair_check_unique: return vec_validate_unique_names(names, opts->name_repair_arg);
   case name_repair_custom: return vec_as_custom_names(names, opts);
   }
   never_reached("vec_as_names");
@@ -50,11 +50,11 @@ SEXP vctrs_as_names(SEXP names, SEXP repair, SEXP repair_arg, SEXP quiet) {
   struct vctrs_arg arg_ = vec_as_arg(repair_arg);
 
   struct name_repair_opts repair_opts = new_name_repair_opts(repair, &arg_, quiet_);
-  PROTECT_NAME_REPAIR_OPTS(&repair_opts);
+  KEEP(repair_opts.shelter);
 
   SEXP out = vec_as_names(names, &repair_opts);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
@@ -833,11 +833,14 @@ void stop_name_repair() {
   Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
 }
 
-struct name_repair_opts new_name_repair_opts(SEXP name_repair, struct vctrs_arg* arg, bool quiet) {
+struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
+                                             struct vctrs_arg* name_repair_arg,
+                                             bool quiet) {
   struct name_repair_opts opts = {
+    .shelter = r_null,
     .type = 0,
-    .fn = R_NilValue,
-    .arg = arg,
+    .fn = r_null,
+    .name_repair_arg = name_repair_arg,
     .quiet = quiet
   };
 
@@ -868,6 +871,7 @@ struct name_repair_opts new_name_repair_opts(SEXP name_repair, struct vctrs_arg*
 
   case LANGSXP:
     opts.fn = r_as_function(name_repair, ".name_repair");
+    opts.shelter = opts.fn;
     opts.type = name_repair_custom;
     return opts;
 
