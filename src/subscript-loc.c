@@ -7,6 +7,104 @@
 
 #include "decl/subscript-loc-decl.h"
 
+
+r_obj* vec_as_location(r_obj* subscript, r_ssize n, r_obj* names) {
+  return vec_as_location_opts(subscript,
+                              n,
+                              names,
+                              location_default_opts);
+}
+
+r_obj* vec_as_location_opts(r_obj* subscript,
+                            r_ssize n,
+                            r_obj* names,
+                            const struct location_opts* opts) {
+
+  ERR err = NULL;
+  subscript = vec_as_subscript_opts(subscript, opts->subscript_opts, &err);
+  KEEP2(subscript, err);
+
+  if (err) {
+    r_cnd_signal(err);
+    r_stop_unreached("vec_as_location_opts");
+  }
+
+  r_obj* out = r_null;
+  switch (r_typeof(subscript)) {
+  case R_TYPE_null: out = vctrs_shared_empty_int; break;
+  case R_TYPE_logical: out = lgl_as_location(subscript, n, opts); break;
+  case R_TYPE_integer: out = int_as_location(subscript, n, opts); break;
+  case R_TYPE_double: out = dbl_as_location(subscript, n, opts); break;
+  case R_TYPE_character: out = chr_as_location(subscript, names, opts); break;
+  default: r_stop_unimplemented_type("vec_as_location_opts", r_typeof(subscript));
+  }
+
+  FREE(2);
+  return out;
+}
+
+
+static
+r_obj* lgl_as_location(r_obj* subscript,
+                       r_ssize n,
+                       const struct location_opts* opts) {
+  r_ssize subscript_n = r_length(subscript);
+
+  if (subscript_n == n) {
+    r_obj* out = KEEP(r_lgl_which(subscript, true));
+
+    r_obj* nms = KEEP(r_names(subscript));
+    if (nms != R_NilValue) {
+      nms = KEEP(vec_slice(nms, out));
+      r_attrib_poke_names(out, nms);
+      FREE(1);
+    }
+
+    FREE(2);
+    return out;
+  }
+
+  /* A single `TRUE` or `FALSE` index is recycled to the full vector
+   * size. This means `TRUE` is synonym for missing index (subscript.e. no
+   * subsetting) and `FALSE` is synonym for empty index.
+   *
+   * We could return the missing argument as sentinel to avoid
+   * materialising the index vector for the `TRUE` case but this would
+   * make `vec_as_location()` an option type just to optimise a rather
+   * uncommon case.
+   */
+  if (subscript_n == 1) {
+    int elt = r_lgl_get(subscript, 0);
+
+    r_obj* out;
+    if (elt == r_globals.na_lgl) {
+      out = KEEP(r_alloc_integer(n));
+      r_int_fill(out, r_globals.na_int, n);
+    } else if (elt) {
+      out = KEEP(r_alloc_integer(n));
+      r_int_fill_seq(out, 1, n);
+    } else {
+      return vctrs_shared_empty_int;
+    }
+
+    r_obj* nms = KEEP(r_names(subscript));
+    if (nms != R_NilValue) {
+      r_obj* recycled_nms = KEEP(r_alloc_character(n));
+      r_chr_fill(recycled_nms, r_chr_get(nms, 0), n);
+      r_attrib_poke_names(out, recycled_nms);
+      FREE(1);
+    }
+
+    FREE(2);
+    return out;
+  }
+
+  r_obj* n_obj = KEEP(r_int(n));
+  stop_indicator_size(subscript, n_obj, opts);
+
+  r_stop_unreached("lgl_as_location");
+}
+
 static
 r_obj* int_as_location(r_obj* subscript,
                        r_ssize n,
@@ -205,67 +303,6 @@ r_obj* dbl_as_location(r_obj* subscript,
 }
 
 static
-r_obj* lgl_as_location(r_obj* subscript,
-                       r_ssize n,
-                       const struct location_opts* opts) {
-  r_ssize subscript_n = r_length(subscript);
-
-  if (subscript_n == n) {
-    r_obj* out = KEEP(r_lgl_which(subscript, true));
-
-    r_obj* nms = KEEP(r_names(subscript));
-    if (nms != R_NilValue) {
-      nms = KEEP(vec_slice(nms, out));
-      r_attrib_poke_names(out, nms);
-      FREE(1);
-    }
-
-    FREE(2);
-    return out;
-  }
-
-  /* A single `TRUE` or `FALSE` index is recycled to the full vector
-   * size. This means `TRUE` is synonym for missing index (subscript.e. no
-   * subsetting) and `FALSE` is synonym for empty index.
-   *
-   * We could return the missing argument as sentinel to avoid
-   * materialising the index vector for the `TRUE` case but this would
-   * make `vec_as_location()` an option type just to optimise a rather
-   * uncommon case.
-   */
-  if (subscript_n == 1) {
-    int elt = r_lgl_get(subscript, 0);
-
-    r_obj* out;
-    if (elt == r_globals.na_lgl) {
-      out = KEEP(r_alloc_integer(n));
-      r_int_fill(out, r_globals.na_int, n);
-    } else if (elt) {
-      out = KEEP(r_alloc_integer(n));
-      r_int_fill_seq(out, 1, n);
-    } else {
-      return vctrs_shared_empty_int;
-    }
-
-    r_obj* nms = KEEP(r_names(subscript));
-    if (nms != R_NilValue) {
-      r_obj* recycled_nms = KEEP(r_alloc_character(n));
-      r_chr_fill(recycled_nms, r_chr_get(nms, 0), n);
-      r_attrib_poke_names(out, recycled_nms);
-      FREE(1);
-    }
-
-    FREE(2);
-    return out;
-  }
-
-  r_obj* n_obj = KEEP(r_int(n));
-  stop_indicator_size(subscript, n_obj, opts);
-
-  r_stop_unreached("lgl_as_location");
-}
-
-static
 r_obj* chr_as_location(r_obj* subscript,
                        r_obj* names,
                        const struct location_opts* opts) {
@@ -292,41 +329,6 @@ r_obj* chr_as_location(r_obj* subscript,
 
   FREE(1);
   return matched;
-}
-
-r_obj* vec_as_location(r_obj* subscript, r_ssize n, r_obj* names) {
-  return vec_as_location_opts(subscript,
-                              n,
-                              names,
-                              location_default_opts);
-}
-
-r_obj* vec_as_location_opts(r_obj* subscript,
-                            r_ssize n,
-                            r_obj* names,
-                            const struct location_opts* opts) {
-
-  ERR err = NULL;
-  subscript = vec_as_subscript_opts(subscript, opts->subscript_opts, &err);
-  KEEP2(subscript, err);
-
-  if (err) {
-    r_cnd_signal(err);
-    r_stop_unreached("vec_as_location_opts");
-  }
-
-  r_obj* out = r_null;
-  switch (r_typeof(subscript)) {
-  case R_TYPE_null: out = vctrs_shared_empty_int; break;
-  case R_TYPE_integer: out = int_as_location(subscript, n, opts); break;
-  case R_TYPE_double: out = dbl_as_location(subscript, n, opts); break;
-  case R_TYPE_logical: out = lgl_as_location(subscript, n, opts); break;
-  case R_TYPE_character: out = chr_as_location(subscript, names, opts); break;
-  default: r_stop_unimplemented_type("vec_as_location_opts", r_typeof(subscript));
-  }
-
-  FREE(2);
-  return out;
 }
 
 // [[ register() ]]

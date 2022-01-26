@@ -1,9 +1,20 @@
 static
+r_obj* lgl_as_location(r_obj* subscript,
+                       r_ssize n,
+                       const struct location_opts* opts);
+
+static
+r_obj* int_as_location(r_obj* subscript,
+                       r_ssize n,
+                       const struct location_opts* opts);
+
+static
 r_obj* int_invert_location(r_obj* subscript,
                            r_ssize n,
                            const struct location_opts* opts);
 static
 r_obj* int_filter_zero(r_obj* subscript, r_ssize n_zero);
+
 static
 void int_check_consecutive(r_obj* subscript,
                            r_ssize n,
@@ -11,10 +22,14 @@ void int_check_consecutive(r_obj* subscript,
                            const struct location_opts* opts);
 
 static
-r_obj* lgl_as_location(r_obj* subscript,
+r_obj* dbl_as_location(r_obj* subscript,
                        r_ssize n,
                        const struct location_opts* opts);
 
+static
+r_obj* chr_as_location(r_obj* subscript,
+                       r_obj* names,
+                       const struct location_opts* opts);
 
 static
 void stop_subscript_missing(r_obj* i);
