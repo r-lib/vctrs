@@ -76,7 +76,7 @@ vec_as_index <- function(i, n, names = NULL) {
   arg <- NULL
 
   .Call(
-    vctrs_as_location,
+    ffi_as_location,
     i = i,
     n = n,
     names = names,

@@ -173,3 +173,54 @@
       x These names are invalid:
         * "..." at location 1.
 
+# subscript validation reports correct error calls
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/rlang_error>
+      Error in `vctrs::num_as_location()`:
+      ! `missing` must be one of "propagate" or "error".
+
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `my_function()`:
+      ! Can't subset elements that don't exist.
+      x Location 10 doesn't exist.
+      i There are only 2 elements.
+
+---
+
+    Code
+      (expect_error(my_function(1.5)))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Can't convert from <double> to <integer> due to loss of precision.
+
+---
+
+    Code
+      (expect_error(my_function(1.5)))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Can't convert from <double> to <integer> due to loss of precision.
+
+---
+
+    Code
+      (expect_error(my_function(list())))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript has the wrong type `list`.
+      i It must be logical, numeric, or character.
+

@@ -36,12 +36,22 @@
       x Location 3 doesn't exist.
       i There are only 2 elements.
 
+# can slice with double indices
+
+    Code
+      (expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Can't convert from <double> to <integer> due to loss of precision.
+
 # Unnamed vector with character subscript is caught
 
     Code
       vec_slice(1:3, letters[1])
     Condition
-      Error:
+      Error in `vec_slice()`:
       ! Can't use character names to index an unnamed vector.
 
 # Negative subscripts are checked

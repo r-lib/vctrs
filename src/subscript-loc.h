@@ -39,9 +39,14 @@ static const struct location_opts* const location_default_opts = &location_defau
 static const struct location_opts* const location_default_assign_opts = &location_default_assign_opts_obj;
 
 
-SEXP vec_as_location(SEXP i, R_len_t n, SEXP names);
-SEXP vec_as_location_opts(SEXP subscript, R_len_t n, SEXP names,
-                          const struct location_opts* location_opts);
+r_obj* vec_as_location(r_obj* i,
+                       r_ssize n,
+                       r_obj* names);
+
+r_obj* vec_as_location_opts(r_obj* subscript,
+                            r_ssize n,
+                            r_obj* names,
+                            const struct location_opts* location_opts);
 
 
 #endif

@@ -45,7 +45,7 @@ extern r_obj* ffi_ptype2(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
 extern r_obj* ffi_cast(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_as_location(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vec_slice(SEXP, SEXP);
 extern SEXP ffi_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
@@ -93,8 +93,8 @@ extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
 extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_as_subscript(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_as_subscript_result(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_as_subscript(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_as_subscript_result(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_df_flatten_info(SEXP);
 extern SEXP df_flatten(SEXP);
 extern SEXP vctrs_linked_version();
@@ -201,7 +201,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
   {"vctrs_typeof2_s3",                 (DL_FUNC) &vctrs_typeof2_s3, 2},
   {"ffi_cast",                         (DL_FUNC) &ffi_cast, 5},
-  {"vctrs_as_location",                (DL_FUNC) &vctrs_as_location, 8},
+  {"ffi_as_location",                  (DL_FUNC) &ffi_as_location, 8},
   {"vctrs_slice",                      (DL_FUNC) &vec_slice, 2},
   {"ffi_init",                         (DL_FUNC) &ffi_init, 3},
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
@@ -251,8 +251,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_list",                    (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",         (DL_FUNC) &vctrs_try_catch_callback, 2},
   {"vctrs_is_coercible",               (DL_FUNC) &vctrs_is_coercible, 5},
-  {"vctrs_as_subscript",               (DL_FUNC) &vctrs_as_subscript, 5},
-  {"vctrs_as_subscript_result",        (DL_FUNC) &vctrs_as_subscript_result, 5},
+  {"ffi_as_subscript",                 (DL_FUNC) &ffi_as_subscript, 6},
+  {"ffi_as_subscript_result",          (DL_FUNC) &ffi_as_subscript_result, 6},
   {"vctrs_df_flatten_info",            (DL_FUNC) &vctrs_df_flatten_info, 1},
   {"vctrs_df_flatten",                 (DL_FUNC) &df_flatten, 1},
   {"vctrs_linked_version",             (DL_FUNC) &vctrs_linked_version, 0},

@@ -13,7 +13,8 @@ vec_as_location(
   names = NULL,
   ...,
   missing = c("propagate", "error"),
-  arg = NULL
+  arg = NULL,
+  call = caller_env()
 )
 
 num_as_location(
@@ -24,7 +25,8 @@ num_as_location(
   negative = c("invert", "error", "ignore"),
   oob = c("error", "extend"),
   zero = c("remove", "error", "ignore"),
-  arg = NULL
+  arg = NULL,
+  call = caller_env()
 )
 
 vec_as_location2(
@@ -33,7 +35,8 @@ vec_as_location2(
   names = NULL,
   ...,
   missing = c("error", "propagate"),
-  arg = NULL
+  arg = NULL,
+  call = caller_env()
 )
 
 num_as_location2(
@@ -42,7 +45,8 @@ num_as_location2(
   ...,
   negative = c("error", "ignore"),
   missing = c("error", "propagate"),
-  arg = NULL
+  arg = NULL,
+  call = caller_env()
 )
 }
 \arguments{
@@ -68,6 +72,11 @@ subscripts can contain missing values and scalar subscripts can't.}
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
 \item{negative}{Whether to throw an \code{"error"} when \code{i} is a
 negative location value, or \code{"ignore"} it.}
