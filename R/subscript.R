@@ -116,8 +116,7 @@ vec_as_subscript2_result <- function(i,
       numeric = numeric,
       character = character,
       subscript_arg = arg,
-      body = bullets,
-      parent = result$err$parent
+      body = bullets
     )
 
     return(result)

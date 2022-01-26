@@ -9,32 +9,12 @@
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `logical`.
       i It must be numeric or character.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `logical`.
-      i It must be numeric or character.
     Code
       (expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `data.frame<
-        mpg : double
-        cyl : double
-        disp: double
-        hp  : double
-        drat: double
-        wt  : double
-        qsec: double
-        vs  : double
-        am  : double
-        gear: double
-        carb: double
-      >`.
-      i It must be numeric or character.
-      Caused by error:
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `data.frame<
         mpg : double
@@ -59,10 +39,6 @@
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `environment`.
       i It must be numeric or character.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `environment`.
-      i It must be numeric or character.
     Code
       (expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -72,36 +48,22 @@
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `vctrs_foobar`.
       i It must be numeric or character.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `vctrs_foobar`.
-      i It must be numeric or character.
     Code
       (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
-      * Locations: 1
+      x Subscript has the wrong type `double`.
+      i It must be numeric or character.
     Code
       (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
-      * Locations: 1
+      x Subscript has the wrong type `double`.
+      i It must be numeric or character.
     Code
       (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type")
       )
@@ -109,13 +71,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
-      * Locations: 1
+      x Subscript has the wrong type `double`.
+      i It must be numeric or character.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(foobar(), 10L, arg = "foo", call = call(
@@ -126,10 +83,6 @@
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has the wrong type `vctrs_foobar`.
       i It must be numeric or character.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` has the wrong type `vctrs_foobar`.
-      i It must be numeric or character.
     Code
       (expect_error(vec_as_location2(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -137,13 +90,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from `foo` <double> to <integer> due to loss of precision.
-      * Locations: 1
+      x Subscript `foo` has the wrong type `double`.
+      i It must be numeric or character.
     Code
       (expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type")
       )
@@ -152,10 +100,6 @@
       Error:
       ! Must remove row with a single valid subscript.
       x Subscript `foo(bar)` has the wrong type `logical`.
-      i It must be numeric or character.
-      Caused by error:
-      ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `logical`.
       i It must be numeric or character.
 
 # vec_as_location() requires integer, character, or logical inputs
@@ -206,9 +150,6 @@
       Error:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
-      * Locations: 1
     Code
       (expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -263,9 +204,6 @@
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from `foo` <double> to <integer> due to loss of precision.
-      * Locations: 1
 
 # vec_as_location() and variants check for OOB elements
 
@@ -344,22 +282,6 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` has the wrong type `data.frame<
-        mpg : double
-        cyl : double
-        disp: double
-        hp  : double
-        drat: double
-        wt  : double
-        qsec: double
-        vs  : double
-        am  : double
-        gear: double
-        carb: double
-      >`.
-      i It must be numeric or character.
-      Caused by error:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has the wrong type `data.frame<
         mpg : double

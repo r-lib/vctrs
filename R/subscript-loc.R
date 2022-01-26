@@ -182,9 +182,7 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       subscript_arg = arg,
-      # Should body fields in parents be automatically inherited?
       body = parent$body,
-      parent = parent,
       call = call
     )))
   }
@@ -257,7 +255,6 @@ vec_as_location2_result <- function(i,
   } else {
     result(err = new_error_location2_type(
       i = i,
-      parent = err,
       subscript_arg = arg,
       call = call
     ))

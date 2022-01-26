@@ -202,9 +202,6 @@
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
-      * Locations: 1
 
 ---
 
@@ -215,9 +212,6 @@
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from <double> to <integer> due to loss of precision.
-      Caused by error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
-      * Locations: 1
 
 ---
 

@@ -12,7 +12,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
                              const struct subscript_opts* opts,
                              ERR* err) {
   if (vec_dim_n(subscript) != 1) {
-    *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim, r_null);
+    *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim);
     return r_null;
   }
 
@@ -38,7 +38,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   KEEP_AT(subscript, subscript_pi);
 
   if (!vec_is_vector(subscript)) {
-    *err = new_error_subscript_type(subscript, opts, r_null, r_null);
+    *err = new_error_subscript_type(subscript, opts, r_null);
     FREE(2);
     return r_null;
   }
@@ -84,7 +84,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   }
 
   if (action == SUBSCRIPT_TYPE_ACTION_ERROR) {
-    *err = new_error_subscript_type(subscript, opts, r_null, r_null);
+    *err = new_error_subscript_type(subscript, opts, r_null);
     FREE(2);
     return r_null;
   }
@@ -132,7 +132,7 @@ r_obj* obj_cast_subscript(r_obj* subscript,
     return vec_cast_opts(&cast_opts);
   }
 
-  *err = new_error_subscript_type(subscript, opts, r_null, r_null);
+  *err = new_error_subscript_type(subscript, opts, r_null);
   return r_null;
 }
 
@@ -194,10 +194,7 @@ r_obj* dbl_cast_subscript_fallback(r_obj* subscript,
     r_obj* body = KEEP(vctrs_eval_mask1(syms_new_dbl_cast_subscript_body,
                                         syms_lossy_err, err_obj));
 
-    *err = new_error_subscript_type(subscript,
-                                    opts,
-                                    body,
-                                    err_obj);
+    *err = new_error_subscript_type(subscript, opts, body);
     FREE(3);
     return r_null;
   }
@@ -294,8 +291,7 @@ enum subscript_type_action parse_subscript_arg_type(r_obj* x,
 static
 r_obj* new_error_subscript_type(r_obj* subscript,
                                 const struct subscript_opts* opts,
-                                r_obj* body,
-                                r_obj* parent) {
+                                r_obj* body) {
   r_obj* logical = subscript_type_action_chr(opts->logical);
   r_obj* numeric = subscript_type_action_chr(opts->numeric);
   r_obj* character = subscript_type_action_chr(opts->character);
@@ -313,7 +309,6 @@ r_obj* new_error_subscript_type(r_obj* subscript,
     syms_numeric,
     syms_character,
     syms_body,
-    syms_parent,
     NULL
   };
   r_obj* args[] = {
@@ -325,7 +320,6 @@ r_obj* new_error_subscript_type(r_obj* subscript,
     numeric,
     character,
     body,
-    parent,
     NULL
   };
 
