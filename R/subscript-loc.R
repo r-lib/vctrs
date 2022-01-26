@@ -173,7 +173,8 @@ vec_as_location2_result <- function(i,
   result <- vec_as_subscript2_result(
     i = i,
     arg = arg,
-    logical = "error"
+    logical = "error",
+    call = call
   )
 
   if (!is_null(result$err)) {

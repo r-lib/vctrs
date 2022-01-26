@@ -108,7 +108,7 @@ void stop_recycle_incompatible_size(r_ssize x_size,
     KEEP(r_int(x_size)),
     KEEP(r_int(size)),
     KEEP(vctrs_arg(x_arg)),
-    KEEP(r_lazy_eval(call)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
