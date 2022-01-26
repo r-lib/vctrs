@@ -25,12 +25,6 @@
 #' `condition` is analogous to specifying a SQL ON statement, and `condition =
 #' NULL` is identical to specifying a join without an ON statement.
 #'
-#' When `incomplete = "match"`, missing values are allowed to match other
-#' missing values, but will not match any other values. Regardless of
-#' the `condition`, missing values will be matched exactly. For example, even
-#' with `<`, a missing value in `needles` will match a missing value in
-#' `haystack`.
-#'
 #' Be very careful when specifying match `condition`s. If a condition is
 #' mis-specified, it is very easy to accidentally generate an exponentially
 #' large number of matches.
@@ -78,16 +72,20 @@
 #'
 #' @param incomplete Handling of [incomplete][vec_detect_complete] observations
 #'   in `needles`.
-#'   - `"match"` matches incomplete observations in `needles` to incomplete
-#'     observations in `haystack`. Incomplete observations will be matched
-#'     exactly, regardless of the `condition`. `nan_distinct` determines whether
-#'     a `NA` is allowed to match a `NaN`.
+#'   - `"compare"` uses `condition` to determine whether or not an incomplete
+#'     observation in `needles` matches an incomplete observation in `haystack`.
+#'     If `condition` is `==`, `>=`, or `<=`, then incomplete observations will
+#'     match.
+#'   - `"match"` always matches incomplete observations in `needles` to
+#'     incomplete observations in `haystack`, regardless of the `condition`.
 #'   - `"drop"` drops incomplete observations in `needles` from the result.
 #'   - `"error"` throws an error if any `needles` are incomplete.
 #'   - If a single integer is provided, this represents the value returned
 #'     in the `haystack` column for observations of `needles` that are
 #'     incomplete. If `no_match = NA`, setting `incomplete = NA` forces
 #'     incomplete observations in `needles` to be treated like unmatched values.
+#'
+#'   `nan_distinct` determines whether a `NA` is allowed to match a `NaN`.
 #'
 #' @param no_match Handling of `needles` without a match.
 #'   - `"drop"` drops `needles` with zero matches from the result.
@@ -146,11 +144,12 @@
 #' # If multiple matches are present, control which is returned with `multiple`
 #' vec_locate_matches(x, y, multiple = "first")
 #' vec_locate_matches(x, y, multiple = "last")
+#' vec_locate_matches(x, y, multiple = "any")
 #' try(vec_locate_matches(x, y, multiple = "error"))
 #'
-#' # By default, NA is allowed to match other NA values, and NA is treated
-#' # as being identical to NaN. Using `nan_distinct = TRUE` treats NA and NaN as
-#' # different values, so NA can only match NA, and NaN can only match NaN.
+#' # By default, NA is treated as being identical to NaN.
+#' # Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
+#' # can only match NA, and NaN can only match NaN.
 #' vec_locate_matches(x, y, nan_distinct = TRUE)
 #'
 #' # If you never want missing values to match, set `incomplete = NA` to return
@@ -199,6 +198,19 @@
 #' nrow(matches)
 #' head(matches, n = 10)
 #'
+#' # By default, missing values will match other missing values when using
+#' # `==`, `>=`, or `<=` conditions, but not when using `>` or `<` conditions.
+#' # This is similar to how `vec_compare(x, y, na_equal = TRUE)` works.
+#' x <- c(1, NA)
+#' y <- c(NA, 2)
+#'
+#' vec_locate_matches(x, y, condition = "<=")
+#' vec_locate_matches(x, y, condition = "<")
+#'
+#' # You can force missing values to match regardless of the `condition`
+#' # by using `incomplete = "match"`
+#' vec_locate_matches(x, y, condition = "<", incomplete = "match")
+#'
 #' # You can also use data frames for `needles` and `haystack`. The
 #' # `condition` will be recycled to the number of columns in `needles`, or
 #' # you can specify varying conditions per column. In this example, we take
@@ -225,7 +237,7 @@ vec_locate_matches <- function(needles,
                                ...,
                                condition = "==",
                                filter = "none",
-                               incomplete = "match",
+                               incomplete = "compare",
                                no_match = NA_integer_,
                                remaining = "drop",
                                multiple = "all",

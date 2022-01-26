@@ -34,10 +34,11 @@ enum vctrs_ops {
 };
 
 enum vctrs_incomplete_action {
-  VCTRS_INCOMPLETE_ACTION_match = 0,
-  VCTRS_INCOMPLETE_ACTION_value = 1,
-  VCTRS_INCOMPLETE_ACTION_drop = 2,
-  VCTRS_INCOMPLETE_ACTION_error = 3
+  VCTRS_INCOMPLETE_ACTION_compare = 0,
+  VCTRS_INCOMPLETE_ACTION_match = 1,
+  VCTRS_INCOMPLETE_ACTION_value = 2,
+  VCTRS_INCOMPLETE_ACTION_drop = 3,
+  VCTRS_INCOMPLETE_ACTION_error = 4
 };
 struct vctrs_incomplete {
   enum vctrs_incomplete_action action;
@@ -538,7 +539,10 @@ void df_locate_matches_recurse(r_ssize col,
     loc_upper_bound_o_needles
   );
 
-  if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && !needle_is_complete) {
+  if (!needle_is_complete &&
+      (incomplete->action == VCTRS_INCOMPLETE_ACTION_value ||
+       incomplete->action == VCTRS_INCOMPLETE_ACTION_drop ||
+       incomplete->action == VCTRS_INCOMPLETE_ACTION_error)) {
     // Signal incomplete needle, don't recursive into further columns.
     // Early return at the end of this branch.
 
@@ -624,33 +628,46 @@ void df_locate_matches_recurse(r_ssize col,
   r_ssize loc_upper_match_o_haystack = bounds.upper;
 
   // Adjust bounds based on non-equi condition.
-  // If needle is NA, we always treat it like an equi condition
-  if (needle_is_complete) {
-    switch (op) {
-    case VCTRS_OPS_lt: {
-      // Exclude found needle
-      loc_lower_match_o_haystack = loc_upper_match_o_haystack + 1;
+  // If needle is NA and we are doing an exact match, then we treat it like an
+  // equi condition here. Otherwise if needle is NA, then we are careful to
+  // never extend the bounds to capture values past it.
+  const enum vctrs_ops bounds_op =
+    (!needle_is_complete && incomplete->action == VCTRS_INCOMPLETE_ACTION_match) ?
+    VCTRS_OPS_eq :
+    op;
+
+  switch (bounds_op) {
+  case VCTRS_OPS_lt: {
+    // Exclude found needle
+    loc_lower_match_o_haystack = loc_upper_match_o_haystack + 1;
+    if (needle_is_complete) {
       loc_upper_match_o_haystack = loc_upper_bound_o_haystack;
-      break;
     }
-    case VCTRS_OPS_lte: {
+    break;
+  }
+  case VCTRS_OPS_lte: {
+    if (needle_is_complete) {
       loc_upper_match_o_haystack = loc_upper_bound_o_haystack;
-      break;
     }
-    case VCTRS_OPS_gt: {
-      // Exclude found needle
-      loc_upper_match_o_haystack = loc_lower_match_o_haystack - 1;
+    break;
+  }
+  case VCTRS_OPS_gt: {
+    // Exclude found needle
+    loc_upper_match_o_haystack = loc_lower_match_o_haystack - 1;
+    if (needle_is_complete) {
       loc_lower_match_o_haystack = loc_lower_bound_o_haystack;
-      break;
     }
-    case VCTRS_OPS_gte: {
+    break;
+  }
+  case VCTRS_OPS_gte: {
+    if (needle_is_complete) {
       loc_lower_match_o_haystack = loc_lower_bound_o_haystack;
-      break;
     }
-    case VCTRS_OPS_eq: {
-      break;
-    }
-    }
+    break;
+  }
+  case VCTRS_OPS_eq: {
+    break;
+  }
   }
 
   if (needle_is_complete &&
@@ -857,7 +874,10 @@ void df_locate_matches_recurse(r_ssize col,
         }
       }
     }
-  } else if (incomplete->action != VCTRS_INCOMPLETE_ACTION_match && col < n_col - 1) {
+  } else if (col < n_col - 1 &&
+             (incomplete->action == VCTRS_INCOMPLETE_ACTION_value ||
+              incomplete->action == VCTRS_INCOMPLETE_ACTION_drop ||
+              incomplete->action == VCTRS_INCOMPLETE_ACTION_error)) {
     // This branch occurs if there is no match in `haystack` for this needle,
     // but we aren't on the last column and we are tracking incomplete needles.
     // Before we move on from this needle, we check its future columns for
@@ -1296,6 +1316,13 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
   if (r_is_string(incomplete)) {
     const char* c_incomplete = r_chr_get_c_string(incomplete, 0);
 
+    if (!strcmp(c_incomplete, "compare")) {
+      return (struct vctrs_incomplete) {
+        .action = VCTRS_INCOMPLETE_ACTION_compare,
+        .value = -1
+      };
+    }
+
     if (!strcmp(c_incomplete, "match")) {
       return (struct vctrs_incomplete) {
         .action = VCTRS_INCOMPLETE_ACTION_match,
@@ -1317,7 +1344,7 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
       };
     }
 
-    r_abort("`incomplete` must be one of: \"match\", \"drop\", or \"error\".");
+    r_abort("`incomplete` must be one of: \"compare\", \"match\", \"drop\", or \"error\".");
   }
 
   incomplete = vec_cast(incomplete, vctrs_shared_empty_int, args_incomplete, args_empty);
@@ -1621,10 +1648,12 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       case VCTRS_INCOMPLETE_ACTION_error: {
         stop_matches_incomplete(loc_needles, needles_arg);
       }
+      case VCTRS_INCOMPLETE_ACTION_compare:
       case VCTRS_INCOMPLETE_ACTION_match: {
         r_stop_internal(
           "expand_compact_indices",
-          "Needles should never be marked as `SIGNAL_INCOMPLETE` when `incomplete = 'match'`."
+          "Needles should never be marked as `SIGNAL_INCOMPLETE`",
+          "when `incomplete = 'compare'` or `incomplete = 'match'`."
         );
       }
       default: {

@@ -10,7 +10,7 @@ vec_locate_matches(
   ...,
   condition = "==",
   filter = "none",
-  incomplete = "match",
+  incomplete = "compare",
   no_match = NA_integer_,
   remaining = "drop",
   multiple = "all",
@@ -66,17 +66,21 @@ can be further controlled with \code{multiple}.}
 \item{incomplete}{Handling of \link[=vec_detect_complete]{incomplete} observations
 in \code{needles}.
 \itemize{
-\item \code{"match"} matches incomplete observations in \code{needles} to incomplete
-observations in \code{haystack}. Incomplete observations will be matched
-exactly, regardless of the \code{condition}. \code{nan_distinct} determines whether
-a \code{NA} is allowed to match a \code{NaN}.
+\item \code{"compare"} uses \code{condition} to determine whether or not an incomplete
+observation in \code{needles} matches an incomplete observation in \code{haystack}.
+If \code{condition} is \code{==}, \code{>=}, or \code{<=}, then incomplete observations will
+match.
+\item \code{"match"} always matches incomplete observations in \code{needles} to
+incomplete observations in \code{haystack}, regardless of the \code{condition}.
 \item \code{"drop"} drops incomplete observations in \code{needles} from the result.
 \item \code{"error"} throws an error if any \code{needles} are incomplete.
 \item If a single integer is provided, this represents the value returned
 in the \code{haystack} column for observations of \code{needles} that are
 incomplete. If \code{no_match = NA}, setting \code{incomplete = NA} forces
 incomplete observations in \code{needles} to be treated like unmatched values.
-}}
+}
+
+\code{nan_distinct} determines whether a \code{NA} is allowed to match a \code{NaN}.}
 
 \item{no_match}{Handling of \code{needles} without a match.
 \itemize{
@@ -167,12 +171,6 @@ binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, an
 and \code{haystack}, with the default being most similar to a left join. Using
 \code{condition} is analogous to specifying a SQL ON statement, and \code{condition = NULL} is identical to specifying a join without an ON statement.
 
-When \code{incomplete = "match"}, missing values are allowed to match other
-missing values, but will not match any other values. Regardless of
-the \code{condition}, missing values will be matched exactly. For example, even
-with \code{<}, a missing value in \code{needles} will match a missing value in
-\code{haystack}.
-
 Be very careful when specifying match \code{condition}s. If a condition is
 mis-specified, it is very easy to accidentally generate an exponentially
 large number of matches.
@@ -203,11 +201,12 @@ data_frame(
 # If multiple matches are present, control which is returned with `multiple`
 vec_locate_matches(x, y, multiple = "first")
 vec_locate_matches(x, y, multiple = "last")
+vec_locate_matches(x, y, multiple = "any")
 try(vec_locate_matches(x, y, multiple = "error"))
 
-# By default, NA is allowed to match other NA values, and NA is treated
-# as being identical to NaN. Using `nan_distinct = TRUE` treats NA and NaN as
-# different values, so NA can only match NA, and NaN can only match NaN.
+# By default, NA is treated as being identical to NaN.
+# Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
+# can only match NA, and NaN can only match NaN.
 vec_locate_matches(x, y, nan_distinct = TRUE)
 
 # If you never want missing values to match, set `incomplete = NA` to return
@@ -255,6 +254,19 @@ matches <- vec_locate_matches(x, y, condition = NULL)
 vec_size(x) * vec_size(y)
 nrow(matches)
 head(matches, n = 10)
+
+# By default, missing values will match other missing values when using
+# `==`, `>=`, or `<=` conditions, but not when using `>` or `<` conditions.
+# This is similar to how `vec_compare(x, y, na_equal = TRUE)` works.
+x <- c(1, NA)
+y <- c(NA, 2)
+
+vec_locate_matches(x, y, condition = "<=")
+vec_locate_matches(x, y, condition = "<")
+
+# You can force missing values to match regardless of the `condition`
+# by using `incomplete = "match"`
+vec_locate_matches(x, y, condition = "<", incomplete = "match")
 
 # You can also use data frames for `needles` and `haystack`. The
 # `condition` will be recycled to the number of columns in `needles`, or

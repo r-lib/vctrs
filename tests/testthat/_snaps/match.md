@@ -36,7 +36,7 @@
     Output
       <error/rlang_error>
       Error:
-      ! `incomplete` must be one of: "match", "drop", or "error".
+      ! `incomplete` must be one of: "compare", "match", "drop", or "error".
 
 # `multiple` can error informatively
 
