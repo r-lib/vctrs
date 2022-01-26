@@ -38,7 +38,7 @@ SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   }
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  KEEP(name_repair_opts.shelter);
 
   SEXP out = vec_rbind(xs, ptype, names_to, &name_repair_opts, name_spec);
 
@@ -349,7 +349,7 @@ SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, true);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  KEEP(name_repair_opts.shelter);
 
   SEXP out = vec_cbind(xs, ptype, size, &name_repair_opts);
 
@@ -578,7 +578,10 @@ static SEXP vec_as_df_col(SEXP x, SEXP outer) {
 }
 
 struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
-  struct name_repair_opts opts = new_name_repair_opts(name_repair, args_empty, false);
+  struct name_repair_opts opts = new_name_repair_opts(name_repair,
+                                                      args_empty,
+                                                      false,
+                                                      r_lazy_null);
 
   switch (opts.type) {
   case name_repair_custom:

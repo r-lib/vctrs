@@ -5,7 +5,7 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't recycle input of size 2 to size 3.
 
 # logical subscripts must match size of indexed vector
@@ -38,7 +38,7 @@
       (expect_error(vec_assign(1:3, 5, 10), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't assign to elements that don't exist.
       x Location 5 doesn't exist.
       i There are only 3 elements.
@@ -51,7 +51,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't negate elements that don't exist.
       x Location 100 doesn't exist.
       i There are only 26 elements.
@@ -60,7 +60,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`:
+      Error:
       ! Can't assign to elements that don't exist.
       x Element `foo` doesn't exist.
 
@@ -92,13 +92,13 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't convert `bar` <character> to match type of `foo` <integer>.
     Code
       (expect_error(vec_assign(1:2, 1L, 1:2, value_arg = "bar"), class = "vctrs_error_recycle_incompatible_size")
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't recycle `bar` (size 2) to size 1.
 

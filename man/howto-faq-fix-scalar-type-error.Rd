@@ -53,12 +53,12 @@ class} is not \code{"data.frame"}:\if{html}{\out{<div class="sourceCode r">}}\pr
 class(my_df) <- c("data.frame", "my_class")
 
 vctrs::vec_assert(my_df)
-#> Error in `stop_vctrs()`:
+#> Error:
 #> ! `my_df` must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
 
 This is problematic as many tidyverse functions won’t work properly:\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
-#> Error in `stop_vctrs()`:
+#> Error:
 #> ! Input must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
 

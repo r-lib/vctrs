@@ -227,12 +227,18 @@ SEXP vctrs_is_coercible(SEXP x,
 
 
 // [[ register() ]]
-SEXP vctrs_ptype2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+r_obj* ffi_ptype2(r_obj* x,
+                  r_obj* y,
+                  r_obj* ffi_x_arg,
+                  r_obj* ffi_y_arg,
+                  r_obj* frame) {
+  struct vctrs_arg x_arg = vec_as_arg(ffi_x_arg);
+  struct vctrs_arg y_arg = vec_as_arg(ffi_y_arg);
+
+  struct r_lazy call = { .x = syms_call, .env = frame };
 
   int _left;
-  return vec_ptype2(x, y, &x_arg_, &y_arg_, &_left);
+  return vec_ptype2(x, y, &x_arg, &y_arg, &_left, call);
 }
 
 // [[ include("ptype2.h") ]]

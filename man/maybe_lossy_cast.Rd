@@ -14,6 +14,7 @@ maybe_lossy_cast(
   loss_type = c("precision", "generality"),
   x_arg,
   to_arg,
+  call = caller_env(),
   details = NULL,
   message = NULL,
   class = NULL,
@@ -50,6 +51,11 @@ types.}
 \item{to_arg}{Argument names for \code{x}, \code{y}, and \code{to}. Used in
 error messages to inform the user about the locations of incompatible
 types.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
 \item{details}{Any additional human readable details.}
 

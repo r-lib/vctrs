@@ -58,7 +58,7 @@ When vctrs can’t convert a vector because the target type is not as rich
 as the source type, it throws a lossy cast error. Assigning a fractional
 number to an integer vector is a typical example of a lossy cast error:\if{html}{\out{<div class="sourceCode r">}}\preformatted{int_vector <- 1:3
 vec_assign(int_vector, 2, 0.001)
-#> Error in `stop_vctrs()`:
+#> Error:
 #> ! Can't convert from <double> to <integer> due to loss of precision.
 #> * Locations: 1
 }\if{html}{\out{</div>}}

@@ -249,11 +249,12 @@ vec_as_location2_result <- function(i,
 }
 
 
-stop_location_negative_missing <- function(i, ...) {
+stop_location_negative_missing <- function(i, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_type(
     i,
     ...,
-    body = cnd_body_vctrs_error_location_negative_missing
+    body = cnd_body_vctrs_error_location_negative_missing,
+    call = call
   ))
 }
 cnd_body_vctrs_error_location_negative_missing <- function(cnd, ...) {
@@ -275,11 +276,12 @@ cnd_body_vctrs_error_location_negative_missing <- function(cnd, ...) {
   ))
 }
 
-stop_location_negative_positive <- function(i, ...) {
+stop_location_negative_positive <- function(i, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_type(
     i,
     ...,
-    body = cnd_body_vctrs_error_location_negative_positive
+    body = cnd_body_vctrs_error_location_negative_positive,
+    call = call
   ))
 }
 cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
@@ -333,11 +335,12 @@ cnd_bullets_location2_need_positive <- function(cnd, ...) {
   ))
 }
 
-stop_location_negative <- function(i, ...) {
+stop_location_negative <- function(i, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_type(
     i,
     body = cnd_bullets_location_need_non_negative,
-    ...
+    ...,
+    call = call
   ))
 }
 cnd_bullets_location_need_non_negative <- function(cnd, ...) {
@@ -347,11 +350,12 @@ cnd_bullets_location_need_non_negative <- function(cnd, ...) {
   ))
 }
 
-stop_location_zero <- function(i, ...) {
+stop_location_zero <- function(i, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_type(
     i,
     body = cnd_bullets_location_need_non_zero,
-    ...
+    ...,
+    call = call
   ))
 }
 cnd_bullets_location_need_non_zero <- function(cnd, ...) {
@@ -373,11 +377,12 @@ cnd_bullets_location_need_non_zero <- function(cnd, ...) {
   ))
 }
 
-stop_subscript_missing <- function(i, ...) {
+stop_subscript_missing <- function(i, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_type(
     i = i,
     body = cnd_bullets_subscript_missing,
-    ...
+    ...,
+    call = call
   ))
 }
 cnd_bullets_subscript_missing <- function(cnd, ...) {
@@ -397,12 +402,13 @@ cnd_bullets_subscript_missing <- function(cnd, ...) {
   ))
 }
 
-stop_indicator_size <- function(i, n, ...) {
+stop_indicator_size <- function(i, n, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_size(
     i,
     n = n,
     ...,
-    body = cnd_body_vctrs_error_indicator_size
+    body = cnd_body_vctrs_error_indicator_size,
+    call = call
   ))
 }
 cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
@@ -414,12 +420,16 @@ cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
   )
 }
 
-stop_subscript_oob <- function(i, subscript_type, ...) {
+stop_subscript_oob <- function(i,
+                               subscript_type,
+                               ...,
+                               call = caller_env()) {
   stop_subscript(
     class = "vctrs_error_subscript_oob",
     i = i,
     subscript_type = subscript_type,
-    ...
+    ...,
+    call = call
   )
 }
 
@@ -489,13 +499,17 @@ cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
   ))
 }
 
-stop_location_oob_non_consecutive <- function(i, size, ...) {
+stop_location_oob_non_consecutive <- function(i,
+                                              size,
+                                              ...,
+                                              call = caller_env()) {
   stop_subscript_oob(
     i = i,
     size = size,
     subscript_type = "numeric",
     subscript_oob_non_consecutive = TRUE,
-    ...
+    ...,
+    call = call
   )
 }
 

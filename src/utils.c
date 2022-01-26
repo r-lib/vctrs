@@ -135,6 +135,19 @@ SEXP vctrs_eval_mask7(SEXP fn,
   SEXP args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
   return vctrs_eval_mask_n(fn, syms, args);
 }
+r_obj* vctrs_eval_mask8(r_obj* fn,
+                        r_obj* x1_sym, r_obj* x1,
+                        r_obj* x2_sym, r_obj* x2,
+                        r_obj* x3_sym, r_obj* x3,
+                        r_obj* x4_sym, r_obj* x4,
+                        r_obj* x5_sym, r_obj* x5,
+                        r_obj* x6_sym, r_obj* x6,
+                        r_obj* x7_sym, r_obj* x7,
+                        r_obj* x8_sym, r_obj* x8) {
+  r_obj* syms[9] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, x8_sym, NULL };
+  r_obj* args[9] = { x1, x2, x3, x4, x5, x6, x7, x8, NULL };
+  return vctrs_eval_mask_n(fn, syms, args);
+}
 
 /**
  * Dispatch in the current environment
@@ -1593,6 +1606,7 @@ SEXP syms_message = NULL;
 SEXP syms_chr_proxy_collate = NULL;
 SEXP syms_actual = NULL;
 SEXP syms_required = NULL;
+SEXP syms_call = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1635,6 +1649,8 @@ void c_print_backtrace() {
   Rprintf("vctrs must be compliled with -DRLIB_DEBUG.");
 #endif
 }
+
+struct r_lazy r_lazy_null;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -1860,6 +1876,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_chr_proxy_collate = Rf_install("chr_proxy_collate");
   syms_actual = Rf_install("actual");
   syms_required = Rf_install("required");
+  syms_call = Rf_install("call");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -1914,6 +1931,8 @@ void vctrs_init_utils(SEXP ns) {
     MARK_NOT_MUTABLE(result_attrib);
     UNPROTECT(4);
   }
+
+  r_lazy_null = (struct r_lazy) { 0 };
 
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));

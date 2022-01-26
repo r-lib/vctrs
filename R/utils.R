@@ -12,7 +12,7 @@ ones <- function(...) {
 }
 
 vec_coerce_bare <- function(x, type) {
-  # Unexported wrapper around Rf_coerceVector()
+  # FIXME! Unexported wrapper around Rf_coerceVector()
   coerce <- env_get(ns_env("rlang"), "vec_coerce")
   coerce(x, type)
 }
@@ -283,4 +283,19 @@ named <- function(x) {
     names(x) <- names2(x)
   }
   x
+}
+
+browser <- function(...,
+                    skipCalls = 0,
+                    frame = parent.frame()) {
+  if (!identical(stdout(), getConnection(1))) {
+    sink(getConnection(1))
+    withr::defer(sink(), envir = frame)
+  }
+
+  # Calling `browser()` on exit avoids RStudio displaying the
+  # `browser2()` location. We still need one `n` to get to the
+  # expected place. Ideally `skipCalls` would not skip but exit the
+  # contexts.
+  on.exit(base::browser(..., skipCalls = skipCalls + 1))
 }

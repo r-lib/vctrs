@@ -1,0 +1,75 @@
+test_that("failing common type reports correct error call", {
+  my_function <- function() vec_ptype2(2, chr())
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("failing cast reports correct error call", {
+  my_function <- function() vec_cast(2, chr())
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("lossy cast reports correct error call", {
+  my_function <- function() vec_cast(2, lgl())
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("failing common size reports correct error call", {
+  my_function <- function() vec_recycle(1:2, 10)
+  expect_snapshot((expect_error(my_function())))
+
+  # FIXME
+  my_function <- function() vec_size_common(1:2, 1:10)
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("unsupported error reports correct error call", {
+  x <- new_vctr(1:2)
+
+  my_function <- function() dim(x) <- 1:2
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() median(x)
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("scalar error reports correct error call", {
+  my_function <- function() vec_assert(foobar())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_assert(1:2, dbl())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_assert(1:2, size = 1)
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("bare casts report correct error call", {
+  my_function <- function() vec_cast(1.5, int())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_cast(1.5, lgl())
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_cast(2L, lgl())
+  expect_snapshot((expect_error(my_function())))
+
+  # Passing call to `shape_broadcast()`
+  my_function <- function() vec_cast(matrix(TRUE), dbl())
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("base S3 casts report correct error call", {
+  my_function <- function() vec_cast("a", factor("b"))
+  expect_snapshot((expect_error(my_function())))
+})
+
+test_that("names validation reports correct error call", {
+  my_function <- function() vec_as_names(c("x", "", "y"), repair = "check_unique")
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
+  expect_snapshot((expect_error(my_function())))
+
+  my_function <- function() vec_as_names("...", repair = "check_unique", repair_arg = "repair")
+  expect_snapshot((expect_error(my_function())))
+})

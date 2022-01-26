@@ -72,14 +72,14 @@ vec_ptype2_asis <- function(x, y, ...) {
 # ------------------------------------------------------------------------------
 # Casting
 
-vec_cast_from_asis <- function(x, to, ...) {
+vec_cast_from_asis <- function(x, to, ..., call = caller_env()) {
   x <- asis_strip(x)
-  vec_cast(x, to, ...)
+  vec_cast(x, to, ..., call = call)
 }
 
-vec_cast_to_asis <- function(x, to, ...) {
+vec_cast_to_asis <- function(x, to, ..., call = caller_env()) {
   to <- asis_strip(to)
-  out <- vec_cast(x, to, ...)
+  out <- vec_cast(x, to, ..., call = call)
   asis_restore(out)
 }
 

@@ -324,7 +324,7 @@ vec_rbind(green, green)
 #> 2 TRUE
 
 vec_rbind(green, red)
-#> Error in `stop_vctrs()`:
+#> Error in `my_tib_ptype2()`:
 #> ! Can't combine `..1` <my_tibble> and `..2` <my_tibble>.
 #> Can't combine colours.
 }\if{html}{\out{</div>}}

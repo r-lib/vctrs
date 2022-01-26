@@ -50,7 +50,7 @@ fit[1:3]
 
 # But not in vctrs
 vctrs::vec_slice(fit, 1:3)
-#> Error in `stop_vctrs()`:
+#> Error:
 #> ! Input must be a vector, not a <lm> object.
 }\if{html}{\out{</div>}}
 
@@ -73,7 +73,7 @@ lapply(call, function(x) x)
 
 # But not with vctrs:
 vctrs::vec_slice(call, 1:2)
-#> Error in `stop_vctrs()`:
+#> Error:
 #> ! Input must be a vector, not a call.
 }\if{html}{\out{</div>}}
 }

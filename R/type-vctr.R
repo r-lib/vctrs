@@ -138,14 +138,25 @@ vec_cast.vctrs_vctr <- function(x, to, ...) {
   UseMethod("vec_cast.vctrs_vctr")
 }
 
-vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+vctr_cast <- function(x,
+                      to,
+                      ...,
+                      x_arg = "",
+                      to_arg = "",
+                      call = caller_env()) {
   # These are not strictly necessary, but make bootstrapping a new class
   # a bit simpler
   if (is.object(x)) {
     if (is_same_type(x, to)) {
       x
     } else {
-      stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+      stop_incompatible_cast(
+        x,
+        to,
+        x_arg = x_arg,
+        to_arg = to_arg,
+        call = call
+      )
     }
   } else {
     # FIXME: `vec_restore()` should only be called on proxies
@@ -403,7 +414,7 @@ na.fail.vctrs_vctr <- function(object, ...) {
 
   if (any(missing)) {
     # Return the same error as `na.fail.default()`
-    stop("missing values in object")
+    abort("missing values in object")
   }
 
   object

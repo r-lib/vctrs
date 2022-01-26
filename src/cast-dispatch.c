@@ -86,21 +86,33 @@ SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
 }
 
 // [[ register() ]]
-SEXP vctrs_cast_dispatch_native(SEXP x,
-                                SEXP to,
-                                SEXP fallback_opts,
-                                SEXP x_arg,
-                                SEXP to_arg) {
+r_obj* ffi_cast_dispatch_native(r_obj* x,
+                                r_obj* to,
+                                r_obj* fallback_opts,
+                                r_obj* x_arg,
+                                r_obj* to_arg,
+                                r_obj* frame) {
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_to_arg = vec_as_arg(to_arg);
+  struct r_lazy call = { .x = syms_call, .env = frame };
 
-  const struct cast_opts c_opts = new_cast_opts(x, to, &c_x_arg, &c_to_arg, fallback_opts);
+  struct cast_opts c_opts = new_cast_opts(x,
+                                          to,
+                                          &c_x_arg,
+                                          &c_to_arg,
+                                          call,
+                                          fallback_opts);
 
   bool lossy = false;
-  SEXP out = vec_cast_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(to), &lossy);
+  r_obj* out = vec_cast_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(to), &lossy);
 
   if (lossy || out == R_NilValue) {
-    return vec_cast_default(x, to, x_arg, to_arg, &c_opts.fallback);
+    return vec_cast_default(x,
+                            to,
+                            x_arg,
+                            to_arg,
+                            c_opts.call,
+                            &c_opts.fallback);
   } else {
     return out;
   }

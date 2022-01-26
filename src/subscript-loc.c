@@ -207,12 +207,18 @@ static void int_check_consecutive(SEXP subscript, R_len_t n, R_len_t n_extend,
   UNPROTECT(1);
 }
 
-static SEXP dbl_as_location(SEXP subscript, R_len_t n,
-                            const struct location_opts* opts) {
-  subscript = PROTECT(vec_cast(subscript, vctrs_shared_empty_int, args_empty, args_empty));
+static
+r_obj* dbl_as_location(r_obj* subscript,
+                       R_len_t n,
+                       const struct location_opts* opts) {
+  subscript = KEEP(vec_cast(subscript,
+                            vctrs_shared_empty_int,
+                            args_empty,
+                            args_empty,
+                            r_lazy_null));
   subscript = int_as_location(subscript, n, opts);
 
-  UNPROTECT(1);
+  FREE(1);
   return subscript;
 }
 
@@ -413,7 +419,11 @@ SEXP vctrs_as_location(SEXP subscript, SEXP n_, SEXP names,
     n = Rf_length(subscript);
   } else {
     if (OBJECT(n_) || TYPEOF(n_) != INTSXP) {
-      n_ = vec_cast(n_, vctrs_shared_empty_int, args_empty, args_empty);
+      n_ = vec_cast(n_,
+                    vctrs_shared_empty_int,
+                    args_empty,
+                    args_empty,
+                    r_lazy_null);
     }
     PROTECT(n_);
 

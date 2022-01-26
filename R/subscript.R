@@ -150,11 +150,15 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
-stop_subscript <- function(i, ..., class = NULL) {
+stop_subscript <- function(i,
+                           ...,
+                           class = NULL,
+                           call = caller_env()) {
   abort(
     class = c(class, "vctrs_error_subscript"),
     i = i,
-    ...
+    ...,
+    call = call
   )
 }
 new_error_subscript <- function(class = NULL, i, ...) {

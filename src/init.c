@@ -41,13 +41,13 @@ extern SEXP vctrs_dim_n(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP, SEXP);
 extern SEXP vctrs_is_vector(SEXP);
-extern SEXP vctrs_ptype2(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_ptype2(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
-extern SEXP vctrs_cast(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_cast(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_as_location(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vec_slice(SEXP, SEXP);
-extern SEXP vctrs_init(SEXP, SEXP);
+extern SEXP ffi_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
 extern SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
@@ -76,7 +76,7 @@ extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
 extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
-extern SEXP vctrs_recycle(SEXP, SEXP, SEXP);
+extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_assign_seq(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
@@ -88,7 +88,7 @@ extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unset_s4(SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
-extern SEXP vctrs_as_names(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
@@ -116,7 +116,7 @@ extern SEXP vctrs_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_s3_find_method(SEXP, SEXP, SEXP);
 extern SEXP vctrs_implements_ptype2(SEXP);
 extern SEXP vctrs_ptype2_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_fast_c(SEXP, SEXP);
 extern SEXP vctrs_data_frame(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_list(SEXP, SEXP, SEXP);
@@ -197,13 +197,13 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 2},
   {"vctrs_init_library",               (DL_FUNC) &vctrs_init_library, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
-  {"vctrs_ptype2",                     (DL_FUNC) &vctrs_ptype2, 4},
+  {"ffi_ptype2",                       (DL_FUNC) &ffi_ptype2, 5},
   {"vctrs_typeof2",                    (DL_FUNC) &vctrs_typeof2, 2},
   {"vctrs_typeof2_s3",                 (DL_FUNC) &vctrs_typeof2_s3, 2},
-  {"vctrs_cast",                       (DL_FUNC) &vctrs_cast, 4},
+  {"ffi_cast",                         (DL_FUNC) &ffi_cast, 5},
   {"vctrs_as_location",                (DL_FUNC) &vctrs_as_location, 8},
   {"vctrs_slice",                      (DL_FUNC) &vec_slice, 2},
-  {"vctrs_init",                       (DL_FUNC) &vctrs_init, 2},
+  {"ffi_init",                         (DL_FUNC) &ffi_init, 3},
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
   {"vctrs_unchop",                     (DL_FUNC) &vctrs_unchop, 5},
   {"vctrs_chop_seq",                   (DL_FUNC) &vctrs_chop_seq, 4},
@@ -232,7 +232,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
   {"vctrs_bare_df_restore",            (DL_FUNC) &vctrs_bare_df_restore, 3},
-  {"vctrs_recycle",                    (DL_FUNC) &vctrs_recycle, 3},
+  {"ffi_recycle",                      (DL_FUNC) &ffi_recycle, 4},
   {"vctrs_assign",                     (DL_FUNC) &vctrs_assign, 5},
   {"vctrs_assign_seq",                 (DL_FUNC) &vctrs_assign_seq, 5},
   {"vctrs_set_attributes",             (DL_FUNC) &vctrs_set_attributes, 2},
@@ -246,7 +246,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_altrep_rle_is_materialized", (DL_FUNC) &altrep_rle_is_materialized, 1},
   {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
-  {"vctrs_as_names",                   (DL_FUNC) &vctrs_as_names, 4},
+  {"ffi_as_names",                     (DL_FUNC) &ffi_as_names, 5},
   {"vctrs_is_partial",                 (DL_FUNC) &vctrs_is_partial, 1},
   {"vctrs_is_list",                    (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",         (DL_FUNC) &vctrs_try_catch_callback, 2},
@@ -274,7 +274,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_s3_find_method",             (DL_FUNC) &vctrs_s3_find_method, 3},
   {"vctrs_implements_ptype2",          (DL_FUNC) &vctrs_implements_ptype2, 1},
   {"vctrs_ptype2_dispatch_native",     (DL_FUNC) &vctrs_ptype2_dispatch_native, 5},
-  {"vctrs_cast_dispatch_native",       (DL_FUNC) &vctrs_cast_dispatch_native, 5},
+  {"ffi_cast_dispatch_native",         (DL_FUNC) &ffi_cast_dispatch_native, 6},
   {"vctrs_fast_c",                     (DL_FUNC) &vctrs_fast_c, 2},
   {"vctrs_data_frame",                 (DL_FUNC) &vctrs_data_frame, 3},
   {"vctrs_df_list",                    (DL_FUNC) &vctrs_df_list, 3},

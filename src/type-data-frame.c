@@ -180,8 +180,11 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
 // [[ register() ]]
 SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
-  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
+                                                                  args_empty,
+                                                                  false,
+                                                                  r_lazy_null);
+  KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == R_NilValue) {
@@ -192,7 +195,7 @@ SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
 
   SEXP out = data_frame(x, c_size, &name_repair_opts);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
@@ -208,8 +211,11 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
 // [[ register() ]]
 SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
-  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
+                                                                  args_empty,
+                                                                  false,
+                                                                  r_lazy_null);
+  KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == R_NilValue) {
@@ -220,7 +226,7 @@ SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
 
   SEXP out = df_list(x, c_size, &name_repair_opts);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
@@ -645,7 +651,13 @@ SEXP vctrs_df_cast_opts(SEXP x, SEXP to, SEXP opts, SEXP x_arg, SEXP to_arg) {
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_to_arg = vec_as_arg(to_arg);
 
-  const struct cast_opts c_opts = new_cast_opts(x, to, &c_x_arg, &c_to_arg, opts);
+  // FIXME! Error call
+  struct cast_opts c_opts = new_cast_opts(x,
+                                          to,
+                                          &c_x_arg,
+                                          &c_to_arg,
+                                          r_lazy_null,
+                                          opts);
 
   return df_cast_opts(&c_opts);
 }

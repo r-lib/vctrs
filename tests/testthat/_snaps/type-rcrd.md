@@ -3,7 +3,7 @@
     Code
       na.fail(x)
     Condition
-      Error in `na.fail.vctrs_vctr()`:
+      Error in `na.fail()`:
       ! missing values in object
 
 # print and str use format

@@ -26,7 +26,7 @@
       (expect_error(vec_unchop(list(x, y)), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -41,7 +41,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -54,7 +54,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <double>.
 
 # vec_unchop() fallback doesn't support `name_spec` or `ptype`
@@ -73,7 +73,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't convert <vctrs_foobar> to <character>.
 
 # vec_unchop() does not support non-numeric S3 indices
@@ -104,13 +104,13 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't combine `a` <character> and `b` <integer>.
     Code
       (expect_error(vec_unchop(list(a = c(foo = 1:2), b = c(bar = "")), indices = list(
         2:1, 3), name_spec = zap()), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`:
+      Error:
       ! Can't combine `a` <integer> and `b` <character>.
 

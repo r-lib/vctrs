@@ -137,41 +137,54 @@ SEXP vctrs_df_size(SEXP x) {
 
 
 // [[ include("vctrs.h") ]]
-SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
-  if (x == R_NilValue) {
-    return R_NilValue;
+r_obj* vec_recycle2(r_obj* x,
+                    r_ssize size,
+                    struct vctrs_arg* x_arg,
+                    struct r_lazy call) {
+  if (x == r_null) {
+    return r_null;
   }
 
-  R_len_t n_x = vec_size(x);
+  r_ssize n_x = vec_size(x);
 
   if (n_x == size) {
     return x;
   }
 
   if (n_x == 1L) {
-    SEXP i = PROTECT(compact_rep(1, size));
-    SEXP out = vec_slice_impl(x, i);
+    r_obj* i = KEEP(compact_rep(1, size));
+    r_obj* out = vec_slice_impl(x, i);
 
-    UNPROTECT(1);
+    FREE(1);
     return out;
   }
 
-  stop_recycle_incompatible_size(n_x, size, x_arg);
+  stop_recycle_incompatible_size(n_x, size, x_arg, call);
 }
 
 // [[ register() ]]
-SEXP vctrs_recycle(SEXP x, SEXP size_obj, SEXP x_arg) {
-  if (x == R_NilValue || size_obj == R_NilValue) {
-    return R_NilValue;
+r_obj* ffi_recycle(r_obj* x,
+                   r_obj* size_obj,
+                   r_obj* ffi_x_arg,
+                   r_obj* frame) {
+  if (x == r_null || size_obj == r_null) {
+    return r_null;
   }
 
-  size_obj = PROTECT(vec_cast(size_obj, vctrs_shared_empty_int, args_empty, args_empty));
+  struct r_lazy recycle_call = { .x = frame, .env = r_null };
+
+  size_obj = KEEP(vec_cast(size_obj,
+                           vctrs_shared_empty_int,
+                           args_empty,
+                           args_empty,
+                           recycle_call));
   R_len_t size = r_int_get(size_obj, 0);
-  UNPROTECT(1);
+  FREE(1);
 
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
+  struct vctrs_arg x_arg = vec_as_arg(ffi_x_arg);
+  struct r_lazy call = { .x = syms_call, .env = frame };
 
-  return vec_recycle(x, size, &x_arg_);
+  return vec_recycle2(x, size, &x_arg, call);
 }
 
 // [[ include("vctrs.h") ]]
@@ -196,13 +209,17 @@ SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
     return out;
   }
 
-  stop_recycle_incompatible_size(x_size, size, x_arg);
+  stop_recycle_incompatible_size(x_size, size, x_arg, r_lazy_null);
 }
 
 
 // [[ include("utils.h") ]]
 R_len_t size_validate(SEXP size, const char* arg) {
-  size = vec_cast(size, vctrs_shared_empty_int, args_empty, args_empty);
+  size = vec_cast(size,
+                  vctrs_shared_empty_int,
+                  args_empty,
+                  args_empty,
+                  r_lazy_null);
 
   if (Rf_length(size) != 1) {
     Rf_errorcall(R_NilValue, "`%s` must be a single integer.", arg);

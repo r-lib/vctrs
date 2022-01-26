@@ -67,6 +67,15 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
                       SEXP x7_sym, SEXP x7);
+r_obj* vctrs_eval_mask8(r_obj* fn,
+                        r_obj* x1_sym, r_obj* x1,
+                        r_obj* x2_sym, r_obj* x2,
+                        r_obj* x3_sym, r_obj* x3,
+                        r_obj* x4_sym, r_obj* x4,
+                        r_obj* x5_sym, r_obj* x5,
+                        r_obj* x6_sym, r_obj* x6,
+                        r_obj* x7_sym, r_obj* x7,
+                        r_obj* x8_sym, r_obj* x8);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -84,6 +93,17 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
+static inline
+r_obj* vctrs_dispatch5(r_obj* fn_sym, r_obj* fn,
+                     r_obj* x1_sym, r_obj* x1,
+                     r_obj* x2_sym, r_obj* x2,
+                     r_obj* x3_sym, r_obj* x3,
+                     r_obj* x4_sym, r_obj* x4,
+                     r_obj* x5_sym, r_obj* x5) {
+  r_obj* syms[6] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, NULL };
+  r_obj* args[6] = { x1, x2, x3, x4, x5, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x1_sym, SEXP x1,
                      SEXP x2_sym, SEXP x2,
@@ -91,6 +111,19 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x4_sym, SEXP x4,
                      SEXP x5_sym, SEXP x5,
                      SEXP x6_sym, SEXP x6);
+static inline
+r_obj* vctrs_dispatch7(r_obj* fn_sym, r_obj* fn,
+                       r_obj* x1_sym, r_obj* x1,
+                       r_obj* x2_sym, r_obj* x2,
+                       r_obj* x3_sym, r_obj* x3,
+                       r_obj* x4_sym, r_obj* x4,
+                       r_obj* x5_sym, r_obj* x5,
+                       r_obj* x6_sym, r_obj* x6,
+                       r_obj* x7_sym, r_obj* x7) {
+  r_obj* syms[8] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, NULL };
+  r_obj* args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 
 __attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
 
@@ -512,6 +545,7 @@ extern SEXP syms_message;
 extern SEXP syms_chr_proxy_collate;
 extern SEXP syms_actual;
 extern SEXP syms_required;
+extern SEXP syms_call;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 
@@ -531,6 +565,28 @@ extern SEXP s4_c_method_table;
 SEXP R_inspect(SEXP x);
 SEXP R_inspect3(SEXP x, int deep, int pvec);
 #endif
+
+
+struct r_lazy {
+  r_obj* x;
+  r_obj* env;
+};
+
+static inline
+r_obj* r_lazy_eval(struct r_lazy lazy) {
+  if (!lazy.env) {
+    // Unitialised lazy variable
+    return r_null;
+  } else if (lazy.env == r_null) {
+    // Forced lazy variable
+    return lazy.x;
+  } else {
+    return r_eval(lazy.x, lazy.env);
+  }
+}
+
+extern
+struct r_lazy r_lazy_null;
 
 
 #endif

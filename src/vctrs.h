@@ -374,7 +374,7 @@ SEXP vec_init(SEXP x, R_len_t n);
 SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg);
 SEXP vec_ptype_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
-SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
+r_obj* vec_recycle2(r_obj* x, r_ssize size, struct vctrs_arg* x_arg, struct r_lazy call);
 SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
 SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
@@ -384,13 +384,26 @@ SEXP vec_identify_runs(SEXP x);
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
                       struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
 
+// FIXME: Pass error call everywhere
+static inline
+r_obj* vec_recycle(r_obj* x,
+                   r_ssize size,
+                   struct vctrs_arg* x_arg) {
+  return vec_recycle2(x, size, x_arg, r_lazy_null);
+}
+
 #include "cast.h"
-static inline SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+static inline r_obj* vec_cast(r_obj* x,
+                              r_obj* to,
+                              struct vctrs_arg* x_arg,
+                              struct vctrs_arg* to_arg,
+                              struct r_lazy call) {
   struct cast_opts opts = {
     .x = x,
     .to = to,
     .x_arg = x_arg,
-    .to_arg = to_arg
+    .to_arg = to_arg,
+    .call = call
   };
   return vec_cast_opts(&opts);
 }
@@ -614,8 +627,10 @@ void stop_incompatible_type(SEXP x,
                             struct vctrs_arg* y_arg,
                             bool cast);
 __attribute__((noreturn))
-void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
-                                    struct vctrs_arg* x_arg);
+void stop_recycle_incompatible_size(r_ssize x_size,
+                                    r_ssize size,
+                                    struct vctrs_arg* x_arg,
+                                    struct r_lazy call);
 __attribute__((noreturn))
 void stop_incompatible_shape(SEXP x, SEXP y,
                              R_len_t x_size, R_len_t y_size, int axis,

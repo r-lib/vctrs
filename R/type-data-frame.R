@@ -263,6 +263,7 @@ df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
   .Call(vctrs_df_ptype2_opts, x, y, opts = opts, x_arg, y_arg)
 }
 
+# FIXME! Error call
 df_cast_opts <- function(x,
                          to,
                          ...,

@@ -25,7 +25,7 @@
 
 \method{vec_ptype2}{list}(x, y, ..., x_arg = "", y_arg = "")
 
-vec_ptype2(x, y, ..., x_arg = "", y_arg = "")
+vec_ptype2(x, y, ..., x_arg = "", y_arg = "", call = caller_env())
 }
 \arguments{
 \item{x, y}{Vector types.}
@@ -35,6 +35,11 @@ vec_ptype2(x, y, ..., x_arg = "", y_arg = "")
 \item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{vec_ptype2()} defines the coercion hierarchy for a set of related

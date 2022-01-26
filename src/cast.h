@@ -4,10 +4,11 @@
 #include "ptype2.h"
 
 struct cast_opts {
-  SEXP x;
-  SEXP to;
+  r_obj* x;
+  r_obj* to;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* to_arg;
+  struct r_lazy call;
   struct fallback_opts fallback;
 };
 
@@ -55,11 +56,12 @@ SEXP vec_cast_common_params(SEXP xs,
                             enum df_fallback df_fallback,
                             enum s3_fallback s3_fallback);
 
-struct cast_opts new_cast_opts(SEXP x,
-                               SEXP y,
+struct cast_opts new_cast_opts(r_obj* x,
+                               r_obj* y,
                                struct vctrs_arg* x_arg,
                                struct vctrs_arg* y_arg,
-                               SEXP opts);
+                               struct r_lazy call,
+                               r_obj* opts);
 
 SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
                               enum vctrs_type x_type,
@@ -69,11 +71,12 @@ SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
 SEXP vec_cast_e(const struct cast_opts* opts,
                 ERR* err);
 
-SEXP vec_cast_default(SEXP x,
-                      SEXP y,
-                      SEXP x_arg,
-                      SEXP to_arg,
-                      const struct fallback_opts* opts);
+r_obj* vec_cast_default(r_obj* x,
+                        r_obj* y,
+                        r_obj* x_arg,
+                        r_obj* to_arg,
+                        struct r_lazy call,
+                        const struct fallback_opts* opts);
 
 // Defined in cast-bare.c
 SEXP int_as_double(SEXP x, bool* lossy);
