@@ -105,7 +105,8 @@ for extracting with <code>[[</code>.</p></li>
   names <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">...</span>,
   missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"propagate"</span>, <span class="st">"error"</span><span class="op">)</span>,
-  arg <span class="op">=</span> <span class="cn">NULL</span>
+  arg <span class="op">=</span> <span class="cn">NULL</span>,
+  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="fu">num_as_location</span><span class="op">(</span>
@@ -116,7 +117,8 @@ for extracting with <code>[[</code>.</p></li>
   negative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"invert"</span>, <span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,
   oob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"extend"</span><span class="op">)</span>,
   zero <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"remove"</span>, <span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,
-  arg <span class="op">=</span> <span class="cn">NULL</span>
+  arg <span class="op">=</span> <span class="cn">NULL</span>,
+  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="fu">vec_as_location2</span><span class="op">(</span>
@@ -125,7 +127,8 @@ for extracting with <code>[[</code>.</p></li>
   names <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">...</span>,
   missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"propagate"</span><span class="op">)</span>,
-  arg <span class="op">=</span> <span class="cn">NULL</span>
+  arg <span class="op">=</span> <span class="cn">NULL</span>,
+  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="fu">num_as_location2</span><span class="op">(</span>
@@ -134,7 +137,8 @@ for extracting with <code>[[</code>.</p></li>
   <span class="va">...</span>,
   negative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,
   missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"propagate"</span><span class="op">)</span>,
-  arg <span class="op">=</span> <span class="cn">NULL</span>
+  arg <span class="op">=</span> <span class="cn">NULL</span>,
+  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -163,6 +167,11 @@ subscripts can contain missing values and scalar subscripts can't.</p></dd>
 <dd><p>The argument name to be displayed in error messages when
 <code>vec_as_location()</code> and <code>vec_as_location2()</code> are used to check the
 type of a function input.</p></dd>
+<dt>call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 <dt>negative</dt>
 <dd><p>Whether to throw an <code>"error"</code> when <code>i</code> is a
 negative location value, or <code>"ignore"</code> it.</p></dd>
