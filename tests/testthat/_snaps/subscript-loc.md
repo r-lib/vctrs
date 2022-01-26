@@ -540,7 +540,7 @@
       call = call("my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Subscript can't contain missing values.
       x It has missing values at locations 2 and 4.

@@ -234,3 +234,14 @@
       ! Can't convert from `n` <double> to <integer> due to loss of precision.
       * Locations: 1
 
+---
+
+    Code
+      (expect_error(my_function(NA)))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain missing values.
+      x It has a missing value at location 1.
+

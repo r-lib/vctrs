@@ -51,7 +51,7 @@ r_obj* lgl_as_location(r_obj* subscript,
   r_ssize subscript_n = r_length(subscript);
 
   if (opts->missing == SUBSCRIPT_MISSING_ERROR && lgl_any_na(subscript)) {
-    stop_subscript_missing(subscript);
+    stop_subscript_missing(subscript, opts);
   }
 
   if (subscript_n == n) {
@@ -128,7 +128,7 @@ r_obj* int_as_location(r_obj* subscript,
 
     if (elt == r_globals.na_int) {
       if (opts->missing == SUBSCRIPT_MISSING_ERROR) {
-        stop_subscript_missing(subscript);
+        stop_subscript_missing(subscript, opts);
       }
     } else {
       if (elt < 0) {
@@ -336,7 +336,7 @@ r_obj* chr_as_location(r_obj* subscript,
       continue;
     }
 
-    stop_subscript_missing(subscript);
+    stop_subscript_missing(subscript, opts);
   }
 
   r_attrib_poke_names(matched, KEEP(r_names(subscript))); FREE(1);
@@ -477,9 +477,12 @@ void stop_bad_zero(struct r_lazy call) {
 }
 
 static
-void stop_subscript_missing(r_obj* i) {
-  vctrs_eval_mask1(r_sym("stop_subscript_missing"),
-                   syms_i, i);
+void stop_subscript_missing(r_obj* i,
+                            const struct location_opts* opts) {
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask2(r_sym("stop_subscript_missing"),
+                   syms_i, i,
+                   syms_call, call);
   r_stop_unreached("stop_subscript_missing");
 }
 
