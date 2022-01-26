@@ -35,7 +35,8 @@ vec_as_location2(
   names = NULL,
   ...,
   missing = c("error", "propagate"),
-  arg = NULL
+  arg = NULL,
+  call = caller_env()
 )
 
 num_as_location2(
@@ -44,7 +45,8 @@ num_as_location2(
   ...,
   negative = c("error", "ignore"),
   missing = c("error", "propagate"),
-  arg = NULL
+  arg = NULL,
+  call = caller_env()
 )
 }
 \arguments{

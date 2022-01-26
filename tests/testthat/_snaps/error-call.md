@@ -182,3 +182,14 @@
       Error in `my_function()`:
       ! `missing` must be one of "propagate" or "error".
 
+---
+
+    Code
+      (expect_error(my_function()))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `my_function()`:
+      ! Can't subset elements that don't exist.
+      x Location 10 doesn't exist.
+      i There are only 2 elements.
+

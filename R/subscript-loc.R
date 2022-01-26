@@ -120,7 +120,8 @@ vec_as_location2 <- function(i,
                              names = NULL,
                              ...,
                              missing = c("error", "propagate"),
-                             arg = NULL) {
+                             arg = NULL,
+                             call = caller_env()) {
   check_dots_empty0(...)
   result_get(vec_as_location2_result(
     i,
@@ -128,7 +129,8 @@ vec_as_location2 <- function(i,
     names = names,
     negative = "error",
     missing = missing,
-    arg = arg
+    arg = arg,
+    call = call
   ))
 }
 #' @rdname vec_as_location
@@ -140,11 +142,12 @@ num_as_location2 <- function(i,
                              ...,
                              negative = c("error", "ignore"),
                              missing = c("error", "propagate"),
-                             arg = NULL) {
+                             arg = NULL,
+                             call = caller_env()) {
   check_dots_empty0(...)
 
   if (!is_integer(i) && !is_double(i)) {
-    abort("`i` must be a numeric vector.")
+    abort("`i` must be a numeric vector.", call = call)
   }
   result_get(vec_as_location2_result(
     i,
@@ -152,7 +155,8 @@ num_as_location2 <- function(i,
     names = NULL,
     negative = negative,
     missing = missing,
-    arg = arg
+    arg = arg,
+    call = call
   ))
 }
 
@@ -161,7 +165,8 @@ vec_as_location2_result <- function(i,
                                     names,
                                     missing,
                                     negative,
-                                    arg) {
+                                    arg,
+                                    call) {
   allow_missing <- arg_match0(missing, c("error", "propagate")) == "propagate"
   allow_negative <- arg_match0(negative, c("error", "ignore")) == "ignore"
 
@@ -178,7 +183,8 @@ vec_as_location2_result <- function(i,
       subscript_arg = arg,
       # Should body fields in parents be automatically inherited?
       body = parent$body,
-      parent = parent
+      parent = parent,
+      call = call
     )))
   }
 
@@ -189,7 +195,8 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_scalar
+      body = cnd_bullets_location2_need_scalar,
+      call = call
     )))
   }
 
@@ -203,7 +210,8 @@ vec_as_location2_result <- function(i,
       result <- result(err = new_error_location2_type(
         i = i,
         subscript_arg = arg,
-        body = cnd_bullets_location2_need_present
+        body = cnd_bullets_location2_need_present,
+        call = call
       ))
     } else {
       result <- result(i)
@@ -215,7 +223,8 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive
+      body = cnd_bullets_location2_need_positive,
+      call = call
     )))
   }
 
@@ -223,7 +232,8 @@ vec_as_location2_result <- function(i,
     return(result(err = new_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive
+      body = cnd_bullets_location2_need_positive,
+      call = call
     )))
   }
 
@@ -247,7 +257,8 @@ vec_as_location2_result <- function(i,
     result(err = new_error_location2_type(
       i = i,
       parent = err,
-      subscript_arg = arg
+      subscript_arg = arg,
+      call = call
     ))
   }
 }

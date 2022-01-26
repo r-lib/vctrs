@@ -118,11 +118,11 @@
       * Locations: 1
     Code
       # Idem with custom `arg`
-      (expect_error(vec_as_location2(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(foobar(), 10L, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has the wrong type `vctrs_foobar`.
       i It must be numeric or character.
@@ -131,11 +131,11 @@
       x Subscript `foo` has the wrong type `vctrs_foobar`.
       i It must be numeric or character.
     Code
-      (expect_error(vec_as_location2(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(2.5, 3L, arg = "foo", call = call("my_function")),
+      class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
       Caused by error:
@@ -238,8 +238,8 @@
       i It must be logical, numeric, or character.
     Code
       # Idem with custom `arg`
-      (expect_error(vec_as_location(env(), 10L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location(env(), 10L, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
@@ -247,8 +247,8 @@
       x Subscript `foo` has the wrong type `environment`.
       i It must be logical, numeric, or character.
     Code
-      (expect_error(vec_as_location(foobar(), 10L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location(foobar(), 10L, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
@@ -256,8 +256,8 @@
       x Subscript `foo` has the wrong type `vctrs_foobar`.
       i It must be logical, numeric, or character.
     Code
-      (expect_error(vec_as_location(2.5, 3L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location(2.5, 3L, arg = "foo", call = call("my_function")),
+      class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
@@ -290,7 +290,7 @@
       (expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_as_location2_result()`:
       ! Can't subset elements that don't exist.
       x Location 10 doesn't exist.
       i There are only 2 elements.
@@ -308,7 +308,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_as_location2_result()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
 
@@ -331,19 +331,19 @@
       x Subscript has size 2 but must be size 1.
     Code
       # Idem with custom `arg`
-      (expect_error(vec_as_location2(1:2, 2L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
+      class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has size 2 but must be size 1.
     Code
-      (expect_error(vec_as_location2(mtcars, 10L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(mtcars, 10L, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has the wrong type `data.frame<
         mpg : double
@@ -376,11 +376,11 @@
       >`.
       i It must be numeric or character.
     Code
-      (expect_error(vec_as_location2(1:2, 2L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
+      class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has size 2 but must be size 1.
 
@@ -402,11 +402,11 @@
       x Subscript has value -1 but must be a positive location.
     Code
       # Idem with custom `arg`
-      (expect_error(vec_as_location2(0, 2L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(0, 2L, arg = "foo", call = call("my_function")),
+      class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has value 0 but must be a positive location.
 
@@ -430,11 +430,11 @@
       x Subscript can't be `NA`.
     Code
       # Idem with custom `arg`
-      (expect_error(vec_as_location2(na_int, 2L, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(na_int, 2L, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` can't be `NA`.
 
@@ -614,8 +614,8 @@
       x Subscript can't contain missing values.
       x It has a missing value at location 2.
     Code
-      (expect_error(vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo"),
-      class = "vctrs_error_subscript_type"))
+      (expect_error(vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo",
+      call = call("my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
@@ -636,87 +636,87 @@
 
     Code
       # With custom `arg`
-      (expect_error(num_as_location(-1, 2, negative = "error", arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(num_as_location(-1, 2, negative = "error", arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Subscript `foo` can't contain negative locations.
     Code
-      (expect_error(num_as_location2(-1, 2, negative = "error", arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(num_as_location2(-1, 2, negative = "error", arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has value -1 but must be a positive location.
     Code
-      (expect_error(vec_as_location2(0, 2, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(0, 2, arg = "foo", call = call("my_function")),
+      class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has value 0 but must be a positive location.
     Code
-      (expect_error(vec_as_location2(na_dbl, 2, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(na_dbl, 2, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` can't be `NA`.
     Code
-      (expect_error(vec_as_location2(c(1, 2), 2, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location2(c(1, 2), 2, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must extract element with a single valid subscript.
       x Subscript `foo` has size 2 but must be size 1.
     Code
-      (expect_error(vec_as_location(c(TRUE, FALSE), 3, arg = "foo"), class = "vctrs_error_subscript_size")
-      )
+      (expect_error(vec_as_location(c(TRUE, FALSE), 3, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_size"))
     Output
       <error/vctrs_error_subscript_size>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       i Logical subscripts must match the size of the indexed input.
       x Input has size 3 but subscript `foo` has size 2.
     Code
-      (expect_error(vec_as_location(c(-1, NA), 3, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location(c(-1, NA), 3, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Negative locations can't have missing values.
       i Subscript `foo` has a missing value at location 2.
     Code
-      (expect_error(vec_as_location(c(-1, 1), 3, arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(vec_as_location(c(-1, 1), 3, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Negative and positive locations can't be mixed.
       i Subscript `foo` has a positive value at location 2.
     Code
-      (expect_error(num_as_location(c(1, 4), 2, oob = "extend", arg = "foo"), class = "vctrs_error_subscript_oob")
-      )
+      (expect_error(num_as_location(c(1, 4), 2, oob = "extend", arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `my_function()`:
       ! Can't subset elements beyond the end with non-consecutive locations.
       i Input has size 2.
       x Subscript `foo` contains non-consecutive location 4.
     Code
-      (expect_error(num_as_location(0, 1, zero = "error", arg = "foo"), class = "vctrs_error_subscript_type")
-      )
+      (expect_error(num_as_location(0, 1, zero = "error", arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Subscript `foo` can't contain `0` values.
       i It has a `0` value at location 1.
@@ -819,20 +819,20 @@
       x Element `foo` doesn't exist.
     Code
       # With custom `arg`
-      (expect_error(vec_as_location(30, length(letters), arg = "foo"), class = "vctrs_error_subscript_oob")
-      )
+      (expect_error(vec_as_location(30, length(letters), arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `my_function()`:
       ! Can't subset elements that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 elements.
     Code
-      (expect_error(vec_as_location("foo", NULL, letters, arg = "foo"), class = "vctrs_error_subscript_oob")
-      )
+      (expect_error(vec_as_location("foo", NULL, letters, arg = "foo", call = call(
+        "my_function")), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `my_function()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code

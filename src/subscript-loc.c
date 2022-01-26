@@ -471,9 +471,11 @@ static
 void stop_location_negative_missing(r_obj* i,
                                     const struct location_opts* opts) {
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask3(r_sym("stop_location_negative_missing"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask4(r_sym("stop_location_negative_missing"),
                    syms_i, i,
                    syms_subscript_arg, arg,
+                   syms_call, call,
                    syms_subscript_action, get_opts_action(opts->subscript_opts));
   r_stop_unreached("stop_location_negative_missing");
 }
@@ -481,9 +483,11 @@ static
 void stop_location_negative_positive(r_obj* i,
                                      const struct location_opts* opts) {
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask3(r_sym("stop_location_negative_positive"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask4(r_sym("stop_location_negative_positive"),
                    syms_i, i,
                    syms_subscript_arg, arg,
+                   syms_call, call,
                    syms_subscript_action, get_opts_action(opts->subscript_opts));
   r_stop_unreached("stop_location_negative_positive");
 }
@@ -494,14 +498,14 @@ void stop_subscript_oob_location(r_obj* i,
                                  const struct location_opts* opts) {
   r_obj* size_obj = KEEP(r_int(size));
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask5(r_sym("stop_subscript_oob"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask6(r_sym("stop_subscript_oob"),
                    syms_i, i,
                    syms_subscript_type, chrs_numeric,
                    syms_size, size_obj,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg);
-
-  FREE(1);
+                   syms_subscript_arg, arg,
+                   syms_call, call);
   r_stop_unreached("stop_subscript_oob_location");
 }
 static
@@ -509,12 +513,14 @@ void stop_subscript_oob_name(r_obj* i,
                              r_obj* names,
                              const struct location_opts* opts) {
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask5(r_sym("stop_subscript_oob"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask6(r_sym("stop_subscript_oob"),
                    syms_i, i,
                    syms_subscript_type, chrs_character,
                    syms_names, names,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg);
+                   syms_subscript_arg, arg,
+                   syms_call, call);
   r_stop_unreached("stop_subscript_oob_name");
 }
 
@@ -522,10 +528,12 @@ static
 void stop_location_negative(r_obj* i,
                             const struct location_opts* opts) {
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask3(r_sym("stop_location_negative"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask4(r_sym("stop_location_negative"),
                    syms_i, i,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg);
+                   syms_subscript_arg, arg,
+                   syms_call, call);
   r_stop_unreached("stop_location_negative");
 }
 
@@ -533,10 +541,12 @@ static
 void stop_location_zero(r_obj* i,
                         const struct location_opts* opts) {
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask3(r_sym("stop_location_zero"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask4(r_sym("stop_location_zero"),
                    syms_i, i,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg);
+                   syms_subscript_arg, arg,
+                   syms_call, call);
   r_stop_unreached("stop_location_zero");
 }
 
@@ -545,11 +555,13 @@ void stop_indicator_size(r_obj* i,
                          r_obj* n,
                          const struct location_opts* opts) {
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask4(r_sym("stop_indicator_size"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask5(r_sym("stop_indicator_size"),
                    syms_i, i,
                    syms_n, n,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg);
+                   syms_subscript_arg, arg,
+                   syms_call, call);
   r_stop_unreached("stop_indicator_size");
 }
 
@@ -559,11 +571,13 @@ void stop_location_oob_non_consecutive(r_obj* i,
                                        const struct location_opts* opts) {
   r_obj* size_obj = KEEP(r_int(size));
   r_obj* arg = KEEP(vctrs_arg(opts->subscript_opts->subscript_arg));
-  vctrs_eval_mask4(r_sym("stop_location_oob_non_consecutive"),
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts->call));
+  vctrs_eval_mask5(r_sym("stop_location_oob_non_consecutive"),
                    syms_i, i,
                    syms_size, size_obj,
                    syms_subscript_action, get_opts_action(opts->subscript_opts),
-                   syms_subscript_arg, arg);
+                   syms_subscript_arg, arg,
+                   syms_call, call);
 
   FREE(1);
   r_stop_unreached("stop_location_oob_non_consecutive");
