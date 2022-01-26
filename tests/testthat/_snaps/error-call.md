@@ -193,3 +193,40 @@
       x Location 10 doesn't exist.
       i There are only 2 elements.
 
+---
+
+    Code
+      (expect_error(my_function(1.5)))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function(1.5)))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function(list())))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `my_function()`:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript has the wrong type `list`.
+      i It must be logical, numeric, or character.
+

@@ -242,7 +242,7 @@
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Subscript `foo` has the wrong type `environment`.
       i It must be logical, numeric, or character.
@@ -251,7 +251,7 @@
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Subscript `foo` has the wrong type `vctrs_foobar`.
       i It must be logical, numeric, or character.
@@ -260,7 +260,7 @@
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error:
+      Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
       Caused by error:

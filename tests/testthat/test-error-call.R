@@ -80,4 +80,13 @@ test_that("subscript validation reports correct error calls", {
 
   my_function <- function() vctrs::vec_as_location(10, 2)
   expect_snapshot((expect_error(my_function())))
+
+  my_function <- function(my_arg) vec_as_location(my_arg, 2)
+  expect_snapshot((expect_error(my_function(1.5))))
+
+  my_function <- function(my_arg) vctrs::vec_as_subscript(my_arg)
+  expect_snapshot((expect_error(my_function(1.5))))
+
+  my_function <- function(my_arg) vctrs::vec_as_location(my_arg, 2)
+  expect_snapshot((expect_error(my_function(list()))))
 })

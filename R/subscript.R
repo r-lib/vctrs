@@ -9,6 +9,7 @@
 #' not checked in any way (length, missingness, negative elements).
 #'
 #' @inheritParams vec_as_location
+#'
 #' @param logical,location,character How to handle logical, numeric,
 #'   and character subscripts.
 #'
@@ -29,7 +30,8 @@ vec_as_subscript <- function(i,
                              logical = c("cast", "error"),
                              numeric = c("cast", "error"),
                              character = c("cast", "error"),
-                             arg = NULL) {
+                             arg = NULL,
+                             call = caller_env()) {
   check_dots_empty0(...)
 
   .Call(
@@ -38,17 +40,24 @@ vec_as_subscript <- function(i,
     logical = logical,
     numeric = numeric,
     character = character,
-    arg = arg
+    arg = arg,
+    call = environment()
   )
 }
-vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
+vec_as_subscript_result <- function(i,
+                                    arg,
+                                    call,
+                                    logical,
+                                    numeric,
+                                    character) {
   .Call(
     ffi_as_subscript_result,
     i = i,
     logical = logical,
     numeric = numeric,
     character = character,
-    arg = arg
+    arg = arg,
+    call = environment()
   )
 }
 
@@ -60,11 +69,13 @@ vec_as_subscript2 <- function(i,
                               logical = c("cast", "error"),
                               numeric = c("cast", "error"),
                               character = c("cast", "error"),
-                              arg = NULL) {
+                              arg = NULL,
+                              call = caller_env()) {
   check_dots_empty0(...)
   result_get(vec_as_subscript2_result(
     i,
     arg,
+    call,
     logical = logical,
     numeric = numeric,
     character = character
@@ -72,6 +83,7 @@ vec_as_subscript2 <- function(i,
 }
 vec_as_subscript2_result <- function(i,
                                      arg,
+                                     call,
                                      logical = "cast",
                                      numeric = "cast",
                                      character = "cast") {
@@ -82,6 +94,7 @@ vec_as_subscript2_result <- function(i,
   result <- vec_as_subscript_result(
     i,
     arg = arg,
+    call = call,
     logical = logical,
     numeric = numeric,
     character = character

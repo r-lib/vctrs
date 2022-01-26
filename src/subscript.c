@@ -214,14 +214,17 @@ r_obj* ffi_as_subscript(r_obj* subscript,
                         r_obj* logical,
                         r_obj* numeric,
                         r_obj* character,
-                        r_obj* ffi_arg) {
+                        r_obj* ffi_arg,
+                        r_obj* frame) {
   struct vctrs_arg arg = vec_as_arg(ffi_arg);
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   struct subscript_opts opts = {
     .logical = parse_subscript_arg_type(logical, "logical"),
     .numeric = parse_subscript_arg_type(numeric, "numeric"),
     .character = parse_subscript_arg_type(character, "character"),
-    .subscript_arg = &arg
+    .subscript_arg = &arg,
+    .call = call
   };
 
   ERR err = NULL;
@@ -239,14 +242,17 @@ r_obj* ffi_as_subscript_result(r_obj* subscript,
                                r_obj* logical,
                                r_obj* numeric,
                                r_obj* character,
-                               r_obj* ffi_arg) {
+                               r_obj* ffi_arg,
+                               r_obj* frame) {
   struct vctrs_arg arg = vec_as_arg(ffi_arg);
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   struct subscript_opts opts = {
     .logical = parse_subscript_arg_type(logical, "logical"),
     .numeric = parse_subscript_arg_type(numeric, "numeric"),
     .character = parse_subscript_arg_type(character, "character"),
-    .subscript_arg = &arg
+    .subscript_arg = &arg,
+    .call = call
   };
 
   ERR err = NULL;
@@ -296,11 +302,13 @@ r_obj* new_error_subscript_type(r_obj* subscript,
 
   subscript = KEEP(expr_protect(subscript));
   r_obj* subscript_arg = KEEP(vctrs_arg(opts->subscript_arg));
+  r_obj* ffi_call = r_lazy_eval(opts->call);
 
-  r_obj* syms[9] = {
+  r_obj* syms[] = {
     syms_i,
     syms_subscript_arg,
     syms_subscript_action,
+    syms_call,
     syms_logical,
     syms_numeric,
     syms_character,
@@ -308,10 +316,11 @@ r_obj* new_error_subscript_type(r_obj* subscript,
     syms_parent,
     NULL
   };
-  r_obj* args[9] = {
+  r_obj* args[] = {
     subscript,
     subscript_arg,
     get_opts_action(opts),
+    ffi_call,
     logical,
     numeric,
     character,
