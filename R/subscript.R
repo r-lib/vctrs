@@ -33,7 +33,7 @@ vec_as_subscript <- function(i,
   check_dots_empty0(...)
 
   .Call(
-    vctrs_as_subscript,
+    ffi_as_subscript,
     i = i,
     logical = logical,
     numeric = numeric,
@@ -43,7 +43,7 @@ vec_as_subscript <- function(i,
 }
 vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
   .Call(
-    vctrs_as_subscript_result,
+    ffi_as_subscript_result,
     i = i,
     logical = logical,
     numeric = numeric,
