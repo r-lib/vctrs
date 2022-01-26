@@ -32,6 +32,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -44,18 +46,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">vctrs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.8.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.8.9001</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -86,7 +82,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/r-lib/vctrs/">
+  <a href="https://github.com/r-lib/vctrs/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -105,102 +101,100 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Printing vectors nicely in tibbles</h1>
-                        <h4 class="author">Kirill Müller, Hadley Wickham</h4>
+                        <h4 data-toc-skip class="author">Kirill Müller, Hadley Wickham</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/master/vignettes/pillar.Rmd"><code>vignettes/pillar.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/HEAD/vignettes/pillar.Rmd" class="external-link"><code>vignettes/pillar.Rmd</code></a></small>
       <div class="hidden name"><code>pillar.Rmd</code></div>
 
     </div>
 
     
     
-<p>You can get basic control over how a vector is printed in a tibble by providing a <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method. If you want greater control, you need to understand how printing works. The presentation of a column in a tibble is controlled by two S3 generics:</p>
+<p>You can get basic control over how a vector is printed in a tibble by providing a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method. If you want greater control, you need to understand how printing works. The presentation of a column in a tibble is controlled by two S3 generics:</p>
 <ul>
 <li>
 <code><a href="../reference/vec_ptype_full.html">vctrs::vec_ptype_abbr()</a></code> determines what goes into the column header.</li>
 <li>
-<code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html">pillar::pillar_shaft()</a></code> determines what goes into the body, or the shaft, of the column.</li>
+<code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar::pillar_shaft()</a></code> determines what goes into the body, or the shaft, of the column.</li>
 </ul>
-<p>Technically a <a href="https://en.wikipedia.org/wiki/Column#Nomenclature"><em>pillar</em></a> is composed of a <em>shaft</em> (decorated with an <em>ornament</em>), with a <em>capital</em> above and a <em>base</em> below. Multiple pillars form a <em>colonnade</em>, which can be stacked in multiple <em>tiers</em>. This is the motivation behind the names in our API.</p>
+<p>Technically a <a href="https://en.wikipedia.org/wiki/Column#Nomenclature" class="external-link"><em>pillar</em></a> is composed of a <em>shaft</em> (decorated with an <em>ornament</em>), with a <em>capital</em> above and a <em>base</em> below. Multiple pillars form a <em>colonnade</em>, which can be stacked in multiple <em>tiers</em>. This is the motivation behind the names in our API.</p>
 <p>This short vignette shows the basics of column styling using a <code>"latlon"</code> vector. The vignette imagines the code is in a package, so that you can see the roxygen2 commands you’ll need to create documentation and the <code>NAMESPACE</code> file. In this vignette, we’ll attach pillar and vctrs:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://pillar.r-lib.org/">pillar</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pillar.r-lib.org/" class="external-link">pillar</a></span><span class="op">)</span></code></pre></div>
 <p>You don’t need to do this in a package. Instead, you’ll need to <em>import</em> the packages by then to the <code>Imports:</code> section of your <code>DESCRIPTION</code>. The following helper does this for you:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"vctrs"</span><span class="op">)</span>
 <span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"pillar"</span><span class="op">)</span></code></pre></div>
-<div id="prerequisites" class="section level2">
-<h2 class="hasAnchor">
-<a href="#prerequisites" class="anchor"></a>Prerequisites</h2>
+<div class="section level2">
+<h2 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+</h2>
 <p>To illustrate the basic ideas we’re going to create a <code>"latlon"</code> class that encodes geographic coordinates in a record. We’ll pretend that this code lives in a package called earth. For simplicity, the values are printed as degrees and minutes only. By using <code>vctrs_rcrd()</code>, we already get the infrastructure to make this class fully compatible with data frames for free. See <code><a href="../articles/s3-vector.html">vignette("s3-vector", package = "vctrs")</a></code> for details on the record data type.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' @export</span>
-<span class="va">latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">lat</span>, <span class="va">lon</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>lat <span class="op">=</span> <span class="va">lat</span>, lon <span class="op">=</span> <span class="va">lon</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"earth_latlon"</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="co">#' @export</span>
-<span class="va">format.earth_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, <span class="va">formatter</span> <span class="op">=</span> <span class="va">deg_min</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">x_valid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-
-  <span class="va">lat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"lat"</span><span class="op">)</span><span class="op">[</span><span class="va">x_valid</span><span class="op">]</span>
-  <span class="va">lon</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fields.html">field</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"lon"</span><span class="op">)</span><span class="op">[</span><span class="va">x_valid</span><span class="op">]</span>
-
-  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="cn">NA_character_</span>, <span class="fu"><a href="../reference/vec_size.html">vec_size</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-  <span class="va">ret</span><span class="op">[</span><span class="va">x_valid</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="fu">formatter</span><span class="op">(</span><span class="va">lat</span>, <span class="st">"lat"</span><span class="op">)</span>, <span class="st">" "</span>, <span class="fu">formatter</span><span class="op">(</span><span class="va">lon</span>, <span class="st">"lon"</span><span class="op">)</span><span class="op">)</span>
-  <span class="co"># It's important to keep NA in the vector!</span>
-  <span class="va">ret</span>
-<span class="op">}</span>
-
-<span class="va">deg_min</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">direction</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span>
-
-  <span class="va">sign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sign.html">sign</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">trunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="va">deg</span>
-  <span class="va">min</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="fl">60</span><span class="op">)</span>
-
-  <span class="co"># Ensure the columns are always the same width so they line up nicely</span>
-  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%d°%.2d'%s"</span>, <span class="va">deg</span>, <span class="va">min</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">sign</span> <span class="op">&gt;=</span> <span class="fl">0</span>, <span class="va">pm</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">pm</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">ret</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="fu">latlon</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">32.71</span>, <span class="fl">2.95</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">117.17</span>, <span class="fl">1.67</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; &lt;earth_latlon[2]&gt;</span>
-<span class="co">#&gt; [1] 32°43'N 117°10'W  2°57'N   1°40'E</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">#' @export</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>latlon &lt;-<span class="st"> </span><span class="cf">function</span>(lat, lon) {</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="kw">new_rcrd</span>(<span class="kw">list</span>(<span class="dt">lat =</span> lat, <span class="dt">lon =</span> lon), <span class="dt">class =</span> <span class="st">"earth_latlon"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>}</span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#' @export</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>format.earth_latlon &lt;-<span class="st"> </span><span class="cf">function</span>(x, ..., <span class="dt">formatter =</span> deg_min) {</span>
+<span id="cb3-8"><a href="#cb3-8"></a>  x_valid &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(x))</span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a>  lat &lt;-<span class="st"> </span><span class="kw">field</span>(x, <span class="st">"lat"</span>)[x_valid]</span>
+<span id="cb3-11"><a href="#cb3-11"></a>  lon &lt;-<span class="st"> </span><span class="kw">field</span>(x, <span class="st">"lon"</span>)[x_valid]</span>
+<span id="cb3-12"><a href="#cb3-12"></a></span>
+<span id="cb3-13"><a href="#cb3-13"></a>  ret &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA_character_</span>, <span class="kw">vec_size</span>(x))</span>
+<span id="cb3-14"><a href="#cb3-14"></a>  ret[x_valid] &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="kw">formatter</span>(lat, <span class="st">"lat"</span>), <span class="st">" "</span>, <span class="kw">formatter</span>(lon, <span class="st">"lon"</span>))</span>
+<span id="cb3-15"><a href="#cb3-15"></a>  <span class="co"># It's important to keep NA in the vector!</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a>  ret</span>
+<span id="cb3-17"><a href="#cb3-17"></a>}</span>
+<span id="cb3-18"><a href="#cb3-18"></a></span>
+<span id="cb3-19"><a href="#cb3-19"></a>deg_min &lt;-<span class="st"> </span><span class="cf">function</span>(x, direction) {</span>
+<span id="cb3-20"><a href="#cb3-20"></a>  pm &lt;-<span class="st"> </span><span class="cf">if</span> (direction <span class="op">==</span><span class="st"> "lat"</span>) <span class="kw">c</span>(<span class="st">"N"</span>, <span class="st">"S"</span>) <span class="cf">else</span> <span class="kw">c</span>(<span class="st">"E"</span>, <span class="st">"W"</span>)</span>
+<span id="cb3-21"><a href="#cb3-21"></a></span>
+<span id="cb3-22"><a href="#cb3-22"></a>  sign &lt;-<span class="st"> </span><span class="kw">sign</span>(x)</span>
+<span id="cb3-23"><a href="#cb3-23"></a>  x &lt;-<span class="st"> </span><span class="kw">abs</span>(x)</span>
+<span id="cb3-24"><a href="#cb3-24"></a>  deg &lt;-<span class="st"> </span><span class="kw">trunc</span>(x)</span>
+<span id="cb3-25"><a href="#cb3-25"></a>  x &lt;-<span class="st"> </span>x <span class="op">-</span><span class="st"> </span>deg</span>
+<span id="cb3-26"><a href="#cb3-26"></a>  min &lt;-<span class="st"> </span><span class="kw">round</span>(x <span class="op">*</span><span class="st"> </span><span class="dv">60</span>)</span>
+<span id="cb3-27"><a href="#cb3-27"></a></span>
+<span id="cb3-28"><a href="#cb3-28"></a>  <span class="co"># Ensure the columns are always the same width so they line up nicely</span></span>
+<span id="cb3-29"><a href="#cb3-29"></a>  ret &lt;-<span class="st"> </span><span class="kw">sprintf</span>(<span class="st">"%d°%.2d'%s"</span>, deg, min, <span class="kw">ifelse</span>(sign <span class="op">&gt;=</span><span class="st"> </span><span class="dv">0</span>, pm[[<span class="dv">1</span>]], pm[[<span class="dv">2</span>]]))</span>
+<span id="cb3-30"><a href="#cb3-30"></a>  <span class="kw">format</span>(ret, <span class="dt">justify =</span> <span class="st">"right"</span>)</span>
+<span id="cb3-31"><a href="#cb3-31"></a>}</span>
+<span id="cb3-32"><a href="#cb3-32"></a></span>
+<span id="cb3-33"><a href="#cb3-33"></a><span class="kw">latlon</span>(<span class="kw">c</span>(<span class="fl">32.71</span>, <span class="fl">2.95</span>), <span class="kw">c</span>(<span class="op">-</span><span class="fl">117.17</span>, <span class="fl">1.67</span>))</span>
+<span id="cb3-34"><a href="#cb3-34"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m &lt;earth_latlon[2]&gt;</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m [1] 32°43'N 117°10'W  2°57'N   1°40'E</span></span></code></pre></div>
 </div>
-<div id="using-in-a-tibble" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-in-a-tibble" class="anchor"></a>Using in a tibble</h2>
-<p>Columns of this class can be used in a tibble right away because we’ve made a class using the vctrs infrastructure and have provided a <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/">tibble</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'tibble'</span>
-<span class="co">#&gt; The following object is masked from 'package:vctrs':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     data_frame</span>
-
-<span class="va">loc</span> <span class="op">&lt;-</span> <span class="fu">latlon</span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">28.3411783</span>, <span class="fl">32.7102978</span>, <span class="fl">30.2622356</span>, <span class="fl">37.7859102</span>, <span class="fl">28.5</span>, <span class="cn">NA</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">81.5480348</span>, <span class="op">-</span><span class="fl">117.1704058</span>, <span class="op">-</span><span class="fl">97.7403327</span>, <span class="op">-</span><span class="fl">122.4131357</span>, <span class="op">-</span><span class="fl">81.4</span>, <span class="cn">NA</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>venue <span class="op">=</span> <span class="st">"rstudio::conf"</span>, year <span class="op">=</span> <span class="fl">2017</span><span class="op">:</span><span class="fl">2022</span>, loc <span class="op">=</span> <span class="va">loc</span><span class="op">)</span>
-
-<span class="va">data</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue          year              loc</span>
-<span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt;       &lt;erth_ltl&gt;</span>
-<span class="co">#&gt; 1 rstudio::conf  2017 28°20'N  81°33'W</span>
-<span class="co">#&gt; 2 rstudio::conf  2018 32°43'N 117°10'W</span>
-<span class="co">#&gt; 3 rstudio::conf  2019 30°16'N  97°44'W</span>
-<span class="co">#&gt; 4 rstudio::conf  2020 37°47'N 122°25'W</span>
-<span class="co">#&gt; 5 rstudio::conf  2021 28°30'N  81°24'W</span>
-<span class="co">#&gt; 6 rstudio::conf  2022               NA</span></code></pre></div>
+<div class="section level2">
+<h2 id="using-in-a-tibble">Using in a tibble<a class="anchor" aria-label="anchor" href="#using-in-a-tibble"></a>
+</h2>
+<p>Columns of this class can be used in a tibble right away because we’ve made a class using the vctrs infrastructure and have provided a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">library</span>(tibble)</span>
+<span id="cb4-2"><a href="#cb4-2"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m </span></span>
+<span id="cb4-3"><a href="#cb4-3"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m Attaching package: 'tibble'</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m The following object is masked from 'package:vctrs':</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m </span></span>
+<span id="cb4-6"><a href="#cb4-6"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m     data_frame</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a></span>
+<span id="cb4-8"><a href="#cb4-8"></a>loc &lt;-<span class="st"> </span><span class="kw">latlon</span>(</span>
+<span id="cb4-9"><a href="#cb4-9"></a>  <span class="kw">c</span>(<span class="fl">28.3411783</span>, <span class="fl">32.7102978</span>, <span class="fl">30.2622356</span>, <span class="fl">37.7859102</span>, <span class="fl">28.5</span>, <span class="ot">NA</span>),</span>
+<span id="cb4-10"><a href="#cb4-10"></a>  <span class="kw">c</span>(<span class="op">-</span><span class="fl">81.5480348</span>, <span class="fl">-117.1704058</span>, <span class="fl">-97.7403327</span>, <span class="fl">-122.4131357</span>, <span class="fl">-81.4</span>, <span class="ot">NA</span>)</span>
+<span id="cb4-11"><a href="#cb4-11"></a>)</span>
+<span id="cb4-12"><a href="#cb4-12"></a></span>
+<span id="cb4-13"><a href="#cb4-13"></a>data &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">venue =</span> <span class="st">"rstudio::conf"</span>, <span class="dt">year =</span> <span class="dv">2017</span><span class="op">:</span><span class="dv">2022</span>, <span class="dt">loc =</span> loc)</span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a>data</span>
+<span id="cb4-16"><a href="#cb4-16"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue          year              loc</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;int&gt; [39m [23m        [3m [38;5;246m&lt;erth_ltl&gt; [39m [23m</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstudio::conf   [4m2 [24m017 28°20'N  81°33'W</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstudio::conf   [4m2 [24m018 32°43'N 117°10'W</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstudio::conf   [4m2 [24m019 30°16'N  97°44'W</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstudio::conf   [4m2 [24m020 37°47'N 122°25'W</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstudio::conf   [4m2 [24m021 28°30'N  81°24'W</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstudio::conf   [4m2 [24m022                [31mNA [39m</span></span></code></pre></div>
 <p>This output is ok, but we could improve it by:</p>
 <ol style="list-style-type: decimal">
 <li><p>Using a more description type abbreviation than <code>&lt;erth_ltl&gt;</code>.</p></li>
@@ -209,181 +203,176 @@
 </ol>
 <p>The following sections show how to enhance the rendering.</p>
 </div>
-<div id="fixing-the-data-type" class="section level2">
-<h2 class="hasAnchor">
-<a href="#fixing-the-data-type" class="anchor"></a>Fixing the data type</h2>
+<div class="section level2">
+<h2 id="fixing-the-data-type">Fixing the data type<a class="anchor" aria-label="anchor" href="#fixing-the-data-type"></a>
+</h2>
 <p>Instead of <code>&lt;erth_ltl&gt;</code> we’d prefer to use <code>&lt;latlon&gt;</code>. We can do that by implementing the <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> method, which should return a string that can be used in a column header. For your own classes, strive for an evocative abbreviation that’s under 6 characters.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' @export</span>
-<span class="va">vec_ptype_abbr.earth_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="st">"latlon"</span>
-<span class="op">}</span>
-
-<span class="va">data</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue          year              loc</span>
-<span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt;         &lt;latlon&gt;</span>
-<span class="co">#&gt; 1 rstudio::conf  2017 28°20'N  81°33'W</span>
-<span class="co">#&gt; 2 rstudio::conf  2018 32°43'N 117°10'W</span>
-<span class="co">#&gt; 3 rstudio::conf  2019 30°16'N  97°44'W</span>
-<span class="co">#&gt; 4 rstudio::conf  2020 37°47'N 122°25'W</span>
-<span class="co">#&gt; 5 rstudio::conf  2021 28°30'N  81°24'W</span>
-<span class="co">#&gt; 6 rstudio::conf  2022               NA</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#' @export</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>vec_ptype_abbr.earth_latlon &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="st">"latlon"</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>}</span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a>data</span>
+<span id="cb5-7"><a href="#cb5-7"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue          year              loc</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;int&gt; [39m [23m          [3m [38;5;246m&lt;latlon&gt; [39m [23m</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstudio::conf   [4m2 [24m017 28°20'N  81°33'W</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstudio::conf   [4m2 [24m018 32°43'N 117°10'W</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstudio::conf   [4m2 [24m019 30°16'N  97°44'W</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstudio::conf   [4m2 [24m020 37°47'N 122°25'W</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstudio::conf   [4m2 [24m021 28°30'N  81°24'W</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstudio::conf   [4m2 [24m022                [31mNA [39m</span></span></code></pre></div>
 </div>
-<div id="custom-rendering" class="section level2">
-<h2 class="hasAnchor">
-<a href="#custom-rendering" class="anchor"></a>Custom rendering</h2>
-<p>The <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method is used by default for rendering. For custom formatting you need to implement the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html">pillar_shaft()</a></code> method. This function should always return a pillar shaft object, created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html">new_pillar_shaft_simple()</a></code> or similar. <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html">new_pillar_shaft_simple()</a></code> accepts ANSI escape codes for colouring, and pillar includes some built in styles like <code><a href="https://pillar.r-lib.org/reference/style_subtle.html">style_subtle()</a></code>. We can use subtle style for the degree and minute separators to make the data more obvious.</p>
-<p>First we define a degree formatter that makes use of <code><a href="https://pillar.r-lib.org/reference/style_subtle.html">style_subtle()</a></code>:</p>
+<div class="section level2">
+<h2 id="custom-rendering">Custom rendering<a class="anchor" aria-label="anchor" href="#custom-rendering"></a>
+</h2>
+<p>The <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method is used by default for rendering. For custom formatting you need to implement the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method. This function should always return a pillar shaft object, created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple()</a></code> or similar. <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple()</a></code> accepts ANSI escape codes for colouring, and pillar includes some built in styles like <code><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle()</a></code>. We can use subtle style for the degree and minute separators to make the data more obvious.</p>
+<p>First we define a degree formatter that makes use of <code><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">deg_min_color</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">direction</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span>
+  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span>
 
-  <span class="va">sign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sign.html">sign</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">trunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">sign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sign.html" class="external-link">sign</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">trunc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
   <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="va">deg</span>
-  <span class="va">rad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="fl">60</span><span class="op">)</span>
-  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span>
+  <span class="va">rad</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="fl">60</span><span class="op">)</span>
+  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span>
     <span class="st">"%d%s%.2d%s%s"</span>,
     <span class="va">deg</span>,
-    <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/style_subtle.html">style_subtle</a></span><span class="op">(</span><span class="st">"°"</span><span class="op">)</span>,
+    <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle</a></span><span class="op">(</span><span class="st">"°"</span><span class="op">)</span>,
     <span class="va">rad</span>,
-    <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/style_subtle.html">style_subtle</a></span><span class="op">(</span><span class="st">"'"</span><span class="op">)</span>,
-    <span class="va">pm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">sign</span> <span class="op">&gt;=</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span>
+    <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle</a></span><span class="op">(</span><span class="st">"'"</span><span class="op">)</span>,
+    <span class="va">pm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">sign</span> <span class="op">&gt;=</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span>
   <span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">ret</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">ret</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p>And then we pass that to our <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method:</p>
+<p>And then we pass that to our <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @importFrom pillar pillar_shaft</span>
 <span class="co">#' @export</span>
 <span class="va">pillar_shaft.earth_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span>, formatter <span class="op">=</span> <span class="va">deg_min_color</span><span class="op">)</span>
-  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html">new_pillar_shaft_simple</a></span><span class="op">(</span><span class="va">out</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
+  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">x</span>, formatter <span class="op">=</span> <span class="va">deg_min_color</span><span class="op">)</span>
+  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple</a></span><span class="op">(</span><span class="va">out</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>Currently, ANSI escapes are not rendered in vignettes, so this result doesn’t look any different, but if you run the code yourself you’ll see an improved display.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue          year              loc</span>
-<span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt;         &lt;latlon&gt;</span>
-<span class="co">#&gt; 1 rstudio::conf  2017 28°20'N  81°33'W</span>
-<span class="co">#&gt; 2 rstudio::conf  2018 32°43'N 117°10'W</span>
-<span class="co">#&gt; 3 rstudio::conf  2019 30°16'N  97°44'W</span>
-<span class="co">#&gt; 4 rstudio::conf  2020 37°47'N 122°25'W</span>
-<span class="co">#&gt; 5 rstudio::conf  2021 28°30'N  81°24'W</span>
-<span class="co">#&gt; 6 rstudio::conf  2022               NA</span></code></pre></div>
-<p>As well as the functions in pillar, the <a href="http://cli.r-lib.org/">cli</a> package provides a variety of tools for styling text.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>data</span>
+<span id="cb8-2"><a href="#cb8-2"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue          year              loc</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;int&gt; [39m [23m          [3m [38;5;246m&lt;latlon&gt; [39m [23m</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstudio::conf   [4m2 [24m017 28 [38;5;246m° [39m20 [38;5;246m' [39mN  81 [38;5;246m° [39m33 [38;5;246m' [39mW</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstudio::conf   [4m2 [24m018 32 [38;5;246m° [39m43 [38;5;246m' [39mN 117 [38;5;246m° [39m10 [38;5;246m' [39mW</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstudio::conf   [4m2 [24m019 30 [38;5;246m° [39m16 [38;5;246m' [39mN  97 [38;5;246m° [39m44 [38;5;246m' [39mW</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstudio::conf   [4m2 [24m020 37 [38;5;246m° [39m47 [38;5;246m' [39mN 122 [38;5;246m° [39m25 [38;5;246m' [39mW</span></span>
+<span id="cb8-9"><a href="#cb8-9"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstudio::conf   [4m2 [24m021 28 [38;5;246m° [39m30 [38;5;246m' [39mN  81 [38;5;246m° [39m24 [38;5;246m' [39mW</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstudio::conf   [4m2 [24m022                [31mNA [39m</span></span></code></pre></div>
+<p>As well as the functions in pillar, the <a href="http://cli.r-lib.org/" class="external-link">cli</a> package provides a variety of tools for styling text.</p>
 </div>
-<div id="truncation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#truncation" class="anchor"></a>Truncation</h2>
+<div class="section level2">
+<h2 id="truncation">Truncation<a class="anchor" aria-label="anchor" href="#truncation"></a>
+</h2>
 <p>Tibbles can automatically compacts columns when there’s no enough horizontal space to display everything:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">data</span>, width <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue  year              loc</span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;int&gt;         &lt;latlon&gt;</span>
-<span class="co">#&gt; 1 rstu…  2017 28°20'N  81°33'W</span>
-<span class="co">#&gt; 2 rstu…  2018 32°43'N 117°10'W</span>
-<span class="co">#&gt; 3 rstu…  2019 30°16'N  97°44'W</span>
-<span class="co">#&gt; 4 rstu…  2020 37°47'N 122°25'W</span>
-<span class="co">#&gt; 5 rstu…  2021 28°30'N  81°24'W</span>
-<span class="co">#&gt; 6 rstu…  2022               NA</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">print</span>(data, <span class="dt">width =</span> <span class="dv">30</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue  year              loc</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m  [3m [38;5;246m&lt;int&gt; [39m [23m          [3m [38;5;246m&lt;latlon&gt; [39m [23m</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstu…   [4m2 [24m017 28 [38;5;246m° [39m20 [38;5;246m' [39mN  81 [38;5;246m° [39m33 [38;5;246m' [39mW</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstu…   [4m2 [24m018 32 [38;5;246m° [39m43 [38;5;246m' [39mN 117 [38;5;246m° [39m10 [38;5;246m' [39mW</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstu…   [4m2 [24m019 30 [38;5;246m° [39m16 [38;5;246m' [39mN  97 [38;5;246m° [39m44 [38;5;246m' [39mW</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstu…   [4m2 [24m020 37 [38;5;246m° [39m47 [38;5;246m' [39mN 122 [38;5;246m° [39m25 [38;5;246m' [39mW</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstu…   [4m2 [24m021 28 [38;5;246m° [39m30 [38;5;246m' [39mN  81 [38;5;246m° [39m24 [38;5;246m' [39mW</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstu…   [4m2 [24m022                [31mNA [39m</span></span></code></pre></div>
 <p>Currently the latlon class isn’t ever compacted because we haven’t specified a minimum width when constructing the shaft. Let’s fix that and re-print the data:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' @importFrom pillar pillar_shaft</span>
-<span class="co">#' @export</span>
-<span class="va">pillar_shaft.earth_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html">new_pillar_shaft_simple</a></span><span class="op">(</span><span class="va">out</span>, align <span class="op">=</span> <span class="st">"right"</span>, min_width <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">data</span>, width <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue      year          loc</span>
-<span class="co">#&gt;   &lt;chr&gt;     &lt;int&gt;     &lt;latlon&gt;</span>
-<span class="co">#&gt; 1 rstudio:…  2017 28°20'N  81…</span>
-<span class="co">#&gt; 2 rstudio:…  2018 32°43'N 117…</span>
-<span class="co">#&gt; 3 rstudio:…  2019 30°16'N  97…</span>
-<span class="co">#&gt; 4 rstudio:…  2020 37°47'N 122…</span>
-<span class="co">#&gt; 5 rstudio:…  2021 28°30'N  81…</span>
-<span class="co">#&gt; 6 rstudio:…  2022           NA</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">#' @importFrom pillar pillar_shaft</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co">#' @export</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>pillar_shaft.earth_latlon &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {</span>
+<span id="cb10-4"><a href="#cb10-4"></a>  out &lt;-<span class="st"> </span><span class="kw">format</span>(x)</span>
+<span id="cb10-5"><a href="#cb10-5"></a>  pillar<span class="op">::</span><span class="kw">new_pillar_shaft_simple</span>(out, <span class="dt">align =</span> <span class="st">"right"</span>, <span class="dt">min_width =</span> <span class="dv">10</span>)</span>
+<span id="cb10-6"><a href="#cb10-6"></a>}</span>
+<span id="cb10-7"><a href="#cb10-7"></a></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="kw">print</span>(data, <span class="dt">width =</span> <span class="dv">30</span>)</span>
+<span id="cb10-9"><a href="#cb10-9"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue        year        loc</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;int&gt; [39m [23m    [3m [38;5;246m&lt;latlon&gt; [39m [23m</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstudio::c…   [4m2 [24m017 28°20'N  …</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstudio::c…   [4m2 [24m018 32°43'N 1…</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstudio::c…   [4m2 [24m019 30°16'N  …</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstudio::c…   [4m2 [24m020 37°47'N 1…</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstudio::c…   [4m2 [24m021 28°30'N  …</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstudio::c…   [4m2 [24m022          [31mNA [39m</span></span></code></pre></div>
 </div>
-<div id="adaptive-rendering" class="section level2">
-<h2 class="hasAnchor">
-<a href="#adaptive-rendering" class="anchor"></a>Adaptive rendering</h2>
+<div class="section level2">
+<h2 id="adaptive-rendering">Adaptive rendering<a class="anchor" aria-label="anchor" href="#adaptive-rendering"></a>
+</h2>
 <p>Truncation may be useful for character data, but for lat-lon data it’d be nicer to show full degrees and remove the minutes. We’ll first write a function that does this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">deg</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">direction</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span>
+  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span>
 
-  <span class="va">sign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sign.html">sign</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">sign</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sign.html" class="external-link">sign</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 
-  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%d°%s"</span>, <span class="va">deg</span>, <span class="va">pm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">sign</span> <span class="op">&gt;=</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">ret</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
+  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%d°%s"</span>, <span class="va">deg</span>, <span class="va">pm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">sign</span> <span class="op">&gt;=</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">ret</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p>Then use it as part of more sophisticated implementation of the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html">pillar_shaft()</a></code> method:</p>
+<p>Then use it as part of more sophisticated implementation of the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#' @importFrom pillar pillar_shaft</span>
 <span class="co">#' @export</span>
 <span class="va">pillar_shaft.earth_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span>, formatter <span class="op">=</span> <span class="va">deg</span><span class="op">)</span>
-  <span class="va">deg_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
+  <span class="va">deg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">x</span>, formatter <span class="op">=</span> <span class="va">deg</span><span class="op">)</span>
+  <span class="va">deg_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
 
-  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html">new_pillar_shaft</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>deg <span class="op">=</span> <span class="va">deg</span>, deg_min <span class="op">=</span> <span class="va">deg_min</span><span class="op">)</span>,
-    width <span class="op">=</span> <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/get_extent.html">get_max_extent</a></span><span class="op">(</span><span class="va">deg_min</span><span class="op">)</span>,
-    min_width <span class="op">=</span> <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/get_extent.html">get_max_extent</a></span><span class="op">(</span><span class="va">deg</span><span class="op">)</span>,
+  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>deg <span class="op">=</span> <span class="va">deg</span>, deg_min <span class="op">=</span> <span class="va">deg_min</span><span class="op">)</span>,
+    width <span class="op">=</span> <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/get_extent.html" class="external-link">get_max_extent</a></span><span class="op">(</span><span class="va">deg_min</span><span class="op">)</span>,
+    min_width <span class="op">=</span> <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/get_extent.html" class="external-link">get_max_extent</a></span><span class="op">(</span><span class="va">deg</span><span class="op">)</span>,
     class <span class="op">=</span> <span class="st">"pillar_shaft_latlon"</span>
   <span class="op">)</span>
 <span class="op">}</span></code></pre></div>
-<p>Now the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html">pillar_shaft()</a></code> method returns an object of class <code>"pillar_shaft_latlon"</code> created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html">new_pillar_shaft()</a></code>. This object contains the necessary information to render the values, and also minimum and maximum width values. For simplicity, both formats are pre-rendered, and the minimum and maximum widths are computed from there. (<code><a href="https://pillar.r-lib.org/reference/get_extent.html">get_max_extent()</a></code> is a helper that computes the maximum display width occupied by the values in a character vector.)</p>
-<p>All that’s left to do is to implement a <code><a href="https://rdrr.io/r/base/format.html">format()</a></code> method for our new <code>"pillar_shaft_latlon"</code> class. This method will be called with a <code>width</code> argument, which then determines which of the formats to choose. The formatting of our choice is passed to the <code><a href="https://pillar.r-lib.org/reference/new_ornament.html">new_ornament()</a></code> function:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#' @export</span>
-<span class="va">format.pillar_shaft_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">width</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
-  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://pillar.r-lib.org/reference/get_extent.html">get_max_extent</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">deg_min</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">width</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">ornament</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">deg_min</span>
-  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-    <span class="va">ornament</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">$</span><span class="va">deg</span>
-  <span class="op">}</span>
-
-  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_ornament.html">new_ornament</a></span><span class="op">(</span><span class="va">ornament</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="va">data</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue          year              loc</span>
-<span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt;         &lt;latlon&gt;</span>
-<span class="co">#&gt; 1 rstudio::conf  2017 28°20'N  81°33'W</span>
-<span class="co">#&gt; 2 rstudio::conf  2018 32°43'N 117°10'W</span>
-<span class="co">#&gt; 3 rstudio::conf  2019 30°16'N  97°44'W</span>
-<span class="co">#&gt; 4 rstudio::conf  2020 37°47'N 122°25'W</span>
-<span class="co">#&gt; 5 rstudio::conf  2021 28°30'N  81°24'W</span>
-<span class="co">#&gt; 6 rstudio::conf  2022               NA</span>
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">data</span>, width <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 × 3</span>
-<span class="co">#&gt;   venue        year        loc</span>
-<span class="co">#&gt;   &lt;chr&gt;       &lt;int&gt;   &lt;latlon&gt;</span>
-<span class="co">#&gt; 1 rstudio::c…  2017 28°N  82°W</span>
-<span class="co">#&gt; 2 rstudio::c…  2018 33°N 117°W</span>
-<span class="co">#&gt; 3 rstudio::c…  2019 30°N  98°W</span>
-<span class="co">#&gt; 4 rstudio::c…  2020 38°N 122°W</span>
-<span class="co">#&gt; 5 rstudio::c…  2021 28°N  81°W</span>
-<span class="co">#&gt; 6 rstudio::c…  2022         NA</span></code></pre></div>
+<p>Now the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method returns an object of class <code>"pillar_shaft_latlon"</code> created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft()</a></code>. This object contains the necessary information to render the values, and also minimum and maximum width values. For simplicity, both formats are pre-rendered, and the minimum and maximum widths are computed from there. (<code><a href="https://pillar.r-lib.org/reference/get_extent.html" class="external-link">get_max_extent()</a></code> is a helper that computes the maximum display width occupied by the values in a character vector.)</p>
+<p>All that’s left to do is to implement a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method for our new <code>"pillar_shaft_latlon"</code> class. This method will be called with a <code>width</code> argument, which then determines which of the formats to choose. The formatting of our choice is passed to the <code><a href="https://pillar.r-lib.org/reference/new_ornament.html" class="external-link">new_ornament()</a></code> function:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">#' @export</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>format.pillar_shaft_latlon &lt;-<span class="st"> </span><span class="cf">function</span>(x, width, ...) {</span>
+<span id="cb13-3"><a href="#cb13-3"></a>  <span class="cf">if</span> (<span class="kw">get_max_extent</span>(x<span class="op">$</span>deg_min) <span class="op">&lt;=</span><span class="st"> </span>width) {</span>
+<span id="cb13-4"><a href="#cb13-4"></a>    ornament &lt;-<span class="st"> </span>x<span class="op">$</span>deg_min</span>
+<span id="cb13-5"><a href="#cb13-5"></a>  } <span class="cf">else</span> {</span>
+<span id="cb13-6"><a href="#cb13-6"></a>    ornament &lt;-<span class="st"> </span>x<span class="op">$</span>deg</span>
+<span id="cb13-7"><a href="#cb13-7"></a>  }</span>
+<span id="cb13-8"><a href="#cb13-8"></a></span>
+<span id="cb13-9"><a href="#cb13-9"></a>  pillar<span class="op">::</span><span class="kw">new_ornament</span>(ornament, <span class="dt">align =</span> <span class="st">"right"</span>)</span>
+<span id="cb13-10"><a href="#cb13-10"></a>}</span>
+<span id="cb13-11"><a href="#cb13-11"></a></span>
+<span id="cb13-12"><a href="#cb13-12"></a>data</span>
+<span id="cb13-13"><a href="#cb13-13"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue          year              loc</span></span>
+<span id="cb13-15"><a href="#cb13-15"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m          [3m [38;5;246m&lt;int&gt; [39m [23m          [3m [38;5;246m&lt;latlon&gt; [39m [23m</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstudio::conf   [4m2 [24m017 28°20'N  81°33'W</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstudio::conf   [4m2 [24m018 32°43'N 117°10'W</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstudio::conf   [4m2 [24m019 30°16'N  97°44'W</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstudio::conf   [4m2 [24m020 37°47'N 122°25'W</span></span>
+<span id="cb13-20"><a href="#cb13-20"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstudio::conf   [4m2 [24m021 28°30'N  81°24'W</span></span>
+<span id="cb13-21"><a href="#cb13-21"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstudio::conf   [4m2 [24m022               NA</span></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="kw">print</span>(data, <span class="dt">width =</span> <span class="dv">30</span>)</span>
+<span id="cb13-23"><a href="#cb13-23"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;246m# A tibble: 6 × 3 [39m</span></span>
+<span id="cb13-24"><a href="#cb13-24"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m   venue        year        loc</span></span>
+<span id="cb13-25"><a href="#cb13-25"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m    [3m [38;5;246m&lt;chr&gt; [39m [23m        [3m [38;5;246m&lt;int&gt; [39m [23m    [3m [38;5;246m&lt;latlon&gt; [39m [23m</span></span>
+<span id="cb13-26"><a href="#cb13-26"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m1 [39m rstudio::c…   [4m2 [24m017 28°N  82°W</span></span>
+<span id="cb13-27"><a href="#cb13-27"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m2 [39m rstudio::c…   [4m2 [24m018 33°N 117°W</span></span>
+<span id="cb13-28"><a href="#cb13-28"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m3 [39m rstudio::c…   [4m2 [24m019 30°N  98°W</span></span>
+<span id="cb13-29"><a href="#cb13-29"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m4 [39m rstudio::c…   [4m2 [24m020 38°N 122°W</span></span>
+<span id="cb13-30"><a href="#cb13-30"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m5 [39m rstudio::c…   [4m2 [24m021 28°N  81°W</span></span>
+<span id="cb13-31"><a href="#cb13-31"></a> [<span class="dv">38</span>;<span class="dv">5</span>;246m<span class="co">#&gt; [39m  [38;5;250m6 [39m rstudio::c…   [4m2 [24m022         NA</span></span></code></pre></div>
 </div>
-<div id="testing" class="section level2">
-<h2 class="hasAnchor">
-<a href="#testing" class="anchor"></a>Testing</h2>
-<p>If you want to test the output of your code, you can compare it with a known state recorded in a text file. The <code><a href="https://testthat.r-lib.org/reference/expect_snapshot.html">testthat::expect_snapshot()</a></code> function offers an easy way to test output-generating functions. It takes care about details such as Unicode, ANSI escapes, and output width. Furthermore it won’t make the tests fail on CRAN. This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.</p>
+<div class="section level2">
+<h2 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a>
+</h2>
+<p>If you want to test the output of your code, you can compare it with a known state recorded in a text file. The <code><a href="https://testthat.r-lib.org/reference/expect_snapshot.html" class="external-link">testthat::expect_snapshot()</a></code> function offers an easy way to test output-generating functions. It takes care about details such as Unicode, ANSI escapes, and output width. Furthermore it won’t make the tests fail on CRAN. This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.</p>
 <p>Use this testthat expectation in one of your test files to create a snapshot test:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">expect_snapshot</span><span class="op">(</span><span class="fu"><a href="https://pillar.r-lib.org/reference/pillar_shaft.html">pillar_shaft</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">loc</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>See <a href="https://testthat.r-lib.org/articles/snapshotting.html" class="uri">https://testthat.r-lib.org/articles/snapshotting.html</a> for more information.</p>
+<code class="sourceCode R"><span class="fu">expect_snapshot</span><span class="op">(</span><span class="fu"><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">loc</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>See <a href="https://testthat.r-lib.org/articles/snapshotting.html" class="external-link uri">https://testthat.r-lib.org/articles/snapshotting.html</a> for more information.</p>
 </div>
   </div>
 
@@ -398,11 +387,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="http://hadley.nz">Hadley Wickham</a>, Lionel Henry, Davis Vaughan.</p>
+  <p></p>
+<p>Developed by Hadley Wickham, Lionel Henry, Davis Vaughan.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -410,6 +401,8 @@
 
   
 
+
+  
 
   </body>
 </html>
