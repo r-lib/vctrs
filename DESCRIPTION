@@ -48,7 +48,7 @@ Suggests:
     waldo (>= 0.2.0),
     zeallot
 Remotes:
-    r-lib/rlang
+    r-lib/rlang@dev
 VignetteBuilder: 
     knitr
 SystemRequirements:
