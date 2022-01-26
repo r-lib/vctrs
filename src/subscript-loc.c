@@ -348,9 +348,9 @@ r_obj* ffi_as_location(r_obj* subscript,
     if (r_is_object(ffi_n) || r_typeof(ffi_n) != R_TYPE_integer) {
       ffi_n = vec_cast(ffi_n,
                        vctrs_shared_empty_int,
+                       args_n,
                        args_empty,
-                       args_empty,
-                       r_lazy_null);
+                       (struct r_lazy) { .x = frame, .env = r_null });
     }
     KEEP(ffi_n);
 

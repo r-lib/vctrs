@@ -41,7 +41,7 @@ vec_as_subscript <- function(i,
     numeric = numeric,
     character = character,
     arg = arg,
-    call = environment()
+    frame = environment()
   )
 }
 vec_as_subscript_result <- function(i,
@@ -57,7 +57,7 @@ vec_as_subscript_result <- function(i,
     numeric = numeric,
     character = character,
     arg = arg,
-    call = environment()
+    frame = environment()
   )
 }
 

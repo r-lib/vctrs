@@ -224,3 +224,13 @@
       x Subscript has the wrong type `list`.
       i It must be logical, numeric, or character.
 
+---
+
+    Code
+      (expect_error(my_function(1.5)))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `vec_as_location()`:
+      ! Can't convert from `n` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
