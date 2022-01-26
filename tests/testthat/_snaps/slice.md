@@ -41,7 +41,7 @@
     Code
       vec_slice(1:3, letters[1])
     Condition
-      Error:
+      Error in `vec_slice()`:
       ! Can't use character names to index an unnamed vector.
 
 # Negative subscripts are checked

@@ -529,7 +529,9 @@
     Code
       (expect_error(vec_as_location(letters[1], 3), "unnamed vector"))
     Output
-      <simpleError: Can't use character names to index an unnamed vector.>
+      <error/rlang_error>
+      Error in `vec_as_location()`:
+      ! Can't use character names to index an unnamed vector.
 
 # can optionally extend beyond the end
 

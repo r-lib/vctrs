@@ -45,7 +45,9 @@
     Code
       (expect_error(vec_assign(1:3, "foo", 10), "unnamed vector"))
     Output
-      <simpleError: Can't use character names to index an unnamed vector.>
+      <error/rlang_error>
+      Error in `vec_assign()`:
+      ! Can't use character names to index an unnamed vector.
     Code
       (expect_error(vec_slice(letters, -100) <- "foo", class = "vctrs_error_subscript_oob")
       )
