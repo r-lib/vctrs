@@ -844,7 +844,7 @@
     Code
       vec_as_location(1, 1L, missing = "bogus")
     Condition
-      Error:
+      Error in `vec_as_location()`:
       ! `missing` must be one of "propagate" or "error".
 
 # num_as_location() UI
@@ -852,7 +852,7 @@
     Code
       num_as_location(1, 1L, missing = "bogus")
     Condition
-      Error:
+      Error in `num_as_location()`:
       ! `missing` must be one of "propagate" or "error".
 
 ---
@@ -860,7 +860,7 @@
     Code
       num_as_location(1, 1L, negative = "bogus")
     Condition
-      Error:
+      Error in `num_as_location()`:
       ! `negative` must be one of "invert", "error", or "ignore".
 
 ---
@@ -868,7 +868,7 @@
     Code
       num_as_location(1, 1L, oob = "bogus")
     Condition
-      Error:
+      Error in `num_as_location()`:
       ! `oob` must be one of "error" or "extend".
 
 ---
@@ -876,7 +876,7 @@
     Code
       num_as_location(1, 1L, zero = "bogus")
     Condition
-      Error:
+      Error in `num_as_location()`:
       ! `zero` must be one of "remove", "error", or "ignore".
 
 # vec_as_location2() UI

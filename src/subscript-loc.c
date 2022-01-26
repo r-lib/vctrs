@@ -447,19 +447,19 @@ enum num_loc_zero parse_loc_zero(r_obj* x,
 
 static
 void stop_subscript_arg_missing(struct r_lazy call) {
-  r_abort_call(KEEP(r_lazy_eval(call)), "`missing` must be one of \"propagate\" or \"error\".");
+  r_abort_call(call.env, "`missing` must be one of \"propagate\" or \"error\".");
 }
 static
 void stop_bad_negative(struct r_lazy call) {
-  r_abort_call(KEEP(r_lazy_eval(call)), "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
+  r_abort_call(call.env, "`negative` must be one of \"invert\", \"error\", or \"ignore\".");
 }
 static
 void stop_bad_oob(struct r_lazy call) {
-  r_abort_call(KEEP(r_lazy_eval(call)), "`oob` must be one of \"error\" or \"extend\".");
+  r_abort_call(call.env, "`oob` must be one of \"error\" or \"extend\".");
 }
 static
 void stop_bad_zero(struct r_lazy call) {
-  r_abort_call(KEEP(r_lazy_eval(call)), "`zero` must be one of \"remove\", \"error\", or \"ignore\".");
+  r_abort_call(call.env, "`zero` must be one of \"remove\", \"error\", or \"ignore\".");
 }
 
 static

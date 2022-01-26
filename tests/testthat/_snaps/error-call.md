@@ -179,7 +179,7 @@
       (expect_error(my_function()))
     Output
       <error/rlang_error>
-      Error in `my_function()`:
+      Error in `vctrs::num_as_location()`:
       ! `missing` must be one of "propagate" or "error".
 
 ---
