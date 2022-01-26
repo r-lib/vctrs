@@ -308,6 +308,22 @@ test_that("can disallow missing values", {
       with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error")),
       class = "vctrs_error_subscript_type"
     ))
+    (expect_error(
+      with_tibble_cols(vec_as_location(NA, 1, missing = "error")),
+      class = "vctrs_error_subscript_type"
+    ))
+    (expect_error(
+      with_tibble_cols(vec_as_location(NA, 3, missing = "error")),
+      class = "vctrs_error_subscript_type"
+    ))
+    (expect_error(
+      with_tibble_cols(vec_as_location(c(TRUE, NA, FALSE), 3, missing = "error")),
+      class = "vctrs_error_subscript_type"
+    ))
+    (expect_error(
+      with_tibble_cols(vec_as_location(NA_character_, 2, missing = "error", names = c("x", "y"))),
+      class = "vctrs_error_subscript_type"
+    ))
   })
 })
 
