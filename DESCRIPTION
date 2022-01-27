@@ -47,8 +47,6 @@ Suggests:
     xml2,
     waldo (>= 0.2.0),
     zeallot
-Remotes:
-    r-lib/rlang@dev
 VignetteBuilder: 
     knitr
 SystemRequirements:
