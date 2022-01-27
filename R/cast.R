@@ -72,7 +72,7 @@ vec_cast <- function(x,
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
   }
-  return(.Call(ffi_cast, x, to, x_arg, to_arg, environment()))
+  return(.Call(ffi_cast, x, to, environment()))
   UseMethod("vec_cast", to)
 }
 vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {

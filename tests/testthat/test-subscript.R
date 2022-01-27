@@ -85,3 +85,13 @@ test_that("vec_as_subscript2() forbids subscript types", {
   expect_snapshot(error = TRUE, vec_as_subscript2("foo", character = "error", logical = "error"))
   expect_snapshot(error = TRUE, vec_as_subscript2(TRUE, logical = "error"))
 })
+
+test_that("vec_as_subscript() evaluates arg lazily", {
+  expect_silent(vec_as_subscript(1L, arg = print("oof")))
+  expect_silent(vec_as_subscript_result(1L, arg = print("oof"), NULL, logical = "error", numeric = "cast", character = "error"))
+})
+
+test_that("vec_as_subscript2() evaluates arg lazily", {
+  expect_silent(vec_as_subscript2(1L, arg = print("oof")))
+  expect_silent(vec_as_subscript2_result(1L, arg = print("oof"), NULL, logical = "error", numeric = "cast", character = "error"))
+})

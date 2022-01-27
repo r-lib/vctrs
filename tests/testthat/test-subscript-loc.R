@@ -492,3 +492,12 @@ test_that("num_as_location() UI", {
 test_that("vec_as_location2() UI", {
   expect_snapshot(error = TRUE, vec_as_location2(1, 1L, missing = "bogus"))
 })
+
+test_that("vec_as_location() evaluates arg lazily", {
+  expect_silent(vec_as_location(1L, 1L, arg = print("oof")))
+})
+
+test_that("vec_as_location2() evaluates arg lazily", {
+  expect_silent(vec_as_location2(1L, 1L, arg = print("oof")))
+  expect_silent(vec_as_location2_result(1L, 1L, names = NULL, arg = print("oof"), missing = "error", negative = "error", call = NULL))
+})

@@ -40,7 +40,6 @@ vec_as_subscript <- function(i,
     logical = logical,
     numeric = numeric,
     character = character,
-    arg = arg,
     frame = environment()
   )
 }
@@ -56,7 +55,6 @@ vec_as_subscript_result <- function(i,
     logical = logical,
     numeric = numeric,
     character = character,
-    arg = arg,
     frame = environment()
   )
 }

@@ -163,7 +163,6 @@ vec_as_names <- function(names,
     ffi_as_names,
     names,
     repair,
-    repair_arg,
     quiet,
     environment()
   )

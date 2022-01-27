@@ -1,5 +1,5 @@
 
-# vec_recycle -------------------------------------------------------------
+# vec_recycle() -------------------------------------------------------------
 
 test_that("vec_recycle recycles size 1 to any other size", {
   x <- 1
@@ -37,6 +37,10 @@ test_that("can recycle arrays", {
   expect_equal(vec_recycle(x, 1), x)
   expect_equal(vec_recycle(x, 0), x0)
   expect_equal(vec_recycle(x, 2), x2)
+})
+
+test_that("vec_recycle() evaluates x_arg lazily", {
+  expect_silent(vec_recycle(1L, 1L, x_arg = print("oof")))
 })
 
 # Empty -------------------------------------------------------------------
