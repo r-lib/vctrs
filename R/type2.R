@@ -37,7 +37,7 @@ vec_ptype2 <- function(x,
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
   }
-  return(.Call(ffi_ptype2, x, y, x_arg, y_arg, environment()))
+  return(.Call(ffi_ptype2, x, y, environment()))
   UseMethod("vec_ptype2")
 }
 vec_ptype2_dispatch_s3 <- function(x,
