@@ -106,7 +106,7 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
     if (times_ == 1) {
       out = x;
     } else if (times_ == 0) {
-      out = vec_ptype(x, args_empty);
+      out = vec_ptype(x, args_empty, r_lazy_null);
     } else {
       out = vec_rep_each_uniform(x, times_);
     }

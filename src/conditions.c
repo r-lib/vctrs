@@ -3,12 +3,18 @@
 #include "utils.h"
 
 // [[ include("vctrs.h") ]]
-void stop_scalar_type(SEXP x, struct vctrs_arg* arg) {
-  SEXP call = PROTECT(Rf_lang3(Rf_install("stop_scalar_type"),
-                               PROTECT(r_protect(x)),
-                               PROTECT(vctrs_arg(arg))));
-  Rf_eval(call, vctrs_ns_env);
-  never_reached("stop_scalar_type");
+void stop_scalar_type(r_obj* x,
+                      struct vctrs_arg* arg,
+                      struct r_lazy call) {
+  r_obj* ffi_call = KEEP(r_lazy_eval(call));
+  ffi_call = KEEP(r_expr_protect(ffi_call));
+
+  r_obj* stop_call = KEEP(r_call4(r_sym("stop_scalar_type"),
+                                  KEEP(r_protect(x)),
+                                  KEEP(vctrs_arg(arg)),
+                                  ffi_call));
+  r_eval(stop_call, vctrs_ns_env);
+  r_stop_unreached("stop_scalar_type");
 }
 
 // [[ include("vctrs.h") ]]

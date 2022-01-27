@@ -5,6 +5,8 @@
 #' `vec_ptype_show()` nicely prints the common type of any number of
 #' inputs, and is designed for interactive exploration.
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x A vector
 #' @param ... For `vec_ptype()`, these dots are for future extensions and must
 #'   be empty.
@@ -98,9 +100,9 @@
 #'   data.frame(y = 2),
 #'   data.frame(z = "a")
 #' )
-vec_ptype <- function(x, ..., x_arg = "") {
+vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
   check_dots_empty0(...)
-  return(.Call(vctrs_ptype, x, x_arg))
+  return(.Call(ffi_ptype, x, x_arg, environment()))
   UseMethod("vec_ptype")
 }
 

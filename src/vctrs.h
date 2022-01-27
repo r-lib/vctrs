@@ -371,7 +371,7 @@ SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
 SEXP vec_init(SEXP x, R_len_t n);
-SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg);
+r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call);
 SEXP vec_ptype_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
 r_obj* vec_recycle2(r_obj* x, r_ssize size, struct vctrs_arg* x_arg, struct r_lazy call);
@@ -610,7 +610,10 @@ static inline void growable_push_int(struct growable* g, int i) {
 
 // Conditions ---------------------------------------------------
 
-void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
+r_no_return
+void stop_scalar_type(SEXP x,
+                      struct vctrs_arg* arg,
+                      struct r_lazy call);
 __attribute__((noreturn))
 void stop_assert_size(r_ssize actual,
                       r_ssize required,

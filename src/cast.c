@@ -39,13 +39,13 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
 
   if (x == R_NilValue) {
     if (!vec_is_partial(to)) {
-      vec_assert_vector(to, to_arg);
+      vec_assert_vector(to, to_arg, opts->call);
     }
     return x;
   }
   if (to == R_NilValue) {
     if (!vec_is_partial(x)) {
-      vec_assert_vector(x, x_arg);
+      vec_assert_vector(x, x_arg, opts->call);
     }
     return x;
   }
@@ -58,10 +58,10 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
   }
 
   if (x_type == vctrs_type_scalar) {
-    stop_scalar_type(x, x_arg);
+    stop_scalar_type(x, x_arg, opts->call);
   }
   if (to_type == vctrs_type_scalar) {
-    stop_scalar_type(to, to_arg);
+    stop_scalar_type(to, to_arg, opts->call);
   }
 
   if (has_dim(x) || has_dim(to)) {

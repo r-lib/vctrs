@@ -15,22 +15,17 @@ static SEXP syms_vec_ptype_finalise_dispatch = NULL;
 static SEXP fns_vec_ptype_finalise_dispatch = NULL;
 
 
-static inline SEXP vec_ptype_slice(SEXP x, SEXP empty);
-static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg);
-static SEXP df_ptype(SEXP x, bool bare);
-
 // [[ register() ]]
-SEXP vctrs_ptype(SEXP x, SEXP x_arg) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  return vec_ptype(x, &x_arg_);
+r_obj* ffi_ptype(r_obj* x, r_obj* x_arg_ffi, r_obj* frame) {
+  struct vctrs_arg x_arg = vec_as_arg(x_arg_ffi);
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  return vec_ptype(x, &x_arg, call);
 }
 
-static SEXP col_ptype(SEXP x);
-
 // [[ include("vctrs.h") ]]
-SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg) {
+r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   switch (vec_typeof(x)) {
-  case vctrs_type_null:        return R_NilValue;
+  case vctrs_type_null:        return r_null;
   case vctrs_type_unspecified: return vctrs_shared_empty_uns;
   case vctrs_type_logical:     return vec_ptype_slice(x, vctrs_shared_empty_lgl);
   case vctrs_type_integer:     return vec_ptype_slice(x, vctrs_shared_empty_int);
@@ -40,14 +35,15 @@ SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg) {
   case vctrs_type_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe:   return df_ptype(x, true);
-  case vctrs_type_s3:          return s3_type(x, x_arg);
-  case vctrs_type_scalar:      stop_scalar_type(x, x_arg);
+  case vctrs_type_s3:          return s3_type(x, x_arg, call);
+  case vctrs_type_scalar:      stop_scalar_type(x, x_arg, call);
   }
-  never_reached("vec_ptype");
+  r_stop_unreached("vec_ptype");
 }
 
-static SEXP col_ptype(SEXP x) {
-  return vec_ptype(x, args_empty);
+static
+r_obj* col_ptype(r_obj* x) {
+  return vec_ptype(x, args_empty, r_lazy_null);
 }
 
 static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
@@ -59,7 +55,10 @@ static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
   }
 }
 
-static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
+static
+r_obj* s3_type(r_obj* x,
+               struct vctrs_arg* x_arg,
+               struct r_lazy call) {
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:
     return df_ptype(x, true);
@@ -81,18 +80,18 @@ static SEXP s3_type(SEXP x, struct vctrs_arg* x_arg) {
     return x;
   }
 
-  SEXP method = PROTECT(vec_ptype_method(x));
+  r_obj* method = KEEP(vec_ptype_method(x));
 
-  SEXP out;
+  r_obj* out;
 
   if (method == r_null) {
-    vec_assert_vector(x, x_arg);
+    vec_assert_vector(x, x_arg, call);
     out = vec_slice(x, r_null);
   } else {
     out = vec_ptype_invoke(x, method);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
@@ -136,8 +135,10 @@ SEXP vec_ptype_finalise(SEXP x) {
     return x;
   }
 
+  // TODO! Error call
+
   if (!OBJECT(x)) {
-    vec_assert_vector(x, args_empty);
+    vec_assert_vector(x, args_empty, r_lazy_null);
     return x;
   }
 
@@ -149,7 +150,7 @@ SEXP vec_ptype_finalise(SEXP x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  vec_assert_vector(x, args_empty);
+  vec_assert_vector(x, args_empty, r_lazy_null);
 
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:
@@ -253,8 +254,9 @@ SEXP vec_ptype_common_params(SEXP dots,
 SEXP vec_ptype_common_opts(SEXP dots,
                            SEXP ptype,
                            const struct fallback_opts* opts) {
+  // FIXME! Error call
   if (!vec_is_partial(ptype)) {
-    return vec_ptype(ptype, args_dot_ptype);
+    return vec_ptype(ptype, args_dot_ptype, r_lazy_null);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {

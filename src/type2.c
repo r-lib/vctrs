@@ -54,10 +54,10 @@ SEXP vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   }
 
   if (x_type == vctrs_type_scalar) {
-    stop_scalar_type(x, x_arg);
+    stop_scalar_type(x, x_arg, opts->call);
   }
   if (y_type == vctrs_type_scalar) {
-    stop_scalar_type(y, y_arg);
+    stop_scalar_type(y, y_arg, opts->call);
   }
 
   if (x_type != vctrs_type_s3 && y_type != vctrs_type_s3) {
@@ -75,8 +75,8 @@ SEXP vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   // is another type. FIXME: Use R-level callback instead.
   if (first_pass) {
     struct ptype2_opts mut_opts = *opts;
-    mut_opts.x = PROTECT(vec_ptype(x, x_arg));
-    mut_opts.y = PROTECT(vec_ptype(y, y_arg));
+    mut_opts.x = PROTECT(vec_ptype(x, x_arg, opts->call));
+    mut_opts.y = PROTECT(vec_ptype(y, y_arg, opts->call));
 
     SEXP out = vec_ptype2_opts_impl(&mut_opts, left, false);
 
@@ -156,7 +156,7 @@ SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
                                  SEXP other,
                                  struct vctrs_arg* other_arg) {
   if (other_type == vctrs_type_unspecified || other_type == vctrs_type_null) {
-    return vec_ptype(other, other_arg);
+    return vec_ptype(other, other_arg, opts->call);
   }
 
   if (opts->fallback.s3) {
@@ -171,7 +171,7 @@ SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
     return vec_ptype2_opts(&self_self_opts, &_left);
   }
 
-  return vec_ptype(other, other_arg);
+  return vec_ptype(other, other_arg, opts->call);
 }
 
 

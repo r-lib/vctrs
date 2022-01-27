@@ -98,8 +98,8 @@ SEXP find_common_class(SEXP x, SEXP y) {
 
 // [[ include("vctrs.h") ]]
 SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
-  SEXP x = PROTECT(vec_ptype(opts->x, opts->x_arg));
-  SEXP y = PROTECT(vec_ptype(opts->y, opts->y_arg));
+  SEXP x = PROTECT(vec_ptype(opts->x, opts->x_arg, opts->call));
+  SEXP y = PROTECT(vec_ptype(opts->y, opts->y_arg, opts->call));
 
   SEXP r_x_arg = PROTECT(vctrs_arg(opts->x_arg));
   SEXP r_y_arg = PROTECT(vctrs_arg(opts->y_arg));

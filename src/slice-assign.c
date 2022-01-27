@@ -34,8 +34,9 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
     return R_NilValue;
   }
 
-  vec_assert_vector(x, opts->x_arg);
-  vec_assert_vector(value, opts->value_arg);
+  // TODO! Error call
+  vec_assert_vector(x, opts->x_arg, r_lazy_null);
+  vec_assert_vector(value, opts->value_arg, r_lazy_null);
 
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
@@ -93,7 +94,7 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
   case vctrs_type_raw:       return raw_assign(proxy, index, value, owned);
   case vctrs_type_list:      return list_assign(proxy, index, value, owned);
   case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
-  case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
+  case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty, r_lazy_null);
   default:                   stop_unimplemented_vctrs_type("vec_assign_switch", vec_typeof(proxy));
   }
   never_reached("vec_assign_switch");

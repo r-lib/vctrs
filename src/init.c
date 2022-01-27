@@ -61,7 +61,7 @@ extern SEXP vec_proxy_compare(SEXP);
 extern SEXP vec_proxy_order(SEXP);
 extern SEXP vctrs_df_proxy(SEXP, SEXP);
 extern SEXP vctrs_unspecified(SEXP);
-extern SEXP vctrs_ptype(SEXP, SEXP);
+extern r_obj* ffi_ptype(r_obj*, r_obj*, r_obj*);
 extern SEXP vec_ptype_finalise(SEXP);
 extern SEXP vctrs_minimal_names(SEXP);
 extern SEXP vctrs_unique_names(SEXP, SEXP);
@@ -217,7 +217,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy_order",                (DL_FUNC) &vec_proxy_order, 1},
   {"vctrs_df_proxy",                   (DL_FUNC) &vctrs_df_proxy, 2},
   {"vctrs_unspecified",                (DL_FUNC) &vctrs_unspecified, 1},
-  {"vctrs_ptype",                      (DL_FUNC) &vctrs_ptype, 2},
+  {"ffi_ptype",                        (DL_FUNC) &ffi_ptype, 3},
   {"vctrs_ptype_finalise",             (DL_FUNC) &vec_ptype_finalise, 1},
   {"vctrs_minimal_names",              (DL_FUNC) &vctrs_minimal_names, 1},
   {"vctrs_unique_names",               (DL_FUNC) &vctrs_unique_names, 2},

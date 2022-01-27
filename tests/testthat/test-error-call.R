@@ -96,3 +96,11 @@ test_that("subscript validation reports correct error calls", {
   my_function <- function(my_arg) vec_as_location(my_arg, 1, missing = "error")
   expect_snapshot((expect_error(my_function(NA))))
 })
+
+test_that("`vec_ptype()` reports correct error call", {
+  my_function <- function(my_arg) vec_ptype(my_arg)
+  expect_snapshot({
+    (expect_error(my_function(env())))
+    (expect_error(my_function(foobar(list()))))
+  })
+})

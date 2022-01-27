@@ -245,3 +245,18 @@
       x Subscript can't contain missing values.
       x It has a missing value at location 1.
 
+# `vec_ptype()` reports correct error call
+
+    Code
+      (expect_error(my_function(env())))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `my_function()`:
+      ! Input must be a vector, not an environment.
+    Code
+      (expect_error(my_function(foobar(list()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `my_function()`:
+      ! Input must be a vector, not a <vctrs_foobar> object.
+

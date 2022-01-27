@@ -2,7 +2,8 @@
 
 // [[ include("assert.h") ]]
 void vec_assert(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
-  vec_assert_vector(x, arg);
+  // TODO! error call
+  vec_assert_vector(x, arg, r_lazy_null);
 
   if (size != -1) {
     // `size == -1` makes no assertion about size
@@ -11,9 +12,11 @@ void vec_assert(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
 }
 
 // [[ include("assert.h") ]]
-void vec_assert_vector(r_obj* x, struct vctrs_arg* arg) {
+void vec_assert_vector(r_obj* x,
+                       struct vctrs_arg* arg,
+                       struct r_lazy call) {
   if (!vec_is_vector(x)) {
-    stop_scalar_type(x, arg);
+    stop_scalar_type(x, arg, call);
   }
 }
 

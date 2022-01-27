@@ -49,8 +49,9 @@ R_len_t vec_size(SEXP x) {
     size = df_size(data);
     break;
 
+    
   default:
-    stop_scalar_type(x, NULL);
+    stop_scalar_type(x, NULL, r_lazy_null);
 }
 
   UNPROTECT(nprot);
