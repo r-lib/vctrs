@@ -3,11 +3,13 @@
 #include "dim.h"
 
 // [[ register() ]]
-SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP frame) {
+  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
+  struct arg_data_lazy y_arg_ = new_lazy_arg_data(frame, "y_arg");
+  struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
-  return vec_shaped_ptype(ptype, x, y, &x_arg_, &y_arg_);
+  return vec_shaped_ptype(ptype, x, y, &x_arg, &y_arg);
 }
 
 static SEXP vec_shape2(SEXP x, SEXP y, struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);

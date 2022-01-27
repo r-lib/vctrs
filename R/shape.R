@@ -9,7 +9,7 @@ new_shape <- function(type, shape = integer()) {
 
 vec_shaped_ptype  <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_shaped_ptype, ptype, x, y, x_arg, y_arg)
+  .Call(vctrs_shaped_ptype, ptype, x, y, environment())
 }
 
 vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {

@@ -43,6 +43,11 @@ test_that("vec_shaped_ptype()", {
   expect_identical(vec_shaped_ptype(integer(), int(5, 1, 2), int(10, 1, 2)), new_shape(integer(), 1:2))
 })
 
+test_that("vec_shaped_ptype() evaluates arg lazily", {
+  expect_silent(vec_shaped_ptype(integer(), int(5), int(10), x_arg = print("oof")))
+  expect_silent(vec_shaped_ptype(integer(), int(5), int(10), y_arg = print("oof")))
+})
+
 # vec_cast() --------------------------------------------------------------
 
 # NULL
