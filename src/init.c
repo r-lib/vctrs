@@ -88,7 +88,7 @@ extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unset_s4(SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
-extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
@@ -246,7 +246,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_altrep_rle_is_materialized", (DL_FUNC) &altrep_rle_is_materialized, 1},
   {"vctrs_validate_name_repair_arg",   (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",     (DL_FUNC) &vctrs_validate_minimal_names, 2},
-  {"ffi_as_names",                     (DL_FUNC) &ffi_as_names, 5},
+  {"ffi_as_names",                     (DL_FUNC) &ffi_as_names, 4},
   {"vctrs_is_partial",                 (DL_FUNC) &vctrs_is_partial, 1},
   {"vctrs_is_list",                    (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",         (DL_FUNC) &vctrs_try_catch_callback, 2},

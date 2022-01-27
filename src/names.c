@@ -43,7 +43,6 @@ SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
 // [[ register() ]]
 r_obj* ffi_as_names(r_obj* names,
                     r_obj* repair,
-                    r_obj* ffi_repair_arg,
                     r_obj* ffi_quiet,
                     r_obj* frame) {
   if (!r_is_bool(ffi_quiet)) {
@@ -53,7 +52,8 @@ r_obj* ffi_as_names(r_obj* names,
 
   struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
 
-  struct vctrs_arg repair_arg = vec_as_arg(ffi_repair_arg);
+  struct arg_data_lazy repair_arg_ = new_lazy_arg_data(frame, "repair_arg");
+  struct vctrs_arg repair_arg = new_lazy_arg(&repair_arg_);
   struct name_repair_opts repair_opts = new_name_repair_opts(repair,
                                                              &repair_arg,
                                                              quiet,

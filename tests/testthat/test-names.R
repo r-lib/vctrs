@@ -162,6 +162,10 @@ test_that("vec_as_names() is quiet when function is supplied (#1018)", {
   )
 })
 
+test_that("vec_as_names() evaluates repair_arg lazily", {
+  expect_silent(vec_as_names(letters, repair_arg = print("oof")))
+})
+
 
 # vec_repair_names() -------------------------------------------------------
 
