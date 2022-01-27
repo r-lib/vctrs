@@ -336,9 +336,11 @@ SEXP vctrs_id(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
-                 SEXP needles_arg_, SEXP haystack_arg_) {
-  struct vctrs_arg needles_arg = vec_as_arg(needles_arg_);
-  struct vctrs_arg haystack_arg = vec_as_arg(haystack_arg_);
+                 SEXP frame) {
+  struct arg_data_lazy needles_arg_ = new_lazy_arg_data(frame, "needles_arg");
+  struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
+  struct arg_data_lazy haystack_arg_ = new_lazy_arg_data(frame, "haystack_arg");
+  struct vctrs_arg haystack_arg = new_lazy_arg(&haystack_arg_);
 
   return vec_match_params(needles,
                           haystack,

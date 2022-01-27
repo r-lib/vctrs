@@ -260,7 +260,7 @@ vec_match <- function(needles,
                       needles_arg = "",
                       haystack_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_match, needles, haystack, na_equal, needles_arg, haystack_arg)
+  .Call(vctrs_match, needles, haystack, na_equal, environment())
 }
 
 #' @export
