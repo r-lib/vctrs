@@ -107,7 +107,7 @@ extern SEXP vctrs_rep_each(SEXP, SEXP);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unshared_col();
 extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_shape2(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_shape2(SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
@@ -265,7 +265,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_maybe_shared_col",           (DL_FUNC) &vctrs_maybe_shared_col, 2},
   {"vctrs_new_df_unshared_col",        (DL_FUNC) &vctrs_new_df_unshared_col, 0},
   {"vctrs_shaped_ptype",               (DL_FUNC) &vctrs_shaped_ptype, 4},
-  {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 4},
+  {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 3},
   {"vctrs_new_date",                   (DL_FUNC) &vctrs_new_date, 1},
   {"vctrs_date_validate",              (DL_FUNC) &vctrs_date_validate, 1},
   {"vctrs_new_datetime",               (DL_FUNC) &vctrs_new_datetime, 2},

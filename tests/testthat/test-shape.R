@@ -30,6 +30,11 @@ test_that("can override error args", {
   })
 })
 
+test_that("vec_shape2() evaluates arg lazily", {
+  expect_silent(vec_shape2(shaped_int(1, 5, 5), shaped_int(1), x_arg = print("oof")))
+  expect_silent(vec_shape2(shaped_int(1, 5, 5), shaped_int(1), y_arg = print("oof")))
+})
+
 # broadcasting -------------------------------------------------------------
 
 test_that("can broadcast to higher dimension, but not lower", {
