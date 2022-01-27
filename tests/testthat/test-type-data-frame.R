@@ -230,6 +230,13 @@ test_that("casting to and from data frame preserves row names", {
   expect_identical(row.names(out), row.names(mtcars))
 })
 
+# df_ptype2 ---------------------------------------------------------------
+
+test_that("df_ptype2() evaluates arg lazily", {
+  expect_silent(df_ptype2(data_frame(), data_frame(), x_arg = print("oof")))
+  expect_silent(df_ptype2(data_frame(), data_frame(), y_arg = print("oof")))
+})
+
 
 # new_data_frame ----------------------------------------------------------
 

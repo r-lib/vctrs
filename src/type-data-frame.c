@@ -473,11 +473,13 @@ static SEXP new_compact_rownames(R_len_t n) {
 // vctrs type methods ------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_df_ptype2_opts(SEXP x, SEXP y, SEXP opts, SEXP x_arg, SEXP y_arg) {
-  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
-  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
+SEXP vctrs_df_ptype2_opts(SEXP x, SEXP y, SEXP opts, SEXP frame) {
+  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
+  struct arg_data_lazy y_arg_ = new_lazy_arg_data(frame, "y_arg");
+  struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
+  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &x_arg, &y_arg, opts);
 
   return df_ptype2(&c_opts);
 }
