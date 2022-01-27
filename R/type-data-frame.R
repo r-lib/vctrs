@@ -251,16 +251,16 @@ df_is_coercible <- function(x, y, opts) {
 #'
 #' @export
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = match_fallback_opts(...), x_arg, y_arg)
+  .Call(vctrs_df_ptype2_opts, x, y, opts = match_fallback_opts(...), environment())
 }
 #' @rdname df_ptype2
 #' @export
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, opts = match_fallback_opts(...), x_arg, to_arg)
+  .Call(vctrs_df_cast_opts, x, to, opts = match_fallback_opts(...), environment())
 }
 
 df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = opts, x_arg, y_arg)
+  .Call(vctrs_df_ptype2_opts, x, y, opts = opts, environment())
 }
 
 # FIXME! Error call
@@ -270,7 +270,7 @@ df_cast_opts <- function(x,
                          opts = fallback_opts(),
                          x_arg = "",
                          to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, opts, x_arg, to_arg)
+  .Call(vctrs_df_cast_opts, x, to, opts, environment())
 }
 df_cast_params <- function(x,
                            to,

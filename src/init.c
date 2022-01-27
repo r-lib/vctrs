@@ -31,7 +31,7 @@ extern SEXP vec_group_loc(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
 extern SEXP vctrs_equal_na(SEXP);
 extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
-extern SEXP vctrs_match(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_match(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_in(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_duplicated_any(SEXP);
 extern SEXP vctrs_size(SEXP);
@@ -70,8 +70,8 @@ extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
 extern SEXP vec_set_names(SEXP, SEXP);
-extern SEXP vctrs_df_cast_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_df_cast_opts(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_type_info(SEXP);
 extern SEXP vctrs_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
@@ -106,8 +106,8 @@ extern SEXP vctrs_rep(SEXP, SEXP);
 extern SEXP vctrs_rep_each(SEXP, SEXP);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unshared_col();
-extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_shape2(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP);
+extern SEXP vctrs_shape2(SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
@@ -192,8 +192,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_equal",                      (DL_FUNC) &vctrs_equal, 3},
   {"vctrs_equal_na",                   (DL_FUNC) &vctrs_equal_na, 1},
   {"vctrs_compare",                    (DL_FUNC) &vctrs_compare, 3},
-  {"vctrs_match",                      (DL_FUNC) &vctrs_match, 5},
-  {"vctrs_in",                         (DL_FUNC) &vctrs_in, 5},
+  {"vctrs_match",                      (DL_FUNC) &vctrs_match, 4},
+  {"vctrs_in",                         (DL_FUNC) &vctrs_in, 4},
   {"vctrs_typeof",                     (DL_FUNC) &vctrs_typeof, 2},
   {"vctrs_init_library",               (DL_FUNC) &vctrs_init_library, 1},
   {"vctrs_is_vector",                  (DL_FUNC) &vctrs_is_vector, 1},
@@ -226,8 +226,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_unique_names",            (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",            (DL_FUNC) &vctrs_as_unique_names, 2},
   {"vctrs_set_names",                  (DL_FUNC) &vec_set_names, 2},
-  {"vctrs_df_cast_opts",               (DL_FUNC) &vctrs_df_cast_opts, 5},
-  {"vctrs_df_ptype2_opts",             (DL_FUNC) &vctrs_df_ptype2_opts, 5},
+  {"vctrs_df_cast_opts",               (DL_FUNC) &vctrs_df_cast_opts, 4},
+  {"vctrs_df_ptype2_opts",             (DL_FUNC) &vctrs_df_ptype2_opts, 4},
   {"vctrs_type_info",                  (DL_FUNC) &vctrs_type_info, 1},
   {"vctrs_proxy_info",                 (DL_FUNC) &vctrs_proxy_info, 1},
   {"vctrs_class_type",                 (DL_FUNC) &vctrs_class_type, 1},
@@ -264,8 +264,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_rep_each",                   (DL_FUNC) &vctrs_rep_each, 2},
   {"vctrs_maybe_shared_col",           (DL_FUNC) &vctrs_maybe_shared_col, 2},
   {"vctrs_new_df_unshared_col",        (DL_FUNC) &vctrs_new_df_unshared_col, 0},
-  {"vctrs_shaped_ptype",               (DL_FUNC) &vctrs_shaped_ptype, 5},
-  {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 4},
+  {"vctrs_shaped_ptype",               (DL_FUNC) &vctrs_shaped_ptype, 4},
+  {"vctrs_shape2",                     (DL_FUNC) &vctrs_shape2, 3},
   {"vctrs_new_date",                   (DL_FUNC) &vctrs_new_date, 1},
   {"vctrs_date_validate",              (DL_FUNC) &vctrs_date_validate, 1},
   {"vctrs_new_datetime",               (DL_FUNC) &vctrs_new_datetime, 2},

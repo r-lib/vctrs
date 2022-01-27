@@ -336,3 +336,13 @@ test_that("vec_match() and vec_in() silently fall back to base data frame", {
     rep(TRUE, 32)
   ))
 })
+
+test_that("vec_in() evaluates arg lazily", {
+  expect_silent(vec_in(1L, 1L, needles_arg = print("oof")))
+  expect_silent(vec_in(1L, 1L, haystack_arg = print("oof")))
+})
+
+test_that("vec_match() evaluates arg lazily", {
+  expect_silent(vec_match(1L, 1L, needles_arg = print("oof")))
+  expect_silent(vec_match(1L, 1L, haystack_arg = print("oof")))
+})
