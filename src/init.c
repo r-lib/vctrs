@@ -138,6 +138,7 @@ extern r_obj* vctrs_integer64_proxy(r_obj*);
 extern r_obj* vctrs_integer64_restore(r_obj*);
 extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
+extern r_obj* vctrs_name_repair_missing(r_obj* x);
 
 
 // Maturing
@@ -296,6 +297,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_integer64_restore",          (DL_FUNC) &vctrs_integer64_restore, 1},
   {"vctrs_list_drop_empty",            (DL_FUNC) &vctrs_list_drop_empty, 1},
   {"vctrs_is_altrep",                  (DL_FUNC) &vctrs_is_altrep, 1},
+  {"vctrs_name_repair_missing",        (DL_FUNC) &vctrs_name_repair_missing, 1},
   {NULL, NULL, 0}
 };
 
@@ -309,6 +311,7 @@ extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_data_frame(SEXP);
+extern SEXP vctrs_new_vctr(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
@@ -321,6 +324,7 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
   {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, -1},
+  {"vctrs_new_vctr",                   (DL_FUNC) &vctrs_new_vctr, -1},
   {NULL, NULL, 0}
 };
 
@@ -367,6 +371,7 @@ void vctrs_init_type(SEXP ns);
 void vctrs_init_type_data_frame(SEXP ns);
 void vctrs_init_type_date_time(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
+void vctrs_init_type_vctr(r_obj* ns);
 void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
 
@@ -390,6 +395,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_type_data_frame(ns);
   vctrs_init_type_date_time(ns);
   vctrs_init_type_info(ns);
+  vctrs_init_type_vctr(ns);
   vctrs_init_unspecified(ns);
   vctrs_init_utils(ns);
   return R_NilValue;

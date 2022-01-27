@@ -303,6 +303,22 @@ SEXP r_new_environment(SEXP parent) {
   return env;
 }
 
+static inline
+bool r_is_vector(r_obj* x) {
+  switch(r_typeof(x)) {
+  case R_TYPE_logical:
+  case R_TYPE_integer:
+  case R_TYPE_double:
+  case R_TYPE_complex:
+  case R_TYPE_character:
+  case R_TYPE_raw:
+  case R_TYPE_list:
+    return true;
+  default:
+    return false;
+  }
+}
+
 SEXP r_protect(SEXP x);
 bool r_is_number(SEXP x);
 bool r_is_positive_number(SEXP x);
@@ -417,6 +433,8 @@ void c_print_backtrace();
 
 
 SEXP chr_c(SEXP x, SEXP y);
+
+SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n);
 
 
 extern SEXP vctrs_ns_env;

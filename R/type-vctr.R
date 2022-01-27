@@ -68,51 +68,12 @@ new_vctr <- function(.data,
                      ...,
                      class = character(),
                      inherit_base_type = NULL) {
-  if (!is_vector(.data)) {
-    abort("`.data` must be a vector type.")
-  }
-
-  if (is_list(.data)) {
-    if (is.data.frame(.data)) {
-      abort("`.data` can't be a data frame.")
-    }
-
-    if (is.null(inherit_base_type)) {
-      inherit_base_type <- TRUE
-    } else if (is_false(inherit_base_type)) {
-      abort("List `.data` must inherit from the base type.")
-    }
-  }
-
-  # Default to `FALSE` in all cases except lists
-  if (is.null(inherit_base_type)) {
-    inherit_base_type <- FALSE
-  }
-
-  names <- names(.data)
-  names <- names_repair_missing(names)
-
-  class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
-  attrib <- list(names = names, ..., class = class)
-
-  vec_set_attributes(.data, attrib)
+  .External(vctrs_new_vctr, .data, class, inherit_base_type, ...)
 }
+new_vctr <- fn_inline_formals(new_vctr, "class")
 
 names_repair_missing <- function(x) {
-  if (is.null(x)) {
-    return(x)
-  }
-
-  missing <- vec_equal_na(x)
-
-  if (any(missing)) {
-    # We never want to allow `NA_character_` names to slip through, but
-    # erroring on them has caused issues. Instead, we repair them to the
-    # empty string (#784).
-    x <- vec_assign(x, missing, "")
-  }
-
-  x
+  .Call(vctrs_name_repair_missing, x)
 }
 
 #' @export

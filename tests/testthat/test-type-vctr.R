@@ -11,6 +11,26 @@ test_that(".data must be a vector", {
   expect_error(new_vctr(mean), "vector type")
 })
 
+test_that("`class` must be a character vector", {
+  expect_snapshot((expect_error(new_vctr(1, class = 1))))
+})
+
+test_that("`inherit_base_type` is validated", {
+  expect_snapshot({
+    (expect_error(new_vctr(1, inherit_base_type = 1)))
+    (expect_error(new_vctr(1, inherit_base_type = NA)))
+    (expect_error(new_vctr(1, inherit_base_type = c(TRUE, FALSE))))
+  })
+})
+
+test_that("names come from `.data`", {
+  expect_named(new_vctr(structure(1, names = "x")), "x")
+})
+
+test_that("names provided through `...` override those in `.data`", {
+  expect_named(new_vctr(structure(1, names = "x"), names = "y"), "y")
+})
+
 test_that("attributes other than names are ignored", {
   out <- new_vctr(structure(1, a = 1))
   expect_null(attributes(out)$a)
@@ -30,6 +50,15 @@ test_that("vctr class is proxied", {
 test_that("Can opt out of base type", {
   x <- new_vctr(1, class = "x", inherit_base_type = FALSE)
   expect_s3_class(x, c("x", "vctrs_vctr"), exact = TRUE)
+})
+
+test_that("base type is correct for atomic types", {
+  expect_s3_class(new_vctr(logical(), inherit_base_type = TRUE), "logical")
+  expect_s3_class(new_vctr(integer(), inherit_base_type = TRUE), "integer")
+  expect_s3_class(new_vctr(double(), inherit_base_type = TRUE), "double")
+  expect_s3_class(new_vctr(character(), inherit_base_type = TRUE), "character")
+  expect_s3_class(new_vctr(raw(), inherit_base_type = TRUE), "raw")
+  expect_s3_class(new_vctr(complex(), inherit_base_type = TRUE), "complex")
 })
 
 test_that("base type is always set for lists", {
