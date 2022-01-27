@@ -410,16 +410,9 @@ test_that("can slice-assign unspecified vectors with default type2 method", {
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })
 
-test_that("`vec_assign()` validates `x_arg`", {
-  expect_error(vec_assign(1, 1, 1, x_arg = 1), "must be a string")
-  expect_error(vec_assign(1, 1, 1, x_arg = c("x", "y")), "must be a string")
-  expect_error(vec_assign(1, 1, 1, x_arg = NA_character_), "must be a string")
-})
-
-test_that("`vec_assign()` validates `value_arg`", {
-  expect_error(vec_assign(1, 1, 1, value_arg = 1), "must be a string")
-  expect_error(vec_assign(1, 1, 1, value_arg = c("x", "y")), "must be a string")
-  expect_error(vec_assign(1, 1, 1, value_arg = NA_character_), "must be a string")
+test_that("`vec_assign()` evaluates arg lazily", {
+  expect_silent(vec_assign(1L, 1L, 1L, x_arg = print("oof")))
+  expect_silent(vec_assign(1L, 1L, 1L, value_arg = print("oof")))
 })
 
 test_that("`vec_assign()` requires recyclable value", {

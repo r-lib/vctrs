@@ -170,13 +170,13 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 #' @rdname vec_slice
 #' @export
 `vec_slice<-` <- function(x, i, value) {
-  .Call(vctrs_assign, x, i, value, "", "")
+  .Call(vctrs_assign, x, i, value, environment())
 }
 #' @rdname vec_slice
 #' @export
 vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_assign, x, i, value, x_arg, value_arg)
+  .Call(vctrs_assign, x, i, value, environment())
 }
 vec_assign_fallback <- function(x, i, value) {
   # Work around bug in base `[<-`
