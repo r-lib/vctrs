@@ -369,8 +369,9 @@ void vctrs_init_type_date_time(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
 void vctrs_init_unspecified(SEXP ns);
 void vctrs_init_utils(SEXP ns);
+void vctrs_init_globals(r_obj* ns);
 
-SEXP vctrs_init_library(SEXP ns) {
+r_obj* vctrs_init_library(r_obj* ns) {
   r_init_library(ns);
 
   vctrs_init_bind(ns);
@@ -392,5 +393,7 @@ SEXP vctrs_init_library(SEXP ns) {
   vctrs_init_type_info(ns);
   vctrs_init_unspecified(ns);
   vctrs_init_utils(ns);
-  return R_NilValue;
+  vctrs_init_globals(ns);
+
+  return r_null;
 }

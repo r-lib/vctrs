@@ -78,12 +78,24 @@ static int fill_arg_buffer(struct vctrs_arg* arg,
   }
 }
 
+static
+r_ssize str_arg_fill(const char* data, char* buf, r_ssize remaining) {
+  size_t len = strlen(data);
+
+  if (len >= remaining) {
+    return -1;
+  }
+
+  memcpy(buf, data, len);
+  buf[len] = '\0';
+
+  return len;
+}
+
 
 // Objects -------------------------------------------------------------
 
 // Simple wrapper around a `const char*` argument tag
-
-static r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining);
 
 struct vctrs_arg new_wrapper_arg(struct vctrs_arg* parent, const char* arg) {
   return (struct vctrs_arg) {
@@ -93,72 +105,39 @@ struct vctrs_arg new_wrapper_arg(struct vctrs_arg* parent, const char* arg) {
   };
 }
 
-static r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining) {
-  const char* src = (const char*) data;
-
-  size_t len = strlen(src);
-
-  if (len >= remaining) {
-    return -1;
-  }
-
-  memcpy(buf, src, len);
-  buf[len] = '\0';
-
-  return len;
+static
+r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining) {
+  return str_arg_fill((const char*) data, buf, remaining);
 }
 
 
 // Wrapper that accesses a symbol in an environment, for lazy evaluation
-static r_ssize lazy_arg_fill(void* data, char* buf, r_ssize remaining);
 
-struct vctrs_arg new_lazy_arg(struct arg_data_lazy* data) {
+struct vctrs_arg new_lazy_arg(struct r_lazy* arg) {
   return (struct vctrs_arg) {
     .parent = NULL,
     .fill = &lazy_arg_fill,
-    .data = data
+    .data = arg
   };
 }
 
-struct arg_data_lazy new_lazy_arg_data(SEXP environment, const char* arg_name) {
-  if (environment == R_NilValue) {
-    r_stop_internal("new_lazy_arg_data", "`env` can't be NULL.");
+static
+r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
+  struct r_lazy* data = (struct r_lazy*) data_;
+
+  r_obj* arg = KEEP(r_lazy_eval(*data));
+
+  const char* arg_str = "";
+  if (r_is_string(arg)) {
+    arg_str = r_chr_get_c_string(arg, 0);
+  } else if (arg != r_null) {
+    r_abort("`arg` must be a string.");
   }
 
-  return (struct arg_data_lazy) {
-    .environment = environment,
-    .arg_name = arg_name
-  };
-}
+  r_ssize out = str_arg_fill(arg_str, buf, remaining);
 
-static r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
-  struct arg_data_lazy* data = (struct arg_data_lazy*) data_;
-
-  SEXP arg_name = r_sym(data->arg_name);
-  SEXP value = PROTECT(r_env_get(data->environment, arg_name));
-  const char* c_value;
-
-  // NULL values are mapped to an empty string. We also silently ignore
-  // non-character values or zero-length vectors and take the first element of a
-  // character vector. We could do better with a warning or a combined error.
-  if (!r_is_string(value) || r_length(value) < 1) {
-    c_value = "";
-  } else {
-    c_value = r_chr_get_c_string(value, 0);
-  }
-
-  size_t len = strlen(c_value);
-
-  if (len >= remaining) {
-    UNPROTECT(1);
-    return -1;
-  }
-
-  memcpy(buf, c_value, len);
-  buf[len] = '\0';
-
-  UNPROTECT(1);
-  return len;
+  FREE(1);
+  return out;
 }
 
 

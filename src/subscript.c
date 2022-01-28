@@ -212,8 +212,9 @@ r_obj* ffi_as_subscript(r_obj* subscript,
                         r_obj* numeric,
                         r_obj* character,
                         r_obj* frame) {
-  struct arg_data_lazy arg_ = new_lazy_arg_data(frame, "arg");
+  struct r_lazy arg_ = { .x = syms.arg, .env = frame};
   struct vctrs_arg arg = new_lazy_arg(&arg_);
+
   struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   struct subscript_opts opts = {
@@ -240,8 +241,9 @@ r_obj* ffi_as_subscript_result(r_obj* subscript,
                                r_obj* numeric,
                                r_obj* character,
                                r_obj* frame) {
-  struct arg_data_lazy arg_ = new_lazy_arg_data(frame, "arg");
+  struct r_lazy arg_ = { .x = syms.arg, .env = frame};
   struct vctrs_arg arg = new_lazy_arg(&arg_);
+
   struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   struct subscript_opts opts = {

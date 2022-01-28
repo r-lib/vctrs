@@ -1,6 +1,8 @@
 #ifndef VCTRS_ARG_H
 #define VCTRS_ARG_H
 
+#include "rlang-dev.h"
+
 
 /**
  * Structure for argument tags
@@ -27,15 +29,7 @@ struct vctrs_arg new_wrapper_arg(struct vctrs_arg* parent,
                                  const char* arg);
 
 
-// Wrapper that accesses a symbol in an environment, for lazy evaluation
-struct arg_data_lazy {
-  SEXP environment;
-  const char* arg_name;
-};
-
-struct vctrs_arg new_lazy_arg(struct arg_data_lazy* data);
-
-struct arg_data_lazy new_lazy_arg_data(SEXP environment, const char* arg_name);
+struct vctrs_arg new_lazy_arg(struct r_lazy* data);
 
 
 // Wrapper around a counter representing the current position of the

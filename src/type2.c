@@ -230,9 +230,10 @@ SEXP vctrs_is_coercible(SEXP x,
 r_obj* ffi_ptype2(r_obj* x,
                   r_obj* y,
                   r_obj* frame) {
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
-  struct arg_data_lazy y_arg_ = new_lazy_arg_data(frame, "y_arg");
+
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame};
   struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
   struct r_lazy call = { .x = syms_call, .env = frame };
