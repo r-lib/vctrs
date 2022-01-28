@@ -881,17 +881,31 @@ vctrs_local_error_call <- function(call = frame, frame = caller_env()) {
 
 vctrs_error_call <- function(call) {
   if (is_environment(call)) {
-    caller_call <- env_get(
-      call,
-      ".__vctrs_error_call__.",
-      inherit = TRUE,
-      last = topenv(call),
-      default = NULL
-    )
+    caller_call <- get_vctrs_error_call(call)
     if (!is_null(caller_call)) {
       return(caller_call)
     }
   }
 
   call
+}
+
+vctrs_error_borrowed_call <- function() {
+  borrower <- get_vctrs_error_call(caller_env(2))
+
+  if (is_null(borrower)) {
+    caller_env()
+  } else {
+    borrower
+  }
+}
+
+get_vctrs_error_call <- function(call) {
+  env_get(
+    call,
+    ".__vctrs_error_call__.",
+    inherit = TRUE,
+    last = topenv(call),
+    default = NULL
+  )
 }

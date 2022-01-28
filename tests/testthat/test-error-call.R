@@ -113,5 +113,13 @@ test_that("can take ownership of vctrs errors", {
     (expect_error(local(vec_assert(foobar(list())))))
 
     (expect_error(vec_cast(1, list())))
+
+    (expect_error(vec_slice(env(), list())))
+
+    # This should show `vec_slice()` if no local call
+    local({
+      vctrs_local_error_call(NULL)
+      (expect_error(vec_slice(env(), list())))
+    })
   })
 })

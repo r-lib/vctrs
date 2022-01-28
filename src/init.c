@@ -139,6 +139,7 @@ extern r_obj* vctrs_integer64_restore(r_obj*);
 extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
+extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -203,7 +204,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_typeof2_s3",                 (DL_FUNC) &vctrs_typeof2_s3, 2},
   {"ffi_cast",                         (DL_FUNC) &ffi_cast, 3},
   {"ffi_as_location",                  (DL_FUNC) &ffi_as_location, 8},
-  {"vctrs_slice",                      (DL_FUNC) &vec_slice, 2},
+  {"ffi_slice",                        (DL_FUNC) &ffi_slice, 3},
   {"ffi_init",                         (DL_FUNC) &ffi_init, 3},
   {"vctrs_chop",                       (DL_FUNC) &vctrs_chop, 2},
   {"vctrs_unchop",                     (DL_FUNC) &vctrs_unchop, 5},

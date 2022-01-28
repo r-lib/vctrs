@@ -105,7 +105,8 @@
 #' x <- 1:3
 #' try(vec_slice(x, 2) <- 1.5)
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, i)
+  delayedAssign("call", vctrs_error_borrowed_call())
+  .Call(ffi_slice, x, i, environment())
 }
 
 # Called when `x` has dimensions

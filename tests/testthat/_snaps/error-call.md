@@ -280,4 +280,19 @@
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
       ! Can't convert <double> to <list>.
+    Code
+      (expect_error(vec_slice(env(), list())))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `foo()`:
+      ! Input must be a vector, not an environment.
+    Code
+      local({
+        vctrs_local_error_call(NULL)
+        (expect_error(vec_slice(env(), list())))
+      })
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `vec_slice()`:
+      ! Input must be a vector, not an environment.
 

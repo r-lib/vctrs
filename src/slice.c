@@ -411,16 +411,29 @@ bool vec_is_restored(SEXP x, SEXP to) {
   return false;
 }
 
+r_obj* vec_slice_ctxt(r_obj* x,
+                      r_obj* i,
+                      struct r_lazy call) {
+  vec_assert_vector(x, args_empty, call);
 
-// [[ include("vctrs.h"); register() ]]
-SEXP vec_slice(SEXP x, SEXP subscript) {
-  vec_assert_vector(x, args_empty, r_lazy_null);
+  // TODO! Propagate `call` through `vec_slice_impl()`
+  i = KEEP(vec_as_location(i, vec_size(x), KEEP(vec_names(x))));
+  r_obj* out = vec_slice_impl(x, i);
 
-  subscript = PROTECT(vec_as_location(subscript, vec_size(x), PROTECT(vec_names(x))));
-  SEXP out = vec_slice_impl(x, subscript);
-
-  UNPROTECT(2);
+  FREE(2);
   return out;
+}
+
+// [[ include("vctrs.h") ]]
+r_obj* vec_slice(r_obj* x, r_obj* i) {
+  return vec_slice_ctxt(x, i, r_lazy_null);
+}
+
+r_obj* ffi_slice(r_obj* x,
+                 r_obj* i,
+                 r_obj* frame) {
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  return vec_slice_ctxt(x, i, call);
 }
 
 // [[ include("vctrs.h") ]]
