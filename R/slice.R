@@ -170,6 +170,9 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 #' @rdname vec_slice
 #' @export
 `vec_slice<-` <- function(x, i, value) {
+  x_arg <- "" # Substitution is `*tmp*`
+  delayedAssign("value_arg", as_label(substitute(value)))
+
   .Call(vctrs_assign, x, i, value, environment())
 }
 #' @rdname vec_slice
