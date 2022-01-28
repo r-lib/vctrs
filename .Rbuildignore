@@ -16,3 +16,5 @@
 ^man/faq/.*\.html
 ^man/faq/.*/.*\.html
 ^LICENSE\.md$
+^\.projectile$
+^src/\.clang_complete$
