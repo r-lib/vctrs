@@ -260,3 +260,24 @@
       Error in `my_function()`:
       ! Input must be a vector, not a <vctrs_foobar> object.
 
+# can take ownership of vctrs errors
+
+    Code
+      (expect_error(vec_assert(foobar(list()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `foo()`:
+      ! `foobar(list())` must be a vector, not a <vctrs_foobar> object.
+    Code
+      (expect_error(local(vec_assert(foobar(list())))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `foo()`:
+      ! `foobar(list())` must be a vector, not a <vctrs_foobar> object.
+    Code
+      (expect_error(vec_cast(1, list())))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `foo()`:
+      ! Can't convert <double> to <list>.
+
