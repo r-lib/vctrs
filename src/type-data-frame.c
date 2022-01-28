@@ -474,9 +474,10 @@ static SEXP new_compact_rownames(R_len_t n) {
 
 // [[ register() ]]
 SEXP vctrs_df_ptype2_opts(SEXP x, SEXP y, SEXP opts, SEXP frame) {
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
-  struct arg_data_lazy y_arg_ = new_lazy_arg_data(frame, "y_arg");
+
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame};
   struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
   const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &x_arg, &y_arg, opts);
@@ -650,9 +651,10 @@ SEXP df_ptype2_loop(const struct ptype2_opts* opts,
 
 // [[ register() ]]
 SEXP vctrs_df_cast_opts(SEXP x, SEXP to, SEXP opts, SEXP frame) {
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
-  struct arg_data_lazy to_arg_ = new_lazy_arg_data(frame, "to_arg");
+
+  struct r_lazy to_arg_ = { .x = syms.to_arg, .env = frame};
   struct vctrs_arg to_arg = new_lazy_arg(&to_arg_);
 
   // FIXME! Error call

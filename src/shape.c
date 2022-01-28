@@ -4,9 +4,10 @@
 
 // [[ register() ]]
 SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP frame) {
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
-  struct arg_data_lazy y_arg_ = new_lazy_arg_data(frame, "y_arg");
+
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame};
   struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
   return vec_shaped_ptype(ptype, x, y, &x_arg, &y_arg);
@@ -40,9 +41,10 @@ SEXP vec_shaped_ptype(SEXP ptype,
 
 // [[ register() ]]
 SEXP vctrs_shape2(SEXP x, SEXP y, SEXP frame) {
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
-  struct arg_data_lazy y_arg_ = new_lazy_arg_data(frame, "y_arg");
+
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame};
   struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
   return vec_shape2(x, y, &x_arg, &y_arg);

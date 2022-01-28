@@ -3,6 +3,7 @@
 
 #include <rlang.h>
 #include "arg-counter.h"
+#include "rlang-dev.h"
 
 
 #define SWAP(T, x, y) do {                      \
@@ -552,37 +553,6 @@ extern SEXP s4_c_method_table;
 SEXP R_inspect(SEXP x);
 SEXP R_inspect3(SEXP x, int deep, int pvec);
 #endif
-
-
-struct r_lazy {
-  r_obj* x;
-  r_obj* env;
-};
-
-static inline
-r_obj* r_lazy_eval(struct r_lazy lazy) {
-  if (!lazy.env) {
-    // Unitialised lazy variable
-    return r_null;
-  } else if (lazy.env == r_null) {
-    // Forced lazy variable
-    return lazy.x;
-  } else {
-    return r_eval(lazy.x, lazy.env);
-  }
-}
-
-extern
-struct r_lazy r_lazy_null;
-
-static inline
-r_obj* r_lazy_eval_protect(struct r_lazy lazy) {
-  r_obj* out = KEEP(r_lazy_eval(lazy));
-  out = r_expr_protect(out);
-
-  FREE(1);
-  return out;
-}
 
 
 #endif

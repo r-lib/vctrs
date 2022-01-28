@@ -10,6 +10,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "globals.h"
+
 
 extern bool vctrs_debug_verbose;
 

@@ -181,8 +181,9 @@ r_obj* ffi_recycle(r_obj* x,
   R_len_t size = r_int_get(size_obj, 0);
   FREE(1);
 
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
+
   struct r_lazy call = { .x = syms_call, .env = frame };
 
   return vec_recycle2(x, size, &x_arg, call);

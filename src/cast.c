@@ -20,9 +20,10 @@ static SEXP vec_cast_dispatch_s3(const struct cast_opts* opts);
 r_obj* ffi_cast(r_obj* x,
                 r_obj* to,
                 r_obj* frame) {
-  struct arg_data_lazy x_arg_ = new_lazy_arg_data(frame, "x_arg");
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
-  struct arg_data_lazy to_arg_ = new_lazy_arg_data(frame, "to_arg");
+
+  struct r_lazy to_arg_ = { .x = syms.to_arg, .env = frame};
   struct vctrs_arg to_arg = new_lazy_arg(&to_arg_);
 
   struct r_lazy call = { .x = syms_call, .env = frame };

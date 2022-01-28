@@ -113,30 +113,19 @@ r_ssize wrapper_arg_fill(void* data, char* buf, r_ssize remaining) {
 
 // Wrapper that accesses a symbol in an environment, for lazy evaluation
 
-struct vctrs_arg new_lazy_arg(struct arg_data_lazy* data) {
+struct vctrs_arg new_lazy_arg(struct r_lazy* arg) {
   return (struct vctrs_arg) {
     .parent = NULL,
     .fill = &lazy_arg_fill,
-    .data = data
-  };
-}
-
-struct arg_data_lazy new_lazy_arg_data(SEXP environment, const char* arg_name) {
-  if (environment == R_NilValue) {
-    r_stop_internal("new_lazy_arg_data", "`env` can't be NULL.");
-  }
-
-  return (struct arg_data_lazy) {
-    .environment = environment,
-    .arg_name = arg_name
+    .data = arg
   };
 }
 
 static
 r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
-  struct arg_data_lazy* data = (struct arg_data_lazy*) data_;
+  struct r_lazy* data = (struct r_lazy*) data_;
 
-  r_obj* arg = KEEP(r_eval(r_sym(data->arg_name), data->environment));
+  r_obj* arg = KEEP(r_lazy_eval(*data));
 
   const char* arg_str = "";
   if (r_is_string(arg)) {

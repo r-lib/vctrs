@@ -337,9 +337,10 @@ SEXP vctrs_id(SEXP x) {
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
                  SEXP frame) {
-  struct arg_data_lazy needles_arg_ = new_lazy_arg_data(frame, "needles_arg");
+  struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame};
   struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
-  struct arg_data_lazy haystack_arg_ = new_lazy_arg_data(frame, "haystack_arg");
+
+  struct r_lazy haystack_arg_ = { .x = syms.haystack_arg, .env = frame};
   struct vctrs_arg haystack_arg = new_lazy_arg(&haystack_arg_);
 
   return vec_match_params(needles,
@@ -463,9 +464,11 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
   bool na_equal = r_bool_as_int(na_equal_);
 
   int _;
-  struct arg_data_lazy needles_arg_ = new_lazy_arg_data(frame, "needles_arg");
+
+  struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame};
   struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
-  struct arg_data_lazy haystack_arg_ = new_lazy_arg_data(frame, "haystack_arg");
+
+  struct r_lazy haystack_arg_ = { .x = syms.haystack_arg, .env = frame};
   struct vctrs_arg haystack_arg = new_lazy_arg(&haystack_arg_);
 
   SEXP type = vec_ptype2_params(needles, haystack,
