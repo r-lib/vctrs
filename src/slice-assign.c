@@ -59,10 +59,10 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
 
 // [[ register() ]]
 SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP frame) {
-  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame};
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
-  struct r_lazy value_arg_ = { .x = syms.value_arg, .env = frame};
+  struct r_lazy value_arg_ = { .x = syms.value_arg, .env = frame };
   struct vctrs_arg value_arg = new_lazy_arg(&value_arg_);
 
   const struct vec_assign_opts opts = {

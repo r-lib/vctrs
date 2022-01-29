@@ -376,7 +376,7 @@ r_obj* ffi_as_location(r_obj* subscript,
     FREE(1);
   }
 
-  struct r_lazy arg_ = { .x = syms.arg, .env = frame};
+  struct r_lazy arg_ = { .x = syms.arg, .env = frame };
   struct vctrs_arg arg = new_lazy_arg(&arg_);
 
   struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
