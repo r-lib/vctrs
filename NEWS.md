@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* New `vec_interleave()` for combining multiple vectors together, interleaving
+  their elements in the process (#1396).
+
 * `vec_equal_na(NULL)` now returns `logical(0)` rather than erroring (#1494).
 
 * `vec_as_location(missing = "error")` now fails with `NA` and `NA_character_`

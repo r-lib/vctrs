@@ -40,6 +40,7 @@ reference:
 - title: Combining
   contents:
   - vec_c
+  - vec_interleave
   - vec_cbind
   - vec_rbind
   - name_spec
