@@ -2,9 +2,9 @@
 #include "decl/slice-interleave-decl.h"
 
 // [[ register() ]]
-r_obj* vctrs_interleave_indices(r_obj* n, r_obj* size) {
-  r_ssize c_n = r_as_ssize(n);
-  r_ssize c_size = r_as_ssize(size);
+r_obj* ffi_interleave_indices(r_obj* n, r_obj* size) {
+  r_ssize c_n = r_arg_as_ssize(n, "n");
+  r_ssize c_size = r_arg_as_ssize(size, "size");
   return vec_interleave_indices(c_n, c_size);
 }
 

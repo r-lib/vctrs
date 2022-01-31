@@ -62,5 +62,5 @@ vec_interleave <- function(...,
 }
 
 vec_interleave_indices <- function(n, size) {
-  .Call(vctrs_interleave_indices, n, size)
+  .Call(ffi_interleave_indices, n, size)
 }
