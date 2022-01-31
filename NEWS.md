@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_equal_na(NULL)` now returns `logical(0)` rather than erroring (#1494).
+
 * `vec_as_location(missing = "error")` now fails with `NA` and `NA_character_`
   in addition to `NA_integer_` (#1420, @krlmlr).
 

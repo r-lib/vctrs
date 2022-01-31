@@ -475,6 +475,10 @@ SEXP vec_equal_na(SEXP x) {
     UNPROTECT(1);
     return out;
   }
+  case vctrs_type_null: {
+    UNPROTECT(1);
+    return vctrs_shared_empty_lgl;
+  }
   case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect `NA` values in scalars with `vctrs_equal_na()`.");
   default:                   Rf_error("Unimplemented type in `vctrs_equal_na()`.");
   }

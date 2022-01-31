@@ -303,6 +303,10 @@ test_that("works recursively with data frame columns", {
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
+test_that("works with `NULL` input (#1494)", {
+  expect_identical(vec_equal_na(NULL), logical())
+})
+
 test_that("NA propagate symmetrically (#204)", {
   exp <- c(NA, NA)
 
