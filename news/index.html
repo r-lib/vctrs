@@ -74,7 +74,8 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code>vec_as_location(missing = "error")</code> now fails with <code>NA</code> and <code>NA_character_</code> in addition to <code>NA_integer_</code> (<a href="https://github.com/r-lib/vctrs/issues/1420" class="external-link">#1420</a>, <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a>).</p></li>
+<ul><li><p><code>vec_equal_na(NULL)</code> now returns <code>logical(0)</code> rather than erroring (<a href="https://github.com/r-lib/vctrs/issues/1494" class="external-link">#1494</a>).</p></li>
+<li><p><code>vec_as_location(missing = "error")</code> now fails with <code>NA</code> and <code>NA_character_</code> in addition to <code>NA_integer_</code> (<a href="https://github.com/r-lib/vctrs/issues/1420" class="external-link">#1420</a>, <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a>).</p></li>
 <li>
 <p>Starting with rlang 1.0.0, errors are displayed with the contextual function call. Several vctrs operations gain a <code>call</code> argument that makes it possible to report the correct context in error messages. This concerns:</p>
 <ul><li>
