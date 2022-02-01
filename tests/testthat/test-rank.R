@@ -16,27 +16,27 @@ test_that("can rank in descending order", {
   expect_identical(vec_rank(x, ties = "dense", direction = "desc"), c(2L, 1L, 3L, 3L, 2L))
 })
 
-test_that("can propagate missing values", {
+test_that("can rank incomplete values with `NA`", {
   x <- c(2, NA, 4, NaN, 4, 2, NA)
 
-  expect_identical(vec_rank(x, ties = "min", na_propagate = TRUE), rank(x, ties.method = "min", na.last = "keep"))
-  expect_identical(vec_rank(x, ties = "max", na_propagate = TRUE), rank(x, ties.method = "max", na.last = "keep"))
-  expect_identical(vec_rank(x, ties = "sequential", na_propagate = TRUE), rank(x, ties.method = "first", na.last = "keep"))
-  expect_identical(vec_rank(x, ties = "dense", na_propagate = TRUE), c(1L, NA, 2L, NA, 2L, 1L, NA))
+  expect_identical(vec_rank(x, ties = "min", incomplete = "na"), rank(x, ties.method = "min", na.last = "keep"))
+  expect_identical(vec_rank(x, ties = "max", incomplete = "na"), rank(x, ties.method = "max", na.last = "keep"))
+  expect_identical(vec_rank(x, ties = "sequential", incomplete = "na"), rank(x, ties.method = "first", na.last = "keep"))
+  expect_identical(vec_rank(x, ties = "dense", incomplete = "na"), c(1L, NA, 2L, NA, 2L, 1L, NA))
 
   # NaN are treated as missing, regardless of whether or not they are distinct from NA_real_
   expect_identical(
-    vec_rank(x, ties = "min", na_propagate = TRUE, nan_distinct = TRUE),
-    vec_rank(x, ties = "min", na_propagate = TRUE, nan_distinct = FALSE)
+    vec_rank(x, ties = "min", incomplete = "na", nan_distinct = TRUE),
+    vec_rank(x, ties = "min", incomplete = "na", nan_distinct = FALSE)
   )
 })
 
-test_that("works correctly when `na_propagate = TRUE` with no missing values", {
+test_that("works correctly when `incomplete = 'na'` with no missing values", {
   x <- c(1, 2, 1, 5, 2)
-  expect_identical(vec_rank(x, na_propagate = TRUE), rank(x, ties.method = "min"))
+  expect_identical(vec_rank(x, incomplete = "na"), rank(x, ties.method = "min"))
 })
 
-test_that("when `na_propagate = FALSE`, all NA (or NaN) values get the same rank", {
+test_that("when ranking incomplete values, all NA (or NaN) values get the same rank", {
   # this is in contrast to rank(), which treats all NA (NaN) as different
   x <- c(1, NA, 3, NaN, NA, 1, NaN)
 
@@ -78,21 +78,21 @@ test_that("can control the direction per column", {
   )
 })
 
-test_that("NA propagation occurs if the observation is incomplete (i.e. uses `vec_detect_complete()`)", {
+test_that("incompleteness is respected in data frames and rcrds", {
   df <- data_frame(
     x = c(1, NA, NA, 1),
     y = c(NA, NA, 1, 1)
   )
 
-  expect_identical(vec_rank(df, na_propagate = TRUE), c(NA, NA, NA, 1L))
-  expect_identical(vec_rank(df, na_propagate = TRUE, direction = "desc"), c(NA, NA, NA, 1L))
+  expect_identical(vec_rank(df, incomplete = "na"), c(NA, NA, NA, 1L))
+  expect_identical(vec_rank(df, incomplete = "na", direction = "desc"), c(NA, NA, NA, 1L))
 
   x <- new_rcrd(list(
     x = c(1, 1, NA, NA, 1),
     y = c(1, NA, 1, NA, 1)
   ))
 
-  expect_identical(vec_rank(x, na_propagate = TRUE), c(1L, NA, NA, NA, 1L))
+  expect_identical(vec_rank(x, incomplete = "na"), c(1L, NA, NA, NA, 1L))
 })
 
 test_that("can control `na_value` per column", {
@@ -110,13 +110,13 @@ test_that("can control `na_value` per column", {
     c(4L, 5L, 3L, 1L, 2L)
   )
 
-  # But `na_propagate = TRUE` overrules it
+  # But `incomplete = "na"` overrules it
   expect_identical(
-    vec_rank(df, na_value = c("largest", "smallest"), na_propagate = TRUE),
+    vec_rank(df, na_value = c("largest", "smallest"), incomplete = "na"),
     c(1L, NA, NA, NA, NA)
   )
   expect_identical(
-    vec_rank(df, na_value = c("largest", "smallest"), na_propagate = TRUE, direction = "desc"),
+    vec_rank(df, na_value = c("largest", "smallest"), incomplete = "na", direction = "desc"),
     c(1L, NA, NA, NA, NA)
   )
 })
@@ -126,12 +126,12 @@ test_that("`x` must be a vector", {
 })
 
 test_that("`ties` is validated", {
-  expect_error(vec_rank(1, ties = "foo"), 'must be one of "min", "max", "sequential", or "dense", not "foo".')
-  expect_error(vec_rank(1, ties = 1), "character")
+  expect_snapshot(error = TRUE, vec_rank(1, ties = "foo"))
+  expect_snapshot(error = TRUE, vec_rank(1, ties = 1))
 })
 
-test_that("`na_propagate` is validated", {
-  expect_error(vec_rank(1, na_propagate = NA), "must be a logical value")
-  expect_error(vec_rank(1, na_propagate = c(TRUE, FALSE)), "must be a logical value")
-  expect_error(vec_rank(1, na_propagate = "foo"), "must be a logical value")
+test_that("`incomplete` is validated", {
+  expect_snapshot(error = TRUE, vec_rank(1, incomplete = NA))
+  expect_snapshot(error = TRUE, vec_rank(1, incomplete = c(TRUE, FALSE)))
+  expect_snapshot(error = TRUE, vec_rank(1, incomplete = "foo"))
 })
