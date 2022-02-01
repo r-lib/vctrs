@@ -18,7 +18,7 @@
 #' @inheritParams vec_order
 #' @inheritParams rlang::args_dots_empty
 #'
-#' @param ties Treatment of duplicate values.
+#' @param ties Ranking of duplicate values.
 #'   - `"min"`: Use the current rank for all duplicates. The next non-duplicate
 #'   value will have a rank incremented by the number of duplicates present.
 #'
@@ -33,11 +33,11 @@
 #'   non-duplicate value will have a rank incremented by `1`, effectively
 #'   removing any gaps in the ranking.
 #'
-#' @param incomplete Treatment of [incomplete][vec_detect_complete]
+#' @param incomplete Ranking of missing and [incomplete][vec_detect_complete]
 #'   observations.
 #'
-#'   - `"rank"`: Rank incomplete observations normally. Missing values will
-#'   be affected by `na_value` and `nan_distinct`.
+#'   - `"rank"`: Rank incomplete observations normally. Missing values within
+#'   incomplete observations will be affected by `na_value` and `nan_distinct`.
 #'
 #'   - `"na"`: Don't rank incomplete observations at all. Instead, they are
 #'   given a rank of `NA`. In this case, `na_value` and `nan_distinct` have

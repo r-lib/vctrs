@@ -20,7 +20,7 @@ vec_rank(
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{ties}{Treatment of duplicate values.
+\item{ties}{Ranking of duplicate values.
 \itemize{
 \item \code{"min"}: Use the current rank for all duplicates. The next non-duplicate
 value will have a rank incremented by the number of duplicates present.
@@ -34,11 +34,11 @@ non-duplicate value will have a rank incremented by \code{1}, effectively
 removing any gaps in the ranking.
 }}
 
-\item{incomplete}{Treatment of \link[=vec_detect_complete]{incomplete}
+\item{incomplete}{Ranking of missing and \link[=vec_detect_complete]{incomplete}
 observations.
 \itemize{
-\item \code{"rank"}: Rank incomplete observations normally. Missing values will
-be affected by \code{na_value} and \code{nan_distinct}.
+\item \code{"rank"}: Rank incomplete observations normally. Missing values within
+incomplete observations will be affected by \code{na_value} and \code{nan_distinct}.
 \item \code{"na"}: Don't rank incomplete observations at all. Instead, they are
 given a rank of \code{NA}. In this case, \code{na_value} and \code{nan_distinct} have
 no effect.
