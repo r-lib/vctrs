@@ -52,13 +52,13 @@ respectively.
 only \code{"asc"} or \code{"desc"}, specifying the direction for each column.
 }}
 
-\item{na_value}{Treatment of missing values.
+\item{na_value}{Ordering of missing values.
 \itemize{
-\item A single \code{"largest"} or \code{"smallest"} for treating missing values as the
+\item A single \code{"largest"} or \code{"smallest"} for ordering missing values as the
 largest or smallest values respectively.
 \item For data frames, a length \code{1} or \code{ncol(x)} character vector containing
 only \code{"largest"} or \code{"smallest"}, specifying how missing values should
-be treated in each column.
+be ordered within each column.
 }}
 
 \item{nan_distinct}{A single logical specifying whether or not \code{NaN} should
