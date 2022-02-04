@@ -114,6 +114,9 @@ test_that("can take ownership of vctrs errors", {
 
     (expect_error(vec_cast(1, list())))
 
+    # Suboptimal because `foo()` might not have an `x` argument. It
+    # might be better to comprehensively check inputs with explicit
+    # error context and treat all other errors as programming errors.
     (expect_error(vec_slice(env(), list())))
 
     # This should show `vec_slice()` if no local call
@@ -121,5 +124,12 @@ test_that("can take ownership of vctrs errors", {
       vctrs_local_error_call(NULL)
       (expect_error(vec_slice(env(), list())))
     })
+  })
+})
+
+test_that("vec_slice() reports error context", {
+  expect_snapshot({
+    (expect_error(vec_slice(foobar(list()), 1)))
+    (expect_error(vec_slice(list(), env())))
   })
 })

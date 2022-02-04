@@ -285,7 +285,7 @@
     Output
       <error/vctrs_error_scalar_type>
       Error in `foo()`:
-      ! Input must be a vector, not an environment.
+      ! `x` must be a vector, not an environment.
     Code
       local({
         vctrs_local_error_call(NULL)
@@ -294,5 +294,22 @@
     Output
       <error/vctrs_error_scalar_type>
       Error in `vec_slice()`:
-      ! Input must be a vector, not an environment.
+      ! `x` must be a vector, not an environment.
+
+# vec_slice() reports error context
+
+    Code
+      (expect_error(vec_slice(foobar(list()), 1)))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `vec_slice()`:
+      ! `x` must be a vector, not a <vctrs_foobar> object.
+    Code
+      (expect_error(vec_slice(list(), env())))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error in `vec_slice()`:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript `i` has the wrong type `environment`.
+      i It must be logical, numeric, or character.
 

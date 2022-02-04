@@ -772,7 +772,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code
@@ -799,7 +799,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't rename columns that don't exist.
       x Column `foo` doesn't exist.
     Code
@@ -807,7 +807,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't rename columns that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 columns.
@@ -816,7 +816,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't rename columns that don't exist.
       x Location 30 doesn't exist.
       i There are only 26 columns.
@@ -826,7 +826,7 @@
       class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't remove rows that don't exist.
       x Rows `foo` and `bar` don't exist.
     Code
@@ -834,7 +834,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't remove rows that don't exist.
       x Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
@@ -843,7 +843,7 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't remove rows that don't exist.
       x Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.

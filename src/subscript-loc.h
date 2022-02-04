@@ -44,6 +44,12 @@ r_obj* vec_as_location(r_obj* i,
                        r_ssize n,
                        r_obj* names);
 
+r_obj* vec_as_location_ctxt(r_obj* subscript,
+                            r_ssize n,
+                            r_obj* names,
+                            struct vctrs_arg* arg,
+                            struct r_lazy call);
+
 r_obj* vec_as_location_opts(r_obj* subscript,
                             r_ssize n,
                             r_obj* names,

@@ -58,8 +58,8 @@ vctrs::vec_assert(my_df)
 }\if{html}{\out{</div>}}
 
 This is problematic as many tidyverse functions won’t work properly:\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
-#> Error:
-#> ! Input must be a vector, not a <data.frame/my_class> object.
+#> Error in `vec_slice()`:
+#> ! `x` must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
 
 It is generally not appropriate to declare your class to be a superclass

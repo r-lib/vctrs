@@ -1620,6 +1620,8 @@ SEXP fns_names = NULL;
 SEXP result_attrib = NULL;
 
 struct vctrs_arg args_empty_;
+struct vctrs_arg args_x_;
+struct vctrs_arg args_i_;
 struct vctrs_arg args_n_;
 struct vctrs_arg args_dot_ptype_;
 struct vctrs_arg args_max_fill_;
@@ -1911,6 +1913,8 @@ void vctrs_init_utils(SEXP ns) {
   new_env__size_node = CDR(new_env__parent_node);
 
   args_empty_ = new_wrapper_arg(NULL, "");
+  args_x_ = new_wrapper_arg(NULL, "x");
+  args_i_ = new_wrapper_arg(NULL, "i");
   args_n_ = new_wrapper_arg(NULL, "n");
   args_dot_ptype_ = new_wrapper_arg(NULL, ".ptype");
   args_max_fill_ = new_wrapper_arg(NULL, "max_fill");

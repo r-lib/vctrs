@@ -21,7 +21,7 @@
       class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code
@@ -29,7 +29,7 @@
         foo)), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
     Code
@@ -37,7 +37,7 @@
         foo(bar))), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error:
+      Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
 
@@ -48,7 +48,7 @@
     Output
       <error/vctrs_error_scalar_type>
       Error in `vec_slice()`:
-      ! Input must be a vector, not a <vctrs_foobar> object.
+      ! `x` must be a vector, not a <vctrs_foobar> object.
     Code
       (expect_error(stop_scalar_type(foobar(list(1)), arg = "foo"), class = "vctrs_error_scalar_type")
       )
