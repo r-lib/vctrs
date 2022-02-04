@@ -5,7 +5,22 @@
 #include "slice.h"
 #include "decl/size-decl.h"
 
+// [[ register() ]]
+r_obj* ffi_size(r_obj* x, r_obj* frame) {
+  struct vec_error_info err = {
+    .arg = args_x,
+    .call = { .x = frame, .env = r_null }
+  };
+  return r_len(vec_size_opts(x, &err));
+}
+
 r_ssize vec_size(r_obj* x) {
+  struct vec_error_info err = { 0 };
+  return vec_size_opts(x, &err);
+}
+
+static
+r_ssize vec_size_opts(r_obj* x, const struct vec_error_info* opts) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
@@ -33,15 +48,11 @@ r_ssize vec_size(r_obj* x) {
     break;
 
   default:
-    stop_scalar_type(x, NULL, r_lazy_null);
+    stop_scalar_type(x, opts->arg, opts->call);
 }
 
   FREE(nprot);
   return size;
-}
-// [[ register() ]]
-SEXP vctrs_size(SEXP x) {
-  return Rf_ScalarInteger(vec_size(x));
 }
 
 static

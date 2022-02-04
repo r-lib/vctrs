@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include "globals.h"
+#include "rlang-dev.h"
 
 
 extern bool vctrs_debug_verbose;
@@ -21,6 +22,12 @@ extern bool vctrs_debug_verbose;
 // An ERR indicates either a C NULL in case of no error, or a
 // condition object otherwise
 #define ERR SEXP
+
+struct vec_error_info {
+  struct vctrs_arg* arg;
+  struct r_lazy call;
+};
+
 
 // Vector types -------------------------------------------------
 

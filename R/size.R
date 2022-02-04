@@ -79,7 +79,7 @@
 #'
 #' list_sizes(list("a", 1:5, letters))
 vec_size <- function(x) {
-  .Call(vctrs_size, x)
+  .Call(ffi_size, x, environment())
 }
 
 #' @export

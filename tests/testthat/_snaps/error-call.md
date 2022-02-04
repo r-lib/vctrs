@@ -322,3 +322,12 @@
       Error in `list_sizes()`:
       ! `x` must be a list.
 
+# vec_size() reports error context
+
+    Code
+      (expect_error(vec_size(env())))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `vec_size()`:
+      ! `x` must be a vector, not an environment.
+
