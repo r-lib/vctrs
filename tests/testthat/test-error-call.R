@@ -104,3 +104,22 @@ test_that("`vec_ptype()` reports correct error call", {
     (expect_error(my_function(foobar(list()))))
   })
 })
+
+test_that("can take ownership of vctrs errors", {
+  vctrs_local_error_call(call("foo"))
+
+  expect_snapshot({
+    (expect_error(vec_assert(foobar(list()))))
+    (expect_error(local(vec_assert(foobar(list())))))
+
+    (expect_error(vec_cast(1, list())))
+
+    (expect_error(vec_slice(env(), list())))
+
+    # This should show `vec_slice()` if no local call
+    local({
+      vctrs_local_error_call(NULL)
+      (expect_error(vec_slice(env(), list())))
+    })
+  })
+})

@@ -47,7 +47,7 @@
       (expect_error(vec_slice(foobar(list(1)), 1), class = "vctrs_error_scalar_type"))
     Output
       <error/vctrs_error_scalar_type>
-      Error:
+      Error in `vec_slice()`:
       ! Input must be a vector, not a <vctrs_foobar> object.
     Code
       (expect_error(stop_scalar_type(foobar(list(1)), arg = "foo"), class = "vctrs_error_scalar_type")

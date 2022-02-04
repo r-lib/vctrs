@@ -183,6 +183,7 @@ new_error_subscript_type <- function(i,
                                      numeric = "cast",
                                      character = "cast",
                                      ...,
+                                     call = NULL,
                                      class = NULL) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_type"),
@@ -190,7 +191,8 @@ new_error_subscript_type <- function(i,
     logical = logical,
     numeric = numeric,
     character = character,
-    ...
+    ...,
+    call = vctrs_error_call(call)
   )
 }
 
