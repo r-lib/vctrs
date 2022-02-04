@@ -271,6 +271,47 @@ vec_locate_matches <- function(needles,
 
 # ------------------------------------------------------------------------------
 
+# Experimental shim of `vec_locate_matches()` used by other packages (iv).
+# This allows us to alter the `vec_locate_matches()` signature as we finalize
+# it, while avoiding breakage in these other packages.
+#
+# We can remove this after:
+# - `vec_locate_matches()` is exported
+# - iv updates to use `vec_locate_matches()` directly
+# - A short deprecation period goes by that allows users time to update their
+#   version of iv
+exp_vec_locate_matches <- function(needles,
+                                   haystack,
+                                   ...,
+                                   condition = "==",
+                                   filter = "none",
+                                   incomplete = "compare",
+                                   no_match = NA_integer_,
+                                   remaining = "drop",
+                                   multiple = "all",
+                                   nan_distinct = FALSE,
+                                   chr_proxy_collate = NULL,
+                                   needles_arg = "",
+                                   haystack_arg = "") {
+  vec_locate_matches(
+    needles = needles,
+    haystack = haystack,
+    ...,
+    condition = condition,
+    filter = filter,
+    incomplete = incomplete,
+    no_match = no_match,
+    remaining = remaining,
+    multiple = multiple,
+    nan_distinct = nan_distinct,
+    chr_proxy_collate = chr_proxy_collate,
+    needles_arg = needles_arg,
+    haystack_arg = haystack_arg
+  )
+}
+
+# ------------------------------------------------------------------------------
+
 #' Internal FAQ - Implementation of `vec_locate_matches()`
 #'
 #' ```{r, child = "man/faq/internal/matches-algorithm.Rmd"}
