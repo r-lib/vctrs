@@ -411,19 +411,17 @@ bool vec_is_restored(SEXP x, SEXP to) {
   return false;
 }
 
-r_obj* vec_slice_ctxt(r_obj* x,
+r_obj* vec_slice_opts(r_obj* x,
                       r_obj* i,
-                      struct vctrs_arg* x_arg,
-                      struct vctrs_arg* i_arg,
-                      struct r_lazy call) {
-  vec_assert_vector(x, x_arg, call);
+                      struct vec_slice_opts* opts) {
+  vec_assert_vector(x, opts->x_arg, opts->call);
 
   r_obj* names = KEEP(vec_names(x));
   i = KEEP(vec_as_location_ctxt(i,
                                 vec_size(x),
                                 names,
-                                i_arg,
-                                call));
+                                opts->i_arg,
+                                opts->call));
 
   // TODO! Propagate `call` through `vec_slice_impl()`
   r_obj* out = vec_slice_impl(x, i);
@@ -434,14 +432,19 @@ r_obj* vec_slice_ctxt(r_obj* x,
 
 // [[ include("vctrs.h") ]]
 r_obj* vec_slice(r_obj* x, r_obj* i) {
-  return vec_slice_ctxt(x, i, args_empty, args_empty, r_lazy_null);
+  struct vec_slice_opts opts = { 0 };
+  return vec_slice_opts(x, i, &opts);
 }
 
 r_obj* ffi_slice(r_obj* x,
                  r_obj* i,
                  r_obj* frame) {
-  struct r_lazy call = { .x = r_syms.call, .env = frame };
-  return vec_slice_ctxt(x, i, args_x, args_i, call);
+  struct vec_slice_opts opts = {
+    .x_arg = args_x,
+    .i_arg = args_i,
+    .call = {.x = r_syms.call, .env = frame}
+  };
+  return vec_slice_opts(x, i, &opts);
 }
 
 // [[ include("vctrs.h") ]]
