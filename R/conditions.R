@@ -880,6 +880,10 @@ vctrs_local_error_call <- function(call = frame, frame = caller_env()) {
 }
 
 vctrs_error_call <- function(call) {
+  if (is_function(call)) {
+    call <- call()
+  }
+
   if (is_environment(call)) {
     caller_call <- get_vctrs_error_call(call)
     if (!is_null(caller_call)) {

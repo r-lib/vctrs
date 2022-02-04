@@ -168,7 +168,7 @@ stop_subscript <- function(i,
     class = c(class, "vctrs_error_subscript"),
     i = i,
     ...,
-    call = call
+    call = vctrs_error_call(call)
   )
 }
 new_error_subscript <- function(class = NULL, i, ...) {
