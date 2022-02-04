@@ -240,8 +240,6 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP vec_set_names(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
 
-R_len_t size_validate(SEXP size, const char* arg);
-
 extern bool (*rlang_is_splice_box)(SEXP);
 extern SEXP (*rlang_unbox)(SEXP);
 extern SEXP (*rlang_env_dots_values)(SEXP);

@@ -37,20 +37,20 @@ SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
 }
 
 
-static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* data);
+static
+SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* data);
 
-// [[ include("vctrs.h") ]]
-R_len_t vec_size_common(SEXP xs, R_len_t absent) {
-  SEXP common = PROTECT(reduce(R_NilValue, args_empty, xs, &vctrs_size2_common, NULL));
-  R_len_t out;
+r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
+  r_obj* common = KEEP(reduce(R_NilValue, args_empty, xs, &vctrs_size2_common, NULL));
+  r_ssize out;
 
-  if (common == R_NilValue) {
+  if (common == r_null) {
     out = absent;
   } else {
     out = vec_size(common);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
@@ -102,23 +102,19 @@ SEXP vctrs_recycle_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_recycle_common(SEXP xs, R_len_t size) {
+r_obj* vec_recycle_common(r_obj* xs, r_ssize size) {
   if (size < 0) {
     return xs;
   }
 
-  xs = PROTECT(r_clone_referenced(xs));
+  xs = KEEP(r_clone_referenced(xs));
+  r_ssize n = vec_size(xs);
 
-  R_len_t n = vec_size(xs);
-
-  SEXP elt;
-
-  for (R_len_t i = 0; i < n; ++i) {
-    elt = VECTOR_ELT(xs, i);
-    SET_VECTOR_ELT(xs, i, vec_recycle(elt, size, args_empty));
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* elt = r_list_get(xs, i);
+    r_list_poke(xs, i, vec_recycle(elt, size, args_empty));
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return xs;
 }

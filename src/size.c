@@ -3,34 +3,17 @@
 #include "type-data-frame.h"
 #include "utils.h"
 #include "slice.h"
+#include "decl/size-decl.h"
 
-static inline R_len_t vec_raw_size(SEXP x) {
-  SEXP dimensions = r_dim(x);
-
-  if (dimensions == R_NilValue || Rf_length(dimensions) == 0) {
-    return Rf_length(x);
-  }
-
-  if (TYPEOF(dimensions) != INTSXP) {
-    Rf_errorcall(R_NilValue, "Corrupt vector, `dim` attribute is not an integer vector.");
-  }
-
-  R_len_t size = INTEGER(dimensions)[0];
-
-  return size;
-}
-
-
-// [[ include("vctrs.h") ]]
-R_len_t vec_size(SEXP x) {
+r_ssize vec_size(r_obj* x) {
   int nprot = 0;
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
   PROTECT_PROXY_INFO(&info, &nprot);
 
-  SEXP data = info.proxy;
+  r_obj* data = info.proxy;
 
-  R_len_t size;
+  r_ssize size;
   switch (info.type) {
   case vctrs_type_null:
     size = 0;
@@ -49,17 +32,37 @@ R_len_t vec_size(SEXP x) {
     size = df_size(data);
     break;
 
-    
   default:
     stop_scalar_type(x, NULL, r_lazy_null);
 }
 
-  UNPROTECT(nprot);
+  FREE(nprot);
   return size;
 }
 // [[ register() ]]
 SEXP vctrs_size(SEXP x) {
   return Rf_ScalarInteger(vec_size(x));
+}
+
+static
+r_ssize vec_raw_size(r_obj* x) {
+  r_obj* dimensions = r_dim(x);
+
+  if (dimensions == r_null || r_length(dimensions) == 0) {
+    return r_length(x);
+  }
+
+  if (r_typeof(dimensions) != R_TYPE_integer) {
+    r_stop_internal("vec_raw_size", "Corrupt vector, `dim` attribute is not an integer vector.");
+  }
+
+  return r_int_get(dimensions, 0);
+}
+
+// [[ register() ]]
+r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
+  return list_sizes(x, call);
 }
 
 static
@@ -85,19 +88,15 @@ r_obj* list_sizes(r_obj* x, struct r_lazy call) {
   return out;
 }
 
-// [[ register() ]]
-r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
-  struct r_lazy call = { .x = frame, .env = r_null };
-  return list_sizes(x, call);
-}
-
-R_len_t df_rownames_size(SEXP x) {
-  for (SEXP attr = ATTRIB(x); attr != R_NilValue; attr = CDR(attr)) {
-    if (TAG(attr) != R_RowNamesSymbol) {
+r_ssize df_rownames_size(r_obj* x) {
+  for (r_obj* attr = r_attrib(x);
+       attr != r_null;
+       attr = r_node_cdr(attr)) {
+    if (r_node_tag(attr) != r_syms.row_names) {
       continue;
     }
 
-    return rownames_size(CAR(attr));
+    return rownames_size(r_node_car(attr));
   }
 
   return -1;
@@ -105,18 +104,18 @@ R_len_t df_rownames_size(SEXP x) {
 
 // For performance, avoid Rf_getAttrib() because it automatically transforms
 // the rownames into an integer vector
-R_len_t df_size(SEXP x) {
-  R_len_t n = df_rownames_size(x);
+r_ssize df_size(r_obj* x) {
+  r_ssize n = df_rownames_size(x);
 
   if (n < 0) {
-    Rf_errorcall(R_NilValue, "Corrupt data frame: row.names are missing");
+    r_stop_internal("df_size", "Corrupt data frame: row.names are missing");
   }
 
   return n;
 }
 // Supports bare lists as well
-R_len_t df_raw_size(SEXP x) {
-  R_len_t n = df_rownames_size(x);
+r_ssize df_raw_size(r_obj* x) {
+  r_ssize n = df_rownames_size(x);
   if (n >= 0) {
     return n;
   }
@@ -124,10 +123,9 @@ R_len_t df_raw_size(SEXP x) {
   return df_raw_size_from_list(x);
 }
 
-// [[ include("vctrs.h") ]]
-R_len_t df_raw_size_from_list(SEXP x) {
-  if (Rf_length(x) >= 1) {
-    return vec_size(VECTOR_ELT(x, 0));
+r_ssize df_raw_size_from_list(r_obj* x) {
+  if (r_length(x) >= 1) {
+    return vec_size(r_list_get(x, 0));
   } else {
     return 0;
   }
@@ -139,7 +137,6 @@ SEXP vctrs_df_size(SEXP x) {
 }
 
 
-// [[ include("vctrs.h") ]]
 r_obj* vec_recycle2(r_obj* x,
                     r_ssize size,
                     struct vctrs_arg* x_arg,
@@ -191,25 +188,26 @@ r_obj* ffi_recycle(r_obj* x,
   return vec_recycle2(x, size, &x_arg, call);
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
-  if (x == R_NilValue) {
-    return R_NilValue;
+r_obj* vec_recycle_fallback(r_obj* x,
+                            r_ssize size,
+                            struct vctrs_arg* x_arg) {
+  if (x == r_null) {
+    return r_null;
   }
 
-  R_len_t x_size = vec_size(x);
+  r_ssize x_size = vec_size(x);
 
   if (x_size == size) {
     return x;
   }
 
   if (x_size == 1) {
-    SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
+    r_obj* subscript = KEEP(r_alloc_integer(size));
     r_int_fill(subscript, 1, size);
 
-    SEXP out = vec_slice_fallback(x, subscript);
+    r_obj* out = vec_slice_fallback(x, subscript);
 
-    UNPROTECT(1);
+    FREE(1);
     return out;
   }
 
@@ -217,22 +215,24 @@ SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg) {
 }
 
 
-// [[ include("utils.h") ]]
-R_len_t size_validate(SEXP size, const char* arg) {
+r_ssize size_validate(r_obj* size, const char* arg) {
+  // TODO! Error call
+  struct r_lazy call = r_lazy_null;
+
   size = vec_cast(size,
                   vctrs_shared_empty_int,
                   args_empty,
                   args_empty,
-                  r_lazy_null);
+                  call);
 
-  if (Rf_length(size) != 1) {
-    Rf_errorcall(R_NilValue, "`%s` must be a single integer.", arg);
+  if (r_length(size) != 1) {
+    r_abort_lazy_call(call, "`%s` must be a single integer.", arg);
   }
 
   int out = r_int_get(size, 0);
 
-  if (out == NA_INTEGER) {
-    Rf_errorcall(R_NilValue, "`%s` can't be missing.", arg);
+  if (out == r_globals.na_int) {
+    r_abort_lazy_call(call, "`%s` can't be missing.", arg);
   }
 
   return out;

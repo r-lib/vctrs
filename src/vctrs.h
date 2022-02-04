@@ -349,6 +349,8 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 #include "names.h"
 #include "owned.h"
+#include "size.h"
+#include "size-common.h"
 #include "slice.h"
 
 enum vctrs_proxy_kind {
@@ -365,8 +367,6 @@ SEXP vec_proxy_order(SEXP x);
 r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y);
 SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
-R_len_t vec_size(SEXP x);
-R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
@@ -376,9 +376,6 @@ SEXP vec_init(SEXP x, R_len_t n);
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call);
 SEXP vec_ptype_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
-r_obj* vec_recycle2(r_obj* x, r_ssize size, struct vctrs_arg* x_arg, struct r_lazy call);
-SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
-SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
@@ -422,10 +419,6 @@ SEXP vec_c(SEXP xs,
 
 bool is_data_frame(SEXP x);
 
-R_len_t df_size(SEXP x);
-R_len_t df_rownames_size(SEXP x);
-R_len_t df_raw_size(SEXP x);
-R_len_t df_raw_size_from_list(SEXP x);
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 
