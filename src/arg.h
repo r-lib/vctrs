@@ -18,6 +18,7 @@
  *   `fill()` must return a negative error value.
  */
 struct vctrs_arg {
+  r_obj* shelter;
   struct vctrs_arg* parent;
   r_ssize (*fill)(void* data, char* buf, r_ssize remaining);
   void* data;
@@ -61,6 +62,11 @@ struct vctrs_arg new_index_arg(struct vctrs_arg* parent,
 
 struct arg_data_index new_index_arg_data(const char* arg,
                                          struct vctrs_arg* parent);
+
+
+struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
+                                    r_obj* x,
+                                    r_ssize* p_i);
 
 
 // Materialise an argument tag as a CHARSXP.

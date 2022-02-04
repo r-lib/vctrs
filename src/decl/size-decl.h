@@ -5,4 +5,4 @@ static
 r_ssize vec_raw_size(r_obj* x);
 
 static
-r_obj* list_sizes(r_obj* x, struct r_lazy call);
+r_obj* list_sizes(r_obj* x, const struct vec_error_info* err);

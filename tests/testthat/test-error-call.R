@@ -137,6 +137,9 @@ test_that("vec_slice() reports error context", {
 test_that("list_sizes() reports error context", {
   expect_snapshot({
     (expect_error(list_sizes(foobar(list()))))
+    (expect_error(list_sizes(list(env()))))
+    (expect_error(list_sizes(list(1, 2, env()))))
+    (expect_error(list_sizes(list(1, 2, foo = env()))))
   })
 })
 

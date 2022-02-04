@@ -321,6 +321,24 @@
       <error/rlang_error>
       Error in `list_sizes()`:
       ! `x` must be a list.
+    Code
+      (expect_error(list_sizes(list(env()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `list_sizes()`:
+      ! `x[[1]]` must be a vector, not an environment.
+    Code
+      (expect_error(list_sizes(list(1, 2, env()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `list_sizes()`:
+      ! `x[[3]]` must be a vector, not an environment.
+    Code
+      (expect_error(list_sizes(list(1, 2, foo = env()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `list_sizes()`:
+      ! `x$foo` must be a vector, not an environment.
 
 # vec_size() reports error context
 
