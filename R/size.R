@@ -91,7 +91,7 @@ vec_size_common <- function(..., .size = NULL, .absent = 0L) {
 #' @rdname vec_size
 #' @export
 list_sizes <- function(x) {
-  .Call(vctrs_list_sizes, x)
+  .Call(ffi_list_sizes, x, environment())
 }
 
 #' @rdname vec_size

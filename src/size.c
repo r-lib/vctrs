@@ -62,31 +62,33 @@ SEXP vctrs_size(SEXP x) {
   return Rf_ScalarInteger(vec_size(x));
 }
 
-SEXP list_sizes(SEXP x) {
+static
+r_obj* list_sizes(r_obj* x, struct r_lazy call) {
   if (!vec_is_list(x)) {
-    Rf_errorcall(R_NilValue, "`x` must be a list.");
+    r_abort_lazy_call(call, "`x` must be a list.");
   }
 
-  R_len_t size = vec_size(x);
+  r_ssize size = vec_size(x);
+  r_obj* const * v_x = r_list_cbegin(x);
 
-  const SEXP* v_x = r_list_cbegin(x);
-
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* v_out = INTEGER(out);
+  r_obj* out = KEEP(r_alloc_integer(size));
+  int* v_out = r_int_begin(out);
 
   r_attrib_poke_names(out, vec_names(x));
 
   for (R_len_t i = 0; i < size; ++i) {
+    // TODO! Error call
     v_out[i] = vec_size(v_x[i]);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
 // [[ register() ]]
-SEXP vctrs_list_sizes(SEXP x) {
-  return list_sizes(x);
+r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
+  return list_sizes(x, call);
 }
 
 R_len_t df_rownames_size(SEXP x) {

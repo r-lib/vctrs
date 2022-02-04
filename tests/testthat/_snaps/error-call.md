@@ -313,3 +313,12 @@
       x Subscript `i` has the wrong type `environment`.
       i It must be logical, numeric, or character.
 
+# list_sizes() reports error context
+
+    Code
+      (expect_error(list_sizes(foobar(list()))))
+    Output
+      <error/rlang_error>
+      Error in `list_sizes()`:
+      ! `x` must be a list.
+
