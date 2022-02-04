@@ -890,13 +890,14 @@ vctrs_error_call <- function(call) {
   call
 }
 
-vctrs_error_borrowed_call <- function() {
-  borrower <- get_vctrs_error_call(caller_env(2))
+vctrs_error_borrowed_call <- function(call = caller_env(),
+                                      borrower = caller_env(2)) {
+  borrower_call <- get_vctrs_error_call(borrower)
 
-  if (is_null(borrower)) {
-    caller_env()
+  if (is_null(borrower_call)) {
+    call
   } else {
-    borrower
+    borrower_call
   }
 }
 
