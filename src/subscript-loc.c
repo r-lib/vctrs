@@ -9,10 +9,11 @@
 
 
 r_obj* vec_as_location(r_obj* subscript, r_ssize n, r_obj* names) {
+  const struct location_opts opts = { 0 };
   return vec_as_location_opts(subscript,
                               n,
                               names,
-                              location_default_opts);
+                              &opts);
 }
 
 r_obj* vec_as_location_opts(r_obj* subscript,
@@ -599,16 +600,4 @@ void stop_location_oob_non_consecutive(r_obj* i,
   r_stop_unreached("stop_location_oob_non_consecutive");
 }
 
-struct location_opts location_default_opts_obj;
-struct location_opts location_default_assign_opts_obj;
-
-void vctrs_init_subscript_loc(r_obj* ns) {
-  location_default_opts_obj.subscript_opts = subscript_default_opts;
-  location_default_opts_obj.loc_negative = LOC_NEGATIVE_INVERT;
-  location_default_opts_obj.loc_oob = LOC_OOB_ERROR;
-  location_default_opts_obj.loc_zero = LOC_ZERO_REMOVE;
-  location_default_opts_obj.missing = SUBSCRIPT_MISSING_PROPAGATE;
-
-  location_default_assign_opts_obj = location_default_opts_obj;
-  location_default_assign_opts_obj.subscript_opts = subscript_default_assign_opts;
-}
+void vctrs_init_subscript_loc(r_obj* ns) { }

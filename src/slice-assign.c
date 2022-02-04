@@ -38,10 +38,11 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   vec_assert_vector(x, opts->x_arg, r_lazy_null);
   vec_assert_vector(value, opts->value_arg, r_lazy_null);
 
+  const struct location_opts location_opts = new_location_opts_assign();
   index = PROTECT(vec_as_location_opts(index,
                                        vec_size(x),
                                        PROTECT(vec_names(x)),
-                                       location_default_assign_opts));
+                                       &location_opts));
 
   // Cast and recycle `value`
   value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, r_lazy_null));

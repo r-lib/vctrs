@@ -32,11 +32,12 @@ struct location_opts {
   enum subscript_missing missing;
 };
 
-extern struct location_opts location_default_opts_obj;
-extern struct location_opts location_default_assign_opts_obj;
-
-static const struct location_opts* const location_default_opts = &location_default_opts_obj;
-static const struct location_opts* const location_default_assign_opts = &location_default_assign_opts_obj;
+static inline
+struct location_opts new_location_opts_assign() {
+  return (struct location_opts) {
+    .subscript_opts = new_subscript_opts_assign()
+  };
+}
 
 
 r_obj* vec_as_location(r_obj* i,
