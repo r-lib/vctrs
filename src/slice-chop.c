@@ -400,17 +400,13 @@ SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   R_len_t size = vec_size(indices);
 
-  const struct subscript_opts subscript_opts = {
-    .action = SUBSCRIPT_ACTION_DEFAULT,
-    .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
-    .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
-    .character = SUBSCRIPT_TYPE_ACTION_ERROR,
-    .subscript_arg = NULL
-  };
-
   // Restrict index values to positive integer locations
   const struct location_opts opts = {
-    .subscript_opts = &subscript_opts,
+    .subscript_opts = {
+      .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
+      .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
+      .character = SUBSCRIPT_TYPE_ACTION_ERROR
+    },
     .missing = SUBSCRIPT_MISSING_PROPAGATE,
     .loc_negative = LOC_NEGATIVE_ERROR,
     .loc_oob = LOC_OOB_ERROR,

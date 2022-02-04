@@ -25,7 +25,7 @@ enum num_loc_zero {
 };
 
 struct location_opts {
-  const struct subscript_opts* subscript_opts;
+  struct subscript_opts subscript_opts;
   enum num_loc_negative loc_negative;
   enum num_loc_oob loc_oob;
   enum num_loc_zero loc_zero;
