@@ -71,7 +71,7 @@ static SEXP vec_rep(SEXP x, int times) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;
@@ -141,7 +141,7 @@ static SEXP vec_rep_each_uniform(SEXP x, int times) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;
@@ -187,7 +187,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;

@@ -15,6 +15,18 @@ enum vctrs_materialize {
   VCTRS_MATERIALIZE_true
 };
 
+r_obj* vec_slice_opts(r_obj* x,
+                      r_obj* i,
+                      const struct vec_slice_opts* opts);
+
+static inline
+r_obj* vec_slice(r_obj* x, r_obj* i) {
+  const struct vec_slice_opts opts = { 0 };
+  return vec_slice_opts(x, i, &opts);
+}
+
+r_obj* vec_slice_unsafe(r_obj* x, r_obj* i);
+
 SEXP vec_slice_base(enum vctrs_type type,
                     SEXP x,
                     SEXP subscript,

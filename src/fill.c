@@ -51,7 +51,7 @@ SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_fill) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, loc);
+  SEXP out = vec_slice_unsafe(x, loc);
 
   UNPROTECT(2);
   return out;

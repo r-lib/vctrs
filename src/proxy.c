@@ -193,8 +193,8 @@ r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method) {
   r_obj* proxy = KEEP(vec_proxy_order_invoke(combined, method));
 
   // Separate and store back in `out`
-  r_list_poke(out, 0, vec_slice_impl(proxy, x_slicer));
-  r_list_poke(out, 1, vec_slice_impl(proxy, y_slicer));
+  r_list_poke(out, 0, vec_slice_unsafe(proxy, x_slicer));
+  r_list_poke(out, 1, vec_slice_unsafe(proxy, y_slicer));
 
   FREE(7);
   return out;

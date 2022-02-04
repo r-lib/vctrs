@@ -349,6 +349,7 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 #include "names.h"
 #include "owned.h"
+#include "slice.h"
 
 enum vctrs_proxy_kind {
   VCTRS_PROXY_KIND_default,
@@ -367,8 +368,6 @@ SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
 R_len_t vec_size(SEXP x);
 R_len_t vec_size_common(SEXP xs, R_len_t absent);
 SEXP vec_cast_common(SEXP xs, SEXP to);
-SEXP vec_slice(SEXP x, SEXP subscript);
-SEXP vec_slice_impl(SEXP x, SEXP subscript);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);

@@ -205,7 +205,7 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
       r_stop_internal("df_slice", "Columns must match the data frame size.");
     }
 
-    SEXP sliced = vec_slice_impl(elt, subscript);
+    SEXP sliced = vec_slice_unsafe(elt, subscript);
     SET_VECTOR_ELT(out, i, sliced);
   }
 
@@ -295,7 +295,7 @@ SEXP slice_rownames(SEXP names, SEXP subscript) {
   return names;
 }
 
-SEXP vec_slice_impl(SEXP x, SEXP subscript) {
+SEXP vec_slice_unsafe(SEXP x, SEXP subscript) {
   int nprot = 0;
 
   SEXP restore_size = PROTECT_N(r_int(vec_subscript_size(subscript)), &nprot);
@@ -411,31 +411,6 @@ bool vec_is_restored(SEXP x, SEXP to) {
   return false;
 }
 
-r_obj* vec_slice_opts(r_obj* x,
-                      r_obj* i,
-                      struct vec_slice_opts* opts) {
-  vec_assert_vector(x, opts->x_arg, opts->call);
-
-  r_obj* names = KEEP(vec_names(x));
-  i = KEEP(vec_as_location_ctxt(i,
-                                vec_size(x),
-                                names,
-                                opts->i_arg,
-                                opts->call));
-
-  // TODO! Propagate `call` through `vec_slice_impl()`
-  r_obj* out = vec_slice_impl(x, i);
-
-  FREE(2);
-  return out;
-}
-
-// [[ include("vctrs.h") ]]
-r_obj* vec_slice(r_obj* x, r_obj* i) {
-  struct vec_slice_opts opts = { 0 };
-  return vec_slice_opts(x, i, &opts);
-}
-
 r_obj* ffi_slice(r_obj* x,
                  r_obj* i,
                  r_obj* frame) {
@@ -445,6 +420,24 @@ r_obj* ffi_slice(r_obj* x,
     .call = {.x = r_syms.call, .env = frame}
   };
   return vec_slice_opts(x, i, &opts);
+}
+
+r_obj* vec_slice_opts(r_obj* x,
+                      r_obj* i,
+                      const struct vec_slice_opts* opts) {
+  vec_assert_vector(x, opts->x_arg, opts->call);
+
+  r_obj* names = KEEP(vec_names(x));
+  i = KEEP(vec_as_location_ctxt(i,
+                                vec_size(x),
+                                names,
+                                opts->i_arg,
+                                opts->call));
+
+  r_obj* out = vec_slice_unsafe(x, i);
+
+  FREE(2);
+  return out;
 }
 
 // [[ include("vctrs.h") ]]
@@ -457,7 +450,7 @@ SEXP vec_init(SEXP x, R_len_t n) {
 
   SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
 
-  SEXP out = vec_slice_impl(x, i);
+  SEXP out = vec_slice_unsafe(x, i);
 
   UNPROTECT(1);
   return out;
@@ -491,7 +484,7 @@ SEXP vec_slice_seq(SEXP x, SEXP start, SEXP size, SEXP increasing) {
   bool increasing_ = r_lgl_get(increasing, 0);
 
   SEXP subscript = PROTECT(compact_seq(start_, size_, increasing_));
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;
@@ -504,7 +497,7 @@ SEXP vec_slice_rep(SEXP x, SEXP i, SEXP n) {
   R_len_t n_ = r_int_get(n, 0);
 
   SEXP subscript = PROTECT(compact_rep(i_, n_));
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;

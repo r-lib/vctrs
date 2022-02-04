@@ -18,7 +18,7 @@ SEXP vec_slice_complete(SEXP x) {
   SEXP loc = PROTECT(vec_locate_complete(x));
 
   // Skip `vec_as_location()` in `vec_slice()`
-  SEXP out = vec_slice_impl(x, loc);
+  SEXP out = vec_slice_unsafe(x, loc);
 
   UNPROTECT(1);
   return out;

@@ -25,7 +25,7 @@ SEXP exp_vec_chop(SEXP x, SEXP indices) {
 }
 
 SEXP exp_vec_slice_impl(SEXP x, SEXP subscript) {
-  return vec_slice_impl(x, subscript);
+  return vec_slice_unsafe(x, subscript);
 }
 
 SEXP exp_vec_names(SEXP x) {
