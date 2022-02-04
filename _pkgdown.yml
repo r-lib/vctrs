@@ -76,7 +76,6 @@ reference:
   - vec_duplicate
   - vec_unique
   - vec_in
-  - vec_locate_matches
   - vec_split
 
 - title: Sequences and repetitions
