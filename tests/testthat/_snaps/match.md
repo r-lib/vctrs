@@ -63,13 +63,6 @@
       Error in `stop_matches()`:
       ! Each element of `foo` can match at most 1 observation from `bar`.
       x The element at location 1 has multiple matches.
-    Code
-      (expect_error(vec_locate_matches(1, 1:2, multiple = "error", condition = NULL)))
-    Output
-      <error/vctrs_error_matches_multiple>
-      Error in `stop_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
 
 # `multiple` can warn informatively
 
@@ -96,14 +89,6 @@
       Warning in `warn_matches()`:
       Each element of `foo` can match at most 1 observation from `bar`.
       x The element at location 1 has multiple matches.
-    Code
-      (expect_warning(vec_locate_matches(1, 1:2, multiple = "warning", condition = NULL))
-      )
-    Output
-      <warning/vctrs_warning_matches_multiple>
-      Warning in `warn_matches()`:
-      Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
 
 # `no_match` can error informatively
 
@@ -129,14 +114,6 @@
       <error/vctrs_error_matches_nothing>
       Error in `stop_matches()`:
       ! Each element of `foo` must have a match in `bar`.
-      x The element at location 1 does not have a match.
-    Code
-      (expect_error(vec_locate_matches(1, double(), no_match = "error", condition = NULL))
-      )
-    Output
-      <error/vctrs_error_matches_nothing>
-      Error in `stop_matches()`:
-      ! Each element must have a match.
       x The element at location 1 does not have a match.
 
 # `no_match` is validated
@@ -186,14 +163,6 @@
       Error in `stop_matches()`:
       ! Each haystack value of `bar` must be matched by `foo`.
       x The value at location 1 was not matched.
-    Code
-      (expect_error(vec_locate_matches(double(), c(1, 2), remaining = "error",
-      condition = NULL)))
-    Output
-      <error/vctrs_error_matches_remaining>
-      Error in `stop_matches()`:
-      ! Each haystack value must be matched.
-      x The value at location 1 was not matched.
 
 # `remaining` is validated
 
@@ -225,10 +194,4 @@
       <error/rlang_error>
       Error in `vec_locate_matches()`:
       ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
-    Code
-      (expect_error(vec_locate_matches(1:1e+07, 1:1e+07, condition = NULL)))
-    Output
-      <error/rlang_error>
-      Error in `vec_locate_matches()`:
-      ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 100000000000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
 

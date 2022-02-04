@@ -168,26 +168,6 @@ r_obj* vec_locate_matches(r_obj* needles,
   r_ssize size_needles = vec_size(needles);
   r_ssize size_haystack = vec_size(haystack);
 
-  if (condition == r_null) {
-    // Special case of "match on nothing" to mimic `LEFT JOIN needles, haystack`
-    // with no ON condition. Replace `needles` and `haystack` with integer
-    // vectors all containing `0` so everything matches. This ensures we get
-    // the correct behavior of all other arguments (like `multiple` and
-    // `no_match`) with minimal effort.
-    needles = KEEP_N(r_alloc_integer(size_needles), &n_prot);
-    haystack = KEEP_N(r_alloc_integer(size_haystack), &n_prot);
-
-    int* v_needles = r_int_begin(needles);
-    int* v_haystack = r_int_begin(haystack);
-
-    memset(v_needles, 0, size_needles * sizeof(*v_needles));
-    memset(v_haystack, 0, size_haystack * sizeof(*v_haystack));
-
-    // This resets `condition` and overrides any usage of `filter`
-    condition = KEEP_N(r_chr("=="), &n_prot);
-    filter = KEEP_N(r_chr("none"), &n_prot);
-  }
-
   // Support non-data frame types by wrapping them in a 1-col data frame
   if (!is_data_frame(needles)) {
     needles = KEEP_N(r_list(needles), &n_prot);
@@ -218,9 +198,8 @@ r_obj* vec_locate_matches(r_obj* needles,
   }
 
   if (n_cols == 0) {
-    // If we have a match `condition`, but there are no columns, this operation
-    // isn't well defined
-    r_abort("Must have at least 1 column to match on unless `condition = NULL`.");
+    // If there are no columns, this operation isn't well defined.
+    r_abort("Must have at least 1 column to match on.");
   }
 
   // Compute the locations of incomplete values per column since computing
@@ -1273,7 +1252,7 @@ enum vctrs_ops parse_condition_one(const char* condition) {
 static inline
 void parse_condition(r_obj* condition, r_ssize n_cols, enum vctrs_ops* v_ops) {
   if (r_typeof(condition) != R_TYPE_character) {
-    r_abort("`condition` must be a character vector, or `NULL`.");
+    r_abort("`condition` must be a character vector.");
   }
 
   r_obj* const* v_condition = r_chr_cbegin(condition);
@@ -1300,7 +1279,7 @@ void parse_condition(r_obj* condition, r_ssize n_cols, enum vctrs_ops* v_ops) {
   }
 
   r_abort(
-    "If `condition` is a character vector, it must be length 1, or the same "
+    "`condition` must be length 1, or the same "
     "length as the number of columns of the input."
   );
 }

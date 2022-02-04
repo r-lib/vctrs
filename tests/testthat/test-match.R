@@ -752,7 +752,7 @@ test_that("multiple matches from a non-equi condition are returned in first appe
 })
 
 test_that("`condition` is validated", {
-  expect_error(vec_locate_matches(1, 2, condition = 1), "`condition` must be a character vector, or `NULL`")
+  expect_error(vec_locate_matches(1, 2, condition = 1), "`condition` must be a character vector")
   expect_error(vec_locate_matches(1, 2, condition = "x"), 'must only contain "==", ">", ">=", "<", or "<="')
   expect_error(vec_locate_matches(1, 2, condition = c("==", "==")), "must be length 1, or the same length as the number of columns of the input")
 })
@@ -800,7 +800,6 @@ test_that("`multiple` can error informatively", {
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error")))
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo")))
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar")))
-    (expect_error(vec_locate_matches(1, 1:2, multiple = "error", condition = NULL)))
   })
 })
 
@@ -809,7 +808,6 @@ test_that("`multiple` can warn informatively", {
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning")))
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo")))
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar")))
-    (expect_warning(vec_locate_matches(1, 1:2, multiple = "warning", condition = NULL)))
   })
 })
 
@@ -967,7 +965,6 @@ test_that("`no_match` can error informatively", {
     (expect_error(vec_locate_matches(1, 2, no_match = "error")))
     (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo")))
     (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar")))
-    (expect_error(vec_locate_matches(1, double(), no_match = "error", condition = NULL)))
   })
 })
 
@@ -1042,12 +1039,6 @@ test_that("`incomplete` affects `needles` but not `haystack`", {
   expect_identical(res$haystack, c(2L, 1L))
 })
 
-test_that("`remaining` works with `condition = NULL` and empty `needles`", {
-  res <- vec_locate_matches(integer(), 1:5, condition = NULL, remaining = NA)
-  expect_identical(res$needles, rep(NA_integer_, 5))
-  expect_identical(res$haystack, 1:5)
-})
-
 test_that("`remaining` combined with `multiple = 'first/last'` treats non-first/last matches as remaining", {
   x <- c(1, 2)
   y <- c(1, 2, 2)
@@ -1085,7 +1076,6 @@ test_that("`remaining` can error informatively", {
     (expect_error(vec_locate_matches(1, 2, remaining = "error")))
     (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo")))
     (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar")))
-    (expect_error(vec_locate_matches(double(), c(1, 2), remaining = "error", condition = NULL)))
   })
 })
 
@@ -1276,68 +1266,7 @@ test_that("zero row `haystack` still allows needle incomplete handling", {
   expect_identical(res$haystack, c(0L, NA))
 })
 
-test_that("`condition = NULL` is correct in all possible cases", {
-  matches <- function(needles, haystack, multiple, no_match = NA) {
-    vec_locate_matches(needles, haystack, condition = NULL, multiple = multiple, no_match = no_match)
-  }
-  exp <- function(needles, haystack) {
-    data_frame(needles = as.integer(needles), haystack = as.integer(haystack))
-  }
-
-  zero <- data_frame(.size = 0L)
-  one <- data_frame(.size = 1L)
-  two <- data_frame(.size = 2L)
-
-  multiples <- c("all", "warning", "error", "first", "last", "any")
-
-  for (multiple in multiples) {
-    # `zero` haystack
-    expect_identical(matches(zero, zero, multiple = multiple), exp(integer(), integer()))
-    expect_identical(matches(one, zero, multiple = multiple), exp(1, NA))
-    expect_identical(matches(two, zero, multiple = multiple), exp(1:2, c(NA, NA)))
-  }
-
-  for (multiple in multiples) {
-    # `one` haystack
-    expect_identical(matches(zero, one, multiple = multiple), exp(integer(), integer()))
-    expect_identical(matches(one, one, multiple = multiple), exp(1, 1))
-    expect_identical(matches(two, one, multiple = multiple), exp(1:2, c(1, 1)))
-  }
-
-  # `two` haystack
-  expect_identical(matches(zero, two, multiple = "all"), exp(integer(), integer()))
-  expect_identical(matches(one, two, multiple = "all"), exp(c(1, 1), c(1, 2)))
-  expect_identical(matches(two, two, multiple = "all"), exp(c(1, 1, 2, 2), c(1, 2, 1, 2)))
-
-  expect_identical(matches(zero, two, multiple = "warning"), exp(integer(), integer()))
-  expect_warning(expect_identical(matches(one,  two, multiple = "warning"), exp(c(1, 1), c(1, 2))))
-  expect_warning(expect_identical(matches(two,  two, multiple = "warning"), exp(c(1, 1, 2, 2), c(1, 2, 1, 2))))
-
-  expect_identical(matches(zero, two, multiple = "error"), exp(integer(), integer()))
-  expect_error(matches(one, two, multiple = "error"), "multiple matches")
-  expect_error(matches(two, two, multiple = "error"), "multiple matches")
-
-  expect_identical(matches(zero, two, multiple = "first"), exp(integer(), integer()))
-  expect_identical(matches(one, two, multiple = "first"), exp(1, 1))
-  expect_identical(matches(two, two, multiple = "first"), exp(1:2, c(1, 1)))
-
-  expect_identical(matches(zero, two, multiple = "last"), exp(integer(), integer()))
-  expect_identical(matches(one, two, multiple = "last"), exp(1, 2))
-  expect_identical(matches(two, two, multiple = "last"), exp(1:2, c(2, 2)))
-
-  expect_identical(matches(zero, two, multiple = "any"), exp(integer(), integer()))
-  expect_identical(matches(one, two, multiple = "any"), exp(1, 1))
-  expect_identical(matches(two, two, multiple = "any"), exp(1:2, c(1, 1)))
-
-  for (multiple in multiples) {
-    # `zero` haystack with `no_match = "error"`
-    expect_identical(matches(zero, zero, multiple = multiple, no_match = "error"), exp(integer(), integer()))
-    expect_error(matches(one, zero, multiple = multiple, no_match = "error"), "must have a match")
-    expect_error(matches(two, zero, multiple = multiple, no_match = "error"), "must have a match")
-  }
-})
-
-test_that("zero column data frames are not allowed if `condition != NULL`", {
+test_that("zero column data frames are not allowed", {
   expect_error(
     vec_locate_matches(data_frame(.size = 2L), data_frame(.size = 2L)),
     "at least 1 column"
@@ -1371,13 +1300,6 @@ test_that("NA adjustment of `>` and `>=` conditions is protected from empty hays
   expect_identical(res$haystack, NA_integer_)
 })
 
-test_that("`condition = NULL` works with `no_match = 'drop'`", {
-  # All needles are unmatched with an empty haystack
-  res <- vec_locate_matches(1:2, integer(), condition = NULL, no_match = "drop")
-  expect_identical(res$needles, integer())
-  expect_identical(res$haystack, integer())
-})
-
 test_that("potential overflow on large output size is caught informatively", {
   # Windows 32-bit doesn't support long vectors of this size, and the
   # intermediate `r_ssize` will be too large
@@ -1385,6 +1307,5 @@ test_that("potential overflow on large output size is caught informatively", {
 
   expect_snapshot({
     (expect_error(vec_locate_matches(1:1e7, 1:1e7, condition = ">=")))
-    (expect_error(vec_locate_matches(1:1e7, 1:1e7, condition = NULL)))
   })
 })

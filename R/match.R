@@ -21,9 +21,7 @@
 #' ```
 #'
 #' `vec_locate_matches()` is extremely similar to a SQL join between `needles`
-#' and `haystack`, with the default being most similar to a left join. Using
-#' `condition` is analogous to specifying a SQL ON statement, and `condition =
-#' NULL` is identical to specifying a join without an ON statement.
+#' and `haystack`, with the default being most similar to a left join.
 #'
 #' Be very careful when specifying match `condition`s. If a condition is
 #' mis-specified, it is very easy to accidentally generate an exponentially
@@ -48,10 +46,6 @@
 #'   - For data frames, a length `1` or `ncol(needles)` character vector
 #'     containing only the above options, specifying how matching is determined
 #'     for each column.
-#'   - Alternatively, specify `NULL` to perform a cross match. In this case,
-#'     every observation of `needles` matches against every observation of
-#'     `haystack`, regardless of the specific values. This overrides any usage
-#'     of `filter`.
 #'
 #' @param filter Filter to be applied to the matched results.
 #'   - `"none"` doesn't apply any filter.
@@ -190,13 +184,15 @@
 #'   y = vec_slice(y, matches$haystack)
 #' )
 #'
-#' # You can also specify `condition = NULL` to generate a cross match where
-#' # every observation in `needles` matches all observations in `haystack`.
-#' # This ignores the actual values, and depends only on the size of the inputs.
-#' matches <- vec_locate_matches(x, y, condition = NULL)
+#' # In the very rare case that you need to generate locations for a
+#' # cross match, where every observation of `x` is forced to match every
+#' # observation of `y` regardless of what the actual values are, you can
+#' # replace `x` and `y` with integer vectors of the same size that contain
+#' # a single value and match on those instead.
+#' x_proxy <- vec_rep(1L, vec_size(x))
+#' y_proxy <- vec_rep(1L, vec_size(y))
+#' nrow(vec_locate_matches(x_proxy, y_proxy))
 #' vec_size(x) * vec_size(y)
-#' nrow(matches)
-#' head(matches, n = 10)
 #'
 #' # By default, missing values will match other missing values when using
 #' # `==`, `>=`, or `<=` conditions, but not when using `>` or `<` conditions.
