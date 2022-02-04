@@ -271,6 +271,24 @@ vec_locate_matches <- function(needles,
 
 # ------------------------------------------------------------------------------
 
+#' Internal FAQ - Implementation of `vec_locate_matches()`
+#'
+#' ```{r, child = "man/faq/internal/matches-algorithm.Rmd"}
+#' ```
+#'
+#' @name internal-faq-matches-algorithm
+NULL
+
+# ------------------------------------------------------------------------------
+
+# Helper used for testing and in the internal FAQ.
+# It needs to live in R/ to be usable by the FAQ Rmd.
+compute_nesting_container_info <- function(x, condition) {
+  .Call(vctrs_test_compute_nesting_container_info, x, condition)
+}
+
+# ------------------------------------------------------------------------------
+
 stop_matches <- function(class = NULL, ...) {
   stop_vctrs(
     class = c(class, "vctrs_error_matches"),
