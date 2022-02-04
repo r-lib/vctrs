@@ -194,8 +194,8 @@ r_obj* vec_locate_matches(r_obj* needles,
     haystack = KEEP_N(r_list(haystack), &n_prot);
 
     r_obj* names = KEEP_N(r_chr("x"), &n_prot);
-    r_poke_names(needles, names);
-    r_poke_names(haystack, names);
+    r_attrib_poke_names(needles, names);
+    r_attrib_poke_names(haystack, names);
 
     r_init_data_frame(needles, size_needles);
     r_init_data_frame(haystack, size_haystack);
@@ -1241,7 +1241,7 @@ r_obj* df_joint_xtfrm_by_col(r_obj* x,
 static
 r_obj* df_detect_complete_by_col(r_obj* x, r_ssize x_size, r_ssize n_cols) {
   r_obj* out = KEEP(r_alloc_list(n_cols));
-  r_poke_names(out, r_names(x));
+  r_attrib_poke_names(out, r_names(x));
   r_init_data_frame(out, x_size);
 
   r_obj* const* v_x = r_list_cbegin(x);
@@ -1506,7 +1506,7 @@ r_obj* new_matches_result(r_obj* needles, r_obj* haystack) {
   r_list_poke(out, 1, haystack);
 
   r_obj* names = r_alloc_character(2);
-  r_poke_names(out, names);
+  r_attrib_poke_names(out, names);
 
   r_chr_poke(names, 0, strings_needles);
   r_chr_poke(names, 1, strings_haystack);
@@ -2005,7 +2005,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
     // "Outer" data frame columns before the first non-equi condition
     r_obj* haystack_outer = KEEP_N(r_alloc_list(first_non_equi), &n_prot);
     r_obj* haystack_outer_names = r_alloc_character(first_non_equi);
-    r_poke_names(haystack_outer, haystack_outer_names);
+    r_attrib_poke_names(haystack_outer, haystack_outer_names);
     r_init_data_frame(haystack_outer, size_haystack);
     for (r_ssize i = 0; i < first_non_equi; ++i) {
       r_list_poke(haystack_outer, i, v_haystack[i]);
@@ -2015,7 +2015,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
     // "Inner" data frame columns at and after the first non-equi condition
     r_obj* haystack_inner = KEEP_N(r_alloc_list(n_cols - first_non_equi), &n_prot);
     r_obj* haystack_inner_names = r_alloc_character(n_cols - first_non_equi);
-    r_poke_names(haystack_inner, haystack_inner_names);
+    r_attrib_poke_names(haystack_inner, haystack_inner_names);
     r_init_data_frame(haystack_inner, size_haystack);
     for (r_ssize i = first_non_equi, j = 0; i < n_cols; ++i, ++j) {
       r_list_poke(haystack_inner, j, v_haystack[i]);
@@ -2096,7 +2096,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
   r_list_poke(df, 1, haystack_proxy);
 
   r_obj* df_names = r_alloc_character(2);
-  r_poke_names(df, df_names);
+  r_attrib_poke_names(df, df_names);
   r_chr_poke(df_names, 0, r_str("container_ids"));
   r_chr_poke(df_names, 1, r_str("haystack_proxy"));
 
