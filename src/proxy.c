@@ -79,7 +79,7 @@ static r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method);
 
 /*
  * Specialized internal variant of `vec_proxy_order()` used in
- * `vec_locate_matches()`. It generally just calls `vec_proxy_order()`,except
+ * `vec_locate_matches()`. It generally just calls `vec_proxy_order()`, except
  * in the case where we are taking the order-proxy of a list. This generates a
  * proxy that orders by first appearance, so we need to combine `x` and `y` to
  * jointly compute the proxy for comparisons to be correct in
@@ -98,7 +98,8 @@ static r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method);
  * We don't anticipate any other classes having this issue. Most order-proxies
  * should be orderable by typical comparison operators.
  * If that assumption proves incorrect, we may need to expose a new proxy
- * for this.
+ * generic for this so class authors can customize the joint order proxy
+ * calculation as needed.
  */
 // [[ include("vctrs.h") ]]
 r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
@@ -185,10 +186,10 @@ r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method) {
   // NOTE: Without long vector support, this limits the maximum allowed
   // size of `vec_locate_matches()` input to
   // `vec_size(x) + vec_size(y) <= INT_MAX`
-  // when list columns are used. This should be incredibly rare.
+  // when list columns are used. Hitting this limit should be incredibly rare.
   r_obj* combined = KEEP(vec_c(out, ptype, zap, p_no_repair_opts));
 
-  // Compute order-proxy
+  // Compute joint order-proxy
   r_obj* proxy = KEEP(vec_proxy_order_invoke(combined, method));
 
   // Separate and store back in `out`
