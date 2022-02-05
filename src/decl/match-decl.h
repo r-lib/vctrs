@@ -60,7 +60,7 @@ void df_locate_matches_recurse(r_ssize col,
                                struct r_dyn_array* p_loc_first_match_o_haystack,
                                struct r_dyn_array* p_size_match,
                                struct r_dyn_array* p_loc_needles,
-                               int* v_loc_filter_match_haystack);
+                               int* v_loc_filter_match_o_haystack);
 
 static
 void df_locate_matches_with_containers(int n_containers,
@@ -84,7 +84,7 @@ void df_locate_matches_with_containers(int n_containers,
                                        struct r_dyn_array* p_loc_first_match_o_haystack,
                                        struct r_dyn_array* p_size_match,
                                        struct r_dyn_array* p_loc_needles,
-                                       int* v_loc_filter_match_haystack);
+                                       int* v_loc_filter_match_o_haystack);
 
 static inline
 r_ssize int_locate_upper_incomplete(const int* v_haystack_complete,
@@ -155,9 +155,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               r_ssize size_needles,
                               r_ssize size_haystack,
                               bool any_non_equi,
-                              bool has_loc_filter_match_haystack,
+                              bool has_loc_filter_match_o_haystack,
                               const enum vctrs_filter* v_filters,
-                              const int* v_loc_filter_match_haystack,
+                              const int* v_loc_filter_match_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
                               struct vctrs_arg* haystack_arg);

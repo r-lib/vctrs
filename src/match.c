@@ -343,10 +343,10 @@ r_obj* df_locate_matches(r_obj* needles,
   }
 
   // When filtering, we find the filtered match for a particular needle in each
-  // nesting container of the haystack. `loc_filter_match_haystack`
+  // nesting container of the haystack. `v_loc_filter_match_o_haystack`
   // keeps track of the overall filtered match loc for a needle across all
   // nesting containers in the haystack.
-  const bool has_loc_filter_match_haystack =
+  const bool has_loc_filter_match_o_haystack =
     any_filters &&
     (multiple == VCTRS_MULTIPLE_all ||
      multiple == VCTRS_MULTIPLE_warning ||
@@ -354,10 +354,10 @@ r_obj* df_locate_matches(r_obj* needles,
      multiple == VCTRS_MULTIPLE_first ||
      multiple == VCTRS_MULTIPLE_last);
 
-  int* v_loc_filter_match_haystack = NULL;
-  if (has_loc_filter_match_haystack) {
-    r_obj* loc_filter_match_haystack = KEEP_N(r_alloc_integer(size_needles), &n_prot);
-    v_loc_filter_match_haystack = r_int_begin(loc_filter_match_haystack);
+  int* v_loc_filter_match_o_haystack = NULL;
+  if (has_loc_filter_match_o_haystack) {
+    r_obj* loc_filter_match_o_haystack = KEEP_N(r_alloc_integer(size_needles), &n_prot);
+    v_loc_filter_match_o_haystack = r_int_begin(loc_filter_match_o_haystack);
   }
 
   struct poly_vec* p_poly_needles = new_poly_vec(needles, vctrs_type_dataframe);
@@ -408,7 +408,7 @@ r_obj* df_locate_matches(r_obj* needles,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack
+        v_loc_filter_match_o_haystack
       );
     } else {
       df_locate_matches_with_containers(
@@ -433,7 +433,7 @@ r_obj* df_locate_matches(r_obj* needles,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack
+        v_loc_filter_match_o_haystack
       );
     }
   }
@@ -452,9 +452,9 @@ r_obj* df_locate_matches(r_obj* needles,
     size_needles,
     size_haystack,
     any_non_equi,
-    has_loc_filter_match_haystack,
+    has_loc_filter_match_o_haystack,
     v_filters,
-    v_loc_filter_match_haystack,
+    v_loc_filter_match_o_haystack,
     p_haystack,
     needles_arg,
     haystack_arg
@@ -486,7 +486,7 @@ void df_locate_matches_recurse(r_ssize col,
                                struct r_dyn_array* p_loc_first_match_o_haystack,
                                struct r_dyn_array* p_size_match,
                                struct r_dyn_array* p_loc_needles,
-                               int* v_loc_filter_match_haystack) {
+                               int* v_loc_filter_match_o_haystack) {
   const enum vctrs_ops op = v_ops[col];
   const enum vctrs_filter filter = v_filters[col];
   const r_ssize n_col = p_needles->n_col;
@@ -562,7 +562,7 @@ void df_locate_matches_recurse(r_ssize col,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack
+        v_loc_filter_match_o_haystack
       );
     }
     if (do_rhs) {
@@ -589,7 +589,7 @@ void df_locate_matches_recurse(r_ssize col,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack
+        v_loc_filter_match_o_haystack
       );
     }
 
@@ -760,7 +760,7 @@ void df_locate_matches_recurse(r_ssize col,
         p_loc_first_match_o_haystack,
         p_size_match,
         p_loc_needles,
-        v_loc_filter_match_haystack
+        v_loc_filter_match_o_haystack
       );
     } else {
       // We just finished locating matches for the last column,
@@ -813,20 +813,21 @@ void df_locate_matches_recurse(r_ssize col,
             R_ARR_POKE(int, p_size_match, loc_needles, size_match);
 
             if (any_filters) {
-              const int loc_upper_match_haystack = v_o_haystack[loc_upper_match_o_haystack] - 1;
-              v_loc_filter_match_haystack[loc_needles] = loc_upper_match_haystack;
+              v_loc_filter_match_o_haystack[loc_needles] = loc_lower_match_o_haystack;
             }
 
             break;
           }
 
           if (any_filters) {
-            const int loc_filter_match_haystack = v_loc_filter_match_haystack[loc_needles];
-            const int loc_upper_match_haystack = v_o_haystack[loc_upper_match_o_haystack] - 1;
+            const int loc_filter_match_o_haystack = v_loc_filter_match_o_haystack[loc_needles];
 
-            int cmp = p_matches_df_compare_na_equal(
+            const int loc_filter_match_haystack = v_o_haystack[loc_filter_match_o_haystack] - 1;
+            const int loc_lower_match_haystack = v_o_haystack[loc_lower_match_o_haystack] - 1;
+
+            const int cmp = p_matches_df_compare_na_equal(
               p_haystack,
-              loc_upper_match_haystack,
+              loc_lower_match_haystack,
               p_haystack,
               loc_filter_match_haystack,
               v_filters
@@ -842,7 +843,7 @@ void df_locate_matches_recurse(r_ssize col,
             if (cmp == -1) {
               break;
             } else if (cmp == 1) {
-              v_loc_filter_match_haystack[loc_needles] = loc_upper_match_haystack;
+              v_loc_filter_match_o_haystack[loc_needles] = loc_lower_match_o_haystack;
             }
           }
 
@@ -959,7 +960,7 @@ void df_locate_matches_recurse(r_ssize col,
       p_loc_first_match_o_haystack,
       p_size_match,
       p_loc_needles,
-      v_loc_filter_match_haystack
+      v_loc_filter_match_o_haystack
     );
   }
   if (do_rhs) {
@@ -983,7 +984,7 @@ void df_locate_matches_recurse(r_ssize col,
       p_loc_first_match_o_haystack,
       p_size_match,
       p_loc_needles,
-      v_loc_filter_match_haystack
+      v_loc_filter_match_o_haystack
     );
   }
 }
@@ -1012,7 +1013,7 @@ void df_locate_matches_with_containers(int n_containers,
                                        struct r_dyn_array* p_loc_first_match_o_haystack,
                                        struct r_dyn_array* p_size_match,
                                        struct r_dyn_array* p_loc_needles,
-                                       int* v_loc_filter_match_haystack) {
+                                       int* v_loc_filter_match_o_haystack) {
   const int* v_haystack = v_container_ids;
 
   for (int i = 0; i < n_containers; ++i) {
@@ -1049,7 +1050,7 @@ void df_locate_matches_with_containers(int n_containers,
       p_loc_first_match_o_haystack,
       p_size_match,
       p_loc_needles,
-      v_loc_filter_match_haystack
+      v_loc_filter_match_o_haystack
     );
 
     // Advance lower bound for next container
@@ -1513,9 +1514,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               r_ssize size_needles,
                               r_ssize size_haystack,
                               bool any_non_equi,
-                              bool has_loc_filter_match_haystack,
+                              bool has_loc_filter_match_o_haystack,
                               const enum vctrs_filter* v_filters,
-                              const int* v_loc_filter_match_haystack,
+                              const int* v_loc_filter_match_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
                               struct vctrs_arg* haystack_arg) {
@@ -1669,21 +1670,23 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       }
     }
 
-    if (has_loc_filter_match_haystack) {
+    if (has_loc_filter_match_o_haystack) {
       // When recording matches, if we updated the filter match value for a
       // particular needle, then we weren't able to remove the old match from
       // `p_loc_first_match_o_haystack`. So we need to check that the current
       // match value in the haystack is the same as the recorded filter match
       // value for this needle. If it is the same, we continue, otherwise we
       // move on to the next value.
-      const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
-      const int loc_filter_match_haystack = v_loc_filter_match_haystack[loc_needles];
+      const int loc_filter_match_o_haystack = v_loc_filter_match_o_haystack[loc_needles];
 
       bool equal = false;
 
-      if (loc_first_match_haystack == loc_filter_match_haystack) {
+      if (loc_filter_match_o_haystack == loc_first_match_o_haystack) {
         equal = true;
       } else {
+        const int loc_filter_match_haystack = v_o_haystack[loc_filter_match_o_haystack] - 1;
+        const int loc_first_match_haystack = v_o_haystack[loc_first_match_o_haystack] - 1;
+
         equal = p_matches_df_equal_na_equal(
           p_haystack,
           loc_first_match_haystack,
@@ -1802,7 +1805,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   if (loc_out < size_out) {
     // Can happen with a `filter` and `multiple = "all"`, where it is possible
     // for potential matches coming from a different nesting container
-    // to be skipped over in the `has_loc_filter_match_haystack` section.
+    // to be skipped over in the `has_loc_filter_match_o_haystack` section.
     // Can also happen with `no_match = "drop"` or `incomplete = "drop"`.
     // This resize should be essentially free by setting truelength/growable.
     size_out = loc_out;
