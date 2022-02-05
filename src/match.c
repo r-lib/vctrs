@@ -261,7 +261,13 @@ r_obj* df_locate_matches(r_obj* needles,
                          struct vctrs_arg* haystack_arg) {
   int n_prot = 0;
 
-  r_obj* o_needles = KEEP_N(vec_order(needles, chrs_asc, chrs_smallest, true, r_null), &n_prot);
+  r_obj* o_needles = KEEP_N(vec_order(
+    needles,
+    chrs_asc,
+    chrs_smallest,
+    true,
+    r_null
+  ), &n_prot);
   const int* v_o_needles = r_int_cbegin(o_needles);
 
   r_obj* container_info = KEEP_N(compute_nesting_container_info(
