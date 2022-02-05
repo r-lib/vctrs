@@ -95,13 +95,8 @@ r_obj* ffi_locate_matches(r_obj* needles,
   const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match);
   const struct vctrs_remaining c_remaining = parse_remaining(remaining);
-  enum vctrs_multiple c_multiple = parse_multiple(multiple);
-
-  // TODO: Use `r_arg_as_bool()`
-  if (!r_is_bool(nan_distinct)) {
-    r_abort("`nan_distinct` must be a single `TRUE` or `FALSE`.");
-  }
-  bool c_nan_distinct = r_lgl_get(nan_distinct, 0);
+  const enum vctrs_multiple c_multiple = parse_multiple(multiple);
+  const bool c_nan_distinct = r_arg_as_bool(nan_distinct, "nan_distinct");
 
   struct vctrs_arg c_needles_arg = vec_as_arg(needles_arg);
   struct vctrs_arg c_haystack_arg = vec_as_arg(haystack_arg);
