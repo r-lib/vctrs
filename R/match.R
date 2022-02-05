@@ -253,7 +253,7 @@ vec_locate_matches <- function(needles,
   check_dots_empty0(...)
 
   .Call(
-    vctrs_locate_matches,
+    ffi_locate_matches,
     needles,
     haystack,
     condition,
@@ -325,7 +325,7 @@ NULL
 # Helper used for testing and in the internal FAQ.
 # It needs to live in R/ to be usable by the FAQ Rmd.
 compute_nesting_container_info <- function(x, condition) {
-  .Call(vctrs_test_compute_nesting_container_info, x, condition)
+  .Call(ffi_compute_nesting_container_info, x, condition)
 }
 
 # ------------------------------------------------------------------------------

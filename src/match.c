@@ -80,18 +80,18 @@ struct vctrs_match_bounds {
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-r_obj* vctrs_locate_matches(r_obj* needles,
-                            r_obj* haystack,
-                            r_obj* condition,
-                            r_obj* filter,
-                            r_obj* incomplete,
-                            r_obj* no_match,
-                            r_obj* remaining,
-                            r_obj* multiple,
-                            r_obj* nan_distinct,
-                            r_obj* chr_proxy_collate,
-                            r_obj* needles_arg,
-                            r_obj* haystack_arg) {
+r_obj* ffi_locate_matches(r_obj* needles,
+                          r_obj* haystack,
+                          r_obj* condition,
+                          r_obj* filter,
+                          r_obj* incomplete,
+                          r_obj* no_match,
+                          r_obj* remaining,
+                          r_obj* multiple,
+                          r_obj* nan_distinct,
+                          r_obj* chr_proxy_collate,
+                          r_obj* needles_arg,
+                          r_obj* haystack_arg) {
   const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match);
   const struct vctrs_remaining c_remaining = parse_remaining(remaining);
@@ -1893,9 +1893,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
 // -----------------------------------------------------------------------------
 
+// Registered for testing purposes
 // [[ register() ]]
-r_obj* vctrs_test_compute_nesting_container_info(r_obj* haystack,
-                                                 r_obj* condition) {
+r_obj* ffi_compute_nesting_container_info(r_obj* haystack, r_obj* condition) {
   r_ssize n_cols = r_length(haystack);
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, n_cols, v_ops);
