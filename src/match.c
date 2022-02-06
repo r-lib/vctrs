@@ -1569,9 +1569,12 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
   const int* v_o_loc_needles = NULL;
   if (!skip_loc_needles) {
-    // `loc_needles` is used when we compactly recorded all matches. The first
-    // `size_needles` elements will be in order, but locations after that
-    // are extra matches across different nesting containers and won't be in order.
+    // `loc_needles` is used to record the location of the needle that the
+    // matches correspond to. The first `size_needles` elements will be in
+    // sequential order, but locations after that correspond to the "extra"
+    // matches gathered from different nesting containers. We need the order of
+    // this `loc_needles` vector so we can process all the matches for needle 1,
+    // then 2, then 3, etc, in that order, across all nesting containers.
     r_obj* loc_needles = KEEP_N(r_arr_unwrap(p_loc_needles), &n_prot);
     r_obj* o_loc_needles = KEEP_N(vec_order(loc_needles, chrs_asc, chrs_smallest, true, r_null), &n_prot);
     v_o_loc_needles = r_int_cbegin(o_loc_needles);
@@ -1584,7 +1587,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     v_detect_remaining_haystack = r_int_begin(detect_remaining_haystack);
 
     for (r_ssize i = 0; i < size_haystack; ++i) {
-      // Initialize to remaining (i.e. unmatched)
+      // Initialize to "remaining" (i.e. this haystack value wasn't matched)
       v_detect_remaining_haystack[i] = 1;
     }
   }
