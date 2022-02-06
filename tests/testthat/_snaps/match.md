@@ -116,6 +116,17 @@
       ! Each element of `foo` must have a match in `bar`.
       x The element at location 1 does not have a match.
 
+# errors with the right location on unmatched needles when different nesting containers are present
+
+    Code
+      (expect_error(vec_locate_matches(df, df2, condition = ">=", no_match = "error"))
+      )
+    Output
+      <error/vctrs_error_matches_nothing>
+      Error in `stop_matches()`:
+      ! Each element must have a match.
+      x The element at location 2 does not have a match.
+
 # `no_match` is validated
 
     Code

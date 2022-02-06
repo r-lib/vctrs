@@ -982,6 +982,16 @@ test_that("`no_match = 'drop'` doesn't drop handled incomplete values", {
   expect_identical(res$haystack, c(rep(NA, 3), 2L))
 })
 
+test_that("errors with the right location on unmatched needles when different nesting containers are present", {
+  df <- data_frame(x = 2:1, y = 2:1)
+  df2 <- data_frame(x = 1:2, y = 2:1)
+
+  # i.e. should be location 2
+  expect_snapshot(
+    (expect_error(vec_locate_matches(df, df2, condition = ">=", no_match = "error")))
+  )
+})
+
 test_that("`no_match` is validated", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1, 2, no_match = 1.5)))

@@ -1665,7 +1665,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_NO_MATCH_ACTION_error: {
-        stop_matches_nothing(i, needles_arg, haystack_arg);
+        stop_matches_nothing(loc_needles, needles_arg, haystack_arg);
       }
       default: {
         r_stop_internal("expand_compact_indices", "Unknown `no_match->action`.");
