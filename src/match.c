@@ -1916,7 +1916,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
                                       r_ssize size_haystack,
                                       const enum vctrs_ops* v_ops,
                                       struct vctrs_arg* haystack_arg) {
-  r_ssize n_prot = 0;
+  int n_prot = 0;
 
   const r_ssize n_cols = r_length(haystack);
 
