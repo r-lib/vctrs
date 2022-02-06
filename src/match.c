@@ -1738,19 +1738,37 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         );
       }
 
-      for (r_ssize j = 0; j < size_match; ++j) {
-        const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
+      if (loc_haystack_overall == r_globals.na_int) {
+        // Start of a new needle
+        loc_haystack_overall = v_o_haystack[loc_o_haystack] - 1;
+      }
 
-        const bool loc_is_new_overall =
-          (loc_haystack_overall == r_globals.na_int) ||
-          (multiple == VCTRS_MULTIPLE_first && loc_haystack_overall > loc_haystack) ||
-          (multiple == VCTRS_MULTIPLE_last && loc_haystack_overall < loc_haystack);
+      // Branching here seems to help a good bit when there are many matches
+      if (multiple == VCTRS_MULTIPLE_first) {
+        for (r_ssize j = 0; j < size_match; ++j) {
+          const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
 
-        if (loc_is_new_overall) {
-          loc_haystack_overall = loc_haystack;
+          if (loc_haystack_overall > loc_haystack) {
+            loc_haystack_overall = loc_haystack;
+          }
+
+          ++loc_o_haystack;
         }
+      } else if (multiple == VCTRS_MULTIPLE_last) {
+        for (r_ssize j = 0; j < size_match; ++j) {
+          const int loc_haystack = v_o_haystack[loc_o_haystack] - 1;
 
-        ++loc_o_haystack;
+          if (loc_haystack_overall < loc_haystack) {
+            loc_haystack_overall = loc_haystack;
+          }
+
+          ++loc_o_haystack;
+        }
+      } else {
+        r_stop_internal(
+          "expand_compact_indices",
+          "`multiple` should only be 'first' or 'last' here."
+        );
       }
 
       const bool at_end_of_all_matches = (i == n_used - 1);
