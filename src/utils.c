@@ -1520,6 +1520,8 @@ SEXP strings_group = NULL;
 SEXP strings_length = NULL;
 SEXP strings_vctrs_vctr = NULL;
 SEXP strings_times = NULL;
+SEXP strings_needles = NULL;
+SEXP strings_haystack = NULL;
 
 SEXP chrs_subset = NULL;
 SEXP chrs_extract = NULL;
@@ -1543,6 +1545,10 @@ SEXP chrs_cast = NULL;
 SEXP chrs_error = NULL;
 SEXP chrs_combine = NULL;
 SEXP chrs_convert = NULL;
+SEXP chrs_asc = NULL;
+SEXP chrs_desc = NULL;
+SEXP chrs_largest = NULL;
+SEXP chrs_smallest = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1559,6 +1565,8 @@ SEXP syms_y_arg = NULL;
 SEXP syms_to_arg = NULL;
 SEXP syms_times_arg = NULL;
 SEXP syms_subscript_arg = NULL;
+SEXP syms_needles_arg = NULL;
+SEXP syms_haystack_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
 SEXP syms_quiet = NULL;
@@ -1590,6 +1598,11 @@ SEXP syms_s3_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_stop_assert_size = NULL;
+SEXP syms_stop_matches_nothing = NULL;
+SEXP syms_stop_matches_remaining = NULL;
+SEXP syms_stop_matches_incomplete = NULL;
+SEXP syms_stop_matches_multiple = NULL;
+SEXP syms_warn_matches_multiple = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
@@ -1661,7 +1674,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = r_new_shared_vector(STRSXP, 21);
+  strings = r_new_shared_vector(STRSXP, 23);
 
   strings_dots = Rf_mkChar("...");
   SET_STRING_ELT(strings, 0, strings_dots);
@@ -1726,6 +1739,12 @@ void vctrs_init_utils(SEXP ns) {
   strings_times = Rf_mkChar("times");
   SET_STRING_ELT(strings, 20, strings_times);
 
+  strings_needles = Rf_mkChar("needles");
+  SET_STRING_ELT(strings, 21, strings_needles);
+
+  strings_haystack = Rf_mkChar("haystack");
+  SET_STRING_ELT(strings, 22, strings_haystack);
+
 
   classes_data_frame = r_new_shared_vector(STRSXP, 1);
   strings_data_frame = Rf_mkChar("data.frame");
@@ -1767,6 +1786,10 @@ void vctrs_init_utils(SEXP ns) {
   chrs_error = r_new_shared_character("error");
   chrs_combine = r_new_shared_character("combine");
   chrs_convert = r_new_shared_character("convert");
+  chrs_asc = r_new_shared_character("asc");
+  chrs_desc = r_new_shared_character("desc");
+  chrs_largest = r_new_shared_character("largest");
+  chrs_smallest = r_new_shared_character("smallest");
 
   classes_tibble = r_new_shared_vector(STRSXP, 3);
 
@@ -1827,6 +1850,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_to_arg = Rf_install("to_arg");
   syms_times_arg = Rf_install("times_arg");
   syms_subscript_arg = Rf_install("subscript_arg");
+  syms_needles_arg = Rf_install("needles_arg");
+  syms_haystack_arg = Rf_install("haystack_arg");
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
   syms_quiet = Rf_install("quiet");
@@ -1860,6 +1885,11 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
   syms_stop_assert_size = Rf_install("stop_assert_size");
+  syms_stop_matches_nothing = Rf_install("stop_matches_nothing");
+  syms_stop_matches_remaining = Rf_install("stop_matches_remaining");
+  syms_stop_matches_incomplete = Rf_install("stop_matches_incomplete");
+  syms_stop_matches_multiple = Rf_install("stop_matches_multiple");
+  syms_warn_matches_multiple = Rf_install("warn_matches_multiple");
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
