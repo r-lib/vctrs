@@ -38,7 +38,7 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   case vctrs_type_s3:          return s3_type(x, x_arg, call);
   case vctrs_type_scalar:      stop_scalar_type(x, x_arg, call);
   }
-  r_stop_unreached("vec_ptype");
+  r_stop_unreachable();
 }
 
 static

@@ -17,7 +17,7 @@ double* r_dbl_begin(r_obj* x) {
   return REAL(x);
 }
 static inline
-r_complex_t* r_cpl_begin(r_obj* x) {
+r_complex* r_cpl_begin(r_obj* x) {
   return COMPLEX(x);
 }
 static inline
@@ -38,8 +38,8 @@ const double* r_dbl_cbegin(r_obj* x) {
   return (const double*) REAL(x);
 }
 static inline
-const r_complex_t* r_cpl_cbegin(r_obj* x) {
-  return (const r_complex_t*) COMPLEX(x);
+const r_complex* r_cpl_cbegin(r_obj* x) {
+  return (const r_complex*) COMPLEX(x);
 }
 static inline
 const void* r_raw_cbegin(r_obj* x) {
@@ -66,7 +66,7 @@ void* r_vec_begin0(enum r_type type, r_obj* x) {
   case R_TYPE_double: return r_dbl_begin(x);
   case R_TYPE_complex: return r_cpl_begin(x);
   case R_TYPE_raw: return r_raw_begin(x);
-  default: r_stop_unimplemented_type("r_vec_begin", type);
+  default: r_stop_unimplemented_type(type);
   }
 }
 static inline
@@ -84,7 +84,7 @@ const void* r_vec_cbegin0(enum r_type type, r_obj* x) {
   case R_TYPE_raw: return r_raw_cbegin(x);
   case R_TYPE_character: return r_chr_cbegin(x);
   case R_TYPE_list: return r_list_cbegin(x);
-  default: r_stop_unimplemented_type("r_vec_cbegin", type);
+  default: r_stop_unimplemented_type(type);
   }
 }
 static inline
@@ -98,11 +98,11 @@ int r_vec_elt_sizeof0(enum r_type type) {
   case R_TYPE_logical: return sizeof(int);
   case R_TYPE_integer: return sizeof(int);
   case R_TYPE_double: return sizeof(double);
-  case R_TYPE_complex: return sizeof(r_complex_t);
+  case R_TYPE_complex: return sizeof(r_complex);
   case R_TYPE_raw: return sizeof(char);
   case R_TYPE_character: return sizeof(r_obj*);
   case R_TYPE_list: return sizeof(r_obj*);
-  default: r_stop_unimplemented_type("r_vec_elt_sizeof", type);
+  default: r_stop_unimplemented_type(type);
   }
 }
 static inline
@@ -123,8 +123,12 @@ double r_dbl_get(r_obj* x, r_ssize i) {
   return REAL(x)[i];
 }
 static inline
-r_complex_t r_cpl_get(r_obj* x, r_ssize i) {
+r_complex r_cpl_get(r_obj* x, r_ssize i) {
   return COMPLEX(x)[i];
+}
+static inline
+char r_raw_get(r_obj* x, r_ssize i) {
+  return RAW(x)[i];
 }
 static inline
 r_obj* r_chr_get(r_obj* x, r_ssize i) {
@@ -152,8 +156,12 @@ void r_dbl_poke(r_obj* x, r_ssize i, double y) {
   REAL(x)[i] = y;
 }
 static inline
-void r_cpl_poke(r_obj* x, r_ssize i, r_complex_t y) {
+void r_cpl_poke(r_obj* x, r_ssize i, r_complex y) {
   COMPLEX(x)[i] = y;
+}
+static inline
+void r_raw_poke(r_obj* x, r_ssize i, char y) {
+  RAW(x)[i] = y;
 }
 static inline
 void r_chr_poke(r_obj* x, r_ssize i, r_obj* y) {
@@ -223,8 +231,12 @@ r_obj* r_dbl(double x) {
   return Rf_ScalarReal(x);
 }
 static inline
-r_obj* r_cpl(r_complex_t x) {
+r_obj* r_cpl(r_complex x) {
   return Rf_ScalarComplex(x);
+}
+static inline
+r_obj* r_raw(char x) {
+  return Rf_ScalarRaw(x);
 }
 static inline
 r_obj* r_str(const char* c_string) {
@@ -264,6 +276,34 @@ r_obj* r_shared_lgl(bool x) {
   } else {
     return r_false;
   }
+}
+
+static inline
+bool _r_has_correct_length(r_obj* x, r_ssize n) {
+  return n < 0 || r_length(x) == n;
+}
+extern
+bool _r_is_finite(r_obj* x);
+
+static inline
+bool _r_is_double(r_obj* x, r_ssize n, int finite) {
+  if (r_typeof(x) != R_TYPE_double || !_r_has_correct_length(x, n)) {
+    return false;
+  }
+  if (finite >= 0 && (bool) finite != _r_is_finite(x)) {
+    return false;
+  }
+  return true;
+}
+static inline
+bool _r_is_complex(r_obj* x, r_ssize n, int finite) {
+  if (r_typeof(x) != R_TYPE_complex || !_r_has_correct_length(x, n)) {
+    return false;
+  }
+  if (finite >= 0 && (bool) finite != _r_is_finite(x)) {
+    return false;
+  }
+  return true;
 }
 
 static inline
@@ -307,6 +347,7 @@ static inline
 bool r_as_bool(r_obj* x) {
   return r_arg_as_bool(x, "x");
 }
+
 static inline
 int r_arg_as_int(r_obj* x, const char* arg) {
   if (!r_is_int(x)) {
@@ -317,6 +358,43 @@ int r_arg_as_int(r_obj* x, const char* arg) {
 static inline
 int r_as_int(r_obj* x) {
   return r_arg_as_int(x, "x");
+}
+
+static inline
+double r_arg_as_double(r_obj* x, const char* arg) {
+  // TODO: Coercion of int and lgl values
+  if (!_r_is_double(x, 1, 1)) {
+    r_abort("`%s` must be a double value.", arg);
+  }
+  return r_dbl_get(x, 0);
+}
+static inline
+double r_as_double(r_obj* x) {
+  return r_arg_as_double(x, "x");
+}
+
+static inline
+r_complex r_arg_as_complex(r_obj* x, const char* arg) {
+  if (!_r_is_complex(x, 1, 1)) {
+    r_abort("`%s` must be a complex value.", arg);
+  }
+  return r_cpl_get(x, 0);
+}
+static inline
+r_complex r_as_complex(r_obj* x) {
+  return r_arg_as_complex(x, "x");
+}
+
+static inline
+char r_arg_as_char(r_obj* x, const char* arg) {
+  if (r_typeof(x) != R_TYPE_raw && r_length(x) != 1) {
+    r_abort("`%s` must be a raw value.", arg);
+  }
+  return r_raw_get(x, 0);
+}
+static inline
+char r_as_char(r_obj* x) {
+  return r_arg_as_char(x, "x");
 }
 
 r_obj* r_lgl_resize(r_obj* x, r_ssize size);
@@ -337,7 +415,7 @@ r_obj* r_vec_resize0(enum r_type type, r_obj* x, r_ssize size) {
   case R_TYPE_raw: return r_raw_resize(x, size);
   case R_TYPE_character: return r_chr_resize(x, size);
   case R_TYPE_list: return r_list_resize(x, size);
-  default: r_stop_unimplemented_type("r_vec_resize", type);
+  default: r_stop_unimplemented_type(type);
   }
 }
 static inline
@@ -361,7 +439,7 @@ r_obj* r_vec_n(enum r_type type, void* v_src, r_ssize n) {
   case R_TYPE_list:
     r_abort("TODO: barrier types in `r_vec_n()`");
   default:
-    r_stop_unimplemented_type("r_vec_n", type);
+    r_stop_unimplemented_type(type);
   }
 }
 

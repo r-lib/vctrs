@@ -16,7 +16,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
     return r_null;
   }
 
-  r_keep_t subscript_pi;
+  r_keep_loc subscript_pi;
   KEEP_HERE(subscript, &subscript_pi);
 
   r_obj* orig_names = KEEP(r_names(subscript));
@@ -284,7 +284,7 @@ enum subscript_type_action parse_subscript_arg_type(r_obj* x,
   if (!strcmp(str, "error")) return SUBSCRIPT_TYPE_ACTION_ERROR;
   stop_subscript_arg_type(kind);
 
-  r_stop_unreached("parse_subscript_arg_type");
+  r_stop_unreachable();
 }
 
 

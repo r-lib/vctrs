@@ -50,7 +50,7 @@ struct r_dict* r_new_dict(r_ssize size) {
   p_dict->p_buckets = r_list_cbegin(p_dict->buckets);
   p_dict->n_buckets = size;
 
-  r_attrib_poke(shelter, r_syms.class, r_chr("rlang_dict"));
+  r_attrib_poke(shelter, r_syms.class_, r_chr("rlang_dict"));
 
   FREE(1);
   return p_dict;
@@ -266,7 +266,7 @@ struct r_dict_iterator* r_new_dict_iterator(struct r_dict* p_dict) {
   p_it->v_buckets = p_dict->p_buckets;
 
   if (p_it->n == 0) {
-    r_stop_internal("r_new_dict_iterator", "Empty dictionary.");
+    r_stop_internal("Empty dictionary.");
   }
   p_it->node = p_it->v_buckets[0];
 

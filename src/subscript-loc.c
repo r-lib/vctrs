@@ -44,7 +44,7 @@ r_obj* vec_as_location_opts(r_obj* subscript,
 
   if (err) {
     r_cnd_signal(err);
-    r_stop_unreached("vec_as_location_opts");
+    r_stop_unreachable();
   }
 
   r_obj* out = r_null;
@@ -54,7 +54,7 @@ r_obj* vec_as_location_opts(r_obj* subscript,
   case R_TYPE_integer: out = int_as_location(subscript, n, opts); break;
   case R_TYPE_double: out = dbl_as_location(subscript, n, opts); break;
   case R_TYPE_character: out = chr_as_location(subscript, names, opts); break;
-  default: r_stop_unimplemented_type("vec_as_location_opts", r_typeof(subscript));
+  default: r_stop_unimplemented_type(r_typeof(subscript));
   }
 
   FREE(2);
@@ -124,7 +124,7 @@ r_obj* lgl_as_location(r_obj* subscript,
   r_obj* n_obj = KEEP(r_int(n));
   stop_indicator_size(subscript, n_obj, opts);
 
-  r_stop_unreached("lgl_as_location");
+  r_stop_unreachable();
 }
 
 static
@@ -424,7 +424,7 @@ enum subscript_missing parse_subscript_arg_missing(r_obj* x,
   if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
   stop_subscript_arg_missing(call);
 
-  r_stop_unreached("stop_subscript_arg_missing");
+  r_stop_unreachable();
 }
 static
 enum num_loc_negative parse_loc_negative(r_obj* x,
@@ -440,7 +440,7 @@ enum num_loc_negative parse_loc_negative(r_obj* x,
   if (!strcmp(str, "ignore")) return LOC_NEGATIVE_IGNORE;
   stop_bad_negative(call);
 
-  r_stop_unreached("stop_bad_negative");
+  r_stop_unreachable();
 }
 static
 enum num_loc_oob parse_loc_oob(r_obj* x,
@@ -455,7 +455,7 @@ enum num_loc_oob parse_loc_oob(r_obj* x,
   if (!strcmp(str, "extend")) return LOC_OOB_EXTEND;
   stop_bad_oob(call);
 
-  r_stop_unreached("stop_bad_oob");
+  r_stop_unreachable();
 }
 static
 enum num_loc_zero parse_loc_zero(r_obj* x,
@@ -471,7 +471,7 @@ enum num_loc_zero parse_loc_zero(r_obj* x,
   if (!strcmp(str, "ignore")) return LOC_ZERO_IGNORE;
   stop_bad_zero(call);
 
-  r_stop_unreached("parse_loc_zero");
+  r_stop_unreachable();
 }
 
 static
@@ -498,7 +498,7 @@ void stop_subscript_missing(r_obj* i,
   vctrs_eval_mask2(r_sym("stop_subscript_missing"),
                    syms_i, i,
                    syms_call, call);
-  r_stop_unreached("stop_subscript_missing");
+  r_stop_unreachable();
 }
 
 static
@@ -511,7 +511,7 @@ void stop_location_negative_missing(r_obj* i,
                    syms_subscript_arg, arg,
                    syms_call, call,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts));
-  r_stop_unreached("stop_location_negative_missing");
+  r_stop_unreachable();
 }
 static
 void stop_location_negative_positive(r_obj* i,
@@ -523,7 +523,7 @@ void stop_location_negative_positive(r_obj* i,
                    syms_subscript_arg, arg,
                    syms_call, call,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts));
-  r_stop_unreached("stop_location_negative_positive");
+  r_stop_unreachable();
 }
 
 static
@@ -540,7 +540,7 @@ void stop_subscript_oob_location(r_obj* i,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts),
                    syms_subscript_arg, arg,
                    syms_call, call);
-  r_stop_unreached("stop_subscript_oob_location");
+  r_stop_unreachable();
 }
 static
 void stop_subscript_oob_name(r_obj* i,
@@ -555,7 +555,7 @@ void stop_subscript_oob_name(r_obj* i,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts),
                    syms_subscript_arg, arg,
                    syms_call, call);
-  r_stop_unreached("stop_subscript_oob_name");
+  r_stop_unreachable();
 }
 
 static
@@ -568,7 +568,7 @@ void stop_location_negative(r_obj* i,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts),
                    syms_subscript_arg, arg,
                    syms_call, call);
-  r_stop_unreached("stop_location_negative");
+  r_stop_unreachable();
 }
 
 static
@@ -581,7 +581,7 @@ void stop_location_zero(r_obj* i,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts),
                    syms_subscript_arg, arg,
                    syms_call, call);
-  r_stop_unreached("stop_location_zero");
+  r_stop_unreachable();
 }
 
 static
@@ -596,7 +596,7 @@ void stop_indicator_size(r_obj* i,
                    syms_subscript_action, get_opts_action(&opts->subscript_opts),
                    syms_subscript_arg, arg,
                    syms_call, call);
-  r_stop_unreached("stop_indicator_size");
+  r_stop_unreachable();
 }
 
 static
@@ -614,7 +614,7 @@ void stop_location_oob_non_consecutive(r_obj* i,
                    syms_call, call);
 
   FREE(1);
-  r_stop_unreached("stop_location_oob_non_consecutive");
+  r_stop_unreachable();
 }
 
 void vctrs_init_subscript_loc(r_obj* ns) { }

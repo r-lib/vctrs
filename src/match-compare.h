@@ -58,10 +58,10 @@ int dbl_order_compare_na_equal(double x, double y, bool nan_distinct) {
   }
   }
 
-  r_stop_unreached("dbl_order_compare_na_equal");
+  r_stop_unreachable();
 }
 static inline
-int cpl_order_compare_na_equal(r_complex_t x, r_complex_t y, bool nan_distinct) {
+int cpl_order_compare_na_equal(r_complex x, r_complex y, bool nan_distinct) {
   x = cpl_normalise_missing(x);
   y = cpl_normalise_missing(y);
 
@@ -99,7 +99,7 @@ int p_dbl_order_compare_na_equal(const void* p_x, r_ssize i, const void* p_y, r_
 }
 static inline
 int p_cpl_order_compare_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j, bool nan_distinct) {
-  P_ORDER_COMPARE_NA_EQUAL(r_complex_t, cpl_order_compare_na_equal);
+  P_ORDER_COMPARE_NA_EQUAL(r_complex, cpl_order_compare_na_equal);
 }
 static inline
 int p_chr_order_compare_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j, bool nan_distinct) {

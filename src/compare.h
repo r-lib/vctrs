@@ -73,7 +73,7 @@ int dbl_compare_na_equal(double x, double y) {
   }
   }
 
-  r_stop_unreached("dbl_compare_na_equal");
+  r_stop_unreachable();
 }
 static inline r_no_return
 int cpl_compare_na_equal(Rcomplex x, Rcomplex y) {

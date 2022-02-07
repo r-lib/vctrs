@@ -14,7 +14,7 @@ void stop_scalar_type(r_obj* x,
                                   KEEP(vctrs_arg(arg)),
                                   ffi_call));
   r_eval(stop_call, vctrs_ns_env);
-  r_stop_unreached("stop_scalar_type");
+  r_stop_unreachable();
 }
 
 // [[ include("vctrs.h") ]]

@@ -50,11 +50,11 @@ r_obj* vec_rank(r_obj* x,
                 r_obj* chr_proxy_collate) {
   r_ssize size = vec_size(x);
 
-  r_keep_t pi_x;
+  r_keep_loc pi_x;
   KEEP_HERE(x, &pi_x);
 
   r_obj* complete = r_null;
-  r_keep_t pi_complete;
+  r_keep_loc pi_complete;
   KEEP_HERE(complete, &pi_complete);
   int* v_complete = NULL;
 
