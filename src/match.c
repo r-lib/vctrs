@@ -885,8 +885,8 @@ void df_locate_matches_recurse(r_ssize col,
   // the `==` op case we can also limit the haystack bounds we search in for
   // needles on the LHS/RHS, since those needles won't ever match the current
   // haystack values.
-  bool do_lhs;
-  bool do_rhs;
+  bool do_lhs = false;
+  bool do_rhs = false;
 
   // Default to current bounds
   r_ssize lhs_loc_lower_bound_o_needles = loc_lower_bound_o_needles;
