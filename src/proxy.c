@@ -104,7 +104,7 @@ static r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method);
 // [[ include("vctrs.h") ]]
 r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
   if (r_typeof(x) != r_typeof(y)) {
-    r_stop_internal("vec_joint_proxy_order", "`x` and `y` should have the same type.");
+    r_stop_internal("`x` and `y` should have the same type.");
   }
 
   if (is_data_frame(x)) {
@@ -137,7 +137,6 @@ r_obj* df_joint_proxy_order(r_obj* x, r_obj* y) {
   r_ssize n_cols = r_length(x);
   if (n_cols != r_length(y)) {
     r_stop_internal(
-      "df_joint_proxy_order",
       "`x` and `y` must have the same number of columns."
     );
   }
@@ -313,7 +312,7 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
 // [[ register() ]]
 SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
   if (!r_is_number(kind)) {
-    r_stop_internal("vctrs_df_proxy", "`kind` must be a single integer.");
+    r_stop_internal("`kind` must be a single integer.");
   }
 
   enum vctrs_proxy_kind c_kind = r_int_get(kind, 0);

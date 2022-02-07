@@ -355,7 +355,7 @@ static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* loss
 
 static void init_factor(SEXP x, SEXP levels) {
   if (TYPEOF(x) != INTSXP) {
-    r_stop_internal("init_factor", "Only integers can be made into factors.");
+    r_stop_internal("Only integers can be made into factors.");
   }
 
   Rf_setAttrib(x, R_LevelsSymbol, levels);
@@ -364,7 +364,7 @@ static void init_factor(SEXP x, SEXP levels) {
 
 static void init_ordered(SEXP x, SEXP levels) {
   if (TYPEOF(x) != INTSXP) {
-    r_stop_internal("init_ordered", "Only integers can be made into ordered factors.");
+    r_stop_internal("Only integers can be made into ordered factors.");
   }
 
   Rf_setAttrib(x, R_LevelsSymbol, levels);

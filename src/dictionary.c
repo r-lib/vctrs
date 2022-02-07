@@ -32,7 +32,7 @@ uint32_t u32_safe_ceil2(uint32_t x) {
     // INT32_MAX+2 <= x <= UINT32_MAX (i.e. 2^31+1 <= x <= 2^32-1) would attempt
     // to ceiling to 2^32, which is 1 greater than `UINT32_MAX`, resulting in
     // overflow wraparound to 0.
-    r_stop_internal("u32_safe_ceil2", "`x` results in an `uint32_t` overflow.");
+    r_stop_internal("`x` results in an `uint32_t` overflow.");
   }
 
   return x;
@@ -151,7 +151,7 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     // quadratic probing.
   }
 
-  r_stop_internal("dict_hash_with", "Dictionary is full.");
+  r_stop_internal("Dictionary is full.");
 }
 
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
@@ -183,13 +183,13 @@ uint32_t dict_key_size(SEXP x) {
 
   if (x_size > R_LEN_T_MAX) {
     // Ensure we catch the switch to supporting long vectors in `vec_size()`
-    r_stop_internal("dict_key_size", "Dictionary functions do not support long vectors.");
+    r_stop_internal("Dictionary functions do not support long vectors.");
   }
 
   const double load_adjusted_size = x_size / 0.77;
 
   if (load_adjusted_size > UINT32_MAX) {
-    r_stop_internal("dict_key_size", "Can't safely cast load adjusted size to a `uint32_t`.");
+    r_stop_internal("Can't safely cast load adjusted size to a `uint32_t`.");
   }
 
   uint32_t size = (uint32_t)load_adjusted_size;
@@ -202,7 +202,7 @@ uint32_t dict_key_size(SEXP x) {
   if (x_size > size) {
     // Should never happen with `R_len_t` sizes.
     // This is a defensive check that will be useful when we support long vectors.
-    r_stop_internal("dict_key_size", "Hash table size must be at least as large as input to avoid a load factor of >100%.");
+    r_stop_internal("Hash table size must be at least as large as input to avoid a load factor of >100%.");
   }
 
   // Rprintf("size: %u\n", size);

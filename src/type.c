@@ -67,10 +67,10 @@ r_obj* s3_type(r_obj* x,
     return df_ptype(x, false);
 
   case vctrs_class_bare_data_frame:
-    r_stop_internal("s3_type", "Bare data frames should be handled by `vec_ptype()`.");
+    r_stop_internal("Bare data frames should be handled by `vec_ptype()`.");
 
   case vctrs_class_none:
-    r_stop_internal("s3_type", "Non-S3 classes should be handled by `vec_ptype()`.");
+    r_stop_internal("Non-S3 classes should be handled by `vec_ptype()`.");
 
   default:
     break;
@@ -179,7 +179,7 @@ SEXP vec_ptype_finalise(SEXP x) {
     return x;
 
   case vctrs_class_none:
-    r_stop_internal("vec_ptype_finalise", "Non-S3 classes should have returned by now.");
+    r_stop_internal("Non-S3 classes should have returned by now.");
 
   default:
     return vec_ptype_finalise_dispatch(x);

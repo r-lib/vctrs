@@ -64,7 +64,7 @@ r_ssize vec_raw_size(r_obj* x) {
   }
 
   if (r_typeof(dimensions) != R_TYPE_integer) {
-    r_stop_internal("vec_raw_size", "Corrupt vector, `dim` attribute is not an integer vector.");
+    r_stop_internal("Corrupt vector, `dim` attribute is not an integer vector.");
   }
 
   return r_int_get(dimensions, 0);
@@ -119,7 +119,7 @@ r_ssize df_size(r_obj* x) {
   r_ssize n = df_rownames_size(x);
 
   if (n < 0) {
-    r_stop_internal("df_size", "Corrupt data frame: row.names are missing");
+    r_stop_internal("Corrupt data frame: row.names are missing");
   }
 
   return n;

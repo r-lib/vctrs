@@ -202,7 +202,7 @@ static SEXP df_slice(SEXP x, SEXP subscript) {
     SEXP elt = VECTOR_ELT(x, i);
 
     if (vec_size(elt) != size) {
-      r_stop_internal("df_slice", "Columns must match the data frame size.");
+      r_stop_internal("Columns must match the data frame size.");
     }
 
     SEXP sliced = vec_slice_unsafe(elt, subscript);
@@ -335,7 +335,7 @@ SEXP vec_slice_unsafe(SEXP x, SEXP subscript) {
 
   switch (info.type) {
   case vctrs_type_null:
-    r_stop_internal("vec_slice_impl", "Unexpected `NULL`.");
+    r_stop_internal("Unexpected `NULL`.");
 
   case vctrs_type_logical:
   case vctrs_type_integer:

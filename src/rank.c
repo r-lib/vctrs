@@ -211,7 +211,7 @@ void vec_rank_dense(const int* v_order,
 static inline
 enum ties parse_ties(r_obj* ties) {
   if (!r_is_string(ties)) {
-    r_stop_internal("parse_ties", "`ties` must be a string.");
+    r_stop_internal("`ties` must be a string.");
   }
 
   const char* c_ties = r_chr_get_c_string(ties, 0);
@@ -222,7 +222,6 @@ enum ties parse_ties(r_obj* ties) {
   if (!strcmp(c_ties, "dense")) return TIES_dense;
 
   r_stop_internal(
-    "parse_ties",
     "`ties` must be one of: \"min\", \"max\", \"sequential\", or \"dense\"."
   );
 }
@@ -232,7 +231,7 @@ enum ties parse_ties(r_obj* ties) {
 static inline
 enum incomplete parse_incomplete(r_obj* incomplete) {
   if (!r_is_string(incomplete)) {
-    r_stop_internal("parse_incomplete", "`incomplete` must be a string.");
+    r_stop_internal("`incomplete` must be a string.");
   }
 
   const char* c_incomplete = r_chr_get_c_string(incomplete, 0);
@@ -241,7 +240,6 @@ enum incomplete parse_incomplete(r_obj* incomplete) {
   if (!strcmp(c_incomplete, "na")) return INCOMPLETE_na;
 
   r_stop_internal(
-    "parse_incomplete",
     "`incomplete` must be either \"rank\" or \"na\"."
   );
 }
@@ -252,7 +250,7 @@ enum incomplete parse_incomplete(r_obj* incomplete) {
 static inline
 bool r_lgl_all(r_obj* x) {
   if (r_typeof(x) != R_TYPE_logical) {
-    r_stop_internal("r_lgl_all", "`x` must be a logical vector.");
+    r_stop_internal("`x` must be a logical vector.");
   }
 
   const int* v_x = r_lgl_cbegin(x);

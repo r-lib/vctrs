@@ -150,8 +150,7 @@ SEXP vctrs_bare_df_restore(SEXP x, SEXP to, SEXP n) {
 // [[ include("vctrs.h") ]]
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned) {
   if (TYPEOF(x) != VECSXP) {
-    r_stop_internal("vec_bare_df_restore",
-                    "Attempt to restore data frame from a %s.",
+    r_stop_internal("Attempt to restore data frame from a %s.",
                     Rf_type2char(TYPEOF(x)));
   }
 

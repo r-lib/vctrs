@@ -31,7 +31,7 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
 
   r_ssize n_col = x_data->n_col;
   if (n_col != y_data->n_col) {
-    r_stop_internal("p_df_equal_na_equal", "`x` and `y` must have the same number of columns.");
+    r_stop_internal("`x` and `y` must have the same number of columns.");
   }
 
   enum vctrs_type* v_col_type = x_data->v_col_type;

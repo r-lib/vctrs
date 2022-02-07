@@ -131,7 +131,7 @@ __attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enu
 static inline
 __attribute__((noreturn))
 void stop_unimplemented_type(const char* fn, SEXPTYPE type) {
-  r_stop_internal(fn, "Unimplemented type `%s`.", Rf_type2char(type));
+  r_stop_internal("Unimplemented type `%s`.", Rf_type2char(type));
 }
 
 

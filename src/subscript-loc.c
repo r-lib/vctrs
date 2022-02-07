@@ -385,7 +385,7 @@ r_obj* ffi_as_location(r_obj* subscript,
     KEEP(ffi_n);
 
     if (r_length(ffi_n) != 1) {
-      r_stop_internal("ffi_as_location", "`n` must be a scalar number.");
+      r_stop_internal("`n` must be a scalar number.");
     }
 
     n = r_int_get(ffi_n, 0);

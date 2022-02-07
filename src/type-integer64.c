@@ -26,10 +26,10 @@ enum integer64_proxy_df_locs {
 // [[ register() ]]
 r_obj* vctrs_integer64_proxy(r_obj* x) {
   if (r_typeof(x) != R_TYPE_double) {
-    r_stop_internal("vctrs_integer64_proxy", "`x` must be a double.");
+    r_stop_internal("`x` must be a double.");
   }
   if (r_attrib_get(x, R_DimSymbol) != r_null) {
-    r_stop_internal("vctrs_integer64_proxy", "`x` should not have a `dim` attribute.");
+    r_stop_internal("`x` should not have a `dim` attribute.");
   }
 
   r_ssize size = r_length(x);
@@ -78,10 +78,10 @@ r_obj* vctrs_integer64_proxy(r_obj* x) {
 // [[ register() ]]
 r_obj* vctrs_integer64_restore(r_obj* x) {
   if (!is_data_frame(x)) {
-    r_stop_internal("vctrs_integer64_restore", "`x` must be a data frame.");
+    r_stop_internal("`x` must be a data frame.");
   }
   if (r_length(x) != 2) {
-    r_stop_internal("vctrs_integer64_restore", "`x` must have two columns.");
+    r_stop_internal("`x` must have two columns.");
   }
 
   r_obj* left = r_list_get(x, INTEGER64_PROXY_DF_LOCS_left);

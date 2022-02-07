@@ -12,14 +12,12 @@ static
 r_obj* vec_interleave_indices(r_ssize n, r_ssize size) {
   if (n < 0) {
     r_stop_internal(
-      "vec_interleave_indices",
       "`n` must be greater than or equal to 0."
     );
   }
 
   if (size < 0) {
     r_stop_internal(
-      "vec_interleave_indices",
       "`size` must be greater than or equal to 0."
     );
   }

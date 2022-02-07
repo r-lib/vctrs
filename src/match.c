@@ -1613,7 +1613,6 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     if (loc_first_match_o_haystack == SIGNAL_INCOMPLETE) {
       if (size_match != 1) {
         r_stop_internal(
-          "expand_compact_indices",
           "`size_match` should always be 1 in the case of incomplete values."
         );
       }
@@ -1635,13 +1634,12 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       case VCTRS_INCOMPLETE_ACTION_compare:
       case VCTRS_INCOMPLETE_ACTION_match: {
         r_stop_internal(
-          "expand_compact_indices",
           "Needles should never be marked as `SIGNAL_INCOMPLETE`",
           "when `incomplete = 'compare'` or `incomplete = 'match'`."
         );
       }
       default: {
-        r_stop_internal("expand_compact_indices", "Unknown `incomplete->action`.");
+        r_stop_internal("Unknown `incomplete->action`.");
       }
       }
     }
@@ -1649,7 +1647,6 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     if (loc_first_match_o_haystack == SIGNAL_NO_MATCH) {
       if (size_match != 1) {
         r_stop_internal(
-          "expand_compact_indices",
           "`size_match` should always be 1 in the case of no matches."
         );
       }
@@ -1668,7 +1665,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         stop_matches_nothing(loc_needles, needles_arg, haystack_arg);
       }
       default: {
-        r_stop_internal("expand_compact_indices", "Unknown `no_match->action`.");
+        r_stop_internal("Unknown `no_match->action`.");
       }
       }
     }
@@ -1733,7 +1730,6 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         // We use `v_loc_needles` unconditionally below because it should always
         // be available when finding the first/last match
         r_stop_internal(
-          "expand_compact_indices",
           "`skip_loc_needles` should never be `true` with `multiple = 'first'/'last'`."
         );
       }
@@ -1766,7 +1762,6 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         }
       } else {
         r_stop_internal(
-          "expand_compact_indices",
           "`multiple` should only be 'first' or 'last' here."
         );
       }
@@ -2135,7 +2130,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
                                      r_ssize n_groups,
                                      bool has_outer_group_sizes) {
   if (!is_data_frame(x)) {
-    r_stop_internal("compute_nesting_container_ids", "`x` must be a data frame.");
+    r_stop_internal("`x` must be a data frame.");
   }
 
   int n_prot = 0;
@@ -2313,7 +2308,7 @@ int p_matches_df_compare_na_equal(const void* x,
       break;
     }
     default: {
-      r_stop_internal("p_matches_df_compare_na_equal", "Unknown `filter`.");
+      r_stop_internal("Unknown `filter`.");
     }
     }
   }

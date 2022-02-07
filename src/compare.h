@@ -34,7 +34,7 @@ int qsort_int_compare_scalar(const void* x, const void* y) {
 
 static inline r_no_return
 int nil_compare_na_equal(r_obj* x, r_obj* y) {
-  r_stop_internal("nil_compare_na_equal", "Can't compare NULL values.");
+  r_stop_internal("Can't compare NULL values.");
 }
 static inline
 int lgl_compare_na_equal(int x, int y) {
@@ -77,7 +77,7 @@ int dbl_compare_na_equal(double x, double y) {
 }
 static inline r_no_return
 int cpl_compare_na_equal(Rcomplex x, Rcomplex y) {
-  r_stop_internal("cpl_compare_na_equal", "Can't compare complex types.");
+  r_stop_internal("Can't compare complex types.");
 }
 static inline
 int chr_compare_na_equal(r_obj* x, r_obj* y) {
@@ -93,11 +93,11 @@ int chr_compare_na_equal(r_obj* x, r_obj* y) {
 }
 static inline r_no_return
 int raw_compare_na_equal(Rbyte x, Rbyte y) {
-  r_stop_internal("raw_compare_na_equal", "Can't compare raw types.");
+  r_stop_internal("Can't compare raw types.");
 }
 static inline r_no_return
 int list_compare_na_equal(r_obj* x, r_obj* y) {
-  r_stop_internal("list_compare_na_equal", "Can't compare list types.");
+  r_stop_internal("Can't compare list types.");
 }
 
 // -----------------------------------------------------------------------------
@@ -164,7 +164,7 @@ bool p_compare_na_equal(const void* p_x,
 
 static inline r_no_return
 int nil_compare_na_propagate(r_obj* x, r_obj* y) {
-  r_stop_internal("nil_compare_na_propagate", "Can't compare NULL values.");
+  r_stop_internal("Can't compare NULL values.");
 }
 static inline
 int lgl_compare_na_propagate(int x, int y) {
@@ -192,7 +192,7 @@ int dbl_compare_na_propagate(double x, double y) {
 }
 static inline r_no_return
 int cpl_compare_na_propagate(Rcomplex x, Rcomplex y) {
-  r_stop_internal("cpl_compare_na_propagate", "Can't compare complex types.");
+  r_stop_internal("Can't compare complex types.");
 }
 static inline
 int chr_compare_na_propagate(r_obj* x, r_obj* y) {
@@ -206,11 +206,11 @@ int chr_compare_na_propagate(r_obj* x, r_obj* y) {
 }
 static inline r_no_return
 int raw_compare_na_propagate(Rbyte x, Rbyte y) {
-  r_stop_internal("raw_compare_na_propagate", "Can't compare raw types.");
+  r_stop_internal("Can't compare raw types.");
 }
 static inline r_no_return
 int list_compare_na_propagate(r_obj* x, r_obj* y) {
-  r_stop_internal("list_compare_na_propagate", "Can't compare list types.");
+  r_stop_internal("Can't compare list types.");
 }
 
 // -----------------------------------------------------------------------------
