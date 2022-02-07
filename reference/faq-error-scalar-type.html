@@ -134,8 +134,8 @@ but in the tidyverse that’s not the case by default:</p><div class="sourceCode
 
 <span class="co"># But not in vctrs</span>
 <span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Error:</span>
-<span class="co">#&gt; ! Input must be a vector, not a &lt;lm&gt; object.</span></code></pre><p></p></div>
+<span class="co">#&gt; Error in `vctrs::vec_slice()`:</span>
+<span class="co">#&gt; ! `x` must be a vector, not a &lt;lm&gt; object.</span></code></pre><p></p></div>
 <p>Defused function calls are another (more esoteric) example:</p><div class="sourceCode r"><pre><code><span class="va">call</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="fu">foo</span><span class="op">(</span>bar <span class="op">=</span> <span class="cn">TRUE</span>, baz <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span>
 <span class="va">call</span>
 <span class="co">#&gt; foo(bar = TRUE, baz = FALSE)</span>
@@ -155,8 +155,8 @@ but in the tidyverse that’s not the case by default:</p><div class="sourceCode
 
 <span class="co"># But not with vctrs:</span>
 <span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">call</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>
-<span class="co">#&gt; Error:</span>
-<span class="co">#&gt; ! Input must be a vector, not a call.</span></code></pre><p></p></div>
+<span class="co">#&gt; Error in `vctrs::vec_slice()`:</span>
+<span class="co">#&gt; ! `x` must be a vector, not a call.</span></code></pre><p></p></div>
     </div>
     <div id="i-get-a-scalar-type-error-but-i-think-this-is-a-bug">
     <h2>I get a scalar type error but I think this is a bug</h2>
