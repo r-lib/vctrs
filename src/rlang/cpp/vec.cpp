@@ -11,9 +11,9 @@ int* r_int_unique0(int* v_data, r_ssize size) {
   }
 }
 
-bool r_list_all_of(r_obj* const * v_first,
-                   r_ssize size,
-                   bool (*predicate)(r_obj* x)) {
+bool r_list_all_of0(r_obj* const * v_first,
+                    r_ssize size,
+                    bool (*predicate)(r_obj* x)) {
   try {
     return std::all_of(v_first, v_first + size, predicate);
   } catch (...) {
