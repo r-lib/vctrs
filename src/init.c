@@ -46,7 +46,7 @@ extern SEXP vctrs_typeof2(SEXP, SEXP);
 extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
 extern r_obj* ffi_cast(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_location(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vec_slice(SEXP, SEXP);
+extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
 extern SEXP ffi_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
 extern SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -139,7 +139,6 @@ extern r_obj* vctrs_integer64_restore(r_obj*);
 extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
-extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_compute_nesting_container_info(r_obj*, r_obj*);
 extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
