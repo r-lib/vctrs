@@ -1,17 +1,15 @@
 #include "assert.h"
 
-// [[ include("assert.h") ]]
 void vec_assert(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
   // TODO! error call
   vec_check_vector(x, arg, r_lazy_null);
 
   if (size != -1) {
     // `size == -1` makes no assertion about size
-    vec_assert_size(x, size, arg);
+    vec_check_size(x, size, arg);
   }
 }
 
-// [[ include("assert.h") ]]
 void vec_check_vector(r_obj* x,
                       struct vctrs_arg* arg,
                       struct r_lazy call) {
@@ -20,8 +18,7 @@ void vec_check_vector(r_obj* x,
   }
 }
 
-// [[ include("assert.h") ]]
-void vec_assert_size(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
+void vec_check_size(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
   r_ssize x_size = vec_size(x);
 
   if (x_size != size) {

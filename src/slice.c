@@ -466,7 +466,7 @@ r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
                         args_empty,
                         frame));
   // TODO! Pass `frame`
-  vec_assert_size(ffi_n, 1, args_n);
+  vec_check_size(ffi_n, 1, args_n);
 
   // TODO! Pass `frame`
   r_ssize n = r_int_get(ffi_n, 0);
