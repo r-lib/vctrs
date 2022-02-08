@@ -1,7 +1,7 @@
 #ifndef VCTRS_STRIDES_H
 #define VCTRS_STRIDES_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 #include "utils.h"
 #include "dim.h"
 

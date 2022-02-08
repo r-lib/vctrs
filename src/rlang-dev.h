@@ -1,6 +1,7 @@
 #ifndef VCTRS_RLANG_DEV_H
 #define VCTRS_RLANG_DEV_H
 
+#include <rlang.h>
 
 struct r_lazy {
   r_obj* x;
@@ -34,6 +35,5 @@ r_obj* r_lazy_eval_protect(struct r_lazy lazy) {
 
 #define r_abort_lazy_call(LAZY, ...) \
   r_abort_call(KEEP(r_lazy_eval(LAZY)), __VA_ARGS__)
-
 
 #endif

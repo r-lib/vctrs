@@ -1,6 +1,7 @@
 #ifndef VCTRS_TYPE_FACTOR_H
 #define VCTRS_TYPE_FACTOR_H
 
+#include "vctrs-core.h"
 #include "cast.h"
 #include "ptype2.h"
 

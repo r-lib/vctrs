@@ -1,7 +1,10 @@
+#ifndef VCTRS_DICTIONARY_H
+#define VCTRS_DICTIONARY_H
+
+#include "vctrs-core.h"
 #include "poly-op.h"
 
 #define DICT_EMPTY -1
-
 
 // The dictionary structure is a little peculiar since R has no notion of
 // a scalar, so the `key`s are indexes into vector `x`. This means we can
@@ -63,3 +66,6 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i);
 bool dict_is_incomplete(struct dictionary* d, R_len_t i);
 
 void dict_put(struct dictionary* d, uint32_t k, R_len_t i);
+
+
+#endif

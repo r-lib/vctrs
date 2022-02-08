@@ -1,6 +1,7 @@
 #ifndef VCTRS_SLICE_ASSIGN_H
 #define VCTRS_SLICE_ASSIGN_H
 
+#include "vctrs-core.h"
 #include "owned.h"
 
 struct vec_assign_opts {

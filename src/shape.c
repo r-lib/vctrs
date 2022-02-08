@@ -1,3 +1,4 @@
+#include "vctrs.h"
 #include "shape.h"
 #include "dim.h"
 

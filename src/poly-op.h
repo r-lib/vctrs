@@ -1,7 +1,7 @@
 #ifndef VCTRS_POLY_OP
 #define VCTRS_POLY_OP
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 
 typedef int (*poly_binary_int_fn_ptr)(const void* x, r_ssize i, const void* y, r_ssize j);
 poly_binary_int_fn_ptr new_poly_p_equal_na_equal(enum vctrs_type type);

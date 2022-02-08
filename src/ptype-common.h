@@ -1,6 +1,7 @@
 #ifndef VCTRS_PTYPE_COMMON_H
 #define VCTRS_PTYPE_COMMON_H
 
+#include "vctrs-core.h"
 #include "ptype2.h"
 #include "utils.h"
 
@@ -17,6 +18,5 @@ SEXP vec_ptype_common_params(SEXP dots,
 SEXP vec_ptype_common_opts(SEXP dots,
                            SEXP ptype,
                            const struct fallback_opts* opts);
-
 
 #endif

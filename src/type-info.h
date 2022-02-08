@@ -1,6 +1,8 @@
 #ifndef VCTRS_TYPE_INFO_H
 #define VCTRS_TYPE_INFO_H
 
+#include <rlang.h>
+
 enum vctrs_type {
   vctrs_type_null = 0,
   vctrs_type_unspecified,

@@ -1,7 +1,7 @@
 #ifndef VCTRS_ARG_H
 #define VCTRS_ARG_H
 
-#include "rlang-dev.h"
+#include "vctrs-core.h"
 
 
 /**

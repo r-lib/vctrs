@@ -1,6 +1,7 @@
 #ifndef VCTRS_OWNED_H
 #define VCTRS_OWNED_H
 
+#include "vctrs-core.h"
 #include "altrep.h"
 #include "utils.h"
 

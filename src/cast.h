@@ -1,6 +1,7 @@
 #ifndef VCTRS_CAST_H
 #define VCTRS_CAST_H
 
+#include "vctrs-core.h"
 #include "ptype2.h"
 
 struct cast_opts {

@@ -1,6 +1,7 @@
 #ifndef VCTRS_ARG_COUNTER_H
 #define VCTRS_ARG_COUNTER_H
 
+#include "vctrs-core.h"
 
 struct counters {
  /* public: */

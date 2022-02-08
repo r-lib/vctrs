@@ -1,6 +1,6 @@
 #include <math.h>
-#include "equal.h"
 #include "vctrs.h"
+#include "equal.h"
 #include "utils.h"
 #include "translate.h"
 

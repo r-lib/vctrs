@@ -1,6 +1,7 @@
 #ifndef VCTRS_SUBSCRIPT_H
 #define VCTRS_SUBSCRIPT_H
 
+#include "vctrs-core.h"
 #include "utils.h"
 
 

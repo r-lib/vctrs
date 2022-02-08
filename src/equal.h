@@ -1,7 +1,8 @@
 #ifndef VCTRS_EQUAL_H
 #define VCTRS_EQUAL_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
+#include "utils.h"
 
 // -----------------------------------------------------------------------------
 

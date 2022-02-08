@@ -13,7 +13,7 @@
 #ifndef VCTRS_ORDER_GROUPS_H
 #define VCTRS_ORDER_GROUPS_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 
 // -----------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 #ifndef VCTRS_UTILS_H
 #define VCTRS_UTILS_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 #include "arg-counter.h"
 #include "rlang-dev.h"
 

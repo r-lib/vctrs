@@ -1,6 +1,8 @@
 #ifndef VCTRS_PTYPE2_H
 #define VCTRS_PTYPE2_H
 
+#include "vctrs-core.h"
+
 
 // Sync with R constants in ptype2.R
 

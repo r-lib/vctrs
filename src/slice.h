@@ -1,6 +1,8 @@
 #ifndef VCTRS_SLICE_H
 #define VCTRS_SLICE_H
 
+#include "vctrs-core.h"
+
 struct vec_slice_opts {
   struct vctrs_arg* x_arg;
   struct vctrs_arg* i_arg;

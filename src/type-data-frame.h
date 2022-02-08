@@ -1,6 +1,7 @@
 #ifndef VCTRS_TYPE_DATA_FRAME_H
 #define VCTRS_TYPE_DATA_FRAME_H
 
+#include "vctrs-core.h"
 #include "arg.h"
 #include "names.h"
 #include "ptype2.h"

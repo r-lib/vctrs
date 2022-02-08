@@ -1,6 +1,8 @@
 #ifndef VCTRS_GLOBALS_H
 #define VCTRS_GLOBALS_H
 
+#include <rlang.h>
+
 struct syms {
   r_obj* arg;
   r_obj* haystack_arg;
@@ -13,6 +15,5 @@ struct syms {
 };
 
 extern struct syms syms;
-
 
 #endif

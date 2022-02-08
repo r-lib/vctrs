@@ -1,7 +1,7 @@
 #ifndef VCTRS_TRANSLATE_H
 #define VCTRS_TRANSLATE_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 
 // -----------------------------------------------------------------------------
 // Vector translation

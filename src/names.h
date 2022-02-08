@@ -1,6 +1,7 @@
 #ifndef VCTRS_NAMES_H
 #define VCTRS_NAMES_H
 
+#include "vctrs-core.h"
 #include "utils.h"
 
 enum name_repair_type {
