@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "ptype2.h"
 #include "type-data-frame.h"

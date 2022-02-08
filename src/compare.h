@@ -1,9 +1,9 @@
 #ifndef VCTRS_COMPARE_H
 #define VCTRS_COMPARE_H
 
-#include <rlang.h>
 #include "vctrs.h"
 #include "equal.h"
+#include <stdlib.h>
 
 // -----------------------------------------------------------------------------
 

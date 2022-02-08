@@ -10,7 +10,6 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
 #include "lazy.h"

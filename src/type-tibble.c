@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "cast.h"
 #include "ptype2.h"

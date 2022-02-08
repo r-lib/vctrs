@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "poly-op.h"
 #include "vctrs.h"
 #include "equal.h"

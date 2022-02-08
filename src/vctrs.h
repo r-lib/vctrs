@@ -1,17 +1,13 @@
 #ifndef VCTRS_H
 #define VCTRS_H
 
-
-#define R_NO_REMAP
-#include <R.h>
-#include <Rinternals.h>
-#include <Rversion.h>
-
-#include <stdbool.h>
-#include <stdint.h>
-
+#include <rlang.h>
 #include "globals.h"
 #include "rlang-dev.h"
+
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 
 extern bool vctrs_debug_verbose;
@@ -28,84 +24,11 @@ struct vec_error_info {
   struct r_lazy call;
 };
 
+#include "type-info.h"
+
 
 // Vector types -------------------------------------------------
 
-enum vctrs_type {
-  vctrs_type_null = 0,
-  vctrs_type_unspecified,
-  vctrs_type_logical,
-  vctrs_type_integer,
-  vctrs_type_double,
-  vctrs_type_complex,
-  vctrs_type_character,
-  vctrs_type_raw,
-  vctrs_type_list,
-  vctrs_type_dataframe,
-  vctrs_type_scalar,
-  vctrs_type_s3 = 255
-};
-
-/**
- * @member type The vector type of the original data.
- * @member proxy_method The function of the `vec_proxy()` method, if
- *   any. This method is looked up with [vec_proxy_method()].
- */
-struct vctrs_type_info {
-  enum vctrs_type type;
-  SEXP proxy_method;
-};
-/**
- * @inheritMembers vctrs_type_info
- * @member type If `proxy_method` was found, the vector type of the
- *   proxy data. Otherwise, the vector type of the original data.
- *   This is never `vctrs_type_s3`.
- * @member proxy If `proxy_method` was found, the result of invoking
- *   the method. Otherwise, the original data.
- */
-struct vctrs_proxy_info {
-  enum vctrs_type type;
-  SEXP proxy_method;
-  SEXP proxy;
-};
-
-/**
- * Return the type information of a vector or its proxy
- *
- * `vec_type_info()` returns the vctrs type of `x`. `vec_proxy_info()`
- * returns the vctrs type of `x` or its proxy if it has one. The
- * former returns `vctrs_type_s3` with S3 objects (expect for native
- * types like bare data frames). The latter returns the bare type of
- * the proxy, if any. It never returns `vctrs_type_s3`.
- *
- * `vec_proxy_info()` returns both the proxy method and the proxy
- * data. `vec_type_info()` only returns the proxy method, which it
- * needs to determine whether S3 lists and non-vector base types are
- * scalars or proxied vectors.
- *
- * Use `PROTECT_PROXY_INFO()` and `PROTECT_TYPE_INFO()` to protect the
- * members of the return value. These helpers take a pointer to a
- * protection counter that can be passed to `UNPROTECT()`.
- */
-struct vctrs_type_info vec_type_info(SEXP x);
-struct vctrs_proxy_info vec_proxy_info(SEXP x);
-
-#define PROTECT_PROXY_INFO(info, n) do {        \
-    PROTECT((info)->proxy);                     \
-    PROTECT((info)->proxy_method);              \
-    *n += 2;                                    \
-  } while (0)
-
-#define PROTECT_TYPE_INFO(info, n) do {         \
-    PROTECT((info)->proxy_method);              \
-    *n += 1;                                    \
-  } while (0)
-
-enum vctrs_type vec_typeof(SEXP x);
-enum vctrs_type vec_proxy_typeof(SEXP x);
-const char* vec_type_as_str(enum vctrs_type type);
-bool vec_is_list(SEXP x);
-bool vec_is_vector(SEXP x);
 bool vec_is_partial(SEXP x);
 
 // After adding a new `vctrs_dispatch` type, add the missing entries
@@ -351,16 +274,20 @@ SEXP vec_unspecified(R_len_t n);
 bool vec_is_unspecified(SEXP x);
 
 
-// Vector methods ------------------------------------------------
-
 #include "type-info.h"
 
 #include "arg.h"
+#include "assert.h"
+#include "complete.h"
+#include "match-joint.h"
 #include "names.h"
 #include "owned.h"
 #include "size.h"
 #include "size-common.h"
 #include "slice.h"
+
+
+// Vector methods ------------------------------------------------
 
 enum vctrs_proxy_kind {
   VCTRS_PROXY_KIND_default,

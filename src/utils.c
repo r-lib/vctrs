@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
 #include "type-data-frame.h"
@@ -1643,6 +1642,7 @@ SEXP r_new_shared_character(const char* name) {
 void c_print_backtrace() {
 #if defined(RLIB_DEBUG)
 #include <execinfo.h>
+#include <stdlib.h>
   void *buffer[500];
   int nptrs = backtrace(buffer, 100);
 

@@ -10,7 +10,7 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include <rlang.h>
+#include "vctrs.h"
 #include "order-truelength.h"
 #include "utils.h"
 

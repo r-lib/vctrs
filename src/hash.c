@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "equal.h"
 #include "hash.h"

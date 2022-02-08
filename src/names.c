@@ -1,5 +1,4 @@
 #include <ctype.h>
-#include <rlang.h>
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include "utils.h"

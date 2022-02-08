@@ -1,7 +1,6 @@
 #ifndef VCTRS_TYPE_COMPLEX_H
 #define VCTRS_TYPE_COMPLEX_H
 
-#include <rlang.h>
 #include "vctrs.h"
 
 

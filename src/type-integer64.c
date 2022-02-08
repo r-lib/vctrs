@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
 #include "decl/type-integer64-decl.h"

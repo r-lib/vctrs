@@ -1,7 +1,7 @@
 #ifndef VCTRS_UTILS_H
 #define VCTRS_UTILS_H
 
-#include <rlang.h>
+#include "vctrs.h"
 #include "arg-counter.h"
 #include "rlang-dev.h"
 
@@ -125,8 +125,6 @@ r_obj* vctrs_dispatch7(r_obj* fn_sym, r_obj* fn,
   r_obj* args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
   return vctrs_dispatch_n(fn_sym, fn, syms, args);
 }
-
-__attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
 
 static inline
 __attribute__((noreturn))

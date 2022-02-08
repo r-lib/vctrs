@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "owned.h"
 #include "utils.h"

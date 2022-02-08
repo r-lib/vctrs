@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "dictionary.h"
 #include "translate.h"

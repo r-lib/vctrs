@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "arg-counter.h"
 #include "ptype-common.h"

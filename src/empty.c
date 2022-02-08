@@ -1,6 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-
 #include "decl/empty-decl.h"
 
 // [[ register() ]]

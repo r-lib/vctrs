@@ -1,4 +1,4 @@
-#include "assert.h"
+#include "vctrs.h"
 
 void vec_assert(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
   // TODO! error call

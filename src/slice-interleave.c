@@ -1,4 +1,4 @@
-#include <rlang.h>
+#include "vctrs.h"
 #include "decl/slice-interleave-decl.h"
 
 // [[ register() ]]

@@ -1,9 +1,8 @@
-#include <rlang.h>
 #include <stdlib.h> // for NULL
 #include <stdbool.h>
 #include <R_ext/Rdynload.h>
-#include "altrep-rle.h"
 #include "vctrs.h"
+#include "altrep-rle.h"
 
 // Compile with `-fvisibility=hidden -DHAVE_VISIBILITY_ATTRIBUTE` if you link to this library
 #include <R_ext/Visibility.h>

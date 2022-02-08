@@ -1,4 +1,3 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "altrep-rle.h"
 #include "altrep.h"

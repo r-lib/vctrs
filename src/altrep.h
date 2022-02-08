@@ -1,5 +1,5 @@
-#ifndef ALTREP_H
-#define ALTREP_H
+#ifndef VCTRS_ALTREP_H
+#define VCTRS_ALTREP_H
 
 #include "Rversion.h"
 
