@@ -309,7 +309,7 @@ SEXP vec_slice_unsafe(SEXP x, SEXP subscript) {
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
-      vec_assert_vector(x, NULL, r_lazy_null);
+      vec_check_vector(x, NULL, r_lazy_null);
     }
 
     if (is_compact(subscript)) {
@@ -425,7 +425,7 @@ r_obj* ffi_slice(r_obj* x,
 r_obj* vec_slice_opts(r_obj* x,
                       r_obj* i,
                       const struct vec_slice_opts* opts) {
-  vec_assert_vector(x, opts->x_arg, opts->call);
+  vec_check_vector(x, opts->x_arg, opts->call);
 
   r_obj* names = KEEP(vec_names(x));
   i = KEEP(vec_as_location_ctxt(i,
@@ -442,7 +442,7 @@ r_obj* vec_slice_opts(r_obj* x,
 
 // [[ include("vctrs.h") ]]
 SEXP vec_init(SEXP x, R_len_t n) {
-  vec_assert_vector(x, NULL, r_lazy_null);
+  vec_check_vector(x, NULL, r_lazy_null);
 
   if (n < 0) {
     r_abort("`n` must be a positive integer.");

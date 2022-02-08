@@ -35,8 +35,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   }
 
   // TODO! Error call
-  vec_assert_vector(x, opts->x_arg, r_lazy_null);
-  vec_assert_vector(value, opts->value_arg, r_lazy_null);
+  vec_check_vector(x, opts->x_arg, r_lazy_null);
+  vec_check_vector(value, opts->value_arg, r_lazy_null);
 
   const struct location_opts location_opts = new_location_opts_assign();
   index = PROTECT(vec_as_location_opts(index,

@@ -85,7 +85,7 @@ r_obj* s3_type(r_obj* x,
   r_obj* out;
 
   if (method == r_null) {
-    vec_assert_vector(x, x_arg, call);
+    vec_check_vector(x, x_arg, call);
     out = vec_slice(x, r_null);
   } else {
     out = vec_ptype_invoke(x, method);
@@ -138,7 +138,7 @@ SEXP vec_ptype_finalise(SEXP x) {
   // TODO! Error call
 
   if (!OBJECT(x)) {
-    vec_assert_vector(x, args_empty, r_lazy_null);
+    vec_check_vector(x, args_empty, r_lazy_null);
     return x;
   }
 
@@ -150,7 +150,7 @@ SEXP vec_ptype_finalise(SEXP x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  vec_assert_vector(x, args_empty, r_lazy_null);
+  vec_check_vector(x, args_empty, r_lazy_null);
 
   switch (class_type(x)) {
   case vctrs_class_bare_tibble:
