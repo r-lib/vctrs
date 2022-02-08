@@ -251,7 +251,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; function (x, ...) </span>
 <span class="co">#&gt; UseMethod("mean")</span>
-<span class="co">#&gt; &lt;bytecode: 0x563a1baebba0&gt;</span>
+<span class="co">#&gt; &lt;bytecode: 0x55a98464ab90&gt;</span>
 <span class="co">#&gt; &lt;environment: namespace:base&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
@@ -470,7 +470,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span>
 <span class="co">#&gt; Levels: small big</span>
 <span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">7</span><span class="op">)</span>
-<span class="co">#&gt; [1] NA           "2022-02-14" "2022-02-14" "2022-02-07" "2022-02-07"</span></code></pre></div>
+<span class="co">#&gt; [1] NA           "2022-02-15" "2022-02-15" "2022-02-08" "2022-02-08"</span></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
