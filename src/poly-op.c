@@ -49,10 +49,10 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
 
 // -----------------------------------------------------------------------------
 
-static bool p_df_is_missing(const void* x, r_ssize i);
+static bool p_df_is_incomplete(const void* x, r_ssize i);
 
 // [[ include("poly-op.h") ]]
-poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
+poly_unary_bool_fn_ptr new_poly_p_is_incomplete(enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_is_missing;
   case vctrs_type_logical: return p_lgl_is_missing;
@@ -62,13 +62,13 @@ poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
   case vctrs_type_character: return p_chr_is_missing;
   case vctrs_type_raw: return p_raw_is_missing;
   case vctrs_type_list: return p_list_is_missing;
-  case vctrs_type_dataframe: return p_df_is_missing;
-  default: stop_unimplemented_vctrs_type("new_poly_p_is_missing", type);
+  case vctrs_type_dataframe: return p_df_is_incomplete;
+  default: stop_unimplemented_vctrs_type("new_poly_p_is_incomplete", type);
   }
 }
 
 static
-bool p_df_is_missing(const void* x, r_ssize i) {
+bool p_df_is_incomplete(const void* x, r_ssize i) {
   struct poly_df_data* x_data = (struct poly_df_data*) x;
 
   enum vctrs_type* v_col_type = x_data->v_col_type;
