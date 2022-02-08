@@ -80,7 +80,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   d->p_poly_vec = p_poly_vec;
 
   d->p_equal_na_equal = new_poly_p_equal_na_equal(type);
-  d->p_is_missing = new_poly_p_is_missing(type);
+  d->p_is_incomplete = new_poly_p_is_incomplete(type);
 
   d->used = 0;
 
@@ -157,9 +157,9 @@ uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
   return dict_hash_with(d, d, i);
 }
 
-bool dict_is_missing(struct dictionary* d, R_len_t i) {
+bool dict_is_incomplete(struct dictionary* d, R_len_t i) {
   return d->hash[i] == HASH_MISSING &&
-    d->p_is_missing(d->p_poly_vec->p_vec, i);
+    d->p_is_incomplete(d->p_poly_vec->p_vec, i);
 }
 
 
@@ -441,7 +441,7 @@ static inline void vec_match_loop_propagate(int* p_out,
                                             struct dictionary* d_needles,
                                             R_len_t n_needle) {
   for (R_len_t i = 0; i < n_needle; ++i) {
-    if (dict_is_missing(d_needles, i)) {
+    if (dict_is_incomplete(d_needles, i)) {
       p_out[i] = NA_INTEGER;
       continue;
     }
@@ -519,7 +519,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
   bool propagate = !na_equal;
 
   for (int i = 0; i < n_needle; ++i) {
-    if (propagate && dict_is_missing(d_needles, i)) {
+    if (propagate && dict_is_incomplete(d_needles, i)) {
       p_out[i] = NA_LOGICAL;
     } else {
       uint32_t hash = dict_hash_with(d, d_needles, i);
