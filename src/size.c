@@ -20,10 +20,8 @@ r_ssize vec_size(r_obj* x) {
 
 static
 r_ssize vec_size_opts(r_obj* x, const struct vec_error_info* opts) {
-  int nprot = 0;
-
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info, &nprot);
+  KEEP(info.shelter);
 
   r_obj* data = info.proxy;
 
@@ -50,7 +48,7 @@ r_ssize vec_size_opts(r_obj* x, const struct vec_error_info* opts) {
     stop_scalar_type(x, opts->arg, opts->call);
 }
 
-  FREE(nprot);
+  FREE(1);
   return size;
 }
 

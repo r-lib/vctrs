@@ -158,7 +158,7 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   mut_opts.ignore_outer_names = false;
 
   struct vctrs_proxy_info value_info = vec_proxy_info(value);
-  PROTECT_PROXY_INFO(&value_info, &n_protect);
+  KEEP_N(value_info.shelter, &n_protect);
 
   if (TYPEOF(proxy) != TYPEOF(value_info.proxy)) {
     r_stop_internal("`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
@@ -171,21 +171,19 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   SEXP out = R_NilValue;
 
   if (vec_requires_fallback(value, value_info)) {
-    index = PROTECT(compact_materialize(index));
-    out = PROTECT(vec_assign_fallback(proxy, index, value));
-    ++n_protect;
+    index = KEEP_N(compact_materialize(index), &n_protect);
+    out = KEEP_N(vec_assign_fallback(proxy, index, value), &n_protect);
   } else if (has_dim(proxy)) {
-    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, owned, &mut_opts));
+    out = KEEP_N(vec_assign_shaped(proxy, index, value_info.proxy, owned, &mut_opts), &n_protect);
   } else {
-    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, owned, &mut_opts));
+    out = KEEP_N(vec_assign_switch(proxy, index, value_info.proxy, owned, &mut_opts), &n_protect);
   }
-  ++n_protect;
 
   if (!ignore_outer_names && opts->assign_names) {
     out = vec_proxy_assign_names(out, index, value_info.proxy, owned);
   }
 
-  UNPROTECT(n_protect);
+  FREE(n_protect);
   return out;
 }
 

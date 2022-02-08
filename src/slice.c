@@ -300,7 +300,7 @@ SEXP vec_slice_unsafe(SEXP x, SEXP subscript) {
   SEXP restore_size = PROTECT_N(r_int(vec_subscript_size(subscript)), &nprot);
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info, &nprot);
+  KEEP_N(info.shelter, &nprot);
 
   SEXP data = info.proxy;
 

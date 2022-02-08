@@ -129,14 +129,14 @@
       ints <- rep(list(set_names(1:3, letters[1:3])), 100)
       with_memory_prof(vec_unchop(ints))
     Output
-      [1] 4.05KB
+      [1] 5.27KB
     Code
       # Named matrices
       mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
       mats <- rep(list(mat), 100)
       with_memory_prof(vec_unchop(mats))
     Output
-      [1] 3.66KB
+      [1] 5.27KB
     Code
       # Data frame with named columns
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(

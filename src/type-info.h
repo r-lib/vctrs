@@ -22,6 +22,7 @@ enum vctrs_type {
  *   any. This method is looked up with [vec_proxy_method()].
  */
 struct vctrs_type_info {
+  r_obj* shelter;
   enum vctrs_type type;
   r_obj* proxy_method;
 };
@@ -35,6 +36,7 @@ struct vctrs_type_info {
  *   the method. Otherwise, the original data.
  */
 struct vctrs_proxy_info {
+  r_obj* shelter;
   enum vctrs_type type;
   r_obj* proxy_method;
   r_obj* proxy;
@@ -53,25 +55,9 @@ struct vctrs_proxy_info {
  * data. `vec_type_info()` only returns the proxy method, which it
  * needs to determine whether S3 lists and non-vector base types are
  * scalars or proxied vectors.
- *
- * Use `PROTECT_PROXY_INFO()` and `PROTECT_TYPE_INFO()` to protect the
- * members of the return value. These helpers take a pointer to a
- * protection counter that can be passed to `UNPROTECT()`.
  */
 struct vctrs_type_info vec_type_info(r_obj* x);
 struct vctrs_proxy_info vec_proxy_info(r_obj* x);
-
-#define PROTECT_PROXY_INFO(info, n) do {        \
-    PROTECT((info)->proxy);                     \
-    PROTECT((info)->proxy_method);              \
-    *n += 2;                                    \
-  } while (0)
-
-#define PROTECT_TYPE_INFO(info, n) do {         \
-    PROTECT((info)->proxy_method);              \
-    *n += 1;                                    \
-  } while (0)
-
 
 enum vctrs_type vec_typeof(r_obj* x);
 enum vctrs_type vec_proxy_typeof(r_obj* x);

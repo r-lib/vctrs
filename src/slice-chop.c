@@ -33,29 +33,28 @@ struct vctrs_chop_info {
   SEXP out;
 };
 
-#define PROTECT_CHOP_INFO(info, n) do {       \
-  PROTECT_PROXY_INFO(&(info)->proxy_info, n); \
-  PROTECT((info)->restore_size);              \
-  PROTECT((info)->index);                     \
-  PROTECT((info)->out);                       \
-  *n += 3;                                    \
-} while (0)                                   \
+#define PROTECT_CHOP_INFO(info, n) do {         \
+    KEEP((info)->proxy_info.shelter);           \
+    KEEP((info)->restore_size);                 \
+    KEEP((info)->index);                        \
+    KEEP((info)->out);                          \
+    *n += 4;                                    \
+  } while (0)                                   \
 
-static struct vctrs_chop_info init_chop_info(SEXP x, SEXP indices) {
-  int nprot = 0;
-
+static
+struct vctrs_chop_info init_chop_info(r_obj* x, r_obj* indices) {
   struct vctrs_chop_info info;
 
   info.proxy_info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info.proxy_info, &nprot);
+  KEEP(info.proxy_info.shelter);
 
-  info.restore_size = PROTECT_N(r_int(1), &nprot);
+  info.restore_size = KEEP(r_int(1));
   info.p_restore_size = INTEGER(info.restore_size);
 
-  info.index = PROTECT_N(r_int(0), &nprot);
-  info.p_index = INTEGER(info.index);
+  info.index = KEEP(r_int(0));
+  info.p_index = r_int_begin(info.index);
 
-  if (indices == R_NilValue) {
+  if (indices == r_null) {
     info.out_size = vec_size(x);
     info.has_indices = false;
   } else {
@@ -63,9 +62,9 @@ static struct vctrs_chop_info init_chop_info(SEXP x, SEXP indices) {
     info.has_indices = true;
   }
 
-  info.out = PROTECT_N(Rf_allocVector(VECSXP, info.out_size), &nprot);
+  info.out = r_alloc_list(info.out_size);
 
-  UNPROTECT(nprot);
+  FREE(3);
   return info;
 }
 

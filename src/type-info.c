@@ -13,15 +13,17 @@ struct vctrs_type_info vec_type_info(r_obj* x) {
   case vctrs_type_s3: info.proxy_method = vec_proxy_method(x); break;
   default: info.proxy_method = r_null;
   }
+  info.shelter = info.proxy_method;
 
   return info;
 }
 
 struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info;
+  info.shelter = KEEP(r_alloc_list(2));
 
   info.proxy_method = r_is_object(x) ? vec_proxy_method(x) : r_null;
-  KEEP(info.proxy_method);
+  r_list_poke(info.shelter, 0, info.proxy_method);
 
   if (info.proxy_method == r_null) {
     info.type = vec_base_typeof(x, false);
@@ -32,6 +34,7 @@ struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
     info.proxy = proxy;
     FREE(1);
   }
+  r_list_poke(info.shelter, 1, info.proxy);
 
   FREE(1);
   return info;
