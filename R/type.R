@@ -189,8 +189,8 @@ vec_typeof_bare <- function(x) {
 }
 
 vec_type_info <- function(x) {
-  .Call(vctrs_type_info, x)
+  .Call(ffi_type_info, x)
 }
 vec_proxy_info <- function(x) {
-  .Call(vctrs_proxy_info, x)
+  .Call(ffi_proxy_info, x)
 }

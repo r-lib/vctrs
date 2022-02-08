@@ -353,6 +353,8 @@ bool vec_is_unspecified(SEXP x);
 
 // Vector methods ------------------------------------------------
 
+#include "type-info.h"
+
 #include "arg.h"
 #include "names.h"
 #include "owned.h"

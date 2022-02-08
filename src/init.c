@@ -72,8 +72,8 @@ extern SEXP vctrs_as_unique_names(SEXP, SEXP);
 extern SEXP vec_set_names(SEXP, SEXP);
 extern SEXP vctrs_df_cast_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_type_info(SEXP);
-extern SEXP vctrs_proxy_info(SEXP);
+extern r_obj* ffi_type_info(r_obj*);
+extern SEXP ffi_proxy_info(SEXP);
 extern SEXP vctrs_class_type(SEXP);
 extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
@@ -231,8 +231,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_set_names",                       (DL_FUNC) &vec_set_names, 2},
   {"vctrs_df_cast_opts",                    (DL_FUNC) &vctrs_df_cast_opts, 4},
   {"vctrs_df_ptype2_opts",                  (DL_FUNC) &vctrs_df_ptype2_opts, 4},
-  {"vctrs_type_info",                       (DL_FUNC) &vctrs_type_info, 1},
-  {"vctrs_proxy_info",                      (DL_FUNC) &vctrs_proxy_info, 1},
+  {"ffi_type_info",                         (DL_FUNC) &ffi_type_info, 1},
+  {"ffi_proxy_info",                        (DL_FUNC) &ffi_proxy_info, 1},
   {"vctrs_class_type",                      (DL_FUNC) &vctrs_class_type, 1},
   {"vctrs_bare_df_restore",                 (DL_FUNC) &vctrs_bare_df_restore, 3},
   {"ffi_recycle",                           (DL_FUNC) &ffi_recycle, 3},

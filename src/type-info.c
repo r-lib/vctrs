@@ -1,20 +1,9 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "utils.h"
 #include "arg-counter.h"
-
-// Initialised at load time
-static r_obj* syms_vec_is_vector_dispatch = NULL;
-static r_obj* fns_vec_is_vector_dispatch = NULL;
-
-// From proxy.c
-r_obj* vec_proxy_method(r_obj* x);
-r_obj* vec_proxy_invoke(r_obj* x, r_obj* method);
+#include "decl/type-info-decl.h"
 
 
-static enum vctrs_type vec_base_typeof(r_obj* x, bool proxied);
-
-// [[ include("vctrs.h") ]]
 struct vctrs_type_info vec_type_info(r_obj* x) {
   struct vctrs_type_info info = {
     .type = vec_typeof(x)
@@ -28,7 +17,6 @@ struct vctrs_type_info vec_type_info(r_obj* x) {
   return info;
 }
 
-// [[ include("vctrs.h") ]]
 struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info;
 
@@ -50,7 +38,7 @@ struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
 }
 
 // [[ register() ]]
-r_obj* vctrs_type_info(r_obj* x) {
+r_obj* ffi_type_info(r_obj* x) {
   struct vctrs_type_info info = vec_type_info(x);
 
   r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "" }));
@@ -61,7 +49,7 @@ r_obj* vctrs_type_info(r_obj* x) {
   return out;
 }
 // [[ register() ]]
-r_obj* vctrs_proxy_info(r_obj* x) {
+r_obj* ffi_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
 
   r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "proxy", "" }));
@@ -73,7 +61,8 @@ r_obj* vctrs_proxy_info(r_obj* x) {
   return out;
 }
 
-static enum vctrs_type vec_base_typeof(r_obj* x, bool proxied) {
+static
+enum vctrs_type vec_base_typeof(r_obj* x, bool proxied) {
   switch (r_typeof(x)) {
   // Atomic types are always vectors
   case R_TYPE_null: return vctrs_type_null;
@@ -94,11 +83,9 @@ static enum vctrs_type vec_base_typeof(r_obj* x, bool proxied) {
   }
 }
 
-// [[ include("vctrs.h") ]]
 enum vctrs_type vec_proxy_typeof(r_obj* x) {
   return vec_base_typeof(x, true);
 }
-
 
 
 // [[ register() ]]
@@ -121,8 +108,11 @@ bool vec_is_list(r_obj* x) {
   return class_type(x) == vctrs_class_list;
 }
 
+// [[ register() ]]
+r_obj* vctrs_is_vector(r_obj* x) {
+  return r_lgl(vec_is_vector(x));
+}
 
-// [[ include("vctrs.h") ]]
 bool vec_is_vector(r_obj* x) {
   if (x == r_null) {
     return false;
@@ -131,12 +121,19 @@ bool vec_is_vector(r_obj* x) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
   return info.type != vctrs_type_scalar;
 }
+
+
 // [[ register() ]]
-r_obj* vctrs_is_vector(r_obj* x) {
-  return r_lgl(vec_is_vector(x));
+r_obj* vctrs_typeof(r_obj* x, r_obj* dispatch) {
+  enum vctrs_type type;
+  if (r_lgl_get(dispatch, 0)) {
+    type = vec_proxy_info(x).type;
+  } else {
+    type = vec_typeof(x);
+  }
+  return r_chr(vec_type_as_str(type));
 }
 
-// [[ include("vctrs.h") ]]
 enum vctrs_type vec_typeof(r_obj* x) {
   // Check for unspecified vectors before `vec_base_typeof()` which
   // allows vectors of `NA` to pass through as `vctrs_type_logical`
@@ -156,17 +153,6 @@ enum vctrs_type vec_typeof(r_obj* x) {
   }
 
   return vctrs_type_s3;
-}
-
-// [[ register() ]]
-r_obj* vctrs_typeof(r_obj* x, r_obj* dispatch) {
-  enum vctrs_type type;
-  if (r_lgl_get(dispatch, 0)) {
-    type = vec_proxy_info(x).type;
-  } else {
-    type = vec_typeof(x);
-  }
-  return r_chr(vec_type_as_str(type));
 }
 
 r_no_return
@@ -197,3 +183,9 @@ void vctrs_init_type_info(r_obj* ns) {
   syms_vec_is_vector_dispatch = r_sym("vec_is_vector");
   fns_vec_is_vector_dispatch = r_eval(syms_vec_is_vector_dispatch, ns);
 }
+
+static
+r_obj* syms_vec_is_vector_dispatch = NULL;
+
+static
+r_obj* fns_vec_is_vector_dispatch = NULL;
