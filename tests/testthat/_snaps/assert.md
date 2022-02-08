@@ -188,3 +188,41 @@
       Error in `vec_assert()`:
       ! Can't convert `size` <character> to <integer>.
 
+# vec_check_list() works
+
+    Code
+      my_function <- (function(my_arg) vec_check_list(my_arg))
+      (expect_error(my_function(env())))
+    Output
+      <error/rlang_error>
+      Error in `my_function()`:
+      ! `my_arg` must be a list, not an environment.
+
+# vec_check_list() and vec_check_list_of_vectors() work
+
+    Code
+      my_function <- (function(my_arg) vec_check_list_of_vectors(my_arg))
+      (expect_error(my_function(env())))
+    Output
+      <error/rlang_error>
+      Error in `my_function()`:
+      ! `my_arg` must be a list, not an environment.
+    Code
+      (expect_error(my_function(list(1, env()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `my_function()`:
+      ! `my_arg[[2]]` must be a vector, not an environment.
+    Code
+      (expect_error(my_function(list(1, name = env()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `my_function()`:
+      ! `my_arg$name` must be a vector, not an environment.
+    Code
+      (expect_error(my_function(list(1, foo = env()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `my_function()`:
+      ! `my_arg$foo` must be a vector, not an environment.
+

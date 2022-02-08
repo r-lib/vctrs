@@ -314,3 +314,30 @@ test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
 
   expect_true(vec_is_list(x))
 })
+
+test_that("vec_is_list_of_vectors() works", {
+  expect_true(vec_is_list_of_vectors(list(1)))
+  expect_true(vec_is_list_of_vectors(list_of(1)))
+  expect_false(vec_is_list_of_vectors(list(1, env())))
+})
+
+test_that("vec_check_list() works", {
+  expect_null(vec_check_list(list(1)))
+  expect_null(vec_check_list(list_of(1)))
+  expect_snapshot({
+    my_function <- function(my_arg) vec_check_list(my_arg)
+    (expect_error(my_function(env())))
+  })
+})
+
+test_that("vec_check_list() and vec_check_list_of_vectors() work", {
+  expect_null(vec_check_list_of_vectors(list()))
+  expect_null(vec_check_list_of_vectors(list(1, mtcars)))
+  expect_snapshot({
+    my_function <- function(my_arg) vec_check_list_of_vectors(my_arg)
+    (expect_error(my_function(env())))
+    (expect_error(my_function(list(1, env()))))
+    (expect_error(my_function(list(1, name = env()))))
+    (expect_error(my_function(list(1, foo = env()))))
+  })
+})

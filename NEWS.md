@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* New `vec_check_list()` and `vec_check_list_of_vectors()` input
+  checkers, and an accompanying `vec_is_list_of_vectors()` predicate.
+
 * New `vec_interleave()` for combining multiple vectors together, interleaving
   their elements in the process (#1396).
 

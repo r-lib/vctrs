@@ -203,6 +203,14 @@ vec_is_vector <- function(x) {
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
 #'
+#' `vec_is_list_of_vectors()` checks in addition that all elements of
+#' `x` are vectors.
+#'
+#' `vec_check_list()` and `vec_check_list_of_vectors()` throw a type
+#' error if the input is not a list as defined by `vec_is_list()` and
+#' `vec_is_list_of_vectors()` respectively.
+#'
+#' @inheritParams rlang::args_error_context
 #' @param x An object.
 #'
 #' @details
@@ -217,6 +225,32 @@ vec_is_vector <- function(x) {
 #' vec_is_list(data.frame())
 vec_is_list <- function(x) {
   .Call(vctrs_is_list, x)
+}
+#' @rdname vec_is_list
+#' @export
+vec_is_list_of_vectors <- function(x) {
+  .Call(ffi_is_list_of_vectors, x)
+}
+
+#' @rdname vec_is_list
+#' @export
+vec_check_list <- function(x,
+                           arg = caller_arg(x),
+                           call = caller_env()) {
+  .Call(ffi_check_list, x, environment())
+}
+#' @rdname vec_is_list
+#' @export
+vec_check_list_of_vectors <- function(x,
+                                      arg = caller_arg(x),
+                                      call = caller_env()) {
+  invisible(.Call(ffi_check_list_of_vectors, x, environment()))
+}
+stop_non_list_type <- function(x, arg, call) {
+  cli::cli_abort(
+    "{.arg {arg}} must be a list, not {friendly_type_of(x)}.",
+    call = call
+  )
 }
 
 is_same_type <- function(x, ptype) {
