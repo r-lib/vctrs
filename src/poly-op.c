@@ -75,6 +75,8 @@ bool p_df_is_incomplete(const void* x, r_ssize i) {
   const void** v_col_ptr = x_data->v_col_ptr;
   r_ssize n_col = x_data->n_col;
 
+  // df-cols should already be flattened,
+  // so we only need missingness of each column, not completeness
   for (r_ssize col = 0; col < n_col; ++col) {
     if (p_is_missing(v_col_ptr[col], i, v_col_type[col])) {
       return true;
