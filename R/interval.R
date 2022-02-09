@@ -39,6 +39,8 @@
 #' re-assert these checks in the C code here is wasteful and makes the code
 #' more complex.
 #'
+#' @inheritParams rlang::args_dots_empty
+#'
 #' @param start,end
 #'   A pair of vectors representing the starts and ends of the intervals.
 #'
@@ -115,10 +117,6 @@
 #' vec_locate_interval_merge_groups(bounds$start, bounds$end)
 #'
 #' @noRd
-NULL
-
-# ------------------------------------------------------------------------------
-
 vec_locate_interval_merge_bounds <- function(start,
                                              end,
                                              ...,
@@ -128,6 +126,8 @@ vec_locate_interval_merge_bounds <- function(start,
   .Call(ffi_locate_interval_merge_bounds, start, end, abutting, missing)
 }
 
+#' @noRd
+#' @rdname interval-merge
 vec_locate_interval_merge_groups <- function(start,
                                              end,
                                              ...,
