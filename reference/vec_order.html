@@ -197,40 +197,40 @@ any transform is applied by <code>chr_proxy_collate</code>.</p>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="cn">NA</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">vec_order</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1  4  5  2  6  7  8  3  9 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1  8  9  7  4  2  3  5  6 10</span>
 <span class="r-in"><span class="fu">vec_sort</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.141 0.141 0.141 0.396 0.396 0.396 0.396 0.754 0.958    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.221 0.221 0.221 0.324 0.438 0.767 0.767 0.767 0.767    NA</span>
 <span class="r-in"><span class="fu">vec_sort</span><span class="op">(</span><span class="va">x</span>, direction <span class="op">=</span> <span class="st">"desc"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]    NA 0.958 0.754 0.396 0.396 0.396 0.396 0.141 0.141 0.141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]    NA 0.767 0.767 0.767 0.767 0.438 0.324 0.221 0.221 0.221</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Can also handle data frames</span></span>
 <span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>g <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">vec_order</span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  2  9 10  1  4  5  6  7  8  3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  7  4  3  5 10  1  8  9  2  6</span>
 <span class="r-in"><span class="fu">vec_sort</span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    g     x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 0.958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2 0.754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1 0.324</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1 0.438</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  2 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2 0.767</span>
 <span class="r-in"><span class="fu">vec_sort</span><span class="op">(</span><span class="va">df</span>, direction <span class="op">=</span> <span class="st">"desc"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    g     x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2 0.754</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 0.958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 0.396</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 0.438</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 0.324</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># For data frames, `direction` and `na_value` are allowed to be vectors</span></span>
 <span class="r-in"><span class="co"># with length equal to the number of columns in the data frame</span></span>
@@ -240,16 +240,16 @@ any transform is applied by <code>chr_proxy_collate</code>.</p>
 <span class="r-in">  na_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"largest"</span>, <span class="st">"smallest"</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    g     x</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2 0.141</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  2 0.754</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1    NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 0.396</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 0.958</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2 0.221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1    NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1 0.324</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1 0.438</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1 0.767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1 0.767</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Character vectors are ordered in the C locale, which orders capital letters</span></span>
 <span class="r-in"><span class="co"># below lowercase ones</span></span>
