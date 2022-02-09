@@ -31,7 +31,7 @@ test_that("can locate bounds with size zero input", {
   )
 })
 
-test_that("incomplete intervals are retained", {
+test_that("missing intervals are retained", {
   x <- data_frame(start = NA, end = NA)
 
   expect_identical(
@@ -51,6 +51,29 @@ test_that("incomplete intervals are retained", {
   expect_identical(
     vec_locate_interval_merge_bounds(x$start, x$end),
     data_frame(start = c(3L, 2L), end = c(1L, 4L))
+  )
+})
+
+test_that("missing intervals can be dropped", {
+  x <- data_frame(start = NA, end = NA)
+
+  expect_identical(
+    vec_locate_interval_merge_bounds(x$start, x$end, missing = "drop"),
+    data_frame(start = integer(), end = integer())
+  )
+
+  x <- data_frame(start = c(NA, NA), end = c(NA, NA))
+
+  expect_identical(
+    vec_locate_interval_merge_bounds(x$start, x$end, missing = "drop"),
+    data_frame(start = integer(), end = integer())
+  )
+
+  x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
+
+  expect_identical(
+    vec_locate_interval_merge_bounds(x$start, x$end, missing = "drop"),
+    data_frame(start = 3L, end = 1L)
   )
 })
 
@@ -124,7 +147,7 @@ test_that("locations are ordered by both `start` and `end`", {
   )
 })
 
-test_that("incomplete intervals are retained", {
+test_that("missing intervals are retained", {
   x <- data_frame(start = NA, end = NA)
 
   out <- vec_locate_interval_merge_groups(x$start, x$end)
@@ -152,6 +175,34 @@ test_that("incomplete intervals are retained", {
   )
 })
 
+test_that("missing intervals can be dropped", {
+  x <- data_frame(start = NA, end = NA)
+
+  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
+
+  expect_identical(
+    out$key,
+    data_frame(start = integer(), end = integer())
+  )
+  expect_identical(
+    out$loc,
+    list()
+  )
+
+  x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
+
+  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
+
+  expect_identical(
+    out$key,
+    data_frame(start = 3L, end = 1L)
+  )
+  expect_identical(
+    out$loc,
+    list(c(3L, 1L)),
+  )
+})
+
 test_that("treats NA and NaN as equivalent with doubles", {
   x <- data_frame(start = c(NA, NaN, NA, NaN), end = c(NA, NA, NaN, NaN))
 
@@ -164,6 +215,17 @@ test_that("treats NA and NaN as equivalent with doubles", {
   expect_identical(
     out$loc,
     list(1:4),
+  )
+
+  out <- vec_locate_interval_merge_groups(x, x, missing = "drop")
+
+  expect_identical(
+    out$key,
+    data_frame(start = integer(), end = integer())
+  )
+  expect_identical(
+    out$loc,
+    list(),
   )
 })
 
@@ -182,16 +244,22 @@ test_that("works on various types", {
   x <- data_frame(start = c(1.5, 2, 3.1, NA), end = c(1.7, 3.2, 4.5, NA))
 
   out <- vec_locate_interval_merge_groups(x$start, x$end)
-
   expect_identical(out$key, data_frame(start = c(1L, 2L, 4L), end = c(1L, 3L, 4L)))
   expect_identical(out$loc, list(1L, 2:3, 4L))
+
+  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
+  expect_identical(out$key, data_frame(start = c(1L, 2L), end = c(1L, 3L)))
+  expect_identical(out$loc, list(1L, 2:3))
 
   x <- data_frame(start = c("a", "c", "f", NA), end = c("b", "g", "h", NA))
 
   out <- vec_locate_interval_merge_groups(x$start, x$end)
-
   expect_identical(out$key, data_frame(start = c(1L, 2L, 4L), end = c(1L, 3L, 4L)))
   expect_identical(out$loc, list(1L, 2:3, 4L))
+
+  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
+  expect_identical(out$key, data_frame(start = c(1L, 2L), end = c(1L, 3L)))
+  expect_identical(out$loc, list(1L, 2:3))
 })
 
 test_that("can keep abutting intervals separate", {
@@ -218,6 +286,11 @@ test_that("can keep abutting intervals separate", {
 
   expect_identical(out$key, data_frame(start = c(2L, 1L, 3L), end = c(2L, 1L, 3L)))
   expect_identical(out$loc, list(2L, 1L, 3L))
+})
+
+test_that("`missing` is validated", {
+  expect_snapshot((expect_error(vec_locate_interval_merge_groups(1, 2, missing = "s"))))
+  expect_snapshot((expect_error(vec_locate_interval_merge_groups(1, 2, missing = c("merge", "drop")))))
 })
 
 test_that("common type is taken", {

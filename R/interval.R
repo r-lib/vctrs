@@ -51,6 +51,13 @@
 #'   A single logical controlling whether or not abutting intervals should be
 #'   merged together. If `TRUE`, `[a, b)` and `[b, c)` will be merged.
 #'
+#' @param missing
+#'   Handling of missing intervals.
+#'
+#'   - `"merge"`: Merge all missing intervals together.
+#'
+#'   - `"drop"`: Drop all missing intervals from the result.
+#'
 #' @return
 #' - `vec_locate_interval_merge_bounds()` returns a data frame with two columns,
 #' `start` and `end`, both of which are integer vectors.
@@ -90,6 +97,19 @@
 #'   end = vec_slice(bounds$end, loc$end)
 #' )
 #'
+#' # You can also choose to drop all missing intervals if you don't consider
+#' # them part of the merged result
+#' loc <- vec_locate_interval_merge_bounds(
+#'   bounds$start,
+#'   bounds$end,
+#'   missing = "drop"
+#' )
+#'
+#' data_frame(
+#'   start = vec_slice(bounds$start, loc$start),
+#'   end = vec_slice(bounds$end, loc$end)
+#' )
+#'
 #' # You can also locate the merge groups, which allow you to map each original
 #' # interval to its corresponding merged interval
 #' vec_locate_interval_merge_groups(bounds$start, bounds$end)
@@ -102,17 +122,19 @@ NULL
 vec_locate_interval_merge_bounds <- function(start,
                                              end,
                                              ...,
-                                             abutting = TRUE) {
+                                             abutting = TRUE,
+                                             missing = "merge") {
   check_dots_empty0(...)
-  .Call(ffi_locate_interval_merge_bounds, start, end, abutting)
+  .Call(ffi_locate_interval_merge_bounds, start, end, abutting, missing)
 }
 
 vec_locate_interval_merge_groups <- function(start,
                                              end,
                                              ...,
-                                             abutting = TRUE) {
+                                             abutting = TRUE,
+                                             missing = "merge") {
   check_dots_empty0(...)
-  .Call(ffi_locate_interval_merge_groups, start, end, abutting)
+  .Call(ffi_locate_interval_merge_groups, start, end, abutting, missing)
 }
 
 # ------------------------------------------------------------------------------
@@ -131,23 +153,27 @@ vec_locate_interval_merge_groups <- function(start,
 exp_vec_locate_interval_merge_bounds <- function(start,
                                                  end,
                                                  ...,
-                                                 abutting = TRUE) {
+                                                 abutting = TRUE,
+                                                 missing = "merge") {
   vec_locate_interval_merge_bounds(
     start = start,
     end = end,
     ...,
-    abutting = abutting
+    abutting = abutting,
+    missing = missing
   )
 }
 
 exp_vec_locate_interval_merge_groups <- function(start,
                                                  end,
                                                  ...,
-                                                 abutting = TRUE) {
+                                                 abutting = TRUE,
+                                                 missing = "merge") {
   vec_locate_interval_merge_groups(
     start = start,
     end = end,
     ...,
-    abutting = abutting
+    abutting = abutting,
+    missing = missing
   )
 }

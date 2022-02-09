@@ -3,6 +3,11 @@
 #include "translate.h"
 #include "poly-op.h"
 
+enum vctrs_interval_missing {
+  VCTRS_INTERVAL_MISSING_merge = 0,
+  VCTRS_INTERVAL_MISSING_drop = 1
+};
+
 #include "decl/interval-decl.h"
 
 // -----------------------------------------------------------------------------
@@ -10,25 +15,30 @@
 // [[ register() ]]
 r_obj* ffi_locate_interval_merge_bounds(r_obj* start,
                                         r_obj* end,
-                                        r_obj* ffi_abutting) {
+                                        r_obj* ffi_abutting,
+                                        r_obj* ffi_missing) {
   const bool abutting = r_arg_as_bool(ffi_abutting, "abutting");
+  const enum vctrs_interval_missing missing = parse_missing(ffi_missing);
   const bool groups = false;
-  return vec_locate_interval_merge_info(start, end, abutting, groups);
+  return vec_locate_interval_merge_info(start, end, abutting, missing, groups);
 }
 
 // [[ register() ]]
 r_obj* ffi_locate_interval_merge_groups(r_obj* start,
                                         r_obj* end,
-                                        r_obj* ffi_abutting) {
+                                        r_obj* ffi_abutting,
+                                        r_obj* ffi_missing) {
   const bool abutting = r_arg_as_bool(ffi_abutting, "abutting");
+  const enum vctrs_interval_missing missing = parse_missing(ffi_missing);
   const bool groups = true;
-  return vec_locate_interval_merge_info(start, end, abutting, groups);
+  return vec_locate_interval_merge_info(start, end, abutting, missing, groups);
 }
 
 static
 r_obj* vec_locate_interval_merge_info(r_obj* start,
                                       r_obj* end,
                                       bool abutting,
+                                      enum vctrs_interval_missing missing,
                                       bool groups) {
   int n_prot = 0;
 
@@ -194,7 +204,8 @@ r_obj* vec_locate_interval_merge_info(r_obj* start,
     }
   }
 
-  if (loc_order_missing_end >= loc_order_missing_start) {
+  if (missing == VCTRS_INTERVAL_MISSING_merge &&
+      loc_order_missing_end >= loc_order_missing_start) {
     // Log missing interval at the end
     const r_ssize loc_group_missing_start = v_order[loc_order_missing_start] - 1;
     const r_ssize loc_group_missing_end = v_order[loc_order_missing_end] - 1;
@@ -287,6 +298,22 @@ r_obj* interval_order(r_obj* start, r_obj* end, r_ssize size) {
 
   FREE(1);
   return out;
+}
+
+// -----------------------------------------------------------------------------
+
+static inline
+enum vctrs_interval_missing parse_missing(r_obj* missing) {
+  if (!r_is_string(missing)) {
+    r_abort("`missing` must be a string.");
+  }
+
+  const char* c_missing = r_chr_get_c_string(missing, 0);
+
+  if (!strcmp(c_missing, "merge")) return VCTRS_INTERVAL_MISSING_merge;
+  if (!strcmp(c_missing, "drop")) return VCTRS_INTERVAL_MISSING_drop;
+
+  r_abort("`missing` must be either \"merge\" or \"drop\".");
 }
 
 // -----------------------------------------------------------------------------
