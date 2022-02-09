@@ -100,6 +100,44 @@ int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
 
 // -----------------------------------------------------------------------------
 
+static bool p_df_is_missing(const void* x, r_ssize i);
+
+// [[ include("poly-op.h") ]]
+poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_null: return p_nil_is_missing;
+  case vctrs_type_logical: return p_lgl_is_missing;
+  case vctrs_type_integer: return p_int_is_missing;
+  case vctrs_type_double: return p_dbl_is_missing;
+  case vctrs_type_complex: return p_cpl_is_missing;
+  case vctrs_type_character: return p_chr_is_missing;
+  case vctrs_type_raw: return p_raw_is_missing;
+  case vctrs_type_list: return p_list_is_missing;
+  case vctrs_type_dataframe: return p_df_is_missing;
+  default: stop_unimplemented_vctrs_type("new_poly_p_is_missing", type);
+  }
+}
+
+static
+bool p_df_is_missing(const void* x, r_ssize i) {
+  struct poly_df_data* x_data = (struct poly_df_data*) x;
+
+  enum vctrs_type* v_col_type = x_data->v_col_type;
+  const void** v_col_ptr = x_data->v_col_ptr;
+  r_ssize n_col = x_data->n_col;
+
+  // df-cols should already be flattened
+  for (r_ssize col = 0; col < n_col; ++col) {
+    if (!p_is_missing(v_col_ptr[col], i, v_col_type[col])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// -----------------------------------------------------------------------------
+
 static bool p_df_is_incomplete(const void* x, r_ssize i);
 
 // [[ include("poly-op.h") ]]
