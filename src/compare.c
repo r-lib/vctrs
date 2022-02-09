@@ -29,10 +29,8 @@ do {                                                    \
 }                                                       \
 while (0)
 
-// [[ register() ]]
-SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
-  bool na_equal = r_bool_as_int(na_equal_);
-
+// [[ include("compare.h") ]]
+SEXP vec_compare(SEXP x, SEXP y, bool na_equal) {
   R_len_t size = vec_size(x);
 
   enum vctrs_type type = vec_proxy_typeof(x);
@@ -55,9 +53,9 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_equal);
     case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_equal);
     case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_equal);
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
-    default:                   stop_unimplemented_vctrs_type("vctrs_compare", type);
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vec_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   } else {
     switch (type) {
@@ -65,14 +63,20 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_propagate);
     case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_propagate);
     case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_propagate);
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
-    default:                   stop_unimplemented_vctrs_type("vctrs_compare", type);
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vec_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   }
 }
 
 #undef COMPARE
+
+// [[ register() ]]
+SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal) {
+  const bool c_na_equal = r_bool_as_int(na_equal);
+  return vec_compare(x, y, c_na_equal);
+}
 
 // -----------------------------------------------------------------------------
 

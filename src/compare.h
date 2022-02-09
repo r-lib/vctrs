@@ -7,6 +7,10 @@
 
 // -----------------------------------------------------------------------------
 
+SEXP vec_compare(SEXP x, SEXP y, bool na_equal);
+
+// -----------------------------------------------------------------------------
+
 // https://stackoverflow.com/questions/10996418
 static inline
 int int_compare_scalar(int x, int y) {
