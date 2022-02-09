@@ -140,6 +140,8 @@ extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
 extern r_obj* ffi_compute_nesting_container_info(r_obj*, r_obj*);
 extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_locate_interval_merge_bounds(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_locate_interval_merge_groups(r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -301,6 +303,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_interleave_indices",                (DL_FUNC) &ffi_interleave_indices, 2},
   {"ffi_compute_nesting_container_info",    (DL_FUNC) &ffi_compute_nesting_container_info, 2},
   {"ffi_locate_matches",                    (DL_FUNC) &ffi_locate_matches, 12},
+  {"ffi_locate_interval_merge_bounds",      (DL_FUNC) &ffi_locate_interval_merge_bounds, 4},
+  {"ffi_locate_interval_merge_groups",      (DL_FUNC) &ffi_locate_interval_merge_groups, 4},
   {NULL, NULL, 0}
 };
 
@@ -359,6 +363,7 @@ void vctrs_init_bind(SEXP ns);
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
 void vctrs_init_dictionary(SEXP ns);
+void vctrs_init_interval(r_obj* ns);
 void vctrs_init_match(r_obj* ns);
 void vctrs_init_names(SEXP ns);
 void vctrs_init_proxy_restore(SEXP ns);
@@ -384,6 +389,7 @@ r_obj* vctrs_init_library(r_obj* ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
+  vctrs_init_interval(ns);
   vctrs_init_match(ns);
   vctrs_init_names(ns);
   vctrs_init_proxy_restore(ns);
