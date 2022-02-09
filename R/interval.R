@@ -18,6 +18,27 @@
 #' These functions require that `start < end`. Additionally, intervals are
 #' treated as if they are right-open, i.e. `[start, end)`.
 #'
+#' @section Assumptions:
+#' For performance and simplicity, these functions make a few assumptions about
+#' `start` and `end` that are not checked internally:
+#'
+#' - `start < end` must be true, with an exception for missing intervals.
+#'
+#' - If the i-th observation of `start` is missing, then the i-th observation
+#' of `end` must also be missing.
+#'
+#' - Each observation of `start` and `end` must be either
+#' [complete][vec_detect_complete] or [missing][vec_equal_na]. Partially
+#' complete values such as `start = data_frame(x = 1, y = NA)` are not allowed.
+#'
+#' If any of these assumptions are invalid, then the result is undefined.
+#'
+#' Developer note: These assumptions stem from the idea that if these functions
+#' were in iv itself, then we could safely make these assumptions in the C code,
+#' because the `iv()` helper would assert them for us ahead of time. Trying to
+#' re-assert these checks in the C code here is wasteful and makes the code
+#' more complex.
+#'
 #' @param start,end
 #'   A pair of vectors representing the starts and ends of the intervals.
 #'
@@ -29,18 +50,6 @@
 #' @param abutting
 #'   A single logical controlling whether or not abutting intervals should be
 #'   merged together. If `TRUE`, `[a, b)` and `[b, c)` will be merged.
-#'
-#' @param incomplete
-#'   Merging of missing and [incomplete][vec_detect_complete] intervals. An
-#'   interval is considered incomplete if either `start` or `end` contain any
-#'   missing values.
-#'
-#'   - `"merge"`: Merge all incomplete intervals together. The bound location
-#'   returned for an incomplete interval is `NA`.
-#'
-#'   - `"drop"`: Drop incomplete intervals from the result.
-#'
-#'   - `"error"`: Error if any incomplete intervals are detected.
 #'
 #' @return
 #' - `vec_locate_interval_merge_bounds()` returns a data frame with two columns,
@@ -54,8 +63,8 @@
 #'
 #' @examples
 #' bounds <- data_frame(
-#'   start = c(1, 2, NA, 5, 6, 9, 12),
-#'   end = c(5, 3, 2, 6, NA, 12, 14)
+#'   start = c(1, 2, NA, 5, NA, 9, 12),
+#'   end = c(5, 3, NA, 6, NA, 12, 14)
 #' )
 #' bounds
 #'
@@ -63,7 +72,6 @@
 #' loc <- vec_locate_interval_merge_bounds(bounds$start, bounds$end)
 #' loc
 #'
-#' # Notice that the incomplete intervals are standardized in the merged result
 #' data_frame(
 #'   start = vec_slice(bounds$start, loc$start),
 #'   end = vec_slice(bounds$end, loc$end)
@@ -94,19 +102,17 @@ NULL
 vec_locate_interval_merge_bounds <- function(start,
                                              end,
                                              ...,
-                                             abutting = TRUE,
-                                             incomplete = "merge") {
+                                             abutting = TRUE) {
   check_dots_empty0(...)
-  .Call(ffi_locate_interval_merge_bounds, start, end, abutting, incomplete)
+  .Call(ffi_locate_interval_merge_bounds, start, end, abutting)
 }
 
 vec_locate_interval_merge_groups <- function(start,
                                              end,
                                              ...,
-                                             abutting = TRUE,
-                                             incomplete = "merge") {
+                                             abutting = TRUE) {
   check_dots_empty0(...)
-  .Call(ffi_locate_interval_merge_groups, start, end, abutting, incomplete)
+  .Call(ffi_locate_interval_merge_groups, start, end, abutting)
 }
 
 # ------------------------------------------------------------------------------
@@ -125,27 +131,23 @@ vec_locate_interval_merge_groups <- function(start,
 exp_vec_locate_interval_merge_bounds <- function(start,
                                                  end,
                                                  ...,
-                                                 abutting = TRUE,
-                                                 incomplete = "merge") {
+                                                 abutting = TRUE) {
   vec_locate_interval_merge_bounds(
     start = start,
     end = end,
     ...,
-    abutting = abutting,
-    incomplete = incomplete
+    abutting = abutting
   )
 }
 
 exp_vec_locate_interval_merge_groups <- function(start,
                                                  end,
                                                  ...,
-                                                 abutting = TRUE,
-                                                 incomplete = "merge") {
+                                                 abutting = TRUE) {
   vec_locate_interval_merge_groups(
     start = start,
     end = end,
     ...,
-    abutting = abutting,
-    incomplete = incomplete
+    abutting = abutting
   )
 }
