@@ -109,3 +109,43 @@ vec_locate_interval_merge_groups <- function(start,
   .Call(ffi_locate_interval_merge_groups, start, end, abutting, incomplete)
 }
 
+# ------------------------------------------------------------------------------
+
+# Experimental shims of interval functions used by other packages (mainly, iv).
+#
+# This gives us the freedom to experiment with the signature of these functions
+# while being backwards compatible with iv in the meantime.
+#
+# We can remove these after:
+# - The interval functions are exported
+# - iv updates to use them directly
+# - A short deprecation period goes by that allows users time to update their
+#   version of iv
+
+exp_vec_locate_interval_merge_bounds <- function(start,
+                                                 end,
+                                                 ...,
+                                                 abutting = TRUE,
+                                                 incomplete = "merge") {
+  vec_locate_interval_merge_bounds(
+    start = start,
+    end = end,
+    ...,
+    abutting = abutting,
+    incomplete = incomplete
+  )
+}
+
+exp_vec_locate_interval_merge_groups <- function(start,
+                                                 end,
+                                                 ...,
+                                                 abutting = TRUE,
+                                                 incomplete = "merge") {
+  vec_locate_interval_merge_groups(
+    start = start,
+    end = end,
+    ...,
+    abutting = abutting,
+    incomplete = incomplete
+  )
+}
