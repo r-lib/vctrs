@@ -1,5 +1,6 @@
 #include "vctrs.h"
 #include "order.h"
+#include "complete.h"
 #include "translate.h"
 #include "poly-op.h"
 
@@ -263,6 +264,402 @@ r_obj* vec_locate_interval_merge_info(r_obj* start,
 
 // -----------------------------------------------------------------------------
 
+// [[ register() ]]
+r_obj* ffi_interval_complement(r_obj* start,
+                               r_obj* end,
+                               r_obj* lower,
+                               r_obj* upper) {
+  return vec_interval_complement(start, end, lower, upper);
+}
+
+static
+r_obj* vec_interval_complement(r_obj* start,
+                               r_obj* end,
+                               r_obj* lower,
+                               r_obj* upper) {
+  int n_prot = 0;
+
+  int _;
+  r_obj* ptype = vec_ptype2_params(
+    start,
+    end,
+    args_start,
+    args_end,
+    DF_FALLBACK_quiet,
+    &_
+  );
+  KEEP_N(ptype, &n_prot);
+
+  start = vec_cast_params(
+    start,
+    ptype,
+    args_start,
+    args_empty,
+    DF_FALLBACK_quiet,
+    S3_FALLBACK_false
+  );
+  KEEP_N(start, &n_prot);
+
+  end = vec_cast_params(
+    end,
+    ptype,
+    args_end,
+    args_empty,
+    DF_FALLBACK_quiet,
+    S3_FALLBACK_false
+  );
+  KEEP_N(end, &n_prot);
+
+  r_obj* start_proxy = KEEP_N(vec_proxy_compare(start), &n_prot);
+  start_proxy = KEEP_N(vec_normalize_encoding(start_proxy), &n_prot);
+
+  r_obj* end_proxy = KEEP_N(vec_proxy_compare(end), &n_prot);
+  end_proxy = KEEP_N(vec_normalize_encoding(end_proxy), &n_prot);
+
+  const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
+
+  struct poly_vec* p_poly_start = new_poly_vec(start_proxy, type_proxy);
+  PROTECT_POLY_VEC(p_poly_start, &n_prot);
+  const void* p_start = p_poly_start->p_vec;
+
+  struct poly_vec* p_poly_end = new_poly_vec(end_proxy, type_proxy);
+  PROTECT_POLY_VEC(p_poly_end, &n_prot);
+  const void* p_end = p_poly_end->p_vec;
+
+  const poly_binary_int_fn_ptr fn_compare = new_poly_p_compare_na_equal(type_proxy);
+
+  bool use_lower = (lower != r_null);
+  bool use_upper = (upper != r_null);
+
+  bool append_lower = false;
+  bool append_upper = false;
+
+  const void* p_lower = NULL;
+  if (use_lower) {
+    if (vec_size(lower) != 1) {
+      r_abort("`lower` must be size 1.");
+    }
+
+    lower = vec_cast_params(
+      lower,
+      ptype,
+      args_lower,
+      args_empty,
+      DF_FALLBACK_quiet,
+      S3_FALLBACK_false
+    );
+    KEEP_N(lower, &n_prot);
+
+    r_obj* lower_proxy = KEEP_N(vec_proxy_compare(lower), &n_prot);
+    lower_proxy = KEEP_N(vec_normalize_encoding(lower_proxy), &n_prot);
+
+    r_obj* lower_complete = KEEP_N(vec_detect_complete(lower_proxy), &n_prot);
+    if (!r_lgl_get(lower_complete, 0)) {
+      r_abort("`lower` can't contain missing values.");
+    }
+
+    struct poly_vec* p_poly_lower = new_poly_vec(lower_proxy, type_proxy);
+    PROTECT_POLY_VEC(p_poly_lower, &n_prot);
+    p_lower = p_poly_lower->p_vec;
+  }
+
+  const void* p_upper = NULL;
+  if (use_upper) {
+    if (vec_size(upper) != 1) {
+      r_abort("`upper` must be size 1.");
+    }
+
+    upper = vec_cast_params(
+      upper,
+      ptype,
+      args_upper,
+      args_empty,
+      DF_FALLBACK_quiet,
+      S3_FALLBACK_false
+    );
+    KEEP_N(upper, &n_prot);
+
+    r_obj* upper_proxy = KEEP_N(vec_proxy_compare(upper), &n_prot);
+    upper_proxy = KEEP_N(vec_normalize_encoding(upper_proxy), &n_prot);
+
+    r_obj* upper_complete = KEEP_N(vec_detect_complete(upper_proxy), &n_prot);
+    if (!r_lgl_get(upper_complete, 0)) {
+      r_abort("`upper` can't contain missing values.");
+    }
+
+    struct poly_vec* p_poly_upper = new_poly_vec(upper_proxy, type_proxy);
+    PROTECT_POLY_VEC(p_poly_upper, &n_prot);
+    p_upper = p_poly_upper->p_vec;
+  }
+
+  if (use_lower && use_upper && fn_compare(p_lower, 0, p_upper, 0) >= 0) {
+    // Handle the special case of `lower >= upper` up front.
+    // This could also be an error, but we try to be a little flexible.
+    // These can't follow the standard code path because it assumes
+    // `lower < upper`, like the rest of the intervals.
+    // - `lower > upper` is an invalid interval.
+    // - `lower = upper` will always result in an empty complement.
+    r_obj* out = KEEP_N(r_new_list(2), &n_prot);
+    r_list_poke(out, 0, vec_slice_unsafe(start, vctrs_shared_empty_int));
+    r_list_poke(out, 1, vec_slice_unsafe(end, vctrs_shared_empty_int));
+
+    r_obj* out_names = r_new_character(2);
+    r_attrib_poke_names(out, out_names);
+    r_chr_poke(out_names, 0, r_str("start"));
+    r_chr_poke(out_names, 1, r_str("end"));
+
+    r_init_data_frame(out, 0);
+
+    FREE(n_prot);
+    return out;
+  }
+
+  // Merge to sort, remove all missings, and merge all abutting intervals
+  const bool abutting = true;
+  const bool groups = false;
+  r_obj* minimal = KEEP_N(vec_locate_interval_merge_info(
+    start,
+    end,
+    abutting,
+    VCTRS_INTERVAL_MISSING_drop,
+    groups
+  ), &n_prot);
+  const int* v_loc_minimal_start = r_int_cbegin(r_list_get(minimal, 0));
+  const int* v_loc_minimal_end = r_int_cbegin(r_list_get(minimal, 1));
+
+  r_ssize size = vec_size(minimal);
+
+  // Assume the complement will take roughly half current size.
+  // Apply a minimum size to avoid a size of zero.
+  const r_ssize initial_size = r_ssize_max(size / 2, 1);
+
+  struct r_dyn_array* p_loc_start = r_new_dyn_vector(R_TYPE_integer, initial_size);
+  KEEP_N(p_loc_start->shelter, &n_prot);
+
+  struct r_dyn_array* p_loc_end = r_new_dyn_vector(R_TYPE_integer, initial_size);
+  KEEP_N(p_loc_end->shelter, &n_prot);
+
+  r_ssize i = 0;
+
+  r_ssize loc_lower_is_after_start_of = -1;
+  r_ssize loc_lower_is_before_end_of = 0;
+
+  if (use_lower) {
+    // Shift `i` forward to the first interval completely past `lower`.
+    // Track information about where `lower` is in relation to the intervals.
+    for (; i < size; ++i) {
+      const r_ssize loc_start = v_loc_minimal_start[i] - 1;
+      const r_ssize loc_end = v_loc_minimal_end[i] - 1;
+
+      if (fn_compare(p_lower, 0, p_end, loc_end) == 1) {
+        ++loc_lower_is_before_end_of;
+        ++loc_lower_is_after_start_of;
+      } else if (fn_compare(p_lower, 0, p_start, loc_start) >= 0) {
+        ++loc_lower_is_after_start_of;
+      } else {
+        break;
+      }
+    }
+  }
+
+  r_ssize loc_upper_is_after_start_of = size - 1;
+  r_ssize loc_upper_is_before_end_of = size;
+
+  if (use_upper) {
+    // Shift `size` backwards to the first interval that is completely before `upper`.
+    // Track information about where `upper` is in relation to the intervals.
+    for (; size - 1 >= 0; --size) {
+      const r_ssize loc_start = v_loc_minimal_start[size - 1] - 1;
+      const r_ssize loc_end = v_loc_minimal_end[size - 1] - 1;
+
+      if (fn_compare(p_upper, 0, p_start, loc_start) == -1) {
+        --loc_upper_is_before_end_of;
+        --loc_upper_is_after_start_of;
+      } else if (fn_compare(p_upper, 0, p_end, loc_end) <= 0) {
+        --loc_upper_is_before_end_of;
+      } else {
+        break;
+      }
+    }
+  }
+
+  const bool has_intervals_between = i < size;
+
+  if (use_lower && has_intervals_between) {
+    r_ssize loc_gap_start = -1;
+    if (loc_lower_is_before_end_of == loc_lower_is_after_start_of) {
+      // `lower` is in the middle of an interval, use the end of that interval
+      loc_gap_start = v_loc_minimal_end[loc_lower_is_before_end_of] - 1;
+    } else {
+      // `lower` is not within an interval, use `lower`
+      append_lower = true;
+    }
+
+    // The next start location is the end of the interval that `loc_gap_start`
+    // lines up with. We know this start location exists because of
+    // `has_intervals_between`.
+    const r_ssize loc_gap_end = v_loc_minimal_start[loc_lower_is_after_start_of + 1] - 1;
+
+    if (!append_lower) {
+      r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+    }
+    r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+  }
+
+  r_ssize loc_group_start = -1;
+  r_ssize loc_group_end = -1;
+
+  if (i < size) {
+    // Set information about first usable interval
+    loc_group_start = v_loc_minimal_start[i] - 1;
+    loc_group_end = v_loc_minimal_end[i] - 1;
+    ++i;
+  }
+
+  for (; i < size; ++i) {
+    const r_ssize loc_elt_start = v_loc_minimal_start[i] - 1;
+    const r_ssize loc_elt_end = v_loc_minimal_end[i] - 1;
+
+    if (fn_compare(p_end, loc_group_end, p_start, loc_elt_start) == -1) {
+      const r_ssize loc_gap_start = loc_group_end;
+      const r_ssize loc_gap_end = loc_elt_start;
+
+      r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+      r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+
+      loc_group_start = loc_elt_start;
+      loc_group_end = loc_elt_end;
+    } else if (fn_compare(p_end, loc_group_end, p_end, loc_elt_end) == -1) {
+      loc_group_end = loc_elt_end;
+    }
+  }
+
+  if (use_upper && has_intervals_between) {
+    // The previous end location is the start of the interval that `loc_gap_end`
+    // lines up with. We know this end location exists because of
+    // `has_intervals_between`.
+    const r_ssize loc_gap_start = v_loc_minimal_end[loc_upper_is_before_end_of - 1] - 1;
+
+    r_ssize loc_gap_end = -1;
+    if (loc_upper_is_before_end_of == loc_upper_is_after_start_of) {
+      // `upper` is in the middle of an interval, use the start of that interval
+      loc_gap_end = v_loc_minimal_start[loc_upper_is_before_end_of] - 1;
+    } else {
+      // `upper` is not within an interval, use `upper`
+      append_upper = true;
+    }
+
+    r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+    if (!append_upper) {
+      r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+    }
+  }
+
+  if (use_lower && use_upper && !has_intervals_between) {
+    /*
+     * This branch handles the case when `lower` and `upper` have no full
+     * intervals between them. They can be in any of these states. In
+     * particular, if they are in the same interval together, then there is
+     * no complement.
+     *
+     * | [ ) <lower> <upper> [ ) | append_lower = append_upper = true. complement: <lower> -> <upper>
+     * | [ <lower> ) <upper> [ ) | append_upper = true. complement: ) -> <upper>
+     * | [ ) <lower> [ <upper> ) | append_lower = true. complement: <lower> -> [
+     * | [ <lower> ) [ <upper> ) | both in separate intervals. complement: ) -> [
+     * | [ <lower> <upper> ) [ ) | both in same interval! complement: none
+     * | [ ) [ <lower> <upper> ) | both in same interval! complement: none
+     */
+    bool lower_in_interval = false;
+    bool upper_in_interval = false;
+
+    r_ssize loc_gap_start = -1;
+    if (loc_lower_is_before_end_of == loc_lower_is_after_start_of) {
+      lower_in_interval = true;
+      loc_gap_start = v_loc_minimal_end[loc_lower_is_before_end_of] - 1;
+    } else {
+      append_lower = true;
+    }
+
+    r_ssize loc_gap_end = -1;
+    if (loc_upper_is_before_end_of == loc_upper_is_after_start_of) {
+      upper_in_interval = true;
+      loc_gap_end = v_loc_minimal_start[loc_upper_is_before_end_of] - 1;
+    } else {
+      append_upper = true;
+    }
+
+    const bool lower_and_upper_in_same_interval =
+      lower_in_interval &&
+      upper_in_interval &&
+      (loc_lower_is_before_end_of == loc_upper_is_before_end_of);
+
+    if (!append_lower && !lower_and_upper_in_same_interval) {
+      r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+    }
+    if (!append_upper && !lower_and_upper_in_same_interval) {
+      r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+    }
+  }
+
+  r_obj* loc_start = KEEP_N(r_dyn_unwrap(p_loc_start), &n_prot);
+  r_obj* loc_end = KEEP_N(r_dyn_unwrap(p_loc_end), &n_prot);
+
+  // Slice `end` to get new starts and `start` to get new ends!
+  r_obj* out_start = KEEP_N(vec_slice_unsafe(end, loc_start), &n_prot);
+  r_obj* out_end = KEEP_N(vec_slice_unsafe(start, loc_end), &n_prot);
+
+  if (append_lower || append_upper) {
+    r_obj* args = KEEP_N(r_new_list(2), &n_prot);
+
+    const struct name_repair_opts name_repair_opts = {
+      .type = name_repair_none,
+      .fn = R_NilValue
+    };
+
+    if (append_lower) {
+      // Push `lower` to the start of the new starts
+      r_list_poke(args, 0, lower);
+      r_list_poke(args, 1, out_start);
+
+      out_start = KEEP_N(vec_c(
+        args,
+        ptype,
+        R_NilValue,
+        &name_repair_opts
+      ), &n_prot);
+    }
+
+    if (append_upper) {
+      // Push `upper` to the end of the new ends
+      r_list_poke(args, 0, out_end);
+      r_list_poke(args, 1, upper);
+
+      out_end = KEEP_N(vec_c(
+        args,
+        ptype,
+        R_NilValue,
+        &name_repair_opts
+      ), &n_prot);
+    }
+  }
+
+  r_obj* out = KEEP_N(r_new_list(2), &n_prot);
+  r_list_poke(out, 0, out_start);
+  r_list_poke(out, 1, out_end);
+
+  r_obj* out_names = r_new_character(2);
+  r_attrib_poke_names(out, out_names);
+  r_chr_poke(out_names, 0, r_str("start"));
+  r_chr_poke(out_names, 1, r_str("end"));
+
+  r_init_data_frame(out, vec_size(out_start));
+
+  FREE(n_prot);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
+
 /*
  * `interval_order()` orders the `start` and `end` values of a vector of
  * intervals in ascending order. It places missing intervals at the front.
@@ -321,4 +718,6 @@ enum vctrs_interval_missing parse_missing(r_obj* missing) {
 void vctrs_init_interval(r_obj* ns) {
   args_start_ = new_wrapper_arg(NULL, "start");
   args_end_ = new_wrapper_arg(NULL, "end");
+  args_lower_ = new_wrapper_arg(NULL, "lower");
+  args_upper_ = new_wrapper_arg(NULL, "upper");
 }
