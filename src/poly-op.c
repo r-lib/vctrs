@@ -1,6 +1,7 @@
 #include "poly-op.h"
 #include "vctrs.h"
 #include "equal.h"
+#include "compare.h"
 #include "utils.h"
 
 // -----------------------------------------------------------------------------
@@ -45,6 +46,56 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
   }
 
   return true;
+}
+
+// -----------------------------------------------------------------------------
+
+static int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssize j);
+
+// [[ include("poly-op.h") ]]
+poly_binary_int_fn_ptr new_poly_p_compare_na_equal(enum vctrs_type type) {
+  switch (type) {
+  case vctrs_type_null: return p_nil_compare_na_equal;
+  case vctrs_type_logical: return p_lgl_compare_na_equal;
+  case vctrs_type_integer: return p_int_compare_na_equal;
+  case vctrs_type_double: return p_dbl_compare_na_equal;
+  case vctrs_type_complex: return p_cpl_compare_na_equal;
+  case vctrs_type_character: return p_chr_compare_na_equal;
+  case vctrs_type_raw: return p_raw_compare_na_equal;
+  case vctrs_type_list: return p_list_compare_na_equal;
+  case vctrs_type_dataframe: return p_df_compare_na_equal;
+  default: stop_unimplemented_vctrs_type("new_poly_p_compare_na_equal", type);
+  }
+}
+
+static
+int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
+  struct poly_df_data* x_data = (struct poly_df_data*) x;
+  struct poly_df_data* y_data = (struct poly_df_data*) y;
+
+  r_ssize n_col = x_data->n_col;
+  if (n_col != y_data->n_col) {
+    r_stop_internal("`x` and `y` must have the same number of columns.");
+  }
+
+  enum vctrs_type* v_col_type = x_data->v_col_type;
+  const void** v_x_col_ptr = x_data->v_col_ptr;
+  const void** v_y_col_ptr = y_data->v_col_ptr;
+
+  // df-cols should already be flattened
+  for (r_ssize col = 0; col < n_col; ++col) {
+    const int cmp = p_compare_na_equal(
+      v_x_col_ptr[col], i,
+      v_y_col_ptr[col], j,
+      v_col_type[col]
+    );
+
+    if (cmp != 0) {
+      return cmp;
+    }
+  }
+
+  return 0;
 }
 
 // -----------------------------------------------------------------------------
