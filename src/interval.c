@@ -429,15 +429,27 @@ r_obj* vec_interval_complement(r_obj* start,
 
   r_ssize size = vec_size(minimal);
 
-  // Assume the complement will take roughly half current size.
-  // Apply a minimum size to avoid a size of zero.
-  const r_ssize initial_size = r_ssize_max(size / 2, 1);
+  // Because we have the minimal interval information (i.e. no intervals overlap
+  // or abut!), we know that the complement takes exactly `size - 1` space if
+  // `lower` and `upper` aren't used.
+  //
+  // If `lower` is used, it can at most add one more interval, and
+  // requires one more `loc_end` location. No `loc_start` location is needed
+  // because we just append `lower` to the front if needed.
+  //
+  // If `upper` is used, it can at most add one more interval, and
+  // requires one more `loc_start` location. No `loc_end` location is needed
+  // because we just append `upper` to the end if needed.
+  const r_ssize max_size_start = r_ssize_max(size - 1 + use_upper, 0);
+  const r_ssize max_size_end = r_ssize_max(size - 1 + use_lower, 0);
 
-  struct r_dyn_array* p_loc_start = r_new_dyn_vector(R_TYPE_integer, initial_size);
-  KEEP_N(p_loc_start->shelter, &n_prot);
+  r_obj* loc_start = KEEP_N(r_alloc_integer(max_size_start), &n_prot);
+  int* v_loc_start = r_int_begin(loc_start);
+  r_ssize i_start = 0;
 
-  struct r_dyn_array* p_loc_end = r_new_dyn_vector(R_TYPE_integer, initial_size);
-  KEEP_N(p_loc_end->shelter, &n_prot);
+  r_obj* loc_end = KEEP_N(r_alloc_integer(max_size_end), &n_prot);
+  int* v_loc_end = r_int_begin(loc_end);
+  r_ssize i_end = 0;
 
   r_ssize i = 0;
 
@@ -501,18 +513,18 @@ r_obj* vec_interval_complement(r_obj* start,
     const r_ssize loc_gap_end = v_loc_minimal_start[loc_lower_is_after_start_of + 1] - 1;
 
     if (!append_lower) {
-      r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+      v_loc_start[i_start] = loc_gap_start + 1;
+      ++i_start;
     }
-    r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+    v_loc_end[i_end] = loc_gap_end + 1;
+    ++i_end;
   }
 
-  r_ssize loc_group_start = -1;
-  r_ssize loc_group_end = -1;
+  r_ssize loc_previous_end = -1;
 
   if (i < size) {
     // Set information about first usable interval
-    loc_group_start = v_loc_minimal_start[i] - 1;
-    loc_group_end = v_loc_minimal_end[i] - 1;
+    loc_previous_end = v_loc_minimal_end[i] - 1;
     ++i;
   }
 
@@ -520,18 +532,16 @@ r_obj* vec_interval_complement(r_obj* start,
     const r_ssize loc_elt_start = v_loc_minimal_start[i] - 1;
     const r_ssize loc_elt_end = v_loc_minimal_end[i] - 1;
 
-    if (fn_compare(p_end, loc_group_end, p_start, loc_elt_start) == -1) {
-      const r_ssize loc_gap_start = loc_group_end;
-      const r_ssize loc_gap_end = loc_elt_start;
+    const r_ssize loc_gap_start = loc_previous_end;
+    const r_ssize loc_gap_end = loc_elt_start;
 
-      r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
-      r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+    v_loc_start[i_start] = loc_gap_start + 1;
+    ++i_start;
 
-      loc_group_start = loc_elt_start;
-      loc_group_end = loc_elt_end;
-    } else if (fn_compare(p_end, loc_group_end, p_end, loc_elt_end) == -1) {
-      loc_group_end = loc_elt_end;
-    }
+    v_loc_end[i_end] = loc_gap_end + 1;
+    ++i_end;
+
+    loc_previous_end = loc_elt_end;
   }
 
   if (use_upper && has_intervals_between) {
@@ -549,9 +559,11 @@ r_obj* vec_interval_complement(r_obj* start,
       append_upper = true;
     }
 
-    r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+    v_loc_start[i_start] = loc_gap_start + 1;
+    ++i_start;
     if (!append_upper) {
-      r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+      v_loc_end[i_end] = loc_gap_end + 1;
+      ++i_end;
     }
   }
 
@@ -594,15 +606,19 @@ r_obj* vec_interval_complement(r_obj* start,
       (loc_lower_is_before_end_of == loc_upper_is_before_end_of);
 
     if (!append_lower && !lower_and_upper_in_same_interval) {
-      r_dyn_int_push_back(p_loc_start, loc_gap_start + 1);
+      v_loc_start[i_start] = loc_gap_start + 1;
+      ++i_start;
     }
     if (!append_upper && !lower_and_upper_in_same_interval) {
-      r_dyn_int_push_back(p_loc_end, loc_gap_end + 1);
+      v_loc_end[i_end] = loc_gap_end + 1;
+      ++i_end;
     }
   }
 
-  r_obj* loc_start = KEEP_N(r_dyn_unwrap(p_loc_start), &n_prot);
-  r_obj* loc_end = KEEP_N(r_dyn_unwrap(p_loc_end), &n_prot);
+  // This should essentially be free.
+  // It will only ever shrink `loc_start` and `loc_end`.
+  loc_start = KEEP_N(r_int_resize(loc_start, i_start), &n_prot);
+  loc_end = KEEP_N(r_int_resize(loc_end, i_end), &n_prot);
 
   // Slice `end` to get new starts and `start` to get new ends!
   r_obj* out_start = KEEP_N(vec_slice_unsafe(end, loc_start), &n_prot);
