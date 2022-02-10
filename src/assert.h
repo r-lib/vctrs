@@ -11,4 +11,8 @@ void vec_check_vector(r_obj* x,
 
 void vec_check_size(r_obj* x, r_ssize size, struct vctrs_arg* arg);
 
+void vec_check_list(r_obj* x,
+                    struct vctrs_arg* arg,
+                    struct r_lazy call);
+
 #endif

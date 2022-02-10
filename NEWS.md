@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* vctrs now depends on cli to help with error message generation.
+
+* New `vec_check_list()` and `list_check_all_vectors()` input
+  checkers, and an accompanying `list_all_vectors()` predicate.
+
 * New `vec_interleave()` for combining multiple vectors together, interleaving
   their elements in the process (#1396).
 

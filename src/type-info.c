@@ -125,6 +125,19 @@ bool vec_is_vector(r_obj* x) {
   return info.type != vctrs_type_scalar;
 }
 
+// [[ register() ]]
+r_obj* ffi_list_all_vectors(r_obj* x, r_obj* frame) {
+  vec_check_list(x, args_x, (struct r_lazy) { frame, r_null });
+  return r_lgl(list_all_vectors(x));
+}
+
+bool list_all_vectors(r_obj* x) {
+  if (r_typeof(x) != R_TYPE_list) {
+    r_stop_unexpected_type(r_typeof(x));
+  }
+  return r_list_all_of(x, &vec_is_vector);
+}
+
 
 // [[ register() ]]
 r_obj* vctrs_typeof(r_obj* x, r_obj* dispatch) {

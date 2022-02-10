@@ -2,12 +2,32 @@
 % Please edit documentation in R/assert.R
 \name{vec_is_list}
 \alias{vec_is_list}
+\alias{vec_check_list}
+\alias{list_all_vectors}
+\alias{list_check_all_vectors}
 \title{Is the object a list?}
 \usage{
 vec_is_list(x)
+
+vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
+
+list_all_vectors(x)
+
+list_check_all_vectors(x, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
 \item{x}{An object.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+
+\item{arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{vec_is_list()} tests if \code{x} is considered a list in the vctrs sense. It
@@ -16,6 +36,13 @@ returns \code{TRUE} if:
 \item \code{x} is a bare list with no class.
 \item \code{x} is a list explicitly inheriting from \code{"list"}.
 }
+
+\code{list_all_vectors()} takes a list and checks that all elements of
+\code{x} are vectors.
+
+\code{vec_check_list()} and \code{list_check_all_vectors()} throw a type
+error if the input is not a list as defined by \code{vec_is_list()} and
+\code{list_all_vectors()} respectively.
 }
 \details{
 Notably, data frames and S3 record style classes like POSIXlt are not
@@ -24,6 +51,11 @@ considered lists.
 \examples{
 vec_is_list(list())
 vec_is_list(list_of(1))
-
 vec_is_list(data.frame())
+
+list_all_vectors(list(1, mtcars))
+list_all_vectors(list(1, environment()))
+
+# `list_`-prefixed functions assume a list:
+try(list_all_vectors(environment()))
 }

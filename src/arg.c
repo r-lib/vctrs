@@ -140,6 +140,61 @@ r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
 }
 
 
+// Wrapper around a subscript, either numeric or character
+
+struct subscript_arg_data {
+  struct vctrs_arg self;
+  r_obj* x;
+  r_ssize* p_i;
+};
+
+struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
+                                    r_obj* x,
+                                    r_ssize* p_i) {
+  r_obj* shelter = r_alloc_raw(sizeof(struct subscript_arg_data));
+
+  struct subscript_arg_data* p_data = r_raw_begin(shelter);
+  p_data->self = (struct vctrs_arg) {
+    .shelter = shelter,
+    .parent = parent,
+    .fill = &subscript_arg_fill,
+    .data = p_data
+  };
+  p_data->x = x;
+  p_data->p_i = p_i;
+
+  return (struct vctrs_arg*) p_data;
+}
+
+static
+r_ssize subscript_arg_fill(void* p_data_, char* buf, r_ssize remaining) {
+  struct subscript_arg_data* p_data = (struct subscript_arg_data*) p_data_;
+
+  r_ssize i = *p_data->p_i;
+  r_obj* x = p_data->x;
+
+  r_obj* names = vec_names(x);
+  r_ssize n = vec_size(x);
+
+  if (i >= n) {
+    r_stop_internal("subscript_arg_fill", "`i` can't be greater than `vec_size(x)`.");
+  }
+
+  int len;
+  if (r_has_name_at(names, i)) {
+    len = snprintf(buf, remaining, "$%s", r_chr_get_c_string(names, i));
+  } else {
+    len = snprintf(buf, remaining, "[[%td]]", i + 1);
+  }
+
+  if (len >= remaining) {
+    return -1;
+  } else {
+    return len;
+  }
+}
+
+
 // Wrapper around a counter representing the current position of the
 // argument
 

@@ -203,6 +203,15 @@ vec_is_vector <- function(x) {
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
 #'
+#' `list_all_vectors()` takes a list and checks that all elements of
+#' `x` are vectors.
+#'
+#' `vec_check_list()` and `list_check_all_vectors()` throw a type
+#' error if the input is not a list as defined by `vec_is_list()` and
+#' `list_all_vectors()` respectively.
+#'
+#' @inheritParams rlang::args_error_context
+#' @inheritParams rlang::args_dots_empty
 #' @param x An object.
 #'
 #' @details
@@ -213,10 +222,48 @@ vec_is_vector <- function(x) {
 #' @examples
 #' vec_is_list(list())
 #' vec_is_list(list_of(1))
-#'
 #' vec_is_list(data.frame())
+#'
+#' list_all_vectors(list(1, mtcars))
+#' list_all_vectors(list(1, environment()))
+#'
+#' # `list_`-prefixed functions assume a list:
+#' try(list_all_vectors(environment()))
 vec_is_list <- function(x) {
   .Call(vctrs_is_list, x)
+}
+#' @rdname vec_is_list
+#' @export
+vec_check_list <- function(x,
+                           ...,
+                           arg = caller_arg(x),
+                           call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_check_list, x, environment()))
+}
+
+#' @rdname vec_is_list
+#' @export
+list_all_vectors <- function(x) {
+  .Call(ffi_list_all_vectors, x, environment())
+}
+
+#' @rdname vec_is_list
+#' @export
+list_check_all_vectors <- function(x,
+                                   ...,
+                                   arg = caller_arg(x),
+                                   call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_list_check_all_vectors, x, environment()))
+}
+
+# Called from C
+stop_non_list_type <- function(x, arg, call) {
+  cli::cli_abort(
+    "{.arg {arg}} must be a list, not {friendly_type_of(x)}.",
+    call = call
+  )
 }
 
 is_same_type <- function(x, ptype) {
