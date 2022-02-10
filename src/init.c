@@ -142,6 +142,7 @@ extern r_obj* ffi_compute_nesting_container_info(r_obj*, r_obj*);
 extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_locate_interval_merge_bounds(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_locate_interval_merge_groups(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_interval_complement(r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -305,6 +306,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_locate_matches",                    (DL_FUNC) &ffi_locate_matches, 12},
   {"ffi_locate_interval_merge_bounds",      (DL_FUNC) &ffi_locate_interval_merge_bounds, 4},
   {"ffi_locate_interval_merge_groups",      (DL_FUNC) &ffi_locate_interval_merge_groups, 4},
+  {"ffi_interval_complement",               (DL_FUNC) &ffi_interval_complement, 4},
   {NULL, NULL, 0}
 };
 

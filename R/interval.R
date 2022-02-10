@@ -39,6 +39,8 @@
 #' re-assert these checks in the C code here is wasteful and makes the code
 #' more complex.
 #'
+#' @inheritParams rlang::args_dots_empty
+#'
 #' @param start,end
 #'   A pair of vectors representing the starts and ends of the intervals.
 #'
@@ -115,10 +117,6 @@
 #' vec_locate_interval_merge_groups(bounds$start, bounds$end)
 #'
 #' @noRd
-NULL
-
-# ------------------------------------------------------------------------------
-
 vec_locate_interval_merge_bounds <- function(start,
                                              end,
                                              ...,
@@ -128,6 +126,8 @@ vec_locate_interval_merge_bounds <- function(start,
   .Call(ffi_locate_interval_merge_bounds, start, end, abutting, missing)
 }
 
+#' @noRd
+#' @rdname interval-merge
 vec_locate_interval_merge_groups <- function(start,
                                              end,
                                              ...,
@@ -135,6 +135,67 @@ vec_locate_interval_merge_groups <- function(start,
                                              missing = "merge") {
   check_dots_empty0(...)
   .Call(ffi_locate_interval_merge_groups, start, end, abutting, missing)
+}
+
+# ------------------------------------------------------------------------------
+
+#' Interval complement
+#'
+#' @description
+#' `vec_interval_complement()` takes the complement of the intervals defined by
+#' `start` and `end`. The complement can also be thought of as the "gaps"
+#' between the intervals. By default, the minimum of `start` and the maximum of
+#' `end` define the bounds to take the complement over, but this can be adjusted
+#' with `lower` and `upper`. Missing intervals are always dropped from the
+#' complement.
+#'
+#' These functions require that `start < end`. Additionally, intervals are
+#' treated as if they are right-open, i.e. `[start, end)`.
+#'
+#' @inheritSection interval-merge Assumptions
+#'
+#' @inheritParams rlang::args_dots_empty
+#'
+#' @param start,end
+#'   A pair of vectors representing the starts and ends of the intervals.
+#'
+#'   It is required that `start < end`.
+#'
+#'   `start` and `end` will be cast to their common type, and must have the same
+#'   size.
+#'
+#' @param lower,upper
+#'   Bounds for the universe over which to compute the complement. These should
+#'   be singular values with the same type as `start` and `end`.
+#'
+#' @return
+#' A two column data frame with a `start` column containing a vector of the
+#' same type as `start` and an `end` column containing a vector of the same
+#' type as `end`.
+#'
+#' @examples
+#' x <- data_frame(
+#'   start = c(10, 0, NA, 3, -5, NA),
+#'   end = c(12, 5, NA, 6, -2, NA)
+#' )
+#' x
+#'
+#' # The complement contains any values from `[-5, 12)` that aren't represented
+#' # in these intervals. Missing intervals are dropped.
+#' vec_interval_complement(x$start, x$end)
+#'
+#' # Expand out the "universe" of possible values
+#' vec_interval_complement(x$start, x$end, lower = -Inf)
+#' vec_interval_complement(x$start, x$end, lower = -Inf, upper = Inf)
+#'
+#' @noRd
+vec_interval_complement <- function(start,
+                                    end,
+                                    ...,
+                                    lower = NULL,
+                                    upper = NULL) {
+  check_dots_empty0(...)
+  .Call(ffi_interval_complement, start, end, lower, upper)
 }
 
 # ------------------------------------------------------------------------------
@@ -175,5 +236,19 @@ exp_vec_locate_interval_merge_groups <- function(start,
     ...,
     abutting = abutting,
     missing = missing
+  )
+}
+
+exp_vec_interval_complement <- function(start,
+                                        end,
+                                        ...,
+                                        lower = NULL,
+                                        upper = NULL) {
+  vec_interval_complement(
+    start = start,
+    end = end,
+    ...,
+    lower = lower,
+    upper = upper
   )
 }

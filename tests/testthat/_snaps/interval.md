@@ -26,3 +26,34 @@
       Error:
       ! Can't combine `start` <double> and `end` <character>.
 
+# `lower` and `upper` can't contain missing values
+
+    Code
+      (expect_error(vec_interval_complement(1, 2, lower = NA)))
+    Output
+      <error/rlang_error>
+      Error in `vec_interval_complement()`:
+      ! `lower` can't contain missing values.
+    Code
+      (expect_error(vec_interval_complement(1, 2, upper = NA)))
+    Output
+      <error/rlang_error>
+      Error in `vec_interval_complement()`:
+      ! `upper` can't contain missing values.
+    Code
+      start <- data_frame(x = 1, y = 2)
+      end <- data_frame(x = 1, y = 3)
+      (expect_error(vec_interval_complement(start, end, lower = data_frame(x = 1, y = NA)))
+      )
+    Output
+      <error/rlang_error>
+      Error in `vec_interval_complement()`:
+      ! `lower` can't contain missing values.
+    Code
+      (expect_error(vec_interval_complement(start, end, upper = data_frame(x = 1, y = NA)))
+      )
+    Output
+      <error/rlang_error>
+      Error in `vec_interval_complement()`:
+      ! `upper` can't contain missing values.
+

@@ -296,3 +296,257 @@ test_that("`missing` is validated", {
 test_that("common type is taken", {
   expect_snapshot((expect_error(vec_locate_interval_merge_groups(1, "x"))))
 })
+
+# ------------------------------------------------------------------------------
+# vec_interval_complement()
+
+test_that("computes the complement", {
+  x <- data_frame(
+    start = c(6L, 1L, 2L, 12L),
+    end = c(9L, 3L, 4L, 14L)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end),
+    data_frame(start = c(4L, 9L), end = c(6L, 12L))
+  )
+})
+
+test_that("treats intervals as half-open like [a, b)", {
+  x <- data_frame(
+    start = c(1L, 5L),
+    end = c(4L, 6L)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end),
+    data_frame(start = 4L, end = 5L)
+  )
+})
+
+test_that("`[a, b)` and `[b, c)` result in no complement values", {
+  x <- data_frame(
+    start = c(1L, 5L),
+    end = c(5L, 6L)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end),
+    data_frame(start = integer(), end = integer())
+  )
+})
+
+test_that("works with `lower == upper`", {
+  x <- data_frame(
+    start = c(1L, 2L, 12L, NA),
+    end = c(10L, 5L, 15L, NA)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 10L, upper = 10L),
+    data_frame(start = integer(), end = integer())
+  )
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = -1L, upper = -1L),
+    data_frame(start = integer(), end = integer())
+  )
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 20L, upper = 20L),
+    data_frame(start = integer(), end = integer())
+  )
+})
+
+test_that("works with `lower` before any values", {
+  x <- data_frame(
+    start = c(1L, 2L, 12L, NA),
+    end = c(10L, 5L, 15L, NA)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = -1L),
+    data_frame(start = c(-1L, 10L), end = c(1L, 12L))
+  )
+})
+
+test_that("works if both `lower` and `upper` are before any values", {
+  x <- data_frame(
+    start = c(2L, 1L, 12L, NA),
+    end = c(5L, 10L, 15L, NA)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = -5L, upper = -2L),
+    data_frame(start = -5L, end = -2L)
+  )
+})
+
+test_that("works with `upper` after any values", {
+  x <- data_frame(
+    start = c(2L, 1L, 13L, 12L, NA),
+    end = c(5L, 10L, 17L, 15L, NA)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, upper = 20L),
+    data_frame(start = c(10L, 17L), end = c(12L, 20L))
+  )
+})
+
+test_that("works if both `lower` and `upper` are after any values", {
+  x <- data_frame(
+    start = c(2L, 1L, 12L, NA),
+    end = c(5L, 10L, 15L, NA)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 17L, upper = 19L),
+    data_frame(start = 17L, end = 19L)
+  )
+})
+
+test_that("works with only NA and `lower`", {
+  x <- data_frame(start = NA_integer_, end = NA_integer_)
+  expect_identical(vec_interval_complement(x$start, x$end, lower = 5L), data_frame(start = integer(), end = integer()))
+})
+
+test_that("works with only NA and `upper`", {
+  x <- data_frame(start = NA_integer_, end = NA_integer_)
+  expect_identical(vec_interval_complement(x$start, x$end, upper = 5L), data_frame(start = integer(), end = integer()))
+})
+
+test_that("works with only NA and both `lower` and `upper`", {
+  x <- data_frame(start = NA_integer_, end = NA_integer_)
+  expect_identical(vec_interval_complement(x$start, x$end, lower = 2L, upper = 5L), data_frame(start = 2L, end = 5L))
+})
+
+test_that("works with `lower` that is on the max set value", {
+  x <- data_frame(
+    start = c(1L, 12L),
+    end = c(9L, 13L)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 9L),
+    data_frame(start = 9L, end = 12L)
+  )
+})
+
+test_that("works with `upper` that is on the max set value", {
+  x <- data_frame(
+    start = c(-5L, 1L, 2L, 12L),
+    end = c(0L, 10L, 5L, 15L)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, upper = 10L),
+    data_frame(start = 0L, end = 1L)
+  )
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 10L, upper = 10L),
+    data_frame(start = integer(), end = integer())
+  )
+})
+
+test_that("size zero case generally returns nothing", {
+  expect_identical(
+    vec_interval_complement(integer(), integer()),
+    data_frame(start = integer(), end = integer())
+  )
+
+  expect_identical(
+    vec_interval_complement(integer(), integer(), lower = 5L),
+    data_frame(start = integer(), end = integer())
+  )
+
+  expect_identical(
+    vec_interval_complement(integer(), integer(), upper = 5L),
+    data_frame(start = integer(), end = integer())
+  )
+})
+
+test_that("size zero case with both `lower` and `upper` returns an interval", {
+  expect_identical(
+    vec_interval_complement(integer(), integer(), lower = 5L, upper = 10L),
+    data_frame(start = 5L, end = 10L)
+  )
+})
+
+test_that("size zero case with `lower == upper` doesn't return anything", {
+  expect_identical(
+    vec_interval_complement(integer(), integer(), lower = 5L, upper = 5L),
+    data_frame(start = integer(), end = integer())
+  )
+})
+
+test_that("works when `lower` is contained in an interval", {
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), lower = 3),
+    data_frame(start = 5, end = 10)
+  )
+})
+
+test_that("works when `lower` is in a gap between intervals", {
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), lower = 7),
+    data_frame(start = 7, end = 10)
+  )
+})
+
+test_that("works when `upper` is in a gap between intervals", {
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), upper = 7),
+    data_frame(start = c(-3, 5), end = c(1, 7))
+  )
+})
+
+test_that("works when `lower` and `upper` are in a gap between intervals", {
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), lower = 6, upper = 7),
+    data_frame(start = 6, end = 7)
+  )
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), lower = 7, upper = 7),
+    data_frame(start = double(), end = double())
+  )
+})
+
+test_that("works when `lower` and `upper` have an interval between them", {
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), lower = 0, upper = 7),
+    data_frame(start = c(0, 5), end = c(1, 7))
+  )
+  expect_identical(
+    vec_interval_complement(c(-5, 1, 10), c(-3, 5, 15), lower = -6, upper = 7),
+    data_frame(start = c(-6, -3, 5), end = c(-5, 1, 7))
+  )
+})
+
+test_that("allow `lower > upper` which returns an empty interval", {
+  x <- data_frame(start = c(1, 2), end = c(5, 12))
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 10, upper = 9),
+    data_frame(start = double(), end = double())
+  )
+})
+
+test_that("complement works when `lower` and `upper` are in the same interval", {
+  x <- data_frame(start = 1, end = 5)
+
+  expect_identical(
+    vec_interval_complement(x$start, x$end, lower = 2, upper = 4),
+    data_frame(start = double(), end = double())
+  )
+})
+
+test_that("`lower` and `upper` can't contain missing values", {
+  expect_snapshot({
+    (expect_error(vec_interval_complement(1, 2, lower = NA)))
+    (expect_error(vec_interval_complement(1, 2, upper = NA)))
+
+    start <- data_frame(x = 1, y = 2)
+    end <- data_frame(x = 1, y = 3)
+    (expect_error(vec_interval_complement(start, end, lower = data_frame(x = 1, y = NA))))
+    (expect_error(vec_interval_complement(start, end, upper = data_frame(x = 1, y = NA))))
+  })
+})
