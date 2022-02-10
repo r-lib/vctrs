@@ -203,7 +203,7 @@ vec_is_vector <- function(x) {
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
 #'
-#' `list_all_vectors()` additionally checks that all elements of
+#' `list_all_vectors()` takes a list and checks that all elements of
 #' `x` are vectors.
 #'
 #' `vec_check_list()` and `list_check_all_vectors()` throw a type

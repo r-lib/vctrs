@@ -205,8 +205,8 @@
       (expect_error(my_function(env())))
     Output
       <error/rlang_error>
-      Error in `my_function()`:
-      ! `my_arg` must be a list, not an environment.
+      Error in `list_check_all_vectors()`:
+      ! `x` must be a list, not an environment.
     Code
       (expect_error(my_function(list(1, env()))))
     Output

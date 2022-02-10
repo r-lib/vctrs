@@ -2,16 +2,16 @@
 % Please edit documentation in R/assert.R
 \name{vec_is_list}
 \alias{vec_is_list}
-\alias{list_all_vectors}
 \alias{vec_check_list}
+\alias{list_all_vectors}
 \alias{list_check_all_vectors}
 \title{Is the object a list?}
 \usage{
 vec_is_list(x)
 
-list_all_vectors(x)
-
 vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
+
+list_all_vectors(x)
 
 list_check_all_vectors(x, ..., arg = caller_arg(x), call = caller_env())
 }
@@ -37,7 +37,7 @@ returns \code{TRUE} if:
 \item \code{x} is a list explicitly inheriting from \code{"list"}.
 }
 
-\code{list_all_vectors()} additionally checks that all elements of
+\code{list_all_vectors()} takes a list and checks that all elements of
 \code{x} are vectors.
 
 \code{vec_check_list()} and \code{list_check_all_vectors()} throw a type
