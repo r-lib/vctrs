@@ -246,15 +246,15 @@ section in the "tidyverse package development principles".</p></div>
 <span class="r-in"><span class="co"># You can make them unique:</span></span>
 <span class="r-in"><span class="fu">vec_as_names</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="st">"foo"</span><span class="op">)</span>, repair <span class="op">=</span> <span class="st">"unique"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> New names:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> <span style="color: #262626; background-color: #DADADA;">``</span> -&gt; <span style="color: #262626; background-color: #DADADA;">`...1`</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> <span style="color: #262626; background-color: #DADADA;">``</span> -&gt; <span style="color: #262626; background-color: #DADADA;">`...2`</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...1`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `` -&gt; `...2`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "...1" "...2" "foo" </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Universal repairing fixes any non-syntactic name:</span></span>
 <span class="r-in"><span class="fu">vec_as_names</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"_foo"</span>, <span class="st">"+"</span><span class="op">)</span>, repair <span class="op">=</span> <span class="st">"universal"</span><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> New names:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> <span style="color: #262626; background-color: #DADADA;">`_foo`</span> -&gt; <span style="color: #262626; background-color: #DADADA;">`._foo`</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> <span style="color: #262626; background-color: #DADADA;">`+`</span> -&gt; <span style="color: #262626; background-color: #DADADA;">`.`</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `_foo` -&gt; `._foo`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> `+` -&gt; `.`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "._foo" "."    </span>
 </code></pre></div>
     </div>

@@ -310,7 +310,7 @@
 
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">percent</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">:</span><span class="fl">1</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_restore_dispatch()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_restore_dispatch()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert &lt;integer&gt; to &lt;vctrs_percent&gt;.</span>
 <span class="va">x</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
 <span class="va">x</span>
@@ -557,11 +557,11 @@
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span>
 <span class="co">#&gt; &lt;vctrs_rational[10]&gt;</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`format()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `format()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> `format.vctrs_rational()` not implemented.</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`format()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `format()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> `format.vctrs_rational()` not implemented.</span></code></pre></div>
 <p>This is because we haven’t defined how our class can be printed from the underlying data. Note that if you want to look under the hood during development, you can always call <code>vec_data(x)</code>.</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
@@ -811,7 +811,7 @@
 <p>We can’t compare individual elements, because by default lists are not comparable:</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;</span> <span class="va">p</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_proxy_compare()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_proxy_compare()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> `vec_proxy_compare.vctrs_poly()` not supported.</span></code></pre></div>
 <p>To enable comparison, we implement a <code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> method:</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
@@ -912,13 +912,13 @@
 <p>But we can’t do arithmetic:</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">x</span> <span class="op">+</span> <span class="fl">1</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_arith()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span>
 <span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">+</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_arith()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; + &lt;vctrs_meter&gt; is not permitted</span>
 <span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fl">3</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_arith()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; * &lt;double&gt; is not permitted</span></code></pre></div>
 <p>To allow these infix functions to work, we’ll need to provide <code><a href="../reference/vec_arith.html">vec_arith()</a></code> generic. But before we do that, let’s think about what combinations of inputs we should support:</p>
 <ul>
@@ -954,7 +954,7 @@
 <span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">/</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; [1] 10</span>
 <span class="fu">meter</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">*</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_arith()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; * &lt;vctrs_meter&gt; is not permitted</span></code></pre></div>
 <p>Next we write the pair of methods for arithmetic with a meter and a number. These are almost identical, but while <code>meter(10) / 2</code> makes sense, <code>2 / meter(10)</code> does not (and neither do addition and subtraction). To support both doubles and integers as operands, we dispatch over <code>numeric</code> here instead of <code>double</code>.</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
@@ -987,10 +987,10 @@
 <span class="co">#&gt; &lt;vctrs_meter[1]&gt;</span>
 <span class="co">#&gt; [1] 2 m</span>
 <span class="fl">10</span> <span class="op">/</span> <span class="fu">meter</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_arith()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;double&gt; / &lt;vctrs_meter&gt; is not permitted</span>
 <span class="fu">meter</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span> <span class="op">+</span> <span class="fl">10</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in </span><span style="color: #262626; background-color: #DADADA; font-weight: bold;">`vec_arith()`</span><span style="font-weight: bold;">:</span></span>
+<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_arith()`:</span></span>
 <span class="co">#&gt; <span style="color: #BBBB00;">!</span> &lt;vctrs_meter&gt; + &lt;double&gt; is not permitted</span></code></pre></div>
 <p>For completeness, we also need <code>vec_arith.vctrs_meter.MISSING</code> for the unary <code>+</code> and <code>-</code> operators:</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">

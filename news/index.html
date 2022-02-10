@@ -74,7 +74,9 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>New <code><a href="../reference/vec_interleave.html">vec_interleave()</a></code> for combining multiple vectors together, interleaving their elements in the process (<a href="https://github.com/r-lib/vctrs/issues/1396" class="external-link">#1396</a>).</p></li>
+<ul><li><p>vctrs now depends on cli to help with error message generation.</p></li>
+<li><p>New <code><a href="../reference/vec_is_list.html">vec_check_list()</a></code> and <code><a href="../reference/vec_is_list.html">list_check_all_vectors()</a></code> input checkers, and an accompanying <code><a href="../reference/vec_is_list.html">list_all_vectors()</a></code> predicate.</p></li>
+<li><p>New <code><a href="../reference/vec_interleave.html">vec_interleave()</a></code> for combining multiple vectors together, interleaving their elements in the process (<a href="https://github.com/r-lib/vctrs/issues/1396" class="external-link">#1396</a>).</p></li>
 <li><p><code>vec_equal_na(NULL)</code> now returns <code>logical(0)</code> rather than erroring (<a href="https://github.com/r-lib/vctrs/issues/1494" class="external-link">#1494</a>).</p></li>
 <li><p><code>vec_as_location(missing = "error")</code> now fails with <code>NA</code> and <code>NA_character_</code> in addition to <code>NA_integer_</code> (<a href="https://github.com/r-lib/vctrs/issues/1420" class="external-link">#1420</a>, <a href="https://github.com/krlmlr" class="external-link">@krlmlr</a>).</p></li>
 <li>
