@@ -98,7 +98,11 @@ static SEXP vec_rbind(SEXP xs,
   }
 
   // Must happen after the `names_to` column has been added to `ptype`
-  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
+  xs = vec_cast_common_params(xs,
+                              ptype,
+                              DF_FALLBACK_DEFAULT,
+                              S3_FALLBACK_true,
+                              r_lazy_null);
   PROTECT_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output

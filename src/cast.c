@@ -1,9 +1,6 @@
 #include "vctrs.h"
-#include "cast.h"
 #include "dim.h"
 #include "type-data-frame.h"
-#include "utils.h"
-#include "assert.h"
 #include "decl/cast-decl.h"
 
 // [[ register() ]]
@@ -233,20 +230,21 @@ r_obj* vec_cast_e(const struct cast_opts* opts,
 
 r_obj* vec_cast_common_opts(r_obj* xs,
                             r_obj* to,
-                            const struct fallback_opts* fallback_opts) {
-  r_obj* type = KEEP(vec_ptype_common_opts(xs, to, fallback_opts));
+                            const struct cast_common_opts* opts) {
+  r_obj* type = KEEP(vec_ptype_common_opts(xs, to, &opts->fallback));
 
   r_ssize n = r_length(xs);
   r_obj* out = KEEP(r_alloc_list(n));
 
   for (r_ssize i = 0; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
-    struct cast_opts opts = {
+    struct cast_opts cast_opts = {
       .x = elt,
       .to = type,
-      .fallback = *fallback_opts
+      .call = opts->call,
+      .fallback = opts->fallback
     };
-    r_list_poke(out, i, vec_cast_opts(&opts));
+    r_list_poke(out, i, vec_cast_opts(&cast_opts));
   }
 
   r_attrib_poke_names(out, r_names(xs));
@@ -257,42 +255,54 @@ r_obj* vec_cast_common_opts(r_obj* xs,
 r_obj* vec_cast_common_params(r_obj* xs,
                               r_obj* to,
                               enum df_fallback df_fallback,
-                              enum s3_fallback s3_fallback) {
-  struct fallback_opts opts = {
-    .df = df_fallback,
-    .s3 = s3_fallback
+                              enum s3_fallback s3_fallback,
+                              struct r_lazy call) {
+  struct cast_common_opts opts = {
+    .call = call,
+    .fallback = {
+      .df = df_fallback,
+      .s3 = s3_fallback
+    }
   };
   return vec_cast_common_opts(xs, to, &opts);
 }
 
-r_obj* vec_cast_common(r_obj* xs, r_obj* to) {
-  return vec_cast_common_params(xs, to, DF_FALLBACK_DEFAULT, S3_FALLBACK_DEFAULT);
+r_obj* vec_cast_common(r_obj* xs, r_obj* to, struct r_lazy call) {
+  return vec_cast_common_params(xs,
+                                to,
+                                DF_FALLBACK_DEFAULT,
+                                S3_FALLBACK_DEFAULT,
+                                call);
 }
 
 // [[ register(external = TRUE) ]]
-r_obj* ffi_cast_common(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+r_obj* ffi_cast_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
   r_obj* dots = KEEP(rlang_env_dots_list(env));
   r_obj* to = KEEP(r_eval(r_node_car(args), env));
+  struct r_lazy call = { .x = syms.dot_call, .env = env };
 
-  r_obj* out = vec_cast_common(dots, to);
+  r_obj* out = vec_cast_common(dots, to, call);
 
   FREE(2);
   return out;
 }
 
 // [[ register(external = TRUE) ]]
-r_obj* ffi_cast_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+r_obj* ffi_cast_common_opts(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
   r_obj* dots = KEEP(rlang_env_dots_list(env));
   r_obj* to = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
-  r_obj* opts = KEEP(r_eval(r_node_car(args), env));
+  r_obj* ffi_fallback_opts = KEEP(r_eval(r_node_car(args), env));
 
-  const struct fallback_opts c_opts = new_fallback_opts(opts);
+  struct cast_common_opts opts = {
+    .call = { .x = syms.dot_call, .env = env },
+    .fallback = new_fallback_opts(ffi_fallback_opts)
+  };
 
-  r_obj* out = vec_cast_common_opts(dots, to, &c_opts);
+  r_obj* out = vec_cast_common_opts(dots, to, &opts);
 
   FREE(3);
   return out;

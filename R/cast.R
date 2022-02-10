@@ -101,26 +101,42 @@ vec_cast_dispatch_native <- function(x,
 
 #' @export
 #' @rdname vec_cast
-vec_cast_common <- function(..., .to = NULL) {
+vec_cast_common <- function(...,
+                            .to = NULL,
+                            .call = caller_env()) {
   .External2(ffi_cast_common, .to)
 }
 vec_cast_common_opts <- function(...,
                                  .to = NULL,
-                                 .opts = fallback_opts()) {
+                                 .opts = fallback_opts(),
+                                 .call = caller_env()) {
   .External2(ffi_cast_common_opts, .to, .opts)
 }
 vec_cast_common_params <- function(...,
                                    .to = NULL,
                                    .df_fallback = NULL,
-                                   .s3_fallback = NULL) {
+                                   .s3_fallback = NULL,
+                                   .call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
-  vec_cast_common_opts(..., .to = .to, .opts = opts)
+  vec_cast_common_opts(
+    ...,
+    .to = .to,
+    .opts = opts,
+    .call = .call
+  )
 }
-vec_cast_common_fallback <- function(..., .to = NULL) {
-  vec_cast_common_opts(..., .to = .to, .opts = full_fallback_opts())
+vec_cast_common_fallback <- function(...,
+                                     .to = NULL,
+                                     .call = caller_env()) {
+  vec_cast_common_opts(
+    ...,
+    .to = .to,
+    .opts = full_fallback_opts(),
+    .call = .call
+  )
 }
 
 #' @rdname vec_default_ptype2

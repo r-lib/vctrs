@@ -85,7 +85,7 @@ static SEXP vec_unchop(SEXP xs,
     return R_NilValue;
   }
 
-  xs = PROTECT(vec_cast_common(xs, ptype));
+  xs = PROTECT(vec_cast_common(xs, ptype, r_lazy_null));
 
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
   SEXP xs_names = PROTECT(r_names(xs));

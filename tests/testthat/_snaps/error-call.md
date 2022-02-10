@@ -349,3 +349,13 @@
       Error in `vec_size()`:
       ! `x` must be a vector, not an environment.
 
+# vec_cast_common() reports error context
+
+    Code
+      (expect_error(my_function(my_arg = 1.5, .to = int())))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from <double> to <integer> due to loss of precision.
+      * Locations: 1
+
