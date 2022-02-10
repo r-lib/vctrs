@@ -255,6 +255,9 @@ bool vec_is_unspecified(SEXP x);
 
 #include "arg.h"
 #include "assert.h"
+#include "cast.h"
+#include "cast-bare.h"
+#include "cast-dispatch.h"
 #include "complete.h"
 #include "match-joint.h"
 #include "names.h"
@@ -280,7 +283,6 @@ SEXP vec_proxy_order(SEXP x);
 r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y);
 SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
-SEXP vec_cast_common(SEXP xs, SEXP to);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);

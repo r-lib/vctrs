@@ -2,80 +2,77 @@
 #include "type-data-frame.h"
 #include "utils.h"
 
-// [[ include("cast.h") ]]
-SEXP int_as_logical(SEXP x, bool* lossy) {
-  int* data = INTEGER(x);
-  R_len_t n = Rf_length(x);
+r_obj* int_as_logical(r_obj* x, bool* lossy) {
+  int* data = r_int_begin(x);
+  r_ssize n = r_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
+  r_obj* out = KEEP(r_alloc_logical(n));
+  int* out_data = r_lgl_begin(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+  for (r_ssize i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
 
-    if (elt == NA_INTEGER) {
-      *out_data = NA_LOGICAL;
+    if (elt == r_globals.na_int) {
+      *out_data = r_globals.na_lgl;
       continue;
     }
 
     if (elt != 0 && elt != 1) {
       *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
+      FREE(1);
+      return r_null;
     }
 
     *out_data = elt;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-// [[ include("cast.h") ]]
-SEXP dbl_as_logical(SEXP x, bool* lossy) {
-  double* data = REAL(x);
-  R_len_t n = Rf_length(x);
+r_obj* dbl_as_logical(r_obj* x, bool* lossy) {
+  double* data = r_dbl_begin(x);
+  r_ssize n = r_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* out_data = LOGICAL(out);
+  r_obj* out = KEEP(r_alloc_logical(n));
+  int* out_data = r_lgl_begin(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+  for (r_ssize i = 0; i < n; ++i, ++data, ++out_data) {
     double elt = *data;
 
     if (isnan(elt)) {
-      *out_data = NA_LOGICAL;
+      *out_data = r_globals.na_lgl;
       continue;
     }
 
     if (elt != 0 && elt != 1) {
       *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
+      FREE(1);
+      return r_null;
     }
 
     *out_data = (int) elt;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-// [[ include("cast.h") ]]
-SEXP chr_as_logical(SEXP x, bool* lossy) {
-  SEXP const* x_p = STRING_PTR_RO(x);
-  R_len_t n = Rf_length(x);
+r_obj* chr_as_logical(r_obj* x, bool* lossy) {
+  r_obj* const* x_p = r_chr_cbegin(x);
+  r_ssize n = r_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, n));
-  int* p_out = LOGICAL(out);
+  r_obj* out = KEEP(r_alloc_logical(n));
+  int* p_out = r_lgl_begin(out);
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP str = x_p[i];
-    if (str == NA_STRING) {
-      p_out[i] = NA_LOGICAL;
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* str = x_p[i];
+    if (str == r_globals.na_str) {
+      p_out[i] = r_globals.na_lgl;
       continue;
     }
 
-    const char* elt = CHAR(str);
+    const char* elt = r_str_c_string(str);
     switch (elt[0]) {
     case 'T':
       if (elt[1] == '\0' || strcmp(elt, "TRUE") == 0) {
@@ -106,38 +103,36 @@ SEXP chr_as_logical(SEXP x, bool* lossy) {
     }
 
     *lossy = true;
-    UNPROTECT(1);
-    return R_NilValue;
+    FREE(1);
+    return r_null;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-// [[ include("cast.h") ]]
-SEXP lgl_as_integer(SEXP x, bool* lossy) {
+r_obj* lgl_as_integer(r_obj* x, bool* lossy) {
   return Rf_coerceVector(x, INTSXP);
 }
 
-// [[ include("cast.h") ]]
-SEXP dbl_as_integer(SEXP x, bool* lossy) {
-  double* data = REAL(x);
-  R_len_t n = Rf_length(x);
+r_obj* dbl_as_integer(r_obj* x, bool* lossy) {
+  double* data = r_dbl_begin(x);
+  r_ssize n = r_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int* out_data = INTEGER(out);
+  r_obj* out = KEEP(r_alloc_integer(n));
+  int* out_data = r_int_begin(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+  for (r_ssize i = 0; i < n; ++i, ++data, ++out_data) {
     double elt = *data;
 
     if (elt <= INT_MIN || elt >= INT_MAX + 1.0) {
       *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
+      FREE(1);
+      return r_null;
     }
 
     if (isnan(elt)) {
-      *out_data = NA_INTEGER;
+      *out_data = r_globals.na_int;
       continue;
     }
 
@@ -145,47 +140,45 @@ SEXP dbl_as_integer(SEXP x, bool* lossy) {
 
     if (value != elt) {
       *lossy = true;
-      UNPROTECT(1);
-      return R_NilValue;
+      FREE(1);
+      return r_null;
     }
 
     *out_data = value;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-// [[ include("cast.h") ]]
-SEXP lgl_as_double(SEXP x, bool* lossy) {
-  int* data = LOGICAL(x);
-  R_len_t n = Rf_length(x);
+r_obj* lgl_as_double(r_obj* x, bool* lossy) {
+  int* data = r_lgl_begin(x);
+  r_ssize n = r_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
-  double* out_data = REAL(out);
+  r_obj* out = KEEP(r_alloc_double(n));
+  double* out_data = r_dbl_begin(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+  for (r_ssize i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
-    *out_data = (elt == NA_LOGICAL) ? NA_REAL : elt;
+    *out_data = (elt == r_globals.na_lgl) ? r_globals.na_dbl : elt;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-// [[ include("cast.h") ]]
-SEXP int_as_double(SEXP x, bool* lossy) {
-  int* data = INTEGER(x);
-  R_len_t n = Rf_length(x);
+r_obj* int_as_double(r_obj* x, bool* lossy) {
+  int* data = r_int_begin(x);
+  r_ssize n = r_length(x);
 
-  SEXP out = PROTECT(Rf_allocVector(REALSXP, n));
-  double* out_data = REAL(out);
+  r_obj* out = KEEP(r_alloc_double(n));
+  double* out_data = r_dbl_begin(out);
 
-  for (R_len_t i = 0; i < n; ++i, ++data, ++out_data) {
+  for (r_ssize i = 0; i < n; ++i, ++data, ++out_data) {
     int elt = *data;
-    *out_data = (elt == NA_INTEGER) ? NA_REAL : elt;
+    *out_data = (elt == r_globals.na_int) ? r_globals.na_dbl : elt;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }

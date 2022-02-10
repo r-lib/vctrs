@@ -6,14 +6,7 @@
 #include "type-data-frame.h"
 #include "utils.h"
 #include "assert.h"
-
-static
-SEXP vec_cast_switch_native(const struct cast_opts* opts,
-                            enum vctrs_type x_type,
-                            enum vctrs_type to_type,
-                            bool* lossy);
-
-static SEXP vec_cast_dispatch_s3(const struct cast_opts* opts);
+#include "decl/cast-decl.h"
 
 // [[ register() ]]
 r_obj* ffi_cast(r_obj* x,
@@ -30,20 +23,19 @@ r_obj* ffi_cast(r_obj* x,
   return vec_cast(x, to, &x_arg, &to_arg, call);
 }
 
-// [[ include("cast.h") ]]
-SEXP vec_cast_opts(const struct cast_opts* opts) {
-  SEXP x = opts->x;
-  SEXP to = opts->to;
+r_obj* vec_cast_opts(const struct cast_opts* opts) {
+  r_obj* x = opts->x;
+  r_obj* to = opts->to;
   struct vctrs_arg* x_arg = opts->x_arg;
   struct vctrs_arg* to_arg = opts->to_arg;
 
-  if (x == R_NilValue) {
+  if (x == r_null) {
     if (!vec_is_partial(to)) {
       vec_check_vector(to, to_arg, opts->call);
     }
     return x;
   }
-  if (to == R_NilValue) {
+  if (to == r_null) {
     if (!vec_is_partial(x)) {
       vec_check_vector(x, x_arg, opts->call);
     }
@@ -68,7 +60,7 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
     return vec_cast_dispatch_s3(opts);
   }
 
-  SEXP out = R_NilValue;
+  r_obj* out = r_null;
   bool lossy = false;
 
   if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
@@ -77,7 +69,7 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
     out = vec_cast_switch_native(opts, x_type, to_type, &lossy);
   }
 
-  if (lossy || out == R_NilValue) {
+  if (lossy || out == r_null) {
     return vec_cast_dispatch_s3(opts);
   } else {
     return out;
@@ -85,11 +77,11 @@ SEXP vec_cast_opts(const struct cast_opts* opts) {
 }
 
 static
-SEXP vec_cast_switch_native(const struct cast_opts* opts,
-                            enum vctrs_type x_type,
-                            enum vctrs_type to_type,
-                            bool* lossy) {
-  SEXP x = opts->x;
+r_obj* vec_cast_switch_native(const struct cast_opts* opts,
+                              enum vctrs_type x_type,
+                              enum vctrs_type to_type,
+                              bool* lossy) {
+  r_obj* x = opts->x;
 
   int dir = 0;
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, to_type, &dir);
@@ -133,13 +125,10 @@ SEXP vec_cast_switch_native(const struct cast_opts* opts,
     break;
   }
 
-  return R_NilValue;
+  return r_null;
 }
 
 
-static SEXP syms_vec_cast_default = NULL;
-
-// [[ include("cast.h") ]]
 r_obj* vec_cast_default(r_obj* x,
                         r_obj* to,
                         r_obj* x_arg,
@@ -149,7 +138,7 @@ r_obj* vec_cast_default(r_obj* x,
   r_obj* df_fallback = KEEP(r_int(opts->df));
   r_obj* s3_fallback = KEEP(r_int(opts->s3));
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
-  r_obj* out = vctrs_eval_mask8(syms_vec_cast_default,
+  r_obj* out = vctrs_eval_mask8(syms.vec_default_cast,
                                 syms_x, x,
                                 syms_to, to,
                                 syms_x_arg, x_arg,
@@ -163,26 +152,26 @@ r_obj* vec_cast_default(r_obj* x,
 }
 
 static
-SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
-  SEXP x = opts->x;
-  SEXP to = opts->to;
-  SEXP r_x_arg = PROTECT(vctrs_arg(opts->x_arg));
-  SEXP r_to_arg = PROTECT(vctrs_arg(opts->to_arg));
+r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
+  r_obj* x = opts->x;
+  r_obj* to = opts->to;
+  r_obj* r_x_arg = KEEP(vctrs_arg(opts->x_arg));
+  r_obj* r_to_arg = KEEP(vctrs_arg(opts->to_arg));
 
-  SEXP method_sym = R_NilValue;
-  SEXP method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
+  r_obj* method_sym = r_null;
+  r_obj* method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
 
   // Compatibility with legacy double dispatch mechanism
-  if (method == R_NilValue) {
-    SEXP to_method_sym = R_NilValue;
-    SEXP to_method = PROTECT(s3_find_method2("vec_cast",
+  if (method == r_null) {
+    r_obj* to_method_sym = r_null;
+    r_obj* to_method = KEEP(s3_find_method2("vec_cast",
                                              to,
                                              vctrs_method_table,
                                              &to_method_sym));
 
-    if (to_method != R_NilValue) {
+    if (to_method != r_null) {
       const char* to_method_str = CHAR(PRINTNAME(to_method_sym));
-      SEXP to_table = s3_get_table(CLOENV(to_method));
+      r_obj* to_table = s3_get_table(CLOENV(to_method));
 
       method = s3_find_method2(to_method_str,
                                x,
@@ -190,19 +179,19 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
                                &method_sym);
     }
 
-    UNPROTECT(1);
+    FREE(1);
   }
 
-  PROTECT(method);
+  KEEP(method);
 
-  if (method == R_NilValue) {
-    SEXP out = vec_cast_default(x,
+  if (method == r_null) {
+    r_obj* out = vec_cast_default(x,
                                 to,
                                 r_x_arg,
                                 r_to_arg,
                                 opts->call,
                                 &(opts->fallback));
-    UNPROTECT(3);
+    FREE(3);
     return out;
   }
 
@@ -214,26 +203,26 @@ SEXP vec_cast_dispatch_s3(const struct cast_opts* opts) {
                                         opts->call,
                                         &(opts->fallback));
 
-  UNPROTECT(3);
+  FREE(3);
   return out;
 }
 
 struct cast_err_data {
   const struct cast_opts* opts;
-  SEXP out;
+  r_obj* out;
 };
 
-static void vec_cast_e_cb(void* data_) {
+static
+void vec_cast_e_cb(void* data_) {
   struct cast_err_data* data = (struct cast_err_data*) data_;
   data->out = vec_cast_opts(data->opts);
 }
 
-// [[ include("cast.h") ]]
-SEXP vec_cast_e(const struct cast_opts* opts,
-                ERR* err) {
+r_obj* vec_cast_e(const struct cast_opts* opts,
+                  ERR* err) {
   struct cast_err_data data = {
     .opts = opts,
-    .out = R_NilValue
+    .out = r_null
   };
 
   *err = r_try_catch(&vec_cast_e_cb,
@@ -244,36 +233,33 @@ SEXP vec_cast_e(const struct cast_opts* opts,
   return data.out;
 }
 
-// [[ include("cast.h") ]]
-SEXP vec_cast_common_opts(SEXP xs,
-                          SEXP to,
-                          const struct fallback_opts* fallback_opts) {
-  SEXP type = PROTECT(vec_ptype_common_opts(xs, to, fallback_opts));
+r_obj* vec_cast_common_opts(r_obj* xs,
+                            r_obj* to,
+                            const struct fallback_opts* fallback_opts) {
+  r_obj* type = KEEP(vec_ptype_common_opts(xs, to, fallback_opts));
 
-  R_len_t n = Rf_length(xs);
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+  r_ssize n = r_length(xs);
+  r_obj* out = KEEP(r_alloc_list(n));
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = VECTOR_ELT(xs, i);
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* elt = r_list_get(xs, i);
     struct cast_opts opts = {
       .x = elt,
       .to = type,
       .fallback = *fallback_opts
     };
-    SET_VECTOR_ELT(out, i, vec_cast_opts(&opts));
+    r_list_poke(out, i, vec_cast_opts(&opts));
   }
 
-  SEXP names = PROTECT(Rf_getAttrib(xs, R_NamesSymbol));
-  Rf_setAttrib(out, R_NamesSymbol, names);
+  r_attrib_poke_names(out, r_names(xs));
 
-  UNPROTECT(3);
+  FREE(2);
   return out;
 }
-// [[ include("cast.h") ]]
-SEXP vec_cast_common_params(SEXP xs,
-                            SEXP to,
-                            enum df_fallback df_fallback,
-                            enum s3_fallback s3_fallback) {
+r_obj* vec_cast_common_params(r_obj* xs,
+                              r_obj* to,
+                              enum df_fallback df_fallback,
+                              enum s3_fallback s3_fallback) {
   struct fallback_opts opts = {
     .df = df_fallback,
     .s3 = s3_fallback
@@ -281,41 +267,39 @@ SEXP vec_cast_common_params(SEXP xs,
   return vec_cast_common_opts(xs, to, &opts);
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_cast_common(SEXP xs, SEXP to) {
+r_obj* vec_cast_common(r_obj* xs, r_obj* to) {
   return vec_cast_common_params(xs, to, DF_FALLBACK_DEFAULT, S3_FALLBACK_DEFAULT);
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_cast_common(SEXP call, SEXP op, SEXP args, SEXP env) {
-  args = CDR(args);
+r_obj* ffi_cast_common(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+  args = r_node_cdr(args);
 
-  SEXP dots = PROTECT(rlang_env_dots_list(env));
-  SEXP to = PROTECT(Rf_eval(CAR(args), env));
+  r_obj* dots = KEEP(rlang_env_dots_list(env));
+  r_obj* to = KEEP(r_eval(r_node_car(args), env));
 
-  SEXP out = vec_cast_common(dots, to);
+  r_obj* out = vec_cast_common(dots, to);
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_cast_common_opts(SEXP call, SEXP op, SEXP args, SEXP env) {
-  args = CDR(args);
+r_obj* ffi_cast_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+  args = r_node_cdr(args);
 
-  SEXP dots = PROTECT(rlang_env_dots_list(env));
-  SEXP to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP opts = PROTECT(Rf_eval(CAR(args), env));
+  r_obj* dots = KEEP(rlang_env_dots_list(env));
+  r_obj* to = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
+  r_obj* opts = KEEP(r_eval(r_node_car(args), env));
 
   const struct fallback_opts c_opts = new_fallback_opts(opts);
 
-  SEXP out = vec_cast_common_opts(dots, to, &c_opts);
+  r_obj* out = vec_cast_common_opts(dots, to, &c_opts);
 
-  UNPROTECT(3);
+  FREE(3);
   return out;
 }
 
-// [[ include("cast.h") ]]
 struct cast_opts new_cast_opts(r_obj* x,
                                r_obj* to,
                                struct vctrs_arg* x_arg,
@@ -336,6 +320,6 @@ struct cast_opts new_cast_opts(r_obj* x,
 }
 
 
-void vctrs_init_cast(SEXP ns) {
-  syms_vec_cast_default = Rf_install("vec_default_cast");
+void vctrs_init_cast(r_obj* ns) {
+  syms.vec_default_cast = r_sym("vec_default_cast");
 }

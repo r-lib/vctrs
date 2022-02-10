@@ -10,6 +10,7 @@ struct syms {
   r_obj* repair_arg;
   r_obj* to_arg;
   r_obj* value_arg;
+  r_obj* vec_default_cast;
   r_obj* x_arg;
   r_obj* y_arg;
 };

@@ -102,12 +102,12 @@ vec_cast_dispatch_native <- function(x,
 #' @export
 #' @rdname vec_cast
 vec_cast_common <- function(..., .to = NULL) {
-  .External2(vctrs_cast_common, .to)
+  .External2(ffi_cast_common, .to)
 }
 vec_cast_common_opts <- function(...,
                                  .to = NULL,
                                  .opts = fallback_opts()) {
-  .External2(vctrs_cast_common_opts, .to, .opts)
+  .External2(ffi_cast_common_opts, .to, .opts)
 }
 vec_cast_common_params <- function(...,
                                    .to = NULL,

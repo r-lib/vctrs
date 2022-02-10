@@ -13,11 +13,14 @@ struct cast_opts {
   struct fallback_opts fallback;
 };
 
-SEXP df_cast_opts(const struct cast_opts* opts);
-
 // Defined in type-data-frame.c
+r_obj* df_cast_opts(const struct cast_opts* opts);
+
 static inline
-SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
+r_obj* df_cast(r_obj* x,
+               r_obj* to,
+               struct vctrs_arg* x_arg,
+               struct vctrs_arg* to_arg) {
   const struct cast_opts opts = {
     .x = x,
     .to = to,
@@ -27,15 +30,15 @@ SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg)
   return df_cast_opts(&opts);
 }
 
-SEXP vec_cast_opts(const struct cast_opts* opts);
+r_obj* vec_cast_opts(const struct cast_opts* opts);
 
 static inline
-SEXP vec_cast_params(SEXP x,
-                     SEXP to,
-                     struct vctrs_arg* x_arg,
-                     struct vctrs_arg* to_arg,
-                     enum df_fallback df_fallback,
-                     enum s3_fallback s3_fallback) {
+r_obj* vec_cast_params(r_obj* x,
+                       r_obj* to,
+                       struct vctrs_arg* x_arg,
+                       struct vctrs_arg* to_arg,
+                       enum df_fallback df_fallback,
+                       enum s3_fallback s3_fallback) {
   const struct cast_opts opts = {
     .x = x,
     .to = to,
@@ -49,13 +52,15 @@ SEXP vec_cast_params(SEXP x,
   return vec_cast_opts(&opts);
 }
 
-SEXP vec_cast_common_opts(SEXP xs,
-                          SEXP to,
-                          const struct fallback_opts* fallback_opts);
-SEXP vec_cast_common_params(SEXP xs,
-                            SEXP to,
-                            enum df_fallback df_fallback,
-                            enum s3_fallback s3_fallback);
+r_obj* vec_cast_common(r_obj* xs, r_obj* to);
+
+r_obj* vec_cast_common_opts(r_obj* xs,
+                            r_obj* to,
+                            const struct fallback_opts* fallback_opts);
+r_obj* vec_cast_common_params(r_obj* xs,
+                              r_obj* to,
+                              enum df_fallback df_fallback,
+                              enum s3_fallback s3_fallback);
 
 struct cast_opts new_cast_opts(r_obj* x,
                                r_obj* y,
@@ -64,13 +69,8 @@ struct cast_opts new_cast_opts(r_obj* x,
                                struct r_lazy call,
                                r_obj* opts);
 
-SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
-                              enum vctrs_type x_type,
-                              enum vctrs_type to_type,
-                              bool* lossy);
-
-SEXP vec_cast_e(const struct cast_opts* opts,
-                ERR* err);
+r_obj* vec_cast_e(const struct cast_opts* opts,
+                  ERR* err);
 
 r_obj* vec_cast_default(r_obj* x,
                         r_obj* y,
@@ -78,15 +78,6 @@ r_obj* vec_cast_default(r_obj* x,
                         r_obj* to_arg,
                         struct r_lazy call,
                         const struct fallback_opts* opts);
-
-// Defined in cast-bare.c
-SEXP int_as_double(SEXP x, bool* lossy);
-SEXP lgl_as_double(SEXP x, bool* lossy);
-SEXP dbl_as_integer(SEXP x, bool* lossy);
-SEXP lgl_as_integer(SEXP x, bool* lossy);
-SEXP chr_as_logical(SEXP x, bool* lossy);
-SEXP dbl_as_logical(SEXP x, bool* lossy);
-SEXP int_as_logical(SEXP x, bool* lossy);
 
 
 #endif

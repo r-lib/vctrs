@@ -1,16 +1,14 @@
 #include "vctrs.h"
-#include "cast.h"
 #include "type-factor.h"
 #include "type-tibble.h"
 #include "utils.h"
 
-// [[ include("cast.h") ]]
-SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
-                              enum vctrs_type x_type,
-                              enum vctrs_type to_type,
-                              bool* lossy) {
-  SEXP x = opts->x;
-  SEXP to = opts->to;
+r_obj* vec_cast_dispatch_native(const struct cast_opts* opts,
+                                enum vctrs_type x_type,
+                                enum vctrs_type to_type,
+                                bool* lossy) {
+  r_obj* x = opts->x;
+  r_obj* to = opts->to;
   struct vctrs_arg* x_arg = opts->x_arg;
   struct vctrs_arg* to_arg = opts->to_arg;
 
@@ -80,7 +78,7 @@ SEXP vec_cast_dispatch_native(const struct cast_opts* opts,
     return tib_cast(opts);
 
   default:
-    return R_NilValue;
+    return r_null;
   }
 }
 
@@ -105,7 +103,7 @@ r_obj* ffi_cast_dispatch_native(r_obj* x,
   bool lossy = false;
   r_obj* out = vec_cast_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(to), &lossy);
 
-  if (lossy || out == R_NilValue) {
+  if (lossy || out == r_null) {
     return vec_cast_default(x,
                             to,
                             x_arg,

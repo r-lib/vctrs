@@ -314,8 +314,8 @@ extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_ptype_common_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cast_common_opts(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_cast_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
@@ -326,8 +326,8 @@ static const R_ExternalMethodDef ExtEntries[] = {
   {"vctrs_ptype_common_opts",          (DL_FUNC) &vctrs_ptype_common_opts, 2},
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
   {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 1},
-  {"vctrs_cast_common",                (DL_FUNC) &vctrs_cast_common, 1},
-  {"vctrs_cast_common_opts",           (DL_FUNC) &vctrs_cast_common_opts, 2},
+  {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 1},
+  {"ffi_cast_common_opts",             (DL_FUNC) &ffi_cast_common_opts, 2},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 4},
   {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
