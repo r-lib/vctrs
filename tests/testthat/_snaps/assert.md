@@ -198,10 +198,10 @@
       Error in `my_function()`:
       ! `my_arg` must be a list, not an environment.
 
-# vec_check_list() and vec_check_list_of_vectors() work
+# vec_check_list() and list_check_all_vectors() work
 
     Code
-      my_function <- (function(my_arg) vec_check_list_of_vectors(my_arg))
+      my_function <- (function(my_arg) list_check_all_vectors(my_arg))
       (expect_error(my_function(env())))
     Output
       <error/rlang_error>

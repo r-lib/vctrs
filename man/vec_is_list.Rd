@@ -4,7 +4,7 @@
 \alias{vec_is_list}
 \alias{vec_is_list_of_vectors}
 \alias{vec_check_list}
-\alias{vec_check_list_of_vectors}
+\alias{list_check_all_vectors}
 \title{Is the object a list?}
 \usage{
 vec_is_list(x)
@@ -13,7 +13,7 @@ vec_is_list_of_vectors(x)
 
 vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
 
-vec_check_list_of_vectors(x, ..., arg = caller_arg(x), call = caller_env())
+list_check_all_vectors(x, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
 \item{x}{An object.}
@@ -40,7 +40,7 @@ returns \code{TRUE} if:
 \code{vec_is_list_of_vectors()} additionally checks that all elements of
 \code{x} are vectors.
 
-\code{vec_check_list()} and \code{vec_check_list_of_vectors()} throw a type
+\code{vec_check_list()} and \code{list_check_all_vectors()} throw a type
 error if the input is not a list as defined by \code{vec_is_list()} and
 \code{vec_is_list_of_vectors()} respectively.
 }

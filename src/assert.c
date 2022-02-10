@@ -58,7 +58,7 @@ void vec_check_list(r_obj* x,
 }
 
 
-r_obj* ffi_check_list_of_vectors(r_obj* x, r_obj* frame) {
+r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
   struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   struct r_lazy arg_caller_data = { .x = syms.arg, .env = frame };

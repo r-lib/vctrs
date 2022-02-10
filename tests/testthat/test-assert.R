@@ -330,11 +330,11 @@ test_that("vec_check_list() works", {
   })
 })
 
-test_that("vec_check_list() and vec_check_list_of_vectors() work", {
-  expect_null(vec_check_list_of_vectors(list()))
-  expect_null(vec_check_list_of_vectors(list(1, mtcars)))
+test_that("vec_check_list() and list_check_all_vectors() work", {
+  expect_null(list_check_all_vectors(list()))
+  expect_null(list_check_all_vectors(list(1, mtcars)))
   expect_snapshot({
-    my_function <- function(my_arg) vec_check_list_of_vectors(my_arg)
+    my_function <- function(my_arg) list_check_all_vectors(my_arg)
     (expect_error(my_function(env())))
     (expect_error(my_function(list(1, env()))))
     (expect_error(my_function(list(1, name = env()))))

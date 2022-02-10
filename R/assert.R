@@ -206,7 +206,7 @@ vec_is_vector <- function(x) {
 #' `vec_is_list_of_vectors()` additionally checks that all elements of
 #' `x` are vectors.
 #'
-#' `vec_check_list()` and `vec_check_list_of_vectors()` throw a type
+#' `vec_check_list()` and `list_check_all_vectors()` throw a type
 #' error if the input is not a list as defined by `vec_is_list()` and
 #' `vec_is_list_of_vectors()` respectively.
 #'
@@ -244,12 +244,12 @@ vec_check_list <- function(x,
 }
 #' @rdname vec_is_list
 #' @export
-vec_check_list_of_vectors <- function(x,
-                                      ...,
-                                      arg = caller_arg(x),
-                                      call = caller_env()) {
+list_check_all_vectors <- function(x,
+                                   ...,
+                                   arg = caller_arg(x),
+                                   call = caller_env()) {
   check_dots_empty0(...)
-  invisible(.Call(ffi_check_list_of_vectors, x, environment()))
+  invisible(.Call(ffi_list_check_all_vectors, x, environment()))
 }
 
 # Called from C
