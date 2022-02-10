@@ -240,7 +240,7 @@ vec_check_list <- function(x,
 #' @rdname vec_is_list
 #' @export
 list_all_vectors <- function(x) {
-  .Call(ffi_list_all_vectors, x)
+  .Call(ffi_list_all_vectors, x, environment())
 }
 
 #' @rdname vec_is_list

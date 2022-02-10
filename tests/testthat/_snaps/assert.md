@@ -188,6 +188,15 @@
       Error in `vec_assert()`:
       ! Can't convert `size` <character> to <integer>.
 
+# list_all_vectors() works
+
+    Code
+      (expect_error(list_all_vectors(env())))
+    Output
+      <error/rlang_error>
+      Error in `list_all_vectors()`:
+      ! `x` must be a list, not an environment.
+
 # vec_check_list() works
 
     Code

@@ -319,6 +319,7 @@ test_that("list_all_vectors() works", {
   expect_true(list_all_vectors(list(1)))
   expect_true(list_all_vectors(list_of(1)))
   expect_false(list_all_vectors(list(1, env())))
+  expect_snapshot((expect_error(list_all_vectors(env()))))
 })
 
 test_that("vec_check_list() works", {
