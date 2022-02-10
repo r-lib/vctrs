@@ -529,7 +529,7 @@ void df_locate_matches_recurse(r_ssize col,
       // Will always be the first and only time the output is touched for this
       // needle, so we can poke directly into it
       const int loc_needles = v_o_needles[i] - 1;
-      R_DYN_POKE(int, p_loc_first_match_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
+      r_dyn_int_poke(p_loc_first_match_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
     }
 
     // Learned nothing about haystack, so just update lhs/rhs bounds for
@@ -767,14 +767,14 @@ void df_locate_matches_recurse(r_ssize col,
 
       for (r_ssize i = loc_lower_duplicate_o_needles; i <= loc_upper_duplicate_o_needles; ++i) {
         const int loc_needles = v_o_needles[i] - 1;
-        const int loc_first_match_o_haystack = R_DYN_GET(int, p_loc_first_match_o_haystack, loc_needles);
+        const int loc_first_match_o_haystack = r_dyn_int_get(p_loc_first_match_o_haystack, loc_needles);
         const bool first_touch = loc_first_match_o_haystack == r_globals.na_int;
 
         switch (multiple) {
         case VCTRS_MULTIPLE_any: {
           if (first_touch) {
             // Arbitrarily record the lower match
-            R_DYN_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
+            r_dyn_int_poke(p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
             break;
           }
 
@@ -794,7 +794,7 @@ void df_locate_matches_recurse(r_ssize col,
             //  1 = New haystack value "wins", it becomes new match
             //  0 = Equal values, nothing to update
             if (cmp == 1) {
-              R_DYN_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
+              r_dyn_int_poke(p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
             }
           }
 
@@ -808,8 +808,8 @@ void df_locate_matches_recurse(r_ssize col,
           const int size_match = loc_upper_match_o_haystack - loc_lower_match_o_haystack + 1;
 
           if (first_touch) {
-            R_DYN_POKE(int, p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
-            R_DYN_POKE(int, p_size_match, loc_needles, size_match);
+            r_dyn_int_poke(p_loc_first_match_o_haystack, loc_needles, loc_lower_match_o_haystack);
+            r_dyn_int_poke(p_size_match, loc_needles, size_match);
 
             if (any_filters) {
               v_loc_filter_match_o_haystack[loc_needles] = loc_lower_match_o_haystack;
@@ -871,7 +871,7 @@ void df_locate_matches_recurse(r_ssize col,
         const bool future_needle_is_complete = v_future_needles_complete[loc_needles];
 
         if (!future_needle_is_complete) {
-          R_DYN_POKE(int, p_loc_first_match_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
+          r_dyn_int_poke(p_loc_first_match_o_haystack, loc_needles, SIGNAL_INCOMPLETE);
           break;
         }
       }
@@ -2196,7 +2196,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
     int n_container_ids_group = p_prev_rows->count;
 
     for (; container_id < n_container_ids_group; ++container_id) {
-      const int prev_row = R_DYN_GET(int, p_prev_rows, container_id);
+      const int prev_row = r_dyn_int_get(p_prev_rows, container_id);
 
       if (p_nesting_container_df_compare_fully_ge_na_equal(v_x, cur_row, v_x, prev_row)) {
         // Current row is fully greater than or equal to previous row.
@@ -2218,7 +2218,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
     } else {
       // Update stored row location to the current row,
       // since the current row is greater than or equal to it
-      R_DYN_POKE(int, p_prev_rows, container_id, cur_row);
+      r_dyn_int_poke(p_prev_rows, container_id, cur_row);
     }
 
     for (r_ssize j = 0; j < group_size; ++j) {
