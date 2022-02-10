@@ -51,6 +51,11 @@ considered lists.
 \examples{
 vec_is_list(list())
 vec_is_list(list_of(1))
-
 vec_is_list(data.frame())
+
+list_all_vectors(list(1, mtcars))
+list_all_vectors(list(1, environment()))
+
+# `list_`-prefixed functions assume a list:
+try(list_all_vectors(environment()))
 }

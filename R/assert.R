@@ -222,8 +222,13 @@ vec_is_vector <- function(x) {
 #' @examples
 #' vec_is_list(list())
 #' vec_is_list(list_of(1))
-#'
 #' vec_is_list(data.frame())
+#'
+#' list_all_vectors(list(1, mtcars))
+#' list_all_vectors(list(1, environment()))
+#'
+#' # `list_`-prefixed functions assume a list:
+#' try(list_all_vectors(environment()))
 vec_is_list <- function(x) {
   .Call(vctrs_is_list, x)
 }
