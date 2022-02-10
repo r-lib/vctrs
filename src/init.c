@@ -310,9 +310,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_locate_interval_merge_bounds",      (DL_FUNC) &ffi_locate_interval_merge_bounds, 4},
   {"ffi_locate_interval_merge_groups",      (DL_FUNC) &ffi_locate_interval_merge_groups, 4},
   {"ffi_interval_complement",               (DL_FUNC) &ffi_interval_complement, 4},
-  {"ffi_check_list",                    (DL_FUNC) &ffi_check_list, 2},
-  {"ffi_is_list_of_vectors",            (DL_FUNC) &ffi_is_list_of_vectors, 1},
-  {"ffi_check_list_of_vectors",         (DL_FUNC) &ffi_check_list_of_vectors, 2},
+  {"ffi_check_list",                        (DL_FUNC) &ffi_check_list, 2},
+  {"ffi_is_list_of_vectors",                (DL_FUNC) &ffi_is_list_of_vectors, 1},
+  {"ffi_check_list_of_vectors",             (DL_FUNC) &ffi_check_list_of_vectors, 2},
   {NULL, NULL, 0}
 };
 

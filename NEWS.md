@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* vctrs now depends on cli to help with error message generation.
+
 * New `vec_check_list()` and `vec_check_list_of_vectors()` input
   checkers, and an accompanying `vec_is_list_of_vectors()` predicate.
 

@@ -11,12 +11,14 @@ vec_is_list(x)
 
 vec_is_list_of_vectors(x)
 
-vec_check_list(x, arg = caller_arg(x), call = caller_env())
+vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
 
-vec_check_list_of_vectors(x, arg = caller_arg(x), call = caller_env())
+vec_check_list_of_vectors(x, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
 \item{x}{An object.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{arg}{An argument name as a string. This argument
 will be mentioned in error messages as the input that is at the
@@ -35,7 +37,7 @@ returns \code{TRUE} if:
 \item \code{x} is a list explicitly inheriting from \code{"list"}.
 }
 
-\code{vec_is_list_of_vectors()} checks in addition that all elements of
+\code{vec_is_list_of_vectors()} additionally checks that all elements of
 \code{x} are vectors.
 
 \code{vec_check_list()} and \code{vec_check_list_of_vectors()} throw a type
