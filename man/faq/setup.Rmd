@@ -5,11 +5,10 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-options(cli.unicode = FALSE)
-
-# FIXME: Replace by rlang option to disable srcrefs in call
-# https://github.com/r-lib/rlang/issues/1349
-Sys.setenv(TESTTHAT = "true")
+options(
+  cli.unicode = FALSE,
+  rlang_call_format_srcrefs = FALSE
+)
 
 library(vctrs)
 ```
