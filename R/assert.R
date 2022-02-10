@@ -203,12 +203,12 @@ vec_is_vector <- function(x) {
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
 #'
-#' `vec_is_list_of_vectors()` additionally checks that all elements of
+#' `list_all_vectors()` additionally checks that all elements of
 #' `x` are vectors.
 #'
 #' `vec_check_list()` and `list_check_all_vectors()` throw a type
 #' error if the input is not a list as defined by `vec_is_list()` and
-#' `vec_is_list_of_vectors()` respectively.
+#' `list_all_vectors()` respectively.
 #'
 #' @inheritParams rlang::args_error_context
 #' @inheritParams rlang::args_dots_empty
@@ -229,12 +229,6 @@ vec_is_list <- function(x) {
 }
 #' @rdname vec_is_list
 #' @export
-vec_is_list_of_vectors <- function(x) {
-  .Call(ffi_is_list_of_vectors, x)
-}
-
-#' @rdname vec_is_list
-#' @export
 vec_check_list <- function(x,
                            ...,
                            arg = caller_arg(x),
@@ -242,6 +236,13 @@ vec_check_list <- function(x,
   check_dots_empty0(...)
   invisible(.Call(ffi_check_list, x, environment()))
 }
+
+#' @rdname vec_is_list
+#' @export
+list_all_vectors <- function(x) {
+  .Call(ffi_list_all_vectors, x)
+}
+
 #' @rdname vec_is_list
 #' @export
 list_check_all_vectors <- function(x,

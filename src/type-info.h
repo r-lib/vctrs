@@ -67,7 +67,7 @@ const char* vec_type_as_str(enum vctrs_type type);
 
 bool vec_is_list(r_obj* x);
 bool vec_is_vector(r_obj* x);
-bool vec_is_list_of_vectors(r_obj* x);
+bool list_all_vectors(r_obj* x);
 
 r_no_return
 void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type type);

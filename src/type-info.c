@@ -126,11 +126,11 @@ bool vec_is_vector(r_obj* x) {
 }
 
 // [[ register() ]]
-r_obj* ffi_is_list_of_vectors(r_obj* x) {
-  return r_lgl(vec_is_list_of_vectors(x));
+r_obj* ffi_list_all_vectors(r_obj* x) {
+  return r_lgl(list_all_vectors(x));
 }
 
-bool vec_is_list_of_vectors(r_obj* x) {
+bool list_all_vectors(r_obj* x) {
   return vec_is_list(x) && r_list_all_of(x, &vec_is_vector);
 }
 
