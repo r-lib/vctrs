@@ -258,9 +258,9 @@ vec_order_base <- function(x,
   proxy <- vec_proxy_order(x)
 
   if (is.data.frame(proxy)) {
-    # Work around type-instability in `base::order()`
-    if (vec_size(proxy) == 0L) {
-      return(integer(0L))
+    if (length(proxy) == 0L) {
+      # Work around type-instability in `base::order()`
+      return(vec_seq_along(proxy))
     }
     args <- map(unstructure(proxy), function(.x) {
       if (is.data.frame(.x)) {

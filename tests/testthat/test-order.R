@@ -1276,12 +1276,26 @@ test_that("can order matrices and arrays (#306)", {
   expect_identical(vec_order_base(x), 2:1)
 })
 
-test_that("can order empty data frames (#356)", {
-  df1 <- data.frame()
-  expect_equal(vec_order_base(df1), integer())
+test_that("can order zero column data frames (#356, #1499)", {
+  df <- data_frame()
+  expect_identical(vec_order_base(df), integer())
 
-  df2 <- data.frame(x = numeric(), y = integer())
-  expect_equal(vec_order_base(df2), integer())
+  df <- data_frame(.size = 5L)
+  expect_identical(vec_order_base(df), 1:5)
+
+  df <- data_frame(.size = 5L)
+  expect_identical(vec_order_base(df, direction = "desc"), 1:5)
+})
+
+test_that("can order zero row data frames (#356, #1499)", {
+  df <- data.frame(x = numeric())
+  expect_identical(vec_order_base(df), integer())
+
+  df <- data.frame(x = numeric(), y = integer())
+  expect_identical(vec_order_base(df), integer())
+
+  df <- data.frame(x = numeric(), y = integer())
+  expect_identical(vec_order_base(df, direction = "desc"), integer())
 })
 
 test_that("can order data frames with data frame columns (#527)", {
