@@ -54,7 +54,7 @@
 #' # But lists are orderable by first appearance to allow for
 #' # ordering data frames with list-cols
 #' df <- new_data_frame(list(x = x))
-#' vec_sort_radix(df)
+#' vec_sort(df)
 vec_proxy_compare <- function(x, ...) {
   if (!missing(...)) {
     # For backward compatibility with older dplyr versions

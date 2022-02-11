@@ -105,7 +105,7 @@
 #' * [vec_order_radix()]
 #' * [vec_slice()]
 #'
-#' @export
+#' @noRd
 #' @examples
 #' x <- round(sample(runif(5), 9, replace = TRUE), 3)
 #' x <- c(x, NA)
@@ -146,7 +146,7 @@ vec_order_radix <- function(x,
   .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_proxy_collate)
 }
 
-#' @export
+#' @noRd
 #' @rdname vec_order_radix
 vec_sort_radix <- function(x,
                            ...,

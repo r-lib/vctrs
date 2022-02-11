@@ -1083,19 +1083,19 @@ test_that("can request NAs sorted first", {
 test_that("can sort data frames", {
   df <- data.frame(x = c(1, 2, 1), y = c(1, 2, 2))
 
-  out1 <- vec_sort_radix(df)
+  out1 <- vec_sort(df)
   expect_equal(out1, data.frame(x = c(1, 1, 2), y = c(1, 2, 2)))
 
-  out2 <- vec_sort_radix(df, direction = "desc")
+  out2 <- vec_sort(df, direction = "desc")
   expect_equal(out2, data.frame(x = c(2, 1, 1), y = c(2, 2, 1)))
 })
 
 test_that("can sort empty data frames (#356)", {
   df1 <- data.frame()
-  expect_equal(vec_sort_radix(df1), df1)
+  expect_equal(vec_sort(df1), df1)
 
   df2 <- data.frame(x = numeric(), y = integer())
-  expect_equal(vec_sort_radix(df2), df2)
+  expect_equal(vec_sort(df2), df2)
 })
 
 test_that("can order tibbles that contain non-comparable objects", {
@@ -1222,24 +1222,24 @@ test_that("Indistinct NA and NaN are reported in the same group", {
 })
 
 # ------------------------------------------------------------------------------
-# vec_sort_radix
+# vec_sort
 
 test_that("can sort data frames", {
   df <- data.frame(x = c(1, 2, 1), y = c(1, 2, 2))
 
-  out1 <- vec_sort_radix(df)
+  out1 <- vec_sort(df)
   expect_equal(out1, data.frame(x = c(1, 1, 2), y = c(1, 2, 2)))
 
-  out2 <- vec_sort_radix(df, direction = "desc")
+  out2 <- vec_sort(df, direction = "desc")
   expect_equal(out2, data.frame(x = c(2, 1, 1), y = c(2, 2, 1)))
 })
 
 test_that("can sort empty data frames (#356)", {
   df1 <- data.frame()
-  expect_equal(vec_sort_radix(df1), df1)
+  expect_equal(vec_sort(df1), df1)
 
   df2 <- data.frame(x = numeric(), y = integer())
-  expect_equal(vec_sort_radix(df2), df2)
+  expect_equal(vec_sort(df2), df2)
 })
 
 # ------------------------------------------------------------------------------

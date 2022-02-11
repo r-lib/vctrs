@@ -307,7 +307,7 @@ test_that("can unchop data frames", {
   x <- list(df1, df2)
   indices <- list(c(3, 1), c(2, 4))
 
-  expect <- vec_slice(vec_c(df1, df2), vec_order_radix(vec_c(!!! indices)))
+  expect <- vec_slice(vec_c(df1, df2), vec_order(vec_c(!!! indices)))
 
   expect_identical(vec_unchop(x, indices), expect)
 })
@@ -332,7 +332,7 @@ test_that("can fallback when unchopping matrices", {
   x <- list(mat1, mat2)
   indices <- list(c(4, 1), c(2, 3, 5))
 
-  expect <- vec_slice(vec_c(mat1, mat2), vec_order_radix(vec_c(!!! indices)))
+  expect <- vec_slice(vec_c(mat1, mat2), vec_order(vec_c(!!! indices)))
 
   expect_identical(vec_unchop(x, indices), expect)
   expect_identical(vec_unchop(x), vec_c(mat1, mat2))
@@ -345,7 +345,7 @@ test_that("can fallback when unchopping arrays of >2D", {
   x <- list(arr1, arr2)
   indices <- list(c(3, 1), 2)
 
-  expect <- vec_slice(vec_c(arr1, arr2), vec_order_radix(vec_c(!!! indices)))
+  expect <- vec_slice(vec_c(arr1, arr2), vec_order(vec_c(!!! indices)))
 
   expect_identical(vec_unchop(x, indices), expect)
   expect_identical(vec_unchop(x), vec_c(arr1, arr2))

@@ -411,7 +411,7 @@ vec_proxy_order.raw <- function(x, ...) {
 #' @export
 vec_proxy_order.list <- function(x, ...) {
   # Order lists by first appearance.
-  # This allows list elements to be grouped in `vec_order_radix()`.
+  # This allows list elements to be grouped in `vec_order()`.
   # Have to separately ensure missing values are propagated.
   out <- vec_duplicate_id(x)
   na <- vec_equal_na(x)

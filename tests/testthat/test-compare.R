@@ -151,7 +151,7 @@ test_that("vec_proxy_compare() handles data frame with a POSIXlt column", {
 
 test_that("vec_proxy_compare.POSIXlt() correctly orders (#720)", {
   dates <- as.POSIXlt(seq.Date(as.Date("2019-12-30"), as.Date("2020-01-03"), by = "day"))
-  expect_equal(vec_order_radix(dates), 1:5)
+  expect_equal(vec_order(dates), 1:5)
 })
 
 test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
@@ -161,7 +161,7 @@ test_that("vec_proxy_compare.POSIXlt() correctly orders around DST", {
   # "falls back" to 1am again, but in EST
   y <- as.POSIXlt(x + 3600)
 
-  expect_equal(vec_order_radix(c(y, x)), c(2, 1))
+  expect_equal(vec_order(c(y, x)), c(2, 1))
 })
 
 test_that("vec_proxy_compare() flattens df-cols", {

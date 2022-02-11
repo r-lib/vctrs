@@ -56,8 +56,8 @@ test_that("vec_ptype_abbr.integer64", {
 
 test_that("can sort integer64", {
   x <- bit64::as.integer64(c(-1, -3, -2, 1))
-  expect_identical(vec_order_radix(x), int(2, 3, 1, 4))
-  expect_identical(x[vec_order_radix(x)], bit64::as.integer64(c(-3, -2, -1, 1)))
+  expect_identical(vec_order(x), int(2, 3, 1, 4))
+  expect_identical(x[vec_order(x)], bit64::as.integer64(c(-3, -2, -1, 1)))
 })
 
 test_that("can slice integer64 objects of all dimensions", {
