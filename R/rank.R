@@ -1,3 +1,8 @@
+# TODO: Use this NEWS bullet when we export `vec_rank()`
+#
+# * New `vec_rank()` to compute various types of sample ranks.
+
+
 #' Compute ranks
 #'
 #' `vec_rank()` computes the sample ranks of a vector. For data frames, ranks
@@ -48,7 +53,7 @@
 #' - [vec_order()]
 #' - [vec_slice()]
 #'
-#' @export
+#' @noRd
 #' @examples
 #' x <- c(5L, 6L, 3L, 3L, 5L, 3L)
 #'
