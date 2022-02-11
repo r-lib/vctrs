@@ -2,7 +2,7 @@
 % Please edit documentation in R/order.R
 \name{vec_order_radix}
 \alias{vec_order_radix}
-\alias{vec_sort}
+\alias{vec_sort_radix}
 \title{Order and sort vectors}
 \usage{
 vec_order_radix(
@@ -14,7 +14,7 @@ vec_order_radix(
   chr_proxy_collate = NULL
 )
 
-vec_sort(
+vec_sort_radix(
   x,
   ...,
   direction = "asc",
@@ -69,7 +69,7 @@ ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
 \value{
 \itemize{
 \item \code{vec_order_radix()} an integer vector the same size as \code{x}.
-\item \code{vec_sort()} a vector with the same size and type as \code{x}.
+\item \code{vec_sort_radix()} a vector with the same size and type as \code{x}.
 }
 }
 \description{
@@ -77,7 +77,7 @@ ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
 computed along the rows by computing the order of the first column and
 using subsequent columns to break ties.
 
-\code{vec_sort()} sorts \code{x}. It is equivalent to \code{vec_slice(x, vec_order_radix(x))}.
+\code{vec_sort_radix()} sorts \code{x}. It is equivalent to \code{vec_slice(x, vec_order_radix(x))}.
 }
 \section{Differences with \code{order()}}{
 
@@ -93,7 +93,7 @@ Character vectors are ordered in the C-locale. This is different from
 consistent locale can produce more reproducible results between different
 sessions and platforms, however, the results of sorting in the C-locale
 can be surprising. For example, capital letters sort before lower case
-letters. Sorting \code{c("b", "C", "a")} with \code{vec_sort()} will return
+letters. Sorting \code{c("b", "C", "a")} with \code{vec_sort_radix()} will return
 \code{c("C", "a", "b")}, but with \code{base::order()} will return \code{c("a", "b", "C")}
 unless \code{base::order(method = "radix")} is explicitly set, which also uses
 the C-locale. While sorting with the C-locale can be useful for
@@ -120,7 +120,7 @@ For complex vectors, if either the real or imaginary component is \code{NA} or
 }
 }
 
-\section{Dependencies of \code{vec_sort()}}{
+\section{Dependencies of \code{vec_sort_radix()}}{
 
 \itemize{
 \item \code{\link[=vec_order_radix]{vec_order_radix()}}
@@ -133,18 +133,18 @@ x <- round(sample(runif(5), 9, replace = TRUE), 3)
 x <- c(x, NA)
 
 vec_order_radix(x)
-vec_sort(x)
-vec_sort(x, direction = "desc")
+vec_sort_radix(x)
+vec_sort_radix(x, direction = "desc")
 
 # Can also handle data frames
 df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 vec_order_radix(df)
-vec_sort(df)
-vec_sort(df, direction = "desc")
+vec_sort_radix(df)
+vec_sort_radix(df, direction = "desc")
 
 # For data frames, `direction` and `na_value` are allowed to be vectors
 # with length equal to the number of columns in the data frame
-vec_sort(
+vec_sort_radix(
   df,
   direction = c("desc", "asc"),
   na_value = c("largest", "smallest")
@@ -153,9 +153,9 @@ vec_sort(
 # Character vectors are ordered in the C locale, which orders capital letters
 # below lowercase ones
 y <- c("B", "A", "a")
-vec_sort(y)
+vec_sort_radix(y)
 
 # To order in a case-insensitive manner, provide a `chr_proxy_collate`
 # function that transforms the strings to all lowercase
-vec_sort(y, chr_proxy_collate = tolower)
+vec_sort_radix(y, chr_proxy_collate = tolower)
 }

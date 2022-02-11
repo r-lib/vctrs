@@ -67,6 +67,6 @@ try(vec_compare(x, x))
 # But lists are orderable by first appearance to allow for
 # ordering data frames with list-cols
 df <- new_data_frame(list(x = x))
-vec_sort(df)
+vec_sort_radix(df)
 }
 \keyword{internal}

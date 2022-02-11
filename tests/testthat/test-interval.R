@@ -143,7 +143,7 @@ test_that("locations are ordered by both `start` and `end`", {
   # So this orders `x`
   expect_identical(
     vec_slice(x, unlist(out$loc)),
-    vec_sort(x)
+    vec_sort_radix(x)
   )
 })
 

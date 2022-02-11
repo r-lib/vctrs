@@ -28,7 +28,7 @@
 #' computed along the rows by computing the order of the first column and
 #' using subsequent columns to break ties.
 #'
-#' `vec_sort()` sorts `x`. It is equivalent to `vec_slice(x, vec_order_radix(x))`.
+#' `vec_sort_radix()` sorts `x`. It is equivalent to `vec_slice(x, vec_order_radix(x))`.
 #'
 #' @inheritParams rlang::args_dots_empty
 #'
@@ -64,7 +64,7 @@
 #'
 #' @return
 #' * `vec_order_radix()` an integer vector the same size as `x`.
-#' * `vec_sort()` a vector with the same size and type as `x`.
+#' * `vec_sort_radix()` a vector with the same size and type as `x`.
 #'
 #' @section Differences with `order()`:
 #'
@@ -79,7 +79,7 @@
 #' consistent locale can produce more reproducible results between different
 #' sessions and platforms, however, the results of sorting in the C-locale
 #' can be surprising. For example, capital letters sort before lower case
-#' letters. Sorting `c("b", "C", "a")` with `vec_sort()` will return
+#' letters. Sorting `c("b", "C", "a")` with `vec_sort_radix()` will return
 #' `c("C", "a", "b")`, but with `base::order()` will return `c("a", "b", "C")`
 #' unless `base::order(method = "radix")` is explicitly set, which also uses
 #' the C-locale. While sorting with the C-locale can be useful for
@@ -101,7 +101,7 @@
 #' @section Dependencies of `vec_order_radix()`:
 #' * [vec_proxy_order()]
 #'
-#' @section Dependencies of `vec_sort()`:
+#' @section Dependencies of `vec_sort_radix()`:
 #' * [vec_order_radix()]
 #' * [vec_slice()]
 #'
@@ -111,18 +111,18 @@
 #' x <- c(x, NA)
 #'
 #' vec_order_radix(x)
-#' vec_sort(x)
-#' vec_sort(x, direction = "desc")
+#' vec_sort_radix(x)
+#' vec_sort_radix(x, direction = "desc")
 #'
 #' # Can also handle data frames
 #' df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 #' vec_order_radix(df)
-#' vec_sort(df)
-#' vec_sort(df, direction = "desc")
+#' vec_sort_radix(df)
+#' vec_sort_radix(df, direction = "desc")
 #'
 #' # For data frames, `direction` and `na_value` are allowed to be vectors
 #' # with length equal to the number of columns in the data frame
-#' vec_sort(
+#' vec_sort_radix(
 #'   df,
 #'   direction = c("desc", "asc"),
 #'   na_value = c("largest", "smallest")
@@ -131,11 +131,11 @@
 #' # Character vectors are ordered in the C locale, which orders capital letters
 #' # below lowercase ones
 #' y <- c("B", "A", "a")
-#' vec_sort(y)
+#' vec_sort_radix(y)
 #'
 #' # To order in a case-insensitive manner, provide a `chr_proxy_collate`
 #' # function that transforms the strings to all lowercase
-#' vec_sort(y, chr_proxy_collate = tolower)
+#' vec_sort_radix(y, chr_proxy_collate = tolower)
 vec_order_radix <- function(x,
                             ...,
                             direction = "asc",
@@ -148,12 +148,12 @@ vec_order_radix <- function(x,
 
 #' @export
 #' @rdname vec_order_radix
-vec_sort <- function(x,
-                     ...,
-                     direction = "asc",
-                     na_value = "largest",
-                     nan_distinct = FALSE,
-                     chr_proxy_collate = NULL) {
+vec_sort_radix <- function(x,
+                           ...,
+                           direction = "asc",
+                           na_value = "largest",
+                           nan_distinct = FALSE,
+                           chr_proxy_collate = NULL) {
   check_dots_empty0(...)
 
   idx <- vec_order_radix(
