@@ -250,7 +250,7 @@ vec_order_info <- function(x,
 #' @section Dependencies of `vec_order_base()`:
 #' * [vec_proxy_order()]
 #'
-#' @export
+#' @noRd
 #' @keywords internal
 #' @examples
 #' x <- round(c(runif(9), NA), 3)
@@ -336,7 +336,7 @@ vec_order <- function(x,
     }
     args <- map(unstructure(proxy), function(.x) {
       if (is.data.frame(.x)) {
-        .x <- order(vec_order_base(.x, direction = direction, na_value = na_value))
+        .x <- order(vec_order(.x, direction = direction, na_value = na_value))
       }
       .x
     })

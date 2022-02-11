@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* `vec_order_base()` now correctly orders zero column data frames (#1499).
+* `vec_order()` now correctly orders zero column data frames (#1499).
 
 * vctrs now depends on cli to help with error message generation.
 
