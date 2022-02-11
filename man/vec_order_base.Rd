@@ -26,8 +26,8 @@ more complex types, like data frames and \code{\link[=vctr]{vctrs_vctr}} objects
 vctrs principles.
 
 \code{vec_order_base()} is mainly provided for backwards compatibility with vctrs
-<= 0.3.7. New code should instead use \code{\link[=vec_order]{vec_order()}}, which has more
-capabilities. The main difference between the two is that \code{vec_order()}
+<= 0.3.7. New code should instead use \code{\link[=vec_order_radix]{vec_order_radix()}}, which has more
+capabilities. The main difference between the two is that \code{vec_order_radix()}
 orders character vectors in the C locale (which is highly performant), while
 \code{vec_order_base()} respects the system locale.
 }

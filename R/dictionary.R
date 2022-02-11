@@ -18,7 +18,7 @@
 #' @section Dependencies:
 #' - [vec_proxy_equal()]
 #' - [vec_slice()]
-#' - [vec_order()]
+#' - [vec_order_radix()]
 #' @export
 #' @examples
 #' vec_count(mtcars$vs)
@@ -59,9 +59,9 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   }
 
   idx <- switch(sort,
-    location = vec_order(kv$key),
-    key = vec_order(df$key),
-    count = vec_order(-kv$val)
+    location = vec_order_radix(kv$key),
+    key = vec_order_radix(df$key),
+    count = vec_order_radix(-kv$val)
   )
 
   df <- vec_slice(df, idx)

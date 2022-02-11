@@ -33,7 +33,7 @@ appear in the input.
 \itemize{
 \item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
-\item \code{\link[=vec_order]{vec_order()}}
+\item \code{\link[=vec_order_radix]{vec_order_radix()}}
 }
 }
 

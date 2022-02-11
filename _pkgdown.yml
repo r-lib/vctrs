@@ -67,7 +67,7 @@ reference:
 - title: Sorting
   contents:
   - vec_sort
-  - vec_order
+  - vec_order_radix
 
 - title: Matching and splitting
   contents:

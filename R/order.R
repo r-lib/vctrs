@@ -1,11 +1,11 @@
 #' Order and sort vectors
 #'
 #' @description
-#' `vec_order()` computes the order of `x`. For data frames, the order is
+#' `vec_order_radix()` computes the order of `x`. For data frames, the order is
 #' computed along the rows by computing the order of the first column and
 #' using subsequent columns to break ties.
 #'
-#' `vec_sort()` sorts `x`. It is equivalent to `vec_slice(x, vec_order(x))`.
+#' `vec_sort()` sorts `x`. It is equivalent to `vec_slice(x, vec_order_radix(x))`.
 #'
 #' @inheritParams rlang::args_dots_empty
 #'
@@ -40,14 +40,14 @@
 #'   ordering and `stringi::stri_sort_key()` for locale-aware ordering.
 #'
 #' @return
-#' * `vec_order()` an integer vector the same size as `x`.
+#' * `vec_order_radix()` an integer vector the same size as `x`.
 #' * `vec_sort()` a vector with the same size and type as `x`.
 #'
 #' @section Differences with `order()`:
 #'
 #' Unlike the `na.last` argument of `order()` which decides the positions of
 #' missing values irrespective of the `decreasing` argument, the `na_value`
-#' argument of `vec_order()` interacts with `direction`. If missing values
+#' argument of `vec_order_radix()` interacts with `direction`. If missing values
 #' are considered the largest value, they will appear last in ascending order,
 #' and first in descending order.
 #'
@@ -75,11 +75,11 @@
 #' For complex vectors, if either the real or imaginary component is `NA` or
 #' `NaN`, then the entire observation is considered missing.
 #'
-#' @section Dependencies of `vec_order()`:
+#' @section Dependencies of `vec_order_radix()`:
 #' * [vec_proxy_order()]
 #'
 #' @section Dependencies of `vec_sort()`:
-#' * [vec_order()]
+#' * [vec_order_radix()]
 #' * [vec_slice()]
 #'
 #' @export
@@ -87,13 +87,13 @@
 #' x <- round(sample(runif(5), 9, replace = TRUE), 3)
 #' x <- c(x, NA)
 #'
-#' vec_order(x)
+#' vec_order_radix(x)
 #' vec_sort(x)
 #' vec_sort(x, direction = "desc")
 #'
 #' # Can also handle data frames
 #' df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
-#' vec_order(df)
+#' vec_order_radix(df)
 #' vec_sort(df)
 #' vec_sort(df, direction = "desc")
 #'
@@ -113,18 +113,18 @@
 #' # To order in a case-insensitive manner, provide a `chr_proxy_collate`
 #' # function that transforms the strings to all lowercase
 #' vec_sort(y, chr_proxy_collate = tolower)
-vec_order <- function(x,
-                      ...,
-                      direction = "asc",
-                      na_value = "largest",
-                      nan_distinct = FALSE,
-                      chr_proxy_collate = NULL) {
+vec_order_radix <- function(x,
+                            ...,
+                            direction = "asc",
+                            na_value = "largest",
+                            nan_distinct = FALSE,
+                            chr_proxy_collate = NULL) {
   check_dots_empty0(...)
   .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_proxy_collate)
 }
 
 #' @export
-#' @rdname vec_order
+#' @rdname vec_order_radix
 vec_sort <- function(x,
                      ...,
                      direction = "asc",
@@ -133,7 +133,7 @@ vec_sort <- function(x,
                      chr_proxy_collate = NULL) {
   check_dots_empty0(...)
 
-  idx <- vec_order(
+  idx <- vec_order_radix(
     x = x,
     direction = direction,
     na_value = na_value,
@@ -154,7 +154,7 @@ vec_sort <- function(x,
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
 #'
-#' @inheritParams vec_order
+#' @inheritParams vec_order_radix
 #'
 #' @return
 #' A two column data frame with size equal to `vec_size(vec_unique(x))`.
@@ -207,8 +207,8 @@ vec_order_info <- function(x,
 #' vctrs principles.
 #'
 #' `vec_order_base()` is mainly provided for backwards compatibility with vctrs
-#' <= 0.3.7. New code should instead use [vec_order()], which has more
-#' capabilities. The main difference between the two is that `vec_order()`
+#' <= 0.3.7. New code should instead use [vec_order_radix()], which has more
+#' capabilities. The main difference between the two is that `vec_order_radix()`
 #' orders character vectors in the C locale (which is highly performant), while
 #' `vec_order_base()` respects the system locale.
 #'
