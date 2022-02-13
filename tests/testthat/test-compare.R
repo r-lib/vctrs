@@ -81,6 +81,11 @@ test_that("can compare data frames with data frame columns", {
   expect_equal(vec_compare(df1, df2), -1)
 })
 
+test_that("can compare data frames with 0 columns", {
+  x <- new_data_frame(n = 2L)
+  expect_identical(vec_compare(x, x), c(0L, 0L))
+})
+
 test_that("C code doesn't crash with bad inputs", {
   df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
@@ -193,11 +198,6 @@ test_that("vec_proxy_order() works on deeply nested lists", {
 
   df2 <- data_frame(x = df_col, y = 1:3)
   expect_identical(vec_proxy_order(df2), data_frame(x = c(1L, 2L, 1L), y = 1:3))
-})
-
-test_that("error is thrown with data frames with 0 columns", {
-  x <- new_data_frame(n = 1L)
-  expect_error(vec_compare(x, x), "data frame with zero columns")
 })
 
 test_that("error is thrown when comparing lists", {
