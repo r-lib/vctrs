@@ -91,7 +91,6 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    struct vctrs_arg* y_arg,
                                    r_obj* opts);
 
-r_obj* new_fallback_r_opts(const struct ptype2_opts* opts);
 struct fallback_opts new_fallback_opts(r_obj* opts);
 
 r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,

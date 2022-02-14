@@ -232,13 +232,6 @@ r_obj* ffi_ptype2(r_obj* x,
   return vec_ptype2(x, y, &x_arg, &y_arg, &_left, call);
 }
 
-struct fallback_opts new_fallback_opts(r_obj* opts) {
-  return (struct fallback_opts) {
-    .df = r_int_get(r_list_get(opts, 0), 0),
-    .s3 = r_int_get(r_list_get(opts, 1), 0)
-  };
-}
-
 struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    r_obj* y,
                                    struct vctrs_arg* x_arg,
@@ -253,21 +246,12 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
   };
 }
 
-r_obj* new_fallback_r_opts(const struct ptype2_opts* opts) {
-  r_obj* r_opts = KEEP(r_copy(r_fallback_opts_template));
-
-  r_int_poke(r_list_get(r_opts, 0), 0, opts->fallback.df);
-  r_int_poke(r_list_get(r_opts, 1), 0, opts->fallback.s3);
-
-  FREE(1);
-  return r_opts;
+struct fallback_opts new_fallback_opts(r_obj* opts) {
+  return (struct fallback_opts) {
+    .df = r_int_get(r_list_get(opts, 0), 0),
+    .s3 = r_int_get(r_list_get(opts, 1), 0)
+  };
 }
 
 
-void vctrs_init_ptype2(r_obj* ns) {
-  r_fallback_opts_template = r_parse_eval("fallback_opts()", ns);
-  r_preserve_global(r_fallback_opts_template);
-}
-
-static
-r_obj* r_fallback_opts_template = NULL;
+void vctrs_init_ptype2(r_obj* ns) { }
