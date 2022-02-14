@@ -1,3 +1,8 @@
+# TODO: Use this NEWS bullet when we export `vec_rank()`
+#
+# * New `vec_rank()` to compute various types of sample ranks.
+
+
 #' Compute ranks
 #'
 #' `vec_rank()` computes the sample ranks of a vector. For data frames, ranks
@@ -10,12 +15,12 @@
 #' `nan_distinct = FALSE`, `NaN` values are given the same rank as `NA`,
 #' otherwise they are given a rank that differentiates them from `NA`.
 #'
-#' Like [vec_order()], ordering is done in the C-locale. This can affect
+#' Like [vec_order_radix()], ordering is done in the C-locale. This can affect
 #' the ranks of character vectors, especially regarding how uppercase and
-#' lowercase letters are ranked. See the documentation of [vec_order()]
+#' lowercase letters are ranked. See the documentation of [vec_order_radix()]
 #' for more information.
 #'
-#' @inheritParams vec_order
+#' @inheritParams vec_order_radix
 #' @inheritParams rlang::args_dots_empty
 #'
 #' @param ties Ranking of duplicate values.
@@ -45,10 +50,10 @@
 #'
 #' @section Dependencies:
 #'
-#' - [vec_order()]
+#' - [vec_order_radix()]
 #' - [vec_slice()]
 #'
-#' @export
+#' @noRd
 #' @examples
 #' x <- c(5L, 6L, 3L, 3L, 5L, 3L)
 #'

@@ -1,6 +1,6 @@
 # vctrs (development version)
 
-* `vec_order_base()` now correctly orders zero column data frames (#1499).
+* `vec_order()` now correctly orders zero column data frames (#1499).
 
 * vctrs now depends on cli to help with error message generation.
 
@@ -51,34 +51,12 @@
 
 * `vec_proxy_order()` is described in `vignette("s3-vectors")` (#1373, @krlmlr).
 
-* New `vec_rank()` to compute various types of sample ranks.
-
 * `vec_chop()` now materializes ALTREP vectors before chopping, which is more
   efficient than creating many small ALTREP pieces (#1450).
 
 * New `list_drop_empty()` for removing empty elements from a list (#1395).
 
 * `list_sizes()` now propagates the names of the list onto the result.
-
-* `vec_order()` and `vec_sort()` now use a custom radix sort algorithm, rather
-   than relying on `order()`. The implementation is based on data.table’s
-   `forder()` and their earlier contribution to R’s `order()`. There are four
-   major changes, outlined below, the first two of which are breaking changes.
-   If you need to retain the old ordering behavior, use `vec_order_base()`.
-
-   * Character vectors now order in the C locale by default, which is _much_
-     faster than ordering in the system's locale. To order in a specific locale,
-     you can provide a character proxy function through `chr_proxy_collate`,
-     such as `stringi::stri_sort_key()`.
-
-   * Optional arguments, such as `direction` and `na_value`, must now be
-     specified by name. Specifying by position will result in an error.
-
-   * When ordering data frames, you can now control the behavior of `direction`
-     and `na_value` on a per column basis.
-
-   * There is a new `nan_distinct` argument for differentiating between `NaN`
-     and `NA` in double and complex vectors.
 
 * Name repair messages are now signaled by `rlang::names_inform_repair()`. This
   means that the messages are now sent to stdout by default rather than to

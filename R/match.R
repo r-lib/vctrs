@@ -37,11 +37,11 @@
 #' large number of matches.
 #'
 #' @section Dependencies of `vec_locate_matches()`:
-#' * [vec_order()]
+#' * [vec_order_radix()]
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
-#' @inheritParams vec_order
+#' @inheritParams vec_order_radix
 #'
 #' @param needles,haystack Vectors used for matching.
 #'   - `needles` represents the vector to search for.
