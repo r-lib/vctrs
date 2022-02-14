@@ -29,7 +29,7 @@ BugReports: https://github.com/r-lib/vctrs/issues
 Depends: 
     R (>= 3.3)
 Imports:
-    cli (>= 3.1.1.9000),
+    cli (>= 3.2.0),
     glue,
     rlang (>= 1.0.0)
 Suggests: 
@@ -48,8 +48,6 @@ Suggests:
     xml2,
     waldo (>= 0.2.0),
     zeallot
-Remotes:
-    r-lib/cli
 VignetteBuilder: 
     knitr
 SystemRequirements:
