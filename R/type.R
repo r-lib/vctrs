@@ -110,6 +110,7 @@ vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
 #' @rdname vec_ptype
 vec_ptype_common <- function(...,
                              .ptype = NULL,
+                             .arg = "",
                              .call = caller_env()) {
   .External2(ffi_ptype_common, .ptype)
 }

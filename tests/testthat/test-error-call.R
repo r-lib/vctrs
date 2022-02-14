@@ -161,4 +161,6 @@ test_that("vec_cast_common() reports error context", {
 test_that("vec_ptype_common() reports error context", {
   my_function <- function(...) vec_ptype_common(...)
   expect_snapshot((expect_error(my_function(this_arg = 1, that_arg = "foo"))))
+  expect_snapshot((expect_error(my_function(this_arg = 1, that_arg = "foo", .arg = "my_arg"))))
+  expect_snapshot((expect_error(my_function(1, "foo", .arg = "my_arg"))))
 })

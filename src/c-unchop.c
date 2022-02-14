@@ -70,6 +70,7 @@ static SEXP vec_unchop(SEXP xs,
                                           ptype,
                                           DF_FALLBACK_DEFAULT,
                                           S3_FALLBACK_true,
+                                          args_empty,
                                           r_lazy_null));
 
   if (needs_vec_c_fallback(ptype)) {

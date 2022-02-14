@@ -40,7 +40,7 @@ static
 SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* data);
 
 r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
-  r_obj* common = KEEP(reduce(R_NilValue, args_empty, xs, &vctrs_size2_common, NULL));
+  r_obj* common = KEEP(reduce(R_NilValue, args_empty, NULL, xs, &vctrs_size2_common, NULL));
   r_ssize out;
 
   if (common == r_null) {

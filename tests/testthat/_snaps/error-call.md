@@ -377,3 +377,21 @@
       Error in `my_function()`:
       ! Can't combine `this_arg` <double> and `that_arg` <character>.
 
+---
+
+    Code
+      (expect_error(my_function(this_arg = 1, that_arg = "foo", .arg = "my_arg")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `my_arg$this_arg` <double> and `my_arg$that_arg` <character>.
+
+---
+
+    Code
+      (expect_error(my_function(1, "foo", .arg = "my_arg")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `my_arg[[1]]` <double> and `my_arg[[2]]` <character>.
+
