@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_compare()` can now compare zero column data frames (#1500).
+
 * `new_data_frame()` now errors on negative and missing `n` values (#1477).
 
 * `vec_order()` now correctly orders zero column data frames (#1499).

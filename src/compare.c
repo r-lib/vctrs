@@ -98,8 +98,8 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, size), &nprot);
   int* p_out = INTEGER(out);
 
-  // Initialize to "equality" value
-  // and only change if we learn that it differs
+  // Initialize to "equality" value and only change if we learn that it differs.
+  // This also determines the zero column result.
   memset(p_out, 0, size * sizeof(int));
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
@@ -118,10 +118,6 @@ static void df_compare_impl(int* p_out,
                             SEXP y,
                             bool na_equal) {
   int n_col = Rf_length(x);
-
-  if (n_col == 0) {
-    stop_not_comparable(x, y, "data frame with zero columns");
-  }
 
   if (n_col != Rf_length(y)) {
     stop_not_comparable(x, y, "must have the same number of columns");
