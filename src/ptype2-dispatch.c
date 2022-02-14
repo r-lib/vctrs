@@ -67,29 +67,6 @@ r_obj* vec_ptype2_default(r_obj* x,
   return out;
 }
 
-r_obj* find_common_class(r_obj* x, r_obj* y) {
-  r_obj* x_class = KEEP(r_class(x));
-  r_obj* y_class = KEEP(r_class(y));
-
-  r_ssize x_n = r_length(x_class);
-  r_ssize y_n = r_length(x_class);
-
-  r_obj* const * p_x_classes = r_chr_cbegin(x_class);
-  r_obj* const * p_y_classes = r_chr_cbegin(y_class);
-
-  for (r_ssize i = 0; i < x_n; ++i) {
-    for (r_ssize j = 0; j < y_n; ++j) {
-      if (p_x_classes[i] == p_y_classes[j]) {
-        FREE(2);
-        return p_x_classes[i];
-      }
-    }
-  }
-
-  FREE(2);
-  return r_null;
-}
-
 r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   r_obj* x = KEEP(vec_ptype(opts->x, opts->x_arg, opts->call));
   r_obj* y = KEEP(vec_ptype(opts->y, opts->y_arg, opts->call));
