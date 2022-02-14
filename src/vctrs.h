@@ -254,6 +254,7 @@ bool vec_is_unspecified(SEXP x);
 #include "type-info.h"
 
 #include "arg.h"
+#include "arg-counter.h"
 #include "assert.h"
 #include "cast.h"
 #include "cast-bare.h"

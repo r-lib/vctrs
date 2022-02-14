@@ -36,17 +36,17 @@ struct vctrs_arg new_lazy_arg(struct r_lazy* data);
 // Wrapper around a counter representing the current position of the
 // argument
 struct arg_data_counter {
-  R_len_t* i;
-  SEXP* names;
-  R_len_t* names_i;
+  r_ssize* i;
+  r_obj** names;
+  r_ssize* names_i;
 };
 
 struct vctrs_arg new_counter_arg(struct vctrs_arg* parent,
                                  struct arg_data_counter* data);
 
-struct arg_data_counter new_counter_arg_data(R_len_t* i,
-                                             SEXP* names,
-                                             R_len_t* names_i);
+struct arg_data_counter new_counter_arg_data(r_ssize* i,
+                                             r_obj** names,
+                                             r_ssize* names_i);
 
 
 // Wrapper around a string that should be prefixed with `$`, unless
@@ -70,7 +70,7 @@ struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
 
 
 // Materialise an argument tag as a CHARSXP.
-SEXP vctrs_arg(struct vctrs_arg* arg);
+r_obj* vctrs_arg(struct vctrs_arg* arg);
 
 
 #endif

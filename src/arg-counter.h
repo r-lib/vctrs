@@ -16,16 +16,16 @@ struct counters {
  /* private: */
 
   // Global counters
-  R_len_t curr;
-  R_len_t next;
+  r_ssize curr;
+  r_ssize next;
 
-  SEXP names;
-  R_len_t names_curr;
-  R_len_t names_next;
+  r_obj* names;
+  r_ssize names_curr;
+  r_ssize names_next;
 
   // `names` might be from a splice box whose reduction has already
   // finished. We protect those from up high.
-  PROTECT_INDEX names_pi;
+  r_keep_loc names_pi;
 
   // Local counters for splice boxes. Since the tags are generated
   // lazily, we need two counter states to handle the
@@ -51,10 +51,10 @@ struct counters {
  */
 void counters_shift(struct counters* counters);
 
-SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
-            SEXP rest,
-            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters, void* data),
-            void* data);
+r_obj* reduce(r_obj* current, struct vctrs_arg* current_arg,
+              r_obj* rest,
+              r_obj* (*impl)(r_obj* current, r_obj* next, struct counters* counters, void* data),
+              void* data);
 
 
 #endif
