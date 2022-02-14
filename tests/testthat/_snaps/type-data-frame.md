@@ -104,6 +104,21 @@
       with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
       with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
 
+# if supplied, `n` can't be negative or missing (#1477)
+
+    Code
+      (expect_error(new_data_frame(n = -1L)))
+    Output
+      <error/rlang_error>
+      Error in `new_data_frame()`:
+      ! `n` can't be negative.
+    Code
+      (expect_error(new_data_frame(n = NA_integer_)))
+    Output
+      <error/rlang_error>
+      Error in `new_data_frame()`:
+      ! `n` can't be missing.
+
 # falls back to tibble for tibble subclasses (#1025)
 
     Code
