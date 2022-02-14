@@ -263,6 +263,7 @@ bool vec_is_unspecified(SEXP x);
 #include "names.h"
 #include "owned.h"
 #include "ptype.h"
+#include "ptype-common.h"
 #include "size.h"
 #include "size-common.h"
 #include "slice.h"

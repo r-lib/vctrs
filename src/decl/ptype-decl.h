@@ -32,9 +32,3 @@ r_obj* vec_ptype_finalise_unspecified(r_obj* x);
 
 static
 r_obj* vec_ptype_finalise_dispatch(r_obj* x);
-
-static
-r_obj* vctrs_ptype2_common(r_obj* current,
-                           r_obj* next,
-                           struct counters* counters,
-                           void* data);
