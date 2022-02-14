@@ -2,15 +2,14 @@
 #include "type-data-frame.h"
 #include "type-factor.h"
 #include "type-tibble.h"
-#include "utils.h"
+#include "decl/ptype2-dispatch-decl.h"
 
-// [[ include("ptype2.h") ]]
-SEXP vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
-                                enum vctrs_type x_type,
-                                enum vctrs_type y_type,
-                                int* left) {
-  SEXP x = opts->x;
-  SEXP y = opts->y;
+r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
+                                  enum vctrs_type x_type,
+                                  enum vctrs_type y_type,
+                                  int* left) {
+  r_obj* x = opts->x;
+  r_obj* y = opts->y;
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
   switch (type2_s3) {
@@ -41,12 +40,9 @@ SEXP vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
     return tib_ptype2(opts);
 
   default:
-    return R_NilValue;
+    return r_null;
   }
 }
-
-// Initialised at load time
-static SEXP syms_vec_ptype2_default = NULL;
 
 static inline
 r_obj* vec_ptype2_default(r_obj* x,
@@ -71,51 +67,50 @@ r_obj* vec_ptype2_default(r_obj* x,
   return out;
 }
 
-SEXP find_common_class(SEXP x, SEXP y) {
-  SEXP x_class = PROTECT(r_class(x));
-  SEXP y_class = PROTECT(r_class(y));
+r_obj* find_common_class(r_obj* x, r_obj* y) {
+  r_obj* x_class = KEEP(r_class(x));
+  r_obj* y_class = KEEP(r_class(y));
 
-  R_len_t x_n = Rf_length(x_class);
-  R_len_t y_n = Rf_length(x_class);
+  r_ssize x_n = r_length(x_class);
+  r_ssize y_n = r_length(x_class);
 
-  SEXP const * p_x_classes = STRING_PTR_RO(x_class);
-  SEXP const * p_y_classes = STRING_PTR_RO(y_class);
+  r_obj* const * p_x_classes = r_chr_cbegin(x_class);
+  r_obj* const * p_y_classes = r_chr_cbegin(y_class);
 
-  for (R_len_t i = 0; i < x_n; ++i) {
-    for (R_len_t j = 0; j < y_n; ++j) {
+  for (r_ssize i = 0; i < x_n; ++i) {
+    for (r_ssize j = 0; j < y_n; ++j) {
       if (p_x_classes[i] == p_y_classes[j]) {
-        UNPROTECT(2);
+        FREE(2);
         return p_x_classes[i];
       }
     }
   }
 
-  UNPROTECT(2);
-  return R_NilValue;
+  FREE(2);
+  return r_null;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
-  SEXP x = PROTECT(vec_ptype(opts->x, opts->x_arg, opts->call));
-  SEXP y = PROTECT(vec_ptype(opts->y, opts->y_arg, opts->call));
+r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
+  r_obj* x = KEEP(vec_ptype(opts->x, opts->x_arg, opts->call));
+  r_obj* y = KEEP(vec_ptype(opts->y, opts->y_arg, opts->call));
 
-  SEXP r_x_arg = PROTECT(vctrs_arg(opts->x_arg));
-  SEXP r_y_arg = PROTECT(vctrs_arg(opts->y_arg));
+  r_obj* r_x_arg = KEEP(vctrs_arg(opts->x_arg));
+  r_obj* r_y_arg = KEEP(vctrs_arg(opts->y_arg));
 
-  SEXP method_sym = R_NilValue;
-  SEXP method = s3_find_method_xy("vec_ptype2", x, y, vctrs_method_table, &method_sym);
+  r_obj* method_sym = r_null;
+  r_obj* method = s3_find_method_xy("vec_ptype2", x, y, vctrs_method_table, &method_sym);
 
   // Compatibility with legacy double dispatch mechanism
-  if (method == R_NilValue) {
-    SEXP x_method_sym = R_NilValue;
-    SEXP x_method = PROTECT(s3_find_method2("vec_ptype2",
-                                             x,
-                                             vctrs_method_table,
-                                             &x_method_sym));
+  if (method == r_null) {
+    r_obj* x_method_sym = r_null;
+    r_obj* x_method = KEEP(s3_find_method2("vec_ptype2",
+                                           x,
+                                           vctrs_method_table,
+                                           &x_method_sym));
 
-    if (x_method != R_NilValue) {
-      const char* x_method_str = CHAR(PRINTNAME(x_method_sym));
-      SEXP x_table = s3_get_table(CLOENV(x_method));
+    if (x_method != r_null) {
+      const char* x_method_str = r_sym_c_string(x_method_sym);
+      r_obj* x_table = s3_get_table(r_fn_env(x_method));
 
       method = s3_find_method2(x_method_str,
                                y,
@@ -123,31 +118,31 @@ SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
                                &method_sym);
     }
 
-    UNPROTECT(1);
+    FREE(1);
   }
 
-  PROTECT(method);
+  KEEP(method);
 
-  if (method == R_NilValue) {
-    SEXP out = vec_ptype2_default(x,
-                                  y,
-                                  r_x_arg,
-                                  r_y_arg,
-                                  opts->call,
-                                  &(opts->fallback));
-    UNPROTECT(5);
+  if (method == r_null) {
+    r_obj* out = vec_ptype2_default(x,
+                                    y,
+                                    r_x_arg,
+                                    r_y_arg,
+                                    opts->call,
+                                    &(opts->fallback));
+    FREE(5);
     return out;
   }
 
-  SEXP out = vec_invoke_coerce_method(method_sym, method,
-                                      syms_x, x,
-                                      syms_y, y,
-                                      syms_x_arg, r_x_arg,
-                                      syms_y_arg, r_y_arg,
-                                      opts->call,
-                                      &(opts->fallback));
+  r_obj* out = vec_invoke_coerce_method(method_sym, method,
+                                        syms_x, x,
+                                        syms_y, y,
+                                        syms_x_arg, r_x_arg,
+                                        syms_y_arg, r_y_arg,
+                                        opts->call,
+                                        &(opts->fallback));
 
-  UNPROTECT(5);
+  FREE(5);
   return out;
 }
 
@@ -188,11 +183,11 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
 }
 
 // [[ register() ]]
-SEXP vctrs_ptype2_dispatch_native(SEXP x,
-                                  SEXP y,
-                                  SEXP fallback_opts,
-                                  SEXP x_arg,
-                                  SEXP y_arg) {
+r_obj* ffi_ptype2_dispatch_native(r_obj* x,
+                                  r_obj* y,
+                                  r_obj* fallback_opts,
+                                  r_obj* x_arg,
+                                  r_obj* y_arg) {
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
@@ -200,9 +195,9 @@ SEXP vctrs_ptype2_dispatch_native(SEXP x,
 
   int _left;
 
-  SEXP out = vec_ptype2_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(y), &_left);
+  r_obj* out = vec_ptype2_dispatch_native(&c_opts, vec_typeof(x), vec_typeof(y), &_left);
 
-  if (out == R_NilValue) {
+  if (out == r_null) {
     return vec_ptype2_default(x,
                               y,
                               x_arg,
@@ -215,6 +210,9 @@ SEXP vctrs_ptype2_dispatch_native(SEXP x,
 }
 
 
-void vctrs_init_ptype2_dispatch(SEXP ns) {
-  syms_vec_ptype2_default = Rf_install("vec_default_ptype2");
+void vctrs_init_ptype2_dispatch(r_obj* ns) {
+  syms_vec_ptype2_default = r_sym("vec_default_ptype2");
 }
+
+static
+r_obj* syms_vec_ptype2_default = NULL;

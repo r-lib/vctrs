@@ -51,7 +51,7 @@ vec_ptype2_dispatch_s3 <- function(x,
 
 vec_ptype2_dispatch_native <- function(x, y, ..., x_arg = "", y_arg = "") {
   fallback_opts <- match_fallback_opts(...)
-  .Call(vctrs_ptype2_dispatch_native, x, y, fallback_opts, x_arg, y_arg)
+  .Call(ffi_ptype2_dispatch_native, x, y, fallback_opts, x_arg, y_arg)
 }
 
 #' Default cast and ptype2 methods

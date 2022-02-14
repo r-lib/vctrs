@@ -1,0 +1,22 @@
+#ifndef VCTRS_PTYPE2_DISPATCH_H
+#define VCTRS_PTYPE2_DISPATCH_H
+
+#include "vctrs-core.h"
+
+r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
+                                  enum vctrs_type x_type,
+                                  enum vctrs_type y_type,
+                                  int* left);
+
+r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts);
+
+r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
+                                r_obj* x_sym, r_obj* x,
+                                r_obj* y_sym, r_obj* y,
+                                r_obj* x_arg_sym, r_obj* x_arg,
+                                r_obj* y_arg_sym, r_obj* y_arg,
+                                struct r_lazy call,
+                                const struct fallback_opts* opts);
+
+
+#endif

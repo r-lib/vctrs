@@ -265,6 +265,7 @@ bool vec_is_unspecified(SEXP x);
 #include "ptype-common.h"
 #include "ptype.h"
 #include "ptype2.h"
+#include "ptype2-dispatch.h"
 #include "size.h"
 #include "size-common.h"
 #include "slice.h"
