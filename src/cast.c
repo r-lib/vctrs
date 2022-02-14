@@ -232,6 +232,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
                             r_obj* to,
                             const struct cast_common_opts* opts) {
   struct ptype_common_opts ptype_opts = {
+    .p_arg = opts->p_arg,
     .call = opts->call,
     .fallback = opts->fallback
   };
@@ -241,7 +242,10 @@ r_obj* vec_cast_common_opts(r_obj* xs,
   r_obj* out = KEEP(r_alloc_list(n));
 
   r_ssize i = 0;
-  struct vctrs_arg* p_x_arg = new_subscript_arg(NULL, r_names(xs), n, &i);
+  struct vctrs_arg* p_x_arg = new_subscript_arg(opts->p_arg,
+                                                r_names(xs),
+                                                n,
+                                                &i);
 
   for (; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
@@ -264,8 +268,10 @@ r_obj* vec_cast_common_params(r_obj* xs,
                               r_obj* to,
                               enum df_fallback df_fallback,
                               enum s3_fallback s3_fallback,
+                              struct vctrs_arg* p_arg,
                               struct r_lazy call) {
   struct cast_common_opts opts = {
+    .p_arg = p_arg,
     .call = call,
     .fallback = {
       .df = df_fallback,
@@ -275,11 +281,15 @@ r_obj* vec_cast_common_params(r_obj* xs,
   return vec_cast_common_opts(xs, to, &opts);
 }
 
-r_obj* vec_cast_common(r_obj* xs, r_obj* to, struct r_lazy call) {
+r_obj* vec_cast_common(r_obj* xs,
+                       r_obj* to,
+                       struct vctrs_arg* p_arg,
+                       struct r_lazy call) {
   return vec_cast_common_params(xs,
                                 to,
                                 DF_FALLBACK_DEFAULT,
                                 S3_FALLBACK_DEFAULT,
+                                p_arg,
                                 call);
 }
 
@@ -291,7 +301,10 @@ r_obj* ffi_cast_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   r_obj* to = KEEP(r_eval(r_node_car(args), env));
   struct r_lazy call = { .x = syms.dot_call, .env = env };
 
-  r_obj* out = vec_cast_common(dots, to, call);
+  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
+  r_obj* out = vec_cast_common(dots, to, &arg, call);
 
   FREE(2);
   return out;
@@ -305,7 +318,11 @@ r_obj* ffi_cast_common_opts(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env)
   r_obj* to = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
   r_obj* ffi_fallback_opts = KEEP(r_eval(r_node_car(args), env));
 
+  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
   struct cast_common_opts opts = {
+    .p_arg = &arg,
     .call = { .x = syms.dot_call, .env = env },
     .fallback = new_fallback_opts(ffi_fallback_opts)
   };

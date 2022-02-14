@@ -107,6 +107,7 @@ static SEXP vec_rbind(SEXP xs,
                               ptype,
                               DF_FALLBACK_DEFAULT,
                               S3_FALLBACK_true,
+                              args_empty,
                               r_lazy_null);
   PROTECT_N(xs, &n_prot);
 

@@ -362,6 +362,34 @@
 ---
 
     Code
+      (expect_error(my_function(my_arg = 1.5, .to = int(), .arg = "my_arg")))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from `my_arg$my_arg` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function(this_arg = 1, that_arg = "foo", .arg = "my_arg")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `my_arg$this_arg` <double> and `my_arg$that_arg` <character>.
+
+---
+
+    Code
+      (expect_error(my_function(1, "foo", .arg = "my_arg")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `my_arg[[1]]` <double> and `my_arg[[2]]` <character>.
+
+---
+
+    Code
       (expect_error(my_function(this_arg = x, that_arg = y)))
     Output
       <error/vctrs_error_incompatible_type>

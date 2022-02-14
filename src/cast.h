@@ -14,6 +14,7 @@ struct cast_opts {
 };
 
 struct cast_common_opts {
+  struct vctrs_arg* p_arg;
   struct r_lazy call;
   struct fallback_opts fallback;
 };
@@ -59,6 +60,7 @@ r_obj* vec_cast_params(r_obj* x,
 
 r_obj* vec_cast_common(r_obj* xs,
                        r_obj* to,
+                       struct vctrs_arg* p_arg,
                        struct r_lazy call);
 
 r_obj* vec_cast_common_opts(r_obj* xs,
@@ -69,6 +71,7 @@ r_obj* vec_cast_common_params(r_obj* xs,
                               r_obj* to,
                               enum df_fallback df_fallback,
                               enum s3_fallback s3_fallback,
+                              struct vctrs_arg* p_arg,
                               struct r_lazy call);
 
 struct cast_opts new_cast_opts(r_obj* x,
