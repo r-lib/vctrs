@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `new_data_frame()` now errors on negative and missing `n` values (#1477).
+
 * `vec_order()` now correctly orders zero column data frames (#1499).
 
 * vctrs now depends on cli to help with error message generation.
