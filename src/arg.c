@@ -139,12 +139,23 @@ r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
 
 struct subscript_arg_data {
   struct vctrs_arg self;
-  r_obj* x;
+  r_obj* names;
+  r_ssize n;
   r_ssize* p_i;
 };
 
+struct vctrs_arg* new_subscript_arg_vec(struct vctrs_arg* parent,
+                                        r_obj* x,
+                                        r_ssize* p_i) {
+  return new_subscript_arg(parent,
+                           vec_names(x),
+                           vec_size(x),
+                           p_i);
+}
+
 struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
-                                    r_obj* x,
+                                    r_obj* names,
+                                    r_ssize n,
                                     r_ssize* p_i) {
   r_obj* shelter = r_alloc_raw(sizeof(struct subscript_arg_data));
 
@@ -155,7 +166,8 @@ struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
     .fill = &subscript_arg_fill,
     .data = p_data
   };
-  p_data->x = x;
+  p_data->names = names;
+  p_data->n = n;
   p_data->p_i = p_i;
 
   return (struct vctrs_arg*) p_data;
@@ -166,20 +178,29 @@ r_ssize subscript_arg_fill(void* p_data_, char* buf, r_ssize remaining) {
   struct subscript_arg_data* p_data = (struct subscript_arg_data*) p_data_;
 
   r_ssize i = *p_data->p_i;
-  r_obj* x = p_data->x;
 
-  r_obj* names = vec_names(x);
-  r_ssize n = vec_size(x);
+  r_obj* names = p_data->names;
+  r_ssize n = p_data->n;
 
   if (i >= n) {
     r_stop_internal("`i` can't be greater than `vec_size(x)`.");
   }
 
-  int len;
-  if (r_has_name_at(names, i)) {
-    len = snprintf(buf, remaining, "$%s", r_chr_get_c_string(names, i));
+  int len = 0;
+  bool child = !is_empty_arg(p_data->self.parent);
+
+  if (child) {
+    if (r_has_name_at(names, i)) {
+      len = snprintf(buf, remaining, "$%s", r_chr_get_c_string(names, i));
+    } else {
+      len = snprintf(buf, remaining, "[[%td]]", i + 1);
+    }
   } else {
-    len = snprintf(buf, remaining, "[[%td]]", i + 1);
+    if (r_has_name_at(names, i)) {
+      len = snprintf(buf, remaining, "%s", r_chr_get_c_string(names, i));
+    } else {
+      len = snprintf(buf, remaining, "..%td", i + 1);
+    }
   }
 
   if (len >= remaining) {
@@ -236,57 +257,11 @@ r_ssize counter_arg_fill(void* data_, char* buf, r_ssize remaining) {
 }
 
 
-// Indexing tag that materialises as `$rhs`. The `$` is only written when
-// the arg has a parent.
-
-struct vctrs_arg new_index_arg(struct vctrs_arg* parent,
-                               struct arg_data_index* data) {
-  return (struct vctrs_arg) {
-    .parent = parent,
-    .fill = &index_arg_fill,
-    .data = (void*) data
-  };
-}
-
-struct arg_data_index new_index_arg_data(const char* arg,
-                                         struct vctrs_arg* parent) {
-  return (struct arg_data_index) {
-    .arg = arg,
-    .parent = parent
-  };
-}
-
-
-static
-r_ssize index_arg_fill(void* data_, char* buf, r_ssize remaining) {
-  struct arg_data_index* data = (struct arg_data_index*) data_;
-  const char* src = data->arg;
-  size_t len = strlen(src);
-
-  bool child = is_empty_arg(data->parent);
-
-  if (child) {
-    ++len;
-  }
-
-  if (len >= remaining) {
-    return -1;
-  }
-
-  if (child) {
-    *buf++ = '$';
-  }
-  memcpy(buf, src, len);
-  buf[len] = '\0';
-
-  return len;
-}
-
 static
 bool is_empty_arg(struct vctrs_arg* arg) {
   if (!arg) {
     return true;
   }
   char tmp[1];
-  return arg->fill(arg->data, tmp, 1) != 0;;
+  return arg->fill(arg->data, tmp, 1) == 0;
 }

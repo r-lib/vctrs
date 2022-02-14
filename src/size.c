@@ -92,7 +92,7 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_info* opts) {
   r_attrib_poke_names(out, names);
 
   r_ssize i = 0;
-  struct vctrs_arg* arg = new_subscript_arg(opts->arg, x, &i);
+  struct vctrs_arg* arg = new_subscript_arg_vec(opts->arg, x, &i);
   KEEP(arg->shelter);
 
   struct vec_error_info local_opts = *opts;
