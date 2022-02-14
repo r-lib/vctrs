@@ -86,7 +86,7 @@ inputs, and is designed for interactive exploration.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vec_ptype</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">vec_ptype_common</span><span class="op">(</span><span class="va">...</span>, .ptype <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+<span class="fu">vec_ptype_common</span><span class="op">(</span><span class="va">...</span>, .ptype <span class="op">=</span> <span class="cn">NULL</span>, .call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu">vec_ptype_show</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
@@ -113,6 +113,11 @@ computing the common type across all elements of <code>...</code>.</p>
 <p>Alternatively, you can supply <code>.ptype</code> to give the output known type.
 If <code>getOption("vctrs.no_guessing")</code> is <code>TRUE</code> you must supply this value:
 this is a convenient way to make production code demand fixed types.</p></dd>
+<dt>.call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

@@ -84,7 +84,7 @@ the foundation of type coercions in vctrs.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vec_cast</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, to_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">vec_cast_common</span><span class="op">(</span><span class="va">...</span>, .to <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>
+<span class="fu">vec_cast_common</span><span class="op">(</span><span class="va">...</span>, .to <span class="op">=</span> <span class="cn">NULL</span>, .call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># S3 method for logical</span>
 <span class="fu">vec_cast</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span>
@@ -123,6 +123,11 @@ dots are only for future extensions and should be empty.</p></dd>
 in error messages to inform the user about the locations of
 incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
 <dt>call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
+<dt>.call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
 mentioned in error messages as the source of the error. See the
