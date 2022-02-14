@@ -172,7 +172,7 @@ r_ssize subscript_arg_fill(void* p_data_, char* buf, r_ssize remaining) {
   r_ssize n = vec_size(x);
 
   if (i >= n) {
-    r_stop_internal("subscript_arg_fill", "`i` can't be greater than `vec_size(x)`.");
+    r_stop_internal("`i` can't be greater than `vec_size(x)`.");
   }
 
   int len;
