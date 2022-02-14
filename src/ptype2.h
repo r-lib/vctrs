@@ -37,21 +37,21 @@ struct ptype2_opts {
   struct fallback_opts fallback;
 };
 
-SEXP vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
-                                enum vctrs_type x_type,
-                                enum vctrs_type y_type,
-                                int* left);
+r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
+                                  enum vctrs_type x_type,
+                                  enum vctrs_type y_type,
+                                  int* left);
 
-SEXP vec_ptype2_opts(const struct ptype2_opts* opts,
-                     int* left);
+r_obj* vec_ptype2_opts(const struct ptype2_opts* opts,
+                       int* left);
 
 static inline
-SEXP vec_ptype2_params(SEXP x,
-                       SEXP y,
-                       struct vctrs_arg* x_arg,
-                       struct vctrs_arg* y_arg,
-                       enum df_fallback df_fallback,
-                       int* left) {
+r_obj* vec_ptype2_params(r_obj* x,
+                         r_obj* y,
+                         struct vctrs_arg* x_arg,
+                         struct vctrs_arg* y_arg,
+                         enum df_fallback df_fallback,
+                         int* left) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
@@ -81,18 +81,18 @@ r_obj* vec_ptype2(r_obj* x,
   return vec_ptype2_opts(&opts, left);
 }
 
-SEXP vec_ptype2_dispatch_s3(const struct ptype2_opts* opts);
+r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts);
 
 bool vec_is_coercible(const struct ptype2_opts* opts, int* dir);
 
-struct ptype2_opts new_ptype2_opts(SEXP x,
-                                   SEXP y,
+struct ptype2_opts new_ptype2_opts(r_obj* x,
+                                   r_obj* y,
                                    struct vctrs_arg* x_arg,
                                    struct vctrs_arg* y_arg,
-                                   SEXP opts);
+                                   r_obj* opts);
 
-SEXP new_fallback_r_opts(const struct ptype2_opts* opts);
-struct fallback_opts new_fallback_opts(SEXP opts);
+r_obj* new_fallback_r_opts(const struct ptype2_opts* opts);
+struct fallback_opts new_fallback_opts(r_obj* opts);
 
 r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
                                 r_obj* x_sym, r_obj* x,
@@ -102,9 +102,9 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
                                 struct r_lazy call,
                                 const struct fallback_opts* opts);
 
-SEXP vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
+r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
                                  enum vctrs_type other_type,
-                                 SEXP other,
+                                 r_obj* other,
                                  struct vctrs_arg* other_arg);
 
 

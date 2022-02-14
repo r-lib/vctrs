@@ -91,7 +91,7 @@ extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_is_partial(SEXP);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
-extern SEXP vctrs_is_coercible(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_is_coercible(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript_result(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_df_flatten_info(SEXP);
@@ -111,7 +111,7 @@ extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
 extern SEXP vctrs_datetime_validate(SEXP);
-extern SEXP vctrs_ptype2_opts(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_ptype2_opts(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_s3_find_method(SEXP, SEXP, SEXP);
 extern SEXP vctrs_implements_ptype2(SEXP);
 extern SEXP vctrs_ptype2_dispatch_native(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -258,7 +258,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_partial",                      (DL_FUNC) &vctrs_is_partial, 1},
   {"vctrs_is_list",                         (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",              (DL_FUNC) &vctrs_try_catch_callback, 2},
-  {"vctrs_is_coercible",                    (DL_FUNC) &vctrs_is_coercible, 5},
+  {"ffi_is_coercible",                      (DL_FUNC) &ffi_is_coercible, 5},
   {"ffi_as_subscript",                      (DL_FUNC) &ffi_as_subscript, 5},
   {"ffi_as_subscript_result",               (DL_FUNC) &ffi_as_subscript_result, 5},
   {"vctrs_df_flatten_info",                 (DL_FUNC) &vctrs_df_flatten_info, 1},
@@ -278,7 +278,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_date_validate",                   (DL_FUNC) &vctrs_date_validate, 1},
   {"vctrs_new_datetime",                    (DL_FUNC) &vctrs_new_datetime, 2},
   {"vctrs_datetime_validate",               (DL_FUNC) &vctrs_datetime_validate, 1},
-  {"vctrs_ptype2_opts",                     (DL_FUNC) &vctrs_ptype2_opts, 5},
+  {"ffi_ptype2_opts",                       (DL_FUNC) &ffi_ptype2_opts, 5},
   {"vctrs_s3_find_method",                  (DL_FUNC) &vctrs_s3_find_method, 3},
   {"vctrs_implements_ptype2",               (DL_FUNC) &vctrs_implements_ptype2, 1},
   {"vctrs_ptype2_dispatch_native",          (DL_FUNC) &vctrs_ptype2_dispatch_native, 5},

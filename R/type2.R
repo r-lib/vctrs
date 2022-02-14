@@ -260,7 +260,7 @@ vec_ptype2_opts <- function(x,
                             opts,
                             x_arg = "",
                             y_arg = "") {
-  .Call(vctrs_ptype2_opts, x, y, opts, x_arg, y_arg)
+  .Call(ffi_ptype2_opts, x, y, opts, x_arg, y_arg)
 }
 vec_ptype2_params <- function(x,
                               y,
@@ -332,7 +332,7 @@ vec_is_coercible <- function(x,
   check_dots_empty0(...)
 
   .Call(
-    vctrs_is_coercible,
+    ffi_is_coercible,
     x,
     y,
     opts,

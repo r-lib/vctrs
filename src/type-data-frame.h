@@ -4,7 +4,6 @@
 #include "vctrs-core.h"
 #include "arg.h"
 #include "names.h"
-#include "ptype2.h"
 
 
 SEXP new_data_frame(SEXP x, R_len_t n);

@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "ptype2.h"
 #include "subscript.h"
 #include "utils.h"
 #include "dim.h"

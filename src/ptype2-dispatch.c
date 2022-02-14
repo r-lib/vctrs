@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "ptype2.h"
 #include "type-data-frame.h"
 #include "type-factor.h"
 #include "type-tibble.h"

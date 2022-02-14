@@ -1,6 +1,5 @@
 #include "vctrs.h"
 #include "cast.h"
-#include "ptype2.h"
 #include "type-data-frame.h"
 #include "utils.h"
 

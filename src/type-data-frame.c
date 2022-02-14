@@ -1,6 +1,4 @@
 #include "vctrs.h"
-#include "ptype-common.h"
-#include "ptype2.h"
 #include "type-data-frame.h"
 #include "utils.h"
 

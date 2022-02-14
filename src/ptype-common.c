@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "ptype2.h"
 #include "decl/ptype-common-decl.h"
 
 // [[ register(external = TRUE) ]]

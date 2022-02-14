@@ -3,7 +3,6 @@
 #include "translate.h"
 #include "equal.h"
 #include "hash.h"
-#include "ptype2.h"
 #include "utils.h"
 
 #include "decl/dictionary-decl.h"
