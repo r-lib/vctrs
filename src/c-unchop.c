@@ -66,7 +66,11 @@ static SEXP vec_unchop(SEXP xs,
     Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
   }
 
-  ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true));
+  ptype = PROTECT(vec_ptype_common_params(xs,
+                                          ptype,
+                                          DF_FALLBACK_DEFAULT,
+                                          S3_FALLBACK_true,
+                                          r_lazy_null));
 
   if (needs_vec_c_fallback(ptype)) {
     SEXP out = vec_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);

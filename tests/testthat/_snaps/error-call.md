@@ -359,3 +359,12 @@
       ! Can't convert from <double> to <integer> due to loss of precision.
       * Locations: 1
 
+# vec_ptype_common() reports error context
+
+    Code
+      (expect_error(my_function(this_arg = 1, that_arg = "foo")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `this_arg` <double> and `that_arg` <character>.
+

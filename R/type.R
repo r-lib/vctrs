@@ -108,26 +108,42 @@ vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
 
 #' @export
 #' @rdname vec_ptype
-vec_ptype_common <- function(..., .ptype = NULL) {
+vec_ptype_common <- function(...,
+                             .ptype = NULL,
+                             .call = caller_env()) {
   .External2(ffi_ptype_common, .ptype)
 }
 vec_ptype_common_opts <- function(...,
                                   .ptype = NULL,
-                                  .opts = fallback_opts()) {
+                                  .opts = fallback_opts(),
+                                  .call = caller_env()) {
   .External2(ffi_ptype_common_opts, .ptype, .opts)
 }
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,
                                     .df_fallback = NULL,
-                                    .s3_fallback = NULL) {
+                                    .s3_fallback = NULL,
+                                    .call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
-  vec_ptype_common_opts(..., .ptype = .ptype, .opts = opts)
+  vec_ptype_common_opts(
+    ...,
+    .ptype = .ptype,
+    .opts = opts,
+    .call = .call
+  )
 }
-vec_ptype_common_fallback <- function(..., .ptype = NULL) {
-  vec_ptype_common_opts(..., .ptype = .ptype, .opts = full_fallback_opts())
+vec_ptype_common_fallback <- function(...,
+                                      .ptype = NULL,
+                                      .call = caller_env()) {
+  vec_ptype_common_opts(
+    ...,
+    .ptype = .ptype,
+    .opts = full_fallback_opts(),
+    .call = .call
+  )
 }
 
 #' @export
