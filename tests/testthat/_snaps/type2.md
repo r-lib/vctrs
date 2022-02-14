@@ -124,7 +124,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `vec_cast_no_fallback()`:
-      ! Can't convert <vctrs_foo> to <vctrs_bar>.
+      ! Can't convert `x` <vctrs_foo> to <vctrs_bar>.
 
 # common type warnings for data frames take attributes into account
 

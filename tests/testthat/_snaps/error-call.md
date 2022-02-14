@@ -356,7 +356,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from <double> to <integer> due to loss of precision.
+      ! Can't convert from `my_arg` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 ---

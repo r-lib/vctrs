@@ -240,11 +240,15 @@ r_obj* vec_cast_common_opts(r_obj* xs,
   r_ssize n = r_length(xs);
   r_obj* out = KEEP(r_alloc_list(n));
 
-  for (r_ssize i = 0; i < n; ++i) {
+  r_ssize i = 0;
+  struct vctrs_arg* p_x_arg = new_subscript_arg(NULL, r_names(xs), n, &i);
+
+  for (; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
     struct cast_opts cast_opts = {
       .x = elt,
       .to = type,
+      .x_arg = p_x_arg,
       .call = opts->call,
       .fallback = opts->fallback
     };
