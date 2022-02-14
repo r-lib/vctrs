@@ -382,6 +382,13 @@ test_that("if supplied, `n` must be an integer of size 1", {
   expect_error(new_data_frame(n = "x"), "must be an integer of size 1")
 })
 
+test_that("if supplied, `n` can't be negative or missing (#1477)", {
+  expect_snapshot({
+    (expect_error(new_data_frame(n = -1L)))
+    (expect_error(new_data_frame(n = NA_integer_)))
+  })
+})
+
 test_that("`class` must be a character vector", {
   expect_error(new_data_frame(class = 1), "must be NULL or a character vector")
 })

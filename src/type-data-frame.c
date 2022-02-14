@@ -159,10 +159,19 @@ static R_len_t df_size_from_list(SEXP x, SEXP n) {
 
 static R_len_t df_size_from_n(SEXP n) {
   if (TYPEOF(n) != INTSXP || Rf_length(n) != 1) {
-    Rf_errorcall(R_NilValue, "`n` must be an integer of size 1");
+    r_abort("`n` must be an integer of size 1.");
   }
 
-  return r_int_get(n, 0);
+  R_len_t out = r_int_get(n, 0);
+
+  if (out == r_globals.na_int) {
+    r_abort("`n` can't be missing.");
+  }
+  if (out < 0) {
+    r_abort("`n` can't be negative.");
+  }
+
+  return out;
 }
 
 static SEXP c_data_frame_class(SEXP cls) {
