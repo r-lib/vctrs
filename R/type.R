@@ -109,12 +109,12 @@ vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
 #' @export
 #' @rdname vec_ptype
 vec_ptype_common <- function(..., .ptype = NULL) {
-  .External2(vctrs_type_common, .ptype)
+  .External2(ffi_ptype_common, .ptype)
 }
 vec_ptype_common_opts <- function(...,
                                   .ptype = NULL,
                                   .opts = fallback_opts()) {
-  .External2(vctrs_ptype_common_opts, .ptype, .opts)
+  .External2(ffi_ptype_common_opts, .ptype, .opts)
 }
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,

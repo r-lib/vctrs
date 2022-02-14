@@ -316,8 +316,8 @@ static const R_CallMethodDef CallEntries[] = {
   {NULL, NULL, 0}
 };
 
-extern SEXP vctrs_type_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_ptype_common_opts(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_ptype_common(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_ptype_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
 extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -328,8 +328,8 @@ extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_data_frame(SEXP);
 
 static const R_ExternalMethodDef ExtEntries[] = {
-  {"vctrs_type_common",                (DL_FUNC) &vctrs_type_common, 1},
-  {"vctrs_ptype_common_opts",          (DL_FUNC) &vctrs_ptype_common_opts, 2},
+  {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 1},
+  {"ffi_ptype_common_opts",            (DL_FUNC) &ffi_ptype_common_opts, 2},
   {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
   {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 1},
   {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 1},
@@ -379,10 +379,10 @@ void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
 void vctrs_init_subscript(SEXP ns);
 void vctrs_init_subscript_loc(SEXP ns);
+void vctrs_init_ptype(r_obj* ns);
 void vctrs_init_ptype2(SEXP ns);
 void vctrs_init_ptype2_dispatch(SEXP ns);
 void vctrs_init_rep(SEXP ns);
-void vctrs_init_type(SEXP ns);
 void vctrs_init_type_data_frame(SEXP ns);
 void vctrs_init_type_date_time(SEXP ns);
 void vctrs_init_type_info(SEXP ns);
@@ -405,10 +405,10 @@ r_obj* vctrs_init_library(r_obj* ns) {
   vctrs_init_slice_assign(ns);
   vctrs_init_subscript(ns);
   vctrs_init_subscript_loc(ns);
+  vctrs_init_ptype(ns);
   vctrs_init_ptype2(ns);
   vctrs_init_ptype2_dispatch(ns);
   vctrs_init_rep(ns);
-  vctrs_init_type(ns);
   vctrs_init_type_data_frame(ns);
   vctrs_init_type_date_time(ns);
   vctrs_init_type_info(ns);

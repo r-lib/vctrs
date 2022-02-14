@@ -7,12 +7,6 @@
 #include "assert.h"
 #include "decl/ptype-decl.h"
 
-// Initialised at load time
-static SEXP syms_vec_ptype = NULL;
-
-static SEXP syms_vec_ptype_finalise_dispatch = NULL;
-static SEXP fns_vec_ptype_finalise_dispatch = NULL;
-
 
 // [[ register() ]]
 r_obj* ffi_ptype(r_obj* x, r_obj* x_arg_ffi, r_obj* frame) {
@@ -21,7 +15,6 @@ r_obj* ffi_ptype(r_obj* x, r_obj* x_arg_ffi, r_obj* frame) {
   return vec_ptype(x, &x_arg, call);
 }
 
-// [[ include("vctrs.h") ]]
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   switch (vec_typeof(x)) {
   case vctrs_type_null:        return r_null;
@@ -34,7 +27,7 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   case vctrs_type_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
   case vctrs_type_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
   case vctrs_type_dataframe:   return df_ptype(x, true);
-  case vctrs_type_s3:          return s3_type(x, x_arg, call);
+  case vctrs_type_s3:          return s3_ptype(x, x_arg, call);
   case vctrs_type_scalar:      stop_scalar_type(x, x_arg, call);
   }
   r_stop_unreachable();
@@ -45,17 +38,18 @@ r_obj* col_ptype(r_obj* x) {
   return vec_ptype(x, args_empty, r_lazy_null);
 }
 
-static inline SEXP vec_ptype_slice(SEXP x, SEXP empty) {
-  if (ATTRIB(x) == R_NilValue) {
+static inline
+r_obj* vec_ptype_slice(r_obj* x, r_obj* empty) {
+  if (r_attrib(x) == r_null) {
     return empty;
   } else {
     // Slicing preserves attributes
-    return vec_slice(x, R_NilValue);
+    return vec_slice(x, r_null);
   }
 }
 
 static
-r_obj* s3_type(r_obj* x,
+r_obj* s3_ptype(r_obj* x,
                struct vctrs_arg* x_arg,
                struct r_lazy call) {
   switch (class_type(x)) {
@@ -95,48 +89,46 @@ r_obj* s3_type(r_obj* x,
 }
 
 static inline
-SEXP vec_ptype_method(SEXP x) {
-  SEXP cls = PROTECT(s3_get_class(x));
-  SEXP method = s3_class_find_method("vec_ptype", cls, vctrs_method_table);
-  UNPROTECT(1);
+r_obj* vec_ptype_method(r_obj* x) {
+  r_obj* cls = KEEP(s3_get_class(x));
+  r_obj* method = s3_class_find_method("vec_ptype", cls, vctrs_method_table);
+  FREE(1);
   return method;
 }
 
 static inline
-SEXP vec_ptype_invoke(SEXP x, SEXP method) {
+r_obj* vec_ptype_invoke(r_obj* x, r_obj* method) {
   return vctrs_dispatch1(syms_vec_ptype, method, syms_x, x);
 }
 
-SEXP df_ptype(SEXP x, bool bare) {
-  SEXP row_nms = PROTECT(df_rownames(x));
+r_obj* df_ptype(r_obj* x, bool bare) {
+  r_obj* row_nms = KEEP(df_rownames(x));
 
-  SEXP ptype = R_NilValue;
+  r_obj* ptype = r_null;
   if (bare) {
-    ptype = PROTECT(bare_df_map(x, &col_ptype));
+    ptype = KEEP(bare_df_map(x, &col_ptype));
   } else {
-    ptype = PROTECT(df_map(x, &col_ptype));
+    ptype = KEEP(df_map(x, &col_ptype));
   }
 
-  if (TYPEOF(row_nms) == STRSXP) {
-    Rf_setAttrib(ptype, R_RowNamesSymbol, vctrs_shared_empty_chr);
+  if (r_typeof(row_nms) == R_TYPE_character) {
+    r_attrib_poke(ptype, r_syms.row_names, vctrs_shared_empty_chr);
   }
 
-  UNPROTECT(2);
+  FREE(2);
   return ptype;
 }
 
-static SEXP vec_ptype_finalise_unspecified(SEXP x);
-static SEXP vec_ptype_finalise_dispatch(SEXP x);
 
-// [[ include("vctrs.h"); register() ]]
-SEXP vec_ptype_finalise(SEXP x) {
-  if (x == R_NilValue) {
+// [[ register() ]]
+r_obj* vec_ptype_finalise(r_obj* x) {
+  if (x == r_null) {
     return x;
   }
 
   // TODO! Error call
 
-  if (!OBJECT(x)) {
+  if (!r_is_object(x)) {
     vec_check_vector(x, args_empty, r_lazy_null);
     return x;
   }
@@ -157,12 +149,12 @@ SEXP vec_ptype_finalise(SEXP x) {
     return bare_df_map(x, &vec_ptype_finalise);
 
   case vctrs_class_data_frame:
-    x = PROTECT(df_map(x, &vec_ptype_finalise));
+    x = KEEP(df_map(x, &vec_ptype_finalise));
 
-    if (Rf_inherits(x, "vctrs:::df_fallback")) {
-      SEXP seen_tibble_attr = PROTECT(Rf_getAttrib(x, Rf_install("seen_tibble")));
+    if (r_inherits(x, "vctrs:::df_fallback")) {
+      r_obj* seen_tibble_attr = KEEP(r_attrib_get(x, r_sym("seen_tibble")));
       bool seen_tibble = r_is_true(seen_tibble_attr);
-      UNPROTECT(1);
+      FREE(1);
 
       if (seen_tibble) {
         r_attrib_poke_class(x, classes_tibble);
@@ -170,11 +162,11 @@ SEXP vec_ptype_finalise(SEXP x) {
         r_attrib_poke_class(x, classes_data_frame);
       }
 
-      Rf_setAttrib(x, Rf_install("known_classes"), R_NilValue);
-      Rf_setAttrib(x, Rf_install("seen_tibble"), R_NilValue);
+      r_attrib_poke(x, r_sym("known_classes"), r_null);
+      r_attrib_poke(x, r_sym("seen_tibble"), r_null);
     }
 
-    UNPROTECT(1);
+    FREE(1);
     return x;
 
   case vctrs_class_none:
@@ -185,62 +177,61 @@ SEXP vec_ptype_finalise(SEXP x) {
   }
 }
 
-static SEXP vec_ptype_finalise_unspecified(SEXP x) {
-  R_len_t size = Rf_length(x);
+static
+r_obj* vec_ptype_finalise_unspecified(r_obj* x) {
+  r_ssize size = Rf_length(x);
 
   if (size == 0) {
     return vctrs_shared_empty_lgl;
   }
 
-  SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));
-  r_lgl_fill(out, NA_LOGICAL, size);
+  r_obj* out = KEEP(r_alloc_logical(size));
+  r_lgl_fill(out, r_globals.na_lgl, size);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static SEXP vec_ptype_finalise_dispatch(SEXP x) {
+static
+r_obj* vec_ptype_finalise_dispatch(r_obj* x) {
   return vctrs_dispatch1(
     syms_vec_ptype_finalise_dispatch, fns_vec_ptype_finalise_dispatch,
     syms_x, x
   );
 }
 
-static SEXP vctrs_type2_common(SEXP current, SEXP next, struct counters* counters, void* data);
-
 // [[ register(external = TRUE) ]]
-SEXP vctrs_type_common(SEXP call, SEXP op, SEXP args, SEXP env) {
-  args = CDR(args);
+r_obj* ffi_ptype_common(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+  args = r_node_cdr(args);
 
-  SEXP types = PROTECT(rlang_env_dots_values(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env));
+  r_obj* types = KEEP(rlang_env_dots_values(env));
+  r_obj* ptype = KEEP(r_eval(r_node_car(args), env));
 
-  SEXP out = vec_ptype_common_params(types, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
+  r_obj* out = vec_ptype_common_params(types, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_ptype_common_opts(SEXP call, SEXP op, SEXP args, SEXP env) {
-  args = CDR(args);
+r_obj* ffi_ptype_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+  args = r_node_cdr(args);
 
-  SEXP types = PROTECT(rlang_env_dots_values(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP opts = PROTECT(Rf_eval(CAR(args), env));
+  r_obj* types = KEEP(rlang_env_dots_values(env));
+  r_obj* ptype = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
+  r_obj* opts = KEEP(r_eval(r_node_car(args), env));
 
   const struct fallback_opts c_opts = new_fallback_opts(opts);
+  r_obj* out = vec_ptype_common_opts(types, ptype, &c_opts);
 
-  SEXP out = vec_ptype_common_opts(types, ptype, &c_opts);
-
-  UNPROTECT(3);
+  FREE(3);
   return out;
 }
 // [[ include("ptype-common.h") ]]
-SEXP vec_ptype_common_params(SEXP dots,
-                             SEXP ptype,
-                             enum df_fallback df_fallback,
-                             enum s3_fallback s3_fallback) {
+r_obj* vec_ptype_common_params(r_obj* dots,
+                               r_obj* ptype,
+                               enum df_fallback df_fallback,
+                               enum s3_fallback s3_fallback) {
   struct fallback_opts opts = {
     .df = df_fallback,
     .s3 = s3_fallback
@@ -250,34 +241,35 @@ SEXP vec_ptype_common_params(SEXP dots,
 }
 
 // [[ include("ptype-common.h") ]]
-SEXP vec_ptype_common_opts(SEXP dots,
-                           SEXP ptype,
-                           const struct fallback_opts* opts) {
+r_obj* vec_ptype_common_opts(r_obj* dots,
+                             r_obj* ptype,
+                             const struct fallback_opts* opts) {
   // FIXME! Error call
   if (!vec_is_partial(ptype)) {
     return vec_ptype(ptype, args_dot_ptype, r_lazy_null);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
-    Rf_errorcall(R_NilValue, "strict mode is activated; you must supply complete `.ptype`.");
+    r_abort_lazy_call(r_lazy_null, "strict mode is activated; you must supply complete `.ptype`.");
   }
 
   // Remove constness
   struct fallback_opts mut_opts = *opts;
 
   // Start reduction with the `.ptype` argument
-  SEXP type = PROTECT(reduce(ptype, args_dot_ptype, dots, &vctrs_type2_common, &mut_opts));
+  r_obj* type = KEEP(reduce(ptype, args_dot_ptype, dots, &vctrs_ptype2_common, &mut_opts));
   type = vec_ptype_finalise(type);
 
-  UNPROTECT(1);
+  FREE(1);
   return type;
 }
 
 
-static SEXP vctrs_type2_common(SEXP current,
-                               SEXP next,
-                               struct counters* counters,
-                               void* data) {
+static
+r_obj* vctrs_ptype2_common(r_obj* current,
+                           r_obj* next,
+                           struct counters* counters,
+                           void* data) {
   int left = -1;
 
   const struct ptype2_opts opts = {
@@ -300,9 +292,18 @@ static SEXP vctrs_type2_common(SEXP current,
 }
 
 
-void vctrs_init_type(SEXP ns) {
-  syms_vec_ptype = Rf_install("vec_ptype");
+void vctrs_init_ptype(r_obj* ns) {
+  syms_vec_ptype = r_sym("vec_ptype");
 
-  syms_vec_ptype_finalise_dispatch = Rf_install("vec_ptype_finalise_dispatch");
-  fns_vec_ptype_finalise_dispatch = Rf_findVar(syms_vec_ptype_finalise_dispatch, ns);
+  syms_vec_ptype_finalise_dispatch = r_sym("vec_ptype_finalise_dispatch");
+  fns_vec_ptype_finalise_dispatch = r_eval(syms_vec_ptype_finalise_dispatch, ns);
 }
+
+static
+r_obj* syms_vec_ptype = NULL;
+
+static
+r_obj* syms_vec_ptype_finalise_dispatch = NULL;
+
+static
+r_obj* fns_vec_ptype_finalise_dispatch = NULL;

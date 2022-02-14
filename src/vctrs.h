@@ -262,6 +262,7 @@ bool vec_is_unspecified(SEXP x);
 #include "match-joint.h"
 #include "names.h"
 #include "owned.h"
+#include "ptype.h"
 #include "size.h"
 #include "size-common.h"
 #include "slice.h"
