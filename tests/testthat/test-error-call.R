@@ -148,3 +148,17 @@ test_that("vec_size() reports error context", {
     (expect_error(vec_size(env())))
   })
 })
+
+test_that("vec_cast_common() reports error context", {
+  my_function <- function(...) vec_cast_common(...)
+  expect_snapshot((expect_error(my_function(my_arg = 1.5, .to = int()))))
+
+  x <- data.frame(x = "a")
+  y <- data.frame(x = 1, y = 2)
+  expect_snapshot((expect_error(my_function(this_arg = x, that_arg = y))))
+})
+
+test_that("vec_ptype_common() reports error context", {
+  my_function <- function(...) vec_ptype_common(...)
+  expect_snapshot((expect_error(my_function(this_arg = 1, that_arg = "foo"))))
+})

@@ -5,6 +5,7 @@
 
 struct syms {
   r_obj* arg;
+  r_obj* dot_call;
   r_obj* haystack_arg;
   r_obj* needles_arg;
   r_obj* repair_arg;

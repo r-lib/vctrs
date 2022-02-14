@@ -67,7 +67,7 @@ r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
   struct vctrs_arg arg_caller = new_lazy_arg(&arg_caller_data);
 
   r_ssize i = 0;
-  struct vctrs_arg* arg = new_subscript_arg(&arg_caller, x, &i);
+  struct vctrs_arg* arg = new_subscript_arg_vec(&arg_caller, x, &i);
   KEEP(arg->shelter);
 
   r_ssize n = r_length(x);

@@ -2,13 +2,18 @@
 #include "decl/ptype-common-decl.h"
 
 // [[ register(external = TRUE) ]]
-r_obj* ffi_ptype_common(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
   r_obj* types = KEEP(rlang_env_dots_values(env));
   r_obj* ptype = KEEP(r_eval(r_node_car(args), env));
+  struct r_lazy call = { .x = syms.dot_call, .env = env };
 
-  r_obj* out = vec_ptype_common_params(types, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_false);
+  r_obj* out = vec_ptype_common_params(types,
+                                       ptype,
+                                       DF_FALLBACK_DEFAULT,
+                                       S3_FALLBACK_false,
+                                       call);
 
   FREE(2);
   return out;
@@ -22,8 +27,11 @@ r_obj* ffi_ptype_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
   r_obj* ptype = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
   r_obj* opts = KEEP(r_eval(r_node_car(args), env));
 
-  const struct fallback_opts c_opts = new_fallback_opts(opts);
-  r_obj* out = vec_ptype_common_opts(types, ptype, &c_opts);
+  struct ptype_common_opts ptype_opts = {
+    .call = { .x = syms.dot_call, .env = env },
+    .fallback = new_fallback_opts(opts)
+  };
+  r_obj* out = vec_ptype_common_opts(types, ptype, &ptype_opts);
 
   FREE(3);
   return out;
@@ -31,10 +39,9 @@ r_obj* ffi_ptype_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
 
 r_obj* vec_ptype_common_opts(r_obj* dots,
                              r_obj* ptype,
-                             const struct fallback_opts* opts) {
-  // FIXME! Error call
+                             const struct ptype_common_opts* opts) {
   if (!vec_is_partial(ptype)) {
-    return vec_ptype(ptype, args_dot_ptype, r_lazy_null);
+    return vec_ptype(ptype, args_dot_ptype, opts->call);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
@@ -42,7 +49,7 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
   }
 
   // Remove constness
-  struct fallback_opts mut_opts = *opts;
+  struct ptype_common_opts mut_opts = *opts;
 
   // Start reduction with the `.ptype` argument
   r_obj* type = KEEP(reduce(ptype, args_dot_ptype, dots, &ptype2_common, &mut_opts));
@@ -55,10 +62,14 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
 r_obj* vec_ptype_common_params(r_obj* dots,
                                r_obj* ptype,
                                enum df_fallback df_fallback,
-                               enum s3_fallback s3_fallback) {
-  struct fallback_opts opts = {
-    .df = df_fallback,
-    .s3 = s3_fallback
+                               enum s3_fallback s3_fallback,
+                               struct r_lazy call) {
+  struct ptype_common_opts opts = {
+    .call = call,
+    .fallback = {
+      .df = df_fallback,
+      .s3 = s3_fallback
+    }
   };
 
   return vec_ptype_common_opts(dots, ptype, &opts);
@@ -68,15 +79,18 @@ static
 r_obj* ptype2_common(r_obj* current,
                      r_obj* next,
                      struct counters* counters,
-                     void* data) {
+                     void* p_data) {
   int left = -1;
+
+  struct ptype_common_opts* p_common_opts = (struct ptype_common_opts*) p_data;
 
   const struct ptype2_opts opts = {
     .x = current,
     .y = next,
     .x_arg = counters->curr_arg,
     .y_arg = counters->next_arg,
-    .fallback = *((struct fallback_opts*) data)
+    .call = p_common_opts->call,
+    .fallback = p_common_opts->fallback
   };
 
   current = vec_ptype2_opts(&opts, &left);

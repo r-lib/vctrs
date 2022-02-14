@@ -49,25 +49,14 @@ struct arg_data_counter new_counter_arg_data(r_ssize* i,
                                              r_ssize* names_i);
 
 
-// Wrapper around a string that should be prefixed with `$`, unless
-// that's the first argument of the chain
-
-struct arg_data_index {
-  const char* arg;
-  struct vctrs_arg* parent;
-};
-
-struct vctrs_arg new_index_arg(struct vctrs_arg* parent,
-                               struct arg_data_index* data);
-
-struct arg_data_index new_index_arg_data(const char* arg,
-                                         struct vctrs_arg* parent);
-
+struct vctrs_arg* new_subscript_arg_vec(struct vctrs_arg* parent,
+                                        r_obj* x,
+                                        r_ssize* p_i);
 
 struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
-                                    r_obj* x,
+                                    r_obj* names,
+                                    r_ssize n,
                                     r_ssize* p_i);
-
 
 // Materialise an argument tag as a CHARSXP.
 r_obj* vctrs_arg(struct vctrs_arg* arg);

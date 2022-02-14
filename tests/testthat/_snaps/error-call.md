@@ -349,3 +349,31 @@
       Error in `vec_size()`:
       ! `x` must be a vector, not an environment.
 
+# vec_cast_common() reports error context
+
+    Code
+      (expect_error(my_function(my_arg = 1.5, .to = int())))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `my_function()`:
+      ! Can't convert from `my_arg` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+---
+
+    Code
+      (expect_error(my_function(this_arg = x, that_arg = y)))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `this_arg$x` <character> and `that_arg$x` <double>.
+
+# vec_ptype_common() reports error context
+
+    Code
+      (expect_error(my_function(this_arg = 1, that_arg = "foo")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
+      ! Can't combine `this_arg` <double> and `that_arg` <character>.
+

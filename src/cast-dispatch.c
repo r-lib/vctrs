@@ -1,7 +1,6 @@
 #include "vctrs.h"
 #include "type-factor.h"
 #include "type-tibble.h"
-#include "utils.h"
 
 r_obj* vec_cast_dispatch_native(const struct cast_opts* opts,
                                 enum vctrs_type x_type,

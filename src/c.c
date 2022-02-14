@@ -45,8 +45,12 @@ SEXP vec_c_opts(SEXP xs,
                 SEXP name_spec,
                 const struct name_repair_opts* name_repair,
                 const struct fallback_opts* fallback_opts) {
+  struct ptype_common_opts ptype_opts = {
+    .fallback = *fallback_opts
+  };
+
   SEXP orig_ptype = ptype;
-  ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, fallback_opts));
+  ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, &ptype_opts));
 
   if (ptype == R_NilValue) {
     UNPROTECT(1);
@@ -76,11 +80,10 @@ SEXP vec_c_opts(SEXP xs,
   // fallback disabled as well.
   if ((is_data_frame(ptype) && fallback_opts->s3 == S3_FALLBACK_true) ||
       vec_is_common_class_fallback(ptype)) {
-    struct fallback_opts d_fallback_opts = *fallback_opts;
-    d_fallback_opts.s3 = S3_FALLBACK_false;
-    ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, &d_fallback_opts));
+    ptype_opts.fallback.s3 = S3_FALLBACK_false;
+    ptype = PROTECT(vec_ptype_common_opts(xs, orig_ptype, &ptype_opts));
   } else {
-    ptype = PROTECT(vec_ptype_common_opts(xs, ptype, fallback_opts));
+    ptype = PROTECT(vec_ptype_common_opts(xs, ptype, &ptype_opts));
   }
 
   // Find individual input sizes and total size of output
@@ -278,19 +281,21 @@ SEXP vec_c_fallback(SEXP ptype,
   if (implements_c) {
     return vec_c_fallback_invoke(xs, name_spec);
   } else {
-    struct fallback_opts fallback_opts = {
-      .df = DF_FALLBACK_none,
-      .s3 = S3_FALLBACK_false
+    struct ptype_common_opts ptype_opts = {
+      .fallback = {
+        .df = DF_FALLBACK_none,
+        .s3 = S3_FALLBACK_false
+      }
     };
 
     // Should cause a common type error, unless another fallback
     // kicks in (for instance, homogeneous class with homogeneous
     // attributes)
-    vec_ptype_common_opts(xs, R_NilValue, &fallback_opts);
+    vec_ptype_common_opts(xs, R_NilValue, &ptype_opts);
 
     // Suboptimal: Call `vec_c()` again to combine vector with
     // homogeneous class fallback
-    return vec_c_opts(xs, R_NilValue, name_spec, name_repair, &fallback_opts);
+    return vec_c_opts(xs, R_NilValue, name_spec, name_repair, &ptype_opts.fallback);
   }
 }
 

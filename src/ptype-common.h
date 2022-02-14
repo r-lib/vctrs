@@ -2,8 +2,11 @@
 #define VCTRS_PTYPE_COMMON_H
 
 #include "vctrs-core.h"
-#include "ptype2.h"
-#include "utils.h"
+
+struct ptype_common_opts {
+  struct r_lazy call;
+  struct fallback_opts fallback;
+};
 
 static inline
 bool vec_is_common_class_fallback(r_obj* ptype) {
@@ -13,10 +16,11 @@ bool vec_is_common_class_fallback(r_obj* ptype) {
 r_obj* vec_ptype_common_params(r_obj* dots,
                                r_obj* ptype,
                                enum df_fallback df_fallback,
-                               enum s3_fallback s3_fallback);
+                               enum s3_fallback s3_fallback,
+                               struct r_lazy call);
 
 r_obj* vec_ptype_common_opts(r_obj* dots,
                              r_obj* ptype,
-                             const struct fallback_opts* opts);
+                             const struct ptype_common_opts* opts);
 
 #endif
