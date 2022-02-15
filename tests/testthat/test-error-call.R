@@ -6,6 +6,11 @@ test_that("failing common type reports correct error call", {
 test_that("failing cast reports correct error call", {
   my_function <- function() vec_cast(2, chr())
   expect_snapshot((expect_error(my_function())))
+
+  df1 <- data_frame(x = TRUE, y = TRUE)
+  df2 <- data_frame(y = "1")
+  my_function <- function(lhs, rhs) vec_cast(lhs, rhs)
+  expect_snapshot((expect_error(my_function(df1, df2))))
 })
 
 test_that("lossy cast reports correct error call", {

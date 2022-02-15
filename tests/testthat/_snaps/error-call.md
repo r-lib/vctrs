@@ -16,6 +16,15 @@
       Error in `my_function()`:
       ! Can't convert `2` <double> to <character>.
 
+---
+
+    Code
+      (expect_error(my_function(df1, df2)))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error:
+      ! Can't convert `lhs$y` <logical> to match type of `y` <character>.
+
 # lossy cast reports correct error call
 
     Code

@@ -713,7 +713,7 @@ static SEXP df_cast_match(const struct cast_opts* opts,
 
   r_ssize i = 0;
   r_ssize x_arg_loc = 0;
-  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, x_names, vec_size(x), &x_arg_loc);
+  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, x_names, r_length(x_names), &x_arg_loc);
   struct vctrs_arg* named_to_arg = new_subscript_arg(opts->to_arg, to_names, to_len, &i);
 
   for (; i < to_len; ++i) {
