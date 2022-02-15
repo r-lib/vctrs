@@ -25,7 +25,14 @@
 
 \method{vec_ptype2}{list}(x, y, ..., x_arg = "", y_arg = "")
 
-vec_ptype2(x, y, ..., x_arg = "", y_arg = "", call = caller_env())
+vec_ptype2(
+  x,
+  y,
+  ...,
+  x_arg = caller_arg(x),
+  y_arg = caller_arg(y),
+  call = caller_env()
+)
 }
 \arguments{
 \item{x, y}{Vector types.}

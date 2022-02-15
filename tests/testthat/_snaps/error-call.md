@@ -5,7 +5,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
-      ! Can't combine <double> and <character>.
+      ! Can't combine `2` <double> and `chr()` <character>.
 
 # failing cast reports correct error call
 

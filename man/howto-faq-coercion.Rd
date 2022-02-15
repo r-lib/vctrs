@@ -99,11 +99,11 @@ Our natural number class is conceptually a parent of \verb{<logical>} and a
 child of \verb{<integer>}, but the class is not compatible with logical,
 integer, or double vectors yet:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
 #> Error:
-#> ! Can't combine <logical> and <my_natural>.
+#> ! Can't combine `TRUE` <logical> and `new_natural(2:3)` <my_natural>.
 
 vec_ptype2(new_natural(1), 2:3)
 #> Error:
-#> ! Can't combine <my_natural> and <integer>.
+#> ! Can't combine `new_natural(1)` <my_natural> and `2:3` <integer>.
 }\if{html}{\out{</div>}}
 
 We’ll specify the twin methods for each of these classes, returning the

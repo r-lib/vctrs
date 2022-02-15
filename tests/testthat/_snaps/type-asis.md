@@ -6,7 +6,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't combine <double> and <character>.
+      ! Can't combine `I(1)` <double> and `I("x")` <character>.
 
 # AsIs objects throw cast errors with their underlying types
 
