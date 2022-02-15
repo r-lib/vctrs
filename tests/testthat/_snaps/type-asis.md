@@ -6,7 +6,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't combine <double> and <character>.
+      ! Can't combine `I(1)` <double> and `I("x")` <character>.
 
 # AsIs objects throw cast errors with their underlying types
 
@@ -16,5 +16,5 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't convert <double> to <factor<bf275>>.
+      ! Can't convert `I(1)` <double> to <factor<bf275>>.
 

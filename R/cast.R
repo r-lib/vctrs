@@ -66,7 +66,7 @@
 vec_cast <- function(x,
                      to,
                      ...,
-                     x_arg = "",
+                     x_arg = caller_arg(x),
                      to_arg = "",
                      call = caller_env()) {
   if (!missing(...)) {

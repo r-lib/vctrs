@@ -31,8 +31,8 @@
 vec_ptype2 <- function(x,
                        y,
                        ...,
-                       x_arg = "",
-                       y_arg = "",
+                       x_arg = caller_arg(x),
+                       y_arg = caller_arg(y),
                        call = caller_env()) {
   if (!missing(...)) {
     check_ptype2_dots_empty(...)

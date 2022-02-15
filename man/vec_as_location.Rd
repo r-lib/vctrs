@@ -13,7 +13,7 @@ vec_as_location(
   names = NULL,
   ...,
   missing = c("propagate", "error"),
-  arg = NULL,
+  arg = caller_arg(i),
   call = caller_env()
 )
 
@@ -25,7 +25,7 @@ num_as_location(
   negative = c("invert", "error", "ignore"),
   oob = c("error", "extend"),
   zero = c("remove", "error", "ignore"),
-  arg = NULL,
+  arg = caller_arg(i),
   call = caller_env()
 )
 
@@ -35,7 +35,7 @@ vec_as_location2(
   names = NULL,
   ...,
   missing = c("error", "propagate"),
-  arg = NULL,
+  arg = caller_arg(i),
   call = caller_env()
 )
 
@@ -45,7 +45,7 @@ num_as_location2(
   ...,
   negative = c("error", "ignore"),
   missing = c("error", "propagate"),
-  arg = NULL,
+  arg = caller_arg(i),
   call = caller_env()
 )
 }

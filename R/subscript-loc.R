@@ -60,7 +60,7 @@ vec_as_location <- function(i,
                             names = NULL,
                             ...,
                             missing = c("propagate", "error"),
-                            arg = NULL,
+                            arg = caller_arg(i),
                             call = caller_env()) {
   check_dots_empty0(...)
 
@@ -93,7 +93,7 @@ num_as_location <- function(i,
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "extend"),
                             zero = c("remove", "error", "ignore"),
-                            arg = NULL,
+                            arg = caller_arg(i),
                             call = caller_env()) {
   check_dots_empty0(...)
 
@@ -120,7 +120,7 @@ vec_as_location2 <- function(i,
                              names = NULL,
                              ...,
                              missing = c("error", "propagate"),
-                             arg = NULL,
+                             arg = caller_arg(i),
                              call = caller_env()) {
   check_dots_empty0(...)
   result_get(vec_as_location2_result(
@@ -142,7 +142,7 @@ num_as_location2 <- function(i,
                              ...,
                              negative = c("error", "ignore"),
                              missing = c("error", "propagate"),
-                             arg = NULL,
+                             arg = caller_arg(i),
                              call = caller_env()) {
   check_dots_empty0(...)
 

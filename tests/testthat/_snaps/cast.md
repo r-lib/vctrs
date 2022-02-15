@@ -20,7 +20,7 @@
       vec_cast(1.5, 10L)
     Condition
       Error:
-      ! Can't convert from <double> to <integer> due to loss of precision.
+      ! Can't convert from `1.5` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 ---
@@ -29,7 +29,7 @@
       vec_cast(factor("foo"), 10)
     Condition
       Error:
-      ! Can't convert <factor<c1562>> to <double>.
+      ! Can't convert `factor("foo")` <factor<c1562>> to <double>.
 
 ---
 
@@ -39,7 +39,7 @@
       vec_cast(x, y)
     Condition
       Error:
-      ! Can't convert from `a$b` <double> to `a$b` <integer> due to loss of precision.
+      ! Can't convert from `x$a$b` <double> to `a$b` <integer> due to loss of precision.
       * Locations: 1
 
 ---
@@ -50,7 +50,7 @@
       vec_cast(x, y)
     Condition
       Error:
-      ! Can't convert `a$b` <factor<c1562>> to match type of `a$b` <double>.
+      ! Can't convert `x$a$b` <factor<c1562>> to match type of `a$b` <double>.
 
 ---
 

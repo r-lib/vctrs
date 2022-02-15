@@ -17,7 +17,7 @@
       vec_ptype2("foo", 10)
     Condition
       Error:
-      ! Can't combine <character> and <double>.
+      ! Can't combine `"foo"` <character> and `10` <double>.
 
 ---
 
@@ -27,7 +27,7 @@
       vec_ptype2(df1, df2)
     Condition
       Error:
-      ! Can't combine `x$y$z` <double> and `x$y$z` <character>.
+      ! Can't combine `df1$x$y$z` <double> and `df2$x$y$z` <character>.
 
 # can override scalar vector error message for base scalar types
 
@@ -71,7 +71,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
+      ! Can't convert `foobar(1, bar = TRUE)` <vctrs_foobar> to <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -81,7 +81,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
+      ! Can't combine `foobar(1, bar = TRUE)` <vctrs_foobar> and `foobar(2, baz = TRUE)` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -104,14 +104,14 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't convert <vctrs_foobar> to <vctrs_foobar>.
+      ! Can't convert `foobar(1, bar = TRUE)` <vctrs_foobar> to <vctrs_foobar>.
     Code
       (expect_error(with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2,
         baz = TRUE))), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't combine <vctrs_foobar> and <vctrs_foobar>.
+      ! Can't combine `foobar(1, bar = TRUE)` <vctrs_foobar> and `foobar(2, baz = TRUE)` <vctrs_foobar>.
 
 # common type errors don't mention columns if they are compatible
 

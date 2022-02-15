@@ -5,7 +5,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
-      ! Can't combine <double> and <character>.
+      ! Can't combine `2` <double> and `chr()` <character>.
 
 # failing cast reports correct error call
 
@@ -14,7 +14,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
-      ! Can't convert <double> to <character>.
+      ! Can't convert `2` <double> to <character>.
 
 # lossy cast reports correct error call
 
@@ -23,7 +23,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from <double> to <logical> due to loss of precision.
+      ! Can't convert from `2` <double> to <logical> due to loss of precision.
       * Locations: 1
 
 # failing common size reports correct error call
@@ -97,7 +97,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from <double> to <integer> due to loss of precision.
+      ! Can't convert from `1.5` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 ---
@@ -107,7 +107,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from <double> to <logical> due to loss of precision.
+      ! Can't convert from `1.5` <double> to <logical> due to loss of precision.
       * Locations: 1
 
 ---
@@ -117,7 +117,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from <integer> to <logical> due to loss of precision.
+      ! Can't convert from `2L` <integer> to <logical> due to loss of precision.
       * Locations: 1
 
 ---
@@ -127,7 +127,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
-      ! Can't convert <double[,1]> to <double>.
+      ! Can't convert `matrix(TRUE)` <double[,1]> to <double>.
       Cannot decrease dimensions.
 
 # base S3 casts report correct error call
@@ -137,7 +137,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
+      ! Can't convert from `"a"` <character> to <factor<9b7e3>> due to loss of generality.
       * Locations: 1
 
 # names validation reports correct error call
@@ -201,7 +201,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Can't convert from <double> to <integer> due to loss of precision.
+      x Can't convert from `my_arg` <double> to <integer> due to loss of precision.
 
 ---
 
@@ -221,7 +221,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `list`.
+      x Subscript `my_arg` has the wrong type `list`.
       i It must be logical, numeric, or character.
 
 ---
@@ -279,7 +279,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't convert <double> to <list>.
+      ! Can't convert `1` <double> to <list>.
     Code
       (expect_error(vec_slice(env(), list())))
     Output

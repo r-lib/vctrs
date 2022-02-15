@@ -1,5 +1,15 @@
 # vctrs (development version)
 
+* `vec_assert()`, `vec_ptype2()`, `vec_cast()`, and `vec_as_location()`
+  now use `caller_arg()` to infer a default `arg` value from the
+  caller.
+
+  This may result in unhelpful arguments being mentioned in error
+  messages. In general, you should consider snapshotting vctrs error
+  messages thrown in your package and supply `arg` and `call`
+  arguments if the error context is not adequately reported to your
+  users.
+
 * `vec_ptype_common()` and `vec_cast_common()` gain `call` and `arg`
   arguments for specifying an error context.
 
