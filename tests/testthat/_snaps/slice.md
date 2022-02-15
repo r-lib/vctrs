@@ -24,7 +24,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Location 3 doesn't exist.
       i There are only 2 elements.
     Code
@@ -32,7 +32,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't negate elements that don't exist.
+      ! Can't negate elements past the end.
       i Location 3 doesn't exist.
       i There are only 2 elements.
 
@@ -80,7 +80,7 @@
       vec_slice(c(bar = 1), "foo")
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Element `foo` doesn't exist.
 
 ---
@@ -89,7 +89,7 @@
       vec_slice(letters, c(100, 1000))
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Locations 100 and 1000 don't exist.
       i There are only 26 elements.
 
@@ -99,7 +99,7 @@
       vec_slice(letters, c(1, 100:103, 2, 104:110))
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Locations 100, 101, 102, 103, 104, ... don't exist.
       i There are only 26 elements.
 
@@ -109,7 +109,7 @@
       vec_slice(set_names(letters), c("foo", "bar"))
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Elements `foo` and `bar` don't exist.
 
 ---
@@ -118,6 +118,6 @@
       vec_slice(set_names(letters), toupper(letters))
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Elements `A`, `B`, `C`, `D`, `E`, etc. don't exist.
 

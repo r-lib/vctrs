@@ -213,7 +213,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Location 10 doesn't exist.
       i There are only 2 elements.
     Code
@@ -221,7 +221,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't negate elements that don't exist.
+      ! Can't negate elements past the end.
       i Location 10 doesn't exist.
       i There are only 2 elements.
     Code
@@ -229,7 +229,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_as_location2_result()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Location 10 doesn't exist.
       i There are only 2 elements.
     Code
@@ -239,7 +239,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Element `foo` doesn't exist.
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
@@ -247,7 +247,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_as_location2_result()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Element `foo` doesn't exist.
 
 # vec_as_location2() requires length 1 inputs
@@ -511,7 +511,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Locations 2 and 3 don't exist.
       i There is only 1 element.
     Code
@@ -773,7 +773,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Element `foo` doesn't exist.
     Code
       # With custom `arg`
@@ -782,7 +782,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Location 30 doesn't exist.
       i There are only 26 elements.
     Code
@@ -791,7 +791,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       x Element `foo` doesn't exist.
     Code
       # With tibble columns
@@ -827,7 +827,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't remove rows that don't exist.
+      ! Can't remove rows past the end.
       x Rows `foo` and `bar` don't exist.
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), 1:30)), class = "vctrs_error_subscript_oob")
@@ -835,7 +835,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't remove rows that don't exist.
+      ! Can't remove rows past the end.
       i Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
     Code
@@ -844,7 +844,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't remove rows that don't exist.
+      ! Can't remove rows past the end.
       i Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
 

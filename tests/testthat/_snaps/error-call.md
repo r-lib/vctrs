@@ -189,7 +189,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements that don't exist.
+      ! Can't subset elements past the end.
       i Location 10 doesn't exist.
       i There are only 2 elements.
 
