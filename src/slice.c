@@ -185,7 +185,10 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
     r_obj* elt = r_list_get(x, i);
 
     if (vec_size(elt) != size) {
-      r_stop_internal("Columns must match the data frame size.");
+      r_stop_internal("Column `%s` (size %ld) must match the data frame (size %ld).",
+                      r_chr_get_c_string(nms, i),
+                      vec_size(elt),
+                      size);
     }
 
     r_obj* sliced = vec_slice_unsafe(elt, subscript);

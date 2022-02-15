@@ -703,7 +703,11 @@ test_that("scalar type error is thrown when `vec_slice_unsafe()` is called direc
 
 test_that("column sizes are checked before slicing (#552)", {
   x <- structure(list(a = 1, b = 2:3), row.names = 1:2, class = "data.frame")
-  expect_error(vctrs::vec_slice(x, 2), "must match the data frame size")
+  expect_error(
+    vctrs::vec_slice(x, 2),
+    "Column `a` (size 1) must match the data frame (size 2)",
+    fixed = TRUE
+  )
 })
 
 test_that("base_vec_rep() slices data frames with the base::rep() UI", {
