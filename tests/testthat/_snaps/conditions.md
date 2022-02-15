@@ -146,7 +146,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error:
-      ! Can't convert from <character> to <factor<9b7e3>> due to loss of generality.
+      ! Can't convert from `"a"` <character> to `factor("b")` <factor<9b7e3>> due to loss of generality.
       * Locations: 1
 
 # ordered cast failures mention conversion
@@ -157,7 +157,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't convert <ordered<bf275>> to <ordered<fd1ad>>.
+      ! Can't convert `ordered("x")` <ordered<bf275>> to match type of `ordered("y")` <ordered<fd1ad>>.
 
 # incompatible size errors
 

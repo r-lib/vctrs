@@ -16,5 +16,5 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error:
-      ! Can't convert <double> to <factor<bf275>>.
+      ! Can't convert `I(1)` <double> to match type of `I(factor("x"))` <factor<bf275>>.
 

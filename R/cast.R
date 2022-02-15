@@ -66,8 +66,8 @@
 vec_cast <- function(x,
                      to,
                      ...,
-                     x_arg = "",
-                     to_arg = "",
+                     x_arg = caller_arg(x),
+                     to_arg = caller_arg(to),
                      call = caller_env()) {
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
