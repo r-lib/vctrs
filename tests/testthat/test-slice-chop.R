@@ -271,6 +271,11 @@ test_that("`x` and `indices` must be lists of the same size", {
   expect_error(vec_unchop(list(1, 2), list(1)), "`x` and `indices` must be lists of the same size")
 })
 
+test_that("can unchop with an AsIs list (#1463)", {
+  x <- I(list(1, 2))
+  expect_identical(vec_unchop(x), c(1, 2))
+})
+
 test_that("can unchop empty vectors", {
   expect_null(vec_unchop(list()))
   expect_null(vec_unchop(list(), list()))
