@@ -64,6 +64,7 @@ static SEXP vec_rbind(SEXP xs,
                                   ptype,
                                   DF_FALLBACK_DEFAULT,
                                   S3_FALLBACK_true,
+                                  args_empty,
                                   r_lazy_null);
   PROTECT_N(ptype, &n_prot);
 
@@ -106,6 +107,7 @@ static SEXP vec_rbind(SEXP xs,
                               ptype,
                               DF_FALLBACK_DEFAULT,
                               S3_FALLBACK_true,
+                              args_empty,
                               r_lazy_null);
   PROTECT_N(xs, &n_prot);
 
@@ -376,6 +378,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
                                               ptype,
                                               DF_FALLBACK_DEFAULT,
                                               S3_FALLBACK_false,
+                                              args_empty,
                                               r_lazy_null));
   if (type == R_NilValue) {
     type = new_data_frame(vctrs_shared_empty_list, 0);

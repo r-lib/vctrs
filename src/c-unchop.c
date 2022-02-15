@@ -70,6 +70,7 @@ static SEXP vec_unchop(SEXP xs,
                                           ptype,
                                           DF_FALLBACK_DEFAULT,
                                           S3_FALLBACK_true,
+                                          args_empty,
                                           r_lazy_null));
 
   if (needs_vec_c_fallback(ptype)) {
@@ -89,7 +90,7 @@ static SEXP vec_unchop(SEXP xs,
     return R_NilValue;
   }
 
-  xs = PROTECT(vec_cast_common(xs, ptype, r_lazy_null));
+  xs = PROTECT(vec_cast_common(xs, ptype, args_empty, r_lazy_null));
 
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
   SEXP xs_names = PROTECT(r_names(xs));

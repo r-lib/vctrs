@@ -7,12 +7,16 @@ r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 
   r_obj* types = KEEP(rlang_env_dots_values(env));
   r_obj* ptype = KEEP(r_eval(r_node_car(args), env));
+
   struct r_lazy call = { .x = syms.dot_call, .env = env };
+  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
   r_obj* out = vec_ptype_common_params(types,
                                        ptype,
                                        DF_FALLBACK_DEFAULT,
                                        S3_FALLBACK_false,
+                                       &arg,
                                        call);
 
   FREE(2);
@@ -52,7 +56,12 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
   struct ptype_common_opts mut_opts = *opts;
 
   // Start reduction with the `.ptype` argument
-  r_obj* type = KEEP(reduce(ptype, args_dot_ptype, dots, &ptype2_common, &mut_opts));
+  r_obj* type = KEEP(reduce(ptype,
+                            args_dot_ptype,
+                            mut_opts.p_arg,
+                            dots,
+                            &ptype2_common,
+                            &mut_opts));
   type = vec_ptype_finalise(type);
 
   FREE(1);
@@ -63,9 +72,11 @@ r_obj* vec_ptype_common_params(r_obj* dots,
                                r_obj* ptype,
                                enum df_fallback df_fallback,
                                enum s3_fallback s3_fallback,
+                               struct vctrs_arg* p_arg,
                                struct r_lazy call) {
   struct ptype_common_opts opts = {
     .call = call,
+    .p_arg = p_arg,
     .fallback = {
       .df = df_fallback,
       .s3 = s3_fallback
