@@ -11,6 +11,10 @@ test_that("failing cast reports correct error call", {
   df2 <- data_frame(y = "1")
   my_function <- function(lhs, rhs) vec_cast(lhs, rhs)
   expect_snapshot((expect_error(my_function(df1, df2))))
+
+  df1 <- data_frame(y = TRUE)
+  df2 <- data_frame(y = "1")
+  expect_snapshot((expect_error(my_function(df1, df2))))
 })
 
 test_that("lossy cast reports correct error call", {

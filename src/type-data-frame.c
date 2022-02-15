@@ -743,6 +743,7 @@ static SEXP df_cast_match(const struct cast_opts* opts,
         .to = VECTOR_ELT(to, i),
         .x_arg = named_x_arg,
         .to_arg = named_to_arg,
+        .call = opts->call,
         .fallback = opts->fallback
       };
       col = vec_cast_opts(&col_opts);
@@ -789,6 +790,7 @@ static SEXP df_cast_loop(const struct cast_opts* opts, SEXP names) {
       .to = VECTOR_ELT(to, i),
       .x_arg = named_x_arg,
       .to_arg = named_to_arg,
+      .call = opts->call,
       .fallback = opts->fallback
     };
     SEXP col = vec_cast_opts(&col_opts);

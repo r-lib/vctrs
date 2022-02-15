@@ -22,7 +22,16 @@
       (expect_error(my_function(df1, df2)))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `my_function()`:
+      ! Can't convert `lhs$y` <logical> to match type of `y` <character>.
+
+---
+
+    Code
+      (expect_error(my_function(df1, df2)))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_function()`:
       ! Can't convert `lhs$y` <logical> to match type of `y` <character>.
 
 # lossy cast reports correct error call
