@@ -76,3 +76,7 @@ test_that("can `vec_c()` with only AsIs objects", {
 test_that("can `vec_c()` with AsIs objects mixed with other types", {
   expect_identical(vec_c(I(1L), 1), I(c(1, 1)))
 })
+
+test_that("vec_is_list() supports AsIs lists (#1463)", {
+  expect_true(vec_is_list(I(list())))
+})

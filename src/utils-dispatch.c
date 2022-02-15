@@ -20,22 +20,26 @@ enum vctrs_class_type class_type(r_obj* x) {
     return VCTRS_CLASS_none;
   }
 
-  enum vctrs_class_type type = class_type_impl(class);
+  int n = r_length(class);
+  r_obj* const* v_class = r_chr_cbegin(class);
+  if (n == 1 && v_class[0] == strings.AsIs && r_typeof(x) == R_TYPE_list) {
+    FREE(1);
+    return VCTRS_CLASS_list;
+  }
+
+  enum vctrs_class_type type = class_type_impl(v_class, n);
 
   FREE(1);
   return type;
 }
 
 static
-enum vctrs_class_type class_type_impl(r_obj* class) {
-  int n = r_length(class);
-  r_obj* const* p = r_chr_cbegin(class);
-
+enum vctrs_class_type class_type_impl(r_obj* const* v_class, int n) {
   // First check for bare types for which we know how many strings are
   // the classes composed of
   switch (n) {
   case 1: {
-    r_obj* p0 = p[0];
+    r_obj* p0 = v_class[0];
 
     if (p0 == strings_data_frame) {
       return VCTRS_CLASS_bare_data_frame;
@@ -48,8 +52,8 @@ enum vctrs_class_type class_type_impl(r_obj* class) {
     break;
   }
   case 2: {
-    r_obj* p0 = p[0];
-    r_obj* p1 = p[1];
+    r_obj* p0 = v_class[0];
+    r_obj* p1 = v_class[1];
 
     if (p0 == strings_ordered &&
         p1 == strings_factor) {
@@ -67,9 +71,9 @@ enum vctrs_class_type class_type_impl(r_obj* class) {
     break;
   }
   case 3: {
-    if (p[0] == strings_tbl_df &&
-        p[1] == strings_tbl &&
-        p[2] == strings_data_frame) {
+    if (v_class[0] == strings_tbl_df &&
+        v_class[1] == strings_tbl &&
+        v_class[2] == strings_data_frame) {
       return VCTRS_CLASS_bare_tibble;
     }
 
@@ -77,8 +81,8 @@ enum vctrs_class_type class_type_impl(r_obj* class) {
   }}
 
   // Now check for inherited classes
-  p = p + n - 1;
-  r_obj* last = *p;
+  v_class = v_class + n - 1;
+  r_obj* last = *v_class;
 
   if (last == strings_data_frame) {
     return VCTRS_CLASS_data_frame;
