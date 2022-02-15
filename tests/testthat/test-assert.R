@@ -246,6 +246,7 @@ test_that("bare lists are lists", {
 
 test_that("AsIs lists are lists (#1463)", {
   expect_true(vec_is_list(I(list())))
+  expect_true(vec_is_list(I(list_of(1))))
   expect_false(vec_is_list(I(double())))
 })
 
