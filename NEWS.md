@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_is_list()` now returns `TRUE` for `AsIs` lists (#1463).
+
 * `vec_assert()`, `vec_ptype2()`, `vec_cast()`, and `vec_as_location()`
   now use `caller_arg()` to infer a default `arg` value from the
   caller.
