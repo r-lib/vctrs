@@ -6,6 +6,8 @@
 struct counters {
  /* public: */
 
+  r_obj* shelter;
+
   // Argument tags for the current value of the reduction (the result
   // so far) and the next value. These handles typically point to the
   // local counter args, but might also point to external arg objects
@@ -33,11 +35,10 @@ struct counters {
   struct counters* next_box_counters;
   struct counters* prev_box_counters;
 
-  // Actual counter args are stored here
-  struct arg_data_counter curr_counter_data;
-  struct arg_data_counter next_counter_data;
   struct vctrs_arg curr_counter;
   struct vctrs_arg next_counter;
+
+  void* p_data;
 };
 
 /**
