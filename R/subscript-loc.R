@@ -455,7 +455,11 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
 
-  glue::glue("Can't {action} {elt[[2]]} that don't exist.")
+  if (action == "rename") {
+    glue::glue("Can't rename {elt[[2]]} that don't exist.")
+  } else {
+    glue::glue("Can't {action} {elt[[2]]} past the end.")
+  }
 }
 
 #' @export
@@ -474,7 +478,6 @@ cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
 }
 cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- cnd$i
-  elt <- cnd_subscript_element(cnd)
 
   # In case of negative indexing
   i <- abs(i)
@@ -483,19 +486,16 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- i[!is.na(i)]
 
   oob <- i[i > cnd$size]
-  oob_enum <- enumerate(oob)
+  oob_enum <- vctrs_cli_vec(oob)
 
-  format_error_bullets(c(
-    x = glue::glue(ngettext(
-      length(oob),
-      "Location {oob_enum} doesn't exist.",
-      "Locations {oob_enum} don't exist."
-    )),
-    i = glue::glue(ngettext(
-      cnd$size,
-      "There are only {cnd$size} {elt[[1]]}.",
-      "There are only {cnd$size} {elt[[2]]}.",
-    ))
+  n_loc <- length(oob)
+  n <- cnd$size
+  elt <- cnd_subscript_element_cli(n, cnd)
+
+  # TODO: Switch to `format_inline()` and format bullets lazily through rlang
+  cli::format_error(c(
+    "i" = "{cli::qty(n_loc)} Location{?s} {oob_enum} do{?esn't/n't} exist.",
+    "i" = "There {cli::qty(n)} {?is/are} only {elt}."
   ))
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
@@ -510,6 +510,10 @@ cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
       "{elt[[2]]} {oob_enum} don't exist."
     ))
   ))
+}
+
+vctrs_cli_vec <- function(x, ..., vec_trunc = 5) {
+  cli::cli_vec(as.character(x), list(..., vec_trunc = vec_trunc))
 }
 
 stop_location_oob_non_consecutive <- function(i,
