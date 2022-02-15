@@ -1,33 +1,33 @@
 # ------------------------------------------------------------------------------
-# vec_locate_interval_merge_bounds()
+# vec_interval_groups()
 
-test_that("can compute merge bounds", {
+test_that("can compute groups", {
   x <- data_frame(
     start = c(1L, 9L,  2L, 2L, 10L),
     end = c(5L, 11L, 6L, 8L, 12L)
   )
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = c(1L, 2L), end = c(4L, 5L))
+    vec_interval_groups(x$start, x$end),
+    data_frame(start = c(1L, 9L), end = c(8L, 12L))
   )
 })
 
-test_that("can locate bounds with size one input", {
+test_that("can group with size one input", {
   x <- data_frame(start = 1L, end = 2L)
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = 1L, end = 1L)
+    vec_interval_groups(x$start, x$end),
+    x
   )
 })
 
-test_that("can locate bounds with size zero input", {
+test_that("can group with size zero input", {
   x <- data_frame(start = integer(), end = integer())
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = integer(), end = integer())
+    vec_interval_groups(x$start, x$end),
+    x
   )
 })
 
@@ -35,22 +35,22 @@ test_that("missing intervals are retained", {
   x <- data_frame(start = NA, end = NA)
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = 1L, end = 1L)
+    vec_interval_groups(x$start, x$end),
+    x
   )
 
   x <- data_frame(start = c(NA, NA), end = c(NA, NA))
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = 1L, end = 2L)
+    vec_interval_groups(x$start, x$end),
+    x[1,]
   )
 
   x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = c(3L, 2L), end = c(1L, 4L))
+    vec_interval_groups(x$start, x$end),
+    data_frame(start = c(2, NA), end = c(5, NA))
   )
 })
 
@@ -58,22 +58,22 @@ test_that("missing intervals can be dropped", {
   x <- data_frame(start = NA, end = NA)
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end, missing = "drop"),
-    data_frame(start = integer(), end = integer())
+    vec_interval_groups(x$start, x$end, missing = "drop"),
+    data_frame(start = logical(), end = logical())
   )
 
   x <- data_frame(start = c(NA, NA), end = c(NA, NA))
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end, missing = "drop"),
-    data_frame(start = integer(), end = integer())
+    vec_interval_groups(x$start, x$end, missing = "drop"),
+    data_frame(start = logical(), end = logical())
   )
 
   x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end, missing = "drop"),
-    data_frame(start = 3L, end = 1L)
+    vec_interval_groups(x$start, x$end, missing = "drop"),
+    data_frame(start = 2, end = 5)
   )
 })
 
@@ -82,25 +82,25 @@ test_that("max endpoint is retained even if it isn't the last in the group", {
   x <- data_frame(start = c(1L, 2L, 12L), end = c(10L, 5L, 15L))
 
   expect_identical(
-    vec_locate_interval_merge_bounds(x$start, x$end),
-    data_frame(start = c(1L, 3L), end = c(1L, 3L))
+    vec_interval_groups(x$start, x$end),
+    data_frame(start = c(1L, 12L), end = c(10L, 15L))
   )
 })
 
 # ------------------------------------------------------------------------------
-# vec_locate_interval_merge_groups()
+# vec_interval_locate_groups()
 
-test_that("can locate merge bounds and groups", {
+test_that("can locate groups", {
   x <- data_frame(
     start = c(1L, 9L,  2L, 2L, 10L),
     end = c(5L, 11L, 6L, 8L, 12L)
   )
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
+  out <- vec_interval_locate_groups(x$start, x$end)
 
   expect_identical(
     out$key,
-    data_frame(start = c(1L, 2L), end = c(4L, 5L))
+    data_frame(start = c(1L, 9L), end = c(8L, 12L))
   )
 
   expect_identical(
@@ -111,9 +111,9 @@ test_that("can locate merge bounds and groups", {
 
 test_that("can locate groups with size one input", {
   expect_identical(
-    vec_locate_interval_merge_groups(1L, 2L),
+    vec_interval_locate_groups(1L, 2L),
     data_frame(
-      key = data_frame(start = 1L, end = 1L),
+      key = data_frame(start = 1L, end = 2L),
       loc = list(1L)
     )
   )
@@ -121,7 +121,7 @@ test_that("can locate groups with size one input", {
 
 test_that("can locate groups with size zero input", {
   expect_identical(
-    vec_locate_interval_merge_groups(integer(), integer()),
+    vec_interval_locate_groups(integer(), integer()),
     data_frame(
       key = data_frame(start = integer(), end = integer()),
       loc = list()
@@ -132,7 +132,7 @@ test_that("can locate groups with size zero input", {
 test_that("locations are ordered by both `start` and `end`", {
   x <- data_frame(start = c(4L, 4L, 1L), end = c(6L, 5L, 2L))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
+  out <- vec_interval_locate_groups(x$start, x$end)
 
   # Ties of `start = 4` are broken by `end` values and reordered
   expect_identical(
@@ -150,11 +150,11 @@ test_that("locations are ordered by both `start` and `end`", {
 test_that("missing intervals are retained", {
   x <- data_frame(start = NA, end = NA)
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
+  out <- vec_interval_locate_groups(x$start, x$end)
 
   expect_identical(
     out$key,
-    data_frame(start = 1L, end = 1L)
+    data_frame(start = NA, end = NA)
   )
   expect_identical(
     out$loc,
@@ -163,11 +163,11 @@ test_that("missing intervals are retained", {
 
   x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
+  out <- vec_interval_locate_groups(x$start, x$end)
 
   expect_identical(
     out$key,
-    data_frame(start = c(3L, 2L), end = c(1L, 4L))
+    data_frame(start = c(2, NA), end = c(5, NA))
   )
   expect_identical(
     out$loc,
@@ -178,11 +178,11 @@ test_that("missing intervals are retained", {
 test_that("missing intervals can be dropped", {
   x <- data_frame(start = NA, end = NA)
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
+  out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
 
   expect_identical(
     out$key,
-    data_frame(start = integer(), end = integer())
+    data_frame(start = logical(), end = logical())
   )
   expect_identical(
     out$loc,
@@ -191,11 +191,11 @@ test_that("missing intervals can be dropped", {
 
   x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 3, NA))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
+  out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
 
   expect_identical(
     out$key,
-    data_frame(start = 3L, end = 1L)
+    data_frame(start = 2, end = 5)
   )
   expect_identical(
     out$loc,
@@ -206,22 +206,22 @@ test_that("missing intervals can be dropped", {
 test_that("treats NA and NaN as equivalent with doubles", {
   x <- data_frame(start = c(NA, NaN, NA, NaN), end = c(NA, NA, NaN, NaN))
 
-  out <- vec_locate_interval_merge_groups(x, x)
+  out <- vec_interval_locate_groups(x$start, x$end)
 
   expect_identical(
     out$key,
-    data_frame(start = 1L, end = 4L)
+    data_frame(start = NA_real_, end = NaN)
   )
   expect_identical(
     out$loc,
     list(1:4),
   )
 
-  out <- vec_locate_interval_merge_groups(x, x, missing = "drop")
+  out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
 
   expect_identical(
     out$key,
-    data_frame(start = integer(), end = integer())
+    data_frame(start = double(), end = double())
   )
   expect_identical(
     out$loc,
@@ -234,31 +234,35 @@ test_that("recognizes missing rows in data frames", {
   end <- data_frame(year = c(2020, NA, NA, 2020, 2020), month = c(2, NA, NA, 11, 12))
   x <- data_frame(start = start, end = end)
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
+  out <- vec_interval_locate_groups(x$start, x$end)
 
-  expect_identical(out$key, data_frame(start = c(1L, 2L), end = c(5L, 3L)))
+  expect_start <- data_frame(year = c(2019, NA), month = c(12, NA))
+  expect_end <- data_frame(year = c(2020, NA), month = c(12, NA))
+  expect <- data_frame(start = expect_start, end = expect_end)
+
+  expect_identical(out$key, expect)
   expect_identical(out$loc, list(c(1L, 4L, 5L), c(2L, 3L)))
 })
 
 test_that("works on various types", {
   x <- data_frame(start = c(1.5, 2, 3.1, NA), end = c(1.7, 3.2, 4.5, NA))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
-  expect_identical(out$key, data_frame(start = c(1L, 2L, 4L), end = c(1L, 3L, 4L)))
+  out <- vec_interval_locate_groups(x$start, x$end)
+  expect_identical(out$key, data_frame(start = c(1.5, 2, NA), end = c(1.7, 4.5, NA)))
   expect_identical(out$loc, list(1L, 2:3, 4L))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
-  expect_identical(out$key, data_frame(start = c(1L, 2L), end = c(1L, 3L)))
+  out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
+  expect_identical(out$key, data_frame(start = c(1.5, 2), end = c(1.7, 4.5)))
   expect_identical(out$loc, list(1L, 2:3))
 
   x <- data_frame(start = c("a", "c", "f", NA), end = c("b", "g", "h", NA))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end)
-  expect_identical(out$key, data_frame(start = c(1L, 2L, 4L), end = c(1L, 3L, 4L)))
+  out <- vec_interval_locate_groups(x$start, x$end)
+  expect_identical(out$key, data_frame(start = c("a", "c", NA), end = c("b", "h", NA)))
   expect_identical(out$loc, list(1L, 2:3, 4L))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, missing = "drop")
-  expect_identical(out$key, data_frame(start = c(1L, 2L), end = c(1L, 3L)))
+  out <- vec_interval_locate_groups(x$start, x$end, missing = "drop")
+  expect_identical(out$key, data_frame(start = c("a", "c"), end = c("b", "h")))
   expect_identical(out$loc, list(1L, 2:3))
 })
 
@@ -266,35 +270,35 @@ test_that("can keep abutting intervals separate", {
   # after
   x <- data_frame(start = c(1L, 2L, 0L), end = c(2L, 3L, 2L))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, abutting = FALSE)
+  out <- vec_interval_locate_groups(x$start, x$end, abutting = FALSE)
 
-  expect_identical(out$key, data_frame(start = c(3L, 2L), end = c(3L, 2L)))
+  expect_identical(out$key, data_frame(start = c(0L, 2L), end = c(2L, 3L)))
   expect_identical(out$loc, list(c(3L, 1L), 2L))
 
   # before
   x <- data_frame(start = c(1L, 0L), end = c(2L, 1L))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, abutting = FALSE)
+  out <- vec_interval_locate_groups(x$start, x$end, abutting = FALSE)
 
-  expect_identical(out$key, data_frame(start = c(2L, 1L), end = c(2L, 1L)))
+  expect_identical(out$key, data_frame(start = c(0L, 1L), end = c(1L, 2L)))
   expect_identical(out$loc, list(2L, 1L))
 
   # both
   x <- data_frame(start = c(1L, 0L, 2L), end = c(2L, 1L, 3L))
 
-  out <- vec_locate_interval_merge_groups(x$start, x$end, abutting = FALSE)
+  out <- vec_interval_locate_groups(x$start, x$end, abutting = FALSE)
 
-  expect_identical(out$key, data_frame(start = c(2L, 1L, 3L), end = c(2L, 1L, 3L)))
+  expect_identical(out$key, data_frame(start = c(0L, 1L, 2L), end = c(1L, 2L, 3L)))
   expect_identical(out$loc, list(2L, 1L, 3L))
 })
 
 test_that("`missing` is validated", {
-  expect_snapshot((expect_error(vec_locate_interval_merge_groups(1, 2, missing = "s"))))
-  expect_snapshot((expect_error(vec_locate_interval_merge_groups(1, 2, missing = c("merge", "drop")))))
+  expect_snapshot((expect_error(vec_interval_locate_groups(1, 2, missing = "s"))))
+  expect_snapshot((expect_error(vec_interval_locate_groups(1, 2, missing = c("group", "drop")))))
 })
 
 test_that("common type is taken", {
-  expect_snapshot((expect_error(vec_locate_interval_merge_groups(1, "x"))))
+  expect_snapshot((expect_error(vec_interval_locate_groups(1, "x"))))
 })
 
 # ------------------------------------------------------------------------------

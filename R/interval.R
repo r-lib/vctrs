@@ -1,19 +1,19 @@
-#' Merge intervals
+#' Group overlapping intervals
 #'
 #' @description
-#' These functions are used to merge overlaps present within a set of vector
-#' intervals. They take a parallel set of `start` and `end` vectors of any type
-#' that define the bounds of the intervals.
+#' These functions are used to group together any overlaps that are present
+#' within a set of vector intervals. When multiple overlapping intervals are
+#' grouped together they result in a wider interval containing the smallest
+#' `start` and the largest `end` of the overlaps.
 #'
-#' - `vec_locate_interval_merge_bounds()` returns locations to slice `start`
-#' and `end` with to generate the set of intervals that remain after all
-#' overlaps are merged.
+#' - `vec_interval_groups()` merges all overlapping intervals found within
+#' `start` and `end`. The resulting intervals are known as the interval
+#' "groups".
 #'
-#' - `vec_locate_interval_merge_groups()` returns a two column data frame
-#' with a `key` column containing the result of
-#' `vec_locate_interval_merge_bounds()` and a `loc` list-column containing
-#' integer vectors that map each original interval to one of the resulting
-#' merge bounds.
+#' - `vec_interval_locate_groups()` returns a two column data frame with a `key`
+#' column containing the result of `vec_interval_groups()` and a `loc`
+#' list-column containing integer vectors that map each interval in `start` and
+#' `end` to the group that it falls in.
 #'
 #' These functions require that `start < end`. Additionally, intervals are
 #' treated as if they are right-open, i.e. `[start, end)`.
@@ -51,24 +51,24 @@
 #'
 #' @param abutting
 #'   A single logical controlling whether or not abutting intervals should be
-#'   merged together. If `TRUE`, `[a, b)` and `[b, c)` will be merged.
+#'   grouped together. If `TRUE`, `[a, b)` and `[b, c)` will be grouped.
 #'
 #' @param missing
 #'   Handling of missing intervals.
 #'
-#'   - `"merge"`: Merge all missing intervals together.
+#'   - `"group"`: Group all missing intervals together.
 #'
 #'   - `"drop"`: Drop all missing intervals from the result.
 #'
 #' @return
-#' - `vec_locate_interval_merge_bounds()` returns a data frame with two columns,
-#' `start` and `end`, both of which are integer vectors.
+#' - `vec_interval_groups()` returns a data frame with two columns, `start` and
+#' `end`, which contain vectors matching the types of `start` and `end`.
 #'
-#' - `vec_locate_interval_merge_groups()` returns a data frame with two columns,
-#' `key` and `loc`. `key` contains the result of
-#' `vec_locate_interval_merge_bounds()` and `loc` is a list of integer vectors.
+#' - `vec_interval_locate_groups()` returns a data frame with two columns, `key`
+#' and `loc`. `key` contains the result of `vec_interval_groups()` and `loc` is
+#' a list of integer vectors.
 #'
-#' @name interval-merge
+#' @name interval-groups
 #'
 #' @examples
 #' bounds <- data_frame(
@@ -77,64 +77,40 @@
 #' )
 #' bounds
 #'
-#' # Locate the bounds that will generate the merged intervals
-#' loc <- vec_locate_interval_merge_bounds(bounds$start, bounds$end)
-#' loc
+#' # Group overlapping intervals together
+#' vec_interval_groups(bounds$start, bounds$end)
 #'
-#' data_frame(
-#'   start = vec_slice(bounds$start, loc$start),
-#'   end = vec_slice(bounds$end, loc$end)
-#' )
-#'
-#' # You can choose not to merge abutting intervals if you want to retain
+#' # You can choose not to group abutting intervals if you want to retain
 #' # those boundaries
-#' loc <- vec_locate_interval_merge_bounds(
-#'   bounds$start,
-#'   bounds$end,
-#'   abutting = FALSE
-#' )
-#'
-#' data_frame(
-#'   start = vec_slice(bounds$start, loc$start),
-#'   end = vec_slice(bounds$end, loc$end)
-#' )
+#' vec_interval_groups(bounds$start, bounds$end, abutting = FALSE)
 #'
 #' # You can also choose to drop all missing intervals if you don't consider
-#' # them part of the merged result
-#' loc <- vec_locate_interval_merge_bounds(
-#'   bounds$start,
-#'   bounds$end,
-#'   missing = "drop"
-#' )
+#' # them part of the result
+#' vec_interval_groups(bounds$start, bounds$end, missing = "drop")
 #'
-#' data_frame(
-#'   start = vec_slice(bounds$start, loc$start),
-#'   end = vec_slice(bounds$end, loc$end)
-#' )
-#'
-#' # You can also locate the merge groups, which allow you to map each original
-#' # interval to its corresponding merged interval
-#' vec_locate_interval_merge_groups(bounds$start, bounds$end)
+#' # You can also locate the groups, which allows you to map each original
+#' # interval to its corresponding group
+#' vec_interval_locate_groups(bounds$start, bounds$end)
 #'
 #' @noRd
-vec_locate_interval_merge_bounds <- function(start,
-                                             end,
-                                             ...,
-                                             abutting = TRUE,
-                                             missing = "merge") {
+vec_interval_groups <- function(start,
+                                end,
+                                ...,
+                                abutting = TRUE,
+                                missing = "group") {
   check_dots_empty0(...)
-  .Call(ffi_locate_interval_merge_bounds, start, end, abutting, missing)
+  .Call(ffi_interval_groups, start, end, abutting, missing)
 }
 
 #' @noRd
-#' @rdname interval-merge
-vec_locate_interval_merge_groups <- function(start,
-                                             end,
-                                             ...,
-                                             abutting = TRUE,
-                                             missing = "merge") {
+#' @rdname interval-groups
+vec_interval_locate_groups <- function(start,
+                                       end,
+                                       ...,
+                                       abutting = TRUE,
+                                       missing = "group") {
   check_dots_empty0(...)
-  .Call(ffi_locate_interval_merge_groups, start, end, abutting, missing)
+  .Call(ffi_interval_locate_groups, start, end, abutting, missing)
 }
 
 # ------------------------------------------------------------------------------
@@ -152,7 +128,7 @@ vec_locate_interval_merge_groups <- function(start,
 #' These functions require that `start < end`. Additionally, intervals are
 #' treated as if they are right-open, i.e. `[start, end)`.
 #'
-#' @inheritSection interval-merge Assumptions
+#' @inheritSection interval-groups Assumptions
 #'
 #' @inheritParams rlang::args_dots_empty
 #'
@@ -211,12 +187,12 @@ vec_interval_complement <- function(start,
 # - A short deprecation period goes by that allows users time to update their
 #   version of iv
 
-exp_vec_locate_interval_merge_bounds <- function(start,
-                                                 end,
-                                                 ...,
-                                                 abutting = TRUE,
-                                                 missing = "merge") {
-  vec_locate_interval_merge_bounds(
+exp_vec_interval_groups <- function(start,
+                                    end,
+                                    ...,
+                                    abutting = TRUE,
+                                    missing = "group") {
+  vec_interval_groups(
     start = start,
     end = end,
     ...,
@@ -225,12 +201,12 @@ exp_vec_locate_interval_merge_bounds <- function(start,
   )
 }
 
-exp_vec_locate_interval_merge_groups <- function(start,
-                                                 end,
-                                                 ...,
-                                                 abutting = TRUE,
-                                                 missing = "merge") {
-  vec_locate_interval_merge_groups(
+exp_vec_interval_locate_groups <- function(start,
+                                           end,
+                                           ...,
+                                           abutting = TRUE,
+                                           missing = "group") {
+  vec_interval_locate_groups(
     start = start,
     end = end,
     ...,
