@@ -147,19 +147,24 @@ struct subscript_arg_data {
 struct vctrs_arg* new_subscript_arg_vec(struct vctrs_arg* parent,
                                         r_obj* x,
                                         r_ssize* p_i) {
-  return new_subscript_arg(parent,
-                           vec_names(x),
-                           vec_size(x),
-                           p_i);
+  r_obj* names = KEEP(vec_names(x));
+  struct vctrs_arg* p_arg = new_subscript_arg(parent,
+                                              names,
+                                              vec_size(x),
+                                              p_i);
+  FREE(1);
+  return p_arg;
 }
 
 struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
                                     r_obj* names,
                                     r_ssize n,
                                     r_ssize* p_i) {
-  r_obj* shelter = r_alloc_raw(sizeof(struct subscript_arg_data));
+  r_obj* shelter = KEEP(r_alloc_list(2));
+  r_list_poke(shelter, 0, r_alloc_raw(sizeof(struct subscript_arg_data)));
+  r_list_poke(shelter, 1, names);
 
-  struct subscript_arg_data* p_data = r_raw_begin(shelter);
+  struct subscript_arg_data* p_data = r_raw_begin(r_list_get(shelter, 0));
   p_data->self = (struct vctrs_arg) {
     .shelter = shelter,
     .parent = parent,
@@ -170,6 +175,7 @@ struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
   p_data->n = n;
   p_data->p_i = p_i;
 
+  FREE(1);
   return (struct vctrs_arg*) p_data;
 }
 
