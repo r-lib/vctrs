@@ -101,7 +101,7 @@ SEXP vec_c_opts(SEXP xs,
     p_sizes[i] = size;
   }
 
-  SEXP out = vec_init(ptype, out_size);
+  SEXP out = vec_init(ptype, out_size, r_lazy_null);
   PROTECT_INDEX out_pi;
   PROTECT_WITH_INDEX(out, &out_pi);
 

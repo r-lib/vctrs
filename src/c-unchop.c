@@ -114,7 +114,7 @@ static SEXP vec_unchop(SEXP xs,
   PROTECT_INDEX proxy_pi;
   PROTECT_WITH_INDEX(proxy, &proxy_pi);
 
-  proxy = vec_init(proxy, out_size);
+  proxy = vec_init(proxy, out_size, r_lazy_null);
   REPROTECT(proxy, proxy_pi);
 
   SEXP out_names = R_NilValue;

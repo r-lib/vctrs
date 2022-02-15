@@ -40,7 +40,7 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   enum vctrs_type to_type = vec_typeof(to);
 
   if (x_type == vctrs_type_unspecified) {
-    return vec_init(to, vec_size(x));
+    return vec_init(to, vec_size(x), opts->call);
   }
 
   if (x_type == vctrs_type_scalar) {

@@ -124,7 +124,7 @@ static SEXP vec_rbind(SEXP xs,
   }
 
   PROTECT_INDEX out_pi;
-  SEXP out = vec_init(proxy, n_rows);
+  SEXP out = vec_init(proxy, n_rows, r_lazy_null);
   PROTECT_WITH_INDEX(out, &out_pi);
   ++n_prot;
 

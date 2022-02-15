@@ -722,7 +722,7 @@ static SEXP df_cast_match(const struct cast_opts* opts,
     SEXP col;
     if (pos == NA_INTEGER) {
       SEXP to_col = VECTOR_ELT(to, i);
-      col = vec_init(to_col, size);
+      col = vec_init(to_col, size, opts->call);
 
       // FIXME: Need to initialise the vector because we currently use
       // `vec_assign()` in `vec_rbind()` before falling back. Attach
