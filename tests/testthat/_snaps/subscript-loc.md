@@ -214,24 +214,21 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements that don't exist.
-      x Location 10 doesn't exist.
-      i There are only 2 elements.
+      i Location 10 doesn't exist, there are only 2 elements.
     Code
       (expect_error(vec_as_location(-10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't negate elements that don't exist.
-      x Location 10 doesn't exist.
-      i There are only 2 elements.
+      i Location 10 doesn't exist, there are only 2 elements.
     Code
       (expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_as_location2_result()`:
       ! Can't subset elements that don't exist.
-      x Location 10 doesn't exist.
-      i There are only 2 elements.
+      i Location 10 doesn't exist, there are only 2 elements.
     Code
       # Character indexing
       (expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
@@ -512,8 +509,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements that don't exist.
-      x Locations 2 and 3 don't exist.
-      i There are only 1 element.
+      i Locations 2 and 3 don't exist, there is only 1 element.
     Code
       (expect_error(num_as_location(c(1, NA, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -783,8 +779,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
       ! Can't subset elements that don't exist.
-      x Location 30 doesn't exist.
-      i There are only 26 elements.
+      i Location 30 doesn't exist, there are only 26 elements.
     Code
       (expect_error(vec_as_location("foo", NULL, letters, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_oob"))
@@ -809,8 +804,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't rename columns that don't exist.
-      x Location 30 doesn't exist.
-      i There are only 26 columns.
+      i Location 30 doesn't exist, there are only 26 columns.
     Code
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), -30)), class = "vctrs_error_subscript_oob")
       )
@@ -818,8 +812,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't rename columns that don't exist.
-      x Location 30 doesn't exist.
-      i There are only 26 columns.
+      i Location 30 doesn't exist, there are only 26 columns.
     Code
       # With tibble rows
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), c("foo", "bar"))),
@@ -836,8 +829,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't remove rows that don't exist.
-      x Locations 27, 28, 29, and 30 don't exist.
-      i There are only 26 rows.
+      i Locations 27, 28, 29, and 30 don't exist, there are only 26 rows.
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), -(1:30))), class = "vctrs_error_subscript_oob")
       )
@@ -845,8 +837,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't remove rows that don't exist.
-      x Locations 27, 28, 29, and 30 don't exist.
-      i There are only 26 rows.
+      i Locations 27, 28, 29, and 30 don't exist, there are only 26 rows.
 
 # vec_as_location() checks dimensionality
 

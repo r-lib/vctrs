@@ -190,8 +190,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
       ! Can't subset elements that don't exist.
-      x Location 10 doesn't exist.
-      i There are only 2 elements.
+      i Location 10 doesn't exist, there are only 2 elements.
 
 ---
 

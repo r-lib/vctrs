@@ -295,7 +295,8 @@ cnd_subscript_element <- function(cnd, capital = FALSE) {
   }
 
   if (capital) {
-    switch(elt,
+    switch(
+      elt,
       element = c("Element", "Elements"),
       row = c("Row", "Rows"),
       column = c("Column", "Columns"),
@@ -309,6 +310,37 @@ cnd_subscript_element <- function(cnd, capital = FALSE) {
       table = c("table", "tables")
     )
   }
+}
+
+cnd_subscript_element_cli <- function(n, cnd, capital = FALSE) {
+  elt <- cnd$subscript_elt %||% "element"
+
+  if (!is_string(elt, c("element", "row", "column", "table"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_elt` must be one of ",
+      "`element`, `row`, `column` or `table`."
+    ))
+  }
+
+  if (capital) {
+    elt <- switch(
+      elt,
+      element = "Element{?s}",
+      row = "Row{?s}",
+      column = "Column{?s}",
+      table = "Table{?s}"
+    )
+  } else {
+    elt <- switch(
+      elt,
+      element = "element{?s}",
+      row = "row{?s}",
+      column = "column{?s}",
+      table = "table{?s}"
+    )
+  }
+
+  cli::pluralize("{n} ", elt)
 }
 
 subscript_actions <- c(

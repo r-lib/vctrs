@@ -25,16 +25,14 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
-      x Location 3 doesn't exist.
-      i There are only 2 elements.
+      i Location 3 doesn't exist, there are only 2 elements.
     Code
       (expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't negate elements that don't exist.
-      x Location 3 doesn't exist.
-      i There are only 2 elements.
+      i Location 3 doesn't exist, there are only 2 elements.
 
 # can slice with double indices
 
@@ -90,8 +88,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
-      x Locations 100 and 1000 don't exist.
-      i There are only 26 elements.
+      i Locations 100 and 1000 don't exist, there are only 26 elements.
 
 ---
 
@@ -100,8 +97,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements that don't exist.
-      x Locations 100, 101, 102, 103, 104, etc. don't exist.
-      i There are only 26 elements.
+      i Locations 100, 101, 102, 103, 104, ... don't exist, there are only 26 elements.
 
 ---
 
