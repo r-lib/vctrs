@@ -94,7 +94,7 @@ vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
 # But they are incompatible with integers
 vec_ptype2(factor(&quot;a&quot;), 1L)
 #&amp;gt; Error:
-#&amp;gt; ! Can't combine &amp;lt;factor&amp;lt;4d52a&amp;gt;&amp;gt; and &amp;lt;integer&amp;gt;.
+#&amp;gt; ! Can't combine `factor(&quot;a&quot;)` &amp;lt;factor&amp;lt;4d52a&amp;gt;&amp;gt; and `1L` &amp;lt;integer&amp;gt;.
 
 
 
@@ -435,7 +435,7 @@ character vectors than to round numbers:</p><div class="sourceCode r"><pre><code
 <span class="co"># But they are incompatible with integers</span>
 <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fl">1L</span><span class="op">)</span>
 <span class="co">#&gt; Error:</span>
-<span class="co">#&gt; ! Can't combine &lt;factor&lt;4d52a&gt;&gt; and &lt;integer&gt;.</span></code></pre><p></p></div>
+<span class="co">#&gt; ! Can't combine `factor("a")` &lt;factor&lt;4d52a&gt;&gt; and `1L` &lt;integer&gt;.</span></code></pre><p></p></div>
 </div>
 
 <div class="section">

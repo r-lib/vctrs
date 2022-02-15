@@ -226,7 +226,7 @@
 
 <span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_ptype_show()`:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine &lt;logical&gt; and &lt;character&gt;.</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `out_types[[i - 1]]` &lt;logical&gt; and `in_types[[i]]` &lt;character&gt;.</span></code></pre></div>
 </li>
 <li>
 <p>Matrices and arrays are automatically broadcast to higher dimensions:</p>
@@ -257,7 +257,7 @@
   <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine &lt;double[,2]&gt; and &lt;double[,3]&gt;.</span>
+<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `out_types[[i - 1]]` &lt;double[,2]&gt; and `in_types[[i]]` &lt;double[,3]&gt;.</span>
 <span class="co">#&gt; <span style="color: #BB0000;">✖</span> Incompatible sizes 2 and 3 along axis 2.</span></code></pre></div>
 </li>
 <li>
@@ -375,12 +375,12 @@
 <span class="co"># Cast fails</span>
 <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span></code></pre></div>
+<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert `c(1.5, 2.5)` &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span></code></pre></div>
 <p>If a cast is possible in general (i.e., double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate an error.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert from `c(1.5, 2)` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
 <span class="co">#&gt; <span style="color: #00BBBB;">•</span> Locations: 1</span></code></pre></div>
 <p>You can suppress the lossy cast errors with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code>:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -432,11 +432,11 @@
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt; [1] 10  1</span>
+<span class="co">#&gt; [1] 6 2</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt;    x</span>
-<span class="co">#&gt; 1 10</span>
-<span class="co">#&gt; 2  1</span></code></pre></div>
+<span class="co">#&gt;   x</span>
+<span class="co">#&gt; 1 6</span>
+<span class="co">#&gt; 2 2</span></code></pre></div>
 <p><code>vec_slice(data.frame(x), i)</code> equals <code>data.frame(vec_slice(x, i))</code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code>vec_slice(x, 0L)</code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>

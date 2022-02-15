@@ -255,7 +255,7 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="st">"bogus"</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine &lt;character&gt; and &lt;vctrs_percent&gt;.</span>
+<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `"bogus"` &lt;character&gt; and `percent()` &lt;vctrs_percent&gt;.</span>
 <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu">percent</span><span class="op">(</span><span class="op">)</span>, <span class="cn">NA</span><span class="op">)</span>
 <span class="co">#&gt; &lt;vctrs_percent[0]&gt;</span>
 <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fu">percent</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
@@ -434,7 +434,7 @@
 
 <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span>, <span class="fl">10.5</span><span class="op">)</span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert from `c(1.5, 2, 10.5)` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
 <span class="co">#&gt; <span style="color: #00BBBB;">•</span> Locations: 1, 3</span></code></pre></div>
 </div>
 <div class="section level3">

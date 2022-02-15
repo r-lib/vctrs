@@ -161,21 +161,21 @@ method, the vector is sliced with <code>[</code> instead.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">x</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  7  6  8 10  4  2  9  1  5  3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  6  1  2  5  4  8  3  9 10  7</span>
 <span class="r-in"><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7 6 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6 1 2</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># You can assign with the infix variant:</span></span>
 <span class="r-in"><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span class="r-in"><span class="va">x</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   7 100   8  10   4   2   9   1   5   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   2   5   4   8   3   9  10   7</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Or with the regular variant that doesn't modify the original input:</span></span>
 <span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">vec_assign</span><span class="op">(</span><span class="va">x</span>, <span class="fl">3</span>, <span class="fl">500</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">y</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   7 100 500  10   4   2   9   1   5   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100 500   5   4   8   3   9  10   7</span>
 <span class="r-in"><span class="va">x</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   7 100   8  10   4   2   9   1   5   3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   6 100   2   5   4   8   3   9  10   7</span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Slicing objects of higher dimension:</span></span>
@@ -212,7 +212,7 @@ method, the vector is sliced with <code>[</code> instead.</p>
 <span class="r-in"><span class="co"># But not fractional doubles:</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir, enclos) : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from `1.5` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Locations: 1</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># For this reason you can't assign fractional values in an integer</span></span>

@@ -100,11 +100,11 @@ Our natural number class is conceptually a parent of &amp;lt;logical&amp;gt; and
 child of &amp;lt;integer&amp;gt;, but the class is not compatible with logical,
 integer, or double vectors yet:vec_ptype2(TRUE, new_natural(2:3))
 #&amp;gt; Error:
-#&amp;gt; ! Can't combine &amp;lt;logical&amp;gt; and &amp;lt;my_natural&amp;gt;.
+#&amp;gt; ! Can't combine `TRUE` &amp;lt;logical&amp;gt; and `new_natural(2:3)` &amp;lt;my_natural&amp;gt;.
 
 vec_ptype2(new_natural(1), 2:3)
 #&amp;gt; Error:
-#&amp;gt; ! Can't combine &amp;lt;my_natural&amp;gt; and &amp;lt;integer&amp;gt;.
+#&amp;gt; ! Can't combine `new_natural(1)` &amp;lt;my_natural&amp;gt; and `2:3` &amp;lt;integer&amp;gt;.
 
 We’ll specify the twin methods for each of these classes, returning the
 richer class in each case.#' @export
@@ -424,11 +424,11 @@ makes your class a bit more efficient.</p>
 child of <code>&lt;integer&gt;</code>, but the class is not compatible with logical,
 integer, or double vectors yet:</p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fu">new_natural</span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Error:</span>
-<span class="co">#&gt; ! Can't combine &lt;logical&gt; and &lt;my_natural&gt;.</span>
+<span class="co">#&gt; ! Can't combine `TRUE` &lt;logical&gt; and `new_natural(2:3)` &lt;my_natural&gt;.</span>
 
 <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu">new_natural</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
 <span class="co">#&gt; Error:</span>
-<span class="co">#&gt; ! Can't combine &lt;my_natural&gt; and &lt;integer&gt;.</span></code></pre><p></p></div>
+<span class="co">#&gt; ! Can't combine `new_natural(1)` &lt;my_natural&gt; and `2:3` &lt;integer&gt;.</span></code></pre><p></p></div>
 <p>We’ll specify the twin methods for each of these classes, returning the
 richer class in each case.</p><div class="sourceCode r"><pre><code><span class="co">#' @export</span>
 <span class="va">vec_ptype2.my_natural.logical</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
