@@ -534,19 +534,4 @@ void stop_incompatible_shape(SEXP x, SEXP y,
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 
-// Compatibility ------------------------------------------------
-
-#if (R_VERSION < R_Version(3, 5, 0))
-# define LOGICAL_RO(x) ((const int*) LOGICAL(x))
-# define INTEGER_RO(x) ((const int*) INTEGER(x))
-# define REAL_RO(x) ((const double*) REAL(x))
-# define COMPLEX_RO(x) ((const Rcomplex*) COMPLEX(x))
-# define STRING_PTR_RO(x) ((const SEXP*) STRING_PTR(x))
-# define RAW_RO(x) ((const Rbyte*) RAW(x))
-# define DATAPTR_RO(x) ((const void*) STRING_PTR(x))
-#endif
-
-#define VECTOR_PTR_RO(x) ((const SEXP*) DATAPTR_RO(x))
-
-
 #endif
