@@ -152,16 +152,16 @@ test_that("unique functions treat positive and negative 0 as equivalent (#637)",
 test_that("unique functions work with different encodings", {
   encs <- encodings()
 
-  expect_equal(vec_unique(encs), encs[1])
+  expect_equal(vec_unique(encs), unname(encs[1]))
   expect_equal(vec_unique_count(encs), 1L)
   expect_equal(vec_unique_loc(encs), 1L)
 })
 
 test_that("unique functions can handle scalar types in lists", {
-  x <- list(x = a ~ b, y = a ~ b, z = a ~ c)
+  x <- list(a ~ b, a ~ b, a ~ c)
   expect_equal(vec_unique(x), vec_slice(x, c(1, 3)))
 
-  x <- list(x = call("x"), y = call("y"), z = call("x"))
+  x <- list(call("x"), call("y"), call("x"))
   expect_equal(vec_unique(x), vec_slice(x, c(1, 2)))
 })
 
@@ -198,6 +198,13 @@ test_that("can take the unique locations of dfs with list-cols", {
   expect_identical(vec_unique_loc(df), c(1L, 2L, 4L))
 })
 
+test_that("vec_unique() drops names (#1442)", {
+  x <- c(a = 1, 1)
+  y <- c(1, a = 1)
+
+  expect_identical(vec_unique(x), 1)
+  expect_identical(vec_unique(y), 1)
+})
 
 # matching ----------------------------------------------------------------
 
