@@ -20,6 +20,10 @@ struct syms {
   r_obj* y_arg;
 };
 
+struct strings {
+  r_obj* AsIs;
+};
+
 struct fns {
   r_obj* vec_slice_dispatch_integer64;
   r_obj* vec_slice_fallback;
@@ -27,6 +31,7 @@ struct fns {
 };
 
 extern struct syms syms;
+extern struct strings strings;
 extern struct fns fns;
 
 #endif

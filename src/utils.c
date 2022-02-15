@@ -1485,7 +1485,7 @@ SEXP vctrs_shared_na_list = NULL;
 
 SEXP vctrs_shared_zero_int = NULL;
 
-SEXP strings = NULL;
+SEXP strings2 = NULL;
 SEXP strings_empty = NULL;
 SEXP strings_dots = NULL;
 SEXP strings_none = NULL;
@@ -1657,76 +1657,76 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = r_new_shared_vector(STRSXP, 23);
+  strings2 = r_new_shared_vector(STRSXP, 23);
 
   strings_dots = Rf_mkChar("...");
-  SET_STRING_ELT(strings, 0, strings_dots);
+  SET_STRING_ELT(strings2, 0, strings_dots);
 
   strings_empty = Rf_mkChar("");
-  SET_STRING_ELT(strings, 1, strings_empty);
+  SET_STRING_ELT(strings2, 1, strings_empty);
 
   strings_date = Rf_mkChar("Date");
-  SET_STRING_ELT(strings, 2, strings_date);
+  SET_STRING_ELT(strings2, 2, strings_date);
 
   strings_posixct = Rf_mkChar("POSIXct");
-  SET_STRING_ELT(strings, 3, strings_posixct);
+  SET_STRING_ELT(strings2, 3, strings_posixct);
 
   strings_posixlt = Rf_mkChar("POSIXlt");
-  SET_STRING_ELT(strings, 4, strings_posixlt);
+  SET_STRING_ELT(strings2, 4, strings_posixlt);
 
   strings_posixt = Rf_mkChar("POSIXt");
-  SET_STRING_ELT(strings, 5, strings_posixt);
+  SET_STRING_ELT(strings2, 5, strings_posixt);
 
   strings_none = Rf_mkChar("none");
-  SET_STRING_ELT(strings, 6, strings_none);
+  SET_STRING_ELT(strings2, 6, strings_none);
 
   strings_minimal = Rf_mkChar("minimal");
-  SET_STRING_ELT(strings, 7, strings_minimal);
+  SET_STRING_ELT(strings2, 7, strings_minimal);
 
   strings_unique = Rf_mkChar("unique");
-  SET_STRING_ELT(strings, 8, strings_unique);
+  SET_STRING_ELT(strings2, 8, strings_unique);
 
   strings_universal = Rf_mkChar("universal");
-  SET_STRING_ELT(strings, 9, strings_universal);
+  SET_STRING_ELT(strings2, 9, strings_universal);
 
   strings_check_unique = Rf_mkChar("check_unique");
-  SET_STRING_ELT(strings, 10, strings_check_unique);
+  SET_STRING_ELT(strings2, 10, strings_check_unique);
 
   strings_key = Rf_mkChar("key");
-  SET_STRING_ELT(strings, 11, strings_key);
+  SET_STRING_ELT(strings2, 11, strings_key);
 
   strings_loc = Rf_mkChar("loc");
-  SET_STRING_ELT(strings, 12, strings_loc);
+  SET_STRING_ELT(strings2, 12, strings_loc);
 
   strings_val = Rf_mkChar("val");
-  SET_STRING_ELT(strings, 13, strings_val);
+  SET_STRING_ELT(strings2, 13, strings_val);
 
   strings_group = Rf_mkChar("group");
-  SET_STRING_ELT(strings, 14, strings_group);
+  SET_STRING_ELT(strings2, 14, strings_group);
 
   strings_length = Rf_mkChar("length");
-  SET_STRING_ELT(strings, 15, strings_length);
+  SET_STRING_ELT(strings2, 15, strings_length);
 
   strings_factor = Rf_mkChar("factor");
-  SET_STRING_ELT(strings, 16, strings_factor);
+  SET_STRING_ELT(strings2, 16, strings_factor);
 
   strings_ordered = Rf_mkChar("ordered");
-  SET_STRING_ELT(strings, 17, strings_ordered);
+  SET_STRING_ELT(strings2, 17, strings_ordered);
 
   strings_list = Rf_mkChar("list");
-  SET_STRING_ELT(strings, 18, strings_list);
+  SET_STRING_ELT(strings2, 18, strings_list);
 
   strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
-  SET_STRING_ELT(strings, 19, strings_vctrs_vctr);
+  SET_STRING_ELT(strings2, 19, strings_vctrs_vctr);
 
   strings_times = Rf_mkChar("times");
-  SET_STRING_ELT(strings, 20, strings_times);
+  SET_STRING_ELT(strings2, 20, strings_times);
 
   strings_needles = Rf_mkChar("needles");
-  SET_STRING_ELT(strings, 21, strings_needles);
+  SET_STRING_ELT(strings2, 21, strings_needles);
 
   strings_haystack = Rf_mkChar("haystack");
-  SET_STRING_ELT(strings, 22, strings_haystack);
+  SET_STRING_ELT(strings2, 22, strings_haystack);
 
 
   classes_data_frame = r_new_shared_vector(STRSXP, 1);
