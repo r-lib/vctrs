@@ -105,8 +105,11 @@ bool vec_is_list(r_obj* x) {
     return true;
   }
 
+  const enum vctrs_class_type type = class_type(x);
+
   // Classed R_TYPE_list are only lists if the last class is explicitly `"list"`
-  return class_type(x) == VCTRS_CLASS_list;
+  // or if it is a bare "AsIs" type
+  return (type == VCTRS_CLASS_list) || (type == VCTRS_CLASS_bare_asis);
 }
 
 // [[ register() ]]

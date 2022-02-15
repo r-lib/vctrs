@@ -6,6 +6,7 @@
 enum vctrs_class_type {
   VCTRS_CLASS_list,
   VCTRS_CLASS_data_frame,
+  VCTRS_CLASS_bare_asis,
   VCTRS_CLASS_bare_data_frame,
   VCTRS_CLASS_bare_tibble,
   VCTRS_CLASS_bare_factor,
