@@ -161,21 +161,21 @@ method, the vector is sliced with <code>[</code> instead.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">x</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  7  6  2  3  5  9  1 10  8  4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 10  1  4  2  6  9  8  7  5  3</span>
 <span class="r-in"><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7 6 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10  1  4</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># You can assign with the infix variant:</span></span>
 <span class="r-in"><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span class="r-in"><span class="va">x</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   7 100   2   3   5   9   1  10   8   4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  10 100   4   2   6   9   8   7   5   3</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Or with the regular variant that doesn't modify the original input:</span></span>
 <span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">vec_assign</span><span class="op">(</span><span class="va">x</span>, <span class="fl">3</span>, <span class="fl">500</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">y</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   7 100 500   3   5   9   1  10   8   4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  10 100 500   2   6   9   8   7   5   3</span>
 <span class="r-in"><span class="va">x</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   7 100   2   3   5   9   1  10   8   4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  10 100   4   2   6   9   8   7   5   3</span>
 <span class="r-in"></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Slicing objects of higher dimension:</span></span>
