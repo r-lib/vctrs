@@ -50,8 +50,8 @@ extern SEXP ffi_init(SEXP, SEXP);
 extern SEXP vctrs_chop(SEXP, SEXP);
 extern SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vec_slice_seq(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vec_slice_rep(SEXP, SEXP, SEXP);
+extern r_obj* ffi_slice_seq(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_slice_rep(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_restore(SEXP, SEXP, SEXP);
 extern SEXP vctrs_restore_default(SEXP, SEXP);
 extern SEXP vec_proxy(SEXP);
@@ -215,8 +215,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_chop",                            (DL_FUNC) &vctrs_chop, 2},
   {"vctrs_unchop",                          (DL_FUNC) &vctrs_unchop, 5},
   {"vctrs_chop_seq",                        (DL_FUNC) &vctrs_chop_seq, 4},
-  {"vctrs_slice_seq",                       (DL_FUNC) &vec_slice_seq, 4},
-  {"vctrs_slice_rep",                       (DL_FUNC) &vec_slice_rep, 3},
+  {"ffi_slice_seq",                         (DL_FUNC) &ffi_slice_seq, 4},
+  {"ffi_slice_rep",                         (DL_FUNC) &ffi_slice_rep, 3},
   {"vctrs_restore",                         (DL_FUNC) &vctrs_restore, 3},
   {"vctrs_restore_default",                 (DL_FUNC) &vctrs_restore_default, 2},
   {"vctrs_proxy",                           (DL_FUNC) &vec_proxy, 1},

@@ -9,9 +9,6 @@ struct vec_slice_opts {
   struct r_lazy call;
 };
 
-extern SEXP syms_vec_slice_dispatch_integer64;
-extern SEXP fns_vec_slice_dispatch_integer64;
-
 enum vctrs_materialize {
   VCTRS_MATERIALIZE_false = 0,
   VCTRS_MATERIALIZE_true
@@ -27,18 +24,20 @@ r_obj* vec_slice(r_obj* x, r_obj* i) {
   return vec_slice_opts(x, i, &opts);
 }
 
+r_obj* vec_init(r_obj* x, r_ssize n);
+
 r_obj* vec_slice_unsafe(r_obj* x, r_obj* i);
 
-SEXP vec_slice_base(enum vctrs_type type,
-                    SEXP x,
-                    SEXP subscript,
-                    enum vctrs_materialize materialize);
+r_obj* vec_slice_base(enum vctrs_type type,
+                      r_obj* x,
+                      r_obj* subscript,
+                      enum vctrs_materialize materialize);
 
-SEXP slice_names(SEXP names, SEXP subscript);
-SEXP slice_rownames(SEXP names, SEXP subscript);
-SEXP vec_slice_fallback(SEXP x, SEXP subscript);
+r_obj* slice_names(r_obj* names, r_obj* subscript);
+r_obj* slice_rownames(r_obj* names, r_obj* subscript);
+r_obj* vec_slice_fallback(r_obj* x, r_obj* subscript);
 
-bool vec_is_restored(SEXP x, SEXP to);
+bool vec_is_restored(r_obj* x, r_obj* to);
 
 
 #endif

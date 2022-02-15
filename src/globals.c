@@ -1,6 +1,7 @@
 #include "vctrs.h"
 
 struct syms syms;
+struct fns fns;
 
 void vctrs_init_globals(r_obj* ns) {
   syms.arg = r_sym("arg");

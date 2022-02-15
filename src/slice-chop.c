@@ -327,8 +327,8 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // objects to ensure correct slicing with `NA_integer_`.
   SEXP call;
   if (is_integer64(x)) {
-    call = PROTECT(Rf_lang3(syms_vec_slice_dispatch_integer64, syms_x, syms_i));
-    Rf_defineVar(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64, env);
+    call = PROTECT(Rf_lang3(syms.vec_slice_dispatch_integer64, syms_x, syms_i));
+    Rf_defineVar(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64, env);
   } else {
     call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
     Rf_defineVar(syms_bracket, fns_bracket, env);

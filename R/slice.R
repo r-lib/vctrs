@@ -239,12 +239,12 @@ vec_init <- function(x, n = 1L) {
 
 # Exposed for testing (`start` is 0-based)
 vec_slice_seq <- function(x, start, size, increasing = TRUE) {
-  .Call(vctrs_slice_seq, x, start, size, increasing)
+  .Call(ffi_slice_seq, x, start, size, increasing)
 }
 
 # Exposed for testing (`i` is 1-based)
 vec_slice_rep <- function(x, i, n) {
-  .Call(vctrs_slice_rep, x, i, n)
+  .Call(ffi_slice_rep, x, i, n)
 }
 
 # Forwards arguments to `base::rep()`
