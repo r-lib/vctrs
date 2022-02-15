@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_ptype_common()` and `vec_cast_common()` gain `call` and `arg`
+  arguments for specifying an error context.
+
 * `vec_compare()` can now compare zero column data frames (#1500).
 
 * `new_data_frame()` now errors on negative and missing `n` values (#1477).
