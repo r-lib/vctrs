@@ -24,7 +24,7 @@ r_obj* vec_slice(r_obj* x, r_obj* i) {
   return vec_slice_opts(x, i, &opts);
 }
 
-r_obj* vec_init(r_obj* x, r_ssize n);
+r_obj* vec_init(r_obj* x, r_ssize n, struct r_lazy call);
 
 r_obj* vec_slice_unsafe(r_obj* x, r_obj* i);
 

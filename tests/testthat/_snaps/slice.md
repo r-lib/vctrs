@@ -121,3 +121,40 @@
       ! Can't subset elements past the end.
       x Elements `A`, `B`, `C`, `D`, `E`, etc. don't exist.
 
+# vec_init() asserts vectorness (#301)
+
+    Code
+      (expect_error(vec_init(NULL, 1L), class = "vctrs_error_scalar_type"))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `vec_init()`:
+      ! Input must be a vector, not NULL.
+
+# vec_init() validates `n`
+
+    Code
+      (expect_error(vec_init(1L, 1.5), class = "vctrs_error_cast_lossy"))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `vec_init()`:
+      ! Can't convert from `n` <double> to <integer> due to loss of precision.
+      * Locations: 1
+    Code
+      (expect_error(vec_init(1L, c(1, 2))))
+    Output
+      <error/vctrs_error_assert_size>
+      Error:
+      ! `n` must have size 1, not size 2.
+    Code
+      (expect_error(vec_init(1L, -1L)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a positive integer.
+    Code
+      (expect_error(vec_init(1L, NA_integer_)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a positive integer.
+

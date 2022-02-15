@@ -494,7 +494,9 @@ test_that("na of list-array is 1d slice", {
 })
 
 test_that("vec_init() asserts vectorness (#301)", {
-  expect_error(vec_init(NULL, 1L), class = "vctrs_error_scalar_type")
+  expect_snapshot(
+    (expect_error(vec_init(NULL, 1L), class = "vctrs_error_scalar_type"))
+  )
 })
 
 test_that("vec_init() works with Altrep classes", {
@@ -506,10 +508,12 @@ test_that("vec_init() works with Altrep classes", {
 })
 
 test_that("vec_init() validates `n`", {
-  expect_error(vec_init(1L, 1.5), class = "vctrs_error_cast_lossy")
-  expect_error(vec_init(1L, c(1, 2)), "`n` must have size 1, not size 2.")
-  expect_error(vec_init(1L, -1L), "positive integer")
-  expect_error(vec_init(1L, NA_integer_), "positive integer")
+  expect_snapshot({
+    (expect_error(vec_init(1L, 1.5), class = "vctrs_error_cast_lossy"))
+    (expect_error(vec_init(1L, c(1, 2))))
+    (expect_error(vec_init(1L, -1L)))
+    (expect_error(vec_init(1L, NA_integer_)))
+  })
 })
 
 # vec_slice + compact_rep -------------------------------------------------
