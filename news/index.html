@@ -74,7 +74,8 @@
 
     <div class="section level2">
 <h2 class="page-header" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li>
+<ul><li><p><code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> now returns <code>TRUE</code> for <code>AsIs</code> lists (<a href="https://github.com/r-lib/vctrs/issues/1463" class="external-link">#1463</a>).</p></li>
+<li>
 <p><code><a href="../reference/vec_assert.html">vec_assert()</a></code>, <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code>, <code><a href="../reference/vec_cast.html">vec_cast()</a></code>, and <code><a href="../reference/vec_as_location.html">vec_as_location()</a></code> now use <code>caller_arg()</code> to infer a default <code>arg</code> value from the caller.</p>
 <p>This may result in unhelpful arguments being mentioned in error messages. In general, you should consider snapshotting vctrs error messages thrown in your package and supply <code>arg</code> and <code>call</code> arguments if the error context is not adequately reported to your users.</p>
 </li>
