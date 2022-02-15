@@ -15,27 +15,27 @@ bool is_data_frame(SEXP x) {
 
   enum vctrs_class_type type = class_type(x);
   return
-    type == vctrs_class_bare_data_frame ||
-    type == vctrs_class_bare_tibble ||
-    type == vctrs_class_data_frame;
+    type == VCTRS_CLASS_bare_data_frame ||
+    type == VCTRS_CLASS_bare_tibble ||
+    type == VCTRS_CLASS_data_frame;
 }
 
 // [[ include("type-data-frame.h") ]]
 bool is_native_df(SEXP x) {
   enum vctrs_class_type type = class_type(x);
   return
-    type == vctrs_class_bare_data_frame ||
-    type == vctrs_class_bare_tibble;
+    type == VCTRS_CLASS_bare_data_frame ||
+    type == VCTRS_CLASS_bare_tibble;
 }
 
 // [[ include("type-data-frame.h") ]]
 bool is_bare_data_frame(SEXP x) {
-  return class_type(x) == vctrs_class_bare_data_frame;
+  return class_type(x) == VCTRS_CLASS_bare_data_frame;
 }
 
 // [[ include("type-data-frame.h") ]]
 bool is_bare_tibble(SEXP x) {
-  return class_type(x) == vctrs_class_bare_tibble;
+  return class_type(x) == VCTRS_CLASS_bare_tibble;
 }
 
 // [[ include("type-data-frame.h") ]]

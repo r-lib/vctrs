@@ -106,7 +106,7 @@ bool vec_is_list(r_obj* x) {
   }
 
   // Classed R_TYPE_list are only lists if the last class is explicitly `"list"`
-  return class_type(x) == vctrs_class_list;
+  return class_type(x) == VCTRS_CLASS_list;
 }
 
 // [[ register() ]]

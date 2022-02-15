@@ -48,16 +48,16 @@ r_obj* s3_ptype(r_obj* x,
                struct vctrs_arg* x_arg,
                struct r_lazy call) {
   switch (class_type(x)) {
-  case vctrs_class_bare_tibble:
+  case VCTRS_CLASS_bare_tibble:
     return df_ptype(x, true);
 
-  case vctrs_class_data_frame:
+  case VCTRS_CLASS_data_frame:
     return df_ptype(x, false);
 
-  case vctrs_class_bare_data_frame:
+  case VCTRS_CLASS_bare_data_frame:
     r_stop_internal("Bare data frames should be handled by `vec_ptype()`.");
 
-  case vctrs_class_none:
+  case VCTRS_CLASS_none:
     r_stop_internal("Non-S3 classes should be handled by `vec_ptype()`.");
 
   default:
@@ -139,11 +139,11 @@ r_obj* vec_ptype_finalise(r_obj* x) {
   vec_check_vector(x, args_empty, r_lazy_null);
 
   switch (class_type(x)) {
-  case vctrs_class_bare_tibble:
-  case vctrs_class_bare_data_frame:
+  case VCTRS_CLASS_bare_tibble:
+  case VCTRS_CLASS_bare_data_frame:
     return bare_df_map(x, &vec_ptype_finalise);
 
-  case vctrs_class_data_frame:
+  case VCTRS_CLASS_data_frame:
     x = KEEP(df_map(x, &vec_ptype_finalise));
 
     if (r_inherits(x, "vctrs:::df_fallback")) {
@@ -164,7 +164,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     FREE(1);
     return x;
 
-  case vctrs_class_none:
+  case VCTRS_CLASS_none:
     r_stop_internal("Non-S3 classes should have returned by now.");
 
   default:

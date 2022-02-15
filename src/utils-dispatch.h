@@ -4,17 +4,17 @@
 #include "vctrs-core.h"
 
 enum vctrs_class_type {
-  vctrs_class_list,
-  vctrs_class_data_frame,
-  vctrs_class_bare_data_frame,
-  vctrs_class_bare_tibble,
-  vctrs_class_bare_factor,
-  vctrs_class_bare_ordered,
-  vctrs_class_bare_date,
-  vctrs_class_bare_posixct,
-  vctrs_class_bare_posixlt,
-  vctrs_class_unknown,
-  vctrs_class_none
+  VCTRS_CLASS_list,
+  VCTRS_CLASS_data_frame,
+  VCTRS_CLASS_bare_data_frame,
+  VCTRS_CLASS_bare_tibble,
+  VCTRS_CLASS_bare_factor,
+  VCTRS_CLASS_bare_ordered,
+  VCTRS_CLASS_bare_date,
+  VCTRS_CLASS_bare_posixct,
+  VCTRS_CLASS_bare_posixlt,
+  VCTRS_CLASS_unknown,
+  VCTRS_CLASS_none
 };
 
 enum vctrs_class_type class_type(r_obj* x);
