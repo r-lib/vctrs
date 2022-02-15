@@ -14,7 +14,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
-      ! Can't convert `2` <double> to match type of `chr()` <character>.
+      ! Can't convert `2` <double> to <character>.
 
 # lossy cast reports correct error call
 
@@ -23,7 +23,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from `2` <double> to `lgl()` <logical> due to loss of precision.
+      ! Can't convert from `2` <double> to <logical> due to loss of precision.
       * Locations: 1
 
 # failing common size reports correct error call
@@ -97,7 +97,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from `1.5` <double> to `int()` <integer> due to loss of precision.
+      ! Can't convert from `1.5` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 ---
@@ -107,7 +107,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from `1.5` <double> to `lgl()` <logical> due to loss of precision.
+      ! Can't convert from `1.5` <double> to <logical> due to loss of precision.
       * Locations: 1
 
 ---
@@ -117,7 +117,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from `2L` <integer> to `lgl()` <logical> due to loss of precision.
+      ! Can't convert from `2L` <integer> to <logical> due to loss of precision.
       * Locations: 1
 
 ---
@@ -127,7 +127,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
-      ! Can't convert `matrix(TRUE)` <double[,1]> to match type of `dbl()` <double>.
+      ! Can't convert `matrix(TRUE)` <double[,1]> to <double>.
       Cannot decrease dimensions.
 
 # base S3 casts report correct error call
@@ -137,7 +137,7 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `my_function()`:
-      ! Can't convert from `"a"` <character> to `factor("b")` <factor<9b7e3>> due to loss of generality.
+      ! Can't convert from `"a"` <character> to <factor<9b7e3>> due to loss of generality.
       * Locations: 1
 
 # names validation reports correct error call
@@ -279,7 +279,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't convert `1` <double> to match type of `list()` <list>.
+      ! Can't convert `1` <double> to <list>.
     Code
       (expect_error(vec_slice(env(), list())))
     Output

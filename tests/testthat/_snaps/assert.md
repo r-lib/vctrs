@@ -179,14 +179,14 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `vec_assert()`:
-      ! Can't convert from `size` <double> to `integer()` <integer> due to loss of precision.
+      ! Can't convert from `size` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
       (expect_error(vec_assert(1, size = "x")))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `vec_assert()`:
-      ! Can't convert `size` <character> to match type of `integer()` <integer>.
+      ! Can't convert `size` <character> to <integer>.
 
 # list_all_vectors() works
 

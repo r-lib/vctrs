@@ -12,14 +12,7 @@
 \alias{vec_cast.list}
 \title{Cast a vector to a specified type}
 \usage{
-vec_cast(
-  x,
-  to,
-  ...,
-  x_arg = caller_arg(x),
-  to_arg = caller_arg(to),
-  call = caller_env()
-)
+vec_cast(x, to, ..., x_arg = caller_arg(x), to_arg = "", call = caller_env())
 
 vec_cast_common(..., .to = NULL, .arg = "", .call = caller_env())
 
