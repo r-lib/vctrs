@@ -132,24 +132,24 @@ unique values: duplicated values.</p></div>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">8</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">vec_unique</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  9 10  8 12  4 14  6 13  5  7 11 15  2  3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  8  6 12 10  5  7  2  4  9 13 11  3</span>
 <span class="r-in"><span class="fu">vec_unique_loc</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1  2  5  7  8 13 16 19 20 21 28 52 53 56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1  2  4  7  8  9 12 15 16 18 29 54</span>
 <span class="r-in"><span class="fu">vec_unique_count</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># `vec_unique()` returns values in the order that encounters them</span></span>
 <span class="r-in"><span class="co"># use sort = "location" to match to the result of `vec_count()`</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">vec_unique</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  9 10  8 12  4 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  8  6 12 10  5  7</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="vec_count.html">vec_count</a></span><span class="op">(</span><span class="va">x</span>, sort <span class="op">=</span> <span class="st">"location"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   key count</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   9     9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  10     7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   8    16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  12     4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   4     7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  14     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   8    22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   6    15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  12     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  10    12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   7    11</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Normally missing values are not considered to be equal</span></span>
 <span class="r-in"><span class="cn">NA</span> <span class="op">==</span> <span class="cn">NA</span></span>
