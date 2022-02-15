@@ -6,8 +6,6 @@
 
 // Vector types -------------------------------------------------
 
-bool vec_is_partial(SEXP x);
-
 // After adding a new `vctrs_dispatch` type, add the missing entries
 // in `vec_typeof2()`
 enum vctrs_type2 {
@@ -289,6 +287,7 @@ bool vec_is_unspecified(SEXP x);
 #include "subscript-loc.h"
 #include "subscript.h"
 #include "translate.h"
+#include "utils-dispatch.h"
 #include "utils.h"
 
 
@@ -330,7 +329,6 @@ r_obj* vec_recycle(r_obj* x,
   return vec_recycle2(x, size, x_arg, r_lazy_null);
 }
 
-#include "cast.h"
 static inline r_obj* vec_cast(r_obj* x,
                               r_obj* to,
                               struct vctrs_arg* x_arg,

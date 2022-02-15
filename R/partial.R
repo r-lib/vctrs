@@ -37,7 +37,7 @@ obj_print_data.vctrs_partial <- function(x, ...) {
 #' @rdname new_partial
 #' @export
 is_partial <- function(x) {
-  .Call(vctrs_is_partial, x)
+  .Call(ffi_is_partial, x)
 }
 
 #' @rdname new_partial

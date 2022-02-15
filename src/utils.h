@@ -15,20 +15,6 @@
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
 #define PROTECT2(x, y) (PROTECT(x), PROTECT(y))
 
-enum vctrs_class_type {
-  vctrs_class_list,
-  vctrs_class_data_frame,
-  vctrs_class_bare_data_frame,
-  vctrs_class_bare_tibble,
-  vctrs_class_bare_factor,
-  vctrs_class_bare_ordered,
-  vctrs_class_bare_date,
-  vctrs_class_bare_posixct,
-  vctrs_class_bare_posixlt,
-  vctrs_class_unknown,
-  vctrs_class_none
-};
-
 int r_bool_as_int(SEXP x);
 
 SEXP vctrs_eval_mask_n(SEXP fn,
@@ -138,7 +124,6 @@ SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data);
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP));
 
-enum vctrs_class_type class_type(SEXP x);
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
@@ -208,8 +193,6 @@ void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
-
-enum vctrs_class_type class_type(SEXP x);
 
 SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);

@@ -73,7 +73,7 @@ extern SEXP vctrs_df_cast_opts(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP);
 extern r_obj* ffi_type_info(r_obj*);
 extern SEXP ffi_proxy_info(SEXP);
-extern SEXP vctrs_class_type(SEXP);
+extern r_obj* ffi_class_type(r_obj*);
 extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP);
@@ -88,7 +88,7 @@ extern SEXP vctrs_unset_s4(SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
 extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_is_partial(SEXP);
+extern r_obj* ffi_is_partial(r_obj*);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
 extern r_obj* ffi_is_coercible(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
@@ -238,7 +238,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_ptype2_opts",                  (DL_FUNC) &vctrs_df_ptype2_opts, 4},
   {"ffi_type_info",                         (DL_FUNC) &ffi_type_info, 1},
   {"ffi_proxy_info",                        (DL_FUNC) &ffi_proxy_info, 1},
-  {"vctrs_class_type",                      (DL_FUNC) &vctrs_class_type, 1},
+  {"ffi_class_type",                        (DL_FUNC) &ffi_class_type, 1},
   {"vctrs_bare_df_restore",                 (DL_FUNC) &vctrs_bare_df_restore, 3},
   {"ffi_recycle",                           (DL_FUNC) &ffi_recycle, 3},
   {"vctrs_assign",                          (DL_FUNC) &vctrs_assign, 4},
@@ -255,7 +255,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_validate_name_repair_arg",        (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
   {"vctrs_validate_minimal_names",          (DL_FUNC) &vctrs_validate_minimal_names, 2},
   {"ffi_as_names",                          (DL_FUNC) &ffi_as_names, 4},
-  {"vctrs_is_partial",                      (DL_FUNC) &vctrs_is_partial, 1},
+  {"ffi_is_partial",                        (DL_FUNC) &ffi_is_partial, 1},
   {"vctrs_is_list",                         (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",              (DL_FUNC) &vctrs_try_catch_callback, 2},
   {"ffi_is_coercible",                      (DL_FUNC) &ffi_is_coercible, 5},

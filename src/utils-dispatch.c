@@ -1,47 +1,41 @@
 #include "vctrs.h"
-
-
-// Defined below
-enum vctrs_class_type class_type(SEXP x);
-static enum vctrs_class_type class_type_impl(SEXP class);
-static const char* class_type_as_str(enum vctrs_class_type type);
+#include "decl/utils-dispatch-decl.h"
 
 
 // [[ register() ]]
-SEXP vctrs_class_type(SEXP x) {
-  return Rf_mkString(class_type_as_str(class_type(x)));
+r_obj* ffi_class_type(r_obj* x) {
+  return r_chr(class_type_as_str(class_type(x)));
 }
 
-
-// [[ include("utils.h") ]]
-enum vctrs_class_type class_type(SEXP x) {
-  if (!OBJECT(x)) {
+enum vctrs_class_type class_type(r_obj* x) {
+  if (!r_is_object(x)) {
     return vctrs_class_none;
   }
 
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  r_obj* class = KEEP(r_class(x));
 
-  // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
-  if (class == R_NilValue) {
-    UNPROTECT(1);
+  // Avoid corrupt objects where `x` is an object, but the class is NULL
+  if (class == r_null) {
+    FREE(1);
     return vctrs_class_none;
   }
 
   enum vctrs_class_type type = class_type_impl(class);
 
-  UNPROTECT(1);
+  FREE(1);
   return type;
 }
 
-static enum vctrs_class_type class_type_impl(SEXP class) {
-  int n = Rf_length(class);
-  SEXP const* p = STRING_PTR_RO(class);
+static
+enum vctrs_class_type class_type_impl(r_obj* class) {
+  int n = r_length(class);
+  r_obj* const* p = r_chr_cbegin(class);
 
   // First check for bare types for which we know how many strings are
   // the classes composed of
   switch (n) {
   case 1: {
-    SEXP p0 = p[0];
+    r_obj* p0 = p[0];
 
     if (p0 == strings_data_frame) {
       return vctrs_class_bare_data_frame;
@@ -54,8 +48,8 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
     break;
   }
   case 2: {
-    SEXP p0 = p[0];
-    SEXP p1 = p[1];
+    r_obj* p0 = p[0];
+    r_obj* p1 = p[1];
 
     if (p0 == strings_ordered &&
         p1 == strings_factor) {
@@ -84,7 +78,7 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
 
   // Now check for inherited classes
   p = p + n - 1;
-  SEXP last = *p;
+  r_obj* last = *p;
 
   if (last == strings_data_frame) {
     return vctrs_class_data_frame;
@@ -95,7 +89,8 @@ static enum vctrs_class_type class_type_impl(SEXP class) {
   return vctrs_class_unknown;
 }
 
-static const char* class_type_as_str(enum vctrs_class_type type) {
+static
+const char* class_type_as_str(enum vctrs_class_type type) {
   switch (type) {
   case vctrs_class_list: return "list";
   case vctrs_class_data_frame: return "data_frame";
@@ -113,12 +108,11 @@ static const char* class_type_as_str(enum vctrs_class_type type) {
 }
 
 
-// [[ include("vctrs.h") ]]
-bool vec_is_partial(SEXP x) {
-  return x == R_NilValue || (TYPEOF(x) == VECSXP && Rf_inherits(x, "vctrs_partial"));
+bool vec_is_partial(r_obj* x) {
+  return x == r_null || (r_typeof(x) == R_TYPE_list && r_inherits(x, "vctrs_partial"));
 }
 
 // [[ register() ]]
-SEXP vctrs_is_partial(SEXP x) {
-  return Rf_ScalarLogical(vec_is_partial(x));
+r_obj* ffi_is_partial(r_obj* x) {
+  return r_lgl(vec_is_partial(x));
 }
