@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_unique()` now drops all names from the result (#1442).
+
 * Lossy cast errors now inherit from incompatible type errors.
 
 * `vec_is_list()` now returns `TRUE` for `AsIs` lists (#1463).
