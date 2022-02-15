@@ -490,7 +490,8 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
 
   # TODO: Switch to `format_inline()` and format bullets lazily through rlang
   cli::format_error(c(
-    "i" = "{cli::qty(n_loc)} Location{?s} {oob_enum} do{?esn't/n't} exist, there {cli::qty(n)} {?is/are} only {elt}."
+    "i" = "{cli::qty(n_loc)} Location{?s} {oob_enum} do{?esn't/n't} exist.",
+    "i" = "There {cli::qty(n)} {?is/are} only {elt}."
   ))
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
