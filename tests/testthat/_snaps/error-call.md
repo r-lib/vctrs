@@ -201,7 +201,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Can't convert from <double> to <integer> due to loss of precision.
+      x Can't convert from `my_arg` <double> to <integer> due to loss of precision.
 
 ---
 
@@ -221,7 +221,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `list`.
+      x Subscript `my_arg` has the wrong type `list`.
       i It must be logical, numeric, or character.
 
 ---

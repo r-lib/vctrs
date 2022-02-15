@@ -44,7 +44,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Can't convert from <double> to <integer> due to loss of precision.
+      x Can't convert from `2^31` <double> to <integer> due to loss of precision.
 
 # Unnamed vector with character subscript is caught
 
