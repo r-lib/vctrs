@@ -1,8 +1,6 @@
-#include <ctype.h>
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "utils.h"
-#include "dim.h"
+#include <ctype.h>
 #include "decl/names-decl.h"
 
 static void describe_repair(SEXP old_names, SEXP new_names);

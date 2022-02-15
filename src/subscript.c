@@ -1,8 +1,4 @@
 #include "vctrs.h"
-#include "subscript.h"
-#include "utils.h"
-#include "dim.h"
-
 #include "decl/subscript-decl.h"
 
 

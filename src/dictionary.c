@@ -1,10 +1,4 @@
 #include "vctrs.h"
-#include "dictionary.h"
-#include "translate.h"
-#include "equal.h"
-#include "hash.h"
-#include "utils.h"
-
 #include "decl/dictionary-decl.h"
 
 // Initialised at load time

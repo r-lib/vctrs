@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 #include "type-data-frame.h"
 
 // Initialised at load time

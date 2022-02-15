@@ -11,8 +11,6 @@
  */
 
 #include "vctrs.h"
-#include "order-sortedness.h"
-#include "utils.h"
 
 // -----------------------------------------------------------------------------
 

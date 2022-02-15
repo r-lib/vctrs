@@ -2,8 +2,6 @@
 #define VCTRS_TYPE_DATA_FRAME_H
 
 #include "vctrs-core.h"
-#include "arg.h"
-#include "names.h"
 
 
 SEXP new_data_frame(SEXP x, R_len_t n);

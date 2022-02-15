@@ -1,6 +1,5 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "utils.h"
 
 static SEXP syms_df_lossy_cast = NULL;
 static SEXP fns_df_lossy_cast = NULL;

@@ -1,7 +1,5 @@
 #include "vctrs.h"
-#include "cast.h"
 #include "type-data-frame.h"
-#include "utils.h"
 
 // [[ include("vctrs.h") ]]
 SEXP tib_ptype2(const struct ptype2_opts* opts) {

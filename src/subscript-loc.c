@@ -1,9 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "compare.h"
-#include "subscript.h"
-#include "subscript-loc.h"
-
 #include "decl/subscript-loc-decl.h"
 
 

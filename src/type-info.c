@@ -1,6 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "arg-counter.h"
 #include "decl/type-info-decl.h"
 
 

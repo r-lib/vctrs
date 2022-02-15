@@ -1,12 +1,6 @@
 #include "vctrs.h"
-#include "altrep.h"
-#include "slice.h"
-#include "subscript-loc.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
-#include "dim.h"
-#include "assert.h"
+#include "altrep.h"
 
 // Initialised at load time
 SEXP syms_vec_slice_fallback = NULL;

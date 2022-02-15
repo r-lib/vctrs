@@ -1,10 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "complete.h"
-#include "poly-op.h"
-#include "compare.h"
-#include "order.h"
-#include "match-joint.h"
 
 // -----------------------------------------------------------------------------
 

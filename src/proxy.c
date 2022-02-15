@@ -1,8 +1,5 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "dim.h"
-#include "utils.h"
-#include "equal.h"
 
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;

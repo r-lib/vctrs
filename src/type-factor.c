@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 
 static SEXP levels_union(SEXP x, SEXP y);
 

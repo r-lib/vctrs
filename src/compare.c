@@ -1,7 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "compare.h"
-#include "translate.h"
 #include <strings.h>
 
 static void stop_not_comparable(SEXP x, SEXP y, const char* message) {

@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "shape.h"
 #include "type-data-frame.h"
 #include "decl/ptype2-decl.h"
 

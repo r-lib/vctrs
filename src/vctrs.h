@@ -253,23 +253,43 @@ bool vec_is_unspecified(SEXP x);
 
 #include "type-info.h"
 
-#include "arg.h"
 #include "arg-counter.h"
+#include "arg.h"
 #include "assert.h"
-#include "cast.h"
+#include "c.h"
 #include "cast-bare.h"
 #include "cast-dispatch.h"
+#include "cast.h"
+#include "compare.h"
 #include "complete.h"
+#include "dictionary.h"
+#include "dim.h"
+#include "hash.h"
+#include "lazy.h"
+#include "match-compare.h"
 #include "match-joint.h"
 #include "names.h"
+#include "order-collate.h"
+#include "order-groups.h"
+#include "order-sortedness.h"
+#include "order-truelength.h"
+#include "order.h"
 #include "owned.h"
+#include "poly-op.h"
 #include "ptype-common.h"
 #include "ptype.h"
-#include "ptype2.h"
 #include "ptype2-dispatch.h"
-#include "size.h"
+#include "ptype2.h"
+#include "shape.h"
 #include "size-common.h"
+#include "size.h"
+#include "slice-assign.h"
 #include "slice.h"
+#include "strides.h"
+#include "subscript-loc.h"
+#include "subscript.h"
+#include "translate.h"
+#include "utils.h"
 
 
 // Vector methods ------------------------------------------------
@@ -341,12 +361,6 @@ bool is_data_frame(SEXP x);
 
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
-
-// equal_object() never propagates missingness, so
-// it can return a `bool`
-bool equal_object(SEXP x, SEXP y);
-bool equal_object_normalized(SEXP x, SEXP y);
-bool equal_names(SEXP x, SEXP y);
 
 uint32_t hash_object(SEXP x);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);

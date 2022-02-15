@@ -1,7 +1,5 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
 
 // Initialised at load time
 static SEXP syms_vec_restore_dispatch = NULL;

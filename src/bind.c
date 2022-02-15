@@ -1,11 +1,5 @@
 #include "vctrs.h"
-#include "c.h"
-#include "dim.h"
-#include "ptype-common.h"
-#include "slice-assign.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
 
 
 static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair, SEXP name_spec);

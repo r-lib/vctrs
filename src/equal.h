@@ -4,6 +4,12 @@
 #include "vctrs-core.h"
 #include "utils.h"
 
+// equal_object() never propagates missingness, so
+// it can return a `bool`
+bool equal_object(SEXP x, SEXP y);
+bool equal_object_normalized(SEXP x, SEXP y);
+bool equal_names(SEXP x, SEXP y);
+
 // -----------------------------------------------------------------------------
 
 SEXP vec_equal_na(SEXP x);

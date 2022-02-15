@@ -1,11 +1,5 @@
 #include "vctrs.h"
-#include "dim.h"
-#include "slice.h"
-#include "subscript-loc.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
-#include "assert.h"
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.

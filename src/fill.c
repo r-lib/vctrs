@@ -1,6 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "equal.h"
 
 #define INFINITE_FILL -1
 

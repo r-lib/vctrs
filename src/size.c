@@ -1,7 +1,5 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "utils.h"
-#include "slice.h"
 #include "decl/size-decl.h"
 
 // [[ register() ]]

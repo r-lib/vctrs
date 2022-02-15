@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "dim.h"
 #include "type-data-frame.h"
 #include "decl/cast-decl.h"
 

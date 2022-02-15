@@ -11,16 +11,8 @@
  */
 
 #include "vctrs.h"
-#include "utils.h"
-#include "lazy.h"
 #include "type-data-frame.h"
 #include "type-complex.h"
-#include "translate.h"
-#include "order.h"
-#include "order-groups.h"
-#include "order-truelength.h"
-#include "order-sortedness.h"
-#include "order-collate.h"
 
 // -----------------------------------------------------------------------------
 

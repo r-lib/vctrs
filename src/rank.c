@@ -1,6 +1,4 @@
 #include "vctrs.h"
-#include "complete.h"
-#include "order.h"
 
 enum ties {
   TIES_min,

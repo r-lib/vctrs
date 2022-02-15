@@ -3,7 +3,6 @@
 
 #include "vctrs.h"
 
-
 /*
  * Normalises a complex value so that if one side is missing, both are. This
  * ensures that all missing complex values are grouped together, no matter

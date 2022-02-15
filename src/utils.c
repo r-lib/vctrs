@@ -1,8 +1,5 @@
 #include "vctrs.h"
-#include "utils.h"
 #include "type-data-frame.h"
-#include "owned.h"
-
 #include <R_ext/Rdynload.h>
 
 // Initialised at load time

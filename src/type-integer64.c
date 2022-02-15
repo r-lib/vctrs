@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 #include "decl/type-integer64-decl.h"
 
 #define r_na_llong LLONG_MIN

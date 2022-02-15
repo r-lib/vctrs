@@ -1,8 +1,5 @@
-#include <math.h>
 #include "vctrs.h"
-#include "equal.h"
-#include "utils.h"
-#include "translate.h"
+#include <math.h>
 
 // -----------------------------------------------------------------------------
 

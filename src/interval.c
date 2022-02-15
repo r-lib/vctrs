@@ -1,8 +1,4 @@
 #include "vctrs.h"
-#include "order.h"
-#include "complete.h"
-#include "translate.h"
-#include "poly-op.h"
 
 enum vctrs_interval_missing {
   VCTRS_INTERVAL_MISSING_group = 0,

@@ -2,7 +2,6 @@
 #define VCTRS_MATCH_COMPARE_H
 
 #include "vctrs-core.h"
-#include "compare.h"
 #include "poly-op.h"
 #include "type-complex.h"
 

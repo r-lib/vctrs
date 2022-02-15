@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 
 static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
                                                 SEXP y,

@@ -1,10 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "translate.h"
-#include "order.h"
-#include "order-collate.h"
-#include "match-compare.h"
-
 
 #define VEC_JOINT_XTFRM_LOOP(CMP) do {                         \
   while (i < x_n_groups && j < y_n_groups) {                   \

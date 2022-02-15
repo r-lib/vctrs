@@ -1,5 +1,4 @@
-#include <rlang.h>
-#include "globals.h"
+#include "vctrs.h"
 
 struct syms syms;
 

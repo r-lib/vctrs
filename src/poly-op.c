@@ -1,8 +1,4 @@
-#include "poly-op.h"
 #include "vctrs.h"
-#include "equal.h"
-#include "compare.h"
-#include "utils.h"
 
 // -----------------------------------------------------------------------------
 

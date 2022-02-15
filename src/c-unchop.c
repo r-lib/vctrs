@@ -1,10 +1,4 @@
 #include "vctrs.h"
-#include "c.h"
-#include "ptype-common.h"
-#include "slice.h"
-#include "slice-assign.h"
-#include "owned.h"
-#include "utils.h"
 
 // Defined in slice-chop.c
 SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
