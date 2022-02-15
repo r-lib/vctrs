@@ -865,45 +865,42 @@ SEXP compact_seq_materialize(SEXP x) {
 // Initialised at load time
 SEXP compact_rep_attrib = NULL;
 
-void init_compact_rep(int* p, R_len_t i, R_len_t n) {
-  p[0] = i;
-  p[1] = n;
-}
-
 // Returns a compact repetition that `vec_slice()` understands
 // `i` should be an R-based index
-SEXP compact_rep(R_len_t i, R_len_t n) {
+r_obj* new_compact_rep(int i, r_ssize n) {
   if (n < 0) {
-    r_stop_internal("Negative `n` in `compact_rep()`.");
+    r_stop_internal("Negative `n`.");
   }
 
-  SEXP rep = PROTECT(Rf_allocVector(INTSXP, 2));
+  r_obj* rep = KEEP(r_alloc_raw(sizeof(struct compact_rep)));
 
-  int* p = INTEGER(rep);
-  init_compact_rep(p, i, n);
+  struct compact_rep* p_rep = r_raw_begin(rep);
+  p_rep->i = i;
+  p_rep->n = n;
 
-  SET_ATTRIB(rep, compact_rep_attrib);
+  r_poke_attrib(rep, compact_rep_attrib);
 
-  UNPROTECT(1);
+  FREE(1);
   return rep;
 }
 
-bool is_compact_rep(SEXP x) {
-  return ATTRIB(x) == compact_rep_attrib;
+bool is_compact_rep(r_obj* x) {
+  return r_attrib(x) == compact_rep_attrib;
 }
 
-SEXP compact_rep_materialize(SEXP x) {
-  int i = r_int_get(x, 0);
-  int n = r_int_get(x, 1);
+r_obj* compact_rep_materialize(r_obj* x) {
+  struct compact_rep* p_rep = r_raw_begin(x);
+  int i = p_rep->i;
+  r_ssize n = p_rep->n;
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
+  r_obj* out = KEEP(r_alloc_integer(n));
   r_int_fill(out, i, n);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-bool is_compact(SEXP x) {
+bool is_compact(r_obj* x) {
   return is_compact_rep(x) || is_compact_seq(x);
 }
 
@@ -917,9 +914,9 @@ SEXP compact_materialize(SEXP x) {
   }
 }
 
-R_len_t vec_subscript_size(SEXP x) {
+r_ssize vec_subscript_size(r_obj* x) {
   if (is_compact_rep(x)) {
-    return r_int_get(x, 1);
+    return compact_rep_n(x);
   } else if (is_compact_seq(x)) {
     return r_int_get(x, 1);
   } else {

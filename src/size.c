@@ -168,7 +168,7 @@ r_obj* vec_recycle2(r_obj* x,
   }
 
   if (n_x == 1L) {
-    r_obj* i = KEEP(compact_rep(1, size));
+    r_obj* i = KEEP(new_compact_rep(1, size));
     r_obj* out = vec_slice_unsafe(x, i);
 
     FREE(1);

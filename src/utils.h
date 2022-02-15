@@ -204,13 +204,28 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);
 bool is_compact_seq(SEXP x);
 
-void init_compact_rep(int* p, R_len_t i, R_len_t n);
-SEXP compact_rep(R_len_t i, R_len_t n);
-bool is_compact_rep(SEXP x);
+struct compact_rep {
+  int i;
+  r_ssize n;
+};
+
+r_obj* new_compact_rep(int i, r_ssize n);
+bool is_compact_rep(r_obj* x);
+
+static inline
+int compact_rep_i(r_obj* x) {
+  struct compact_rep* p_rep = r_raw_begin(x);
+  return p_rep->i;
+}
+static inline
+int compact_rep_n(r_obj* x) {
+  struct compact_rep* p_rep = r_raw_begin(x);
+  return p_rep->n;
+}
 
 bool is_compact(SEXP x);
 SEXP compact_materialize(SEXP x);
-R_len_t vec_subscript_size(SEXP x);
+r_ssize vec_subscript_size(r_obj* x);
 
 bool is_integer64(SEXP x);
 

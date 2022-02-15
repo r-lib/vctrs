@@ -21,9 +21,9 @@
 #define SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)   \
   const CTYPE* data = CONST_DEREF(x);                                   \
                                                                         \
-  int* subscript_data = r_int_begin(subscript);                         \
-  r_ssize j = subscript_data[0];                                        \
-  r_ssize n = subscript_data[1];                                        \
+  struct compact_rep* p_rep = r_raw_begin(subscript);                   \
+  r_ssize j = p_rep->i;                                                 \
+  r_ssize n = p_rep->n;                                                 \
                                                                         \
   r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                          \
   CTYPE* out_data = DEREF(out);                                         \
@@ -431,7 +431,7 @@ r_obj* vec_init(r_obj* x, r_ssize n) {
     r_abort("`n` must be a positive integer.");
   }
 
-  r_obj* i = KEEP(compact_rep(r_globals.na_int, n));
+  r_obj* i = KEEP(new_compact_rep(r_globals.na_int, n));
   r_obj* out = vec_slice_unsafe(x, i);
 
   FREE(1);
@@ -440,18 +440,7 @@ r_obj* vec_init(r_obj* x, r_ssize n) {
 
 // [[ register() ]]
 r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
-  struct r_lazy frame = { .x = ffi_frame, .env = r_null };
-
-  ffi_n = KEEP(vec_cast(ffi_n,
-                        vctrs_shared_empty_int,
-                        args_n,
-                        args_empty,
-                        frame));
-  // TODO! Pass `frame`
-  vec_check_size(ffi_n, 1, args_n);
-
-  // TODO! Pass `frame`
-  r_ssize n = r_int_get(ffi_n, 0);
+  r_ssize n = r_arg_as_ssize(ffi_n, "n");
   r_obj* out = vec_init(x, n);
 
   FREE(1);
@@ -481,7 +470,7 @@ r_obj* ffi_slice_rep(r_obj* x, r_obj* ffi_i, r_obj* ffi_n) {
   r_ssize i = r_int_get(ffi_i, 0);
   r_ssize n = r_int_get(ffi_n, 0);
 
-  r_obj* subscript = KEEP(compact_rep(i, n));
+  r_obj* subscript = KEEP(new_compact_rep(i, n));
   r_obj* out = vec_slice_unsafe(x, subscript);
 
   FREE(1);
