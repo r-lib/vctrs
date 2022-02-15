@@ -136,6 +136,10 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(foobar(list())), "unknown")
   expect_identical(class_type(structure(list(), class = "list")), "list")
   expect_identical(class_type(subclass(structure(list(), class = "list"))), "list")
+  expect_identical(class_type(I(subclass(structure(list(), class = "list")))), "list")
+
+  expect_identical(class_type(I(list())), "bare_asis")
+  expect_identical(class_type(I(1)), "bare_asis")
 
   expect_identical(class_type(data.frame()), "bare_data_frame")
   expect_identical(class_type(tibble::tibble()), "bare_tibble")

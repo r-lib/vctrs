@@ -43,6 +43,8 @@ enum vctrs_class_type class_type_impl(r_obj* class) {
       return VCTRS_CLASS_bare_factor;
     } else if (p0 == strings_date) {
       return VCTRS_CLASS_bare_date;
+    } else if (p0 == strings.AsIs) {
+      return VCTRS_CLASS_bare_asis;
     }
 
     break;
@@ -94,6 +96,7 @@ const char* class_type_as_str(enum vctrs_class_type type) {
   switch (type) {
   case VCTRS_CLASS_list: return "list";
   case VCTRS_CLASS_data_frame: return "data_frame";
+  case VCTRS_CLASS_bare_asis: return "bare_asis";
   case VCTRS_CLASS_bare_data_frame: return "bare_data_frame";
   case VCTRS_CLASS_bare_tibble: return "bare_tibble";
   case VCTRS_CLASS_bare_factor: return "bare_factor";
