@@ -194,7 +194,7 @@ vec_cbind <- function(...,
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
 
 as_df_row <- function(x, quiet = FALSE) {
-  .Call(ffi_as_df_row, x, quiet)
+  .Call(ffi_as_df_row, x, quiet, environment())
 }
 as_df_col <- function(x, outer_name) {
   .Call(ffi_as_df_col, x, outer_name)

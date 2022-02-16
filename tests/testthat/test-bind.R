@@ -952,11 +952,13 @@ test_that("can't zap names when `.names_to` is supplied", {
     vec_rbind(foo = c(x = 1), .names_to = zap(), .name_spec = zap()),
     data.frame(x = 1)
   )
-  expect_error(
-    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
-    "Can't zap outer names when `.names_to` is supplied.",
-    fixed = TRUE
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
+      "Can't zap outer names when `.names_to` is supplied.",
+      fixed = TRUE
+    ))
+  })
 })
 
 test_that("can zap outer names from a name-spec (#1215)", {

@@ -3,13 +3,18 @@ r_obj* vec_rbind(r_obj* xs,
                  r_obj* ptype,
                  r_obj* id,
                  struct name_repair_opts* name_repair,
-                 r_obj* name_spec);
+                 r_obj* name_spec,
+                 struct r_lazy call);
 
 static
-r_obj* as_df_row(r_obj* x, struct name_repair_opts* name_repair);
+r_obj* as_df_row(r_obj* x,
+                 struct name_repair_opts* name_repair,
+                 struct r_lazy call);
 
 static
-r_obj* as_df_row_impl(r_obj* x, struct name_repair_opts* name_repair);
+r_obj* as_df_row_impl(r_obj* x,
+                      struct name_repair_opts* name_repair,
+                      struct r_lazy call);
 
 static
 struct name_repair_opts validate_bind_name_repair(r_obj* name_repair, bool allow_minimal);

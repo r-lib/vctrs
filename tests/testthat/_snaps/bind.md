@@ -4,7 +4,7 @@
       (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_rbind()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
 
 # names are supplied if needed
@@ -36,7 +36,7 @@
       class = "vctrs_error_names_must_be_unique"))
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error:
+      Error in `vec_rbind()`:
       ! Names must be unique.
       x These names are duplicated:
         * "a" at locations 1 and 2.
@@ -47,7 +47,7 @@
       (expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays"))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_rbind()`:
       ! Can't bind arrays.
 
 # can assign row names in vec_rbind()
@@ -256,6 +256,16 @@
       <error/vctrs_error_incompatible_type>
       Error:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+
+# can't zap names when `.names_to` is supplied
+
+    Code
+      (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
+      "Can't zap outer names when `.names_to` is supplied.", fixed = TRUE))
+    Output
+      <error/rlang_error>
+      Error in `vec_rbind()`:
+      ! Can't zap outer names when `.names_to` is supplied.
 
 # row-binding performs expected allocations
 
