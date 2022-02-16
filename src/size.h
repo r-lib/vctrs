@@ -4,7 +4,7 @@
 #include "vctrs-core.h"
 
 r_ssize vec_size(r_obj* x);
-r_ssize size_validate(r_obj* size, const char* arg);
+r_ssize check_size(r_obj* size, struct vctrs_arg* arg);
 
 r_obj* vec_recycle2(r_obj* x,
                     r_ssize size,

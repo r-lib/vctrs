@@ -30,8 +30,13 @@ struct fns {
   r_obj* vec_slice_fallback_integer64;
 };
 
+struct vec_args {
+  struct vctrs_arg* dot_size;
+};
+
 extern struct syms syms;
 extern struct strings strings;
 extern struct fns fns;
+extern struct vec_args vec_args;
 
 #endif

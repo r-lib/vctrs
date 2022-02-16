@@ -234,7 +234,7 @@ r_obj* vec_recycle_fallback(r_obj* x,
 }
 
 
-r_ssize size_validate(r_obj* size, const char* arg) {
+r_ssize check_size(r_obj* size, struct vctrs_arg* p_arg) {
   // TODO! Error call
   struct r_lazy call = r_lazy_null;
 
@@ -247,7 +247,7 @@ r_ssize size_validate(r_obj* size, const char* arg) {
   if (r_length(size) != 1) {
     r_abort_lazy_call(call,
                       "%s must be a single integer.",
-                      r_c_str_format_error_arg(arg));
+                      vec_arg_format(p_arg));
   }
 
   int out = r_int_get(size, 0);
@@ -255,7 +255,7 @@ r_ssize size_validate(r_obj* size, const char* arg) {
   if (out == r_globals.na_int) {
     r_abort_lazy_call(call,
                       "`%s` can't be missing.",
-                      r_c_str_format_error_arg(arg));
+                      vec_arg_format(p_arg));
   }
 
   return out;

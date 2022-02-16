@@ -387,7 +387,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   if (size == R_NilValue) {
     nrow = vec_size_common(xs, 0);
   } else {
-    nrow = size_validate(size, ".size");
+    nrow = check_size(size, vec_args.dot_size);
   }
 
   if (rownames != R_NilValue && Rf_length(rownames) != nrow) {

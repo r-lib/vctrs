@@ -195,7 +195,7 @@ SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
   if (size == R_NilValue) {
     c_size = vec_size_common(x, 0);
   } else {
-    c_size = size_validate(size, ".size");
+    c_size = check_size(size, vec_args.dot_size);
   }
 
   SEXP out = data_frame(x, c_size, &name_repair_opts);
@@ -226,7 +226,7 @@ SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
   if (size == R_NilValue) {
     c_size = vec_size_common(x, 0);
   } else {
-    c_size = size_validate(size, ".size");
+    c_size = check_size(size, vec_args.dot_size);
   }
 
   SEXP out = df_list(x, c_size, &name_repair_opts);
