@@ -88,7 +88,7 @@ precise definition of size.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">vec_recycle</span><span class="op">(</span><span class="va">x</span>, <span class="va">size</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">vec_recycle_common</span><span class="op">(</span><span class="va">...</span>, .size <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+<span class="fu">vec_recycle_common</span><span class="op">(</span><span class="va">...</span>, .size <span class="op">=</span> <span class="cn">NULL</span>, .arg <span class="op">=</span> <span class="st">""</span>, .call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -113,6 +113,15 @@ mentioned in error messages as the source of the error. See the
 <dt>.size</dt>
 <dd><p>Desired output size. If omitted,
 will use the common size from <code><a href="vec_size.html">vec_size_common()</a></code>.</p></dd>
+<dt>.arg</dt>
+<dd><p>An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.</p></dd>
+<dt>.call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 </dl></div>
     <div id="recycling-rules">
     <h2>Recycling rules</h2>
