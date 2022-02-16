@@ -79,10 +79,10 @@ extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_assign_seq(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
-extern SEXP vctrs_as_df_row(SEXP, SEXP);
+extern r_obj* ffi_as_df_row(r_obj*, r_obj*);
 extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_size(SEXP);
-extern SEXP vctrs_as_df_col(SEXP, SEXP);
+extern r_obj* ffi_as_df_col(r_obj*, r_obj*);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unset_s4(SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
@@ -245,10 +245,10 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_assign",                          (DL_FUNC) &vctrs_assign, 4},
   {"vctrs_assign_seq",                      (DL_FUNC) &vctrs_assign_seq, 5},
   {"vctrs_set_attributes",                  (DL_FUNC) &vctrs_set_attributes, 2},
-  {"vctrs_as_df_row",                       (DL_FUNC) &vctrs_as_df_row, 2},
+  {"ffi_as_df_row",                         (DL_FUNC) &ffi_as_df_row, 2},
   {"vctrs_outer_names",                     (DL_FUNC) &vctrs_outer_names, 3},
   {"vctrs_df_size",                         (DL_FUNC) &vctrs_df_size, 1},
-  {"vctrs_as_df_col",                       (DL_FUNC) &vctrs_as_df_col, 2},
+  {"ffi_as_df_col",                         (DL_FUNC) &ffi_as_df_col, 2},
   {"vctrs_apply_name_spec",                 (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                        (DL_FUNC) &vctrs_unset_s4, 1},
   {"vctrs_altrep_rle_Make",                 (DL_FUNC) &altrep_rle_Make, 1},
@@ -324,20 +324,21 @@ extern r_obj* ffi_size_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_recycle_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_cbind(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_rbind(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_cbind(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_new_data_frame(SEXP);
 
-static const R_ExternalMethodDef ExtEntries[] = {
+static
+const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 1},
   {"ffi_ptype_common_opts",            (DL_FUNC) &ffi_ptype_common_opts, 2},
   {"ffi_size_common",                  (DL_FUNC) &ffi_size_common, 2},
   {"ffi_recycle_common",               (DL_FUNC) &ffi_recycle_common, 1},
   {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 1},
   {"ffi_cast_common_opts",             (DL_FUNC) &ffi_cast_common_opts, 2},
-  {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 4},
-  {"vctrs_cbind",                      (DL_FUNC) &vctrs_cbind, 3},
+  {"ffi_rbind",                        (DL_FUNC) &ffi_rbind, 4},
+  {"ffi_cbind",                        (DL_FUNC) &ffi_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
   {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, -1},
   {NULL, NULL, 0}

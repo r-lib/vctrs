@@ -174,7 +174,7 @@ vec_rbind <- function(...,
                       .names_to = rlang::zap(),
                       .name_repair = c("unique", "universal", "check_unique"),
                       .name_spec = NULL) {
-  .External2(vctrs_rbind, .ptype, .names_to, .name_repair, .name_spec)
+  .External2(ffi_rbind, .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 
@@ -189,15 +189,15 @@ vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
                       .name_repair = c("unique", "universal", "check_unique", "minimal")) {
-  .External2(vctrs_cbind, .ptype, .size, .name_repair)
+  .External2(ffi_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
 
 as_df_row <- function(x, quiet = FALSE) {
-  .Call(vctrs_as_df_row, x, quiet)
+  .Call(ffi_as_df_row, x, quiet)
 }
 as_df_col <- function(x, outer_name) {
-  .Call(vctrs_as_df_col, x, outer_name)
+  .Call(ffi_as_df_col, x, outer_name)
 }
 
 #' Frame prototype
