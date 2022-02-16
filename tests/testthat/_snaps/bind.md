@@ -58,6 +58,21 @@
       <simpleError: Can't merge the outer name `foo` with a vector of length > 1.
       Please supply a `.name_spec` specification.>
 
+# vec_cbind() reports error context
+
+    Code
+      (expect_error(vec_cbind(foobar(list()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error:
+      ! Input must be a vector, not a <vctrs_foobar> object.
+    Code
+      (expect_error(vec_cbind(a = 1:2, b = int())))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `vec_cbind()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+
 # duplicate names are de-deduplicated
 
     Code
@@ -79,6 +94,26 @@
     Output
         x...1 x...2
       1     1     1
+
+# can repair names in `vec_cbind()` (#227)
+
+    Code
+      (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"),
+      "can't be `\"none\"`"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `.name_repair` can't be `"none"`.
+      It must be one of `"unique"`, `"universal"`, `"check_unique"`, or `"minimal"`.
+    Code
+      (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
+      )
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `vec_cbind()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
 
 # vec_rbind() name repair messages are useful
 

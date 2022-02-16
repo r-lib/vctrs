@@ -377,6 +377,13 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 
 # cols --------------------------------------------------------------------
 
+test_that("vec_cbind() reports error context", {
+  expect_snapshot({
+    (expect_error(vec_cbind(foobar(list()))))
+    (expect_error(vec_cbind(a = 1:2, b = int())))
+  })
+})
+
 test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(), data_frame())
   expect_equal(vec_cbind(NULL), data_frame())
@@ -454,10 +461,12 @@ test_that("can override default .nrow", {
 })
 
 test_that("can repair names in `vec_cbind()` (#227)", {
-  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`")
+  expect_snapshot({
+    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`"))
+    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+  })
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "unique"), c("a...1", "a...2"))
-  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_cbind(`_` = 1, .name_repair = "universal"), "._")
 
