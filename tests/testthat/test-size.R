@@ -11,11 +11,19 @@ test_that("vec_as_short_length() checks inputs", {
     (expect_error(my_function(na_int)))
     (expect_error(my_function("foo")))
     (expect_error(my_function(foobar(1:2))))
-    (expect_error(my_function(.Machine$integer.max + 1)))
     (expect_error(my_function(.Machine$double.xmax)))
   })
 })
 
+test_that("vec_as_short_length() has a special error about long vector support", {
+  # In particular, skips on 32-bit Windows where `r_ssize == int`
+  skip_if(.Machine$sizeof.pointer < 8L, message = "No long vector support")
+
+  my_function <- function(my_arg) vec_as_short_length(my_arg)
+  expect_snapshot({
+    (expect_error(my_function(.Machine$integer.max + 1)))
+  })
+})
 
 # vec_size -----------------------------------------------------------------
 

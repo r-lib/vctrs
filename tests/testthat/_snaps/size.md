@@ -43,17 +43,20 @@
       Error in `vec_as_short_length()`:
       ! `my_arg` must be a single number, not NULL.
     Code
-      (expect_error(my_function(.Machine$integer.max + 1)))
-    Output
-      <error/rlang_error>
-      Error in `vec_as_short_length()`:
-      ! `my_arg` is too large a number and long vectors are not supported.
-    Code
       (expect_error(my_function(.Machine$double.xmax)))
     Output
       <error/rlang_error>
       Error in `vec_as_short_length()`:
       ! `my_arg` is too large a number.
+
+# vec_as_short_length() has a special error about long vector support
+
+    Code
+      (expect_error(my_function(.Machine$integer.max + 1)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` is too large a number and long vectors are not supported.
 
 # vec_size_common() checks inputs
 
