@@ -24,7 +24,7 @@
 #' # Most of the time, `maybe_lossy_cast()` returns its input normally:
 #' maybe_lossy_cast(
 #'   c("foo", "bar"),
-#'   NULL,
+#'   NA,
 #'   "",
 #'   lossy = c(FALSE, FALSE),
 #'   x_arg = "",
@@ -34,7 +34,7 @@
 #' # If `lossy` has any `TRUE`, an error is thrown:
 #' try(maybe_lossy_cast(
 #'   c("foo", "bar"),
-#'   NULL,
+#'   NA,
 #'   "",
 #'   lossy = c(FALSE, TRUE),
 #'   x_arg = "",
@@ -45,7 +45,7 @@
 #' allow_lossy_cast(
 #'   maybe_lossy_cast(
 #'     c("foo", "bar"),
-#'     NULL,
+#'     NA,
 #'     "",
 #'     lossy = c(FALSE, TRUE),
 #'     x_arg = "",
@@ -469,7 +469,9 @@ maybe_lossy_cast <- function(result, x, to,
     )
   )
 }
-stop_lossy_cast <- function(x, to, result,
+stop_lossy_cast <- function(x,
+                            to,
+                            result,
                             locations = NULL,
                             ...,
                             loss_type,
@@ -479,10 +481,8 @@ stop_lossy_cast <- function(x, to, result,
                             message = NULL,
                             class = NULL,
                             call = caller_env()) {
-  stop_vctrs(
-    message,
+  stop_incompatible_cast(
     x = x,
-    y = to,
     to = to,
     result = result,
     locations = locations,
@@ -512,7 +512,7 @@ conditionMessage.vctrs_error_cast_lossy <- function(c) {
 #' @export
 cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
-  to_label <- format_arg_label(vec_ptype_full(cnd$to), cnd$to_arg)
+  to_label <- format_arg_label(vec_ptype_full(cnd$y), cnd$y_arg)
   loss_type <- loss_type(cnd$loss_type)
   glue::glue("Can't convert from {x_label} to {to_label} due to loss of {loss_type}.")
 }
@@ -536,12 +536,12 @@ loss_type <- function(x) {
 # Used in maybe_warn_deprecated_lossy_cast()
 new_error_cast_lossy <- function(x, to, loss_type, x_arg = "", to_arg = "") {
   error_cnd(
-    "vctrs_error_cast_lossy",
+    c("vctrs_error_cast_lossy", "vctrs_error_incompatible_type"),
     x = x,
-    to = to,
+    y = to,
     loss_type = loss_type,
     x_arg = x_arg,
-    to_arg = to_arg
+    y_arg = to_arg
   )
 }
 
@@ -555,7 +555,7 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
       if (!is_null(x_ptype) && !vec_is(err$x, x_ptype)) {
         return()
       }
-      if (!is_null(to_ptype) && !vec_is(err$to, to_ptype)) {
+      if (!is_null(to_ptype) && !vec_is(err$y, to_ptype)) {
         return()
       }
 
