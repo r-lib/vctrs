@@ -10,16 +10,20 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
+  struct r_lazy internal_call = { .x = env, .env = r_null };
+
   r_obj* size = r_node_car(args); args = r_node_cdr(args);
   r_obj* absent = r_node_car(args);
 
   if (size != r_null) {
-    r_ssize out = vec_as_short_length(size, vec_args.dot_size, call);
+    r_ssize out = vec_as_short_length(size,
+                                      vec_args.dot_size,
+                                      internal_call);
     return r_int(out);
   }
 
   if (absent != r_null && (r_typeof(absent) != R_TYPE_integer || r_length(absent) != 1)) {
-    r_abort_lazy_call(call,
+    r_abort_lazy_call(internal_call,
                       "%s must be a single integer.",
                       r_c_str_format_error_arg(".absent"));
   }
@@ -35,7 +39,7 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   r_obj* out;
   if (common < 0) {
     if (absent == r_null) {
-      r_abort_lazy_call(call,
+      r_abort_lazy_call(internal_call,
                         "%s must be supplied when %s is empty.",
                         r_c_str_format_error_arg(".absent"),
                         r_c_str_format_error_arg("..."));
@@ -120,6 +124,8 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
   struct r_lazy call = { .x = syms.dot_call, .env = env };
+  struct r_lazy internal_call = { .x = env, .env = r_null };
+
   struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
@@ -135,7 +141,9 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   if (size == r_null) {
     common = vec_size_common_opts(xs, -1, &size_opts);
   } else {
-    common = vec_as_short_length(size, vec_args.dot_size, call);
+    common = vec_as_short_length(size,
+                                 vec_args.dot_size,
+                                 internal_call);
   }
 
   r_obj* out = vec_recycle_common_opts(xs, common, &size_opts);

@@ -61,13 +61,13 @@
       (expect_error(vec_size_common(.size = "foo")))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_size_common()`:
       ! `.size` must be a single number, not a string.
     Code
       (expect_error(vec_size_common(.size = 1:2)))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_size_common()`:
       ! `.size` must be a single number, not an integer vector of length 2.
 
 # vec_size_common() mentions `arg` in errors
@@ -85,7 +85,7 @@
       (expect_error(vec_size_common(.absent = NULL)))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_size_common()`:
       ! `.absent` must be supplied when `...` is empty.
 
 # `.absent` must be a length 1 integer if provided
@@ -94,13 +94,13 @@
       (expect_error(vec_size_common(.absent = 1), "must be a single integer"))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_size_common()`:
       ! `.absent` must be a single integer.
     Code
       (expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer"))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_size_common()`:
       ! `.absent` must be a single integer.
 
 # argument tags are forwarded
