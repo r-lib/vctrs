@@ -813,8 +813,15 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
     return x;
   }
 
-  x = PROTECT(vec_clone_referenced(x, owned));
-  Rf_setAttrib(x, R_NamesSymbol, names);
+  if (owned) {
+    // Possibly skip the cloning altogether
+    x = PROTECT(vec_clone_referenced(x, owned));
+    Rf_setAttrib(x, R_NamesSymbol, names);
+  } else {
+    // We need to clone, but to do this we will use `names<-`
+    // which can perform a cheaper ALTREP shallow duplication
+    x = PROTECT(set_names_dispatch(x, names));
+  }
 
   UNPROTECT(1);
   return x;
