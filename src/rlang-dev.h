@@ -36,4 +36,14 @@ r_obj* r_lazy_eval_protect(struct r_lazy lazy) {
 #define r_abort_lazy_call(LAZY, ...) \
   r_abort_call(KEEP(r_lazy_eval(LAZY)), __VA_ARGS__)
 
+
+static inline
+const char* r_c_str_format_error_arg(const char* x) {
+  r_obj* ffi_x = KEEP(r_chr(x));
+  const char* out = r_format_error_arg(ffi_x);
+  FREE(1);
+  return out;
+}
+
+
 #endif

@@ -42,6 +42,14 @@ r_obj* vctrs_arg(struct vctrs_arg* arg) {
   return out;
 }
 
+// vmax-protected
+const char* vec_arg_format(struct vctrs_arg* p_arg) {
+  r_obj* arg = KEEP(vctrs_arg(p_arg));
+  const char* out = r_format_error_arg(arg);
+  FREE(1);
+  return out;
+}
+
 /**
  * Takes a `struct vctrs_arg{}` linked list and a buffer and calls the
  * `fill()` method on each of those, recursively. Unless an error
