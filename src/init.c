@@ -318,8 +318,8 @@ static const R_CallMethodDef CallEntries[] = {
 
 extern r_obj* ffi_ptype_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_ptype_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_size_common(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_recycle_common(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_size_common(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_recycle_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_rbind(SEXP, SEXP, SEXP, SEXP);
@@ -330,8 +330,8 @@ extern SEXP vctrs_new_data_frame(SEXP);
 static const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_ptype_common",                 (DL_FUNC) &ffi_ptype_common, 1},
   {"ffi_ptype_common_opts",            (DL_FUNC) &ffi_ptype_common_opts, 2},
-  {"vctrs_size_common",                (DL_FUNC) &vctrs_size_common, 2},
-  {"vctrs_recycle_common",             (DL_FUNC) &vctrs_recycle_common, 1},
+  {"ffi_size_common",                  (DL_FUNC) &ffi_size_common, 2},
+  {"ffi_recycle_common",               (DL_FUNC) &ffi_recycle_common, 1},
   {"ffi_cast_common",                  (DL_FUNC) &ffi_cast_common, 1},
   {"ffi_cast_common_opts",             (DL_FUNC) &ffi_cast_common_opts, 2},
   {"vctrs_rbind",                      (DL_FUNC) &vctrs_rbind, 4},

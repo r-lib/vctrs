@@ -1,49 +1,46 @@
 #include "vctrs.h"
+#include "decl/size-common-decl.h"
 
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_size_common(SEXP ffi_call, SEXP op, SEXP args, SEXP env) {
+r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
+  args = r_node_cdr(args);
+
   // TODO! arg
   // TODO! call
   struct r_lazy call = r_lazy_null;
 
-  args = CDR(args);
+  r_obj* size = r_node_car(args); args = r_node_cdr(args);
+  r_obj* absent = r_node_car(args);
 
-  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  if (size != R_NilValue) {
-    R_len_t out = check_size(size, vec_args.dot_size, call);
-    UNPROTECT(1);
+  if (size != r_null) {
+    r_ssize out = check_size(size, vec_args.dot_size, call);
     return r_int(out);
   }
 
-  SEXP absent = PROTECT(Rf_eval(CAR(args), env));
-  if (absent != R_NilValue && (TYPEOF(absent) != INTSXP || Rf_length(absent) != 1)) {
-    Rf_errorcall(R_NilValue, "`.absent` must be a single integer.");
+  if (absent != r_null && (r_typeof(absent) != R_TYPE_integer || r_length(absent) != 1)) {
+    r_abort_lazy_call(call, "`.absent` must be a single integer.");
   }
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-  R_len_t common = vec_size_common(xs, -1);
+  r_obj* xs = KEEP(rlang_env_dots_list(env));
+  r_ssize common = vec_size_common(xs, -1);
 
-  SEXP out;
+  r_obj* out;
   if (common < 0) {
-    if (absent == R_NilValue) {
-      Rf_errorcall(R_NilValue, "`...` is empty, and no `.absent` value was supplied.");
+    if (absent == r_null) {
+      r_abort_lazy_call(call, "`...` is empty, and no `.absent` value was supplied.");
     }
     out = absent;
   } else {
     out = r_int(common);
   }
 
-  UNPROTECT(3);
+  FREE(1);
   return out;
 }
 
-
-static
-SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* data);
-
 r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
-  r_obj* common = KEEP(reduce(R_NilValue, args_empty, NULL, xs, &vctrs_size2_common, NULL));
+  r_obj* common = KEEP(reduce(r_null, args_empty, NULL, xs, &vctrs_size2_common, NULL));
   r_ssize out;
 
   if (common == r_null) {
@@ -56,17 +53,21 @@ r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
   return out;
 }
 
-static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* data) {
-  if (x == R_NilValue) {
+static
+r_obj* vctrs_size2_common(r_obj* x,
+                          r_obj* y,
+                          struct counters* counters,
+                          void* data) {
+  if (x == r_null) {
     counters_shift(counters);
     return y;
   }
-  if (y == R_NilValue) {
+  if (y == r_null) {
     return x;
   }
 
-  R_len_t nx = vec_size(x);
-  R_len_t ny = vec_size(y);
+  r_ssize nx = vec_size(x);
+  r_ssize ny = vec_size(y);
 
   if (nx == ny) {
     return x;
@@ -79,32 +80,35 @@ static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* 
     return x;
   }
 
-  stop_incompatible_size(x, y, nx, ny, counters->curr_arg, counters->next_arg);
+  stop_incompatible_size(x,
+                         y,
+                         nx,
+                         ny,
+                         counters->curr_arg,
+                         counters->next_arg);
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_recycle_common(SEXP ffi_call, SEXP op, SEXP args, SEXP env) {
+r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
+  args = r_node_cdr(args);
+
   // TODO! arg
   // TODO! call
   struct r_lazy call = r_lazy_null;
 
-  args = CDR(args);
+  r_obj* size = r_node_car(args); args = r_node_cdr(args);
+  r_obj* xs = KEEP(rlang_env_dots_list(env));
 
-  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-
-  R_len_t common;
-
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-
-  if (size != R_NilValue) {
+  r_ssize common;
+  if (size != r_null) {
     common = check_size(size, vec_args.dot_size, call);
   } else {
     common = vec_size_common(xs, -1);
   }
 
-  SEXP out = PROTECT(vec_recycle_common(xs, common));
+  r_obj* out = KEEP(vec_recycle_common(xs, common));
 
-  UNPROTECT(3);
+  FREE(2);
   return out;
 }
 

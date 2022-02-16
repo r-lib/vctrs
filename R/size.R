@@ -85,7 +85,7 @@ vec_size <- function(x) {
 #' @export
 #' @rdname vec_size
 vec_size_common <- function(..., .size = NULL, .absent = 0L) {
-  .External2(vctrs_size_common, .size, .absent)
+  .External2(ffi_size_common, .size, .absent)
 }
 
 #' @rdname vec_size

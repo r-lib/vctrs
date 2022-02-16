@@ -59,5 +59,5 @@ vec_recycle <- function(x, size, ..., x_arg = "", call = caller_env()) {
 #' @export
 #' @rdname vec_recycle
 vec_recycle_common <- function(..., .size = NULL) {
-  .External2(vctrs_recycle_common, .size)
+  .External2(ffi_recycle_common, .size)
 }
