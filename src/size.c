@@ -78,8 +78,9 @@ static
 r_obj* list_sizes(r_obj* x, const struct vec_error_info* opts) {
   if (!vec_is_list(x)) {
     r_abort_lazy_call(opts->call,
-                      "%s must be a list.",
-                      r_c_str_format_error_arg("x"));
+                      "%s must be a list, not %s.",
+                      r_c_str_format_error_arg("x"),
+                      r_friendly_type_of(x));
   }
 
   r_ssize size = vec_size(x);

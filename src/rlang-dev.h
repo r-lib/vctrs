@@ -45,5 +45,8 @@ const char* r_c_str_format_error_arg(const char* x) {
   return out;
 }
 
+// vmax-protected result
+const char* r_friendly_type_of(r_obj* x);
+
 
 #endif

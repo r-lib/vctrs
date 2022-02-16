@@ -338,7 +338,7 @@
     Output
       <error/rlang_error>
       Error in `list_sizes()`:
-      ! `x` must be a list.
+      ! `x` must be a list, not a <vctrs_foobar> object.
     Code
       (expect_error(list_sizes(list(env()))))
     Output
