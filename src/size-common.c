@@ -19,7 +19,9 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   }
 
   if (absent != r_null && (r_typeof(absent) != R_TYPE_integer || r_length(absent) != 1)) {
-    r_abort_lazy_call(call, "`.absent` must be a single integer.");
+    r_abort_lazy_call(call,
+                      "%s must be a single integer.",
+                      r_c_str_format_error_arg(".absent"));
   }
 
   r_obj* xs = KEEP(rlang_env_dots_list(env));
@@ -28,7 +30,10 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   r_obj* out;
   if (common < 0) {
     if (absent == r_null) {
-      r_abort_lazy_call(call, "`...` is empty, and no `.absent` value was supplied.");
+      r_abort_lazy_call(call,
+                        "%s is empty, and no %s value was supplied.",
+                        r_c_str_format_error_arg("..."),
+                        r_c_str_format_error_arg(".absent"));
     }
     out = absent;
   } else {
