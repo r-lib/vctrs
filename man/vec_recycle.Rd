@@ -7,7 +7,7 @@
 \usage{
 vec_recycle(x, size, ..., x_arg = "", call = caller_env())
 
-vec_recycle_common(..., .size = NULL)
+vec_recycle_common(..., .size = NULL, .arg = "", .call = caller_env())
 }
 \arguments{
 \item{x}{A vector to recycle.}
@@ -32,6 +32,15 @@ mentioned in error messages as the source of the error. See the
 
 \item{.size}{Desired output size. If omitted,
 will use the common size from \code{\link[=vec_size_common]{vec_size_common()}}.}
+
+\item{.arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
+
+\item{.call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{vec_recycle(x, size)} recycles a single vector to given size.

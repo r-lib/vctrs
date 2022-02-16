@@ -119,27 +119,39 @@ r_obj* vctrs_size2_common(r_obj* x,
 r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
-  // TODO! arg
-  // TODO! call
-  struct r_lazy call = r_lazy_null;
+  struct r_lazy call = { .x = syms.dot_call, .env = env };
+  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
+  struct size_common_opts size_opts = {
+    .p_arg = &arg,
+    .call = call
+  };
 
   r_obj* size = r_node_car(args); args = r_node_cdr(args);
   r_obj* xs = KEEP(rlang_env_dots_list(env));
 
   r_ssize common;
-  if (size != r_null) {
-    common = vec_as_short_length(size, vec_args.dot_size, call);
+  if (size == r_null) {
+    common = vec_size_common_opts(xs, -1, &size_opts);
   } else {
-    common = vec_size_common(xs, -1);
+    common = vec_as_short_length(size, vec_args.dot_size, call);
   }
 
-  r_obj* out = KEEP(vec_recycle_common(xs, common));
+  r_obj* out = vec_recycle_common_opts(xs, common, &size_opts);
 
-  FREE(2);
+  FREE(1);
   return out;
 }
 
 r_obj* vec_recycle_common(r_obj* xs, r_ssize size) {
+  struct size_common_opts opts = { 0 };
+  return vec_recycle_common_opts(xs, size, &opts);
+}
+
+r_obj* vec_recycle_common_opts(r_obj* xs,
+                               r_ssize size,
+                               const struct size_common_opts* p_opts) {
   if (size < 0) {
     return xs;
   }
@@ -147,11 +159,18 @@ r_obj* vec_recycle_common(r_obj* xs, r_ssize size) {
   xs = KEEP(r_clone_referenced(xs));
   r_ssize n = vec_size(xs);
 
-  for (r_ssize i = 0; i < n; ++i) {
+  r_ssize i = 0;
+  struct vctrs_arg* p_x_arg = new_subscript_arg(p_opts->p_arg,
+                                                r_names(xs),
+                                                n,
+                                                &i);
+  KEEP(p_x_arg->shelter);
+
+  for (; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
-    r_list_poke(xs, i, vec_recycle(elt, size, args_empty));
+    r_list_poke(xs, i, vec_recycle(elt, size, p_x_arg));
   }
 
-  FREE(1);
+  FREE(2);
   return xs;
 }

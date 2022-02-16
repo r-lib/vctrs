@@ -15,4 +15,8 @@ r_ssize vec_size_common_opts(r_obj* xs,
                              r_ssize absent,
                              const struct size_common_opts* opts);
 
+r_obj* vec_recycle_common_opts(r_obj* xs,
+                               r_ssize size,
+                               const struct size_common_opts* opts);
+
 #endif

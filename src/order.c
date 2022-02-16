@@ -363,7 +363,7 @@ SEXP vec_order_info_impl(SEXP x,
 
   struct size_common_opts size_opts = { .call = call };
   R_len_t arg_size = vec_size_common_opts(args, 0, &size_opts);
-  args = PROTECT_N(vec_recycle_common(args, arg_size), &n_prot);
+  args = PROTECT_N(vec_recycle_common_opts(args, arg_size, &size_opts), &n_prot);
 
   decreasing = VECTOR_ELT(args, 0);
   na_largest = VECTOR_ELT(args, 1);

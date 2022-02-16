@@ -247,11 +247,15 @@ static SEXP df_list_drop_null(SEXP x);
 static SEXP df_list_splice(SEXP x);
 
 SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_opts) {
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
   if (TYPEOF(x) != VECSXP) {
     r_stop_internal("`x` must be a list.");
   }
 
-  x = PROTECT(vec_recycle_common(x, size));
+  struct size_common_opts size_opts = { .call = call };
+  x = PROTECT(vec_recycle_common_opts(x, size, &size_opts));
 
   r_ssize n_cols = r_length(x);
 
