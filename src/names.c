@@ -687,21 +687,21 @@ SEXP r_seq_chr(const char* prefix, R_len_t n) {
 
 
 // Initialised at load time
-SEXP syms_set_rownames_fallback = NULL;
-SEXP fns_set_rownames_fallback = NULL;
+SEXP syms_set_rownames_dispatch = NULL;
+SEXP fns_set_rownames_dispatch = NULL;
 
-static SEXP set_rownames_fallback(SEXP x, SEXP names) {
-  return vctrs_dispatch2(syms_set_rownames_fallback, fns_set_rownames_fallback,
+static SEXP set_rownames_dispatch(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_rownames_dispatch, fns_set_rownames_dispatch,
                          syms_x, x,
                          syms_names, names);
 }
 
 // Initialised at load time
-SEXP syms_set_names_fallback = NULL;
-SEXP fns_set_names_fallback = NULL;
+SEXP syms_set_names_dispatch = NULL;
+SEXP fns_set_names_dispatch = NULL;
 
-static SEXP set_names_fallback(SEXP x, SEXP names) {
-  return vctrs_dispatch2(syms_set_names_fallback, fns_set_names_fallback,
+static SEXP set_names_dispatch(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_names_dispatch, fns_set_names_dispatch,
                          syms_x, x,
                          syms_names, names);
 }
@@ -734,7 +734,7 @@ static void check_names(SEXP x, SEXP names) {
 
 SEXP vec_set_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
   if (!proxy && OBJECT(x)) {
-    return set_rownames_fallback(x, names);
+    return set_rownames_dispatch(x, names);
   }
 
   int nprot = 0;
@@ -805,7 +805,7 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
   }
 
   if (!proxy && OBJECT(x)) {
-    return set_names_fallback(x, names);
+    return set_names_dispatch(x, names);
   }
 
   // Early exit if no new names and no existing names
@@ -956,13 +956,13 @@ struct name_repair_opts unique_repair_silent_opts;
 struct name_repair_opts no_repair_opts;
 
 void vctrs_init_names(SEXP ns) {
-  syms_set_rownames_fallback = Rf_install("set_rownames_fallback");
-  syms_set_names_fallback = Rf_install("set_names_fallback");
+  syms_set_rownames_dispatch = Rf_install("set_rownames_dispatch");
+  syms_set_names_dispatch = Rf_install("set_names_dispatch");
   syms_as_universal_names = Rf_install("as_universal_names");
   syms_check_unique_names = Rf_install("validate_unique");
 
-  fns_set_rownames_fallback = r_env_get(ns, syms_set_rownames_fallback);
-  fns_set_names_fallback = r_env_get(ns, syms_set_names_fallback);
+  fns_set_rownames_dispatch = r_env_get(ns, syms_set_rownames_dispatch);
+  fns_set_names_dispatch = r_env_get(ns, syms_set_names_dispatch);
   fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
   fns_check_unique_names = r_env_get(ns, syms_check_unique_names);
 
