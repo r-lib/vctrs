@@ -552,7 +552,10 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
   r_ssize i = 0;
   r_ssize y_arg_loc = 0;
   struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, x_names, x_len, &i);
+  KEEP(named_x_arg->shelter);
+
   struct vctrs_arg* named_y_arg = new_subscript_arg(opts->y_arg, y_names, y_len, &y_arg_loc);
+  KEEP(named_y_arg->shelter);
 
   // Fill in prototypes of all the columns that are in `x`, in order
   for (; i < x_len; ++i) {
@@ -613,7 +616,7 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
 
   init_data_frame(out, 0);
 
-  UNPROTECT(4);
+  UNPROTECT(6);
   return out;
 }
 
@@ -719,8 +722,12 @@ static SEXP df_cast_match(const struct cast_opts* opts,
 
   r_ssize i = 0;
   r_ssize x_arg_loc = 0;
+
   struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, x_names, r_length(x_names), &x_arg_loc);
+  KEEP(named_x_arg->shelter);
+
   struct vctrs_arg* named_to_arg = new_subscript_arg(opts->to_arg, to_names, to_len, &i);
+  KEEP(named_to_arg->shelter);
 
   for (; i < to_len; ++i) {
     R_len_t pos = to_dups_pos_data[i];
@@ -771,7 +778,7 @@ static SEXP df_cast_match(const struct cast_opts* opts,
                           syms_to, to);
   }
 
-  UNPROTECT(2);
+  UNPROTECT(4);
   return out;
 }
 
@@ -788,7 +795,10 @@ static SEXP df_cast_loop(const struct cast_opts* opts, SEXP names) {
 
   r_ssize i = 0;
   struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, names, len, &i);
+  KEEP(named_x_arg->shelter);
+
   struct vctrs_arg* named_to_arg = new_subscript_arg(opts->to_arg, names, len, &i);
+  KEEP(named_to_arg->shelter);
 
   for (; i < len; ++i) {
     struct cast_opts col_opts = {
@@ -809,7 +819,7 @@ static SEXP df_cast_loop(const struct cast_opts* opts, SEXP names) {
   init_data_frame(out, size);
   Rf_setAttrib(out, R_RowNamesSymbol, df_rownames(x));
 
-  UNPROTECT(1);
+  UNPROTECT(3);
   return out;
 }
 

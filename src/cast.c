@@ -245,6 +245,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
                                                 r_names(xs),
                                                 n,
                                                 &i);
+  KEEP(p_x_arg->shelter);
 
   for (; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
@@ -260,7 +261,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
 
   r_attrib_poke_names(out, r_names(xs));
 
-  FREE(2);
+  FREE(3);
   return out;
 }
 r_obj* vec_cast_common_params(r_obj* xs,
