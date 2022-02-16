@@ -413,10 +413,14 @@ test_that("can flatten data frames", {
   expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
 })
 
-test_that("can flatten data frames with rcrd columns containing 1 field (#1318)", {
-  col <- new_rcrd(list(x = 1))
+test_that("can flatten data frames with rcrd columns (#1318)", {
+  col <- new_rcrd(list(a = 1))
   df <- data_frame(col = col, y = 1)
-  expect_identical(vec_proxy_equal(df), data_frame(x = 1, y = 1))
+  expect_identical(vec_proxy_equal(df), data_frame(col = 1, y = 1))
+
+  col <- new_rcrd(list(a = 1, b = 2))
+  df <- data_frame(col = col, y = 1)
+  expect_identical(vec_proxy_equal(df), data_frame(a = 1, b = 2, y = 1))
 })
 
 test_that("new_data_frame() zaps existing attributes", {
