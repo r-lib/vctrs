@@ -64,8 +64,8 @@
       (expect_error(vec_cbind(foobar(list()))))
     Output
       <error/vctrs_error_scalar_type>
-      Error:
-      ! Input must be a vector, not a <vctrs_foobar> object.
+      Error in `vec_cbind()`:
+      ! `..1` must be a vector, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_cbind(a = 1:2, b = int())))
     Output
