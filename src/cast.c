@@ -221,7 +221,7 @@ r_obj* vec_cast_e(const struct cast_opts* opts,
 
   *err = r_try_catch(&vec_cast_e_cb,
                      &data,
-                     syms_vctrs_error_cast_lossy,
+                     syms_vctrs_error_incompatible_type,
                      NULL,
                      NULL);
   return data.out;

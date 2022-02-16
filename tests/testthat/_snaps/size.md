@@ -39,9 +39,9 @@
     Code
       (expect_error(my_function(foobar(1:2))))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/rlang_error>
       Error in `vec_as_short_length()`:
-      ! Can't convert `my_arg` <vctrs_foobar> to <double>.
+      ! `my_arg` must be a single number, not NULL.
     Code
       (expect_error(my_function(.Machine$integer.max + 1)))
     Output
