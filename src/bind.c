@@ -388,7 +388,8 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
 
   R_len_t nrow;
   if (size == R_NilValue) {
-    nrow = vec_size_common(xs, 0);
+    struct size_common_opts opts = { .call = call };
+    nrow = vec_size_common_opts(xs, 0, &opts);
   } else {
     nrow = vec_as_short_length(size, vec_args.dot_size, call);
   }

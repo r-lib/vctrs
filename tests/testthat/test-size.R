@@ -81,6 +81,13 @@ test_that("vec_size_common() checks inputs", {
   })
 })
 
+test_that("vec_size_common() mentions `arg` in errors", {
+  my_function <- function(...) vec_size_common(..., .arg = "my_arg")
+  expect_snapshot({
+    (expect_error(my_function(this_arg = 1:2, that_arg = int())))
+  })
+})
+
 test_that("vec_size_common with no input is 0L unless `.absent` is provided", {
   expect_identical(vec_size_common(), 0L)
   expect_identical(vec_size_common(NULL), 0L)

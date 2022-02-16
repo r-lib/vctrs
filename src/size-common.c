@@ -5,9 +5,10 @@
 // [[ register(external = TRUE) ]]
 r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
-  struct r_lazy call = { .x = env, .env = r_null };
 
-  // TODO! arg
+  struct r_lazy call = { .x = env, .env = r_null };
+  struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
   r_obj* size = r_node_car(args); args = r_node_cdr(args);
   r_obj* absent = r_node_car(args);
@@ -23,8 +24,13 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
                       r_c_str_format_error_arg(".absent"));
   }
 
+  struct size_common_opts size_opts = {
+    .p_arg = &arg,
+    .call = call
+  };
+
   r_obj* xs = KEEP(rlang_env_dots_list(env));
-  r_ssize common = vec_size_common(xs, -1);
+  r_ssize common = vec_size_common_opts(xs, -1, &size_opts);
 
   r_obj* out;
   if (common < 0) {
@@ -44,7 +50,19 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 }
 
 r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
-  r_obj* common = KEEP(reduce(r_null, args_empty, NULL, xs, &vctrs_size2_common, NULL));
+  struct size_common_opts opts = { 0 };
+  return vec_size_common_opts(xs, absent, &opts);
+}
+
+r_ssize vec_size_common_opts(r_obj* xs,
+                             r_ssize absent,
+                             const struct size_common_opts* opts) {
+  r_obj* common = KEEP(reduce(r_null,
+                              args_empty,
+                              opts->p_arg,
+                              xs,
+                              &vctrs_size2_common,
+                              NULL));
   r_ssize out;
 
   if (common == r_null) {

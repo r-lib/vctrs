@@ -350,6 +350,9 @@ SEXP vec_order_info_impl(SEXP x,
                          SEXP chr_proxy_collate,
                          bool chr_ordered,
                          bool group_sizes) {
+  // TODO call
+  struct r_lazy call = r_lazy_null;
+
   int n_prot = 0;
 
   SEXP decreasing = PROTECT_N(parse_direction(direction), &n_prot);
@@ -357,7 +360,9 @@ SEXP vec_order_info_impl(SEXP x,
 
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
   SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_largest), &n_prot);
-  R_len_t arg_size = vec_size_common(args, 0);
+
+  struct size_common_opts size_opts = { .call = call };
+  R_len_t arg_size = vec_size_common_opts(args, 0, &size_opts);
   args = PROTECT_N(vec_recycle_common(args, arg_size), &n_prot);
 
   decreasing = VECTOR_ELT(args, 0);
