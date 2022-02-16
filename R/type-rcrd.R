@@ -41,6 +41,12 @@ vec_restore.vctrs_rcrd <- function(x, to, ...) {
 }
 
 #' @export
+vec_proxy_equal.vctrs_rcrd <- function(x, ...) {
+  # Recursively proxy using a data frame
+  vec_proxy_equal(new_data_frame(x))
+}
+
+#' @export
 length.vctrs_rcrd <- function(x) {
   vec_size(x)
 }
@@ -138,13 +144,6 @@ rep.vctrs_rcrd <- function(x, ...) {
 }
 
 # Equality and ordering ---------------------------------------------------
-
-# FIXME
-
-#' @export
-vec_proxy_compare.vctrs_rcrd <- function(x, ...) {
-  new_data_frame(vec_data(x), n = length(x))
-}
 
 #' @export
 vec_math.vctrs_rcrd <- function(.fn, .x, ...) {

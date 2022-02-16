@@ -26,6 +26,24 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
+test_that("equality, comparison, and order proxies are recursive (#1503)", {
+  base <- new_rcrd(list(a = 1))
+  x <- new_rcrd(list(x = base))
+
+  expect_identical(vec_proxy_equal(x), 1)
+  expect_identical(vec_proxy_compare(x), 1)
+  expect_identical(vec_proxy_order(x), 1)
+
+  base <- new_rcrd(list(a = 1, b = 2))
+  x <- new_rcrd(list(x = base, y = base))
+
+  expect <- data_frame(a = 1, b = 2, a = 1, b = 2, .name_repair = "minimal")
+
+  expect_identical(vec_proxy_equal(x), expect)
+  expect_identical(vec_proxy_compare(x), expect)
+  expect_identical(vec_proxy_order(x), expect)
+})
+
 # base methods ------------------------------------------------------------
 
 test_that("has no names", {
