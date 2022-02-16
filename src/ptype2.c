@@ -168,12 +168,13 @@ r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
 struct is_coercible_data {
   const struct ptype2_opts* opts;
   int* dir;
+  r_obj* out;
 };
 
 static
 void vec_is_coercible_cb(void* data_) {
   struct is_coercible_data* data = (struct is_coercible_data*) data_;
-  vec_ptype2_opts(data->opts, data->dir);
+  data->out = vec_ptype2_opts(data->opts, data->dir);
 }
 
 static
@@ -183,6 +184,7 @@ void vec_is_coercible_e(const struct ptype2_opts* opts,
   struct is_coercible_data data = {
     .opts = opts,
     .dir = dir,
+    .out = r_null
   };
 
   *err = r_try_catch(&vec_is_coercible_cb,
@@ -197,6 +199,24 @@ bool vec_is_coercible(const struct ptype2_opts* opts,
   ERR err = NULL;
   vec_is_coercible_e(opts, dir, &err);
   return !err;
+}
+
+r_obj* vec_ptype2_e(const struct ptype2_opts* opts,
+                    int* dir,
+                    ERR* err) {
+  struct is_coercible_data data = {
+    .opts = opts,
+    .dir = dir,
+    .out = r_null
+  };
+
+  *err = r_try_catch(&vec_is_coercible_cb,
+                     &data,
+                     syms_vctrs_error_incompatible_type,
+                     NULL,
+                     NULL);
+
+  return data.out;
 }
 
 // [[ register() ]]
