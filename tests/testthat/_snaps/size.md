@@ -53,7 +53,7 @@
     Output
       <error/rlang_error>
       Error in `vec_as_short_length()`:
-      ! `my_arg` is too large a number and long vectors are not supported.
+      ! `my_arg` is too large a number.
 
 # vec_size_common() checks inputs
 

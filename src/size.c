@@ -281,6 +281,7 @@ r_ssize vec_as_ssize(r_obj* n,
       goto invalid;
     }
   }
+  KEEP(n);
 
   switch (r_typeof(n)) {
 
@@ -301,24 +302,26 @@ r_ssize vec_as_ssize(r_obj* n,
 
     if (out > R_SSIZE_MAX) {
       r_abort_lazy_call(call,
-                        "%s is too large a number and long vectors are not supported.",
+                        "%s is too large a number.",
                         vec_arg_format(p_arg));
     }
 
-    return (r_ssize) floor(out);
+    FREE(1);
+    return (r_ssize) out;
   }
 
   case R_TYPE_integer: {
     if (r_length(n) != 1) {
       goto invalid;
     }
-    int out = (r_ssize) r_int_get(n, 0);
+    int out = r_int_get(n, 0);
 
     if (out == r_globals.na_int) {
       goto invalid;
     }
 
-    return out;
+    FREE(1);
+    return (r_ssize) out;
   }
 
   invalid:
