@@ -4,6 +4,13 @@
 #include "vctrs-core.h"
 
 
+// Materialise an argument tag as a CHARSXP.
+r_obj* vctrs_arg(struct vctrs_arg* arg);
+
+// Materialise an argument tag as a vmax-protected C string.
+const char* vec_arg_format(struct vctrs_arg* p_arg);
+
+
 // Simple wrapper around a string
 struct vctrs_arg new_wrapper_arg(struct vctrs_arg* parent,
                                  const char* arg);
@@ -38,9 +45,6 @@ struct vctrs_arg* new_subscript_arg(struct vctrs_arg* parent,
                                     r_obj* names,
                                     r_ssize n,
                                     r_ssize* p_i);
-
-// Materialise an argument tag as a CHARSXP.
-r_obj* vctrs_arg(struct vctrs_arg* arg);
 
 
 #endif

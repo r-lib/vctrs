@@ -77,7 +77,10 @@ r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
 static
 r_obj* list_sizes(r_obj* x, const struct vec_error_info* opts) {
   if (!vec_is_list(x)) {
-    r_abort_lazy_call(opts->call, "`x` must be a list.");
+    r_abort_lazy_call(opts->call,
+                      "%s must be a list, not %s.",
+                      r_c_str_format_error_arg("x"),
+                      r_friendly_type_of(x));
   }
 
   r_ssize size = vec_size(x);
@@ -242,13 +245,17 @@ r_ssize size_validate(r_obj* size, const char* arg) {
                   call);
 
   if (r_length(size) != 1) {
-    r_abort_lazy_call(call, "`%s` must be a single integer.", arg);
+    r_abort_lazy_call(call,
+                      "%s must be a single integer.",
+                      r_c_str_format_error_arg(arg));
   }
 
   int out = r_int_get(size, 0);
 
   if (out == r_globals.na_int) {
-    r_abort_lazy_call(call, "`%s` can't be missing.", arg);
+    r_abort_lazy_call(call,
+                      "`%s` can't be missing.",
+                      r_c_str_format_error_arg(arg));
   }
 
   return out;
