@@ -1,3 +1,75 @@
+# vec_as_short_length() checks inputs
+
+    Code
+      (expect_error(my_function(-1)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a positive number or zero.
+    Code
+      (expect_error(my_function(1:2)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a single number, not an integer vector of length 2.
+    Code
+      (expect_error(my_function(1.5)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a whole number, not a fractional number.
+    Code
+      (expect_error(my_function(NA)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a single number, not `NA`.
+    Code
+      (expect_error(my_function(na_int)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a single number, not an integer `NA`.
+    Code
+      (expect_error(my_function("foo")))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a single number, not a string.
+    Code
+      (expect_error(my_function(foobar(1:2))))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` must be a single number, not NULL.
+    Code
+      (expect_error(my_function(.Machine$integer.max + 1)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` is too large a number and long vectors are not supported.
+    Code
+      (expect_error(my_function(.Machine$double.xmax)))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_short_length()`:
+      ! `my_arg` is too large a number.
+
+# vec_size_common() checks inputs
+
+    Code
+      (expect_error(vec_size_common(.size = "foo")))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.size` must be a single number, not a string.
+    Code
+      (expect_error(vec_size_common(.size = 1:2)))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.size` must be a single number, not an integer vector of length 2.
+
 # `.absent` must be supplied when `...` is empty
 
     Code

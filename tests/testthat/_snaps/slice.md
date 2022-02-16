@@ -121,3 +121,36 @@
       ! Can't subset elements past the end.
       x Elements `A`, `B`, `C`, `D`, `E`, etc. don't exist.
 
+# vec_init() validates `n`
+
+    Code
+      (expect_error(vec_init(1L, 1.5)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a whole number, not a fractional number.
+    Code
+      (expect_error(vec_init(1L, c(1, 2))))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a single number, not a double vector of length 2.
+    Code
+      (expect_error(vec_init(1L, -1L)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a positive number or zero.
+    Code
+      (expect_error(vec_init(1L, NA)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a single number, not `NA`.
+    Code
+      (expect_error(vec_init(1L, NA_integer_)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a single number, not an integer `NA`.
+

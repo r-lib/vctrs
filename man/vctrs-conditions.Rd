@@ -104,7 +104,7 @@ testing easier.
 # Most of the time, `maybe_lossy_cast()` returns its input normally:
 maybe_lossy_cast(
   c("foo", "bar"),
-  NULL,
+  NA,
   "",
   lossy = c(FALSE, FALSE),
   x_arg = "",
@@ -114,7 +114,7 @@ maybe_lossy_cast(
 # If `lossy` has any `TRUE`, an error is thrown:
 try(maybe_lossy_cast(
   c("foo", "bar"),
-  NULL,
+  NA,
   "",
   lossy = c(FALSE, TRUE),
   x_arg = "",
@@ -125,7 +125,7 @@ try(maybe_lossy_cast(
 allow_lossy_cast(
   maybe_lossy_cast(
     c("foo", "bar"),
-    NULL,
+    NA,
     "",
     lossy = c(FALSE, TRUE),
     x_arg = "",

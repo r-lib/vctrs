@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Lossy cast errors now inherit from incompatible type errors.
+
 * `vec_is_list()` now returns `TRUE` for `AsIs` lists (#1463).
 
 * `vec_assert()`, `vec_ptype2()`, `vec_cast()`, and `vec_as_location()`

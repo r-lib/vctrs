@@ -1638,6 +1638,7 @@ void c_print_backtrace() {
 #endif
 }
 
+
 struct r_lazy r_lazy_null;
 
 void vctrs_init_utils(SEXP ns) {

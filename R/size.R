@@ -144,3 +144,9 @@ vec_seq_along <- function(x) {
 vec_init_along <- function(x, y = x) {
   vec_slice(x, rep_len(NA_integer_, vec_size(y)))
 }
+
+vec_as_short_length <- function(n,
+                                arg = caller_arg(n),
+                                call = caller_env()) {
+  .Call(ffi_as_short_length, n, environment())
+}

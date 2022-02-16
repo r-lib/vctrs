@@ -13,7 +13,7 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   r_obj* absent = r_node_car(args);
 
   if (size != r_null) {
-    r_ssize out = check_size(size, vec_args.dot_size, call);
+    r_ssize out = vec_as_short_length(size, vec_args.dot_size, call);
     return r_int(out);
   }
 
@@ -105,7 +105,7 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 
   r_ssize common;
   if (size != r_null) {
-    common = check_size(size, vec_args.dot_size, call);
+    common = vec_as_short_length(size, vec_args.dot_size, call);
   } else {
     common = vec_size_common(xs, -1);
   }

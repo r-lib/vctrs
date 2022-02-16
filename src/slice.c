@@ -440,21 +440,12 @@ r_obj* vec_init(r_obj* x, r_ssize n) {
 
 // [[ register() ]]
 r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
-  struct r_lazy frame = { .x = ffi_frame, .env = r_null };
+  struct r_lazy call = { .x = ffi_frame, .env = r_null };
+  r_ssize n = vec_as_short_length(ffi_n, args_n, call);
 
-  ffi_n = KEEP(vec_cast(ffi_n,
-                        vctrs_shared_empty_int,
-                        args_n,
-                        args_empty,
-                        frame));
-  // TODO! Pass `frame`
-  vec_check_size(ffi_n, 1, args_n);
-
-  // TODO! Pass `frame`
-  r_ssize n = r_int_get(ffi_n, 0);
+  // TODO! Pass `call`
   r_obj* out = vec_init(x, n);
 
-  FREE(1);
   return out;
 }
 

@@ -78,6 +78,10 @@ r_obj* vec_ptype2(r_obj* x,
 
 bool vec_is_coercible(const struct ptype2_opts* opts, int* dir);
 
+r_obj* vec_ptype2_e(const struct ptype2_opts* opts,
+                    int* dir,
+                    ERR* err);
+
 struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    r_obj* y,
                                    struct vctrs_arg* x_arg,

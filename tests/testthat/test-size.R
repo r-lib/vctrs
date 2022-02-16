@@ -1,3 +1,21 @@
+test_that("vec_as_short_length() checks inputs", {
+  expect_equal(vec_as_short_length(0), 0)
+  expect_equal(vec_as_short_length(1L), 1)
+
+  my_function <- function(my_arg) vec_as_short_length(my_arg)
+  expect_snapshot({
+    (expect_error(my_function(-1)))
+    (expect_error(my_function(1:2)))
+    (expect_error(my_function(1.5)))
+    (expect_error(my_function(NA)))
+    (expect_error(my_function(na_int)))
+    (expect_error(my_function("foo")))
+    (expect_error(my_function(foobar(1:2))))
+    (expect_error(my_function(.Machine$integer.max + 1)))
+    (expect_error(my_function(.Machine$double.xmax)))
+  })
+})
+
 
 # vec_size -----------------------------------------------------------------
 
@@ -55,6 +73,13 @@ test_that("can take the size of unspecified objects", {
 })
 
 # vec_size_common ---------------------------------------------------------
+
+test_that("vec_size_common() checks inputs", {
+  expect_snapshot({
+    (expect_error(vec_size_common(.size = "foo")))
+    (expect_error(vec_size_common(.size = 1:2)))
+  })
+})
 
 test_that("vec_size_common with no input is 0L unless `.absent` is provided", {
   expect_identical(vec_size_common(), 0L)
