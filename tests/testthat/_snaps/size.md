@@ -76,7 +76,7 @@
       (expect_error(my_function(this_arg = 1:2, that_arg = int())))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `vec_size_common()`:
       ! Can't recycle `my_arg$this_arg` (size 2) to match `my_arg$that_arg` (size 0).
 
 # `.absent` must be supplied when `...` is empty
@@ -108,7 +108,7 @@
     Code
       vec_size_common(1:2, 1, 1:4)
     Condition
-      Error:
+      Error in `vec_size_common()`:
       ! Can't recycle `..1` (size 2) to match `..3` (size 4).
 
 ---
@@ -116,6 +116,6 @@
     Code
       vec_size_common(foo = 1:2, 1, bar = 1:4)
     Condition
-      Error:
+      Error in `vec_size_common()`:
       ! Can't recycle `foo` (size 2) to match `bar` (size 4).
 

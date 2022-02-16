@@ -57,12 +57,14 @@ r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
 r_ssize vec_size_common_opts(r_obj* xs,
                              r_ssize absent,
                              const struct size_common_opts* opts) {
+  struct size_common_opts mut_opts = *opts;
+
   r_obj* common = KEEP(reduce(r_null,
                               args_empty,
                               opts->p_arg,
                               xs,
                               &vctrs_size2_common,
-                              NULL));
+                              &mut_opts));
   r_ssize out;
 
   if (common == r_null) {
@@ -80,6 +82,8 @@ r_obj* vctrs_size2_common(r_obj* x,
                           r_obj* y,
                           struct counters* counters,
                           void* data) {
+  struct size_common_opts* opts = data;
+
   if (x == r_null) {
     counters_shift(counters);
     return y;
@@ -107,7 +111,8 @@ r_obj* vctrs_size2_common(r_obj* x,
                          nx,
                          ny,
                          counters->curr_arg,
-                         counters->next_arg);
+                         counters->next_arg,
+                         opts->call);
 }
 
 // [[ register(external = TRUE) ]]
