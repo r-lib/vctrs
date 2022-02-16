@@ -233,31 +233,99 @@ r_obj* vec_recycle_fallback(r_obj* x,
   stop_recycle_incompatible_size(x_size, size, x_arg, r_lazy_null);
 }
 
+r_obj* ffi_as_short_length(r_obj* n, r_obj* frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
 
-r_ssize check_size(r_obj* size,
-                   struct vctrs_arg* p_arg,
-                   struct r_lazy call) {
-  size = vec_cast(size,
-                  vctrs_shared_empty_int,
-                  p_arg,
-                  args_empty,
-                  call);
+  struct r_lazy arg_lazy = { .x = syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
-  if (r_length(size) != 1) {
+  return r_len(vec_as_short_length(n, &arg, call));
+}
+
+r_ssize vec_as_short_length(r_obj* n,
+                            struct vctrs_arg* p_arg,
+                            struct r_lazy call) {
+  r_ssize out = vec_as_ssize(n, p_arg, call);
+
+  if (out < 0) {
     r_abort_lazy_call(call,
-                      "%s must be a single integer, not %s.",
-                      vec_arg_format(p_arg),
-                      r_friendly_type_of_length(size));
+                      "%s must be a positive number or zero.",
+                      vec_arg_format(p_arg));
   }
 
-  int out = r_int_get(size, 0);
-
-  if (out == r_globals.na_int) {
+  if (out > INT_MAX) {
+    // Ideally we'd mention long vector support in an info bullets
     r_abort_lazy_call(call,
-                      "%s must be a single number, not %s.",
-                      vec_arg_format(p_arg),
-                      r_friendly_type_of(size));
+                      "%s is too large a number and long vectors are not supported.",
+                      vec_arg_format(p_arg));
   }
 
   return out;
+}
+
+// Adapted from `r_arg_as_ssize()`
+r_ssize vec_as_ssize(r_obj* n,
+                     struct vctrs_arg* p_arg,
+                     struct r_lazy call) {
+  if (r_is_object(n)) {
+    struct cast_opts cast_opts = {
+      .x = n,
+      .to = r_globals.empty_dbl,
+      .x_arg = p_arg,
+      .call = call
+    };
+    ERR err = NULL;
+    n = vec_cast_e(&cast_opts, &err);
+
+    if (err) {
+      goto invalid;
+    }
+  }
+
+  switch (r_typeof(n)) {
+
+  case R_TYPE_double: {
+    if (r_length(n) != 1) {
+      goto invalid;
+    }
+    double out = r_dbl_get(n, 0);
+
+    if (out == r_globals.na_int) {
+      goto invalid;
+    }
+    if (out != floor(out)) {
+      r_abort_lazy_call(call,
+                        "%s must be a whole number, not a fractional number.",
+                        vec_arg_format(p_arg));
+    }
+
+    if (out > R_SSIZE_MAX) {
+      r_abort_lazy_call(call,
+                        "%s is too large a number and long vectors are not supported.",
+                        vec_arg_format(p_arg));
+    }
+
+    return (r_ssize) floor(out);
+  }
+
+  case R_TYPE_integer: {
+    if (r_length(n) != 1) {
+      goto invalid;
+    }
+    int out = (r_ssize) r_int_get(n, 0);
+
+    if (out == r_globals.na_int) {
+      goto invalid;
+    }
+
+    return out;
+  }
+
+  invalid:
+  default:
+    r_abort_lazy_call(call,
+                      "%s must be a single number, not %s.",
+                      vec_arg_format(p_arg),
+                      r_friendly_type_of_length(n));
+  }
 }

@@ -146,6 +146,7 @@ extern r_obj* ffi_interval_complement(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_check_list(r_obj*, r_obj*);
 extern r_obj* ffi_list_all_vectors(r_obj*);
 extern r_obj* ffi_list_check_all_vectors(r_obj*, r_obj*);
+extern r_obj* ffi_as_short_length(r_obj*, r_obj*);
 
 
 // Maturing
@@ -313,6 +314,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_check_list",                        (DL_FUNC) &ffi_check_list, 2},
   {"ffi_list_all_vectors",                  (DL_FUNC) &ffi_list_all_vectors, 2},
   {"ffi_list_check_all_vectors",            (DL_FUNC) &ffi_list_check_all_vectors, 2},
+  {"ffi_as_short_length",                   (DL_FUNC) &ffi_as_short_length, 2},
   {NULL, NULL, 0}
 };
 

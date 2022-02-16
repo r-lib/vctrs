@@ -5,9 +5,13 @@
 
 r_ssize vec_size(r_obj* x);
 
-r_ssize check_size(r_obj* size,
-                   struct vctrs_arg* p_arg,
-                   struct r_lazy call);
+r_ssize vec_as_short_length(r_obj* size,
+                            struct vctrs_arg* p_arg,
+                            struct r_lazy call);
+
+r_ssize vec_as_ssize(r_obj* n,
+                     struct vctrs_arg* arg,
+                     struct r_lazy call);
 
 r_obj* vec_recycle2(r_obj* x,
                     r_ssize size,
