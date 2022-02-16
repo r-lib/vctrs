@@ -29,7 +29,9 @@ test_that("type of column is common type of individual columns", {
   expect_equal(vec_rbind(x_int, x_int), data_frame(x = c(1L, 1L)))
   expect_equal(vec_rbind(x_int, x_dbl), data_frame(x = c(1, 2.5)))
 
-  expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
+  })
 })
 
 test_that("result contains union of columns", {
@@ -176,11 +178,13 @@ test_that("vec_rbind() respects size invariants (#286)", {
 })
 
 test_that("can repair names in `vec_rbind()` (#229)", {
-  expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`")
-  expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`")
+  expect_snapshot({
+    (expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`"))
+    (expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`"))
+    (expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+  })
 
   expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = "unique"), c("a...1", "a...2"))
-  expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_rbind(list(`_` = 1)), "_")
   expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
@@ -200,7 +204,9 @@ test_that("can construct an id column", {
 })
 
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
-  expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
+  expect_snapshot({
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays"))
+  })
 })
 
 test_that("row names are preserved by vec_rbind()", {
@@ -218,14 +224,16 @@ test_that("can assign row names in vec_rbind()", {
   df1 <- mtcars[1:3, ]
   df2 <- mtcars[4:5, ]
 
-  expect_error(
-    vec_rbind(
-      foo = df1,
-      df2,
-      .names_to = NULL
-    ),
-    "specification"
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(
+        foo = df1,
+        df2,
+        .names_to = NULL
+      ),
+      "specification"
+    ))
+  })
 
   # Combination
   out <- vec_rbind(

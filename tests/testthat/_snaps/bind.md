@@ -1,3 +1,12 @@
+# type of column is common type of individual columns
+
+    Code
+      (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error:
+      ! Can't combine `..1$x` <integer> and `..2$x` <character>.
+
 # names are supplied if needed
 
     Code
@@ -5,6 +14,49 @@
     Message
       New names:
       * `` -> `...1`
+
+# can repair names in `vec_rbind()` (#229)
+
+    Code
+      (expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `.name_repair` can't be `"none"`.
+      It must be one of `"unique"`, `"universal"`, or `"check_unique"`.
+    Code
+      (expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `.name_repair` can't be `"minimal"`.
+      It must be one of `"unique"`, `"universal"`, or `"check_unique"`.
+    Code
+      (expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+
+# vec_rbind() fails with arrays of dimensionality > 3
+
+    Code
+      (expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! Can't bind arrays.
+
+# can assign row names in vec_rbind()
+
+    Code
+      (expect_error(vec_rbind(foo = df1, df2, .names_to = NULL), "specification"))
+    Output
+      <simpleError: Can't merge the outer name `foo` with a vector of length > 1.
+      Please supply a `.name_spec` specification.>
 
 # duplicate names are de-deduplicated
 
