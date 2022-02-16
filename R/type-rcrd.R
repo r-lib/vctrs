@@ -31,7 +31,7 @@ new_rcrd <- function(fields, ..., class = character()) {
 
 #' @export
 vec_proxy.vctrs_rcrd <- function(x, ...) {
-  new_data_frame(unclass(x))
+  new_data_frame(x)
 }
 #' @export
 vec_restore.vctrs_rcrd <- function(x, to, ...) {
