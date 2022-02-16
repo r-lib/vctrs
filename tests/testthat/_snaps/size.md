@@ -1,3 +1,18 @@
+# `.absent` must be a length 1 integer if provided
+
+    Code
+      (expect_error(vec_size_common(.absent = 1), "must be a single integer"))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.absent` must be a single integer.
+    Code
+      (expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer"))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.absent` must be a single integer.
+
 # argument tags are forwarded
 
     Code

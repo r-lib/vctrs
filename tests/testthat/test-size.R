@@ -63,8 +63,10 @@ test_that("vec_size_common with no input is 0L unless `.absent` is provided", {
 })
 
 test_that("`.absent` must be a length 1 integer if provided", {
-  expect_error(vec_size_common(.absent = 1), "must be a single integer")
-  expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer")
+  expect_snapshot({
+    (expect_error(vec_size_common(.absent = 1), "must be a single integer"))
+    (expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer"))
+  })
 })
 
 test_that("`NULL` is treated as the absence of input", {

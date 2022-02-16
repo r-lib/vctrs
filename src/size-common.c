@@ -5,10 +5,9 @@
 // [[ register(external = TRUE) ]]
 r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
+  struct r_lazy call = { .x = env, .env = r_null };
 
   // TODO! arg
-  // TODO! call
-  struct r_lazy call = r_lazy_null;
 
   r_obj* size = r_node_car(args); args = r_node_cdr(args);
   r_obj* absent = r_node_car(args);
