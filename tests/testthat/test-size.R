@@ -56,6 +56,14 @@ test_that("can take the size of unspecified objects", {
 
 # vec_size_common ---------------------------------------------------------
 
+test_that("vec_size_common() checks inputs", {
+  expect_snapshot({
+    (expect_error(vec_size_common(.size = "foo")))
+    (expect_error(vec_size_common(.size = 1:2)))
+    (expect_error(vec_size_common(.size = NA)))
+  })
+})
+
 test_that("vec_size_common with no input is 0L unless `.absent` is provided", {
   expect_identical(vec_size_common(), 0L)
   expect_identical(vec_size_common(NULL), 0L)

@@ -1,3 +1,24 @@
+# vec_size_common() checks inputs
+
+    Code
+      (expect_error(vec_size_common(.size = "foo")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `vec_size_common()`:
+      ! Can't convert `.size` <character> to <integer>.
+    Code
+      (expect_error(vec_size_common(.size = 1:2)))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.size` must be a single integer, not an integer vector of length 2.
+    Code
+      (expect_error(vec_size_common(.size = NA)))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.size` must be a single number, not an integer `NA`.
+
 # `.absent` must be supplied when `...` is empty
 
     Code

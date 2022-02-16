@@ -239,22 +239,24 @@ r_ssize check_size(r_obj* size,
                    struct r_lazy call) {
   size = vec_cast(size,
                   vctrs_shared_empty_int,
-                  args_empty,
+                  p_arg,
                   args_empty,
                   call);
 
   if (r_length(size) != 1) {
     r_abort_lazy_call(call,
-                      "%s must be a single integer.",
-                      vec_arg_format(p_arg));
+                      "%s must be a single integer, not %s.",
+                      vec_arg_format(p_arg),
+                      r_friendly_type_of_length(size));
   }
 
   int out = r_int_get(size, 0);
 
   if (out == r_globals.na_int) {
     r_abort_lazy_call(call,
-                      "`%s` can't be missing.",
-                      vec_arg_format(p_arg));
+                      "%s must be a single number, not %s.",
+                      vec_arg_format(p_arg),
+                      r_friendly_type_of(size));
   }
 
   return out;
