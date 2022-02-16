@@ -185,17 +185,20 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
 // [[ register() ]]
 SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
                                                                   args_empty,
                                                                   false,
-                                                                  r_lazy_null);
+                                                                  call);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == R_NilValue) {
     c_size = vec_size_common(x, 0);
   } else {
-    c_size = check_size(size, vec_args.dot_size);
+    c_size = check_size(size, vec_args.dot_size, call);
   }
 
   SEXP out = data_frame(x, c_size, &name_repair_opts);
@@ -216,17 +219,20 @@ SEXP data_frame(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repa
 
 // [[ register() ]]
 SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
                                                                   args_empty,
                                                                   false,
-                                                                  r_lazy_null);
+                                                                  call);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == R_NilValue) {
     c_size = vec_size_common(x, 0);
   } else {
-    c_size = check_size(size, vec_args.dot_size);
+    c_size = check_size(size, vec_args.dot_size, call);
   }
 
   SEXP out = df_list(x, c_size, &name_repair_opts);

@@ -361,6 +361,9 @@ SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
 }
 
 static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair) {
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
   R_len_t n = Rf_length(xs);
 
   // Find the common container type of inputs
@@ -373,7 +376,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
                                               DF_FALLBACK_DEFAULT,
                                               S3_FALLBACK_false,
                                               args_empty,
-                                              r_lazy_null));
+                                              call));
   if (type == R_NilValue) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
   } else if (!is_data_frame(type)) {
@@ -387,7 +390,7 @@ static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* n
   if (size == R_NilValue) {
     nrow = vec_size_common(xs, 0);
   } else {
-    nrow = check_size(size, vec_args.dot_size);
+    nrow = check_size(size, vec_args.dot_size, call);
   }
 
   if (rownames != R_NilValue && Rf_length(rownames) != nrow) {

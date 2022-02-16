@@ -2,8 +2,9 @@
 #include "decl/assert-decl.h"
 
 void vec_assert(r_obj* x, r_ssize size, struct vctrs_arg* arg) {
-  // TODO! error call
-  vec_check_vector(x, arg, r_lazy_null);
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+  vec_check_vector(x, arg, call);
 
   if (size != -1) {
     // `size == -1` makes no assertion about size

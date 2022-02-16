@@ -2,12 +2,16 @@
 
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_size_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_size_common(SEXP ffi_call, SEXP op, SEXP args, SEXP env) {
+  // TODO! arg
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
   args = CDR(args);
 
   SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
   if (size != R_NilValue) {
-    R_len_t out = check_size(size, vec_args.dot_size);
+    R_len_t out = check_size(size, vec_args.dot_size, call);
     UNPROTECT(1);
     return r_int(out);
   }
@@ -79,7 +83,11 @@ static SEXP vctrs_size2_common(SEXP x, SEXP y, struct counters* counters, void* 
 }
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_recycle_common(SEXP call, SEXP op, SEXP args, SEXP env) {
+SEXP vctrs_recycle_common(SEXP ffi_call, SEXP op, SEXP args, SEXP env) {
+  // TODO! arg
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
   args = CDR(args);
 
   SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
@@ -89,7 +97,7 @@ SEXP vctrs_recycle_common(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP xs = PROTECT(rlang_env_dots_list(env));
 
   if (size != R_NilValue) {
-    common = check_size(size, vec_args.dot_size);
+    common = check_size(size, vec_args.dot_size, call);
   } else {
     common = vec_size_common(xs, -1);
   }

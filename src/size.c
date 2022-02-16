@@ -234,10 +234,9 @@ r_obj* vec_recycle_fallback(r_obj* x,
 }
 
 
-r_ssize check_size(r_obj* size, struct vctrs_arg* p_arg) {
-  // TODO! Error call
-  struct r_lazy call = r_lazy_null;
-
+r_ssize check_size(r_obj* size,
+                   struct vctrs_arg* p_arg,
+                   struct r_lazy call) {
   size = vec_cast(size,
                   vctrs_shared_empty_int,
                   args_empty,
