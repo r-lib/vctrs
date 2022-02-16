@@ -59,7 +59,7 @@
       (expect_error(my_function()))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `my_function()`:
       ! Can't recycle `..1` (size 2) to match `..2` (size 10).
 
 # unsupported error reports correct error call

@@ -89,7 +89,8 @@ vec_size <- function(x) {
 vec_size_common <- function(...,
                             .size = NULL,
                             .absent = 0L,
-                            .arg = "") {
+                            .arg = "",
+                            .call = caller_env()) {
   .External2(ffi_size_common, .size, .absent)
 }
 

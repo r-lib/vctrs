@@ -61,13 +61,13 @@
       (expect_error(vec_size_common(.size = "foo")))
     Output
       <error/rlang_error>
-      Error in `vec_size_common()`:
+      Error:
       ! `.size` must be a single number, not a string.
     Code
       (expect_error(vec_size_common(.size = 1:2)))
     Output
       <error/rlang_error>
-      Error in `vec_size_common()`:
+      Error:
       ! `.size` must be a single number, not an integer vector of length 2.
 
 # vec_size_common() mentions `arg` in errors
@@ -76,7 +76,7 @@
       (expect_error(my_function(this_arg = 1:2, that_arg = int())))
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `vec_size_common()`:
+      Error in `my_function()`:
       ! Can't recycle `my_arg$this_arg` (size 2) to match `my_arg$that_arg` (size 0).
 
 # `.absent` must be supplied when `...` is empty
@@ -85,7 +85,7 @@
       (expect_error(vec_size_common(.absent = NULL)))
     Output
       <error/rlang_error>
-      Error in `vec_size_common()`:
+      Error:
       ! `.absent` must be supplied when `...` is empty.
 
 # `.absent` must be a length 1 integer if provided
@@ -94,13 +94,13 @@
       (expect_error(vec_size_common(.absent = 1), "must be a single integer"))
     Output
       <error/rlang_error>
-      Error in `vec_size_common()`:
+      Error:
       ! `.absent` must be a single integer.
     Code
       (expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer"))
     Output
       <error/rlang_error>
-      Error in `vec_size_common()`:
+      Error:
       ! `.absent` must be a single integer.
 
 # argument tags are forwarded
@@ -108,7 +108,7 @@
     Code
       vec_size_common(1:2, 1, 1:4)
     Condition
-      Error in `vec_size_common()`:
+      Error:
       ! Can't recycle `..1` (size 2) to match `..3` (size 4).
 
 ---
@@ -116,6 +116,6 @@
     Code
       vec_size_common(foo = 1:2, 1, bar = 1:4)
     Condition
-      Error in `vec_size_common()`:
+      Error:
       ! Can't recycle `foo` (size 2) to match `bar` (size 4).
 

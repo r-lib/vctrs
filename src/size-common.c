@@ -6,7 +6,7 @@
 r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
-  struct r_lazy call = { .x = env, .env = r_null };
+  struct r_lazy call = { .x = syms.dot_call, .env = env };
   struct r_lazy arg_lazy = { .x = syms.dot_arg, .env = env };
   struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 

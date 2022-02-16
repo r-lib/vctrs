@@ -14,8 +14,8 @@
   arguments if the error context is not adequately reported to your
   users.
 
-* `vec_ptype_common()` and `vec_cast_common()` gain `call` and `arg`
-  arguments for specifying an error context.
+* `vec_ptype_common()`, `vec_cast_common()`, and `vec_size_common()`
+  gain `call` and `arg` arguments for specifying an error context.
 
 * `vec_compare()` can now compare zero column data frames (#1500).
 
