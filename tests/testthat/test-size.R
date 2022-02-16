@@ -62,6 +62,12 @@ test_that("vec_size_common with no input is 0L unless `.absent` is provided", {
   expect_equal(vec_size_common(.absent = na_int), na_int)
 })
 
+test_that("`.absent` must be supplied when `...` is empty", {
+  expect_snapshot({
+    (expect_error(vec_size_common(.absent = NULL)))
+  })
+})
+
 test_that("`.absent` must be a length 1 integer if provided", {
   expect_snapshot({
     (expect_error(vec_size_common(.absent = 1), "must be a single integer"))

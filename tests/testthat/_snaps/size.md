@@ -1,3 +1,12 @@
+# `.absent` must be supplied when `...` is empty
+
+    Code
+      (expect_error(vec_size_common(.absent = NULL)))
+    Output
+      <error/rlang_error>
+      Error in `vec_size_common()`:
+      ! `.absent` must be supplied when `...` is empty.
+
 # `.absent` must be a length 1 integer if provided
 
     Code

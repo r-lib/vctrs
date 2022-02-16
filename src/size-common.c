@@ -30,9 +30,9 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   if (common < 0) {
     if (absent == r_null) {
       r_abort_lazy_call(call,
-                        "%s is empty, and no %s value was supplied.",
-                        r_c_str_format_error_arg("..."),
-                        r_c_str_format_error_arg(".absent"));
+                        "%s must be supplied when %s is empty.",
+                        r_c_str_format_error_arg(".absent"),
+                        r_c_str_format_error_arg("..."));
     }
     out = absent;
   } else {
