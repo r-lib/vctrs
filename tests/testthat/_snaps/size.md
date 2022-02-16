@@ -70,6 +70,15 @@
       Error in `vec_size_common()`:
       ! `.size` must be a single number, not an integer vector of length 2.
 
+# vec_size_common() mentions `arg` in errors
+
+    Code
+      (expect_error(my_function(this_arg = 1:2, that_arg = int())))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `my_function()`:
+      ! Can't recycle `my_arg$this_arg` (size 2) to match `my_arg$that_arg` (size 0).
+
 # `.absent` must be supplied when `...` is empty
 
     Code

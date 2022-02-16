@@ -1,3 +1,13 @@
+test_that("vec_recycle_common() reports error context", {
+  my_function <- function(...) vec_recycle_common(...)
+  expect_snapshot({
+    (expect_error(my_function(this_arg = 1:2, that_arg = int())))
+    (expect_error(my_function(this_arg = 1:2, that_arg = int(), .size = 2)))
+    (expect_error(my_function(this_arg = 1:2, that_arg = int(), .arg = "my_arg")))
+    (expect_error(my_function(this_arg = 1:2, that_arg = int(), .size = 2, .arg = "my_arg")))
+  })
+})
+
 
 # vec_recycle() -------------------------------------------------------------
 

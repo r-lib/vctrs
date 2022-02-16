@@ -15,7 +15,7 @@
     Code
       vec_interleave(1:2, 1:3)
     Condition
-      Error:
+      Error in `vec_interleave()`:
       ! Can't recycle `..1` (size 2) to match `..2` (size 3).
 
 # errors if the result would be a long vector

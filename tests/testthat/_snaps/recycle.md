@@ -1,3 +1,31 @@
+# vec_recycle_common() reports error context
+
+    Code
+      (expect_error(my_function(this_arg = 1:2, that_arg = int())))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `my_function()`:
+      ! Can't recycle `this_arg` (size 2) to match `that_arg` (size 0).
+    Code
+      (expect_error(my_function(this_arg = 1:2, that_arg = int(), .size = 2)))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error:
+      ! Can't recycle `that_arg` (size 0) to size 2.
+    Code
+      (expect_error(my_function(this_arg = 1:2, that_arg = int(), .arg = "my_arg")))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `my_function()`:
+      ! Can't recycle `my_arg$this_arg` (size 2) to match `my_arg$that_arg` (size 0).
+    Code
+      (expect_error(my_function(this_arg = 1:2, that_arg = int(), .size = 2, .arg = "my_arg"))
+      )
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error:
+      ! Can't recycle `my_arg$that_arg` (size 0) to size 2.
+
 # vec_recycle(): incompatible lengths get error messages
 
     Code

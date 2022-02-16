@@ -9,7 +9,13 @@
 \usage{
 vec_size(x)
 
-vec_size_common(..., .size = NULL, .absent = 0L)
+vec_size_common(
+  ...,
+  .size = NULL,
+  .absent = 0L,
+  .arg = "",
+  .call = caller_env()
+)
 
 list_sizes(x)
 
@@ -25,6 +31,15 @@ ignored.}
 
 \item{.absent}{The size used when no input is provided, or when all input
 is \code{NULL}. If left as \code{NULL} when no input is supplied, an error is thrown.}
+
+\item{.arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
+
+\item{.call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 An integer (or double for long vectors).

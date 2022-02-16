@@ -260,6 +260,7 @@ bool vec_is_unspecified(SEXP x);
 #include "cast.h"
 #include "compare.h"
 #include "complete.h"
+#include "conditions.h"
 #include "dictionary.h"
 #include "dim.h"
 #include "hash.h"
@@ -509,11 +510,6 @@ __attribute__((noreturn))
 void stop_assert_size(r_ssize actual,
                       r_ssize required,
                       struct vctrs_arg* arg);
-__attribute__((noreturn))
-void stop_incompatible_size(SEXP x, SEXP y,
-                            R_len_t x_size, R_len_t y_size,
-                            struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg);
 __attribute__((noreturn))
 void stop_incompatible_type(SEXP x,
                             SEXP y,

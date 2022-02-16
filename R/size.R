@@ -25,6 +25,8 @@
 #' * `vec_size(matrix)` == `vec_size(matrix[, i, drop = FALSE])`
 #' * `vec_size(vec_c(x, y))` == `vec_size(x)` + `vec_size(y)`
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x,... Vector inputs or `NULL`.
 #' @param .size If `NULL`, the default, the output size is determined by
 #'   recycling the lengths of all elements of `...`. Alternatively, you can
@@ -84,7 +86,11 @@ vec_size <- function(x) {
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(..., .size = NULL, .absent = 0L) {
+vec_size_common <- function(...,
+                            .size = NULL,
+                            .absent = 0L,
+                            .arg = "",
+                            .call = caller_env()) {
   .External2(ffi_size_common, .size, .absent)
 }
 
