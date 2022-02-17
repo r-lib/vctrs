@@ -19,8 +19,8 @@ SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
-    .x_arg = &x_arg,
-    .y_arg = &y_arg
+    .p_x_arg = &x_arg,
+    .p_y_arg = &y_arg
   };
 
   return tib_ptype2(&opts);
@@ -44,8 +44,8 @@ SEXP vctrs_tib_cast(SEXP x, SEXP to, SEXP x_arg, SEXP to_arg) {
   const struct cast_opts opts = {
     .x = x,
     .to = to,
-    .x_arg = &c_x_arg,
-    .to_arg = &c_to_arg
+    .p_x_arg = &c_x_arg,
+    .p_to_arg = &c_to_arg
   };
 
   return tib_cast(&opts);

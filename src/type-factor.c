@@ -11,11 +11,11 @@ SEXP fct_ptype2(const struct ptype2_opts* opts) {
   SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
 
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_factor_levels(x, opts->x_arg);
+    stop_corrupt_factor_levels(x, opts->p_x_arg);
   }
 
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_factor_levels(y, opts->y_arg);
+    stop_corrupt_factor_levels(y, opts->p_y_arg);
   }
 
   // Quick early exit for identical levels pointing to the same SEXP
@@ -56,7 +56,7 @@ SEXP ord_ptype2_validate(SEXP x,
 
 // [[ include("type-factor.h") ]]
 SEXP ord_ptype2(const struct ptype2_opts* opts) {
-  SEXP levels = PROTECT(ord_ptype2_validate(opts->x, opts->y, opts->x_arg, opts->y_arg, false));
+  SEXP levels = PROTECT(ord_ptype2_validate(opts->x, opts->y, opts->p_x_arg, opts->p_y_arg, false));
   SEXP out = new_empty_ordered(levels);
   return UNPROTECT(1), out;
 }
@@ -254,7 +254,7 @@ SEXP fct_as_factor(SEXP x,
 
 // [[ include("factor.h") ]]
 SEXP ord_as_ordered(const struct cast_opts* opts) {
-  ord_ptype2_validate(opts->x, opts->to, opts->x_arg, opts->to_arg, true);
+  ord_ptype2_validate(opts->x, opts->to, opts->p_x_arg, opts->p_to_arg, true);
   return opts->x;
 }
 

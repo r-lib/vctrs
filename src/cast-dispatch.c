@@ -9,8 +9,8 @@ r_obj* vec_cast_dispatch_native(const struct cast_opts* opts,
                                 bool* lossy) {
   r_obj* x = opts->x;
   r_obj* to = opts->to;
-  struct vctrs_arg* x_arg = opts->x_arg;
-  struct vctrs_arg* to_arg = opts->to_arg;
+  struct vctrs_arg* x_arg = opts->p_x_arg;
+  struct vctrs_arg* to_arg = opts->p_to_arg;
 
   int dir = 0;
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, to, x_type, to_type, &dir);

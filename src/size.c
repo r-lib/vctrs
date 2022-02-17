@@ -5,7 +5,7 @@
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
   struct vec_error_args err = {
-    .arg = args_x,
+    .p_arg = args_x,
     .call = { .x = frame, .env = r_null }
   };
   return r_len(vec_size_opts(x, &err));
@@ -13,7 +13,7 @@ r_obj* ffi_size(r_obj* x, r_obj* frame) {
 
 r_ssize vec_size(r_obj* x) {
   struct vec_error_args err = {
-    .arg = args_x,
+    .p_arg = args_x,
     .call = lazy_calls.vec_size
   };
   return vec_size_opts(x, &err);
@@ -46,7 +46,7 @@ r_ssize vec_size_opts(r_obj* x, const struct vec_error_args* opts) {
     break;
 
   default:
-    stop_scalar_type(x, opts->arg, opts->call);
+    stop_scalar_type(x, opts->p_arg, opts->call);
 }
 
   FREE(1);
@@ -71,7 +71,7 @@ r_ssize vec_raw_size(r_obj* x) {
 // [[ register() ]]
 r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
   struct vec_error_args err = {
-    .arg = args_x,
+    .p_arg = args_x,
     .call = { .x = frame, .env = r_null }
   };
   return list_sizes(x, &err);
@@ -96,11 +96,11 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_args* opts) {
   r_attrib_poke_names(out, names);
 
   r_ssize i = 0;
-  struct vctrs_arg* arg = new_subscript_arg_vec(opts->arg, x, &i);
+  struct vctrs_arg* arg = new_subscript_arg_vec(opts->p_arg, x, &i);
   KEEP(arg->shelter);
 
   struct vec_error_args local_opts = *opts;
-  local_opts.arg = arg;
+  local_opts.p_arg = arg;
 
   for (; i < size; ++i) {
     v_out[i] = vec_size_opts(v_x[i], &local_opts);
@@ -274,7 +274,7 @@ r_ssize vec_as_ssize(r_obj* n,
     struct cast_opts cast_opts = {
       .x = n,
       .to = r_globals.empty_dbl,
-      .x_arg = p_arg,
+      .p_x_arg = p_arg,
       .call = call
     };
     ERR err = NULL;

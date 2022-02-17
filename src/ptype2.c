@@ -22,8 +22,8 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
                             bool first_pass) {
   r_obj* x = opts->x;
   r_obj* y = opts->y;
-  struct vctrs_arg* x_arg = opts->x_arg;
-  struct vctrs_arg* y_arg = opts->y_arg;
+  struct vctrs_arg* x_arg = opts->p_x_arg;
+  struct vctrs_arg* y_arg = opts->p_y_arg;
 
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type y_type = vec_typeof(y);
@@ -90,8 +90,8 @@ r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
                                 int* left) {
   r_obj* x = opts->x;
   r_obj* y = opts->y;
-  struct vctrs_arg* x_arg = opts->x_arg;
-  struct vctrs_arg* y_arg = opts->y_arg;
+  struct vctrs_arg* x_arg = opts->p_x_arg;
+  struct vctrs_arg* y_arg = opts->p_y_arg;
 
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, y_type, left);
 
@@ -153,8 +153,8 @@ r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
     const struct ptype2_opts self_self_opts = (const struct ptype2_opts) {
       .x = other,
       .y = other,
-      .x_arg = other_arg,
-      .y_arg = other_arg,
+      .p_x_arg = other_arg,
+      .p_y_arg = other_arg,
       .fallback = opts->fallback
     };
     int _left = 0;
@@ -253,14 +253,14 @@ r_obj* ffi_ptype2(r_obj* x,
 
 struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    r_obj* y,
-                                   struct vctrs_arg* x_arg,
-                                   struct vctrs_arg* y_arg,
+                                   struct vctrs_arg* p_x_arg,
+                                   struct vctrs_arg* p_y_arg,
                                    r_obj* opts) {
   return (struct ptype2_opts) {
     .x = x,
     .y = y,
-    .x_arg = x_arg,
-    .y_arg = y_arg,
+    .p_x_arg = p_x_arg,
+    .p_y_arg = p_y_arg,
     .fallback = new_fallback_opts(opts)
   };
 }

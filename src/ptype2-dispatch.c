@@ -68,11 +68,11 @@ r_obj* vec_ptype2_default(r_obj* x,
 }
 
 r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
-  r_obj* x = KEEP(vec_ptype(opts->x, opts->x_arg, opts->call));
-  r_obj* y = KEEP(vec_ptype(opts->y, opts->y_arg, opts->call));
+  r_obj* x = KEEP(vec_ptype(opts->x, opts->p_x_arg, opts->call));
+  r_obj* y = KEEP(vec_ptype(opts->y, opts->p_y_arg, opts->call));
 
-  r_obj* r_x_arg = KEEP(vctrs_arg(opts->x_arg));
-  r_obj* r_y_arg = KEEP(vctrs_arg(opts->y_arg));
+  r_obj* r_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
+  r_obj* r_y_arg = KEEP(vctrs_arg(opts->p_y_arg));
 
   r_obj* method_sym = r_null;
   r_obj* method = s3_find_method_xy("vec_ptype2", x, y, vctrs_method_table, &method_sym);

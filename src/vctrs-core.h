@@ -42,7 +42,7 @@ struct vctrs_arg {
 };
 
 struct vec_error_args {
-  struct vctrs_arg* arg;
+  struct vctrs_arg* p_arg;
   struct r_lazy call;
 };
 

@@ -20,8 +20,8 @@ r_obj* ffi_cast(r_obj* x,
 r_obj* vec_cast_opts(const struct cast_opts* opts) {
   r_obj* x = opts->x;
   r_obj* to = opts->to;
-  struct vctrs_arg* x_arg = opts->x_arg;
-  struct vctrs_arg* to_arg = opts->to_arg;
+  struct vctrs_arg* x_arg = opts->p_x_arg;
+  struct vctrs_arg* to_arg = opts->p_to_arg;
 
   if (x == r_null) {
     if (!vec_is_partial(to)) {
@@ -125,8 +125,8 @@ r_obj* vec_cast_switch_native(const struct cast_opts* opts,
 
 r_obj* vec_cast_default(r_obj* x,
                         r_obj* to,
-                        r_obj* x_arg,
-                        r_obj* to_arg,
+                        r_obj* p_x_arg,
+                        r_obj* p_to_arg,
                         struct r_lazy call,
                         const struct fallback_opts* opts) {
   r_obj* df_fallback = KEEP(r_int(opts->df));
@@ -135,8 +135,8 @@ r_obj* vec_cast_default(r_obj* x,
   r_obj* out = vctrs_eval_mask8(syms.vec_default_cast,
                                 syms_x, x,
                                 syms_to, to,
-                                syms_x_arg, x_arg,
-                                syms_to_arg, to_arg,
+                                syms_x_arg, p_x_arg,
+                                syms_to_arg, p_to_arg,
                                 syms_call, ffi_call,
                                 syms_from_dispatch, vctrs_shared_true,
                                 syms_df_fallback, df_fallback,
@@ -149,8 +149,8 @@ static
 r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
   r_obj* x = opts->x;
   r_obj* to = opts->to;
-  r_obj* r_x_arg = KEEP(vctrs_arg(opts->x_arg));
-  r_obj* r_to_arg = KEEP(vctrs_arg(opts->to_arg));
+  r_obj* r_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
+  r_obj* r_to_arg = KEEP(vctrs_arg(opts->p_to_arg));
 
   r_obj* method_sym = r_null;
   r_obj* method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
@@ -252,7 +252,7 @@ r_obj* vec_cast_common_opts(r_obj* xs,
     struct cast_opts cast_opts = {
       .x = elt,
       .to = type,
-      .x_arg = p_x_arg,
+      .p_x_arg = p_x_arg,
       .call = opts->call,
       .fallback = opts->fallback
     };
@@ -335,15 +335,15 @@ r_obj* ffi_cast_common_opts(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env)
 
 struct cast_opts new_cast_opts(r_obj* x,
                                r_obj* to,
-                               struct vctrs_arg* x_arg,
-                               struct vctrs_arg* to_arg,
+                               struct vctrs_arg* p_x_arg,
+                               struct vctrs_arg* p_to_arg,
                                struct r_lazy call,
                                r_obj* opts) {
   return (struct cast_opts) {
     .x = x,
     .to = to,
-    .x_arg = x_arg,
-    .to_arg = to_arg,
+    .p_x_arg = p_x_arg,
+    .p_to_arg = p_to_arg,
     .call = call,
     .fallback = {
       .df = r_int_get(r_list_get(opts, 0), 0),

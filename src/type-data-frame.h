@@ -25,14 +25,15 @@ r_obj* df_cast_opts(const struct cast_opts* opts);
 static inline
 r_obj* df_cast(r_obj* x,
                r_obj* to,
-               struct vctrs_arg* x_arg,
-               struct vctrs_arg* to_arg) {
+               struct vctrs_arg* p_x_arg,
+               struct vctrs_arg* p_to_arg) {
   const struct cast_opts opts = {
     .x = x,
     .to = to,
-    .x_arg = x_arg,
-    .to_arg = to_arg
+    .p_x_arg = p_x_arg,
+    .p_to_arg = p_to_arg
   };
+
   return df_cast_opts(&opts);
 }
 
@@ -50,14 +51,14 @@ SEXP df_ptype2(const struct ptype2_opts* opts);
 static inline
 SEXP df_ptype2_params(SEXP x,
                       SEXP y,
-                      struct vctrs_arg* x_arg,
-                      struct vctrs_arg* y_arg,
+                      struct vctrs_arg* p_x_arg,
+                      struct vctrs_arg* p_y_arg,
                       enum df_fallback df_fallback) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
-    .x_arg = x_arg,
-    .y_arg = y_arg,
+    .p_x_arg = p_x_arg,
+    .p_y_arg = p_y_arg,
     .fallback = {
       .df = df_fallback
     }

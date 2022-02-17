@@ -31,8 +31,8 @@ struct fallback_opts {
 struct ptype2_opts {
   r_obj* x;
   r_obj* y;
-  struct vctrs_arg* x_arg;
-  struct vctrs_arg* y_arg;
+  struct vctrs_arg* p_x_arg;
+  struct vctrs_arg* p_y_arg;
   struct r_lazy call;
   struct fallback_opts fallback;
 };
@@ -43,15 +43,15 @@ r_obj* vec_ptype2_opts(const struct ptype2_opts* opts,
 static inline
 r_obj* vec_ptype2_params(r_obj* x,
                          r_obj* y,
-                         struct vctrs_arg* x_arg,
-                         struct vctrs_arg* y_arg,
+                         struct vctrs_arg* p_x_arg,
+                         struct vctrs_arg* p_y_arg,
                          enum df_fallback df_fallback,
                          int* left) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
-    .x_arg = x_arg,
-    .y_arg = y_arg,
+    .p_x_arg = p_x_arg,
+    .p_y_arg = p_y_arg,
     .fallback = {
       .df = df_fallback
     }
@@ -62,15 +62,15 @@ r_obj* vec_ptype2_params(r_obj* x,
 static inline
 r_obj* vec_ptype2(r_obj* x,
                   r_obj* y,
-                  struct vctrs_arg* x_arg,
-                  struct vctrs_arg* y_arg,
+                  struct vctrs_arg* p_x_arg,
+                  struct vctrs_arg* p_y_arg,
                   int* left,
                   struct r_lazy call) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
-    .x_arg = x_arg,
-    .y_arg = y_arg,
+    .p_x_arg = p_x_arg,
+    .p_y_arg = p_y_arg,
     .call = call
   };
   return vec_ptype2_opts(&opts, left);
@@ -84,8 +84,8 @@ r_obj* vec_ptype2_e(const struct ptype2_opts* opts,
 
 struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    r_obj* y,
-                                   struct vctrs_arg* x_arg,
-                                   struct vctrs_arg* y_arg,
+                                   struct vctrs_arg* p_x_arg,
+                                   struct vctrs_arg* p_y_arg,
                                    r_obj* opts);
 
 struct fallback_opts new_fallback_opts(r_obj* opts);

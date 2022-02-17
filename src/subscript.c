@@ -103,12 +103,12 @@ r_obj* obj_cast_subscript(r_obj* subscript,
   struct ptype2_opts ptype2_opts = {
     .x = subscript,
     .y = r_null,
-    .x_arg = opts->subscript_arg
+    .p_x_arg = opts->subscript_arg
   };
   struct cast_opts cast_opts = {
     .x = subscript,
     .to = r_null,
-    .x_arg = opts->subscript_arg
+    .p_x_arg = opts->subscript_arg
   };
 
   ptype2_opts.y = cast_opts.to = vctrs_shared_empty_lgl;

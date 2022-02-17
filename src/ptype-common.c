@@ -98,8 +98,8 @@ r_obj* ptype2_common(r_obj* current,
   const struct ptype2_opts opts = {
     .x = current,
     .y = next,
-    .x_arg = counters->curr_arg,
-    .y_arg = counters->next_arg,
+    .p_x_arg = counters->curr_arg,
+    .p_y_arg = counters->next_arg,
     .call = p_common_opts->call,
     .fallback = p_common_opts->fallback
   };

@@ -557,10 +557,10 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
 
   r_ssize i = 0;
   r_ssize y_arg_loc = 0;
-  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, x_names, x_len, &i);
+  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->p_x_arg, x_names, x_len, &i);
   KEEP(named_x_arg->shelter);
 
-  struct vctrs_arg* named_y_arg = new_subscript_arg(opts->y_arg, y_names, y_len, &y_arg_loc);
+  struct vctrs_arg* named_y_arg = new_subscript_arg(opts->p_y_arg, y_names, y_len, &y_arg_loc);
   KEEP(named_y_arg->shelter);
 
   // Fill in prototypes of all the columns that are in `x`, in order
@@ -570,12 +570,12 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
     SEXP col = VECTOR_ELT(x, i);
     struct ptype2_opts col_opts = *opts;
     col_opts.x = col;
-    col_opts.x_arg = named_x_arg;
+    col_opts.p_x_arg = named_x_arg;
 
     SEXP type;
     if (dup == NA_INTEGER) {
       col_opts.y = vctrs_shared_empty_uns;
-      col_opts.y_arg = NULL;
+      col_opts.p_y_arg = NULL;
       type = vec_ptype2_from_unspecified(&col_opts,
                                          vec_typeof(col),
                                          col,
@@ -586,7 +586,7 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
       y_arg_loc = dup;
 
       col_opts.y = VECTOR_ELT(y, dup);
-      col_opts.y_arg = named_y_arg;
+      col_opts.p_y_arg = named_y_arg;
 
       int _left;
       type = vec_ptype2_opts(&col_opts, &_left);
@@ -606,9 +606,9 @@ SEXP df_ptype2_match(const struct ptype2_opts* opts,
 
       struct ptype2_opts col_opts = *opts;
       col_opts.y = col;
-      col_opts.y_arg = named_y_arg;
+      col_opts.p_y_arg = named_y_arg;
       col_opts.x = vctrs_shared_empty_uns;
-      col_opts.x_arg = NULL;
+      col_opts.p_x_arg = NULL;
       SEXP type = vec_ptype2_from_unspecified(&col_opts,
                                               vec_typeof(col),
                                               col,
@@ -638,15 +638,15 @@ SEXP df_ptype2_loop(const struct ptype2_opts* opts,
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   r_ssize i = 0;
-  struct vctrs_arg* named_x_arg = new_subscript_arg_vec(opts->x_arg, out, &i);
-  struct vctrs_arg* named_y_arg = new_subscript_arg_vec(opts->y_arg, out, &i);
+  struct vctrs_arg* named_x_arg = new_subscript_arg_vec(opts->p_x_arg, out, &i);
+  struct vctrs_arg* named_y_arg = new_subscript_arg_vec(opts->p_y_arg, out, &i);
 
   for (; i < len; ++i) {
     struct ptype2_opts col_opts = *opts;
     col_opts.x = VECTOR_ELT(x, i);
     col_opts.y = VECTOR_ELT(y, i);
-    col_opts.x_arg = named_x_arg;
-    col_opts.y_arg = named_y_arg;
+    col_opts.p_x_arg = named_x_arg;
+    col_opts.p_y_arg = named_y_arg;
     int _left;
 
     SEXP type = vec_ptype2_opts(&col_opts, &_left);
@@ -729,10 +729,10 @@ static SEXP df_cast_match(const struct cast_opts* opts,
   r_ssize i = 0;
   r_ssize x_arg_loc = 0;
 
-  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, x_names, r_length(x_names), &x_arg_loc);
+  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->p_x_arg, x_names, r_length(x_names), &x_arg_loc);
   KEEP(named_x_arg->shelter);
 
-  struct vctrs_arg* named_to_arg = new_subscript_arg(opts->to_arg, to_names, to_len, &i);
+  struct vctrs_arg* named_to_arg = new_subscript_arg(opts->p_to_arg, to_names, to_len, &i);
   KEEP(named_to_arg->shelter);
 
   for (; i < to_len; ++i) {
@@ -760,8 +760,8 @@ static SEXP df_cast_match(const struct cast_opts* opts,
       struct cast_opts col_opts = {
         .x = VECTOR_ELT(x, pos),
         .to = VECTOR_ELT(to, i),
-        .x_arg = named_x_arg,
-        .to_arg = named_to_arg,
+        .p_x_arg = named_x_arg,
+        .p_to_arg = named_to_arg,
         .call = opts->call,
         .fallback = opts->fallback
       };
@@ -800,18 +800,18 @@ static SEXP df_cast_loop(const struct cast_opts* opts, SEXP names) {
   R_len_t size = df_size(x);
 
   r_ssize i = 0;
-  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->x_arg, names, len, &i);
+  struct vctrs_arg* named_x_arg = new_subscript_arg(opts->p_x_arg, names, len, &i);
   KEEP(named_x_arg->shelter);
 
-  struct vctrs_arg* named_to_arg = new_subscript_arg(opts->to_arg, names, len, &i);
+  struct vctrs_arg* named_to_arg = new_subscript_arg(opts->p_to_arg, names, len, &i);
   KEEP(named_to_arg->shelter);
 
   for (; i < len; ++i) {
     struct cast_opts col_opts = {
       .x = VECTOR_ELT(x, i),
       .to = VECTOR_ELT(to, i),
-      .x_arg = named_x_arg,
-      .to_arg = named_to_arg,
+      .p_x_arg = named_x_arg,
+      .p_to_arg = named_to_arg,
       .call = opts->call,
       .fallback = opts->fallback
     };
