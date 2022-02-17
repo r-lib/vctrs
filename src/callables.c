@@ -8,7 +8,7 @@ R_len_t short_vec_size(SEXP x) {
 }
 
 SEXP short_vec_recycle(SEXP x, R_len_t size) {
-  return vec_recycle(x, size, args_empty);
+  return vec_recycle(x, size);
 }
 
 // -----------------------------------------------------------------------------

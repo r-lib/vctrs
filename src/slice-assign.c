@@ -27,8 +27,10 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
   }
 
   // TODO! Error call
-  vec_check_vector(x, opts->x_arg, r_lazy_null);
-  vec_check_vector(value, opts->value_arg, r_lazy_null);
+  struct r_lazy call = r_lazy_null;
+
+  vec_check_vector(x, opts->x_arg, call);
+  vec_check_vector(value, opts->value_arg, call);
 
   const struct location_opts location_opts = new_location_opts_assign();
   index = PROTECT(vec_as_location_opts(index,
@@ -37,8 +39,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                                        &location_opts));
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, r_lazy_null));
-  value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
+  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, call));
+  value = PROTECT(vec_check_recycle(value, vec_size(index), opts->value_arg, call));
 
   SEXP proxy = PROTECT(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
@@ -412,9 +414,13 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
 
   const struct vec_assign_opts* opts = &vec_assign_default_opts;
 
+  // TODO! call
+  // struct r_lazy call = opts->call;
+  struct r_lazy call = r_lazy_null;
+
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, r_lazy_null));
-  value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
+  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, call));
+  value = PROTECT(vec_check_recycle(value, vec_subscript_size(index), opts->value_arg, call));
 
   SEXP proxy = PROTECT(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);

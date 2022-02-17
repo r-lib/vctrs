@@ -104,7 +104,7 @@ static SEXP vec_unchop(SEXP xs,
     out_size += index_size;
 
     // Each element of `xs` is recycled to its corresponding index's size
-    x = vec_recycle(x, index_size, args_empty);
+    x = vec_check_recycle(x, index_size, args_empty, r_lazy_null);
     SET_VECTOR_ELT(xs, i, x);
   }
 

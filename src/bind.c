@@ -394,7 +394,7 @@ r_obj* vec_cbind(r_obj* xs,
   }
 
   if (rownames != r_null && r_length(rownames) != nrow) {
-    rownames = KEEP(vec_recycle(rownames, nrow, args_empty));
+    rownames = KEEP(vec_check_recycle(rownames, nrow, args_empty, r_lazy_null));
     rownames = vec_as_unique_names(rownames, false);
     FREE(1);
   }
@@ -413,7 +413,7 @@ r_obj* vec_cbind(r_obj* xs,
       continue;
     }
 
-    x = KEEP(vec_recycle(x, nrow, args_empty));
+    x = KEEP(vec_check_recycle(x, nrow, args_empty, r_lazy_null));
 
     r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
     bool allow_packing;

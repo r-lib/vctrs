@@ -10,7 +10,7 @@
       (expect_error(my_function(this_arg = 1:2, that_arg = int(), .size = 2)))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `my_function()`:
       ! Can't recycle `that_arg` (size 0) to size 2.
     Code
       (expect_error(my_function(this_arg = 1:2, that_arg = int(), .arg = "my_arg")))
@@ -23,7 +23,7 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `my_function()`:
       ! Can't recycle `my_arg$that_arg` (size 0) to size 2.
 
 # vec_recycle(): incompatible lengths get error messages

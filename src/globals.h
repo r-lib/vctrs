@@ -36,6 +36,7 @@ struct vec_args {
 };
 
 struct lazy_calls {
+  struct r_lazy vec_recycle;
   struct r_lazy vec_size;
 };
 

@@ -176,7 +176,10 @@ r_obj* vec_recycle_common_opts(r_obj* xs,
 
   for (; i < n; ++i) {
     r_obj* elt = r_list_get(xs, i);
-    r_list_poke(xs, i, vec_recycle(elt, size, p_x_arg));
+    r_list_poke(xs, i, vec_check_recycle(elt,
+                                         size,
+                                         p_x_arg,
+                                         p_opts->call));
   }
 
   FREE(2);

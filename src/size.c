@@ -158,11 +158,10 @@ SEXP vctrs_df_size(SEXP x) {
   return r_int(df_raw_size(x));
 }
 
-
-r_obj* vec_recycle2(r_obj* x,
-                    r_ssize size,
-                    struct vctrs_arg* x_arg,
-                    struct r_lazy call) {
+r_obj* vec_check_recycle(r_obj* x,
+                         r_ssize size,
+                         struct vctrs_arg* x_arg,
+                         struct r_lazy call) {
   if (x == r_null) {
     return r_null;
   }
@@ -207,7 +206,7 @@ r_obj* ffi_recycle(r_obj* x,
 
   struct r_lazy call = { .x = syms_call, .env = frame };
 
-  return vec_recycle2(x, size, &x_arg, call);
+  return vec_check_recycle(x, size, &x_arg, call);
 }
 
 r_obj* vec_recycle_fallback(r_obj* x,

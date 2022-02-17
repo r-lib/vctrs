@@ -590,7 +590,7 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   SEXP out = PROTECT(vctrs_dispatch2(syms_dot_name_spec, name_spec,
                                      syms_outer, outer_chr,
                                      syms_inner, inner));
-  out = vec_recycle(out, n, NULL);
+  out = vec_recycle(out, n);
 
   if (out != R_NilValue) {
     if (TYPEOF(out) != STRSXP) {
