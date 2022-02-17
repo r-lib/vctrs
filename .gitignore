@@ -4,3 +4,4 @@ man/faq/**/*.html
 .Rhistory
 .RData
 docs
+.clangd
