@@ -18,6 +18,14 @@ r_obj* vec_recycle2(r_obj* x,
                     struct vctrs_arg* x_arg,
                     struct r_lazy call);
 
+// FIXME: Pass error call everywhere
+static inline
+r_obj* vec_recycle(r_obj* x,
+                   r_ssize size,
+                   struct vctrs_arg* x_arg) {
+  return vec_recycle2(x, size, x_arg, r_lazy_null);
+}
+
 r_obj* vec_recycle_fallback(r_obj* x,
                             r_ssize size,
                             struct vctrs_arg* x_arg);

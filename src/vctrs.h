@@ -322,14 +322,6 @@ SEXP vec_identify_runs(SEXP x);
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
                       struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
 
-// FIXME: Pass error call everywhere
-static inline
-r_obj* vec_recycle(r_obj* x,
-                   r_ssize size,
-                   struct vctrs_arg* x_arg) {
-  return vec_recycle2(x, size, x_arg, r_lazy_null);
-}
-
 static inline
 SEXP vec_match(SEXP needles, SEXP haystack) {
   return vec_match_params(needles, haystack, true, NULL, NULL);
