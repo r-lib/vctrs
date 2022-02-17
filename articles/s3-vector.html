@@ -735,7 +735,7 @@
 <code class="sourceCode R"><span class="fu">rational</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu">rational</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE</span></code></pre></div>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>The easiest fix is to convert the fraction to a floating point number and use this as a proxy:</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">vec_proxy_compare.vctrs_rational</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span>
