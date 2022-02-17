@@ -4,7 +4,7 @@
 
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
-  struct vec_error_args err = {
+  struct vec_error_opts err = {
     .p_arg = args_x,
     .call = { .x = frame, .env = r_null }
   };
@@ -12,7 +12,7 @@ r_obj* ffi_size(r_obj* x, r_obj* frame) {
 }
 
 r_ssize vec_size(r_obj* x) {
-  struct vec_error_args err = {
+  struct vec_error_opts err = {
     .p_arg = args_x,
     .call = lazy_calls.vec_size
   };
@@ -20,7 +20,7 @@ r_ssize vec_size(r_obj* x) {
 }
 
 static
-r_ssize vec_size_opts(r_obj* x, const struct vec_error_args* opts) {
+r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
   KEEP(info.shelter);
 
@@ -70,7 +70,7 @@ r_ssize vec_raw_size(r_obj* x) {
 
 // [[ register() ]]
 r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
-  struct vec_error_args err = {
+  struct vec_error_opts err = {
     .p_arg = args_x,
     .call = { .x = frame, .env = r_null }
   };
@@ -78,7 +78,7 @@ r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
 }
 
 static
-r_obj* list_sizes(r_obj* x, const struct vec_error_args* opts) {
+r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
   if (!vec_is_list(x)) {
     r_abort_lazy_call(opts->call,
                       "%s must be a list, not %s.",
@@ -99,7 +99,7 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_args* opts) {
   struct vctrs_arg* arg = new_subscript_arg_vec(opts->p_arg, x, &i);
   KEEP(arg->shelter);
 
-  struct vec_error_args local_opts = *opts;
+  struct vec_error_opts local_opts = *opts;
   local_opts.p_arg = arg;
 
   for (; i < size; ++i) {

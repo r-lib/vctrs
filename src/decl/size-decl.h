@@ -1,8 +1,8 @@
 static
-r_ssize vec_size_opts(r_obj* x, const struct vec_error_args* opts);
+r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts);
 
 static
 r_ssize vec_raw_size(r_obj* x);
 
 static
-r_obj* list_sizes(r_obj* x, const struct vec_error_args* err);
+r_obj* list_sizes(r_obj* x, const struct vec_error_opts* err);
