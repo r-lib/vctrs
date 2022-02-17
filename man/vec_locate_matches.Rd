@@ -59,15 +59,14 @@ A filter can return multiple haystack matches for a particular needle
 if the maximum or minimum haystack value is duplicated in \code{haystack}. These
 can be further controlled with \code{multiple}.}
 
-\item{incomplete}{Handling of \link[=vec_detect_complete]{incomplete} observations
-in \code{needles}.
+\item{incomplete}{Handling of missing values and
+\link[=vec_detect_complete]{incomplete} observations in \code{needles}.
 \itemize{
-\item \code{"compare"} uses \code{condition} to determine whether or not an incomplete
-observation in \code{needles} matches an incomplete observation in \code{haystack}.
-If \code{condition} is \code{==}, \code{>=}, or \code{<=}, then incomplete observations will
-match.
-\item \code{"match"} always matches incomplete observations in \code{needles} to
-incomplete observations in \code{haystack}, regardless of the \code{condition}.
+\item \code{"compare"} uses \code{condition} to determine whether or not a missing value
+in \code{needles} matches a missing value in \code{haystack}. If \code{condition} is
+\code{==}, \code{>=}, or \code{<=}, then missing values will match.
+\item \code{"match"} always allows missing values in \code{needles} to match missing
+values in \code{haystack}, regardless of the \code{condition}.
 \item \code{"drop"} drops incomplete observations in \code{needles} from the result.
 \item \code{"error"} throws an error if any \code{needles} are incomplete.
 \item If a single integer is provided, this represents the value returned

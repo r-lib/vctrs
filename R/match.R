@@ -66,14 +66,13 @@
 #'   if the maximum or minimum haystack value is duplicated in `haystack`. These
 #'   can be further controlled with `multiple`.
 #'
-#' @param incomplete Handling of [incomplete][vec_detect_complete] observations
-#'   in `needles`.
-#'   - `"compare"` uses `condition` to determine whether or not an incomplete
-#'     observation in `needles` matches an incomplete observation in `haystack`.
-#'     If `condition` is `==`, `>=`, or `<=`, then incomplete observations will
-#'     match.
-#'   - `"match"` always matches incomplete observations in `needles` to
-#'     incomplete observations in `haystack`, regardless of the `condition`.
+#' @param incomplete Handling of missing values and
+#'   [incomplete][vec_detect_complete] observations in `needles`.
+#'   - `"compare"` uses `condition` to determine whether or not a missing value
+#'     in `needles` matches a missing value in `haystack`. If `condition` is
+#'     `==`, `>=`, or `<=`, then missing values will match.
+#'   - `"match"` always allows missing values in `needles` to match missing
+#'     values in `haystack`, regardless of the `condition`.
 #'   - `"drop"` drops incomplete observations in `needles` from the result.
 #'   - `"error"` throws an error if any `needles` are incomplete.
 #'   - If a single integer is provided, this represents the value returned
