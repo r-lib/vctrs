@@ -55,14 +55,15 @@ of character vectors to use for collation, often used for locale-aware
 ordering.
 \itemize{
 \item If \code{NULL}, no transformation is done.
-\item Otherwise, this must be a function of one argument. The function will be
-invoked with \code{x}, if it is a character vector, after it has been
-translated to UTF-8, and should return a character vector with the same
-length as \code{x}. The result should sort as expected in the C-locale,
-regardless of encoding.
-\item For data frames, \code{chr_proxy_collate} will be applied to all character
-columns.
+\item Otherwise, this must be a function of one argument. If the input contains
+a character vector, it will be passed to this function after it has been
+translated to UTF-8. This function should return a character vector with
+the same length as the input. The result should sort as expected in the
+C-locale, regardless of encoding.
 }
+
+For data frames, \code{chr_proxy_collate} will be applied to all character
+columns.
 
 Common transformation functions include: \code{tolower()} for case-insensitive
 ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}

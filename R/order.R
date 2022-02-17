@@ -51,13 +51,14 @@
 #'   of character vectors to use for collation, often used for locale-aware
 #'   ordering.
 #'   - If `NULL`, no transformation is done.
-#'   - Otherwise, this must be a function of one argument. The function will be
-#'     invoked with `x`, if it is a character vector, after it has been
-#'     translated to UTF-8, and should return a character vector with the same
-#'     length as `x`. The result should sort as expected in the C-locale,
-#'     regardless of encoding.
-#'   - For data frames, `chr_proxy_collate` will be applied to all character
-#'     columns.
+#'   - Otherwise, this must be a function of one argument. If the input contains
+#'     a character vector, it will be passed to this function after it has been
+#'     translated to UTF-8. This function should return a character vector with
+#'     the same length as the input. The result should sort as expected in the
+#'     C-locale, regardless of encoding.
+#'
+#'   For data frames, `chr_proxy_collate` will be applied to all character
+#'   columns.
 #'
 #'   Common transformation functions include: `tolower()` for case-insensitive
 #'   ordering and `stringi::stri_sort_key()` for locale-aware ordering.
