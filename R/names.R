@@ -436,13 +436,13 @@ bullets <- function(..., header = NULL) {
 }
 
 # Used in names.c
-set_rownames_fallback <- function(x, names) {
+set_rownames_dispatch <- function(x, names) {
   rownames(x) <- names
   x
 }
 
 # Used in names.c
-set_names_fallback <- function(x, names) {
+set_names_dispatch <- function(x, names) {
   names(x) <- names
   x
 }

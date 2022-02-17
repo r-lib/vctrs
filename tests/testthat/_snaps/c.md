@@ -129,7 +129,7 @@
       ints <- rep(list(set_names(1:3, letters[1:3])), 100)
       with_memory_prof(vec_unchop(ints))
     Output
-      [1] 5.27KB
+      [1] 4.05KB
     Code
       # Named matrices
       mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
