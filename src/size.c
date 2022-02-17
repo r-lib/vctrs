@@ -12,7 +12,10 @@ r_obj* ffi_size(r_obj* x, r_obj* frame) {
 }
 
 r_ssize vec_size(r_obj* x) {
-  struct vec_error_args err = { 0 };
+  struct vec_error_args err = {
+    .arg = args_x,
+    .call = lazy_calls.vec_size
+  };
   return vec_size_opts(x, &err);
 }
 

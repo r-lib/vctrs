@@ -2,6 +2,7 @@
 #define VCTRS_GLOBALS_H
 
 #include <rlang.h>
+#include "rlang-dev.h"
 
 struct syms {
   r_obj* arg;
@@ -34,9 +35,14 @@ struct vec_args {
   struct vctrs_arg* dot_size;
 };
 
+struct lazy_calls {
+  struct r_lazy vec_size;
+};
+
 extern struct syms syms;
 extern struct strings strings;
 extern struct fns fns;
 extern struct vec_args vec_args;
+extern struct lazy_calls lazy_calls;
 
 #endif

@@ -4,6 +4,7 @@ struct syms syms;
 struct strings strings;
 struct fns fns;
 struct vec_args vec_args;
+struct lazy_calls lazy_calls;
 
 struct r_dyn_array* strings_shelter = NULL;
 
@@ -27,4 +28,7 @@ void vctrs_init_globals(r_obj* ns) {
 
   static struct vctrs_arg dot_size; dot_size = new_wrapper_arg(NULL, ".size");
   vec_args.dot_size = &dot_size;
+
+  lazy_calls.vec_size = (struct r_lazy) { .x = r_parse("vec_size()"), .env = r_null };
+  r_preserve_global(lazy_calls.vec_size.x);
 }
