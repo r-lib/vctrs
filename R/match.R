@@ -1,15 +1,8 @@
-# TODO: Use this NEWS bullet when we export `vec_locate_matches()`
-#
-# * New `vec_locate_matches()` for locating where each observation in one vector
-#   matches one or more observations in another vector. It is similar to
-#   `vec_match()`, but returns all matches by default (rather than just the
-#   first), and can match on binary conditions other than equality. The algorithm
-#   is inspired by data.table's very fast binary merge procedure.
-
-
 #' Locate observations matching specified conditions
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' `vec_locate_matches()` is a more flexible version of [vec_match()] used to
 #' identify locations where each observation of `needles` matches one or
 #' multiple observations in `haystack`. Unlike `vec_match()`,
@@ -41,7 +34,7 @@
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
-#' @inheritParams vec_order_radix
+#' @inheritParams order-radix
 #'
 #' @param needles,haystack Vectors used for matching.
 #'   - `needles` represents the vector to search for.
@@ -128,7 +121,7 @@
 #'   - `haystack` is an integer vector containing the location of the
 #'     corresponding match in the haystack for the current needle.
 #'
-#' @noRd
+#' @export
 #' @examples
 #' x <- c(1, 2, NA, 3, NaN)
 #' y <- c(2, 1, 4, NA, 1, 2, NaN)
