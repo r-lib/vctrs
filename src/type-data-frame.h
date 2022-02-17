@@ -20,8 +20,21 @@ SEXP df_poke_at(SEXP x, SEXP name, SEXP value);
 SEXP df_flatten(SEXP x);
 SEXP df_repair_names(SEXP x, struct name_repair_opts* name_repair);
 
+r_obj* df_cast_opts(const struct cast_opts* opts);
+
 static inline
-SEXP df_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg);
+r_obj* df_cast(r_obj* x,
+               r_obj* to,
+               struct vctrs_arg* x_arg,
+               struct vctrs_arg* to_arg) {
+  const struct cast_opts opts = {
+    .x = x,
+    .to = to,
+    .x_arg = x_arg,
+    .to_arg = to_arg
+  };
+  return df_cast_opts(&opts);
+}
 
 enum rownames_type {
   ROWNAMES_AUTOMATIC,

@@ -330,22 +330,8 @@ r_obj* vec_recycle(r_obj* x,
   return vec_recycle2(x, size, x_arg, r_lazy_null);
 }
 
-static inline r_obj* vec_cast(r_obj* x,
-                              r_obj* to,
-                              struct vctrs_arg* x_arg,
-                              struct vctrs_arg* to_arg,
-                              struct r_lazy call) {
-  struct cast_opts opts = {
-    .x = x,
-    .to = to,
-    .x_arg = x_arg,
-    .to_arg = to_arg,
-    .call = call
-  };
-  return vec_cast_opts(&opts);
-}
-
-static inline SEXP vec_match(SEXP needles, SEXP haystack) {
+static inline
+SEXP vec_match(SEXP needles, SEXP haystack) {
   return vec_match_params(needles, haystack, true, NULL, NULL);
 }
 

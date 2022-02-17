@@ -19,24 +19,23 @@ struct cast_common_opts {
   struct fallback_opts fallback;
 };
 
-// Defined in type-data-frame.c
-r_obj* df_cast_opts(const struct cast_opts* opts);
+r_obj* vec_cast_opts(const struct cast_opts* opts);
 
 static inline
-r_obj* df_cast(r_obj* x,
-               r_obj* to,
-               struct vctrs_arg* x_arg,
-               struct vctrs_arg* to_arg) {
-  const struct cast_opts opts = {
+r_obj* vec_cast(r_obj* x,
+                r_obj* to,
+                struct vctrs_arg* x_arg,
+                struct vctrs_arg* to_arg,
+                struct r_lazy call) {
+  struct cast_opts opts = {
     .x = x,
     .to = to,
     .x_arg = x_arg,
-    .to_arg = to_arg
+    .to_arg = to_arg,
+    .call = call
   };
-  return df_cast_opts(&opts);
+  return vec_cast_opts(&opts);
 }
-
-r_obj* vec_cast_opts(const struct cast_opts* opts);
 
 static inline
 r_obj* vec_cast_params(r_obj* x,
