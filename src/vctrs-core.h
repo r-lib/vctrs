@@ -41,7 +41,7 @@ struct vctrs_arg {
   void* data;
 };
 
-struct vec_error_info {
+struct vec_error_args {
   struct vctrs_arg* arg;
   struct r_lazy call;
 };
