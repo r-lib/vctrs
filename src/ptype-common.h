@@ -2,6 +2,8 @@
 #define VCTRS_PTYPE_COMMON_H
 
 #include "vctrs-core.h"
+#include "ptype2.h"
+#include "utils.h"
 
 struct ptype_common_opts {
   struct r_lazy call;
