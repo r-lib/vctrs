@@ -178,7 +178,7 @@ vec_sort_radix <- function(x,
 
 # ------------------------------------------------------------------------------
 
-#' Identify ordered groups
+#' Locate sorted groups
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
@@ -188,16 +188,26 @@ vec_sort_radix <- function(x,
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
 #'
+#' @details
+#' `vec_locate_sorted_groups(x)` is equivalent to, but faster than:
+#'
+#' ```
+#' info <- vec_group_loc(x)
+#' vec_slice(info, vec_order(info$key))
+#' ```
+#'
 #' @inheritParams order-radix
 #'
 #' @return
 #' A two column data frame with size equal to `vec_size(vec_unique(x))`.
-#'   * A `key` column of type `vec_ptype(x)`.
-#'   * A `loc` column of type list, with elements of type integer.
+#' * A `key` column of type `vec_ptype(x)`.
+#' * A `loc` column of type list, with elements of type integer.
 #'
 #' @section Dependencies of `vec_locate_sorted_groups()`:
 #' * [vec_proxy_order()]
 #'
+#' @export
+#' @keywords internal
 #' @examples
 #' df <- data.frame(
 #'   g = sample(2, 10, replace = TRUE),
@@ -209,7 +219,6 @@ vec_sort_radix <- function(x,
 #' vec_locate_sorted_groups(df)
 #'
 #' vec_group_loc(df)
-#' @noRd
 vec_locate_sorted_groups <- function(x,
                                      ...,
                                      direction = "asc",
