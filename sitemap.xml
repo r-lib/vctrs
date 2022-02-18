@@ -118,6 +118,9 @@
     <loc>https://vctrs.r-lib.org/reference/op-empty-default.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/order-radix.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/partial_factor.html</loc>
   </url>
   <url>
@@ -230,6 +233,9 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_list_cast.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_locate_matches.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_match.html</loc>

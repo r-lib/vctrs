@@ -90,13 +90,13 @@ vec_locate_matches(x, y)
     </div>
 
     <div class="ref-description">
-    <p><code>vec_locate_matches()</code> is similar to <code><a href="vec_match.html">vec_match()</a></code>, but detects <em>all</em> matches by default, and can match on conditions other than equality (like <code>&gt;=</code> and <code>&lt;</code>). There are also various other arguments to limit or adjust exactly which kinds of matches are returned. Here is an example:</p><div class="sourceCode r"><pre><code><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>, <span class="st">"c"</span>, <span class="st">"d"</span><span class="op">)</span>
+    <p><code><a href="vec_locate_matches.html">vec_locate_matches()</a></code> is similar to <code><a href="vec_match.html">vec_match()</a></code>, but detects <em>all</em> matches by default, and can match on conditions other than equality (like <code>&gt;=</code> and <code>&lt;</code>). There are also various other arguments to limit or adjust exactly which kinds of matches are returned. Here is an example:</p><div class="sourceCode r"><pre><code><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>, <span class="st">"c"</span>, <span class="st">"d"</span><span class="op">)</span>
 <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"d"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>, <span class="st">"d"</span>, <span class="st">"a"</span>, <span class="st">"e"</span><span class="op">)</span>
 
 <span class="co"># For each value of `x`, find all matches in `y`</span>
 <span class="co"># - The "c" in `x` doesn't have a match, so it gets an NA location by default</span>
 <span class="co"># - The "e" in `y` isn't matched by anything in `x`, so it is dropped by default</span>
-<span class="fu">vec_locate_matches</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
+<span class="fu"><a href="../reference/vec_locate_matches.html">vec_locate_matches</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>
 <span class="co">#&gt;   needles haystack</span>
 <span class="co">#&gt; 1       1        3</span>
 <span class="co">#&gt; 2       1        5</span>
