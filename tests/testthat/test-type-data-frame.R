@@ -552,14 +552,17 @@ test_that("data frame fallback handles column types (#999)", {
   expect_identical(vec_ptype2(df1, df2), common)
   expect_identical(vec_ptype2(df2, df1), common)
 
-  expect_error(
-    vec_ptype2(df1, df3),
-    class = "vctrs_error_incompatible_type"
-  )
-  expect_error(
-    vec_ptype2(df3, df1),
-    class = "vctrs_error_incompatible_type"
-  )
+  expect_snapshot({
+    local_error_call(call("my_function"))
+    (expect_error(
+      vec_ptype2(df1, df3),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_ptype2(df3, df1),
+      class = "vctrs_error_incompatible_type"
+    ))
+  })
 
   expect_identical(
     vec_cast(df1, df2),

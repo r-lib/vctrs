@@ -11,7 +11,15 @@ r_obj* ffi_ptype2_opts(r_obj* x,
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
+  const struct ptype2_opts c_opts = new_ptype2_opts(x,
+                                                    y,
+                                                    &c_x_arg,
+                                                    &c_y_arg,
+                                                    call,
+                                                    opts);
 
   int _left;
   return vec_ptype2_opts(&c_opts, &_left);
@@ -228,7 +236,15 @@ r_obj* ffi_is_coercible(r_obj* x,
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, opts);
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
+  const struct ptype2_opts c_opts = new_ptype2_opts(x,
+                                                    y,
+                                                    &c_x_arg,
+                                                    &c_y_arg,
+                                                    call,
+                                                    opts);
 
   int dir = 0;
   return r_lgl(vec_is_coercible(&c_opts, &dir));
@@ -255,12 +271,14 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    r_obj* y,
                                    struct vctrs_arg* p_x_arg,
                                    struct vctrs_arg* p_y_arg,
+                                   struct r_lazy call,
                                    r_obj* opts) {
   return (struct ptype2_opts) {
     .x = x,
     .y = y,
     .p_x_arg = p_x_arg,
     .p_y_arg = p_y_arg,
+    .call = call,
     .fallback = new_fallback_opts(opts)
   };
 }

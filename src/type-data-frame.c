@@ -485,7 +485,14 @@ r_obj* ffi_df_ptype2_opts(r_obj* x, r_obj* y, r_obj* opts, r_obj* frame) {
   struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame };
   struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &x_arg, &y_arg, opts);
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+
+  const struct ptype2_opts c_opts = new_ptype2_opts(x,
+                                                    y,
+                                                    &x_arg,
+                                                    &y_arg,
+                                                    call,
+                                                    opts);
 
   return df_ptype2(&c_opts);
 }
@@ -647,12 +654,13 @@ r_obj* ffi_df_cast_opts(r_obj* x, r_obj* to, r_obj* opts, r_obj* frame) {
   struct r_lazy to_arg_ = { .x = syms.to_arg, .env = frame };
   struct vctrs_arg to_arg = new_lazy_arg(&to_arg_);
 
-  // FIXME! Error call
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+
   struct cast_opts c_opts = new_cast_opts(x,
                                           to,
                                           &x_arg,
                                           &to_arg,
-                                          r_lazy_null,
+                                          call,
                                           opts);
 
   return df_cast_opts(&c_opts);

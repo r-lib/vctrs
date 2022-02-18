@@ -168,7 +168,15 @@ r_obj* ffi_ptype2_dispatch_native(r_obj* x,
   struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
   struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x, y, &c_x_arg, &c_y_arg, fallback_opts);
+  // TODO! call
+  struct r_lazy call = r_lazy_null;
+
+  const struct ptype2_opts c_opts = new_ptype2_opts(x,
+                                                    y,
+                                                    &c_x_arg,
+                                                    &c_y_arg,
+                                                    call,
+                                                    fallback_opts);
 
   int _left;
 

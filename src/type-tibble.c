@@ -12,15 +12,20 @@ SEXP tib_ptype2(const struct ptype2_opts* opts) {
 }
 
 // [[ register() ]]
-SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg y_arg = vec_as_arg(y_arg_);
+r_obj* ffi_tib_ptype2(r_obj* x,
+                      r_obj* y,
+                      r_obj* ffi_x_arg_,
+                      r_obj* ffi_y_arg_,
+                      r_obj* frame) {
+  struct vctrs_arg x_arg = vec_as_arg(ffi_x_arg_);
+  struct vctrs_arg y_arg = vec_as_arg(ffi_y_arg_);
 
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
     .p_x_arg = &x_arg,
-    .p_y_arg = &y_arg
+    .p_y_arg = &y_arg,
+    .call = { .x = r_syms.call, .env = frame }
   };
 
   return tib_ptype2(&opts);
@@ -37,15 +42,20 @@ SEXP tib_cast(const struct cast_opts* opts) {
 }
 
 // [[ register() ]]
-SEXP vctrs_tib_cast(SEXP x, SEXP to, SEXP x_arg, SEXP to_arg) {
-  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
-  struct vctrs_arg c_to_arg = vec_as_arg(to_arg);
+r_obj* ffi_tib_cast(r_obj* x,
+                    r_obj* to,
+                    r_obj* ffi_x_arg,
+                    r_obj* ffi_to_arg,
+                    r_obj* frame) {
+  struct vctrs_arg x_arg = vec_as_arg(ffi_x_arg);
+  struct vctrs_arg to_arg = vec_as_arg(ffi_to_arg);
 
   const struct cast_opts opts = {
     .x = x,
     .to = to,
-    .p_x_arg = &c_x_arg,
-    .p_to_arg = &c_to_arg
+    .p_x_arg = &x_arg,
+    .p_to_arg = &to_arg,
+    .call = { .x = r_syms.call, .env = frame }
   };
 
   return tib_cast(&opts);

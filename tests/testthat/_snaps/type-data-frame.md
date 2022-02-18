@@ -190,6 +190,22 @@
     Code
       expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
 
+# data frame fallback handles column types (#999)
+
+    Code
+      local_error_call(call("my_function"))
+      (expect_error(vec_ptype2(df1, df3), class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error:
+      ! Can't combine `x` <double> and `x` <character>.
+    Code
+      (expect_error(vec_ptype2(df3, df1), class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error:
+      ! Can't combine `x` <character> and `x` <double>.
+
 # falls back to tibble for tibble subclasses (#1025)
 
     Code

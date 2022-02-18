@@ -97,8 +97,8 @@ extern r_obj* ffi_as_subscript_result(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_df_flatten_info(r_obj*);
 extern r_obj* df_flatten(r_obj*);
 extern SEXP vctrs_linked_version();
-extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
-extern SEXP vctrs_tib_cast(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
+extern r_obj* ffi_tib_ptype2(r_obj* x, r_obj* y, r_obj* x_arg_, r_obj* y_arg_, r_obj* frame);
+extern r_obj* ffi_tib_cast(r_obj* x, r_obj* y, r_obj* x_arg_, r_obj* y_arg_);
 extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_has_dim(SEXP);
 extern SEXP vctrs_rep(SEXP, SEXP);
@@ -265,8 +265,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_df_flatten_info",                   (DL_FUNC) &ffi_df_flatten_info, 1},
   {"ffi_df_flatten",                        (DL_FUNC) &df_flatten, 1},
   {"vctrs_linked_version",                  (DL_FUNC) &vctrs_linked_version, 0},
-  {"vctrs_tib_ptype2",                      (DL_FUNC) &vctrs_tib_ptype2, 4},
-  {"vctrs_tib_cast",                        (DL_FUNC) &vctrs_tib_cast, 4},
+  {"ffi_tib_ptype2",                        (DL_FUNC) &ffi_tib_ptype2, 5},
+  {"ffi_tib_cast",                          (DL_FUNC) &ffi_tib_cast, 5},
   {"ffi_assign_params",                     (DL_FUNC) &ffi_assign_params, 4},
   {"vctrs_has_dim",                         (DL_FUNC) &vctrs_has_dim, 1},
   {"vctrs_rep",                             (DL_FUNC) &vctrs_rep, 2},

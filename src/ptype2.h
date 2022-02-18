@@ -86,6 +86,7 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
                                    r_obj* y,
                                    struct vctrs_arg* p_x_arg,
                                    struct vctrs_arg* p_y_arg,
+                                   struct r_lazy call,
                                    r_obj* opts);
 
 struct fallback_opts new_fallback_opts(r_obj* opts);
