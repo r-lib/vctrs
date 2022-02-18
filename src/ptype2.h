@@ -91,9 +91,9 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
 struct fallback_opts new_fallback_opts(r_obj* opts);
 
 r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
-                                 enum vctrs_type other_type,
-                                 r_obj* other,
-                                 struct vctrs_arg* other_arg);
+                                   enum vctrs_type other_type,
+                                   r_obj* other,
+                                   struct vctrs_arg* other_arg);
 
 
 #endif
