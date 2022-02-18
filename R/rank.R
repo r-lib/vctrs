@@ -20,7 +20,7 @@
 #' lowercase letters are ranked. See the documentation of [vec_order_radix()]
 #' for more information.
 #'
-#' @inheritParams vec_order_radix
+#' @inheritParams order-radix
 #' @inheritParams rlang::args_dots_empty
 #'
 #' @param ties Ranking of duplicate values.

@@ -51,13 +51,14 @@
 #'   of character vectors to use for collation, often used for locale-aware
 #'   ordering.
 #'   - If `NULL`, no transformation is done.
-#'   - Otherwise, this must be a function of one argument. The function will be
-#'     invoked with `x`, if it is a character vector, after it has been
-#'     translated to UTF-8, and should return a character vector with the same
-#'     length as `x`. The result should sort as expected in the C-locale,
-#'     regardless of encoding.
-#'   - For data frames, `chr_proxy_collate` will be applied to all character
-#'     columns.
+#'   - Otherwise, this must be a function of one argument. If the input contains
+#'     a character vector, it will be passed to this function after it has been
+#'     translated to UTF-8. This function should return a character vector with
+#'     the same length as the input. The result should sort as expected in the
+#'     C-locale, regardless of encoding.
+#'
+#'   For data frames, `chr_proxy_collate` will be applied to all character
+#'   columns.
 #'
 #'   Common transformation functions include: `tolower()` for case-insensitive
 #'   ordering and `stringi::stri_sort_key()` for locale-aware ordering.
@@ -105,8 +106,12 @@
 #' * [vec_order_radix()]
 #' * [vec_slice()]
 #'
-#' @noRd
+#' @name order-radix
+#' @keywords internal
+#'
 #' @examples
+#' if (FALSE) {
+#'
 #' x <- round(sample(runif(5), 9, replace = TRUE), 3)
 #' x <- c(x, NA)
 #'
@@ -136,6 +141,11 @@
 #' # To order in a case-insensitive manner, provide a `chr_proxy_collate`
 #' # function that transforms the strings to all lowercase
 #' vec_sort_radix(y, chr_proxy_collate = tolower)
+#'
+#' }
+NULL
+
+#' @rdname order-radix
 vec_order_radix <- function(x,
                             ...,
                             direction = "asc",
@@ -146,8 +156,7 @@ vec_order_radix <- function(x,
   .Call(vctrs_order, x, direction, na_value, nan_distinct, chr_proxy_collate)
 }
 
-#' @noRd
-#' @rdname vec_order_radix
+#' @rdname order-radix
 vec_sort_radix <- function(x,
                            ...,
                            direction = "asc",
@@ -177,7 +186,7 @@ vec_sort_radix <- function(x,
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
 #'
-#' @inheritParams vec_order_radix
+#' @inheritParams order-radix
 #'
 #' @return
 #' A two column data frame with size equal to `vec_size(vec_unique(x))`.

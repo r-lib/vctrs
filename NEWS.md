@@ -1,5 +1,11 @@
 # vctrs (development version)
 
+* New experimental `vec_locate_matches()` for locating where each observation
+  in one vector matches one or more observations in another vector. It is
+  similar to `vec_match()`, but returns all matches by default (rather than just
+  the first), and can match on binary conditions other than equality. The
+  algorithm is inspired by data.table's very fast binary merge procedure.
+
 * The `vec_proxy_equal()`, `vec_proxy_compare()`, and `vec_proxy_order()`
   methods for `vctrs_rcrd` are now applied recursively over the fields (#1503).
 

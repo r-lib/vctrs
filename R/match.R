@@ -1,15 +1,8 @@
-# TODO: Use this NEWS bullet when we export `vec_locate_matches()`
-#
-# * New `vec_locate_matches()` for locating where each observation in one vector
-#   matches one or more observations in another vector. It is similar to
-#   `vec_match()`, but returns all matches by default (rather than just the
-#   first), and can match on binary conditions other than equality. The algorithm
-#   is inspired by data.table's very fast binary merge procedure.
-
-
 #' Locate observations matching specified conditions
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' `vec_locate_matches()` is a more flexible version of [vec_match()] used to
 #' identify locations where each observation of `needles` matches one or
 #' multiple observations in `haystack`. Unlike `vec_match()`,
@@ -41,7 +34,7 @@
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
-#' @inheritParams vec_order_radix
+#' @inheritParams order-radix
 #'
 #' @param needles,haystack Vectors used for matching.
 #'   - `needles` represents the vector to search for.
@@ -73,14 +66,13 @@
 #'   if the maximum or minimum haystack value is duplicated in `haystack`. These
 #'   can be further controlled with `multiple`.
 #'
-#' @param incomplete Handling of [incomplete][vec_detect_complete] observations
-#'   in `needles`.
-#'   - `"compare"` uses `condition` to determine whether or not an incomplete
-#'     observation in `needles` matches an incomplete observation in `haystack`.
-#'     If `condition` is `==`, `>=`, or `<=`, then incomplete observations will
-#'     match.
-#'   - `"match"` always matches incomplete observations in `needles` to
-#'     incomplete observations in `haystack`, regardless of the `condition`.
+#' @param incomplete Handling of missing values and
+#'   [incomplete][vec_detect_complete] observations in `needles`.
+#'   - `"compare"` uses `condition` to determine whether or not a missing value
+#'     in `needles` matches a missing value in `haystack`. If `condition` is
+#'     `==`, `>=`, or `<=`, then missing values will match.
+#'   - `"match"` always allows missing values in `needles` to match missing
+#'     values in `haystack`, regardless of the `condition`.
 #'   - `"drop"` drops incomplete observations in `needles` from the result.
 #'   - `"error"` throws an error if any `needles` are incomplete.
 #'   - If a single integer is provided, this represents the value returned
@@ -128,7 +120,7 @@
 #'   - `haystack` is an integer vector containing the location of the
 #'     corresponding match in the haystack for the current needle.
 #'
-#' @noRd
+#' @export
 #' @examples
 #' x <- c(1, 2, NA, 3, NaN)
 #' y <- c(2, 1, 4, NA, 1, 2, NaN)
@@ -266,47 +258,6 @@ vec_locate_matches <- function(needles,
     chr_proxy_collate,
     needles_arg,
     haystack_arg
-  )
-}
-
-# ------------------------------------------------------------------------------
-
-# Experimental shim of `vec_locate_matches()` used by other packages (iv).
-# This allows us to alter the `vec_locate_matches()` signature as we finalize
-# it, while avoiding breakage in these other packages.
-#
-# We can remove this after:
-# - `vec_locate_matches()` is exported
-# - iv updates to use `vec_locate_matches()` directly
-# - A short deprecation period goes by that allows users time to update their
-#   version of iv
-exp_vec_locate_matches <- function(needles,
-                                   haystack,
-                                   ...,
-                                   condition = "==",
-                                   filter = "none",
-                                   incomplete = "compare",
-                                   no_match = NA_integer_,
-                                   remaining = "drop",
-                                   multiple = "all",
-                                   nan_distinct = FALSE,
-                                   chr_proxy_collate = NULL,
-                                   needles_arg = "",
-                                   haystack_arg = "") {
-  vec_locate_matches(
-    needles = needles,
-    haystack = haystack,
-    ...,
-    condition = condition,
-    filter = filter,
-    incomplete = incomplete,
-    no_match = no_match,
-    remaining = remaining,
-    multiple = multiple,
-    nan_distinct = nan_distinct,
-    chr_proxy_collate = chr_proxy_collate,
-    needles_arg = needles_arg,
-    haystack_arg = haystack_arg
   )
 }
 
