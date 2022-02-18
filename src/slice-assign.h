@@ -9,6 +9,7 @@ struct vec_assign_opts {
   bool ignore_outer_names;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* value_arg;
+  struct r_lazy call;
 };
 
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,

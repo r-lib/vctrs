@@ -139,9 +139,10 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
  *   we have to fallback.
  */
 SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
+  struct vec_assign_opts args = { 0 };
   return vec_proxy_assign_opts(proxy, index, value,
                                vec_owned(proxy),
-                               &vec_assign_default_opts);
+                               &args);
 }
 SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
                            const enum vctrs_owned owned,
@@ -412,19 +413,22 @@ SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing
 
   SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
 
-  const struct vec_assign_opts* opts = &vec_assign_default_opts;
+  struct r_lazy call = lazy_calls.vec_assign_seq;
 
-  // TODO! call
-  // struct r_lazy call = opts->call;
-  struct r_lazy call = r_lazy_null;
+  // TODO! vec_check_assign()
+  struct vec_assign_opts args = {
+    .x_arg = vec_args.x,
+    .value_arg = vec_args.value,
+    .call = call
+  };
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, call));
-  value = PROTECT(vec_check_recycle(value, vec_subscript_size(index), opts->value_arg, call));
+  value = PROTECT(vec_cast(value, x, args.value_arg, args.x_arg, call));
+  value = PROTECT(vec_check_recycle(value, vec_subscript_size(index), args.value_arg, call));
 
   SEXP proxy = PROTECT(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, opts));
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, &args));
 
   SEXP out = vec_restore(proxy, x, R_NilValue, owned);
 

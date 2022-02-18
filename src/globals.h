@@ -38,10 +38,12 @@ struct vec_args {
   struct vctrs_arg* i;
   struct vctrs_arg* max_fill;
   struct vctrs_arg* n;
+  struct vctrs_arg* value;
   struct vctrs_arg* x;
 };
 
 struct lazy_calls {
+  struct r_lazy vec_assign_seq;
   struct r_lazy vec_recycle;
   struct r_lazy vec_recycle_common;
   struct r_lazy vec_size;
