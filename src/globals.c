@@ -8,6 +8,24 @@ struct lazy_calls lazy_calls;
 
 struct r_dyn_array* globals_shelter = NULL;
 
+
+#define INIT_ARG(ARG)                                             \
+  static struct vctrs_arg ARG; ARG = new_wrapper_arg(NULL, #ARG); \
+  vec_args.ARG = &ARG
+
+#define INIT_ARG2(ARG, STR)                                      \
+  static struct vctrs_arg ARG; ARG = new_wrapper_arg(NULL, STR); \
+  vec_args.ARG = &ARG
+
+#define INIT_STRING(ARG)                                \
+  strings.ARG = r_str(#ARG);                            \
+  r_dyn_list_push_back(globals_shelter, strings.ARG);
+
+#define INIT_CALL(ARG)                                                  \
+  lazy_calls.ARG = (struct r_lazy) { .x = r_parse(#ARG "()"), .env = r_null }; \
+  r_dyn_list_push_back(globals_shelter, lazy_calls.ARG.x)
+
+
 void vctrs_init_globals(r_obj* ns) {
   size_t n_strings = sizeof(struct lazy_calls) / sizeof(struct r_lazy);
   size_t n_lazy_calls = sizeof(struct strings) / sizeof(r_obj*);
@@ -29,41 +47,22 @@ void vctrs_init_globals(r_obj* ns) {
   syms.y_arg = r_sym("y_arg");
 
   // Strings -----------------------------------------------------------
-  strings.AsIs = r_str("AsIs");
-  r_dyn_list_push_back(globals_shelter, strings.AsIs);
+  INIT_STRING(AsIs);
 
   // Args --------------------------------------------------------------
-  static struct vctrs_arg dot_ptype; dot_ptype = new_wrapper_arg(NULL, ".ptype");
-  static struct vctrs_arg dot_size; dot_size = new_wrapper_arg(NULL, ".size");
-  static struct vctrs_arg empty; empty = new_wrapper_arg(NULL, "");
-  static struct vctrs_arg i; i = new_wrapper_arg(NULL, "i");
-  static struct vctrs_arg max_fill; max_fill = new_wrapper_arg(NULL, "max_fill");
-  static struct vctrs_arg n; n = new_wrapper_arg(NULL, "n");
-  static struct vctrs_arg value; value = new_wrapper_arg(NULL, "value");
-  static struct vctrs_arg x; x = new_wrapper_arg(NULL, "x");
-
-  vec_args.dot_ptype = &dot_ptype;
-  vec_args.dot_size = &dot_size;
-  vec_args.empty = &empty;
-  vec_args.i = &i;
-  vec_args.max_fill = &max_fill;
-  vec_args.n = &n;
-  vec_args.value = &value;
-  vec_args.x = &x;
+  INIT_ARG2(dot_ptype, ".ptype");
+  INIT_ARG2(dot_size, ".size");
+  INIT_ARG2(empty, "");
+  INIT_ARG(i);
+  INIT_ARG(max_fill);
+  INIT_ARG(n);
+  INIT_ARG(value);
+  INIT_ARG(x);
 
   // Calls -------------------------------------------------------------
-  lazy_calls.vec_assign_seq = (struct r_lazy) { .x = r_parse("vec_assign_seq()"), .env = r_null };
-  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_assign_seq.x);
-
-  lazy_calls.vec_recycle = (struct r_lazy) { .x = r_parse("vec_recycle()"), .env = r_null };
-  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_recycle.x);
-
-  lazy_calls.vec_recycle_common = (struct r_lazy) { .x = r_parse("vec_recycle_common()"), .env = r_null };
-  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_recycle_common.x);
-
-  lazy_calls.vec_size = (struct r_lazy) { .x = r_parse("vec_size()"), .env = r_null };
-  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_size.x);
-
-  lazy_calls.vec_size_common = (struct r_lazy) { .x = r_parse("vec_size_common()"), .env = r_null };
-  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_size_common.x);
+  INIT_CALL(vec_assign_seq);
+  INIT_CALL(vec_recycle);
+  INIT_CALL(vec_recycle_common);
+  INIT_CALL(vec_size);
+  INIT_CALL(vec_size_common);
 }
