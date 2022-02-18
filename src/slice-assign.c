@@ -136,14 +136,6 @@ r_obj* vec_assign_switch(r_obj* proxy,
  *   recycled to the correct size. Should not be proxied, in case
  *   we have to fallback.
  */
-r_obj* vec_proxy_assign(r_obj* proxy, r_obj* index, r_obj* value) {
-  struct vec_assign_opts args = { 0 };
-  return vec_proxy_assign_opts(proxy,
-                               index,
-                               value,
-                               vec_owned(proxy),
-                               &args);
-}
 r_obj* vec_proxy_assign_opts(r_obj* proxy,
                              r_obj* index,
                              r_obj* value,
@@ -421,20 +413,13 @@ r_obj* ffi_assign_seq(r_obj* x,
 
   struct r_lazy call = lazy_calls.vec_assign_seq;
 
-  // TODO! vec_check_assign()
-  struct vec_assign_opts args = {
-    .x_arg = vec_args.x,
-    .value_arg = vec_args.value,
-    .call = call
-  };
-
   // Cast and recycle `value`
-  value = KEEP(vec_cast(value, x, args.value_arg, args.x_arg, call));
-  value = KEEP(vec_check_recycle(value, vec_subscript_size(index), args.value_arg, call));
+  value = KEEP(vec_cast(value, x, vec_args.value, vec_args.x, call));
+  value = KEEP(vec_check_recycle(value, vec_subscript_size(index), vec_args.value, call));
 
   r_obj* proxy = KEEP(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
-  proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, owned, &args));
+  proxy = KEEP(vec_proxy_check_assign(proxy, index, value, vec_args.x, vec_args.value, call));
 
   r_obj* out = vec_restore(proxy, x, r_null, owned);
 

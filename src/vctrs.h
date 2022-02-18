@@ -310,7 +310,6 @@ SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
-SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call);
 SEXP vec_ptype_finalise(SEXP x);
