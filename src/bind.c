@@ -426,10 +426,8 @@ r_obj* vec_cbind(r_obj* xs,
     nrow = vec_as_short_length(size, vec_args.dot_size, call);
   }
 
-  // TODO! arg and call in `vec_recycle()`
-
   if (rownames != r_null && r_length(rownames) != nrow) {
-    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, r_lazy_null));
+    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, call));
     rownames = vec_as_unique_names(rownames, false);
     FREE(1);
   }
