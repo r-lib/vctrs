@@ -91,7 +91,7 @@ extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_is_partial(r_obj*);
 extern SEXP vctrs_is_list(SEXP);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
-extern r_obj* ffi_is_coercible(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_is_coercible(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript_result(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_df_flatten_info(r_obj*);
@@ -259,7 +259,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_is_partial",                        (DL_FUNC) &ffi_is_partial, 1},
   {"vctrs_is_list",                         (DL_FUNC) &vctrs_is_list, 1},
   {"vctrs_try_catch_callback",              (DL_FUNC) &vctrs_try_catch_callback, 2},
-  {"ffi_is_coercible",                      (DL_FUNC) &ffi_is_coercible, 5},
+  {"ffi_is_coercible",                      (DL_FUNC) &ffi_is_coercible, 4},
   {"ffi_as_subscript",                      (DL_FUNC) &ffi_as_subscript, 5},
   {"ffi_as_subscript_result",               (DL_FUNC) &ffi_as_subscript_result, 5},
   {"ffi_df_flatten_info",                   (DL_FUNC) &ffi_df_flatten_info, 1},

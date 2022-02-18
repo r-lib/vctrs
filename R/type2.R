@@ -372,7 +372,8 @@ vec_is_coercible <- function(x,
                              ...,
                              opts = fallback_opts(),
                              x_arg = "",
-                             y_arg = "") {
+                             y_arg = "",
+                             call = caller_env()) {
   check_dots_empty0(...)
 
   .Call(
@@ -380,8 +381,7 @@ vec_is_coercible <- function(x,
     x,
     y,
     opts,
-    x_arg,
-    y_arg
+    environment()
   )
 }
 

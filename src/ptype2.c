@@ -232,18 +232,19 @@ r_obj* vec_ptype2_e(const struct ptype2_opts* opts,
 r_obj* ffi_is_coercible(r_obj* x,
                         r_obj* y,
                         r_obj* opts,
-                        r_obj* x_arg,
-                        r_obj* y_arg) {
-  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
-  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
+                        r_obj* frame) {
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
-  // TODO! call
-  struct r_lazy call = r_lazy_null;
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame };
+  struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
+
+  struct r_lazy call = { .x = syms_call, .env = frame };
 
   const struct ptype2_opts c_opts = new_ptype2_opts(x,
                                                     y,
-                                                    &c_x_arg,
-                                                    &c_y_arg,
+                                                    &x_arg,
+                                                    &y_arg,
                                                     call,
                                                     opts);
 
