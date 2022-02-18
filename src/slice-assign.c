@@ -17,13 +17,20 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
 
 // [[ include("slice-assign.h") ]]
 SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
-                     const struct vec_assign_opts* opts) {
+                     const struct vec_assign_opts* c_opts) {
   if (x == R_NilValue) {
     return R_NilValue;
   }
 
-  vec_check_vector(x, opts->x_arg, opts->call);
-  vec_check_vector(value, opts->value_arg, opts->call);
+  struct vec_assign_opts opts = *c_opts;
+  if (r_lazy_is_null(opts.call)) {
+    opts.call = lazy_calls.vec_assign;
+    opts.x_arg = vec_args.x;
+    opts.value_arg = vec_args.value;
+  }
+
+  vec_check_vector(x, opts.x_arg, opts.call);
+  vec_check_vector(value, opts.value_arg, opts.call);
 
   const struct location_opts location_opts = new_location_opts_assign();
   index = PROTECT(vec_as_location_opts(index,
@@ -32,12 +39,12 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                                        &location_opts));
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, opts->call));
-  value = PROTECT(vec_check_recycle(value, vec_size(index), opts->value_arg, opts->call));
+  value = PROTECT(vec_cast(value, x, opts.value_arg, opts.x_arg, opts.call));
+  value = PROTECT(vec_check_recycle(value, vec_size(index), opts.value_arg, opts.call));
 
   SEXP proxy = PROTECT(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, opts));
+  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, &opts));
 
   SEXP out = vec_restore(proxy, x, R_NilValue, owned);
 

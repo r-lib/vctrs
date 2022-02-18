@@ -43,6 +43,7 @@ struct vec_args {
 };
 
 struct lazy_calls {
+  struct r_lazy vec_assign;
   struct r_lazy vec_assign_params;
   struct r_lazy vec_assign_seq;
   struct r_lazy vec_recycle;

@@ -33,6 +33,12 @@ r_obj* r_lazy_eval_protect(struct r_lazy lazy) {
   return out;
 }
 
+static inline
+bool r_lazy_is_null(struct r_lazy call) {
+  return !call.x && !call.env;
+}
+
+
 #define r_abort_lazy_call(LAZY, ...) \
   r_abort_call(KEEP(r_lazy_eval(LAZY)), __VA_ARGS__)
 
