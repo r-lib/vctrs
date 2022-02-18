@@ -79,10 +79,10 @@ extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
-extern r_obj* ffi_as_df_row(r_obj*, r_obj*);
+extern r_obj* ffi_as_df_row(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_size(SEXP);
-extern r_obj* ffi_as_df_col(r_obj*, r_obj*);
+extern r_obj* ffi_as_df_col(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unset_s4(SEXP);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
@@ -245,10 +245,10 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_assign",                            (DL_FUNC) &ffi_assign, 4},
   {"ffi_assign_seq",                        (DL_FUNC) &ffi_assign_seq, 5},
   {"vctrs_set_attributes",                  (DL_FUNC) &vctrs_set_attributes, 2},
-  {"ffi_as_df_row",                         (DL_FUNC) &ffi_as_df_row, 2},
+  {"ffi_as_df_row",                         (DL_FUNC) &ffi_as_df_row, 3},
   {"vctrs_outer_names",                     (DL_FUNC) &vctrs_outer_names, 3},
   {"vctrs_df_size",                         (DL_FUNC) &vctrs_df_size, 1},
-  {"ffi_as_df_col",                         (DL_FUNC) &ffi_as_df_col, 2},
+  {"ffi_as_df_col",                         (DL_FUNC) &ffi_as_df_col, 3},
   {"vctrs_apply_name_spec",                 (DL_FUNC) &vctrs_apply_name_spec, 4},
   {"vctrs_unset_s4",                        (DL_FUNC) &vctrs_unset_s4, 1},
   {"vctrs_altrep_rle_Make",                 (DL_FUNC) &altrep_rle_Make, 1},

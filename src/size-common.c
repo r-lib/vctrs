@@ -83,6 +83,13 @@ r_obj* vctrs_size2_common(r_obj* x,
                           void* data) {
   struct size_common_opts* opts = data;
 
+  if (x != r_null) {
+    vec_check_vector(x, counters->curr_arg, opts->call);
+  }
+  if (y != r_null) {
+    vec_check_vector(y, counters->next_arg, opts->call);
+  }
+
   if (x == r_null) {
     counters_shift(counters);
     return y;

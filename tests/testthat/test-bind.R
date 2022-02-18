@@ -29,7 +29,9 @@ test_that("type of column is common type of individual columns", {
   expect_equal(vec_rbind(x_int, x_int), data_frame(x = c(1L, 1L)))
   expect_equal(vec_rbind(x_int, x_dbl), data_frame(x = c(1, 2.5)))
 
-  expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
+  })
 })
 
 test_that("result contains union of columns", {
@@ -176,11 +178,13 @@ test_that("vec_rbind() respects size invariants (#286)", {
 })
 
 test_that("can repair names in `vec_rbind()` (#229)", {
-  expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`")
-  expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`")
+  expect_snapshot({
+    (expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`"))
+    (expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`"))
+    (expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+  })
 
   expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = "unique"), c("a...1", "a...2"))
-  expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_rbind(list(`_` = 1)), "_")
   expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
@@ -200,7 +204,9 @@ test_that("can construct an id column", {
 })
 
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
-  expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
+  expect_snapshot({
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays"))
+  })
 })
 
 test_that("row names are preserved by vec_rbind()", {
@@ -218,14 +224,16 @@ test_that("can assign row names in vec_rbind()", {
   df1 <- mtcars[1:3, ]
   df2 <- mtcars[4:5, ]
 
-  expect_error(
-    vec_rbind(
-      foo = df1,
-      df2,
-      .names_to = NULL
-    ),
-    "specification"
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(
+        foo = df1,
+        df2,
+        .names_to = NULL
+      ),
+      "specification"
+    ))
+  })
 
   # Combination
   out <- vec_rbind(
@@ -369,6 +377,13 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 
 # cols --------------------------------------------------------------------
 
+test_that("vec_cbind() reports error context", {
+  expect_snapshot({
+    (expect_error(vec_cbind(foobar(list()))))
+    (expect_error(vec_cbind(a = 1:2, b = int())))
+  })
+})
+
 test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(), data_frame())
   expect_equal(vec_cbind(NULL), data_frame())
@@ -446,10 +461,12 @@ test_that("can override default .nrow", {
 })
 
 test_that("can repair names in `vec_cbind()` (#227)", {
-  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`")
+  expect_snapshot({
+    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`"))
+    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+  })
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "unique"), c("a...1", "a...2"))
-  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_cbind(`_` = 1, .name_repair = "universal"), "._")
 
@@ -944,11 +961,13 @@ test_that("can't zap names when `.names_to` is supplied", {
     vec_rbind(foo = c(x = 1), .names_to = zap(), .name_spec = zap()),
     data.frame(x = 1)
   )
-  expect_error(
-    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
-    "Can't zap outer names when `.names_to` is supplied.",
-    fixed = TRUE
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
+      "Can't zap outer names when `.names_to` is supplied.",
+      fixed = TRUE
+    ))
+  })
 })
 
 test_that("can zap outer names from a name-spec (#1215)", {
