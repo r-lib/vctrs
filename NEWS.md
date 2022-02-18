@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New experimental `vec_locate_sorted_groups()` for returning the locations of
+  groups in sorted order. This is equivalent to, but faster than, calling
+  `vec_group_loc()` and then sorting by the `key` column of the result.
+
 * New experimental `vec_locate_matches()` for locating where each observation
   in one vector matches one or more observations in another vector. It is
   similar to `vec_match()`, but returns all matches by default (rather than just
