@@ -238,6 +238,9 @@
     <loc>https://vctrs.r-lib.org/reference/vec_locate_matches.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_locate_sorted_groups.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_match.html</loc>
   </url>
   <url>
