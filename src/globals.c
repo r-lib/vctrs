@@ -60,6 +60,7 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_ARG(x);
 
   // Calls -------------------------------------------------------------
+  INIT_CALL(vec_assign_params);
   INIT_CALL(vec_assign_seq);
   INIT_CALL(vec_recycle);
   INIT_CALL(vec_recycle_common);

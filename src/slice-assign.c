@@ -4,10 +4,6 @@
 SEXP syms_vec_assign_fallback = NULL;
 SEXP fns_vec_assign_fallback = NULL;
 
-const struct vec_assign_opts vec_assign_default_opts = {
-  .assign_names = false
-};
-
 static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
 static SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value, const enum vctrs_owned owned);
 static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
@@ -26,11 +22,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
     return R_NilValue;
   }
 
-  // TODO! Error call
-  struct r_lazy call = r_lazy_null;
-
-  vec_check_vector(x, opts->x_arg, call);
-  vec_check_vector(value, opts->value_arg, call);
+  vec_check_vector(x, opts->x_arg, opts->call);
+  vec_check_vector(value, opts->value_arg, opts->call);
 
   const struct location_opts location_opts = new_location_opts_assign();
   index = PROTECT(vec_as_location_opts(index,
@@ -39,8 +32,8 @@ SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
                                        &location_opts));
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, call));
-  value = PROTECT(vec_check_recycle(value, vec_size(index), opts->value_arg, call));
+  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg, opts->call));
+  value = PROTECT(vec_check_recycle(value, vec_size(index), opts->value_arg, opts->call));
 
   SEXP proxy = PROTECT(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
@@ -60,10 +53,13 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP frame) {
   struct r_lazy value_arg_ = { .x = syms.value_arg, .env = frame };
   struct vctrs_arg value_arg = new_lazy_arg(&value_arg_);
 
+  struct r_lazy call = { .x = frame, .env = r_null };
+
   const struct vec_assign_opts opts = {
     .assign_names = false,
     .x_arg = &x_arg,
-    .value_arg = &value_arg
+    .value_arg = &value_arg,
+    .call = call
   };
 
   return vec_assign_opts(x, index, value, &opts);
@@ -73,7 +69,8 @@ SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP frame) {
 SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
                          SEXP assign_names) {
   const struct vec_assign_opts opts =  {
-    .assign_names = r_bool_as_int(assign_names)
+    .assign_names = r_bool_as_int(assign_names),
+    .call = lazy_calls.vec_assign_params
   };
   return vec_assign_opts(x, index, value, &opts);
 }

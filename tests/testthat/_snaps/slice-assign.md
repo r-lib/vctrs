@@ -5,7 +5,7 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `vec_assign()`:
       ! Can't recycle input of size 2 to size 3.
 
 # logical subscripts must match size of indexed vector
@@ -94,13 +94,13 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_assign()`:
       ! Can't convert `bar` <character> to match type of `foo` <integer>.
     Code
       (expect_error(vec_assign(1:2, 1L, 1:2, value_arg = "bar"), class = "vctrs_error_recycle_incompatible_size")
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `vec_assign()`:
       ! Can't recycle `bar` (size 2) to size 1.
 
