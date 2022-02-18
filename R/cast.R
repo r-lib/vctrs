@@ -192,7 +192,14 @@ vec_default_cast <- function(x,
   # If both data frames, first find the `to` type of columns before
   # the same-type fallback
   if (df_needs_normalisation(x, to, opts)) {
-    x <- vec_cast_df_fallback_normalise(x, to, opts)
+    x <- vec_cast_df_fallback_normalise(
+      x,
+      to,
+      opts,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      call = call
+    )
   }
 
   if (is_same_type(x, to)) {
@@ -206,7 +213,8 @@ vec_default_cast <- function(x,
       ...,
       opts = opts,
       x_arg = x_arg,
-      to_arg = to_arg
+      to_arg = to_arg,
+      call = call
     )
 
     if (inherits(to, "tbl_df")) {

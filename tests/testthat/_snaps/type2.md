@@ -171,8 +171,9 @@
 # For reference, error when fallback is disabled
 
     Code
-      vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))
-    Condition
+      (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))))
+    Output
+      <error/vctrs_error_incompatible_type>
       Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 

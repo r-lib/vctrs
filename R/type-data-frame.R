@@ -281,7 +281,13 @@ df_cast <- function(x,
   )
 }
 
-df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
+df_ptype2_opts <- function(x,
+                           y,
+                           ...,
+                           opts,
+                           x_arg = "",
+                           y_arg = "",
+                           call = caller_env()) {
   .Call(ffi_df_ptype2_opts, x, y, opts = opts, environment())
 }
 
@@ -336,11 +342,11 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
 }
 
-vec_ptype2_df_fallback_normalise <- function(x, y, opts) {
+vec_ptype2_df_fallback_normalise <- function(x, y, opts, ...) {
   x_orig <- x
   y_orig <- y
 
-  ptype <- df_ptype2_opts(x, y, opts = opts)
+  ptype <- df_ptype2_opts(x, y, opts = opts, ...)
 
   x <- x[0, , drop = FALSE]
   y <- y[0, , drop = FALSE]
@@ -362,9 +368,9 @@ vec_ptype2_df_fallback_normalise <- function(x, y, opts) {
 
   list(x = x, y = y)
 }
-vec_cast_df_fallback_normalise <- function(x, to, opts) {
+vec_cast_df_fallback_normalise <- function(x, to, opts, ...) {
   orig <- x
-  cast <- df_cast_opts(x, to, opts = opts)
+  cast <- df_cast_opts(x, to, opts = opts, ...)
 
   # Seq-assign should be more widely implemented than empty-assign?
   x[seq_along(to)] <- cast
@@ -385,14 +391,20 @@ df_needs_normalisation <- function(x, y, opts) {
 }
 
 # Fallback for data frame subclasses (#981)
-vec_ptype2_df_fallback <- function(x, y, opts, x_arg = "", y_arg = "") {
+vec_ptype2_df_fallback <- function(x,
+                                   y,
+                                   opts,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   call = caller_env()) {
   seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
 
   ptype <- vec_ptype2_params(
     new_data_frame(x),
     new_data_frame(y),
     df_fallback = opts$df_fallback,
-    s3_fallback = opts$s3_fallback
+    s3_fallback = opts$s3_fallback,
+    call = call
   )
 
   classes <- NULL

@@ -109,7 +109,14 @@ vec_default_ptype2 <- function(x,
   # If both data frames, first find common type of columns before the
   # same-type fallback
   if (df_needs_normalisation(x, y, opts)) {
-    out <- vec_ptype2_df_fallback_normalise(x, y, opts)
+    out <- vec_ptype2_df_fallback_normalise(
+      x,
+      y,
+      opts,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      call = call
+    )
     x <- out$x
     y <- out$y
   }
@@ -127,10 +134,24 @@ vec_default_ptype2 <- function(x,
 
   if (has_df_fallback(opts$df_fallback)) {
     if (is_df_subclass(x) && is.data.frame(y)) {
-      return(vec_ptype2_df_fallback(x, y, opts))
+      return(vec_ptype2_df_fallback(
+        x,
+        y,
+        opts,
+        x_arg = x_arg,
+        y_arg = y_arg,
+        call = call
+      ))
     }
     if (is_df_subclass(y) && is.data.frame(x)) {
-      return(vec_ptype2_df_fallback(x, y, opts))
+      return(vec_ptype2_df_fallback(
+        x,
+        y,
+        opts,
+        x_arg = x_arg,
+        y_arg = y_arg,
+        call = call
+      ))
     }
   }
 
@@ -269,20 +290,42 @@ vec_ptype2_params <- function(x,
                               df_fallback = NULL,
                               s3_fallback = NULL,
                               x_arg = "",
-                              y_arg = "") {
+                              y_arg = "",
+                              call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = df_fallback,
     s3_fallback = s3_fallback
   )
-  vec_ptype2_opts(x, y, opts = opts, x_arg = x_arg, y_arg = y_arg)
+  vec_ptype2_opts(
+    x,
+    y,
+    opts = opts,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    call = call
+  )
 }
 
-vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2_no_fallback <- function(x,
+                                   y,
+                                   ...,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = DF_FALLBACK_none,
     s3_fallback = S3_FALLBACK_false
   )
-  vec_ptype2_opts(x, y, ..., , opts = opts, x_arg = x_arg, y_arg = y_arg)
+  vec_ptype2_opts(
+    x,
+    y,
+    ...,
+   ,
+    opts = opts,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    call = call
+  )
 }
 
 
