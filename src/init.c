@@ -69,8 +69,8 @@ extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
 extern SEXP vec_set_names(SEXP, SEXP);
-extern SEXP vctrs_df_cast_opts(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_df_ptype2_opts(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_df_cast_opts(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_df_ptype2_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_type_info(r_obj*);
 extern SEXP ffi_proxy_info(SEXP);
 extern r_obj* ffi_class_type(r_obj*);
@@ -94,8 +94,8 @@ extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
 extern r_obj* ffi_is_coercible(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript_result(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_df_flatten_info(SEXP);
-extern SEXP df_flatten(SEXP);
+extern r_obj* ffi_df_flatten_info(r_obj*);
+extern r_obj* df_flatten(r_obj*);
 extern SEXP vctrs_linked_version();
 extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 extern SEXP vctrs_tib_cast(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
@@ -117,8 +117,8 @@ extern SEXP vctrs_implements_ptype2(SEXP);
 extern r_obj* ffi_ptype2_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_fast_c(SEXP, SEXP);
-extern SEXP vctrs_data_frame(SEXP, SEXP, SEXP);
-extern SEXP vctrs_df_list(SEXP, SEXP, SEXP);
+extern r_obj* ffi_data_frame(r_obj*, r_obj*, r_obj*);
+extern SEXP ffi_df_list(SEXP, SEXP, SEXP);
 extern SEXP vctrs_identify_runs(SEXP);
 extern SEXP vctrs_locate_runs(SEXP, SEXP);
 extern SEXP vctrs_detect_runs(SEXP, SEXP);
@@ -235,8 +235,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_unique_names",                 (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",                 (DL_FUNC) &vctrs_as_unique_names, 2},
   {"vctrs_set_names",                       (DL_FUNC) &vec_set_names, 2},
-  {"vctrs_df_cast_opts",                    (DL_FUNC) &vctrs_df_cast_opts, 4},
-  {"vctrs_df_ptype2_opts",                  (DL_FUNC) &vctrs_df_ptype2_opts, 4},
+  {"ffi_df_cast_opts",                      (DL_FUNC) &ffi_df_cast_opts, 4},
+  {"ffi_df_ptype2_opts",                    (DL_FUNC) &ffi_df_ptype2_opts, 4},
   {"ffi_type_info",                         (DL_FUNC) &ffi_type_info, 1},
   {"ffi_proxy_info",                        (DL_FUNC) &ffi_proxy_info, 1},
   {"ffi_class_type",                        (DL_FUNC) &ffi_class_type, 1},
@@ -262,8 +262,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_is_coercible",                      (DL_FUNC) &ffi_is_coercible, 5},
   {"ffi_as_subscript",                      (DL_FUNC) &ffi_as_subscript, 5},
   {"ffi_as_subscript_result",               (DL_FUNC) &ffi_as_subscript_result, 5},
-  {"vctrs_df_flatten_info",                 (DL_FUNC) &vctrs_df_flatten_info, 1},
-  {"vctrs_df_flatten",                      (DL_FUNC) &df_flatten, 1},
+  {"ffi_df_flatten_info",                   (DL_FUNC) &ffi_df_flatten_info, 1},
+  {"ffi_df_flatten",                        (DL_FUNC) &df_flatten, 1},
   {"vctrs_linked_version",                  (DL_FUNC) &vctrs_linked_version, 0},
   {"vctrs_tib_ptype2",                      (DL_FUNC) &vctrs_tib_ptype2, 4},
   {"vctrs_tib_cast",                        (DL_FUNC) &vctrs_tib_cast, 4},
@@ -285,8 +285,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_ptype2_dispatch_native",            (DL_FUNC) &ffi_ptype2_dispatch_native, 5},
   {"ffi_cast_dispatch_native",              (DL_FUNC) &ffi_cast_dispatch_native, 6},
   {"vctrs_fast_c",                          (DL_FUNC) &vctrs_fast_c, 2},
-  {"vctrs_data_frame",                      (DL_FUNC) &vctrs_data_frame, 3},
-  {"vctrs_df_list",                         (DL_FUNC) &vctrs_df_list, 3},
+  {"ffi_data_frame",                        (DL_FUNC) &ffi_data_frame, 3},
+  {"ffi_df_list",                           (DL_FUNC) &ffi_df_list, 3},
   {"vctrs_identify_runs",                   (DL_FUNC) &vctrs_identify_runs, 1},
   {"vctrs_locate_runs",                     (DL_FUNC) &vctrs_locate_runs, 2},
   {"vctrs_detect_runs",                     (DL_FUNC) &vctrs_detect_runs, 2},
@@ -327,7 +327,7 @@ extern r_obj* ffi_cast_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_rbind(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cbind(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_new_data_frame(SEXP);
+extern r_obj* ffi_new_data_frame(r_obj*);
 
 static
 const R_ExternalMethodDef ExtEntries[] = {
@@ -340,7 +340,7 @@ const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_rbind",                        (DL_FUNC) &ffi_rbind, 4},
   {"ffi_cbind",                        (DL_FUNC) &ffi_cbind, 3},
   {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
-  {"vctrs_new_data_frame",             (DL_FUNC) &vctrs_new_data_frame, -1},
+  {"ffi_new_data_frame",               (DL_FUNC) &ffi_new_data_frame, -1},
   {NULL, NULL, 0}
 };
 

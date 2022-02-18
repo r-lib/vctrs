@@ -395,7 +395,7 @@ test_that("`class` must be a character vector", {
 
 test_that("flatten info is computed", {
   df_flatten_info <- function(x) {
-    .Call(vctrs_df_flatten_info, x)
+    .Call(ffi_df_flatten_info, x)
   }
   expect_identical(df_flatten_info(mtcars), list(FALSE, ncol(mtcars)))
 
@@ -405,7 +405,7 @@ test_that("flatten info is computed", {
 
 test_that("can flatten data frames", {
   df_flatten <- function(x) {
-    .Call(vctrs_df_flatten, x)
+    .Call(ffi_df_flatten, x)
   }
   expect_identical(df_flatten(mtcars), mtcars)
 

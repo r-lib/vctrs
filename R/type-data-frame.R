@@ -27,7 +27,7 @@
 #' @examples
 #' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
-  .External(vctrs_new_data_frame, x, n, class, ...)
+  .External(ffi_new_data_frame, x, n, class, ...)
 }
 new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
@@ -84,7 +84,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 df_list <- function(...,
                     .size = NULL,
                     .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(vctrs_df_list, list2(...), .size, .name_repair)
+  .Call(ffi_df_list, list2(...), .size, .name_repair)
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
 
@@ -155,7 +155,7 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 data_frame <- function(...,
                        .size = NULL,
                        .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(vctrs_data_frame, list2(...), .size, .name_repair)
+  .Call(ffi_data_frame, list2(...), .size, .name_repair)
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
 
@@ -251,16 +251,16 @@ df_is_coercible <- function(x, y, opts) {
 #'
 #' @export
 df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = match_fallback_opts(...), environment())
+  .Call(ffi_df_ptype2_opts, x, y, opts = match_fallback_opts(...), environment())
 }
 #' @rdname df_ptype2
 #' @export
 df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, opts = match_fallback_opts(...), environment())
+  .Call(ffi_df_cast_opts, x, to, opts = match_fallback_opts(...), environment())
 }
 
 df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = opts, environment())
+  .Call(ffi_df_ptype2_opts, x, y, opts = opts, environment())
 }
 
 # FIXME! Error call
@@ -270,7 +270,7 @@ df_cast_opts <- function(x,
                          opts = fallback_opts(),
                          x_arg = "",
                          to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, opts, environment())
+  .Call(ffi_df_cast_opts, x, to, opts, environment())
 }
 df_cast_params <- function(x,
                            to,
