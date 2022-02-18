@@ -76,8 +76,8 @@ extern SEXP ffi_proxy_info(SEXP);
 extern r_obj* ffi_class_type(r_obj*);
 extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_assign(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_assign_seq(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern r_obj* ffi_as_df_row(r_obj*, r_obj*);
 extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
@@ -99,7 +99,7 @@ extern SEXP df_flatten(SEXP);
 extern SEXP vctrs_linked_version();
 extern SEXP vctrs_tib_ptype2(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
 extern SEXP vctrs_tib_cast(SEXP x, SEXP y, SEXP x_arg_, SEXP y_arg_);
-extern SEXP vctrs_assign_params(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_has_dim(SEXP);
 extern SEXP vctrs_rep(SEXP, SEXP);
 extern SEXP vctrs_rep_each(SEXP, SEXP);
@@ -242,8 +242,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_class_type",                        (DL_FUNC) &ffi_class_type, 1},
   {"vctrs_bare_df_restore",                 (DL_FUNC) &vctrs_bare_df_restore, 3},
   {"ffi_recycle",                           (DL_FUNC) &ffi_recycle, 3},
-  {"vctrs_assign",                          (DL_FUNC) &vctrs_assign, 4},
-  {"vctrs_assign_seq",                      (DL_FUNC) &vctrs_assign_seq, 5},
+  {"ffi_assign",                            (DL_FUNC) &ffi_assign, 4},
+  {"ffi_assign_seq",                        (DL_FUNC) &ffi_assign_seq, 5},
   {"vctrs_set_attributes",                  (DL_FUNC) &vctrs_set_attributes, 2},
   {"ffi_as_df_row",                         (DL_FUNC) &ffi_as_df_row, 2},
   {"vctrs_outer_names",                     (DL_FUNC) &vctrs_outer_names, 3},
@@ -267,7 +267,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_linked_version",                  (DL_FUNC) &vctrs_linked_version, 0},
   {"vctrs_tib_ptype2",                      (DL_FUNC) &vctrs_tib_ptype2, 4},
   {"vctrs_tib_cast",                        (DL_FUNC) &vctrs_tib_cast, 4},
-  {"vctrs_assign_params",                   (DL_FUNC) &vctrs_assign_params, 4},
+  {"ffi_assign_params",                     (DL_FUNC) &ffi_assign_params, 4},
   {"vctrs_has_dim",                         (DL_FUNC) &vctrs_has_dim, 1},
   {"vctrs_rep",                             (DL_FUNC) &vctrs_rep, 2},
   {"vctrs_rep_each",                        (DL_FUNC) &vctrs_rep_each, 2},

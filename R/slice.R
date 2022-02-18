@@ -174,13 +174,13 @@ vec_slice_dispatch_integer64 <- function(x, i) {
   x_arg <- "" # Substitution is `*tmp*`
   delayedAssign("value_arg", as_label(substitute(value)))
 
-  .Call(vctrs_assign, x, i, value, environment())
+  .Call(ffi_assign, x, i, value, environment())
 }
 #' @rdname vec_slice
 #' @export
 vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_assign, x, i, value, environment())
+  .Call(ffi_assign, x, i, value, environment())
 }
 vec_assign_fallback <- function(x, i, value) {
   # Work around bug in base `[<-`
@@ -196,11 +196,11 @@ vec_assign_fallback <- function(x, i, value) {
 
 # `start` is 0-based
 vec_assign_seq <- function(x, value, start, size, increasing = TRUE) {
-  .Call(vctrs_assign_seq, x, value, start, size, increasing)
+  .Call(ffi_assign_seq, x, value, start, size, increasing)
 }
 
 vec_assign_params <- function(x, i, value, assign_names = FALSE) {
-  .Call(vctrs_assign_params, x, i, value, assign_names)
+  .Call(ffi_assign_params, x, i, value, assign_names)
 }
 
 vec_remove <- function(x, i) {
