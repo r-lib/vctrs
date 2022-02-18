@@ -760,10 +760,17 @@ r_obj* df_cast_match(const struct cast_opts* opts,
 
   r_ssize extra_len = r_length(x) - common_len;
   if (extra_len) {
-    out = vctrs_dispatch3(syms_df_lossy_cast, fns_df_lossy_cast,
+    r_obj* ffi_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
+    r_obj* ffi_to_arg = KEEP(vctrs_arg(opts->p_to_arg));
+    r_obj* ffi_call = KEEP(r_lazy_eval(opts->call));
+    out = vctrs_dispatch6(syms_df_lossy_cast, fns_df_lossy_cast,
                           syms_out, out,
                           syms_x, x,
-                          syms_to, to);
+                          syms_to, to,
+                          syms_x_arg, ffi_x_arg,
+                          syms_to_arg, ffi_to_arg,
+                          syms_call, ffi_call);
+    FREE(3);
   }
 
   FREE(4);

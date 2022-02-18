@@ -27,20 +27,20 @@
       (expect_error(vec_cast(tib1, tib2), class = "vctrs_error_cast_lossy_dropped"))
     Output
       <error/vctrs_error_cast_lossy_dropped>
-      Error in `df_lossy_cast()`:
-      ! Can't convert from <tbl_df<x:double>> to <tbl_df<y:double>> due to loss of precision.
+      Error in `my_function()`:
+      ! Can't convert from `tib1` <tbl_df<x:double>> to <tbl_df<y:double>> due to loss of precision.
     Code
       (expect_error(vec_cast(tib1, data.frame(y = 2)), class = "vctrs_error_cast_lossy_dropped")
       )
     Output
       <error/vctrs_error_cast_lossy_dropped>
-      Error in `df_lossy_cast()`:
-      ! Can't convert from <tbl_df<x:double>> to <data.frame<y:double>> due to loss of precision.
+      Error in `my_function()`:
+      ! Can't convert from `tib1` <tbl_df<x:double>> to <data.frame<y:double>> due to loss of precision.
     Code
       (expect_error(vec_cast(data.frame(x = 1), tib2), class = "vctrs_error_cast_lossy_dropped")
       )
     Output
       <error/vctrs_error_cast_lossy_dropped>
-      Error in `df_lossy_cast()`:
-      ! Can't convert from <data.frame<x:double>> to <tbl_df<y:double>> due to loss of precision.
+      Error in `my_function()`:
+      ! Can't convert from `data.frame(x = 1)` <data.frame<x:double>> to <tbl_df<y:double>> due to loss of precision.
 

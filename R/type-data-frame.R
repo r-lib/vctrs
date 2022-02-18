@@ -510,7 +510,13 @@ df_size <- function(x) {
   .Call(vctrs_df_size, x)
 }
 
-df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
+df_lossy_cast <- function(out,
+                          x,
+                          to,
+                          ...,
+                          x_arg = "",
+                          to_arg = "",
+                          call = caller_env()) {
   extra <- setdiff(names(x), names(to))
 
   maybe_lossy_cast(
@@ -521,6 +527,7 @@ df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
     locations = int(),
     x_arg = x_arg,
     to_arg = to_arg,
+    call = call,
     details = inline_list("Dropped variables: ", extra, quote = "`"),
     class = "vctrs_error_cast_lossy_dropped"
   )
