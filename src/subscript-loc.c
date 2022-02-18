@@ -307,8 +307,8 @@ r_obj* dbl_as_location(r_obj* subscript,
                        const struct location_opts* opts) {
   subscript = KEEP(vec_cast(subscript,
                             vctrs_shared_empty_int,
-                            args_empty,
-                            args_empty,
+                            vec_args.empty,
+                            vec_args.empty,
                             r_lazy_null));
   subscript = int_as_location(subscript, n, opts);
 
@@ -372,8 +372,8 @@ r_obj* ffi_as_location(r_obj* subscript,
     if (r_is_object(ffi_n) || r_typeof(ffi_n) != R_TYPE_integer) {
       ffi_n = vec_cast(ffi_n,
                        vctrs_shared_empty_int,
-                       args_n,
-                       args_empty,
+                       vec_args.n,
+                       vec_args.empty,
                        (struct r_lazy) { .x = frame, .env = r_null });
     }
     KEEP(ffi_n);

@@ -25,8 +25,8 @@ SEXP vctrs_unspecified(SEXP n) {
   if (TYPEOF(n) != INTSXP) {
     n = vec_cast(n,
                  vctrs_shared_empty_int,
-                 args_empty,
-                 args_empty,
+                 vec_args.empty,
+                 vec_args.empty,
                  r_lazy_null);
   }
   int len = INTEGER(n)[0];

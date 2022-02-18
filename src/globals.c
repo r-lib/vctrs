@@ -33,8 +33,21 @@ void vctrs_init_globals(r_obj* ns) {
   r_dyn_list_push_back(globals_shelter, strings.AsIs);
 
   // Args --------------------------------------------------------------
+  static struct vctrs_arg dot_ptype; dot_ptype = new_wrapper_arg(NULL, ".ptype");
   static struct vctrs_arg dot_size; dot_size = new_wrapper_arg(NULL, ".size");
+  static struct vctrs_arg empty; empty = new_wrapper_arg(NULL, "");
+  static struct vctrs_arg i; i = new_wrapper_arg(NULL, "i");
+  static struct vctrs_arg max_fill; max_fill = new_wrapper_arg(NULL, "max_fill");
+  static struct vctrs_arg n; n = new_wrapper_arg(NULL, "n");
+  static struct vctrs_arg x; x = new_wrapper_arg(NULL, "x");
+
+  vec_args.dot_ptype = &dot_ptype;
   vec_args.dot_size = &dot_size;
+  vec_args.empty = &empty;
+  vec_args.i = &i;
+  vec_args.max_fill = &max_fill;
+  vec_args.n = &n;
+  vec_args.x = &x;
 
   // Calls -------------------------------------------------------------
   lazy_calls.vec_recycle = (struct r_lazy) { .x = r_parse("vec_recycle()"), .env = r_null };

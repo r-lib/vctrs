@@ -189,7 +189,7 @@ SEXP vctrs_data_frame(SEXP x, SEXP size, SEXP name_repair) {
   struct r_lazy call = r_lazy_null;
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  args_empty,
+                                                                  vec_args.empty,
                                                                   false,
                                                                   call);
   KEEP(name_repair_opts.shelter);
@@ -224,7 +224,7 @@ SEXP vctrs_df_list(SEXP x, SEXP size, SEXP name_repair) {
   struct r_lazy call = r_lazy_null;
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  args_empty,
+                                                                  vec_args.empty,
                                                                   false,
                                                                   call);
   KEEP(name_repair_opts.shelter);

@@ -61,7 +61,7 @@ void vec_check_list(r_obj* x,
 
 r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
   // This is an internal error
-  vec_check_list(x, args_x, (struct r_lazy) {.x = frame, .env = r_null });
+  vec_check_list(x, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
 
   struct r_lazy call = { .x = r_syms.call, .env = frame };
   struct r_lazy arg_caller_data = { .x = syms.arg, .env = frame };

@@ -5,7 +5,7 @@
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
   struct vec_error_opts err = {
-    .p_arg = args_x,
+    .p_arg = vec_args.x,
     .call = { .x = frame, .env = r_null }
   };
   return r_len(vec_size_opts(x, &err));
@@ -13,7 +13,7 @@ r_obj* ffi_size(r_obj* x, r_obj* frame) {
 
 r_ssize vec_size(r_obj* x) {
   struct vec_error_opts err = {
-    .p_arg = args_x,
+    .p_arg = vec_args.x,
     .call = lazy_calls.vec_size
   };
   return vec_size_opts(x, &err);
@@ -71,7 +71,7 @@ r_ssize vec_raw_size(r_obj* x) {
 // [[ register() ]]
 r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
   struct vec_error_opts err = {
-    .p_arg = args_x,
+    .p_arg = vec_args.x,
     .call = { .x = frame, .env = r_null }
   };
   return list_sizes(x, &err);
@@ -195,8 +195,8 @@ r_obj* ffi_recycle(r_obj* x,
 
   size_obj = KEEP(vec_cast(size_obj,
                            vctrs_shared_empty_int,
-                           args_empty,
-                           args_empty,
+                           vec_args.empty,
+                           vec_args.empty,
                            recycle_call));
   R_len_t size = r_int_get(size_obj, 0);
   FREE(1);

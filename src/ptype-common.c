@@ -45,7 +45,7 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
                              r_obj* ptype,
                              const struct ptype_common_opts* opts) {
   if (!vec_is_partial(ptype)) {
-    return vec_ptype(ptype, args_dot_ptype, opts->call);
+    return vec_ptype(ptype, vec_args.dot_ptype, opts->call);
   }
 
   if (r_is_true(r_peek_option("vctrs.no_guessing"))) {
@@ -57,7 +57,7 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
 
   // Start reduction with the `.ptype` argument
   r_obj* type = KEEP(reduce(ptype,
-                            args_dot_ptype,
+                            vec_args.dot_ptype,
                             mut_opts.p_arg,
                             dots,
                             &ptype2_common,

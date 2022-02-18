@@ -171,24 +171,6 @@ bool list_is_homogeneously_classed(SEXP xs);
 // Destructive compacting
 SEXP node_compact_d(SEXP xs);
 
-extern struct vctrs_arg args_empty_;
-static struct vctrs_arg* const args_empty = &args_empty_;
-
-extern struct vctrs_arg args_x_;
-static struct vctrs_arg* const args_x = &args_x_;
-
-extern struct vctrs_arg args_i_;
-static struct vctrs_arg* const args_i = &args_i_;
-
-extern struct vctrs_arg args_n_;
-static struct vctrs_arg* const args_n = &args_n_;
-
-extern struct vctrs_arg args_dot_ptype_;
-static struct vctrs_arg* const args_dot_ptype = &args_dot_ptype_;
-
-extern struct vctrs_arg args_max_fill_;
-static struct vctrs_arg* const args_max_fill = &args_max_fill_;
-
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
@@ -367,7 +349,7 @@ static inline SEXP r_result_get(SEXP x, ERR err) {
 
 static inline struct vctrs_arg vec_as_arg(SEXP x) {
   if (x == R_NilValue) {
-    return *args_empty;
+    return *vec_args.empty;
   }
 
   if (!r_is_string(x)) {

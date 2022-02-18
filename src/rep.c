@@ -25,7 +25,7 @@ SEXP vctrs_rep(SEXP x, SEXP times) {
   times = PROTECT(vec_cast(times,
                            vctrs_shared_empty_int,
                            args_times,
-                           args_empty,
+                           vec_args.empty,
                            call));
 
   if (vec_size(times) != 1) {
@@ -93,7 +93,7 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
   times = PROTECT(vec_cast(times,
                            vctrs_shared_empty_int,
                            args_times,
-                           args_empty,
+                           vec_args.empty,
                            r_lazy_null));
 
   const R_len_t times_size = vec_size(times);
@@ -106,7 +106,7 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
     if (times_ == 1) {
       out = x;
     } else if (times_ == 0) {
-      out = vec_ptype(x, args_empty, r_lazy_null);
+      out = vec_ptype(x, vec_args.empty, r_lazy_null);
     } else {
       out = vec_rep_each_uniform(x, times_);
     }

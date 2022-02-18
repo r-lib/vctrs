@@ -64,7 +64,7 @@ r_ssize vec_size_common_opts(r_obj* xs,
   struct size_common_opts mut_opts = *opts;
 
   r_obj* common = KEEP(reduce(r_null,
-                              args_empty,
+                              vec_args.empty,
                               opts->p_arg,
                               xs,
                               &vctrs_size2_common,

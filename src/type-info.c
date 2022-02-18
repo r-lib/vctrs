@@ -128,7 +128,7 @@ bool vec_is_vector(r_obj* x) {
 
 // [[ register() ]]
 r_obj* ffi_list_all_vectors(r_obj* x, r_obj* frame) {
-  vec_check_list(x, args_x, (struct r_lazy) { frame, r_null });
+  vec_check_list(x, vec_args.x, (struct r_lazy) { frame, r_null });
   return r_lgl(list_all_vectors(x));
 }
 

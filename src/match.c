@@ -138,7 +138,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     needles,
     ptype,
     needles_arg,
-    args_empty,
+    vec_args.empty,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -147,7 +147,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     haystack,
     ptype,
     haystack_arg,
-    args_empty,
+    vec_args.empty,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -1320,7 +1320,7 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
     r_abort("`incomplete` must be one of: \"compare\", \"match\", \"drop\", or \"error\".");
   }
 
-  incomplete = vec_cast(incomplete, vctrs_shared_empty_int, args_incomplete, args_empty, r_lazy_null);
+  incomplete = vec_cast(incomplete, vctrs_shared_empty_int, args_incomplete, vec_args.empty, r_lazy_null);
   int c_incomplete = r_int_get(incomplete, 0);
 
   return (struct vctrs_incomplete) {
@@ -1423,7 +1423,7 @@ struct vctrs_no_match parse_no_match(r_obj* no_match) {
     r_abort("`no_match` must be either \"drop\" or \"error\".");
   }
 
-  no_match = vec_cast(no_match, vctrs_shared_empty_int, args_no_match, args_empty, r_lazy_null);
+  no_match = vec_cast(no_match, vctrs_shared_empty_int, args_no_match, vec_args.empty, r_lazy_null);
   int c_no_match = r_int_get(no_match, 0);
 
   return (struct vctrs_no_match) {
@@ -1460,7 +1460,7 @@ struct vctrs_remaining parse_remaining(r_obj* remaining) {
     r_abort("`remaining` must be either \"drop\" or \"error\".");
   }
 
-  remaining = vec_cast(remaining, vctrs_shared_empty_int, args_remaining, args_empty, r_lazy_null);
+  remaining = vec_cast(remaining, vctrs_shared_empty_int, args_remaining, vec_args.empty, r_lazy_null);
   int c_remaining = r_int_get(remaining, 0);
 
   return (struct vctrs_remaining) {

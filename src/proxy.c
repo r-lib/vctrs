@@ -170,7 +170,7 @@ r_obj* list_joint_proxy_order(r_obj* x, r_obj* y, r_obj* method) {
   r_obj* zap = KEEP(r_alloc_list(0));
   r_attrib_poke_class(zap, r_chr("rlang_zap"));
 
-  r_obj* ptype = KEEP(vec_ptype(x, args_empty, r_lazy_null));
+  r_obj* ptype = KEEP(vec_ptype(x, vec_args.empty, r_lazy_null));
 
   r_obj* out = KEEP(r_alloc_list(2));
   r_list_poke(out, 0, x);

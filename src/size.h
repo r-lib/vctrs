@@ -2,6 +2,7 @@
 #define VCTRS_SIZE_H
 
 #include "vctrs-core.h"
+#include "globals.h"
 
 r_ssize vec_size(r_obj* x);
 
@@ -21,7 +22,7 @@ r_obj* vec_check_recycle(r_obj* x,
 static inline
 r_obj* vec_recycle(r_obj* x,
                    r_ssize size) {
-  return vec_check_recycle(x, size, args_x, lazy_calls.vec_recycle);
+  return vec_check_recycle(x, size, vec_args.x, lazy_calls.vec_recycle);
 }
 
 r_obj* vec_recycle_fallback(r_obj* x,

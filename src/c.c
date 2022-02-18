@@ -16,7 +16,7 @@ SEXP vctrs_c(SEXP call, SEXP op, SEXP args, SEXP env) {
   SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  args_empty,
+                                                                  vec_args.empty,
                                                                   false,
                                                                   r_lazy_null);
   KEEP(name_repair_opts.shelter);

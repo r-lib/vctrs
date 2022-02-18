@@ -30,7 +30,7 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
 
 static
 r_obj* col_ptype(r_obj* x) {
-  return vec_ptype(x, args_empty, r_lazy_null);
+  return vec_ptype(x, vec_args.empty, r_lazy_null);
 }
 
 static inline
@@ -124,7 +124,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
   // TODO! Error call
 
   if (!r_is_object(x)) {
-    vec_check_vector(x, args_empty, r_lazy_null);
+    vec_check_vector(x, vec_args.empty, r_lazy_null);
     return x;
   }
 
@@ -136,7 +136,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  vec_check_vector(x, args_empty, r_lazy_null);
+  vec_check_vector(x, vec_args.empty, r_lazy_null);
 
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_tibble:

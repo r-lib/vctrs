@@ -838,7 +838,7 @@ SEXP vec_proxy_set_names(SEXP x, SEXP names, const enum vctrs_owned owned) {
 
 SEXP vctrs_validate_name_repair_arg(SEXP arg) {
   struct name_repair_opts opts = new_name_repair_opts(arg,
-                                                      args_empty,
+                                                      vec_args.empty,
                                                       true,
                                                       r_lazy_null);
   if (opts.type == name_repair_custom) {

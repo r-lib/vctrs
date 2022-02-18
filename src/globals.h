@@ -32,7 +32,13 @@ struct fns {
 };
 
 struct vec_args {
+  struct vctrs_arg* dot_ptype;
   struct vctrs_arg* dot_size;
+  struct vctrs_arg* empty;
+  struct vctrs_arg* i;
+  struct vctrs_arg* max_fill;
+  struct vctrs_arg* n;
+  struct vctrs_arg* x;
 };
 
 struct lazy_calls {

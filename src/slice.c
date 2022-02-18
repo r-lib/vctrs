@@ -399,8 +399,8 @@ r_obj* ffi_slice(r_obj* x,
                  r_obj* i,
                  r_obj* frame) {
   struct vec_slice_opts opts = {
-    .x_arg = args_x,
-    .i_arg = args_i,
+    .x_arg = vec_args.x,
+    .i_arg = vec_args.i,
     .call = {.x = r_syms.call, .env = frame}
   };
   return vec_slice_opts(x, i, &opts);
@@ -441,7 +441,7 @@ r_obj* vec_init(r_obj* x, r_ssize n) {
 // [[ register() ]]
 r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
   struct r_lazy call = { .x = ffi_frame, .env = r_null };
-  r_ssize n = vec_as_short_length(ffi_n, args_n, call);
+  r_ssize n = vec_as_short_length(ffi_n, vec_args.n, call);
 
   // TODO! Pass `call`
   r_obj* out = vec_init(x, n);

@@ -52,7 +52,7 @@ r_obj* vec_rbind(r_obj* xs,
                                   ptype,
                                   DF_FALLBACK_DEFAULT,
                                   S3_FALLBACK_true,
-                                  args_empty,
+                                  vec_args.empty,
                                   r_lazy_null);
   KEEP_N(ptype, &n_prot);
 
@@ -98,7 +98,7 @@ r_obj* vec_rbind(r_obj* xs,
                               ptype,
                               DF_FALLBACK_DEFAULT,
                               S3_FALLBACK_true,
-                              args_empty,
+                              vec_args.empty,
                               r_lazy_null);
   KEEP_N(xs, &n_prot);
 
@@ -374,7 +374,7 @@ r_obj* vec_cbind(r_obj* xs,
                                              ptype,
                                              DF_FALLBACK_DEFAULT,
                                              S3_FALLBACK_false,
-                                             args_empty,
+                                             vec_args.empty,
                                              call));
   if (type == r_null) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
@@ -394,7 +394,7 @@ r_obj* vec_cbind(r_obj* xs,
   }
 
   if (rownames != r_null && r_length(rownames) != nrow) {
-    rownames = KEEP(vec_check_recycle(rownames, nrow, args_empty, r_lazy_null));
+    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, r_lazy_null));
     rownames = vec_as_unique_names(rownames, false);
     FREE(1);
   }
@@ -413,7 +413,7 @@ r_obj* vec_cbind(r_obj* xs,
       continue;
     }
 
-    x = KEEP(vec_check_recycle(x, nrow, args_empty, r_lazy_null));
+    x = KEEP(vec_check_recycle(x, nrow, vec_args.empty, r_lazy_null));
 
     r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
     bool allow_packing;
@@ -587,7 +587,7 @@ r_obj* vec_as_df_col(r_obj* x, r_obj* outer) {
 static
 struct name_repair_opts validate_bind_name_repair(r_obj* name_repair, bool allow_minimal) {
   struct name_repair_opts opts = new_name_repair_opts(name_repair,
-                                                      args_empty,
+                                                      vec_args.empty,
                                                       false,
                                                       r_lazy_null);
 

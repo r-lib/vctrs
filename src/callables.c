@@ -15,7 +15,7 @@ SEXP short_vec_recycle(SEXP x, R_len_t size) {
 // Experimental
 
 SEXP exp_vec_cast(SEXP x, SEXP to) {
-  return vec_cast(x, to, args_empty, args_empty, r_lazy_null);
+  return vec_cast(x, to, vec_args.empty, vec_args.empty, r_lazy_null);
 }
 
 SEXP exp_vec_chop(SEXP x, SEXP indices) {
