@@ -335,7 +335,9 @@ test_that("For reference, warning for incompatible classes", {
 })
 
 test_that("For reference, error when fallback is disabled", {
-  expect_snapshot(error = TRUE, vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)))
+  expect_snapshot(
+    (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))))
+  )
 })
 
 test_that("vec_ptype2() evaluates x_arg and y_arg lazily", {

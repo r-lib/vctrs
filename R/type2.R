@@ -259,8 +259,9 @@ vec_ptype2_opts <- function(x,
                             ...,
                             opts,
                             x_arg = "",
-                            y_arg = "") {
-  .Call(ffi_ptype2_opts, x, y, opts, x_arg, y_arg)
+                            y_arg = "",
+                            call = caller_env()) {
+  .Call(ffi_ptype2_opts, x, y, opts, environment())
 }
 vec_ptype2_params <- function(x,
                               y,

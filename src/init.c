@@ -111,7 +111,7 @@ extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
 extern SEXP vctrs_datetime_validate(SEXP);
-extern r_obj* ffi_ptype2_opts(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_ptype2_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_s3_find_method(SEXP, SEXP, SEXP);
 extern SEXP vctrs_implements_ptype2(SEXP);
 extern r_obj* ffi_ptype2_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
@@ -279,7 +279,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_date_validate",                   (DL_FUNC) &vctrs_date_validate, 1},
   {"vctrs_new_datetime",                    (DL_FUNC) &vctrs_new_datetime, 2},
   {"vctrs_datetime_validate",               (DL_FUNC) &vctrs_datetime_validate, 1},
-  {"ffi_ptype2_opts",                       (DL_FUNC) &ffi_ptype2_opts, 5},
+  {"ffi_ptype2_opts",                       (DL_FUNC) &ffi_ptype2_opts, 4},
   {"vctrs_s3_find_method",                  (DL_FUNC) &vctrs_s3_find_method, 3},
   {"vctrs_implements_ptype2",               (DL_FUNC) &vctrs_implements_ptype2, 1},
   {"ffi_ptype2_dispatch_native",            (DL_FUNC) &ffi_ptype2_dispatch_native, 5},

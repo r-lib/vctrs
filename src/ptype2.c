@@ -5,24 +5,25 @@
 // [[ register() ]]
 r_obj* ffi_ptype2_opts(r_obj* x,
                        r_obj* y,
-                       r_obj* opts,
-                       r_obj* x_arg,
-                       r_obj* y_arg) {
-  struct vctrs_arg c_x_arg = vec_as_arg(x_arg);
-  struct vctrs_arg c_y_arg = vec_as_arg(y_arg);
+                       r_obj* ffi_opts,
+                       r_obj* frame) {
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
-  // TODO! call
-  struct r_lazy call = r_lazy_null;
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame };
+  struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
 
-  const struct ptype2_opts c_opts = new_ptype2_opts(x,
-                                                    y,
-                                                    &c_x_arg,
-                                                    &c_y_arg,
-                                                    call,
-                                                    opts);
+  struct r_lazy call = { .x = r_syms.call, .env = frame, };
+
+  struct ptype2_opts opts = new_ptype2_opts(x,
+                                            y,
+                                            &x_arg,
+                                            &y_arg,
+                                            call,
+                                            ffi_opts);
 
   int _left;
-  return vec_ptype2_opts(&c_opts, &_left);
+  return vec_ptype2_opts(&opts, &_left);
 }
 
 r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
