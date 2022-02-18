@@ -88,13 +88,13 @@ type error when the columns are not compatible.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">df_ptype2</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, y_arg <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">df_ptype2</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, y_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">df_cast</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, to_arg <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+<span class="fu">df_cast</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, to_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">tib_ptype2</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, y_arg <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+<span class="fu">tib_ptype2</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, y_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu">tib_cast</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, to_arg <span class="op">=</span> <span class="st">""</span><span class="op">)</span></code></pre></div>
+<span class="fu">tib_cast</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span>, x_arg <span class="op">=</span> <span class="st">""</span>, to_arg <span class="op">=</span> <span class="st">""</span>, call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -113,6 +113,11 @@ incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_
 <dd><p>Argument names for <code>x</code> and <code>y</code>. These are used
 in error messages to inform the user about the locations of
 incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
+<dt>call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 <dt>to_arg</dt>
 <dd><p>Argument names for <code>x</code> and <code>to</code>. These are used
 in error messages to inform the user about the locations of

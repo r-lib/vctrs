@@ -125,7 +125,7 @@ integer if they contain fractional values.</p>
 as the source type, it throws a lossy cast error. Assigning a fractional
 number to an integer vector is a typical example of a lossy cast error:</p><div class="sourceCode r"><pre><code><span class="va">int_vector</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>
 <span class="fu"><a href="../reference/vec_slice.html">vec_assign</a></span><span class="op">(</span><span class="va">int_vector</span>, <span class="fl">2</span>, <span class="fl">0.001</span><span class="op">)</span>
-<span class="co">#&gt; Error:</span>
+<span class="co">#&gt; Error in `vec_assign()`:</span>
 <span class="co">#&gt; ! Can't convert from &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
 <span class="co">#&gt; * Locations: 1</span></code></pre><p></p></div>
     </div>
