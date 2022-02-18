@@ -252,8 +252,7 @@ SEXP df_list(SEXP x, r_ssize size, const struct name_repair_opts* p_name_repair_
     r_stop_internal("`x` must be a list.");
   }
 
-  struct size_common_opts size_opts = { .call = call };
-  x = PROTECT(vec_recycle_common_opts(x, size, &size_opts));
+  x = PROTECT(vec_check_recycle_common(x, size, vec_args.empty, call));
 
   r_ssize n_cols = r_length(x);
 
