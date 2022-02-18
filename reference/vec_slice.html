@@ -218,7 +218,8 @@ method, the vector is sliced with <code>[</code> instead.</p>
 <span class="r-in"><span class="co"># vector:</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1.5</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error : Can't convert `1.5` &lt;double&gt; to &lt;integer&gt;.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in `vec_slice&lt;-`(`*tmp*`, 2, value = 1.5) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert `1.5` &lt;double&gt; to &lt;integer&gt;.</span>
 </code></pre></div>
     </div>
   </div>
