@@ -121,10 +121,10 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return x;
   }
 
-  // TODO! Error call
+  struct r_lazy call = lazy_calls.vec_ptype_finalise;
 
   if (!r_is_object(x)) {
-    vec_check_vector(x, vec_args.empty, r_lazy_null);
+    vec_check_vector(x, vec_args.x, call);
     return x;
   }
 
@@ -136,7 +136,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  vec_check_vector(x, vec_args.empty, r_lazy_null);
+  vec_check_vector(x, vec_args.x, call);
 
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_tibble:
@@ -174,7 +174,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
 
 static
 r_obj* vec_ptype_finalise_unspecified(r_obj* x) {
-  r_ssize size = Rf_length(x);
+  r_ssize size = r_length(x);
 
   if (size == 0) {
     return vctrs_shared_empty_lgl;

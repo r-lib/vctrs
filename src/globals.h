@@ -48,6 +48,7 @@ struct lazy_calls {
   struct r_lazy vec_assign_params;
   struct r_lazy vec_assign_seq;
   struct r_lazy vec_init;
+  struct r_lazy vec_ptype_finalise;
   struct r_lazy vec_recycle;
   struct r_lazy vec_recycle_common;
   struct r_lazy vec_size;
