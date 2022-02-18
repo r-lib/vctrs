@@ -425,10 +425,12 @@ r_obj* vec_slice_opts(r_obj* x,
 }
 
 r_obj* vec_init(r_obj* x, r_ssize n) {
-  vec_check_vector(x, NULL, r_lazy_null);
+  vec_check_vector(x, vec_args.x, lazy_calls.vec_init);
 
   if (n < 0) {
-    r_abort("`n` must be a positive integer.");
+    r_abort_lazy_call(lazy_calls.vec_init,
+                      "%s must be a positive integer.",
+                      r_c_str_format_error_arg("n"));
   }
 
   r_obj* i = KEEP(compact_rep(r_globals.na_int, n));
@@ -443,7 +445,6 @@ r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
   struct r_lazy call = { .x = ffi_frame, .env = r_null };
   r_ssize n = vec_as_short_length(ffi_n, vec_args.n, call);
 
-  // TODO! Pass `call`
   r_obj* out = vec_init(x, n);
 
   return out;
