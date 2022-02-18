@@ -176,13 +176,15 @@ vec_sort_radix <- function(x,
   vec_slice(x, idx)
 }
 
+# ------------------------------------------------------------------------------
+
 #' Identify ordered groups
 #'
 #' @description
 #' `r lifecycle::badge("experimental")`
 #'
-#' `vec_order_locs()` returns a data frame containing a `key` column with
-#' sorted unique groups, and a `loc` column with the locations of each
+#' `vec_locate_sorted_groups()` returns a data frame containing a `key` column
+#' with sorted unique groups, and a `loc` column with the locations of each
 #' group in `x`. It is similar to [vec_group_loc()], except the groups are
 #' returned sorted rather than by first appearance.
 #'
@@ -193,7 +195,7 @@ vec_sort_radix <- function(x,
 #'   * A `key` column of type `vec_ptype(x)`.
 #'   * A `loc` column of type list, with elements of type integer.
 #'
-#' @section Dependencies of `vec_order_locs()`:
+#' @section Dependencies of `vec_locate_sorted_groups()`:
 #' * [vec_proxy_order()]
 #'
 #' @examples
@@ -202,21 +204,31 @@ vec_sort_radix <- function(x,
 #'   x = c(NA, sample(5, 9, replace = TRUE))
 #' )
 #'
-#' # `vec_order_locs()` is similar to `vec_group_loc()`, except keys are
-#' # returned ordered rather than by first appearance.
-#' vec_order_locs(df)
+#' # `vec_locate_sorted_groups()` is similar to `vec_group_loc()`, except keys
+#' # are returned ordered rather than by first appearance.
+#' vec_locate_sorted_groups(df)
 #'
 #' vec_group_loc(df)
 #' @noRd
-vec_order_locs <- function(x,
-                           ...,
-                           direction = "asc",
-                           na_value = "largest",
-                           nan_distinct = FALSE,
-                           chr_proxy_collate = NULL) {
+vec_locate_sorted_groups <- function(x,
+                                     ...,
+                                     direction = "asc",
+                                     na_value = "largest",
+                                     nan_distinct = FALSE,
+                                     chr_proxy_collate = NULL) {
   check_dots_empty0(...)
-  .Call(vctrs_order_locs, x, direction, na_value, nan_distinct, chr_proxy_collate)
+
+  .Call(
+    vctrs_locate_sorted_groups,
+    x,
+    direction,
+    na_value,
+    nan_distinct,
+    chr_proxy_collate
+  )
 }
+
+# ------------------------------------------------------------------------------
 
 vec_order_info <- function(x,
                            ...,

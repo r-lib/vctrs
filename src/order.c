@@ -211,28 +211,45 @@ SEXP vec_order(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x,
-                           SEXP direction,
-                           SEXP na_value,
-                           bool nan_distinct,
-                           SEXP chr_proxy_collate);
+static SEXP vec_locate_sorted_groups(SEXP x,
+                                     SEXP direction,
+                                     SEXP na_value,
+                                     bool nan_distinct,
+                                     SEXP chr_proxy_collate);
 
 // [[ register() ]]
-SEXP vctrs_order_locs(SEXP x,
-                      SEXP direction,
-                      SEXP na_value,
-                      SEXP nan_distinct,
-                      SEXP chr_proxy_collate) {
+SEXP vctrs_locate_sorted_groups(SEXP x,
+                                SEXP direction,
+                                SEXP na_value,
+                                SEXP nan_distinct,
+                                SEXP chr_proxy_collate) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  return vec_order_locs(x, direction, na_value, c_nan_distinct, chr_proxy_collate);
+
+  return vec_locate_sorted_groups(
+    x,
+    direction,
+    na_value,
+    c_nan_distinct,
+    chr_proxy_collate
+  );
 }
 
-
 static
-SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_proxy_collate) {
+SEXP vec_locate_sorted_groups(SEXP x,
+                              SEXP direction,
+                              SEXP na_value,
+                              bool nan_distinct,
+                              SEXP chr_proxy_collate) {
   const bool chr_ordered = true;
 
-  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered));
+  SEXP info = KEEP(vec_order_info(
+    x,
+    direction,
+    na_value,
+    nan_distinct,
+    chr_proxy_collate,
+    chr_ordered
+  ));
 
   SEXP o = r_list_get(info, 0);
   const int* p_o = r_int_cbegin(o);
