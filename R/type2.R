@@ -49,9 +49,20 @@ vec_ptype2_dispatch_s3 <- function(x,
   UseMethod("vec_ptype2")
 }
 
-vec_ptype2_dispatch_native <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2_dispatch_native <- function(x,
+                                       y,
+                                       ...,
+                                       x_arg = "",
+                                       y_arg = "",
+                                       call = caller_env()) {
   fallback_opts <- match_fallback_opts(...)
-  .Call(ffi_ptype2_dispatch_native, x, y, fallback_opts, x_arg, y_arg)
+  .Call(
+    ffi_ptype2_dispatch_native,
+    x,
+    y,
+    fallback_opts,
+    frame = environment()
+  )
 }
 
 #' Default cast and ptype2 methods
