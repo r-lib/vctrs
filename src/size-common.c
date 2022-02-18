@@ -53,11 +53,6 @@ r_obj* ffi_size_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   return out;
 }
 
-r_ssize vec_size_common(r_obj* xs, r_ssize absent) {
-  struct size_common_opts opts = { 0 };
-  return vec_size_common_opts(xs, absent, &opts);
-}
-
 r_ssize vec_size_common_opts(r_obj* xs,
                              r_ssize absent,
                              const struct size_common_opts* opts) {
@@ -150,11 +145,6 @@ r_obj* ffi_recycle_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 
   FREE(1);
   return out;
-}
-
-r_obj* vec_recycle_common(r_obj* xs, r_ssize size) {
-  struct size_common_opts opts = { 0 };
-  return vec_recycle_common_opts(xs, size, &opts);
 }
 
 r_obj* vec_recycle_common_opts(r_obj* xs,

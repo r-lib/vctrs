@@ -53,6 +53,12 @@ void vctrs_init_globals(r_obj* ns) {
   lazy_calls.vec_recycle = (struct r_lazy) { .x = r_parse("vec_recycle()"), .env = r_null };
   r_dyn_list_push_back(globals_shelter, lazy_calls.vec_recycle.x);
 
+  lazy_calls.vec_recycle_common = (struct r_lazy) { .x = r_parse("vec_recycle_common()"), .env = r_null };
+  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_recycle_common.x);
+
   lazy_calls.vec_size = (struct r_lazy) { .x = r_parse("vec_size()"), .env = r_null };
   r_dyn_list_push_back(globals_shelter, lazy_calls.vec_size.x);
+
+  lazy_calls.vec_size_common = (struct r_lazy) { .x = r_parse("vec_size_common()"), .env = r_null };
+  r_dyn_list_push_back(globals_shelter, lazy_calls.vec_size_common.x);
 }
