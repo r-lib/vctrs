@@ -32,6 +32,7 @@ struct fns {
 };
 
 struct vec_args {
+  struct vctrs_arg* dot_name_repair;
   struct vctrs_arg* dot_ptype;
   struct vctrs_arg* dot_size;
   struct vctrs_arg* empty;

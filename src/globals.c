@@ -50,6 +50,7 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_STRING(AsIs);
 
   // Args --------------------------------------------------------------
+  INIT_ARG2(dot_name_repair, ".name_repair");
   INIT_ARG2(dot_ptype, ".ptype");
   INIT_ARG2(dot_size, ".size");
   INIT_ARG2(empty, "");

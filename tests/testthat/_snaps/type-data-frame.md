@@ -104,6 +104,30 @@
       with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
       with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
 
+# `x` must be a list
+
+    Code
+      (expect_error(new_data_frame(1), "`x` must be a list"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `x` must be a list
+
+# if supplied, `n` must be an integer of size 1
+
+    Code
+      (expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1"))
+    Output
+      <error/rlang_error>
+      Error in `new_data_frame()`:
+      ! `n` must be an integer of size 1.
+    Code
+      (expect_error(new_data_frame(n = "x"), "must be an integer of size 1"))
+    Output
+      <error/rlang_error>
+      Error in `new_data_frame()`:
+      ! `n` must be an integer of size 1.
+
 # if supplied, `n` can't be negative or missing (#1477)
 
     Code
@@ -118,6 +142,53 @@
       <error/rlang_error>
       Error in `new_data_frame()`:
       ! `n` can't be missing.
+
+# `class` must be a character vector
+
+    Code
+      (expect_error(new_data_frame(class = 1), "must be NULL or a character vector"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `class` must be NULL or a character vector
+
+# data_frame() and df_list() report error context
+
+    Code
+      (expect_error(data_frame(a = 1, a = 1)))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `data_frame()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+      i Use argument `.name_repair` to specify repair strategy.
+    Code
+      (expect_error(data_frame(a = 1:2, b = int())))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `data_frame()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+    Code
+      (expect_error(df_list(a = 1, a = 1)))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `df_list()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+      i Use argument `.name_repair` to specify repair strategy.
+    Code
+      (expect_error(df_list(a = 1:2, b = int())))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `df_list()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+
+# input is tidy recycled
+
+    Code
+      expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
 
 # falls back to tibble for tibble subclasses (#1025)
 

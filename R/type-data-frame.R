@@ -84,7 +84,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 df_list <- function(...,
                     .size = NULL,
                     .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(ffi_df_list, list2(...), .size, .name_repair)
+  .Call(ffi_df_list, list2(...), .size, .name_repair, environment())
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
 
@@ -155,7 +155,7 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 data_frame <- function(...,
                        .size = NULL,
                        .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(ffi_data_frame, list2(...), .size, .name_repair)
+  .Call(ffi_data_frame, list2(...), .size, .name_repair, environment())
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
 

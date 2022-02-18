@@ -374,12 +374,17 @@ test_that("n and row.names (#894)", {
 })
 
 test_that("`x` must be a list", {
-  expect_error(new_data_frame(1), "`x` must be a list")
+  expect_snapshot((expect_error(
+    new_data_frame(1),
+    "`x` must be a list"
+  )))
 })
 
 test_that("if supplied, `n` must be an integer of size 1", {
-  expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1")
-  expect_error(new_data_frame(n = "x"), "must be an integer of size 1")
+  expect_snapshot({
+    (expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1"))
+    (expect_error(new_data_frame(n = "x"), "must be an integer of size 1"))
+  })
 })
 
 test_that("if supplied, `n` can't be negative or missing (#1477)", {
@@ -390,7 +395,10 @@ test_that("if supplied, `n` can't be negative or missing (#1477)", {
 })
 
 test_that("`class` must be a character vector", {
-  expect_error(new_data_frame(class = 1), "must be NULL or a character vector")
+  expect_snapshot((expect_error(
+    new_data_frame(class = 1),
+    "must be NULL or a character vector"
+  )))
 })
 
 test_that("flatten info is computed", {
@@ -437,6 +445,16 @@ test_that("new_data_frame() zaps existing attributes", {
 
 # data_frame --------------------------------------------------------------
 
+test_that("data_frame() and df_list() report error context", {
+  expect_snapshot({
+    (expect_error(data_frame(a = 1, a = 1)))
+    (expect_error(data_frame(a = 1:2, b = int())))
+
+    (expect_error(df_list(a = 1, a = 1)))
+    (expect_error(df_list(a = 1:2, b = int())))
+  })
+})
+
 test_that("can construct data frames with empty input", {
   expect_identical(data_frame(), new_data_frame())
   expect_named(data_frame(), character())
@@ -453,7 +471,9 @@ test_that("input is tidy recycled", {
     data_frame(x = double(), y = integer())
   )
 
-  expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
+  expect_snapshot({
+    expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
+  })
 })
 
 test_that("dots are dynamic", {
