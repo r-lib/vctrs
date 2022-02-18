@@ -361,8 +361,9 @@ SEXP vec_order_info_impl(SEXP x,
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
   SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_largest), &n_prot);
 
+  R_len_t arg_size = vec_check_size_common(args, 0, vec_args.empty, call);
+
   struct size_common_opts size_opts = { .call = call };
-  R_len_t arg_size = vec_size_common_opts(args, 0, &size_opts);
   args = PROTECT_N(vec_recycle_common_opts(args, arg_size, &size_opts), &n_prot);
 
   decreasing = VECTOR_ELT(args, 0);

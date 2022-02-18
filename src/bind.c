@@ -387,8 +387,7 @@ r_obj* vec_cbind(r_obj* xs,
 
   r_ssize nrow;
   if (size == r_null) {
-    struct size_common_opts opts = { .call = call };
-    nrow = vec_size_common_opts(xs, 0, &opts);
+    nrow = vec_check_size_common(xs, 0, vec_args.dot_size, call);
   } else {
     nrow = vec_as_short_length(size, vec_args.dot_size, call);
   }

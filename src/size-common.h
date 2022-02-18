@@ -15,6 +15,18 @@ r_ssize vec_size_common_opts(r_obj* xs,
                              r_ssize absent,
                              const struct size_common_opts* opts);
 
+static inline
+r_ssize vec_check_size_common(r_obj* xs,
+                              r_ssize absent,
+                              struct vctrs_arg* p_arg,
+                              struct r_lazy call) {
+  struct size_common_opts args = {
+    .p_arg = p_arg,
+    .call = call
+  };
+  return vec_size_common_opts(xs, absent, &args);
+}
+
 r_obj* vec_recycle_common_opts(r_obj* xs,
                                r_ssize size,
                                const struct size_common_opts* opts);
