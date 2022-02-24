@@ -197,7 +197,7 @@ r_ssize subscript_arg_fill(void* p_data_, char* buf, r_ssize remaining) {
   r_ssize n = p_data->n;
 
   if (i >= n) {
-    r_stop_internal("`i = %ld` can't be greater than `vec_size(x) = %ld`.",
+    r_stop_internal("`i = %" R_PRI_SSIZE "` can't be greater than `vec_size(x) = %" R_PRI_SSIZE "`.",
                     i,
                     n);
   }
@@ -267,13 +267,13 @@ r_ssize counter_arg_fill(void* data_, char* buf, r_ssize remaining) {
     if (r_has_name_at(names, names_i)) {
       len = snprintf(buf, remaining, "$%s", r_chr_get_c_string(names, names_i));
     } else {
-      len = snprintf(buf, remaining, "[[%ld]]", i + 1);
+      len = snprintf(buf, remaining, "[[%" R_PRI_SSIZE "]]", i + 1);
     }
   } else {
     if (r_has_name_at(names, names_i)) {
       len = snprintf(buf, remaining, "%s", r_chr_get_c_string(names, names_i));
     } else {
-      len = snprintf(buf, remaining, "..%ld", i + 1);
+      len = snprintf(buf, remaining, "..%" R_PRI_SSIZE, i + 1);
     }
   }
 
