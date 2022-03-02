@@ -42,7 +42,10 @@ will include a hint to set the \code{repair_arg}.}
 \item{quiet}{By default, the user is informed of any renaming
 caused by repairing the names. This only concerns unique and
 universal repairing. Set \code{quiet} to \code{TRUE} to silence the
-messages.}
+messages.
+
+Users can silence the name repair messages by setting the
+\code{"rlib_name_repair_verbosity"} global option to \code{"quiet"}.}
 
 \item{call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be

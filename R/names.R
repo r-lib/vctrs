@@ -61,6 +61,9 @@
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
 #'   messages.
 #'
+#'   Users can silence the name repair messages by setting the
+#'   `"rlib_name_repair_verbosity"` global option to `"quiet"`.
+#'
 #' @section `minimal` names:
 #'
 #' `minimal` names exist. The `names` attribute is not `NULL`. The
