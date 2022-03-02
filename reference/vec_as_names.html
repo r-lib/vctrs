@@ -156,7 +156,9 @@ will include a hint to set the <code>repair_arg</code>.</p></dd>
 <dd><p>By default, the user is informed of any renaming
 caused by repairing the names. This only concerns unique and
 universal repairing. Set <code>quiet</code> to <code>TRUE</code> to silence the
-messages.</p></dd>
+messages.</p>
+<p>Users can silence the name repair messages by setting the
+<code>"rlib_name_repair_verbosity"</code> global option to <code>"quiet"</code>.</p></dd>
 <dt>call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
