@@ -13,8 +13,6 @@
 * The `vec_proxy_equal()`, `vec_proxy_compare()`, and `vec_proxy_order()`
   methods for `vctrs_rcrd` are now applied recursively over the fields (#1503).
 
-* `vec_unique()` now drops all names from the result (#1442).
-
 * Lossy cast errors now inherit from incompatible type errors.
 
 * `vec_is_list()` now returns `TRUE` for `AsIs` lists (#1463).

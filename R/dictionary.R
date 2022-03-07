@@ -161,7 +161,7 @@ vec_duplicate_id <- function(x) {
 #' @param x A vector (including a data frame).
 #' @return
 #' * `vec_unique()`: a vector the same type as `x` containing only unique
-#'    values. Names from `x` are dropped.
+#'    values.
 #' * `vec_unique_loc()`: an integer vector, giving locations of unique values.
 #' * `vec_unique_count()`: an integer vector of length 1, giving the
 #'   number of unique values.
@@ -189,7 +189,6 @@ vec_duplicate_id <- function(x) {
 #' # But they are for the purposes of considering uniqueness
 #' vec_unique(c(NA, NA, NA, NA, 1, 2, 1))
 vec_unique <- function(x) {
-  x <- vec_set_names(x, NULL)
   vec_slice(x, vec_unique_loc(x))
 }
 
