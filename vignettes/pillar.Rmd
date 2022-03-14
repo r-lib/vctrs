@@ -176,7 +176,7 @@ Currently, ANSI escapes are not rendered in vignettes, so this result doesn't lo
 data
 ```
 
-As well as the functions in pillar, the [cli](http://cli.r-lib.org/) package provides a variety of tools for styling text.
+As well as the functions in pillar, the [cli](https://cli.r-lib.org/) package provides a variety of tools for styling text.
 
 ## Truncation
 
