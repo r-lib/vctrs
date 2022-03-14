@@ -21,7 +21,7 @@ are combined into a larger vector:
 not compatible:\if{html}{\out{<div class="sourceCode r">}}\preformatted{df1 <- data.frame(x = 1:3)
 df2 <- data.frame(x = "foo")
 dplyr::bind_rows(df1, df2)
-#> Error:
+#> Error in `dplyr::bind_rows()`:
 #> ! Can't combine `..1$x` <integer> and `..2$x` <character>.
 }\if{html}{\out{</div>}}
 \item The vectors are combined into a vector that has the common type of

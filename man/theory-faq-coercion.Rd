@@ -39,7 +39,7 @@ vec_rbind(
   data.frame(x = "a"),
   data.frame(x = 1, y = 2)
 )
-#> Error:
+#> Error in `vec_rbind()`:
 #> ! Can't combine `..1$x` <character> and `..2$x` <double>.
 }\if{html}{\out{</div>}}
 
