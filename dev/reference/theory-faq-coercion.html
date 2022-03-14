@@ -35,7 +35,7 @@ vec_rbind(
   data.frame(x = &quot;a&quot;),
   data.frame(x = 1, y = 2)
 )
-#&amp;gt; Error:
+#&amp;gt; Error in `vec_rbind()`:
 #&amp;gt; ! Can't combine `..1$x` &amp;lt;character&amp;gt; and `..2$x` &amp;lt;double&amp;gt;.
 
 One major goal of vctrs is to provide a central place for implementing
@@ -309,7 +309,7 @@ vec_rbind(
   data.frame(x = &quot;a&quot;),
   data.frame(x = 1, y = 2)
 )
-#&amp;gt; Error:
+#&amp;gt; Error in `vec_rbind()`:
 #&amp;gt; ! Can't combine `..1$x` &amp;lt;character&amp;gt; and `..2$x` &amp;lt;double&amp;gt;.
 
 One major goal of vctrs is to provide a central place for implementing
@@ -637,7 +637,7 @@ functions that use the split-apply-combine strategy. For example:</p><div class=
   <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"a"</span><span class="op">)</span>,
   <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="op">)</span>
-<span class="co">#&gt; Error:</span>
+<span class="co">#&gt; Error in `vec_rbind()`:</span>
 <span class="co">#&gt; ! Can't combine `..1$x` &lt;character&gt; and `..2$x` &lt;double&gt;.</span></code></pre><p></p></div>
 <p>One major goal of vctrs is to provide a central place for implementing
 the coercion methods that make generic combinations possible. The two
