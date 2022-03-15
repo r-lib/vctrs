@@ -24,3 +24,5 @@
 ^compile_flags\.txt$
 ^\.dir-locals\.el$
 ^\.cache$
+^launch\.json$
+^\.vscode$

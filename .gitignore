@@ -5,3 +5,5 @@ man/faq/**/*.html
 .RData
 docs
 .clangd
+launch.json
+.vscode/
