@@ -125,64 +125,68 @@ if you want to match the counts up to other unique/duplicated functions.</p></li
 <span class="r-in"><span class="co"># default is to sort by frequency</span></span>
 <span class="r-in"><span class="fu">vec_count</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    key count</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    d    22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    h    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    g    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    e    13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    c    11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    f    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    i     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    j     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    b     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   k     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   a     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    e    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    f    17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    g    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    h    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    c     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    d     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    i     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    j     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    b     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   n     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   a     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   k     1</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># by can sort by key</span></span>
 <span class="r-in"><span class="fu">vec_count</span><span class="op">(</span><span class="va">x</span>, sort <span class="op">=</span> <span class="st">"key"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    key count</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    a     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    b     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    c    11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    d    22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    e    13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    f    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    g    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    h    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    i     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   j     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   k     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    a     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    b     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    c     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    d     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    e    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    f    17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    g    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    h    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    i     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   j     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   k     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   n     1</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># or location of first value</span></span>
 <span class="r-in"><span class="fu">vec_count</span><span class="op">(</span><span class="va">x</span>, sort <span class="op">=</span> <span class="st">"location"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    key count</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    f    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    h    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    c    11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    e    13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    b     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    g    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    k     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    d    22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    j     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   i     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   a     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    e    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    f    17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    h    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    g    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    j     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    d     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    b     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    c     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    i     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   k     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   n     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   a     1</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "f" "h" "c" "f" "e" "f"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "e" "f" "e" "e" "h" "h"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># or not at all</span></span>
 <span class="r-in"><span class="fu">vec_count</span><span class="op">(</span><span class="va">x</span>, sort <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    key count</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    i     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    h    15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    f    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    d    22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    c    11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    e    13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    j     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    b     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    k     3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   a     2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   g    15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    i     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    e    21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    j     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    c     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    b     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    d     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    g    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    h    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    n     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   f    17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   a     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   k     1</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
