@@ -70,47 +70,6 @@ Run `cloud_details(, "bignum")` for more info
         libs  14.1Mb
     ```
 
-# cutpointr
-
-<details>
-
-* Version: 1.1.1
-* GitHub: https://github.com/thie1e/cutpointr
-* Source code: https://github.com/cran/cutpointr
-* Date/Publication: 2021-06-29 06:30:02 UTC
-* Number of recursive dependencies: 82
-
-Run `cloud_details(, "cutpointr")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘cutpointr.Rmd’ using rmarkdown
-    Assuming the positive class is yes
-    Assuming the positive class has higher x values
-    
-     *** caught segfault ***
-    address (nil), cause 'memory not mapped'
-    
-    Traceback:
-     1: vec_unchop(col, ptype = col_ptype)
-    ...
-    27: rmarkdown::render(file, encoding = encoding, quiet = quiet, envir = globalenv(),     output_dir = getwd(), ...)
-    28: vweave_rmarkdown(...)
-    29: engine$weave(file, quiet = quiet, encoding = enc)
-    30: doTryCatch(return(expr), name, parentenv, handler)
-    31: tryCatchOne(expr, names, parentenv, handlers[[1L]])
-    32: tryCatchList(expr, classes, parentenv, handlers)
-    33: tryCatch({    engine$weave(file, quiet = quiet, encoding = enc)    setwd(startdir)    output <- find_vignette_product(name, by = "weave", engine = engine)    if (!have.makefile && vignette_is_tex(output)) {        texi2pdf(file = output, clean = FALSE, quiet = quiet)        output <- find_vignette_product(name, by = "texi2pdf",             engine = engine)    }    outputs <- c(outputs, output)}, error = function(e) {    thisOK <<- FALSE    fails <<- c(fails, file)    message(gettextf("Error: processing vignette '%s' failed with diagnostics:\n%s",         file, conditionMessage(e)))})
-    34: tools:::buildVignettes(dir = "/tmp/workdir/cutpointr/new/cutpointr.Rcheck/vign_test/cutpointr",     ser_elibs = "/tmp/RtmpiYeVjQ/filefbd4efcc90a.rds")
-    An irrecoverable exception occurred. R is aborting now ...
-    Segmentation fault (core dumped)
-    ```
-
 # dibble
 
 <details>
@@ -147,78 +106,6 @@ Run `cloud_details(, "dibble")` for more info
       [ FAIL 3 | WARN 0 | SKIP 0 | PASS 28 ]
       Error: Test failures
       Execution halted
-    ```
-
-# redist
-
-<details>
-
-* Version: 3.1.5
-* GitHub: https://github.com/alarm-redist/redist
-* Source code: https://github.com/cran/redist
-* Date/Publication: 2021-10-05 23:20:19 UTC
-* Number of recursive dependencies: 147
-
-Run `cloud_details(, "redist")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      31: test_code(NULL, exprs, env)
-      32: source_file(path, child_env(env), wrap = wrap)
-      33: FUN(X[[i]], ...)
-      34: lapply(test_paths, test_one_file, env = env, wrap = wrap)
-      35: doTryCatch(return(expr), name, parentenv, handler)
-      36: tryCatchOne(expr, names, parentenv, handlers[[1L]])
-      37: tryCatchList(expr, classes, parentenv, handlers)
-      38: tryCatch(code, testthat_abort_reporter = function(cnd) {    cat(conditionMessage(cnd), "\n")    NULL})
-      39: with_reporter(reporters$multi, lapply(test_paths, test_one_file,     env = env, wrap = wrap))
-      40: test_files(test_dir = test_dir, test_package = test_package,     test_paths = test_paths, load_helpers = load_helpers, reporter = reporter,     env = env, stop_on_failure = stop_on_failure, stop_on_warning = stop_on_warning,     wrap = wrap, load_package = load_package)
-      41: test_files(test_dir = path, test_paths = test_paths, test_package = package,     reporter = reporter, load_helpers = load_helpers, env = env,     stop_on_failure = stop_on_failure, stop_on_warning = stop_on_warning,     wrap = wrap, load_package = load_package, parallel = parallel)
-      42: test_dir("testthat", package = package, reporter = reporter,     ..., load_package = "installed")
-      43: test_check("redist")
-      An irrecoverable exception occurred. R is aborting now ...
-      Segmentation fault (core dumped)
-    ```
-
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘glossary.Rmd’ using rmarkdown
-    --- finished re-building ‘glossary.Rmd’
-    
-    --- re-building ‘map-preproc.Rmd’ using rmarkdown
-    
-    Attaching package: 'dplyr'
-    
-    The following objects are masked from 'package:stats':
-    
-    ...
-    35: tryCatchList(expr, classes, parentenv, handlers)
-    36: tryCatch({    engine$weave(file, quiet = quiet, encoding = enc)    setwd(startdir)    output <- find_vignette_product(name, by = "weave", engine = engine)    if (!have.makefile && vignette_is_tex(output)) {        texi2pdf(file = output, clean = FALSE, quiet = quiet)        output <- find_vignette_product(name, by = "texi2pdf",             engine = engine)    }}, error = function(e) {    OK <<- FALSE    message(gettextf("Error: processing vignette '%s' failed with diagnostics:\n%s",         file, conditionMessage(e)))})
-    37: tools:::.buildOneVignette("redist.Rmd", "/tmp/workdir/redist/new/redist.Rcheck/vign_test/redist",     TRUE, FALSE, "redist", "UTF-8", "/tmp/RtmpLzMp38/file21021196066.rds")
-    An irrecoverable exception occurred. R is aborting now ...
-    Segmentation fault (core dumped)
-    SUMMARY: processing the following files failed:
-      ‘map-preproc.Rmd’ ‘redist.Rmd’
-    
-    Error: Vignette re-building failed.
-    Execution halted
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is 36.0Mb
-      sub-directories of 1Mb or more:
-        libs  32.3Mb
     ```
 
 # taxa
