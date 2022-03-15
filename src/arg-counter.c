@@ -65,11 +65,12 @@ void init_next_box_counters(struct vctrs_arg* p_parent_arg,
 }
 
 // Stack-based protection, should be called after `init_counters()`
-#define PROTECT_COUNTERS(counters, nprot) do {                                \
-    KEEP_HERE((counters)->names, &(counters)->names_pi);             \
-    KEEP_HERE(R_NilValue, &(counters)->prev_box_counters->names_pi); \
-    KEEP_HERE(R_NilValue, &(counters)->next_box_counters->names_pi); \
-    *nprot += 3;                                                              \
+#define PROTECT_COUNTERS(counters, nprot) do {                          \
+    KEEP((counters)->shelter);                                          \
+    KEEP_HERE((counters)->names, &(counters)->names_pi);                \
+    KEEP_HERE(R_NilValue, &(counters)->prev_box_counters->names_pi);    \
+    KEEP_HERE(R_NilValue, &(counters)->next_box_counters->names_pi);    \
+    *nprot += 4;                                                        \
   } while(0)
 
 

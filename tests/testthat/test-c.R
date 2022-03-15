@@ -512,3 +512,14 @@ test_that("concatenation performs expected allocations", {
     with_memory_prof(vec_unchop(dfs))
   })
 })
+
+test_that("can dispatch many times", {
+  # This caused a crash when counters were not correctly protected
+  foo <- structure(
+    list(x.sorted = numeric(0), tp = numeric(0), fp = numeric(0)),
+    row.names = integer(0),
+    class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame")
+  )
+  x <- lapply(1:200, function(...) foo)
+  expect_error(NA, object = vctrs::vec_unchop(x))
+})
