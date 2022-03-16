@@ -16,10 +16,19 @@ test_that("conditions inherit from `vctrs_error`", {
 })
 
 test_that("incompatible cast throws an incompatible type error", {
-  expect_error(
-    stop_incompatible_cast(1, 1, x_arg = "x", to_arg = "to"),
+  err <- expect_error(
+    stop_incompatible_cast(1, 2, x_arg = "x", to_arg = "to"),
     class = "vctrs_error_incompatible_type"
   )
+
+  expect_equal(err$x, 1)
+  expect_equal(err$y, 2)
+  expect_equal(err$x_arg, "x")
+  expect_equal(err$y_arg, "to")
+
+  # Convenience aliases
+  expect_equal(err$to, err$y)
+  expect_equal(err$to_arg, err$y_arg)
 })
 
 test_that("incompatible type error validates `action`", {
