@@ -1,14 +1,5 @@
 # nocov start
 
-on_package_load <- function(pkg, expr) {
-  if (isNamespaceLoaded(pkg)) {
-    expr
-  } else {
-    thunk <- function(...) expr
-    setHook(packageEvent(pkg, "onLoad"), thunk)
-  }
-}
-
 .onLoad <- function(libname, pkgname) {
   check_linked_version(pkgname)
   ns <- ns_env("vctrs")
