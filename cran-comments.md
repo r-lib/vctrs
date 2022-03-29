@@ -1,16 +1,28 @@
-## Test environments
-
-* local macOS: release
-* Travis Ubuntu: 3.3, 3.4, 3.5, 3.6, 4.0, devel
-* win-builder: release, devel
-* R-Hub: UBSAN, rchk, and valgrind builds
-
-
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
 
-## Revdep checks
+## revdepcheck results
 
-We ran checks on revdeps of vctrs, dplyr, and tidyr. No problems were found.
+We checked 5 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 4 new problems
+ * We failed to check 0 packages
+
+Issues with CRAN packages are summarised below. We notified authors or provided patches.
+
+### New problems
+(This reports the first line of each new failure)
+
+* dibble
+  checking tests ... ERROR
+
+* taxa
+  checking tests ... ERROR
+
+* tibblify
+  checking tests ... ERROR
+
+* winch
+  checking tests ... ERROR
