@@ -100,7 +100,7 @@
   now be silenced through the global option `rlib_name_repair_verbosity`, which
   is useful for testing purposes. See `?names_inform_repair` for more
   information (#1429).
-  
+
 * `vctrs_vctr` methods for `na.omit()`, `na.exclude()`, and `na.fail()` have
   been added (#1413).
 
@@ -111,7 +111,7 @@
 * `vec_detect_complete()` now computes completeness for `vctrs_rcrd` types in
   the same way as data frames, which means that if any field is missing, the
   entire record is considered incomplete (#1386).
-  
+
 * The `na_value` argument of `vec_order()` and `vec_sort()` now correctly
   respect missing values in lists (#1401).
 
