@@ -454,9 +454,10 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
 
   elt <- cnd_subscript_element(cnd)
   action <- cnd_subscript_action(cnd)
+  type <- cnd_subscript_type(cnd)
 
-  if (action == "rename") {
-    glue::glue("Can't rename {elt[[2]]} that don't exist.")
+  if (action == "rename" || type == "character") {
+    glue::glue("Can't {action} {elt[[2]]} that don't exist.")
   } else {
     glue::glue("Can't {action} {elt[[2]]} past the end.")
   }

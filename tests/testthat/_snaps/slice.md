@@ -80,7 +80,7 @@
       vec_slice(c(bar = 1), "foo")
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements past the end.
+      ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
 
 ---
@@ -109,7 +109,7 @@
       vec_slice(set_names(letters), c("foo", "bar"))
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements past the end.
+      ! Can't subset elements that don't exist.
       x Elements `foo` and `bar` don't exist.
 
 ---
@@ -118,7 +118,7 @@
       vec_slice(set_names(letters), toupper(letters))
     Condition
       Error in `vec_slice()`:
-      ! Can't subset elements past the end.
+      ! Can't subset elements that don't exist.
       x Elements `A`, `B`, `C`, `D`, `E`, etc. don't exist.
 
 # vec_init() validates `n`
