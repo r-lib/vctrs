@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-</div>
+<ul><li>Fixed a memory protection issue related to the data frame method for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1551" class="external-link">#1551</a>).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="vctrs-040">vctrs 0.4.0<a class="anchor" aria-label="anchor" href="#vctrs-040"></a></h2><p class="text-muted">CRAN release: 2022-03-30</p>
 <ul><li><p>New experimental <code><a href="../reference/vec_locate_sorted_groups.html">vec_locate_sorted_groups()</a></code> for returning the locations of groups in sorted order. This is equivalent to, but faster than, calling <code><a href="../reference/vec_group.html">vec_group_loc()</a></code> and then sorting by the <code>key</code> column of the result.</p></li>
