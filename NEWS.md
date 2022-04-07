@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed a memory protection issue related to the data frame method for
+  `vec_ptype2()` (#1551).
+
 # vctrs 0.4.0
 
 * New experimental `vec_locate_sorted_groups()` for returning the locations of
