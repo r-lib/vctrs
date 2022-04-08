@@ -624,8 +624,12 @@ r_obj* df_ptype2_loop(const struct ptype2_opts* opts,
   r_attrib_poke(out, r_syms.names, names);
 
   r_ssize i = 0;
+
   struct vctrs_arg* named_x_arg = new_subscript_arg_vec(opts->p_x_arg, out, &i);
+  KEEP(named_x_arg->shelter);
+
   struct vctrs_arg* named_y_arg = new_subscript_arg_vec(opts->p_y_arg, out, &i);
+  KEEP(named_y_arg->shelter);
 
   for (; i < len; ++i) {
     struct ptype2_opts col_opts = *opts;
@@ -642,7 +646,7 @@ r_obj* df_ptype2_loop(const struct ptype2_opts* opts,
 
   init_data_frame(out, 0);
 
-  FREE(1);
+  FREE(3);
   return out;
 }
 
