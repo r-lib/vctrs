@@ -2,6 +2,7 @@
 #define VCTRS_ARG_COUNTER_H
 
 #include "vctrs-core.h"
+#include "arg.h"
 
 struct counters {
  /* public: */
@@ -33,6 +34,9 @@ struct counters {
 
   struct vctrs_arg curr_counter;
   struct vctrs_arg next_counter;
+
+  struct arg_data_counter curr_counter_arg_data;
+  struct arg_data_counter next_counter_arg_data;
 
   void* p_data;
 };
