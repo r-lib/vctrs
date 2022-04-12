@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* OOB errors with `character()` indexes use "that don't exist" instead
+  of "past the end" (#1543).
+
 * Fixed a memory protection issue related to the data frame method for
   `vec_ptype2()` (#1551).
 
