@@ -1,3 +1,4 @@
+#include "arg-counter.h"
 #include "vctrs.h"
 #include "decl/arg-counter-decl.h"
 
@@ -14,8 +15,19 @@ void init_counters(struct counters* counters,
                    struct vctrs_arg* p_parent_arg,
                    struct counters* prev_box_counters,
                    struct counters* next_box_counters) {
-  counters->shelter = KEEP(r_alloc_raw(sizeof(struct counters_data)));
-  struct counters_data* p_data = r_raw_begin(counters->shelter);
+  // This protects `shelter` and `names`. We leave space for
+  // protecting `prev_box_counters` and `next_box_counters` later on.
+  r_obj* shelter = KEEP(r_alloc_list(COUNTERS_SHELTER_N));
+  counters->shelter = shelter;
+
+  r_obj* data_shelter = r_alloc_raw(sizeof(struct counters_data));
+  r_list_poke(counters->shelter, COUNTERS_SHELTER_data, data_shelter);
+
+  // `names` might be from a splice box whose reduction has already
+  // finished. We protect those from upstack.
+  r_list_poke(shelter, COUNTERS_SHELTER_names, names);
+
+  struct counters_data* p_data = r_raw_begin(data_shelter);
   counters->p_data = p_data;
 
   counters->curr = 0;
@@ -46,33 +58,30 @@ void init_counters(struct counters* counters,
   FREE(1);
 }
 
+void r_list_swap(r_obj* xs, r_ssize i, r_ssize j) {
+  r_obj* tmp = r_list_get(xs, i);
+  r_list_poke(xs, i, r_list_get(xs, j));
+  r_list_poke(xs, j, tmp);
+}
+
 static
 void init_next_box_counters(struct vctrs_arg* p_parent_arg,
                             struct counters* counters,
                             r_obj* names) {
-  SWAP(struct counters*, counters->prev_box_counters, counters->next_box_counters);
+  SWAP(struct counters*, counters->next_box_counters, counters->prev_box_counters);
+  r_list_swap(counters->shelter, COUNTERS_SHELTER_next, COUNTERS_SHELTER_prev);
+
   struct counters* next = counters->next_box_counters;
-
-  KEEP_AT(names, next->names_pi);
-
   init_counters(next,
                 names,
                 counters->curr_arg,
                 p_parent_arg,
                 NULL,
                 NULL);
+  r_list_poke(counters->shelter, COUNTERS_SHELTER_next, next->shelter);
+
   next->next = counters->next;
 }
-
-// Stack-based protection, should be called after `init_counters()`
-#define PROTECT_COUNTERS(counters, nprot) do {                          \
-    KEEP((counters)->shelter);                                          \
-    KEEP_HERE((counters)->names, &(counters)->names_pi);                \
-    KEEP_HERE(R_NilValue, &(counters)->prev_box_counters->names_pi);    \
-    KEEP_HERE(R_NilValue, &(counters)->next_box_counters->names_pi);    \
-    *nprot += 4;                                                        \
-  } while(0)
-
 
 static
 void counters_inc(struct counters* counters) {
@@ -122,8 +131,7 @@ r_obj* reduce(r_obj* current,
                 p_parent_arg,
                 &prev_box_counters,
                 &next_box_counters);
-  int nprot = 0;
-  PROTECT_COUNTERS(&counters, &nprot);
+  KEEP(counters.shelter);
 
   r_obj* out = reduce_impl(current,
                            rest,
@@ -133,7 +141,7 @@ r_obj* reduce(r_obj* current,
                            impl,
                            data);
 
-  FREE(nprot);
+  FREE(1);
   return out;
 }
 
@@ -187,8 +195,6 @@ r_obj* reduce_splice_box(r_obj* current,
                                         void* data),
                          void* data) {
   init_next_box_counters(p_parent_arg, counters, r_names(rest));
-  KEEP(counters->shelter);
-
   struct counters* box_counters = counters->next_box_counters;
 
   current = reduce_impl(current,
@@ -202,6 +208,5 @@ r_obj* reduce_splice_box(r_obj* current,
   counters->curr_arg = box_counters->curr_arg;
   counters->next = box_counters->next;
 
-  FREE(1);
   return current;
 }
