@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.4.1
 
 * OOB errors with `character()` indexes use "that don't exist" instead
   of "past the end" (#1543).
