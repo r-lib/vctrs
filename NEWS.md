@@ -3,7 +3,7 @@
 * OOB errors with `character()` indexes use "that don't exist" instead
   of "past the end" (#1543).
 
-* Fixed memory protection issues related with common type
+* Fixed memory protection issues related to common type
   determination (#1551, tidyverse/tidyr#1348).
 
 
