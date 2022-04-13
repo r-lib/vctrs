@@ -1,78 +1,76 @@
+#include "arg-counter.h"
 #include "vctrs.h"
 #include "decl/arg-counter-decl.h"
 
 
-struct counters_data {
-  struct arg_data_counter curr_counter_data;
-  struct arg_data_counter next_counter_data;
-};
-
 static
-void init_counters(struct counters* counters,
-                   r_obj* names,
-                   struct vctrs_arg* p_curr_arg,
-                   struct vctrs_arg* p_parent_arg,
-                   struct counters* prev_box_counters,
-                   struct counters* next_box_counters) {
-  counters->shelter = KEEP(r_alloc_raw(sizeof(struct counters_data)));
-  struct counters_data* p_data = r_raw_begin(counters->shelter);
-  counters->p_data = p_data;
+struct counters* new_counters(r_obj* names,
+                              struct vctrs_arg* p_curr_arg,
+                              struct vctrs_arg* p_parent_arg,
+                              struct counters* prev_box_counters,
+                              struct counters* next_box_counters) {
+  // This protects `shelter` and `names`. We leave space for
+  // protecting `prev_box_counters` and `next_box_counters` later on.
+  r_obj* shelter = KEEP(r_alloc_list(COUNTERS_SHELTER_N));
 
-  counters->curr = 0;
-  counters->next = 0;
+  r_obj* data_shelter = r_alloc_raw(sizeof(struct counters));
+  r_list_poke(shelter, COUNTERS_SHELTER_data, data_shelter);
 
-  counters->names = names;
-  counters->names_curr = 0;
-  counters->names_next = 0;
+  // `names` might be from a splice box whose reduction has already
+  // finished. We protect those from upstack.
+  r_list_poke(shelter, COUNTERS_SHELTER_names, names);
 
-  p_data->curr_counter_data = new_counter_arg_data(p_parent_arg,
-                                                   &counters->curr,
-                                                   &counters->names,
-                                                   &counters->names_curr);
-  p_data->next_counter_data = new_counter_arg_data(p_parent_arg,
-                                                   &counters->next,
-                                                   &counters->names,
-                                                   &counters->names_next);
+  struct counters* p_counters = r_raw_begin(data_shelter);
+  p_counters->shelter = shelter;
 
-  counters->curr_counter = new_counter_arg(p_parent_arg, (void*) &p_data->curr_counter_data);
-  counters->next_counter = new_counter_arg(p_parent_arg, (void*) &p_data->next_counter_data);
+  p_counters->curr = 0;
+  p_counters->next = 0;
 
-  counters->curr_arg = p_curr_arg;
-  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
+  p_counters->names = names;
+  p_counters->names_curr = 0;
+  p_counters->names_next = 0;
 
-  counters->prev_box_counters = prev_box_counters;
-  counters->next_box_counters = next_box_counters;
+  p_counters->curr_counter_arg_data = new_counter_arg_data(p_parent_arg,
+                                                           &p_counters->curr,
+                                                           &p_counters->names,
+                                                           &p_counters->names_curr);
+  p_counters->next_counter_arg_data = new_counter_arg_data(p_parent_arg,
+                                                           &p_counters->next,
+                                                           &p_counters->names,
+                                                           &p_counters->names_next);
+
+  p_counters->curr_counter = new_counter_arg(p_parent_arg, (void*) &p_counters->curr_counter_arg_data);
+  p_counters->next_counter = new_counter_arg(p_parent_arg, (void*) &p_counters->next_counter_arg_data);
+
+  p_counters->curr_arg = p_curr_arg;
+  p_counters->next_arg = (struct vctrs_arg*) &p_counters->next_counter;
+
+  p_counters->prev_box_counters = prev_box_counters;
+  p_counters->next_box_counters = next_box_counters;
 
   FREE(1);
+  return p_counters;
 }
 
 static
 void init_next_box_counters(struct vctrs_arg* p_parent_arg,
-                            struct counters* counters,
+                            struct counters* p_counters,
                             r_obj* names) {
-  SWAP(struct counters*, counters->prev_box_counters, counters->next_box_counters);
-  struct counters* next = counters->next_box_counters;
+  p_counters->prev_box_counters = p_counters->next_box_counters;
+  r_list_poke(p_counters->shelter,
+              COUNTERS_SHELTER_prev,
+              r_list_get(p_counters->shelter, COUNTERS_SHELTER_next));
 
-  KEEP_AT(names, next->names_pi);
+  struct counters* p_next = new_counters(names,
+                                         p_counters->curr_arg,
+                                         p_parent_arg,
+                                         NULL,
+                                         NULL);
+  r_list_poke(p_counters->shelter, COUNTERS_SHELTER_next, p_next->shelter);
+  p_counters->next_box_counters = p_next;
 
-  init_counters(next,
-                names,
-                counters->curr_arg,
-                p_parent_arg,
-                NULL,
-                NULL);
-  next->next = counters->next;
+  p_next->next = p_counters->next;
 }
-
-// Stack-based protection, should be called after `init_counters()`
-#define PROTECT_COUNTERS(counters, nprot) do {                          \
-    KEEP((counters)->shelter);                                          \
-    KEEP_HERE((counters)->names, &(counters)->names_pi);                \
-    KEEP_HERE(R_NilValue, &(counters)->prev_box_counters->names_pi);    \
-    KEEP_HERE(R_NilValue, &(counters)->next_box_counters->names_pi);    \
-    *nprot += 4;                                                        \
-  } while(0)
-
 
 static
 void counters_inc(struct counters* counters) {
@@ -86,20 +84,18 @@ void counters_inc(struct counters* counters) {
  *  becomes the current counter (the one representing the result so
  *  far of the reduction).
  */
-void counters_shift(struct counters* counters) {
-  struct counters_data* p_data = counters->p_data;
-
+void counters_shift(struct counters* p_counters) {
   // Swap the counters data
-  SWAP(void*, counters->curr_counter.data, counters->next_counter.data);
-  SWAP(r_ssize*, p_data->curr_counter_data.i, p_data->next_counter_data.i);
-  SWAP(r_ssize*, p_data->curr_counter_data.names_i, p_data->next_counter_data.names_i);
+  SWAP(struct vctrs_arg, p_counters->curr_counter, p_counters->next_counter);
+  SWAP(r_ssize*, p_counters->curr_counter_arg_data.i, p_counters->next_counter_arg_data.i);
+  SWAP(r_ssize*, p_counters->curr_counter_arg_data.names_i, p_counters->next_counter_arg_data.names_i);
 
   // Update the handles to `vctrs_arg`
-  counters->curr_arg = (struct vctrs_arg*) &counters->curr_counter;
-  counters->next_arg = (struct vctrs_arg*) &counters->next_counter;
+  p_counters->curr_arg = (struct vctrs_arg*) &p_counters->curr_counter;
+  p_counters->next_arg = (struct vctrs_arg*) &p_counters->next_counter;
 
   // Update the current index
-  counters->curr = counters->next;
+  p_counters->curr = p_counters->next;
 }
 
 
@@ -115,25 +111,22 @@ r_obj* reduce(r_obj* current,
   struct counters next_box_counters;
   struct counters prev_box_counters;
 
-  struct counters counters;
-  init_counters(&counters,
-                r_names(rest),
-                p_current_arg,
-                p_parent_arg,
-                &prev_box_counters,
-                &next_box_counters);
-  int nprot = 0;
-  PROTECT_COUNTERS(&counters, &nprot);
+  struct counters* p_counters = new_counters(r_names(rest),
+                                             p_current_arg,
+                                             p_parent_arg,
+                                             &prev_box_counters,
+                                             &next_box_counters);
+  KEEP(p_counters->shelter);
 
   r_obj* out = reduce_impl(current,
                            rest,
                            p_parent_arg,
-                           &counters,
+                           p_counters,
                            false,
                            impl,
                            data);
 
-  FREE(nprot);
+  FREE(1);
   return out;
 }
 
@@ -187,8 +180,6 @@ r_obj* reduce_splice_box(r_obj* current,
                                         void* data),
                          void* data) {
   init_next_box_counters(p_parent_arg, counters, r_names(rest));
-  KEEP(counters->shelter);
-
   struct counters* box_counters = counters->next_box_counters;
 
   current = reduce_impl(current,
@@ -202,6 +193,5 @@ r_obj* reduce_splice_box(r_obj* current,
   counters->curr_arg = box_counters->curr_arg;
   counters->next = box_counters->next;
 
-  FREE(1);
   return current;
 }

@@ -86,12 +86,12 @@
       # Integers
       with_memory_prof(vec_c_list(ints))
     Output
-      [1] 1.7KB
+      [1] 1.96KB
     Code
       # Doubles
       with_memory_prof(vec_c_list(dbls))
     Output
-      [1] 2.09KB
+      [1] 2.35KB
     Code
       # Integers to integer
       with_memory_prof(vec_c_list(ints, ptype = int()))
@@ -107,12 +107,12 @@
       # Integers
       with_memory_prof(vec_unchop(ints))
     Output
-      [1] 896B
+      [1] 1.13KB
     Code
       # Doubles
       with_memory_prof(vec_unchop(dbls))
     Output
-      [1] 1.27KB
+      [1] 1.52KB
     Code
       # Integers to integer
       with_memory_prof(vec_unchop(ints, ptype = int()))
@@ -129,14 +129,14 @@
       ints <- rep(list(set_names(1:3, letters[1:3])), 100)
       with_memory_prof(vec_unchop(ints))
     Output
-      [1] 4.05KB
+      [1] 4.3KB
     Code
       # Named matrices
       mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
       mats <- rep(list(mat), 100)
       with_memory_prof(vec_unchop(mats))
     Output
-      [1] 5.27KB
+      [1] 5.52KB
     Code
       # Data frame with named columns
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
@@ -144,7 +144,7 @@
       dfs <- rep(list(df), 100)
       with_memory_prof(vec_unchop(dfs))
     Output
-      [1] 8.53KB
+      [1] 9.05KB
     Code
       # Data frame with rownames (non-repaired, non-recursive case)
       df <- data_frame(x = 1:2)
@@ -152,13 +152,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(vec_unchop(dfs))
     Output
-      [1] 5.77KB
+      [1] 6.28KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_unchop(dfs))
     Output
-      [1] 11.9KB
+      [1] 12.4KB
     Code
       # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))

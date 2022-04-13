@@ -2,6 +2,7 @@
 #define VCTRS_ARG_COUNTER_H
 
 #include "vctrs-core.h"
+#include "arg.h"
 
 struct counters {
  /* public: */
@@ -25,10 +26,6 @@ struct counters {
   r_ssize names_curr;
   r_ssize names_next;
 
-  // `names` might be from a splice box whose reduction has already
-  // finished. We protect those from up high.
-  r_keep_loc names_pi;
-
   // Local counters for splice boxes. Since the tags are generated
   // lazily, we need two counter states to handle the
   // `vec_c(!!!list(foo = 1), !!!list(bar = 2))` case.
@@ -38,7 +35,18 @@ struct counters {
   struct vctrs_arg curr_counter;
   struct vctrs_arg next_counter;
 
+  struct arg_data_counter curr_counter_arg_data;
+  struct arg_data_counter next_counter_arg_data;
+
   void* p_data;
+};
+
+enum counters_shelter {
+  COUNTERS_SHELTER_data = 0,
+  COUNTERS_SHELTER_names,
+  COUNTERS_SHELTER_next,
+  COUNTERS_SHELTER_prev,
+  COUNTERS_SHELTER_N
 };
 
 /**
