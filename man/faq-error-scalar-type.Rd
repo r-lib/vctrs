@@ -35,21 +35,16 @@ class(fit)
 #> [1] "lm"
 
 # S3 lists can be subset like a vector using base R:
-fit[1:3]
+fit[c(1, 4)]
 #> $coefficients
 #> (Intercept) 
 #>           2 
 #> 
-#> $residuals
-#>             1             2             3 
-#> -1.000000e+00 -3.246047e-16  1.000000e+00 
-#> 
-#> $effects
-#> (Intercept)                         
-#>  -3.4641016   0.3660254   1.3660254
+#> $rank
+#> [1] 1
 
 # But not in vctrs
-vctrs::vec_slice(fit, 1:3)
+vctrs::vec_slice(fit, c(1, 4))
 #> Error in `vctrs::vec_slice()`:
 #> ! `x` must be a vector, not a <lm> object.
 }\if{html}{\out{</div>}}
