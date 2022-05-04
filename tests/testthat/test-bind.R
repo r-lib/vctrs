@@ -880,10 +880,6 @@ test_that("vec_rbind() falls back to c() if S3 method is available for S4 class"
 })
 
 test_that("rbind supports names and inner names (#689)", {
-  skip_if(getRversion() >= "4.1.0", "work around r-devel bug")
-  # Introduced in
-  # https://github.com/wch/r-source/commit/275bb3db02491899bbadc28fea69dcdd6fedf41e
-
   out <- vec_rbind(
     data_frame(x = list(a = 1, b = 2)),
     data_frame(x = list(3)),
