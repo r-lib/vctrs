@@ -1,4 +1,7 @@
 #include "vctrs.h"
+#include "type-data-frame.h"
+#include "decl/match-joint-decl.h"
+
 
 #define VEC_JOINT_XTFRM_LOOP(CMP) do {                         \
   while (i < x_n_groups && j < y_n_groups) {                   \
@@ -195,3 +198,179 @@ r_obj* vec_joint_xtfrm(r_obj* x,
 
 
 #undef VEC_JOINT_XTFRM_LOOP
+
+// -----------------------------------------------------------------------------
+
+/*
+ * Specialized internal variant of `vec_proxy_order()` used in
+ * `vec_joint_xtfrm()`.
+ *
+ * If we know that the `vec_proxy_order()` method of a type doesn't depend on
+ * the data itself, then we just call `vec_proxy_order()` on `x` and `y`
+ * separately. We know this is true for most base types (except lists) and
+ * for the base R S3 types that we support natively in vctrs, so those get a
+ * fast path.
+ *
+ * Otherwise, it is possible that the `vec_proxy_order()` method is dependent
+ * on the data itself, like it is with lists and the bignum classes, so we need
+ * to compute the order proxy "jointly" by combining `x` and `y` together.
+ *
+ * For example
+ * x <- list(1.5, 2)
+ * y <- list(2, 1.5)
+ * vec_proxy_order(x)
+ * # [1] 1 2
+ * vec_proxy_order(y) # can't compare proxies when taken individually
+ * # [1] 1 2
+ * vec_proxy_order(c(x, y)) # jointly comparable
+ * # [1] 1 2 2 1
+ *
+ * Combining `x` and `y` has the downsides that it:
+ * - Is slower than the independent proxy method
+ * - Limits the maximum data size to `vec_size(x) + vec_size(y) <= INT_MAX`
+ *
+ * Data frames are analyzed one column at a time, so if one of the columns
+ * requires a joint proxy, then we only have to combine those individual columns
+ * together rather than the entire data frames.
+ */
+static inline
+r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
+  if (r_typeof(x) != r_typeof(y)) {
+    r_stop_internal("`x` and `y` should have the same type.");
+  }
+
+  switch (vec_typeof(x)) {
+  case vctrs_type_unspecified:
+  case vctrs_type_logical:
+  case vctrs_type_integer:
+  case vctrs_type_double:
+  case vctrs_type_complex:
+  case vctrs_type_character:
+  case vctrs_type_raw: {
+    return vec_joint_proxy_order_independent(x, y);
+  }
+  case vctrs_type_list: {
+    return vec_joint_proxy_order_dependent(x, y);
+  }
+  case vctrs_type_dataframe: {
+    return df_joint_proxy_order(x, y);
+  }
+  case vctrs_type_s3: {
+    return vec_joint_proxy_order_s3(x, y);
+  }
+  case vctrs_type_null:
+  case vctrs_type_scalar: {
+    stop_unimplemented_vctrs_type("vec_joint_proxy_order", vec_typeof(x));
+  }
+  }
+}
+
+static inline
+r_obj* vec_joint_proxy_order_independent(r_obj* x, r_obj* y) {
+  r_obj* out = KEEP(r_alloc_list(2));
+
+  r_list_poke(out, 0, vec_proxy_order(x));
+  r_list_poke(out, 1, vec_proxy_order(y));
+
+  FREE(1);
+  return out;
+}
+
+static inline
+r_obj* vec_joint_proxy_order_dependent(r_obj* x, r_obj* y) {
+  r_ssize x_size = vec_size(x);
+  r_ssize y_size = vec_size(y);
+
+  r_obj* x_slicer = KEEP(compact_seq(0, x_size, true));
+  r_obj* y_slicer = KEEP(compact_seq(x_size, y_size, true));
+
+  r_obj* ptype = KEEP(vec_ptype(x, vec_args.empty, r_lazy_null));
+
+  r_obj* out = KEEP(r_alloc_list(2));
+  r_list_poke(out, 0, x);
+  r_list_poke(out, 1, y);
+
+  // Combine
+  // NOTE: Without long vector support, this limits the maximum allowed
+  // size of `vec_locate_matches()` input to
+  // `vec_size(x) + vec_size(y) <= INT_MAX`
+  // when foreign columns are used.
+  r_obj* combined = KEEP(vec_c(out, ptype, r_null, p_no_repair_opts));
+
+  // Compute joint order-proxy
+  r_obj* proxy = KEEP(vec_proxy_order(combined));
+
+  // Separate and store back in `out`
+  r_list_poke(out, 0, vec_slice_unsafe(proxy, x_slicer));
+  r_list_poke(out, 1, vec_slice_unsafe(proxy, y_slicer));
+
+  FREE(6);
+  return out;
+}
+
+static inline
+r_obj* vec_joint_proxy_order_s3(r_obj* x, r_obj* y) {
+  const enum vctrs_class_type type = class_type(x);
+
+  if (type != class_type(y)) {
+    r_stop_internal("`x` and `y` should have the same class type.");
+  }
+
+  switch (type) {
+  case VCTRS_CLASS_bare_factor:
+  case VCTRS_CLASS_bare_ordered:
+  case VCTRS_CLASS_bare_date:
+  case VCTRS_CLASS_bare_posixct:
+  case VCTRS_CLASS_bare_posixlt: {
+    return vec_joint_proxy_order_independent(x, y);
+  }
+  case VCTRS_CLASS_bare_asis:
+  case VCTRS_CLASS_list:
+  case VCTRS_CLASS_unknown: {
+    return vec_joint_proxy_order_dependent(x, y);
+  }
+  case VCTRS_CLASS_bare_tibble:
+  case VCTRS_CLASS_data_frame: {
+    return df_joint_proxy_order(x, y);
+  }
+  case VCTRS_CLASS_bare_data_frame: {
+    r_stop_internal("Bare data frames should have been handled earlier.");
+  }
+  case VCTRS_CLASS_none: {
+    r_stop_internal("Unclassed objects should have been handled earlier.");
+  }
+  }
+}
+
+static inline
+r_obj* df_joint_proxy_order(r_obj* x, r_obj* y) {
+  x = KEEP(r_clone_referenced(x));
+  y = KEEP(r_clone_referenced(y));
+
+  const r_ssize n_cols = r_length(x);
+  if (n_cols != r_length(y)) {
+    r_stop_internal("`x` and `y` must have the same number of columns.");
+  }
+
+  r_obj* const* v_x = r_list_cbegin(x);
+  r_obj* const* v_y = r_list_cbegin(y);
+
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* proxies = vec_joint_proxy_order(v_x[i], v_y[i]);
+    r_list_poke(x, i, r_list_get(proxies, 0));
+    r_list_poke(y, i, r_list_get(proxies, 1));
+  }
+
+  x = KEEP(df_flatten(x));
+  x = KEEP(vec_proxy_unwrap(x));
+
+  y = KEEP(df_flatten(y));
+  y = KEEP(vec_proxy_unwrap(y));
+
+  r_obj* out = KEEP(r_alloc_list(2));
+  r_list_poke(out, 0, x);
+  r_list_poke(out, 1, y);
+
+  FREE(7);
+  return out;
+}
