@@ -263,6 +263,8 @@ r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
     stop_unimplemented_vctrs_type("vec_joint_proxy_order", vec_typeof(x));
   }
   }
+
+  r_stop_unreachable();
 }
 
 static inline
@@ -340,6 +342,8 @@ r_obj* vec_joint_proxy_order_s3(r_obj* x, r_obj* y) {
     r_stop_internal("Unclassed objects should have been handled earlier.");
   }
   }
+
+  r_stop_unreachable();
 }
 
 static inline
