@@ -128,6 +128,12 @@ vec_cast.data.frame.sf = function(x, to, ...) {
 	df_cast(x, to, ...)
 }
 
+vec_proxy_order.sfc <- function(x, ...) {
+  # These are list columns, so they need to use the order-by-appearance proxy
+  # that is defined by `vec_proxy_order.list()`
+  x <- unstructure(x)
+  vec_proxy_order(x)
+}
 
 # take conservative approach of requiring equal CRS and precision
 common_crs = function(x, y) {
