@@ -38,6 +38,24 @@ vec_restore.AsIs <- function(x, to, ...) {
   asis_restore(x)
 }
 
+#' @export
+vec_proxy_equal.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_equal(x)
+}
+
+#' @export
+vec_proxy_compare.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_compare(x)
+}
+
+#' @export
+vec_proxy_order.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_order(x)
+}
+
 # ------------------------------------------------------------------------------
 # Coercion
 

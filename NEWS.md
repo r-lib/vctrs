@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_proxy_compare()` now works correctly for raw vectors wrapped in `I()`.
+  `vec_proxy_order()` now works correctly for raw and list vectors wrapped in
+  `I()` (#1557).
+
 # vctrs 0.4.1
 
 * OOB errors with `character()` indexes use "that don't exist" instead
