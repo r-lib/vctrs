@@ -516,8 +516,6 @@ test_that("Works with classed data frame columns", {
 })
 
 test_that("AsIs types are combined before order proxies are taken (#1557)", {
-  skip("Until #1557 is fixed")
-
   x <- I(list(5, 1))
   y <- I(list(8, 5, 5))
 
