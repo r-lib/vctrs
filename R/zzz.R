@@ -89,6 +89,9 @@
       s3_register("vctrs::vec_cast", "sf.data.frame")
       s3_register("vctrs::vec_cast", "data.frame.sf")
     }
+    if (!env_has(ns_env("sf"), "vec_proxy_order.sfc")) {
+      s3_register("vctrs::vec_proxy_order", "sfc")
+    }
   })
 
   utils::globalVariables("vec_set_attributes")

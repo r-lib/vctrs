@@ -442,6 +442,89 @@ test_that("rcrd type incompleteness is handled correctly", {
 })
 
 # ------------------------------------------------------------------------------
+# vec_locate_matches() - S3
+
+test_that("S3 types with order proxies that depend on the data are combined before the proxy is taken", {
+  # i.e. `bignum:::vec_proxy_order.bignum_biginteger()`
+
+  x <- structure(c(5L, 1L), class = "foo")
+  y <- structure(c(8L, 5L), class = "foo")
+
+  local_methods(
+    vec_proxy_order.foo = function(x, ...) {
+      rank(unclass(x))
+    }
+  )
+
+  # Can't take the order proxies separately because they are the same!
+  expect_identical(vec_proxy_order(x), vec_proxy_order(y))
+
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 2L))
+  expect_identical(res$haystack, c(2L, NA))
+
+  x_df <- data_frame(a = x, b = x)
+  y_df <- data_frame(a = y, b = y)
+
+  res <- vec_locate_matches(x_df, y_df)
+  expect_identical(res$needles, c(1L, 2L))
+  expect_identical(res$haystack, c(2L, NA))
+})
+
+test_that("Works with base R S3 types we support natively", {
+  x <- new_factor(c(1L, 2L), levels = c("x", "y"))
+  y <- new_factor(c(3L, 1L, 1L), levels = c("x", "y", "z"))
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(2L, 3L, NA))
+
+  x <- new_ordered(c(1L, 2L), levels = c("x", "y"))
+  y <- new_ordered(c(2L, 1L, 1L), levels = c("x", "y"))
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(2L, 3L, 1L))
+
+  x <- new_date(c(1, 2))
+  y <- new_date(c(3, 1, 1))
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(2L, 3L, NA))
+
+  x <- new_datetime(c(1, 2))
+  y <- new_datetime(c(3, 1, 1))
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(2L, 3L, NA))
+
+  x <- as.POSIXlt(new_datetime(c(1, 2)))
+  y <- as.POSIXlt(new_datetime(c(3, 1, 1)))
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(2L, 3L, NA))
+})
+
+test_that("Works with classed data frame columns", {
+  x_col <- new_data_frame(list(a = c(1L, 2L), b = c(2, 3)), class = "foo")
+  y_col <- new_data_frame(list(a = c(1L, 1L, 1L), b = c(2, 4, 2)), class = "foo")
+
+  x <- new_data_frame(list(c = c(1L, 1L), d = x_col))
+  y <- new_data_frame(list(c = c(1L, 1L, 1L), d = y_col))
+
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(1L, 3L, NA))
+})
+
+test_that("AsIs types are combined before order proxies are taken (#1557)", {
+  x <- I(list(5, 1))
+  y <- I(list(8, 5, 5))
+
+  res <- vec_locate_matches(x, y)
+  expect_identical(res$needles, c(1L, 1L, 2L))
+  expect_identical(res$haystack, c(2L, 3L, NA))
+})
+
+# ------------------------------------------------------------------------------
 # vec_locate_matches() - missing values
 
 test_that("integer missing values match with `==`, `>=`, and `<=` when `incomplete = 'compare'", {
