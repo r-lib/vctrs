@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_cast()` now throws the correct error when attempting to cast a subclassed
+  data frame to a non-data frame type (#1568).
+
 * `vec_locate_matches()` now uses a more conservative heuristic when taking the
   joint ordering proxy. This allows it to work correctly with sf's sfc vectors
   and the classes from the bignum package (#1558).
