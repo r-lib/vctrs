@@ -206,7 +206,7 @@ vec_default_cast <- function(x,
     return(x)
   }
 
-  if (has_df_fallback(opts$df_fallback) && is_df_subclass(x)) {
+  if (has_df_fallback(opts$df_fallback) && is_df_subclass(x) && is.data.frame(to)) {
     out <- df_cast_opts(
       x,
       to,

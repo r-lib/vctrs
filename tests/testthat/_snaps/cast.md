@@ -62,3 +62,13 @@
       Error:
       ! Can't combine `..1$a$b` <factor<c1562>> and `..2$a$b` <double>.
 
+# vec_cast() only attempts to fall back if `to` is a data frame (#1568)
+
+    Code
+      (expect_error(vec_cast(foobar(mtcars), 1), class = "vctrs_error_incompatible_type")
+      )
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error:
+      ! Can't convert `foobar(mtcars)` <vctrs_foobar> to <double>.
+
