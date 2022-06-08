@@ -183,11 +183,7 @@ vec_ptype_full.data.frame <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.data.frame <- function(x, ...) {
-  if (inherits_only(x, "data.frame")) {
     "df"
-  } else {
-    class(x)[[1]]
-  }
 }
 
 #' @export

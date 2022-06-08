@@ -168,6 +168,39 @@ s3_find_method <- function(x, generic, ns = "base") {
   table <- ns_methods(ns_env(ns))
   .Call(vctrs_s3_find_method, generic, x, table)
 }
+s3_get_method <- function(class, generic, ns = "base") {
+  stopifnot(
+    is_string(class),
+    is_string(generic),
+    is_string(ns)
+  )
+  table <- ns_methods(ns_env(ns))
+  .Call(ffi_s3_get_method, generic, class, table)
+}
+
+s3_method_specific <- function(x,
+                               generic,
+                               ns = "base",
+                               df_default = FALSE,
+                               default = TRUE) {
+  classes <- class(x)[[1]]
+
+  if (df_default && inherits(x, "data.frame")) {
+    classes <- c(classes, "data.frame")
+  }
+  if (default) {
+    classes <- c(classes, "default")
+  }
+
+  for (class in classes) {
+    method <- s3_get_method(class, generic, ns = ns)
+    if (!is_null(method)) {
+      return(method)
+    }
+  }
+
+  cli::cli_abort("Can't find {.fn {generic}} method for {.cls {class}}.")
+}
 
 df_has_base_subset <- function(x) {
   method <- s3_find_method(x, "[", ns = "base")

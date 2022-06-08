@@ -111,7 +111,12 @@ vec_ptype_full.POSIXlt <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.POSIXt <- function(x, ...) {
+vec_ptype_abbr.POSIXct <- function(x, ...) {
+  "dttm"
+}
+
+#' @export
+vec_ptype_abbr.POSIXlt <- function(x, ...) {
   "dttm"
 }
 

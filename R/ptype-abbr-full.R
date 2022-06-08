@@ -32,7 +32,16 @@
 #' cat(vec_ptype_abbr(1:10))
 vec_ptype_full <- function(x, ...) {
   check_dots_empty0(...)
-  UseMethod("vec_ptype_full")
+
+  # Data frames dispatch to the `data.frame` method by default to get
+  # the inner types format
+  method <- s3_method_specific(
+    x,
+    "vec_ptype_full",
+    ns = "vctrs",
+    df_default = TRUE
+  )
+  method(x, ...)
 }
 
 #' @export
@@ -40,16 +49,14 @@ vec_ptype_full <- function(x, ...) {
 vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   check_dots_empty0(...)
 
-  abbr <- vec_ptype_abbr_dispatch(x)
+  method <- s3_method_specific(x, "vec_ptype_abbr", ns = "vctrs")
+  abbr <- method(x, ...)
 
   return(paste0(
     if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) "named ",
     abbr,
     if (suffix_shape) vec_ptype_shape(x)
   ))
-  UseMethod("vec_ptype_abbr")
-}
-vec_ptype_abbr_dispatch <- function(x, ...) {
   UseMethod("vec_ptype_abbr")
 }
 
