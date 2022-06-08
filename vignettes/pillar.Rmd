@@ -9,7 +9,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = pillar::style_subtle("#>"))
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 You can get basic control over how a vector is printed in a tibble by providing a `format()` method.
