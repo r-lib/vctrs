@@ -237,3 +237,31 @@ test_that("vec_ptype() preserves type of names and row names", {
   expect_identical(vec_ptype(mtcars), mtcars[0, ])
   expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
 })
+
+test_that("vec_ptype_common() handles spliced names consistently (#1570)", {
+  args1 <- list(a = "foo", b = "bar")
+  args2 <- list(y = NULL, z = 1)
+
+  y_name <- "y"
+  z_name <- "z"
+
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(
+      a = "foo",
+      b = "bar",
+      y = NULL,
+      z = 1
+    )
+
+    vec_ptype_common(
+      !!!args1,
+      !!!args2
+    )
+
+    vec_ptype_common(
+      !!!args1,
+      "{y_name}" := NULL,
+      "{z_name}" := 1
+    )
+  })
+})

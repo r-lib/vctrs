@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed inconsistent reporting of conflicting inputs in
+  `vec_ptype_common()` (#1570).
+
 * `vec_ptype_abbr()` and `vec_ptype_full()` now suffix 1d arrays
   with `[1d]`.
 

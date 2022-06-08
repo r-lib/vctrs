@@ -101,7 +101,7 @@
       vec_ptype_common(TRUE, !!!list(1, 2), "foo")
     Condition
       Error:
-      ! Can't combine `..2` <double> and `..5` <character>.
+      ! Can't combine `..2` <double> and `..4` <character>.
 
 ---
 
@@ -109,7 +109,7 @@
       vec_ptype_common(1, !!!list(TRUE, FALSE), "foo")
     Condition
       Error:
-      ! Can't combine `..1` <double> and `..5` <character>.
+      ! Can't combine `..1` <double> and `..4` <character>.
 
 ---
 
@@ -125,7 +125,7 @@
       vec_ptype_common(foo = TRUE, !!!list(bar = 1, "foo"))
     Condition
       Error:
-      ! Can't combine `bar` <double> and `..3` <character>.
+      ! Can't combine `foo` <double> and `..3` <character>.
 
 ---
 
@@ -150,4 +150,22 @@
     Condition
       Error:
       ! Can't combine `foo` <logical> and `baz` <character>.
+
+# vec_ptype_common() handles spliced names consistently (#1570)
+
+    Code
+      vec_ptype_common(a = "foo", b = "bar", y = NULL, z = 1)
+    Condition
+      Error:
+      ! Can't combine `a` <character> and `z` <double>.
+    Code
+      vec_ptype_common(!!!args1, !!!args2)
+    Condition
+      Error:
+      ! Can't combine `a` <character> and `z` <double>.
+    Code
+      vec_ptype_common(!!!args1, "{y_name}" := NULL, "{z_name}" := 1)
+    Condition
+      Error:
+      ! Can't combine `a` <character> and `z` <double>.
 
