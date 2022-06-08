@@ -11,7 +11,7 @@
     Code
       vec_rank(1, ties = 1)
     Condition
-      Error in `arg_match0()`:
+      Error in `vec_rank()`:
       ! `ties` must be a string or character vector.
 
 # `incomplete` is validated
@@ -19,7 +19,7 @@
     Code
       vec_rank(1, incomplete = NA)
     Condition
-      Error in `arg_match0()`:
+      Error in `vec_rank()`:
       ! `incomplete` must be a string or character vector.
 
 ---
@@ -27,7 +27,7 @@
     Code
       vec_rank(1, incomplete = c(TRUE, FALSE))
     Condition
-      Error in `arg_match0()`:
+      Error in `vec_rank()`:
       ! `incomplete` must be a string or character vector.
 
 ---

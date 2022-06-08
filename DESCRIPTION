@@ -31,7 +31,7 @@ Depends:
 Imports:
     cli (>= 3.2.0),
     glue,
-    rlang (>= 1.0.2)
+    rlang (>= 1.0.2.9003)
 Suggests: 
     bit64,
     covr,
@@ -48,6 +48,8 @@ Suggests:
     xml2,
     waldo (>= 0.2.0),
     zeallot
+Remotes:
+    r-lib/rlang
 VignetteBuilder: 
     knitr
 SystemRequirements:
