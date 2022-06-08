@@ -150,6 +150,15 @@ SEXP vec_proxy_names(SEXP x) {
   return vec_names_impl(x, true);
 }
 
+r_obj* vec_names2(r_obj* x) {
+  r_obj* names = vec_names(x);
+  if (names == r_null) {
+    return r_alloc_character(vec_size(x));
+  } else {
+    return names;
+  }
+}
+
 // [[ register() ]]
 SEXP vctrs_as_minimal_names(SEXP names) {
   if (TYPEOF(names) != STRSXP) {

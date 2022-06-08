@@ -298,14 +298,16 @@ r_obj* as_df_row_impl(r_obj* x,
     r_abort_lazy_call(call, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    r_obj* names = KEEP_N(vec_unique_colnames(x, name_repair->quiet), &nprot);
-    r_obj* out = KEEP_N(r_as_data_frame(x), &nprot);
-    r_attrib_poke_names(out, names);
-    FREE(nprot);
+    r_obj* out = KEEP(r_as_data_frame(x));
+    r_attrib_poke_names(out, vec_as_names(KEEP(colnames2(x)), name_repair));
+
+    FREE(2); FREE(nprot);
     return out;
   }
 
-  r_obj* nms = KEEP_N(vec_names(x), &nprot);
+  // Take names before removing dimensions so we get colnames if needed
+  r_obj* nms = KEEP(vec_names2(x));
+  nms = KEEP(vec_as_names(nms, name_repair));
 
   if (dim != r_null) {
     x = KEEP_N(r_clone_referenced(x), &nprot);
@@ -313,22 +315,14 @@ r_obj* as_df_row_impl(r_obj* x,
     r_attrib_poke(x, r_syms.dim_names, r_null);
   }
 
-  // Remove names as they are promoted to data frame column names
-  if (nms != r_null) {
-    x = KEEP_N(vec_set_names(x, r_null), &nprot);
-  }
+  // Remove names first as they are promoted to data frame column names
+  x = KEEP(vec_set_names(x, r_null));
 
-  if (nms == r_null) {
-    nms = KEEP_N(vec_unique_names(x, name_repair->quiet), &nprot);
-  } else {
-    nms = KEEP_N(vec_as_names(nms, name_repair), &nprot);
-  }
-
-  x = KEEP_N(vec_chop(x, r_null), &nprot);
+  x = KEEP(vec_chop(x, r_null));
   r_attrib_poke_names(x, nms);
   x = new_data_frame(x, 1);
 
-  FREE(nprot);
+  FREE(4); FREE(nprot);
   return x;
 }
 

@@ -4,6 +4,8 @@
 #include "vctrs-core.h"
 #include "utils.h"
 
+r_obj* vec_names2(r_obj* x);
+
 enum name_repair_type {
   name_repair_none = 0,
   name_repair_minimal,

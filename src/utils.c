@@ -936,6 +936,15 @@ SEXP colnames(SEXP x) {
                          syms_x, x);
 }
 
+r_obj* colnames2(r_obj* x) {
+  r_obj* names = colnames(x);
+  if (names == r_null) {
+    return r_alloc_character(Rf_ncols(x));
+  } else {
+    return names;
+  }
+}
+
 // [[ include("utils.h") ]]
 bool is_integer64(SEXP x) {
   return TYPEOF(x) == REALSXP && Rf_inherits(x, "integer64");

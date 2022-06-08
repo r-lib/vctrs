@@ -997,6 +997,43 @@ test_that("column names are treated consistently in vec_rbind()", {
   expect_error(vec_rbind(x, x), "Can't bind arrays")
 })
 
+test_that("can repair names of row-binded vectors (#1567)", {
+  local_name_repair_verbose()
+  expect_silent(
+    expect_named(
+      vec_rbind(
+        x = 1:3,
+        y = 4:6,
+        .name_repair = function(x) c("a", "a", "a")
+      ),
+      c("a", "a", "a")
+    )
+  )
+})
+
+test_that("can repair names of row-binded matrices", {
+  local_name_repair_verbose()
+  expect_silent({
+    expect_named(
+      vec_rbind(
+        x = matrix(1:3, 1),
+        y = matrix(4:6, 1),
+        .name_repair = function(x) c("a", "a", "a")
+      ),
+      c("a", "a", "a")
+    )
+
+    expect_named(
+      vec_rbind(
+        x = matrix(1:3, 1),
+        y = 4:6,
+        .name_repair = function(x) c("a", "a", "a")
+      ),
+      c("a", "a", "a")
+    )
+  })
+})
+
 
 # Golden tests -------------------------------------------------------
 
