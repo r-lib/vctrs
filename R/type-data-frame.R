@@ -160,28 +160,6 @@ data_frame <- function(...,
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
 
 #' @export
-vec_ptype_full.data.frame <- function(x, ...) {
-  if (length(x) == 0) {
-    return(paste0(class(x)[[1]], "<>"))
-  } else if (length(x) == 1) {
-    return(paste0(class(x)[[1]], "<", names(x), ":", vec_ptype_full(x[[1]]), ">"))
-  }
-
-  # Needs to handle recursion with indenting
-  types <- map_chr(x, vec_ptype_full)
-  needs_indent <- grepl("\n", types)
-  types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
-
-  names <- paste0("  ", format(names(x)))
-
-  paste0(
-    class(x)[[1]], "<\n",
-    paste0(names, ": ", types, collapse = "\n"),
-    "\n>"
-  )
-}
-
-#' @export
 vec_ptype_abbr.data.frame <- function(x, ...) {
   "df"
 }
