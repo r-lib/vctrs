@@ -36,6 +36,7 @@ Suggests:
     bit64,
     covr,
     crayon,
+    data.table,
     dplyr (>= 0.8.5),
     generics,
     knitr,
