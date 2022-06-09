@@ -41,7 +41,9 @@ vec_ptype_full <- function(x, ...) {
     ns = "vctrs",
     df_default = TRUE
   )
-  method(x, ...)
+  return(method(x, ...))
+
+  UseMethod("vec_ptype_full")
 }
 
 #' @export
@@ -52,11 +54,11 @@ vec_ptype_abbr <- function(x, ..., prefix_named = FALSE, suffix_shape = TRUE) {
   method <- s3_method_specific(x, "vec_ptype_abbr", ns = "vctrs")
   abbr <- method(x, ...)
 
-  return(paste0(
-    if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) "named ",
-    abbr,
-    if (suffix_shape) vec_ptype_shape(x)
-  ))
+  named <- if ((prefix_named || is_bare_list(x)) && !is.null(vec_names(x))) "named "
+  shape <- if (suffix_shape) vec_ptype_shape(x)
+  abbr <- paste0(named, abbr, shape)
+
+  return(abbr)
   UseMethod("vec_ptype_abbr")
 }
 
