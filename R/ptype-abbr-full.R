@@ -83,10 +83,12 @@ vec_ptype_full.default <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.default <- function(x, ...) {
-  if (is.object(x)) {
-    unname(abbreviate(vec_ptype_full(x), 8))
+  if (is.data.frame(x)) {
+    type <- class(x)[[1]]
+  } else if (is.object(x)) {
+    type <- vec_ptype_full(x)
   } else if (is_vector(x)) {
-    switch(typeof(x),
+    type <- switch(typeof(x),
       list = "list",
       logical = "lgl",
       integer = "int",
@@ -96,11 +98,12 @@ vec_ptype_abbr.default <- function(x, ...) {
       list = "list",
       expression = "expr",
       raw = "raw",
-      abbreviate(typeof(x))
+      typeof(x)
     )
   } else {
     abort("Not a vector.")
   }
+  unname(abbreviate(type, 8))
 }
 
 # Helpers -----------------------------------------------------------------

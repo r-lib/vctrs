@@ -97,3 +97,18 @@ test_that("vec_ptype_abbr() and vec_ptype_full() are not inherited (#1549)", {
     "bar_full"
   )
 })
+
+test_that("data.frames have good default abbr and full methods", {
+  expect_snapshot({
+    df <- foobar(data.frame(x = 1, y = "", z = TRUE))
+    vec_ptype_abbr(df)
+    vec_ptype_full(df)
+  })
+
+  skip_if_not_installed("data.table")
+  expect_snapshot({
+    dt <- data.table::data.table(x = 1, y = 2, z = 3)
+    vec_ptype_abbr(dt)
+    vec_ptype_full(dt)
+  })
+})

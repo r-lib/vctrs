@@ -183,7 +183,7 @@ vec_ptype_full.data.frame <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.data.frame <- function(x, ...) {
-    "df"
+  "df"
 }
 
 #' @export
