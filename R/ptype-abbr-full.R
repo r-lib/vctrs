@@ -33,8 +33,8 @@
 vec_ptype_full <- function(x, ...) {
   check_dots_empty0(...)
 
-  # Data frames dispatch to the `data.frame` method by default to get
-  # the inner types format
+  # Data frames and their subclasses have internal handling in the
+  # default method to get the inner types format
   method <- s3_method_specific(x, "vec_ptype_full", ns = "vctrs")
   return(method(x, ...))
 

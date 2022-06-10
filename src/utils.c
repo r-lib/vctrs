@@ -482,10 +482,10 @@ SEXP vctrs_s3_find_method(SEXP generic, SEXP x, SEXP table) {
 // [[ register() ]]
 r_obj* ffi_s3_get_method(r_obj* generic, r_obj* class, r_obj* table) {
   if (!r_is_string(generic)) {
-    r_abort("`generic` must be a string");
+    r_stop_internal("`generic` must be a string");
   }
   if (!r_is_string(class)) {
-    r_abort("`class` must be a string");
+    r_stop_internal("`class` must be a string");
   }
   return s3_get_method(r_chr_get_c_string(generic, 0),
                        r_chr_get_c_string(class, 0),
