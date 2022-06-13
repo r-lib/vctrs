@@ -104,11 +104,4 @@ test_that("data.frames have good default abbr and full methods", {
     vec_ptype_abbr(df)
     vec_ptype_full(df)
   })
-
-  skip_if_not_installed("data.table")
-  expect_snapshot({
-    dt <- data.table::data.table(x = 1, y = 2, z = 3)
-    vec_ptype_abbr(dt)
-    vec_ptype_full(dt)
-  })
 })
