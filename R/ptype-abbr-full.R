@@ -81,10 +81,8 @@ vec_ptype_full.default <- function(x, ...) {
 
 #' @export
 vec_ptype_abbr.default <- function(x, ...) {
-  if (is.data.frame(x)) {
+  if (is.object(x)) {
     type <- class(x)[[1]]
-  } else if (is.object(x)) {
-    type <- vec_ptype_full(x)
   } else if (is_vector(x)) {
     type <- vec_ptype_abbr_bare(x, ...)
   } else {
