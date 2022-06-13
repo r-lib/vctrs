@@ -155,3 +155,8 @@ vec_cast.data.table.data.frame <- function(x, to, ...) {
 vec_cast.data.frame.data.table <- function(x, to, ...) {
   df_cast(x, to, ...)
 }
+
+#' @export
+vec_ptype_abbr.data.table <- function(x, ...) {
+  "dt"
+}

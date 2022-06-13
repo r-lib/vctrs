@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_ptype_abbr()` and `vec_ptype_full()` methods are no longer
+  inherited (#1549).
+
 * `vec_cast()` now throws the correct error when attempting to cast a subclassed
   data frame to a non-data frame type (#1568).
 

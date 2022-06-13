@@ -67,3 +67,41 @@ test_that("vec_ptype_abbr() adds named tag in case of row names", {
     "named int[,2]"
   )
 })
+
+test_that("vec_ptype_abbr() and vec_ptype_full() are not inherited (#1549)", {
+  foobar <- foobar(class = c("vctrs_bar", "vctrs_foo"))
+
+  local_methods(
+    vec_ptype_abbr.vctrs_foo = function(...) "foo_abbr",
+    vec_ptype_full.vctrs_foo = function(...) "foo_full"
+  )
+  expect_equal(
+    vec_ptype_abbr(foobar),
+    vec_ptype_abbr.default(foobar)
+  )
+  expect_equal(
+    vec_ptype_full(foobar),
+    "vctrs_bar"
+  )
+
+  local_methods(
+    vec_ptype_abbr.vctrs_bar = function(...) "bar_abbr",
+    vec_ptype_full.vctrs_bar = function(...) "bar_full"
+  )
+  expect_equal(
+    vec_ptype_abbr(foobar),
+    "bar_abbr"
+  )
+  expect_equal(
+    vec_ptype_full(foobar),
+    "bar_full"
+  )
+})
+
+test_that("data.frames have good default abbr and full methods", {
+  expect_snapshot({
+    df <- foobar(data.frame(x = 1, y = "", z = TRUE))
+    vec_ptype_abbr(df)
+    vec_ptype_full(df)
+  })
+})
