@@ -181,13 +181,9 @@ s3_get_method <- function(class, generic, ns = "base") {
 s3_method_specific <- function(x,
                                generic,
                                ns = "base",
-                               df_default = FALSE,
                                default = TRUE) {
   classes <- class(x)[[1]]
 
-  if (df_default && inherits(x, "data.frame")) {
-    classes <- c(classes, "data.frame")
-  }
   if (default) {
     classes <- c(classes, "default")
   }
