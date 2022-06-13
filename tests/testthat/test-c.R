@@ -1,3 +1,4 @@
+local_name_repair_quiet()
 
 test_that("zero length input returns NULL", {
   expect_equal(vec_c(), NULL)
@@ -522,4 +523,31 @@ test_that("can dispatch many times", {
   )
   x <- lapply(1:200, function(...) foo)
   expect_error(NA, object = vctrs::vec_unchop(x))
+})
+
+test_that("dots splicing clones as appropriate", {
+  x <- list(a = 1)
+  vctrs::vec_cbind(!!!x)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_rbind(!!!x)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_c(!!!x)
+  expect_equal(x, list(a = 1))
+
+
+  x <- list(a = 1)
+  vctrs::vec_cbind(!!!x, 2)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_rbind(!!!x, 2)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_c(!!!x, 2)
+  expect_equal(x, list(a = 1))
 })

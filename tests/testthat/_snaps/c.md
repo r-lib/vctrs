@@ -86,22 +86,22 @@
       # Integers
       with_memory_prof(vec_c_list(ints))
     Output
-      [1] 1.13KB
+      [1] 1.96KB
     Code
       # Doubles
       with_memory_prof(vec_c_list(dbls))
     Output
-      [1] 1.52KB
+      [1] 2.35KB
     Code
       # Integers to integer
       with_memory_prof(vec_c_list(ints, ptype = int()))
     Output
-      [1] 896B
+      [1] 1.7KB
     Code
       # Doubles to integer
       with_memory_prof(vec_c_list(dbls, ptype = int()))
     Output
-      [1] 896B
+      [1] 1.7KB
     Code
       # # `vec_unchop()` 
       # Integers
