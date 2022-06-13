@@ -126,35 +126,54 @@ testing easier.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x, y, to</dt>
 <dd><p>Vectors</p></dd>
+
+
 <dt>..., class</dt>
 <dd><p>Only use these fields when creating a subclass.</p></dd>
+
+
 <dt>x_arg, y_arg, to_arg</dt>
 <dd><p>Argument names for <code>x</code>, <code>y</code>, and <code>to</code>. Used in
 error messages to inform the user about the locations of incompatible
 types.</p></dd>
+
+
 <dt>action</dt>
 <dd><p>An option to customize the incompatible type message depending
 on the context. Errors thrown from <code><a href="vec_ptype2.html">vec_ptype2()</a></code> use <code>"combine"</code> and
 those thrown from <code><a href="vec_cast.html">vec_cast()</a></code> use <code>"convert"</code>.</p></dd>
+
+
 <dt>details</dt>
 <dd><p>Any additional human readable details.</p></dd>
+
+
 <dt>message</dt>
 <dd><p>An overriding message for the error. <code>details</code> and
 <code>message</code> are mutually exclusive, supplying both is an error.</p></dd>
+
+
 <dt>call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
 mentioned in error messages as the source of the error. See the
 <code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
+
+
 <dt>x_ptype, to_ptype</dt>
 <dd><p>Suppress only the casting errors where <code>x</code>
 or <code>to</code> match these <a href="vec_ptype.html">prototypes</a>.</p></dd>
+
+
 <dt>subclass</dt>
 <dd><p>Use if you want to further customize the class.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>stop_incompatible_*()</code> unconditionally raise an error of class
+    
+
+<p><code>stop_incompatible_*()</code> unconditionally raise an error of class
 <code>"vctrs_error_incompatible_*"</code> and <code>"vctrs_error_incompatible"</code>.</p>
     </div>
 
@@ -210,7 +229,7 @@ or <code>to</code> match these <a href="vec_ptype.html">prototypes</a>.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

@@ -77,26 +77,37 @@ that matches <code><a href="vec_size.html">vec_size()</a></code> instead of <cod
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A vector</p></dd>
+
+
 <dt>i</dt>
 <dd><p>An integer, character or logical vector specifying the
 locations or names of the observations to get/set. Specify
 <code>TRUE</code> to index all elements (as in <code>x[]</code>), or <code>NULL</code>, <code>FALSE</code> or
 <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> to index none (as in <code>x[NULL]</code>).</p></dd>
+
+
 <dt>value</dt>
 <dd><p>Replacement values. <code>value</code> is cast to the type of
 <code>x</code>, but only if they have a common type. See below for examples
 of this rule.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>These dots are for future extensions and must be empty.</p></dd>
+
+
 <dt>x_arg, value_arg</dt>
 <dd><p>Argument names for <code>x</code> and <code>value</code>. These are used
 in error messages to inform the user about the locations of
 incompatible types and sizes (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code> and
 <code><a href="vctrs-conditions.html">stop_incompatible_size()</a></code>).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A vector of the same type as <code>x</code>.</p>
+    
+
+<p>A vector of the same type as <code>x</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="genericity">Genericity<a class="anchor" aria-label="anchor" href="#genericity"></a></h2>
@@ -217,7 +228,7 @@ method, the vector is sliced with <code>[</code> instead.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

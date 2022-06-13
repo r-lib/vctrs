@@ -86,14 +86,20 @@ returned sorted rather than by first appearance.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A vector</p></dd>
+
+
 <dt>...</dt>
 <dd><p>These dots are for future extensions and must be empty.</p></dd>
+
+
 <dt>direction</dt>
 <dd><p>Direction to sort in.</p><ul><li><p>A single <code>"asc"</code> or <code>"desc"</code> for ascending or descending order
 respectively.</p></li>
 <li><p>For data frames, a length <code>1</code> or <code>ncol(x)</code> character vector containing
 only <code>"asc"</code> or <code>"desc"</code>, specifying the direction for each column.</p></li>
 </ul></dd>
+
+
 <dt>na_value</dt>
 <dd><p>Ordering of missing values.</p><ul><li><p>A single <code>"largest"</code> or <code>"smallest"</code> for ordering missing values as the
 largest or smallest values respectively.</p></li>
@@ -101,10 +107,14 @@ largest or smallest values respectively.</p></li>
 only <code>"largest"</code> or <code>"smallest"</code>, specifying how missing values should
 be ordered within each column.</p></li>
 </ul></dd>
+
+
 <dt>nan_distinct</dt>
 <dd><p>A single logical specifying whether or not <code>NaN</code> should
 be considered distinct from <code>NA</code> for double and complex vectors. If <code>TRUE</code>,
 <code>NaN</code> will always be ordered between <code>NA</code> and non-missing numbers.</p></dd>
+
+
 <dt>chr_proxy_collate</dt>
 <dd><p>A function generating an alternate representation
 of character vectors to use for collation, often used for locale-aware
@@ -118,10 +128,13 @@ C-locale, regardless of encoding.</p></li>
 columns.</p>
 <p>Common transformation functions include: <code><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower()</a></code> for case-insensitive
 ordering and <code><a href="https://rdrr.io/pkg/stringi/man/stri_sort_key.html" class="external-link">stringi::stri_sort_key()</a></code> for locale-aware ordering.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A two column data frame with size equal to <code>vec_size(vec_unique(x))</code>.</p><ul><li><p>A <code>key</code> column of type <code>vec_ptype(x)</code>.</p></li>
+    
+
+<p>A two column data frame with size equal to <code>vec_size(vec_unique(x))</code>.</p><ul><li><p>A <code>key</code> column of type <code>vec_ptype(x)</code>.</p></li>
 <li><p>A <code>loc</code> column of type list, with elements of type integer.</p></li>
 </ul></div>
     <div class="section level2">
@@ -180,7 +193,7 @@ ordering and <code><a href="https://rdrr.io/pkg/stringi/man/stri_sort_key.html" 
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

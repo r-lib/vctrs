@@ -116,6 +116,8 @@ holds:</p><div class="sourceCode"><pre><code><span class="fu"><a href="../refere
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A vector</p></dd>
+
+
 <dt>indices</dt>
 <dd><p>For <code>vec_chop()</code>, a list of positive integer vectors to
 slice <code>x</code> with, or <code>NULL</code>. If <code>NULL</code>, <code>x</code> is split into its individual
@@ -125,10 +127,14 @@ locations to place elements of <code>x</code> in. Each element of <code>x</code>
 the size of the corresponding index vector. The size of <code>indices</code> must
 match the size of <code>x</code>. If <code>NULL</code>, <code>x</code> is combined in the order it is
 provided in, which is equivalent to using <code><a href="vec_c.html">vec_c()</a></code>.</p></dd>
+
+
 <dt>ptype</dt>
 <dd><p>If <code>NULL</code>, the default, the output type is determined by
 computing the common type across all elements of <code>x</code>. Alternatively, you
 can supply <code>ptype</code> to give the output a known type.</p></dd>
+
+
 <dt>name_spec</dt>
 <dd><p>A name specification for combining
 inner and outer names. This is relevant for inputs passed with a
@@ -143,13 +149,18 @@ are passed as second argument.</p></li>
 <li><p>An <code><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">rlang::zap()</a></code> object, in which case both outer and inner
 names are ignored and the result is unnamed.</p></li>
 </ul><p>See the <a href="name_spec.html">name specification topic</a>.</p></dd>
+
+
 <dt>name_repair</dt>
 <dd><p>How to repair names, see <code>repair</code> options in
 <code><a href="vec_as_names.html">vec_as_names()</a></code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <ul><li><p><code>vec_chop()</code>: A list of size <code>vec_size(indices)</code> or, if <code>indices == NULL</code>,
+    
+
+<ul><li><p><code>vec_chop()</code>: A list of size <code>vec_size(indices)</code> or, if <code>indices == NULL</code>,
 <code>vec_size(x)</code>.</p></li>
 <li><p><code>vec_unchop()</code>: A vector of type <code>vec_ptype_common(!!!x)</code>, or <code>ptype</code>, if
 specified. The size is computed as <code>vec_size_common(!!!indices)</code> unless
@@ -276,7 +287,7 @@ the indices are <code>NULL</code>, in which case the size is <code>vec_size_comm
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

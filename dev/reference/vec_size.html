@@ -115,28 +115,41 @@ to <code>vec_size()</code> as <code><a href="https://rdrr.io/r/base/lengths.html
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x, ...</dt>
 <dd><p>Vector inputs or <code>NULL</code>.</p></dd>
+
+
 <dt>.size</dt>
 <dd><p>If <code>NULL</code>, the default, the output size is determined by
 recycling the lengths of all elements of <code>...</code>. Alternatively, you can
 supply <code>.size</code> to force a known size; in this case, <code>x</code> and <code>...</code> are
 ignored.</p></dd>
+
+
 <dt>.absent</dt>
 <dd><p>The size used when no input is provided, or when all input
 is <code>NULL</code>. If left as <code>NULL</code> when no input is supplied, an error is thrown.</p></dd>
+
+
 <dt>.arg</dt>
 <dd><p>An argument name as a string. This argument
 will be mentioned in error messages as the input that is at the
 origin of a problem.</p></dd>
+
+
 <dt>.call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
 mentioned in error messages as the source of the error. See the
 <code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An integer (or double for long vectors).
-<code>vec_size_common()</code> returns <code>.absent</code> if all inputs are <code>NULL</code> or
+    
+
+<p>An integer (or double for long vectors).</p>
+
+
+<p><code>vec_size_common()</code> returns <code>.absent</code> if all inputs are <code>NULL</code> or
 absent, <code>0L</code> by default.</p>
     </div>
     <div class="section level2">
@@ -215,7 +228,7 @@ and <code><a href="vec_recycle.html">vec_recycle()</a></code> to recycle vectors
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

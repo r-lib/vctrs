@@ -93,26 +93,37 @@ doesn't conform.</p></li>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A vector argument to check.</p></dd>
+
+
 <dt>ptype</dt>
 <dd><p>Prototype to compare against. If the prototype has a
 class, its <code><a href="vec_ptype.html">vec_ptype()</a></code> is compared to that of <code>x</code> with
 <code><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical()</a></code>. Otherwise, its <code><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof()</a></code> is compared to that of
 <code>x</code> with <code>==</code>.</p></dd>
+
+
 <dt>size</dt>
 <dd><p>A single integer size against which to compare.</p></dd>
+
+
 <dt>arg</dt>
 <dd><p>Name of argument being checked. This is used in error
 messages. The label of the expression passed as <code>x</code> is taken as
 default.</p></dd>
+
+
 <dt>call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
 mentioned in error messages as the source of the error. See the
 <code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>vec_is()</code> returns <code>TRUE</code> or <code>FALSE</code>. <code>vec_assert()</code> either
+    
+
+<p><code>vec_is()</code> returns <code>TRUE</code> or <code>FALSE</code>. <code>vec_assert()</code> either
 throws a typed error (see section on error types) or returns <code>x</code>,
 invisibly.</p>
     </div>
@@ -168,7 +179,7 @@ always prepend your class to the <code>"class"</code> attribute for correct disp
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>

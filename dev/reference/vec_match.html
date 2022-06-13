@@ -93,20 +93,29 @@ haystack. <code>vec_match()</code> returns an integer vector giving location of
 return the location of the first match.</p>
 <p><code>needles</code> and <code>haystack</code> are coerced to the same type prior to
 comparison.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>These dots are for future extensions and must be empty.</p></dd>
+
+
 <dt>na_equal</dt>
 <dd><p>If <code>TRUE</code>, missing values in <code>needles</code> can be
 matched to missing values in <code>haystack</code>. If <code>FALSE</code>, they
 propagate, missing values in <code>needles</code> are represented as <code>NA</code> in
 the return value.</p></dd>
+
+
 <dt>needles_arg, haystack_arg</dt>
 <dd><p>Argument tags for <code>needles</code> and
 <code>haystack</code> used in error messages.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A vector the same length as <code>needles</code>. <code>vec_in()</code> returns a
+    
+
+<p>A vector the same length as <code>needles</code>. <code>vec_in()</code> returns a
 logical vector; <code>vec_match()</code> returns an integer vector.</p>
     </div>
     <div class="section level2">
@@ -159,7 +168,7 @@ this behaviour with the <code>na_equal</code> argument.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
   </div></footer></body></html>
