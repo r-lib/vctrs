@@ -24,7 +24,7 @@
 #'
 #' @section Usage in other packages:
 #' To avoid taking a dependency on vctrs, you copy the source of
-#' [`s3_register()`](https://github.com/r-lib/vctrs/blob/master/R/register-s3.R)
+#' [`s3_register()`](https://github.com/r-lib/vctrs/blob/main/R/register-s3.R)
 #' into your own package. It is licensed under the permissive
 #' [unlicense](https://choosealicense.com/licenses/unlicense/) to make it
 #' crystal clear that we're happy for you to do this. There's no need to include
