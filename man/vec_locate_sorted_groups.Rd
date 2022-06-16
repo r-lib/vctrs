@@ -73,9 +73,11 @@ group in \code{x}. It is similar to \code{\link[=vec_group_loc]{vec_group_loc()}
 returned sorted rather than by first appearance.
 }
 \details{
-\code{vec_locate_sorted_groups(x)} is equivalent to, but faster than:\preformatted{info <- vec_group_loc(x)
+\code{vec_locate_sorted_groups(x)} is equivalent to, but faster than:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{info <- vec_group_loc(x)
 vec_slice(info, vec_order(info$key))
-}
+}\if{html}{\out{</div>}}
 }
 \section{Dependencies of \code{vec_locate_sorted_groups()}}{
 

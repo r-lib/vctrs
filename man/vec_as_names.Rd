@@ -88,12 +88,14 @@ levels are nested.
 \code{minimal} names exist. The \code{names} attribute is not \code{NULL}. The
 name of an unnamed element is \code{""} and never \code{NA}.
 
-Examples:\preformatted{Original names of a vector with length 3: NULL
+Examples:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Original names of a vector with length 3: NULL
                            minimal names: "" "" ""
 
                           Original names: "x" NA
                            minimal names: "x" ""
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{\code{unique} names}{
@@ -110,9 +112,11 @@ There are many ways to make names \code{unique}. We append a suffix of the form
 \code{...j} to any name that is \code{""} or a duplicate, where \code{j} is the position.
 We also change \code{..#} and \code{...} to \code{...#}.
 
-Example:\preformatted{Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
+Example:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
   unique names: "...1" "x...2" "...3" "y" "x...5" "...6" "...7"
-}
+}\if{html}{\out{</div>}}
 
 Pre-existing suffixes of the form \code{...j} are always stripped, prior
 to making names \code{unique}, i.e. reconstructing the suffixes. If this
@@ -144,12 +148,14 @@ vctrs has a different method of making names syntactic than
 \code{\link[base:make.names]{base::make.names()}}. In general, vctrs prepends one or more dots
 \code{.} until the name is syntactic.
 
-Examples:\preformatted{ Original names:     ""     "x"    NA      "x"
+Examples:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ Original names:     ""     "x"    NA      "x"
 universal names: "...1" "x...2" "...3" "x...4"
 
   Original names: "(y)"  "_z"  ".2fa"  "FALSE"
  universal names: ".y." "._z" "..2fa" ".FALSE"
-}
+}\if{html}{\out{</div>}}
 }
 
 \examples{

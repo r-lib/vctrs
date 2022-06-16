@@ -92,16 +92,20 @@ for S3 lists. In vctrs, S3 lists are treated as scalars by
 default. This way we don't treat objects like model fits as
 vectors. To prevent vctrs from treating your S3 list as a scalar,
 unclass it in the \code{vec_proxy()} method. For instance, here is the
-definition for \code{list_of}:\preformatted{vec_proxy.vctrs_list_of <- function(x) \{
+definition for \code{list_of}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_proxy.vctrs_list_of <- function(x) \{
   unclass(x)
 \}
-}
+}\if{html}{\out{</div>}}
 
 Another case where you need to implement a proxy is \link[=new_rcrd]{record types}. Record types should return a data frame, as in
-the \code{POSIXlt} method:\preformatted{vec_proxy.POSIXlt <- function(x) \{
+the \code{POSIXlt} method:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_proxy.POSIXlt <- function(x) \{
   new_data_frame(unclass(x))
 \}
-}
+}\if{html}{\out{</div>}}
 
 Note that you don't need to implement \code{vec_proxy()} when your class
 inherits from \code{vctrs_vctr} or \code{vctrs_rcrd}.

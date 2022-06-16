@@ -6,7 +6,9 @@
 \description{
 This error occurs when a function expects a vector and gets a scalar
 object instead. This commonly happens when some code attempts to assign
-a scalar object as column in a data frame:\if{html}{\out{<div class="sourceCode r">}}\preformatted{fn <- function() NULL
+a scalar object as column in a data frame:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{fn <- function() NULL
 tibble::tibble(x = fn)
 #> Error:
 #> ! All columns in a tibble must be vectors.
@@ -27,7 +29,9 @@ vectorness of a type is whether it makes sense to include that object as
 a column in a data frame.
 
 The main difference is that S3 lists are considered vectors by base R
-but in the tidyverse that’s not the case by default:\if{html}{\out{<div class="sourceCode r">}}\preformatted{fit <- lm(1:3 ~ 1)
+but in the tidyverse that’s not the case by default:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{fit <- lm(1:3 ~ 1)
 
 typeof(fit)
 #> [1] "list"
@@ -49,7 +53,9 @@ vctrs::vec_slice(fit, c(1, 4))
 #> ! `x` must be a vector, not a <lm> object.
 }\if{html}{\out{</div>}}
 
-Defused function calls are another (more esoteric) example:\if{html}{\out{<div class="sourceCode r">}}\preformatted{call <- quote(foo(bar = TRUE, baz = FALSE))
+Defused function calls are another (more esoteric) example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{call <- quote(foo(bar = TRUE, baz = FALSE))
 call
 #> foo(bar = TRUE, baz = FALSE)
 
