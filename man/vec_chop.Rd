@@ -75,8 +75,10 @@ are combined. When no indices are supplied, it is identical to \code{vec_c()}.
 
 If \code{indices} selects every value in \code{x} exactly once, in any order, then
 \code{vec_unchop()} is the inverse of \code{vec_chop()} and the following invariant
-holds:\preformatted{vec_unchop(vec_chop(x, indices), indices) == x
-}
+holds:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_unchop(vec_chop(x, indices), indices) == x
+}\if{html}{\out{</div>}}
 }
 \section{Dependencies of \code{vec_chop()}}{
 

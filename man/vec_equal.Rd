@@ -10,9 +10,7 @@ vec_equal(x, y, na_equal = FALSE, .ptype = NULL)
 vec_equal_na(x)
 }
 \arguments{
-\item{x}{Vectors with compatible types and lengths.}
-
-\item{y}{Vectors with compatible types and lengths.}
+\item{x, y}{Vectors with compatible types and lengths.}
 
 \item{na_equal}{Should \code{NA} values be considered equal?}
 

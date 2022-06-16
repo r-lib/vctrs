@@ -47,8 +47,10 @@ See the \link[=name_spec]{name specification topic}.}
 but does so in such a way that the elements of each vector are interleaved
 together.
 
-It is a more efficient equivalent to the following usage of \code{vec_c()}:\preformatted{vec_interleave(x, y) == vec_c(x[1], y[1], x[2], y[2], ..., x[n], y[n])
-}
+It is a more efficient equivalent to the following usage of \code{vec_c()}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_interleave(x, y) == vec_c(x[1], y[1], x[2], y[2], ..., x[n], y[n])
+}\if{html}{\out{</div>}}
 }
 \section{Dependencies}{
 

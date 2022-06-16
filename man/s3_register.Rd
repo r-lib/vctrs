@@ -32,10 +32,12 @@ For R 3.5.0 and later, \code{s3_register()} is also useful when demonstrating
 class creation in a vignette, since method lookup no longer always involves
 the lexical scope. For R 3.6.0 and later, you can achieve a similar effect
 by using "delayed method registration", i.e. placing the following in your
-\code{NAMESPACE} file:\preformatted{if (getRversion() >= "3.6.0") \{
+\code{NAMESPACE} file:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{if (getRversion() >= "3.6.0") \{
   S3method(package::generic, class)
 \}
-}
+}\if{html}{\out{</div>}}
 }
 \section{Usage in other packages}{
 

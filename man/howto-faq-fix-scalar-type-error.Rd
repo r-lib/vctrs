@@ -9,20 +9,26 @@ objects are considered as vectors (see the \link[=faq-error-scalar-type]{user FA
 treat your class as a vector when it should.
 \subsection{Why isn’t my list class considered a vector?}{
 
-By default, S3 lists are not considered to be vectors by vctrs:\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_list <- structure(list(), class = "my_class")
+By default, S3 lists are not considered to be vectors by vctrs:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_list <- structure(list(), class = "my_class")
 
 vctrs::vec_is(my_list)
 #> [1] FALSE
 }\if{html}{\out{</div>}}
 
 To be treated as a vector, the class must either inherit from \code{"list"}
-explicitly:\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_explicit_list <- structure(list(), class = c("my_class", "list"))
+explicitly:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_explicit_list <- structure(list(), class = c("my_class", "list"))
 vctrs::vec_is(my_explicit_list)
 #> [1] TRUE
 }\if{html}{\out{</div>}}
 
 Or it should implement a \code{vec_proxy()} method that returns its input if
-explicit inheritance is not possible or troublesome:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+explicit inheritance is not possible or troublesome:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_proxy.my_class <- function(x, ...) x
 
 vctrs::vec_is(my_list)
@@ -30,7 +36,9 @@ vctrs::vec_is(my_list)
 }\if{html}{\out{</div>}}
 
 Note that explicit inheritance is the preferred way because this makes
-it possible for your class to dispatch on \code{list} methods of S3 generics:\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_generic <- function(x) UseMethod("my_generic")
+it possible for your class to dispatch on \code{list} methods of S3 generics:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_generic <- function(x) UseMethod("my_generic")
 my_generic.list <- function(x) "dispatched!"
 
 my_generic(my_list)
@@ -49,7 +57,9 @@ constructed.
 However, if you get an “Input must be a vector” error with a data frame
 subclass, it probably means that the data frame has not been properly
 constructed. The main cause of these errors are data frames whose \emph{base
-class} is not \code{"data.frame"}:\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_df <- data.frame(x = 1)
+class} is not \code{"data.frame"}:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{my_df <- data.frame(x = 1)
 class(my_df) <- c("data.frame", "my_class")
 
 vctrs::vec_assert(my_df)
@@ -57,7 +67,9 @@ vctrs::vec_assert(my_df)
 #> ! `my_df` must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
 
-This is problematic as many tidyverse functions won’t work properly:\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
+This is problematic as many tidyverse functions won’t work properly:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
 #> Error in `vec_slice()`:
 #> ! `x` must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
@@ -66,7 +78,9 @@ It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
 To fix these errors, you can simply change the construction of your data
 frame class so that \code{"data.frame"} is a base class, i.e. it should come
-last in the class vector:\if{html}{\out{<div class="sourceCode r">}}\preformatted{class(my_df) <- c("my_class", "data.frame")
+last in the class vector:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{class(my_df) <- c("my_class", "data.frame")
 
 vctrs::vec_assert(my_df)
 
