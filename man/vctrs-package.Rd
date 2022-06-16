@@ -6,7 +6,6 @@
 \alias{vctrs-package}
 \title{vctrs: Vector Helpers}
 \description{
-\if{html}{\figure{logo.png}{options: align='right'}}
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 
 Defines new notions of prototype and size that are
