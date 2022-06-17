@@ -104,10 +104,10 @@ the old namespace. This might cause crashes because of dangling
 class creation in a vignette, since method lookup no longer always involves
 the lexical scope. For R 3.6.0 and later, you can achieve a similar effect
 by using "delayed method registration", i.e. placing the following in your
-<code>NAMESPACE</code> file:</p><div class="sourceCode"><pre><code><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric_version.html" class="external-link">getRversion</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="st">"3.6.0"</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu">S3method</span><span class="op">(</span><span class="fu">package</span><span class="fu">::</span><span class="va">generic</span>, <span class="va">class</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-
+<code>NAMESPACE</code> file:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">getRversion</span>() <span class="sc">&gt;=</span> <span class="st">"3.6.0"</span>) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">S3method</span>(package<span class="sc">::</span>generic, class)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="usage-in-other-packages">Usage in other packages<a class="anchor" aria-label="anchor" href="#usage-in-other-packages"></a></h2>

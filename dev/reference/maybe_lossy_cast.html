@@ -112,7 +112,7 @@ returns the result silently.</p>
 
 
 <dt>x</dt>
-<dd><p>Vectors</p></dd>
+<dd><p>Vectors to cast.</p></dd>
 
 
 <dt>to</dt>
@@ -132,7 +132,7 @@ own location vector, possibly empty.</p></dd>
 locations where <code>x</code> lost information.</p></dd>
 
 
-<dt>...</dt>
+<dt>..., class</dt>
 <dd><p>Only use these fields when creating a subclass.</p></dd>
 
 
@@ -143,15 +143,15 @@ integer) or loss of generality (from character to factor).</p></dd>
 
 
 <dt>x_arg</dt>
-<dd><p>Argument names for <code>x</code>, <code>y</code>, and <code>to</code>. Used in
-error messages to inform the user about the locations of incompatible
-types.</p></dd>
+<dd><p>Argument name for <code>x</code>, used in error messages to
+inform the user about the locations of incompatible types
+(see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
 
 
 <dt>to_arg</dt>
-<dd><p>Argument names for <code>x</code>, <code>y</code>, and <code>to</code>. Used in
-error messages to inform the user about the locations of incompatible
-types.</p></dd>
+<dd><p>Argument name <code>to</code> used in error messages to
+inform the user about the locations of incompatible types
+(see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
 
 
 <dt>call</dt>
@@ -168,10 +168,6 @@ mentioned in error messages as the source of the error. See the
 <dt>message</dt>
 <dd><p>An overriding message for the error. <code>details</code> and
 <code>message</code> are mutually exclusive, supplying both is an error.</p></dd>
-
-
-<dt>class</dt>
-<dd><p>Only use these fields when creating a subclass.</p></dd>
 
 
 <dt>.deprecation</dt>

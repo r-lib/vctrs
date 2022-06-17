@@ -122,9 +122,9 @@ each element of <code>x</code>. <code>times</code> will be recycled to the size 
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Using <code>vec_unrep()</code> and <code>vec_rep_each()</code> together is similar to using
 <code><a href="https://rdrr.io/r/base/rle.html" class="external-link">base::rle()</a></code> and <code><a href="https://rdrr.io/r/base/rle.html" class="external-link">base::inverse.rle()</a></code>. The following invariant shows
-the relationship between the two functions:</p><div class="sourceCode"><pre><code><span class="va">compressed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec-rep.html">vec_unrep</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="../reference/vec-rep.html">vec_rep_each</a></span><span class="op">(</span><span class="va">compressed</span><span class="op">$</span><span class="va">key</span>, <span class="va">compressed</span><span class="op">$</span><span class="va">times</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-
+the relationship between the two functions:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>compressed <span class="ot">&lt;-</span> <span class="fu">vec_unrep</span>(x)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(x, <span class="fu">vec_rep_each</span>(compressed<span class="sc">$</span>key, compressed<span class="sc">$</span>times))</span></code></pre><p></p></div>
 <p>There are two main differences between <code>vec_unrep()</code> and <code><a href="https://rdrr.io/r/base/rle.html" class="external-link">base::rle()</a></code>:</p><ul><li><p><code>vec_unrep()</code> treats adjacent missing values as equivalent, while <code><a href="https://rdrr.io/r/base/rle.html" class="external-link">rle()</a></code>
 treats them as different values.</p></li>
 <li><p><code>vec_unrep()</code> works along the size of <code>x</code>, while <code><a href="https://rdrr.io/r/base/rle.html" class="external-link">rle()</a></code> works along its

@@ -16,7 +16,8 @@ Combination mechanism in vctrs
 The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
-functions that use the split-apply-combine strategy. For example:vec_c(TRUE, 1)
+functions that use the split-apply-combine strategy. For example:
+vec_c(TRUE, 1)
 #&amp;gt; [1] 1 1
 
 vec_c(&quot;a&quot;, 1)
@@ -82,7 +83,8 @@ are a subset or a superset of the values of the other type. The notion
 of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
-character vectors than to round numbers:# Two factors are compatible
+character vectors than to round numbers:
+# Two factors are compatible
 vec_ptype2(factor(&quot;a&quot;), factor(&quot;b&quot;))
 #&amp;gt; factor(0)
 #&amp;gt; Levels: a b
@@ -109,7 +111,8 @@ data.frame), or both. If you have trouble determining which one of the
 two types is richer, it probably means they shouldn’t be automatically
 coercible.
 Let’s look again at what happens when we combine a factor and a
-character:vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
+character:
+vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
 #&amp;gt; character(0)
 
 The ptype2 method for &amp;lt;character&amp;gt; and &amp;lt;factor&amp;lt;&quot;a&quot;&amp;gt;&amp;gt; returns
@@ -129,7 +132,8 @@ Consistency and symmetry on permutation
 
 Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
+levels are aggregated in order:
+vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
 #&amp;gt; factor(0)
 #&amp;gt; Levels: a c b
 
@@ -242,7 +246,8 @@ Being too strict with data frame combinations would cause too much pain
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:df1 &amp;lt;- data.frame(x = 1)
+a base data frame:
+df1 &amp;lt;- data.frame(x = 1)
 df2 &amp;lt;- structure(df1, class = c(&quot;foreign_df&quot;, &quot;data.frame&quot;))
 
 vec_rbind(df1, df2)
@@ -250,7 +255,8 @@ vec_rbind(df1, df2)
 #&amp;gt; 1 1
 #&amp;gt; 2 1
 
-When a tibble is involved, we fall back to tibble:df3 &amp;lt;- tibble::as_tibble(df1)
+When a tibble is involved, we fall back to tibble:
+df3 &amp;lt;- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
 #&amp;gt; # A tibble: 2 x 1
@@ -290,7 +296,8 @@ Combination mechanism in vctrs
 The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
-functions that use the split-apply-combine strategy. For example:vec_c(TRUE, 1)
+functions that use the split-apply-combine strategy. For example:
+vec_c(TRUE, 1)
 #&amp;gt; [1] 1 1
 
 vec_c(&quot;a&quot;, 1)
@@ -356,7 +363,8 @@ are a subset or a superset of the values of the other type. The notion
 of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
-character vectors than to round numbers:# Two factors are compatible
+character vectors than to round numbers:
+# Two factors are compatible
 vec_ptype2(factor(&quot;a&quot;), factor(&quot;b&quot;))
 #&amp;gt; factor(0)
 #&amp;gt; Levels: a b
@@ -383,7 +391,8 @@ data.frame), or both. If you have trouble determining which one of the
 two types is richer, it probably means they shouldn’t be automatically
 coercible.
 Let’s look again at what happens when we combine a factor and a
-character:vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
+character:
+vec_ptype2(factor(&quot;a&quot;), &quot;b&quot;)
 #&amp;gt; character(0)
 
 The ptype2 method for &amp;lt;character&amp;gt; and &amp;lt;factor&amp;lt;&quot;a&quot;&amp;gt;&amp;gt; returns
@@ -403,7 +412,8 @@ Consistency and symmetry on permutation
 
 Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
+levels are aggregated in order:
+vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
 #&amp;gt; factor(0)
 #&amp;gt; Levels: a c b
 
@@ -516,7 +526,8 @@ Being too strict with data frame combinations would cause too much pain
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:df1 &amp;lt;- data.frame(x = 1)
+a base data frame:
+df1 &amp;lt;- data.frame(x = 1)
 df2 &amp;lt;- structure(df1, class = c(&quot;foreign_df&quot;, &quot;data.frame&quot;))
 
 vec_rbind(df1, df2)
@@ -524,7 +535,8 @@ vec_rbind(df1, df2)
 #&amp;gt; 1 1
 #&amp;gt; 2 1
 
-When a tibble is involved, we fall back to tibble:df3 &amp;lt;- tibble::as_tibble(df1)
+When a tibble is involved, we fall back to tibble:
+df3 &amp;lt;- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
 #&amp;gt; # A tibble: 2 x 1
@@ -618,7 +630,8 @@ subclasses, see
 <p>The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
-functions that use the split-apply-combine strategy. For example:</p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">1</span><span class="op">)</span>
+functions that use the split-apply-combine strategy. For example:</p>
+<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; [1] 1 1</span>
 
 <span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fl">1</span><span class="op">)</span>
@@ -678,7 +691,8 @@ are a subset or a superset of the values of the other type. The notion
 of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
-character vectors than to round numbers:</p><div class="sourceCode r"><pre><code><span class="co"># Two factors are compatible</span>
+character vectors than to round numbers:</p>
+<p></p><div class="sourceCode r"><pre><code><span class="co"># Two factors are compatible</span>
 <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; factor(0)</span>
 <span class="co">#&gt; Levels: a b</span>
@@ -704,7 +718,8 @@ vector), richer behaviour (a <code>data.table</code> has richer behaviour than a
 two types is richer, it probably means they shouldn’t be automatically
 coercible.</p>
 <p>Let’s look again at what happens when we combine a factor and a
-character:</p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="st">"b"</span><span class="op">)</span>
+character:</p>
+<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="st">"b"</span><span class="op">)</span>
 <span class="co">#&gt; character(0)</span></code></pre><p></p></div>
 <p>The ptype2 method for <code>&lt;character&gt;</code> and <code>&lt;factor&lt;"a"&gt;&gt;</code> returns
 <code>&lt;character&gt;</code> because the former is a richer type. The factor can only
@@ -723,7 +738,8 @@ R where <code>stringsAsFactors</code> is still true by default.</p>
 
 <p>Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:</p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span>
+levels are aggregated in order:</p>
+<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; factor(0)</span>
 <span class="co">#&gt; Levels: a c b</span>
 
@@ -826,14 +842,16 @@ as <code><a href="df_ptype2.html">df_ptype2()</a></code> and <code><a href="df_p
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:</p><div class="sourceCode r"><pre><code><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+a base data frame:</p>
+<p></p><div class="sourceCode r"><pre><code><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html" class="external-link">structure</a></span><span class="op">(</span><span class="va">df1</span>, class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foreign_df"</span>, <span class="st">"data.frame"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_bind.html">vec_rbind</a></span><span class="op">(</span><span class="va">df1</span>, <span class="va">df2</span><span class="op">)</span>
 <span class="co">#&gt;   x</span>
 <span class="co">#&gt; 1 1</span>
 <span class="co">#&gt; 2 1</span></code></pre><p></p></div>
-<p>When a tibble is involved, we fall back to tibble:</p><div class="sourceCode r"><pre><code><span class="va">df3</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">df1</span><span class="op">)</span>
+<p>When a tibble is involved, we fall back to tibble:</p>
+<p></p><div class="sourceCode r"><pre><code><span class="va">df3</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="va">df1</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/vec_bind.html">vec_rbind</a></span><span class="op">(</span><span class="va">df1</span>, <span class="va">df3</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 2 x 1</span>

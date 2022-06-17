@@ -217,14 +217,14 @@ corresponding match in the haystack for the current needle.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code><a href="vec_match.html">vec_match()</a></code> is identical to (but often slightly faster than):</p><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/vec_locate_matches.html">vec_locate_matches</a></span><span class="op">(</span>
-  <span class="va">needles</span>,
-  <span class="va">haystack</span>,
-  condition <span class="op">=</span> <span class="st">"=="</span>,
-  multiple <span class="op">=</span> <span class="st">"first"</span>,
-  nan_distinct <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
-
+    <p><code><a href="vec_match.html">vec_match()</a></code> is identical to (but often slightly faster than):</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vec_locate_matches</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  needles,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  haystack,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span> <span class="st">"=="</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">multiple =</span> <span class="st">"first"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nan_distinct =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre><p></p></div>
 <p><code>vec_locate_matches()</code> is extremely similar to a SQL join between <code>needles</code>
 and <code>haystack</code>, with the default being most similar to a left join.</p>
 <p>Be very careful when specifying match <code>condition</code>s. If a condition is

@@ -108,13 +108,19 @@ the foundation of type coercions in vctrs.</p>
 dots are only for future extensions and should be empty.</p></dd>
 
 
-<dt>x_arg, to_arg</dt>
-<dd><p>Argument names for <code>x</code> and <code>to</code>. These are used
-in error messages to inform the user about the locations of
-incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
+<dt>x_arg</dt>
+<dd><p>Argument name for <code>x</code>, used in error messages to
+inform the user about the locations of incompatible types
+(see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
 
 
-<dt>call</dt>
+<dt>to_arg</dt>
+<dd><p>Argument name <code>to</code> used in error messages to
+inform the user about the locations of incompatible types
+(see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
+
+
+<dt>call, .call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
 mentioned in error messages as the source of the error. See the
@@ -125,13 +131,6 @@ mentioned in error messages as the source of the error. See the
 <dd><p>An argument name as a string. This argument
 will be mentioned in error messages as the input that is at the
 origin of a problem.</p></dd>
-
-
-<dt>.call</dt>
-<dd><p>The execution environment of a currently
-running function, e.g. <code>caller_env()</code>. The function will be
-mentioned in error messages as the source of the error. See the
-<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 
 </dl></div>
     <div class="section level2">

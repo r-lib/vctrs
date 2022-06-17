@@ -139,9 +139,9 @@ ordering and <code><a href="https://rdrr.io/pkg/stringi/man/stri_sort_key.html" 
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>vec_locate_sorted_groups(x)</code> is equivalent to, but faster than:</p><div class="sourceCode"><pre><code><span class="va">info</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/vec_group.html">vec_group_loc</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">info</span>, <span class="fu"><a href="../reference/vec_order.html">vec_order</a></span><span class="op">(</span><span class="va">info</span><span class="op">$</span><span class="va">key</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-
+    <p><code>vec_locate_sorted_groups(x)</code> is equivalent to, but faster than:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>info <span class="ot">&lt;-</span> <span class="fu">vec_group_loc</span>(x)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">vec_slice</span>(info, <span class="fu">vec_order</span>(info<span class="sc">$</span>key))</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="dependencies-of-vec-locate-sorted-groups-">Dependencies of <code>vec_locate_sorted_groups()</code><a class="anchor" aria-label="anchor" href="#dependencies-of-vec-locate-sorted-groups-"></a></h2>

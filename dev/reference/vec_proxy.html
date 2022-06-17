@@ -218,15 +218,15 @@ for S3 lists. In vctrs, S3 lists are treated as scalars by
 default. This way we don't treat objects like model fits as
 vectors. To prevent vctrs from treating your S3 list as a scalar,
 unclass it in the <code>vec_proxy()</code> method. For instance, here is the
-definition for <code>list_of</code>:</p><div class="sourceCode"><pre><code><span class="va">vec_proxy.vctrs_list_of</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-
+definition for <code>list_of</code>:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>vec_proxy.vctrs_list_of <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unclass</span>(x)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre><p></p></div>
 <p>Another case where you need to implement a proxy is <a href="new_rcrd.html">record types</a>. Record types should return a data frame, as in
-the <code>POSIXlt</code> method:</p><div class="sourceCode"><pre><code><span class="va">vec_proxy.POSIXlt</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="../reference/new_data_frame.html">new_data_frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-
+the <code>POSIXlt</code> method:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>vec_proxy.POSIXlt <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">new_data_frame</span>(<span class="fu">unclass</span>(x))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre><p></p></div>
 <p>Note that you don't need to implement <code>vec_proxy()</code> when your class
 inherits from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code>.</p>
     </div>
