@@ -348,3 +348,8 @@ test_that("vec_check_list() and list_check_all_vectors() work", {
     (expect_error(my_function(list(1, foo = env()))))
   })
 })
+
+test_that("informative messages when 1d array doesn't match vector", {
+  x <- array(1:3)
+  expect_snapshot((expect_error(vec_assert(x, int()))))
+})
