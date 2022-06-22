@@ -136,7 +136,7 @@ vec_ptype_shape <- function(x) {
     if (is_null(dim(x))) {
       ""
     } else {
-      sprintf("[1d]")
+      "[1d]"
     }
   } else {
     paste0("[,", paste(dim[-1], collapse = ","), "]")
