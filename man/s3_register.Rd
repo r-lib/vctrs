@@ -42,7 +42,7 @@ by using "delayed method registration", i.e. placing the following in your
 \section{Usage in other packages}{
 
 To avoid taking a dependency on vctrs, you copy the source of
-\href{https://github.com/r-lib/vctrs/blob/master/R/register-s3.R}{\code{s3_register()}}
+\href{https://github.com/r-lib/vctrs/blob/main/R/register-s3.R}{\code{s3_register()}}
 into your own package. It is licensed under the permissive
 \href{https://choosealicense.com/licenses/unlicense/}{unlicense} to make it
 crystal clear that we're happy for you to do this. There's no need to include

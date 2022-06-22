@@ -192,7 +192,7 @@ with_lifecycle_errors <- function(expr) {
 #'
 #' The badge appears as an image in the HTML version of the
 #' documentation. To make them available in your package, visit
-#' <https://github.com/r-lib/rlang/tree/master/man/figures> and copy
+#' <https://github.com/r-lib/rlang/tree/main/man/figures> and copy
 #' all the files starting with `lifecycle-` in your `man/figures/`
 #' folder.
 #'
