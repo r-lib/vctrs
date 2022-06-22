@@ -5,10 +5,10 @@ test_that("ptype print methods are descriptive", {
   tab1 <- new_table()
   tab2 <- new_table(dim = c(0L, 1L, 2L, 1L))
 
-  expect_equal(vec_ptype_abbr(tab1), "table")
+  expect_equal(vec_ptype_abbr(tab1), "table[1d]")
   expect_equal(vec_ptype_abbr(tab2), "table[,1,2,1]")
 
-  expect_equal(vec_ptype_full(tab1), "table")
+  expect_equal(vec_ptype_full(tab1), "table[1d]")
   expect_equal(vec_ptype_full(tab2), "table[,1,2,1]")
 })
 

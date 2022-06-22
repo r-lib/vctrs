@@ -10,11 +10,11 @@ test_that("NULL has method", {
 })
 
 test_that("non objects default to type + shape", {
-  expect_equal(vec_ptype_abbr(ones(10)), "dbl")
+  expect_equal(vec_ptype_abbr(ones(10)), "dbl[1d]")
   expect_equal(vec_ptype_abbr(ones(0, 10)), "dbl[,10]")
   expect_equal(vec_ptype_abbr(ones(10, 0)), "dbl[,0]")
 
-  expect_equal(vec_ptype_full(ones(10)), "double")
+  expect_equal(vec_ptype_full(ones(10)), "double[1d]")
   expect_equal(vec_ptype_full(ones(0, 10)), "double[,10]")
   expect_equal(vec_ptype_full(ones(10, 0)), "double[,0]")
 

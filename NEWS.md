@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_ptype_abbr()` and `vec_ptype_full()` now suffix 1d arrays
+  with `[1d]`.
+
 * `vec_ptype_abbr()` and `vec_ptype_full()` methods are no longer
   inherited (#1549).
 

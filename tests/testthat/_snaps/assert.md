@@ -235,3 +235,13 @@
       Error in `my_function()`:
       ! `my_arg$foo` must be a vector, not an environment.
 
+# informative messages when 1d array doesn't match vector
+
+    Code
+      (expect_error(vec_assert(x, int())))
+    Output
+      <error/vctrs_error_assert_ptype>
+      Error:
+      ! `x` must be a vector with type <integer>.
+      Instead, it has type <integer[1d]>.
+

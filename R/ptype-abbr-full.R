@@ -133,7 +133,11 @@ vec_ptype_abbr_bare <- function(x, ...) {
 vec_ptype_shape <- function(x) {
   dim <- dim2(x)
   if (length(dim) == 1) {
-    ""
+    if (is_null(dim(x))) {
+      ""
+    } else {
+      sprintf("[1d]")
+    }
   } else {
     paste0("[,", paste(dim[-1], collapse = ","), "]")
   }
