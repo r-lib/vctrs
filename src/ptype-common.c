@@ -5,7 +5,7 @@
 r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
-  r_obj* types = KEEP(rlang_env_dots_values(env));
+  r_obj* types = KEEP(rlang_env_dots_list(env));
   r_obj* ptype = KEEP(r_eval(r_node_car(args), env));
 
   struct r_lazy call = { .x = syms.dot_call, .env = env };
@@ -27,7 +27,7 @@ r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 r_obj* ffi_ptype_common_opts(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
   args = r_node_cdr(args);
 
-  r_obj* types = KEEP(rlang_env_dots_values(env));
+  r_obj* types = KEEP(rlang_env_dots_list(env));
   r_obj* ptype = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
   r_obj* opts = KEEP(r_eval(r_node_car(args), env));
 
