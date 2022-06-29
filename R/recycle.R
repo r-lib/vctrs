@@ -106,6 +106,7 @@
 #' ```
 #'
 #' @name vector_recycling_rules
+#' @keywords internal
 NULL
 
 #' Vector recycling

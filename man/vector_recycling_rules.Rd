@@ -106,3 +106,4 @@ data.frame(1:2, 1:3)
 }\if{html}{\out{</div>}}
 }
 
+\keyword{internal}
