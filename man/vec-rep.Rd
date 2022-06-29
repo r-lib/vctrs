@@ -20,7 +20,8 @@ vec_unrep(x)
 the entire vector.
 
 For \code{vec_rep_each()}, an integer vector of the number of times to repeat
-each element of \code{x}. \code{times} will be recycled to the size of \code{x}.}
+each element of \code{x}. \code{times} will be \link[=vector_recycling_rules]{recycled} to
+the size of \code{x}.}
 }
 \value{
 For \code{vec_rep()}, a vector the same type as \code{x} with size

@@ -19,7 +19,8 @@
 #' to `vec_size()` as [lengths()] is to [length()].
 #'
 #' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
-#'   and [vec_recycle()] to recycle vectors to common length.
+#'   and [vec_recycle()] to [recycle][vector_recycling_rules] vectors to common
+#'   length.
 #' @section Invariants:
 #' * `vec_size(dataframe)` == `vec_size(dataframe[[i]])`
 #' * `vec_size(matrix)` == `vec_size(matrix[, i, drop = FALSE])`
