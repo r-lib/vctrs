@@ -17,38 +17,59 @@ process used by packages in r-lib and the tidyverse:
 
 Vectors of size 1 are recycled to the size of any other vector:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_recycle_common(1:3, 1)
-#> [[1]]
-#> [1] 1 2 3
-#>
-#> [[2]]
-#> [1] 1 1 1
+\if{html}{\out{<div class="sourceCode">}}\preformatted{tibble(x = 1:3, y = 1L)
+#> # A tibble: 3 × 2
+#>       x     y
+#>   <int> <int>
+#> 1     1     1
+#> 2     2     1
+#> 3     3     1
 }\if{html}{\out{</div>}}
 
 This includes vectors of size 0:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_recycle_common(integer(), 1)
-#> [[1]]
-#> integer(0)
-#>
-#> [[2]]
-#> numeric(0)
+\if{html}{\out{<div class="sourceCode">}}\preformatted{tibble(x = integer(), y = 1L)
+#> # A tibble: 0 × 2
+#> # … with 2 variables: x <int>, y <int>
 }\if{html}{\out{</div>}}
 
-If vectors aren't size 1, they must all be the same size:
+If vectors aren't size 1, they must all be the same size. Otherwise, an error
+is thrown:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{# This is fine, all vectors are the same size
-vec_recycle_common(1:3, 4:6)
+\if{html}{\out{<div class="sourceCode">}}\preformatted{tibble(x = 1:3, y = 4:7)
+#> Error:
+#> ! Tibble columns must have compatible sizes.
+#> • Size 3: Existing data.
+#> • Size 4: Column `y`.
+#> ℹ Only values of size one are recycled.
+}\if{html}{\out{</div>}}
+}
+
+\section{vctrs backend}{
+
+
+Packages in r-lib and the tidyverse generally use \code{\link[=vec_size_common]{vec_size_common()}} and
+\code{\link[=vec_recycle_common]{vec_recycle_common()}} as the backends for handling recycling rules.
+\itemize{
+\item \code{vec_size_common()} returns the common size of multiple vectors, after
+applying the recycling rules
+\item \code{vec_recycle_common()} goes one step further, and actually recycles the
+vectors to their common size
+}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_size_common(1:3, "x")
+#> [1] 3
+
+vec_recycle_common(1:3, "x")
 #> [[1]]
 #> [1] 1 2 3
 #>
 #> [[2]]
-#> [1] 4 5 6
+#> [1] "x" "x" "x"
 
-# This is an error
-vec_recycle_common(1:3, 4:7)
+vec_size_common(1:3, c("x", "y"))
 #> Error:
-#> ! Can't recycle `..1` (size 3) to match `..2` (size 4).
+#> ! Can't recycle `..1` (size 3) to match `..2` (size 2).
 }\if{html}{\out{</div>}}
 }
 
@@ -64,17 +85,18 @@ warning will be thrown if the length of the longer vector is not an integer
 multiple of the length of the shorter vector.
 }
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{# max(2, 4) == 4
-# 1:2 is fully recycled to c(1:2, 1:2)
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# `max(2, 4) == 4`
+# `1:2` is fully recycled to `c(1:2, 1:2)`
 1:2 + 1:4
 #> [1] 2 4 4 6
 
-# max(3, 4) == 4, with a warning
-# 1:3 is partially recycled to c(1:3, 1)
+# `max(3, 4) == 4`, with a warning
+# `1:3` is partially recycled to `c(1:3, 1)`
 1:3 + 1:4
-#> Warning in 1:3 + 1:4: longer object length is not a multiple of shorter object
-#> length
 #> [1] 2 4 6 5
+#> Warning message:
+#>   In 1:3 + 1:4 :
+#>   longer object length is not a multiple of shorter object length
 
 # Length 0 vector overrides any other length
 1 + numeric()
@@ -91,7 +113,24 @@ not followed consistently:
 atan2(1:3, 1:2)
 #> [1] 0.7853982 0.7853982 1.2490458
 
-# Taking `max(3, 0)` rather than recycling to length 0
+# `cbind()` is fairly consistent
+cbind(1:3, 1:2)
+#>      [,1] [,2]
+#> [1,]    1    1
+#> [2,]    2    2
+#> [3,]    3    1
+#> Warning message:
+#>   In cbind(1:3, 1:2) :
+#>   number of rows of result is not a multiple of vector length (arg 2)
+
+# But it doesn't recycle to length 0. Instead, it takes `max(3, 0) == 3`.
+cbind(1:3, integer())
+#>      [,1]
+#> [1,]    1
+#> [2,]    2
+#> [3,]    3
+
+# `paste()` also takes `max(3, 0)` rather than recycling to length 0
 paste(1:3, integer())
 #> [1] "1 " "2 " "3 "
 
@@ -100,9 +139,9 @@ paste(1:3, integer(), recycle0 = TRUE)
 #> character(0)
 
 # Erroring rather than recycling
-data.frame(1:2, 1:3)
+data.frame(1:3, 1:2)
 #> Error in base::data.frame(..., stringsAsFactors = stringsAsFactors):
-#> arguments imply differing number of rows: 2, 3
+#> arguments imply differing number of rows: 3, 2
 }\if{html}{\out{</div>}}
 }
 
