@@ -168,15 +168,15 @@
 <li><p><code>outer</code> is now passed unrecycled to name specifications. Instead, the return value is recycled (<a href="https://github.com/r-lib/vctrs/issues/1099" class="external-link">#1099</a>).</p></li>
 <li>
 <p>Name specifications can now return <code>NULL</code>. The names vector will only be allocated if the spec function returns non-<code>NULL</code> during the concatenation. This makes it possible to ignore outer names without having to create an empty names vector when there are no inner names:</p>
-<pre><code><span class="va">zap_outer_spec</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">outer</span>, <span class="va">inner</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu">is_character</span><span class="op">(</span><span class="va">inner</span><span class="op">)</span><span class="op">)</span> <span class="va">inner</span>
-
-<span class="co"># `NULL` names rather than a vector of ""</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, .name_spec <span class="op">=</span> <span class="va">zap_outer_spec</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; NULL</span>
-
-<span class="co"># Names are allocated when inner names exist</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>b <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="va">zap_outer_spec</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] ""  ""  "b"</span></code></pre>
+<pre><code><span><span class="va">zap_outer_spec</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">outer</span>, <span class="va">inner</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu">is_character</span><span class="op">(</span><span class="va">inner</span><span class="op">)</span><span class="op">)</span> <span class="va">inner</span></span>
+<span></span>
+<span><span class="co"># `NULL` names rather than a vector of ""</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, .name_spec <span class="op">=</span> <span class="va">zap_outer_spec</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span></span>
+<span><span class="co"># Names are allocated when inner names exist</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>b <span class="op">=</span> <span class="fl">3L</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="va">zap_outer_spec</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] ""  ""  "b"</span></span></code></pre>
 </li>
 <li><p>Fixed several performance issues in <code><a href="../reference/vec_c.html">vec_c()</a></code> and <code><a href="../reference/vec_chop.html">vec_unchop()</a></code> with named vectors.</p></li>
 <li><p>The restriction that S3 lists must have a list-based proxy to be considered lists by <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> has been removed (<a href="https://github.com/r-lib/vctrs/issues/1208" class="external-link">#1208</a>).</p></li>
@@ -254,8 +254,8 @@
 <h3 id="type-system-0-3-0">Type system<a class="anchor" aria-label="anchor" href="#type-system-0-3-0"></a></h3>
 <ul><li>
 <p>Double-dispatch methods for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="../reference/vec_cast.html">vec_cast()</a></code> are now easier to implement. They no longer need any the boiler plate. Implementing a method for classes <code>foo</code> and <code>bar</code> is now as simple as:</p>
-<pre><code><span class="co">#' @export</span>
-<span class="va">vec_ptype2.foo.bar</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_foo</span><span class="op">(</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="co">#' @export</span></span>
+<span><span class="va">vec_ptype2.foo.bar</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="fu">new_foo</span><span class="op">(</span><span class="op">)</span></span></code></pre>
 <p>vctrs also takes care of implementing the default and unspecified methods. If you have implemented these methods, they are no longer called and can now be removed.</p>
 <p>One consequence of the new dispatch mechanism is that <code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> is now completely unsupported. This is for the best as it never worked correctly in a double-dispatch setting. Parent methods must now be called manually.</p>
 </li>
@@ -358,14 +358,14 @@
 <li><p>New <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> for detecting if a vector is a list in the vctrs sense. For instance, objects of class <code>lm</code> are not lists. In general, classes need to explicitly inherit from <code>"list"</code> to be considered as lists by vctrs.</p></li>
 <li>
 <p>Unspecified vectors of <code>NA</code> can now be assigned into a list (<a href="https://github.com/r-lib/vctrs/issues/819" class="external-link">#819</a>).</p>
-<pre><code><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
-<span class="va">x</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; NULL</span>
-<span class="co">#&gt;</span>
-<span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; 2</span></code></pre>
+<pre><code><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">x</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; 2</span></span></code></pre>
 </li>
 <li><p><code><a href="../reference/vec_ptype.html">vec_ptype()</a></code> now errors on scalar inputs (<a href="https://github.com/r-lib/vctrs/issues/807" class="external-link">#807</a>).</p></li>
 <li><p><code><a href="../reference/new_partial.html">vec_ptype_finalise()</a></code> is now recursive over all data frame types, ensuring that unspecified columns are correctly finalised to logical (<a href="https://github.com/r-lib/vctrs/issues/800" class="external-link">#800</a>).</p></li>
@@ -418,20 +418,20 @@
 <ul><li><p>Lossy casts now throw errors of type <code>vctrs_error_cast_lossy</code>. Previously these were warnings. You can suppress these errors selectively with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code> to get the partial cast results. To implement your own lossy cast operation, call the new exported function <code><a href="../reference/maybe_lossy_cast.html">maybe_lossy_cast()</a></code>.</p></li>
 <li>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code> now fails when an input is supplied with a name but has internal names or is length &gt; 1:</p>
-<pre><code><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Error: Can't merge the outer name `foo` with a named vector.</span>
-<span class="co">#&gt; Please supply a `.name_spec` specification.</span>
-
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Error: Can't merge the outer name `foo` with a vector of length &gt; 1.</span>
-<span class="co">#&gt; Please supply a `.name_spec` specification.</span></code></pre>
+<pre><code><span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: Can't merge the outer name `foo` with a named vector.</span></span>
+<span><span class="co">#&gt; Please supply a `.name_spec` specification.</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: Can't merge the outer name `foo` with a vector of length &gt; 1.</span></span>
+<span><span class="co">#&gt; Please supply a `.name_spec` specification.</span></span></code></pre>
 <p>You can supply a name specification that describes how to combine the external name of the input with its internal names or positions:</p>
-<pre><code><span class="co"># Name spec as glue string:</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="st">"{outer}_{inner}"</span><span class="op">)</span>
-
-<span class="co"># Name spec as a function:</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">outer</span>, <span class="va">inner</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">outer</span>, <span class="va">inner</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></code></pre>
+<pre><code><span><span class="co"># Name spec as glue string:</span></span>
+<span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="st">"{outer}_{inner}"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Name spec as a function:</span></span>
+<span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">outer</span>, <span class="va">inner</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">outer</span>, <span class="va">inner</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, .name_spec <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">.x</span>, <span class="va">.y</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 </li>
 <li><p><code><a href="../reference/vec_empty.html">vec_empty()</a></code> has been renamed to <code><a href="../reference/vec_size.html">vec_is_empty()</a></code>.</p></li>
 <li><p><code>vec_dim()</code> and <code>vec_dims()</code> are no longer exported.</p></li>
@@ -456,20 +456,20 @@
 <ul><li>
 <p>New <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> generic. This is the main customisation point in vctrs along with <code><a href="../reference/vec_proxy.html">vec_restore()</a></code>. You should only implement it when your type is designed around a non-vector class (atomic vectors, bare lists, data frames). In this case, <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> should return such a vector class. The vctrs operations will be applied on the proxy and <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> is called to restore the original representation of your type.</p>
 <p>The most common case where you need to implement <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> is for S3 lists. In vctrs, S3 lists are treated as scalars by default. This way we don’t treat objects like model fits as vectors. To prevent vctrs from treating your S3 list as a scalar, unclass it from the <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code> method. For instance here is the definition for <code>list_of</code>:</p>
-<pre><code><span class="co">#' @export</span>
-<span class="va">vec_proxy.vctrs_list_of</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
-<span class="op">}</span></code></pre>
+<pre><code><span><span class="co">#' @export</span></span>
+<span><span class="va">vec_proxy.vctrs_list_of</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">unclass</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre>
 <p>If you inherit from <code>vctrs_vctr</code> or <code>vctrs_rcrd</code> you don’t need to implement <code><a href="../reference/vec_proxy.html">vec_proxy()</a></code>.</p>
 </li>
 <li><p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, and <code><a href="../reference/vec_bind.html">vec_cbind()</a></code> gain a <code>.name_repair</code> argument (<a href="https://github.com/r-lib/vctrs/issues/227" class="external-link">#227</a>, <a href="https://github.com/r-lib/vctrs/issues/229" class="external-link">#229</a>).</p></li>
 <li>
 <p><code><a href="../reference/vec_c.html">vec_c()</a></code>, <code><a href="../reference/vec_bind.html">vec_rbind()</a></code>, <code><a href="../reference/vec_bind.html">vec_cbind()</a></code>, and all functions relying on <code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> now have more informative error messages when some of the inputs have nested data frames that are not convergent:</p>
-<pre><code><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>bar <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>bar <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/vec_bind.html">vec_rbind</a></span><span class="op">(</span><span class="va">df1</span>, <span class="va">df2</span><span class="op">)</span>
-<span class="co">#&gt; Error: No common type for `..1$foo$bar$y` &lt;character&gt; and `..2$foo$bar$y` &lt;integer&gt;.</span></code></pre>
+<pre><code><span><span class="va">df1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>bar <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>foo <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>bar <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vec_bind.html">vec_rbind</a></span><span class="op">(</span><span class="va">df1</span>, <span class="va">df2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error: No common type for `..1$foo$bar$y` &lt;character&gt; and `..2$foo$bar$y` &lt;integer&gt;.</span></span></code></pre>
 </li>
 <li>
 <p><code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now turns named data frames to packed columns.</p>
@@ -536,7 +536,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
   </div></footer></body></html>

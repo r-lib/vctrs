@@ -291,4 +291,7 @@
   <url>
     <loc>https://vctrs.r-lib.org/dev/reference/vec_unique.html</loc>
   </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/dev/reference/vector_recycling_rules.html</loc>
+  </url>
 </urlset>

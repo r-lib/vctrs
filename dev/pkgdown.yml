@@ -1,12 +1,12 @@
 pandoc: 2.14.2
-pkgdown: 2.0.4
+pkgdown: 2.0.5
 pkgdown_sha: ~
 articles:
   pillar: pillar.html
   s3-vector: s3-vector.html
   stability: stability.html
   type-size: type-size.html
-last_built: 2022-06-23T10:52Z
+last_built: 2022-07-01T15:40Z
 urls:
   reference: https://vctrs.r-lib.org/reference
   article: https://vctrs.r-lib.org/articles

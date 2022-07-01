@@ -297,20 +297,20 @@ change the result of the reduction. vctrs has two identity values,
 
 <p>As an identity element that shouldn’t influence the determination of the
 common type of a set of vectors, <code>NULL</code> is promoted to any type:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="st">""</span><span class="op">)</span>
-<span class="co">#&gt; character(0)</span>
-<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="cn">NULL</span><span class="op">)</span>
-<span class="co">#&gt; integer(0)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="st">""</span><span class="op">)</span></span>
+<span><span class="co">#&gt; character(0)</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="co">#&gt; integer(0)</span></span></code></pre><p></p></div>
 <p>The common type of <code>NULL</code> and <code>NULL</code> is the identity <code>NULL</code>:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span><span class="op">)</span>
-<span class="co">#&gt; NULL</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre><p></p></div>
 <p>This way the result of <code>vec_ptype2(NULL, NULL)</code> does not influence
 subsequent promotions:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span><span class="op">)</span>,
-  <span class="st">""</span>
-<span class="op">)</span>
-<span class="co">#&gt; character(0)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>  <span class="st">""</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; character(0)</span></span></code></pre><p></p></div>
 </div>
 
 <div class="section">
@@ -322,18 +322,18 @@ automatically promoted to the type of any other vector, just like
 <code>NULL</code>. We call these vectors unspecified. The special coercion
 semantics of unspecified vectors serve two purposes:</p><ol><li><p>It makes it possible to assign vectors of <code>NA</code> inside any type of
 vectors, even when they are not coercible with logical:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
-<span class="fu"><a href="../reference/vec_slice.html">vec_assign</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] NA  NA  "c" "d" "e"</span></code></pre><p></p></div></li>
+<p></p><div class="sourceCode r"><pre><code><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
+<span><span class="fu"><a href="../reference/vec_slice.html">vec_assign</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] NA  NA  "c" "d" "e"</span></span></code></pre><p></p></div></li>
 <li><p>We can’t put <code>NULL</code> in a data frame, so we need an identity element
 that behaves more like a vector. Logical vectors of <code>NA</code> seem a
 natural fit for this.</p></li>
 </ol><p>Unspecified vectors are thus promoted to any other type, just like
 <code>NULL</code>:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span><span class="op">)</span>
-<span class="co">#&gt; character(0)</span>
-<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; integer(0)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">""</span><span class="op">)</span></span>
+<span><span class="co">#&gt; character(0)</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; integer(0)</span></span></code></pre><p></p></div>
 </div>
 
 <div class="section">
@@ -344,24 +344,24 @@ natural fit for this.</p></li>
 normally don’t see such vectors in the wild, but they do come up when
 taking the common type of an unspecified vector with another identity
 value:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>
-<span class="co">#&gt; &lt;unspecified&gt; [0]</span>
-<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NULL</span><span class="op">)</span>
-<span class="co">#&gt; &lt;unspecified&gt; [0]</span>
-<span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NA</span><span class="op">)</span>
-<span class="co">#&gt; &lt;unspecified&gt; [0]</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;unspecified&gt; [0]</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;unspecified&gt; [0]</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;unspecified&gt; [0]</span></span></code></pre><p></p></div>
 <p>We can’t return <code>NA</code> here because <code><a href="vec_ptype2.html">vec_ptype2()</a></code> normally returns empty
 vectors. We also can’t return <code>NULL</code> because unspecified vectors need to
 be recognised as logical vectors if they haven’t been promoted at the
 end of the reduction.</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/new_partial.html">vec_ptype_finalise</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; logical(0)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/new_partial.html">vec_ptype_finalise</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; logical(0)</span></span></code></pre><p></p></div>
 <p>See the output of <code><a href="vec_ptype.html">vec_ptype_common()</a></code> which performs the reduction and
 finalises the type, ready to be used by the caller:</p>
-<p></p><div class="sourceCode r"><pre><code><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span><span class="op">)</span>
-<span class="co">#&gt; NULL</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NULL</span><span class="op">)</span>
-<span class="co">#&gt; logical(0)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="co">#&gt; logical(0)</span></span></code></pre><p></p></div>
 <p>Note that <strong>partial</strong> types in vctrs make use of the same mechanism.
 They are finalised with <code><a href="new_partial.html">vec_ptype_finalise()</a></code>.</p>
 </div>
@@ -381,7 +381,7 @@ They are finalised with <code><a href="new_partial.html">vec_ptype_finalise()</a
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
   </div></footer></body></html>

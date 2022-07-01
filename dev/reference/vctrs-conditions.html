@@ -69,57 +69,57 @@ testing easier.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">stop_incompatible_type</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  <span class="va">...</span>,
-  <span class="va">x_arg</span>,
-  <span class="va">y_arg</span>,
-  action <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"combine"</span>, <span class="st">"convert"</span><span class="op">)</span>,
-  details <span class="op">=</span> <span class="cn">NULL</span>,
-  message <span class="op">=</span> <span class="cn">NULL</span>,
-  class <span class="op">=</span> <span class="cn">NULL</span>,
-  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">stop_incompatible_cast</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">to</span>,
-  <span class="va">...</span>,
-  <span class="va">x_arg</span>,
-  <span class="va">to_arg</span>,
-  details <span class="op">=</span> <span class="cn">NULL</span>,
-  message <span class="op">=</span> <span class="cn">NULL</span>,
-  class <span class="op">=</span> <span class="cn">NULL</span>,
-  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">stop_incompatible_op</span><span class="op">(</span>
-  <span class="va">op</span>,
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  details <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>,
-  message <span class="op">=</span> <span class="cn">NULL</span>,
-  class <span class="op">=</span> <span class="cn">NULL</span>,
-  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">stop_incompatible_size</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  <span class="va">x_size</span>,
-  <span class="va">y_size</span>,
-  <span class="va">...</span>,
-  <span class="va">x_arg</span>,
-  <span class="va">y_arg</span>,
-  details <span class="op">=</span> <span class="cn">NULL</span>,
-  message <span class="op">=</span> <span class="cn">NULL</span>,
-  class <span class="op">=</span> <span class="cn">NULL</span>,
-  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">allow_lossy_cast</span><span class="op">(</span><span class="va">expr</span>, x_ptype <span class="op">=</span> <span class="cn">NULL</span>, to_ptype <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">stop_incompatible_type</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  <span class="va">x_arg</span>,</span>
+<span>  <span class="va">y_arg</span>,</span>
+<span>  action <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"combine"</span>, <span class="st">"convert"</span><span class="op">)</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  message <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  class <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">stop_incompatible_cast</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">to</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  <span class="va">x_arg</span>,</span>
+<span>  <span class="va">to_arg</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  message <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  class <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">stop_incompatible_op</span><span class="op">(</span></span>
+<span>  <span class="va">op</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  message <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  class <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">stop_incompatible_size</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">x_size</span>,</span>
+<span>  <span class="va">y_size</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  <span class="va">x_arg</span>,</span>
+<span>  <span class="va">y_arg</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  message <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  class <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">allow_lossy_cast</span><span class="op">(</span><span class="va">expr</span>, x_ptype <span class="op">=</span> <span class="cn">NULL</span>, to_ptype <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -179,43 +179,43 @@ or <code>to</code> match these <a href="vec_ptype.html">prototypes</a>.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Most of the time, `maybe_lossy_cast()` returns its input normally:</span></span>
-<span class="r-in"><span class="fu"><a href="maybe_lossy_cast.html">maybe_lossy_cast</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="cn">NA</span>,</span>
-<span class="r-in">  <span class="st">""</span>,</span>
-<span class="r-in">  lossy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span class="r-in">  x_arg <span class="op">=</span> <span class="st">""</span>,</span>
-<span class="r-in">  to_arg <span class="op">=</span> <span class="st">""</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Most of the time, `maybe_lossy_cast()` returns its input normally:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="maybe_lossy_cast.html">maybe_lossy_cast</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>  <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  lossy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  x_arg <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  to_arg <span class="op">=</span> <span class="st">""</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "foo" "bar"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># If `lossy` has any `TRUE`, an error is thrown:</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="maybe_lossy_cast.html">maybe_lossy_cast</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span>,</span>
-<span class="r-in">  <span class="cn">NA</span>,</span>
-<span class="r-in">  <span class="st">""</span>,</span>
-<span class="r-in">  lossy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">  x_arg <span class="op">=</span> <span class="st">""</span>,</span>
-<span class="r-in">  to_arg <span class="op">=</span> <span class="st">""</span></span>
-<span class="r-in"><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># If `lossy` has any `TRUE`, an error is thrown:</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="maybe_lossy_cast.html">maybe_lossy_cast</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>  <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  lossy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  x_arg <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>  to_arg <span class="op">=</span> <span class="st">""</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir, enclos) : </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert &lt;logical&gt; to &lt;character&gt;.</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Unless lossy casts are allowed:</span></span>
-<span class="r-in"><span class="fu">allow_lossy_cast</span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="maybe_lossy_cast.html">maybe_lossy_cast</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span>,</span>
-<span class="r-in">    <span class="cn">NA</span>,</span>
-<span class="r-in">    <span class="st">""</span>,</span>
-<span class="r-in">    lossy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">    x_arg <span class="op">=</span> <span class="st">""</span>,</span>
-<span class="r-in">    to_arg <span class="op">=</span> <span class="st">""</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Unless lossy casts are allowed:</span></span></span>
+<span class="r-in"><span><span class="fu">allow_lossy_cast</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="maybe_lossy_cast.html">maybe_lossy_cast</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"foo"</span>, <span class="st">"bar"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>    <span class="st">""</span>,</span></span>
+<span class="r-in"><span>    lossy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    x_arg <span class="op">=</span> <span class="st">""</span>,</span></span>
+<span class="r-in"><span>    to_arg <span class="op">=</span> <span class="st">""</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "foo" "bar"</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -229,7 +229,7 @@ or <code>to</code> match these <a href="vec_ptype.html">prototypes</a>.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
   </div></footer></body></html>
