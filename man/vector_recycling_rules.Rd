@@ -5,8 +5,8 @@
 \title{Recycling rules used by r-lib and the tidyverse}
 \description{
 Recycling describes the concept of repeating elements of one vector to match
-the size of another vector. There are two rules that guide the recycling
-process used by packages in r-lib and the tidyverse:
+the size of another. There are two rules that underlie the "tidyverse"
+recycling rules:
 \itemize{
 \item Vectors of size 1 will be recycled to the size of any other vector
 \item Otherwise, all vectors must have the same size
@@ -17,8 +17,10 @@ process used by packages in r-lib and the tidyverse:
 
 Vectors of size 1 are recycled to the size of any other vector:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{tibble(x = 1:3, y = 1L)
-#> # A tibble: 3 × 2
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = 1:3, y = 1L)
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A tibble: 3 x 2
 #>       x     y
 #>   <int> <int>
 #> 1     1     1
@@ -28,20 +30,24 @@ Vectors of size 1 are recycled to the size of any other vector:
 
 This includes vectors of size 0:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{tibble(x = integer(), y = 1L)
-#> # A tibble: 0 × 2
-#> # … with 2 variables: x <int>, y <int>
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = integer(), y = 1L)
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A tibble: 0 x 2
+#> # ... with 2 variables: x <int>, y <int>
 }\if{html}{\out{</div>}}
 
 If vectors aren't size 1, they must all be the same size. Otherwise, an error
 is thrown:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{tibble(x = 1:3, y = 4:7)
-#> Error:
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = 1:3, y = 4:7)
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> Error:
 #> ! Tibble columns must have compatible sizes.
-#> • Size 3: Existing data.
-#> • Size 4: Column `y`.
-#> ℹ Only values of size one are recycled.
+#> * Size 3: Existing data.
+#> * Size 4: Column `y`.
+#> i Only values of size one are recycled.
 }\if{html}{\out{</div>}}
 }
 
@@ -57,27 +63,35 @@ applying the recycling rules
 vectors to their common size
 }
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_size_common(1:3, "x")
-#> [1] 3
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_size_common(1:3, "x")
+}\if{html}{\out{</div>}}
 
-vec_recycle_common(1:3, "x")
-#> [[1]]
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> [1] 3
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_recycle_common(1:3, "x")
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> [[1]]
 #> [1] 1 2 3
-#>
+#> 
 #> [[2]]
 #> [1] "x" "x" "x"
+}\if{html}{\out{</div>}}
 
-vec_size_common(1:3, c("x", "y"))
-#> Error:
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_size_common(1:3, c("x", "y"))
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{#> Error:
 #> ! Can't recycle `..1` (size 3) to match `..2` (size 2).
 }\if{html}{\out{</div>}}
 }
 
-\section{Differences with base R}{
+\section{Base R recycling rules}{
 
 
 The recycling rules described here are stricter than the ones generally used
-by base R. With base R, the rules are usually:
+by base R, which are:
 \itemize{
 \item If any vector is length 0, the output will be length 0
 \item Otherwise, the output will be length \code{max(length_x, length_y)}, and a
@@ -85,64 +99,7 @@ warning will be thrown if the length of the longer vector is not an integer
 multiple of the length of the shorter vector.
 }
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{# `max(2, 4) == 4`
-# `1:2` is fully recycled to `c(1:2, 1:2)`
-1:2 + 1:4
-#> [1] 2 4 4 6
-
-# `max(3, 4) == 4`, with a warning
-# `1:3` is partially recycled to `c(1:3, 1)`
-1:3 + 1:4
-#> [1] 2 4 6 5
-#> Warning message:
-#>   In 1:3 + 1:4 :
-#>   longer object length is not a multiple of shorter object length
-
-# Length 0 vector overrides any other length
-1 + numeric()
-#> numeric(0)
-1:3 + numeric()
-#> numeric(0)
-}\if{html}{\out{</div>}}
-
-These rules come from the \href{https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Recycling-rules}{R Language Definition}
-and are mainly focused on arithmetic. Outside of arithmetic, these rules are
-not followed consistently:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{# Silent recycling
-atan2(1:3, 1:2)
-#> [1] 0.7853982 0.7853982 1.2490458
-
-# `cbind()` is fairly consistent
-cbind(1:3, 1:2)
-#>      [,1] [,2]
-#> [1,]    1    1
-#> [2,]    2    2
-#> [3,]    3    1
-#> Warning message:
-#>   In cbind(1:3, 1:2) :
-#>   number of rows of result is not a multiple of vector length (arg 2)
-
-# But it doesn't recycle to length 0. Instead, it takes `max(3, 0) == 3`.
-cbind(1:3, integer())
-#>      [,1]
-#> [1,]    1
-#> [2,]    2
-#> [3,]    3
-
-# `paste()` also takes `max(3, 0)` rather than recycling to length 0
-paste(1:3, integer())
-#> [1] "1 " "2 " "3 "
-
-# R 4.0.1 added `recycle0` for this case
-paste(1:3, integer(), recycle0 = TRUE)
-#> character(0)
-
-# Erroring rather than recycling
-data.frame(1:3, 1:2)
-#> Error in base::data.frame(..., stringsAsFactors = stringsAsFactors):
-#> arguments imply differing number of rows: 3, 2
-}\if{html}{\out{</div>}}
+We explore the base R rules in detail in \code{vignette("type-size")}.
 }
 
 \keyword{internal}
