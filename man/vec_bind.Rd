@@ -72,7 +72,7 @@ set to \code{NULL}, which causes the input names to be assigned as row
 names.}
 
 \item{.size}{If, \code{NULL}, the default, will determine the number of rows in
-\code{vec_cbind()} output by using the standard \link[=vector_recycling_rules]{recycling rules}.
+\code{vec_cbind()} output by using the tidyverse \link[=vector_recycling_rules]{recycling rules}.
 
 Alternatively, specify the desired number of rows, and any inputs of length
 1 will be recycled appropriately.}
