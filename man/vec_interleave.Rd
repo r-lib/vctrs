@@ -12,7 +12,8 @@ vec_interleave(
 )
 }
 \arguments{
-\item{...}{Vectors to interleave. These will be recycled to a common size.}
+\item{...}{Vectors to interleave. These will be
+\link[=vector_recycling_rules]{recycled} to a common size.}
 
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.

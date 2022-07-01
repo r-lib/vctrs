@@ -40,7 +40,8 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'
 #' @section Properties:
 #'
-#' - Inputs are recycled to a common size with [vec_recycle_common()].
+#' - Inputs are [recycled][vector_recycling_rules] to a common size with
+#'   [vec_recycle_common()].
 #'
 #' - With the exception of data frames, inputs are not modified in any way.
 #'   Character vectors are never converted to factors, and lists are stored

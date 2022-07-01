@@ -19,7 +19,8 @@
 #'
 #' @inheritParams vec_c
 #'
-#' @param ... Vectors to interleave. These will be recycled to a common size.
+#' @param ... Vectors to interleave. These will be
+#'   [recycled][vector_recycling_rules] to a common size.
 #'
 #' @export
 #' @examples
