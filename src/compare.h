@@ -3,6 +3,7 @@
 
 #include "vctrs-core.h"
 #include "equal.h"
+#include "missing.h"
 #include <stdlib.h>
 
 // -----------------------------------------------------------------------------
