@@ -28,7 +28,7 @@ extern SEXP vctrs_group_id(SEXP);
 extern SEXP vctrs_group_rle(SEXP);
 extern SEXP vec_group_loc(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
-extern SEXP vctrs_equal_na(SEXP);
+extern r_obj* vctrs_equal_na(r_obj*);
 extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
 extern SEXP vctrs_match(SEXP, SEXP, SEXP, SEXP);
 extern r_obj* vctrs_in(r_obj*, r_obj*, r_obj*, r_obj*);

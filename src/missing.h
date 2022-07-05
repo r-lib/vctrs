@@ -6,69 +6,84 @@
 
 // -----------------------------------------------------------------------------
 
-SEXP vec_equal_na(SEXP x);
+r_obj* vec_equal_na(r_obj* x);
 
 // -----------------------------------------------------------------------------
 
-static inline bool lgl_is_missing(int x) {
-  return x == NA_LOGICAL;
+static inline
+bool lgl_is_missing(int x) {
+  return x == r_globals.na_int;
 }
-static inline bool int_is_missing(int x) {
-  return x == NA_INTEGER;
+static inline
+bool int_is_missing(int x) {
+  return x == r_globals.na_int;
 }
-static inline bool dbl_is_missing(double x) {
+static inline
+bool dbl_is_missing(double x) {
   return isnan(x);
 }
-static inline bool cpl_is_missing(Rcomplex x) {
+static inline
+bool cpl_is_missing(r_complex x) {
   return dbl_is_missing(x.r) || dbl_is_missing(x.i);
 }
-static inline bool chr_is_missing(SEXP x) {
-  return x == NA_STRING;
+static inline
+bool chr_is_missing(r_obj* x) {
+  return x == r_globals.na_str;
 }
-static inline bool raw_is_missing(Rbyte x) {
+static inline
+bool raw_is_missing(Rbyte x) {
   return false;
 }
-static inline bool list_is_missing(SEXP x) {
-  return x == R_NilValue;
+static inline
+bool list_is_missing(r_obj* x) {
+  return x == r_null;
 }
 
 // -----------------------------------------------------------------------------
 
 #define P_IS_MISSING(CTYPE, IS_MISSING) do {   \
-  return IS_MISSING(((const CTYPE*) p_x)[i]);  \
+  return IS_MISSING(((CTYPE const*) p_x)[i]);  \
 } while (0)
 
-static r_no_return
-inline bool p_nil_is_missing(const void* p_x, r_ssize i) {
+static r_no_return inline
+bool p_nil_is_missing(const void* p_x, r_ssize i) {
   r_stop_internal("Can't check NULL for missingness.");
 }
-static inline bool p_lgl_is_missing(const void* p_x, r_ssize i) {
+static inline
+bool p_lgl_is_missing(const void* p_x, r_ssize i) {
   P_IS_MISSING(int, lgl_is_missing);
 }
-static inline bool p_int_is_missing(const void* p_x, r_ssize i) {
+static inline
+bool p_int_is_missing(const void* p_x, r_ssize i) {
   P_IS_MISSING(int, int_is_missing);
 }
-static inline bool p_dbl_is_missing(const void* p_x, r_ssize i) {
+static inline
+bool p_dbl_is_missing(const void* p_x, r_ssize i) {
   P_IS_MISSING(double, dbl_is_missing);
 }
-static inline bool p_cpl_is_missing(const void* p_x, r_ssize i) {
-  P_IS_MISSING(Rcomplex, cpl_is_missing);
+static inline
+bool p_cpl_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(r_complex, cpl_is_missing);
 }
-static inline bool p_chr_is_missing(const void* p_x, r_ssize i) {
-  P_IS_MISSING(SEXP, chr_is_missing);
+static inline
+bool p_chr_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(r_obj*, chr_is_missing);
 }
-static inline bool p_raw_is_missing(const void* p_x, r_ssize i) {
+static inline
+bool p_raw_is_missing(const void* p_x, r_ssize i) {
   P_IS_MISSING(Rbyte, raw_is_missing);
 }
-static inline bool p_list_is_missing(const void* p_x, r_ssize i) {
-  P_IS_MISSING(SEXP, list_is_missing);
+static inline
+bool p_list_is_missing(const void* p_x, r_ssize i) {
+  P_IS_MISSING(r_obj*, list_is_missing);
 }
 
 #undef P_IS_MISSING
 
-static inline bool p_is_missing(const void* p_x,
-                                r_ssize i,
-                                const enum vctrs_type type) {
+static inline
+bool p_is_missing(const void* p_x,
+                  r_ssize i,
+                  const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_logical: return p_lgl_is_missing(p_x, i);
   case vctrs_type_integer: return p_int_is_missing(p_x, i);

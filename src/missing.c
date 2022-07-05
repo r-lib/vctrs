@@ -1,144 +1,222 @@
 #include "vctrs.h"
 
+#include "decl/missing-decl.h"
+
 // [[ register() ]]
-SEXP vctrs_equal_na(SEXP x) {
+r_obj* vctrs_equal_na(r_obj* x) {
   return vec_equal_na(x);
 }
 
-#define EQUAL_NA(CTYPE, CONST_DEREF, IS_MISSING)           \
-  do {                                                     \
-    SEXP out = PROTECT(Rf_allocVector(LGLSXP, size));      \
-    int* p_out = LOGICAL(out);                             \
-                                                           \
-    const CTYPE* p_x = CONST_DEREF(x);                     \
-                                                           \
-    for (R_len_t i = 0; i < size; ++i) {                   \
-      p_out[i] = IS_MISSING(p_x[i]);                       \
-    }                                                      \
-                                                           \
-    UNPROTECT(2);                                          \
-    return out;                                            \
-  }                                                        \
-  while (0)
-
-static SEXP df_equal_na(SEXP x, R_len_t size);
-
 // [[ include("missing.h") ]]
-SEXP vec_equal_na(SEXP x) {
-  R_len_t size = vec_size(x);
+r_obj* vec_equal_na(r_obj* x) {
+  r_obj* proxy = KEEP(vec_proxy_equal(x));
+  r_obj* out = proxy_equal_na(proxy);
+  FREE(1);
+  return out;
+}
 
-  x = PROTECT(vec_proxy_equal(x));
-
-  enum vctrs_type type = vec_proxy_typeof(x);
+static inline
+r_obj* proxy_equal_na(r_obj* proxy) {
+  const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
-  case vctrs_type_logical:   EQUAL_NA(int, LOGICAL_RO, lgl_is_missing);
-  case vctrs_type_integer:   EQUAL_NA(int, INTEGER_RO, int_is_missing);
-  case vctrs_type_double:    EQUAL_NA(double, REAL_RO, dbl_is_missing);
-  case vctrs_type_complex:   EQUAL_NA(Rcomplex, COMPLEX_RO, cpl_is_missing);
-  case vctrs_type_raw:       EQUAL_NA(Rbyte, RAW_RO, raw_is_missing);
-  case vctrs_type_character: EQUAL_NA(SEXP, STRING_PTR_RO, chr_is_missing);
-  case vctrs_type_list:      EQUAL_NA(SEXP, VECTOR_PTR_RO, list_is_missing);
-  case vctrs_type_dataframe: {
-    SEXP out = df_equal_na(x, size);
-    UNPROTECT(1);
-    return out;
+  case vctrs_type_logical: return lgl_equal_na(proxy);
+  case vctrs_type_integer: return int_equal_na(proxy);
+  case vctrs_type_double: return dbl_equal_na(proxy);
+  case vctrs_type_complex: return cpl_equal_na(proxy);
+  case vctrs_type_raw: return raw_equal_na(proxy);
+  case vctrs_type_character: return chr_equal_na(proxy);
+  case vctrs_type_list: return list_equal_na(proxy);
+  case vctrs_type_dataframe: return df_equal_na(proxy);
+  case vctrs_type_null: return vctrs_shared_empty_lgl;
+  case vctrs_type_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
+  default: stop_unimplemented_vctrs_type("vec_equal_na", type);
   }
-  case vctrs_type_null: {
-    UNPROTECT(1);
-    return vctrs_shared_empty_lgl;
-  }
-  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't detect `NA` values in scalars with `vctrs_equal_na()`.");
-  default:                   Rf_error("Unimplemented type in `vctrs_equal_na()`.");
-  }
+
+  r_stop_unreachable();
+}
+
+// -----------------------------------------------------------------------------
+
+#define EQUAL_NA(CTYPE, CBEGIN, IS_MISSING) do { \
+  const r_ssize size = vec_size(x);              \
+                                                 \
+  r_obj* out = KEEP(r_new_logical(size));        \
+  int* v_out = r_lgl_begin(out);                 \
+                                                 \
+  CTYPE const* v_x = CBEGIN(x);                  \
+                                                 \
+  for (r_ssize i = 0; i < size; ++i) {           \
+    v_out[i] = IS_MISSING(v_x[i]);               \
+  }                                              \
+                                                 \
+  FREE(1);                                       \
+  return out;                                    \
+} while (0)
+
+static inline
+r_obj* lgl_equal_na(r_obj* x) {
+  EQUAL_NA(int, r_lgl_cbegin, lgl_is_missing);
+}
+static inline
+r_obj* int_equal_na(r_obj* x) {
+  EQUAL_NA(int, r_int_cbegin, int_is_missing);
+}
+static inline
+r_obj* dbl_equal_na(r_obj* x) {
+  EQUAL_NA(double, r_dbl_cbegin, dbl_is_missing);
+}
+static inline
+r_obj* cpl_equal_na(r_obj* x) {
+  EQUAL_NA(r_complex, r_cpl_cbegin, cpl_is_missing);
+}
+static inline
+r_obj* raw_equal_na(r_obj* x) {
+  EQUAL_NA(Rbyte, r_raw_cbegin2, raw_is_missing);
+}
+static inline
+r_obj* chr_equal_na(r_obj* x) {
+  EQUAL_NA(r_obj*, r_chr_cbegin, chr_is_missing);
+}
+static inline
+r_obj* list_equal_na(r_obj* x) {
+  EQUAL_NA(r_obj*, r_list_cbegin, list_is_missing);
 }
 
 #undef EQUAL_NA
 
 // -----------------------------------------------------------------------------
 
-static void vec_equal_na_col(int* p_out,
-                             struct df_short_circuit_info* p_info,
-                             SEXP x);
+static inline
+r_obj* df_equal_na(r_obj* x) {
+  int n_prot = 0;
 
-static void df_equal_na_impl(int* p_out,
-                             struct df_short_circuit_info* p_info,
-                             SEXP x) {
-  int n_col = Rf_length(x);
+  const r_ssize n_col = r_length(x);
+  const r_ssize size = vec_size(x);
+  r_obj* const* v_x = r_list_cbegin(x);
 
-  for (R_len_t i = 0; i < n_col; ++i) {
-    SEXP col = VECTOR_ELT(x, i);
+  r_obj* out = KEEP_N(r_new_logical(size), &n_prot);
+  int* v_out = r_lgl_begin(out);
 
-    vec_equal_na_col(p_out, p_info, col);
+  // Initialize to "equality" value
+  // and only change if we learn that it differs
+  for (r_ssize i = 0; i < size; ++i) {
+    v_out[i] = 1;
+  }
+
+  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
+  struct df_short_circuit_info* p_info = &info;
+  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &n_prot);
+
+  for (r_ssize i = 0; i < n_col; ++i) {
+    r_obj* col = v_x[i];
+
+    col_equal_na(col, v_out, p_info);
 
     // If all rows have at least one non-missing value, break
     if (p_info->remaining == 0) {
       break;
     }
   }
-}
 
-static SEXP df_equal_na(SEXP x, R_len_t size) {
-  int nprot = 0;
-
-  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, size), &nprot);
-  int* p_out = LOGICAL(out);
-
-  // Initialize to "equality" value
-  // and only change if we learn that it differs
-  for (R_len_t i = 0; i < size; ++i) {
-    p_out[i] = 1;
-  }
-
-  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
-  struct df_short_circuit_info* p_info = &info;
-  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &nprot);
-
-  df_equal_na_impl(p_out, p_info, x);
-
-  UNPROTECT(nprot);
+  FREE(n_prot);
   return out;
 }
 
 // -----------------------------------------------------------------------------
 
-#define EQUAL_NA_COL(CTYPE, CONST_DEREF, IS_MISSING)           \
-do {                                                           \
-  const CTYPE* p_x = CONST_DEREF(x);                           \
-                                                               \
-  for (R_len_t i = 0; i < p_info->size; ++i) {                 \
-    if (p_info->p_row_known[i]) {                              \
-      continue;                                                \
-    }                                                          \
-                                                               \
-    if (!IS_MISSING(p_x[i])) {                                 \
-      p_out[i] = 0;                                            \
-      p_info->p_row_known[i] = true;                           \
-      --p_info->remaining;                                     \
-                                                               \
-      if (p_info->remaining == 0) {                            \
-        break;                                                 \
-      }                                                        \
-    }                                                          \
-  }                                                            \
-}                                                              \
-while (0)
+static inline
+void col_equal_na(r_obj* x,
+                  int* v_out,
+                  struct df_short_circuit_info* p_info) {
+  const enum vctrs_type type = vec_proxy_typeof(x);
 
-static void vec_equal_na_col(int* p_out,
-                             struct df_short_circuit_info* p_info,
-                             SEXP x) {
-  switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical:   EQUAL_NA_COL(int, LOGICAL_RO, lgl_is_missing); break;
-  case vctrs_type_integer:   EQUAL_NA_COL(int, INTEGER_RO, int_is_missing); break;
-  case vctrs_type_double:    EQUAL_NA_COL(double, REAL_RO, dbl_is_missing); break;
-  case vctrs_type_complex:   EQUAL_NA_COL(Rcomplex, COMPLEX_RO, cpl_is_missing); break;
-  case vctrs_type_raw:       EQUAL_NA_COL(Rbyte, RAW_RO, raw_is_missing); break;
-  case vctrs_type_character: EQUAL_NA_COL(SEXP, STRING_PTR_RO, chr_is_missing); break;
-  case vctrs_type_list:      EQUAL_NA_COL(SEXP, VECTOR_PTR_RO, list_is_missing); break;
-  case vctrs_type_dataframe: df_equal_na_impl(p_out, p_info, x); break;
-  case vctrs_type_scalar:    Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal_na()`");
-  default:                   Rf_error("Unimplemented type in `vec_equal_na()`");
+  switch (type) {
+  case vctrs_type_logical: lgl_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_integer: int_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_double: dbl_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_complex: cpl_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_raw: raw_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_character: chr_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_list: list_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_dataframe: r_stop_internal("Data frame columns should have been flattened by now.");
+  case vctrs_type_null: r_abort("Unexpected `NULL` column found in a data frame.");
+  case vctrs_type_scalar: stop_scalar_type(x, vec_args.empty, r_lazy_null);
+  default: stop_unimplemented_vctrs_type("vec_equal_na", type);
   }
 }
 
-#undef EQUAL_NA_COL
+// -----------------------------------------------------------------------------
+
+#define COL_EQUAL_NA(CTYPE, CBEGIN, IS_MISSING) do { \
+  CTYPE const* v_x = CBEGIN(x);                      \
+                                                     \
+  for (r_ssize i = 0; i < p_info->size; ++i) {       \
+    if (p_info->p_row_known[i]) {                    \
+      continue;                                      \
+    }                                                \
+                                                     \
+    if (!IS_MISSING(v_x[i])) {                       \
+      v_out[i] = 0;                                  \
+      p_info->p_row_known[i] = true;                 \
+      --p_info->remaining;                           \
+                                                     \
+      if (p_info->remaining == 0) {                  \
+        break;                                       \
+      }                                              \
+    }                                                \
+  }                                                  \
+} while (0)
+
+static inline
+void lgl_col_equal_na(r_obj* x,
+                      int* v_out,
+                      struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(int, r_lgl_cbegin, lgl_is_missing);
+}
+static inline
+void int_col_equal_na(r_obj* x,
+                      int* v_out,
+                      struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(int, r_int_cbegin, int_is_missing);
+}
+static inline
+void dbl_col_equal_na(r_obj* x,
+                      int* v_out,
+                      struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(double, r_dbl_cbegin, dbl_is_missing);
+}
+static inline
+void cpl_col_equal_na(r_obj* x,
+                      int* v_out,
+                      struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(r_complex, r_cpl_cbegin, cpl_is_missing);
+}
+static inline
+void raw_col_equal_na(r_obj* x,
+                      int* v_out,
+                      struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(Rbyte, r_raw_cbegin2, raw_is_missing);
+}
+static inline
+void chr_col_equal_na(r_obj* x,
+                      int* v_out,
+                      struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(r_obj*, r_chr_cbegin, chr_is_missing);
+}
+static inline
+void list_col_equal_na(r_obj* x,
+                       int* v_out,
+                       struct df_short_circuit_info* p_info) {
+  COL_EQUAL_NA(r_obj*, r_list_cbegin, list_is_missing);
+}
+
+#undef COL_EQUAL_NA
+
+// -----------------------------------------------------------------------------
+
+static inline
+const Rbyte* r_raw_cbegin2(r_obj* x) {
+  // Because `r_raw_cbegin()` returns `const void*` and that is causing issues
+  return (const Rbyte*) RAW(x);
+}
