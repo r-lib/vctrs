@@ -1,5 +1,5 @@
 #' @export
 #' @rdname vec_equal
 vec_equal_na <- function(x) {
-  .Call(vctrs_equal_na, x)
+  .Call(ffi_vec_equal_na, x)
 }

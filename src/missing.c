@@ -3,7 +3,7 @@
 #include "decl/missing-decl.h"
 
 // [[ register() ]]
-r_obj* vctrs_equal_na(r_obj* x) {
+r_obj* ffi_vec_equal_na(r_obj* x) {
   return vec_equal_na(x);
 }
 

@@ -28,7 +28,7 @@ extern SEXP vctrs_group_id(SEXP);
 extern SEXP vctrs_group_rle(SEXP);
 extern SEXP vec_group_loc(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
-extern r_obj* vctrs_equal_na(r_obj*);
+extern r_obj* ffi_vec_equal_na(r_obj*);
 extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
 extern SEXP vctrs_match(SEXP, SEXP, SEXP, SEXP);
 extern r_obj* vctrs_in(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -200,7 +200,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_dim_n",                           (DL_FUNC) &vctrs_dim_n, 1},
   {"vctrs_is_unspecified",                  (DL_FUNC) &vctrs_is_unspecified, 1},
   {"vctrs_equal",                           (DL_FUNC) &vctrs_equal, 3},
-  {"vctrs_equal_na",                        (DL_FUNC) &vctrs_equal_na, 1},
+  {"ffi_vec_equal_na",                      (DL_FUNC) &ffi_vec_equal_na, 1},
   {"vctrs_compare",                         (DL_FUNC) &vctrs_compare, 3},
   {"vctrs_match",                           (DL_FUNC) &vctrs_match, 4},
   {"vctrs_in",                              (DL_FUNC) &vctrs_in, 4},
