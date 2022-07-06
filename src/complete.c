@@ -158,7 +158,7 @@ void chr_detect_complete(SEXP x, R_len_t size, int* p_out) {
 }
 static inline
 void raw_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(Rbyte, RAW_RO, raw_is_missing);
+  VEC_DETECT_COMPLETE(unsigned char, RAW_RO, raw_is_missing);
 }
 static inline
 void list_detect_complete(SEXP x, R_len_t size, int* p_out) {

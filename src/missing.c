@@ -72,7 +72,7 @@ r_obj* cpl_equal_na(r_obj* x) {
 }
 static inline
 r_obj* raw_equal_na(r_obj* x) {
-  EQUAL_NA(Rbyte, r_raw_cbegin2, raw_is_missing);
+  EQUAL_NA(unsigned char, r_uchar_cbegin, raw_is_missing);
 }
 static inline
 r_obj* chr_equal_na(r_obj* x) {
@@ -196,7 +196,7 @@ static inline
 void raw_col_equal_na(r_obj* x,
                       int* v_out,
                       struct df_short_circuit_info* p_info) {
-  COL_EQUAL_NA(Rbyte, r_raw_cbegin2, raw_is_missing);
+  COL_EQUAL_NA(unsigned char, r_uchar_cbegin, raw_is_missing);
 }
 static inline
 void chr_col_equal_na(r_obj* x,
@@ -216,7 +216,7 @@ void list_col_equal_na(r_obj* x,
 // -----------------------------------------------------------------------------
 
 static inline
-const Rbyte* r_raw_cbegin2(r_obj* x) {
-  // Because `r_raw_cbegin()` returns `const void*` and that is causing issues
-  return (const Rbyte*) RAW(x);
+const unsigned char* r_uchar_cbegin(r_obj* x) {
+  // TODO: Move to the rlang library
+  return (const unsigned char*) r_raw_cbegin(x);
 }

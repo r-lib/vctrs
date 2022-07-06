@@ -54,4 +54,4 @@ void list_col_equal_na(r_obj* x,
                        struct df_short_circuit_info* p_info);
 
 static inline
-const Rbyte* r_raw_cbegin2(r_obj* x);
+const unsigned char* r_uchar_cbegin(r_obj* x);

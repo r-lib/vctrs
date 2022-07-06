@@ -31,7 +31,7 @@ bool chr_is_missing(r_obj* x) {
   return x == r_globals.na_str;
 }
 static inline
-bool raw_is_missing(Rbyte x) {
+bool raw_is_missing(unsigned char x) {
   return false;
 }
 static inline
@@ -71,7 +71,7 @@ bool p_chr_is_missing(const void* p_x, r_ssize i) {
 }
 static inline
 bool p_raw_is_missing(const void* p_x, r_ssize i) {
-  P_IS_MISSING(Rbyte, raw_is_missing);
+  P_IS_MISSING(unsigned char, raw_is_missing);
 }
 static inline
 bool p_list_is_missing(const void* p_x, r_ssize i) {
