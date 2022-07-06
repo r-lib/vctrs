@@ -100,9 +100,7 @@ r_obj* df_equal_na(r_obj* x) {
 
   // Initialize to "equality" value
   // and only change if we learn that it differs
-  for (r_ssize i = 0; i < size; ++i) {
-    v_out[i] = 1;
-  }
+  r_p_lgl_fill(v_out, 1, size);
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
   struct df_short_circuit_info* p_info = &info;
