@@ -39,6 +39,21 @@ test_that("works recursively with data frame columns", {
   expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
+test_that("0 row, N col data frame always returns `logical()` (#1585)", {
+  expect_identical(vec_equal_na(data_frame()), logical())
+  expect_identical(vec_equal_na(data_frame(x = integer(), y = double())), logical())
+})
+
+test_that(">0 row, 0 col data frame always returns `TRUE` for each row (#1585)", {
+  # `vec_equal_na()` returns `TRUE` for each row because it (in theory) does
+  # `all()` on each row, and since there are 0 columns we get
+  # `all(logical()) == TRUE` for each row.
+  expect_identical(
+    vec_equal_na(data_frame(.size = 2L)),
+    c(TRUE, TRUE)
+  )
+})
+
 test_that("works with `NULL` input (#1494)", {
   expect_identical(vec_equal_na(NULL), logical())
 })
