@@ -57,3 +57,89 @@ test_that(">0 row, 0 col data frame always returns `TRUE` for each row (#1585)",
 test_that("works with `NULL` input (#1494)", {
   expect_identical(vec_equal_na(NULL), logical())
 })
+
+# ------------------------------------------------------------------------------
+# vec_any_missing()
+
+test_that("can check for any missing with all base vector types", {
+  expect_false(vec_any_missing(TRUE))
+  expect_false(vec_any_missing(1L))
+  expect_false(vec_any_missing(1))
+  expect_false(vec_any_missing(complex(real = 1, imaginary = 1)))
+  expect_false(vec_any_missing("1"))
+  expect_false(vec_any_missing(list(1)))
+
+  expect_true(vec_any_missing(c(TRUE, NA)))
+  expect_true(vec_any_missing(c(1L, NA_integer_)))
+  expect_true(vec_any_missing(c(1, NA_real_)))
+  expect_true(vec_any_missing(complex(real = c(1, NA), imaginary = c(1, NA))))
+  expect_true(vec_any_missing(c("1", NA_character_)))
+  expect_true(vec_any_missing(list(1, NULL)))
+})
+
+test_that("raw vectors can never be missing", {
+  expect_false(vec_any_missing(raw(1)))
+  expect_false(vec_any_missing(data.frame(x = raw(1), y = raw(1))))
+})
+
+test_that("works with empty vectors", {
+  # Like `any(logical())`
+  expect_false(vec_any_missing(integer()))
+})
+
+test_that("correctly detects complex missingness", {
+  expect_false(vec_any_missing(complex(real = 1, imaginary = 1)))
+  expect_true(vec_any_missing(complex(real = 1, imaginary = NA)))
+  expect_true(vec_any_missing(complex(real = NA, imaginary = 1)))
+  expect_true(vec_any_missing(complex(real = NA, imaginary = NA)))
+})
+
+test_that("treats NaN as missing", {
+  expect_true(vec_any_missing(NaN))
+})
+
+test_that("works with `NULL` input", {
+  expect_false(vec_any_missing(NULL))
+})
+
+test_that("entire row of a data frame must be missing", {
+  df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
+  expect_true(vec_any_missing(df))
+  expect_false(vec_any_missing(df[-4,]))
+})
+
+test_that("works recursively with data frame columns", {
+  df <- data.frame(x = c(1, 1, NA, NA))
+  df$df <- data.frame(y = c(NA, 1, 1, NA), z = c(1, NA, 1, NA))
+  expect_true(vec_any_missing(df))
+  expect_false(vec_any_missing(df[-4,]))
+})
+
+test_that("0 row, N col data frame always returns `FALSE` (#1585)", {
+  df <- data_frame()
+
+  expect_false(vec_any_missing(df))
+  expect_false(vec_any_missing(data_frame(x = integer(), y = double())))
+
+  # This is consistent with `vec_equal_na()` returning `logical()` for 0 row
+  # data frames. Then `any(logical()) == FALSE` to get `vec_any_missing()`.
+  expect_identical(
+    vec_any_missing(df),
+    any(vec_equal_na(df))
+  )
+})
+
+test_that(">0 row, 0 col data frame always returns `TRUE` (#1585)", {
+  df <- data_frame(.size = 2L)
+
+  expect_true(vec_any_missing(df))
+
+  # This is consistent with `vec_equal_na()` returning `TRUE` for each row
+  # because it (in theory) does `all()` on each row, and since there are 0
+  # columns we get `all(logical()) == TRUE` for each row.
+  # Then `any(c(TRUE, TRUE)) == TRUE` to get `vec_any_missing()`.
+  expect_identical(
+    vec_any_missing(df),
+    any(vec_equal_na(df))
+  )
+})

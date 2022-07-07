@@ -260,6 +260,138 @@ r_ssize list_col_equal_na(r_obj* x,
 
 // -----------------------------------------------------------------------------
 
+// [[ register() ]]
+r_obj* ffi_vec_any_missing(r_obj* x) {
+  return r_lgl(vec_any_missing(x));
+}
+
+// [[ include("missing.h") ]]
+bool vec_any_missing(r_obj* x) {
+  return vec_first_missing(x) != vec_size(x);
+}
+
+// [[ include("missing.h") ]]
+r_ssize vec_first_missing(r_obj* x) {
+  r_obj* proxy = KEEP(vec_proxy_equal(x));
+  r_ssize out = proxy_first_missing(proxy);
+  FREE(1);
+  return out;
+}
+
+static inline
+r_ssize proxy_first_missing(r_obj* proxy) {
+  const enum vctrs_type type = vec_proxy_typeof(proxy);
+
+  switch (type) {
+  case vctrs_type_logical: return lgl_first_missing(proxy);
+  case vctrs_type_integer: return int_first_missing(proxy);
+  case vctrs_type_double: return dbl_first_missing(proxy);
+  case vctrs_type_complex: return cpl_first_missing(proxy);
+  case vctrs_type_raw: return raw_first_missing(proxy);
+  case vctrs_type_character: return chr_first_missing(proxy);
+  case vctrs_type_list: return list_first_missing(proxy);
+  case vctrs_type_dataframe: return df_first_missing(proxy);
+  case vctrs_type_null: return 0;
+  case vctrs_type_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
+  default: stop_unimplemented_vctrs_type("vec_first_missing", type);
+  }
+
+  r_stop_unreachable();
+}
+
+// -----------------------------------------------------------------------------
+
+#define FIRST_MISSING(CTYPE, CBEGIN, IS_MISSING) do { \
+  const r_ssize size = r_length(x);                   \
+                                                      \
+  CTYPE const* v_x = CBEGIN(x);                       \
+                                                      \
+  for (r_ssize i = 0; i < size; ++i) {                \
+    if (IS_MISSING(v_x[i])) {                         \
+      return i;                                       \
+    }                                                 \
+  }                                                   \
+                                                      \
+  return size;                                        \
+} while (0)
+
+static inline
+r_ssize lgl_first_missing(r_obj* x) {
+  FIRST_MISSING(int, r_lgl_cbegin, lgl_is_missing);
+}
+static inline
+r_ssize int_first_missing(r_obj* x) {
+  FIRST_MISSING(int, r_int_cbegin, int_is_missing);
+}
+static inline
+r_ssize dbl_first_missing(r_obj* x) {
+  FIRST_MISSING(double, r_dbl_cbegin, dbl_is_missing);
+}
+static inline
+r_ssize cpl_first_missing(r_obj* x) {
+  FIRST_MISSING(r_complex, r_cpl_cbegin, cpl_is_missing);
+}
+static inline
+r_ssize raw_first_missing(r_obj* x) {
+  FIRST_MISSING(unsigned char, r_uchar_cbegin, raw_is_missing);
+}
+static inline
+r_ssize chr_first_missing(r_obj* x) {
+  FIRST_MISSING(r_obj*, r_chr_cbegin, chr_is_missing);
+}
+static inline
+r_ssize list_first_missing(r_obj* x) {
+  FIRST_MISSING(r_obj*, r_list_cbegin, list_is_missing);
+}
+
+#undef FIRST_MISSING
+
+// -----------------------------------------------------------------------------
+
+static inline
+r_ssize df_first_missing(r_obj* x) {
+  const r_ssize n_cols = r_length(x);
+  const r_ssize size = vec_size(x);
+
+  r_ssize i = 0;
+
+  if (n_cols > 0) {
+    // First perform a very cheap check to see if there is at least 1 missing
+    // value in the first column. If not, then we are done. If there is at least
+    // 1 missing value, we start the loop below from there by updating `i`. This
+    // avoids the more expensive rowwise poly-op loop when there aren't any
+    // missing values.
+    r_obj* col = r_list_get(x, 0);
+    i = vec_first_missing(col);
+
+    if (i == size) {
+      return size;
+    }
+  }
+
+  int n_prot = 0;
+
+  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(vctrs_type_dataframe);
+
+  struct poly_vec* p_poly_x = new_poly_vec(x, vctrs_type_dataframe);
+  PROTECT_POLY_VEC(p_poly_x, &n_prot);
+  const void* v_x = p_poly_x->p_vec;
+
+  r_ssize out = size;
+
+  for (; i < size; ++i) {
+    if (fn_is_missing(v_x, i)) {
+      out = i;
+      break;
+    }
+  }
+
+  FREE(n_prot);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
+
 static inline
 const unsigned char* r_uchar_cbegin(r_obj* x) {
   // TODO: Move to the rlang library
