@@ -99,7 +99,8 @@ r_obj* df_equal_na(r_obj* x) {
   // values. After we iterate through all columns, `v_loc` points to the missing
   // rows.
   r_ssize loc_size = size;
-  r_ssize* v_loc = (r_ssize*) R_alloc(loc_size, sizeof(r_ssize));
+  r_obj* loc_shelter = KEEP_N(r_alloc_raw(loc_size * sizeof(r_ssize)), &n_prot);
+  r_ssize* v_loc = (r_ssize*) r_raw_begin(loc_shelter);
 
   for (r_ssize i = 0; i < loc_size; ++i) {
     v_loc[i] = i;
