@@ -20,38 +20,38 @@ static inline
 r_obj* df_equal_na(r_obj* x);
 
 static inline
-void col_equal_na(r_obj* x,
-                  int* v_out,
-                  struct df_short_circuit_info* p_info);
+r_ssize col_equal_na(r_obj* x,
+                     r_ssize* v_loc,
+                     r_ssize loc_size);
 
 static inline
-void lgl_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info);
+r_ssize lgl_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size);
 static inline
-void int_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info);
+r_ssize int_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size);
 static inline
-void dbl_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info);
+r_ssize dbl_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size);
 static inline
-void cpl_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info);
+r_ssize cpl_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size);
 static inline
-void raw_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info);
+r_ssize raw_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size);
 static inline
-void chr_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info);
+r_ssize chr_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size);
 static inline
-void list_col_equal_na(r_obj* x,
-                       int* v_out,
-                       struct df_short_circuit_info* p_info);
+r_ssize list_col_equal_na(r_obj* x,
+                          r_ssize* v_loc,
+                          r_ssize loc_size);
 
 static inline
 const unsigned char* r_uchar_cbegin(r_obj* x);

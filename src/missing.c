@@ -95,26 +95,35 @@ r_obj* df_equal_na(r_obj* x) {
   const r_ssize size = vec_size(x);
   r_obj* const* v_x = r_list_cbegin(x);
 
-  r_obj* out = KEEP_N(r_new_logical(size), &n_prot);
-  int* v_out = r_lgl_begin(out);
+  // A location vector to track rows where we still need to check for missing
+  // values. After we iterate through all columns, `v_loc` points to the missing
+  // rows.
+  r_ssize loc_size = size;
+  r_obj* loc_shelter = KEEP_N(r_alloc_raw(loc_size * sizeof(r_ssize)), &n_prot);
+  r_ssize* v_loc = (r_ssize*) r_raw_begin(loc_shelter);
 
-  // Initialize to "equality" value
-  // and only change if we learn that it differs
-  r_p_lgl_fill(v_out, 1, size);
-
-  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
-  struct df_short_circuit_info* p_info = &info;
-  PROTECT_DF_SHORT_CIRCUIT_INFO(p_info, &n_prot);
+  for (r_ssize i = 0; i < loc_size; ++i) {
+    v_loc[i] = i;
+  }
 
   for (r_ssize i = 0; i < n_col; ++i) {
     r_obj* col = v_x[i];
 
-    col_equal_na(col, v_out, p_info);
+    loc_size = col_equal_na(col, v_loc, loc_size);
 
     // If all rows have at least one non-missing value, break
-    if (p_info->remaining == 0) {
+    if (loc_size == 0) {
       break;
     }
+  }
+
+  r_obj* out = KEEP_N(r_new_logical(size), &n_prot);
+  int* v_out = r_lgl_begin(out);
+  r_p_lgl_fill(v_out, 0, size);
+
+  for (r_ssize i = 0; i < loc_size; ++i) {
+    const r_ssize loc = v_loc[i];
+    v_out[loc] = 1;
   }
 
   FREE(n_prot);
@@ -124,19 +133,19 @@ r_obj* df_equal_na(r_obj* x) {
 // -----------------------------------------------------------------------------
 
 static inline
-void col_equal_na(r_obj* x,
-                  int* v_out,
-                  struct df_short_circuit_info* p_info) {
+r_ssize col_equal_na(r_obj* x,
+                     r_ssize* v_loc,
+                     r_ssize loc_size) {
   const enum vctrs_type type = vec_proxy_typeof(x);
 
   switch (type) {
-  case vctrs_type_logical: lgl_col_equal_na(x, v_out, p_info); break;
-  case vctrs_type_integer: int_col_equal_na(x, v_out, p_info); break;
-  case vctrs_type_double: dbl_col_equal_na(x, v_out, p_info); break;
-  case vctrs_type_complex: cpl_col_equal_na(x, v_out, p_info); break;
-  case vctrs_type_raw: raw_col_equal_na(x, v_out, p_info); break;
-  case vctrs_type_character: chr_col_equal_na(x, v_out, p_info); break;
-  case vctrs_type_list: list_col_equal_na(x, v_out, p_info); break;
+  case vctrs_type_logical: return lgl_col_equal_na(x, v_loc, loc_size);
+  case vctrs_type_integer: return int_col_equal_na(x, v_loc, loc_size);
+  case vctrs_type_double: return dbl_col_equal_na(x, v_loc, loc_size);
+  case vctrs_type_complex: return cpl_col_equal_na(x, v_loc, loc_size);
+  case vctrs_type_raw: return raw_col_equal_na(x, v_loc, loc_size);
+  case vctrs_type_character: return chr_col_equal_na(x, v_loc, loc_size);
+  case vctrs_type_list: return list_col_equal_na(x, v_loc, loc_size);
   case vctrs_type_dataframe: r_stop_internal("Data frame columns should have been flattened by now.");
   case vctrs_type_null: r_abort("Unexpected `NULL` column found in a data frame.");
   case vctrs_type_scalar: stop_scalar_type(x, vec_args.empty, r_lazy_null);
@@ -146,66 +155,104 @@ void col_equal_na(r_obj* x,
 
 // -----------------------------------------------------------------------------
 
+/*
+ * The data frame algorithm for `vec_equal_na()` is fast because this inner
+ * for loop doesn't have any `if` branches in it. We utilize the fact that
+ * this is a no-op when the element isn't missing:
+ * `new_loc_size += IS_MISSING(v_x[loc])`
+ * This is faster than doing `if (IS_MISSING())` at each iteration, especially
+ * when there is a moderate amount of missing values, which makes that branch
+ * fairly unpredictable.
+ *
+ * `r_ssize* v_loc` is a location vector that tracks which rows we still need
+ * to check for missingness. It is "narrowed" after each column is processed to
+ * only point to the rows that might still be missing. After all columns are
+ * processed, it points to exactly where the missing rows are. Here is some
+ * pseudo R code that demonstrates how `v_loc` changes:
+ *
+ * ```
+ * df <- data.frame(
+ *  x = c(1,  NA, NA, 2, NA, 3),
+ *  y = c(NA, NA, 1,  2, NA, 4)
+ * )
+ * df
+ * #>    x  y
+ * #> 1  1 NA
+ * #> 2 NA NA
+ * #> 3 NA  1
+ * #> 4  2  2
+ * #> 5 NA NA
+ * #> 6  3  4
+ *
+ * # Initially any row could be missing
+ * loc_size <- 6
+ * loc <- 1:6
+ *
+ * # After processing the first column, only rows 2, 3, and 5 could be missing
+ * loc_size <- 3
+ * loc <- c(2, 3, 5)
+ *
+ * # After processing the second column, only 2 and 5 could be missing
+ * # This is the last column, so these are the missing rows
+ * loc_size <- 2
+ * loc <- c(2, 5)
+ * ```
+ *
+ * For more details, see: https://github.com/r-lib/vctrs/pull/1584
+ */
 #define COL_EQUAL_NA(CTYPE, CBEGIN, IS_MISSING) do { \
   CTYPE const* v_x = CBEGIN(x);                      \
+  r_ssize new_loc_size = 0;                          \
                                                      \
-  for (r_ssize i = 0; i < p_info->size; ++i) {       \
-    if (p_info->p_row_known[i]) {                    \
-      continue;                                      \
-    }                                                \
-                                                     \
-    if (!IS_MISSING(v_x[i])) {                       \
-      v_out[i] = 0;                                  \
-      p_info->p_row_known[i] = true;                 \
-      --p_info->remaining;                           \
-                                                     \
-      if (p_info->remaining == 0) {                  \
-        break;                                       \
-      }                                              \
-    }                                                \
+  for (r_ssize i = 0; i < loc_size; ++i) {           \
+    const r_ssize loc = v_loc[i];                    \
+    v_loc[new_loc_size] = loc;                       \
+    new_loc_size += IS_MISSING(v_x[loc]);            \
   }                                                  \
+                                                     \
+  return new_loc_size;                               \
 } while (0)
 
 static inline
-void lgl_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info) {
+r_ssize lgl_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size) {
   COL_EQUAL_NA(int, r_lgl_cbegin, lgl_is_missing);
 }
 static inline
-void int_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info) {
+r_ssize int_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size) {
   COL_EQUAL_NA(int, r_int_cbegin, int_is_missing);
 }
 static inline
-void dbl_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info) {
+r_ssize dbl_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size) {
   COL_EQUAL_NA(double, r_dbl_cbegin, dbl_is_missing);
 }
 static inline
-void cpl_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info) {
+r_ssize cpl_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size) {
   COL_EQUAL_NA(r_complex, r_cpl_cbegin, cpl_is_missing);
 }
 static inline
-void raw_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info) {
+r_ssize raw_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size) {
   COL_EQUAL_NA(unsigned char, r_uchar_cbegin, raw_is_missing);
 }
 static inline
-void chr_col_equal_na(r_obj* x,
-                      int* v_out,
-                      struct df_short_circuit_info* p_info) {
+r_ssize chr_col_equal_na(r_obj* x,
+                         r_ssize* v_loc,
+                         r_ssize loc_size) {
   COL_EQUAL_NA(r_obj*, r_chr_cbegin, chr_is_missing);
 }
 static inline
-void list_col_equal_na(r_obj* x,
-                       int* v_out,
-                       struct df_short_circuit_info* p_info) {
+r_ssize list_col_equal_na(r_obj* x,
+                          r_ssize* v_loc,
+                          r_ssize loc_size) {
   COL_EQUAL_NA(r_obj*, r_list_cbegin, list_is_missing);
 }
 
