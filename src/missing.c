@@ -155,6 +155,51 @@ r_ssize col_equal_na(r_obj* x,
 
 // -----------------------------------------------------------------------------
 
+/*
+ * The data frame algorithm for `vec_equal_na()` is fast because this inner
+ * for loop doesn't have any `if` branches in it. We utilize the fact that
+ * this is a no-op when the element isn't missing:
+ * `new_loc_size += IS_MISSING(v_x[loc])`
+ * This is faster than doing `if (IS_MISSING())` at each iteration, especially
+ * when there is a moderate amount of missing values, which makes that branch
+ * fairly unpredictable.
+ *
+ * `r_ssize* v_loc` is a location vector that tracks which rows we still need
+ * to check for missingness. It is "narrowed" after each column is processed to
+ * only point to the rows that might still be missing. After all columns are
+ * processed, it points to exactly where the missing rows are. Here is some
+ * pseudo R code that demonstrates how `v_loc` changes:
+ *
+ * ```
+ * df <- data.frame(
+ *  x = c(1,  NA, NA, 2, NA, 3),
+ *  y = c(NA, NA, 1,  2, NA, 4)
+ * )
+ * df
+ * #>    x  y
+ * #> 1  1 NA
+ * #> 2 NA NA
+ * #> 3 NA  1
+ * #> 4  2  2
+ * #> 5 NA NA
+ * #> 6  3  4
+ *
+ * # Initially any row could be missing
+ * loc_size <- 6
+ * loc <- 1:6
+ *
+ * # After processing the first column, only rows 2, 3, and 5 could be missing
+ * loc_size <- 3
+ * loc <- c(2, 3, 5)
+ *
+ * # After processing the second column, only 2 and 5 could be missing
+ * # This is the last column, so these are the missing rows
+ * loc_size <- 2
+ * loc <- c(2, 5)
+ * ```
+ *
+ * For more details, see: https://github.com/r-lib/vctrs/pull/1584
+ */
 #define COL_EQUAL_NA(CTYPE, CBEGIN, IS_MISSING) do { \
   CTYPE const* v_x = CBEGIN(x);                      \
   r_ssize new_loc_size = 0;                          \
