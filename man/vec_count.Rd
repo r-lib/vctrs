@@ -15,7 +15,8 @@ vec_count(x, sort = c("count", "key", "location", "none"))
 \item "key", orders by the output key column (i.e. unique values of \code{x})
 \item "location", orders by location where key first seen. This is useful
 if you want to match the counts up to other unique/duplicated functions.
-\item "none", leaves unordered.
+\item "none", leaves unordered. This is not guaranteed to produce the same
+ordering across R sessions, but is the fastest method.
 }}
 }
 \value{

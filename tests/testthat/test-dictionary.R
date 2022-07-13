@@ -6,6 +6,15 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_count(sort = 'count') uses a stable sort when there are ties (#1588)", {
+  x <- c("a", "b", "b", "a", "d")
+
+  expect_identical(
+    vec_count(x, sort = "count"),
+    data_frame(key = c("a", "b", "d"), count = c(2L, 2L, 1L))
+  )
+})
+
 test_that("vec_count works with matrices", {
   x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
 
