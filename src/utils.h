@@ -185,6 +185,7 @@ SEXP list_pluck(SEXP xs, R_len_t i);
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);
 bool is_compact_seq(SEXP x);
+bool is_full_compact_seq(SEXP x, r_ssize n_all);
 
 void init_compact_rep(int* p, R_len_t i, R_len_t n);
 SEXP compact_rep(R_len_t i, R_len_t n);

@@ -63,6 +63,10 @@ test_that("can subset with a recycled TRUE", {
   expect_identical(vec_as_location(TRUE, 2), 1:2)
 })
 
+test_that("can subset with a vector of TRUE", {
+  expect_identical(vec_slice(1:3, c(TRUE, TRUE, TRUE)), 1:3)
+})
+
 test_that("can subset with a recycled FALSE", {
   expect_identical(vec_slice(1:3, FALSE), int())
   expect_identical(vec_slice(mtcars, FALSE), mtcars[NULL, ])

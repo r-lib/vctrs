@@ -857,6 +857,18 @@ bool is_compact_seq(SEXP x) {
   return ATTRIB(x) == compact_seq_attrib;
 }
 
+bool is_full_compact_seq(SEXP x, r_ssize n_all) {
+  if (is_compact_seq(x)) {
+    int* x_data = r_int_begin(x);
+    r_ssize start = x_data[0];
+    r_ssize n = x_data[1];
+    r_ssize step = x_data[2];
+    return start == 0 && n == n_all && step == 1;
+  }
+
+  return false;
+}
+
 // Materialize a 1-based sequence
 SEXP compact_seq_materialize(SEXP x) {
   int* p = INTEGER(x);

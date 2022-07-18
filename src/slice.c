@@ -280,6 +280,10 @@ r_obj* slice_rownames(r_obj* names, r_obj* subscript) {
 }
 
 r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
+  if (is_full_compact_seq(subscript, vec_size(x))) {
+    return x;
+  }
+
   int nprot = 0;
 
   r_obj* restore_size = KEEP_N(r_int(vec_subscript_size(subscript)), &nprot);
