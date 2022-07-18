@@ -27,6 +27,11 @@ r_obj* vec_assign_opts(r_obj* x,
                                        KEEP(vec_names(x)),
                                        &location_opts));
 
+  if (is_compact(index)) {
+    index = compact_materialize(index);
+  }
+  KEEP(index);
+
   // Cast and recycle `value`
   value = KEEP(vec_cast(value, x, opts.value_arg, opts.x_arg, opts.call));
   value = KEEP(vec_check_recycle(value, vec_size(index), opts.value_arg, opts.call));
@@ -37,7 +42,7 @@ r_obj* vec_assign_opts(r_obj* x,
 
   r_obj* out = vec_restore(proxy, x, r_null, owned);
 
-  FREE(6);
+  FREE(7);
   return out;
 }
 

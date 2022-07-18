@@ -196,6 +196,13 @@ test_that("vec_as_location() handles NULL", {
   )
 })
 
+test_that("vec_as_location() handles vector of TRUE", {
+  expect_identical(
+    vec_as_location(c(TRUE, TRUE), 2),
+    vec_as_location(1:2, 10),
+  )
+})
+
 test_that("vec_as_location() checks for mix of negative and missing locations", {
   expect_snapshot({
     (expect_error(

@@ -67,7 +67,22 @@ r_obj* lgl_as_location(r_obj* subscript,
   }
 
   if (subscript_n == n) {
-    r_obj* out = KEEP(r_lgl_which(subscript, true));
+    const int* p_x = r_lgl_cbegin(subscript);
+    bool all_true = true;
+    for (r_ssize i = 0; i < n; ++i) {
+      int x_i = p_x[i];
+      if (x_i != 1) {
+        all_true = false;
+        break;
+      }
+    }
+
+    r_obj* out;
+    if (all_true) {
+      out = KEEP(compact_seq(0, n, true));
+    } else {
+      out = KEEP(r_lgl_which(subscript, true));
+    }
 
     r_obj* nms = KEEP(r_names(subscript));
     if (nms != R_NilValue) {
@@ -402,7 +417,10 @@ r_obj* ffi_as_location(r_obj* subscript,
     .loc_zero       = parse_loc_zero(loc_zero, call)
   };
 
-  return vec_as_location_opts(subscript, n, names, &opts);
+  r_obj* out = KEEP(vec_as_location_opts(subscript, n, names, &opts));
+  out = compact_materialize(out);
+  FREE(1);
+  return out;
 }
 
 static
