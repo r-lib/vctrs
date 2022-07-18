@@ -144,6 +144,16 @@ test_that("lossy cast from character to factor mentions loss of generality", {
   })
 })
 
+test_that("lossy cast `conditionMessage()` result matches `cnd_message()` (#1592)", {
+  cnd <- catch_cnd(vec_cast(1.5, to = integer()))
+
+  expect_identical(conditionMessage(cnd), cnd_message(cnd))
+
+  expect_snapshot({
+    cat(conditionMessage(cnd))
+  })
+})
+
 test_that("ordered cast failures mention conversion", {
   expect_snapshot({
     (expect_error(
