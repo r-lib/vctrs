@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "type-data-frame.h"
 #include "decl/dictionary-decl.h"
 
 // Initialised at load time
@@ -535,42 +536,47 @@ SEXP vctrs_count(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
-  int* p_val = INTEGER(val);
+  SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
+  int* p_count = INTEGER(count);
 
   for (int i = 0; i < n; ++i) {
     uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
-      p_val[hash] = 0;
+      p_count[hash] = 0;
     }
-    p_val[hash]++;
+    p_count[hash]++;
   }
 
   // Create output
-  SEXP out_key = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
-  SEXP out_val = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
-  int* p_out_key = INTEGER(out_key);
-  int* p_out_val = INTEGER(out_val);
+  SEXP out_loc = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
+  int* p_out_loc = INTEGER(out_loc);
+
+  // Reuse `count` storage, which will be narrowed
+  SEXP out_count = count;
+  int* p_out_count = p_count;
 
   int i = 0;
   for (uint32_t hash = 0; hash < d->size; ++hash) {
     if (d->key[hash] == DICT_EMPTY)
       continue;
 
-    p_out_key[i] = d->key[hash] + 1;
-    p_out_val[i] = p_val[hash];
+    p_out_loc[i] = d->key[hash] + 1;
+    p_out_count[i] = p_count[hash];
     i++;
   }
 
+  out_count = PROTECT_N(r_int_resize(out_count, d->used), &nprot);
+
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
-  SET_VECTOR_ELT(out, 0, out_key);
-  SET_VECTOR_ELT(out, 1, out_val);
+  SET_VECTOR_ELT(out, 0, out_loc);
+  SET_VECTOR_ELT(out, 1, out_count);
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
-  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
-  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
+  SET_STRING_ELT(names, 0, Rf_mkChar("loc"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("count"));
   Rf_setAttrib(out, R_NamesSymbol, names);
+  init_data_frame(out, d->used);
 
   UNPROTECT(nprot);
   return out;

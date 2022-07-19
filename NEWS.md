@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_count(sort = "count")` now uses a stable sorting method. This ensures
+  that different keys with the same count are sorted in the order that they
+  originally appeared in (#1588).
+
 * Lossy cast error conditions now show the correct message when
   `conditionMessage()` is called on them (#1592).
 
