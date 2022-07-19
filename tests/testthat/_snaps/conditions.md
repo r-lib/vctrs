@@ -149,6 +149,14 @@
       ! Can't convert from `"a"` <character> to <factor<9b7e3>> due to loss of generality.
       * Locations: 1
 
+# lossy cast `conditionMessage()` result matches `cnd_message()` (#1592)
+
+    Code
+      cat(conditionMessage(cnd))
+    Output
+      Can't convert from `1.5` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
 # ordered cast failures mention conversion
 
     Code

@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Lossy cast error conditions now show the correct message when
+  `conditionMessage()` is called on them (#1592).
+
 * Fixed inconsistent reporting of conflicting inputs in
   `vec_ptype_common()` (#1570).
 

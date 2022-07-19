@@ -499,19 +499,6 @@ stop_lossy_cast <- function(x,
 }
 
 #' @export
-conditionMessage.vctrs_error_cast_lossy <- function(c) {
-  # FIXME: Remove `message` argument
-  if (is_string(c$message) && nzchar(c$message)) {
-    return(c$message)
-  }
-
-  # FIXME: Add `cnd_details()`?
-  glue_lines(
-    cnd_message(c),
-    c$details
-  )
-}
-#' @export
 cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
   to_label <- format_arg_label(vec_ptype_full(cnd$y), cnd$y_arg)
