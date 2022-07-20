@@ -64,7 +64,7 @@ r_obj* r_lgl_which(r_obj* x, bool na_propagate) {
       }
     }
 
-    FREE(2);
+    FREE(1);
     return which;
   }
 
