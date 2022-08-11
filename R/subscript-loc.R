@@ -239,7 +239,7 @@ vec_as_location2_result <- function(i,
   # FIXME: Use result approach in internal implementation?
   err <- NULL
   i <- tryCatch(
-    vec_as_location(i, n, names = names, arg = arg),
+    vec_as_location(i, n, names = names, arg = arg, call = call),
     vctrs_error_subscript_type = function(err) {
       err <<- err
       i

@@ -205,7 +205,7 @@
       ! Must subset elements with a valid subscript vector.
       x Can't convert from `foo` <double> to <integer> due to loss of precision.
 
-# vec_as_location() and variants check for OOB elements
+# vec_as_location() and variants check for OOB elements (#1605)
 
     Code
       # Numeric indexing
@@ -228,7 +228,7 @@
       (expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `vec_as_location2_result()`:
+      Error:
       ! Can't subset elements past the end.
       i Location 10 doesn't exist.
       i There are only 2 elements.
@@ -246,7 +246,15 @@
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `vec_as_location2_result()`:
+      Error:
+      ! Can't subset elements that don't exist.
+      x Element `foo` doesn't exist.
+    Code
+      (expect_error(vec_as_location2("foo", 1L, names = "bar", call = call("baz")),
+      class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `baz()`:
       ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
 
