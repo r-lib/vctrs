@@ -260,17 +260,14 @@ r_ssize list_col_equal_na(r_obj* x,
 
 // -----------------------------------------------------------------------------
 
-// [[ register() ]]
 r_obj* ffi_vec_any_missing(r_obj* x) {
   return r_lgl(vec_any_missing(x));
 }
 
-// [[ include("missing.h") ]]
 bool vec_any_missing(r_obj* x) {
   return vec_first_missing(x) != vec_size(x);
 }
 
-// [[ include("missing.h") ]]
 r_ssize vec_first_missing(r_obj* x) {
   r_obj* proxy = KEEP(vec_proxy_equal(x));
   r_ssize out = proxy_first_missing(proxy);
