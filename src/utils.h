@@ -514,6 +514,7 @@ extern SEXP syms_chr_proxy_collate;
 extern SEXP syms_actual;
 extern SEXP syms_required;
 extern SEXP syms_call;
+extern SEXP syms_dot_call;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

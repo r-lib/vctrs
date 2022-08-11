@@ -1614,6 +1614,7 @@ SEXP syms_chr_proxy_collate = NULL;
 SEXP syms_actual = NULL;
 SEXP syms_required = NULL;
 SEXP syms_call = NULL;
+SEXP syms_dot_call = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1898,6 +1899,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_actual = Rf_install("actual");
   syms_required = Rf_install("required");
   syms_call = Rf_install("call");
+  syms_dot_call = Rf_install(".call");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

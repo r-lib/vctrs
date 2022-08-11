@@ -3,12 +3,12 @@
 #include "decl/bind-decl.h"
 
 // [[ register(external = TRUE) ]]
-r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
+r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   args = r_node_cdr(args);
 
-  struct r_lazy call = { .x = env, .env = r_null };
+  struct r_lazy call = { .x = syms_dot_call, .env = frame };
 
-  r_obj* xs = KEEP(rlang_env_dots_list(env));
+  r_obj* xs = KEEP(rlang_env_dots_list(frame));
   r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
   r_obj* names_to = r_node_car(args); args = r_node_cdr(args);
   r_obj* name_repair = r_node_car(args); args = r_node_cdr(args);

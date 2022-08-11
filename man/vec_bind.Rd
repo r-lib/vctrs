@@ -11,7 +11,8 @@ vec_rbind(
   .ptype = NULL,
   .names_to = rlang::zap(),
   .name_repair = c("unique", "universal", "check_unique"),
-  .name_spec = NULL
+  .name_spec = NULL,
+  .call = current_env()
 )
 
 vec_cbind(
@@ -70,6 +71,11 @@ for combining the outer inputs names in \code{...} and the inner row
 names of the inputs. This only has an effect when \code{.names_to} is
 set to \code{NULL}, which causes the input names to be assigned as row
 names.}
+
+\item{.call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
 \item{.size}{If, \code{NULL}, the default, will determine the number of rows in
 \code{vec_cbind()} output by using the tidyverse \link[=vector_recycling_rules]{recycling rules}.

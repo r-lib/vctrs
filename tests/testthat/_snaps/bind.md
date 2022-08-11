@@ -1,11 +1,26 @@
-# type of column is common type of individual columns
+# incompatible columns throws common type error
 
     Code
-      (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
-    Output
-      <error/vctrs_error_incompatible_type>
+      vec_rbind(x_int, x_chr)
+    Condition
       Error in `vec_rbind()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
+
+---
+
+    Code
+      vec_rbind(x_int, x_chr, .call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Can't combine `..1$x` <integer> and `..2$x` <character>.
+
+---
+
+    Code
+      vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Can't convert `..1$x` <integer> to match type of `x` <character>.
 
 # names are supplied if needed
 
@@ -44,10 +59,17 @@
 # vec_rbind() fails with arrays of dimensionality > 3
 
     Code
-      (expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays"))
-    Output
-      <error/rlang_error>
+      vec_rbind(array(NA, c(1, 1, 1)))
+    Condition
       Error in `vec_rbind()`:
+      ! Can't bind arrays.
+
+---
+
+    Code
+      vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))
+    Condition
+      Error in `foo()`:
       ! Can't bind arrays.
 
 # can assign row names in vec_rbind()
@@ -114,6 +136,30 @@
       ! Names must be unique.
       x These names are duplicated:
         * "a" at locations 1 and 2.
+
+# can supply `.names_to` to `vec_rbind()` (#229)
+
+    Code
+      vec_rbind(.names_to = letters)
+    Condition
+      Error in `vec_rbind()`:
+      ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
+
+---
+
+    Code
+      vec_rbind(.names_to = 10)
+    Condition
+      Error in `vec_rbind()`:
+      ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
+
+---
+
+    Code
+      vec_rbind(.names_to = letters, .call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
 
 # vec_rbind() name repair messages are useful
 

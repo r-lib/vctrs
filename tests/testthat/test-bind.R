@@ -24,13 +24,23 @@ test_that("vec_rbind() output is tibble if any input is tibble", {
 test_that("type of column is common type of individual columns", {
   x_int <- data_frame(x = 1L)
   x_dbl <- data_frame(x = 2.5)
-  x_chr <- data_frame(x = "a")
 
   expect_equal(vec_rbind(x_int, x_int), data_frame(x = c(1L, 1L)))
   expect_equal(vec_rbind(x_int, x_dbl), data_frame(x = c(1, 2.5)))
+})
 
-  expect_snapshot({
-    (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
+test_that("incompatible columns throws common type error", {
+  x_int <- data_frame(x = 1L)
+  x_chr <- data_frame(x = "a")
+
+  expect_snapshot(error = TRUE, {
+    vec_rbind(x_int, x_chr)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(x_int, x_chr, .call = call("foo"))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo"))
   })
 })
 
@@ -204,8 +214,11 @@ test_that("can construct an id column", {
 })
 
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
-  expect_snapshot({
-    (expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays"))
+  expect_snapshot(error = TRUE, {
+    vec_rbind(array(NA, c(1, 1, 1)))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))
   })
 })
 
@@ -475,8 +488,15 @@ test_that("can repair names in `vec_cbind()` (#227)", {
 })
 
 test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
-  expect_error(vec_rbind(.names_to = letters), "must be")
-  expect_error(vec_rbind(.names_to = 10), "must be")
+  expect_snapshot(error = TRUE, {
+    vec_rbind(.names_to = letters)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(.names_to = 10)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(.names_to = letters, .call = call("foo"))
+  })
 
   x <- data_frame(foo = 1:2, bar = 3:4)
   y <- data_frame(foo = 5L, bar = 6L)
