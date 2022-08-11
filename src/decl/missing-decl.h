@@ -54,4 +54,25 @@ r_ssize list_col_equal_na(r_obj* x,
                           r_ssize loc_size);
 
 static inline
+r_ssize proxy_first_missing(r_obj* proxy);
+
+static inline
+r_ssize lgl_first_missing(r_obj* x);
+static inline
+r_ssize int_first_missing(r_obj* x);
+static inline
+r_ssize dbl_first_missing(r_obj* x);
+static inline
+r_ssize cpl_first_missing(r_obj* x);
+static inline
+r_ssize raw_first_missing(r_obj* x);
+static inline
+r_ssize chr_first_missing(r_obj* x);
+static inline
+r_ssize list_first_missing(r_obj* x);
+
+static inline
+r_ssize df_first_missing(r_obj* x);
+
+static inline
 const unsigned char* r_uchar_cbegin(r_obj* x);
