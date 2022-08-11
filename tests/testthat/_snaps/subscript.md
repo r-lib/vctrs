@@ -159,3 +159,13 @@
       x Subscript has the wrong type `double`.
       i It must be logical, numeric, or character.
 
+# vec_as_subscript2() retains the call when erroring on logical input (#1605)
+
+    Code
+      vec_as_subscript2(TRUE, call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Must extract element with a single valid subscript.
+      x Subscript has the wrong type `logical`.
+      i It must be logical, numeric, or character.
+
