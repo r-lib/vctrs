@@ -173,6 +173,11 @@ test_that("vec_ptype2(<difftime>, NA) is symmetric (#687)", {
   )
 })
 
+test_that("vec_ptype2() standardizes duration storage type to double", {
+  x <- structure(1L, units = "secs", class = "difftime")
+  expect <- new_duration(double(), units = "secs")
+  expect_identical(vec_ptype2(x, x), expect)
+})
 
 # cast: dates ---------------------------------------------------------------
 
@@ -344,6 +349,17 @@ test_that("invalid casts generate error", {
 test_that("can cast NA and unspecified to duration", {
   expect_identical(vec_cast(NA, new_duration()), new_duration(na_dbl))
   expect_identical(vec_cast(unspecified(2), new_duration()), new_duration(dbl(NA, NA)))
+})
+
+test_that("casting coerces corrupt integer storage durations to double (#1602)", {
+  x <- structure(1L, units = "secs", class = "difftime")
+  expect <- new_duration(1, units = "secs")
+
+  expect_identical(vec_cast(x, x), expect)
+
+  # Names are retained through the coercion
+  names(x) <- "a"
+  expect_named(vec_cast(x, x), "a")
 })
 
 # proxy/restore: dates ---------------------------------------------------
