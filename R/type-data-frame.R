@@ -47,7 +47,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'   Character vectors are never converted to factors, and lists are stored
 #'   as-is for easy creation of list-columns.
 #'
-#' - Unnamed data frame inputs are automatically spliced. Named data frame
+#' - Unnamed data frame inputs are automatically unpacked. Named data frame
 #'   inputs are stored unmodified as data frame columns.
 #'
 #' - `NULL` inputs are completely ignored.
@@ -63,6 +63,8 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'   are used for names of the resulting list.
 #' @param .size The common size of vectors supplied in `...`. If `NULL`, this
 #'   will be computed as the common size of the inputs.
+#' @param .unpack Should unnamed data frame inputs be unpacked? Defaults to
+#'   `TRUE`.
 #' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
 #'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
 #'
@@ -84,8 +86,9 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #' class(df)
 df_list <- function(...,
                     .size = NULL,
+                    .unpack = TRUE,
                     .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(ffi_df_list, list2(...), .size, .name_repair, environment())
+  .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
 
@@ -151,7 +154,7 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #'   tibble::as_tibble(df)
 #' }
 #'
-#' # Unnamed data frame input is automatically spliced
+#' # Unnamed data frame input is automatically unpacked
 #' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
 data_frame <- function(...,
                        .size = NULL,

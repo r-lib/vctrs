@@ -119,7 +119,7 @@ extern r_obj* ffi_ptype2_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_fast_c(SEXP, SEXP);
 extern r_obj* ffi_data_frame(r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_df_list(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_df_list(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_identify_runs(SEXP);
 extern SEXP vctrs_locate_runs(SEXP, SEXP);
 extern SEXP vctrs_detect_runs(SEXP, SEXP);
@@ -289,7 +289,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_cast_dispatch_native",              (DL_FUNC) &ffi_cast_dispatch_native, 6},
   {"vctrs_fast_c",                          (DL_FUNC) &vctrs_fast_c, 2},
   {"ffi_data_frame",                        (DL_FUNC) &ffi_data_frame, 4},
-  {"ffi_df_list",                           (DL_FUNC) &ffi_df_list, 4},
+  {"ffi_df_list",                           (DL_FUNC) &ffi_df_list, 5},
   {"vctrs_identify_runs",                   (DL_FUNC) &vctrs_identify_runs, 1},
   {"vctrs_locate_runs",                     (DL_FUNC) &vctrs_locate_runs, 2},
   {"vctrs_detect_runs",                     (DL_FUNC) &vctrs_detect_runs, 2},

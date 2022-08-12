@@ -489,23 +489,50 @@ test_that("unnamed input is auto named with empty strings", {
   expect_named(data_frame(1, 2, .name_repair = "minimal"), c("", ""))
 })
 
-test_that("unnamed data frames are auto spliced", {
+test_that("unnamed data frames are auto unpacked", {
   expect_identical(
     data_frame(w = 1, data_frame(x = 2, y = 3), z = 4),
     data_frame(w = 1, x = 2, y = 3, z = 4)
   )
 })
 
-test_that("named data frames are not spliced", {
+test_that("named data frames are not unpacked", {
   df_col <- data_frame(x = 2, y = 3)
   df <- data_frame(w = 1, col = data_frame(x = 2, y = 3), z = 4)
 
   expect_identical(df$col, df_col)
 })
 
-test_that("spliced data frames without names are caught", {
+test_that("unpacked data frames without names are caught", {
   df_col <- new_data_frame(list(1))
   expect_error(data_frame(df_col), "corrupt data frame")
+})
+
+test_that("unpacking in `df_list()` can be disabled with `.unpack = FALSE`", {
+  out <- df_list(
+    w = 1,
+    data_frame(x = 2, y = 3),
+    z = 4,
+    .unpack = FALSE,
+    .name_repair = "minimal"
+  )
+
+  expect <- list(
+    w = 1,
+    data_frame(x = 2, y = 3),
+    z = 4
+  )
+
+  expect_identical(out, expect)
+})
+
+test_that("`.unpack` is validated", {
+  expect_snapshot(error = TRUE, {
+    df_list(.unpack = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    df_list(.unpack = c(TRUE, FALSE))
+  })
 })
 
 test_that("`NULL` inputs are dropped", {
