@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* The `difftime` to `difftime` `vec_cast()` method now standardizes the internal
+  storage type to double, catching potentially corrupt integer storage
+  `difftime` vectors (#1602).
+
 * `vec_as_location2()` and `vec_as_subscript2()` more correctly utilize their
   `call` arguments (#1605).
 
