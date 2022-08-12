@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `df_list()` has gained a new `.unpack` argument to optionally disable data
+  frame unpacking (#1616).
+
 * `vec_check_list(arg = "")` now throws the correct error (#1604).
 
 * The `difftime` to `difftime` `vec_cast()` method now standardizes the internal
