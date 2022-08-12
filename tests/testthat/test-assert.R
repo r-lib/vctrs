@@ -337,6 +337,12 @@ test_that("vec_check_list() works", {
   })
 })
 
+test_that("vec_check_list() uses a special error when `arg` is the empty string (#1604)", {
+  expect_snapshot(error = TRUE, {
+    vec_check_list(1, arg = "")
+  })
+})
+
 test_that("vec_check_list() and list_check_all_vectors() work", {
   expect_null(list_check_all_vectors(list()))
   expect_null(list_check_all_vectors(list(1, mtcars)))

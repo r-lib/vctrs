@@ -207,6 +207,14 @@
       Error in `my_function()`:
       ! `my_arg` must be a list, not an environment.
 
+# vec_check_list() uses a special error when `arg` is the empty string (#1604)
+
+    Code
+      vec_check_list(1, arg = "")
+    Condition
+      Error:
+      ! Input must be a list, not a number.
+
 # vec_check_list() and list_check_all_vectors() work
 
     Code
