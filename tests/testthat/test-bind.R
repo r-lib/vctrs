@@ -391,9 +391,18 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 # cols --------------------------------------------------------------------
 
 test_that("vec_cbind() reports error context", {
-  expect_snapshot({
-    (expect_error(vec_cbind(foobar(list()))))
-    (expect_error(vec_cbind(a = 1:2, b = int())))
+  expect_snapshot(error = TRUE, {
+    vec_cbind(foobar(list()))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_cbind(foobar(list()), .call = call("foo"))
+  })
+
+  expect_snapshot(error = TRUE, {
+    vec_cbind(a = 1:2, b = int())
+  })
+  expect_snapshot(error = TRUE, {
+    vec_cbind(a = 1:2, b = int(), .call = call("foo"))
   })
 })
 
@@ -592,8 +601,16 @@ test_that("names are not repaired if packed", {
 
 test_that("vec_cbind() fails with arrays of dimensionality > 3", {
   a <- array(NA, c(1, 1, 1))
-  expect_error(vec_cbind(a), "Can't bind arrays")
-  expect_error(vec_cbind(x = a), "Can't bind arrays")
+
+  expect_snapshot(error = TRUE, {
+    vec_cbind(a)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_cbind(a, .call = call("foo"))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_cbind(x = a)
+  })
 })
 
 test_that("monitoring: name repair while cbinding doesn't modify in place", {
@@ -744,6 +761,13 @@ test_that("rbind repairs names of data frames (#704)", {
     vec_rbind(df, df, .name_repair = "check_unique"),
     class = "vctrs_error_names_must_be_unique"
   )
+
+  expect_snapshot(error = TRUE, {
+    vec_rbind(df, df, .name_repair = "check_unique")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo"))
+  })
 })
 
 test_that("vec_rbind() works with simple homogeneous foreign S3 classes", {
@@ -977,12 +1001,12 @@ test_that("can't zap names when `.names_to` is supplied", {
     vec_rbind(foo = c(x = 1), .names_to = zap(), .name_spec = zap()),
     data.frame(x = 1)
   )
-  expect_snapshot({
-    (expect_error(
-      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
-      "Can't zap outer names when `.names_to` is supplied.",
-      fixed = TRUE
-    ))
+
+  expect_snapshot(error = TRUE, {
+    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
+  })
+  expect_snapshot(error = TRUE, {
+    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call("foo"))
   })
 })
 

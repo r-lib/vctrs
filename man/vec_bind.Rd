@@ -19,7 +19,8 @@ vec_cbind(
   ...,
   .ptype = NULL,
   .size = NULL,
-  .name_repair = c("unique", "universal", "check_unique", "minimal")
+  .name_repair = c("unique", "universal", "check_unique", "minimal"),
+  .call = current_env()
 )
 }
 \arguments{

@@ -83,16 +83,33 @@
 # vec_cbind() reports error context
 
     Code
-      (expect_error(vec_cbind(foobar(list()))))
-    Output
-      <error/vctrs_error_scalar_type>
+      vec_cbind(foobar(list()))
+    Condition
       Error in `vec_cbind()`:
       ! `..1` must be a vector, not a <vctrs_foobar> object.
+
+---
+
     Code
-      (expect_error(vec_cbind(a = 1:2, b = int())))
-    Output
-      <error/vctrs_error_incompatible_size>
+      vec_cbind(foobar(list()), .call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! `..1` must be a vector, not a <vctrs_foobar> object.
+
+---
+
+    Code
+      vec_cbind(a = 1:2, b = int())
+    Condition
       Error in `vec_cbind()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+
+---
+
+    Code
+      vec_cbind(a = 1:2, b = int(), .call = call("foo"))
+    Condition
+      Error in `foo()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
 
 # duplicate names are de-deduplicated
@@ -160,6 +177,30 @@
     Condition
       Error in `foo()`:
       ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
+
+# vec_cbind() fails with arrays of dimensionality > 3
+
+    Code
+      vec_cbind(a)
+    Condition
+      Error in `vec_cbind()`:
+      ! Can't bind arrays.
+
+---
+
+    Code
+      vec_cbind(a, .call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Can't bind arrays.
+
+---
+
+    Code
+      vec_cbind(x = a)
+    Condition
+      Error in `vec_cbind()`:
+      ! Can't bind arrays.
 
 # vec_rbind() name repair messages are useful
 
@@ -311,6 +352,26 @@
         ...1 ...2
       1    1    2
 
+# rbind repairs names of data frames (#704)
+
+    Code
+      vec_rbind(df, df, .name_repair = "check_unique")
+    Condition
+      Error in `vec_rbind()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "x" at locations 1 and 2.
+
+---
+
+    Code
+      vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "x" at locations 1 and 2.
+
 # vec_rbind() fails with complex foreign S3 classes
 
     Code
@@ -341,11 +402,18 @@
 # can't zap names when `.names_to` is supplied
 
     Code
-      (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
-      "Can't zap outer names when `.names_to` is supplied.", fixed = TRUE))
-    Output
-      <error/rlang_error>
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
+    Condition
       Error in `vec_rbind()`:
+      ! Can't zap outer names when `.names_to` is supplied.
+
+---
+
+    Code
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call(
+        "foo"))
+    Condition
+      Error in `foo()`:
       ! Can't zap outer names when `.names_to` is supplied.
 
 # row-binding performs expected allocations
