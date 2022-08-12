@@ -114,7 +114,8 @@ vec_as_subscript2_result <- function(i,
       numeric = numeric,
       character = character,
       subscript_arg = arg,
-      body = bullets
+      body = bullets,
+      call = call
     )
 
     return(result)
@@ -129,7 +130,8 @@ vec_as_subscript2_result <- function(i,
       numeric = numeric,
       character = character,
       subscript_arg = arg,
-      body = cnd_body.vctrs_error_subscript_type
+      body = cnd_body.vctrs_error_subscript_type,
+      call = call
     )))
   }
 

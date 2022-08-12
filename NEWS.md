@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_as_location2()` and `vec_as_subscript2()` more correctly utilize their
+  `call` arguments (#1605).
+
 * `vec_count(sort = "count")` now uses a stable sorting method. This ensures
   that different keys with the same count are sorted in the order that they
   originally appeared in (#1588).

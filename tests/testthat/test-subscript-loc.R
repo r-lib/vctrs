@@ -62,7 +62,7 @@ test_that("vec_as_location2() and vec_as_location() require integer- or characte
   expect_identical(vec_as_location(foobar(FALSE), 10L), int())
 })
 
-test_that("vec_as_location() and variants check for OOB elements", {
+test_that("vec_as_location() and variants check for OOB elements (#1605)", {
   expect_snapshot({
     "Numeric indexing"
     (expect_error(vec_as_location(10L, 2L), class = "vctrs_error_subscript_oob"))
@@ -72,6 +72,7 @@ test_that("vec_as_location() and variants check for OOB elements", {
     "Character indexing"
     (expect_error(vec_as_location("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob"))
     (expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob"))
+    (expect_error(vec_as_location2("foo", 1L, names = "bar", call = call("baz")), class = "vctrs_error_subscript_oob"))
   })
 
   expect_error(num_as_location(10L, 2L), class = "vctrs_error_subscript_oob")
