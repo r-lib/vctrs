@@ -17,6 +17,7 @@ enum num_loc_negative {
 };
 enum num_loc_oob {
   LOC_OOB_ERROR = 0,
+  LOC_OOB_REMOVE,
   LOC_OOB_EXTEND
 };
 enum num_loc_zero {

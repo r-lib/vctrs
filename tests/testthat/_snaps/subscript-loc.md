@@ -511,6 +511,26 @@
       i Input has size 3.
       x Subscript `c(1:5, 7, 1, 10)` contains non-consecutive locations 4, 7, and 10.
 
+# num_as_location() errors when inverting oob negatives unless `oob = 'remove'`
+
+    Code
+      num_as_location(-4, 3, oob = "error", negative = "invert")
+    Condition
+      Error:
+      ! Can't negate elements past the end.
+      i Location 4 doesn't exist.
+      i There are only 3 elements.
+
+---
+
+    Code
+      num_as_location(-4, 3, oob = "extend", negative = "invert")
+    Condition
+      Error:
+      ! Can't negate elements past the end.
+      i Location 4 doesn't exist.
+      i There are only 3 elements.
+
 # missing values are supported in error formatters
 
     Code
