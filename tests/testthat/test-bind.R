@@ -33,14 +33,19 @@ test_that("incompatible columns throws common type error", {
   x_int <- data_frame(x = 1L)
   x_chr <- data_frame(x = "a")
 
-  expect_snapshot(error = TRUE, {
-    vec_rbind(x_int, x_chr)
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(x_int, x_chr, .call = call("foo"))
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo"))
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(x_int, x_chr),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_rbind(x_int, x_chr, .call = call("foo")),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 })
 
@@ -214,11 +219,9 @@ test_that("can construct an id column", {
 })
 
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
-  expect_snapshot(error = TRUE, {
-    vec_rbind(array(NA, c(1, 1, 1)))
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))
+  expect_snapshot({
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1)))))
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
   })
 })
 
@@ -391,18 +394,12 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 # cols --------------------------------------------------------------------
 
 test_that("vec_cbind() reports error context", {
-  expect_snapshot(error = TRUE, {
-    vec_cbind(foobar(list()))
-  })
-  expect_snapshot(error = TRUE, {
-    vec_cbind(foobar(list()), .call = call("foo"))
-  })
+  expect_snapshot({
+    (expect_error(vec_cbind(foobar(list()))))
+    (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
 
-  expect_snapshot(error = TRUE, {
-    vec_cbind(a = 1:2, b = int())
-  })
-  expect_snapshot(error = TRUE, {
-    vec_cbind(a = 1:2, b = int(), .call = call("foo"))
+    (expect_error(vec_cbind(a = 1:2, b = int())))
+    (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
   })
 })
 
@@ -497,14 +494,10 @@ test_that("can repair names in `vec_cbind()` (#227)", {
 })
 
 test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
-  expect_snapshot(error = TRUE, {
-    vec_rbind(.names_to = letters)
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(.names_to = 10)
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(.names_to = letters, .call = call("foo"))
+  expect_snapshot({
+    (expect_error(vec_rbind(.names_to = letters)))
+    (expect_error(vec_rbind(.names_to = 10)))
+    (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
   })
 
   x <- data_frame(foo = 1:2, bar = 3:4)
@@ -602,14 +595,10 @@ test_that("names are not repaired if packed", {
 test_that("vec_cbind() fails with arrays of dimensionality > 3", {
   a <- array(NA, c(1, 1, 1))
 
-  expect_snapshot(error = TRUE, {
-    vec_cbind(a)
-  })
-  expect_snapshot(error = TRUE, {
-    vec_cbind(a, .call = call("foo"))
-  })
-  expect_snapshot(error = TRUE, {
-    vec_cbind(x = a)
+  expect_snapshot({
+    (expect_error(vec_cbind(a)))
+    (expect_error(vec_cbind(a, .call = call("foo"))))
+    (expect_error(vec_cbind(x = a)))
   })
 })
 
@@ -757,16 +746,15 @@ test_that("rbind repairs names of data frames (#704)", {
   expect_identical(vec_rbind(df), df_repaired)
   expect_identical(vec_rbind(df, df), vec_rbind(df_repaired, df_repaired))
 
-  expect_error(
-    vec_rbind(df, df, .name_repair = "check_unique"),
-    class = "vctrs_error_names_must_be_unique"
-  )
-
-  expect_snapshot(error = TRUE, {
-    vec_rbind(df, df, .name_repair = "check_unique")
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo"))
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(df, df, .name_repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"
+    ))
+    (expect_error(
+      vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo")),
+      class = "vctrs_error_names_must_be_unique"
+    ))
   })
 })
 
@@ -1002,11 +990,13 @@ test_that("can't zap names when `.names_to` is supplied", {
     data.frame(x = 1)
   )
 
-  expect_snapshot(error = TRUE, {
-    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
-  })
-  expect_snapshot(error = TRUE, {
-    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call("foo"))
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
+    ))
+    (expect_error(
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call("foo"))
+    ))
   })
 })
 
