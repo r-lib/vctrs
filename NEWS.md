@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_check_list(arg = "")` now throws the correct error (#1604).
+
 * The `difftime` to `difftime` `vec_cast()` method now standardizes the internal
   storage type to double, catching potentially corrupt integer storage
   `difftime` vectors (#1602).

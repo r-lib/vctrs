@@ -260,8 +260,14 @@ list_check_all_vectors <- function(x,
 
 # Called from C
 stop_non_list_type <- function(x, arg, call) {
+  if (nzchar(arg)) {
+    arg <- cli::format_inline("{.arg {arg}}")
+  } else {
+    arg <- "Input"
+  }
+
   cli::cli_abort(
-    "{.arg {arg}} must be a list, not {friendly_type_of(x)}.",
+    "{arg} must be a list, not {friendly_type_of(x)}.",
     call = call
   )
 }
