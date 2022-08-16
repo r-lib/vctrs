@@ -7,6 +7,7 @@
 df_list(
   ...,
   .size = NULL,
+  .unpack = TRUE,
   .name_repair = c("check_unique", "unique", "universal", "minimal")
 )
 }
@@ -16,6 +17,9 @@ are used for names of the resulting list.}
 
 \item{.size}{The common size of vectors supplied in \code{...}. If \code{NULL}, this
 will be computed as the common size of the inputs.}
+
+\item{.unpack}{Should unnamed data frame inputs be unpacked? Defaults to
+\code{TRUE}.}
 
 \item{.name_repair}{One of \code{"check_unique"}, \code{"unique"}, \code{"universal"} or
 \code{"minimal"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these options.}
@@ -34,7 +38,7 @@ a helper function for data frame subclasses.
 \item With the exception of data frames, inputs are not modified in any way.
 Character vectors are never converted to factors, and lists are stored
 as-is for easy creation of list-columns.
-\item Unnamed data frame inputs are automatically spliced. Named data frame
+\item Unnamed data frame inputs are automatically unpacked. Named data frame
 inputs are stored unmodified as data frame columns.
 \item \code{NULL} inputs are completely ignored.
 \item The dots are dynamic, allowing for splicing of lists with \verb{!!!} and

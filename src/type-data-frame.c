@@ -201,7 +201,8 @@ r_obj* data_frame(r_obj* x,
                   r_ssize size,
                   const struct name_repair_opts* p_name_repair_opts,
                   struct r_lazy call) {
-  r_obj* out = KEEP(df_list(x, size, p_name_repair_opts, call));
+  const bool unpack = true;
+  r_obj* out = KEEP(df_list(x, size, unpack, p_name_repair_opts, call));
   out = new_data_frame(out, size);
   FREE(1);
   return out;
@@ -211,6 +212,7 @@ r_obj* data_frame(r_obj* x,
 // [[ register() ]]
 r_obj* ffi_df_list(r_obj* x,
                    r_obj* size,
+                   r_obj* unpack,
                    r_obj* name_repair,
                    r_obj* frame) {
   struct r_lazy call = { .x = frame, .env = r_null };
@@ -228,7 +230,9 @@ r_obj* ffi_df_list(r_obj* x,
     c_size = vec_as_short_length(size, vec_args.dot_size, call);
   }
 
-  r_obj* out = df_list(x, c_size, &name_repair_opts, call);
+  const bool c_unpack = r_arg_as_bool(unpack, ".unpack");
+
+  r_obj* out = df_list(x, c_size, c_unpack, &name_repair_opts, call);
 
   FREE(1);
   return out;
@@ -237,6 +241,7 @@ r_obj* ffi_df_list(r_obj* x,
 static
 r_obj* df_list(r_obj* x,
                r_ssize size,
+               bool unpack,
                const struct name_repair_opts* p_name_repair_opts,
                struct r_lazy call) {
   if (r_typeof(x) != R_TYPE_list) {
@@ -255,7 +260,11 @@ r_obj* df_list(r_obj* x,
   }
 
   x = KEEP(df_list_drop_null(x));
-  x = KEEP(df_list_splice(x));
+
+  if (unpack) {
+    x = df_list_unpack(x);
+  }
+  KEEP(x);
 
   r_obj* names = KEEP(r_names(x));
   names = KEEP(vec_as_names(names, p_name_repair_opts));
@@ -303,16 +312,16 @@ r_obj* df_list_drop_null(r_obj* x) {
 }
 
 static
-r_obj* df_list_splice(r_obj* x) {
+r_obj* df_list_unpack(r_obj* x) {
   r_obj* names = KEEP(r_names(x));
   r_obj* const * p_names = r_chr_cbegin(names);
 
-  bool any_needs_splice = false;
+  bool any_needs_unpack = false;
   r_ssize n_cols = r_length(x);
   r_ssize i = 0;
 
   for (; i < n_cols; ++i) {
-    // Only splice unnamed data frames
+    // Only unpack unnamed data frames
     if (p_names[i] != strings_empty) {
       continue;
     }
@@ -320,27 +329,27 @@ r_obj* df_list_splice(r_obj* x) {
     r_obj* col = r_list_get(x, i);
 
     if (is_data_frame(col)) {
-      any_needs_splice = true;
+      any_needs_unpack = true;
       break;
     }
   }
 
-  if (!any_needs_splice) {
+  if (!any_needs_unpack) {
     FREE(1);
     return x;
   }
 
-  r_obj* splice = KEEP(r_new_logical(n_cols));
-  int* p_splice = LOGICAL(splice);
+  r_obj* unpack = KEEP(r_new_logical(n_cols));
+  int* p_unpack = LOGICAL(unpack);
 
   for (r_ssize j = 0; j < n_cols; ++j) {
-    p_splice[j] = 0;
+    p_unpack[j] = 0;
   }
 
   r_ssize width = i;
 
   for (; i < n_cols; ++i) {
-    // Only splice unnamed data frames
+    // Only unpack unnamed data frames
     if (p_names[i] != strings_empty) {
       ++width;
       continue;
@@ -350,7 +359,7 @@ r_obj* df_list_splice(r_obj* x) {
 
     if (is_data_frame(col)) {
       width += r_length(col);
-      p_splice[i] = 1;
+      p_unpack[i] = 1;
     } else {
       ++width;
     }
@@ -361,9 +370,9 @@ r_obj* df_list_splice(r_obj* x) {
 
   r_ssize loc = 0;
 
-  // Splice loop
+  // Unpack loop
   for (r_ssize i = 0; i < n_cols; ++i) {
-    if (!p_splice[i]) {
+    if (!p_unpack[i]) {
       r_list_poke(out, loc, r_list_get(x, i));
       r_chr_poke(out_names, loc, p_names[i]);
       ++loc;

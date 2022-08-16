@@ -190,6 +190,22 @@
     Code
       expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
 
+# `.unpack` is validated
+
+    Code
+      df_list(.unpack = 1)
+    Condition
+      Error in `df_list()`:
+      ! `.unpack` must be a logical value.
+
+---
+
+    Code
+      df_list(.unpack = c(TRUE, FALSE))
+    Condition
+      Error in `df_list()`:
+      ! `.unpack` must be a logical value.
+
 # data frame fallback handles column types (#999)
 
     Code
