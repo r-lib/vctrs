@@ -16,6 +16,9 @@ static
 r_obj* int_filter_zero(r_obj* subscript, r_ssize n_zero);
 
 static
+r_obj* int_filter_oob(r_obj* subscript, r_ssize n, r_ssize n_oob);
+
+static
 void int_check_consecutive(r_obj* subscript,
                            r_ssize n,
                            r_ssize n_extend,

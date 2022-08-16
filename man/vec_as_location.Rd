@@ -23,7 +23,7 @@ num_as_location(
   ...,
   missing = c("propagate", "error"),
   negative = c("invert", "error", "ignore"),
-  oob = c("error", "extend"),
+  oob = c("error", "remove", "extend"),
   zero = c("remove", "error", "ignore"),
   arg = caller_arg(i),
   call = caller_env()
@@ -81,10 +81,11 @@ mentioned in error messages as the source of the error. See the
 \item{negative}{Whether to throw an \code{"error"} when \code{i} is a
 negative location value, or \code{"ignore"} it.}
 
-\item{oob}{If \code{"error"}, throws an informative \code{"error"} if some
-elements are out-of-bounds. If \code{"extend"}, out-of-bounds
-locations are allowed if they are consecutive after the end. This
-can be used to implement extendable vectors like \code{letters[1:30]}.}
+\item{oob}{If \code{"error"}, throws an informative \code{"error"} if some elements are
+out-of-bounds. If \code{"remove"}, removes both positive and negative
+out-of-bounds locations. If \code{"extend"}, out-of-bounds locations are allowed
+if they are consecutive after the end. This can be used to implement
+extendable vectors like \code{letters[1:30]}.}
 
 \item{zero}{Whether to \code{"remove"} zero values, throw an informative
 \code{"error"}, or \code{"ignore"} them.}

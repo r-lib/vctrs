@@ -125,6 +125,9 @@ static
 r_obj* int_as_location(r_obj* subscript,
                        r_ssize n,
                        const struct location_opts* opts) {
+  r_keep_loc subscript_shelter;
+  KEEP_HERE(subscript, &subscript_shelter);
+
   const int* data = r_int_cbegin(subscript);
   r_ssize loc_n = r_length(subscript);
 
@@ -133,7 +136,7 @@ r_obj* int_as_location(r_obj* subscript,
   // positive indices need to go through and `int_filter_zero()`.
   r_ssize n_zero = 0;
 
-  r_ssize n_extend = 0;
+  r_ssize n_oob = 0;
 
   for (r_ssize i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
@@ -158,21 +161,35 @@ r_obj* int_as_location(r_obj* subscript,
         case LOC_ZERO_IGNORE: break;
         }
       } else if (abs(elt) > n) {
-        if (opts->loc_oob == LOC_OOB_ERROR) {
-          stop_subscript_oob_location(subscript, n, opts);
+        switch (opts->loc_oob) {
+        case LOC_OOB_ERROR: stop_subscript_oob_location(subscript, n, opts);
+        case LOC_OOB_EXTEND:
+        case LOC_OOB_REMOVE: ++n_oob; break;
         }
-        ++n_extend;
       }
     }
   }
 
   if (n_zero) {
     subscript = int_filter_zero(subscript, n_zero);
+    KEEP_AT(subscript, subscript_shelter);
   }
-  KEEP(subscript);
 
-  if (n_extend > 0) {
-    int_check_consecutive(subscript, n, n_extend, opts);
+  if (n_oob > 0) {
+    switch (opts->loc_oob) {
+    case LOC_OOB_ERROR: {
+      r_stop_internal("An error should have been thrown on the first OOB value.");
+    }
+    case LOC_OOB_EXTEND: {
+      int_check_consecutive(subscript, n, n_oob, opts);
+      break;
+    }
+    case LOC_OOB_REMOVE: {
+      subscript = int_filter_oob(subscript, n, n_oob);
+      KEEP_AT(subscript, subscript_shelter);
+      break;
+    }
+    }
   }
 
   FREE(1);
@@ -207,9 +224,19 @@ r_obj* int_invert_location(r_obj* subscript,
 
     j = -j;
     if (j > n) {
-      struct location_opts updated_opts = *opts;
-      updated_opts.subscript_opts.action = SUBSCRIPT_ACTION_NEGATE;
-      stop_subscript_oob_location(subscript, n, &updated_opts);
+      switch (opts->loc_oob) {
+      case LOC_OOB_REMOVE: {
+        continue;
+      }
+      case LOC_OOB_EXTEND:
+      case LOC_OOB_ERROR: {
+        // Setting `oob` to `"error"` and `"extend"` result in errors here,
+        // because extending with a negative subscript is nonsensical
+        struct location_opts updated_opts = *opts;
+        updated_opts.subscript_opts.action = SUBSCRIPT_ACTION_NEGATE;
+        stop_subscript_oob_location(subscript, n, &updated_opts);
+      }
+      }
     }
 
     sel_data[j - 1] = 0;
@@ -235,6 +262,30 @@ r_obj* int_filter_zero(r_obj* subscript,
     if (elt != 0) {
       *out_data = elt;
       ++out_data;
+    }
+  }
+
+  FREE(1);
+  return out;
+}
+
+static
+r_obj* int_filter_oob(r_obj* subscript, r_ssize n, r_ssize n_oob) {
+  const r_ssize n_subscript = r_length(subscript);
+  const r_ssize n_out = n_subscript - n_oob;
+
+  r_obj* out = KEEP(r_alloc_integer(n_out));
+  int* v_out = r_int_begin(out);
+  r_ssize i_out = 0;
+
+  const int* v_subscript = r_int_cbegin(subscript);
+
+  for (r_ssize i = 0; i < n_subscript; ++i) {
+    const int elt = v_subscript[i];
+
+    if (abs(elt) <= n || elt == r_globals.na_int) {
+      v_out[i_out] = elt;
+      ++i_out;
     }
   }
 
@@ -446,6 +497,7 @@ enum num_loc_oob parse_loc_oob(r_obj* x,
   const char* str = r_chr_get_c_string(x, 0);
 
   if (!strcmp(str, "error")) return LOC_OOB_ERROR;
+  if (!strcmp(str, "remove")) return LOC_OOB_REMOVE;
   if (!strcmp(str, "extend")) return LOC_OOB_EXTEND;
   stop_bad_oob(call);
 
