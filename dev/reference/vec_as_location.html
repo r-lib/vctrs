@@ -109,7 +109,7 @@ for extracting with <code>[[</code>.</p></li>
 <span>  <span class="va">...</span>,</span>
 <span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"propagate"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
 <span>  negative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"invert"</span>, <span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,</span>
-<span>  oob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"extend"</span><span class="op">)</span>,</span>
+<span>  oob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"remove"</span>, <span class="st">"extend"</span><span class="op">)</span>,</span>
 <span>  zero <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"remove"</span>, <span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,</span>
 <span>  arg <span class="op">=</span> <span class="fu">caller_arg</span><span class="op">(</span><span class="va">i</span><span class="op">)</span>,</span>
 <span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
@@ -186,10 +186,11 @@ negative location value, or <code>"ignore"</code> it.</p></dd>
 
 
 <dt>oob</dt>
-<dd><p>If <code>"error"</code>, throws an informative <code>"error"</code> if some
-elements are out-of-bounds. If <code>"extend"</code>, out-of-bounds
-locations are allowed if they are consecutive after the end. This
-can be used to implement extendable vectors like <code>letters[1:30]</code>.</p></dd>
+<dd><p>If <code>"error"</code>, throws an informative <code>"error"</code> if some elements are
+out-of-bounds. If <code>"remove"</code>, removes both positive and negative
+out-of-bounds locations. If <code>"extend"</code>, out-of-bounds locations are allowed
+if they are consecutive after the end. This can be used to implement
+extendable vectors like <code>letters[1:30]</code>.</p></dd>
 
 
 <dt>zero</dt>

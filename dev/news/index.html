@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now have <code>.call</code> arguments (<a href="https://github.com/r-lib/vctrs/issues/1597" class="external-link">#1597</a>).</p></li>
+<ul><li><p><code><a href="../reference/vec_as_location.html">num_as_location()</a></code> has a new <code>oob = "remove"</code> argument to remove out-of-bounds locations (<a href="https://github.com/r-lib/vctrs/issues/1595" class="external-link">#1595</a>).</p></li>
+<li><p><code><a href="../reference/vec_bind.html">vec_rbind()</a></code> and <code><a href="../reference/vec_bind.html">vec_cbind()</a></code> now have <code>.call</code> arguments (<a href="https://github.com/r-lib/vctrs/issues/1597" class="external-link">#1597</a>).</p></li>
 <li><p><code><a href="../reference/df_list.html">df_list()</a></code> has gained a new <code>.unpack</code> argument to optionally disable data frame unpacking (<a href="https://github.com/r-lib/vctrs/issues/1616" class="external-link">#1616</a>).</p></li>
 <li><p><code>vec_check_list(arg = "")</code> now throws the correct error (<a href="https://github.com/r-lib/vctrs/issues/1604" class="external-link">#1604</a>).</p></li>
 <li><p>The <code>difftime</code> to <code>difftime</code> <code><a href="../reference/vec_cast.html">vec_cast()</a></code> method now standardizes the internal storage type to double, catching potentially corrupt integer storage <code>difftime</code> vectors (<a href="https://github.com/r-lib/vctrs/issues/1602" class="external-link">#1602</a>).</p></li>
