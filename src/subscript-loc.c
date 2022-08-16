@@ -125,9 +125,6 @@ static
 r_obj* int_as_location(r_obj* subscript,
                        r_ssize n,
                        const struct location_opts* opts) {
-  r_keep_loc subscript_shelter;
-  KEEP_HERE(subscript, &subscript_shelter);
-
   const int* data = r_int_cbegin(subscript);
   r_ssize loc_n = r_length(subscript);
 
@@ -169,6 +166,9 @@ r_obj* int_as_location(r_obj* subscript,
       }
     }
   }
+
+  r_keep_loc subscript_shelter;
+  KEEP_HERE(subscript, &subscript_shelter);
 
   if (n_zero) {
     subscript = int_filter_zero(subscript, n_zero);
