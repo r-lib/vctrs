@@ -29,6 +29,10 @@
 #'
 #' * `vec_size(vec_cbind(x, y)) == vec_size_common(x, y)`
 #' * `vec_ptype(vec_cbind(x, y)) == vec_cbind(vec_ptype(x), vec_ptype(x))`
+#'
+#' @inheritParams vec_c
+#' @inheritParams rlang::args_error_context
+#'
 #' @param ... Data frames or vectors.
 #'
 #'   When the inputs are named:
@@ -61,7 +65,7 @@
 #'   repair function after all inputs have been concatenated together
 #'   in a final data frame. Hence `vec_cbind()` allows the more
 #'   permissive minimal names repair.
-#' @inheritParams vec_c
+#'
 #' @return A data frame, or subclass of data frame.
 #'
 #'   If `...` is a mix of different data frame subclasses, `vec_ptype2()`
@@ -173,7 +177,8 @@ vec_rbind <- function(...,
                       .ptype = NULL,
                       .names_to = rlang::zap(),
                       .name_repair = c("unique", "universal", "check_unique"),
-                      .name_spec = NULL) {
+                      .name_spec = NULL,
+                      .call = current_env()) {
   .External2(ffi_rbind, .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
@@ -189,7 +194,8 @@ vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
-                      .name_repair = c("unique", "universal", "check_unique", "minimal")) {
+                      .name_repair = c("unique", "universal", "check_unique", "minimal"),
+                      .call = current_env()) {
   .External2(ffi_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
