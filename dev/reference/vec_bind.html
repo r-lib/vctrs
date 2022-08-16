@@ -74,14 +74,16 @@ across all arguments.</p>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .names_to <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zap</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span><span class="op">)</span>,</span>
-<span>  .name_spec <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  .name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">vec_cbind</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span>, <span class="st">"minimal"</span><span class="op">)</span></span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span>, <span class="st">"minimal"</span><span class="op">)</span>,</span>
+<span>  .call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -135,6 +137,13 @@ for combining the outer inputs names in <code>...</code> and the inner row
 names of the inputs. This only has an effect when <code>.names_to</code> is
 set to <code>NULL</code>, which causes the input names to be assigned as row
 names.</p></dd>
+
+
+<dt>.call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 
 
 <dt>.size</dt>
