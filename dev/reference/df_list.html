@@ -72,6 +72,7 @@ a helper function for data frame subclasses.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">df_list</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .unpack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"check_unique"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"minimal"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -88,6 +89,11 @@ are used for names of the resulting list.</p></dd>
 will be computed as the common size of the inputs.</p></dd>
 
 
+<dt>.unpack</dt>
+<dd><p>Should unnamed data frame inputs be unpacked? Defaults to
+<code>TRUE</code>.</p></dd>
+
+
 <dt>.name_repair</dt>
 <dd><p>One of <code>"check_unique"</code>, <code>"unique"</code>, <code>"universal"</code> or
 <code>"minimal"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code> for the meaning of these options.</p></dd>
@@ -102,7 +108,7 @@ will be computed as the common size of the inputs.</p></dd>
 <li><p>With the exception of data frames, inputs are not modified in any way.
 Character vectors are never converted to factors, and lists are stored
 as-is for easy creation of list-columns.</p></li>
-<li><p>Unnamed data frame inputs are automatically spliced. Named data frame
+<li><p>Unnamed data frame inputs are automatically unpacked. Named data frame
 inputs are stored unmodified as data frame columns.</p></li>
 <li><p><code>NULL</code> inputs are completely ignored.</p></li>
 <li><p>The dots are dynamic, allowing for splicing of lists with <code>!!!</code> and
