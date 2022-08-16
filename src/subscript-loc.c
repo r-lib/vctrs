@@ -125,6 +125,9 @@ static
 r_obj* int_as_location(r_obj* subscript,
                        r_ssize n,
                        const struct location_opts* opts) {
+  r_keep_loc subscript_shelter;
+  KEEP_HERE(subscript, &subscript_shelter);
+
   const int* data = r_int_cbegin(subscript);
   r_ssize loc_n = r_length(subscript);
 
@@ -169,19 +172,27 @@ r_obj* int_as_location(r_obj* subscript,
 
   if (n_zero) {
     subscript = int_filter_zero(subscript, n_zero);
-  }
-  KEEP(subscript);
-
-  if (n_oob > 0 && opts->loc_oob == LOC_OOB_EXTEND) {
-    int_check_consecutive(subscript, n, n_oob, opts);
+    KEEP_AT(subscript, subscript_shelter);
   }
 
-  if (n_oob > 0 && opts->loc_oob == LOC_OOB_REMOVE) {
-    subscript = int_filter_oob(subscript, n, n_oob);
+  if (n_oob > 0) {
+    switch (opts->loc_oob) {
+    case LOC_OOB_ERROR: {
+      r_stop_internal("An error should have been thrown on the first OOB value.");
+    }
+    case LOC_OOB_EXTEND: {
+      int_check_consecutive(subscript, n, n_oob, opts);
+      break;
+    }
+    case LOC_OOB_REMOVE: {
+      subscript = int_filter_oob(subscript, n, n_oob);
+      KEEP_AT(subscript, subscript_shelter);
+      break;
+    }
+    }
   }
-  KEEP(subscript);
 
-  FREE(2);
+  FREE(1);
   return subscript;
 }
 
