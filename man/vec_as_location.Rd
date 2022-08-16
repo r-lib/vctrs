@@ -83,7 +83,7 @@ negative location value, or \code{"ignore"} it.}
 
 \item{oob}{If \code{"error"}, throws an informative \code{"error"} if some elements are
 out-of-bounds. If \code{"remove"}, removes both positive and negative
-out-of-bound locations. If \code{"extend"}, out-of-bounds locations are allowed
+out-of-bounds locations. If \code{"extend"}, out-of-bounds locations are allowed
 if they are consecutive after the end. This can be used to implement
 extendable vectors like \code{letters[1:30]}.}
 

@@ -81,7 +81,7 @@ vec_as_location <- function(i,
 #'   locations, throw an informative `"error"`, or `"ignore"` them.
 #' @param oob If `"error"`, throws an informative `"error"` if some elements are
 #'   out-of-bounds. If `"remove"`, removes both positive and negative
-#'   out-of-bound locations. If `"extend"`, out-of-bounds locations are allowed
+#'   out-of-bounds locations. If `"extend"`, out-of-bounds locations are allowed
 #'   if they are consecutive after the end. This can be used to implement
 #'   extendable vectors like `letters[1:30]`.
 #' @param zero Whether to `"remove"` zero values, throw an informative
