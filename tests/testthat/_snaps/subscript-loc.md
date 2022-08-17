@@ -875,6 +875,60 @@
       ! Can't remove rows past the end.
       i Locations 27, 28, 29, and 30 don't exist.
       i There are only 26 rows.
+    Code
+      # With tidyselect select
+      (expect_error(with_tidyselect_select(vec_slice(set_names(letters), c("foo",
+        "bar"))), class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `vec_slice()`:
+      ! Can't select columns that don't exist.
+      x Columns `foo` and `bar` don't exist.
+    Code
+      (expect_error(with_tidyselect_select(vec_slice(set_names(letters), 30)), class = "vctrs_error_subscript_oob")
+      )
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `vec_slice()`:
+      ! Can't select columns past the end.
+      i Location 30 doesn't exist.
+      i There are only 26 columns.
+    Code
+      (expect_error(with_tidyselect_select(vec_slice(set_names(letters), -(1:30))),
+      class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `vec_slice()`:
+      ! Can't select columns past the end.
+      i Locations 27, 28, 29, and 30 don't exist.
+      i There are only 26 columns.
+    Code
+      # With tidyselect relocate
+      (expect_error(with_tidyselect_relocate(vec_slice(set_names(letters), c("foo",
+        "bar"))), class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `vec_slice()`:
+      ! Can't relocate columns that don't exist.
+      x Columns `foo` and `bar` don't exist.
+    Code
+      (expect_error(with_tidyselect_relocate(vec_slice(set_names(letters), 30)),
+      class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `vec_slice()`:
+      ! Can't relocate columns that don't exist.
+      i Location 30 doesn't exist.
+      i There are only 26 columns.
+    Code
+      (expect_error(with_tidyselect_relocate(vec_slice(set_names(letters), -(1:30))),
+      class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error in `vec_slice()`:
+      ! Can't relocate columns that don't exist.
+      i Locations 27, 28, 29, and 30 don't exist.
+      i There are only 26 columns.
 
 # vec_as_location() checks dimensionality
 

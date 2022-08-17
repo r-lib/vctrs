@@ -346,7 +346,9 @@ cnd_subscript_element_cli <- function(n, cnd, capital = FALSE) {
 }
 
 subscript_actions <- c(
-  "subset", "extract", "assign", "rename", "remove", "negate"
+  "select", "subset", "extract",
+  "assign", "rename", "relocate",
+  "remove", "negate"
 )
 cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   action <- cnd$subscript_action
@@ -360,10 +362,14 @@ cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   }
 
   if (!is_string(action, subscript_actions)) {
-    abort(paste0(
-      "Internal error: `cnd$subscript_action` must be one of ",
-      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
-    ))
+    subscript_actions <- glue::backtick(subscript_actions)
+    subscript_actions <- glue::glue_collapse(
+      subscript_actions,
+      sep = ", ",
+      last = ", or "
+    )
+    message <- glue::glue("`cnd$subscript_action` must be one of {subscript_actions}.")
+    abort(message, .internal = TRUE)
   }
 
   if (assign_to && action == "assign") {
