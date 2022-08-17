@@ -362,14 +362,10 @@ cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   }
 
   if (!is_string(action, subscript_actions)) {
-    subscript_actions <- glue::backtick(subscript_actions)
-    subscript_actions <- glue::glue_collapse(
-      subscript_actions,
-      sep = ", ",
-      last = ", or "
+    cli::cli_abort(
+      "`cnd$subscript_action` must be one of {.or {.arg {subscript_actions}}}.",
+      .internal = TRUE
     )
-    message <- glue::glue("`cnd$subscript_action` must be one of {subscript_actions}.")
-    abort(message, .internal = TRUE)
   }
 
   if (assign_to && action == "assign") {
