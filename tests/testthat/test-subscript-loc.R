@@ -485,6 +485,34 @@ test_that("can customise OOB errors", {
       with_tibble_rows(vec_slice(set_names(letters), -(1:30))),
       class = "vctrs_error_subscript_oob"
     ))
+
+    "With tidyselect select"
+    (expect_error(
+      with_tidyselect_select(vec_slice(set_names(letters), c("foo", "bar"))),
+      class = "vctrs_error_subscript_oob"
+    ))
+    (expect_error(
+      with_tidyselect_select(vec_slice(set_names(letters), 30)),
+      class = "vctrs_error_subscript_oob"
+    ))
+    (expect_error(
+      with_tidyselect_select(vec_slice(set_names(letters), -(1:30))),
+      class = "vctrs_error_subscript_oob"
+    ))
+
+    "With tidyselect relocate"
+    (expect_error(
+      with_tidyselect_relocate(vec_slice(set_names(letters), c("foo", "bar"))),
+      class = "vctrs_error_subscript_oob"
+    ))
+    (expect_error(
+      with_tidyselect_relocate(vec_slice(set_names(letters), 30)),
+      class = "vctrs_error_subscript_oob"
+    ))
+    (expect_error(
+      with_tidyselect_relocate(vec_slice(set_names(letters), -(1:30))),
+      class = "vctrs_error_subscript_oob"
+    ))
   })
 })
 

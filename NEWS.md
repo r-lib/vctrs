@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `"select"` and `"relocate"` have been added as valid subscript actions to
+  support tidyselect and dplyr (#1596).
+
 * `num_as_location()` has a new `oob = "remove"` argument to remove
   out-of-bounds locations (#1595).
 
