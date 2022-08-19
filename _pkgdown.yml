@@ -75,6 +75,7 @@ reference:
   contents:
   - vec_sort
   - vec_order
+  - vec_rank
 
 - title: Matching and splitting
   contents:
