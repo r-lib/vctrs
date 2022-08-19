@@ -18,9 +18,7 @@ recycling rules:
 Vectors of size 1 are recycled to the size of any other vector:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = 1:3, y = 1L)
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A tibble: 3 x 2
+#> # A tibble: 3 x 2
 #>       x     y
 #>   <int> <int>
 #> 1     1     1
@@ -31,9 +29,7 @@ Vectors of size 1 are recycled to the size of any other vector:
 This includes vectors of size 0:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = integer(), y = 1L)
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> # A tibble: 0 x 2
+#> # A tibble: 0 x 2
 #> # ... with 2 variables: x <int>, y <int>
 }\if{html}{\out{</div>}}
 
@@ -41,9 +37,7 @@ If vectors aren't size 1, they must all be the same size. Otherwise, an error
 is thrown:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = 1:3, y = 4:7)
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> Error:
+#> Error:
 #> ! Tibble columns must have compatible sizes.
 #> * Size 3: Existing data.
 #> * Size 4: Column `y`.
@@ -64,25 +58,17 @@ vectors to their common size
 }
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_size_common(1:3, "x")
-}\if{html}{\out{</div>}}
+#> [1] 3
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> [1] 3
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_recycle_common(1:3, "x")
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> [[1]]
+vec_recycle_common(1:3, "x")
+#> [[1]]
 #> [1] 1 2 3
 #> 
 #> [[2]]
 #> [1] "x" "x" "x"
-}\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_size_common(1:3, c("x", "y"))
-}\if{html}{\out{</div>}}
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{#> Error:
+vec_size_common(1:3, c("x", "y"))
+#> Error:
 #> ! Can't recycle `..1` (size 3) to match `..2` (size 2).
 }\if{html}{\out{</div>}}
 }
