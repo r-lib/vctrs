@@ -1,12 +1,14 @@
-#include "shape.h"
-#include "dim.h"
+#include "vctrs.h"
 
 // [[ register() ]]
-SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP frame) {
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
-  return vec_shaped_ptype(ptype, x, y, &x_arg_, &y_arg_);
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame };
+  struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
+
+  return vec_shaped_ptype(ptype, x, y, &x_arg, &y_arg);
 }
 
 static SEXP vec_shape2(SEXP x, SEXP y, struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
@@ -27,7 +29,7 @@ SEXP vec_shaped_ptype(SEXP ptype,
 
   ptype = PROTECT(r_clone_referenced(ptype));
 
-  r_poke_dim(ptype, ptype_dimensions);
+  r_attrib_poke_dim(ptype, ptype_dimensions);
 
   UNPROTECT(2);
   return ptype;
@@ -36,11 +38,14 @@ SEXP vec_shaped_ptype(SEXP ptype,
 // -----------------------------------------------------------------------------
 
 // [[ register() ]]
-SEXP vctrs_shape2(SEXP x, SEXP y, SEXP x_arg, SEXP y_arg) {
-  struct vctrs_arg x_arg_ = vec_as_arg(x_arg);
-  struct vctrs_arg y_arg_ = vec_as_arg(y_arg);
+SEXP vctrs_shape2(SEXP x, SEXP y, SEXP frame) {
+  struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
-  return vec_shape2(x, y, &x_arg_, &y_arg_);
+  struct r_lazy y_arg_ = { .x = syms.y_arg, .env = frame };
+  struct vctrs_arg y_arg = new_lazy_arg(&y_arg_);
+
+  return vec_shape2(x, y, &x_arg, &y_arg);
 }
 
 static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
@@ -97,7 +102,7 @@ static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
 
   // Sanity check, should never be true
   if (max_dimensionality == 0) {
-    stop_internal("vec_shape2_impl", "`max_dimensionality` must have length.");
+    r_stop_internal("`max_dimensionality` must have length.");
   }
 
   const int* p_x_dimensions = INTEGER_RO(x_dimensions);
@@ -140,11 +145,11 @@ static SEXP vec_shape(SEXP dimensions) {
   dimensions = PROTECT(r_clone_referenced(dimensions));
 
   if (Rf_length(dimensions) == 0) {
-    stop_internal("vec_shape", "`dimensions` must have length.");
+    r_stop_internal("`dimensions` must have length.");
   }
 
   if (TYPEOF(dimensions) != INTSXP) {
-    stop_internal("vec_shape", "`dimensions` must be an integer vector.");
+    r_stop_internal("`dimensions` must be an integer vector.");
   }
 
   INTEGER(dimensions)[0] = 0;

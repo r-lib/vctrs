@@ -38,6 +38,24 @@ vec_restore.AsIs <- function(x, to, ...) {
   asis_restore(x)
 }
 
+#' @export
+vec_proxy_equal.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_equal(x)
+}
+
+#' @export
+vec_proxy_compare.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_compare(x)
+}
+
+#' @export
+vec_proxy_order.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_order(x)
+}
+
 # ------------------------------------------------------------------------------
 # Coercion
 
@@ -72,14 +90,14 @@ vec_ptype2_asis <- function(x, y, ...) {
 # ------------------------------------------------------------------------------
 # Casting
 
-vec_cast_from_asis <- function(x, to, ...) {
+vec_cast_from_asis <- function(x, to, ..., call = caller_env()) {
   x <- asis_strip(x)
-  vec_cast(x, to, ...)
+  vec_cast(x, to, ..., call = call)
 }
 
-vec_cast_to_asis <- function(x, to, ...) {
+vec_cast_to_asis <- function(x, to, ..., call = caller_env()) {
   to <- asis_strip(to)
-  out <- vec_cast(x, to, ...)
+  out <- vec_cast(x, to, ..., call = call)
   asis_restore(out)
 }
 

@@ -48,7 +48,7 @@ test_that("subsetting works", {
 })
 
 test_that("has useful print method", {
-  expect_known_output(unspecified(), print = TRUE, file = test_path("test-type-unspecified.txt"))
+  expect_snapshot(unspecified())
 })
 
 test_that("can finalise data frame containing unspecified columns", {

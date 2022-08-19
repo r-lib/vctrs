@@ -14,7 +14,8 @@
 #'
 #' @includeRmd man/faq/developer/links-coercion.Rmd
 #'
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
 #' @param x,y Vector types.
 #' @param x_arg,y_arg Argument names for `x` and `y`. These are used
 #'   in error messages to inform the user about the locations of
@@ -27,20 +28,41 @@
 #' - [vec_ptype()] is applied to `x` and `y`
 #'
 #' @export
-vec_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2 <- function(x,
+                       y,
+                       ...,
+                       x_arg = caller_arg(x),
+                       y_arg = caller_arg(y),
+                       call = caller_env()) {
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
   }
-  return(.Call(vctrs_ptype2, x, y, x_arg, y_arg))
+  return(.Call(ffi_ptype2, x, y, environment()))
   UseMethod("vec_ptype2")
 }
-vec_ptype2_dispatch_s3 <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2_dispatch_s3 <- function(x,
+                                   y,
+                                   ...,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   call = caller_env()) {
   UseMethod("vec_ptype2")
 }
 
-vec_ptype2_dispatch_native <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2_dispatch_native <- function(x,
+                                       y,
+                                       ...,
+                                       x_arg = "",
+                                       y_arg = "",
+                                       call = caller_env()) {
   fallback_opts <- match_fallback_opts(...)
-  .Call(vctrs_ptype2_dispatch_native, x, y, fallback_opts, x_arg, y_arg)
+  .Call(
+    ffi_ptype2_dispatch_native,
+    x,
+    y,
+    fallback_opts,
+    frame = environment()
+  )
 }
 
 #' Default cast and ptype2 methods
@@ -68,12 +90,29 @@ vec_ptype2_dispatch_native <- function(x, y, ..., x_arg = "", y_arg = "") {
 #'
 #' @keywords internal
 #' @export
-vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_default_ptype2 <- function(x,
+                               y,
+                               ...,
+                               x_arg = "",
+                               y_arg = "",
+                               call = caller_env()) {
   if (is_asis(x)) {
-    return(vec_ptype2_asis_left(x, y, x_arg = x_arg, y_arg = y_arg))
+    return(vec_ptype2_asis_left(
+      x,
+      y,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      call = call
+    ))
   }
   if (is_asis(y)) {
-    return(vec_ptype2_asis_right(x, y, x_arg = x_arg, y_arg = y_arg))
+    return(vec_ptype2_asis_right(
+      x,
+      y,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      call = call
+    ))
   }
 
   opts <- match_fallback_opts(...)
@@ -81,7 +120,14 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   # If both data frames, first find common type of columns before the
   # same-type fallback
   if (df_needs_normalisation(x, y, opts)) {
-    out <- vec_ptype2_df_fallback_normalise(x, y, opts)
+    out <- vec_ptype2_df_fallback_normalise(
+      x,
+      y,
+      opts,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      call = call
+    )
     x <- out$x
     y <- out$y
   }
@@ -99,10 +145,24 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
 
   if (has_df_fallback(opts$df_fallback)) {
     if (is_df_subclass(x) && is.data.frame(y)) {
-      return(vec_ptype2_df_fallback(x, y, opts))
+      return(vec_ptype2_df_fallback(
+        x,
+        y,
+        opts,
+        x_arg = x_arg,
+        y_arg = y_arg,
+        call = call
+      ))
     }
     if (is_df_subclass(y) && is.data.frame(x)) {
-      return(vec_ptype2_df_fallback(x, y, opts))
+      return(vec_ptype2_df_fallback(
+        x,
+        y,
+        opts,
+        x_arg = x_arg,
+        y_arg = y_arg,
+        call = call
+      ))
     }
   }
 
@@ -115,7 +175,26 @@ vec_default_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
     y,
     x_arg = x_arg,
     y_arg = y_arg,
-    `vctrs:::from_dispatch` = match_from_dispatch(...)
+    `vctrs:::from_dispatch` = match_from_dispatch(...),
+    call = call
+  )
+}
+
+# This wrapper for `stop_incompatible_type()` matches error context
+# arguments. It is useful to pass ptype2 arguments through dots
+# without risking unknown arguments getting stored as condition fields.
+vec_incompatible_ptype2 <- function(x,
+                                    y,
+                                    ...,
+                                    x_arg = "",
+                                    y_arg = "",
+                                    call = caller_env()) {
+  stop_incompatible_type(
+    x,
+    y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    call = call
   )
 }
 
@@ -177,7 +256,7 @@ check_ptype2_dots_empty <- function(...,
                                     `vctrs:::from_dispatch`,
                                     `vctrs:::df_fallback`,
                                     `vctrs:::s3_fallback`) {
-  ellipsis::check_dots_empty()
+  check_dots_empty0(...)
 }
 match_fallback_opts <- function(...,
                                 `vctrs:::df_fallback` = NULL,
@@ -212,8 +291,9 @@ vec_ptype2_opts <- function(x,
                             ...,
                             opts,
                             x_arg = "",
-                            y_arg = "") {
-  .Call(vctrs_ptype2_opts, x, y, opts, x_arg, y_arg)
+                            y_arg = "",
+                            call = caller_env()) {
+  .Call(ffi_ptype2_opts, x, y, opts, environment())
 }
 vec_ptype2_params <- function(x,
                               y,
@@ -221,20 +301,42 @@ vec_ptype2_params <- function(x,
                               df_fallback = NULL,
                               s3_fallback = NULL,
                               x_arg = "",
-                              y_arg = "") {
+                              y_arg = "",
+                              call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = df_fallback,
     s3_fallback = s3_fallback
   )
-  vec_ptype2_opts(x, y, opts = opts, x_arg = x_arg, y_arg = y_arg)
+  vec_ptype2_opts(
+    x,
+    y,
+    opts = opts,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    call = call
+  )
 }
 
-vec_ptype2_no_fallback <- function(x, y, ..., x_arg = "", y_arg = "") {
+vec_ptype2_no_fallback <- function(x,
+                                   y,
+                                   ...,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = DF_FALLBACK_none,
     s3_fallback = S3_FALLBACK_false
   )
-  vec_ptype2_opts(x, y, ..., , opts = opts, x_arg = x_arg, y_arg = y_arg)
+  vec_ptype2_opts(
+    x,
+    y,
+    ...,
+   ,
+    opts = opts,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    call = call
+  )
 }
 
 
@@ -281,18 +383,16 @@ vec_is_coercible <- function(x,
                              ...,
                              opts = fallback_opts(),
                              x_arg = "",
-                             y_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+                             y_arg = "",
+                             call = caller_env()) {
+  check_dots_empty0(...)
 
   .Call(
-    vctrs_is_coercible,
+    ffi_is_coercible,
     x,
     y,
     opts,
-    x_arg,
-    y_arg
+    environment()
   )
 }
 

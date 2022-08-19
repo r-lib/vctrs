@@ -1,5 +1,4 @@
 #' @description
-#' \if{html}{\figure{logo.png}{options: align='right'}}
 #' `r lifecycle::badge("maturing")`
 #'
 #' Defines new notions of prototype and size that are

@@ -1,14 +1,10 @@
 
-test_that("vec_cast() has helpful error messages", {
-  verify_output(test_path("error", "test-cast.txt"), {
-    "# Casting to named argument mentions 'match type <foo>'"
-    vec_cast(1, "", x_arg = "foo", to_arg = "bar")
-    vec_cast(1, "", x_arg = "foo")
-  })
+test_that("Casting to named argument mentions 'match type <foo>'", {
+  expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo", to_arg = "bar"))
+  expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo"))
 })
 
-
-# vec_cast ---------------------------------------------------------------
+# vec_cast() ---------------------------------------------------------------
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
@@ -55,27 +51,31 @@ test_that("cast common preserves names", {
 })
 
 test_that("cast errors create helpful messages (#57, #225)", {
-  expect_known_output(file = test_path("test-cast-error-nested.txt"), {
-    # Lossy cast
-    try2(vec_cast("foo", 10))
+  # Lossy cast
+  expect_snapshot(error = TRUE, vec_cast(1.5, 10L))
 
-    # Incompatible cast
-    try2(vec_cast(factor("foo"), 10))
+  # Incompatible cast
+  expect_snapshot(error = TRUE, vec_cast(factor("foo"), 10))
 
+  # Nested data frames - Lossy cast
+  expect_snapshot(error = TRUE, {
+    x <- tibble(a = tibble(b = 1.5))
+    y <- tibble(a = tibble(b = 10L))
+    vec_cast(x, y)
+  })
 
-    ## Nested data frames
-
-    # Lossy cast
-    x <- tibble(a = tibble(b = "foo"))
-    y <- tibble(a = tibble(b = 10))
-    try2(vec_cast(x, y))
-
-    # Incompatible cast
+  # Nested data frames - Incompatible cast
+  expect_snapshot(error = TRUE, {
     x <- tibble(a = tibble(b = factor("foo")))
-    try2(vec_cast(x, y))
+    y <- tibble(a = tibble(b = 10))
+    vec_cast(x, y)
+  })
 
-    # Common cast error
-    try2(vec_cast_common(x, y))
+  # Nested data frames - Common cast error
+  expect_snapshot(error = TRUE, {
+    x <- tibble(a = tibble(b = factor("foo")))
+    y <- tibble(a = tibble(b = 10))
+    vec_cast_common(x, y)
   })
 })
 
@@ -98,6 +98,20 @@ test_that("vec_cast() only falls back when casting to base type", {
     vec_cast(mtcars, foobar(mtcars)),
     class = "vctrs_error_incompatible_type"
   )
+})
+
+test_that("vec_cast() only attempts to fall back if `to` is a data frame (#1568)", {
+  expect_snapshot({
+    (expect_error(
+      vec_cast(foobar(mtcars), 1),
+      class = "vctrs_error_incompatible_type"
+    ))
+  })
+})
+
+test_that("vec_cast() evaluates x_arg and to_arg lazily", {
+  expect_silent(vec_cast(TRUE, logical(), x_arg = print("oof")))
+  expect_silent(vec_cast(TRUE, logical(), to_arg = print("oof")))
 })
 
 
@@ -129,10 +143,10 @@ test_that("can signal deprecation warnings for lossy casts", {
     )
   }
 
-  expect_true(expect_warning(lossy_cast(), "detected a lossy transformation"))
-  expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast())))
-  expect_true(expect_warning(regexp = NA, allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
-  expect_true(expect_warning(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
+  expect_warning(expect_true(lossy_cast()), "detected a lossy transformation")
+  expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast())))
+  expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
+  expect_warning(expect_true(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
 })
 
 

@@ -1,7 +1,0 @@
-          logical   integer   double   character   raw   list  
-logical   "logical" "integer" "double" NA          NA    NA    
-integer   "integer" "integer" "double" NA          NA    NA    
-double    "double"  "double"  "double" NA          NA    NA    
-character NA        NA        NA       "character" NA    NA    
-raw       NA        NA        NA       NA          "raw" NA    
-list      NA        NA        NA       NA          NA    "list"

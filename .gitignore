@@ -4,3 +4,6 @@ man/faq/**/*.html
 .Rhistory
 .RData
 docs
+.clangd
+launch.json
+.vscode/

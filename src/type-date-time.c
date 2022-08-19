@@ -1,6 +1,4 @@
 #include "vctrs.h"
-#include "owned.h"
-#include "utils.h"
 
 
 static SEXP new_date(SEXP x);
@@ -280,8 +278,8 @@ static SEXP new_date(SEXP x) {
 
   SET_ATTRIB(out, R_NilValue);
 
-  r_poke_names(out, names);
-  r_poke_class(out, classes_date);
+  r_attrib_poke_names(out, names);
+  r_attrib_poke_class(out, classes_date);
 
   UNPROTECT(2);
   return out;
@@ -314,8 +312,8 @@ static SEXP new_datetime(SEXP x, SEXP tzone) {
 
   SET_ATTRIB(out, R_NilValue);
 
-  r_poke_names(out, names);
-  r_poke_class(out, classes_posixct);
+  r_attrib_poke_names(out, names);
+  r_attrib_poke_class(out, classes_posixct);
   Rf_setAttrib(out, syms_tzone, tzone);
 
   UNPROTECT(2);
@@ -343,9 +341,8 @@ static SEXP date_validate(SEXP x) {
     // Keeps attributes
     return Rf_coerceVector(x, REALSXP);
   default:
-    stop_internal("date_validate",
-                  "Corrupt `Date` with unknown type %s.",
-                  Rf_type2char(TYPEOF(x)));
+    r_stop_internal("Corrupt `Date` with unknown type %s.",
+                    Rf_type2char(TYPEOF(x)));
   }
 }
 
@@ -387,9 +384,8 @@ static SEXP datetime_validate_type(SEXP x) {
     // Keeps attributes
     return Rf_coerceVector(x, REALSXP);
   default:
-    stop_internal("datetime_validate_type",
-                  "Corrupt `POSIXct` with unknown type %s.",
-                  Rf_type2char(TYPEOF(x)));
+    r_stop_internal("Corrupt `POSIXct` with unknown type %s.",
+                    Rf_type2char(TYPEOF(x)));
   }
 
   never_reached("datetime_validate_type");

@@ -10,15 +10,21 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include "order-sortedness.h"
-#include "utils.h"
+#include "vctrs.h"
 
 // -----------------------------------------------------------------------------
 
-static inline int dbl_cmp(double x, double y, const int direction, const int na_order);
+static inline int dbl_cmp(double x,
+                          double y,
+                          enum vctrs_dbl_class x_type,
+                          enum vctrs_dbl_class y_type,
+                          int direction,
+                          int na_order,
+                          int na_nan_order);
 
 /*
- * Check if a double vector is ordered, handling `decreasing` and `na_last`
+ * Check if a double vector is ordered, handling `decreasing`, `na_last`, and
+ * `nan_distinct`.
  *
  * If the double vector is in the expected ordering, no sorting needs to
  * occur. In these cases, if `p_x` is in exactly the expected ordering.
@@ -31,6 +37,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
                                      r_ssize size,
                                      bool decreasing,
                                      bool na_last,
+                                     bool nan_distinct,
                                      struct group_infos* p_group_infos) {
   if (size == 0) {
     return VCTRS_SORTEDNESS_sorted;
@@ -43,8 +50,10 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
 
   const int direction = decreasing ? -1 : 1;
   const int na_order = na_last ? 1 : -1;
+  const int na_nan_order = nan_distinct ? na_order : 0;
 
   double previous = p_x[0];
+  enum vctrs_dbl_class previous_type = dbl_classify(previous);
 
   r_ssize count = 0;
 
@@ -52,12 +61,16 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
     double current = p_x[i];
+    enum vctrs_dbl_class current_type = dbl_classify(current);
 
     int cmp = dbl_cmp(
       current,
       previous,
+      current_type,
+      previous_type,
       direction,
-      na_order
+      na_order,
+      na_nan_order
     );
 
     if (cmp >= 0) {
@@ -65,6 +78,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
     }
 
     previous = current;
+    previous_type = current_type;
   }
 
   // Was in strictly opposite of expected order.
@@ -93,12 +107,16 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
     double current = p_x[i];
+    enum vctrs_dbl_class current_type = dbl_classify(current);
 
     int cmp = dbl_cmp(
       current,
       previous,
+      current_type,
+      previous_type,
       direction,
-      na_order
+      na_order,
+      na_nan_order
     );
 
     // Not expected ordering
@@ -108,6 +126,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
     }
 
     previous = current;
+    previous_type = current_type;
 
     // Continue group run
     if (cmp == 0) {
@@ -127,25 +146,45 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   return VCTRS_SORTEDNESS_sorted;
 }
 
+static inline int dbl_cmp_numbers(double x, double y, int direction);
+
 /*
- * Compare two doubles, handling `na_order` and `direction`
+ * Compare two doubles, handling `na_order`, `direction`, and `na_nan_order`
  */
 static inline
-int dbl_cmp(double x, double y, const int direction, const int na_order) {
-  if (isnan(x)) {
-    if (isnan(y)) {
-      return 0;
-    } else {
-      return na_order;
+int dbl_cmp(double x,
+            double y,
+            enum vctrs_dbl_class x_type,
+            enum vctrs_dbl_class y_type,
+            int direction,
+            int na_order,
+            int na_nan_order) {
+  switch (x_type) {
+  case vctrs_dbl_number:
+    switch (y_type) {
+    case vctrs_dbl_number: return dbl_cmp_numbers(x, y, direction);
+    case vctrs_dbl_missing: return -na_order;
+    case vctrs_dbl_nan: return -na_order;
+    }
+  case vctrs_dbl_missing:
+    switch (y_type) {
+    case vctrs_dbl_number: return na_order;
+    case vctrs_dbl_missing: return 0;
+    case vctrs_dbl_nan: return na_nan_order;
+    }
+  case vctrs_dbl_nan:
+    switch (y_type) {
+    case vctrs_dbl_number: return na_order;
+    case vctrs_dbl_missing: return -na_nan_order;
+    case vctrs_dbl_nan: return 0;
     }
   }
+  never_reached("dbl_cmp");
+}
 
-  if (isnan(y)) {
-    return -na_order;
-  }
-
-  int cmp = (x > y) - (x < y);
-
+static inline
+int dbl_cmp_numbers(double x, double y, int direction) {
+  const int cmp = (x > y) - (x < y);
   return cmp * direction;
 }
 

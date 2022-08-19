@@ -490,7 +490,7 @@ new_rational <- function(n = integer(), d = integer()) {
 Our user friendly constructor casts `n` and `d` to integers and recycles them to the same length.
 
 ```{r}
-rational <- function(n, d) {
+rational <- function(n = integer(), d = integer()) {
   c(n, d) %<-% vec_cast_common(n, d, .to = integer())
   c(n, d) %<-% vec_recycle_common(n, d)
 
@@ -606,15 +606,25 @@ decimal2(10, c(0, 5, 99))
 
 ## Equality and comparison
 
-vctrs provides three "proxy" generics. Two of these let you control how your class determines equality and ordering:
+vctrs provides four "proxy" generics. Two of these let you control how your class determines equality and comparison:
 
 * `vec_proxy_equal()` returns a data vector suitable for comparison. It underpins `==`, `!=`, `unique()`, `anyDuplicated()`, and `is.na()`.
 
-* `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, `quantile()`, and `xtfrm()` (used in `order()` and `sort()`) methods.
+* `vec_proxy_compare()` specifies how to compare the elements of your vector.  This proxy is used in `<`, `<=`, `>=`, `>`, `min()`, `max()`, `median()`, and `quantile()`.
 
-By default, `vec_proxy_equal()` and `vec_proxy_compare()` just call `vec_proxy()`.
+Two other proxy generic are used for sorting for unordered data types and for accessing the raw data for exotic storage formats:
+
+* `vec_proxy_order()` specifies how to sort the elements of your vector. It is used in `xtfrm()`, which in turn is called by the `order()` and `sort()` functions.
+
+    This proxy was added to implement the behaviour of lists, which are sortable (their order proxy sorts by first occurrence) but not comparable (comparison operators cause an error). Its default implementation for other classes calls `vec_proxy_compare()` and you normally don't need to implement this proxy.
 
 * `vec_proxy()` returns the actual data of a vector. This is useful when you store the data in a field of your class. Most of the time, you shouldn't need to implement `vec_proxy()`.
+
+The default behavior is as follows:
+
+- `vec_proxy_equal()` calls `vec_proxy()`
+- `vec_proxy_compare()` calls `vec_proxy_equal()`
+- `vec_proxy_order()` calls `vec_proxy_compare()`
 
 You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
 
@@ -661,19 +671,26 @@ x == rational(1, 1)
 unique(x)
 ```
 
-We now need to fix `sort()` similarly, since it currently sorts by `n`, then by `d`:
+We now need to fix the comparison operations similarly, since comparison currently happens lexicographically by `n`, then by `d`:
 
 ```{r}
-sort(x)
+rational(1, 2) < rational(2, 3)
+rational(2, 4) < rational(2, 3)
 ```
 
-The easiest fix is to convert the fraction to a decimal and then sort that:
+The easiest fix is to convert the fraction to a floating point number and use this as a proxy:
 
 ```{r}
 vec_proxy_compare.pizza_rational <- function(x, ...) {
   field(x, "n") / field(x, "d")
 }
 
+rational(2, 4) < rational(2, 3)
+```
+
+This also fixes `sort()`, because the default implementation of `vec_proxy_order()` calls `vec_proxy_compare()`.
+
+```{r}
 sort(x)
 ```
 
@@ -720,7 +737,7 @@ obj_print_data.pizza_poly <- function(x, ...) {
   print(format(x), quote = FALSE)
 }
 
-p <- poly(1, c(1, 0, 1), c(1, 0, 0, 0, 2))
+p <- poly(1, c(1, 0, 0, 0, 2), c(1, 0, 1))
 p
 ```
 
@@ -738,13 +755,13 @@ Equality works out of the box because we can tell if two integer vectors are equ
 p == poly(c(1, 0, 1))
 ```
 
-But we can't order them because lists are not comparable:
+We can't compare individual elements, because by default lists are not comparable:
 
 ```{r, error = TRUE}
-sort(p)
+p < p[2]
 ```
 
-So we need to define a `vec_proxy_compare()` method:
+To enable comparison, we implement a `vec_proxy_compare()` method:
 
 ```{r}
 vec_proxy_compare.pizza_poly <- function(x, ...) {
@@ -759,8 +776,24 @@ vec_proxy_compare.pizza_poly <- function(x, ...) {
   as.data.frame(do.call(rbind, full))
 }
 
-sort(poly(3, 2, 1))
-sort(poly(1, c(1, 0, 0), c(1, 0)))
+p < p[2]
+```
+
+Often, this is sufficient to also implement `sort()`. However, for lists, there is already a default `vec_proxy_order()` method that sorts by first occurrence:
+
+```{r}
+sort(p)
+sort(p[c(1:3, 1:2)])
+```
+
+To ensure consistency between ordering and comparison, we forward `vec_proxy_order()` to `vec_proxy_compare()`:
+
+```{r}
+vec_proxy_order.vctrs_poly <- function(x, ...) {
+  vec_proxy_compare(x, ...)
+}
+
+sort(p)
 ```
 
 
@@ -1051,7 +1084,7 @@ vec_ptype_abbr.pizza_percent <- function(x, ...) {
 
 Finally, we implement methods for `vec_ptype2()` and `vec_cast()`.
 
-```{r}
+```{r, eval = FALSE}
 #' @export
 vec_ptype2.pizza_percent.pizza_percent <- function(x, y, ...) new_percent()
 #' @export
@@ -1060,12 +1093,10 @@ vec_ptype2.double.pizza_percent <- function(x, y, ...) double()
 
 The exact same roxygen2 treatment is needed for `vec_cast()`, which yields:
 
-```{r eval = FALSE}
 #' @export
 vec_cast.pizza_percent.pizza_percent <- function(x, to, ...) x
 #' @export
 vec_cast.pizza_percent.double <- function(x, to, ...) percent(x)
-#' @method vec_cast.double pizza_percent
 #' @export
 vec_cast.double.pizza_percent <- function(x, to, ...) vec_data(x)
 ```
@@ -1090,3 +1121,10 @@ It's good practice to test your new class. Specific recommendations:
     ```
 
 If your tests pass when run by `devtools::test()`, but fail when run in `R CMD check`, it is very likely to reflect a problem with S3 method registration. Carefully check your roxygen2 comments and the generated `NAMESPACE`.
+
+
+### Existing classes
+
+Before you build your own class, you might want to consider using, or subclassing existing classes. You can check [awesome-vctrs](https://github.com/krlmlr/awesome-vctrs) for a curated list of R vector classes, some of which are built with vctrs.
+
+If you've built or extended a class, consider adding it to that list so other people can use it.

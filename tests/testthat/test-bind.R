@@ -1,3 +1,4 @@
+local_name_repair_quiet()
 
 # rows --------------------------------------------------------------------
 
@@ -23,12 +24,29 @@ test_that("vec_rbind() output is tibble if any input is tibble", {
 test_that("type of column is common type of individual columns", {
   x_int <- data_frame(x = 1L)
   x_dbl <- data_frame(x = 2.5)
-  x_chr <- data_frame(x = "a")
 
   expect_equal(vec_rbind(x_int, x_int), data_frame(x = c(1L, 1L)))
   expect_equal(vec_rbind(x_int, x_dbl), data_frame(x = c(1, 2.5)))
+})
 
-  expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type")
+test_that("incompatible columns throws common type error", {
+  x_int <- data_frame(x = 1L)
+  x_chr <- data_frame(x = "a")
+
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(x_int, x_chr),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_rbind(x_int, x_chr, .call = call("foo")),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      class = "vctrs_error_incompatible_type"
+    ))
+  })
 })
 
 test_that("result contains union of columns", {
@@ -57,7 +75,8 @@ test_that("all inputs coerced to data frames", {
 })
 
 test_that("names are supplied if needed", {
-  expect_message(out <- vec_rbind(data_frame(...1 = 1), 1), "->")
+  local_name_repair_verbose()
+  expect_snapshot(out <- vec_rbind(data_frame(...1 = 1), 1))
   expect_equal(out, data_frame(...1 = c(1, 1)))
 })
 
@@ -160,25 +179,27 @@ test_that("can rbind table objects (#913)", {
 })
 
 test_that("can rbind missing vectors", {
-  expect_identical(vec_rbind(na_int), data_frame(...1 = na_int))
-  expect_identical(vec_rbind(na_int, na_int), data_frame(...1 = int(na_int, na_int)))
+  expect_identical(vec_rbind(c(x = na_int)), data_frame(x = na_int))
+  expect_identical(vec_rbind(c(x = na_int), c(x = na_int)), data_frame(x = int(na_int, na_int)))
 })
 
 test_that("vec_rbind() respects size invariants (#286)", {
   expect_identical(vec_rbind(), new_data_frame(n = 0L))
 
   expect_identical(vec_rbind(int(), int()), new_data_frame(n = 2L))
-  expect_identical(vec_rbind(int(), TRUE), new_data_frame(list(...1 = lgl(NA, TRUE))))
+  expect_identical(vec_rbind(c(x = int()), c(x = TRUE)), new_data_frame(list(x = lgl(NA, TRUE))))
 
   expect_identical(vec_rbind(int(), new_data_frame(n = 2L), int()), new_data_frame(n = 4L))
 })
 
 test_that("can repair names in `vec_rbind()` (#229)", {
-  expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`")
-  expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`")
+  expect_snapshot({
+    (expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`"))
+    (expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`"))
+    (expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+  })
 
   expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = "unique"), c("a...1", "a...2"))
-  expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_rbind(list(`_` = 1)), "_")
   expect_named(vec_rbind(list(`_` = 1), .name_repair = "universal"), c("._"))
@@ -198,7 +219,10 @@ test_that("can construct an id column", {
 })
 
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
-  expect_error(vec_rbind(array(NA, c(1, 1, 1))), "Can't bind arrays")
+  expect_snapshot({
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1)))))
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
+  })
 })
 
 test_that("row names are preserved by vec_rbind()", {
@@ -216,14 +240,16 @@ test_that("can assign row names in vec_rbind()", {
   df1 <- mtcars[1:3, ]
   df2 <- mtcars[4:5, ]
 
-  expect_error(
-    vec_rbind(
-      foo = df1,
-      df2,
-      .names_to = NULL
-    ),
-    "specification"
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(
+        foo = df1,
+        df2,
+        .names_to = NULL
+      ),
+      "specification"
+    ))
+  })
 
   # Combination
   out <- vec_rbind(
@@ -367,6 +393,16 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 
 # cols --------------------------------------------------------------------
 
+test_that("vec_cbind() reports error context", {
+  expect_snapshot({
+    (expect_error(vec_cbind(foobar(list()))))
+    (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+
+    (expect_error(vec_cbind(a = 1:2, b = int())))
+    (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+  })
+})
+
 test_that("empty inputs give data frame", {
   expect_equal(vec_cbind(), data_frame())
   expect_equal(vec_cbind(NULL), data_frame())
@@ -405,12 +441,12 @@ test_that("matrix becomes data frame", {
 })
 
 test_that("duplicate names are de-deduplicated", {
-  expect_message(
-    expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")),
-    "x -> x...1",
-    fixed = TRUE
-  )
-  expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1", "x...2"))
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    (expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")))
+    (expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1", "x...2")))
+  })
 })
 
 test_that("rows recycled to longest", {
@@ -440,14 +476,16 @@ test_that("vec_cbind() output is tibble if any input is tibble", {
 })
 
 test_that("can override default .nrow", {
-  expect_dim(vec_cbind(1, .size = 3), c(3, 1))
+  expect_dim(vec_cbind(x = 1, .size = 3), c(3, 1))
 })
 
 test_that("can repair names in `vec_cbind()` (#227)", {
-  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`")
+  expect_snapshot({
+    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"), "can't be `\"none\"`"))
+    (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique"))
+  })
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "unique"), c("a...1", "a...2"))
-  expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
 
   expect_named(vec_cbind(`_` = 1, .name_repair = "universal"), "._")
 
@@ -456,8 +494,11 @@ test_that("can repair names in `vec_cbind()` (#227)", {
 })
 
 test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
-  expect_error(vec_rbind(.names_to = letters), "must be")
-  expect_error(vec_rbind(.names_to = 10), "must be")
+  expect_snapshot({
+    (expect_error(vec_rbind(.names_to = letters)))
+    (expect_error(vec_rbind(.names_to = 10)))
+    (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
+  })
 
   x <- data_frame(foo = 1:2, bar = 3:4)
   y <- data_frame(foo = 5L, bar = 6L)
@@ -553,8 +594,12 @@ test_that("names are not repaired if packed", {
 
 test_that("vec_cbind() fails with arrays of dimensionality > 3", {
   a <- array(NA, c(1, 1, 1))
-  expect_error(vec_cbind(a), "Can't bind arrays")
-  expect_error(vec_cbind(x = a), "Can't bind arrays")
+
+  expect_snapshot({
+    (expect_error(vec_cbind(a)))
+    (expect_error(vec_cbind(a, .call = call("foo"))))
+    (expect_error(vec_cbind(x = a)))
+  })
 })
 
 test_that("monitoring: name repair while cbinding doesn't modify in place", {
@@ -619,9 +664,10 @@ test_that("vec_cbind() consistently handles unnamed outputs", {
   )
 })
 
-test_that("rbind() and cbind() have informative outputs when repairing names", {
-  verify_output(test_path("output", "bind-name-repair.txt"), {
-    "# vec_rbind()"
+test_that("vec_rbind() name repair messages are useful", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
     vec_rbind(1, 2)
     vec_rbind(1, 2, .names_to = NULL)
 
@@ -633,14 +679,20 @@ test_that("rbind() and cbind() have informative outputs when repairing names", {
 
     vec_rbind(c(a = 1), c(b = 2))
     vec_rbind(c(a = 1), c(b = 2), .names_to = NULL)
+  })
+})
 
-    "Silent when assigning duplicate row names of df-cols"
-    df <- new_data_frame(list(x = mtcars[1:3, 1, drop = FALSE]))
-    vec_rbind(df, df)
+test_that("vec_rbind() is silent when assigning duplicate row names of df-cols", {
+  df <- new_data_frame(list(x = mtcars[1:3, 1, drop = FALSE]))
 
-    vec_rbind(mtcars[1:4, ], mtcars[1:3, ])
+  expect_snapshot(vec_rbind(df, df))
+  expect_snapshot(vec_rbind(mtcars[1:4, ], mtcars[1:3, ]))
+})
 
-    "# vec_cbind()"
+test_that("vec_cbind() name repair messages are useful", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
     vec_cbind(1, 2)
     vec_cbind(1, 2, ...10 = 3)
     vec_cbind(a = 1, b = 2)
@@ -694,10 +746,16 @@ test_that("rbind repairs names of data frames (#704)", {
   expect_identical(vec_rbind(df), df_repaired)
   expect_identical(vec_rbind(df, df), vec_rbind(df_repaired, df_repaired))
 
-  expect_error(
-    vec_rbind(df, df, .name_repair = "check_unique"),
-    class = "vctrs_error_names_must_be_unique"
-  )
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(df, df, .name_repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"
+    ))
+    (expect_error(
+      vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo")),
+      class = "vctrs_error_names_must_be_unique"
+    ))
+  })
 })
 
 test_that("vec_rbind() works with simple homogeneous foreign S3 classes", {
@@ -720,21 +778,24 @@ test_that("vec_rbind() works with simple homogeneous foreign S4 classes", {
 })
 
 test_that("vec_rbind() fails with complex foreign S3 classes", {
-  verify_errors({
+  expect_snapshot({
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
-    expect_error(
+
+    (expect_error(
       vec_rbind(set_names(x, "x"), set_names(y, "x")),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
 test_that("vec_rbind() fails with complex foreign S4 classes", {
-  verify_errors({
+  skip_if_cant_set_names_on_s4()
+
+  expect_snapshot({
     joe <- .Counts(1L, name = "Joe")
     jane <- .Counts(2L, name = "Jane")
-    expect_error(vec_rbind(joe, jane), class = "vctrs_error_incompatible_type")
+    (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "y")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -850,27 +911,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available for S4 class"
   expect_identical(out$x, .Counts(1:3, name = "dispatched"))
 })
 
-test_that("vec_cbind() and vec_rbind() have informative error messages", {
-  skip_if_cant_set_names_on_s4()
-
-  verify_output(test_path("error", "test-bind.txt"), {
-    "# vec_rbind() fails with complex foreign S3 classes"
-    x <- structure(foobar(1), attr_foo = "foo")
-    y <- structure(foobar(2), attr_bar = "bar")
-    vec_rbind(set_names(x, "x"), set_names(y, "x"))
-
-    "# vec_rbind() fails with complex foreign S4 classes"
-    joe <- .Counts(1L, name = "Joe")
-    jane <- .Counts(2L, name = "Jane")
-    vec_rbind(set_names(joe, "x"), set_names(jane, "x"))
-  })
-})
-
 test_that("rbind supports names and inner names (#689)", {
-  skip_if(getRversion() >= "4.1.0", "work around r-devel bug")
-  # Introduced in
-  # https://github.com/wch/r-source/commit/275bb3db02491899bbadc28fea69dcdd6fedf41e
-
   out <- vec_rbind(
     data_frame(x = list(a = 1, b = 2)),
     data_frame(x = list(3)),
@@ -907,7 +948,6 @@ test_that("vec_rbind() doesn't fall back to c() with proxied classes (#1119)", {
   foobar_rcrd <- function(x, y) new_rcrd(list(x = x, y = y), class = "vctrs_foobar")
 
   x <- foobar_rcrd(x = 1:2, y = 3:4)
-  y <- foobar_rcrd(x = 5L, y = 6L)
 
   out <- vec_rbind(x, x)
   exp <- data_frame(
@@ -949,11 +989,15 @@ test_that("can't zap names when `.names_to` is supplied", {
     vec_rbind(foo = c(x = 1), .names_to = zap(), .name_spec = zap()),
     data.frame(x = 1)
   )
-  expect_error(
-    vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap()),
-    "Can't zap outer names when `.names_to` is supplied.",
-    fixed = TRUE
-  )
+
+  expect_snapshot({
+    (expect_error(
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
+    ))
+    (expect_error(
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call("foo"))
+    ))
+  })
 })
 
 test_that("can zap outer names from a name-spec (#1215)", {
@@ -987,17 +1031,58 @@ test_that("column names are treated consistently in vec_rbind()", {
   expect_error(vec_rbind(x, x), "Can't bind arrays")
 })
 
+test_that("can repair names of row-binded vectors (#1567)", {
+  local_name_repair_verbose()
+  expect_silent(
+    expect_named(
+      vec_rbind(
+        x = 1:3,
+        y = 4:6,
+        .name_repair = function(x) c("a", "a", "a")
+      ),
+      c("a", "a", "a")
+    )
+  )
+})
+
+test_that("can repair names of row-binded matrices", {
+  local_name_repair_verbose()
+  expect_silent({
+    expect_named(
+      vec_rbind(
+        x = matrix(1:3, 1),
+        y = matrix(4:6, 1),
+        .name_repair = function(x) c("a", "a", "a")
+      ),
+      c("a", "a", "a")
+    )
+
+    expect_named(
+      vec_rbind(
+        x = matrix(1:3, 1),
+        y = 4:6,
+        .name_repair = function(x) c("a", "a", "a")
+      ),
+      c("a", "a", "a")
+    )
+  })
+})
+
 
 # Golden tests -------------------------------------------------------
 
-test_that("rows-binding performs expected allocations", {
-  verify_output(test_path("performance", "test-bind.txt"), {
+test_that("row-binding performs expected allocations", {
+  vec_rbind_list <- function(x) {
+    vec_rbind(!!!x)
+  }
+
+  expect_snapshot({
     ints <- rep(list(1L), 1e2)
     named_ints <- rep(list(set_names(1:3, letters[1:3])), 1e2)
 
     "Integers as rows"
-    suppressMessages(with_memory_prof(vec_rbind(!!!ints)))
-    suppressMessages(with_memory_prof(vec_rbind(!!!named_ints)))
+    suppressMessages(with_memory_prof(vec_rbind_list(ints)))
+    suppressMessages(with_memory_prof(vec_rbind_list(named_ints)))
 
     "Data frame with named columns"
     df <- data_frame(
@@ -1006,17 +1091,17 @@ test_that("rows-binding performs expected allocations", {
       z = data_frame(Z = set_names(1:2, c("Za", "Zb")))
     )
     dfs <- rep(list(df), 1e2)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     "Data frame with rownames (non-repaired, non-recursive case)"
     df <- data_frame(x = 1:2)
     dfs <- rep(list(df), 1e2)
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     "Data frame with rownames (repaired, non-recursive case)"
     dfs <- map(dfs, set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     # FIXME: The following recursive cases duplicate rownames
     # excessively because df-cols are restored at each chunk
@@ -1028,10 +1113,10 @@ test_that("rows-binding performs expected allocations", {
     )
     dfs <- rep(list(df), 1e2)
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
 
     "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
     dfs <- map(dfs, set_rownames_recursively)
-    with_memory_prof(vec_rbind(!!!dfs))
+    with_memory_prof(vec_rbind_list(dfs))
   })
 })

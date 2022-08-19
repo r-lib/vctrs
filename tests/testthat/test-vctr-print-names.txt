@@ -1,3 +1,0 @@
-<hidden[3]>
-  A   B   C 
-xxx xxx xxx 

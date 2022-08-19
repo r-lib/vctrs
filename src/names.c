@@ -1,8 +1,7 @@
-#include <ctype.h>
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "utils.h"
-#include "dim.h"
+#include <ctype.h>
+#include "decl/names-decl.h"
 
 static void describe_repair(SEXP old_names, SEXP new_names);
 
@@ -11,14 +10,13 @@ static void describe_repair(SEXP old_names, SEXP new_names);
 
 // Initialised at load time
 SEXP syms_as_universal_names = NULL;
-SEXP syms_validate_unique_names = NULL;
+SEXP syms_check_unique_names = NULL;
 SEXP fns_as_universal_names = NULL;
-SEXP fns_validate_unique_names = NULL;
+SEXP fns_check_unique_names = NULL;
 
 // Defined below
 SEXP vctrs_as_minimal_names(SEXP names);
 SEXP vec_as_universal_names(SEXP names, bool quiet);
-SEXP vec_validate_unique_names(SEXP names, struct vctrs_arg* arg);
 SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts);
 static void vec_validate_minimal_names(SEXP names, R_len_t n);
 
@@ -33,27 +31,36 @@ SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
   case name_repair_minimal: return vctrs_as_minimal_names(names);
   case name_repair_unique: return vec_as_unique_names(names, opts->quiet);
   case name_repair_universal: return vec_as_universal_names(names, opts->quiet);
-  case name_repair_check_unique: return vec_validate_unique_names(names, opts->arg);
+  case name_repair_check_unique: return check_unique_names(names, opts);
   case name_repair_custom: return vec_as_custom_names(names, opts);
   }
   never_reached("vec_as_names");
 }
 
 // [[ register() ]]
-SEXP vctrs_as_names(SEXP names, SEXP repair, SEXP repair_arg, SEXP quiet) {
-  if (!r_is_bool(quiet)) {
-    Rf_errorcall(R_NilValue, "`quiet` must a boolean value.");
+r_obj* ffi_as_names(r_obj* names,
+                    r_obj* repair,
+                    r_obj* ffi_quiet,
+                    r_obj* frame) {
+  if (!r_is_bool(ffi_quiet)) {
+    r_abort("`quiet` must a boolean value.");
   }
-  bool quiet_ = LOGICAL(quiet)[0];
+  bool quiet = r_lgl_get(ffi_quiet, 0);
 
-  struct vctrs_arg arg_ = vec_as_arg(repair_arg);
+  struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
 
-  struct name_repair_opts repair_opts = new_name_repair_opts(repair, &arg_, quiet_);
-  PROTECT_NAME_REPAIR_OPTS(&repair_opts);
+  struct r_lazy repair_arg_ = { .x = syms.repair_arg, .env = frame };
+  struct vctrs_arg repair_arg = new_lazy_arg(&repair_arg_);
 
-  SEXP out = vec_as_names(names, &repair_opts);
+  struct name_repair_opts repair_opts = new_name_repair_opts(repair,
+                                                             &repair_arg,
+                                                             quiet,
+                                                             call);
+  KEEP(repair_opts.shelter);
 
-  UNPROTECT(1);
+  r_obj* out = vec_as_names(names, &repair_opts);
+
+  FREE(1);
   return out;
 }
 
@@ -65,17 +72,22 @@ SEXP vec_as_universal_names(SEXP names, bool quiet) {
   UNPROTECT(1);
   return out;
 }
-SEXP vec_validate_unique_names(SEXP names, struct vctrs_arg* arg) {
-  SEXP arg_obj = PROTECT(vctrs_arg(arg));
 
-  SEXP out = PROTECT(vctrs_dispatch2(syms_validate_unique_names, fns_validate_unique_names,
-                                     syms_names, names,
-                                     syms_arg, arg_obj));
+static
+r_obj* check_unique_names(r_obj* names,
+                          const struct name_repair_opts* opts) {
+  r_obj* ffi_arg = KEEP(vctrs_arg(opts->name_repair_arg));
+  r_obj* ffi_call = KEEP(r_lazy_eval(opts->call));
+
+  r_obj* out = KEEP(vctrs_dispatch3(syms_check_unique_names, fns_check_unique_names,
+                                    syms_names, names,
+                                    syms_arg, ffi_arg,
+                                    syms_call, ffi_call));
 
   // Restore visibility
-  Rf_eval(R_NilValue, R_EmptyEnv);
+  r_eval(r_null, r_envs.empty);
 
-  UNPROTECT(2);
+  FREE(3);
   return out;
 }
 
@@ -136,6 +148,15 @@ SEXP vec_names(SEXP x) {
 // [[ include("vctrs.h") ]]
 SEXP vec_proxy_names(SEXP x) {
   return vec_names_impl(x, true);
+}
+
+r_obj* vec_names2(r_obj* x) {
+  r_obj* names = vec_names(x);
+  if (names == r_null) {
+    return r_alloc_character(vec_size(x));
+  } else {
+    return names;
+  }
 }
 
 // [[ register() ]]
@@ -389,7 +410,7 @@ static ptrdiff_t suffix_pos(const char* name) {
       goto done;
 
     default:
-      stop_internal("suffix_pos", "Unexpected state.");
+      r_stop_internal("Unexpected state.");
     }}
 
  done:
@@ -479,10 +500,10 @@ static void describe_repair(SEXP old_names, SEXP new_names) {
 // [[ register() ]]
 SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
   if (names != R_NilValue && TYPEOF(names) != STRSXP) {
-    stop_internal("vctrs_outer_names", "`names` must be `NULL` or a string.");
+    r_stop_internal("`names` must be `NULL` or a string.");
   }
   if (!r_is_number(n)) {
-    stop_internal("vctrs_outer_names", "`n` must be a single integer.");
+    r_stop_internal("`n` must be a single integer.");
   }
 
   if (outer != R_NilValue) {
@@ -498,7 +519,7 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
     return names;
   }
   if (TYPEOF(outer) != CHARSXP) {
-    stop_internal("outer_names", "`outer` must be a scalar string.");
+    r_stop_internal("`outer` must be a scalar string.");
   }
 
   if (outer == strings_empty || outer == NA_STRING) {
@@ -533,7 +554,7 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
     return inner;
   }
   if (TYPEOF(outer) != CHARSXP) {
-    stop_internal("apply_name_spec", "`outer` must be a scalar string.");
+    r_stop_internal("`outer` must be a scalar string.");
   }
 
   if (outer == strings_empty || outer == NA_STRING) {
@@ -578,7 +599,7 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
   SEXP out = PROTECT(vctrs_dispatch2(syms_dot_name_spec, name_spec,
                                      syms_outer, outer_chr,
                                      syms_inner, inner));
-  out = vec_recycle(out, n, NULL);
+  out = vec_recycle(out, n);
 
   if (out != R_NilValue) {
     if (TYPEOF(out) != STRSXP) {
@@ -675,21 +696,21 @@ SEXP r_seq_chr(const char* prefix, R_len_t n) {
 
 
 // Initialised at load time
-SEXP syms_set_rownames_fallback = NULL;
-SEXP fns_set_rownames_fallback = NULL;
+SEXP syms_set_rownames_dispatch = NULL;
+SEXP fns_set_rownames_dispatch = NULL;
 
-static SEXP set_rownames_fallback(SEXP x, SEXP names) {
-  return vctrs_dispatch2(syms_set_rownames_fallback, fns_set_rownames_fallback,
+static SEXP set_rownames_dispatch(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_rownames_dispatch, fns_set_rownames_dispatch,
                          syms_x, x,
                          syms_names, names);
 }
 
 // Initialised at load time
-SEXP syms_set_names_fallback = NULL;
-SEXP fns_set_names_fallback = NULL;
+SEXP syms_set_names_dispatch = NULL;
+SEXP fns_set_names_dispatch = NULL;
 
-static SEXP set_names_fallback(SEXP x, SEXP names) {
-  return vctrs_dispatch2(syms_set_names_fallback, fns_set_names_fallback,
+static SEXP set_names_dispatch(SEXP x, SEXP names) {
+  return vctrs_dispatch2(syms_set_names_dispatch, fns_set_names_dispatch,
                          syms_x, x,
                          syms_names, names);
 }
@@ -722,7 +743,7 @@ static void check_names(SEXP x, SEXP names) {
 
 SEXP vec_set_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
   if (!proxy && OBJECT(x)) {
-    return set_rownames_fallback(x, names);
+    return set_rownames_dispatch(x, names);
   }
 
   int nprot = 0;
@@ -793,7 +814,7 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
   }
 
   if (!proxy && OBJECT(x)) {
-    return set_names_fallback(x, names);
+    return set_names_dispatch(x, names);
   }
 
   // Early exit if no new names and no existing names
@@ -801,8 +822,15 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
     return x;
   }
 
-  x = PROTECT(vec_clone_referenced(x, owned));
-  Rf_setAttrib(x, R_NamesSymbol, names);
+  if (owned) {
+    // Possibly skip the cloning altogether
+    x = PROTECT(vec_clone_referenced(x, owned));
+    Rf_setAttrib(x, R_NamesSymbol, names);
+  } else {
+    // We need to clone, but to do this we will use `names<-`
+    // which can perform a cheaper ALTREP shallow duplication
+    x = PROTECT(set_names_dispatch(x, names));
+  }
 
   UNPROTECT(1);
   return x;
@@ -818,7 +846,10 @@ SEXP vec_proxy_set_names(SEXP x, SEXP names, const enum vctrs_owned owned) {
 
 
 SEXP vctrs_validate_name_repair_arg(SEXP arg) {
-  struct name_repair_opts opts = new_name_repair_opts(arg, args_empty, true);
+  struct name_repair_opts opts = new_name_repair_opts(arg,
+                                                      vec_args.empty,
+                                                      true,
+                                                      r_lazy_null);
   if (opts.type == name_repair_custom) {
     return opts.fn;
   } else if (Rf_length(arg) != 1) {
@@ -832,12 +863,17 @@ void stop_name_repair() {
   Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
 }
 
-struct name_repair_opts new_name_repair_opts(SEXP name_repair, struct vctrs_arg* arg, bool quiet) {
+struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
+                                             struct vctrs_arg* name_repair_arg,
+                                             bool quiet,
+                                             struct r_lazy call) {
   struct name_repair_opts opts = {
+    .shelter = r_null,
     .type = 0,
-    .fn = R_NilValue,
-    .arg = arg,
-    .quiet = quiet
+    .fn = r_null,
+    .name_repair_arg = name_repair_arg,
+    .quiet = quiet,
+    .call = call
   };
 
   switch (TYPEOF(name_repair)) {
@@ -867,6 +903,7 @@ struct name_repair_opts new_name_repair_opts(SEXP name_repair, struct vctrs_arg*
 
   case LANGSXP:
     opts.fn = r_as_function(name_repair, ".name_repair");
+    opts.shelter = opts.fn;
     opts.type = name_repair_custom;
     return opts;
 
@@ -920,7 +957,7 @@ SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
 
   if (TYPEOF(n_) == INTSXP) {
     if (Rf_length(n_) != 1) {
-      stop_internal("vctrs_validate_minimal_names", "`n` must be a single number.");
+      r_stop_internal("`n` must be a single number.");
     }
     n = INTEGER(n_)[0];
   }
@@ -932,17 +969,18 @@ SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
 
 struct name_repair_opts unique_repair_default_opts;
 struct name_repair_opts unique_repair_silent_opts;
+struct name_repair_opts no_repair_opts;
 
 void vctrs_init_names(SEXP ns) {
-  syms_set_rownames_fallback = Rf_install("set_rownames_fallback");
-  syms_set_names_fallback = Rf_install("set_names_fallback");
+  syms_set_rownames_dispatch = Rf_install("set_rownames_dispatch");
+  syms_set_names_dispatch = Rf_install("set_names_dispatch");
   syms_as_universal_names = Rf_install("as_universal_names");
-  syms_validate_unique_names = Rf_install("validate_unique");
+  syms_check_unique_names = Rf_install("validate_unique");
 
-  fns_set_rownames_fallback = r_env_get(ns, syms_set_rownames_fallback);
-  fns_set_names_fallback = r_env_get(ns, syms_set_names_fallback);
+  fns_set_rownames_dispatch = r_env_get(ns, syms_set_rownames_dispatch);
+  fns_set_names_dispatch = r_env_get(ns, syms_set_names_dispatch);
   fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
-  fns_validate_unique_names = r_env_get(ns, syms_validate_unique_names);
+  fns_check_unique_names = r_env_get(ns, syms_check_unique_names);
 
   syms_glue_as_name_spec = Rf_install("glue_as_name_spec");
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
@@ -955,4 +993,8 @@ void vctrs_init_names(SEXP ns) {
   unique_repair_silent_opts.type = name_repair_unique;
   unique_repair_silent_opts.fn = R_NilValue;
   unique_repair_silent_opts.quiet = true;
+
+  no_repair_opts.type = name_repair_none;
+  no_repair_opts.fn = R_NilValue;
+  no_repair_opts.quiet = true;
 }

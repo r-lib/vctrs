@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 
 // -----------------------------------------------------------------------------
 // Maturing
@@ -9,14 +8,14 @@ R_len_t short_vec_size(SEXP x) {
 }
 
 SEXP short_vec_recycle(SEXP x, R_len_t size) {
-  return vec_recycle(x, size, args_empty);
+  return vec_recycle(x, size);
 }
 
 // -----------------------------------------------------------------------------
 // Experimental
 
 SEXP exp_vec_cast(SEXP x, SEXP to) {
-  return vec_cast(x, to, args_empty, args_empty);
+  return vec_cast(x, to, vec_args.empty, vec_args.empty, r_lazy_null);
 }
 
 SEXP exp_vec_chop(SEXP x, SEXP indices) {
@@ -24,7 +23,7 @@ SEXP exp_vec_chop(SEXP x, SEXP indices) {
 }
 
 SEXP exp_vec_slice_impl(SEXP x, SEXP subscript) {
-  return vec_slice_impl(x, subscript);
+  return vec_slice_unsafe(x, subscript);
 }
 
 SEXP exp_vec_names(SEXP x) {

@@ -22,8 +22,8 @@ elements of that row are non-missing. To compare, \code{!vec_equal_na(x)} detect
 rows that are partially complete (they have at least one non-missing value).
 }
 \details{
-A \link[=new_rcrd]{record} type vector is considered complete if any field is
-non-missing.
+A \link[=new_rcrd]{record} type vector is similar to a data frame, and is only
+considered complete if all fields are non-missing.
 }
 \examples{
 x <- c(1, 2, NA, 4, NA)

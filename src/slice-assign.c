@@ -1,85 +1,84 @@
 #include "vctrs.h"
-#include "dim.h"
-#include "names.h"
-#include "owned.h"
-#include "slice-assign.h"
-#include "subscript-loc.h"
-#include "utils.h"
-
-// Initialised at load time
-SEXP syms_vec_assign_fallback = NULL;
-SEXP fns_vec_assign_fallback = NULL;
-
-const struct vec_assign_opts vec_assign_default_opts = {
-  .assign_names = false
-};
-
-static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value);
-static SEXP vec_proxy_assign_names(SEXP proxy, SEXP index, SEXP value, const enum vctrs_owned owned);
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
-static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
-SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
-SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned);
+#include "decl/slice-assign-decl.h"
 
 
 // [[ include("slice-assign.h") ]]
-SEXP vec_assign_opts(SEXP x, SEXP index, SEXP value,
-                     const struct vec_assign_opts* opts) {
-  if (x == R_NilValue) {
-    return R_NilValue;
+r_obj* vec_assign_opts(r_obj* x,
+                       r_obj* index,
+                       r_obj* value,
+                       const struct vec_assign_opts* c_opts) {
+  if (x == r_null) {
+    return r_null;
   }
 
-  vec_assert(x, opts->x_arg);
-  vec_assert(value, opts->value_arg);
+  struct vec_assign_opts opts = *c_opts;
+  if (r_lazy_is_null(opts.call)) {
+    opts.call = lazy_calls.vec_assign;
+    opts.x_arg = vec_args.x;
+    opts.value_arg = vec_args.value;
+  }
 
-  index = PROTECT(vec_as_location_opts(index,
+  vec_check_vector(x, opts.x_arg, opts.call);
+  vec_check_vector(value, opts.value_arg, opts.call);
+
+  const struct location_opts location_opts = new_location_opts_assign();
+  index = KEEP(vec_as_location_opts(index,
                                        vec_size(x),
-                                       PROTECT(vec_names(x)),
-                                       location_default_assign_opts));
+                                       KEEP(vec_names(x)),
+                                       &location_opts));
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg));
-  value = PROTECT(vec_recycle(value, vec_size(index), opts->value_arg));
+  value = KEEP(vec_cast(value, x, opts.value_arg, opts.x_arg, opts.call));
+  value = KEEP(vec_check_recycle(value, vec_size(index), opts.value_arg, opts.call));
 
-  SEXP proxy = PROTECT(vec_proxy(x));
+  r_obj* proxy = KEEP(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, opts));
+  proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, owned, &opts));
 
-  SEXP out = vec_restore(proxy, x, R_NilValue, owned);
+  r_obj* out = vec_restore(proxy, x, r_null, owned);
 
-  UNPROTECT(6);
+  FREE(6);
   return out;
 }
 
 // [[ register() ]]
-SEXP vctrs_assign(SEXP x, SEXP index, SEXP value, SEXP x_arg_, SEXP value_arg_) {
-  struct vctrs_arg x_arg = vec_as_arg(x_arg_);
-  struct vctrs_arg value_arg = vec_as_arg(value_arg_);
+r_obj* ffi_assign(r_obj* x, r_obj* index, r_obj* value, r_obj* frame) {
+  struct r_lazy x_arg_lazy = { .x = syms.x_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
+
+  struct r_lazy value_arg_lazy = { .x = syms.value_arg, .env = frame };
+  struct vctrs_arg value_arg = new_lazy_arg(&value_arg_lazy);
+
+  struct r_lazy call = { .x = frame, .env = r_null };
 
   const struct vec_assign_opts opts = {
     .assign_names = false,
     .x_arg = &x_arg,
-    .value_arg = &value_arg
+    .value_arg = &value_arg,
+    .call = call
   };
 
   return vec_assign_opts(x, index, value, &opts);
 }
 
 // [[ register() ]]
-SEXP vctrs_assign_params(SEXP x, SEXP index, SEXP value,
-                         SEXP assign_names) {
+r_obj* ffi_assign_params(r_obj* x,
+                         r_obj* index,
+                         r_obj* value,
+                         r_obj* assign_names) {
   const struct vec_assign_opts opts =  {
-    .assign_names = r_bool_as_int(assign_names)
+    .assign_names = r_bool_as_int(assign_names),
+    .call = lazy_calls.vec_assign_params
   };
   return vec_assign_opts(x, index, value, &opts);
 }
 
-static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
-                              const enum vctrs_owned owned,
-                              const struct vec_assign_opts* opts) {
+static
+r_obj* vec_assign_switch(r_obj* proxy,
+                         r_obj* index,
+                         r_obj* value,
+                         const enum vctrs_owned owned,
+                         const struct vec_assign_opts* opts) {
   switch (vec_proxy_typeof(proxy)) {
   case vctrs_type_logical:   return lgl_assign(proxy, index, value, owned);
   case vctrs_type_integer:   return int_assign(proxy, index, value, owned);
@@ -89,10 +88,10 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
   case vctrs_type_raw:       return raw_assign(proxy, index, value, owned);
   case vctrs_type_list:      return list_assign(proxy, index, value, owned);
   case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
-  case vctrs_type_scalar:    stop_scalar_type(proxy, args_empty);
+  case vctrs_type_scalar:    stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default:                   stop_unimplemented_vctrs_type("vec_assign_switch", vec_typeof(proxy));
   }
-  never_reached("vec_assign_switch");
+  r_stop_unreachable();
 }
 
 // `vec_proxy_assign_opts()` conditionally duplicates the `proxy` depending
@@ -101,7 +100,7 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
 // - If a fallback is required, the `proxy` is duplicated at the R level.
 // - If `owned` is `VCTRS_OWNED_true`, the `proxy` is typically not duplicated.
 //   However, if it is an ALTREP object, it is duplicated because we need to be
-//   able to assign into the object it represents, not the ALTREP SEXP itself.
+//   able to assign into the object it represents, not the ALTREP r_obj* itself.
 // - If `owned` is `VCTRS_OWNED_false`, the `proxy` is only
 //   duplicated if it is referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
 //
@@ -118,7 +117,7 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
 // in `vec_c()` and `vec_rbind()`. For data frames, this `owned` parameter
 // is particularly important for R 4.0.0 where references are tracked more
 // precisely. In R 4.0.0, a freshly created data frame's columns all have a
-// refcount of 1 because of the `SET_VECTOR_ELT()` call that set them in the
+// refcount of 1 because of the `r_list_poke()` call that set them in the
 // data frame. This makes them referenced, but not shared. If
 // `VCTRS_OWNED_false` was set and `df_assign()` was used in a loop
 // (as it is in `vec_rbind()`), then a copy of each column would be made at
@@ -137,14 +136,11 @@ static SEXP vec_assign_switch(SEXP proxy, SEXP index, SEXP value,
  *   recycled to the correct size. Should not be proxied, in case
  *   we have to fallback.
  */
-SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value) {
-  return vec_proxy_assign_opts(proxy, index, value,
-                               vec_owned(proxy),
-                               &vec_assign_default_opts);
-}
-SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
-                           const enum vctrs_owned owned,
-                           const struct vec_assign_opts* opts) {
+r_obj* vec_proxy_assign_opts(r_obj* proxy,
+                             r_obj* index,
+                             r_obj* value,
+                             const enum vctrs_owned owned,
+                             const struct vec_assign_opts* opts) {
   int n_protect = 0;
 
   struct vec_assign_opts mut_opts = *opts;
@@ -152,83 +148,78 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
   mut_opts.ignore_outer_names = false;
 
   struct vctrs_proxy_info value_info = vec_proxy_info(value);
-  PROTECT_PROXY_INFO(&value_info, &n_protect);
+  KEEP_N(value_info.shelter, &n_protect);
 
-  if (TYPEOF(proxy) != TYPEOF(value_info.proxy)) {
-    stop_internal("vec_proxy_assign_opts",
-                  "`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
-                  Rf_type2char(TYPEOF(proxy)),
-                  Rf_type2char(TYPEOF(value_info.proxy)));
+  if (r_typeof(proxy) != r_typeof(value_info.proxy)) {
+    r_stop_internal("`proxy` of type `%s` incompatible with `value` proxy of type `%s`.",
+                    r_type_as_c_string(r_typeof(proxy)),
+                    r_type_as_c_string(r_typeof(value_info.proxy)));
   }
 
   // If a fallback is required, the `proxy` is identical to the output container
   // because no proxy method was called
-  SEXP out = R_NilValue;
+  r_obj* out = r_null;
 
   if (vec_requires_fallback(value, value_info)) {
-    index = PROTECT(compact_materialize(index));
-    out = PROTECT(vec_assign_fallback(proxy, index, value));
-    ++n_protect;
+    index = KEEP_N(compact_materialize(index), &n_protect);
+    out = KEEP_N(vec_assign_fallback(proxy, index, value), &n_protect);
   } else if (has_dim(proxy)) {
-    out = PROTECT(vec_assign_shaped(proxy, index, value_info.proxy, owned, &mut_opts));
+    out = KEEP_N(vec_assign_shaped(proxy, index, value_info.proxy, owned, &mut_opts), &n_protect);
   } else {
-    out = PROTECT(vec_assign_switch(proxy, index, value_info.proxy, owned, &mut_opts));
+    out = KEEP_N(vec_assign_switch(proxy, index, value_info.proxy, owned, &mut_opts), &n_protect);
   }
-  ++n_protect;
 
   if (!ignore_outer_names && opts->assign_names) {
     out = vec_proxy_assign_names(out, index, value_info.proxy, owned);
   }
 
-  UNPROTECT(n_protect);
+  FREE(n_protect);
   return out;
 }
 
 #define ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF)                         \
-  R_len_t n = Rf_length(index);                                         \
-  int* index_data = INTEGER(index);                                     \
+  r_ssize n = r_length(index);                                          \
+  int* index_data = r_int_begin(index);                                 \
                                                                         \
-  if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+  if (n != r_length(value)) {                                           \
+    r_stop_internal("`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
   const CTYPE* value_data = CONST_DEREF(value);                         \
                                                                         \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+  r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
   CTYPE* out_data = DEREF(out);                                         \
                                                                         \
-  for (R_len_t i = 0; i < n; ++i) {                                     \
+  for (r_ssize i = 0; i < n; ++i) {                                     \
     int j = index_data[i];                                              \
-    if (j != NA_INTEGER) {                                              \
+    if (j != r_globals.na_int) {                                        \
       out_data[j - 1] = value_data[i];                                  \
     }                                                                   \
   }                                                                     \
                                                                         \
-  UNPROTECT(1);                                                         \
+  FREE(1);                                                              \
   return out
 
 #define ASSIGN_COMPACT(CTYPE, DEREF, CONST_DEREF)                       \
-  int* index_data = INTEGER(index);                                     \
-  R_len_t start = index_data[0];                                        \
-  R_len_t n = index_data[1];                                            \
-  R_len_t step = index_data[2];                                         \
+  int* index_data = r_int_begin(index);                                 \
+  r_ssize start = index_data[0];                                        \
+  r_ssize n = index_data[1];                                            \
+  r_ssize step = index_data[2];                                         \
                                                                         \
-  if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+  if (n != r_length(value)) {                                           \
+    r_stop_internal("`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
   const CTYPE* value_data = CONST_DEREF(value);                         \
                                                                         \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+  r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
   CTYPE* out_data = DEREF(out) + start;                                 \
                                                                         \
-  for (int i = 0; i < n; ++i, out_data += step, ++value_data) {         \
+  for (r_ssize i = 0; i < n; ++i, out_data += step, ++value_data) {     \
     *out_data = *value_data;                                            \
   }                                                                     \
                                                                         \
-  UNPROTECT(1);                                                         \
+  FREE(1);                                                              \
   return out
 
 #define ASSIGN(CTYPE, DEREF, CONST_DEREF)       \
@@ -238,69 +229,65 @@ SEXP vec_proxy_assign_opts(SEXP proxy, SEXP index, SEXP value,
     ASSIGN_INDEX(CTYPE, DEREF, CONST_DEREF);    \
   }
 
-static SEXP lgl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
+static
+r_obj* lgl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
   ASSIGN(int, LOGICAL, LOGICAL_RO);
 }
-static SEXP int_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
-  ASSIGN(int, INTEGER, INTEGER_RO);
+static
+r_obj* int_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
+  ASSIGN(int, r_int_begin, INTEGER_RO);
 }
-static SEXP dbl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
+static
+r_obj* dbl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
   ASSIGN(double, REAL, REAL_RO);
 }
-static SEXP cpl_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
+static
+r_obj* cpl_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
   ASSIGN(Rcomplex, COMPLEX, COMPLEX_RO);
 }
-SEXP chr_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
-  ASSIGN(SEXP, STRING_PTR, STRING_PTR_RO);
-}
-static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
+static
+r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
   ASSIGN(Rbyte, RAW, RAW_RO);
 }
 
-#undef ASSIGN
-#undef ASSIGN_INDEX
-#undef ASSIGN_COMPACT
-
 
 #define ASSIGN_BARRIER_INDEX(GET, SET)                                  \
-  R_len_t n = Rf_length(index);                                         \
-  int* index_data = INTEGER(index);                                     \
+  r_ssize n = r_length(index);                                          \
+  int* index_data = r_int_begin(index);                                 \
                                                                         \
-  if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+  if (n != r_length(value)) {                                           \
+    r_stop_internal("`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+  r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
                                                                         \
-  for (R_len_t i = 0; i < n; ++i) {                                     \
+  for (r_ssize i = 0; i < n; ++i) {                                     \
     int j = index_data[i];                                              \
-    if (j != NA_INTEGER) {                                              \
+    if (j != r_globals.na_int) {                                        \
       SET(out, j - 1, GET(value, i));                                   \
     }                                                                   \
   }                                                                     \
                                                                         \
-  UNPROTECT(1);                                                         \
+  FREE(1);                                                              \
   return out
 
 #define ASSIGN_BARRIER_COMPACT(GET, SET)                                \
-  int* index_data = INTEGER(index);                                     \
-  R_len_t start = index_data[0];                                        \
-  R_len_t n = index_data[1];                                            \
-  R_len_t step = index_data[2];                                         \
+  int* index_data = r_int_begin(index);                                 \
+  r_ssize start = index_data[0];                                        \
+  r_ssize n = index_data[1];                                            \
+  r_ssize step = index_data[2];                                         \
                                                                         \
-  if (n != Rf_length(value)) {                                          \
-    stop_internal("vec_assign",                                         \
-                  "`value` should have been recycled to fit `x`.");     \
+  if (n != r_length(value)) {                                           \
+    r_stop_internal("`value` should have been recycled to fit `x`.");   \
   }                                                                     \
                                                                         \
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));                   \
+  r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
                                                                         \
-  for (R_len_t i = 0; i < n; ++i, start += step) {                      \
+  for (r_ssize i = 0; i < n; ++i, start += step) {                      \
     SET(out, start, GET(value, i));                                     \
   }                                                                     \
                                                                         \
-  UNPROTECT(1);                                                         \
+  FREE(1);                                                              \
   return out
 
 #define ASSIGN_BARRIER(GET, SET)                \
@@ -310,13 +297,12 @@ static SEXP raw_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned ow
     ASSIGN_BARRIER_INDEX(GET, SET);             \
   }
 
-SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
-  ASSIGN_BARRIER(VECTOR_ELT, SET_VECTOR_ELT);
+r_obj* chr_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
+  ASSIGN_BARRIER(r_chr_get, r_chr_poke);
 }
-
-#undef ASSIGN_BARRIER
-#undef ASSIGN_BARRIER_INDEX
-#undef ASSIGN_BARRIER_COMPACT
+r_obj* list_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned owned) {
+  ASSIGN_BARRIER(r_list_get, r_list_poke);
+}
 
 
 /**
@@ -340,42 +326,44 @@ SEXP list_assign(SEXP x, SEXP index, SEXP value, const enum vctrs_owned owned) {
  *
  * [[ include("vctrs.h") ]]
  */
-SEXP df_assign(SEXP x, SEXP index, SEXP value,
-               const enum vctrs_owned owned,
-               const struct vec_assign_opts* opts) {
-  SEXP out = PROTECT(vec_clone_referenced(x, owned));
+r_obj* df_assign(r_obj* x,
+                 r_obj* index,
+                 r_obj* value,
+                 const enum vctrs_owned owned,
+                 const struct vec_assign_opts* opts) {
+  r_obj* out = KEEP(vec_clone_referenced(x, owned));
 
-  R_len_t n = Rf_length(out);
+  r_ssize n = r_length(out);
 
-  if (Rf_length(value) != n) {
-    stop_internal("df_assign",
-                  "Can't assign %d columns to df of length %d.",
-                  Rf_length(value),
-                  n);
+  if (r_length(value) != n) {
+    r_stop_internal("Can't assign %d columns to df of length %d.",
+                    r_length(value),
+                    n);
   }
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP out_elt = VECTOR_ELT(out, i);
-    SEXP value_elt = VECTOR_ELT(value, i);
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* out_elt = r_list_get(out, i);
+    r_obj* value_elt = r_list_get(value, i);
 
     // No need to cast or recycle because those operations are
     // recursive and have already been performed. However, proxy and
     // restore are not recursive so need to be done for each element
     // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
-    SEXP proxy_elt = PROTECT(vec_proxy(out_elt));
+    r_obj* proxy_elt = KEEP(vec_proxy(out_elt));
 
-    SEXP assigned = PROTECT(vec_proxy_assign_opts(proxy_elt, index, value_elt, owned, opts));
-    assigned = vec_restore(assigned, out_elt, R_NilValue, owned);
+    r_obj* assigned = KEEP(vec_proxy_assign_opts(proxy_elt, index, value_elt, owned, opts));
+    assigned = vec_restore(assigned, out_elt, r_null, owned);
 
-    SET_VECTOR_ELT(out, i, assigned);
-    UNPROTECT(2);
+    r_list_poke(out, i, assigned);
+    FREE(2);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
+static
+r_obj* vec_assign_fallback(r_obj* x, r_obj* index, r_obj* value) {
   return vctrs_dispatch3(syms_vec_assign_fallback, fns_vec_assign_fallback,
                          syms_x, x,
                          syms_i, index,
@@ -383,60 +371,67 @@ static SEXP vec_assign_fallback(SEXP x, SEXP index, SEXP value) {
 }
 
 static
-SEXP vec_proxy_assign_names(SEXP proxy,
-                            SEXP index,
-                            SEXP value,
-                            const enum vctrs_owned owned) {
-  SEXP value_nms = PROTECT(vec_names(value));
+r_obj* vec_proxy_assign_names(r_obj* proxy,
+                              r_obj* index,
+                              r_obj* value,
+                              const enum vctrs_owned owned) {
+  r_obj* value_nms = KEEP(vec_names(value));
 
-  if (value_nms == R_NilValue) {
-    UNPROTECT(1);
+  if (value_nms == r_null) {
+    FREE(1);
     return proxy;
   }
 
-  SEXP proxy_nms = PROTECT(vec_proxy_names(proxy));
-  if (proxy_nms == R_NilValue) {
-    proxy_nms = PROTECT(Rf_allocVector(STRSXP, vec_size(proxy)));
+  r_obj* proxy_nms = KEEP(vec_proxy_names(proxy));
+  if (proxy_nms == r_null) {
+    proxy_nms = KEEP(r_alloc_character(vec_size(proxy)));
   } else {
-    proxy_nms = PROTECT(vec_clone_referenced(proxy_nms, owned));
+    proxy_nms = KEEP(vec_clone_referenced(proxy_nms, owned));
   }
-  proxy_nms = PROTECT(chr_assign(proxy_nms, index, value_nms, owned));
+  proxy_nms = KEEP(chr_assign(proxy_nms, index, value_nms, owned));
 
-  proxy = PROTECT(vec_clone_referenced(proxy, owned));
+  proxy = KEEP(vec_clone_referenced(proxy, owned));
   proxy = vec_proxy_set_names(proxy, proxy_nms, owned);
 
-  UNPROTECT(5);
+  FREE(5);
   return proxy;
 }
 
 
 // Exported for testing
 // [[ register() ]]
-SEXP vctrs_assign_seq(SEXP x, SEXP value, SEXP start, SEXP size, SEXP increasing) {
-  R_len_t start_ = r_int_get(start, 0);
-  R_len_t size_ = r_int_get(size, 0);
-  bool increasing_ = r_lgl_get(increasing, 0);
+r_obj* ffi_assign_seq(r_obj* x,
+                      r_obj* value,
+                      r_obj* ffi_start,
+                      r_obj* ffi_size,
+                      r_obj* ffi_increasing) {
+  r_ssize start = r_int_get(ffi_start, 0);
+  r_ssize size = r_int_get(ffi_size, 0);
+  bool increasing = r_lgl_get(ffi_increasing, 0);
 
-  SEXP index = PROTECT(compact_seq(start_, size_, increasing_));
+  r_obj* index = KEEP(compact_seq(start, size, increasing));
 
-  const struct vec_assign_opts* opts = &vec_assign_default_opts;
+  struct r_lazy call = lazy_calls.vec_assign_seq;
 
   // Cast and recycle `value`
-  value = PROTECT(vec_cast(value, x, opts->value_arg, opts->x_arg));
-  value = PROTECT(vec_recycle(value, vec_subscript_size(index), opts->value_arg));
+  value = KEEP(vec_cast(value, x, vec_args.value, vec_args.x, call));
+  value = KEEP(vec_check_recycle(value, vec_subscript_size(index), vec_args.value, call));
 
-  SEXP proxy = PROTECT(vec_proxy(x));
+  r_obj* proxy = KEEP(vec_proxy(x));
   const enum vctrs_owned owned = vec_owned(proxy);
-  proxy = PROTECT(vec_proxy_assign_opts(proxy, index, value, owned, opts));
+  proxy = KEEP(vec_proxy_check_assign(proxy, index, value, vec_args.x, vec_args.value, call));
 
-  SEXP out = vec_restore(proxy, x, R_NilValue, owned);
+  r_obj* out = vec_restore(proxy, x, r_null, owned);
 
-  UNPROTECT(5);
+  FREE(5);
   return out;
 }
 
 
-void vctrs_init_slice_assign(SEXP ns) {
-  syms_vec_assign_fallback = Rf_install("vec_assign_fallback");
-  fns_vec_assign_fallback = Rf_findVar(syms_vec_assign_fallback, ns);
+void vctrs_init_slice_assign(r_obj* ns) {
+  syms_vec_assign_fallback = r_sym("vec_assign_fallback");
+  fns_vec_assign_fallback = r_eval(syms_vec_assign_fallback, ns);
 }
+
+static r_obj* syms_vec_assign_fallback = NULL;
+static r_obj* fns_vec_assign_fallback = NULL;

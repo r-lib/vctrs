@@ -6,6 +6,15 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_count(sort = 'count') uses a stable sort when there are ties (#1588)", {
+  x <- c("a", "b", "b", "a", "d")
+
+  expect_identical(
+    vec_count(x, sort = "count"),
+    data_frame(key = c("a", "b", "d"), count = c(2L, 2L, 1L))
+  )
+})
+
 test_that("vec_count works with matrices", {
   x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
 
@@ -158,10 +167,10 @@ test_that("unique functions work with different encodings", {
 })
 
 test_that("unique functions can handle scalar types in lists", {
-  x <- list(x = a ~ b, y = a ~ b, z = a ~ c)
+  x <- list(a ~ b, a ~ b, a ~ c)
   expect_equal(vec_unique(x), vec_slice(x, c(1, 3)))
 
-  x <- list(x = call("x"), y = call("y"), z = call("x"))
+  x <- list(call("x"), call("y"), call("x"))
   expect_equal(vec_unique(x), vec_slice(x, c(1, 2)))
 })
 
@@ -198,7 +207,6 @@ test_that("can take the unique locations of dfs with list-cols", {
   expect_identical(vec_unique_loc(df), c(1L, 2L, 4L))
 })
 
-
 # matching ----------------------------------------------------------------
 
 test_that("vec_match() matches match()", {
@@ -211,13 +219,14 @@ test_that("vec_match() matches match()", {
 })
 
 test_that("vec_match() and vec_in() check types", {
-  verify_errors({
+  expect_snapshot({
     df1 <- data_frame(x = data_frame(foo = 1))
     df2 <- data_frame(x = data_frame(foo = ""))
-    expect_error(vec_match(df1, df2), class = "vctrs_error_incompatible_type")
-    expect_error(vec_match(df1, df2, needles_arg = "n", haystack_arg = "h"), class = "vctrs_error_incompatible_type")
-    expect_error(vec_in(df1, df2), class = "vctrs_error_incompatible_type")
-    expect_error(vec_in(df1, df2, needles_arg = "n", haystack_arg = "h"), class = "vctrs_error_incompatible_type")
+
+    (expect_error(vec_match(df1, df2), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_match(df1, df2, needles_arg = "n", haystack_arg = "h"), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_in(df1, df2), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_in(df1, df2, needles_arg = "n", haystack_arg = "h"), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -297,7 +306,15 @@ test_that("can propagate missing values while matching", {
   expect_identical(vec_match(list(NULL, 1, NULL, 2), list(2, NULL, 1), na_equal = FALSE), exp)
 
   # No missing values for raw vectors
-  expect_identical(vec_match(bytes(0, 1, 0, 2), bytes(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))
+  expect_identical(vec_match(raw2(0, 1, 0, 2), raw2(2, 0, 1), na_equal = FALSE), c(2L, 3L, 2L, 1L))
+})
+
+test_that("can propagate missingness of incomplete rcrd observations (#1386)", {
+  x <- new_rcrd(list(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA)))
+  expect_identical(vec_match(x, x, na_equal = FALSE), c(1L, NA, NA, NA))
+
+  # Matches `vec_detect_complete()` results
+  expect_identical(vec_detect_complete(x), c(TRUE, FALSE, FALSE, FALSE))
 })
 
 test_that("can propagate NaN as a missing value (#1252)", {
@@ -317,18 +334,6 @@ test_that("can't supply NA as `na_equal`", {
   expect_error(vec_match(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
 })
 
-test_that("dictionary tools have informative errors", {
-  verify_output(test_path("error", "test-dictionary.txt"), {
-    "# vec_match() and vec_in() check types"
-    df1 <- data_frame(x = data_frame(foo = 1))
-    df2 <- data_frame(x = data_frame(foo = ""))
-    vec_match(df1, df2)
-    vec_match(df1, df2, needles_arg = "n", haystack_arg = "h")
-    vec_in(df1, df2)
-    vec_in(df1, df2, needles_arg = "n", haystack_arg = "h")
-  })
-})
-
 test_that("vec_match() and vec_in() silently fall back to base data frame", {
   expect_silent(expect_identical(
     vec_match(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
@@ -338,4 +343,14 @@ test_that("vec_match() and vec_in() silently fall back to base data frame", {
     vec_in(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
     rep(TRUE, 32)
   ))
+})
+
+test_that("vec_in() evaluates arg lazily", {
+  expect_silent(vec_in(1L, 1L, needles_arg = print("oof")))
+  expect_silent(vec_in(1L, 1L, haystack_arg = print("oof")))
+})
+
+test_that("vec_match() evaluates arg lazily", {
+  expect_silent(vec_match(1L, 1L, needles_arg = print("oof")))
+  expect_silent(vec_match(1L, 1L, haystack_arg = print("oof")))
 })

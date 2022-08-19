@@ -56,12 +56,14 @@
 #'
 #' Both errors inherit from `"vctrs_error_assert"`.
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x A vector argument to check.
 #' @param ptype Prototype to compare against. If the prototype has a
 #'   class, its [vec_ptype()] is compared to that of `x` with
 #'   `identical()`. Otherwise, its [typeof()] is compared to that of
 #'   `x` with `==`.
-#' @param size Size to compare against
+#' @param size A single integer size against which to compare.
 #' @param arg Name of argument being checked. This is used in error
 #'   messages. The label of the expression passed as `x` is taken as
 #'   default.
@@ -70,9 +72,13 @@
 #'   throws a typed error (see section on error types) or returns `x`,
 #'   invisibly.
 #' @export
-vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x))) {
+vec_assert <- function(x,
+                       ptype = NULL,
+                       size = NULL,
+                       arg = caller_arg(x),
+                       call = caller_env()) {
   if (!vec_is_vector(x)) {
-    stop_scalar_type(x, arg)
+    stop_scalar_type(x, arg, call = call)
   }
 
   if (!is_null(ptype)) {
@@ -84,27 +90,68 @@ vec_assert <- function(x, ptype = NULL, size = NULL, arg = as_label(substitute(x
         msg,
         class = c("vctrs_error_assert_ptype", "vctrs_error_assert"),
         required = ptype,
-        actual = x_type
+        actual = x_type,
+        call = call
       )
     }
   }
 
   if (!is_null(size)) {
-    size <- vec_recycle(vec_cast(size, integer()), 1L)
+    size <- vec_cast(size, integer(), x_arg = "size")
+
+    n_size <- length(size)
+    if (n_size != 1L) {
+      abort(glue::glue("`size` must be length 1, not length {n_size}."))
+    }
+
     x_size <- vec_size(x)
     if (!identical(x_size, size)) {
-      msg <- paste0("`", arg, "` must have size ", size, ", not size ", x_size, ".")
-      abort(
-        msg,
-        class = c("vctrs_error_assert_size", "vctrs_error_assert"),
-        required = size,
-        actual = x_size
+      stop_assert_size(
+        x_size,
+        size,
+        arg,
+        call = call
       )
     }
   }
 
   invisible(x)
 }
+
+# Also thrown from C
+stop_assert_size <- function(actual,
+                             required,
+                             arg,
+                             call = caller_env()) {
+  if (!nzchar(arg)) {
+    arg <- "Input"
+  } else {
+    arg <- glue::backtick(arg)
+  }
+
+  message <- glue::glue("{arg} must have size {required}, not size {actual}.")
+
+  stop_assert(
+    message,
+    class = "vctrs_error_assert_size",
+    actual = actual,
+    required = required,
+    call = call
+  )
+}
+
+stop_assert <- function(message = NULL,
+                        class = NULL,
+                        ...,
+                        call = caller_env()) {
+  stop_vctrs(
+    message,
+    class = c(class, "vctrs_error_assert"),
+    ...,
+    call = call
+  )
+}
+
 #' @rdname vec_assert
 #' @export
 vec_is <- function(x, ptype = NULL, size = NULL) {
@@ -156,6 +203,15 @@ vec_is_vector <- function(x) {
 #' * `x` is a bare list with no class.
 #' * `x` is a list explicitly inheriting from `"list"`.
 #'
+#' `list_all_vectors()` takes a list and checks that all elements of
+#' `x` are vectors.
+#'
+#' `vec_check_list()` and `list_check_all_vectors()` throw a type
+#' error if the input is not a list as defined by `vec_is_list()` and
+#' `list_all_vectors()` respectively.
+#'
+#' @inheritParams rlang::args_error_context
+#' @inheritParams rlang::args_dots_empty
 #' @param x An object.
 #'
 #' @details
@@ -166,10 +222,54 @@ vec_is_vector <- function(x) {
 #' @examples
 #' vec_is_list(list())
 #' vec_is_list(list_of(1))
-#'
 #' vec_is_list(data.frame())
+#'
+#' list_all_vectors(list(1, mtcars))
+#' list_all_vectors(list(1, environment()))
+#'
+#' # `list_`-prefixed functions assume a list:
+#' try(list_all_vectors(environment()))
 vec_is_list <- function(x) {
   .Call(vctrs_is_list, x)
+}
+#' @rdname vec_is_list
+#' @export
+vec_check_list <- function(x,
+                           ...,
+                           arg = caller_arg(x),
+                           call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_check_list, x, environment()))
+}
+
+#' @rdname vec_is_list
+#' @export
+list_all_vectors <- function(x) {
+  .Call(ffi_list_all_vectors, x, environment())
+}
+
+#' @rdname vec_is_list
+#' @export
+list_check_all_vectors <- function(x,
+                                   ...,
+                                   arg = caller_arg(x),
+                                   call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_list_check_all_vectors, x, environment()))
+}
+
+# Called from C
+stop_non_list_type <- function(x, arg, call) {
+  if (nzchar(arg)) {
+    arg <- cli::format_inline("{.arg {arg}}")
+  } else {
+    arg <- "Input"
+  }
+
+  cli::cli_abort(
+    "{arg} must be a list, not {friendly_type_of(x)}.",
+    call = call
+  )
 }
 
 is_same_type <- function(x, ptype) {

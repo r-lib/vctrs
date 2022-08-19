@@ -6,14 +6,18 @@
 \description{
 This error occurs when a function expects a vector and gets a scalar
 object instead. This commonly happens when some code attempts to assign
-a scalar object as column in a data frame:\if{html}{\out{<div class="r">}}\preformatted{fn <- function() NULL
+a scalar object as column in a data frame:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{fn <- function() NULL
 tibble::tibble(x = fn)
-#> Error: All columns in a tibble must be vectors.
+#> Error:
+#> ! All columns in a tibble must be vectors.
 #> x Column `x` is a function.
 
 fit <- lm(1:3 ~ 1)
 tibble::tibble(x = fit)
-#> Error: All columns in a tibble must be vectors.
+#> Error:
+#> ! All columns in a tibble must be vectors.
 #> x Column `x` is a `lm` object.
 }\if{html}{\out{</div>}}
 }
@@ -25,7 +29,9 @@ vectorness of a type is whether it makes sense to include that object as
 a column in a data frame.
 
 The main difference is that S3 lists are considered vectors by base R
-but in the tidyverse that’s not the case by default:\if{html}{\out{<div class="r">}}\preformatted{fit <- lm(1:3 ~ 1)
+but in the tidyverse that’s not the case by default:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{fit <- lm(1:3 ~ 1)
 
 typeof(fit)
 #> [1] "list"
@@ -33,25 +39,23 @@ class(fit)
 #> [1] "lm"
 
 # S3 lists can be subset like a vector using base R:
-fit[1:3]
+fit[c(1, 4)]
 #> $coefficients
 #> (Intercept) 
 #>           2 
 #> 
-#> $residuals
-#>             1             2             3 
-#> -1.000000e+00 -3.885781e-16  1.000000e+00 
-#> 
-#> $effects
-#> (Intercept)                         
-#>  -3.4641016   0.3660254   1.3660254
+#> $rank
+#> [1] 1
 
 # But not in vctrs
-vctrs::vec_slice(fit, 1:3)
-#> Error: Input must be a vector, not a `lm` object.
+vctrs::vec_slice(fit, c(1, 4))
+#> Error in `vctrs::vec_slice()`:
+#> ! `x` must be a vector, not a <lm> object.
 }\if{html}{\out{</div>}}
 
-Defused function calls are another (more esoteric) example:\if{html}{\out{<div class="r">}}\preformatted{call <- quote(foo(bar = TRUE, baz = FALSE))
+Defused function calls are another (more esoteric) example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{call <- quote(foo(bar = TRUE, baz = FALSE))
 call
 #> foo(bar = TRUE, baz = FALSE)
 
@@ -70,7 +74,8 @@ lapply(call, function(x) x)
 
 # But not with vctrs:
 vctrs::vec_slice(call, 1:2)
-#> Error: Input must be a vector, not a call.
+#> Error in `vctrs::vec_slice()`:
+#> ! `x` must be a vector, not a call.
 }\if{html}{\out{</div>}}
 }
 

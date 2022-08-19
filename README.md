@@ -6,29 +6,28 @@
 <!-- badges: start -->
 
 [![Coverage
-status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
-[![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build
-status](https://github.com/r-lib/vctrs/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vctrs/actions)
+status](https://codecov.io/gh/r-lib/vctrs/branch/main/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
+![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
+[![R-CMD-check](https://github.com/r-lib/vctrs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/vctrs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 There are three main goals to the vctrs package, each described in a
 vignette:
 
-  - To propose `vec_size()` and `vec_ptype()` as alternatives to
+-   To propose `vec_size()` and `vec_ptype()` as alternatives to
     `length()` and `class()`; `vignette("type-size")`. These definitions
     are paired with a framework for size-recycling and type-coercion.
     `ptype` should evoke the notion of a prototype, i.e. the original or
     typical form of something.
 
-  - To define size- and type-stability as desirable function properties,
+-   To define size- and type-stability as desirable function properties,
     use them to analyse existing base functions, and to propose better
     alternatives; `vignette("stability")`. This work has been
     particularly motivated by thinking about the ideal properties of
     `c()`, `ifelse()`, and `rbind()`.
 
-  - To provide a new `vctr` base class that makes it easy to create new
+-   To provide a new `vctr` base class that makes it easy to create new
     S3 vectors; `vignette("s3-vector")`. vctrs provides methods for many
     base generics in terms of a few new vctrs generics, making
     implementation considerably simpler and more robust.

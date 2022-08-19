@@ -1,3 +1,11 @@
+replace_from <- function(what, pkg, to = topenv(caller_env())) {
+  if (what %in% getNamespaceExports(pkg)) {
+    env <- ns_env(pkg)
+  } else {
+    env <- to
+  }
+  env_get(env, what, inherit = TRUE)
+}
 
 # nocov start
 

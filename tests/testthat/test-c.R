@@ -1,3 +1,4 @@
+local_name_repair_quiet()
 
 test_that("zero length input returns NULL", {
   expect_equal(vec_c(), NULL)
@@ -74,11 +75,9 @@ test_that("vec_c() includes index in argument tag", {
   df1 <- tibble(x = tibble(y = tibble(z = 1)))
   df2 <- tibble(x = tibble(y = tibble(z = "a")))
 
-  expect_known_output(file = test_path("test-type-vec-c-error.txt"), {
-    try2(vec_c(df1, df2))
-    try2(vec_c(df1, df1, df2))
-    try2(vec_c(foo = df1, bar = df2))
-  })
+  expect_snapshot(error = TRUE, vec_c(df1, df2))
+  expect_snapshot(error = TRUE, vec_c(df1, df1, df2))
+  expect_snapshot(error = TRUE, vec_c(foo = df1, bar = df2))
 })
 
 test_that("vec_c() handles record classes", {
@@ -97,6 +96,8 @@ test_that("can mix named and unnamed vectors (#271)", {
 })
 
 test_that("vec_c() repairs names", {
+  local_name_repair_quiet()
+
   # Default minimal repair
   expect_named(vec_c(a = 1, a = 2, `_` = 3), c("a", "a", "_"))
   out <- vec_c(!!!set_names(1, NA))
@@ -178,18 +179,18 @@ test_that("vec_c() works with simple homogeneous foreign S4 classes", {
 })
 
 test_that("vec_c() fails with complex foreign S3 classes", {
-  verify_errors({
+  expect_snapshot({
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
-    expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type")
+    (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
   })
 })
 
 test_that("vec_c() fails with complex foreign S4 classes", {
-  verify_errors({
+  expect_snapshot({
     joe <- .Counts(c(1L, 2L), name = "Joe")
     jane <- .Counts(3L, name = "Jane")
-    expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type")
+    (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -278,16 +279,17 @@ test_that("vec_c() falls back to c() if S4 method is available", {
 })
 
 test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")),
       "name specification"
-    )
+    ))
+
     # Used to be an error about `ptype`
-    expect_error(
+    (expect_error(
       with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
@@ -346,11 +348,12 @@ test_that("vec_implements_ptype2() and vec_c() fallback are compatible with old 
 test_that("can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)", {
   expect_error(vec_c(a = c(b = 1:2)))
   expect_identical(vec_c(a = c(b = 1:2), b = 3L, .name_spec = zap()), 1:3)
-  verify_errors({
-    expect_error(
+
+  expect_snapshot({
+    (expect_error(
       vec_c(a = c(b = letters), b = 1, .name_spec = zap()),
       class = "vctrs_error_incompatible_type"
-    )
+    ))
   })
 })
 
@@ -425,45 +428,28 @@ test_that("named empty vectors force named output (#1263)", {
 
 # Golden tests -------------------------------------------------------
 
-test_that("vec_c() has informative error messages", {
-  verify_output(test_path("error", "test-c.txt"), {
-    "# vec_c() fails with complex foreign S3 classes"
-    x <- structure(foobar(1), attr_foo = "foo")
-    y <- structure(foobar(2), attr_bar = "bar")
-    vec_c(x, y)
-
-    "# vec_c() fails with complex foreign S4 classes"
-    joe <- .Counts(c(1L, 2L), name = "Joe")
-    jane <- .Counts(3L, name = "Jane")
-    vec_c(joe, jane)
-
-    "# vec_c() fallback doesn't support `name_spec` or `ptype`"
-    with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}"))
-    with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = ""))
-
-    "# can ignore names by providing a `zap()` name-spec (#232)"
-    vec_c(a = c(b = letters), b = 1, .name_spec = zap())
-  })
-})
-
 test_that("concatenation performs expected allocations", {
-  verify_output(test_path("performance", "test-c.txt"), {
+  vec_c_list <- function(x, ptype = NULL) {
+    vec_c(!!!x, .ptype = ptype)
+  }
+
+  expect_snapshot({
     ints <- rep(list(1L), 1e2)
     dbls <- rep(list(1), 1e2)
 
     # Extra allocations from `list2()`, see r-lib/rlang#937
     "# `vec_c()` "
     "Integers"
-    with_memory_prof(vec_c(!!!ints))
+    with_memory_prof(vec_c_list(ints))
 
     "Doubles"
-    with_memory_prof(vec_c(!!!dbls))
+    with_memory_prof(vec_c_list(dbls))
 
     "Integers to integer"
-    with_memory_prof(vec_c(!!!ints, ptype = int()))
+    with_memory_prof(vec_c_list(ints, ptype = int()))
 
     "Doubles to integer"
-    with_memory_prof(vec_c(!!!dbls, ptype = int()))
+    with_memory_prof(vec_c_list(dbls, ptype = int()))
 
 
     "# `vec_unchop()` "
@@ -526,4 +512,42 @@ test_that("concatenation performs expected allocations", {
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_unchop(dfs))
   })
+})
+
+test_that("can dispatch many times", {
+  # This caused a crash when counters were not correctly protected
+  foo <- structure(
+    list(x.sorted = numeric(0), tp = numeric(0), fp = numeric(0)),
+    row.names = integer(0),
+    class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame")
+  )
+  x <- lapply(1:200, function(...) foo)
+  expect_error(NA, object = vctrs::vec_unchop(x))
+})
+
+test_that("dots splicing clones as appropriate", {
+  x <- list(a = 1)
+  vctrs::vec_cbind(!!!x)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_rbind(!!!x)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_c(!!!x)
+  expect_equal(x, list(a = 1))
+
+
+  x <- list(a = 1)
+  vctrs::vec_cbind(!!!x, 2)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_rbind(!!!x, 2)
+  expect_equal(x, list(a = 1))
+
+  x <- list(a = 1)
+  vctrs::vec_c(!!!x, 2)
+  expect_equal(x, list(a = 1))
 })

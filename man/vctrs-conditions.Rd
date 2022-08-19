@@ -18,7 +18,8 @@ stop_incompatible_type(
   action = c("combine", "convert"),
   details = NULL,
   message = NULL,
-  class = NULL
+  class = NULL,
+  call = caller_env()
 )
 
 stop_incompatible_cast(
@@ -29,7 +30,8 @@ stop_incompatible_cast(
   to_arg,
   details = NULL,
   message = NULL,
-  class = NULL
+  class = NULL,
+  call = caller_env()
 )
 
 stop_incompatible_op(
@@ -39,7 +41,8 @@ stop_incompatible_op(
   details = NULL,
   ...,
   message = NULL,
-  class = NULL
+  class = NULL,
+  call = caller_env()
 )
 
 stop_incompatible_size(
@@ -52,7 +55,8 @@ stop_incompatible_size(
   y_arg,
   details = NULL,
   message = NULL,
-  class = NULL
+  class = NULL,
+  call = caller_env()
 )
 
 allow_lossy_cast(expr, x_ptype = NULL, to_ptype = NULL)
@@ -75,6 +79,11 @@ those thrown from \code{\link[=vec_cast]{vec_cast()}} use \code{"convert"}.}
 \item{message}{An overriding message for the error. \code{details} and
 \code{message} are mutually exclusive, supplying both is an error.}
 
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_ptype]{prototypes}.}
 
@@ -95,7 +104,7 @@ testing easier.
 # Most of the time, `maybe_lossy_cast()` returns its input normally:
 maybe_lossy_cast(
   c("foo", "bar"),
-  NULL,
+  NA,
   "",
   lossy = c(FALSE, FALSE),
   x_arg = "",
@@ -105,7 +114,7 @@ maybe_lossy_cast(
 # If `lossy` has any `TRUE`, an error is thrown:
 try(maybe_lossy_cast(
   c("foo", "bar"),
-  NULL,
+  NA,
   "",
   lossy = c(FALSE, TRUE),
   x_arg = "",
@@ -116,7 +125,7 @@ try(maybe_lossy_cast(
 allow_lossy_cast(
   maybe_lossy_cast(
     c("foo", "bar"),
-    NULL,
+    NA,
     "",
     lossy = c(FALSE, TRUE),
     x_arg = "",

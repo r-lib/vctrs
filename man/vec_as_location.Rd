@@ -13,7 +13,8 @@ vec_as_location(
   names = NULL,
   ...,
   missing = c("propagate", "error"),
-  arg = NULL
+  arg = caller_arg(i),
+  call = caller_env()
 )
 
 num_as_location(
@@ -22,9 +23,10 @@ num_as_location(
   ...,
   missing = c("propagate", "error"),
   negative = c("invert", "error", "ignore"),
-  oob = c("error", "extend"),
+  oob = c("error", "remove", "extend"),
   zero = c("remove", "error", "ignore"),
-  arg = NULL
+  arg = caller_arg(i),
+  call = caller_env()
 )
 
 vec_as_location2(
@@ -33,7 +35,8 @@ vec_as_location2(
   names = NULL,
   ...,
   missing = c("error", "propagate"),
-  arg = NULL
+  arg = caller_arg(i),
+  call = caller_env()
 )
 
 num_as_location2(
@@ -42,7 +45,8 @@ num_as_location2(
   ...,
   negative = c("error", "ignore"),
   missing = c("error", "propagate"),
-  arg = NULL
+  arg = caller_arg(i),
+  call = caller_env()
 )
 }
 \arguments{
@@ -69,13 +73,19 @@ subscripts can contain missing values and scalar subscripts can't.}
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
 type of a function input.}
 
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
 \item{negative}{Whether to throw an \code{"error"} when \code{i} is a
 negative location value, or \code{"ignore"} it.}
 
-\item{oob}{If \code{"error"}, throws an informative \code{"error"} if some
-elements are out-of-bounds. If \code{"extend"}, out-of-bounds
-locations are allowed if they are consecutive after the end. This
-can be used to implement extendable vectors like \code{letters[1:30]}.}
+\item{oob}{If \code{"error"}, throws an informative \code{"error"} if some elements are
+out-of-bounds. If \code{"remove"}, removes both positive and negative
+out-of-bounds locations. If \code{"extend"}, out-of-bounds locations are allowed
+if they are consecutive after the end. This can be used to implement
+extendable vectors like \code{letters[1:30]}.}
 
 \item{zero}{Whether to \code{"remove"} zero values, throw an informative
 \code{"error"}, or \code{"ignore"} them.}

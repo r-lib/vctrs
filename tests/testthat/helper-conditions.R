@@ -39,3 +39,19 @@ with_dm_tables <- function(expr) {
     subscript_action = "extract"
   )
 }
+with_tidyselect_select <- function(expr) {
+  with_subscript_data(
+    expr,
+    subscript_arg = quote(foo(bar)),
+    subscript_elt = "column",
+    subscript_action = "select"
+  )
+}
+with_tidyselect_relocate <- function(expr) {
+  with_subscript_data(
+    expr,
+    subscript_arg = quote(foo(bar)),
+    subscript_elt = "column",
+    subscript_action = "relocate"
+  )
+}

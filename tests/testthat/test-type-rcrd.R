@@ -26,6 +26,65 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
+test_that("equality, comparison, and order proxies are recursive (#1503)", {
+  base <- new_rcrd(list(a = 1))
+  x <- new_rcrd(list(x = base))
+
+  expect_identical(vec_proxy_equal(x), 1)
+  expect_identical(vec_proxy_compare(x), 1)
+  expect_identical(vec_proxy_order(x), 1)
+
+  base <- new_rcrd(list(a = 1, b = 2))
+  x <- new_rcrd(list(x = base, y = base))
+
+  expect <- data_frame(a = 1, b = 2, a = 1, b = 2, .name_repair = "minimal")
+
+  expect_identical(vec_proxy_equal(x), expect)
+  expect_identical(vec_proxy_compare(x), expect)
+  expect_identical(vec_proxy_order(x), expect)
+})
+
+# base methods ------------------------------------------------------------
+
+test_that("has no names", {
+  x <- new_rcrd(list(a = 1, b = 2L))
+
+  expect_null(names(x))
+  expect_null(vec_names(x))
+})
+
+test_that("removing names with `NULL` is a no-op (#1419)", {
+  x <- new_rcrd(list(a = 1, b = 2L))
+
+  expect_identical(`names<-`(x, NULL), x)
+  expect_identical(vec_set_names(x, NULL), x)
+})
+
+test_that("setting character names is an error (#1419)", {
+  x <- new_rcrd(list(a = 1, b = 2L))
+
+  expect_error(`names<-`(x, "x"), "Can't assign names")
+  expect_error(vec_set_names(x, "x"), "Can't assign names")
+})
+
+test_that("na.omit() works and retains metadata (#1413)", {
+  x <- new_rcrd(list(a = c(1, 1, NA, NA), b = c(1, NA, 1, NA)))
+  result <- na.omit(x)
+
+  expect <- vec_slice(x, 1:3)
+  attr(expect, "na.action") <- structure(4L, class = "omit")
+
+  expect_identical(result, expect)
+})
+
+test_that("na.fail() works", {
+  # Only considered missing if all fields are missing
+  x <- new_rcrd(list(a = c(1, 1, NA), b = c(1, NA, 1)))
+  expect_identical(na.fail(x), x)
+
+  x <- new_rcrd(list(a = c(1, 1, NA, NA), b = c(1, NA, 1, NA)))
+  expect_snapshot(error = TRUE, na.fail(x))
+})
 
 # coercion ----------------------------------------------------------------
 
@@ -131,16 +190,9 @@ test_that("print and str use format", {
   local_tuple_methods()
   r <- tuple(1, 1:100)
 
-  expect_known_output(
-    file = test_path("test-rcrd-format.txt"),
-    {
-      print(r)
-      cat("\n")
-      str(r[1:10])
-      cat("\n")
-      str(list(list(list(r, 1:100))))
-    }
-  )
+  expect_snapshot(r)
+  expect_snapshot(str(r[1:10]))
+  expect_snapshot(str(list(list(list(r, 1:100)))))
 })
 
 test_that("subsetting methods applied to each field", {

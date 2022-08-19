@@ -10,8 +10,7 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include "order-groups.h"
-#include "utils.h"
+#include "vctrs.h"
 
 // -----------------------------------------------------------------------------
 
@@ -107,11 +106,6 @@ void groups_size_push(r_ssize size, struct group_infos* p_group_infos) {
  */
 static
 void group_realloc(r_ssize size, struct group_info* p_group_info) {
-  // First allocation
-  if (size == 0) {
-    size = GROUP_DATA_SIZE_DEFAULT;
-  }
-
   // Reallocate
   p_group_info->data = int_resize(
     p_group_info->data,
@@ -133,8 +127,15 @@ void group_realloc(r_ssize size, struct group_info* p_group_info) {
 
 static
 r_ssize groups_realloc_size(r_ssize data_size, r_ssize max_data_size) {
-  // Avoid potential overflow when doubling size
-  uint64_t new_data_size = ((uint64_t) data_size) * 2;
+  uint64_t new_data_size;
+
+  if (data_size == 0) {
+    // First allocation
+    new_data_size = GROUP_DATA_SIZE_DEFAULT;
+  } else {
+    // Avoid potential overflow when doubling size
+    new_data_size = ((uint64_t) data_size) * 2;
+  }
 
   // Clamp maximum allocation size to the size of the input
   if (new_data_size > max_data_size) {

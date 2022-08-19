@@ -8,6 +8,11 @@
 
 void vctrs_init_altrep_rle(DllInfo* dll) { }
 
+SEXP altrep_rle_is_materialized(SEXP x) {
+  Rf_error("Need R 3.5+ for Altrep support.");
+  return R_NilValue;
+}
+
 SEXP altrep_rle_Make(SEXP input) {
   Rf_error("Need R 3.5+ for Altrep support.");
   return R_NilValue;
@@ -19,6 +24,9 @@ SEXP altrep_rle_Make(SEXP input) {
 // Initialised at load time
 R_altrep_class_t altrep_rle_class;
 
+SEXP altrep_rle_is_materialized(SEXP x) {
+  return Rf_ScalarLogical(R_altrep_data2(x) != R_NilValue);
+}
 
 SEXP altrep_rle_Make(SEXP input) {
   SEXP res = R_new_altrep(altrep_rle_class, input, R_NilValue);

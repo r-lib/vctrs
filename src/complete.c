@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "equal.h"
 #include "type-data-frame.h"
 
 // -----------------------------------------------------------------------------
@@ -18,7 +17,7 @@ SEXP vec_slice_complete(SEXP x) {
   SEXP loc = PROTECT(vec_locate_complete(x));
 
   // Skip `vec_as_location()` in `vec_slice()`
-  SEXP out = vec_slice_impl(x, loc);
+  SEXP out = vec_slice_unsafe(x, loc);
 
   UNPROTECT(1);
   return out;
@@ -30,8 +29,6 @@ SEXP vec_slice_complete(SEXP x) {
 SEXP vctrs_locate_complete(SEXP x) {
   return vec_locate_complete(x);
 }
-
-static SEXP vec_detect_complete(SEXP x);
 
 static
 SEXP vec_locate_complete(SEXP x) {
@@ -50,9 +47,9 @@ SEXP vctrs_detect_complete(SEXP x) {
 
 static inline void vec_detect_complete_switch(SEXP x, R_len_t size, int* p_out);
 
-static
+// [[ include("complete.h") ]]
 SEXP vec_detect_complete(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy_complete(x));
+  SEXP proxy = PROTECT(vec_proxy_equal(x));
 
   R_len_t size = vec_size(proxy);
 
@@ -92,7 +89,7 @@ void vec_detect_complete_switch(SEXP x, R_len_t size, int* p_out) {
   case vctrs_type_raw: raw_detect_complete(x, size, p_out); break;
   case vctrs_type_list: list_detect_complete(x, size, p_out); break;
   case vctrs_type_dataframe: df_detect_complete(x, size, p_out); break;
-  case vctrs_type_scalar: stop_internal("vec_detect_complete", "Can't detect missing values in scalars.");
+  case vctrs_type_scalar: r_stop_internal("Can't detect missing values in scalars.");
   default: stop_unimplemented_vctrs_type("vec_detect_complete", vec_proxy_typeof(x));
   }
 }
@@ -161,7 +158,7 @@ void chr_detect_complete(SEXP x, R_len_t size, int* p_out) {
 }
 static inline
 void raw_detect_complete(SEXP x, R_len_t size, int* p_out) {
-  VEC_DETECT_COMPLETE(Rbyte, RAW_RO, raw_is_missing);
+  VEC_DETECT_COMPLETE(unsigned char, RAW_RO, raw_is_missing);
 }
 static inline
 void list_detect_complete(SEXP x, R_len_t size, int* p_out) {

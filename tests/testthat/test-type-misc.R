@@ -83,6 +83,15 @@ test_that("data.table and tibble do not have a common type", {
   )
 })
 
+test_that("data table has formatting methods", {
+  testthat_import_from("data.table", "data.table")
+  expect_snapshot({
+    dt <- data.table(x = 1, y = 2, z = 3)
+    vec_ptype_abbr(dt)
+    vec_ptype_full(dt)
+  })
+})
+
 test_that("can slice `ts` vectors", {
   x <- ts(1:3)
   expect_identical(vec_ptype(x), x[0])

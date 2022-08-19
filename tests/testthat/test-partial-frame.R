@@ -1,11 +1,7 @@
 
 test_that("has ok print method", {
   pf <- vec_ptype2(partial_frame(x = 1L), data.frame(y = 2))
-  expect_known_output(
-    print(pf),
-    test_path("test-partial-frame-print.txt")
-  )
-
+  expect_snapshot(pf)
   expect_equal(vec_ptype_abbr(pf), "prtl")
 })
 

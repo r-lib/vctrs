@@ -1,8 +1,15 @@
 url: https://vctrs.r-lib.org
 
+development:
+  mode: auto
+
 template:
-  params:
-    ganalytics: UA-115082821-1
+  package: tidytemplate
+  bootstrap: 5
+
+  includes:
+    in_header: |
+      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>  
 
 reference:
 - title: User FAQ
@@ -40,6 +47,7 @@ reference:
 - title: Combining
   contents:
   - vec_c
+  - vec_interleave
   - vec_cbind
   - vec_rbind
   - name_spec
@@ -50,6 +58,7 @@ reference:
   - vec_slice
   - vec_recycle
   - vec_chop
+  - list_drop_empty
 
 - title: Assigning
   contents:
@@ -73,6 +82,7 @@ reference:
   - vec_duplicate
   - vec_unique
   - vec_in
+  - vec_locate_matches
   - vec_split
 
 - title: Sequences and repetitions

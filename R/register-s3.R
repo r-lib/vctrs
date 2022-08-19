@@ -24,12 +24,13 @@
 #'
 #' @section Usage in other packages:
 #' To avoid taking a dependency on vctrs, you copy the source of
-#' [`s3_register()`](https://github.com/r-lib/vctrs/blob/master/R/register-s3.R)
+#' [`s3_register()`](https://github.com/r-lib/vctrs/blob/main/R/register-s3.R)
 #' into your own package. It is licensed under the permissive
 #' [unlicense](https://choosealicense.com/licenses/unlicense/) to make it
 #' crystal clear that we're happy for you to do this. There's no need to include
 #' the license or even credit us when using this function.
 #'
+#' @usage NULL
 #' @param generic Name of the generic in the form `pkg::generic`.
 #' @param class Name of the class
 #' @param method Optionally, the implementation of the method. By default,
@@ -81,36 +82,40 @@ s3_register <- function(generic, class, method = NULL) {
     }
   }
 
-  method_fn <- get_method(method)
-  stopifnot(is.function(method_fn))
+  register <- function(...) {
+    envir <- asNamespace(package)
 
-  # Always register hook in case package is later unloaded & reloaded
-  setHook(
-    packageEvent(package, "onLoad"),
-    function(...) {
-      ns <- asNamespace(package)
+    # Refresh the method each time, it might have been updated by
+    # `devtools::load_all()`
+    method_fn <- get_method(method)
+    stopifnot(is.function(method_fn))
 
-      # Refresh the method, it might have been updated by `devtools::load_all()`
-      method_fn <- get_method(method)
 
-      registerS3method(generic, class, method_fn, envir = ns)
+    # Only register if generic can be accessed
+    if (exists(generic, envir)) {
+      registerS3method(generic, class, method_fn, envir = envir)
+    } else if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+      warning(sprintf(
+        "Can't find generic `%s` in package %s to register S3 method.",
+        generic,
+        package
+      ))
     }
-  )
-
-  # Avoid registration failures during loading (pkgload or regular)
-  if (!isNamespaceLoaded(package)) {
-    return(invisible())
   }
 
-  envir <- asNamespace(package)
+  # Always register hook in case package is later unloaded & reloaded
+  setHook(packageEvent(package, "onLoad"), register)
 
-  # Only register if generic can be accessed
-  if (exists(generic, envir)) {
-    registerS3method(generic, class, method_fn, envir = envir)
+  # Avoid registration failures during loading (pkgload or regular)
+  if (isNamespaceLoaded(package)) {
+    register()
   }
 
   invisible()
 }
+on_load({
+  s3_register <- replace_from("s3_register", "rlang")
+})
 
 knitr_defer <- function(expr, env = caller_env()) {
   roxy_caller <- detect(sys.frames(), env_inherits, ns_env("knitr"))

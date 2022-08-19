@@ -78,14 +78,14 @@ test_that("takes the equality proxy", {
   expect_identical(vec_detect_complete(df), expect)
 })
 
-test_that("columns with a data frame proxy are only incomplete if all rows are incomplete", {
+test_that("columns with a data frame proxy are incomplete if any columns of the proxy are incomplete (#1404)", {
   df <- data_frame(
-    x = c(NA, 1, 2, 3),
-    y = new_rcrd(list(a = c(1, 1, NA, NA), b = c(2, 2, 2, NA))),
-    z = new_rcrd(list(a = c(1, NA, 1, 1), b = c(2, NA, NA, 1)))
+    x = c(NA, 0, 1, 2, 3),
+    y = new_rcrd(list(a = c(1, 1, 1, NA, NA), b = c(2, 2, 2, 2, NA))),
+    z = new_rcrd(list(a = c(1, 1, NA, 1, 1), b = c(2, 2, NA, NA, 1)))
   )
 
-  expect_identical(vec_detect_complete(df), c(FALSE, FALSE, TRUE, FALSE))
+  expect_identical(vec_detect_complete(df), c(FALSE, TRUE, FALSE, FALSE, FALSE))
 })
 
 test_that("can have rcrd fields of all types", {
@@ -112,39 +112,4 @@ test_that("works with arrays", {
 
   expect_identical(vec_detect_complete(x), c(TRUE, FALSE))
   expect_identical(vec_detect_complete(y), c(TRUE, FALSE))
-})
-
-# vec_proxy_complete -----------------------------------------------------------
-
-test_that("generally returns equality proxy", {
-  x <- 1:5
-  y <- as.POSIXlt("2019-01-01") + 1:5
-
-  expect_identical(vec_proxy_complete(x), vec_proxy_equal(x))
-  expect_identical(vec_proxy_complete(y), vec_proxy_equal(y))
-  expect_identical(vec_proxy_complete(mtcars), vec_proxy_equal(mtcars))
-})
-
-test_that("returns equality proxy with arrays", {
-  x <- array(1)
-  y <- array(1, c(2, 2))
-  z <- array(1, c(2, 2, 2))
-
-  expect_identical(vec_proxy_complete(x), vec_proxy_equal(x))
-  expect_identical(vec_proxy_complete(y), vec_proxy_equal(y))
-  expect_identical(vec_proxy_complete(z), vec_proxy_equal(z))
-})
-
-test_that("non data frame input that has a data frame equality proxy has the correct completeness proxy", {
-  x <- 1:2
-  y <- new_rcrd(list(a = c(NA, 1), b = c(NA, NA)))
-  z <- data_frame(c = 1:2, d = 3:4)
-
-  df <- data_frame(x = x, y = y, z = z)
-
-  y_expect <- c(NA, FALSE)
-  df_expect <- data_frame(x = x, y = y_expect, z)
-
-  expect_identical(vec_proxy_complete(y), y_expect)
-  expect_identical(vec_proxy_complete(df), df_expect)
 })

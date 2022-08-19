@@ -42,6 +42,14 @@ elements of different types is undefined. However, to allow ordering of
 data frames containing list-columns, the ordering proxy of a list is
 generated as an integer vector that can be used to order list elements
 by first appearance.
+
+If a class implements a \code{vec_proxy_compare()} method, it usually doesn't need
+to provide a \code{vec_proxy_order()} method, because the latter is implemented
+by forwarding to \code{vec_proxy_compare()} by default. Classes inheriting from
+list are an exception: due to the default \code{vec_proxy_order()} implementation,
+\code{vec_proxy_compare()} and \code{vec_proxy_order()} should be provided for such
+classes (with identical implementations) to avoid mismatches between
+comparison and sorting.
 }
 \section{Dependencies}{
 

@@ -19,11 +19,14 @@
 #' to `vec_size()` as [lengths()] is to [length()].
 #'
 #' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
-#'   and [vec_recycle()] to recycle vectors to common length.
+#'   and [vec_recycle()] to [recycle][vector_recycling_rules] vectors to common
+#'   length.
 #' @section Invariants:
 #' * `vec_size(dataframe)` == `vec_size(dataframe[[i]])`
 #' * `vec_size(matrix)` == `vec_size(matrix[, i, drop = FALSE])`
 #' * `vec_size(vec_c(x, y))` == `vec_size(x)` + `vec_size(y)`
+#'
+#' @inheritParams rlang::args_error_context
 #'
 #' @param x,... Vector inputs or `NULL`.
 #' @param .size If `NULL`, the default, the output size is determined by
@@ -79,19 +82,23 @@
 #'
 #' list_sizes(list("a", 1:5, letters))
 vec_size <- function(x) {
-  .Call(vctrs_size, x)
+  .Call(ffi_size, x, environment())
 }
 
 #' @export
 #' @rdname vec_size
-vec_size_common <- function(..., .size = NULL, .absent = 0L) {
-  .External2(vctrs_size_common, .size, .absent)
+vec_size_common <- function(...,
+                            .size = NULL,
+                            .absent = 0L,
+                            .arg = "",
+                            .call = caller_env()) {
+  .External2(ffi_size_common, .size, .absent)
 }
 
 #' @rdname vec_size
 #' @export
 list_sizes <- function(x) {
-  .Call(vctrs_list_sizes, x)
+  .Call(ffi_list_sizes, x, environment())
 }
 
 #' @rdname vec_size
@@ -143,4 +150,10 @@ vec_seq_along <- function(x) {
 #' @rdname vec_seq_along
 vec_init_along <- function(x, y = x) {
   vec_slice(x, rep_len(NA_integer_, vec_size(y)))
+}
+
+vec_as_short_length <- function(n,
+                                arg = caller_arg(n),
+                                call = caller_env()) {
+  .Call(ffi_as_short_length, n, environment())
 }

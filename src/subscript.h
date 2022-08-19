@@ -1,6 +1,7 @@
 #ifndef VCTRS_SUBSCRIPT_H
 #define VCTRS_SUBSCRIPT_H
 
+#include "vctrs-core.h"
 #include "utils.h"
 
 
@@ -24,22 +25,15 @@ struct subscript_opts {
   enum subscript_type_action numeric;
   enum subscript_type_action character;
   struct vctrs_arg* subscript_arg;
+  struct r_lazy call;
 };
 
-static const struct subscript_opts subscript_default_opts = {
-  .action = SUBSCRIPT_ACTION_DEFAULT,
-  .logical = SUBSCRIPT_TYPE_ACTION_CAST,
-  .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
-  .character = SUBSCRIPT_TYPE_ACTION_CAST,
-  .subscript_arg = NULL
-};
-static const struct subscript_opts subscript_default_assign_opts = {
-  .action = SUBSCRIPT_ACTION_ASSIGN,
-  .logical = SUBSCRIPT_TYPE_ACTION_CAST,
-  .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
-  .character = SUBSCRIPT_TYPE_ACTION_CAST,
-  .subscript_arg = NULL
-};
+static inline
+struct subscript_opts new_subscript_opts_assign() {
+  return (struct subscript_opts) {
+    .action = SUBSCRIPT_ACTION_ASSIGN
+  };
+}
 
 SEXP vec_as_subscript_opts(SEXP subscript,
                            const struct subscript_opts* opts,

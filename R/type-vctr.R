@@ -72,8 +72,6 @@ new_vctr <- function(.data,
     abort("`.data` must be a vector type.")
   }
 
-  nms <- validate_names(.data)
-
   if (is_list(.data)) {
     if (is.data.frame(.data)) {
       abort("`.data` can't be a data frame.")
@@ -91,27 +89,30 @@ new_vctr <- function(.data,
     inherit_base_type <- FALSE
   }
 
+  names <- names(.data)
+  names <- names_repair_missing(names)
+
   class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
-  attrib <- list(names = nms, ..., class = class)
+  attrib <- list(names = names, ..., class = class)
 
   vec_set_attributes(.data, attrib)
 }
 
-validate_names <- function(.data) {
-  nms <- names(.data)
-
-  if (!names_all_or_nothing(nms)) {
-    stop("If any elements of `.data` are named, all must be named", call. = FALSE)
+names_repair_missing <- function(x) {
+  if (is.null(x)) {
+    return(x)
   }
 
-  nms
-}
-names_all_or_nothing <- function(names) {
-  if (is.null(names)) {
-    TRUE
-  } else {
-    all(names != "" & !is.na(names))
+  missing <- vec_equal_na(x)
+
+  if (any(missing)) {
+    # We never want to allow `NA_character_` names to slip through, but
+    # erroring on them has caused issues. Instead, we repair them to the
+    # empty string (#784).
+    x <- vec_assign(x, missing, "")
   }
+
+  x
 }
 
 #' @export
@@ -137,14 +138,25 @@ vec_cast.vctrs_vctr <- function(x, to, ...) {
   UseMethod("vec_cast.vctrs_vctr")
 }
 
-vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+vctr_cast <- function(x,
+                      to,
+                      ...,
+                      x_arg = "",
+                      to_arg = "",
+                      call = caller_env()) {
   # These are not strictly necessary, but make bootstrapping a new class
   # a bit simpler
   if (is.object(x)) {
     if (is_same_type(x, to)) {
       x
     } else {
-      stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+      stop_incompatible_cast(
+        x,
+        to,
+        x_arg = x_arg,
+        to_arg = to_arg,
+        call = call
+      )
     }
   } else {
     # FIXME: `vec_restore()` should only be called on proxies
@@ -269,9 +281,9 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
   if (length(value) != 0 && length(value) != length(x)) {
     abort("`names()` must be the same length as x.")
   }
-  if (!names_all_or_nothing(value)) {
-    abort("If any elements are named, all elements must be named.")
-  }
+
+  value <- names_repair_missing(value)
+
   NextMethod()
 }
 # Coercion ----------------------------------------------------------------
@@ -395,6 +407,58 @@ is.na.vctrs_vctr <- function(x) {
   vec_equal_na(x)
 }
 
+#' @importFrom stats na.fail
+#' @export
+na.fail.vctrs_vctr <- function(object, ...) {
+  missing <- vec_equal_na(object)
+
+  if (any(missing)) {
+    # Return the same error as `na.fail.default()`
+    abort("missing values in object")
+  }
+
+  object
+}
+
+#' @importFrom stats na.omit
+#' @export
+na.omit.vctrs_vctr <- function(object, ...) {
+  na_remove(object, "omit")
+}
+
+#' @importFrom stats na.exclude
+#' @export
+na.exclude.vctrs_vctr <- function(object, ...) {
+  na_remove(object, "exclude")
+}
+
+na_remove <- function(x, type) {
+  # The only difference between `na.omit()` and `na.exclude()` is the class
+  # of the `na.action` attribute
+
+  missing <- vec_equal_na(x)
+
+  if (!any(missing)) {
+    return(x)
+  }
+
+  # `na.omit/exclude()` attach the locations of the omitted values to the result
+  loc <- which(missing)
+
+  names <- vec_names(x)
+  if (!is_null(names)) {
+    # `na.omit/exclude()` retain the original names, if applicable
+    names <- vec_slice(names, loc)
+    loc <- vec_set_names(loc, names)
+  }
+
+  attr(loc, "class") <- type
+
+  out <- vec_slice(x, !missing)
+  attr(out, "na.action") <- loc
+  out
+}
+
 #' @export
 anyNA.vctrs_vctr <- if (getRversion() >= "3.2") {
   function(x, recursive = FALSE) {
@@ -446,17 +510,20 @@ anyDuplicated.vctrs_vctr <- function(x, incomparables = FALSE, ...) {
 #' @export
 xtfrm.vctrs_vctr <- function(x) {
   proxy <- vec_proxy_order(x)
+  type <- typeof(proxy)
 
-  if (is.object(proxy) && typeof(proxy) %in% c("integer", "double", "character")) {
+  if (type == "logical") {
     proxy <- unstructure(proxy)
+    proxy <- as.integer(proxy)
+    return(proxy)
   }
 
-  # order(order(x)) ~= rank(x)
-  if (typeof(proxy) %in% c("integer", "double")) {
-    proxy
-  } else {
-    vec_order(vec_order(proxy))
+  if (type %in% c("integer", "double")) {
+    proxy <- unstructure(proxy)
+    return(proxy)
   }
+
+  vec_rank(proxy, ties = "dense", incomplete = "na")
 }
 
 #' @importFrom stats median
@@ -475,10 +542,17 @@ quantile.vctrs_vctr <- function(x, ..., type = 1, na.rm = FALSE) {
   # nocov end
 }
 
+vec_cast_or_na <- function(x, to, ...) {
+  tryCatch(
+    vctrs_error_incompatible_type = function(...) vec_init(to, length(x)),
+    vec_cast(x, to)
+  )
+}
+
 #' @export
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (vec_is_empty(x)) {
-    return(vec_cast(Inf, x))
+    return(vec_cast_or_na(Inf, x))
   }
 
   # TODO: implement to do vec_arg_min()
@@ -486,6 +560,9 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
   if (isTRUE(na.rm)) {
     idx <- which.min(rank)
+    if (vec_is_empty(idx)) {
+      return(vec_cast_or_na(Inf, x))
+    }
   } else {
     idx <- which(vec_equal(rank, min(rank), na_equal = TRUE))
   }
@@ -496,7 +573,7 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 #' @export
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (vec_is_empty(x)) {
-    return(vec_cast(-Inf, x))
+    return(vec_cast_or_na(-Inf, x))
   }
 
   # TODO: implement to do vec_arg_max()
@@ -504,6 +581,9 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
   if (isTRUE(na.rm)) {
     idx <- which.max(rank)
+    if (vec_is_empty(idx)) {
+      return(vec_cast_or_na(-Inf, x))
+    }
   } else {
     idx <- which(vec_equal(rank, max(rank), na_equal = TRUE))
   }
@@ -514,7 +594,7 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 #' @export
 range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (vec_is_empty(x)) {
-    return(vec_cast(c(Inf, -Inf), x))
+    return(vec_cast_or_na(c(Inf, -Inf), x))
   }
 
   # Inline `min()` / `max()` to only call `xtfrm()` once
@@ -523,6 +603,9 @@ range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
   if (isTRUE(na.rm)) {
     idx_min <- which.min(rank)
     idx_max <- which.max(rank)
+    if (vec_is_empty(idx_min) && vec_is_empty(idx_max)) {
+      return(vec_cast_or_na(c(Inf, -Inf), x))
+    }
   } else {
     idx_min <- which(vec_equal(rank, min(rank), na_equal = TRUE))
     idx_max <- which(vec_equal(rank, max(rank), na_equal = TRUE))
@@ -646,7 +729,7 @@ summary.vctrs_vctr <- function(object, ...) {
 
 #' @export
 levels.vctrs_vctr <- function(x) {
-  stop_unsupported(x, "levels")
+  NULL
 }
 
 #' @export

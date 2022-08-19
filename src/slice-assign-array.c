@@ -1,8 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "strides.h"
-#include "slice-assign.h"
-#include "owned.h"
 
 #define ASSIGN_SHAPED_INDEX(CTYPE, DEREF, CONST_DEREF)    \
   SEXP out = PROTECT(vec_clone_referenced(proxy, owned)); \

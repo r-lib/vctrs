@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 
 /**
  * Type for symmetric binary dispatch.

@@ -1,7 +1,10 @@
+#ifndef VCTRS_DICTIONARY_H
+#define VCTRS_DICTIONARY_H
+
+#include "vctrs-core.h"
 #include "poly-op.h"
 
 #define DICT_EMPTY -1
-
 
 // The dictionary structure is a little peculiar since R has no notion of
 // a scalar, so the `key`s are indexes into vector `x`. This means we can
@@ -13,7 +16,7 @@ struct dictionary {
   SEXP protect;
 
   poly_binary_int_fn_ptr p_equal_na_equal;
-  poly_unary_bool_fn_ptr p_is_missing;
+  poly_unary_bool_fn_ptr p_is_incomplete;
   struct poly_vec* p_poly_vec;
 
   uint32_t* hash;
@@ -60,6 +63,9 @@ struct dictionary* new_dictionary_partial(SEXP x);
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i);
 uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i);
 
-bool dict_is_missing(struct dictionary* d, R_len_t i);
+bool dict_is_incomplete(struct dictionary* d, R_len_t i);
 
 void dict_put(struct dictionary* d, uint32_t k, R_len_t i);
+
+
+#endif

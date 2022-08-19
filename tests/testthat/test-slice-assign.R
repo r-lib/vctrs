@@ -410,80 +410,80 @@ test_that("can slice-assign unspecified vectors with default type2 method", {
   expect_identical(x, rational(c(NA, 2L), c(NA, 3L)))
 })
 
-test_that("`vec_assign()` validates `x_arg`", {
-  expect_error(vec_assign(1, 1, 1, x_arg = 1), "must be a string")
-  expect_error(vec_assign(1, 1, 1, x_arg = c("x", "y")), "must be a string")
-  expect_error(vec_assign(1, 1, 1, x_arg = NA_character_), "must be a string")
-})
-
-test_that("`vec_assign()` validates `value_arg`", {
-  expect_error(vec_assign(1, 1, 1, value_arg = 1), "must be a string")
-  expect_error(vec_assign(1, 1, 1, value_arg = c("x", "y")), "must be a string")
-  expect_error(vec_assign(1, 1, 1, value_arg = NA_character_), "must be a string")
+test_that("`vec_assign()` evaluates arg lazily", {
+  expect_silent(vec_assign(1L, 1L, 1L, x_arg = print("oof")))
+  expect_silent(vec_assign(1L, 1L, 1L, value_arg = print("oof")))
 })
 
 test_that("`vec_assign()` requires recyclable value", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:3, 1:3, 1:2),
       class = "vctrs_error_recycle_incompatible_size"
-    )
+    ))
   })
 })
 
 test_that("logical subscripts must match size of indexed vector", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:2, c(TRUE, FALSE, TRUE), 5),
       class = "vctrs_error_subscript_size"
-    )
+    ))
   })
+
+  expect_snapshot(
+    (expect_error(
+      vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ]),
+      class = "vctrs_error_subscript_size"
+    ))
+  )
 })
 
 test_that("must assign existing elements", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:3, 5, 10),
       class = "vctrs_error_subscript_oob"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(1:3, "foo", 10),
       "unnamed vector"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_slice(letters, -100) <- "foo",
       class = "vctrs_error_subscript_oob"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(set_names(letters), "foo", "bar"),
       class = "vctrs_error_subscript_oob"
-    )
+    ))
   })
 })
 
 test_that("must assign with proper negative locations", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:3, c(-1, 1), 1:2),
       class = "vctrs_error_subscript_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(1:3, c(-1, NA), 1:2),
       class = "vctrs_error_subscript_type"
-    )
+    ))
   })
 })
 
 test_that("`vec_assign()` error args can be overridden", {
-  verify_errors({
-    expect_error(
+  expect_snapshot({
+    (expect_error(
       vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar"),
       class = "vctrs_error_incompatible_type"
-    )
-    expect_error(
+    ))
+    (expect_error(
       vec_assign(1:2, 1L, 1:2, value_arg = "bar"),
       class = "vctrs_error_recycle_incompatible_size"
-    )
+    ))
   })
 })
 
@@ -667,7 +667,7 @@ test_that("can assign shaped base vectors with compact seqs", {
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
-  expect_identical(vec_assign_seq(mat(bytes(1, 2, 3)), bytes(1), start, size, increasing), mat(bytes(1, 1, 1)))
+  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
 })
 
@@ -681,7 +681,7 @@ test_that("can assign shaped base vectors with decreasing compact seqs", {
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
-  expect_identical(vec_assign_seq(mat(bytes(1, 2, 3)), bytes(1), start, size, increasing), mat(bytes(1, 1, 1)))
+  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
 })
 
@@ -696,7 +696,7 @@ test_that("can assign shaped base vectors with size 0 compact seqs", {
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, 2, 3)))
   expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, 2, 3)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", "2", "3")))
-  expect_identical(vec_assign_seq(mat(bytes(1, 2, 3)), bytes(1), start, size, increasing), mat(bytes(1, 2, 3)))
+  expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 2, 3)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, 2, 3)))
 })
 
@@ -715,32 +715,4 @@ test_that("can assign object of any dimensionality with compact seqs", {
   expect_identical(vec_assign_seq(x2, 2, start, size, increasing), array(rep(c(2, 2, 1), 4), dim = c(3, 4)))
   expect_identical(vec_assign_seq(x3, 2, start, size, increasing), array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5)))
   expect_identical(vec_assign_seq(x4, 2, start, size, increasing), array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6)))
-})
-
-
-# Golden tests ------------------------------------------------------------
-
-test_that("slice and assign have informative errors", {
-  verify_output(test_path("error", "test-slice-assign.txt"), {
-    "# `vec_assign()` requires recyclable value"
-    vec_assign(1:3, 1:3, 1:2)
-
-    "# logical subscripts must match size of indexed vector"
-    vec_assign(1:2, c(TRUE, FALSE, TRUE), 5)
-    vec_assign(mtcars, c(TRUE, FALSE), mtcars[1, ])
-
-    "# must assign existing elements"
-    vec_assign(1:3, 5, 10)
-    vec_assign(1:3, "foo", 10)
-    vec_slice(letters, -100) <- "foo"
-    vec_assign(set_names(letters), "foo", "bar")
-
-    "# must assign with proper negative locations"
-    vec_assign(1:3, c(-1, 1), 1:2)
-    vec_assign(1:3, c(-1, NA), 1:2)
-
-    "# `vec_assign()` error args can be overridden"
-    vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar")
-    vec_assign(1:2, 1L, 1:2, value_arg = "bar")
-  })
 })

@@ -31,13 +31,19 @@ new_rcrd <- function(fields, ..., class = character()) {
 
 #' @export
 vec_proxy.vctrs_rcrd <- function(x, ...) {
-  new_data_frame(unclass(x))
+  new_data_frame(x)
 }
 #' @export
 vec_restore.vctrs_rcrd <- function(x, to, ...) {
   x <- NextMethod()
   attr(x, "row.names") <- NULL
   x
+}
+
+#' @export
+vec_proxy_equal.vctrs_rcrd <- function(x, ...) {
+  # Recursively proxy using a data frame
+  vec_proxy_equal(new_data_frame(x))
 }
 
 #' @export
@@ -48,6 +54,15 @@ length.vctrs_rcrd <- function(x) {
 #' @export
 names.vctrs_rcrd <- function(x) {
   NULL
+}
+
+#' @export
+`names<-.vctrs_rcrd` <- function(x, value) {
+  if (is_null(value)) {
+    x
+  } else {
+    abort("Can't assign names to a <vctrs_rcrd>.")
+  }
 }
 
 #' @export
@@ -129,13 +144,6 @@ rep.vctrs_rcrd <- function(x, ...) {
 }
 
 # Equality and ordering ---------------------------------------------------
-
-# FIXME
-
-#' @export
-vec_proxy_compare.vctrs_rcrd <- function(x, ...) {
-  new_data_frame(vec_data(x), n = length(x))
-}
 
 #' @export
 vec_math.vctrs_rcrd <- function(.fn, .x, ...) {

@@ -5,6 +5,8 @@
 #' `vec_ptype_show()` nicely prints the common type of any number of
 #' inputs, and is designed for interactive exploration.
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x A vector
 #' @param ... For `vec_ptype()`, these dots are for future extensions and must
 #'   be empty.
@@ -98,36 +100,51 @@
 #'   data.frame(y = 2),
 #'   data.frame(z = "a")
 #' )
-vec_ptype <- function(x, ..., x_arg = "") {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
-  return(.Call(vctrs_ptype, x, x_arg))
+vec_ptype <- function(x, ..., x_arg = "", call = caller_env()) {
+  check_dots_empty0(...)
+  return(.Call(ffi_ptype, x, x_arg, environment()))
   UseMethod("vec_ptype")
 }
 
 #' @export
 #' @rdname vec_ptype
-vec_ptype_common <- function(..., .ptype = NULL) {
-  .External2(vctrs_type_common, .ptype)
+vec_ptype_common <- function(...,
+                             .ptype = NULL,
+                             .arg = "",
+                             .call = caller_env()) {
+  .External2(ffi_ptype_common, .ptype)
 }
 vec_ptype_common_opts <- function(...,
                                   .ptype = NULL,
-                                  .opts = fallback_opts()) {
-  .External2(vctrs_ptype_common_opts, .ptype, .opts)
+                                  .opts = fallback_opts(),
+                                  .call = caller_env()) {
+  .External2(ffi_ptype_common_opts, .ptype, .opts)
 }
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,
                                     .df_fallback = NULL,
-                                    .s3_fallback = NULL) {
+                                    .s3_fallback = NULL,
+                                    .call = caller_env()) {
   opts <- fallback_opts(
     df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
-  vec_ptype_common_opts(..., .ptype = .ptype, .opts = opts)
+  vec_ptype_common_opts(
+    ...,
+    .ptype = .ptype,
+    .opts = opts,
+    .call = .call
+  )
 }
-vec_ptype_common_fallback <- function(..., .ptype = NULL) {
-  vec_ptype_common_opts(..., .ptype = .ptype, .opts = full_fallback_opts())
+vec_ptype_common_fallback <- function(...,
+                                      .ptype = NULL,
+                                      .call = caller_env()) {
+  vec_ptype_common_opts(
+    ...,
+    .ptype = .ptype,
+    .opts = full_fallback_opts(),
+    .call = .call
+  )
 }
 
 #' @export
@@ -189,8 +206,8 @@ vec_typeof_bare <- function(x) {
 }
 
 vec_type_info <- function(x) {
-  .Call(vctrs_type_info, x)
+  .Call(ffi_type_info, x)
 }
 vec_proxy_info <- function(x) {
-  .Call(vctrs_proxy_info, x)
+  .Call(ffi_proxy_info, x)
 }

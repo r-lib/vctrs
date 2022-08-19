@@ -1,23 +1,35 @@
 #' @rdname df_ptype2
 #' @export
-tib_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
+tib_ptype2 <- function(x,
+                       y,
+                       ...,
+                       x_arg = "",
+                       y_arg = "",
+                       call = caller_env()) {
   .Call(
-    vctrs_tib_ptype2,
+    ffi_tib_ptype2,
     x = x,
     y = y,
     x_arg = x_arg,
-    y_arg = y_arg
+    y_arg = y_arg,
+    frame = environment()
   )
 }
 #' @rdname df_ptype2
 #' @export
-tib_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+tib_cast <- function(x,
+                     to,
+                     ...,
+                     x_arg = "",
+                     to_arg = "",
+                     call = caller_env()) {
   .Call(
-    vctrs_tib_cast,
+    ffi_tib_cast,
     x = x,
     to = to,
     x_arg = x_arg,
-    to_arg = to_arg
+    to_arg = to_arg,
+    frame = environment()
   )
 }
 

@@ -20,7 +20,9 @@ subclasses, see
 We’ll illustrate how to implement coercion methods with a simple class
 that represents natural numbers. In this scenario we have an existing
 class that already features a constructor and methods for \code{print()} and
-subset.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+subset.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 new_natural <- function(x) \{
   if (is.numeric(x) || is.logical(x)) \{
     stopifnot(is_whole(x))
@@ -44,7 +46,9 @@ print.my_natural <- function(x, ...) \{
 `[.my_natural` <- function(x, i, ...) \{
   new_natural(NextMethod())
 \}
-}\if{html}{\out{</div>}}\if{html}{\out{<div class="r">}}\preformatted{new_natural(1:3)
+}\if{html}{\out{</div>}}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{new_natural(1:3)
 #> <natural>
 #> [1] 1 2 3
 new_natural(c(1, NA))
@@ -56,7 +60,9 @@ new_natural(c(1, NA))
 \subsection{Roxygen workflow}{
 
 To implement methods for generics, first import the generics in your
-namespace and redocument:\if{html}{\out{<div class="r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
+namespace and redocument:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
 NULL
 }\if{html}{\out{</div>}}
 
@@ -75,7 +81,9 @@ your NAMESPACE file or lazily with \code{s3_register()}.
 \subsection{The self-self method}{
 
 The first method to implement is the one that signals that your class is
-compatible with itself:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+compatible with itself:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_natural.my_natural <- function(x, y, ...) \{
   x
 \}
@@ -97,15 +105,21 @@ makes your class a bit more efficient.
 
 Our natural number class is conceptually a parent of \verb{<logical>} and a
 child of \verb{<integer>}, but the class is not compatible with logical,
-integer, or double vectors yet:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
-#> Error: Can't combine <logical> and <my_natural>.
+integer, or double vectors yet:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
+#> Error:
+#> ! Can't combine `TRUE` <logical> and `new_natural(2:3)` <my_natural>.
 
 vec_ptype2(new_natural(1), 2:3)
-#> Error: Can't combine <my_natural> and <integer>.
+#> Error:
+#> ! Can't combine `new_natural(1)` <my_natural> and `2:3` <integer>.
 }\if{html}{\out{</div>}}
 
 We’ll specify the twin methods for each of these classes, returning the
-richer class in each case.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+richer class in each case.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_natural.logical <- function(x, y, ...) \{
   # The order of the classes in the method name follows the order of
   # the arguments in the function signature, so `x` is the natural
@@ -119,7 +133,9 @@ vec_ptype2.logical.my_natural <- function(x, y, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-Between a natural number and an integer, the latter is the richer class:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+Between a natural number and an integer, the latter is the richer class:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_natural.integer <- function(x, y, ...) \{
   y
 \}
@@ -129,7 +145,9 @@ vec_ptype2.integer.my_natural <- function(x, y, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-We no longer get common type errors for logical and integer:\if{html}{\out{<div class="r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
+We no longer get common type errors for logical and integer:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(TRUE, new_natural(2:3))
 #> <natural>
 #> integer(0)
 
@@ -140,7 +158,9 @@ vec_ptype2(new_natural(1), 2:3)
 We are not done yet. Pairwise coercion methods must be implemented for
 all the connected nodes in the coercion hierarchy, which include double
 vectors further up. The coercion methods for grand-parent types must be
-implemented separately:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+implemented separately:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_natural.double <- function(x, y, ...) \{
   y
 \}
@@ -161,7 +181,9 @@ incompatibility is signalled by calling \code{stop_incompatible_type()}.
 In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of \verb{<factor>} that has stricter combination
 semantics. The method throws when the levels of the two factors are not
-compatible.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+compatible.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_strict_factor.my_strict_factor <- function(x, y, ..., x_arg = "", y_arg = "") \{
   if (!setequal(levels(x), levels(y))) \{
     stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
@@ -193,7 +215,9 @@ signature. The first class represents \code{to}, whereas the second class
 represents \code{x}.
 
 The self-self method is easy in this case, it just returns the target
-input:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+input:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_cast.my_natural.my_natural <- function(x, to, ...) \{
   x
 \}
@@ -201,7 +225,9 @@ vec_cast.my_natural.my_natural <- function(x, to, ...) \{
 
 The other types need to be validated. We perform input validation in the
 \code{new_natural()} constructor, so that’s a good fit for our \code{vec_cast()}
-implementations.\if{html}{\out{<div class="r">}}\preformatted{#' @export
+implementations.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_cast.my_natural.logical <- function(x, to, ...) \{
   # The order of the classes in the method name is in reverse order
   # of the arguments in the function signature, so `to` is the natural
@@ -218,21 +244,29 @@ vec_cast.my_natural.double <- function(x, to, ...) \{
 
 With these methods, vctrs is now able to combine logical and natural
 vectors. It properly returns the richer type of the two, a natural
-vector:\if{html}{\out{<div class="r">}}\preformatted{vec_c(TRUE, new_natural(1), FALSE)
+vector:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(TRUE, new_natural(1), FALSE)
 #> <natural>
 #> [1] 1 1 0
 }\if{html}{\out{</div>}}
 
 Because we haven’t implemented conversions \emph{from} natural, it still
 doesn’t know how to combine natural with the richer integer and double
-types:\if{html}{\out{<div class="r">}}\preformatted{vec_c(new_natural(1), 10L)
-#> Error: Can't convert <my_natural> to <integer>.
+types:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(new_natural(1), 10L)
+#> Error:
+#> ! Can't convert <my_natural> to <integer>.
 vec_c(1.5, new_natural(1))
-#> Error: Can't convert <my_natural> to <double>.
+#> Error:
+#> ! Can't convert <my_natural> to <double>.
 }\if{html}{\out{</div>}}
 
 This is quick work which completes the implementation of coercion
-methods for vctrs:\if{html}{\out{<div class="r">}}\preformatted{#' @export
+methods for vctrs:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_cast.logical.my_natural <- function(x, to, ...) \{
   # In this case `to` is the logical and `x` is the natural number
   attributes(x) <- NULL
@@ -250,7 +284,9 @@ vec_cast.double.my_natural <- function(x, to, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-And we now get the expected combinations.\if{html}{\out{<div class="r">}}\preformatted{vec_c(new_natural(1), 10L)
+And we now get the expected combinations.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(new_natural(1), 10L)
 #> [1]  1 10
 
 vec_c(1.5, new_natural(1))

@@ -1,5 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
 #include "type-data-frame.h"
 
 // Initialised at load time
@@ -21,7 +20,13 @@ static SEXP vec_rep(SEXP x, int times);
 
 // [[ register() ]]
 SEXP vctrs_rep(SEXP x, SEXP times) {
-  times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
+  struct r_lazy call = r_lazy_null;
+
+  times = PROTECT(vec_cast(times,
+                           vctrs_shared_empty_int,
+                           args_times,
+                           vec_args.empty,
+                           call));
 
   if (vec_size(times) != 1) {
     stop_rep_times_size();
@@ -38,8 +43,16 @@ SEXP vctrs_rep(SEXP x, SEXP times) {
 static SEXP vec_rep(SEXP x, int times) {
   check_rep_times(times);
 
+  if (times == 1) {
+    return x;
+  }
+
   const R_len_t times_ = (R_len_t) times;
   const R_len_t x_size = vec_size(x);
+
+  if (x_size == 1) {
+    return vec_check_recycle(x, times_, args_times, r_lazy_null);
+  }
 
   if (multiply_would_overflow(x_size, times_)) {
     stop_rep_size_oob();
@@ -58,7 +71,7 @@ static SEXP vec_rep(SEXP x, int times) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;
@@ -77,7 +90,11 @@ static SEXP vec_rep_each_uniform(SEXP x, int times);
 static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size);
 
 static SEXP vec_rep_each(SEXP x, SEXP times) {
-  times = PROTECT(vec_cast(times, vctrs_shared_empty_int, args_times, args_empty));
+  times = PROTECT(vec_cast(times,
+                           vctrs_shared_empty_int,
+                           args_times,
+                           vec_args.empty,
+                           r_lazy_null));
 
   const R_len_t times_size = vec_size(times);
 
@@ -85,7 +102,14 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
 
   if (times_size == 1) {
     const int times_ = r_int_get(times, 0);
-    out = vec_rep_each_uniform(x, times_);
+
+    if (times_ == 1) {
+      out = x;
+    } else if (times_ == 0) {
+      out = vec_ptype(x, vec_args.empty, r_lazy_null);
+    } else {
+      out = vec_rep_each_uniform(x, times_);
+    }
   } else {
     out = vec_rep_each_impl(x, times, times_size);
   }
@@ -117,7 +141,7 @@ static SEXP vec_rep_each_uniform(SEXP x, int times) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;
@@ -127,7 +151,10 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
   const R_len_t x_size = vec_size(x);
 
   if (x_size != times_size) {
-    stop_recycle_incompatible_size(times_size, x_size, args_times);
+    stop_recycle_incompatible_size(times_size,
+                                   x_size,
+                                   args_times,
+                                   r_lazy_null);
   }
 
   const int* p_times = INTEGER_RO(times);
@@ -160,7 +187,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, subscript);
+  SEXP out = vec_slice_unsafe(x, subscript);
 
   UNPROTECT(1);
   return out;
@@ -354,7 +381,7 @@ SEXP new_unrep_data_frame(SEXP key, SEXP times, r_ssize size) {
   r_list_poke(out, 1, times);
 
   SEXP names = PROTECT(r_new_character(2));
-  r_poke_names(out, names);
+  r_attrib_poke_names(out, names);
 
   r_chr_poke(names, 0, strings_key);
   r_chr_poke(names, 1, strings_times);

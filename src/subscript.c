@@ -1,45 +1,27 @@
 #include "vctrs.h"
-#include "ptype2.h"
-#include "subscript.h"
-#include "utils.h"
-#include "dim.h"
-
-static SEXP fns_cnd_body_subscript_dim = NULL;
-
-static SEXP new_error_subscript_type(SEXP subscript,
-                                     const struct subscript_opts* opts,
-                                     SEXP body,
-                                     SEXP parent);
-static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* kind);
-
-static SEXP obj_cast_subscript(SEXP subscript,
-                               const struct subscript_opts* opts,
-                               ERR* err);
-static SEXP dbl_cast_subscript(SEXP subscript,
-                               const struct subscript_opts* opts,
-                               ERR* err);
+#include "decl/subscript-decl.h"
 
 
-SEXP vec_as_subscript_opts(SEXP subscript,
-                           const struct subscript_opts* opts,
-                           ERR* err) {
+r_obj* vec_as_subscript_opts(r_obj* subscript,
+                             const struct subscript_opts* opts,
+                             ERR* err) {
   if (vec_dim_n(subscript) != 1) {
-    *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim, R_NilValue);
-    return R_NilValue;
+    *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim);
+    return r_null;
   }
 
-  PROTECT_INDEX subscript_pi;
-  PROTECT_WITH_INDEX(subscript, &subscript_pi);
+  r_keep_loc subscript_pi;
+  KEEP_HERE(subscript, &subscript_pi);
 
-  SEXP orig_names = PROTECT(r_names(subscript));
+  r_obj* orig_names = KEEP(r_names(subscript));
 
-  switch (TYPEOF(subscript)) {
-  case NILSXP:
+  switch (r_typeof(subscript)) {
+  case R_TYPE_null:
     if (opts->numeric == SUBSCRIPT_TYPE_ACTION_CAST) {
       subscript = vctrs_shared_empty_int;
     }
     break;
-  case SYMSXP:
+  case R_TYPE_symbol:
     if (opts->character == SUBSCRIPT_TYPE_ACTION_CAST) {
       subscript = rlang_sym_as_character(subscript);
     }
@@ -47,24 +29,24 @@ SEXP vec_as_subscript_opts(SEXP subscript,
   default:
     break;
   }
-  REPROTECT(subscript, subscript_pi);
+  KEEP_AT(subscript, subscript_pi);
 
   if (!vec_is_vector(subscript)) {
-    *err = new_error_subscript_type(subscript, opts, R_NilValue, R_NilValue);
-    UNPROTECT(2);
-    return R_NilValue;
+    *err = new_error_subscript_type(subscript, opts, r_null);
+    FREE(2);
+    return r_null;
   }
 
-  if (OBJECT(subscript)) {
+  if (r_is_object(subscript)) {
     subscript = obj_cast_subscript(subscript, opts, err);
-  } else if (TYPEOF(subscript) == REALSXP) {
+  } else if (r_typeof(subscript) == R_TYPE_double) {
     subscript = dbl_cast_subscript(subscript, opts, err);
   }
-  REPROTECT(subscript, subscript_pi);
+  KEEP_AT(subscript, subscript_pi);
 
   if (*err) {
-    UNPROTECT(2);
-    return R_NilValue;
+    FREE(2);
+    return r_null;
   }
 
   // Coerce unspecified vectors to integer only if logical indices are
@@ -72,52 +54,61 @@ SEXP vec_as_subscript_opts(SEXP subscript,
   if (opts->logical == SUBSCRIPT_TYPE_ACTION_ERROR && vec_is_unspecified(subscript)) {
     struct vctrs_arg* arg = opts->subscript_arg;
     if (opts->numeric == SUBSCRIPT_TYPE_ACTION_CAST) {
-      subscript = vec_cast(subscript, vctrs_shared_empty_int, arg, NULL);
+      subscript = vec_cast(subscript,
+                           vctrs_shared_empty_int,
+                           arg,
+                           NULL,
+                           r_lazy_null);
     } else {
-      subscript = vec_cast(subscript, vctrs_shared_empty_chr, arg, NULL);
+      subscript = vec_cast(subscript,
+                           vctrs_shared_empty_chr,
+                           arg,
+                           NULL,
+                           r_lazy_null);
     }
   }
-  REPROTECT(subscript, subscript_pi);
+  KEEP_AT(subscript, subscript_pi);
 
   enum subscript_type_action action = SUBSCRIPT_TYPE_ACTION_ERROR;
-  switch (TYPEOF(subscript)) {
-  case LGLSXP: action = opts->logical; break;
-  case INTSXP: action = opts->numeric; break;
-  case STRSXP: action = opts->character; break;
+  switch (r_typeof(subscript)) {
+  case R_TYPE_logical: action = opts->logical; break;
+  case R_TYPE_integer: action = opts->numeric; break;
+  case R_TYPE_character: action = opts->character; break;
   default: break;
   }
 
   if (action == SUBSCRIPT_TYPE_ACTION_ERROR) {
-    *err = new_error_subscript_type(subscript, opts, R_NilValue, R_NilValue);
-    UNPROTECT(2);
-    return R_NilValue;
+    *err = new_error_subscript_type(subscript, opts, r_null);
+    FREE(2);
+    return r_null;
   }
 
-  if (orig_names != R_NilValue) {
+  if (orig_names != r_null) {
     // FIXME: Handle names in cast methods
     subscript = r_clone_referenced(subscript);
-    REPROTECT(subscript, subscript_pi);
-    r_poke_names(subscript, orig_names);
+    KEEP_AT(subscript, subscript_pi);
+    r_attrib_poke_names(subscript, orig_names);
   }
 
-  UNPROTECT(2);
+  FREE(2);
   return subscript;
 }
 
-static SEXP obj_cast_subscript(SEXP subscript,
-                               const struct subscript_opts* opts,
-                               ERR* err) {
+static
+r_obj* obj_cast_subscript(r_obj* subscript,
+                          const struct subscript_opts* opts,
+                          ERR* err) {
   int dir = 0;
 
   struct ptype2_opts ptype2_opts = {
     .x = subscript,
-    .y = R_NilValue,
-    .x_arg = opts->subscript_arg
+    .y = r_null,
+    .p_x_arg = opts->subscript_arg
   };
   struct cast_opts cast_opts = {
     .x = subscript,
-    .to = R_NilValue,
-    .x_arg = opts->subscript_arg
+    .to = r_null,
+    .p_x_arg = opts->subscript_arg
   };
 
   ptype2_opts.y = cast_opts.to = vctrs_shared_empty_lgl;
@@ -135,142 +126,149 @@ static SEXP obj_cast_subscript(SEXP subscript,
     return vec_cast_opts(&cast_opts);
   }
 
-  *err = new_error_subscript_type(subscript, opts, R_NilValue, R_NilValue);
-  return R_NilValue;
+  *err = new_error_subscript_type(subscript, opts, r_null);
+  return r_null;
 }
 
-static SEXP dbl_cast_subscript_fallback(SEXP subscript,
-                                        const struct subscript_opts* opts,
-                                        ERR* err);
-static SEXP syms_new_dbl_cast_subscript_body = NULL;
-static SEXP syms_lossy_err = NULL;
+static
+r_obj* dbl_cast_subscript(r_obj* subscript,
+                          const struct subscript_opts* opts,
+                          ERR* err) {
+  double* p = r_dbl_begin(subscript);
+  r_ssize n = r_length(subscript);
 
-static SEXP dbl_cast_subscript(SEXP subscript,
-                               const struct subscript_opts* opts,
-                               ERR* err) {
-  double* p = REAL(subscript);
-  R_len_t n = Rf_length(subscript);
+  r_obj* out = KEEP(r_alloc_integer(n));
+  int* out_p = r_int_begin(out);
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, n));
-  int* out_p = INTEGER(out);
-
-  for (R_len_t i = 0; i < n; ++i) {
+  for (r_ssize i = 0; i < n; ++i) {
     double elt = p[i];
 
-    // Generally `(int) nan` results in the correct `NA_INTEGER` value,
+    // Generally `(int) nan` results in the correct `na_int` value,
     // but this is not guaranteed, so we have to explicitly check for it.
     // https://stackoverflow.com/questions/10366485/problems-casting-nan-floats-to-int
     if (isnan(elt)) {
-      out_p[i] = NA_INTEGER;
+      out_p[i] = r_globals.na_int;
       continue;
     }
 
     if (!isfinite(elt) || elt <= INT_MIN || elt > INT_MAX) {
       // Once we throw lazy errors from the cast method, we should
       // throw the error here as well
-      UNPROTECT(1);
+      FREE(1);
       return dbl_cast_subscript_fallback(subscript, opts, err);
     }
 
     int elt_int = (int) elt;
 
     if (elt != elt_int) {
-      UNPROTECT(1);
+      FREE(1);
       return dbl_cast_subscript_fallback(subscript, opts, err);
     }
 
     out_p[i] = elt_int;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static SEXP dbl_cast_subscript_fallback(SEXP subscript,
-                                        const struct subscript_opts* opts,
-                                        ERR* err) {
-  const struct cast_opts cast_opts = {
+static
+r_obj* dbl_cast_subscript_fallback(r_obj* subscript,
+                                   const struct subscript_opts* opts,
+                                   ERR* err) {
+  struct cast_opts cast_opts = {
     .x = subscript,
     .to = vctrs_shared_empty_int,
     opts->subscript_arg
   };
-  SEXP out = PROTECT(vec_cast_e(&cast_opts, err));
+  r_obj* out = KEEP(vec_cast_e(&cast_opts, err));
   if (*err) {
-    SEXP err_obj = PROTECT(*err);
+    r_obj* err_obj = KEEP(*err);
 
-    SEXP body = PROTECT(vctrs_eval_mask1(syms_new_dbl_cast_subscript_body,
-                                         syms_lossy_err, err_obj));
+    r_obj* body = KEEP(vctrs_eval_mask1(syms_new_dbl_cast_subscript_body,
+                                        syms_lossy_err, err_obj));
 
-    *err = new_error_subscript_type(subscript,
-                                    opts,
-                                    body,
-                                    err_obj);
-    UNPROTECT(3);
-    return R_NilValue;
+    *err = new_error_subscript_type(subscript, opts, body);
+    FREE(3);
+    return r_null;
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
+
+// FFI -----------------------------------------------------------------
+
 // [[ register() ]]
-SEXP vctrs_as_subscript_result(SEXP subscript,
-                               SEXP logical,
-                               SEXP numeric,
-                               SEXP character,
-                               SEXP arg_) {
-  struct vctrs_arg arg = vec_as_arg(arg_);
+r_obj* ffi_as_subscript(r_obj* subscript,
+                        r_obj* logical,
+                        r_obj* numeric,
+                        r_obj* character,
+                        r_obj* frame) {
+  struct r_lazy arg_ = { .x = syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_);
+
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   struct subscript_opts opts = {
     .logical = parse_subscript_arg_type(logical, "logical"),
     .numeric = parse_subscript_arg_type(numeric, "numeric"),
     .character = parse_subscript_arg_type(character, "character"),
-    .subscript_arg = &arg
+    .subscript_arg = &arg,
+    .call = call
   };
 
   ERR err = NULL;
-  SEXP out = vec_as_subscript_opts(subscript, &opts, &err);
-  PROTECT2(out, err);
-
-  out = r_result(out, err);
-
-  UNPROTECT(2);
-  return out;
-}
-
-// [[ register() ]]
-SEXP vctrs_as_subscript(SEXP subscript,
-                        SEXP logical,
-                        SEXP numeric,
-                        SEXP character,
-                        SEXP arg_) {
-  struct vctrs_arg arg = vec_as_arg(arg_);
-
-  struct subscript_opts opts = {
-    .logical = parse_subscript_arg_type(logical, "logical"),
-    .numeric = parse_subscript_arg_type(numeric, "numeric"),
-    .character = parse_subscript_arg_type(character, "character"),
-    .subscript_arg = &arg
-  };
-
-  ERR err = NULL;
-  SEXP out = vec_as_subscript_opts(subscript, &opts, &err);
-  PROTECT2(out, err);
+  r_obj* out = vec_as_subscript_opts(subscript, &opts, &err);
+  KEEP2(out, err);
 
   out = r_result_get(out, err);
 
-  UNPROTECT(2);
+  FREE(2);
+  return out;
+}
+
+// [[ register() ]]
+r_obj* ffi_as_subscript_result(r_obj* subscript,
+                               r_obj* logical,
+                               r_obj* numeric,
+                               r_obj* character,
+                               r_obj* frame) {
+  struct r_lazy arg_ = { .x = syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_);
+
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+
+  struct subscript_opts opts = {
+    .logical = parse_subscript_arg_type(logical, "logical"),
+    .numeric = parse_subscript_arg_type(numeric, "numeric"),
+    .character = parse_subscript_arg_type(character, "character"),
+    .subscript_arg = &arg,
+    .call = call
+  };
+
+  ERR err = NULL;
+  r_obj* out = vec_as_subscript_opts(subscript, &opts, &err);
+  KEEP2(out, err);
+
+  out = r_result(out, err);
+
+  FREE(2);
   return out;
 }
 
 
 // Arguments -------------------------------------------------------------------
 
-static void stop_subscript_arg_type(const char* kind) {
-  Rf_errorcall(R_NilValue, "`%s` must be one of \"cast\" or \"error\".", kind);
+static
+void stop_subscript_arg_type(const char* kind) {
+  r_abort("`%s` must be one of \"cast\" or \"error\".", kind);
 }
-static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* kind) {
-  if (TYPEOF(x) != STRSXP || Rf_length(x) == 0) {
+static
+enum subscript_type_action parse_subscript_arg_type(r_obj* x,
+                                                    const char* kind) {
+  if (r_typeof(x) != R_TYPE_character || r_length(x) == 0) {
     stop_subscript_arg_type(kind);
   }
 
@@ -280,60 +278,73 @@ static enum subscript_type_action parse_subscript_arg_type(SEXP x, const char* k
   if (!strcmp(str, "error")) return SUBSCRIPT_TYPE_ACTION_ERROR;
   stop_subscript_arg_type(kind);
 
-  never_reached("parse_subscript_arg_type");
+  r_stop_unreachable();
 }
 
 
 // Conditions ------------------------------------------------------------------
 
-static SEXP syms_new_error_subscript_type = NULL;
+static
+r_obj* new_error_subscript_type(r_obj* subscript,
+                                const struct subscript_opts* opts,
+                                r_obj* body) {
+  r_obj* logical = subscript_type_action_chr(opts->logical);
+  r_obj* numeric = subscript_type_action_chr(opts->numeric);
+  r_obj* character = subscript_type_action_chr(opts->character);
 
-static SEXP new_error_subscript_type(SEXP subscript,
-                                     const struct subscript_opts* opts,
-                                     SEXP body,
-                                     SEXP parent) {
-  SEXP logical = subscript_type_action_chr(opts->logical);
-  SEXP numeric = subscript_type_action_chr(opts->numeric);
-  SEXP character = subscript_type_action_chr(opts->character);
+  subscript = KEEP(expr_protect(subscript));
+  r_obj* subscript_arg = KEEP(vctrs_arg(opts->subscript_arg));
+  r_obj* ffi_call = r_lazy_eval_protect(opts->call);
 
-  subscript = PROTECT(expr_protect(subscript));
-  SEXP subscript_arg = PROTECT(vctrs_arg(opts->subscript_arg));
-
-  SEXP syms[9] = {
+  r_obj* syms[] = {
     syms_i,
     syms_subscript_arg,
     syms_subscript_action,
+    syms_call,
     syms_logical,
     syms_numeric,
     syms_character,
     syms_body,
-    syms_parent,
     NULL
   };
-  SEXP args[9] = {
+  r_obj* args[] = {
     subscript,
     subscript_arg,
     get_opts_action(opts),
+    ffi_call,
     logical,
     numeric,
     character,
     body,
-    parent,
     NULL
   };
 
-  SEXP call = PROTECT(r_call(syms_new_error_subscript_type, syms, args));
-  SEXP out = Rf_eval(call, vctrs_ns_env);
+  r_obj* call = KEEP(r_call_n(syms_new_error_subscript_type, syms, args));
+  r_obj* out = r_eval(call, vctrs_ns_env);
 
-  UNPROTECT(3);
+  FREE(3);
   return out;
 }
 
 
-void vctrs_init_subscript(SEXP ns) {
-  syms_new_error_subscript_type = Rf_install("new_error_subscript_type");
-  syms_new_dbl_cast_subscript_body = Rf_install("new_cnd_bullets_subscript_lossy_cast");
-  syms_lossy_err = Rf_install("lossy_err");
+// Init ----------------------------------------------------------------
 
-  fns_cnd_body_subscript_dim = Rf_eval(Rf_install("cnd_body_subscript_dim"), ns);
+void vctrs_init_subscript(r_obj* ns) {
+  syms_new_error_subscript_type = r_sym("new_error_subscript_type");
+  syms_new_dbl_cast_subscript_body = r_sym("new_cnd_bullets_subscript_lossy_cast");
+  syms_lossy_err = r_sym("lossy_err");
+
+  fns_cnd_body_subscript_dim = r_eval(r_sym("cnd_body_subscript_dim"), ns);
 }
+
+static
+r_obj* fns_cnd_body_subscript_dim = NULL;
+
+static
+r_obj* syms_new_dbl_cast_subscript_body = NULL;
+
+static
+r_obj* syms_lossy_err = NULL;
+
+static
+r_obj* syms_new_error_subscript_type = NULL;

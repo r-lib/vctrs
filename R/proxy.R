@@ -50,7 +50,7 @@
 #' if your class has attributes that depend on the data.
 #'
 #' @param x A vector.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @section Proxying:
 #'
@@ -135,9 +135,7 @@
 #' @keywords internal
 #' @export
 vec_proxy <- function(x, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   return(.Call(vctrs_proxy, x))
   UseMethod("vec_proxy")
 }
@@ -157,9 +155,7 @@ vec_proxy.default <- function(x, ...) {
 #'   future.
 #' @export
 vec_restore <- function(x, to, ..., n = NULL) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   return(.Call(vctrs_restore, x, to, n))
   UseMethod("vec_restore", to)
 }

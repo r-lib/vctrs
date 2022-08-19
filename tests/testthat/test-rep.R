@@ -15,6 +15,14 @@ test_that("`vec_rep()` can repeat 0 `times`", {
   expect_identical(vec_rep(1, 0), numeric())
 })
 
+test_that("`vec_rep()` can repeat 1 `time`", {
+  expect_identical(vec_rep(1:3, 1), 1:3)
+})
+
+test_that("`vec_rep()` can repeat `x` of size 1", {
+  expect_identical(vec_rep(1, 2), c(1, 1))
+})
+
 test_that("`vec_rep()` errors on long vector output", {
   # Exact error message may be platform specific
   expect_error(vec_rep(1:2, .Machine$integer.max), "output size must be less than")
@@ -48,6 +56,10 @@ test_that("`vec_rep_each()` can repeat 0 `times`", {
   expect_identical(vec_rep_each(1:2, 0), integer())
 })
 
+test_that("`vec_rep_each()` can repeat 1 `time`", {
+  expect_identical(vec_rep_each(1:2, 1), 1:2)
+})
+
 test_that("`vec_rep_each()` errors on long vector output", {
   # Exact error message may be platform specific
   expect_error(vec_rep_each(1:2, .Machine$integer.max), "output size must be less than")
@@ -67,24 +79,23 @@ test_that("`vec_rep_each()` uses recyclying errors", {
 
 # ------------------------------------------------------------------------------
 
-test_that("rep functions generate informative error messages", {
-  verify_output(test_path("error", "test-rep.txt"), {
-    "# `vec_rep()` validates `times`"
-    vec_rep(1, "x")
-    vec_rep(1, c(1, 2))
-    vec_rep(1, -1)
-    vec_rep(1, NA_integer_)
+test_that("`vec_rep()` validates `times`", {
+  expect_snapshot(error = TRUE, vec_rep(1, "x"))
+  expect_snapshot(error = TRUE, vec_rep(1, c(1, 2)))
+  expect_snapshot(error = TRUE, vec_rep(1, -1))
+  expect_snapshot(error = TRUE, vec_rep(1, NA_integer_))
+})
 
-    "# `vec_rep_each()` validates `times`"
-    vec_rep_each(1, "x")
-    vec_rep_each(1, -1)
-    vec_rep_each(c(1, 2), c(1, -1))
-    vec_rep_each(1, NA_integer_)
-    vec_rep_each(c(1, 2), c(1, NA_integer_))
+test_that("`vec_rep_each()` validates `times`", {
+  expect_snapshot(error = TRUE, vec_rep_each(1, "x"))
+  expect_snapshot(error = TRUE, vec_rep_each(1, -1))
+  expect_snapshot(error = TRUE, vec_rep_each(c(1, 2), c(1, -1)))
+  expect_snapshot(error = TRUE, vec_rep_each(1, NA_integer_))
+  expect_snapshot(error = TRUE, vec_rep_each(c(1, 2), c(1, NA_integer_)))
+})
 
-    "# `vec_rep_each()` uses recyclying errors"
-    vec_rep_each(1:2, 1:3)
-  })
+test_that("`vec_rep_each()` uses recyclying errors", {
+  expect_snapshot(error = TRUE, vec_rep_each(1:2, 1:3))
 })
 
 # vec_unrep --------------------------------------------------------------------

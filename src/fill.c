@@ -1,6 +1,4 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "equal.h"
 
 #define INFINITE_FILL -1
 
@@ -50,7 +48,7 @@ SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_fill) {
     }
   }
 
-  SEXP out = vec_slice_impl(x, loc);
+  SEXP out = vec_slice_unsafe(x, loc);
 
   UNPROTECT(2);
   return out;
@@ -245,12 +243,16 @@ void stop_bad_direction() {
 }
 
 static
-int parse_max_fill(SEXP x) {
+int parse_max_fill(r_obj* x) {
   if (x == R_NilValue) {
     return INFINITE_FILL;
   }
 
-  x = PROTECT(vec_cast(x, vctrs_shared_empty_int, args_max_fill, args_empty));
+  x = KEEP(vec_cast(x,
+                    vctrs_shared_empty_int,
+                    vec_args.max_fill,
+                    vec_args.empty,
+                    r_lazy_null));
 
   if (!r_is_positive_number(x)) {
     r_abort("`max_fill` must be `NULL` or a single positive integer.");
@@ -258,6 +260,6 @@ int parse_max_fill(SEXP x) {
 
   int out = r_int_get(x, 0);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }

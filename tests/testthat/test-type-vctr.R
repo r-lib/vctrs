@@ -247,20 +247,76 @@ test_that("diff matches base R", {
   expect_equal(diff(x2, differences = 11), x2[0L])
 })
 
+test_that("na.omit() works and retains metadata", {
+  x <- new_vctr(c(a = 1, b = NA, c = 2))
+  result <- na.omit(x)
+
+  expect <- vec_slice(x, c(1, 3))
+  attr(expect, "na.action") <- structure(c(b = 2L), class = "omit")
+
+  expect_identical(result, expect)
+})
+
+test_that("na.omit() returns its input unchanged if there are no missing values", {
+  x <- new_vctr(c(a = 1, b = 2))
+  expect_identical(na.omit(x), x)
+})
+
+test_that("na.exclude() works and retains metadata", {
+  x <- new_vctr(c(a = 1, b = NA, c = 2))
+  result <- na.exclude(x)
+
+  expect <- vec_slice(x, c(1, 3))
+  attr(expect, "na.action") <- structure(c(b = 2L), class = "exclude")
+
+  expect_identical(result, expect)
+})
+
+test_that("na.fail() works", {
+  x <- new_vctr(c(a = 1, b = 2))
+  expect_identical(na.fail(x), x)
+
+  x <- new_vctr(c(a = 1, b = NA, c = 2))
+  expect_snapshot(error = TRUE, na.fail(x))
+})
+
 # names -------------------------------------------------------------------
 
-test_that("all elements must be named if any are named", {
-  expect_error(new_vctr(setNames(1:2, c("a", NA))), "named")
-  expect_error(new_vctr(setNames(1:2, c("a", ""))), "named")
+test_that("`NA_character_` names are repaired to the empty string (#784)", {
+  expect_named(new_vctr(set_names(1, NA_character_)), "")
+  expect_named(new_vctr(set_names(1:2, c("a", NA))), c("a", ""))
+})
+
+test_that("the empty string is an allowed name (#784)", {
+  expect_named(new_vctr(set_names(1, "")), "")
+  expect_named(new_vctr(set_names(1:2, c("", "x"))), c("", "x"))
 })
 
 test_that("can not provide invalid names", {
   x <- new_vctr(c(a = 1, b = 2))
   expect_error(names(x) <- "x", "length")
-  expect_error(names(x) <- c("x", NA), "named")
-  expect_error(names(x) <- c("x", ""), "named")
   expect_error(names(x) <- c("x", "y", "z"), "length")
   expect_error(names(x) <- NULL, NA)
+})
+
+test_that("can set names to the empty string (#784)", {
+  x <- new_vctr(c(a = 1, b = 2))
+
+  names(x) <- c("", "")
+  expect_named(x, c("", ""))
+
+  names(x) <- c("", "x")
+  expect_named(x, c("", "x"))
+})
+
+test_that("setting names to `NA_character_` repairs to the empty string (#784)", {
+  x <- new_vctr(1:2)
+
+  names(x) <- c(NA_character_, NA_character_)
+  expect_named(x, c("", ""))
+
+  names(x) <- c("x", NA_character_)
+  expect_named(x, c("x", ""))
 })
 
 test_that("can use [ and [[ with names", {
@@ -329,11 +385,12 @@ test_that("can't touch protected attributes", {
 
   expect_error(dim(x) <- c(2, 2), class = "vctrs_error_unsupported")
   expect_error(dimnames(x) <- list("x"), class = "vctrs_error_unsupported")
-
-  expect_error(levels(x), class = "vctrs_error_unsupported")
   expect_error(levels(x) <- "x", class = "vctrs_error_unsupported")
 
-  # but it's ok to set names to NULL; this happens at least in vec_c
+  # It is expected that unimplemented `levels()` returns `NULL`
+  expect_null(levels(x))
+
+  # But it's ok to set names to NULL; this happens at least in vec_c
   # and maybe elsewhere. We may need to back off on this level of
   # strictness in the future
   expect_error(names(x) <- NULL, NA)
@@ -388,6 +445,29 @@ test_that("c passes on to vec_c", {
   expect_equal(c(h, h), rep(h, 2))
 })
 
+test_that("rbind does not fail with an unclear message (#1186)", {
+  # In general, vec_rbind() should be preferred. In many cases rbind() does
+  # the right thing, this test exists to alert us if this changes in the future.
+  skip_on_cran()
+
+  local_hidden()
+
+  h <- new_hidden(1)
+  # A failure in levels() for vctrs_vctr classes was the underlying issue.
+  expect_null(levels(h))
+
+  df <- data_frame(h = h)
+
+  expect_equal(rbind(df), df)
+  expect_equal(rbind(df, NULL), df)
+
+  expect_equal(rbind(df, data_frame(h = 1)), unrownames(df[c(1, 1), , drop = FALSE]))
+  expect_equal(rbind(df, df), unrownames(df[c(1, 1), , drop = FALSE]))
+  # An example where the result differs, to alert us if the rbind() contract
+  # changes
+  expect_equal(rbind(data_frame(h = 1), df), data_frame(h = c(1, 1)))
+})
+
 test_that("summaries preserve class", {
   h <- new_hidden(c(1, 2))
 
@@ -438,28 +518,14 @@ test_that("base coercions default to vec_cast", {
 
 test_that("default print and str methods are useful", {
   h <- new_hidden(1:4)
-
-  expect_known_output(
-    {
-      print(h)
-      cat("\n")
-      print(h[0])
-      cat("\n")
-      str(h)
-    },
-    file = "test-vctr-print.txt",
-  )
+  expect_snapshot(h)
+  expect_snapshot(h[0])
+  expect_snapshot(str(h))
 })
 
 test_that("default print method shows names", {
   h <- new_hidden(c(A = 1, B = 2, C = 3))
-
-  expect_known_output(
-    {
-      print(h)
-    },
-    file = "test-vctr-print-names.txt",
-  )
+  expect_snapshot(h)
 })
 
 test_that("can't transpose", {
@@ -577,10 +643,71 @@ test_that("generic predicates return logical vectors (#251)", {
   expect_identical(all(x), TRUE)
 })
 
-test_that("xtfrm() returns a bare vector", {
+test_that("xtfrm() converts logical types to integer", {
+  expect_identical(xtfrm(new_vctr(c(TRUE, FALSE, NA), foo = "bar")), c(1L, 0L, NA))
+})
+
+test_that("xtfrm() unwraps integer and double atomic types", {
   expect_identical(xtfrm(new_vctr(1:3, foo = "bar")), 1:3)
+  expect_identical(xtfrm(new_vctr(1:3 + 0, foo = "bar")), 1:3 + 0)
 })
 
 test_that("xtfrm() works with character subclass", {
   expect_identical(xtfrm(new_vctr(chr())), int())
+})
+
+test_that("xtfrm() maintains ties when falling through to vec_rank() (#1354)", {
+  x <- new_vctr(c("F", "F", "M", "A", "M", "A"))
+  expect_identical(xtfrm(x), c(2L, 2L, 3L, 1L, 3L, 1L))
+})
+
+test_that("xtfrm() propagates NAs when falling through to vec_rank()", {
+  x <- new_vctr(c("F", NA))
+  expect_identical(xtfrm(x), c(1L, NA))
+})
+
+test_that("xtfrm() uses C locale ordering with character proxies", {
+  x <- new_vctr(c("A", "a", "B"))
+  expect_identical(xtfrm(x), c(1L, 3L, 2L))
+})
+
+test_that("xtfrm() works on rcrd types", {
+  x <- new_rcrd(list(x = c(1, 2, 1, NA), y = c(2, 1, 1, NA)))
+  expect_identical(xtfrm(x), c(2L, 3L, 1L, NA))
+})
+
+test_that("Summary generics behave as expected if na.rm = TRUE and all values are NA (#1357)", {
+  expect_identical(min(new_vctr(NA_real_), na.rm = TRUE), new_vctr(Inf))
+  expect_identical(max(new_vctr(NA_real_), na.rm = TRUE), new_vctr(-Inf))
+  expect_identical(range(new_vctr(NA_real_), na.rm = TRUE), new_vctr(c(Inf, -Inf)))
+
+  expect_identical(min(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(max(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(range(new_vctr(NA_integer_), na.rm = TRUE), new_vctr(c(NA_integer_, NA_integer_)))
+
+  expect_identical(min(new_vctr(NA_character_), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(max(new_vctr(NA_character_), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(range(new_vctr(NA_character_), na.rm = TRUE), new_vctr(c(NA_character_, NA_character_)))
+
+  expect_identical(min(new_vctr(NA), na.rm = TRUE), new_vctr(NA))
+  expect_identical(max(new_vctr(NA), na.rm = TRUE), new_vctr(NA))
+  expect_identical(range(new_vctr(NA), na.rm = TRUE), new_vctr(c(NA, NA)))
+})
+
+test_that("Summary generics behave as expected for empty vctrs (#1357)", {
+  expect_identical(min(new_vctr(numeric()), na.rm = TRUE), new_vctr(Inf))
+  expect_identical(max(new_vctr(numeric()), na.rm = TRUE), new_vctr(-Inf))
+  expect_identical(range(new_vctr(numeric()), na.rm = TRUE), new_vctr(c(Inf, -Inf)))
+
+  expect_identical(min(new_vctr(integer()), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(max(new_vctr(integer()), na.rm = TRUE), new_vctr(NA_integer_))
+  expect_identical(range(new_vctr(integer()), na.rm = TRUE), new_vctr(c(NA_integer_, NA_integer_)))
+
+  expect_identical(min(new_vctr(character()), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(max(new_vctr(character()), na.rm = TRUE), new_vctr(NA_character_))
+  expect_identical(range(new_vctr(character()), na.rm = TRUE), new_vctr(c(NA_character_, NA_character_)))
+
+  expect_identical(min(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
+  expect_identical(max(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
+  expect_identical(range(new_vctr(logical()), na.rm = TRUE), new_vctr(c(NA, NA)))
 })

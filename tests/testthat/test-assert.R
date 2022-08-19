@@ -191,31 +191,38 @@ test_that("unspecified is finalised before assertion", {
 })
 
 test_that("assertion failures are explained", {
-  expect_known_output(file = test_path("test-assert-explanations.txt"), {
-    local_no_stringsAsFactors()
-    local_options(rlang_backtrace_on_error = "none")
+  local_no_stringsAsFactors()
+  local_options(rlang_backtrace_on_error = "none")
 
-    try_cat(vec_assert(lgl(), chr()))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), chr()))
 
-    try_cat(vec_assert(lgl(), factor()))
-    try_cat(vec_assert(lgl(), factor(levels = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), factor()))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), factor(levels = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(factor(levels = "bar"), factor(levels = "foo")))
 
-    try_cat(vec_assert(factor(levels = "bar"), factor(levels = "foo")))
-    try_cat(vec_assert(factor(), chr()))
+  expect_snapshot(error = TRUE, vec_assert(factor(), chr()))
 
-    try_cat(vec_assert(lgl(), data.frame()))
-    try_cat(vec_assert(lgl(), data.frame(x = 1)))
-    try_cat(vec_assert(lgl(), data.frame(x = 1, y = 2)))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), data.frame()))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), data.frame(x = 1)))
+  expect_snapshot(error = TRUE, vec_assert(lgl(), data.frame(x = 1, y = 2)))
 
-    try_cat(vec_assert(data.frame(), chr()))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(), chr()))
 
-    try_cat(vec_assert(data.frame(x = 1), chr()))
-    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo")))
-    try_cat(vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), chr()))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), data.frame(x = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1), data.frame(x = "foo", y = 2)))
 
-    try_cat(vec_assert(data.frame(x = 1, y = 2), chr()))
-    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
-    try_cat(vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), chr()))
+
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo")))
+  expect_snapshot(error = TRUE, vec_assert(data.frame(x = 1, y = 2), data.frame(x = "foo", y = 2)))
+})
+
+test_that("vec_assert() validates `size` (#1470)", {
+  expect_snapshot({
+    (expect_error(vec_assert(1, size = c(2, 3))))
+    (expect_error(vec_assert(1, size = 1.5)))
+    (expect_error(vec_assert(1, size = "x")))
   })
 })
 
@@ -235,6 +242,12 @@ test_that("names and row names do not influence type identity (#707)", {
 
 test_that("bare lists are lists", {
   expect_true(vec_is_list(list()))
+})
+
+test_that("AsIs lists are lists (#1463)", {
+  expect_true(vec_is_list(I(list())))
+  expect_true(vec_is_list(I(list_of(1))))
+  expect_false(vec_is_list(I(double())))
 })
 
 test_that("list_of are lists", {
@@ -306,4 +319,43 @@ test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
   )
 
   expect_true(vec_is_list(x))
+})
+
+test_that("list_all_vectors() works", {
+  expect_true(list_all_vectors(list(1)))
+  expect_true(list_all_vectors(list_of(1)))
+  expect_false(list_all_vectors(list(1, env())))
+  expect_snapshot((expect_error(list_all_vectors(env()))))
+})
+
+test_that("vec_check_list() works", {
+  expect_null(vec_check_list(list(1)))
+  expect_null(vec_check_list(list_of(1)))
+  expect_snapshot({
+    my_function <- function(my_arg) vec_check_list(my_arg)
+    (expect_error(my_function(env())))
+  })
+})
+
+test_that("vec_check_list() uses a special error when `arg` is the empty string (#1604)", {
+  expect_snapshot(error = TRUE, {
+    vec_check_list(1, arg = "")
+  })
+})
+
+test_that("vec_check_list() and list_check_all_vectors() work", {
+  expect_null(list_check_all_vectors(list()))
+  expect_null(list_check_all_vectors(list(1, mtcars)))
+  expect_snapshot({
+    my_function <- function(my_arg) list_check_all_vectors(my_arg)
+    (expect_error(my_function(env())))
+    (expect_error(my_function(list(1, env()))))
+    (expect_error(my_function(list(1, name = env()))))
+    (expect_error(my_function(list(1, foo = env()))))
+  })
+})
+
+test_that("informative messages when 1d array doesn't match vector", {
+  x <- array(1:3)
+  expect_snapshot((expect_error(vec_assert(x, int()))))
 })

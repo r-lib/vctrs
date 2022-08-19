@@ -1,10 +1,6 @@
 #include "vctrs.h"
-#include "dictionary.h"
-#include "translate.h"
-#include "equal.h"
-#include "hash.h"
-#include "ptype2.h"
-#include "utils.h"
+#include "type-data-frame.h"
+#include "decl/dictionary-decl.h"
 
 // Initialised at load time
 struct vctrs_arg args_needles;
@@ -12,7 +8,11 @@ struct vctrs_arg args_haystack;
 
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-int32_t ceil2(int32_t x) {
+static inline
+uint32_t u32_safe_ceil2(uint32_t x) {
+  // Return 2^0 when `x` is 0
+  x += (x == 0);
+
   x--;
   x |= x >> 1;
   x |= x >> 2;
@@ -20,6 +20,14 @@ int32_t ceil2(int32_t x) {
   x |= x >> 8;
   x |= x >> 16;
   x++;
+
+  if (x == 0) {
+    // INT32_MAX+2 <= x <= UINT32_MAX (i.e. 2^31+1 <= x <= 2^32-1) would attempt
+    // to ceiling to 2^32, which is 1 greater than `UINT32_MAX`, resulting in
+    // overflow wraparound to 0.
+    r_stop_internal("`x` results in an `uint32_t` overflow.");
+  }
+
   return x;
 }
 
@@ -66,7 +74,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   d->p_poly_vec = p_poly_vec;
 
   d->p_equal_na_equal = new_poly_p_equal_na_equal(type);
-  d->p_is_missing = new_poly_p_is_missing(type);
+  d->p_is_incomplete = new_poly_p_is_incomplete(type);
 
   d->used = 0;
 
@@ -74,12 +82,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     d->key = NULL;
     d->size = 0;
   } else {
-    // assume worst case, that every value is distinct, aiming for a load factor
-    // of at most 77%. We round up to power of 2 to ensure quadratic probing
-    // strategy works.
-    // Rprintf("size: %i\n", size);
-    R_len_t size = ceil2(vec_size(x) / 0.77);
-    size = (size < 16) ? 16 : size;
+    uint32_t size = dict_key_size(x);
 
     d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
     memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
@@ -141,22 +144,62 @@ uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
     // quadratic probing.
   }
 
-  stop_internal("dict_hash_with", "Dictionary is full.");
+  r_stop_internal("Dictionary is full.");
 }
 
 uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
   return dict_hash_with(d, d, i);
 }
 
-bool dict_is_missing(struct dictionary* d, R_len_t i) {
+bool dict_is_incomplete(struct dictionary* d, R_len_t i) {
   return d->hash[i] == HASH_MISSING &&
-    d->p_is_missing(d->p_poly_vec->p_vec, i);
+    d->p_is_incomplete(d->p_poly_vec->p_vec, i);
 }
 
 
 void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
   d->key[hash] = i;
   d->used++;
+}
+
+// Assume worst case, that every value is distinct, aiming for a load factor
+// of at most 77%. We round up to power of 2 to ensure quadratic probing
+// strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
+// as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
+// would result in 2^32 to INT32_MAX to ensure that our maximum ceiling value
+// is only 2^31. This will increase the load factor above 77% for `x` with
+// length greater than 1653562409 (2147483648 * .77), but it ensures that
+// it can run.
+static inline
+uint32_t dict_key_size(SEXP x) {
+  const R_len_t x_size = vec_size(x);
+
+  if (x_size > R_LEN_T_MAX) {
+    // Ensure we catch the switch to supporting long vectors in `vec_size()`
+    r_stop_internal("Dictionary functions do not support long vectors.");
+  }
+
+  const double load_adjusted_size = x_size / 0.77;
+
+  if (load_adjusted_size > UINT32_MAX) {
+    r_stop_internal("Can't safely cast load adjusted size to a `uint32_t`.");
+  }
+
+  uint32_t size = (uint32_t)load_adjusted_size;
+  // Clamp to `INT32_MAX` to avoid overflow in `u32_safe_ceil2()`,
+  // at the cost of an increased maximum load factor for long input
+  size = size > INT32_MAX ? INT32_MAX : size;
+  size = u32_safe_ceil2(size);
+  size = (size < 16) ? 16 : size;
+
+  if (x_size > size) {
+    // Should never happen with `R_len_t` sizes.
+    // This is a defensive check that will be useful when we support long vectors.
+    r_stop_internal("Hash table size must be at least as large as input to avoid a load factor of >100%.");
+  }
+
+  // Rprintf("size: %u\n", size);
+  return size;
 }
 
 // R interface -----------------------------------------------------------------
@@ -286,9 +329,12 @@ SEXP vctrs_id(SEXP x) {
 
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
-                 SEXP needles_arg_, SEXP haystack_arg_) {
-  struct vctrs_arg needles_arg = vec_as_arg(needles_arg_);
-  struct vctrs_arg haystack_arg = vec_as_arg(haystack_arg_);
+                 SEXP frame) {
+  struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame };
+  struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
+
+  struct r_lazy haystack_arg_ = { .x = syms.haystack_arg, .env = frame };
+  struct vctrs_arg haystack_arg = new_lazy_arg(&haystack_arg_);
 
   return vec_match_params(needles,
                           haystack,
@@ -320,13 +366,13 @@ SEXP vec_match_params(SEXP needles,
   PROTECT_N(type, &nprot);
 
   needles = vec_cast_params(needles, type,
-                            needles_arg, args_empty,
+                            needles_arg, vec_args.empty,
                             DF_FALLBACK_quiet,
                             S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
-                             haystack_arg, args_empty,
+                             haystack_arg, vec_args.empty,
                              DF_FALLBACK_quiet,
                              S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
@@ -389,7 +435,7 @@ static inline void vec_match_loop_propagate(int* p_out,
                                             struct dictionary* d_needles,
                                             R_len_t n_needle) {
   for (R_len_t i = 0; i < n_needle; ++i) {
-    if (dict_is_missing(d_needles, i)) {
+    if (dict_is_incomplete(d_needles, i)) {
       p_out[i] = NA_INTEGER;
       continue;
     }
@@ -406,14 +452,17 @@ static inline void vec_match_loop_propagate(int* p_out,
 }
 
 // [[ register() ]]
-SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_,
-              SEXP needles_arg_, SEXP haystack_arg_) {
+SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
   int nprot = 0;
   bool na_equal = r_bool_as_int(na_equal_);
 
   int _;
-  struct vctrs_arg needles_arg = vec_as_arg(needles_arg_);
-  struct vctrs_arg haystack_arg = vec_as_arg(haystack_arg_);
+
+  struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame };
+  struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
+
+  struct r_lazy haystack_arg_ = { .x = syms.haystack_arg, .env = frame };
+  struct vctrs_arg haystack_arg = new_lazy_arg(&haystack_arg_);
 
   SEXP type = vec_ptype2_params(needles, haystack,
                                 &needles_arg, &haystack_arg,
@@ -422,13 +471,13 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_,
   PROTECT_N(type, &nprot);
 
   needles = vec_cast_params(needles, type,
-                            &needles_arg, args_empty,
+                            &needles_arg, vec_args.empty,
                             DF_FALLBACK_quiet,
                             S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
-                             &haystack_arg, args_empty,
+                             &haystack_arg, vec_args.empty,
                              DF_FALLBACK_quiet,
                              S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
@@ -464,7 +513,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_,
   bool propagate = !na_equal;
 
   for (int i = 0; i < n_needle; ++i) {
-    if (propagate && dict_is_missing(d_needles, i)) {
+    if (propagate && dict_is_incomplete(d_needles, i)) {
       p_out[i] = NA_LOGICAL;
     } else {
       uint32_t hash = dict_hash_with(d, d_needles, i);
@@ -487,42 +536,47 @@ SEXP vctrs_count(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
-  int* p_val = INTEGER(val);
+  SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
+  int* p_count = INTEGER(count);
 
   for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+    uint32_t hash = dict_hash_scalar(d, i);
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
-      p_val[hash] = 0;
+      p_count[hash] = 0;
     }
-    p_val[hash]++;
+    p_count[hash]++;
   }
 
   // Create output
-  SEXP out_key = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
-  SEXP out_val = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
-  int* p_out_key = INTEGER(out_key);
-  int* p_out_val = INTEGER(out_val);
+  SEXP out_loc = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
+  int* p_out_loc = INTEGER(out_loc);
+
+  // Reuse `count` storage, which will be narrowed
+  SEXP out_count = count;
+  int* p_out_count = p_count;
 
   int i = 0;
-  for (int hash = 0; hash < d->size; ++hash) {
+  for (uint32_t hash = 0; hash < d->size; ++hash) {
     if (d->key[hash] == DICT_EMPTY)
       continue;
 
-    p_out_key[i] = d->key[hash] + 1;
-    p_out_val[i] = p_val[hash];
+    p_out_loc[i] = d->key[hash] + 1;
+    p_out_count[i] = p_count[hash];
     i++;
   }
 
+  out_count = PROTECT_N(r_int_resize(out_count, d->used), &nprot);
+
   SEXP out = PROTECT_N(Rf_allocVector(VECSXP, 2), &nprot);
-  SET_VECTOR_ELT(out, 0, out_key);
-  SET_VECTOR_ELT(out, 1, out_val);
+  SET_VECTOR_ELT(out, 0, out_loc);
+  SET_VECTOR_ELT(out, 1, out_count);
   SEXP names = PROTECT_N(Rf_allocVector(STRSXP, 2), &nprot);
-  SET_STRING_ELT(names, 0, Rf_mkChar("key"));
-  SET_STRING_ELT(names, 1, Rf_mkChar("val"));
+  SET_STRING_ELT(names, 0, Rf_mkChar("loc"));
+  SET_STRING_ELT(names, 1, Rf_mkChar("count"));
   Rf_setAttrib(out, R_NamesSymbol, names);
+  init_data_frame(out, d->used);
 
   UNPROTECT(nprot);
   return out;
@@ -539,26 +593,37 @@ SEXP vctrs_duplicated(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  SEXP val = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
-  int* p_val = INTEGER(val);
+  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
+  int* p_out = LOGICAL(out);
+  memset(p_out, 0, n * sizeof(int));
 
-  for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
+  uint32_t* p_hashes = (uint32_t*) R_alloc(n, sizeof(uint32_t));
+
+  // Forward pass
+  for (R_len_t i = 0; i < n; ++i) {
+    const uint32_t hash = dict_hash_scalar(d, i);
+    p_hashes[i] = hash;
 
     if (d->key[hash] == DICT_EMPTY) {
       dict_put(d, hash, i);
-      p_val[hash] = 0;
+    } else {
+      p_out[i] = 1;
     }
-    p_val[hash]++;
   }
 
-  // Create output
-  SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n), &nprot);
-  int* p_out = LOGICAL(out);
+  for (uint32_t i = 0; i < d->size; ++i) {
+    d->key[i] = DICT_EMPTY;
+  }
 
-  for (int i = 0; i < n; ++i) {
-    int32_t hash = dict_hash_scalar(d, i);
-    p_out[i] = p_val[hash] != 1;
+  // Reverse pass
+  for (R_len_t i = n - 1; i >= 0; --i) {
+    const uint32_t hash = p_hashes[i];
+
+    if (d->key[hash] == DICT_EMPTY) {
+      dict_put(d, hash, i);
+    } else {
+      p_out[i] = 1;
+    }
   }
 
   UNPROTECT(nprot);

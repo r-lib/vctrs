@@ -1,154 +1,164 @@
 #include "vctrs.h"
-#include "utils.h"
-#include "arg-counter.h"
-
-// Initialised at load time
-static SEXP syms_vec_is_vector_dispatch = NULL;
-static SEXP fns_vec_is_vector_dispatch = NULL;
-
-// From proxy.c
-SEXP vec_proxy_method(SEXP x);
-SEXP vec_proxy_invoke(SEXP x, SEXP method);
+#include "decl/type-info-decl.h"
 
 
-static enum vctrs_type vec_base_typeof(SEXP x, bool proxied);
-
-// [[ include("vctrs.h") ]]
-struct vctrs_type_info vec_type_info(SEXP x) {
-  struct vctrs_type_info info;
-
-  info.type = vec_typeof(x);
+struct vctrs_type_info vec_type_info(r_obj* x) {
+  struct vctrs_type_info info = {
+    .type = vec_typeof(x)
+  };
 
   switch (info.type) {
   case vctrs_type_s3: info.proxy_method = vec_proxy_method(x); break;
-  default: info.proxy_method = R_NilValue;
+  default: info.proxy_method = r_null;
   }
+  info.shelter = info.proxy_method;
 
   return info;
 }
 
-// [[ include("vctrs.h") ]]
-struct vctrs_proxy_info vec_proxy_info(SEXP x) {
+struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info;
+  info.shelter = KEEP(r_alloc_list(2));
 
-  info.proxy_method = OBJECT(x) ? vec_proxy_method(x) : R_NilValue;
-  PROTECT(info.proxy_method);
+  info.proxy_method = r_is_object(x) ? vec_proxy_method(x) : r_null;
+  r_list_poke(info.shelter, 0, info.proxy_method);
 
-  if (info.proxy_method == R_NilValue) {
+  if (info.proxy_method == r_null) {
     info.type = vec_base_typeof(x, false);
     info.proxy = x;
   } else {
-    SEXP proxy = PROTECT(vec_proxy_invoke(x, info.proxy_method));
+    r_obj* proxy = KEEP(vec_proxy_invoke(x, info.proxy_method));
     info.type = vec_base_typeof(proxy, true);
     info.proxy = proxy;
-    UNPROTECT(1);
+    FREE(1);
   }
+  r_list_poke(info.shelter, 1, info.proxy);
 
-  UNPROTECT(1);
+  FREE(1);
   return info;
 }
 
 // [[ register() ]]
-SEXP vctrs_type_info(SEXP x) {
+r_obj* ffi_type_info(r_obj* x) {
   struct vctrs_type_info info = vec_type_info(x);
 
-  SEXP out = PROTECT(Rf_mkNamed(VECSXP, (const char*[]) { "type", "proxy_method", "" }));
-  SET_VECTOR_ELT(out, 0, Rf_mkString(vec_type_as_str(info.type)));
-  SET_VECTOR_ELT(out, 1, info.proxy_method);
+  r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "" }));
+  r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
+  r_list_poke(out, 1, info.proxy_method);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 // [[ register() ]]
-SEXP vctrs_proxy_info(SEXP x) {
+r_obj* ffi_proxy_info(r_obj* x) {
   struct vctrs_proxy_info info = vec_proxy_info(x);
 
-  SEXP out = PROTECT(Rf_mkNamed(VECSXP, (const char*[]) { "type", "proxy_method", "proxy", "" }));
-  SET_VECTOR_ELT(out, 0, Rf_mkString(vec_type_as_str(info.type)));
-  SET_VECTOR_ELT(out, 1, info.proxy_method);
-  SET_VECTOR_ELT(out, 2, info.proxy);
+  r_obj* out = KEEP(Rf_mkNamed(R_TYPE_list, (const char*[]) { "type", "proxy_method", "proxy", "" }));
+  r_list_poke(out, 0, r_chr(vec_type_as_str(info.type)));
+  r_list_poke(out, 1, info.proxy_method);
+  r_list_poke(out, 2, info.proxy);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static enum vctrs_type vec_base_typeof(SEXP x, bool proxied) {
-  switch (TYPEOF(x)) {
+static
+enum vctrs_type vec_base_typeof(r_obj* x, bool proxied) {
+  switch (r_typeof(x)) {
   // Atomic types are always vectors
-  case NILSXP: return vctrs_type_null;
-  case LGLSXP: return vctrs_type_logical;
-  case INTSXP: return vctrs_type_integer;
-  case REALSXP: return vctrs_type_double;
-  case CPLXSXP: return vctrs_type_complex;
-  case STRSXP: return vctrs_type_character;
-  case RAWSXP: return vctrs_type_raw;
-  case VECSXP:
+  case R_TYPE_null: return vctrs_type_null;
+  case R_TYPE_logical: return vctrs_type_logical;
+  case R_TYPE_integer: return vctrs_type_integer;
+  case R_TYPE_double: return vctrs_type_double;
+  case R_TYPE_complex: return vctrs_type_complex;
+  case R_TYPE_character: return vctrs_type_character;
+  case R_TYPE_raw: return vctrs_type_raw;
+  case R_TYPE_list:
     // Bare lists and data frames are vectors
-    if (!OBJECT(x)) return vctrs_type_list;
+    if (!r_is_object(x)) return vctrs_type_list;
     if (is_data_frame(x)) return vctrs_type_dataframe;
     // S3 lists are only vectors if they are proxied
-    if (proxied || Rf_inherits(x, "list")) return vctrs_type_list;
+    if (proxied || r_inherits(x, "list")) return vctrs_type_list;
     // fallthrough
   default: return vctrs_type_scalar;
   }
 }
 
-// [[ include("vctrs.h") ]]
-enum vctrs_type vec_proxy_typeof(SEXP x) {
+enum vctrs_type vec_proxy_typeof(r_obj* x) {
   return vec_base_typeof(x, true);
 }
 
 
-
 // [[ register() ]]
-SEXP vctrs_is_list(SEXP x) {
-  return Rf_ScalarLogical(vec_is_list(x));
+r_obj* vctrs_is_list(r_obj* x) {
+  return r_lgl(vec_is_list(x));
 }
 
-// [[ include("vctrs.h") ]]
-bool vec_is_list(SEXP x) {
+bool vec_is_list(r_obj* x) {
   // Require `x` to be a list internally
-  if (TYPEOF(x) != VECSXP) {
+  if (r_typeof(x) != R_TYPE_list) {
     return false;
   }
 
-  // Unclassed VECSXP are lists
-  if (!OBJECT(x)) {
+  // Unclassed R_TYPE_list are lists
+  if (!r_is_object(x)) {
     return true;
   }
 
-  // Classed VECSXP are only lists if the last class is explicitly `"list"`
-  return class_type(x) == vctrs_class_list;
+  const enum vctrs_class_type type = class_type(x);
+
+  // Classed R_TYPE_list are only lists if the last class is explicitly `"list"`
+  // or if it is a bare "AsIs" type
+  return (type == VCTRS_CLASS_list) || (type == VCTRS_CLASS_bare_asis);
 }
 
+// [[ register() ]]
+r_obj* vctrs_is_vector(r_obj* x) {
+  return r_lgl(vec_is_vector(x));
+}
 
-// [[ include("vctrs.h") ]]
-bool vec_is_vector(SEXP x) {
-  if (x == R_NilValue) {
+bool vec_is_vector(r_obj* x) {
+  if (x == r_null) {
     return false;
   }
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
   return info.type != vctrs_type_scalar;
 }
+
 // [[ register() ]]
-SEXP vctrs_is_vector(SEXP x) {
-  return Rf_ScalarLogical(vec_is_vector(x));
+r_obj* ffi_list_all_vectors(r_obj* x, r_obj* frame) {
+  vec_check_list(x, vec_args.x, (struct r_lazy) { frame, r_null });
+  return r_lgl(list_all_vectors(x));
 }
 
-static bool class_is_null(SEXP x) {
-  return Rf_getAttrib(x, R_ClassSymbol) == R_NilValue;
+bool list_all_vectors(r_obj* x) {
+  if (r_typeof(x) != R_TYPE_list) {
+    r_stop_unexpected_type(r_typeof(x));
+  }
+  return r_list_all_of(x, &vec_is_vector);
 }
 
-// [[ include("vctrs.h") ]]
-enum vctrs_type vec_typeof(SEXP x) {
+
+// [[ register() ]]
+r_obj* vctrs_typeof(r_obj* x, r_obj* dispatch) {
+  enum vctrs_type type;
+  if (r_lgl_get(dispatch, 0)) {
+    type = vec_proxy_info(x).type;
+  } else {
+    type = vec_typeof(x);
+  }
+  return r_chr(vec_type_as_str(type));
+}
+
+enum vctrs_type vec_typeof(r_obj* x) {
   // Check for unspecified vectors before `vec_base_typeof()` which
   // allows vectors of `NA` to pass through as `vctrs_type_logical`
   if (vec_is_unspecified(x)) {
     return vctrs_type_unspecified;
   }
 
-  if (!OBJECT(x) || class_is_null(x)) {
+  if (!r_is_object(x) || r_class(x) == r_null) {
     return vec_base_typeof(x, false);
   }
 
@@ -162,20 +172,9 @@ enum vctrs_type vec_typeof(SEXP x) {
   return vctrs_type_s3;
 }
 
-// [[ register() ]]
-SEXP vctrs_typeof(SEXP x, SEXP dispatch) {
-  enum vctrs_type type;
-  if (LOGICAL(dispatch)[0]) {
-    type = vec_proxy_info(x).type;
-  } else {
-    type = vec_typeof(x);
-  }
-  return Rf_mkString(vec_type_as_str(type));
-}
-
-__attribute__((noreturn))
+r_no_return
 void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type type) {
-  stop_internal(fn, "Unsupported vctrs type `%s`.", vec_type_as_str(type));
+  r_stop_internal("Unsupported vctrs type `%s`.", vec_type_as_str(type));
 }
 
 const char* vec_type_as_str(enum vctrs_type type) {
@@ -197,7 +196,13 @@ const char* vec_type_as_str(enum vctrs_type type) {
 }
 
 
-void vctrs_init_type_info(SEXP ns) {
-  syms_vec_is_vector_dispatch = Rf_install("vec_is_vector");
-  fns_vec_is_vector_dispatch = Rf_findVar(syms_vec_is_vector_dispatch, ns);
+void vctrs_init_type_info(r_obj* ns) {
+  syms_vec_is_vector_dispatch = r_sym("vec_is_vector");
+  fns_vec_is_vector_dispatch = r_eval(syms_vec_is_vector_dispatch, ns);
 }
+
+static
+r_obj* syms_vec_is_vector_dispatch = NULL;
+
+static
+r_obj* fns_vec_is_vector_dispatch = NULL;

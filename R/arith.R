@@ -14,7 +14,7 @@
 #' @param op An arithmetic operator as a string
 #' @param x,y A pair of vectors. For `!`, unary `+` and unary `-`, `y` will be
 #'   a sentinel object of class `MISSING`, as created by `MISSING()`.
-#' @inheritParams ellipsis::dots_empty
+#' @inheritParams rlang::args_dots_empty
 #'
 #' @seealso [stop_incompatible_op()] for signalling that an arithmetic
 #'   operation is not permitted/supported.
@@ -40,9 +40,7 @@
 #'
 #' vec_arith("*", t, 2)
 vec_arith <- function(op, x, y, ...) {
-  if (!missing(...)) {
-    ellipsis::check_dots_empty()
-  }
+  check_dots_empty0(...)
   UseMethod("vec_arith", x)
 }
 

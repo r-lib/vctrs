@@ -9,7 +9,8 @@ vec_as_names(
   ...,
   repair = c("minimal", "unique", "universal", "check_unique"),
   repair_arg = "",
-  quiet = FALSE
+  quiet = FALSE,
+  call = caller_env()
 )
 }
 \arguments{
@@ -41,7 +42,15 @@ will include a hint to set the \code{repair_arg}.}
 \item{quiet}{By default, the user is informed of any renaming
 caused by repairing the names. This only concerns unique and
 universal repairing. Set \code{quiet} to \code{TRUE} to silence the
-messages.}
+messages.
+
+Users can silence the name repair messages by setting the
+\code{"rlib_name_repair_verbosity"} global option to \code{"quiet"}.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{vec_as_names()} takes a character vector of names and repairs it
@@ -79,12 +88,14 @@ levels are nested.
 \code{minimal} names exist. The \code{names} attribute is not \code{NULL}. The
 name of an unnamed element is \code{""} and never \code{NA}.
 
-Examples:\preformatted{Original names of a vector with length 3: NULL
+Examples:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Original names of a vector with length 3: NULL
                            minimal names: "" "" ""
 
                           Original names: "x" NA
                            minimal names: "x" ""
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{\code{unique} names}{
@@ -101,9 +112,11 @@ There are many ways to make names \code{unique}. We append a suffix of the form
 \code{...j} to any name that is \code{""} or a duplicate, where \code{j} is the position.
 We also change \code{..#} and \code{...} to \code{...#}.
 
-Example:\preformatted{Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
+Example:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{Original names:     ""     "x"     "" "y"     "x"  "..2"  "..."
   unique names: "...1" "x...2" "...3" "y" "x...5" "...6" "...7"
-}
+}\if{html}{\out{</div>}}
 
 Pre-existing suffixes of the form \code{...j} are always stripped, prior
 to making names \code{unique}, i.e. reconstructing the suffixes. If this
@@ -135,12 +148,14 @@ vctrs has a different method of making names syntactic than
 \code{\link[base:make.names]{base::make.names()}}. In general, vctrs prepends one or more dots
 \code{.} until the name is syntactic.
 
-Examples:\preformatted{ Original names:     ""     "x"    NA      "x"
+Examples:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{ Original names:     ""     "x"    NA      "x"
 universal names: "...1" "x...2" "...3" "x...4"
 
   Original names: "(y)"  "_z"  ".2fa"  "FALSE"
  universal names: ".y." "._z" "..2fa" ".FALSE"
-}
+}\if{html}{\out{</div>}}
 }
 
 \examples{

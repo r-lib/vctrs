@@ -12,9 +12,9 @@
 \alias{vec_cast.list}
 \title{Cast a vector to a specified type}
 \usage{
-vec_cast(x, to, ..., x_arg = "", to_arg = "")
+vec_cast(x, to, ..., x_arg = caller_arg(x), to_arg = "", call = caller_env())
 
-vec_cast_common(..., .to = NULL)
+vec_cast_common(..., .to = NULL, .arg = "", .call = caller_env())
 
 \method{vec_cast}{logical}(x, to, ...)
 
@@ -39,9 +39,22 @@ vec_cast_common(..., .to = NULL)
 \code{vec_cast()}, \code{vec_cast_default()}, and \code{vec_restore()}, these
 dots are only for future extensions and should be empty.}
 
-\item{x_arg, to_arg}{Argument names for \code{x} and \code{to}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+\item{x_arg}{Argument name for \code{x}, used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{to_arg}{Argument name \code{to} used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{call, .call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
+\item{.arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},

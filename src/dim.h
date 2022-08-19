@@ -1,7 +1,7 @@
 #ifndef VCTRS_DIM_H
 #define VCTRS_DIM_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 #include "utils.h"
 
 // These versions return NULL and 0 for bare vectors.

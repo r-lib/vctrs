@@ -1,9 +1,7 @@
 #ifndef VCTRS_TYPE_FACTOR_H
 #define VCTRS_TYPE_FACTOR_H
 
-#include "cast.h"
-#include "ptype2.h"
-
+#include "vctrs-core.h"
 
 SEXP fct_ptype2(const struct ptype2_opts* opts);
 SEXP ord_ptype2(const struct ptype2_opts* opts);
