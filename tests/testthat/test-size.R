@@ -1,3 +1,29 @@
+test_that("vec_as_short_length() checks inputs", {
+  expect_equal(vec_as_short_length(0), 0)
+  expect_equal(vec_as_short_length(1L), 1)
+
+  my_function <- function(my_arg) vec_as_short_length(my_arg)
+  expect_snapshot({
+    (expect_error(my_function(-1)))
+    (expect_error(my_function(1:2)))
+    (expect_error(my_function(1.5)))
+    (expect_error(my_function(NA)))
+    (expect_error(my_function(na_int)))
+    (expect_error(my_function("foo")))
+    (expect_error(my_function(foobar(1:2))))
+    (expect_error(my_function(.Machine$double.xmax)))
+  })
+})
+
+test_that("vec_as_short_length() has a special error about long vector support", {
+  # In particular, skips on 32-bit Windows where `r_ssize == int`
+  skip_if(.Machine$sizeof.pointer < 8L, message = "No long vector support")
+
+  my_function <- function(my_arg) vec_as_short_length(my_arg)
+  expect_snapshot({
+    (expect_error(my_function(.Machine$integer.max + 1)))
+  })
+})
 
 # vec_size -----------------------------------------------------------------
 
@@ -56,15 +82,37 @@ test_that("can take the size of unspecified objects", {
 
 # vec_size_common ---------------------------------------------------------
 
+test_that("vec_size_common() checks inputs", {
+  expect_snapshot({
+    (expect_error(vec_size_common(.size = "foo")))
+    (expect_error(vec_size_common(.size = 1:2)))
+  })
+})
+
+test_that("vec_size_common() mentions `arg` in errors", {
+  my_function <- function(...) vec_size_common(..., .arg = "my_arg")
+  expect_snapshot({
+    (expect_error(my_function(this_arg = 1:2, that_arg = int())))
+  })
+})
+
 test_that("vec_size_common with no input is 0L unless `.absent` is provided", {
   expect_identical(vec_size_common(), 0L)
   expect_identical(vec_size_common(NULL), 0L)
   expect_equal(vec_size_common(.absent = na_int), na_int)
 })
 
+test_that("`.absent` must be supplied when `...` is empty", {
+  expect_snapshot({
+    (expect_error(vec_size_common(.absent = NULL)))
+  })
+})
+
 test_that("`.absent` must be a length 1 integer if provided", {
-  expect_error(vec_size_common(.absent = 1), "must be a single integer")
-  expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer")
+  expect_snapshot({
+    (expect_error(vec_size_common(.absent = 1), "must be a single integer"))
+    (expect_error(vec_size_common(.absent = c(1L, 2L)), "must be a single integer"))
+  })
 })
 
 test_that("`NULL` is treated as the absence of input", {

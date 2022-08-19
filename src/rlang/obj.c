@@ -7,9 +7,10 @@ struct r_dict* p_precious_dict = NULL;
 
 #include "decl/obj-decl.h"
 
-
-void r_preserve(r_obj* x) {
-  KEEP(x);
+void (_r_preserve)(r_obj* x) {
+  if (!_r_use_local_precious_list) {
+    return;
+  }
 
   r_obj* stack = r_dict_get0(p_precious_dict, x);
   if (!stack) {
@@ -19,10 +20,13 @@ void r_preserve(r_obj* x) {
   }
 
   push_precious(stack);
-  FREE(1);
 }
 
-void r_unpreserve(r_obj* x) {
+void (_r_unpreserve)(r_obj* x) {
+  if (!_r_use_local_precious_list) {
+    return;
+  }
+
   r_obj* stack = r_dict_get0(p_precious_dict, x);
   if (!stack) {
     r_abort("Can't unpreserve `x` because it was not being preserved.");
@@ -31,13 +35,12 @@ void r_unpreserve(r_obj* x) {
   int n = pop_precious(stack);
 
   if (n < 0) {
-    r_stop_internal("r_unpreserve", "`n` unexpectedly < 0.");
+    r_stop_internal("`n` unexpectedly < 0.");
   }
   if (n == 0) {
     r_dict_del(p_precious_dict, x);
   }
 }
-
 
 static
 r_obj* new_precious_stack(r_obj* x) {
@@ -86,6 +89,14 @@ r_obj* r_obj_address(r_obj* x) {
   return Rf_mkChar(buf);
 }
 
+r_obj* (*r_obj_encode_utf8)(r_obj* x) = NULL;
+
+
+r_obj* r_as_label(r_obj* x) {
+  return r_eval_with_x(as_label_call, x, r_ns_env("rlang"));
+}
+
+
 void r_init_library_obj(r_obj* ns) {
   p_precious_dict = r_new_dict(PRECIOUS_DICT_INIT_SIZE);
   KEEP(p_precious_dict->shelter);
@@ -94,8 +105,17 @@ void r_init_library_obj(r_obj* ns) {
              p_precious_dict->shelter);
   FREE(1);
 
+  // The Microsoft C library doesn't implement the hexadecimal
+  // formatter correctly
   const char* null_addr = r_str_c_string(r_obj_address(r_null));
   if (null_addr[0] != '0' || null_addr[1] != 'x') {
     obj_address_formatter = "0x%p";
   }
+
+  r_obj_encode_utf8 = (r_obj* (*)(r_obj*)) r_peek_c_callable("rlang", "rlang_obj_encode_utf8");
+
+  as_label_call = r_parse("as_label(x)");
+  r_preserve_global(as_label_call);
 }
+
+static r_obj* as_label_call = NULL;

@@ -10,9 +10,7 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include <rlang.h>
-#include "order-truelength.h"
-#include "utils.h"
+#include "vctrs.h"
 
 /*
  * See the notes in the character ordering section at the top of `order.c`

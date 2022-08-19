@@ -1,9 +1,5 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "dim.h"
-#include "utils.h"
-#include "equal.h"
 
 // Initialised at load time
 SEXP syms_vec_proxy = NULL;
@@ -18,25 +14,22 @@ SEXP fns_vec_proxy_equal_array = NULL;
 SEXP fns_vec_proxy_compare_array = NULL;
 SEXP fns_vec_proxy_order_array = NULL;
 
-static SEXP vec_proxy_unwrap(SEXP x);
-
 SEXP vec_proxy_method(SEXP x);
 SEXP vec_proxy_invoke(SEXP x, SEXP method);
 
 // [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy(SEXP x) {
-  int nprot = 0;
+r_obj* vec_proxy(r_obj* x) {
   struct vctrs_type_info info = vec_type_info(x);
-  PROTECT_TYPE_INFO(&info, &nprot);
+  KEEP(info.shelter);
 
-  SEXP out;
+  r_obj* out;
   if (info.type == vctrs_type_s3) {
     out = vec_proxy_invoke(x, info.proxy_method);
   } else {
     out = x;
   }
 
-  UNPROTECT(nprot);
+  FREE(1);
   return out;
 }
 
@@ -185,7 +178,7 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
 // [[ register() ]]
 SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
   if (!r_is_number(kind)) {
-    r_stop_internal("vctrs_df_proxy", "`kind` must be a single integer.");
+    r_stop_internal("`kind` must be a single integer.");
   }
 
   enum vctrs_proxy_kind c_kind = r_int_get(kind, 0);
@@ -193,8 +186,7 @@ SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
   return df_proxy(x, c_kind);
 }
 
-
-static
+// [[ include("vctrs.h") ]]
 SEXP vec_proxy_unwrap(SEXP x) {
   if (TYPEOF(x) == VECSXP && XLENGTH(x) == 1 && is_data_frame(x)) {
     x = vec_proxy_unwrap(VECTOR_ELT(x, 0));

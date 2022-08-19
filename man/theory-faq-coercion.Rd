@@ -20,11 +20,14 @@ subclasses, see
 The coercion system in vctrs is designed to make combination of multiple
 inputs consistent and extensible. Combinations occur in many places,
 such as row-binding, joins, subset-assignment, or grouped summary
-functions that use the split-apply-combine strategy. For example:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(TRUE, 1)
+functions that use the split-apply-combine strategy. For example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(TRUE, 1)
 #> [1] 1 1
 
 vec_c("a", 1)
-#> Error: Can't combine `..1` <character> and `..2` <double>.
+#> Error:
+#> ! Can't combine `..1` <character> and `..2` <double>.
 
 vec_rbind(
   data.frame(x = TRUE),
@@ -38,7 +41,8 @@ vec_rbind(
   data.frame(x = "a"),
   data.frame(x = 1, y = 2)
 )
-#> Error: Can't combine `..1$x` <character> and `..2$x` <double>.
+#> Error in `vec_rbind()`:
+#> ! Can't combine `..1$x` <character> and `..2$x` <double>.
 }\if{html}{\out{</div>}}
 
 One major goal of vctrs is to provide a central place for implementing
@@ -84,7 +88,9 @@ are a subset or a superset of the values of the other type. The notion
 of “value” is to be interpreted at a high level, in particular it is not
 the same as the memory representation. For example, factors are
 represented in memory with integers but their values are more related to
-character vectors than to round numbers:\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Two factors are compatible
+character vectors than to round numbers:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# Two factors are compatible
 vec_ptype2(factor("a"), factor("b"))
 #> factor(0)
 #> Levels: a b
@@ -95,7 +101,8 @@ vec_ptype2(factor("a"), "b")
 
 # But they are incompatible with integers
 vec_ptype2(factor("a"), 1L)
-#> Error: Can't combine <factor<4d52a>> and <integer>.
+#> Error:
+#> ! Can't combine `factor("a")` <factor<4d52a>> and `1L` <integer>.
 }\if{html}{\out{</div>}}
 }
 
@@ -109,7 +116,9 @@ two types is richer, it probably means they shouldn’t be automatically
 coercible.
 
 Let’s look again at what happens when we combine a factor and a
-character:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(factor("a"), "b")
+character:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(factor("a"), "b")
 #> character(0)
 }\if{html}{\out{</div>}}
 
@@ -129,7 +138,9 @@ R where \code{stringsAsFactors} is still true by default.
 
 Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
-levels are aggregated in order:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(factor(c("a", "c")), factor("b"))
+levels are aggregated in order:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(factor(c("a", "c")), factor("b"))
 #> factor(0)
 #> Levels: a c b
 
@@ -238,7 +249,9 @@ Being too strict with data frame combinations would cause too much pain
 because there are many data frame subclasses in the wild that don’t
 implement vctrs methods. We have decided to implement a special fallback
 behaviour for foreign data frames. Incompatible data frames fall back to
-a base data frame:\if{html}{\out{<div class="sourceCode r">}}\preformatted{df1 <- data.frame(x = 1)
+a base data frame:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{df1 <- data.frame(x = 1)
 df2 <- structure(df1, class = c("foreign_df", "data.frame"))
 
 vec_rbind(df1, df2)
@@ -247,7 +260,9 @@ vec_rbind(df1, df2)
 #> 2 1
 }\if{html}{\out{</div>}}
 
-When a tibble is involved, we fall back to tibble:\if{html}{\out{<div class="sourceCode r">}}\preformatted{df3 <- tibble::as_tibble(df1)
+When a tibble is involved, we fall back to tibble:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{df3 <- tibble::as_tibble(df1)
 
 vec_rbind(df1, df3)
 #> # A tibble: 2 x 1

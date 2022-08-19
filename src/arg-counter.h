@@ -1,9 +1,13 @@
 #ifndef VCTRS_ARG_COUNTER_H
 #define VCTRS_ARG_COUNTER_H
 
+#include "vctrs-core.h"
+#include "arg.h"
 
 struct counters {
  /* public: */
+
+  r_obj* shelter;
 
   // Argument tags for the current value of the reduction (the result
   // so far) and the next value. These handles typically point to the
@@ -15,16 +19,12 @@ struct counters {
  /* private: */
 
   // Global counters
-  R_len_t curr;
-  R_len_t next;
+  r_ssize curr;
+  r_ssize next;
 
-  SEXP names;
-  R_len_t names_curr;
-  R_len_t names_next;
-
-  // `names` might be from a splice box whose reduction has already
-  // finished. We protect those from up high.
-  PROTECT_INDEX names_pi;
+  r_obj* names;
+  r_ssize names_curr;
+  r_ssize names_next;
 
   // Local counters for splice boxes. Since the tags are generated
   // lazily, we need two counter states to handle the
@@ -32,11 +32,21 @@ struct counters {
   struct counters* next_box_counters;
   struct counters* prev_box_counters;
 
-  // Actual counter args are stored here
-  struct arg_data_counter curr_counter_data;
-  struct arg_data_counter next_counter_data;
   struct vctrs_arg curr_counter;
   struct vctrs_arg next_counter;
+
+  struct arg_data_counter curr_counter_arg_data;
+  struct arg_data_counter next_counter_arg_data;
+
+  void* p_data;
+};
+
+enum counters_shelter {
+  COUNTERS_SHELTER_data = 0,
+  COUNTERS_SHELTER_names,
+  COUNTERS_SHELTER_next,
+  COUNTERS_SHELTER_prev,
+  COUNTERS_SHELTER_N
 };
 
 /**
@@ -50,10 +60,12 @@ struct counters {
  */
 void counters_shift(struct counters* counters);
 
-SEXP reduce(SEXP current, struct vctrs_arg* current_arg,
-            SEXP rest,
-            SEXP (*impl)(SEXP current, SEXP next, struct counters* counters, void* data),
-            void* data);
+r_obj* reduce(r_obj* current,
+              struct vctrs_arg* p_current_arg,
+              struct vctrs_arg* p_parent_arg,
+              r_obj* rest,
+              r_obj* (*impl)(r_obj* current, r_obj* next, struct counters* counters, void* data),
+              void* data);
 
 
 #endif

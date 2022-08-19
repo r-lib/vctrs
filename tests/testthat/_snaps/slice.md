@@ -4,16 +4,18 @@
       (expect_error(vec_slice(1:3, Sys.Date()), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
-      Error: Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `date`.
+      Error in `vec_slice()`:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript `i` has the wrong type `date`.
       i It must be logical, numeric, or character.
     Code
       (expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: Must subset elements with a valid subscript vector.
-      x Subscript must be a simple vector, not a matrix.
+      Error in `vec_slice()`:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript `i` must be a simple vector, not a matrix.
 
 # can't index beyond the end of a vector
 
@@ -21,81 +23,134 @@
       (expect_error(vec_slice(1:2, 3L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`: Can't subset elements that don't exist.
-      x Location 3 doesn't exist.
+      Error in `vec_slice()`:
+      ! Can't subset elements past the end.
+      i Location 3 doesn't exist.
       i There are only 2 elements.
     Code
       (expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`: Can't negate elements that don't exist.
-      x Location 3 doesn't exist.
+      Error in `vec_slice()`:
+      ! Can't negate elements past the end.
+      i Location 3 doesn't exist.
       i There are only 2 elements.
+
+# can slice with double indices
+
+    Code
+      (expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type"))
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Can't convert from `2^31` <double> to <integer> due to loss of precision.
 
 # Unnamed vector with character subscript is caught
 
     Code
       vec_slice(1:3, letters[1])
-    Error <simpleError>
-      Can't use character names to index an unnamed vector.
+    Condition
+      Error in `vec_slice()`:
+      ! Can't use character names to index an unnamed vector.
 
 # Negative subscripts are checked
 
     Code
       vec_slice(1:3, -c(1L, NA))
-    Error <vctrs_error_subscript_type>
-      Must subset elements with a valid subscript vector.
+    Condition
+      Error in `vec_slice()`:
+      ! Must subset elements with a valid subscript vector.
       x Negative locations can't have missing values.
-      i Subscript has a missing value at location 2.
+      i Subscript `i` has a missing value at location 2.
 
 ---
 
     Code
       vec_slice(1:3, c(-1L, 1L))
-    Error <vctrs_error_subscript_type>
-      Must subset elements with a valid subscript vector.
+    Condition
+      Error in `vec_slice()`:
+      ! Must subset elements with a valid subscript vector.
       x Negative and positive locations can't be mixed.
-      i Subscript has a positive value at location 2.
+      i Subscript `i` has a positive value at location 2.
 
 # oob error messages are properly constructed
 
     Code
       vec_slice(c(bar = 1), "foo")
-    Error <vctrs_error_subscript_oob>
-      Can't subset elements that don't exist.
+    Condition
+      Error in `vec_slice()`:
+      ! Can't subset elements that don't exist.
       x Element `foo` doesn't exist.
 
 ---
 
     Code
       vec_slice(letters, c(100, 1000))
-    Error <vctrs_error_subscript_oob>
-      Can't subset elements that don't exist.
-      x Locations 100 and 1000 don't exist.
+    Condition
+      Error in `vec_slice()`:
+      ! Can't subset elements past the end.
+      i Locations 100 and 1000 don't exist.
       i There are only 26 elements.
 
 ---
 
     Code
       vec_slice(letters, c(1, 100:103, 2, 104:110))
-    Error <vctrs_error_subscript_oob>
-      Can't subset elements that don't exist.
-      x Locations 100, 101, 102, 103, 104, etc. don't exist.
+    Condition
+      Error in `vec_slice()`:
+      ! Can't subset elements past the end.
+      i Locations 100, 101, 102, 103, 104, ... don't exist.
       i There are only 26 elements.
 
 ---
 
     Code
       vec_slice(set_names(letters), c("foo", "bar"))
-    Error <vctrs_error_subscript_oob>
-      Can't subset elements that don't exist.
+    Condition
+      Error in `vec_slice()`:
+      ! Can't subset elements that don't exist.
       x Elements `foo` and `bar` don't exist.
 
 ---
 
     Code
       vec_slice(set_names(letters), toupper(letters))
-    Error <vctrs_error_subscript_oob>
-      Can't subset elements that don't exist.
+    Condition
+      Error in `vec_slice()`:
+      ! Can't subset elements that don't exist.
       x Elements `A`, `B`, `C`, `D`, `E`, etc. don't exist.
+
+# vec_init() validates `n`
+
+    Code
+      (expect_error(vec_init(1L, 1.5)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a whole number, not a fractional number.
+    Code
+      (expect_error(vec_init(1L, c(1, 2))))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a single number, not a double vector of length 2.
+    Code
+      (expect_error(vec_init(1L, -1L)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a positive number or zero.
+    Code
+      (expect_error(vec_init(1L, NA)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a single number, not `NA`.
+    Code
+      (expect_error(vec_init(1L, NA_integer_)))
+    Output
+      <error/rlang_error>
+      Error in `vec_init()`:
+      ! `n` must be a single number, not an integer `NA`.
 

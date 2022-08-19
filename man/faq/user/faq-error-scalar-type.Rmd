@@ -26,10 +26,10 @@ typeof(fit)
 class(fit)
 
 # S3 lists can be subset like a vector using base R:
-fit[1:3]
+fit[c(1, 4)]
 
 # But not in vctrs
-vctrs::vec_slice(fit, 1:3)
+vctrs::vec_slice(fit, c(1, 4))
 ```
 
 Defused function calls are another (more esoteric) example:

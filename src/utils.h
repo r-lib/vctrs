@@ -1,8 +1,9 @@
 #ifndef VCTRS_UTILS_H
 #define VCTRS_UTILS_H
 
-#include <rlang.h>
+#include "vctrs-core.h"
 #include "arg-counter.h"
+#include "rlang-dev.h"
 
 
 #define SWAP(T, x, y) do {                      \
@@ -13,20 +14,6 @@
 
 #define PROTECT_N(x, n) (++*n, PROTECT(x))
 #define PROTECT2(x, y) (PROTECT(x), PROTECT(y))
-
-enum vctrs_class_type {
-  vctrs_class_list,
-  vctrs_class_data_frame,
-  vctrs_class_bare_data_frame,
-  vctrs_class_bare_tibble,
-  vctrs_class_bare_factor,
-  vctrs_class_bare_ordered,
-  vctrs_class_bare_date,
-  vctrs_class_bare_posixct,
-  vctrs_class_bare_posixlt,
-  vctrs_class_unknown,
-  vctrs_class_none
-};
 
 int r_bool_as_int(SEXP x);
 
@@ -67,6 +54,15 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x5_sym, SEXP x5,
                       SEXP x6_sym, SEXP x6,
                       SEXP x7_sym, SEXP x7);
+r_obj* vctrs_eval_mask8(r_obj* fn,
+                        r_obj* x1_sym, r_obj* x1,
+                        r_obj* x2_sym, r_obj* x2,
+                        r_obj* x3_sym, r_obj* x3,
+                        r_obj* x4_sym, r_obj* x4,
+                        r_obj* x5_sym, r_obj* x5,
+                        r_obj* x6_sym, r_obj* x6,
+                        r_obj* x7_sym, r_obj* x7,
+                        r_obj* x8_sym, r_obj* x8);
 
 SEXP vctrs_dispatch_n(SEXP fn_sym, SEXP fn,
                       SEXP* syms, SEXP* args);
@@ -84,6 +80,17 @@ SEXP vctrs_dispatch4(SEXP fn_sym, SEXP fn,
                      SEXP x_sym, SEXP x,
                      SEXP y_sym, SEXP y,
                      SEXP z_sym, SEXP z);
+static inline
+r_obj* vctrs_dispatch5(r_obj* fn_sym, r_obj* fn,
+                     r_obj* x1_sym, r_obj* x1,
+                     r_obj* x2_sym, r_obj* x2,
+                     r_obj* x3_sym, r_obj* x3,
+                     r_obj* x4_sym, r_obj* x4,
+                     r_obj* x5_sym, r_obj* x5) {
+  r_obj* syms[6] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, NULL };
+  r_obj* args[6] = { x1, x2, x3, x4, x5, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x1_sym, SEXP x1,
                      SEXP x2_sym, SEXP x2,
@@ -91,13 +98,24 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
                      SEXP x4_sym, SEXP x4,
                      SEXP x5_sym, SEXP x5,
                      SEXP x6_sym, SEXP x6);
-
-__attribute__((noreturn)) void stop_unimplemented_vctrs_type(const char* fn, enum vctrs_type);
+static inline
+r_obj* vctrs_dispatch7(r_obj* fn_sym, r_obj* fn,
+                       r_obj* x1_sym, r_obj* x1,
+                       r_obj* x2_sym, r_obj* x2,
+                       r_obj* x3_sym, r_obj* x3,
+                       r_obj* x4_sym, r_obj* x4,
+                       r_obj* x5_sym, r_obj* x5,
+                       r_obj* x6_sym, r_obj* x6,
+                       r_obj* x7_sym, r_obj* x7) {
+  r_obj* syms[8] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, NULL };
+  r_obj* args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
+  return vctrs_dispatch_n(fn_sym, fn, syms, args);
+}
 
 static inline
 __attribute__((noreturn))
 void stop_unimplemented_type(const char* fn, SEXPTYPE type) {
-  r_stop_internal(fn, "Unimplemented type `%s`.", Rf_type2char(type));
+  r_stop_internal("Unimplemented type `%s`.", Rf_type2char(type));
 }
 
 
@@ -106,7 +124,6 @@ SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data);
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP));
 SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP));
 
-enum vctrs_class_type class_type(SEXP x);
 bool is_data_frame(SEXP x);
 bool is_bare_data_frame(SEXP x);
 bool is_bare_tibble(SEXP x);
@@ -154,24 +171,10 @@ bool list_is_homogeneously_classed(SEXP xs);
 // Destructive compacting
 SEXP node_compact_d(SEXP xs);
 
-extern struct vctrs_arg args_empty_;
-static struct vctrs_arg* const args_empty = &args_empty_;
-
-extern struct vctrs_arg args_n_;
-static struct vctrs_arg* const args_n = &args_n_;
-
-extern struct vctrs_arg args_dot_ptype_;
-static struct vctrs_arg* const args_dot_ptype = &args_dot_ptype_;
-
-extern struct vctrs_arg args_max_fill_;
-static struct vctrs_arg* const args_max_fill = &args_max_fill_;
-
 void never_reached(const char* fn) __attribute__((noreturn));
 
 enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
 enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
-
-enum vctrs_class_type class_type(SEXP x);
 
 SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
@@ -199,8 +202,7 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
 SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
 SEXP vec_set_names(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
-
-R_len_t size_validate(SEXP size, const char* arg);
+r_obj* colnames2(r_obj* x);
 
 extern bool (*rlang_is_splice_box)(SEXP);
 extern SEXP (*rlang_unbox)(SEXP);
@@ -274,22 +276,9 @@ SEXP r_protect(SEXP x);
 bool r_is_number(SEXP x);
 bool r_is_positive_number(SEXP x);
 SEXP r_clone_referenced(SEXP x);
-SEXP r_clone_shared(SEXP x);
 
 SEXP r_call_n(SEXP fn, SEXP* tags, SEXP* cars);
 
-static inline SEXP r_poke_names(SEXP x, SEXP names) {
-  return Rf_setAttrib(x, R_NamesSymbol, names);
-}
-static inline SEXP r_poke_class(SEXP x, SEXP names) {
-  return Rf_setAttrib(x, R_ClassSymbol, names);
-}
-static inline SEXP r_dim(SEXP x) {
-  return Rf_getAttrib(x, R_DimSymbol);
-}
-static inline SEXP r_poke_dim(SEXP x, SEXP dim) {
-  return Rf_setAttrib(x, R_DimSymbol, dim);
-}
 static inline SEXP r_mark_s4(SEXP x) {
   SET_S4_OBJECT(x);
   return(x);
@@ -361,7 +350,7 @@ static inline SEXP r_result_get(SEXP x, ERR err) {
 
 static inline struct vctrs_arg vec_as_arg(SEXP x) {
   if (x == R_NilValue) {
-    return *args_empty;
+    return *vec_args.empty;
   }
 
   if (!r_is_string(x)) {
@@ -394,7 +383,6 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
 }
 
 void c_print_backtrace();
-
 
 SEXP chr_c(SEXP x, SEXP y);
 
@@ -435,6 +423,8 @@ extern SEXP strings_group;
 extern SEXP strings_length;
 extern SEXP strings_vctrs_vctr;
 extern SEXP strings_times;
+extern SEXP strings_needles;
+extern SEXP strings_haystack;
 
 extern SEXP chrs_subset;
 extern SEXP chrs_extract;
@@ -458,6 +448,10 @@ extern SEXP chrs_cast;
 extern SEXP chrs_error;
 extern SEXP chrs_combine;
 extern SEXP chrs_convert;
+extern SEXP chrs_asc;
+extern SEXP chrs_desc;
+extern SEXP chrs_largest;
+extern SEXP chrs_smallest;
 
 extern SEXP syms_i;
 extern SEXP syms_n;
@@ -474,6 +468,8 @@ extern SEXP syms_y_arg;
 extern SEXP syms_to_arg;
 extern SEXP syms_times_arg;
 extern SEXP syms_subscript_arg;
+extern SEXP syms_needles_arg;
+extern SEXP syms_haystack_arg;
 extern SEXP syms_out;
 extern SEXP syms_value;
 extern SEXP syms_quiet;
@@ -504,6 +500,11 @@ extern SEXP syms_s3_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_stop_assert_size;
+extern SEXP syms_stop_matches_nothing;
+extern SEXP syms_stop_matches_remaining;
+extern SEXP syms_stop_matches_incomplete;
+extern SEXP syms_stop_matches_multiple;
+extern SEXP syms_warn_matches_multiple;
 extern SEXP syms_action;
 extern SEXP syms_vctrs_common_class_fallback;
 extern SEXP syms_fallback_class;
@@ -512,6 +513,8 @@ extern SEXP syms_message;
 extern SEXP syms_chr_proxy_collate;
 extern SEXP syms_actual;
 extern SEXP syms_required;
+extern SEXP syms_call;
+extern SEXP syms_dot_call;
 
 static const char * const c_strs_vctrs_common_class_fallback = "vctrs:::common_class_fallback";
 

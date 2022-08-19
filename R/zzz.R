@@ -1,14 +1,5 @@
 # nocov start
 
-on_package_load <- function(pkg, expr) {
-  if (isNamespaceLoaded(pkg)) {
-    expr
-  } else {
-    thunk <- function(...) expr
-    setHook(packageEvent(pkg, "onLoad"), thunk)
-  }
-}
-
 .onLoad <- function(libname, pkgname) {
   check_linked_version(pkgname)
   ns <- ns_env("vctrs")
@@ -97,6 +88,9 @@ on_package_load <- function(pkg, expr) {
       s3_register("vctrs::vec_cast", "sf.sf")
       s3_register("vctrs::vec_cast", "sf.data.frame")
       s3_register("vctrs::vec_cast", "data.frame.sf")
+    }
+    if (!env_has(ns_env("sf"), "vec_proxy_order.sfc")) {
+      s3_register("vctrs::vec_proxy_order", "sfc")
     }
   })
 

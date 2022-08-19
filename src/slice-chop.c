@@ -1,12 +1,5 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "dim.h"
-#include "slice.h"
-#include "subscript-loc.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
-#include "assert.h"
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.
@@ -34,29 +27,28 @@ struct vctrs_chop_info {
   SEXP out;
 };
 
-#define PROTECT_CHOP_INFO(info, n) do {       \
-  PROTECT_PROXY_INFO(&(info)->proxy_info, n); \
-  PROTECT((info)->restore_size);              \
-  PROTECT((info)->index);                     \
-  PROTECT((info)->out);                       \
-  *n += 3;                                    \
-} while (0)                                   \
+#define PROTECT_CHOP_INFO(info, n) do {         \
+    KEEP((info)->proxy_info.shelter);           \
+    KEEP((info)->restore_size);                 \
+    KEEP((info)->index);                        \
+    KEEP((info)->out);                          \
+    *n += 4;                                    \
+  } while (0)                                   \
 
-static struct vctrs_chop_info init_chop_info(SEXP x, SEXP indices) {
-  int nprot = 0;
-
+static
+struct vctrs_chop_info init_chop_info(r_obj* x, r_obj* indices) {
   struct vctrs_chop_info info;
 
   info.proxy_info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info.proxy_info, &nprot);
+  KEEP(info.proxy_info.shelter);
 
-  info.restore_size = PROTECT_N(r_int(1), &nprot);
+  info.restore_size = KEEP(r_int(1));
   info.p_restore_size = INTEGER(info.restore_size);
 
-  info.index = PROTECT_N(r_int(0), &nprot);
-  info.p_index = INTEGER(info.index);
+  info.index = KEEP(r_int(0));
+  info.p_index = r_int_begin(info.index);
 
-  if (indices == R_NilValue) {
+  if (indices == r_null) {
     info.out_size = vec_size(x);
     info.has_indices = false;
   } else {
@@ -64,9 +56,9 @@ static struct vctrs_chop_info init_chop_info(SEXP x, SEXP indices) {
     info.has_indices = true;
   }
 
-  info.out = PROTECT_N(Rf_allocVector(VECSXP, info.out_size), &nprot);
+  info.out = r_alloc_list(info.out_size);
 
-  UNPROTECT(nprot);
+  FREE(3);
   return info;
 }
 
@@ -174,7 +166,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
     return chop_df(x, indices, info);
   }
   default:
-    vec_assert_vector(x, args_empty);
+    vec_check_vector(x, vec_args.empty, r_lazy_null);
     stop_unimplemented_vctrs_type("vec_chop_base", proxy_info.type);
   }
 }
@@ -205,7 +197,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
     if (names != R_NilValue) {
       SEXP elt_names = PROTECT(slice_names(names, info.index));
-      r_poke_names(elt, elt_names);
+      r_attrib_poke_names(elt, elt_names);
       UNPROTECT(1);
     }
 
@@ -335,8 +327,8 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // objects to ensure correct slicing with `NA_integer_`.
   SEXP call;
   if (is_integer64(x)) {
-    call = PROTECT(Rf_lang3(syms_vec_slice_dispatch_integer64, syms_x, syms_i));
-    Rf_defineVar(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64, env);
+    call = PROTECT(Rf_lang3(syms.vec_slice_dispatch_integer64, syms_x, syms_i));
+    Rf_defineVar(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64, env);
   } else {
     call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
     Rf_defineVar(syms_bracket, fns_bracket, env);
@@ -400,17 +392,13 @@ SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   R_len_t size = vec_size(indices);
 
-  const struct subscript_opts subscript_opts = {
-    .action = SUBSCRIPT_ACTION_DEFAULT,
-    .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
-    .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
-    .character = SUBSCRIPT_TYPE_ACTION_ERROR,
-    .subscript_arg = NULL
-  };
-
   // Restrict index values to positive integer locations
   const struct location_opts opts = {
-    .subscript_opts = &subscript_opts,
+    .subscript_opts = {
+      .logical = SUBSCRIPT_TYPE_ACTION_ERROR,
+      .numeric = SUBSCRIPT_TYPE_ACTION_CAST,
+      .character = SUBSCRIPT_TYPE_ACTION_ERROR
+    },
     .missing = SUBSCRIPT_MISSING_PROPAGATE,
     .loc_negative = LOC_NEGATIVE_ERROR,
     .loc_oob = LOC_OOB_ERROR,

@@ -1,7 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
-#include "strides.h"
 
 #define SLICE_SHAPED_INDEX(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE) \
   SEXP out_dim = PROTECT(Rf_shallow_duplicate(p_info->dim));           \

@@ -1,103 +1,10 @@
 #ifndef VCTRS_H
 #define VCTRS_H
 
+#include "vctrs-core.h"
 
-#define R_NO_REMAP
-#include <R.h>
-#include <Rinternals.h>
-#include <Rversion.h>
-
-#include <stdbool.h>
-#include <stdint.h>
-
-
-extern bool vctrs_debug_verbose;
-
-#define VCTRS_ASSERT(condition) ((void)sizeof(char[1 - 2*!(condition)]))
-
-
-// An ERR indicates either a C NULL in case of no error, or a
-// condition object otherwise
-#define ERR SEXP
 
 // Vector types -------------------------------------------------
-
-enum vctrs_type {
-  vctrs_type_null = 0,
-  vctrs_type_unspecified,
-  vctrs_type_logical,
-  vctrs_type_integer,
-  vctrs_type_double,
-  vctrs_type_complex,
-  vctrs_type_character,
-  vctrs_type_raw,
-  vctrs_type_list,
-  vctrs_type_dataframe,
-  vctrs_type_scalar,
-  vctrs_type_s3 = 255
-};
-
-/**
- * @member type The vector type of the original data.
- * @member proxy_method The function of the `vec_proxy()` method, if
- *   any. This method is looked up with [vec_proxy_method()].
- */
-struct vctrs_type_info {
-  enum vctrs_type type;
-  SEXP proxy_method;
-};
-/**
- * @inheritMembers vctrs_type_info
- * @member type If `proxy_method` was found, the vector type of the
- *   proxy data. Otherwise, the vector type of the original data.
- *   This is never `vctrs_type_s3`.
- * @member proxy If `proxy_method` was found, the result of invoking
- *   the method. Otherwise, the original data.
- */
-struct vctrs_proxy_info {
-  enum vctrs_type type;
-  SEXP proxy_method;
-  SEXP proxy;
-};
-
-/**
- * Return the type information of a vector or its proxy
- *
- * `vec_type_info()` returns the vctrs type of `x`. `vec_proxy_info()`
- * returns the vctrs type of `x` or its proxy if it has one. The
- * former returns `vctrs_type_s3` with S3 objects (expect for native
- * types like bare data frames). The latter returns the bare type of
- * the proxy, if any. It never returns `vctrs_type_s3`.
- *
- * `vec_proxy_info()` returns both the proxy method and the proxy
- * data. `vec_type_info()` only returns the proxy method, which it
- * needs to determine whether S3 lists and non-vector base types are
- * scalars or proxied vectors.
- *
- * Use `PROTECT_PROXY_INFO()` and `PROTECT_TYPE_INFO()` to protect the
- * members of the return value. These helpers take a pointer to a
- * protection counter that can be passed to `UNPROTECT()`.
- */
-struct vctrs_type_info vec_type_info(SEXP x);
-struct vctrs_proxy_info vec_proxy_info(SEXP x);
-
-#define PROTECT_PROXY_INFO(info, n) do {        \
-    PROTECT((info)->proxy);                     \
-    PROTECT((info)->proxy_method);              \
-    *n += 2;                                    \
-  } while (0)
-
-#define PROTECT_TYPE_INFO(info, n) do {         \
-    PROTECT((info)->proxy_method);              \
-    *n += 1;                                    \
-  } while (0)
-
-enum vctrs_type vec_typeof(SEXP x);
-enum vctrs_type vec_proxy_typeof(SEXP x);
-const char* vec_type_as_str(enum vctrs_type type);
-bool vec_is_list(SEXP x);
-bool vec_is_vector(SEXP x);
-bool vec_is_partial(SEXP x);
 
 // After adding a new `vctrs_dispatch` type, add the missing entries
 // in `vec_typeof2()`
@@ -342,11 +249,52 @@ SEXP vec_unspecified(R_len_t n);
 bool vec_is_unspecified(SEXP x);
 
 
-// Vector methods ------------------------------------------------
+#include "type-info.h"
 
+#include "arg-counter.h"
 #include "arg.h"
+#include "assert.h"
+#include "c.h"
+#include "cast-bare.h"
+#include "cast-dispatch.h"
+#include "cast.h"
+#include "compare.h"
+#include "complete.h"
+#include "conditions.h"
+#include "dictionary.h"
+#include "dim.h"
+#include "equal.h"
+#include "hash.h"
+#include "lazy.h"
+#include "match-compare.h"
+#include "match-joint.h"
+#include "missing.h"
 #include "names.h"
+#include "order-collate.h"
+#include "order-groups.h"
+#include "order-sortedness.h"
+#include "order-truelength.h"
+#include "order.h"
 #include "owned.h"
+#include "poly-op.h"
+#include "ptype-common.h"
+#include "ptype.h"
+#include "ptype2-dispatch.h"
+#include "ptype2.h"
+#include "shape.h"
+#include "size-common.h"
+#include "size.h"
+#include "slice-assign.h"
+#include "slice.h"
+#include "strides.h"
+#include "subscript-loc.h"
+#include "subscript.h"
+#include "translate.h"
+#include "utils-dispatch.h"
+#include "utils.h"
+
+
+// Vector methods ------------------------------------------------
 
 enum vctrs_proxy_kind {
   VCTRS_PROXY_KIND_default,
@@ -359,24 +307,15 @@ SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
 SEXP vec_proxy_order(SEXP x);
+SEXP vec_proxy_unwrap(SEXP x);
 SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
-R_len_t vec_size(SEXP x);
-R_len_t vec_size_common(SEXP xs, R_len_t absent);
-SEXP vec_cast_common(SEXP xs, SEXP to);
-SEXP vec_slice(SEXP x, SEXP subscript);
-SEXP vec_slice_impl(SEXP x, SEXP subscript);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
-SEXP vec_proxy_assign(SEXP proxy, SEXP index, SEXP value);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
-SEXP vec_init(SEXP x, R_len_t n);
-SEXP vec_ptype(SEXP x, struct vctrs_arg* x_arg);
+r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call);
 SEXP vec_ptype_finalise(SEXP x);
 bool vec_is_unspecified(SEXP x);
-SEXP vec_recycle(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
-SEXP vec_recycle_fallback(SEXP x, R_len_t size, struct vctrs_arg* x_arg);
-SEXP vec_recycle_common(SEXP xs, R_len_t size);
 SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
@@ -384,18 +323,8 @@ SEXP vec_identify_runs(SEXP x);
 SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
                       struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
 
-#include "cast.h"
-static inline SEXP vec_cast(SEXP x, SEXP to, struct vctrs_arg* x_arg, struct vctrs_arg* to_arg) {
-  struct cast_opts opts = {
-    .x = x,
-    .to = to,
-    .x_arg = x_arg,
-    .to_arg = to_arg
-  };
-  return vec_cast_opts(&opts);
-}
-
-static inline SEXP vec_match(SEXP needles, SEXP haystack) {
+static inline
+SEXP vec_match(SEXP needles, SEXP haystack) {
   return vec_match_params(needles, haystack, true, NULL, NULL);
 }
 
@@ -407,18 +336,8 @@ SEXP vec_c(SEXP xs,
 
 bool is_data_frame(SEXP x);
 
-R_len_t df_size(SEXP x);
-R_len_t df_rownames_size(SEXP x);
-R_len_t df_raw_size(SEXP x);
-R_len_t df_raw_size_from_list(SEXP x);
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
-
-// equal_object() never propagates missingness, so
-// it can return a `bool`
-bool equal_object(SEXP x, SEXP y);
-bool equal_object_normalized(SEXP x, SEXP y);
-bool equal_names(SEXP x, SEXP y);
 
 uint32_t hash_object(SEXP x);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);
@@ -496,41 +415,6 @@ static inline void init_lazy_df_short_circuit_info(struct df_short_circuit_info*
   p_info->p_row_known = (bool*) RAW(p_info->row_known);
 }
 
-// Missing values -----------------------------------------------
-
-// Annex F of C99 specifies that `double` should conform to the IEEE 754
-// type `binary64`, which is defined as:
-// * 1  bit : sign
-// * 11 bits: exponent
-// * 52 bits: significand
-//
-// R stores the value "1954" in the last 32 bits: this payload marks
-// the value as a NA, not a regular NaN.
-//
-// On big endian systems, this corresponds to the second element of an
-// integer array of size 2. On little endian systems, this is flipped
-// and the NA marker is in the first element.
-//
-// The type assumptions made here are asserted in `vctrs_init_utils()`
-
-#ifdef WORDS_BIGENDIAN
-static const int vctrs_indicator_pos = 1;
-#else
-static const int vctrs_indicator_pos = 0;
-#endif
-
-union vctrs_dbl_indicator {
-  double value;        // 8 bytes
-  unsigned int key[2]; // 4 * 2 bytes
-};
-
-enum vctrs_dbl_class {
-  vctrs_dbl_number,
-  vctrs_dbl_missing,
-  vctrs_dbl_nan
-};
-
-enum vctrs_dbl_class dbl_classify(double x);
 
 // Factor methods -----------------------------------------------
 
@@ -597,16 +481,14 @@ static inline void growable_push_int(struct growable* g, int i) {
 
 // Conditions ---------------------------------------------------
 
-void stop_scalar_type(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
+r_no_return
+void stop_scalar_type(SEXP x,
+                      struct vctrs_arg* arg,
+                      struct r_lazy call);
 __attribute__((noreturn))
 void stop_assert_size(r_ssize actual,
                       r_ssize required,
                       struct vctrs_arg* arg);
-__attribute__((noreturn))
-void stop_incompatible_size(SEXP x, SEXP y,
-                            R_len_t x_size, R_len_t y_size,
-                            struct vctrs_arg* x_arg,
-                            struct vctrs_arg* y_arg);
 __attribute__((noreturn))
 void stop_incompatible_type(SEXP x,
                             SEXP y,
@@ -614,28 +496,15 @@ void stop_incompatible_type(SEXP x,
                             struct vctrs_arg* y_arg,
                             bool cast);
 __attribute__((noreturn))
-void stop_recycle_incompatible_size(R_len_t x_size, R_len_t size,
-                                    struct vctrs_arg* x_arg);
+void stop_recycle_incompatible_size(r_ssize x_size,
+                                    r_ssize size,
+                                    struct vctrs_arg* x_arg,
+                                    struct r_lazy call);
 __attribute__((noreturn))
 void stop_incompatible_shape(SEXP x, SEXP y,
                              R_len_t x_size, R_len_t y_size, int axis,
                              struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
 void stop_corrupt_factor_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
 void stop_corrupt_ordered_levels(SEXP x, struct vctrs_arg* arg) __attribute__((noreturn));
-
-// Compatibility ------------------------------------------------
-
-#if (R_VERSION < R_Version(3, 5, 0))
-# define LOGICAL_RO(x) ((const int*) LOGICAL(x))
-# define INTEGER_RO(x) ((const int*) INTEGER(x))
-# define REAL_RO(x) ((const double*) REAL(x))
-# define COMPLEX_RO(x) ((const Rcomplex*) COMPLEX(x))
-# define STRING_PTR_RO(x) ((const SEXP*) STRING_PTR(x))
-# define RAW_RO(x) ((const Rbyte*) RAW(x))
-# define DATAPTR_RO(x) ((const void*) STRING_PTR(x))
-#endif
-
-#define VECTOR_PTR_RO(x) ((const SEXP*) DATAPTR_RO(x))
-
 
 #endif

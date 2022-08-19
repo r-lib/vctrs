@@ -5,7 +5,8 @@
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle input of size 2 to size 3.
+      Error in `vec_assign()`:
+      ! Can't recycle input of size 2 to size 3.
 
 # logical subscripts must match size of indexed vector
 
@@ -14,7 +15,8 @@
       )
     Output
       <error/vctrs_error_subscript_size>
-      Error: Must assign to elements with a valid subscript vector.
+      Error:
+      ! Must assign to elements with a valid subscript vector.
       i Logical subscripts must match the size of the indexed input.
       x Input has size 2 but subscript has size 3.
 
@@ -25,7 +27,8 @@
       )
     Output
       <error/vctrs_error_subscript_size>
-      Error: Must assign to elements with a valid subscript vector.
+      Error:
+      ! Must assign to elements with a valid subscript vector.
       i Logical subscripts must match the size of the indexed input.
       x Input has size 32 but subscript has size 2.
 
@@ -35,27 +38,32 @@
       (expect_error(vec_assign(1:3, 5, 10), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`: Can't assign to elements that don't exist.
-      x Location 5 doesn't exist.
+      Error:
+      ! Can't assign to elements past the end.
+      i Location 5 doesn't exist.
       i There are only 3 elements.
     Code
       (expect_error(vec_assign(1:3, "foo", 10), "unnamed vector"))
     Output
-      <simpleError: Can't use character names to index an unnamed vector.>
+      <error/rlang_error>
+      Error in `vec_assign()`:
+      ! Can't use character names to index an unnamed vector.
     Code
       (expect_error(vec_slice(letters, -100) <- "foo", class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`: Can't negate elements that don't exist.
-      x Location 100 doesn't exist.
+      Error:
+      ! Can't negate elements past the end.
+      i Location 100 doesn't exist.
       i There are only 26 elements.
     Code
       (expect_error(vec_assign(set_names(letters), "foo", "bar"), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
-      Error in `stop_subscript()`: Can't assign to elements that don't exist.
+      Error:
+      ! Can't assign to elements that don't exist.
       x Element `foo` doesn't exist.
 
 # must assign with proper negative locations
@@ -65,7 +73,8 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: Must assign to elements with a valid subscript vector.
+      Error:
+      ! Must assign to elements with a valid subscript vector.
       x Negative and positive locations can't be mixed.
       i Subscript has a positive value at location 2.
     Code
@@ -73,7 +82,8 @@
       )
     Output
       <error/vctrs_error_subscript_type>
-      Error: Must assign to elements with a valid subscript vector.
+      Error:
+      ! Must assign to elements with a valid subscript vector.
       x Negative locations can't have missing values.
       i Subscript has a missing value at location 2.
 
@@ -84,11 +94,13 @@
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't convert `bar` <character> to match type of `foo` <integer>.
+      Error in `vec_assign()`:
+      ! Can't convert `bar` <character> to match type of `foo` <integer>.
     Code
       (expect_error(vec_assign(1:2, 1L, 1:2, value_arg = "bar"), class = "vctrs_error_recycle_incompatible_size")
       )
     Output
       <error/vctrs_error_incompatible_size>
-      Error in `stop_vctrs()`: Can't recycle `bar` (size 2) to size 1.
+      Error in `vec_assign()`:
+      ! Can't recycle `bar` (size 2) to size 1.
 

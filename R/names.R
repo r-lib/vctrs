@@ -32,6 +32,9 @@
 #' levels are nested.
 #'
 #'
+#' @inheritParams rlang::args_error_context
+#' @inheritParams rlang::args_dots_empty
+#'
 #' @param names A character vector.
 #' @param repair Either a string or a function. If a string, it must
 #'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
@@ -57,7 +60,9 @@
 #'   caused by repairing the names. This only concerns unique and
 #'   universal repairing. Set `quiet` to `TRUE` to silence the
 #'   messages.
-#' @inheritParams rlang::args_dots_empty
+#'
+#'   Users can silence the name repair messages by setting the
+#'   `"rlib_name_repair_verbosity"` global option to `"quiet"`.
 #'
 #' @section `minimal` names:
 #'
@@ -154,32 +159,43 @@ vec_as_names <- function(names,
                          ...,
                          repair = c("minimal", "unique", "universal", "check_unique"),
                          repair_arg = "",
-                         quiet = FALSE) {
+                         quiet = FALSE,
+                         call = caller_env()) {
   check_dots_empty0(...)
-  .Call(vctrs_as_names, names, repair, repair_arg, quiet)
+  .Call(
+    ffi_as_names,
+    names,
+    repair,
+    quiet,
+    environment()
+  )
 }
 
+# TODO! Error calls
 validate_name_repair_arg <- function(repair) {
   .Call(vctrs_validate_name_repair_arg, repair)
 }
 validate_minimal_names <- function(names, n = NULL) {
   .Call(vctrs_validate_minimal_names, names, n)
 }
-validate_unique <- function(names, arg = "", n = NULL) {
+validate_unique <- function(names,
+                            arg = "",
+                            n = NULL,
+                            call = caller_env()) {
   validate_minimal_names(names, n)
 
   empty_names <- detect_empty_names(names)
   if (has_length(empty_names)) {
-    stop_names_cannot_be_empty(names)
+    stop_names_cannot_be_empty(names, call = call)
   }
 
   dot_dot_name <- detect_dot_dot(names)
   if (has_length(dot_dot_name)) {
-    stop_names_cannot_be_dot_dot(names)
+    stop_names_cannot_be_dot_dot(names, call = call)
   }
 
   if (anyDuplicated(names)) {
-    stop_names_must_be_unique(names, arg)
+    stop_names_must_be_unique(names, arg, call = call)
   }
 
   invisible(names)
@@ -254,7 +270,8 @@ vec_names2 <- function(x,
     return(new_names)
   }
 
-  switch(repair,
+  switch(
+    repair,
     minimal = minimal_names(x),
     unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet),
@@ -422,13 +439,13 @@ bullets <- function(..., header = NULL) {
 }
 
 # Used in names.c
-set_rownames_fallback <- function(x, names) {
+set_rownames_dispatch <- function(x, names) {
   rownames(x) <- names
   x
 }
 
 # Used in names.c
-set_names_fallback <- function(x, names) {
+set_names_dispatch <- function(x, names) {
   names(x) <- names
   x
 }

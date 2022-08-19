@@ -11,7 +11,8 @@
 #'  * "key", orders by the output key column (i.e. unique values of `x`)
 #'  * "location", orders by location where key first seen. This is useful
 #'     if you want to match the counts up to other unique/duplicated functions.
-#'  * "none", leaves unordered.
+#'  * "none", leaves unordered. This is not guaranteed to produce the same
+#'    ordering across R sessions, but is the fastest method.
 #' @return A data frame with columns `key` (same type as `x`) and
 #'   `count` (an integer vector).
 #'
@@ -46,39 +47,37 @@
 vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   sort <- arg_match0(sort, c("count", "key", "location", "none"))
 
-  # Returns key-value pair giving index of first occurrence value and count
-  kv <- vec_count_impl(x)
+  # Returns info pair giving index of first occurrence value and count
+  info <- vec_count_impl(x)
 
-  df <- data_frame(
-    key = vec_slice(x, kv$key),
-    count = kv$val
-  )
-
-  if (sort == "none") {
-    return(df)
+  # Sorting based on rearranging `info`
+  if (sort == "location") {
+    loc <- vec_order(info$loc)
+    info <- vec_slice(info, loc)
+  } else if (sort == "count") {
+    # Order by descending count, but ascending original location.
+    # This retains stable ordering in case of ties in the `count`.
+    # Need `vec_order_radix()` to handle different `direction`s.
+    loc <- vec_order_radix(info[c("count", "loc")], direction = c("desc", "asc"))
+    info <- vec_slice(info, loc)
   }
 
-  idx <- switch(sort,
-    location = vec_order(kv$key),
-    key = vec_order(df$key),
-    count = vec_order(-kv$val)
+  out <- data_frame(
+    key = vec_slice(x, info$loc),
+    count = info$count
   )
 
-  df <- vec_slice(df, idx)
-  reset_rownames(df)
+  # Sorting based on rearranging `out`
+  if (sort == "key") {
+    loc <- vec_order(out$key)
+    out <- vec_slice(out, loc)
+  }
+
+  out
 }
 
 vec_count_impl <- function(x) {
   .Call(vctrs_count, x)
-}
-
-reset_rownames <- function(x) {
-  rownames(x) <- NULL
-
-  is_df <- map_lgl(x, is.data.frame)
-  x[is_df] <- lapply(x[is_df], reset_rownames)
-
-  x
 }
 
 # Duplicates --------------------------------------------------------------
@@ -260,7 +259,7 @@ vec_match <- function(needles,
                       needles_arg = "",
                       haystack_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_match, needles, haystack, na_equal, needles_arg, haystack_arg)
+  .Call(vctrs_match, needles, haystack, na_equal, environment())
 }
 
 #' @export
@@ -272,5 +271,5 @@ vec_in <- function(needles,
                    needles_arg = "",
                    haystack_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_in, needles, haystack, na_equal, needles_arg, haystack_arg)
+  .Call(vctrs_in, needles, haystack, na_equal, environment())
 }

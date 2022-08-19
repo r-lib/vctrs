@@ -1,9 +1,14 @@
 #ifndef VCTRS_COMPARE_H
 #define VCTRS_COMPARE_H
 
-#include <rlang.h>
-#include "vctrs.h"
+#include "vctrs-core.h"
 #include "equal.h"
+#include "missing.h"
+#include <stdlib.h>
+
+// -----------------------------------------------------------------------------
+
+SEXP vec_compare(SEXP x, SEXP y, bool na_equal);
 
 // -----------------------------------------------------------------------------
 
@@ -32,9 +37,9 @@ int qsort_int_compare_scalar(const void* x, const void* y) {
 
 // -----------------------------------------------------------------------------
 
-static inline
+static inline r_no_return
 int nil_compare_na_equal(r_obj* x, r_obj* y) {
-  r_stop_internal("nil_compare_na_equal", "Can't compare NULL values.");
+  r_stop_internal("Can't compare NULL values.");
 }
 static inline
 int lgl_compare_na_equal(int x, int y) {
@@ -73,11 +78,11 @@ int dbl_compare_na_equal(double x, double y) {
   }
   }
 
-  r_stop_unreached("dbl_compare_na_equal");
+  r_stop_unreachable();
 }
-static inline
+static inline r_no_return
 int cpl_compare_na_equal(Rcomplex x, Rcomplex y) {
-  r_stop_internal("cpl_compare_na_equal", "Can't compare complex types.");
+  r_stop_internal("Can't compare complex types.");
 }
 static inline
 int chr_compare_na_equal(r_obj* x, r_obj* y) {
@@ -91,13 +96,13 @@ int chr_compare_na_equal(r_obj* x, r_obj* y) {
     return chr_compare_scalar(x, y);
   }
 }
-static inline
+static inline r_no_return
 int raw_compare_na_equal(Rbyte x, Rbyte y) {
-  r_stop_internal("raw_compare_na_equal", "Can't compare raw types.");
+  r_stop_internal("Can't compare raw types.");
 }
-static inline
+static inline r_no_return
 int list_compare_na_equal(r_obj* x, r_obj* y) {
-  r_stop_internal("list_compare_na_equal", "Can't compare list types.");
+  r_stop_internal("Can't compare list types.");
 }
 
 // -----------------------------------------------------------------------------
@@ -142,11 +147,11 @@ int p_list_compare_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize
 #undef P_COMPARE_NA_EQUAL
 
 static inline
-bool p_compare_na_equal(const void* p_x,
-                        r_ssize i,
-                        const void* p_y,
-                        r_ssize j,
-                        const enum vctrs_type type) {
+int p_compare_na_equal(const void* p_x,
+                       r_ssize i,
+                       const void* p_y,
+                       r_ssize j,
+                       const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_compare_na_equal(p_x, i, p_y, j);
   case vctrs_type_logical: return p_lgl_compare_na_equal(p_x, i, p_y, j);
@@ -162,9 +167,9 @@ bool p_compare_na_equal(const void* p_x,
 
 // -----------------------------------------------------------------------------
 
-static inline
+static inline r_no_return
 int nil_compare_na_propagate(r_obj* x, r_obj* y) {
-  r_stop_internal("nil_compare_na_propagate", "Can't compare NULL values.");
+  r_stop_internal("Can't compare NULL values.");
 }
 static inline
 int lgl_compare_na_propagate(int x, int y) {
@@ -190,9 +195,9 @@ int dbl_compare_na_propagate(double x, double y) {
     return dbl_compare_scalar(x, y);
   }
 }
-static inline
+static inline r_no_return
 int cpl_compare_na_propagate(Rcomplex x, Rcomplex y) {
-  r_stop_internal("cpl_compare_na_propagate", "Can't compare complex types.");
+  r_stop_internal("Can't compare complex types.");
 }
 static inline
 int chr_compare_na_propagate(r_obj* x, r_obj* y) {
@@ -204,13 +209,13 @@ int chr_compare_na_propagate(r_obj* x, r_obj* y) {
     return chr_compare_scalar(x, y);
   }
 }
-static inline
+static inline r_no_return
 int raw_compare_na_propagate(Rbyte x, Rbyte y) {
-  r_stop_internal("raw_compare_na_propagate", "Can't compare raw types.");
+  r_stop_internal("Can't compare raw types.");
 }
-static inline
+static inline r_no_return
 int list_compare_na_propagate(r_obj* x, r_obj* y) {
-  r_stop_internal("list_compare_na_propagate", "Can't compare list types.");
+  r_stop_internal("Can't compare list types.");
 }
 
 // -----------------------------------------------------------------------------
@@ -255,11 +260,11 @@ int p_list_compare_na_propagate(const void* p_x, r_ssize i, const void* p_y, r_s
 #undef P_COMPARE_NA_PROPAGATE
 
 static inline
-bool p_compare_na_propagate(const void* p_x,
-                            r_ssize i,
-                            const void* p_y,
-                            r_ssize j,
-                            const enum vctrs_type type) {
+int p_compare_na_propagate(const void* p_x,
+                           r_ssize i,
+                           const void* p_y,
+                           r_ssize j,
+                           const enum vctrs_type type) {
   switch (type) {
   case vctrs_type_null: return p_nil_compare_na_propagate(p_x, i, p_y, j);
   case vctrs_type_logical: return p_lgl_compare_na_propagate(p_x, i, p_y, j);

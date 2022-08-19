@@ -5,10 +5,6 @@
 #include <Rversion.h>
 
 
-#define r_global_env R_GlobalEnv
-#define r_base_env R_BaseEnv
-#define r_empty_env R_EmptyEnv
-
 extern r_obj* r_methods_ns_env;
 
 
@@ -27,6 +23,9 @@ r_ssize r_env_length(r_obj* env) {
 
 static inline
 r_obj* r_env_parent(r_obj* env) {
+  if (env == r_envs.empty) {
+    r_stop_internal("Can't take the parent of the empty environment.");
+  }
   return ENCLOS(env);
 }
 static inline
@@ -51,14 +50,30 @@ static inline
 r_obj* r_env_find_anywhere(r_obj* env, r_obj* sym) {
   return Rf_findVar(sym, env);
 }
+r_obj* r_env_find_until(r_obj* env, r_obj* sym, r_obj* last);
+
+
+// TODO: Enable `R_existsVarInFrame()` when R 4.2 is out
+#define RLANG_USE_R_EXISTS (1 || R_VERSION < R_Version(4, 2, 0))
 
 static inline
 bool r_env_has(r_obj* env, r_obj* sym) {
-  return r_env_find(env, sym) != r_syms.unbound;
+#if RLANG_USE_R_EXISTS
+  bool r__env_has(r_obj*, r_obj*);
+  return r__env_has(env, sym);
+#else
+  return R_existsVarInFrame(env, sym);
+#endif
 }
+
 static inline
 bool r_env_has_anywhere(r_obj* env, r_obj* sym) {
-  return r_env_find_anywhere(env, sym) != r_syms.unbound;
+#if RLANG_USE_R_EXISTS
+  bool r__env_has_anywhere(r_obj*, r_obj*);
+  return r__env_has_anywhere(env, sym);
+#else
+  return TODO();
+#endif
 }
 
 r_obj* r_ns_env(const char* pkg);
@@ -71,6 +86,7 @@ r_obj* r_list_as_environment(r_obj* x, r_obj* parent);
 r_obj* r_env_clone(r_obj* env, r_obj* parent);
 
 
+// Silently ignores bindings that are not defined in `env`.
 static inline
 void r_env_unbind(r_obj* env, r_obj* sym) {
 #if (R_VERSION < R_Version(4, 0, 0))
@@ -82,18 +98,20 @@ void r_env_unbind(r_obj* env, r_obj* sym) {
 }
 
 static inline
-r_obj* r_env_poke(r_obj* env, r_obj* sym, r_obj* value) {
+void r_env_poke(r_obj* env, r_obj* sym, r_obj* value) {
+  KEEP(value);
   Rf_defineVar(sym, value, env);
-  return env;
+  FREE(1);
 }
+
 void r_env_poke_lazy(r_obj* env, r_obj* sym, r_obj* expr, r_obj* eval_env);
 
 static inline
 void r_env_poke_active(r_obj* env, r_obj* sym, r_obj* fn) {
-  if (r_env_has(env, sym)) {
-    r_env_unbind(env, sym);
-  }
+  KEEP(fn);
+  r_env_unbind(env, sym);
   R_MakeActiveBinding(sym, fn, env);
+  FREE(1);
 }
 
 bool r_env_inherits(r_obj* env, r_obj* ancestor, r_obj* top);

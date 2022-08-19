@@ -111,7 +111,12 @@ vec_ptype_full.POSIXlt <- function(x, ...) {
 }
 
 #' @export
-vec_ptype_abbr.POSIXt <- function(x, ...) {
+vec_ptype_abbr.POSIXct <- function(x, ...) {
+  "dttm"
+}
+
+#' @export
+vec_ptype_abbr.POSIXlt <- function(x, ...) {
   "dttm"
 }
 
@@ -301,6 +306,10 @@ vec_cast.difftime <- function(x, to, ...) {
 #' @method vec_cast.difftime difftime
 vec_cast.difftime.difftime <- function(x, to, ...) {
   if (identical(units(x), units(to))) {
+    if (typeof(x) == "integer") {
+      # Catch corrupt difftime objects (#1602)
+      storage.mode(x) <- "double"
+    }
     x
   } else {
     # Hack: I can't see any obvious way of changing the units

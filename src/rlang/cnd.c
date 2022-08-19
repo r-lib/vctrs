@@ -1,8 +1,5 @@
 #include "rlang.h"
-
-// From rlang/vec.c
-void r_vec_poke_n(r_obj* x, r_ssize offset,
-                  r_obj* y, r_ssize from, r_ssize n);
+#include "decl/cnd-decl.h"
 
 
 #define BUFSIZE 8192
@@ -17,22 +14,12 @@ void r_vec_poke_n(r_obj* x, r_ssize offset,
     BUF[BUFSIZE - 1] = '\0';                    \
   }
 
-__attribute__((noreturn))
-void r_stop_internal(const char* fn, const char* fmt, ...) {
-  R_CheckStack2(BUFSIZE);
-
-  char msg[BUFSIZE];
-  INTERP(msg, fmt, ...);
-
-  r_abort("Internal error in `%s()`: %s", fn, msg);
-}
-
 static r_obj* msg_call = NULL;
 void r_inform(const char* fmt, ...) {
   char buf[BUFSIZE];
   INTERP(buf, fmt, ...);
 
-  r_eval_with_x(msg_call, KEEP(r_chr(buf)), r_base_env);
+  r_eval_with_x(msg_call, KEEP(r_chr(buf)), r_envs.ns);
 
   FREE(1);
 }
@@ -42,7 +29,7 @@ void r_warn(const char* fmt, ...) {
   char buf[BUFSIZE];
   INTERP(buf, fmt, ...);
 
-  r_eval_with_x(wng_call, KEEP(r_chr(buf)), r_base_env);
+  r_eval_with_x(wng_call, KEEP(r_chr(buf)), r_envs.ns);
 
   FREE(1);
 }
@@ -51,150 +38,111 @@ static r_obj* err_call = NULL;
 void r_abort(const char* fmt, ...) {
   char buf[BUFSIZE];
   INTERP(buf, fmt, ...);
+  r_obj* message = KEEP(r_chr(buf));
 
-  r_eval_with_x(err_call, KEEP(r_chr(buf)), r_base_env);
+  // Evaluate in a mask but forward error call to the current frame
+  r_obj* frame = KEEP(r_peek_frame());
+  r_obj* mask = KEEP(r_alloc_environment(2, frame));
+  r_env_poke(mask, r_syms.error_call_flag, frame);
+
+  struct r_pair args[] = {
+    { r_syms.message, message }
+  };
+
+  r_exec_n(r_null, r_syms.abort, args, R_ARR_SIZEOF(args), mask);
 
   while (1); // No return
 }
 
-// From vec-chr.c
-r_obj* chr_append(r_obj* chr, r_obj* r_string);
-
-static r_obj* new_condition_names(r_obj* data) {
-  if (!r_is_named(data)) {
-    r_abort("Conditions must have named data fields");
-  }
-
-  r_obj* data_nms = r_names(data);
-
-  if (r_chr_has_any(data_nms, (const char* []) { "message", NULL })) {
-    r_abort("Conditions can't have a `message` data field");
-  }
-
-  r_obj* nms = KEEP(r_alloc_character(r_length(data) + 1));
-  r_chr_poke(nms, 0, r_str("message"));
-  r_vec_poke_n(nms, 1, data_nms, 0, r_length(nms) - 1);
-
-  FREE(1);
-  return nms;
-}
-r_obj* r_new_condition(r_obj* subclass, r_obj* msg, r_obj* data) {
-  if (msg == r_null) {
-    msg = r_chrs.empty_string;
-  } else if (!r_is_string(msg)) {
-    r_abort("Condition message must be a string");
-  }
-
-  r_ssize n_data = r_length(data);
-  r_obj* cnd = KEEP(r_alloc_list(n_data + 1));
-
-  r_list_poke(cnd, 0, msg);
-  r_vec_poke_n(cnd, 1, data, 0, r_length(cnd) - 1);
-
-  r_attrib_poke_names(cnd, KEEP(new_condition_names(data)));
-  r_attrib_poke_class(cnd, KEEP(chr_append(subclass, KEEP(r_str("condition")))));
-
-  FREE(4);
-  return cnd;
+r_no_return
+void (r_stop_c_internal)(const char* file,
+                         int line,
+                         const char* fn,
+                         const char* fmt, ...) {
+  char buf[BUFSIZE];
+  INTERP(buf, fmt, ...);
+  r_abort("TODO");
 }
 
+r_no_return
+void r_abort_n(const struct r_pair* args, int n) {
+  r_exec_mask_n(r_null, r_syms.abort, args, n, r_peek_frame());
+  r_stop_unreachable();
+}
 
-static r_obj* cnd_signal_call = NULL;
-static r_obj* wng_signal_call = NULL;
-static r_obj* err_signal_call = NULL;
+r_no_return
+void r_abort_call(r_obj* call, const char* fmt, ...) {
+  char buf[BUFSIZE];
+  INTERP(buf, fmt, ...);
+  r_obj* message = KEEP(r_chr(buf));
+
+  struct r_pair args[] = {
+    { r_syms.message, message },
+    { r_syms.call, call }
+  };
+
+  r_obj* frame = KEEP(r_peek_frame());
+  r_exec_mask_n(r_null, r_syms.abort, args, R_ARR_SIZEOF(args), frame);
+
+  r_stop_unreachable();
+}
 
 void r_cnd_signal(r_obj* cnd) {
-  r_obj* call = r_null;
-
-  switch (r_cnd_type(cnd)) {
-  case r_cnd_type_message:
-    call = msg_call;
-    break;
-  case r_cnd_type_warning:
-    call = wng_signal_call;
-    break;
-  case r_cnd_type_error:
-    call = err_signal_call;
-    break;
-  case r_cnd_type_interrupt:
-    r_interrupt();
-    return;
-  default:
-    call = cnd_signal_call;
-    break;
-  }
-
-  r_eval_with_x(call, cnd, r_base_env);
+  r_eval_with_x(cnd_signal_call, cnd, r_envs.base);
 }
 
+// For `R_interrupts_suspended`
+#include <R_ext/GraphicsEngine.h>
+#include <R_ext/GraphicsDevice.h>
 
 #ifdef _WIN32
 #include <Rembedded.h>
 void r_interrupt() {
   UserBreak = 1;
   R_CheckUserInterrupt();
-  r_abort("Internal error: Simulated interrupt not processed");
 }
 #else
 #include <Rinterface.h>
 void r_interrupt() {
   Rf_onintr();
-  r_abort("Internal error: Simulated interrupt not processed");
 }
 #endif
 
-enum r_condition_type r_cnd_type(r_obj* cnd) {
+enum r_cnd_type r_cnd_type(r_obj* cnd) {
   r_obj* classes = r_class(cnd);
   if (r_typeof(cnd) != R_TYPE_list ||
       r_typeof(classes) != R_TYPE_character) {
     goto error;
   }
 
+  r_obj* const * v_classes = r_chr_cbegin(classes);
   r_ssize n_classes = r_length(classes);
 
-  for (r_ssize i = 0; i < n_classes; ++i) {
-    const char* class_str = r_str_c_string(r_chr_get(classes, i));
-    switch (class_str[0]) {
-    case 'c':
-      if (strcmp(class_str, "condition")) {
-        continue;
-      } else {
-        return r_cnd_type_condition;
-      }
-    case 'm':
-      if (strcmp(class_str, "message")) {
-        continue;
-      } else {
-        return r_cnd_type_message;
-      }
-    case 'w':
-      if (strcmp(class_str, "warning")) {
-        continue;
-      } else {
-        return r_cnd_type_warning;
-      }
-    case 'e':
-      if (strcmp(class_str, "error")) {
-        continue;
-      } else {
-        return r_cnd_type_error;
-      }
-    case 'i':
-      if (strcmp(class_str, "interrupt")) {
-        continue;
-      } else {
-        return r_cnd_type_interrupt;
-      }
-    default:
-      continue;
+  for (r_ssize i = n_classes - 2; i >= 0; --i) {
+    r_obj* class_str = v_classes[i];
+
+    if (class_str == r_strs.error) {
+      return R_CND_TYPE_error;
+    }
+    if (class_str == r_strs.warning) {
+      return R_CND_TYPE_warning;
+    }
+    if (class_str == r_strs.message) {
+      return R_CND_TYPE_message;
+    }
+    if (class_str == r_strs.interrupt) {
+      return R_CND_TYPE_interrupt;
     }
   }
 
+  if (r_inherits(cnd, "condition")) {
+    return R_CND_TYPE_condition;
+  }
+
  error:
-  r_abort("`cnd` is not a condition object");
+  r_abort("`cnd` is not a condition object.");
 }
 
-r_obj* rlang_ns_get(const char* name);
 
 void r_init_library_cnd() {
   msg_call = r_parse("message(x)");
@@ -206,14 +154,31 @@ void r_init_library_cnd() {
   err_call = r_parse("rlang::abort(x)");
   r_preserve(err_call);
 
-  wng_signal_call = r_parse("warning(x)");
-  r_preserve(wng_signal_call);
-
-  err_signal_call = r_parse("rlang:::signal_abort(x)");
-  r_preserve(err_signal_call);
-
-  const char* cnd_signal_source =
-    "withRestarts(rlang_muffle = function() NULL, signalCondition(x))";
-  cnd_signal_call = r_parse(cnd_signal_source);
+  cnd_signal_call = r_parse("rlang::cnd_signal(x)");
   r_preserve(cnd_signal_call);
+
+  // Silence "'noreturn' attribute does not apply to types warning".
+  // It seems like GCC doesn't handle attributes in casts so we need
+  // to cast through a typedef.
+  // https://stackoverflow.com/questions/9441262/function-pointer-to-attribute-const-function
+  typedef r_no_return void (*r_stop_internal_t)(const char*,
+                                                int,
+                                                r_obj*,
+                                                const char* fmt,
+                                                ...);
+  r_stop_internal = (r_stop_internal_t) R_GetCCallable("rlang", "rlang_stop_internal2");
+
+  r_format_error_arg = (const char* (*)(r_obj*)) r_peek_c_callable("rlang", "rlang_format_error_arg");
 }
+
+r_no_return
+void (*r_stop_internal)(const char* file,
+                        int line,
+                        r_obj* call,
+                        const char* fmt,
+                        ...) = NULL;
+
+static
+r_obj* cnd_signal_call = NULL;
+
+const char* (*r_format_error_arg)(r_obj* arg) = NULL;

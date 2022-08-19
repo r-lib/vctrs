@@ -1,16 +1,11 @@
-## Test environments
-
-* local macOS: release
-* Travis Ubuntu: 3.3, 3.4, 3.5, 3.6, 4.0, devel
-* win-builder: release, devel
-* R-Hub: UBSAN, rchk, and valgrind builds
-
-
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
 
 
-## Revdep checks
+## revdepcheck results
 
-We ran checks on revdeps of vctrs, dplyr, and tidyr. No problems were found.
+We checked 175 reverse dependencies (171 from CRAN + 4 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages

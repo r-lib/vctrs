@@ -5,54 +5,44 @@
 \alias{vec_recycle_common}
 \title{Vector recycling}
 \usage{
-vec_recycle(x, size, ..., x_arg = "")
+vec_recycle(x, size, ..., x_arg = "", call = caller_env())
 
-vec_recycle_common(..., .size = NULL)
+vec_recycle_common(..., .size = NULL, .arg = "", .call = caller_env())
 }
 \arguments{
 \item{x}{A vector to recycle.}
 
 \item{size}{Desired output size.}
 
-\item{...}{\itemize{
-\item For \code{vec_recycle_common()}, vectors to recycle.
+\item{...}{Depending on the function used:
 \itemize{
+\item For \code{vec_recycle_common()}, vectors to recycle.
 \item For \code{vec_recycle()}, these dots should be empty.
-}
 }}
 
 \item{x_arg}{Argument name for \code{x}. These are used in error
 messages to inform the user about which argument has an
 incompatible size.}
 
+\item{call, .call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
 \item{.size}{Desired output size. If omitted,
 will use the common size from \code{\link[=vec_size_common]{vec_size_common()}}.}
+
+\item{.arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
 }
 \description{
-\code{vec_recycle(x, size)} recycles a single vector to given size.
-\code{vec_recycle_common(...)} recycles multiple vectors to their common size.
-All functions obey the vctrs recycling rules, described below, and will
-throw an error if recycling is not possible. See \code{\link[=vec_size]{vec_size()}} for the
-precise definition of size.
+\code{vec_recycle(x, size)} recycles a single vector to a given size.
+\code{vec_recycle_common(...)} recycles multiple vectors to their common size. All
+functions obey the \link[=vector_recycling_rules]{vctrs recycling rules}, and will
+throw an error if recycling is not possible. See \code{\link[=vec_size]{vec_size()}} for the precise
+definition of size.
 }
-\section{Recycling rules}{
-
-The common size of two vectors defines the recycling rules, and can be
-summarise with the following table:
-
-\figure{sizes-recycling.png}
-
-(Note \code{NULL}s are handled specially; they are treated like empty
-arguments and hence don't affect the size)
-
-This is a stricter set of rules than base R, which will usually
-return output of length \code{max(nx, ny)}, warning if the length of the longer
-vector is not an integer multiple of the length of the shorter.
-
-We say that two vectors have \strong{compatible size} if they can be
-recycled to be the same length.
-}
-
 \section{Dependencies}{
 
 \itemize{

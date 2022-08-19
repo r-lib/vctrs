@@ -6,6 +6,15 @@ test_that("vec_count counts number observations", {
   expect_equal(x, data.frame(key = 1:3, count = 1:3))
 })
 
+test_that("vec_count(sort = 'count') uses a stable sort when there are ties (#1588)", {
+  x <- c("a", "b", "b", "a", "d")
+
+  expect_identical(
+    vec_count(x, sort = "count"),
+    data_frame(key = c("a", "b", "d"), count = c(2L, 2L, 1L))
+  )
+})
+
 test_that("vec_count works with matrices", {
   x <- matrix(c(1, 1, 1, 2, 2, 1), c(3, 2))
 
@@ -158,10 +167,10 @@ test_that("unique functions work with different encodings", {
 })
 
 test_that("unique functions can handle scalar types in lists", {
-  x <- list(x = a ~ b, y = a ~ b, z = a ~ c)
+  x <- list(a ~ b, a ~ b, a ~ c)
   expect_equal(vec_unique(x), vec_slice(x, c(1, 3)))
 
-  x <- list(x = call("x"), y = call("y"), z = call("x"))
+  x <- list(call("x"), call("y"), call("x"))
   expect_equal(vec_unique(x), vec_slice(x, c(1, 2)))
 })
 
@@ -197,7 +206,6 @@ test_that("can take the unique locations of dfs with list-cols", {
   df <- tibble(x = list(1, 2, 1, 3), y = list(1, 2, 1, 3))
   expect_identical(vec_unique_loc(df), c(1L, 2L, 4L))
 })
-
 
 # matching ----------------------------------------------------------------
 
@@ -335,4 +343,14 @@ test_that("vec_match() and vec_in() silently fall back to base data frame", {
     vec_in(foobar(mtcars), foobar(tibble::as_tibble(mtcars))),
     rep(TRUE, 32)
   ))
+})
+
+test_that("vec_in() evaluates arg lazily", {
+  expect_silent(vec_in(1L, 1L, needles_arg = print("oof")))
+  expect_silent(vec_in(1L, 1L, haystack_arg = print("oof")))
+})
+
+test_that("vec_match() evaluates arg lazily", {
+  expect_silent(vec_match(1L, 1L, needles_arg = print("oof")))
+  expect_silent(vec_match(1L, 1L, haystack_arg = print("oof")))
 })

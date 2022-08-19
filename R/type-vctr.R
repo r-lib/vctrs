@@ -72,8 +72,6 @@ new_vctr <- function(.data,
     abort("`.data` must be a vector type.")
   }
 
-  nms <- validate_names(.data)
-
   if (is_list(.data)) {
     if (is.data.frame(.data)) {
       abort("`.data` can't be a data frame.")
@@ -91,27 +89,30 @@ new_vctr <- function(.data,
     inherit_base_type <- FALSE
   }
 
+  names <- names(.data)
+  names <- names_repair_missing(names)
+
   class <- c(class, "vctrs_vctr", if (inherit_base_type) typeof(.data))
-  attrib <- list(names = nms, ..., class = class)
+  attrib <- list(names = names, ..., class = class)
 
   vec_set_attributes(.data, attrib)
 }
 
-validate_names <- function(.data) {
-  nms <- names(.data)
-
-  if (!names_all_or_nothing(nms)) {
-    stop("If any elements of `.data` are named, all must be named", call. = FALSE)
+names_repair_missing <- function(x) {
+  if (is.null(x)) {
+    return(x)
   }
 
-  nms
-}
-names_all_or_nothing <- function(names) {
-  if (is.null(names)) {
-    TRUE
-  } else {
-    all(names != "" & !is.na(names))
+  missing <- vec_equal_na(x)
+
+  if (any(missing)) {
+    # We never want to allow `NA_character_` names to slip through, but
+    # erroring on them has caused issues. Instead, we repair them to the
+    # empty string (#784).
+    x <- vec_assign(x, missing, "")
   }
+
+  x
 }
 
 #' @export
@@ -137,14 +138,25 @@ vec_cast.vctrs_vctr <- function(x, to, ...) {
   UseMethod("vec_cast.vctrs_vctr")
 }
 
-vctr_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
+vctr_cast <- function(x,
+                      to,
+                      ...,
+                      x_arg = "",
+                      to_arg = "",
+                      call = caller_env()) {
   # These are not strictly necessary, but make bootstrapping a new class
   # a bit simpler
   if (is.object(x)) {
     if (is_same_type(x, to)) {
       x
     } else {
-      stop_incompatible_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+      stop_incompatible_cast(
+        x,
+        to,
+        x_arg = x_arg,
+        to_arg = to_arg,
+        call = call
+      )
     }
   } else {
     # FIXME: `vec_restore()` should only be called on proxies
@@ -269,9 +281,9 @@ diff.vctrs_vctr <- function(x, lag = 1L, differences = 1L, ...) {
   if (length(value) != 0 && length(value) != length(x)) {
     abort("`names()` must be the same length as x.")
   }
-  if (!names_all_or_nothing(value)) {
-    abort("If any elements are named, all elements must be named.")
-  }
+
+  value <- names_repair_missing(value)
+
   NextMethod()
 }
 # Coercion ----------------------------------------------------------------
@@ -402,7 +414,7 @@ na.fail.vctrs_vctr <- function(object, ...) {
 
   if (any(missing)) {
     # Return the same error as `na.fail.default()`
-    stop("missing values in object")
+    abort("missing values in object")
   }
 
   object
@@ -511,7 +523,7 @@ xtfrm.vctrs_vctr <- function(x) {
     return(proxy)
   }
 
-  vec_rank(proxy, ties = "dense", na_propagate = TRUE)
+  vec_rank(proxy, ties = "dense", incomplete = "na")
 }
 
 #' @importFrom stats median

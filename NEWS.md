@@ -5,6 +5,146 @@
   of items to print. By default, `getOption("max.print")` is consulted
   (#1355, @krlmlr).
 
+* `"select"` and `"relocate"` have been added as valid subscript actions to
+  support tidyselect and dplyr (#1596).
+
+* `num_as_location()` has a new `oob = "remove"` argument to remove
+  out-of-bounds locations (#1595).
+
+* `vec_rbind()` and `vec_cbind()` now have `.call` arguments (#1597).
+
+* `df_list()` has gained a new `.unpack` argument to optionally disable data
+  frame unpacking (#1616).
+
+* `vec_check_list(arg = "")` now throws the correct error (#1604).
+
+* The `difftime` to `difftime` `vec_cast()` method now standardizes the internal
+  storage type to double, catching potentially corrupt integer storage
+  `difftime` vectors (#1602).
+
+* `vec_as_location2()` and `vec_as_subscript2()` more correctly utilize their
+  `call` arguments (#1605).
+
+* `vec_count(sort = "count")` now uses a stable sorting method. This ensures
+  that different keys with the same count are sorted in the order that they
+  originally appeared in (#1588).
+
+* Lossy cast error conditions now show the correct message when
+  `conditionMessage()` is called on them (#1592).
+
+* Fixed inconsistent reporting of conflicting inputs in
+  `vec_ptype_common()` (#1570).
+
+* `vec_ptype_abbr()` and `vec_ptype_full()` now suffix 1d arrays
+  with `[1d]`.
+
+* `vec_ptype_abbr()` and `vec_ptype_full()` methods are no longer
+  inherited (#1549).
+
+* `vec_cast()` now throws the correct error when attempting to cast a subclassed
+  data frame to a non-data frame type (#1568).
+
+* `vec_locate_matches()` now uses a more conservative heuristic when taking the
+  joint ordering proxy. This allows it to work correctly with sf's sfc vectors
+  and the classes from the bignum package (#1558).
+  
+* An sfc method for `vec_proxy_order()` was added to better support the sf
+  package. These vectors are generally treated like list-columns even though
+  they don't explicitly have a `"list"` class, and the `vec_proxy_order()`
+  method now forwards to the list method to reflect that (#1558).
+
+* `vec_proxy_compare()` now works correctly for raw vectors wrapped in `I()`.
+  `vec_proxy_order()` now works correctly for raw and list vectors wrapped in
+  `I()` (#1557).
+
+# vctrs 0.4.1
+
+* OOB errors with `character()` indexes use "that don't exist" instead
+  of "past the end" (#1543).
+
+* Fixed memory protection issues related to common type
+  determination (#1551, tidyverse/tidyr#1348).
+
+# vctrs 0.4.0
+
+* New experimental `vec_locate_sorted_groups()` for returning the locations of
+  groups in sorted order. This is equivalent to, but faster than, calling
+  `vec_group_loc()` and then sorting by the `key` column of the result.
+
+* New experimental `vec_locate_matches()` for locating where each observation
+  in one vector matches one or more observations in another vector. It is
+  similar to `vec_match()`, but returns all matches by default (rather than just
+  the first), and can match on binary conditions other than equality. The
+  algorithm is inspired by data.table's very fast binary merge procedure.
+
+* The `vec_proxy_equal()`, `vec_proxy_compare()`, and `vec_proxy_order()`
+  methods for `vctrs_rcrd` are now applied recursively over the fields (#1503).
+
+* Lossy cast errors now inherit from incompatible type errors.
+
+* `vec_is_list()` now returns `TRUE` for `AsIs` lists (#1463).
+
+* `vec_assert()`, `vec_ptype2()`, `vec_cast()`, and `vec_as_location()`
+  now use `caller_arg()` to infer a default `arg` value from the
+  caller.
+
+  This may result in unhelpful arguments being mentioned in error
+  messages. In general, you should consider snapshotting vctrs error
+  messages thrown in your package and supply `arg` and `call`
+  arguments if the error context is not adequately reported to your
+  users.
+
+* `vec_ptype_common()`, `vec_cast_common()`, `vec_size_common()`, and
+  `vec_recycle_common()` gain `call` and `arg` arguments for
+  specifying an error context.
+
+* `vec_compare()` can now compare zero column data frames (#1500).
+
+* `new_data_frame()` now errors on negative and missing `n` values (#1477).
+
+* `vec_order()` now correctly orders zero column data frames (#1499).
+
+* vctrs now depends on cli to help with error message generation.
+
+* New `vec_check_list()` and `list_check_all_vectors()` input
+  checkers, and an accompanying `list_all_vectors()` predicate.
+
+* New `vec_interleave()` for combining multiple vectors together, interleaving
+  their elements in the process (#1396).
+
+* `vec_equal_na(NULL)` now returns `logical(0)` rather than erroring (#1494).
+
+* `vec_as_location(missing = "error")` now fails with `NA` and `NA_character_`
+  in addition to `NA_integer_` (#1420, @krlmlr).
+
+* Starting with rlang 1.0.0, errors are displayed with the contextual
+  function call. Several vctrs operations gain a `call` argument that
+  makes it possible to report the correct context in error messages.
+  This concerns:
+
+  - `vec_cast()` and `vec_ptype2()`
+  - `vec_default_cast()` and `vec_default_ptype2()`
+  - `vec_assert()`
+  - `vec_as_names()`
+  - `stop_` constructors like `stop_incompatible_type()`
+
+  Note that default `vec_cast()` and `vec_ptype2()` methods
+  automatically support this if they pass `...` to the corresponding
+  `vec_default_` functions. If you throw a non-internal error from a
+  non-default method, add a `call = caller_env()` argument in the
+  method and pass it to `rlang::abort()`.
+
+* If `NA_character_` is specified as a name for `vctrs_vctr` objects, it is
+  now automatically repaired to `""` (#780).
+
+* `""` is now an allowed name for `vctrs_vctr` objects and all its
+  subclasses (`vctrs_list_of` in particular) (#780).
+
+* `list_of()` is now much faster when many values are provided.
+
+* `vec_as_location()` evaluates `arg` only in case of error, for performance
+  (#1150, @krlmlr).
+
 * `levels.vctrs_vctr()` now returns `NULL` instead of failing (#1186, @krlmlr).
 
 * `vec_assert()` produces a more informative error when `size` is invalid
@@ -12,7 +152,7 @@
 
 * `vec_duplicate_detect()` is a bit faster when there are many unique values.
 
-* New `vec_rank()` to compute various types of sample ranks.
+* `vec_proxy_order()` is described in `vignette("s3-vectors")` (#1373, @krlmlr).
 
 * `vec_chop()` now materializes ALTREP vectors before chopping, which is more
   efficient than creating many small ALTREP pieces (#1450).
@@ -21,33 +161,13 @@
 
 * `list_sizes()` now propagates the names of the list onto the result.
 
-* `vec_order()` and `vec_sort()` now use a custom radix sort algorithm, rather
-   than relying on `order()`. The implementation is based on data.table’s
-   `forder()` and their earlier contribution to R’s `order()`. There are four
-   major changes, outlined below, the first two of which are breaking changes.
-   If you need to retain the old ordering behavior, use `vec_order_base()`.
-
-   * Character vectors now order in the C locale by default, which is _much_
-     faster than ordering in the system's locale. To order in a specific locale,
-     you can provide a character proxy function through `chr_proxy_collate`,
-     such as `stringi::stri_sort_key()`.
-
-   * Optional arguments, such as `direction` and `na_value`, must now be
-     specified by name. Specifying by position will result in an error.
-
-   * When ordering data frames, you can now control the behavior of `direction`
-     and `na_value` on a per column basis.
-
-   * There is a new `nan_distinct` argument for differentiating between `NaN`
-     and `NA` in double and complex vectors.
-
 * Name repair messages are now signaled by `rlang::names_inform_repair()`. This
   means that the messages are now sent to stdout by default rather than to
   stderr, resulting in prettier messages. Additionally, name repair messages can
   now be silenced through the global option `rlib_name_repair_verbosity`, which
   is useful for testing purposes. See `?names_inform_repair` for more
   information (#1429).
-  
+
 * `vctrs_vctr` methods for `na.omit()`, `na.exclude()`, and `na.fail()` have
   been added (#1413).
 
@@ -58,7 +178,7 @@
 * `vec_detect_complete()` now computes completeness for `vctrs_rcrd` types in
   the same way as data frames, which means that if any field is missing, the
   entire record is considered incomplete (#1386).
-  
+
 * The `na_value` argument of `vec_order()` and `vec_sort()` now correctly
   respect missing values in lists (#1401).
 

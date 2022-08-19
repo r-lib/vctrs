@@ -1,9 +1,5 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
 #include "type-data-frame.h"
-#include "owned.h"
-
 #include <R_ext/Rdynload.h>
 
 // Initialised at load time
@@ -133,6 +129,19 @@ SEXP vctrs_eval_mask7(SEXP fn,
                       SEXP x7_sym, SEXP x7) {
   SEXP syms[8] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, NULL };
   SEXP args[8] = { x1, x2, x3, x4, x5, x6, x7, NULL };
+  return vctrs_eval_mask_n(fn, syms, args);
+}
+r_obj* vctrs_eval_mask8(r_obj* fn,
+                        r_obj* x1_sym, r_obj* x1,
+                        r_obj* x2_sym, r_obj* x2,
+                        r_obj* x3_sym, r_obj* x3,
+                        r_obj* x4_sym, r_obj* x4,
+                        r_obj* x5_sym, r_obj* x5,
+                        r_obj* x6_sym, r_obj* x6,
+                        r_obj* x7_sym, r_obj* x7,
+                        r_obj* x8_sym, r_obj* x8) {
+  r_obj* syms[9] = { x1_sym, x2_sym, x3_sym, x4_sym, x5_sym, x6_sym, x7_sym, x8_sym, NULL };
+  r_obj* args[9] = { x1, x2, x3, x4, x5, x6, x7, x8, NULL };
   return vctrs_eval_mask_n(fn, syms, args);
 }
 
@@ -433,7 +442,7 @@ SEXP s3_paste_method_sym(const char* generic, const char* class) {
   int class_len = strlen(class);
   int dot_len = 1;
   if (gen_len + class_len + dot_len >= sizeof(s3_buf)) {
-    r_stop_internal("s3_paste_method_sym", "Generic or class name is too long.");
+    r_stop_internal("Generic or class name is too long.");
   }
 
   char* buf = s3_buf;
@@ -468,6 +477,19 @@ SEXP s3_sym_get_method(SEXP sym, SEXP table) {
 // [[ register() ]]
 SEXP vctrs_s3_find_method(SEXP generic, SEXP x, SEXP table) {
   return s3_find_method(r_chr_get_c_string(generic, 0), x, table);
+}
+
+// [[ register() ]]
+r_obj* ffi_s3_get_method(r_obj* generic, r_obj* class, r_obj* table) {
+  if (!r_is_string(generic)) {
+    r_stop_internal("`generic` must be a string");
+  }
+  if (!r_is_string(class)) {
+    r_stop_internal("`class` must be a string");
+  }
+  return s3_get_method(r_chr_get_c_string(generic, 0),
+                       r_chr_get_c_string(class, 0),
+                       table);
 }
 
 // [[ include("utils.h") ]]
@@ -518,7 +540,7 @@ SEXP s3_get_class(SEXP x) {
   }
 
   if (!Rf_length(class)) {
-    r_stop_internal("s3_get_class", "Class must have length.");
+    r_stop_internal("Class must have length.");
   }
 
   return class;
@@ -735,7 +757,7 @@ SEXP node_compact_d(SEXP node) {
 // [[ include("utils.h") ]]
 SEXP new_empty_factor(SEXP levels) {
   if (TYPEOF(levels) != STRSXP) {
-    r_stop_internal("new_empty_factor", "`level` must be a character vector.");
+    r_stop_internal("`level` must be a character vector.");
   }
 
   SEXP out = PROTECT(Rf_allocVector(INTSXP, 0));
@@ -789,22 +811,6 @@ SEXP list_pluck(SEXP xs, R_len_t i) {
 }
 
 
-// [[ include("vctrs.h") ]]
-enum vctrs_dbl_class dbl_classify(double x) {
-  if (!isnan(x)) {
-    return vctrs_dbl_number;
-  }
-
-  union vctrs_dbl_indicator indicator;
-  indicator.value = x;
-
-  if (indicator.key[vctrs_indicator_pos] == 1954) {
-    return vctrs_dbl_missing;
-  } else {
-    return vctrs_dbl_nan;
-  }
-}
-
 // Initialised at load time
 SEXP compact_seq_attrib = NULL;
 
@@ -825,15 +831,15 @@ void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
 // `start` is 0-based
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing) {
   if (start < 0) {
-    r_stop_internal("compact_seq", "`start` must not be negative.");
+    r_stop_internal("`start` must not be negative.");
   }
 
   if (size < 0) {
-    r_stop_internal("compact_seq", "`size` must not be negative.");
+    r_stop_internal("`size` must not be negative.");
   }
 
   if (!increasing && size > start + 1) {
-    r_stop_internal("compact_seq", "`size` must not be larger than `start` for decreasing sequences.");
+    r_stop_internal("`size` must not be larger than `start` for decreasing sequences.");
   }
 
   SEXP info = PROTECT(Rf_allocVector(INTSXP, 3));
@@ -881,7 +887,7 @@ void init_compact_rep(int* p, R_len_t i, R_len_t n) {
 // `i` should be an R-based index
 SEXP compact_rep(R_len_t i, R_len_t n) {
   if (n < 0) {
-    r_stop_internal("compact_rep", "Negative `n` in `compact_rep()`.");
+    r_stop_internal("Negative `n` in `compact_rep()`.");
   }
 
   SEXP rep = PROTECT(Rf_allocVector(INTSXP, 2));
@@ -941,6 +947,15 @@ static SEXP fns_colnames = NULL;
 SEXP colnames(SEXP x) {
   return vctrs_dispatch1(syms_colnames, fns_colnames,
                          syms_x, x);
+}
+
+r_obj* colnames2(r_obj* x) {
+  r_obj* names = colnames(x);
+  if (names == r_null) {
+    return r_alloc_character(Rf_ncols(x));
+  } else {
+    return names;
+  }
 }
 
 // [[ include("utils.h") ]]
@@ -1061,7 +1076,7 @@ void r_int_fill_seq(SEXP x, int start, R_len_t n) {
 SEXP r_seq(R_len_t from, R_len_t to) {
   R_len_t n = to - from;
   if (n < 0) {
-    r_stop_internal("r_seq", "Negative length.");
+    r_stop_internal("Negative length.");
   }
 
   SEXP seq = PROTECT(Rf_allocVector(INTSXP, n));
@@ -1128,7 +1143,7 @@ int r_chr_max_len(SEXP x) {
 SEXP r_chr_iota(R_len_t n, char* buf, int len, const char* prefix) {
   int prefix_len = strlen(prefix);
   if (len - 1 < prefix_len) {
-    r_stop_internal("r_chr_iota", "Prefix is larger than iota buffer.");
+    r_stop_internal("Prefix is larger than iota buffer.");
   }
 
   memcpy(buf, prefix, prefix_len);
@@ -1208,7 +1223,7 @@ bool r_is_positive_number(SEXP x) {
  */
 SEXP _r_pairlist(SEXP* tags, SEXP* cars) {
   if (!cars) {
-    r_stop_internal("r_pairlist", "NULL `cars`.");
+    r_stop_internal("NULL `cars`.");
   }
 
   SEXP list = PROTECT(Rf_cons(R_NilValue, R_NilValue));
@@ -1241,7 +1256,7 @@ bool r_has_name_at(SEXP names, R_len_t i) {
 
   R_len_t n = Rf_length(names);
   if (n <= i) {
-    r_stop_internal("r_has_name_at", "Names shorter than expected: (%d/%d).", i + 1, n);
+    r_stop_internal("Names shorter than expected: (%d/%d).", i + 1, n);
   }
 
   SEXP elt = STRING_ELT(names, i);
@@ -1302,14 +1317,6 @@ SEXP r_env_get(SEXP env, SEXP sym) {
 
 SEXP r_clone_referenced(SEXP x) {
   if (MAYBE_REFERENCED(x)) {
-    return Rf_shallow_duplicate(x);
-  } else {
-    return x;
-  }
-}
-
-SEXP r_clone_shared(SEXP x) {
-  if (MAYBE_SHARED(x)) {
     return Rf_shallow_duplicate(x);
   } else {
     return x;
@@ -1500,7 +1507,7 @@ SEXP vctrs_shared_na_list = NULL;
 
 SEXP vctrs_shared_zero_int = NULL;
 
-SEXP strings = NULL;
+SEXP strings2 = NULL;
 SEXP strings_empty = NULL;
 SEXP strings_dots = NULL;
 SEXP strings_none = NULL;
@@ -1515,6 +1522,8 @@ SEXP strings_group = NULL;
 SEXP strings_length = NULL;
 SEXP strings_vctrs_vctr = NULL;
 SEXP strings_times = NULL;
+SEXP strings_needles = NULL;
+SEXP strings_haystack = NULL;
 
 SEXP chrs_subset = NULL;
 SEXP chrs_extract = NULL;
@@ -1538,6 +1547,10 @@ SEXP chrs_cast = NULL;
 SEXP chrs_error = NULL;
 SEXP chrs_combine = NULL;
 SEXP chrs_convert = NULL;
+SEXP chrs_asc = NULL;
+SEXP chrs_desc = NULL;
+SEXP chrs_largest = NULL;
+SEXP chrs_smallest = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1554,6 +1567,8 @@ SEXP syms_y_arg = NULL;
 SEXP syms_to_arg = NULL;
 SEXP syms_times_arg = NULL;
 SEXP syms_subscript_arg = NULL;
+SEXP syms_needles_arg = NULL;
+SEXP syms_haystack_arg = NULL;
 SEXP syms_out = NULL;
 SEXP syms_value = NULL;
 SEXP syms_quiet = NULL;
@@ -1585,6 +1600,11 @@ SEXP syms_s3_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_stop_assert_size = NULL;
+SEXP syms_stop_matches_nothing = NULL;
+SEXP syms_stop_matches_remaining = NULL;
+SEXP syms_stop_matches_incomplete = NULL;
+SEXP syms_stop_matches_multiple = NULL;
+SEXP syms_warn_matches_multiple = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
@@ -1593,17 +1613,14 @@ SEXP syms_message = NULL;
 SEXP syms_chr_proxy_collate = NULL;
 SEXP syms_actual = NULL;
 SEXP syms_required = NULL;
+SEXP syms_call = NULL;
+SEXP syms_dot_call = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
 SEXP fns_names = NULL;
 
 SEXP result_attrib = NULL;
-
-struct vctrs_arg args_empty_;
-struct vctrs_arg args_n_;
-struct vctrs_arg args_dot_ptype_;
-struct vctrs_arg args_max_fill_;
 
 
 SEXP r_new_shared_vector(SEXPTYPE type, R_len_t n) {
@@ -1622,6 +1639,7 @@ SEXP r_new_shared_character(const char* name) {
 void c_print_backtrace() {
 #if defined(RLIB_DEBUG)
 #include <execinfo.h>
+#include <stdlib.h>
   void *buffer[500];
   int nptrs = backtrace(buffer, 100);
 
@@ -1635,6 +1653,9 @@ void c_print_backtrace() {
   Rprintf("vctrs must be compliled with -DRLIB_DEBUG.");
 #endif
 }
+
+
+struct r_lazy r_lazy_null;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -1653,70 +1674,76 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings = r_new_shared_vector(STRSXP, 21);
+  strings2 = r_new_shared_vector(STRSXP, 23);
 
   strings_dots = Rf_mkChar("...");
-  SET_STRING_ELT(strings, 0, strings_dots);
+  SET_STRING_ELT(strings2, 0, strings_dots);
 
   strings_empty = Rf_mkChar("");
-  SET_STRING_ELT(strings, 1, strings_empty);
+  SET_STRING_ELT(strings2, 1, strings_empty);
 
   strings_date = Rf_mkChar("Date");
-  SET_STRING_ELT(strings, 2, strings_date);
+  SET_STRING_ELT(strings2, 2, strings_date);
 
   strings_posixct = Rf_mkChar("POSIXct");
-  SET_STRING_ELT(strings, 3, strings_posixct);
+  SET_STRING_ELT(strings2, 3, strings_posixct);
 
   strings_posixlt = Rf_mkChar("POSIXlt");
-  SET_STRING_ELT(strings, 4, strings_posixlt);
+  SET_STRING_ELT(strings2, 4, strings_posixlt);
 
   strings_posixt = Rf_mkChar("POSIXt");
-  SET_STRING_ELT(strings, 5, strings_posixt);
+  SET_STRING_ELT(strings2, 5, strings_posixt);
 
   strings_none = Rf_mkChar("none");
-  SET_STRING_ELT(strings, 6, strings_none);
+  SET_STRING_ELT(strings2, 6, strings_none);
 
   strings_minimal = Rf_mkChar("minimal");
-  SET_STRING_ELT(strings, 7, strings_minimal);
+  SET_STRING_ELT(strings2, 7, strings_minimal);
 
   strings_unique = Rf_mkChar("unique");
-  SET_STRING_ELT(strings, 8, strings_unique);
+  SET_STRING_ELT(strings2, 8, strings_unique);
 
   strings_universal = Rf_mkChar("universal");
-  SET_STRING_ELT(strings, 9, strings_universal);
+  SET_STRING_ELT(strings2, 9, strings_universal);
 
   strings_check_unique = Rf_mkChar("check_unique");
-  SET_STRING_ELT(strings, 10, strings_check_unique);
+  SET_STRING_ELT(strings2, 10, strings_check_unique);
 
   strings_key = Rf_mkChar("key");
-  SET_STRING_ELT(strings, 11, strings_key);
+  SET_STRING_ELT(strings2, 11, strings_key);
 
   strings_loc = Rf_mkChar("loc");
-  SET_STRING_ELT(strings, 12, strings_loc);
+  SET_STRING_ELT(strings2, 12, strings_loc);
 
   strings_val = Rf_mkChar("val");
-  SET_STRING_ELT(strings, 13, strings_val);
+  SET_STRING_ELT(strings2, 13, strings_val);
 
   strings_group = Rf_mkChar("group");
-  SET_STRING_ELT(strings, 14, strings_group);
+  SET_STRING_ELT(strings2, 14, strings_group);
 
   strings_length = Rf_mkChar("length");
-  SET_STRING_ELT(strings, 15, strings_length);
+  SET_STRING_ELT(strings2, 15, strings_length);
 
   strings_factor = Rf_mkChar("factor");
-  SET_STRING_ELT(strings, 16, strings_factor);
+  SET_STRING_ELT(strings2, 16, strings_factor);
 
   strings_ordered = Rf_mkChar("ordered");
-  SET_STRING_ELT(strings, 17, strings_ordered);
+  SET_STRING_ELT(strings2, 17, strings_ordered);
 
   strings_list = Rf_mkChar("list");
-  SET_STRING_ELT(strings, 18, strings_list);
+  SET_STRING_ELT(strings2, 18, strings_list);
 
   strings_vctrs_vctr = Rf_mkChar("vctrs_vctr");
-  SET_STRING_ELT(strings, 19, strings_vctrs_vctr);
+  SET_STRING_ELT(strings2, 19, strings_vctrs_vctr);
 
   strings_times = Rf_mkChar("times");
-  SET_STRING_ELT(strings, 20, strings_times);
+  SET_STRING_ELT(strings2, 20, strings_times);
+
+  strings_needles = Rf_mkChar("needles");
+  SET_STRING_ELT(strings2, 21, strings_needles);
+
+  strings_haystack = Rf_mkChar("haystack");
+  SET_STRING_ELT(strings2, 22, strings_haystack);
 
 
   classes_data_frame = r_new_shared_vector(STRSXP, 1);
@@ -1759,6 +1786,10 @@ void vctrs_init_utils(SEXP ns) {
   chrs_error = r_new_shared_character("error");
   chrs_combine = r_new_shared_character("combine");
   chrs_convert = r_new_shared_character("convert");
+  chrs_asc = r_new_shared_character("asc");
+  chrs_desc = r_new_shared_character("desc");
+  chrs_largest = r_new_shared_character("largest");
+  chrs_smallest = r_new_shared_character("smallest");
 
   classes_tibble = r_new_shared_vector(STRSXP, 3);
 
@@ -1819,6 +1850,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_to_arg = Rf_install("to_arg");
   syms_times_arg = Rf_install("times_arg");
   syms_subscript_arg = Rf_install("subscript_arg");
+  syms_needles_arg = Rf_install("needles_arg");
+  syms_haystack_arg = Rf_install("haystack_arg");
   syms_out = Rf_install("out");
   syms_value = Rf_install("value");
   syms_quiet = Rf_install("quiet");
@@ -1852,6 +1885,11 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
   syms_stop_assert_size = Rf_install("stop_assert_size");
+  syms_stop_matches_nothing = Rf_install("stop_matches_nothing");
+  syms_stop_matches_remaining = Rf_install("stop_matches_remaining");
+  syms_stop_matches_incomplete = Rf_install("stop_matches_incomplete");
+  syms_stop_matches_multiple = Rf_install("stop_matches_multiple");
+  syms_warn_matches_multiple = Rf_install("warn_matches_multiple");
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
@@ -1860,6 +1898,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_chr_proxy_collate = Rf_install("chr_proxy_collate");
   syms_actual = Rf_install("actual");
   syms_required = Rf_install("required");
+  syms_call = Rf_install("call");
+  syms_dot_call = Rf_install(".call");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);
@@ -1870,11 +1910,6 @@ void vctrs_init_utils(SEXP ns) {
 
   new_env__parent_node = CDDR(new_env_call);
   new_env__size_node = CDR(new_env__parent_node);
-
-  args_empty_ = new_wrapper_arg(NULL, "");
-  args_n_ = new_wrapper_arg(NULL, "n");
-  args_dot_ptype_ = new_wrapper_arg(NULL, ".ptype");
-  args_max_fill_ = new_wrapper_arg(NULL, "max_fill");
 
   rlang_is_splice_box = (bool (*)(SEXP)) R_GetCCallable("rlang", "rlang_is_splice_box");
   rlang_unbox = (SEXP (*)(SEXP)) R_GetCCallable("rlang", "rlang_unbox");
@@ -1914,6 +1949,8 @@ void vctrs_init_utils(SEXP ns) {
     MARK_NOT_MUTABLE(result_attrib);
     UNPROTECT(4);
   }
+
+  r_lazy_null = (struct r_lazy) { 0 };
 
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));

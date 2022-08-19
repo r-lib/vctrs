@@ -1,9 +1,7 @@
 #ifndef VCTRS_TYPE_COMPLEX_H
 #define VCTRS_TYPE_COMPLEX_H
 
-#include <rlang.h>
 #include "vctrs.h"
-
 
 /*
  * Normalises a complex value so that if one side is missing, both are. This
@@ -15,7 +13,7 @@
  * See issue #1403 for more information.
  */
 static inline
-r_complex_t cpl_normalise_missing(r_complex_t x) {
+r_complex cpl_normalise_missing(r_complex x) {
   const double na = r_globals.na_dbl;
   const double nan = R_NaN;
 
@@ -26,18 +24,18 @@ r_complex_t cpl_normalise_missing(r_complex_t x) {
   case vctrs_dbl_number:
     switch (i_type) {
     case vctrs_dbl_number: return x;
-    case vctrs_dbl_missing: return (r_complex_t) {na, na};
-    case vctrs_dbl_nan: return (r_complex_t) {nan, nan};
+    case vctrs_dbl_missing: return (r_complex) {na, na};
+    case vctrs_dbl_nan: return (r_complex) {nan, nan};
     }
   case vctrs_dbl_missing:
     switch (i_type) {
-    case vctrs_dbl_number: return (r_complex_t) {na, na};
+    case vctrs_dbl_number: return (r_complex) {na, na};
     case vctrs_dbl_missing: return x;
     case vctrs_dbl_nan: return x;
     }
   case vctrs_dbl_nan:
     switch (i_type) {
-    case vctrs_dbl_number: return (r_complex_t) {nan, nan};
+    case vctrs_dbl_number: return (r_complex) {nan, nan};
     case vctrs_dbl_missing: return x;
     case vctrs_dbl_nan: return x;
     }

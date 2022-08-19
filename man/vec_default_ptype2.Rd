@@ -5,9 +5,9 @@
 \alias{vec_default_ptype2}
 \title{Default cast and ptype2 methods}
 \usage{
-vec_default_cast(x, to, ..., x_arg = "", to_arg = "")
+vec_default_cast(x, to, ..., x_arg = "", to_arg = "", call = caller_env())
 
-vec_default_ptype2(x, y, ..., x_arg = "", y_arg = "")
+vec_default_ptype2(x, y, ..., x_arg = "", y_arg = "", call = caller_env())
 }
 \arguments{
 \item{x}{Vectors to cast.}
@@ -18,13 +18,18 @@ vec_default_ptype2(x, y, ..., x_arg = "", y_arg = "")
 \code{vec_cast()}, \code{vec_cast_default()}, and \code{vec_restore()}, these
 dots are only for future extensions and should be empty.}
 
-\item{x_arg}{Argument names for \code{x} and \code{to}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+\item{x_arg}{Argument name for \code{x}, used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
-\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+\item{to_arg}{Argument name \code{to} used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 These functions are automatically called when no \code{\link[=vec_ptype2]{vec_ptype2()}} or

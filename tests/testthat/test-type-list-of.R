@@ -66,6 +66,15 @@ test_that("constructor requires size 0 ptype", {
   expect_error(new_list_of(ptype = 1), "must have size 0")
 })
 
+test_that("can combine a mix of named and unnamed list-ofs (#784)", {
+  a <- new_list_of(list(x = 1L), ptype = integer())
+  b <- new_list_of(list(2L), ptype = integer())
+
+  expect <- new_list_of(list(x = 1L, 2L), ptype = integer())
+
+  expect_identical(vec_c(a, b), expect)
+})
+
 # Subsetting --------------------------------------------------------------
 
 test_that("[ preserves type", {

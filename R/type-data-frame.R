@@ -27,7 +27,7 @@
 #' @examples
 #' new_data_frame(list(x = 1:10, y = 10:1))
 new_data_frame <- function(x = list(), n = NULL, ..., class = NULL) {
-  .External(vctrs_new_data_frame, x, n, class, ...)
+  .External(ffi_new_data_frame, x, n, class, ...)
 }
 new_data_frame <- fn_inline_formals(new_data_frame, "x")
 
@@ -40,13 +40,14 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'
 #' @section Properties:
 #'
-#' - Inputs are recycled to a common size with [vec_recycle_common()].
+#' - Inputs are [recycled][vector_recycling_rules] to a common size with
+#'   [vec_recycle_common()].
 #'
 #' - With the exception of data frames, inputs are not modified in any way.
 #'   Character vectors are never converted to factors, and lists are stored
 #'   as-is for easy creation of list-columns.
 #'
-#' - Unnamed data frame inputs are automatically spliced. Named data frame
+#' - Unnamed data frame inputs are automatically unpacked. Named data frame
 #'   inputs are stored unmodified as data frame columns.
 #'
 #' - `NULL` inputs are completely ignored.
@@ -62,6 +63,8 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'   are used for names of the resulting list.
 #' @param .size The common size of vectors supplied in `...`. If `NULL`, this
 #'   will be computed as the common size of the inputs.
+#' @param .unpack Should unnamed data frame inputs be unpacked? Defaults to
+#'   `TRUE`.
 #' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
 #'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
 #'
@@ -83,8 +86,9 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #' class(df)
 df_list <- function(...,
                     .size = NULL,
+                    .unpack = TRUE,
                     .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(vctrs_df_list, list2(...), .size, .name_repair)
+  .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
 
@@ -150,44 +154,18 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #'   tibble::as_tibble(df)
 #' }
 #'
-#' # Unnamed data frame input is automatically spliced
+#' # Unnamed data frame input is automatically unpacked
 #' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
 data_frame <- function(...,
                        .size = NULL,
                        .name_repair = c("check_unique", "unique", "universal", "minimal")) {
-  .Call(vctrs_data_frame, list2(...), .size, .name_repair)
+  .Call(ffi_data_frame, list2(...), .size, .name_repair, environment())
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
 
 #' @export
-vec_ptype_full.data.frame <- function(x, ...) {
-  if (length(x) == 0) {
-    return(paste0(class(x)[[1]], "<>"))
-  } else if (length(x) == 1) {
-    return(paste0(class(x)[[1]], "<", names(x), ":", vec_ptype_full(x[[1]]), ">"))
-  }
-
-  # Needs to handle recursion with indenting
-  types <- map_chr(x, vec_ptype_full)
-  needs_indent <- grepl("\n", types)
-  types[needs_indent] <- map(types[needs_indent], function(x) indent(paste0("\n", x), 4))
-
-  names <- paste0("  ", format(names(x)))
-
-  paste0(
-    class(x)[[1]], "<\n",
-    paste0(names, ": ", types, collapse = "\n"),
-    "\n>"
-  )
-}
-
-#' @export
 vec_ptype_abbr.data.frame <- function(x, ...) {
-  if (inherits_only(x, "data.frame")) {
-    "df"
-  } else {
-    class(x)[[1]]
-  }
+  "df"
 }
 
 #' @export
@@ -250,17 +228,45 @@ df_is_coercible <- function(x, y, opts) {
 #'   as a bare tibble.
 #'
 #' @export
-df_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = match_fallback_opts(...), x_arg, y_arg)
+df_ptype2 <- function(x,
+                      y,
+                      ...,
+                      x_arg = "",
+                      y_arg = "",
+                      call = caller_env()) {
+  .Call(
+    ffi_df_ptype2_opts,
+    x,
+    y,
+    opts = match_fallback_opts(...),
+    environment()
+  )
 }
 #' @rdname df_ptype2
 #' @export
-df_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, opts = match_fallback_opts(...), x_arg, to_arg)
+df_cast <- function(x,
+                    to,
+                    ...,
+                    x_arg = "",
+                    to_arg = "",
+                    call = caller_env()) {
+  .Call(
+    ffi_df_cast_opts,
+    x,
+    to,
+    opts = match_fallback_opts(...),
+    environment()
+  )
 }
 
-df_ptype2_opts <- function(x, y, ..., opts, x_arg = "", y_arg = "") {
-  .Call(vctrs_df_ptype2_opts, x, y, opts = opts, x_arg, y_arg)
+df_ptype2_opts <- function(x,
+                           y,
+                           ...,
+                           opts,
+                           x_arg = "",
+                           y_arg = "",
+                           call = caller_env()) {
+  .Call(ffi_df_ptype2_opts, x, y, opts = opts, environment())
 }
 
 df_cast_opts <- function(x,
@@ -268,8 +274,15 @@ df_cast_opts <- function(x,
                          ...,
                          opts = fallback_opts(),
                          x_arg = "",
-                         to_arg = "") {
-  .Call(vctrs_df_cast_opts, x, to, opts, x_arg, to_arg)
+                         to_arg = "",
+                         call = caller_env()) {
+  .Call(
+    ffi_df_cast_opts,
+    x,
+    to,
+    opts,
+    environment()
+  )
 }
 df_cast_params <- function(x,
                            to,
@@ -307,11 +320,11 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
 }
 
-vec_ptype2_df_fallback_normalise <- function(x, y, opts) {
+vec_ptype2_df_fallback_normalise <- function(x, y, opts, ...) {
   x_orig <- x
   y_orig <- y
 
-  ptype <- df_ptype2_opts(x, y, opts = opts)
+  ptype <- df_ptype2_opts(x, y, opts = opts, ...)
 
   x <- x[0, , drop = FALSE]
   y <- y[0, , drop = FALSE]
@@ -333,9 +346,9 @@ vec_ptype2_df_fallback_normalise <- function(x, y, opts) {
 
   list(x = x, y = y)
 }
-vec_cast_df_fallback_normalise <- function(x, to, opts) {
+vec_cast_df_fallback_normalise <- function(x, to, opts, ...) {
   orig <- x
-  cast <- df_cast_opts(x, to, opts = opts)
+  cast <- df_cast_opts(x, to, opts = opts, ...)
 
   # Seq-assign should be more widely implemented than empty-assign?
   x[seq_along(to)] <- cast
@@ -356,14 +369,20 @@ df_needs_normalisation <- function(x, y, opts) {
 }
 
 # Fallback for data frame subclasses (#981)
-vec_ptype2_df_fallback <- function(x, y, opts, x_arg = "", y_arg = "") {
+vec_ptype2_df_fallback <- function(x,
+                                   y,
+                                   opts,
+                                   x_arg = "",
+                                   y_arg = "",
+                                   call = caller_env()) {
   seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
 
   ptype <- vec_ptype2_params(
     new_data_frame(x),
     new_data_frame(y),
     df_fallback = opts$df_fallback,
-    s3_fallback = opts$s3_fallback
+    s3_fallback = opts$s3_fallback,
+    call = call
   )
 
   classes <- NULL
@@ -455,7 +474,7 @@ vec_cast.data.frame <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.data.frame data.frame
 vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") {
-  df_cast(x, to, x_arg = x_arg, to_arg = to_arg)
+  df_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @export
@@ -469,7 +488,13 @@ df_size <- function(x) {
   .Call(vctrs_df_size, x)
 }
 
-df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
+df_lossy_cast <- function(out,
+                          x,
+                          to,
+                          ...,
+                          x_arg = "",
+                          to_arg = "",
+                          call = caller_env()) {
   extra <- setdiff(names(x), names(to))
 
   maybe_lossy_cast(
@@ -480,6 +505,7 @@ df_lossy_cast <- function(out, x, to, ..., x_arg = "", to_arg = "") {
     locations = int(),
     x_arg = x_arg,
     to_arg = to_arg,
+    call = call,
     details = inline_list("Dropped variables: ", extra, quote = "`"),
     class = "vctrs_error_cast_lossy_dropped"
   )

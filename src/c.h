@@ -1,7 +1,9 @@
 #ifndef VCTRS_C_H
 #define VCTRS_C_H
 
-#include "utils.h"
+#include "vctrs-core.h"
+#include "names.h"
+#include "ptype2.h"
 
 
 SEXP vec_c_opts(SEXP xs,

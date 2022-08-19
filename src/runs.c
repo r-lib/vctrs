@@ -1,8 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
-#include "equal.h"
-#include "translate.h"
 
 // -----------------------------------------------------------------------------
 
@@ -382,7 +378,7 @@ int vec_identify_runs_col(SEXP x,
   case vctrs_type_character: return chr_identify_runs_col(x, id, p_info, p_out);
   case vctrs_type_raw: return raw_identify_runs_col(x, id, p_info, p_out);
   case vctrs_type_list: return list_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_dataframe: r_stop_internal("vec_identify_runs_col", "Data frame columns should be flattened.");
+  case vctrs_type_dataframe: r_stop_internal("Data frame columns should be flattened.");
   case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_identify_runs()`");
   default: Rf_error("Unimplemented type in `vec_identify_runs()`");
   }

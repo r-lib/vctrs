@@ -16,3 +16,14 @@
 ^man/faq/.*\.html
 ^man/faq/.*/.*\.html
 ^LICENSE\.md$
+^\.projectile$
+^src/\.clang_complete$
+^\.clang-format$
+\.clangd$
+^compile_commands\.json$
+^compile_flags\.txt$
+^\.dir-locals\.el$
+^\.cache$
+^launch\.json$
+^\.vscode$
+^CRAN-SUBMISSION$

@@ -2,8 +2,9 @@
 
     Code
       na.fail(x)
-    Error <simpleError>
-      missing values in object
+    Condition
+      Error in `na.fail()`:
+      ! missing values in object
 
 # default print and str methods are useful
 

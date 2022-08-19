@@ -235,6 +235,26 @@ test_that("`precision` and `crs` attributes of `sfc` vectors are combined", {
 	# expect_error(vctrs::vec_c(x, y), "coordinate reference systems not equal")
 })
 
+test_that("`vec_locate_matches()` works with `sfc` vectors", {
+  x <- c(
+    st_sfc(st_point(c(0, 0))),
+    st_sfc(st_point(c(0, 1))),
+    st_sfc(st_point(c(2, 1))),
+    st_sfc(c(st_point(c(0, 1)), st_point(c(0, 1))))
+  )
+
+  y <- c(
+    st_sfc(c(st_point(c(0, 1)), st_point(c(0, 1)))),
+    st_sfc(st_point(c(0, 0))),
+    st_sfc(st_point(c(0, 3))),
+    st_sfc(st_point(c(0, 0))),
+    st_sfc(st_point(c(0, 1)))
+  )
+
+  out <- vec_locate_matches(x, y)
+  expect_identical(out$needles,  c(1L, 1L, 2L, 3L, 4L))
+  expect_identical(out$haystack, c(2L, 4L, 5L, NA, 1L))
+})
 
 # Local Variables:
 # indent-tabs-mode: t

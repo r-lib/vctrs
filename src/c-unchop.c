@@ -1,11 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "c.h"
-#include "ptype-common.h"
-#include "slice.h"
-#include "slice-assign.h"
-#include "owned.h"
-#include "utils.h"
 
 // Defined in slice-chop.c
 SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
@@ -19,12 +12,15 @@ static SEXP vec_unchop(SEXP x,
 
 // [[ register() ]]
 SEXP vctrs_unchop(SEXP x, SEXP indices, SEXP ptype, SEXP name_spec, SEXP name_repair) {
-  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair, args_empty, false);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
+                                                                  vec_args.empty,
+                                                                  false,
+                                                                  r_lazy_null);
+  KEEP(name_repair_opts.shelter);
 
   SEXP out = vec_unchop(x, indices, ptype, name_spec, &name_repair_opts);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
@@ -64,7 +60,12 @@ static SEXP vec_unchop(SEXP xs,
     Rf_errorcall(R_NilValue, "`indices` must be a list of integers, or `NULL`");
   }
 
-  ptype = PROTECT(vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true));
+  ptype = PROTECT(vec_ptype_common_params(xs,
+                                          ptype,
+                                          DF_FALLBACK_DEFAULT,
+                                          S3_FALLBACK_true,
+                                          vec_args.empty,
+                                          r_lazy_null));
 
   if (needs_vec_c_fallback(ptype)) {
     SEXP out = vec_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
@@ -83,7 +84,7 @@ static SEXP vec_unchop(SEXP xs,
     return R_NilValue;
   }
 
-  xs = PROTECT(vec_cast_common(xs, ptype));
+  xs = PROTECT(vec_cast_common(xs, ptype, vec_args.empty, r_lazy_null));
 
   bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
   SEXP xs_names = PROTECT(r_names(xs));
@@ -103,7 +104,7 @@ static SEXP vec_unchop(SEXP xs,
     out_size += index_size;
 
     // Each element of `xs` is recycled to its corresponding index's size
-    x = vec_recycle(x, index_size, args_empty);
+    x = vec_check_recycle(x, index_size, vec_args.empty, r_lazy_null);
     SET_VECTOR_ELT(xs, i, x);
   }
 
@@ -199,7 +200,7 @@ static SEXP vec_unchop_fallback(SEXP ptype,
     R_len_t index_size = vec_size(VECTOR_ELT(indices, i));
     out_size += index_size;
 
-    SET_VECTOR_ELT(x, i, vec_recycle_fallback(elt, index_size, args_empty));
+    SET_VECTOR_ELT(x, i, vec_recycle_fallback(elt, index_size, vec_args.empty));
   }
 
   indices = PROTECT(vec_as_indices(indices, out_size, R_NilValue));

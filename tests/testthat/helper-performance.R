@@ -25,7 +25,10 @@ with_memory_prof <- function(expr) {
   f <- tempfile()
   on.exit(unlink(f))
 
-  utils::Rprofmem(f, threshold = 1)
+  tryCatch(
+    utils::Rprofmem(f, threshold = 1),
+    error = function(...) skip("Can't profile memory on this system.")
+  )
   on.exit(utils::Rprofmem(NULL), add = TRUE)
 
   res <- force(expr)

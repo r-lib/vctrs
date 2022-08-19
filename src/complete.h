@@ -1,9 +1,8 @@
 #ifndef VCTRS_COMPLETE_H
 #define VCTRS_COMPLETE_H
 
-#include <rlang.h>
-#include "vctrs.h"
+#include "vctrs-core.h"
 
-SEXP vec_detect_complete(SEXP x);
+r_obj* vec_detect_complete(r_obj* x);
 
 #endif

@@ -10,9 +10,7 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include <rlang.h>
-#include "order-groups.h"
-#include "utils.h"
+#include "vctrs.h"
 
 // -----------------------------------------------------------------------------
 

@@ -1,6 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
 
 struct growable new_growable(SEXPTYPE type, int capacity) {
   struct growable g;

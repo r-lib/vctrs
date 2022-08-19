@@ -29,6 +29,10 @@
 #'
 #' * `vec_size(vec_cbind(x, y)) == vec_size_common(x, y)`
 #' * `vec_ptype(vec_cbind(x, y)) == vec_cbind(vec_ptype(x), vec_ptype(x))`
+#'
+#' @inheritParams vec_c
+#' @inheritParams rlang::args_error_context
+#'
 #' @param ... Data frames or vectors.
 #'
 #'   When the inputs are named:
@@ -61,7 +65,7 @@
 #'   repair function after all inputs have been concatenated together
 #'   in a final data frame. Hence `vec_cbind()` allows the more
 #'   permissive minimal names repair.
-#' @inheritParams vec_c
+#'
 #' @return A data frame, or subclass of data frame.
 #'
 #'   If `...` is a mix of different data frame subclasses, `vec_ptype2()`
@@ -173,31 +177,34 @@ vec_rbind <- function(...,
                       .ptype = NULL,
                       .names_to = rlang::zap(),
                       .name_repair = c("unique", "universal", "check_unique"),
-                      .name_spec = NULL) {
-  .External2(vctrs_rbind, .ptype, .names_to, .name_repair, .name_spec)
+                      .name_spec = NULL,
+                      .call = current_env()) {
+  .External2(ffi_rbind, .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 
 #' @export
 #' @rdname vec_bind
-#' @param .size If, `NULL`, the default, will determine the number of
-#'   rows in `vec_cbind()` output by using the standard recycling rules.
+#' @param .size If, `NULL`, the default, will determine the number of rows in
+#'   `vec_cbind()` output by using the tidyverse [recycling
+#'   rules][vector_recycling_rules].
 #'
-#'   Alternatively, specify the desired number of rows, and any inputs
-#'   of length 1 will be recycled appropriately.
+#'   Alternatively, specify the desired number of rows, and any inputs of length
+#'   1 will be recycled appropriately.
 vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
-                      .name_repair = c("unique", "universal", "check_unique", "minimal")) {
-  .External2(vctrs_cbind, .ptype, .size, .name_repair)
+                      .name_repair = c("unique", "universal", "check_unique", "minimal"),
+                      .call = current_env()) {
+  .External2(ffi_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
 
 as_df_row <- function(x, quiet = FALSE) {
-  .Call(vctrs_as_df_row, x, quiet)
+  .Call(ffi_as_df_row, x, quiet, environment())
 }
 as_df_col <- function(x, outer_name) {
-  .Call(vctrs_as_df_col, x, outer_name)
+  .Call(ffi_as_df_col, x, outer_name, environment())
 }
 
 #' Frame prototype

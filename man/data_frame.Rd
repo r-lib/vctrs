@@ -36,11 +36,12 @@ repair for convenience and performance.
 \section{Properties}{
 
 \itemize{
-\item Inputs are recycled to a common size with \code{\link[=vec_recycle_common]{vec_recycle_common()}}.
+\item Inputs are \link[=vector_recycling_rules]{recycled} to a common size with
+\code{\link[=vec_recycle_common]{vec_recycle_common()}}.
 \item With the exception of data frames, inputs are not modified in any way.
 Character vectors are never converted to factors, and lists are stored
 as-is for easy creation of list-columns.
-\item Unnamed data frame inputs are automatically spliced. Named data frame
+\item Unnamed data frame inputs are automatically unpacked. Named data frame
 inputs are stored unmodified as data frame columns.
 \item \code{NULL} inputs are completely ignored.
 \item The dots are dynamic, allowing for splicing of lists with \verb{!!!} and
@@ -78,7 +79,7 @@ if (rlang::is_installed("tibble")) {
   tibble::as_tibble(df)
 }
 
-# Unnamed data frame input is automatically spliced
+# Unnamed data frame input is automatically unpacked
 data_frame(x = 1, data_frame(y = 1:2, z = "a"))
 }
 \seealso{

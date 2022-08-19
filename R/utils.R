@@ -12,7 +12,7 @@ ones <- function(...) {
 }
 
 vec_coerce_bare <- function(x, type) {
-  # Unexported wrapper around Rf_coerceVector()
+  # FIXME! Unexported wrapper around Rf_coerceVector()
   coerce <- env_get(ns_env("rlang"), "vec_coerce")
   coerce(x, type)
 }
@@ -168,6 +168,35 @@ s3_find_method <- function(x, generic, ns = "base") {
   table <- ns_methods(ns_env(ns))
   .Call(vctrs_s3_find_method, generic, x, table)
 }
+s3_get_method <- function(class, generic, ns = "base") {
+  stopifnot(
+    is_string(class),
+    is_string(generic),
+    is_string(ns)
+  )
+  table <- ns_methods(ns_env(ns))
+  .Call(ffi_s3_get_method, generic, class, table)
+}
+
+s3_method_specific <- function(x,
+                               generic,
+                               ns = "base",
+                               default = TRUE) {
+  classes <- class(x)[[1]]
+
+  if (default) {
+    classes <- c(classes, "default")
+  }
+
+  for (class in classes) {
+    method <- s3_get_method(class, generic, ns = ns)
+    if (!is_null(method)) {
+      return(method)
+    }
+  }
+
+  cli::cli_abort("Can't find {.fn {generic}} method for {.cls {class}}.")
+}
 
 df_has_base_subset <- function(x) {
   method <- s3_find_method(x, "[", ns = "base")
@@ -296,4 +325,19 @@ big_mark <- function(x) {
   ret <- formatC(x, big.mark = mark, format = "d", preserve.width = "individual")
   ret[is.na(x)] <- "??"
   ret
+}
+
+browser <- function(...,
+                    skipCalls = 0,
+                    frame = parent.frame()) {
+  if (!identical(stdout(), getConnection(1))) {
+    sink(getConnection(1))
+    withr::defer(sink(), envir = frame)
+  }
+
+  # Calling `browser()` on exit avoids RStudio displaying the
+  # `browser2()` location. We still need one `n` to get to the
+  # expected place. Ideally `skipCalls` would not skip but exit the
+  # contexts.
+  on.exit(base::browser(..., skipCalls = skipCalls + 1))
 }

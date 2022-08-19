@@ -5,6 +5,7 @@
 #' These conditions have custom classes and structures to make
 #' testing easier.
 #'
+#' @inheritParams rlang::args_error_context
 #' @param x,y,to Vectors
 #' @param subclass Use if you want to further customize the class.
 #' @param ...,class Only use these fields when creating a subclass.
@@ -23,7 +24,7 @@
 #' # Most of the time, `maybe_lossy_cast()` returns its input normally:
 #' maybe_lossy_cast(
 #'   c("foo", "bar"),
-#'   NULL,
+#'   NA,
 #'   "",
 #'   lossy = c(FALSE, FALSE),
 #'   x_arg = "",
@@ -33,7 +34,7 @@
 #' # If `lossy` has any `TRUE`, an error is thrown:
 #' try(maybe_lossy_cast(
 #'   c("foo", "bar"),
-#'   NULL,
+#'   NA,
 #'   "",
 #'   lossy = c(FALSE, TRUE),
 #'   x_arg = "",
@@ -44,7 +45,7 @@
 #' allow_lossy_cast(
 #'   maybe_lossy_cast(
 #'     c("foo", "bar"),
-#'     NULL,
+#'     NA,
 #'     "",
 #'     lossy = c(FALSE, TRUE),
 #'     x_arg = "",
@@ -56,11 +57,27 @@
 #' @name vctrs-conditions
 NULL
 
-stop_vctrs <- function(message = NULL, class = NULL, ...) {
-  abort(message, class = c(class, "vctrs_error"), ...)
+stop_vctrs <- function(message = NULL,
+                       class = NULL,
+                       ...,
+                       call = caller_env()) {
+  abort(
+    message,
+    class = c(class, "vctrs_error"),
+    ...,
+    call = vctrs_error_call(call)
+  )
 }
-warn_vctrs <- function(message = NULL, class = NULL, ...) {
-  warn(message, class = c(class, "vctrs_warning"), ...)
+warn_vctrs <- function(message = NULL,
+                       class = NULL,
+                       ...,
+                       call = caller_env()) {
+  warn(
+    message,
+    class = c(class, "vctrs_warning"),
+    ...,
+    call = call
+  )
 }
 
 stop_incompatible <- function(x,
@@ -68,14 +85,16 @@ stop_incompatible <- function(x,
                               ...,
                               details = NULL,
                               message = NULL,
-                              class = NULL) {
+                              class = NULL,
+                              call = caller_env()) {
   stop_vctrs(
     message,
     class = c(class, "vctrs_error_incompatible"),
     x = x,
     y = y,
     details = details,
-    ...
+    ...,
+    call = call
   )
 }
 
@@ -93,7 +112,8 @@ stop_incompatible_type <- function(x,
                                    action = c("combine", "convert"),
                                    details = NULL,
                                    message = NULL,
-                                   class = NULL) {
+                                   class = NULL,
+                                   call = caller_env()) {
   vec_assert(x, arg = x_arg)
   vec_assert(y, arg = y_arg)
 
@@ -117,7 +137,8 @@ stop_incompatible_type <- function(x,
     details = details,
     ...,
     message = message,
-    class = c(class, "vctrs_error_incompatible_type")
+    class = c(class, "vctrs_error_incompatible_type"),
+    call = call
   )
 }
 
@@ -130,25 +151,43 @@ stop_incompatible_cast <- function(x,
                                    to_arg,
                                    details = NULL,
                                    message = NULL,
-                                   class = NULL) {
+                                   class = NULL,
+                                   call = caller_env()) {
   stop_incompatible_type(
     x = x,
     y = to,
+    to = to,
     ...,
     x_arg = x_arg,
     y_arg = to_arg,
+    to_arg = to_arg,
     action = "convert",
     details = details,
     message = message,
-    class = class
+    class = class,
+    call = call
   )
 }
 
-stop_incompatible_shape <- function(x, y, x_size, y_size, axis, x_arg, y_arg) {
+stop_incompatible_shape <- function(x,
+                                    y,
+                                    x_size,
+                                    y_size,
+                                    axis,
+                                    x_arg,
+                                    y_arg,
+                                    call = caller_env()) {
   details <- format_error_bullets(c(
     x = glue::glue("Incompatible sizes {x_size} and {y_size} along axis {axis}.")
   ))
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg, details = details)
+  stop_incompatible_type(
+    x,
+    y,
+    x_arg = x_arg,
+    y_arg = y_arg,
+    details = details,
+    call = call
+  )
 }
 
 type_actions <- c(
@@ -264,7 +303,14 @@ cnd_type_message_df_label <- function(x) {
 
 #' @rdname vctrs-conditions
 #' @export
-stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, class = NULL) {
+stop_incompatible_op <- function(op,
+                                 x,
+                                 y,
+                                 details = NULL,
+                                 ...,
+                                 message = NULL,
+                                 class = NULL,
+                                 call = caller_env()) {
 
   message <- message %||% glue_lines(
     "<{vec_ptype_full(x)}> {op} <{vec_ptype_full(y)}> is not permitted",
@@ -277,7 +323,8 @@ stop_incompatible_op <- function(op, x, y, details = NULL, ..., message = NULL, 
     details = details,
     ...,
     message = message,
-    class = c(class, "vctrs_error_incompatible_op")
+    class = c(class, "vctrs_error_incompatible_op"),
+    call = call
   )
 }
 
@@ -292,7 +339,8 @@ stop_incompatible_size <- function(x,
                                    y_arg,
                                    details = NULL,
                                    message = NULL,
-                                   class = NULL) {
+                                   class = NULL,
+                                   call = caller_env()) {
   stop_incompatible(
     x,
     y,
@@ -303,7 +351,8 @@ stop_incompatible_size <- function(x,
     y_arg = y_arg,
     details = details,
     message = message,
-    class = c(class, "vctrs_error_incompatible_size")
+    class = c(class, "vctrs_error_incompatible_size"),
+    call = call
   )
 }
 
@@ -362,6 +411,7 @@ cnd_body.vctrs_error_incompatible_size <- function(cnd, ...) {
 #'
 #' @inheritParams stop_incompatible_cast
 #' @inheritParams vec_cast
+#' @inheritParams rlang::args_error_context
 #' @param result The result of a potentially lossy cast.
 #' @param to Type to cast to.
 #' @param lossy A logical vector indicating which elements of `result`
@@ -388,6 +438,7 @@ maybe_lossy_cast <- function(result, x, to,
                              loss_type = c("precision", "generality"),
                              x_arg,
                              to_arg,
+                             call = caller_env(),
                              details = NULL,
                              message = NULL,
                              class = NULL,
@@ -415,11 +466,14 @@ maybe_lossy_cast <- function(result, x, to,
       to_arg = to_arg,
       details = details,
       message = message,
-      class = class
+      class = class,
+      call = call
     )
   )
 }
-stop_lossy_cast <- function(x, to, result,
+stop_lossy_cast <- function(x,
+                            to,
+                            result,
                             locations = NULL,
                             ...,
                             loss_type,
@@ -427,11 +481,10 @@ stop_lossy_cast <- function(x, to, result,
                             to_arg,
                             details = NULL,
                             message = NULL,
-                            class = NULL) {
-  stop_vctrs(
-    message,
+                            class = NULL,
+                            call = caller_env()) {
+  stop_incompatible_cast(
     x = x,
-    y = to,
     to = to,
     result = result,
     locations = locations,
@@ -440,27 +493,15 @@ stop_lossy_cast <- function(x, to, result,
     x_arg = x_arg,
     to_arg = to_arg,
     details = details,
-    class = c(class, "vctrs_error_cast_lossy")
+    class = c(class, "vctrs_error_cast_lossy"),
+    call = call
   )
 }
 
-#' @export
-conditionMessage.vctrs_error_cast_lossy <- function(c) {
-  # FIXME: Remove `message` argument
-  if (is_string(c$message) && nzchar(c$message)) {
-    return(c$message)
-  }
-
-  # FIXME: Add `cnd_details()`?
-  glue_lines(
-    cnd_message(c),
-    c$details
-  )
-}
 #' @export
 cnd_header.vctrs_error_cast_lossy <- function(cnd, ...) {
   x_label <- format_arg_label(vec_ptype_full(cnd$x), cnd$x_arg)
-  to_label <- format_arg_label(vec_ptype_full(cnd$to), cnd$to_arg)
+  to_label <- format_arg_label(vec_ptype_full(cnd$y), cnd$y_arg)
   loss_type <- loss_type(cnd$loss_type)
   glue::glue("Can't convert from {x_label} to {to_label} due to loss of {loss_type}.")
 }
@@ -484,12 +525,12 @@ loss_type <- function(x) {
 # Used in maybe_warn_deprecated_lossy_cast()
 new_error_cast_lossy <- function(x, to, loss_type, x_arg = "", to_arg = "") {
   error_cnd(
-    "vctrs_error_cast_lossy",
+    c("vctrs_error_cast_lossy", "vctrs_error_incompatible_type"),
     x = x,
-    to = to,
+    y = to,
     loss_type = loss_type,
     x_arg = x_arg,
-    to_arg = to_arg
+    y_arg = to_arg
   )
 }
 
@@ -503,7 +544,7 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
       if (!is_null(x_ptype) && !vec_is(err$x, x_ptype)) {
         return()
       }
-      if (!is_null(to_ptype) && !vec_is(err$to, to_ptype)) {
+      if (!is_null(to_ptype) && !vec_is(err$y, to_ptype)) {
         return()
       }
 
@@ -559,70 +600,85 @@ maybe_warn_deprecated_lossy_cast <- function(x, to, loss_type, x_arg, to_arg) {
   invisible()
 }
 
-stop_unsupported <- function(x, method) {
+stop_unsupported <- function(x, method, call = caller_env()) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not supported.")
   stop_vctrs(
     "vctrs_error_unsupported",
     message = msg,
     x = x,
-    method = method
+    method = method,
+    call = call
   )
 }
 
-stop_unimplemented <- function(x, method) {
+stop_unimplemented <- function(x, method, call = caller_env()) {
   msg <- glue::glue("`{method}.{class(x)[[1]]}()` not implemented.")
   stop_vctrs(
     "vctrs_error_unimplemented",
     message = msg,
     x = x,
-    method = method
+    method = method,
+    call = call
   )
 }
 
-stop_scalar_type <- function(x, arg = NULL) {
+stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
   if (is_null(arg) || !nzchar(arg)) {
     arg <- "Input"
   } else {
     arg <- glue::backtick(arg)
   }
   msg <- glue::glue("{arg} must be a vector, not {friendly_type_of(x)}.")
-  stop_vctrs(msg, "vctrs_error_scalar_type", actual = x)
+  stop_vctrs(
+    msg,
+    "vctrs_error_scalar_type",
+    actual = x,
+    call = call
+  )
 }
 
-stop_corrupt_factor_levels <- function(x, arg = "x") {
+stop_corrupt_factor_levels <- function(x,
+                                       arg = "x",
+                                       call = caller_env()) {
   msg <- glue::glue("`{arg}` is a corrupt factor with non-character levels")
-  abort(msg)
+  abort(msg, call = call)
 }
 
-stop_corrupt_ordered_levels <- function(x, arg = "x") {
+stop_corrupt_ordered_levels <- function(x, arg = "x", call = caller_env()) {
   msg <- glue::glue("`{arg}` is a corrupt ordered factor with non-character levels")
-  abort(msg)
+  abort(msg, call = call)
 }
 
-stop_recycle_incompatible_size <- function(x_size, size, x_arg = "x") {
+stop_recycle_incompatible_size <- function(x_size,
+                                           size,
+                                           x_arg = "x",
+                                           call = caller_env()) {
   stop_vctrs(
     x_size = x_size,
     y_size = size,
     x_arg = x_arg,
     # FIXME: tibble is the only package that uses `vctrs_error_recycle_incompatible_size`
-    class = c("vctrs_error_incompatible_size", "vctrs_error_recycle_incompatible_size")
+    class = c("vctrs_error_incompatible_size", "vctrs_error_recycle_incompatible_size"),
+    call = call
   )
 }
 
 
 # Names -------------------------------------------------------------------
 
-stop_names <- function(class = NULL, ...) {
+stop_names <- function(class = NULL, ..., call = caller_env()) {
   stop_vctrs(
     class = c(class, "vctrs_error_names"),
-    ...
+    ...,
+    call = call
   )
 }
 
-stop_names_cannot_be_empty <- function(names) {
+stop_names_cannot_be_empty <- function(names, call = caller_env()) {
   stop_names(
     class = "vctrs_error_names_cannot_be_empty",
-    names = names
+    names = names,
+    call = call
   )
 }
 
@@ -645,10 +701,11 @@ cnd_body.vctrs_error_names_cannot_be_empty <- function(cnd, ...) {
   format_error_bullets(bullet)
 }
 
-stop_names_cannot_be_dot_dot <- function(names) {
+stop_names_cannot_be_dot_dot <- function(names, call = caller_env()) {
   stop_names(
     class = "vctrs_error_names_cannot_be_dot_dot",
-    names = names
+    names = names,
+    call = call
   )
 }
 
@@ -678,11 +735,14 @@ cnd_body.vctrs_error_names_cannot_be_dot_dot <- function(cnd, ...) {
   message
 }
 
-stop_names_must_be_unique <- function(names, arg = "") {
+stop_names_must_be_unique <- function(names,
+                                      arg = "",
+                                      call = caller_env()) {
   stop_names(
     class = "vctrs_error_names_must_be_unique",
     arg = arg,
-    names = names
+    names = names,
+    call = call
   )
 }
 
@@ -754,6 +814,7 @@ ensure_full_stop <- function(x) {
 }
 
 
+# TODO! cli + .internal
 stop_native_implementation <- function(fn) {
   abort(paste_line(
     glue::glue("`{fn}()` is implemented at C level."),
@@ -798,4 +859,47 @@ append_arg <- function(x, arg) {
   } else {
     x
   }
+}
+
+vctrs_local_error_call <- function(call = frame, frame = caller_env()) {
+  # This doesn't implement the semantics of a `local_` function
+  # perfectly in order to be as fast as possible
+  frame$.__vctrs_error_call__. <- call
+  invisible(NULL)
+}
+
+vctrs_error_call <- function(call) {
+  if (is_function(call)) {
+    call <- call()
+  }
+
+  if (is_environment(call)) {
+    caller_call <- get_vctrs_error_call(call)
+    if (!is_null(caller_call)) {
+      return(caller_call)
+    }
+  }
+
+  call
+}
+
+vctrs_error_borrowed_call <- function(call = caller_env(),
+                                      borrower = caller_env(2)) {
+  borrower_call <- get_vctrs_error_call(borrower)
+
+  if (is_null(borrower_call)) {
+    call
+  } else {
+    borrower_call
+  }
+}
+
+get_vctrs_error_call <- function(call) {
+  env_get(
+    call,
+    ".__vctrs_error_call__.",
+    inherit = TRUE,
+    last = topenv(call),
+    default = NULL
+  )
 }

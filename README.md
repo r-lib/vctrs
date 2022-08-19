@@ -6,10 +6,10 @@
 <!-- badges: start -->
 
 [![Coverage
-status](https://codecov.io/gh/r-lib/vctrs/branch/master/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
+status](https://codecov.io/gh/r-lib/vctrs/branch/main/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
 ![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
-[![R-CMD-check](https://github.com/r-lib/vctrs/workflows/R-CMD-check/badge.svg)](https://github.com/r-lib/vctrs/actions)
+[![R-CMD-check](https://github.com/r-lib/vctrs/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/vctrs/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 There are three main goals to the vctrs package, each described in a

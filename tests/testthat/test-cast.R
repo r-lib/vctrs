@@ -4,7 +4,7 @@ test_that("Casting to named argument mentions 'match type <foo>'", {
   expect_snapshot(error = TRUE, vec_cast(1, "", x_arg = "foo"))
 })
 
-# vec_cast ---------------------------------------------------------------
+# vec_cast() ---------------------------------------------------------------
 
 test_that("new classes are uncoercible by default", {
   x <- structure(1:10, class = "vctrs_nonexistant")
@@ -98,6 +98,20 @@ test_that("vec_cast() only falls back when casting to base type", {
     vec_cast(mtcars, foobar(mtcars)),
     class = "vctrs_error_incompatible_type"
   )
+})
+
+test_that("vec_cast() only attempts to fall back if `to` is a data frame (#1568)", {
+  expect_snapshot({
+    (expect_error(
+      vec_cast(foobar(mtcars), 1),
+      class = "vctrs_error_incompatible_type"
+    ))
+  })
+})
+
+test_that("vec_cast() evaluates x_arg and to_arg lazily", {
+  expect_silent(vec_cast(TRUE, logical(), x_arg = print("oof")))
+  expect_silent(vec_cast(TRUE, logical(), to_arg = print("oof")))
 })
 
 

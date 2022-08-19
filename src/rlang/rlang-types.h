@@ -12,12 +12,26 @@
 // symbol clashes.
 #define r_visible attribute_visible extern
 
+#ifdef __GNUC__
+# define r_unused __attribute__ ((unused))
+#else
+# define r_unused
+#endif
+
+#define r_no_return __attribute__ ((noreturn))
+
 typedef struct SEXPREC r_obj;
-typedef Rcomplex r_complex_t;
+typedef Rcomplex r_complex;
 
 typedef R_xlen_t r_ssize;
 #define R_SSIZE_MAX R_XLEN_T_MAX
 #define R_SSIZE_MIN (-R_XLEN_T_MAX)
+
+#ifdef LONG_VECTOR_SUPPORT
+# define R_PRI_SSIZE "td"
+#else
+# define R_PRI_SSIZE "d"
+#endif
 
 enum r_type {
   R_TYPE_null        = 0,
@@ -70,13 +84,18 @@ struct r_pair_ptr_ssize {
   r_ssize size;
 };
 
+struct r_pair_callback {
+  r_obj* (*fn)(void* data);
+  void* data;
+};
+
 
 #define KEEP PROTECT
 #define FREE UNPROTECT
 #define KEEP2(x, y) (KEEP(x), KEEP(y))
 #define KEEP_N(x, n) (++(*n), KEEP(x))
 
-#define r_keep_t PROTECT_INDEX
+#define r_keep_loc PROTECT_INDEX
 #define KEEP_AT REPROTECT
 #define KEEP_HERE PROTECT_WITH_INDEX
 

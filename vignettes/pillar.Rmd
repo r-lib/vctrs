@@ -9,7 +9,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = pillar::style_subtle("#>"))
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 You can get basic control over how a vector is printed in a tibble by providing a `format()` method.
@@ -176,7 +176,7 @@ Currently, ANSI escapes are not rendered in vignettes, so this result doesn't lo
 data
 ```
 
-As well as the functions in pillar, the [cli](http://cli.r-lib.org/) package provides a variety of tools for styling text.
+As well as the functions in pillar, the [cli](https://cli.r-lib.org/) package provides a variety of tools for styling text.
 
 ## Truncation
 

@@ -7,13 +7,13 @@
 \alias{tib_cast}
 \title{Coercion between two data frames}
 \usage{
-df_ptype2(x, y, ..., x_arg = "", y_arg = "")
+df_ptype2(x, y, ..., x_arg = "", y_arg = "", call = caller_env())
 
-df_cast(x, to, ..., x_arg = "", to_arg = "")
+df_cast(x, to, ..., x_arg = "", to_arg = "", call = caller_env())
 
-tib_ptype2(x, y, ..., x_arg = "", y_arg = "")
+tib_ptype2(x, y, ..., x_arg = "", y_arg = "", call = caller_env())
 
-tib_cast(x, to, ..., x_arg = "", to_arg = "")
+tib_cast(x, to, ..., x_arg = "", to_arg = "", call = caller_env())
 }
 \arguments{
 \item{x, y, to}{Subclasses of data frame.}
@@ -22,17 +22,18 @@ tib_cast(x, to, ..., x_arg = "", to_arg = "")
 \code{vec_ptype2()} or \code{vec_cast()} method, you must forward the dots
 passed to your method on to \code{df_ptype2()} or \code{df_cast()}.}
 
-\item{x_arg}{Argument names for \code{x} and \code{y}. These are used
+\item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
-\item{y_arg}{Argument names for \code{x} and \code{y}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
-\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+\item{to_arg}{Argument name \code{to} used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \value{
 \itemize{

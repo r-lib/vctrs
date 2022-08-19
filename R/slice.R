@@ -105,7 +105,8 @@
 #' x <- 1:3
 #' try(vec_slice(x, 2) <- 1.5)
 vec_slice <- function(x, i) {
-  .Call(vctrs_slice, x, i)
+  delayedAssign("call", vctrs_error_borrowed_call())
+  .Call(ffi_slice, x, i, environment())
 }
 
 # Called when `x` has dimensions
@@ -170,13 +171,16 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 #' @rdname vec_slice
 #' @export
 `vec_slice<-` <- function(x, i, value) {
-  .Call(vctrs_assign, x, i, value, "", "")
+  x_arg <- "" # Substitution is `*tmp*`
+  delayedAssign("value_arg", as_label(substitute(value)))
+
+  .Call(ffi_assign, x, i, value, environment())
 }
 #' @rdname vec_slice
 #' @export
 vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_assign, x, i, value, x_arg, value_arg)
+  .Call(ffi_assign, x, i, value, environment())
 }
 vec_assign_fallback <- function(x, i, value) {
   # Work around bug in base `[<-`
@@ -192,11 +196,11 @@ vec_assign_fallback <- function(x, i, value) {
 
 # `start` is 0-based
 vec_assign_seq <- function(x, value, start, size, increasing = TRUE) {
-  .Call(vctrs_assign_seq, x, value, start, size, increasing)
+  .Call(ffi_assign_seq, x, value, start, size, increasing)
 }
 
 vec_assign_params <- function(x, i, value, assign_names = FALSE) {
-  .Call(vctrs_assign_params, x, i, value, assign_names)
+  .Call(ffi_assign_params, x, i, value, assign_names)
 }
 
 vec_remove <- function(x, i) {
@@ -230,17 +234,17 @@ vec_index <- function(x, i, ...) {
 #' vec_init(Sys.Date(), 5)
 #' vec_init(mtcars, 2)
 vec_init <- function(x, n = 1L) {
-  .Call(vctrs_init, x, n)
+  .Call(ffi_init, x, n, environment())
 }
 
 # Exposed for testing (`start` is 0-based)
 vec_slice_seq <- function(x, start, size, increasing = TRUE) {
-  .Call(vctrs_slice_seq, x, start, size, increasing)
+  .Call(ffi_slice_seq, x, start, size, increasing)
 }
 
 # Exposed for testing (`i` is 1-based)
 vec_slice_rep <- function(x, i, n) {
-  .Call(vctrs_slice_rep, x, i, n)
+  .Call(ffi_slice_rep, x, i, n)
 }
 
 # Forwards arguments to `base::rep()`

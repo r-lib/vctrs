@@ -14,6 +14,7 @@ maybe_lossy_cast(
   loss_type = c("precision", "generality"),
   x_arg,
   to_arg,
+  call = caller_env(),
   details = NULL,
   message = NULL,
   class = NULL,
@@ -23,7 +24,7 @@ maybe_lossy_cast(
 \arguments{
 \item{result}{The result of a potentially lossy cast.}
 
-\item{x}{Vectors}
+\item{x}{Vectors to cast.}
 
 \item{to}{Type to cast to.}
 
@@ -37,26 +38,29 @@ own location vector, possibly empty.}
 \item{locations}{An optional integer vector giving the
 locations where \code{x} lost information.}
 
-\item{...}{Only use these fields when creating a subclass.}
+\item{..., class}{Only use these fields when creating a subclass.}
 
 \item{loss_type}{The kind of lossy cast to be mentioned in error
 messages. Can be loss of precision (for instance from double to
 integer) or loss of generality (from character to factor).}
 
-\item{x_arg}{Argument names for \code{x}, \code{y}, and \code{to}. Used in
-error messages to inform the user about the locations of incompatible
-types.}
+\item{x_arg}{Argument name for \code{x}, used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
-\item{to_arg}{Argument names for \code{x}, \code{y}, and \code{to}. Used in
-error messages to inform the user about the locations of incompatible
-types.}
+\item{to_arg}{Argument name \code{to} used in error messages to
+inform the user about the locations of incompatible types
+(see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
 \item{details}{Any additional human readable details.}
 
 \item{message}{An overriding message for the error. \code{details} and
 \code{message} are mutually exclusive, supplying both is an error.}
-
-\item{class}{Only use these fields when creating a subclass.}
 
 \item{.deprecation}{If \code{TRUE}, the error is downgraded to a
 deprecation warning. This is useful for transitioning your class

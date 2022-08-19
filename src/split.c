@@ -1,6 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
 
 // [[ register() ]]
 SEXP vec_split(SEXP x, SEXP by) {

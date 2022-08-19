@@ -27,10 +27,14 @@ A name specification describes how to combine an inner and outer
 names. This sort of name combination arises when concatenating
 vectors or flattening lists. There are two possible cases:
 \itemize{
-\item Named vector:\preformatted{vec_c(outer = c(inner1 = 1, inner2 = 2))
-}
-\item Unnamed vector:\preformatted{vec_c(outer = 1:2)
-}
+\item Named vector:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_c(outer = c(inner1 = 1, inner2 = 2))
+}\if{html}{\out{</div>}}
+\item Unnamed vector:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_c(outer = 1:2)
+}\if{html}{\out{</div>}}
 }
 
 In r-lib and tidyverse packages, these cases are errors by default,

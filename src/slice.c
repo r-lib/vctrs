@@ -1,243 +1,231 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "altrep.h"
-#include "slice.h"
-#include "subscript-loc.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
-#include "dim.h"
-#include "assert.h"
-
-// Initialised at load time
-SEXP syms_vec_slice_fallback = NULL;
-SEXP fns_vec_slice_fallback = NULL;
-
-SEXP syms_vec_slice_fallback_integer64 = NULL;
-SEXP fns_vec_slice_fallback_integer64 = NULL;
-SEXP syms_vec_slice_dispatch_integer64 = NULL;
-SEXP fns_vec_slice_dispatch_integer64 = NULL;
-
+#include "altrep.h"
 
 #define SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)     \
   const CTYPE* data = CONST_DEREF(x);                                   \
-  R_len_t n = Rf_length(subscript);                                     \
-  int* subscript_data = INTEGER(subscript);                             \
+  r_ssize n = r_length(subscript);                                      \
+  int* subscript_data = r_int_begin(subscript);                         \
                                                                         \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                         \
+  r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                          \
   CTYPE* out_data = DEREF(out);                                         \
                                                                         \
-  for (R_len_t i = 0; i < n; ++i, ++subscript_data, ++out_data) {       \
+  for (r_ssize i = 0; i < n; ++i, ++subscript_data, ++out_data) {       \
     int j = *subscript_data;                                            \
-    *out_data = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];             \
+    *out_data = (j == r_globals.na_int) ? NA_VALUE : data[j - 1];       \
   }                                                                     \
                                                                         \
-  UNPROTECT(1);                                                         \
+  FREE(1);                                                              \
   return out
 
 #define SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)   \
   const CTYPE* data = CONST_DEREF(x);                                   \
                                                                         \
-  int* subscript_data = INTEGER(subscript);                             \
-  R_len_t j = subscript_data[0];                                        \
-  R_len_t n = subscript_data[1];                                        \
+  int* subscript_data = r_int_begin(subscript);                         \
+  r_ssize j = subscript_data[0];                                        \
+  r_ssize n = subscript_data[1];                                        \
                                                                         \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                         \
+  r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                          \
   CTYPE* out_data = DEREF(out);                                         \
                                                                         \
-  CTYPE elt = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];               \
+  CTYPE elt = (j == r_globals.na_int) ? NA_VALUE : data[j - 1];         \
                                                                         \
-  for (R_len_t i = 0; i < n; ++i, ++out_data) {                         \
+  for (r_ssize i = 0; i < n; ++i, ++out_data) {                         \
     *out_data = elt;                                                    \
   }                                                                     \
                                                                         \
-  UNPROTECT(1);                                                         \
+  FREE(1);                                                              \
   return out
 
 #define SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF)     \
-  int* subscript_data = INTEGER(subscript);                     \
-  R_len_t start = subscript_data[0];                            \
-  R_len_t n = subscript_data[1];                                \
-  R_len_t step = subscript_data[2];                             \
+  int* subscript_data = r_int_begin(subscript);                 \
+  r_ssize start = subscript_data[0];                            \
+  r_ssize n = subscript_data[1];                                \
+  r_ssize step = subscript_data[2];                             \
                                                                 \
   const CTYPE* data = CONST_DEREF(x) + start;                   \
                                                                 \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                 \
+  r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                  \
   CTYPE* out_data = DEREF(out);                                 \
                                                                 \
   for (int i = 0; i < n; ++i, ++out_data, data += step) {       \
     *out_data = *data;                                          \
   }                                                             \
                                                                 \
-  UNPROTECT(1);                                                 \
+  FREE(1);                                                      \
   return out
 
-#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)                   \
-  if (!materialize && ALTREP(x)) {                                          \
-    SEXP alt_subscript = PROTECT(compact_materialize(subscript));           \
-    SEXP out = ALTVEC_EXTRACT_SUBSET_PROXY(x, alt_subscript, R_NilValue);   \
-    UNPROTECT(1);                                                           \
-    if (out != NULL) {                                                      \
-      return out;                                                           \
-    }                                                                       \
-  }                                                                         \
-  if (is_compact_rep(subscript)) {                                          \
-    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);          \
-  } else if (is_compact_seq(subscript)) {                                   \
-    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                    \
-  } else {                                                                  \
-    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);            \
+#define SLICE(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE)               \
+  if (!materialize && ALTREP(x)) {                                      \
+    r_obj* alt_subscript = KEEP(compact_materialize(subscript));        \
+    r_obj* out = ALTVEC_EXTRACT_SUBSET_PROXY(x, alt_subscript, r_null); \
+    FREE(1);                                                            \
+    if (out != NULL) {                                                  \
+      return out;                                                       \
+    }                                                                   \
+  }                                                                     \
+  if (is_compact_rep(subscript)) {                                      \
+    SLICE_COMPACT_REP(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);      \
+  } else if (is_compact_seq(subscript)) {                               \
+    SLICE_COMPACT_SEQ(RTYPE, CTYPE, DEREF, CONST_DEREF);                \
+  } else {                                                              \
+    SLICE_SUBSCRIPT(RTYPE, CTYPE, DEREF, CONST_DEREF, NA_VALUE);        \
   }
 
-static SEXP lgl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
-  SLICE(LGLSXP, int, LOGICAL, LOGICAL_RO, NA_LOGICAL);
+static
+r_obj* lgl_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE(R_TYPE_logical, int, r_lgl_begin, r_lgl_cbegin, r_globals.na_lgl);
 }
-static SEXP int_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
-  SLICE(INTSXP, int, INTEGER, INTEGER_RO, NA_INTEGER);
+static
+r_obj* int_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE(R_TYPE_integer, int, r_int_begin, r_int_cbegin, r_globals.na_int);
 }
-static SEXP dbl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
-  SLICE(REALSXP, double, REAL, REAL_RO, NA_REAL);
+static
+r_obj* dbl_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE(R_TYPE_double, double, r_dbl_begin, r_dbl_cbegin, r_globals.na_dbl);
 }
-static SEXP cpl_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
-  SLICE(CPLXSXP, Rcomplex, COMPLEX, COMPLEX_RO, vctrs_shared_na_cpl);
+static
+r_obj* cpl_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE(R_TYPE_complex, r_complex, r_cpl_begin, r_cpl_cbegin, r_globals.na_cpl);
 }
-static SEXP chr_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
-  SLICE(STRSXP, SEXP, STRING_PTR, STRING_PTR_RO, NA_STRING);
-}
-static SEXP raw_slice(SEXP x, SEXP subscript, enum vctrs_materialize materialize) {
-  SLICE(RAWSXP, Rbyte, RAW, RAW_RO, 0);
+static
+r_obj* raw_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE(R_TYPE_raw, char, (char*) r_raw_begin, (char*) r_raw_cbegin, 0);
 }
 
-#undef SLICE
-#undef SLICE_COMPACT_REP
-#undef SLICE_COMPACT_SEQ
-#undef SLICE_SUBSCRIPT
 
-#define SLICE_BARRIER_SUBSCRIPT(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE)  \
-  const CTYPE* data = CONST_DEREF(x);                                      \
-                                                                           \
-  R_len_t n = Rf_length(subscript);                                        \
-  int* subscript_data = INTEGER(subscript);                                \
-                                                                           \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                            \
-                                                                           \
-  for (R_len_t i = 0; i < n; ++i, ++subscript_data) {                      \
-    int j = *subscript_data;                                               \
-    SEXP elt = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];                 \
-    SET(out, i, elt);                                                      \
-  }                                                                        \
-                                                                           \
-  UNPROTECT(1);                                                            \
+#define SLICE_BARRIER_SUBSCRIPT(RTYPE, CONST_DEREF, SET, NA_VALUE)      \
+  r_obj* const * data = CONST_DEREF(x);                                 \
+                                                                        \
+  r_ssize n = r_length(subscript);                                      \
+  int* subscript_data = r_int_begin(subscript);                         \
+                                                                        \
+  r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                          \
+                                                                        \
+  for (r_ssize i = 0; i < n; ++i, ++subscript_data) {                   \
+    int j = *subscript_data;                                            \
+    r_obj* elt = (j == r_globals.na_int) ? NA_VALUE : data[j - 1];      \
+    SET(out, i, elt);                                                   \
+  }                                                                     \
+                                                                        \
+  FREE(1);                                                              \
   return out
 
 
-#define SLICE_BARRIER_COMPACT_REP(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE)    \
-  const CTYPE* data = CONST_DEREF(x);                                          \
-                                                                               \
-  int* subscript_data = INTEGER(subscript);                                    \
-  R_len_t j = subscript_data[0];                                               \
-  R_len_t n = subscript_data[1];                                               \
-                                                                               \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                                \
-                                                                               \
-  SEXP elt = (j == NA_INTEGER) ? NA_VALUE : data[j - 1];                       \
-                                                                               \
-  for (R_len_t i = 0; i < n; ++i) {                                            \
-    SET(out, i, elt);                                                          \
-  }                                                                            \
-                                                                               \
-  UNPROTECT(1);                                                                \
+#define SLICE_BARRIER_COMPACT_REP(RTYPE, CONST_DEREF, SET, NA_VALUE)    \
+  r_obj* const * data = CONST_DEREF(x);                                 \
+                                                                        \
+  int* subscript_data = r_int_begin(subscript);                         \
+  r_ssize j = subscript_data[0];                                        \
+  r_ssize n = subscript_data[1];                                        \
+                                                                        \
+  r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                          \
+                                                                        \
+  r_obj* elt = (j == r_globals.na_int) ? NA_VALUE : data[j - 1];        \
+                                                                        \
+  for (r_ssize i = 0; i < n; ++i) {                                     \
+    SET(out, i, elt);                                                   \
+  }                                                                     \
+                                                                        \
+  FREE(1);                                                              \
   return out
 
-#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, CTYPE, CONST_DEREF, SET)  \
-  const CTYPE* data = CONST_DEREF(x);                              \
-                                                                   \
-  int* subscript_data = INTEGER(subscript);                        \
-  R_len_t start = subscript_data[0];                               \
-  R_len_t n = subscript_data[1];                                   \
-  R_len_t step = subscript_data[2];                                \
-                                                                   \
-  SEXP out = PROTECT(Rf_allocVector(RTYPE, n));                    \
-                                                                   \
-  for (R_len_t i = 0; i < n; ++i, start += step) {                 \
-    SET(out, i, data[start]);                                      \
-  }                                                                \
-                                                                   \
-  UNPROTECT(1);                                                    \
+#define SLICE_BARRIER_COMPACT_SEQ(RTYPE, CONST_DEREF, SET)      \
+  r_obj* const * data = CONST_DEREF(x);                         \
+                                                                \
+  int* subscript_data = r_int_begin(subscript);                 \
+  r_ssize start = subscript_data[0];                            \
+  r_ssize n = subscript_data[1];                                \
+  r_ssize step = subscript_data[2];                             \
+                                                                \
+  r_obj* out = KEEP(r_alloc_vector(RTYPE, n));                  \
+                                                                \
+  for (r_ssize i = 0; i < n; ++i, start += step) {              \
+    SET(out, i, data[start]);                                   \
+  }                                                             \
+                                                                \
+  FREE(1);                                                      \
   return out
 
-#define SLICE_BARRIER(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE)          \
-  if (is_compact_rep(subscript)) {                                       \
-    SLICE_BARRIER_COMPACT_REP(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE); \
-  } else if (is_compact_seq(subscript)) {                                \
-    SLICE_BARRIER_COMPACT_SEQ(RTYPE, CTYPE, CONST_DEREF, SET);           \
-  } else {                                                               \
-    SLICE_BARRIER_SUBSCRIPT(RTYPE, CTYPE, CONST_DEREF, SET, NA_VALUE);   \
+#define SLICE_BARRIER(RTYPE, CONST_DEREF, SET, NA_VALUE)                \
+  if (is_compact_rep(subscript)) {                                      \
+    SLICE_BARRIER_COMPACT_REP(RTYPE, CONST_DEREF, SET, NA_VALUE);       \
+  } else if (is_compact_seq(subscript)) {                               \
+    SLICE_BARRIER_COMPACT_SEQ(RTYPE, CONST_DEREF, SET);                 \
+  } else {                                                              \
+    SLICE_BARRIER_SUBSCRIPT(RTYPE, CONST_DEREF, SET, NA_VALUE);         \
   }
 
-static SEXP list_slice(SEXP x, SEXP subscript) {
-  SLICE_BARRIER(VECSXP, SEXP, VECTOR_PTR_RO, SET_VECTOR_ELT, R_NilValue);
+static
+r_obj* chr_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE_BARRIER(R_TYPE_character, r_chr_cbegin, r_chr_poke, r_globals.na_str);
+}
+static
+r_obj* chr_names_slice(r_obj* x, r_obj* subscript, enum vctrs_materialize materialize) {
+  SLICE_BARRIER(R_TYPE_character, r_chr_cbegin, r_chr_poke, r_strs.empty);
+}
+static
+r_obj* list_slice(r_obj* x, r_obj* subscript) {
+  SLICE_BARRIER(R_TYPE_list, r_list_cbegin, r_list_poke, r_null);
 }
 
-#undef SLICE_BARRIER
-#undef SLICE_BARRIER_COMPACT_REP
-#undef SLICE_BARRIER_COMPACT_SEQ
-#undef SLICE_BARRIER_SUBSCRIPT
 
-static SEXP df_slice(SEXP x, SEXP subscript) {
-  R_len_t n = Rf_length(x);
-  R_len_t size = df_size(x);
+static
+r_obj* df_slice(r_obj* x, r_obj* subscript) {
+  r_ssize n = r_length(x);
+  r_ssize size = df_size(x);
 
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
+  r_obj* out = KEEP(r_alloc_list(n));
 
   // FIXME: Should that be restored?
-  SEXP nms = PROTECT(Rf_getAttrib(x, R_NamesSymbol));
-  Rf_setAttrib(out, R_NamesSymbol, nms);
-  UNPROTECT(1);
+  r_obj* nms = r_names(x);
+  r_attrib_poke(out, r_syms.names, nms);
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = VECTOR_ELT(x, i);
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* elt = r_list_get(x, i);
 
     if (vec_size(elt) != size) {
-      r_stop_internal("df_slice", "Columns must match the data frame size.");
+      r_stop_internal("Column `%s` (size %" R_PRI_SSIZE ") must match the data frame (size %" R_PRI_SSIZE ").",
+                      r_chr_get_c_string(nms, i),
+                      vec_size(elt),
+                      size);
     }
 
-    SEXP sliced = vec_slice_impl(elt, subscript);
-    SET_VECTOR_ELT(out, i, sliced);
+    r_obj* sliced = vec_slice_unsafe(elt, subscript);
+    r_list_poke(out, i, sliced);
   }
 
-  SEXP row_nms = PROTECT(df_rownames(x));
-  if (TYPEOF(row_nms) == STRSXP) {
-    row_nms = PROTECT(slice_rownames(row_nms, subscript));
-    Rf_setAttrib(out, R_RowNamesSymbol, row_nms);
-    UNPROTECT(1);
+  r_obj* row_nms = KEEP(df_rownames(x));
+  if (r_typeof(row_nms) == R_TYPE_character) {
+    row_nms = slice_rownames(row_nms, subscript);
+    r_attrib_poke(out, r_syms.row_names, row_nms);
   }
-  UNPROTECT(1);
 
-  UNPROTECT(1);
+  FREE(2);
   return out;
 }
 
 
-SEXP vec_slice_fallback(SEXP x, SEXP subscript) {
+r_obj* vec_slice_fallback(r_obj* x, r_obj* subscript) {
   // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
   // objects to ensure correct slicing with `NA_integer_`.
   if (is_integer64(x)) {
-    return vctrs_dispatch2(syms_vec_slice_fallback_integer64, fns_vec_slice_fallback_integer64,
+    return vctrs_dispatch2(syms.vec_slice_fallback_integer64, fns.vec_slice_fallback_integer64,
                            syms_x, x,
                            syms_i, subscript);
   }
 
-  return vctrs_dispatch2(syms_vec_slice_fallback, fns_vec_slice_fallback,
+  return vctrs_dispatch2(syms.vec_slice_fallback, fns.vec_slice_fallback,
                          syms_x, x,
                          syms_i, subscript);
 }
 
-static SEXP vec_slice_dispatch(SEXP x, SEXP subscript) {
+static
+r_obj* vec_slice_dispatch(r_obj* x, r_obj* subscript) {
   // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
   // objects to ensure correct slicing with `NA_integer_`.
   if (is_integer64(x)) {
-    return vctrs_dispatch2(syms_vec_slice_dispatch_integer64, fns_vec_slice_dispatch_integer64,
+    return vctrs_dispatch2(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64,
                            syms_x, x,
                            syms_i, subscript);
   }
@@ -247,17 +235,16 @@ static SEXP vec_slice_dispatch(SEXP x, SEXP subscript) {
                          syms_i, subscript);
 }
 
-bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info) {
-  return OBJECT(x) &&
-    info.proxy_method == R_NilValue &&
+bool vec_requires_fallback(r_obj* x, struct vctrs_proxy_info info) {
+  return r_is_object(x) &&
+    info.proxy_method == r_null &&
     info.type != vctrs_type_dataframe;
 }
 
-// [[ include("slice.h") ]]
-SEXP vec_slice_base(enum vctrs_type type,
-                    SEXP x,
-                    SEXP subscript,
-                    enum vctrs_materialize materialize) {
+r_obj* vec_slice_base(enum vctrs_type type,
+                      r_obj* x,
+                      r_obj* subscript,
+                      enum vctrs_materialize materialize) {
   switch (type) {
   case vctrs_type_logical:   return lgl_slice(x, subscript, materialize);
   case vctrs_type_integer:   return int_slice(x, subscript, materialize);
@@ -270,101 +257,55 @@ SEXP vec_slice_base(enum vctrs_type type,
   }
 }
 
-// Replace any `NA` name caused by `NA` subscript with the empty
-// string. It's ok mutate the names vector since it is freshly
-// created, but we make an additional check for that anyways
-// (and the empty string is persistently protected anyway).
-static void repair_na_names(SEXP names, SEXP subscript) {
-  if (!NO_REFERENCES(names)) {
-    r_stop_internal("repair_na_names", "`names` can't be referenced.");
-  }
-
-  // No possible way to have `NA_integer_` in a compact seq
-  if (is_compact_seq(subscript)) {
-    return;
-  }
-
-  R_len_t n = Rf_length(names);
-
-  if (n == 0) {
-    return;
-  }
-
-  const int* p_subscript = INTEGER_RO(subscript);
-
-  // Special handling for a compact_rep object with repeated `NA`
-  if (is_compact_rep(subscript)) {
-    if (p_subscript[0] != NA_INTEGER) {
-      return;
-    }
-
-    for (R_len_t i = 0; i < n; ++i) {
-      SET_STRING_ELT(names, i, strings_empty);
-    }
-
-    return;
-  }
-
-  for (R_len_t i = 0; i < n; ++i) {
-    if (p_subscript[i] == NA_INTEGER) {
-      SET_STRING_ELT(names, i, strings_empty);
-    }
+r_obj* slice_names(r_obj* names, r_obj* subscript) {
+  if (names == r_null) {
+    return names;
+  } else {
+    // Ensures `NA_integer_` subscripts utilize `""` as the name
+    return chr_names_slice(names, subscript, VCTRS_MATERIALIZE_false);
   }
 }
-
-SEXP slice_names(SEXP names, SEXP subscript) {
-  if (names == R_NilValue) {
+r_obj* slice_rownames(r_obj* names, r_obj* subscript) {
+  if (names == r_null) {
     return names;
   }
 
-  names = PROTECT(chr_slice(names, subscript, VCTRS_MATERIALIZE_false));
-
-  repair_na_names(names, subscript);
-
-  UNPROTECT(1);
-  return names;
-}
-SEXP slice_rownames(SEXP names, SEXP subscript) {
-  if (names == R_NilValue) {
-    return names;
-  }
-
-  names = PROTECT(chr_slice(names, subscript, VCTRS_MATERIALIZE_false));
+  names = KEEP(chr_slice(names, subscript, VCTRS_MATERIALIZE_false));
 
   // Rownames can't contain `NA` or duplicates
   names = vec_as_unique_names(names, true);
 
-  UNPROTECT(1);
+  FREE(1);
   return names;
 }
 
-SEXP vec_slice_impl(SEXP x, SEXP subscript) {
+r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   int nprot = 0;
 
-  SEXP restore_size = PROTECT_N(r_int(vec_subscript_size(subscript)), &nprot);
+  r_obj* restore_size = KEEP_N(r_int(vec_subscript_size(subscript)), &nprot);
 
   struct vctrs_proxy_info info = vec_proxy_info(x);
-  PROTECT_PROXY_INFO(&info, &nprot);
+  KEEP_N(info.shelter, &nprot);
 
-  SEXP data = info.proxy;
+  r_obj* data = info.proxy;
 
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, info)) {
     if (info.type == vctrs_type_scalar) {
-      vec_assert_vector(x, NULL);
+      vec_check_vector(x, NULL, r_lazy_null);
     }
 
     if (is_compact(subscript)) {
-      subscript = PROTECT_N(compact_materialize(subscript), &nprot);
+      subscript = KEEP_N(compact_materialize(subscript), &nprot);
     }
 
-    SEXP out;
+    r_obj* out;
 
     if (has_dim(x)) {
-      out = PROTECT_N(vec_slice_fallback(x, subscript), &nprot);
+      out = KEEP_N(vec_slice_fallback(x, subscript), &nprot);
     } else {
-      out = PROTECT_N(vec_slice_dispatch(x, subscript), &nprot);
+      out = KEEP_N(vec_slice_dispatch(x, subscript), &nprot);
     }
 
     // Take over attribute restoration only if there is no `[` method
@@ -372,13 +313,13 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
       out = vec_restore(out, x, restore_size, vec_owned(out));
     }
 
-    UNPROTECT(nprot);
+    FREE(nprot);
     return out;
   }
 
   switch (info.type) {
   case vctrs_type_null:
-    r_stop_internal("vec_slice_impl", "Unexpected `NULL`.");
+    r_stop_internal("Unexpected `NULL`.");
 
   case vctrs_type_logical:
   case vctrs_type_integer:
@@ -387,37 +328,37 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   case vctrs_type_character:
   case vctrs_type_raw:
   case vctrs_type_list: {
-    SEXP out;
+    r_obj* out;
 
     if (has_dim(x)) {
-      out = PROTECT_N(vec_slice_shaped(info.type, data, subscript), &nprot);
+      out = KEEP_N(vec_slice_shaped(info.type, data, subscript), &nprot);
 
-      SEXP names = PROTECT_N(Rf_getAttrib(x, R_DimNamesSymbol), &nprot);
-      if (names != R_NilValue) {
-        names = PROTECT_N(Rf_shallow_duplicate(names), &nprot);
-        SEXP row_names = VECTOR_ELT(names, 0);
-        row_names = PROTECT_N(slice_names(row_names, subscript), &nprot);
-        SET_VECTOR_ELT(names, 0, row_names);
-        Rf_setAttrib(out, R_DimNamesSymbol, names);
+      r_obj* names = KEEP_N(r_attrib_get(x, r_syms.dim_names), &nprot);
+      if (names != r_null) {
+        names = KEEP_N(r_clone(names), &nprot);
+        r_obj* row_names = r_list_get(names, 0);
+        row_names = KEEP_N(slice_names(row_names, subscript), &nprot);
+        r_list_poke(names, 0, row_names);
+        r_attrib_poke(out, r_syms.dim_names, names);
       }
     } else {
-      out = PROTECT_N(vec_slice_base(info.type, data, subscript, VCTRS_MATERIALIZE_false), &nprot);
+      out = KEEP_N(vec_slice_base(info.type, data, subscript, VCTRS_MATERIALIZE_false), &nprot);
 
-      SEXP names = PROTECT_N(Rf_getAttrib(x, R_NamesSymbol), &nprot);
-      names = PROTECT_N(slice_names(names, subscript), &nprot);
-      Rf_setAttrib(out, R_NamesSymbol, names);
+      r_obj* names = KEEP_N(r_names(x), &nprot);
+      names = KEEP_N(slice_names(names, subscript), &nprot);
+      r_attrib_poke_names(out, names);
     }
 
     out = vec_restore(out, x, restore_size, vec_owned(out));
 
-    UNPROTECT(nprot);
+    FREE(nprot);
     return out;
   }
 
   case vctrs_type_dataframe: {
-    SEXP out = PROTECT_N(df_slice(data, subscript), &nprot);
+    r_obj* out = KEEP_N(df_slice(data, subscript), &nprot);
     out = vec_restore(out, x, restore_size, vec_owned(out));
-    UNPROTECT(nprot);
+    FREE(nprot);
     return out;
   }
 
@@ -426,26 +367,26 @@ SEXP vec_slice_impl(SEXP x, SEXP subscript) {
   }
 }
 
-bool vec_is_restored(SEXP x, SEXP to) {
+bool vec_is_restored(r_obj* x, r_obj* to) {
   // Don't restore if there is an actual `[` method that ignored
   // attributes. Some methods like [.ts intentionally strip the class
   // and attributes. FIXME: This branch is now probably sufficient.
-  if (s3_find_method("[", to, base_method_table) != R_NilValue) {
+  if (s3_find_method("[", to, base_method_table) != r_null) {
     return true;
   }
 
-  SEXP attrib = ATTRIB(x);
+  r_obj* attrib = r_attrib(x);
 
-  if (attrib == R_NilValue) {
+  if (attrib == r_null) {
     return false;
   }
 
   // Class is restored if it contains any other attributes than names.
   // We might want to add support for data frames later on.
-  SEXP node = attrib;
-  while (node != R_NilValue) {
-    if (TAG(node) == R_NamesSymbol) {
-      node = CDR(node);
+  r_obj* node = attrib;
+  while (node != r_null) {
+    if (r_node_tag(node) == r_syms.names) {
+      node = r_node_cdr(node);
       continue;
     }
     return true;
@@ -454,80 +395,98 @@ bool vec_is_restored(SEXP x, SEXP to) {
   return false;
 }
 
+r_obj* ffi_slice(r_obj* x,
+                 r_obj* i,
+                 r_obj* frame) {
+  struct vec_slice_opts opts = {
+    .x_arg = vec_args.x,
+    .i_arg = vec_args.i,
+    .call = {.x = r_syms.call, .env = frame}
+  };
+  return vec_slice_opts(x, i, &opts);
+}
 
-// [[ include("vctrs.h"); register() ]]
-SEXP vec_slice(SEXP x, SEXP subscript) {
-  vec_assert_vector(x, args_empty);
+r_obj* vec_slice_opts(r_obj* x,
+                      r_obj* i,
+                      const struct vec_slice_opts* opts) {
+  vec_check_vector(x, opts->x_arg, opts->call);
 
-  subscript = PROTECT(vec_as_location(subscript, vec_size(x), PROTECT(vec_names(x))));
-  SEXP out = vec_slice_impl(x, subscript);
+  r_obj* names = KEEP(vec_names(x));
+  i = KEEP(vec_as_location_ctxt(i,
+                                vec_size(x),
+                                names,
+                                opts->i_arg,
+                                opts->call));
 
-  UNPROTECT(2);
+  r_obj* out = vec_slice_unsafe(x, i);
+
+  FREE(2);
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_init(SEXP x, R_len_t n) {
-  vec_assert_vector(x, NULL);
+r_obj* vec_init(r_obj* x, r_ssize n) {
+  vec_check_vector(x, vec_args.x, lazy_calls.vec_init);
 
   if (n < 0) {
-    r_abort("`n` must be a positive integer.");
+    r_abort_lazy_call(lazy_calls.vec_init,
+                      "%s must be a positive integer.",
+                      r_c_str_format_error_arg("n"));
   }
 
-  SEXP i = PROTECT(compact_rep(NA_INTEGER, n));
+  r_obj* i = KEEP(compact_rep(r_globals.na_int, n));
+  r_obj* out = vec_slice_unsafe(x, i);
 
-  SEXP out = vec_slice_impl(x, i);
-
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
 // [[ register() ]]
-SEXP vctrs_init(SEXP x, SEXP n) {
-  n = PROTECT(vec_cast(n, vctrs_shared_empty_int, args_n, args_empty));
-  vec_assert_size(n, 1, args_n);
-  R_len_t n_ = r_int_get(n, 0);
+r_obj* ffi_init(r_obj* x, r_obj* ffi_n, r_obj* ffi_frame) {
+  struct r_lazy call = { .x = ffi_frame, .env = r_null };
+  r_ssize n = vec_as_short_length(ffi_n, vec_args.n, call);
 
-  SEXP out = vec_init(x, n_);
+  r_obj* out = vec_init(x, n);
 
-  UNPROTECT(1);
   return out;
 }
 
 // Exported for testing
 // [[ register() ]]
-SEXP vec_slice_seq(SEXP x, SEXP start, SEXP size, SEXP increasing) {
-  R_len_t start_ = r_int_get(start, 0);
-  R_len_t size_ = r_int_get(size, 0);
-  bool increasing_ = r_lgl_get(increasing, 0);
+r_obj* ffi_slice_seq(r_obj* x,
+                     r_obj* ffi_start,
+                     r_obj* ffi_size,
+                     r_obj* ffi_increasing) {
+  r_ssize start = r_int_get(ffi_start, 0);
+  r_ssize size = r_int_get(ffi_size, 0);
+  bool increasing = r_lgl_get(ffi_increasing, 0);
 
-  SEXP subscript = PROTECT(compact_seq(start_, size_, increasing_));
-  SEXP out = vec_slice_impl(x, subscript);
+  r_obj* subscript = KEEP(compact_seq(start, size, increasing));
+  r_obj* out = vec_slice_unsafe(x, subscript);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
 // Exported for testing
 // [[ register() ]]
-SEXP vec_slice_rep(SEXP x, SEXP i, SEXP n) {
-  R_len_t i_ = r_int_get(i, 0);
-  R_len_t n_ = r_int_get(n, 0);
+r_obj* ffi_slice_rep(r_obj* x, r_obj* ffi_i, r_obj* ffi_n) {
+  r_ssize i = r_int_get(ffi_i, 0);
+  r_ssize n = r_int_get(ffi_n, 0);
 
-  SEXP subscript = PROTECT(compact_rep(i_, n_));
-  SEXP out = vec_slice_impl(x, subscript);
+  r_obj* subscript = KEEP(compact_rep(i, n));
+  r_obj* out = vec_slice_unsafe(x, subscript);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
 
-void vctrs_init_slice(SEXP ns) {
-  syms_vec_slice_fallback = Rf_install("vec_slice_fallback");
-  syms_vec_slice_fallback_integer64 = Rf_install("vec_slice_fallback_integer64");
-  syms_vec_slice_dispatch_integer64 = Rf_install("vec_slice_dispatch_integer64");
+void vctrs_init_slice(r_obj* ns) {
+  syms.vec_slice_dispatch_integer64 = r_sym("vec_slice_dispatch_integer64");
+  syms.vec_slice_fallback = r_sym("vec_slice_fallback");
+  syms.vec_slice_fallback_integer64 = r_sym("vec_slice_fallback_integer64");
 
-  fns_vec_slice_fallback = Rf_findVar(syms_vec_slice_fallback, ns);
-  fns_vec_slice_fallback_integer64 = Rf_findVar(syms_vec_slice_fallback_integer64, ns);
-  fns_vec_slice_dispatch_integer64 = Rf_findVar(syms_vec_slice_dispatch_integer64, ns);
+  fns.vec_slice_dispatch_integer64 = r_eval(syms.vec_slice_dispatch_integer64, ns);
+  fns.vec_slice_fallback = r_eval(syms.vec_slice_fallback, ns);
+  fns.vec_slice_fallback_integer64 = r_eval(syms.vec_slice_fallback_integer64, ns);
 }

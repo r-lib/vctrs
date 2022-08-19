@@ -1,7 +1,7 @@
 #ifndef VCTRS_LAZY_H
 #define VCTRS_LAZY_H
 
-#include "vctrs.h"
+#include "vctrs-core.h"
 
 // -----------------------------------------------------------------------------
 

@@ -244,6 +244,12 @@ test_that("bare lists are lists", {
   expect_true(vec_is_list(list()))
 })
 
+test_that("AsIs lists are lists (#1463)", {
+  expect_true(vec_is_list(I(list())))
+  expect_true(vec_is_list(I(list_of(1))))
+  expect_false(vec_is_list(I(double())))
+})
+
 test_that("list_of are lists", {
   expect_true(vec_is_list(new_list_of()))
 })
@@ -313,4 +319,43 @@ test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
   )
 
   expect_true(vec_is_list(x))
+})
+
+test_that("list_all_vectors() works", {
+  expect_true(list_all_vectors(list(1)))
+  expect_true(list_all_vectors(list_of(1)))
+  expect_false(list_all_vectors(list(1, env())))
+  expect_snapshot((expect_error(list_all_vectors(env()))))
+})
+
+test_that("vec_check_list() works", {
+  expect_null(vec_check_list(list(1)))
+  expect_null(vec_check_list(list_of(1)))
+  expect_snapshot({
+    my_function <- function(my_arg) vec_check_list(my_arg)
+    (expect_error(my_function(env())))
+  })
+})
+
+test_that("vec_check_list() uses a special error when `arg` is the empty string (#1604)", {
+  expect_snapshot(error = TRUE, {
+    vec_check_list(1, arg = "")
+  })
+})
+
+test_that("vec_check_list() and list_check_all_vectors() work", {
+  expect_null(list_check_all_vectors(list()))
+  expect_null(list_check_all_vectors(list(1, mtcars)))
+  expect_snapshot({
+    my_function <- function(my_arg) list_check_all_vectors(my_arg)
+    (expect_error(my_function(env())))
+    (expect_error(my_function(list(1, env()))))
+    (expect_error(my_function(list(1, name = env()))))
+    (expect_error(my_function(list(1, foo = env()))))
+  })
+})
+
+test_that("informative messages when 1d array doesn't match vector", {
+  x <- array(1:3)
+  expect_snapshot((expect_error(vec_assert(x, int()))))
 })

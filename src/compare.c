@@ -1,8 +1,4 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
-#include "compare.h"
-#include "translate.h"
 #include <strings.h>
 
 static void stop_not_comparable(SEXP x, SEXP y, const char* message) {
@@ -30,10 +26,8 @@ do {                                                    \
 }                                                       \
 while (0)
 
-// [[ register() ]]
-SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
-  bool na_equal = r_bool_as_int(na_equal_);
-
+// [[ include("compare.h") ]]
+SEXP vec_compare(SEXP x, SEXP y, bool na_equal) {
   R_len_t size = vec_size(x);
 
   enum vctrs_type type = vec_proxy_typeof(x);
@@ -56,9 +50,9 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_equal);
     case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_equal);
     case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_equal);
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
-    default:                   stop_unimplemented_vctrs_type("vctrs_compare", type);
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vec_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   } else {
     switch (type) {
@@ -66,14 +60,20 @@ SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal_) {
     case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_propagate);
     case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_propagate);
     case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_propagate);
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
-    default:                   stop_unimplemented_vctrs_type("vctrs_compare", type);
+    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
+    case vctrs_type_list:      r_abort("Can't compare lists with `vec_compare()`");
+    default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   }
 }
 
 #undef COMPARE
+
+// [[ register() ]]
+SEXP vctrs_compare(SEXP x, SEXP y, SEXP na_equal) {
+  const bool c_na_equal = r_bool_as_int(na_equal);
+  return vec_compare(x, y, c_na_equal);
+}
 
 // -----------------------------------------------------------------------------
 
@@ -95,8 +95,8 @@ static SEXP df_compare(SEXP x, SEXP y, bool na_equal, R_len_t size) {
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, size), &nprot);
   int* p_out = INTEGER(out);
 
-  // Initialize to "equality" value
-  // and only change if we learn that it differs
+  // Initialize to "equality" value and only change if we learn that it differs.
+  // This also determines the zero column result.
   memset(p_out, 0, size * sizeof(int));
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
@@ -115,10 +115,6 @@ static void df_compare_impl(int* p_out,
                             SEXP y,
                             bool na_equal) {
   int n_col = Rf_length(x);
-
-  if (n_col == 0) {
-    stop_not_comparable(x, y, "data frame with zero columns");
-  }
 
   if (n_col != Rf_length(y)) {
     stop_not_comparable(x, y, "must have the same number of columns");

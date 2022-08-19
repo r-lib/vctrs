@@ -6,9 +6,9 @@
 \alias{vec_ptype_show}
 \title{Find the prototype of a set of vectors}
 \usage{
-vec_ptype(x, ..., x_arg = "")
+vec_ptype(x, ..., x_arg = "", call = caller_env())
 
-vec_ptype_common(..., .ptype = NULL)
+vec_ptype_common(..., .ptype = NULL, .arg = "", .call = caller_env())
 
 vec_ptype_show(...)
 }
@@ -23,12 +23,21 @@ For \code{vec_ptype_common()} and \code{vec_ptype_show()}, vector inputs.}
 \item{x_arg}{Argument name for \code{x}. This is used in error messages to inform
 the user about the locations of incompatible types.}
 
+\item{call, .call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.
 
 Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
+
+\item{.arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
 }
 \value{
 \code{vec_ptype()} and \code{vec_ptype_common()} return a prototype

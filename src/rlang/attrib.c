@@ -47,7 +47,7 @@ r_obj* r_pairlist_clone_until(r_obj* node, r_obj* sentinel, r_obj** parent_out) 
     cur = r_node_cdr(cur);
   }
 
-  r_stop_unreached("r_pairlist_clone_until");
+  r_stop_unreachable();
 }
 
 
@@ -134,7 +134,7 @@ static
 r_obj* node_push_classes(r_obj* node, const char** tags, r_ssize n) {
   r_obj* tags_chr = KEEP(r_chr_n(tags, n));
   r_obj* attrs = r_new_node(tags_chr, node);
-  r_node_poke_tag(attrs, r_syms.class);
+  r_node_poke_tag(attrs, r_syms.class_);
 
   FREE(1);
   return attrs;

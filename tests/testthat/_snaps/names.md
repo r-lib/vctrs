@@ -2,7 +2,7 @@
 
     Code
       vec_as_names(c("x", "x"), repair = "unique")
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `x` -> `x...1`
       * `x` -> `x...2`
@@ -17,7 +17,8 @@
       )
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error in `stop_vctrs()`: Names must be unique.
+      Error:
+      ! Names must be unique.
       x These names are duplicated:
         * "x" at locations 1 and 2.
       i Use argument `repair` to specify repair strategy.
@@ -26,7 +27,7 @@
 
     Code
       unique_names(1:2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -37,7 +38,7 @@
 
     Code
       as_unique_names(c("", ""))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -48,7 +49,7 @@
 
     Code
       as_universal_names(c("a b", "b c"))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `a b` -> `a.b`
       * `b c` -> `b.c`
@@ -59,7 +60,7 @@
 
     Code
       vec_repair_names(set_names(1, "a:b"), "universal")
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `a:b` -> `a.b`
     Output
@@ -70,7 +71,7 @@
 
     Code
       vec_repair_names(set_names(1, "a:b"), ~ make.names(.))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `a:b` -> `a.b`
     Output

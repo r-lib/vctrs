@@ -1,6 +1,6 @@
 Package: vctrs
 Title: Vector Helpers
-Version: 0.3.8.9001
+Version: 0.4.1.9000
 Authors@R: 
     c(person(given = "Hadley",
              family = "Wickham",
@@ -29,8 +29,9 @@ BugReports: https://github.com/r-lib/vctrs/issues
 Depends: 
     R (>= 3.3)
 Imports:
+    cli (>= 3.2.0),
     glue,
-    rlang (>= 0.4.11.9000)
+    rlang (>= 1.0.4)
 Suggests: 
     bit64,
     covr,
@@ -39,7 +40,7 @@ Suggests:
     generics,
     knitr,
     pillar (>= 1.4.4),
-    pkgdown,
+    pkgdown (>= 2.0.1),
     rmarkdown,
     testthat (>= 3.0.0),
     tibble (>= 3.1.3),
@@ -47,8 +48,6 @@ Suggests:
     xml2,
     waldo (>= 0.2.0),
     zeallot
-Remotes:
-    r-lib/rlang
 VignetteBuilder: 
     knitr
 SystemRequirements:
@@ -56,5 +55,6 @@ SystemRequirements:
 Encoding: UTF-8
 Language: en-GB
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Config/testthat/edition: 3
+Config/Needs/website: tidyverse/tidytemplate

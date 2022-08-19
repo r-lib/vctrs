@@ -1,171 +1,193 @@
-#include <rlang.h>
 #include "vctrs.h"
-#include "c.h"
-#include "dim.h"
-#include "ptype-common.h"
-#include "slice-assign.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
-
-
-static SEXP vec_rbind(SEXP xs, SEXP ptype, SEXP id, struct name_repair_opts* name_repair, SEXP name_spec);
-static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair);
-static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair);
-struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal);
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair);
-static SEXP cbind_names_to(bool has_names, SEXP names_to, SEXP ptype);
+#include "decl/bind-decl.h"
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_rbind(SEXP call, SEXP op, SEXP args, SEXP env) {
-  args = CDR(args);
+r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
+  args = r_node_cdr(args);
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP names_to = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_spec = PROTECT(Rf_eval(CAR(args), env));
+  struct r_lazy call = { .x = syms_dot_call, .env = frame };
 
-  if (names_to != R_NilValue) {
-    if (Rf_inherits(names_to, "rlang_zap")) {
-      r_poke_names(xs, R_NilValue);
-      names_to = R_NilValue;
+  r_obj* xs = KEEP(rlang_env_dots_list(frame));
+  r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
+  r_obj* names_to = r_node_car(args); args = r_node_cdr(args);
+  r_obj* name_repair = r_node_car(args); args = r_node_cdr(args);
+  r_obj* name_spec = r_node_car(args);
+
+  if (names_to != r_null) {
+    if (r_inherits(names_to, "rlang_zap")) {
+      r_attrib_poke_names(xs, r_null);
+      names_to = r_null;
     } else if (r_is_string(names_to)) {
       names_to = r_chr_get(names_to, 0);
     } else {
-      Rf_errorcall(R_NilValue, "`.names_to` must be `NULL`, a string, or an `rlang::zap()` object.");
+      r_abort_lazy_call(call,
+                        "%s must be `NULL`, a string, or an `rlang::zap()` object.",
+                        r_c_str_format_error_arg(".names_to"));
     }
   }
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  KEEP(name_repair_opts.shelter);
 
-  SEXP out = vec_rbind(xs, ptype, names_to, &name_repair_opts, name_spec);
+  name_repair_opts.call = call;
 
-  UNPROTECT(6);
+  r_obj* out = vec_rbind(xs,
+                         ptype,
+                         names_to,
+                         &name_repair_opts,
+                         name_spec,
+                         call);
+
+  FREE(2);
   return out;
 }
 
-static SEXP vec_rbind(SEXP xs,
-                      SEXP ptype,
-                      SEXP names_to,
-                      struct name_repair_opts* name_repair,
-                      SEXP name_spec) {
-  int n_prot = 0;
-  R_len_t n_inputs = Rf_length(xs);
+static
+r_obj* vec_rbind(r_obj* xs,
+                 r_obj* ptype,
+                 r_obj* names_to,
+                 struct name_repair_opts* name_repair,
+                 r_obj* name_spec,
+                 struct r_lazy call) {
+  // In case `.arg` is added later on
+  struct vctrs_arg* p_arg = vec_args.empty;
 
-  for (R_len_t i = 0; i < n_inputs; ++i) {
-    SET_VECTOR_ELT(xs, i, as_df_row(VECTOR_ELT(xs, i), name_repair));
+  int n_prot = 0;
+  r_ssize n_inputs = r_length(xs);
+
+  for (r_ssize i = 0; i < n_inputs; ++i) {
+    r_list_poke(xs, i, as_df_row(r_list_get(xs, i),
+                                 name_repair,
+                                 call));
   }
 
   // The common type holds information about common column names,
   // types, etc. Each element of `xs` needs to be cast to that type
   // before assignment.
-  ptype = vec_ptype_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
-  PROTECT_N(ptype, &n_prot);
+  ptype = vec_ptype_common_params(xs,
+                                  ptype,
+                                  DF_FALLBACK_DEFAULT,
+                                  S3_FALLBACK_true,
+                                  p_arg,
+                                  call);
+  KEEP_N(ptype, &n_prot);
 
-  R_len_t n_cols = Rf_length(ptype);
+  r_ssize n_cols = r_length(ptype);
 
-  if (ptype == R_NilValue) {
-    UNPROTECT(n_prot);
+  if (ptype == r_null) {
+    FREE(n_prot);
     return new_data_frame(vctrs_shared_empty_list, 0);
   }
-  if (TYPEOF(ptype) == LGLSXP && !n_cols) {
-    ptype = as_df_row_impl(vctrs_shared_na_lgl, name_repair);
-    PROTECT_N(ptype, &n_prot);
+  if (r_typeof(ptype) == R_TYPE_logical && !n_cols) {
+    ptype = as_df_row_impl(vctrs_shared_na_lgl,
+                           name_repair,
+                           call);
+    KEEP_N(ptype, &n_prot);
   }
   if (!is_data_frame(ptype)) {
-    Rf_errorcall(R_NilValue, "Can't bind objects that are not coercible to a data frame.");
+    r_abort_lazy_call(call, "Can't bind objects that are not coercible to a data frame.");
   }
 
-  bool assign_names = !Rf_inherits(name_spec, "rlang_zap");
+  bool assign_names = !r_inherits(name_spec, "rlang_zap");
 
-  bool has_names_to = names_to != R_NilValue;
-  R_len_t names_to_loc = 0;
+  bool has_names_to = names_to != r_null;
+  r_ssize names_to_loc = 0;
 
   if (has_names_to) {
     if (!assign_names) {
-      r_abort("Can't zap outer names when `.names_to` is supplied.");
+      r_abort_lazy_call(call,
+                        "Can't zap outer names when %s is supplied.",
+                        r_c_str_format_error_arg(".names_to"));
     }
 
-    SEXP ptype_nms = PROTECT(r_names(ptype));
+    r_obj* ptype_nms = KEEP(r_names(ptype));
     names_to_loc = r_chr_find(ptype_nms, names_to);
-    UNPROTECT(1);
+    FREE(1);
 
     if (names_to_loc < 0) {
-      ptype = PROTECT_N(cbind_names_to(r_names(xs) != R_NilValue, names_to, ptype), &n_prot);
+      ptype = cbind_names_to(r_names(xs) != r_null,
+                             names_to,
+                             ptype,
+                             call);
+      KEEP_N(ptype, &n_prot);
       names_to_loc = 0;
     }
   }
 
   // Must happen after the `names_to` column has been added to `ptype`
-  xs = vec_cast_common_params(xs, ptype, DF_FALLBACK_DEFAULT, S3_FALLBACK_true);
-  PROTECT_N(xs, &n_prot);
+  xs = vec_cast_common_params(xs,
+                              ptype,
+                              DF_FALLBACK_DEFAULT,
+                              S3_FALLBACK_true,
+                              vec_args.empty,
+                              call);
+  KEEP_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
-  R_len_t n_rows = 0;
+  r_ssize n_rows = 0;
 
-  SEXP ns_placeholder = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
-  int* ns = INTEGER(ns_placeholder);
+  r_obj* ns_placeholder = KEEP_N(r_alloc_integer(n_inputs), &n_prot);
+  int* ns = r_int_begin(ns_placeholder);
 
-  for (R_len_t i = 0; i < n_inputs; ++i) {
-    SEXP elt = VECTOR_ELT(xs, i);
-    R_len_t size = (elt == R_NilValue) ? 0 : vec_size(elt);
+  for (r_ssize i = 0; i < n_inputs; ++i) {
+    r_obj* elt = r_list_get(xs, i);
+    r_ssize size = (elt == r_null) ? 0 : vec_size(elt);
     n_rows += size;
     ns[i] = size;
   }
 
-  SEXP proxy = PROTECT_N(vec_proxy(ptype), &n_prot);
+  r_obj* proxy = KEEP_N(vec_proxy(ptype), &n_prot);
   if (!is_data_frame(proxy)) {
-    Rf_errorcall(R_NilValue, "Can't fill a data frame that doesn't have a data frame proxy.");
+    r_abort_lazy_call(call, "Can't fill a data frame that doesn't have a data frame proxy.");
   }
 
-  PROTECT_INDEX out_pi;
-  SEXP out = vec_init(proxy, n_rows);
-  PROTECT_WITH_INDEX(out, &out_pi);
+  r_keep_loc out_pi;
+  r_obj* out = vec_init(proxy, n_rows);
+  KEEP_HERE(out, &out_pi);
   ++n_prot;
 
-  SEXP loc = PROTECT_N(compact_seq(0, 0, true), &n_prot);
-  int* p_loc = INTEGER(loc);
+  r_obj* loc = KEEP_N(compact_seq(0, 0, true), &n_prot);
+  int* p_loc = r_int_begin(loc);
 
-  SEXP rownames = R_NilValue;
-  PROTECT_INDEX rownames_pi;
-  PROTECT_WITH_INDEX(rownames, &rownames_pi);
+  r_obj* row_names = r_null;
+  r_keep_loc rownames_pi;
+  KEEP_HERE(row_names, &rownames_pi);
   ++n_prot;
 
-  SEXP names_to_col = R_NilValue;
-  SEXPTYPE names_to_type = 99;
+  r_obj* names_to_col = r_null;
+  enum r_type names_to_type = 99;
   void* p_names_to_col = NULL;
   const void* p_index = NULL;
 
-  SEXP xs_names = PROTECT_N(r_names(xs), &n_prot);
-  bool xs_is_named = xs_names != R_NilValue;
+  r_obj* xs_names = KEEP_N(r_names(xs), &n_prot);
+  bool xs_is_named = xs_names != r_null;
 
   if (has_names_to) {
-    SEXP index = R_NilValue;
+    r_obj* index = r_null;
     if (xs_is_named) {
       index = xs_names;
     } else {
-      index = PROTECT_N(Rf_allocVector(INTSXP, n_inputs), &n_prot);
+      index = KEEP_N(r_alloc_integer(n_inputs), &n_prot);
       r_int_fill_seq(index, 1, n_inputs);
     }
-    names_to_type = TYPEOF(index);
-    names_to_col = PROTECT_N(Rf_allocVector(names_to_type, n_rows), &n_prot);
+    names_to_type = r_typeof(index);
+    names_to_col = KEEP_N(r_alloc_vector(names_to_type, n_rows), &n_prot);
 
     p_index = r_vec_deref_barrier_const(index);
     p_names_to_col = r_vec_deref_barrier(names_to_col);
 
-    xs_names = R_NilValue;
+    xs_names = r_null;
     xs_is_named = false;
   }
 
-  const SEXP* p_xs_names = NULL;
+  r_obj* const * p_xs_names = NULL;
   if (xs_is_named) {
-    p_xs_names = STRING_PTR_RO(xs_names);
+    p_xs_names = r_chr_cbegin(xs_names);
   }
 
   // Compact sequences use 0-based counters
-  R_len_t counter = 0;
+  r_ssize counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
     .assign_names = assign_names,
@@ -174,36 +196,36 @@ static SEXP vec_rbind(SEXP xs,
     .ignore_outer_names = false
   };
 
-  for (R_len_t i = 0; i < n_inputs; ++i) {
-    R_len_t size = ns[i];
+  for (r_ssize i = 0; i < n_inputs; ++i) {
+    r_ssize size = ns[i];
     if (!size) {
       continue;
     }
-    SEXP x = VECTOR_ELT(xs, i);
+    r_obj* x = r_list_get(xs, i);
 
     init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
     out = df_assign(out, loc, x, VCTRS_OWNED_true, &bind_assign_opts);
-    REPROTECT(out, out_pi);
+    KEEP_AT(out, out_pi);
 
     if (assign_names) {
-      SEXP outer = xs_is_named ? p_xs_names[i] : R_NilValue;
-      SEXP inner = PROTECT(vec_names(x));
-      SEXP x_nms = PROTECT(apply_name_spec(name_spec, outer, inner, size));
+      r_obj* outer = xs_is_named ? p_xs_names[i] : r_null;
+      r_obj* inner = KEEP(vec_names(x));
+      r_obj* x_nms = KEEP(apply_name_spec(name_spec, outer, inner, size));
 
-      if (x_nms != R_NilValue) {
-        R_LAZY_ALLOC(rownames, rownames_pi, STRSXP, n_rows);
+      if (x_nms != r_null) {
+        R_LAZY_ALLOC(row_names, rownames_pi, R_TYPE_character, n_rows);
 
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
         if (inner != chrs_empty) {
-          rownames = chr_assign(rownames, loc, x_nms, VCTRS_OWNED_true);
-          REPROTECT(rownames, rownames_pi);
+          row_names = chr_assign(row_names, loc, x_nms, VCTRS_OWNED_true);
+          KEEP_AT(row_names, rownames_pi);
         }
       }
 
-      UNPROTECT(2);
+      FREE(2);
     }
 
     // Assign current name to group vector, if supplied
@@ -214,47 +236,53 @@ static SEXP vec_rbind(SEXP xs,
     counter += size;
   }
 
-  if (rownames != R_NilValue) {
-    Rf_setAttrib(out, R_RowNamesSymbol, rownames);
+  if (row_names != r_null) {
+    r_attrib_poke(out, r_syms.row_names, row_names);
   }
 
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
-    REPROTECT(out, out_pi);
+    KEEP_AT(out, out_pi);
   }
 
   // Not optimal. Happens after the fallback columns have been
   // assigned already, ideally they should be ignored. Also this is
   // currently not recursive. Should we deal with this during
   // restoration?
-  for (R_len_t i = 0; i < n_cols; ++i) {
-    SEXP col = r_list_get(ptype, i);
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* col = r_list_get(ptype, i);
 
     if (vec_is_common_class_fallback(col)) {
-      SEXP col_xs = PROTECT(list_pluck(xs, i));
-      SEXP col_out = vec_c_fallback(col, col_xs, name_spec, name_repair);
+      r_obj* col_xs = KEEP(list_pluck(xs, i));
+      r_obj* col_out = vec_c_fallback(col, col_xs, name_spec, name_repair);
       r_list_poke(out, i, col_out);
-      UNPROTECT(1);
+      FREE(1);
     }
   }
 
-  SEXP r_n_rows = PROTECT_N(r_int(n_rows), &n_prot);
+  r_obj* r_n_rows = KEEP_N(r_int(n_rows), &n_prot);
   out = vec_restore(out, ptype, r_n_rows, VCTRS_OWNED_true);
 
-  UNPROTECT(n_prot);
+  FREE(n_prot);
   return out;
 }
 
-static SEXP as_df_row(SEXP x, struct name_repair_opts* name_repair) {
-  if (vec_is_unspecified(x) && r_names(x) == R_NilValue) {
+static
+r_obj* as_df_row(r_obj* x,
+                 struct name_repair_opts* name_repair,
+                 struct r_lazy call) {
+  if (vec_is_unspecified(x) && r_names(x) == r_null) {
     return x;
   } else {
-    return as_df_row_impl(x, name_repair);
+    return as_df_row_impl(x, name_repair, call);
   }
 }
 
-static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
-  if (x == R_NilValue) {
+static
+r_obj* as_df_row_impl(r_obj* x,
+                      struct name_repair_opts* name_repair,
+                      struct r_lazy call) {
+  if (x == r_null) {
     return x;
   }
   if (is_data_frame(x)) {
@@ -263,275 +291,283 @@ static SEXP as_df_row_impl(SEXP x, struct name_repair_opts* name_repair) {
 
   int nprot = 0;
 
-  SEXP dim = vec_bare_dim(x);
-  R_len_t ndim = (dim == R_NilValue) ? 1 : Rf_length(dim);
+  r_obj* dim = vec_bare_dim(x);
+  r_ssize ndim = (dim == r_null) ? 1 : r_length(dim);
 
   if (ndim > 2) {
-    Rf_errorcall(R_NilValue, "Can't bind arrays.");
+    r_abort_lazy_call(call, "Can't bind arrays.");
   }
   if (ndim == 2) {
-    SEXP names = PROTECT_N(vec_unique_colnames(x, name_repair->quiet), &nprot);
-    SEXP out = PROTECT_N(r_as_data_frame(x), &nprot);
-    r_poke_names(out, names);
-    UNPROTECT(nprot);
+    r_obj* out = KEEP(r_as_data_frame(x));
+    r_attrib_poke_names(out, vec_as_names(KEEP(colnames2(x)), name_repair));
+
+    FREE(2); FREE(nprot);
     return out;
   }
 
-  SEXP nms = PROTECT_N(vec_names(x), &nprot);
+  // Take names before removing dimensions so we get colnames if needed
+  r_obj* nms = KEEP(vec_names2(x));
+  nms = KEEP(vec_as_names(nms, name_repair));
 
-  if (dim != R_NilValue) {
-    x = PROTECT_N(r_clone_referenced(x), &nprot);
-    r_attrib_poke(x, R_DimSymbol, R_NilValue);
-    r_attrib_poke(x, R_DimNamesSymbol, R_NilValue);
+  if (dim != r_null) {
+    x = KEEP_N(r_clone_referenced(x), &nprot);
+    r_attrib_poke(x, r_syms.dim, r_null);
+    r_attrib_poke(x, r_syms.dim_names, r_null);
   }
 
-  // Remove names as they are promoted to data frame column names
-  if (nms != R_NilValue) {
-    x = PROTECT_N(vec_set_names(x, R_NilValue), &nprot);
-  }
+  // Remove names first as they are promoted to data frame column names
+  x = KEEP(vec_set_names(x, r_null));
 
-  if (nms == R_NilValue) {
-    nms = PROTECT_N(vec_unique_names(x, name_repair->quiet), &nprot);
-  } else {
-    nms = PROTECT_N(vec_as_names(nms, name_repair), &nprot);
-  }
-
-  x = PROTECT_N(vec_chop(x, R_NilValue), &nprot);
-
-  r_poke_names(x, nms);
-
+  x = KEEP(vec_chop(x, r_null));
+  r_attrib_poke_names(x, nms);
   x = new_data_frame(x, 1);
 
-  UNPROTECT(nprot);
+  FREE(4); FREE(nprot);
   return x;
 }
 
 // [[ register() ]]
-SEXP vctrs_as_df_row(SEXP x, SEXP quiet) {
+r_obj* ffi_as_df_row(r_obj* x, r_obj* quiet, r_obj* frame) {
   struct name_repair_opts name_repair_opts = {
     .type = name_repair_unique,
-    .fn = R_NilValue,
-    .quiet = LOGICAL(quiet)[0]
+    .fn = r_null,
+    .quiet = r_lgl_get(quiet, 0)
   };
-  return as_df_row(x, &name_repair_opts);
+  struct r_lazy call = { .x = frame, .env = r_null };
+  return as_df_row(x, &name_repair_opts, call);
 }
 
-static SEXP cbind_names_to(bool has_names, SEXP names_to, SEXP ptype) {
-  SEXP index_ptype = has_names ? vctrs_shared_empty_chr : vctrs_shared_empty_int;
+static
+r_obj* cbind_names_to(bool has_names,
+                      r_obj* names_to,
+                      r_obj* ptype,
+                      struct r_lazy call) {
+  r_obj* index_ptype = has_names ? vctrs_shared_empty_chr : vctrs_shared_empty_int;
 
-  SEXP tmp = PROTECT(Rf_allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(tmp, 0, index_ptype);
-  SET_VECTOR_ELT(tmp, 1, ptype);
+  r_obj* tmp = KEEP(r_alloc_list(2));
+  r_list_poke(tmp, 0, index_ptype);
+  r_list_poke(tmp, 1, ptype);
 
-  SEXP tmp_nms = PROTECT(Rf_allocVector(STRSXP, 2));
-  SET_STRING_ELT(tmp_nms, 0, names_to);
-  SET_STRING_ELT(tmp_nms, 1, strings_empty);
+  r_obj* tmp_nms = KEEP(r_alloc_character(2));
+  r_chr_poke(tmp_nms, 0, names_to);
+  r_chr_poke(tmp_nms, 1, strings_empty);
 
-  r_poke_names(tmp, tmp_nms);
+  r_attrib_poke_names(tmp, tmp_nms);
 
-  SEXP out = vec_cbind(tmp, R_NilValue, R_NilValue, NULL);
+  r_obj* out = vec_cbind(tmp, r_null, r_null, NULL, call);
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
-
-static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack);
-static SEXP cbind_container_type(SEXP x, void* data);
 
 // [[ register(external = TRUE) ]]
-SEXP vctrs_cbind(SEXP call, SEXP op, SEXP args, SEXP env) {
-  args = CDR(args);
+r_obj* ffi_cbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
+  args = r_node_cdr(args);
 
-  SEXP xs = PROTECT(rlang_env_dots_list(env));
-  SEXP ptype = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP size = PROTECT(Rf_eval(CAR(args), env)); args = CDR(args);
-  SEXP name_repair = PROTECT(Rf_eval(CAR(args), env));
+  struct r_lazy call = { .x = syms_dot_call, .env = frame };
+
+  r_obj* xs = KEEP(rlang_env_dots_list(frame));
+  r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
+  r_obj* size = r_node_car(args); args = r_node_cdr(args);
+  r_obj* name_repair = r_node_car(args);
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, true);
-  PROTECT_NAME_REPAIR_OPTS(&name_repair_opts);
+  KEEP(name_repair_opts.shelter);
+  name_repair_opts.call = call;
 
-  SEXP out = vec_cbind(xs, ptype, size, &name_repair_opts);
+  r_obj* out = vec_cbind(xs, ptype, size, &name_repair_opts, call);
 
-  UNPROTECT(5);
+  FREE(2);
   return out;
 }
 
-static SEXP vec_cbind(SEXP xs, SEXP ptype, SEXP size, struct name_repair_opts* name_repair) {
-  R_len_t n = Rf_length(xs);
+static
+r_obj* vec_cbind(r_obj* xs,
+                 r_obj* ptype,
+                 r_obj* size,
+                 struct name_repair_opts* name_repair,
+                 struct r_lazy call) {
+  // In case `.arg` is added later on
+  struct vctrs_arg* p_arg = vec_args.empty;
+
+  r_ssize n = r_length(xs);
 
   // Find the common container type of inputs
-  SEXP rownames = R_NilValue;
-  SEXP containers = PROTECT(map_with_data(xs, &cbind_container_type, &rownames));
-  ptype = PROTECT(cbind_container_type(ptype, &rownames));
+  r_obj* rownames = r_null;
+  r_obj* containers = KEEP(map_with_data(xs, &cbind_container_type, &rownames));
+  ptype = KEEP(cbind_container_type(ptype, &rownames));
 
-  SEXP type = PROTECT(vec_ptype_common_params(containers,
-                                              ptype,
-                                              DF_FALLBACK_DEFAULT,
-                                              S3_FALLBACK_false));
-  if (type == R_NilValue) {
+  r_obj* type = KEEP(vec_ptype_common_params(containers,
+                                             ptype,
+                                             DF_FALLBACK_DEFAULT,
+                                             S3_FALLBACK_false,
+                                             p_arg,
+                                             call));
+  if (type == r_null) {
     type = new_data_frame(vctrs_shared_empty_list, 0);
   } else if (!is_data_frame(type)) {
     type = r_as_data_frame(type);
   }
-  UNPROTECT(1);
-  PROTECT(type);
+  FREE(1);
+  KEEP(type);
 
 
-  R_len_t nrow;
-  if (size == R_NilValue) {
-    nrow = vec_size_common(xs, 0);
+  r_ssize nrow;
+  if (size == r_null) {
+    nrow = vec_check_size_common(xs, 0, p_arg, call);
   } else {
-    nrow = size_validate(size, ".size");
+    nrow = vec_as_short_length(size, vec_args.dot_size, call);
   }
 
-  if (rownames != R_NilValue && Rf_length(rownames) != nrow) {
-    rownames = PROTECT(vec_recycle(rownames, nrow, args_empty));
+  if (rownames != r_null && r_length(rownames) != nrow) {
+    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, call));
     rownames = vec_as_unique_names(rownames, false);
-    UNPROTECT(1);
+    FREE(1);
   }
-  PROTECT(rownames);
+  KEEP(rownames);
 
   // Convert inputs to data frames, validate, and collect total number of columns
-  SEXP xs_names = PROTECT(r_names(xs));
-  bool has_names = xs_names != R_NilValue;
-  SEXP const* xs_names_p = has_names ? STRING_PTR_RO(xs_names) : NULL;
+  r_obj* xs_names = KEEP(r_names(xs));
+  bool has_names = xs_names != r_null;
+  r_obj* const* xs_names_p = has_names ? r_chr_cbegin(xs_names) : NULL;
 
-  R_len_t ncol = 0;
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP x = VECTOR_ELT(xs, i);
+  r_ssize ncol = 0;
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* x = r_list_get(xs, i);
 
-    if (x == R_NilValue) {
+    if (x == r_null) {
       continue;
     }
 
-    x = PROTECT(vec_recycle(x, nrow, args_empty));
+    x = KEEP(vec_check_recycle(x, nrow, vec_args.empty, r_lazy_null));
 
-    SEXP outer_name = has_names ? xs_names_p[i] : strings_empty;
+    r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
     bool allow_packing;
-    x = PROTECT(as_df_col(x, outer_name, &allow_packing));
+    x = KEEP(as_df_col(x, outer_name, &allow_packing, call));
 
     // Remove outer name of column vectors because they shouldn't be repacked
     if (has_names && !allow_packing) {
-      SET_STRING_ELT(xs_names, i, strings_empty);
+      r_chr_poke(xs_names, i, strings_empty);
     }
 
-    SET_VECTOR_ELT(xs, i, x);
-    UNPROTECT(2);
+    r_list_poke(xs, i, x);
+    FREE(2);
 
     // Named inputs are packed in a single column
-    R_len_t x_ncol = outer_name == strings_empty ? Rf_length(x) : 1;
+    r_ssize x_ncol = outer_name == strings_empty ? r_length(x) : 1;
     ncol += x_ncol;
   }
 
 
   // Fill in columns
-  PROTECT_INDEX out_pi;
-  SEXP out = Rf_allocVector(VECSXP, ncol);
-  PROTECT_WITH_INDEX(out, &out_pi);
+  r_keep_loc out_pi;
+  r_obj* out = r_alloc_list(ncol);
+  KEEP_HERE(out, &out_pi);
   init_data_frame(out, nrow);
 
-  PROTECT_INDEX names_pi;
-  SEXP names = Rf_allocVector(STRSXP, ncol);
-  PROTECT_WITH_INDEX(names, &names_pi);
+  r_keep_loc names_pi;
+  r_obj* names = r_alloc_character(ncol);
+  KEEP_HERE(names, &names_pi);
 
-  SEXP idx = PROTECT(compact_seq(0, 0, true));
-  int* idx_ptr = INTEGER(idx);
+  r_obj* idx = KEEP(compact_seq(0, 0, true));
+  int* idx_ptr = r_int_begin(idx);
 
-  R_len_t counter = 0;
+  r_ssize counter = 0;
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP x = VECTOR_ELT(xs, i);
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* x = r_list_get(xs, i);
 
-    if (x == R_NilValue) {
+    if (x == r_null) {
       continue;
     }
 
-    SEXP outer_name = has_names ? xs_names_p[i] : strings_empty;
+    r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
     if (outer_name != strings_empty) {
-      SET_VECTOR_ELT(out, counter, x);
-      SET_STRING_ELT(names, counter, outer_name);
+      r_list_poke(out, counter, x);
+      r_chr_poke(names, counter, outer_name);
       ++counter;
       continue;
     }
 
-    R_len_t xn = Rf_length(x);
+    r_ssize xn = r_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
 
-    // Total ownership of `out` because it was freshly created with `Rf_allocVector()`
+    // Total ownership of `out` because it was freshly created with `r_alloc_vector()`
     out = list_assign(out, idx, x, VCTRS_OWNED_true);
-    REPROTECT(out, out_pi);
+    KEEP_AT(out, out_pi);
 
-    SEXP xnms = PROTECT(r_names(x));
-    if (xnms != R_NilValue) {
+    r_obj* xnms = KEEP(r_names(x));
+    if (xnms != r_null) {
       names = chr_assign(names, idx, xnms, VCTRS_OWNED_true);
-      REPROTECT(names, names_pi);
+      KEEP_AT(names, names_pi);
     }
-    UNPROTECT(1);
+    FREE(1);
 
     counter += xn;
   }
 
-  names = PROTECT(vec_as_names(names, name_repair));
-  Rf_setAttrib(out, R_NamesSymbol, names);
+  names = KEEP(vec_as_names(names, name_repair));
+  r_attrib_poke(out, r_syms.names, names);
 
-  if (rownames != R_NilValue) {
-    Rf_setAttrib(out, R_RowNamesSymbol, rownames);
+  if (rownames != r_null) {
+    r_attrib_poke(out, r_syms.row_names, rownames);
   }
 
-  out = vec_restore(out, type, R_NilValue, VCTRS_OWNED_true);
+  out = vec_restore(out, type, r_null, VCTRS_OWNED_true);
 
-  UNPROTECT(9);
+  FREE(9);
   return out;
 }
 
-SEXP syms_vec_cbind_frame_ptype = NULL;
-SEXP fns_vec_cbind_frame_ptype = NULL;
-
-SEXP vec_cbind_frame_ptype(SEXP x) {
+r_obj* vec_cbind_frame_ptype(r_obj* x) {
   return vctrs_dispatch1(syms_vec_cbind_frame_ptype,
                          fns_vec_cbind_frame_ptype,
                          syms_x,
                          x);
 }
 
-static SEXP cbind_container_type(SEXP x, void* data) {
+static
+r_obj* cbind_container_type(r_obj* x, void* data) {
   if (is_data_frame(x)) {
-    SEXP rn = df_rownames(x);
+    r_obj* rn = df_rownames(x);
 
     if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
-      SEXP* learned_rn_p = (SEXP*) data;
-      SEXP learned_rn = *learned_rn_p;
+      r_obj** learned_rn_p = (r_obj**) data;
+      r_obj* learned_rn = *learned_rn_p;
 
-      if (learned_rn == R_NilValue) {
+      if (learned_rn == r_null) {
         *learned_rn_p = rn;
       }
     }
 
     return vec_cbind_frame_ptype(x);
   } else {
-    return R_NilValue;
+    return r_null;
   }
 }
 
-
-static SEXP shaped_as_df_col(SEXP x, SEXP outer);
-static SEXP vec_as_df_col(SEXP x, SEXP outer);
 
 // [[ register() ]]
-SEXP vctrs_as_df_col(SEXP x, SEXP outer) {
+r_obj* ffi_as_df_col(r_obj* x, r_obj* outer, r_obj* frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
   bool allow_pack;
-  return as_df_col(x, r_chr_get(outer, 0), &allow_pack);
+  return as_df_col(x, r_chr_get(outer, 0), &allow_pack, call);
 }
-static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
+
+static
+r_obj* as_df_col(r_obj* x,
+                 r_obj* outer,
+                 bool* allow_pack,
+                 struct r_lazy call) {
   if (is_data_frame(x)) {
     *allow_pack = true;
-    return Rf_shallow_duplicate(x);
+    return r_clone(x);
   }
 
-  R_len_t ndim = vec_bare_dim_n(x);
+  r_ssize ndim = vec_bare_dim_n(x);
   if (ndim > 2) {
-    Rf_errorcall(R_NilValue, "Can't bind arrays.");
+    r_abort_lazy_call(call, "Can't bind arrays.");
   }
   if (ndim > 0) {
     *allow_pack = true;
@@ -542,7 +578,8 @@ static SEXP as_df_col(SEXP x, SEXP outer, bool* allow_pack) {
   return vec_as_df_col(x, outer);
 }
 
-static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
+static
+r_obj* shaped_as_df_col(r_obj* x, r_obj* outer) {
   // If packed, store array as a column
   if (outer != strings_empty) {
     return x;
@@ -550,35 +587,40 @@ static SEXP shaped_as_df_col(SEXP x, SEXP outer) {
 
   // If unpacked, transform to data frame first. We repair names
   // after unpacking and concatenation.
-  SEXP out = PROTECT(r_as_data_frame(x));
+  r_obj* out = KEEP(r_as_data_frame(x));
 
   // Remove names if they were repaired by `as.data.frame()`
-  if (colnames(x) == R_NilValue) {
-    r_poke_names(out, R_NilValue);
+  if (colnames(x) == r_null) {
+    r_attrib_poke_names(out, r_null);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static SEXP vec_as_df_col(SEXP x, SEXP outer) {
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
-  SET_VECTOR_ELT(out, 0, x);
+static
+r_obj* vec_as_df_col(r_obj* x, r_obj* outer) {
+  r_obj* out = KEEP(r_alloc_list(1));
+  r_list_poke(out, 0, x);
 
   if (outer != strings_empty) {
-    SEXP names = PROTECT(r_str_as_character(outer));
-    Rf_setAttrib(out, R_NamesSymbol, names);
-    UNPROTECT(1);
+    r_obj* names = KEEP(r_str_as_character(outer));
+    r_attrib_poke_names(out, names);
+    FREE(1);
   }
 
-  init_data_frame(out, Rf_length(x));
+  init_data_frame(out, r_length(x));
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_minimal) {
-  struct name_repair_opts opts = new_name_repair_opts(name_repair, args_empty, false);
+static
+struct name_repair_opts validate_bind_name_repair(r_obj* name_repair, bool allow_minimal) {
+  struct name_repair_opts opts = new_name_repair_opts(name_repair,
+                                                      vec_args.empty,
+                                                      false,
+                                                      r_lazy_null);
 
   switch (opts.type) {
   case name_repair_custom:
@@ -590,12 +632,12 @@ struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_m
     if (allow_minimal) break; // else fallthrough
   default:
     if (allow_minimal) {
-      Rf_errorcall(R_NilValue,
+      r_abort_call(r_null,
                    "`.name_repair` can't be `\"%s\"`.\n"
                    "It must be one of `\"unique\"`, `\"universal\"`, `\"check_unique\"`, or `\"minimal\"`.",
                    name_repair_arg_as_c_string(opts.type));
     } else {
-      Rf_errorcall(R_NilValue,
+      r_abort_call(r_null,
                    "`.name_repair` can't be `\"%s\"`.\n"
                    "It must be one of `\"unique\"`, `\"universal\"`, or `\"check_unique\"`.",
                    name_repair_arg_as_c_string(opts.type));
@@ -605,7 +647,13 @@ struct name_repair_opts validate_bind_name_repair(SEXP name_repair, bool allow_m
   return opts;
 }
 
-void vctrs_init_bind(SEXP ns) {
-  syms_vec_cbind_frame_ptype = Rf_install("vec_cbind_frame_ptype");
+void vctrs_init_bind(r_obj* ns) {
+  syms_vec_cbind_frame_ptype = r_sym("vec_cbind_frame_ptype");
   fns_vec_cbind_frame_ptype = r_env_get(ns, syms_vec_cbind_frame_ptype);
 }
+
+static
+r_obj* syms_vec_cbind_frame_ptype = NULL;
+
+static
+r_obj* fns_vec_cbind_frame_ptype = NULL;

@@ -1,6 +1,7 @@
 #ifndef VCTRS_TYPE_TIBBLE_H
 #define VCTRS_TYPE_TIBBLE_H
 
+#include "vctrs-core.h"
 #include "ptype2.h"
 
 

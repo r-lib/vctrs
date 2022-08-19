@@ -1,4 +1,3 @@
-
 test_that("tibble beats data frame", {
   df <- new_data_frame()
   dt <- tibble::tibble()
@@ -20,9 +19,12 @@ test_that("can't cast vector to tibble", {
   dt <- tibble::tibble()
   v <- logical()
 
-  expect_error(vec_ptype2(v, dt), class = "vctrs_error_incompatible_type")
-  expect_error(vec_ptype2(dt, v), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    local_error_call(call("my_function"))
+    (expect_error(vec_ptype2(v, dt), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_ptype2(dt, v), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_type"))
+  })
 })
 
 test_that("casting to and from tibble preserves row names", {
@@ -95,16 +97,20 @@ test_that("can use ptype2 and cast with tibble that has incorrect class vector",
     vec_cast(tib1, tib1),
     tib1
   )
-  expect_error(
-    vec_cast(tib1, tib2),
-    class = "vctrs_error_cast_lossy_dropped"
-  )
-  expect_error(
-    vec_cast(tib1, data.frame(y = 2)),
-    class = "vctrs_error_cast_lossy_dropped"
-  )
-  expect_error(
-    vec_cast(data.frame(x = 1), tib2),
-    class = "vctrs_error_cast_lossy_dropped"
-  )
+
+  expect_snapshot({
+    local_error_call(call("my_function"))
+    (expect_error(
+      vec_cast(tib1, tib2),
+      class = "vctrs_error_cast_lossy_dropped"
+    ))
+    (expect_error(
+      vec_cast(tib1, data.frame(y = 2)),
+      class = "vctrs_error_cast_lossy_dropped"
+    ))
+    (expect_error(
+      vec_cast(data.frame(x = 1), tib2),
+      class = "vctrs_error_cast_lossy_dropped"
+    ))
+  })
 })

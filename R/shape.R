@@ -9,16 +9,21 @@ new_shape <- function(type, shape = integer()) {
 
 vec_shaped_ptype  <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_shaped_ptype, ptype, x, y, x_arg, y_arg)
+  .Call(vctrs_shaped_ptype, ptype, x, y, environment())
 }
 
 vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_shape2, x, y, x_arg, y_arg)
+  .Call(vctrs_shape2, x, y, environment())
 }
 
 # Should take same signature as `vec_cast()`
-shape_broadcast <- function(x, to, ..., x_arg, to_arg) {
+shape_broadcast <- function(x,
+                            to,
+                            ...,
+                            x_arg,
+                            to_arg,
+                            call = caller_env()) {
   if (is.null(x) || is.null(to)) {
     return(x)
   }
@@ -37,7 +42,8 @@ shape_broadcast <- function(x, to, ..., x_arg, to_arg) {
       to,
       details = "Cannot decrease dimensions.",
       x_arg = x_arg,
-      to_arg = to_arg
+      to_arg = to_arg,
+      call = call
     )
   }
 
@@ -50,7 +56,8 @@ shape_broadcast <- function(x, to, ..., x_arg, to_arg) {
       to,
       details = "Non-recyclable dimensions.",
       x_arg = x_arg,
-      to_arg = to_arg
+      to_arg = to_arg,
+      call = call
     )
   }
 

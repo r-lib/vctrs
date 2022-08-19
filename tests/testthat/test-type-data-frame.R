@@ -230,6 +230,18 @@ test_that("casting to and from data frame preserves row names", {
   expect_identical(row.names(out), row.names(mtcars))
 })
 
+test_that("df_cast() evaluates arg lazily", {
+  expect_silent(df_cast(data_frame(), data_frame(), x_arg = print("oof")))
+  expect_silent(df_cast(data_frame(), data_frame(), to_arg = print("oof")))
+})
+
+# df_ptype2 ---------------------------------------------------------------
+
+test_that("df_ptype2() evaluates arg lazily", {
+  expect_silent(df_ptype2(data_frame(), data_frame(), x_arg = print("oof")))
+  expect_silent(df_ptype2(data_frame(), data_frame(), y_arg = print("oof")))
+})
+
 
 # new_data_frame ----------------------------------------------------------
 
@@ -362,21 +374,36 @@ test_that("n and row.names (#894)", {
 })
 
 test_that("`x` must be a list", {
-  expect_error(new_data_frame(1), "`x` must be a list")
+  expect_snapshot((expect_error(
+    new_data_frame(1),
+    "`x` must be a list"
+  )))
 })
 
 test_that("if supplied, `n` must be an integer of size 1", {
-  expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1")
-  expect_error(new_data_frame(n = "x"), "must be an integer of size 1")
+  expect_snapshot({
+    (expect_error(new_data_frame(n = c(1L, 2L)), "must be an integer of size 1"))
+    (expect_error(new_data_frame(n = "x"), "must be an integer of size 1"))
+  })
+})
+
+test_that("if supplied, `n` can't be negative or missing (#1477)", {
+  expect_snapshot({
+    (expect_error(new_data_frame(n = -1L)))
+    (expect_error(new_data_frame(n = NA_integer_)))
+  })
 })
 
 test_that("`class` must be a character vector", {
-  expect_error(new_data_frame(class = 1), "must be NULL or a character vector")
+  expect_snapshot((expect_error(
+    new_data_frame(class = 1),
+    "must be NULL or a character vector"
+  )))
 })
 
 test_that("flatten info is computed", {
   df_flatten_info <- function(x) {
-    .Call(vctrs_df_flatten_info, x)
+    .Call(ffi_df_flatten_info, x)
   }
   expect_identical(df_flatten_info(mtcars), list(FALSE, ncol(mtcars)))
 
@@ -386,7 +413,7 @@ test_that("flatten info is computed", {
 
 test_that("can flatten data frames", {
   df_flatten <- function(x) {
-    .Call(vctrs_df_flatten, x)
+    .Call(ffi_df_flatten, x)
   }
   expect_identical(df_flatten(mtcars), mtcars)
 
@@ -394,10 +421,14 @@ test_that("can flatten data frames", {
   expect_identical(df_flatten(df), new_data_frame(list(x = 1, x = 2, x = 3, z = 4, z = 5)))
 })
 
-test_that("can flatten data frames with rcrd columns containing 1 field (#1318)", {
-  col <- new_rcrd(list(x = 1))
+test_that("can flatten data frames with rcrd columns (#1318)", {
+  col <- new_rcrd(list(a = 1))
   df <- data_frame(col = col, y = 1)
-  expect_identical(vec_proxy_equal(df), data_frame(x = 1, y = 1))
+  expect_identical(vec_proxy_equal(df), data_frame(col = 1, y = 1))
+
+  col <- new_rcrd(list(a = 1, b = 2))
+  df <- data_frame(col = col, y = 1)
+  expect_identical(vec_proxy_equal(df), data_frame(a = 1, b = 2, y = 1))
 })
 
 test_that("new_data_frame() zaps existing attributes", {
@@ -413,6 +444,16 @@ test_that("new_data_frame() zaps existing attributes", {
 })
 
 # data_frame --------------------------------------------------------------
+
+test_that("data_frame() and df_list() report error context", {
+  expect_snapshot({
+    (expect_error(data_frame(a = 1, a = 1)))
+    (expect_error(data_frame(a = 1:2, b = int())))
+
+    (expect_error(df_list(a = 1, a = 1)))
+    (expect_error(df_list(a = 1:2, b = int())))
+  })
+})
 
 test_that("can construct data frames with empty input", {
   expect_identical(data_frame(), new_data_frame())
@@ -430,7 +471,9 @@ test_that("input is tidy recycled", {
     data_frame(x = double(), y = integer())
   )
 
-  expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
+  expect_snapshot({
+    expect_error(data_frame(1:2, 1:3), class = "vctrs_error_incompatible_size")
+  })
 })
 
 test_that("dots are dynamic", {
@@ -446,23 +489,50 @@ test_that("unnamed input is auto named with empty strings", {
   expect_named(data_frame(1, 2, .name_repair = "minimal"), c("", ""))
 })
 
-test_that("unnamed data frames are auto spliced", {
+test_that("unnamed data frames are auto unpacked", {
   expect_identical(
     data_frame(w = 1, data_frame(x = 2, y = 3), z = 4),
     data_frame(w = 1, x = 2, y = 3, z = 4)
   )
 })
 
-test_that("named data frames are not spliced", {
+test_that("named data frames are not unpacked", {
   df_col <- data_frame(x = 2, y = 3)
   df <- data_frame(w = 1, col = data_frame(x = 2, y = 3), z = 4)
 
   expect_identical(df$col, df_col)
 })
 
-test_that("spliced data frames without names are caught", {
+test_that("unpacked data frames without names are caught", {
   df_col <- new_data_frame(list(1))
   expect_error(data_frame(df_col), "corrupt data frame")
+})
+
+test_that("unpacking in `df_list()` can be disabled with `.unpack = FALSE`", {
+  out <- df_list(
+    w = 1,
+    data_frame(x = 2, y = 3),
+    z = 4,
+    .unpack = FALSE,
+    .name_repair = "minimal"
+  )
+
+  expect <- list(
+    w = 1,
+    data_frame(x = 2, y = 3),
+    z = 4
+  )
+
+  expect_identical(out, expect)
+})
+
+test_that("`.unpack` is validated", {
+  expect_snapshot(error = TRUE, {
+    df_list(.unpack = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    df_list(.unpack = c(TRUE, FALSE))
+  })
 })
 
 test_that("`NULL` inputs are dropped", {
@@ -509,14 +579,17 @@ test_that("data frame fallback handles column types (#999)", {
   expect_identical(vec_ptype2(df1, df2), common)
   expect_identical(vec_ptype2(df2, df1), common)
 
-  expect_error(
-    vec_ptype2(df1, df3),
-    class = "vctrs_error_incompatible_type"
-  )
-  expect_error(
-    vec_ptype2(df3, df1),
-    class = "vctrs_error_incompatible_type"
-  )
+  expect_snapshot({
+    local_error_call(call("my_function"))
+    (expect_error(
+      vec_ptype2(df1, df3),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_ptype2(df3, df1),
+      class = "vctrs_error_incompatible_type"
+    ))
+  })
 
   expect_identical(
     vec_cast(df1, df2),

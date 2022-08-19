@@ -1,8 +1,5 @@
-#include <rlang.h>
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "owned.h"
-#include "utils.h"
 
 // Initialised at load time
 static SEXP syms_vec_restore_dispatch = NULL;
@@ -150,8 +147,7 @@ SEXP vctrs_bare_df_restore(SEXP x, SEXP to, SEXP n) {
 // [[ include("vctrs.h") ]]
 SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned) {
   if (TYPEOF(x) != VECSXP) {
-    r_stop_internal("vec_bare_df_restore",
-                    "Attempt to restore data frame from a %s.",
+    r_stop_internal("Attempt to restore data frame from a %s.",
                     Rf_type2char(TYPEOF(x)));
   }
 
@@ -186,15 +182,15 @@ SEXP vctrs_restore(SEXP x, SEXP to, SEXP n) {
 SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned) {
   switch (class_type(to)) {
   default: return vec_restore_dispatch(x, to, n);
-  case vctrs_class_bare_factor:
-  case vctrs_class_bare_ordered:
-  case vctrs_class_none: return vec_restore_default(x, to, owned);
-  case vctrs_class_bare_date: return vec_date_restore(x, to, owned);
-  case vctrs_class_bare_posixct: return vec_posixct_restore(x, to, owned);
-  case vctrs_class_bare_posixlt: return vec_posixlt_restore(x, to, owned);
-  case vctrs_class_bare_data_frame:
-  case vctrs_class_bare_tibble: return vec_bare_df_restore(x, to, n, owned);
-  case vctrs_class_data_frame: return vec_df_restore(x, to, n, owned);
+  case VCTRS_CLASS_bare_factor:
+  case VCTRS_CLASS_bare_ordered:
+  case VCTRS_CLASS_none: return vec_restore_default(x, to, owned);
+  case VCTRS_CLASS_bare_date: return vec_date_restore(x, to, owned);
+  case VCTRS_CLASS_bare_posixct: return vec_posixct_restore(x, to, owned);
+  case VCTRS_CLASS_bare_posixlt: return vec_posixlt_restore(x, to, owned);
+  case VCTRS_CLASS_bare_data_frame:
+  case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, n, owned);
+  case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, n, owned);
   }
 }
 

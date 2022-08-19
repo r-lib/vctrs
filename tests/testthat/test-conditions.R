@@ -16,10 +16,19 @@ test_that("conditions inherit from `vctrs_error`", {
 })
 
 test_that("incompatible cast throws an incompatible type error", {
-  expect_error(
-    stop_incompatible_cast(1, 1, x_arg = "x", to_arg = "to"),
+  err <- expect_error(
+    stop_incompatible_cast(1, 2, x_arg = "x", to_arg = "to"),
     class = "vctrs_error_incompatible_type"
   )
+
+  expect_equal(err$x, 1)
+  expect_equal(err$y, 2)
+  expect_equal(err$x_arg, "x")
+  expect_equal(err$y_arg, "to")
+
+  # Convenience aliases
+  expect_equal(err$to, err$y)
+  expect_equal(err$to_arg, err$y_arg)
 })
 
 test_that("incompatible type error validates `action`", {
@@ -132,6 +141,16 @@ test_that("lossy cast errors are internal", {
 test_that("lossy cast from character to factor mentions loss of generality", {
   expect_snapshot({
     (expect_error(vec_cast("a", factor("b")), class = "vctrs_error_cast_lossy"))
+  })
+})
+
+test_that("lossy cast `conditionMessage()` result matches `cnd_message()` (#1592)", {
+  cnd <- catch_cnd(vec_cast(1.5, to = integer()))
+
+  expect_identical(conditionMessage(cnd), cnd_message(cnd))
+
+  expect_snapshot({
+    cat(conditionMessage(cnd))
   })
 })
 

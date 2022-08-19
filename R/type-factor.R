@@ -118,12 +118,12 @@ vec_ptype2.character.ordered <- function(x, y, ...) {
   stop_native_implementation("vec_ptype2.character.ordered")
 }
 #' @export
-vec_ptype2.ordered.factor <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.ordered.factor <- function(x, y, ...) {
+  vec_incompatible_ptype2(x, y, ...)
 }
 #' @export
-vec_ptype2.factor.ordered <- function(x, y, ..., x_arg = "", y_arg = "") {
-  stop_incompatible_type(x, y, x_arg = x_arg, y_arg = y_arg)
+vec_ptype2.factor.ordered <- function(x, y, ...) {
+  vec_incompatible_ptype2(x, y, ...)
 }
 
 
@@ -137,11 +137,17 @@ vec_cast.factor <- function(x, to, ...) {
   UseMethod("vec_cast.factor")
 }
 
-fct_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  fct_cast_impl(x, to, ..., x_arg = x_arg, to_arg = to_arg, ordered = FALSE)
+fct_cast <- function(x, to, ..., call = caller_env()) {
+  fct_cast_impl(x, to, ..., ordered = FALSE, call = call)
 }
 
-fct_cast_impl <- function(x, to, ..., x_arg = "", to_arg = "", ordered = FALSE) {
+fct_cast_impl <- function(x,
+                          to,
+                          ...,
+                          x_arg = "",
+                          to_arg = "",
+                          ordered = FALSE,
+                          call = caller_env()) {
   if (length(levels(to)) == 0L) {
     levels <- levels(x)
     if (is.null(levels)) {
@@ -150,10 +156,20 @@ fct_cast_impl <- function(x, to, ..., x_arg = "", to_arg = "", ordered = FALSE) 
     } else {
       exclude <- NULL
     }
-    factor(as.character(x), levels = levels, ordered = ordered, exclude = exclude)
+    factor(
+      as.character(x),
+      levels = levels,
+      ordered = ordered,
+      exclude = exclude
+    )
   } else {
     lossy <- !(x %in% levels(to) | is.na(x))
-    out <- factor(x, levels = levels(to), ordered = ordered, exclude = NULL)
+    out <- factor(
+      x,
+      levels = levels(to),
+      ordered = ordered,
+      exclude = NULL
+    )
     maybe_lossy_cast(
       out,
       x,
@@ -161,7 +177,8 @@ fct_cast_impl <- function(x, to, ..., x_arg = "", to_arg = "", ordered = FALSE) 
       lossy,
       loss_type = "generality",
       x_arg = x_arg,
-      to_arg = to_arg
+      to_arg = to_arg,
+      call = call
     )
   }
 }
@@ -187,8 +204,8 @@ vec_cast.ordered <- function(x, to, ...) {
   UseMethod("vec_cast.ordered")
 }
 
-ord_cast <- function(x, to, ..., x_arg = "", to_arg = "") {
-  fct_cast_impl(x, to, ..., x_arg = x_arg, to_arg = to_arg, ordered = TRUE)
+ord_cast <- function(x, to, ..., call = caller_env()) {
+  fct_cast_impl(x, to, ..., ordered = TRUE, call = call)
 }
 
 #' @export

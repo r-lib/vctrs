@@ -9,6 +9,7 @@
 #' not checked in any way (length, missingness, negative elements).
 #'
 #' @inheritParams vec_as_location
+#'
 #' @param logical,location,character How to handle logical, numeric,
 #'   and character subscripts.
 #'
@@ -29,26 +30,32 @@ vec_as_subscript <- function(i,
                              logical = c("cast", "error"),
                              numeric = c("cast", "error"),
                              character = c("cast", "error"),
-                             arg = NULL) {
+                             arg = NULL,
+                             call = caller_env()) {
   check_dots_empty0(...)
 
   .Call(
-    vctrs_as_subscript,
+    ffi_as_subscript,
     i = i,
     logical = logical,
     numeric = numeric,
     character = character,
-    arg = arg
+    frame = environment()
   )
 }
-vec_as_subscript_result <- function(i, arg, logical, numeric, character) {
+vec_as_subscript_result <- function(i,
+                                    arg,
+                                    call,
+                                    logical,
+                                    numeric,
+                                    character) {
   .Call(
-    vctrs_as_subscript_result,
+    ffi_as_subscript_result,
     i = i,
     logical = logical,
     numeric = numeric,
     character = character,
-    arg = arg
+    frame = environment()
   )
 }
 
@@ -60,11 +67,13 @@ vec_as_subscript2 <- function(i,
                               logical = c("cast", "error"),
                               numeric = c("cast", "error"),
                               character = c("cast", "error"),
-                              arg = NULL) {
+                              arg = NULL,
+                              call = caller_env()) {
   check_dots_empty0(...)
   result_get(vec_as_subscript2_result(
     i,
     arg,
+    call,
     logical = logical,
     numeric = numeric,
     character = character
@@ -72,6 +81,7 @@ vec_as_subscript2 <- function(i,
 }
 vec_as_subscript2_result <- function(i,
                                      arg,
+                                     call,
                                      logical = "cast",
                                      numeric = "cast",
                                      character = "cast") {
@@ -82,6 +92,7 @@ vec_as_subscript2_result <- function(i,
   result <- vec_as_subscript_result(
     i,
     arg = arg,
+    call = call,
     logical = logical,
     numeric = numeric,
     character = character
@@ -104,7 +115,7 @@ vec_as_subscript2_result <- function(i,
       character = character,
       subscript_arg = arg,
       body = bullets,
-      parent = result$err$parent
+      call = call
     )
 
     return(result)
@@ -119,7 +130,8 @@ vec_as_subscript2_result <- function(i,
       numeric = numeric,
       character = character,
       subscript_arg = arg,
-      body = cnd_body.vctrs_error_subscript_type
+      body = cnd_body.vctrs_error_subscript_type,
+      call = call
     )))
   }
 
@@ -150,11 +162,15 @@ as_opts_subscript2_type <- function(x, arg = NULL) {
 }
 
 
-stop_subscript <- function(i, ..., class = NULL) {
+stop_subscript <- function(i,
+                           ...,
+                           class = NULL,
+                           call = caller_env()) {
   abort(
     class = c(class, "vctrs_error_subscript"),
     i = i,
-    ...
+    ...,
+    call = vctrs_error_call(call)
   )
 }
 new_error_subscript <- function(class = NULL, i, ...) {
@@ -169,6 +185,7 @@ new_error_subscript_type <- function(i,
                                      numeric = "cast",
                                      character = "cast",
                                      ...,
+                                     call = NULL,
                                      class = NULL) {
   new_error_subscript(
     class = c(class, "vctrs_error_subscript_type"),
@@ -176,7 +193,8 @@ new_error_subscript_type <- function(i,
     logical = logical,
     numeric = numeric,
     character = character,
-    ...
+    ...,
+    call = vctrs_error_call(call)
   )
 }
 
@@ -279,7 +297,8 @@ cnd_subscript_element <- function(cnd, capital = FALSE) {
   }
 
   if (capital) {
-    switch(elt,
+    switch(
+      elt,
       element = c("Element", "Elements"),
       row = c("Row", "Rows"),
       column = c("Column", "Columns"),
@@ -295,8 +314,41 @@ cnd_subscript_element <- function(cnd, capital = FALSE) {
   }
 }
 
+cnd_subscript_element_cli <- function(n, cnd, capital = FALSE) {
+  elt <- cnd$subscript_elt %||% "element"
+
+  if (!is_string(elt, c("element", "row", "column", "table"))) {
+    abort(paste0(
+      "Internal error: `cnd$subscript_elt` must be one of ",
+      "`element`, `row`, `column` or `table`."
+    ))
+  }
+
+  if (capital) {
+    elt <- switch(
+      elt,
+      element = "Element{?s}",
+      row = "Row{?s}",
+      column = "Column{?s}",
+      table = "Table{?s}"
+    )
+  } else {
+    elt <- switch(
+      elt,
+      element = "element{?s}",
+      row = "row{?s}",
+      column = "column{?s}",
+      table = "table{?s}"
+    )
+  }
+
+  cli::pluralize("{n} ", elt)
+}
+
 subscript_actions <- c(
-  "subset", "extract", "assign", "rename", "remove", "negate"
+  "select", "subset", "extract",
+  "assign", "rename", "relocate",
+  "remove", "negate"
 )
 cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   action <- cnd$subscript_action
@@ -310,10 +362,10 @@ cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   }
 
   if (!is_string(action, subscript_actions)) {
-    abort(paste0(
-      "Internal error: `cnd$subscript_action` must be one of ",
-      "`subset`, `extract`, `assign`, `rename`, `remove`, or `negate`."
-    ))
+    cli::cli_abort(
+      "`cnd$subscript_action` must be one of {.or {.arg {subscript_actions}}}.",
+      .internal = TRUE
+    )
   }
 
   if (assign_to && action == "assign") {

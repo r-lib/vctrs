@@ -25,6 +25,31 @@ test_that("can slice AsIs class", {
   expect_identical(vec_slice(df, 2:3), unrownames(df[2:3, ]))
 })
 
+test_that("equality proxy is forwarded correctly for atomic types (#1557)", {
+  # We don't define any equality proxies for base atomic types, but we can fake it
+  local_methods(vec_proxy_equal.integer = function(x, ...) "dispatched")
+  asis <- I(1L)
+  expect_identical(vec_proxy_equal(asis), "dispatched")
+})
+
+test_that("comparison proxy is forwarded correctly for atomic types (#1557)", {
+  # vec_proxy_compare.raw() exists
+  x <- raw()
+  asis <- I(x)
+
+  expect_identical(vec_proxy_compare(asis), vec_proxy_compare(x))
+  expect_identical(vec_proxy_compare(asis), integer())
+})
+
+test_that("order proxy is forwarded correctly for atomic types (#1557)", {
+  # vec_proxy_order.list() exists
+  x <- list(2, 1, 2)
+  asis <- I(x)
+
+  expect_identical(vec_proxy_order(asis), vec_proxy_order(x))
+  expect_identical(vec_proxy_order(asis), c(1L, 2L, 1L))
+})
+
 # ------------------------------------------------------------------------------
 # Coercion
 

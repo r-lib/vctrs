@@ -136,6 +136,10 @@ test_that("class_type() detects classes", {
   expect_identical(class_type(foobar(list())), "unknown")
   expect_identical(class_type(structure(list(), class = "list")), "list")
   expect_identical(class_type(subclass(structure(list(), class = "list"))), "list")
+  expect_identical(class_type(I(subclass(structure(list(), class = "list")))), "list")
+
+  expect_identical(class_type(I(list())), "bare_asis")
+  expect_identical(class_type(I(1)), "bare_asis")
 
   expect_identical(class_type(data.frame()), "bare_data_frame")
   expect_identical(class_type(tibble::tibble()), "bare_tibble")
@@ -232,4 +236,32 @@ test_that("vec_ptype() preserves type of names and row names", {
   expect_identical(vec_ptype(c(foo = 1)), named(dbl()))
   expect_identical(vec_ptype(mtcars), mtcars[0, ])
   expect_identical(vec_ptype(foobar(mtcars)), foobar(mtcars[0, ]))
+})
+
+test_that("vec_ptype_common() handles spliced names consistently (#1570)", {
+  args1 <- list(a = "foo", b = "bar")
+  args2 <- list(y = NULL, z = 1)
+
+  y_name <- "y"
+  z_name <- "z"
+
+  expect_snapshot(error = TRUE, {
+    vec_ptype_common(
+      a = "foo",
+      b = "bar",
+      y = NULL,
+      z = 1
+    )
+
+    vec_ptype_common(
+      !!!args1,
+      !!!args2
+    )
+
+    vec_ptype_common(
+      !!!args1,
+      "{y_name}" := NULL,
+      "{z_name}" := 1
+    )
+  })
 })

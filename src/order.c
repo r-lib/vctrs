@@ -10,18 +10,9 @@
  * Copyright (c) 2020, Data table team
  */
 
-#include <rlang.h>
 #include "vctrs.h"
-#include "utils.h"
-#include "lazy.h"
 #include "type-data-frame.h"
 #include "type-complex.h"
-#include "translate.h"
-#include "order.h"
-#include "order-groups.h"
-#include "order-truelength.h"
-#include "order-sortedness.h"
-#include "order-collate.h"
 
 // -----------------------------------------------------------------------------
 
@@ -220,28 +211,45 @@ SEXP vec_order(SEXP x,
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_order_locs(SEXP x,
-                           SEXP direction,
-                           SEXP na_value,
-                           bool nan_distinct,
-                           SEXP chr_proxy_collate);
+static SEXP vec_locate_sorted_groups(SEXP x,
+                                     SEXP direction,
+                                     SEXP na_value,
+                                     bool nan_distinct,
+                                     SEXP chr_proxy_collate);
 
 // [[ register() ]]
-SEXP vctrs_order_locs(SEXP x,
-                      SEXP direction,
-                      SEXP na_value,
-                      SEXP nan_distinct,
-                      SEXP chr_proxy_collate) {
+SEXP vctrs_locate_sorted_groups(SEXP x,
+                                SEXP direction,
+                                SEXP na_value,
+                                SEXP nan_distinct,
+                                SEXP chr_proxy_collate) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  return vec_order_locs(x, direction, na_value, c_nan_distinct, chr_proxy_collate);
+
+  return vec_locate_sorted_groups(
+    x,
+    direction,
+    na_value,
+    c_nan_distinct,
+    chr_proxy_collate
+  );
 }
 
-
 static
-SEXP vec_order_locs(SEXP x, SEXP direction, SEXP na_value, bool nan_distinct, SEXP chr_proxy_collate) {
+SEXP vec_locate_sorted_groups(SEXP x,
+                              SEXP direction,
+                              SEXP na_value,
+                              bool nan_distinct,
+                              SEXP chr_proxy_collate) {
   const bool chr_ordered = true;
 
-  SEXP info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered));
+  SEXP info = KEEP(vec_order_info(
+    x,
+    direction,
+    na_value,
+    nan_distinct,
+    chr_proxy_collate,
+    chr_ordered
+  ));
 
   SEXP o = r_list_get(info, 0);
   const int* p_o = r_int_cbegin(o);
@@ -359,6 +367,9 @@ SEXP vec_order_info_impl(SEXP x,
                          SEXP chr_proxy_collate,
                          bool chr_ordered,
                          bool group_sizes) {
+  // TODO call
+  struct r_lazy call = r_lazy_null;
+
   int n_prot = 0;
 
   SEXP decreasing = PROTECT_N(parse_direction(direction), &n_prot);
@@ -366,8 +377,9 @@ SEXP vec_order_info_impl(SEXP x,
 
   // Call on `x` before potentially flattening cols with `vec_proxy_order()`
   SEXP args = PROTECT_N(vec_order_expand_args(x, decreasing, na_largest), &n_prot);
-  R_len_t arg_size = vec_size_common(args, 0);
-  args = PROTECT_N(vec_recycle_common(args, arg_size), &n_prot);
+
+  R_len_t arg_size = vec_check_size_common(args, 0, vec_args.empty, call);
+  args = PROTECT_N(vec_check_recycle_common(args, arg_size, vec_args.empty, call), &n_prot);
 
   decreasing = VECTOR_ELT(args, 0);
   na_largest = VECTOR_ELT(args, 1);
@@ -4567,7 +4579,6 @@ SEXP vec_order_compute_na_last(SEXP na_largest, SEXP decreasing) {
   const r_ssize size = r_length(na_largest);
   if (size != r_length(decreasing)) {
     r_stop_internal(
-      "vec_order_compute_na_last",
       "`na_largest` and `decreasing` should already match in size."
     );
   }

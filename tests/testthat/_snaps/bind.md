@@ -1,16 +1,115 @@
+# incompatible columns throws common type error
+
+    Code
+      (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `vec_rbind()`:
+      ! Can't combine `..1$x` <integer> and `..2$x` <character>.
+    Code
+      (expect_error(vec_rbind(x_int, x_chr, .call = call("foo")), class = "vctrs_error_incompatible_type")
+      )
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `foo()`:
+      ! Can't combine `..1$x` <integer> and `..2$x` <character>.
+    Code
+      (expect_error(vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `foo()`:
+      ! Can't convert `..1$x` <integer> to match type of `x` <character>.
+
 # names are supplied if needed
 
     Code
       out <- vec_rbind(data_frame(...1 = 1), 1)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
+
+# can repair names in `vec_rbind()` (#229)
+
+    Code
+      (expect_error(vec_rbind(.name_repair = "none"), "can't be `\"none\"`"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `.name_repair` can't be `"none"`.
+      It must be one of `"unique"`, `"universal"`, or `"check_unique"`.
+    Code
+      (expect_error(vec_rbind(.name_repair = "minimal"), "can't be `\"minimal\"`"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `.name_repair` can't be `"minimal"`.
+      It must be one of `"unique"`, `"universal"`, or `"check_unique"`.
+    Code
+      (expect_error(vec_rbind(list(a = 1, a = 2), .name_repair = "check_unique"),
+      class = "vctrs_error_names_must_be_unique"))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `vec_rbind()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+
+# vec_rbind() fails with arrays of dimensionality > 3
+
+    Code
+      (expect_error(vec_rbind(array(NA, c(1, 1, 1)))))
+    Output
+      <error/rlang_error>
+      Error in `vec_rbind()`:
+      ! Can't bind arrays.
+    Code
+      (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
+    Output
+      <error/rlang_error>
+      Error in `foo()`:
+      ! Can't bind arrays.
+
+# can assign row names in vec_rbind()
+
+    Code
+      (expect_error(vec_rbind(foo = df1, df2, .names_to = NULL), "specification"))
+    Output
+      <simpleError: Can't merge the outer name `foo` with a vector of length > 1.
+      Please supply a `.name_spec` specification.>
+
+# vec_cbind() reports error context
+
+    Code
+      (expect_error(vec_cbind(foobar(list()))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `vec_cbind()`:
+      ! `..1` must be a vector, not a <vctrs_foobar> object.
+    Code
+      (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+    Output
+      <error/vctrs_error_scalar_type>
+      Error in `foo()`:
+      ! `..1` must be a vector, not a <vctrs_foobar> object.
+    Code
+      (expect_error(vec_cbind(a = 1:2, b = int())))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `vec_cbind()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+    Code
+      (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `foo()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
 
 # duplicate names are de-deduplicated
 
     Code
       (expect_named(vec_cbind(x = 1, x = 1), c("x...1", "x...2")))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `x` -> `x...1`
       * `x` -> `x...2`
@@ -20,7 +119,7 @@
     Code
       (expect_named(vec_cbind(data.frame(x = 1), data.frame(x = 1)), c("x...1",
         "x...2")))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `x` -> `x...1`
       * `x` -> `x...2`
@@ -28,11 +127,73 @@
         x...1 x...2
       1     1     1
 
+# can repair names in `vec_cbind()` (#227)
+
+    Code
+      (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "none"),
+      "can't be `\"none\"`"))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `.name_repair` can't be `"none"`.
+      It must be one of `"unique"`, `"universal"`, `"check_unique"`, or `"minimal"`.
+    Code
+      (expect_error(vec_cbind(a = 1, a = 2, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
+      )
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `vec_cbind()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+
+# can supply `.names_to` to `vec_rbind()` (#229)
+
+    Code
+      (expect_error(vec_rbind(.names_to = letters)))
+    Output
+      <error/rlang_error>
+      Error in `vec_rbind()`:
+      ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
+    Code
+      (expect_error(vec_rbind(.names_to = 10)))
+    Output
+      <error/rlang_error>
+      Error in `vec_rbind()`:
+      ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
+    Code
+      (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
+    Output
+      <error/rlang_error>
+      Error in `foo()`:
+      ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
+
+# vec_cbind() fails with arrays of dimensionality > 3
+
+    Code
+      (expect_error(vec_cbind(a)))
+    Output
+      <error/rlang_error>
+      Error in `vec_cbind()`:
+      ! Can't bind arrays.
+    Code
+      (expect_error(vec_cbind(a, .call = call("foo"))))
+    Output
+      <error/rlang_error>
+      Error in `foo()`:
+      ! Can't bind arrays.
+    Code
+      (expect_error(vec_cbind(x = a)))
+    Output
+      <error/rlang_error>
+      Error in `vec_cbind()`:
+      ! Can't bind arrays.
+
 # vec_rbind() name repair messages are useful
 
     Code
       vec_rbind(1, 2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -43,7 +204,7 @@
       2    2
     Code
       vec_rbind(1, 2, .names_to = NULL)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -54,7 +215,7 @@
       2    2
     Code
       vec_rbind(1, 2, ...10 = 3)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -68,7 +229,7 @@
       3    3
     Code
       vec_rbind(1, 2, ...10 = 3, .names_to = NULL)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -82,7 +243,7 @@
       ...3    3
     Code
       vec_rbind(a = 1, b = 2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -93,7 +254,7 @@
       2    2
     Code
       vec_rbind(a = 1, b = 2, .names_to = NULL)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       New names:
@@ -146,7 +307,7 @@
 
     Code
       vec_cbind(1, 2)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -155,7 +316,7 @@
       1    1    2
     Code
       vec_cbind(1, 2, ...10 = 3)
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
@@ -170,13 +331,34 @@
       1 1 2
     Code
       vec_cbind(c(a = 1), c(b = 2))
-    Message <rlib_message_name_repair>
+    Message
       New names:
       * `` -> `...1`
       * `` -> `...2`
     Output
         ...1 ...2
       1    1    2
+
+# rbind repairs names of data frames (#704)
+
+    Code
+      (expect_error(vec_rbind(df, df, .name_repair = "check_unique"), class = "vctrs_error_names_must_be_unique")
+      )
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `vec_rbind()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "x" at locations 1 and 2.
+    Code
+      (expect_error(vec_rbind(df, df, .name_repair = "check_unique", .call = call(
+        "foo")), class = "vctrs_error_names_must_be_unique"))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `foo()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "x" at locations 1 and 2.
 
 # vec_rbind() fails with complex foreign S3 classes
 
@@ -187,7 +369,8 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      Error:
+      ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -201,7 +384,24 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error in `stop_vctrs()`: Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+      Error:
+      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
+
+# can't zap names when `.names_to` is supplied
+
+    Code
+      (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())))
+    Output
+      <error/rlang_error>
+      Error in `vec_rbind()`:
+      ! Can't zap outer names when `.names_to` is supplied.
+    Code
+      (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(),
+      .call = call("foo"))))
+    Output
+      <error/rlang_error>
+      Error in `foo()`:
+      ! Can't zap outer names when `.names_to` is supplied.
 
 # row-binding performs expected allocations
 
@@ -211,11 +411,11 @@
       # Integers as rows
       suppressMessages(with_memory_prof(vec_rbind_list(ints)))
     Output
-      [1] 2.53KB
+      [1] 2.79KB
     Code
       suppressMessages(with_memory_prof(vec_rbind_list(named_ints)))
     Output
-      [1] 3.41KB
+      [1] 3.66KB
     Code
       # Data frame with named columns
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
@@ -223,7 +423,7 @@
       dfs <- rep(list(df), 100)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 10.2KB
+      [1] 10.4KB
     Code
       # Data frame with rownames (non-repaired, non-recursive case)
       df <- data_frame(x = 1:2)
@@ -231,13 +431,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 7.42KB
+      [1] 7.68KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 13.6KB
+      [1] 13.8KB
     Code
       # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
@@ -251,5 +451,5 @@
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 921KB
+      [1] 922KB
 

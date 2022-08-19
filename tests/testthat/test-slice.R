@@ -183,8 +183,7 @@ test_that("0 is ignored in positive indices", {
 
 test_that("can slice with double indices", {
   expect_identical(vec_slice(1:3, dbl(2, 3)), 2:3)
-  err <- expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type")
-  expect_s3_class(err$parent, "vctrs_error_cast_lossy")
+  expect_snapshot((expect_error(vec_as_location(2^31, 3L), class = "vctrs_error_subscript_type")))
 })
 
 test_that("can slice with symbols", {
@@ -507,11 +506,15 @@ test_that("vec_init() works with Altrep classes", {
 })
 
 test_that("vec_init() validates `n`", {
-  expect_error(vec_init(1L, 1.5), class = "vctrs_error_cast_lossy")
-  expect_error(vec_init(1L, c(1, 2)), "`n` must have size 1, not size 2.")
-  expect_error(vec_init(1L, -1L), "positive integer")
-  expect_error(vec_init(1L, NA_integer_), "positive integer")
+  expect_snapshot({
+    (expect_error(vec_init(1L, 1.5)))
+    (expect_error(vec_init(1L, c(1, 2))))
+    (expect_error(vec_init(1L, -1L)))
+    (expect_error(vec_init(1L, NA)))
+    (expect_error(vec_init(1L, NA_integer_)))
+  })
 })
+
 
 # vec_slice + compact_rep -------------------------------------------------
 
@@ -697,14 +700,18 @@ test_that("vec_slice() restores unrestored but named foreign classes", {
   expect_identical(fallback_class(out), "vctrs_foobar")
 })
 
-test_that("scalar type error is thrown when `vec_slice_impl()` is called directly (#1139)", {
+test_that("scalar type error is thrown when `vec_slice_unsafe()` is called directly (#1139)", {
   x <- foobar(as.list(1:3))
   expect_error(vec_slice_seq(x, 1L, 1L), class = "vctrs_error_scalar_type")
 })
 
 test_that("column sizes are checked before slicing (#552)", {
   x <- structure(list(a = 1, b = 2:3), row.names = 1:2, class = "data.frame")
-  expect_error(vctrs::vec_slice(x, 2), "must match the data frame size")
+  expect_error(
+    vctrs::vec_slice(x, 2),
+    "Column `a` (size 1) must match the data frame (size 2)",
+    fixed = TRUE
+  )
 })
 
 test_that("base_vec_rep() slices data frames with the base::rep() UI", {
