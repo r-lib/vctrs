@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `vec_rank()` that computes the sample ranks of a vector (#1600).
+
 * `num_as_location()` now throws the right error when there are out-of-bounds
   negative values and `oob = "extend"` and `negative = "ignore"` are set
   (#1614, #1630).

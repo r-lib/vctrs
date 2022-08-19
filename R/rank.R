@@ -53,7 +53,7 @@
 #' - [vec_order_radix()]
 #' - [vec_slice()]
 #'
-#' @noRd
+#' @export
 #' @examples
 #' x <- c(5L, 6L, 3L, 3L, 5L, 3L)
 #'
