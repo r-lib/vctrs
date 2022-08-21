@@ -29,3 +29,62 @@
       $ carb: num  4 4 1 1 2 1 4 2 2 4 ...
       @ row.names: chr [1:32] "Mazda RX4" "Mazda RX4 Wag" "Datsun 710" "Hornet 4 Drive" ...
 
+# max argument (#1355)
+
+    Code
+      x <- vctrs::new_vctr(letters)
+      print(x, max = 5)
+    Output
+      <vctrs_vctr[26]>
+      [1] a b c d e
+      ... and 21 more
+      Set `max` to a larger value to show all items.
+    Code
+      print(x, max = 30)
+    Output
+      <vctrs_vctr[26]>
+       [1] a b c d e f g h i j k l m n o p q r s t u v w x y z
+
+# small max.print option (#1355)
+
+    Code
+      x <- vctrs::new_vctr(letters)
+      print(x)
+    Output
+      <vctrs_vctr[26]>
+      [1] a b c d e
+      ... and 21 more
+      Set `options(max.print = )` to a larger value to show all items.
+
+# large max.print option (#1355)
+
+    Code
+      x <- vctrs::new_vctr(letters)
+      print(x)
+    Output
+      <vctrs_vctr[26]>
+       [1] a b c d e f g h i j k l m n o p q r s t u v w x y z
+
+# both max argument and max.print option (#1355)
+
+    Code
+      x <- vctrs::new_vctr(letters)
+      print(x, max = 5)
+    Output
+      <vctrs_vctr[26]>
+      [1] a b c d e
+      ... and 21 more
+      Set `max` to a larger value to show all items.
+    Code
+      print(x, max = 20)
+    Output
+      <vctrs_vctr[26]>
+       [1] a b c d e f g h i j k l m n o p q r s t
+      ... and 6 more
+      Set `options(max.print = )` to a larger value to show all items.
+    Code
+      print(x, max = 30)
+    Output
+      <vctrs_vctr[26]>
+       [1] a b c d e f g h i j k l m n o p q r s t u v w x y z
+

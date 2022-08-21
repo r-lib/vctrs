@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* `obj_print()`, `obj_print_header()`, `obj_print_data()` and
+  `obj_print_footer()` gain `max` argument that controls the maximum number
+  of items to print. By default, `getOption("max.print")` is consulted
+  (#1355, @krlmlr).
+
 * `"select"` and `"relocate"` have been added as valid subscript actions to
   support tidyselect and dplyr (#1596).
 
