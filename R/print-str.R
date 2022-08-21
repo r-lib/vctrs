@@ -37,9 +37,9 @@ obj_print <- function(x, ..., max = NULL) {
     }
   }
 
-  obj_print_header_dispatch(x, ...)
-  obj_print_data_dispatch(x_max, ...)
-  obj_print_footer_dispatch(x, ...)
+  obj_print_header(x, ...)
+  obj_print_data(x_max, ...)
+  obj_print_footer(x, ...)
 
   if (delta > 0) {
     max_print <- attr(max, "max_print")
