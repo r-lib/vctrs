@@ -102,11 +102,8 @@ vec_proxy.vctrs_list_of <- function(x, ...) {
 # Formatting --------------------------------------------------------------
 
 #' @export
-obj_print_data.vctrs_list_of <- function(x, ..., max) {
+obj_print_data.vctrs_list_of <- function(x, ...) {
   out <- vec_data(x)
-  if (max < length(out)) {
-    out <- out[seq_len(max)]
-  }
 
   # Zero-length lists handled by header and footer
   if (length(out) > 0) {

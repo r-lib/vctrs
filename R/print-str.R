@@ -23,82 +23,24 @@
 #' @keywords internal
 #' @export
 obj_print <- function(x, ..., max = NULL) {
-  max <- local_max_print(max)
-  obj_print_header_dispatch(x, ..., max = max)
-  obj_print_data_dispatch(x, ..., max = max)
-  obj_print_footer_dispatch(x, ..., max = max)
-  invisible(x)
-}
-
-#' @export
-#' @rdname obj_print
-obj_print_header <- function(x, ..., max = NULL) {
-  max <- local_max_print(max)
-  return(obj_print_header_dispatch(x, ..., max = max))
-  UseMethod("obj_print_header")
-}
-obj_print_header_dispatch <- function(x, ..., max) {
-  UseMethod("obj_print_header")
-}
-
-#' @export
-obj_print_header.default <- function(x, ...) {
-  cat_line("<", vec_ptype_full(x), "[", vec_size(x), "]>")
-  invisible(x)
-}
-
-#' @export
-#' @rdname obj_print
-obj_print_data <- function(x, ..., max = NULL) {
-  max <- local_max_print(max)
-  return(obj_print_data_dispatch(x, ..., max = max))
-  UseMethod("obj_print_data")
-}
-obj_print_data_dispatch <- function(x, ..., max) {
-  UseMethod("obj_print_data")
-}
-
-#' @export
-obj_print_data.default <- function(x, ..., max) {
   if (!vec_is(x)) {
-    print(x, quote = FALSE)
-    return(invisible(x))
-  }
-
-  if (vec_size(x) > max) {
-    x_max <- vec_slice(x, seq_len(max))
-  } else {
+    delta <- 0
     x_max <- x
+  } else {
+    max <- local_max_print(max)
+    delta <- vec_size(x) - max
+
+    if (vec_size(x) > max) {
+      x_max <- vec_slice(x, seq_len(max))
+    } else {
+      x_max <- x
+    }
   }
 
-  if (vec_size(x_max) == 0) {
-    return(invisible(x))
-  }
+  obj_print_header_dispatch(x, ...)
+  obj_print_data_dispatch(x_max, ...)
+  obj_print_footer_dispatch(x, ...)
 
-  out <- stats::setNames(format(x_max), names(x_max))
-  print(out, quote = FALSE)
-
-  invisible(x)
-}
-
-#' @export
-#' @rdname obj_print
-obj_print_footer <- function(x, ..., max = NULL) {
-  max <- local_max_print(max)
-  return(obj_print_footer_dispatch(x, ..., max = max))
-  UseMethod("obj_print_footer")
-}
-obj_print_footer_dispatch <- function(x, ..., max) {
-  UseMethod("obj_print_footer")
-}
-
-#' @export
-obj_print_footer.default <- function(x, ..., max) {
-  if (!vec_is(x)) {
-    return(invisible(x))
-  }
-
-  delta <- vec_size(x) - max
   if (delta > 0) {
     max_print <- attr(max, "max_print")
     if (is.null(max_print)) {
@@ -112,6 +54,65 @@ obj_print_footer.default <- function(x, ..., max) {
       cat_line("Set `options(max.print = )` to a larger value to show all items.")
     }
   }
+
+  invisible(x)
+}
+
+#' @export
+#' @rdname obj_print
+obj_print_header <- function(x, ...) {
+  return(obj_print_header_dispatch(x, ...))
+  UseMethod("obj_print_header")
+}
+obj_print_header_dispatch <- function(x, ...) {
+  UseMethod("obj_print_header")
+}
+
+#' @export
+obj_print_header.default <- function(x, ...) {
+  cat_line("<", vec_ptype_full(x), "[", vec_size(x), "]>")
+  invisible(x)
+}
+
+#' @export
+#' @rdname obj_print
+obj_print_data <- function(x, ...) {
+  return(obj_print_data_dispatch(x, ...))
+  UseMethod("obj_print_data")
+}
+obj_print_data_dispatch <- function(x, ...) {
+  UseMethod("obj_print_data")
+}
+
+#' @export
+obj_print_data.default <- function(x, ...) {
+  if (!vec_is(x)) {
+    print(x, quote = FALSE)
+    return(invisible(x))
+  }
+
+  if (vec_size(x) == 0) {
+    return(invisible(x))
+  }
+
+  out <- stats::setNames(format(x), names(x))
+  print(out, quote = FALSE)
+
+  invisible(x)
+}
+
+#' @export
+#' @rdname obj_print
+obj_print_footer <- function(x, ...) {
+  return(obj_print_footer_dispatch(x, ...))
+  UseMethod("obj_print_footer")
+}
+obj_print_footer_dispatch <- function(x, ...) {
+  UseMethod("obj_print_footer")
+}
+
+#' @export
+obj_print_footer.default <- function(x, ...) {
   invisible(x)
 }
 
