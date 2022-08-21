@@ -13,11 +13,11 @@
 \usage{
 obj_print(x, ..., max = NULL)
 
-obj_print_header(x, ..., max = NULL)
+obj_print_header(x, ...)
 
-obj_print_data(x, ..., max = NULL)
+obj_print_data(x, ...)
 
-obj_print_footer(x, ..., max = NULL)
+obj_print_footer(x, ...)
 
 obj_str(x, ...)
 
