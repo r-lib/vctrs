@@ -103,14 +103,10 @@ vec_proxy.vctrs_list_of <- function(x, ...) {
 
 #' @export
 obj_print_data.vctrs_list_of <- function(x, ...) {
-  out <- vec_data(x)
+  if (length(x) == 0)
+    return()
 
-  # Zero-length lists handled by header and footer
-  if (length(out) > 0) {
-    print(out)
-  }
-
-  invisible(x)
+  print(vec_data(x))
 }
 
 #' @export
