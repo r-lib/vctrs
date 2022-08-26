@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_locate_matches()` has gained a `call` argument (#1611).
+
 * `"select"` and `"relocate"` have been added as valid subscript actions to
   support tidyselect and dplyr (#1596).
 
