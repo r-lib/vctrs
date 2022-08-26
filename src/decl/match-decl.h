@@ -21,7 +21,8 @@ r_obj* vec_locate_matches(r_obj* needles,
                           bool nan_distinct,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
-                          struct vctrs_arg* haystack_arg);
+                          struct vctrs_arg* haystack_arg,
+                          struct r_lazy call);
 
 static
 r_obj* df_locate_matches(r_obj* needles,

@@ -34,6 +34,7 @@
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
 #' @inheritParams order-radix
 #'
 #' @param needles,haystack Vectors used for matching.
@@ -241,8 +242,10 @@ vec_locate_matches <- function(needles,
                                nan_distinct = FALSE,
                                chr_proxy_collate = NULL,
                                needles_arg = "",
-                               haystack_arg = "") {
+                               haystack_arg = "",
+                               call = current_env()) {
   check_dots_empty0(...)
+  frame <- environment()
 
   .Call(
     ffi_locate_matches,
@@ -257,7 +260,8 @@ vec_locate_matches <- function(needles,
     nan_distinct,
     chr_proxy_collate,
     needles_arg,
-    haystack_arg
+    haystack_arg,
+    frame
   )
 }
 
