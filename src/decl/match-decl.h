@@ -141,7 +141,8 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete,
                                          struct r_lazy call);
 
 static inline
-enum vctrs_multiple parse_multiple(r_obj* multiple);
+enum vctrs_multiple parse_multiple(r_obj* multiple,
+                                   struct r_lazy call);
 
 static inline
 void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters);

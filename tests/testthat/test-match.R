@@ -1029,9 +1029,13 @@ test_that("`multiple = 'error'` doesn't error errneously on the last observation
 })
 
 test_that("`multiple` is validated", {
-  expect_error(vec_locate_matches(1, 2, multiple = 1.5), "`multiple` must be a string")
-  expect_error(vec_locate_matches(1, 2, multiple = c("first", "last")), "`multiple` must be a string")
-  expect_error(vec_locate_matches(1, 2, multiple = "x"), '`multiple` must be one of "all", "any", "first", "last", "warning", or "error"')
+  expect_snapshot({
+    (expect_error(vec_locate_matches(1, 2, multiple = 1.5)))
+    (expect_error(vec_locate_matches(1, 2, multiple = c("first", "last"))))
+    (expect_error(vec_locate_matches(1, 2, multiple = "x")))
+    # Uses internal error
+    (expect_error(vec_locate_matches(1, 2, multiple = "x", call = call("fn"))))
+  })
 })
 
 # ------------------------------------------------------------------------------
