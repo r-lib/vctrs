@@ -45,6 +45,7 @@ r_obj* vec_ptype2_params(r_obj* x,
                          r_obj* y,
                          struct vctrs_arg* p_x_arg,
                          struct vctrs_arg* p_y_arg,
+                         struct r_lazy call,
                          enum df_fallback df_fallback,
                          int* left) {
   const struct ptype2_opts opts = {
@@ -52,6 +53,7 @@ r_obj* vec_ptype2_params(r_obj* x,
     .y = y,
     .p_x_arg = p_x_arg,
     .p_y_arg = p_y_arg,
+    .call = call,
     .fallback = {
       .df = df_fallback
     }

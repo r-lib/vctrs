@@ -1,3 +1,35 @@
+# must have at least 1 column to match
+
+    Code
+      vec_locate_matches(data_frame(), data_frame())
+    Condition
+      Error in `vec_locate_matches()`:
+      ! Must have at least 1 column to match on.
+
+---
+
+    Code
+      vec_locate_matches(data_frame(), data_frame(), call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Must have at least 1 column to match on.
+
+# common type of `needles` and `haystack` is taken
+
+    Code
+      vec_locate_matches(x, y)
+    Condition
+      Error in `vec_locate_matches()`:
+      ! Can't combine <double> and <character>.
+
+---
+
+    Code
+      vec_locate_matches(x, y, needles_arg = "x", call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Can't combine `x` <double> and <character>.
+
 # `incomplete` can error informatively
 
     Code

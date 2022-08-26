@@ -390,6 +390,15 @@ test_that("df-cols aren't flattened, so `condition` is applied jointly on the df
   expect_identical(res$haystack, 1L)
 })
 
+test_that("must have at least 1 column to match", {
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(data_frame(), data_frame())
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(data_frame(), data_frame(), call = call("foo"))
+  })
+})
+
 # ------------------------------------------------------------------------------
 # vec_locate_matches() - rcrd
 
@@ -522,6 +531,21 @@ test_that("AsIs types are combined before order proxies are taken (#1557)", {
   res <- vec_locate_matches(x, y)
   expect_identical(res$needles, c(1L, 1L, 2L))
   expect_identical(res$haystack, c(2L, 3L, NA))
+})
+
+# ------------------------------------------------------------------------------
+# vec_locate_matches() - ptype2 / casting
+
+test_that("common type of `needles` and `haystack` is taken", {
+  x <- 1
+  y <- "a"
+
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(x, y)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(x, y, needles_arg = "x", call = call("foo"))
+  })
 })
 
 # ------------------------------------------------------------------------------

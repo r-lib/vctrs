@@ -135,6 +135,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     haystack,
     needles_arg,
     haystack_arg,
+    call,
     DF_FALLBACK_quiet,
     &_
   ), &n_prot);
@@ -144,6 +145,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     ptype,
     needles_arg,
     vec_args.empty,
+    call,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -153,6 +155,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     ptype,
     haystack_arg,
     vec_args.empty,
+    call,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -191,7 +194,7 @@ r_obj* vec_locate_matches(r_obj* needles,
 
   if (n_cols == 0) {
     // If there are no columns, this operation isn't well defined.
-    r_abort("Must have at least 1 column to match on.");
+    r_abort_lazy_call(call, "Must have at least 1 column to match on.");
   }
 
   // Compute the locations of incomplete values per column since computing
