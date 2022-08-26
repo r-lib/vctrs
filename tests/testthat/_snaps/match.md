@@ -36,7 +36,7 @@
       (expect_error(vec_locate_matches(NA, 1, incomplete = "error")))
     Output
       <error/vctrs_error_matches_incomplete>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! No element can contain missing values.
       x The element at location 1 contains missing values.
     Code
@@ -44,7 +44,15 @@
       )
     Output
       <error/vctrs_error_matches_incomplete>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
+      ! No element of `foo` can contain missing values.
+      x The element at location 1 contains missing values.
+    Code
+      (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo",
+        call = call("fn"))))
+    Output
+      <error/vctrs_error_matches_incomplete>
+      Error in `fn()`:
       ! No element of `foo` can contain missing values.
       x The element at location 1 contains missing values.
 

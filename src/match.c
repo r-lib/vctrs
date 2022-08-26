@@ -1632,7 +1632,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_INCOMPLETE_ACTION_error: {
-        stop_matches_incomplete(loc_needles, needles_arg);
+        stop_matches_incomplete(loc_needles, needles_arg, call);
       }
       case VCTRS_INCOMPLETE_ACTION_compare:
       case VCTRS_INCOMPLETE_ACTION_match: {
@@ -2421,20 +2421,24 @@ void stop_matches_remaining(r_ssize i,
 }
 
 static inline
-void stop_matches_incomplete(r_ssize i, struct vctrs_arg* needles_arg) {
-  r_obj* syms[3] = {
+void stop_matches_incomplete(r_ssize i,
+                             struct vctrs_arg* needles_arg,
+                             struct r_lazy call) {
+  r_obj* syms[4] = {
     syms_i,
     syms_needles_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[3] = {
+  r_obj* args[4] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_incomplete, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_incomplete, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_incomplete");
 }

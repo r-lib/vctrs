@@ -218,7 +218,9 @@ void stop_matches_remaining(r_ssize i,
                             struct r_lazy call);
 
 static inline
-void stop_matches_incomplete(r_ssize i, struct vctrs_arg* needles_arg);
+void stop_matches_incomplete(r_ssize i,
+                             struct vctrs_arg* needles_arg,
+                             struct r_lazy call);
 
 static inline
 void stop_matches_multiple(r_ssize i,

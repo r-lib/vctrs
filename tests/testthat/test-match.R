@@ -817,6 +817,7 @@ test_that("`incomplete` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(NA, 1, incomplete = "error")))
     (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo", call = call("fn"))))
   })
 })
 

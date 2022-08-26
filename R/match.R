@@ -374,11 +374,12 @@ cnd_body.vctrs_error_matches_remaining <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_incomplete <- function(i, needles_arg) {
+stop_matches_incomplete <- function(i, needles_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_incomplete",
     i = i,
-    needles_arg = needles_arg
+    needles_arg = needles_arg,
+    call = call
   )
 }
 
