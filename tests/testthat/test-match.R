@@ -1210,6 +1210,8 @@ test_that("`remaining` is validated", {
     (expect_error(vec_locate_matches(1, 2, remaining = 1.5)))
     (expect_error(vec_locate_matches(1, 2, remaining = c(1L, 2L))))
     (expect_error(vec_locate_matches(1, 2, remaining = "x")))
+    # Uses internal call
+    (expect_error(vec_locate_matches(1, 2, remaining = "x", call = call("fn"))))
   })
 })
 

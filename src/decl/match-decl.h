@@ -133,7 +133,8 @@ struct vctrs_no_match parse_no_match(r_obj* no_match,
                                      struct r_lazy call);
 
 static inline
-struct vctrs_remaining parse_remaining(r_obj* remaining);
+struct vctrs_remaining parse_remaining(r_obj* remaining,
+                                       struct r_lazy call);
 
 static inline
 struct vctrs_incomplete parse_incomplete(r_obj* incomplete,

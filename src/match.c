@@ -90,7 +90,7 @@ r_obj* ffi_locate_matches(r_obj* needles,
 
   const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete, internal_call);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match, internal_call);
-  const struct vctrs_remaining c_remaining = parse_remaining(remaining);
+  const struct vctrs_remaining c_remaining = parse_remaining(remaining, internal_call);
   const enum vctrs_multiple c_multiple = parse_multiple(multiple);
   const bool c_nan_distinct = r_arg_as_bool(nan_distinct, "nan_distinct");
 
@@ -1474,9 +1474,14 @@ struct vctrs_no_match parse_no_match(r_obj* no_match,
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_remaining parse_remaining(r_obj* remaining) {
+struct vctrs_remaining parse_remaining(r_obj* remaining,
+                                       struct r_lazy call) {
   if (r_length(remaining) != 1) {
-    r_abort("`remaining` must be length 1, not length %i.", r_length(remaining));
+    r_abort_lazy_call(
+      call,
+      "`remaining` must be length 1, not length %i.",
+      r_length(remaining)
+    );
   }
 
   if (r_is_string(remaining)) {
@@ -1496,10 +1501,19 @@ struct vctrs_remaining parse_remaining(r_obj* remaining) {
       };
     }
 
-    r_abort("`remaining` must be either \"drop\" or \"error\".");
+    r_abort_lazy_call(
+      call,
+      "`remaining` must be either \"drop\" or \"error\"."
+    );
   }
 
-  remaining = vec_cast(remaining, vctrs_shared_empty_int, args_remaining, vec_args.empty, r_lazy_null);
+  remaining = vec_cast(
+    remaining,
+    vctrs_shared_empty_int,
+    args_remaining,
+    vec_args.empty,
+    call
+  );
   int c_remaining = r_int_get(remaining, 0);
 
   return (struct vctrs_remaining) {

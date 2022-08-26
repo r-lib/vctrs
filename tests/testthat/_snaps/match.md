@@ -265,7 +265,7 @@
       (expect_error(vec_locate_matches(1, 2, remaining = 1.5)))
     Output
       <error/vctrs_error_cast_lossy>
-      Error:
+      Error in `vec_locate_matches()`:
       ! Can't convert from `remaining` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -280,6 +280,12 @@
       <error/rlang_error>
       Error in `vec_locate_matches()`:
       ! `remaining` must be either "drop" or "error".
+    Code
+      (expect_error(vec_locate_matches(1, 2, remaining = "x", call = call("fn"))))
+    Output
+      <error/rlang_error>
+      Error in `vec_locate_matches()`:
+      ! `remaining` must be either "drop" or "error".
 
 # potential overflow on large output size is caught informatively
 
@@ -289,6 +295,6 @@
       <error/rlang_error>
       Error in `vec_locate_matches()`:
       ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000.
-      i In file 'match.c' at line 2397.
+      i In file 'match.c' at line 2411.
       i This is an internal error in the vctrs package, please report it to the package authors.
 
