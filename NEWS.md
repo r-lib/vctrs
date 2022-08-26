@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `data_frame()` and `df_list()` have gained `.call` arguments (#1610).
+
 * `vec_locate_matches()` has gained a `call` argument (#1611).
 
 * `"select"` and `"relocate"` have been added as valid subscript actions to
