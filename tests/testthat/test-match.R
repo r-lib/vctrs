@@ -1110,6 +1110,8 @@ test_that("`no_match` is validated", {
     (expect_error(vec_locate_matches(1, 2, no_match = 1.5)))
     (expect_error(vec_locate_matches(1, 2, no_match = c(1L, 2L))))
     (expect_error(vec_locate_matches(1, 2, no_match = "x")))
+    # Uses internal call
+    (expect_error(vec_locate_matches(1, 2, no_match = "x", call = call("fn"))))
   })
 })
 
