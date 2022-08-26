@@ -338,12 +338,13 @@ cnd_body.vctrs_error_matches_nothing <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_remaining <- function(i, needles_arg, haystack_arg) {
+stop_matches_remaining <- function(i, needles_arg, haystack_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_remaining",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }
 

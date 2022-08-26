@@ -195,7 +195,7 @@
       (expect_error(vec_locate_matches(1, 2, remaining = "error")))
     Output
       <error/vctrs_error_matches_remaining>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each haystack value must be matched.
       x The value at location 1 was not matched.
     Code
@@ -203,7 +203,15 @@
       )
     Output
       <error/vctrs_error_matches_remaining>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
+      ! Each haystack value must be matched by `foo`.
+      x The value at location 1 was not matched.
+    Code
+      (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo",
+        call = call("fn"))))
+    Output
+      <error/vctrs_error_matches_remaining>
+      Error in `fn()`:
       ! Each haystack value must be matched by `foo`.
       x The value at location 1 was not matched.
     Code
@@ -211,7 +219,7 @@
         haystack_arg = "bar")))
     Output
       <error/vctrs_error_matches_remaining>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each haystack value of `bar` must be matched by `foo`.
       x The value at location 1 was not matched.
 
