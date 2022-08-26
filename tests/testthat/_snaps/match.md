@@ -62,7 +62,7 @@
       (expect_error(vec_locate_matches(1, 2, incomplete = 1.5)))
     Output
       <error/vctrs_error_cast_lossy>
-      Error:
+      Error in `vec_locate_matches()`:
       ! Can't convert from `incomplete` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
@@ -73,6 +73,12 @@
       ! `incomplete` must be length 1, not length 2.
     Code
       (expect_error(vec_locate_matches(1, 2, incomplete = "x")))
+    Output
+      <error/rlang_error>
+      Error in `vec_locate_matches()`:
+      ! `incomplete` must be one of: "compare", "match", "drop", or "error".
+    Code
+      (expect_error(vec_locate_matches(1, 2, incomplete = "x", call = call("fn"))))
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
@@ -277,6 +283,6 @@
       <error/rlang_error>
       Error in `vec_locate_matches()`:
       ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000.
-      i In file 'match.c' at line 2368.
+      i In file 'match.c' at line 2383.
       i This is an internal error in the vctrs package, please report it to the package authors.
 

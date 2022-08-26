@@ -135,7 +135,8 @@ static inline
 struct vctrs_remaining parse_remaining(r_obj* remaining);
 
 static inline
-struct vctrs_incomplete parse_incomplete(r_obj* incomplete);
+struct vctrs_incomplete parse_incomplete(r_obj* incomplete,
+                                         struct r_lazy call);
 
 static inline
 enum vctrs_multiple parse_multiple(r_obj* multiple);

@@ -86,8 +86,9 @@ r_obj* ffi_locate_matches(r_obj* needles,
                           r_obj* haystack_arg,
                           r_obj* frame) {
   struct r_lazy call = { .x = syms_call, .env = frame };
+  struct r_lazy internal_call = { .x = frame, .env = r_null };
 
-  const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete);
+  const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete, internal_call);
   const struct vctrs_no_match c_no_match = parse_no_match(no_match);
   const struct vctrs_remaining c_remaining = parse_remaining(remaining);
   const enum vctrs_multiple c_multiple = parse_multiple(multiple);
@@ -1291,9 +1292,14 @@ void parse_condition(r_obj* condition, r_ssize n_cols, enum vctrs_ops* v_ops) {
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
+struct vctrs_incomplete parse_incomplete(r_obj* incomplete,
+                                         struct r_lazy call) {
   if (r_length(incomplete) != 1) {
-    r_abort("`incomplete` must be length 1, not length %i.", r_length(incomplete));
+    r_abort_lazy_call(
+      call,
+      "`incomplete` must be length 1, not length %i.",
+      r_length(incomplete)
+    );
   }
 
   if (r_is_string(incomplete)) {
@@ -1327,10 +1333,19 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
       };
     }
 
-    r_abort("`incomplete` must be one of: \"compare\", \"match\", \"drop\", or \"error\".");
+    r_abort_lazy_call(
+      call,
+      "`incomplete` must be one of: \"compare\", \"match\", \"drop\", or \"error\"."
+    );
   }
 
-  incomplete = vec_cast(incomplete, vctrs_shared_empty_int, args_incomplete, vec_args.empty, r_lazy_null);
+  incomplete = vec_cast(
+    incomplete,
+    vctrs_shared_empty_int,
+    args_incomplete,
+    vec_args.empty,
+    call
+  );
   int c_incomplete = r_int_get(incomplete, 0);
 
   return (struct vctrs_incomplete) {

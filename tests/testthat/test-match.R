@@ -830,6 +830,8 @@ test_that("`incomplete` is validated", {
     (expect_error(vec_locate_matches(1, 2, incomplete = 1.5)))
     (expect_error(vec_locate_matches(1, 2, incomplete = c("match", "drop"))))
     (expect_error(vec_locate_matches(1, 2, incomplete = "x")))
+    # Uses internal call
+    (expect_error(vec_locate_matches(1, 2, incomplete = "x", call = call("fn"))))
   })
 })
 
