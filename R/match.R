@@ -403,12 +403,13 @@ cnd_body.vctrs_error_matches_incomplete <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_multiple <- function(i, needles_arg, haystack_arg) {
+stop_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_multiple",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }
 

@@ -84,7 +84,7 @@
       (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error")))
     Output
       <error/vctrs_error_matches_multiple>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each element can match at most 1 observation.
       x The element at location 1 has multiple matches.
     Code
@@ -92,7 +92,15 @@
       needles_arg = "foo")))
     Output
       <error/vctrs_error_matches_multiple>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
+      ! Each element of `foo` can match at most 1 observation.
+      x The element at location 1 has multiple matches.
+    Code
+      (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error",
+      needles_arg = "foo", call = call("fn"))))
+    Output
+      <error/vctrs_error_matches_multiple>
+      Error in `fn()`:
       ! Each element of `foo` can match at most 1 observation.
       x The element at location 1 has multiple matches.
     Code
@@ -100,7 +108,7 @@
       needles_arg = "foo", haystack_arg = "bar")))
     Output
       <error/vctrs_error_matches_multiple>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each element of `foo` can match at most 1 observation from `bar`.
       x The element at location 1 has multiple matches.
 

@@ -225,7 +225,8 @@ void stop_matches_incomplete(r_ssize i,
 static inline
 void stop_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
-                           struct vctrs_arg* haystack_arg);
+                           struct vctrs_arg* haystack_arg,
+                           struct r_lazy call);
 
 static inline
 void warn_matches_multiple(r_ssize i,

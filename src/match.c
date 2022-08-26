@@ -1714,7 +1714,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       if (any_multiple) {
         if (multiple == VCTRS_MULTIPLE_error) {
-          stop_matches_multiple(loc_needles, needles_arg, haystack_arg);
+          stop_matches_multiple(loc_needles, needles_arg, haystack_arg, call);
         } else if (multiple == VCTRS_MULTIPLE_warning) {
           warn_matches_multiple(loc_needles, needles_arg, haystack_arg);
         }
@@ -2446,22 +2446,25 @@ void stop_matches_incomplete(r_ssize i,
 static inline
 void stop_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
-                           struct vctrs_arg* haystack_arg) {
-  r_obj* syms[4] = {
+                           struct vctrs_arg* haystack_arg,
+                           struct r_lazy call) {
+  r_obj* syms[5] = {
     syms_i,
     syms_needles_arg,
     syms_haystack_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
     KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_multiple, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_multiple, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_multiple");
 }

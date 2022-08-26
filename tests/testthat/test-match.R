@@ -907,6 +907,7 @@ test_that("`multiple` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error")))
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", call = call("fn"))))
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar")))
   })
 })
