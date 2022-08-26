@@ -118,7 +118,7 @@
       (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning")))
     Output
       <warning/vctrs_warning_matches_multiple>
-      Warning in `warn_matches()`:
+      Warning in `vec_locate_matches()`:
       Each element can match at most 1 observation.
       x The element at location 1 has multiple matches.
     Code
@@ -126,7 +126,15 @@
       needles_arg = "foo")))
     Output
       <warning/vctrs_warning_matches_multiple>
-      Warning in `warn_matches()`:
+      Warning in `vec_locate_matches()`:
+      Each element of `foo` can match at most 1 observation.
+      x The element at location 1 has multiple matches.
+    Code
+      (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning",
+      needles_arg = "foo", call = call("fn"))))
+    Output
+      <warning/vctrs_warning_matches_multiple>
+      Warning in `fn()`:
       Each element of `foo` can match at most 1 observation.
       x The element at location 1 has multiple matches.
     Code
@@ -134,7 +142,7 @@
       needles_arg = "foo", haystack_arg = "bar")))
     Output
       <warning/vctrs_warning_matches_multiple>
-      Warning in `warn_matches()`:
+      Warning in `vec_locate_matches()`:
       Each element of `foo` can match at most 1 observation from `bar`.
       x The element at location 1 has multiple matches.
 

@@ -445,7 +445,7 @@ cnd_matches_multiple_body <- function(i) {
 
 # ------------------------------------------------------------------------------
 
-warn_matches_multiple <- function(i, needles_arg, haystack_arg) {
+warn_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
   message <- paste(
     cnd_matches_multiple_header(needles_arg, haystack_arg),
     cnd_matches_multiple_body(i),
@@ -457,6 +457,7 @@ warn_matches_multiple <- function(i, needles_arg, haystack_arg) {
     class = "vctrs_warning_matches_multiple",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }

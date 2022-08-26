@@ -916,6 +916,7 @@ test_that("`multiple` can warn informatively", {
   expect_snapshot({
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning")))
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo")))
+    (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", call = call("fn"))))
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar")))
   })
 })
