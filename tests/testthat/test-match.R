@@ -1071,6 +1071,7 @@ test_that("`no_match` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1, 2, no_match = "error")))
     (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo", call = call("fn"))))
     (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar")))
   })
 })

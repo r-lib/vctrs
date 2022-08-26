@@ -234,7 +234,8 @@ r_obj* vec_locate_matches(r_obj* needles,
     v_filters,
     v_ops,
     needles_arg,
-    haystack_arg
+    haystack_arg,
+    call
   );
 
   FREE(n_prot);
@@ -258,7 +259,8 @@ r_obj* df_locate_matches(r_obj* needles,
                          const enum vctrs_filter* v_filters,
                          const enum vctrs_ops* v_ops,
                          struct vctrs_arg* needles_arg,
-                         struct vctrs_arg* haystack_arg) {
+                         struct vctrs_arg* haystack_arg,
+                         struct r_lazy call) {
   int n_prot = 0;
 
   r_obj* o_needles = KEEP_N(vec_order(
@@ -273,8 +275,7 @@ r_obj* df_locate_matches(r_obj* needles,
   r_obj* container_info = KEEP_N(compute_nesting_container_info(
     haystack,
     size_haystack,
-    v_ops,
-    haystack_arg
+    v_ops
   ), &n_prot);
 
   r_obj* o_haystack = r_list_get(container_info, 0);
@@ -457,7 +458,8 @@ r_obj* df_locate_matches(r_obj* needles,
     v_loc_filter_match_o_haystack,
     p_haystack,
     needles_arg,
-    haystack_arg
+    haystack_arg,
+    call
   ), &n_prot);
 
   FREE(n_prot);
@@ -1519,7 +1521,8 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const int* v_loc_filter_match_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
-                              struct vctrs_arg* haystack_arg) {
+                              struct vctrs_arg* haystack_arg,
+                              struct r_lazy call) {
   int n_prot = 0;
 
   const r_ssize n_used = p_loc_first_match_o_haystack->count;
@@ -1662,7 +1665,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_NO_MATCH_ACTION_error: {
-        stop_matches_nothing(loc_needles, needles_arg, haystack_arg);
+        stop_matches_nothing(loc_needles, needles_arg, haystack_arg, call);
       }
       default: {
         r_stop_internal("Unknown `no_match->action`.");
@@ -1920,15 +1923,13 @@ r_obj* ffi_compute_nesting_container_info(r_obj* haystack, r_obj* condition) {
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, n_cols, v_ops);
   const r_ssize size_haystack = vec_size(haystack);
-  struct vctrs_arg haystack_arg = new_wrapper_arg(NULL, "haystack");
-  return compute_nesting_container_info(haystack, size_haystack, v_ops, &haystack_arg);
+  return compute_nesting_container_info(haystack, size_haystack, v_ops);
 }
 
 static
 r_obj* compute_nesting_container_info(r_obj* haystack,
                                       r_ssize size_haystack,
-                                      const enum vctrs_ops* v_ops,
-                                      struct vctrs_arg* haystack_arg) {
+                                      const enum vctrs_ops* v_ops) {
   int n_prot = 0;
 
   const r_ssize n_cols = r_length(haystack);
@@ -2370,22 +2371,25 @@ void stop_matches_overflow(double size) {
 static inline
 void stop_matches_nothing(r_ssize i,
                           struct vctrs_arg* needles_arg,
-                          struct vctrs_arg* haystack_arg) {
-  r_obj* syms[4] = {
+                          struct vctrs_arg* haystack_arg,
+                          struct r_lazy call) {
+  r_obj* syms[5] = {
     syms_i,
     syms_needles_arg,
     syms_haystack_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
     KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_nothing, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_nothing, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_nothing");
 }

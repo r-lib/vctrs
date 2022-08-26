@@ -128,7 +128,7 @@
       (expect_error(vec_locate_matches(1, 2, no_match = "error")))
     Output
       <error/vctrs_error_matches_nothing>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each element must have a match.
       x The element at location 1 does not have a match.
     Code
@@ -136,7 +136,15 @@
       )
     Output
       <error/vctrs_error_matches_nothing>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
+      ! Each element of `foo` must have a match.
+      x The element at location 1 does not have a match.
+    Code
+      (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo",
+        call = call("fn"))))
+    Output
+      <error/vctrs_error_matches_nothing>
+      Error in `fn()`:
       ! Each element of `foo` must have a match.
       x The element at location 1 does not have a match.
     Code
@@ -144,7 +152,7 @@
         haystack_arg = "bar")))
     Output
       <error/vctrs_error_matches_nothing>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each element of `foo` must have a match in `bar`.
       x The element at location 1 does not have a match.
 
@@ -155,7 +163,7 @@
       )
     Output
       <error/vctrs_error_matches_nothing>
-      Error in `stop_matches()`:
+      Error in `vec_locate_matches()`:
       ! Each element must have a match.
       x The element at location 2 does not have a match.
 

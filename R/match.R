@@ -302,12 +302,13 @@ warn_matches <- function(message, class = NULL, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_nothing <- function(i, needles_arg, haystack_arg) {
+stop_matches_nothing <- function(i, needles_arg, haystack_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_nothing",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }
 
