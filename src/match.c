@@ -2360,11 +2360,9 @@ r_ssize midpoint(r_ssize lhs, r_ssize rhs) {
 
 static inline
 void stop_matches_overflow(double size) {
-  r_abort(
+  r_stop_internal(
     "Match procedure results in an allocation larger than 2^31-1 elements. "
-    "Attempted allocation size was %.0lf. "
-    "Please report this to the vctrs maintainers at "
-    "<https://github.com/r-lib/vctrs/issues>.",
+    "Attempted allocation size was %.0lf.",
     size
   );
 }

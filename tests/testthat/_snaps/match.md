@@ -236,5 +236,7 @@
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
-      ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000. Please report this to the vctrs maintainers at <https://github.com/r-lib/vctrs/issues>.
+      ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000.
+      i In file 'match.c' at line 2368.
+      i This is an internal error in the vctrs package, please report it to the package authors.
 
