@@ -8,7 +8,8 @@ df_list(
   ...,
   .size = NULL,
   .unpack = TRUE,
-  .name_repair = c("check_unique", "unique", "universal", "minimal")
+  .name_repair = c("check_unique", "unique", "universal", "minimal"),
+  .call = caller_env()
 )
 }
 \arguments{
@@ -23,6 +24,11 @@ will be computed as the common size of the inputs.}
 
 \item{.name_repair}{One of \code{"check_unique"}, \code{"unique"}, \code{"universal"} or
 \code{"minimal"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these options.}
+
+\item{.call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \code{df_list()} constructs the data structure underlying a data
