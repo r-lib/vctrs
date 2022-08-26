@@ -285,18 +285,20 @@ compute_nesting_container_info <- function(x, condition) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches <- function(class = NULL, ...) {
+stop_matches <- function(class = NULL, ..., call = caller_env()) {
   stop_vctrs(
     class = c(class, "vctrs_error_matches"),
-    ...
+    ...,
+    call = call
   )
 }
 
-warn_matches <- function(message, class = NULL, ...) {
+warn_matches <- function(message, class = NULL, ..., call = caller_env()) {
   warn_vctrs(
     message = message,
     class = c(class, "vctrs_warning_matches"),
-    ...
+    ...,
+    call = call
   )
 }
 
