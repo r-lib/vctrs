@@ -34,6 +34,7 @@
 #' * [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
 #' @inheritParams order-radix
 #'
 #' @param needles,haystack Vectors used for matching.
@@ -241,8 +242,10 @@ vec_locate_matches <- function(needles,
                                nan_distinct = FALSE,
                                chr_proxy_collate = NULL,
                                needles_arg = "",
-                               haystack_arg = "") {
+                               haystack_arg = "",
+                               call = current_env()) {
   check_dots_empty0(...)
+  frame <- environment()
 
   .Call(
     ffi_locate_matches,
@@ -257,7 +260,8 @@ vec_locate_matches <- function(needles,
     nan_distinct,
     chr_proxy_collate,
     needles_arg,
-    haystack_arg
+    haystack_arg,
+    frame
   )
 }
 
@@ -281,29 +285,32 @@ compute_nesting_container_info <- function(x, condition) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches <- function(class = NULL, ...) {
+stop_matches <- function(class = NULL, ..., call = caller_env()) {
   stop_vctrs(
     class = c(class, "vctrs_error_matches"),
-    ...
+    ...,
+    call = call
   )
 }
 
-warn_matches <- function(message, class = NULL, ...) {
+warn_matches <- function(message, class = NULL, ..., call = caller_env()) {
   warn_vctrs(
     message = message,
     class = c(class, "vctrs_warning_matches"),
-    ...
+    ...,
+    call = call
   )
 }
 
 # ------------------------------------------------------------------------------
 
-stop_matches_nothing <- function(i, needles_arg, haystack_arg) {
+stop_matches_nothing <- function(i, needles_arg, haystack_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_nothing",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }
 
@@ -333,12 +340,13 @@ cnd_body.vctrs_error_matches_nothing <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_remaining <- function(i, needles_arg, haystack_arg) {
+stop_matches_remaining <- function(i, needles_arg, haystack_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_remaining",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }
 
@@ -368,11 +376,12 @@ cnd_body.vctrs_error_matches_remaining <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_incomplete <- function(i, needles_arg) {
+stop_matches_incomplete <- function(i, needles_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_incomplete",
     i = i,
-    needles_arg = needles_arg
+    needles_arg = needles_arg,
+    call = call
   )
 }
 
@@ -396,12 +405,13 @@ cnd_body.vctrs_error_matches_incomplete <- function(cnd, ...) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches_multiple <- function(i, needles_arg, haystack_arg) {
+stop_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
   stop_matches(
     class = "vctrs_error_matches_multiple",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }
 
@@ -437,7 +447,7 @@ cnd_matches_multiple_body <- function(i) {
 
 # ------------------------------------------------------------------------------
 
-warn_matches_multiple <- function(i, needles_arg, haystack_arg) {
+warn_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
   message <- paste(
     cnd_matches_multiple_header(needles_arg, haystack_arg),
     cnd_matches_multiple_body(i),
@@ -449,6 +459,7 @@ warn_matches_multiple <- function(i, needles_arg, haystack_arg) {
     class = "vctrs_warning_matches_multiple",
     i = i,
     needles_arg = needles_arg,
-    haystack_arg = haystack_arg
+    haystack_arg = haystack_arg,
+    call = call
   )
 }

@@ -320,12 +320,16 @@ SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
 SEXP vec_identify_runs(SEXP x);
-SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
-                      struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
+SEXP vec_match_params(SEXP needles,
+                      SEXP haystack,
+                      bool na_equal,
+                      struct vctrs_arg* needles_arg,
+                      struct vctrs_arg* haystack_arg,
+                      struct r_lazy call);
 
 static inline
 SEXP vec_match(SEXP needles, SEXP haystack) {
-  return vec_match_params(needles, haystack, true, NULL, NULL);
+  return vec_match_params(needles, haystack, true, NULL, NULL, r_lazy_null);
 }
 
 

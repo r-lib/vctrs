@@ -80,6 +80,7 @@ r_obj* vec_interval_group_info(r_obj* start,
     end,
     args_start,
     args_end,
+    r_lazy_null,
     DF_FALLBACK_quiet,
     &_
   );
@@ -90,6 +91,7 @@ r_obj* vec_interval_group_info(r_obj* start,
     ptype,
     args_start,
     vec_args.empty,
+    r_lazy_null,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
@@ -100,6 +102,7 @@ r_obj* vec_interval_group_info(r_obj* start,
     ptype,
     args_end,
     vec_args.empty,
+    r_lazy_null,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
@@ -316,6 +319,7 @@ r_obj* vec_interval_complement(r_obj* start,
     end,
     args_start,
     args_end,
+    r_lazy_null,
     DF_FALLBACK_quiet,
     &_
   );
@@ -326,6 +330,7 @@ r_obj* vec_interval_complement(r_obj* start,
     ptype,
     args_start,
     vec_args.empty,
+    r_lazy_null,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
@@ -336,6 +341,7 @@ r_obj* vec_interval_complement(r_obj* start,
     ptype,
     args_end,
     vec_args.empty,
+    r_lazy_null,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
@@ -376,6 +382,7 @@ r_obj* vec_interval_complement(r_obj* start,
       ptype,
       args_lower,
       vec_args.empty,
+      r_lazy_null,
       DF_FALLBACK_quiet,
       S3_FALLBACK_false
     );
@@ -405,6 +412,7 @@ r_obj* vec_interval_complement(r_obj* start,
       ptype,
       args_upper,
       vec_args.empty,
+      r_lazy_null,
       DF_FALLBACK_quiet,
       S3_FALLBACK_false
     );

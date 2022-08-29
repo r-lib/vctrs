@@ -83,11 +83,15 @@ r_obj* ffi_locate_matches(r_obj* needles,
                           r_obj* nan_distinct,
                           r_obj* chr_proxy_collate,
                           r_obj* needles_arg,
-                          r_obj* haystack_arg) {
-  const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete);
-  const struct vctrs_no_match c_no_match = parse_no_match(no_match);
-  const struct vctrs_remaining c_remaining = parse_remaining(remaining);
-  const enum vctrs_multiple c_multiple = parse_multiple(multiple);
+                          r_obj* haystack_arg,
+                          r_obj* frame) {
+  struct r_lazy call = { .x = syms_call, .env = frame };
+  struct r_lazy internal_call = { .x = frame, .env = r_null };
+
+  const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete, internal_call);
+  const struct vctrs_no_match c_no_match = parse_no_match(no_match, internal_call);
+  const struct vctrs_remaining c_remaining = parse_remaining(remaining, internal_call);
+  const enum vctrs_multiple c_multiple = parse_multiple(multiple, internal_call);
   const bool c_nan_distinct = r_arg_as_bool(nan_distinct, "nan_distinct");
 
   struct vctrs_arg c_needles_arg = vec_as_arg(needles_arg);
@@ -105,7 +109,8 @@ r_obj* ffi_locate_matches(r_obj* needles,
     c_nan_distinct,
     chr_proxy_collate,
     &c_needles_arg,
-    &c_haystack_arg
+    &c_haystack_arg,
+    call
   );
 }
 
@@ -121,7 +126,8 @@ r_obj* vec_locate_matches(r_obj* needles,
                           bool nan_distinct,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
-                          struct vctrs_arg* haystack_arg) {
+                          struct vctrs_arg* haystack_arg,
+                          struct r_lazy call) {
   int n_prot = 0;
 
   int _;
@@ -130,6 +136,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     haystack,
     needles_arg,
     haystack_arg,
+    call,
     DF_FALLBACK_quiet,
     &_
   ), &n_prot);
@@ -139,6 +146,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     ptype,
     needles_arg,
     vec_args.empty,
+    call,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -148,6 +156,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     ptype,
     haystack_arg,
     vec_args.empty,
+    call,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -186,7 +195,7 @@ r_obj* vec_locate_matches(r_obj* needles,
 
   if (n_cols == 0) {
     // If there are no columns, this operation isn't well defined.
-    r_abort("Must have at least 1 column to match on.");
+    r_abort_lazy_call(call, "Must have at least 1 column to match on.");
   }
 
   // Compute the locations of incomplete values per column since computing
@@ -226,7 +235,8 @@ r_obj* vec_locate_matches(r_obj* needles,
     v_filters,
     v_ops,
     needles_arg,
-    haystack_arg
+    haystack_arg,
+    call
   );
 
   FREE(n_prot);
@@ -250,7 +260,8 @@ r_obj* df_locate_matches(r_obj* needles,
                          const enum vctrs_filter* v_filters,
                          const enum vctrs_ops* v_ops,
                          struct vctrs_arg* needles_arg,
-                         struct vctrs_arg* haystack_arg) {
+                         struct vctrs_arg* haystack_arg,
+                         struct r_lazy call) {
   int n_prot = 0;
 
   r_obj* o_needles = KEEP_N(vec_order(
@@ -265,8 +276,7 @@ r_obj* df_locate_matches(r_obj* needles,
   r_obj* container_info = KEEP_N(compute_nesting_container_info(
     haystack,
     size_haystack,
-    v_ops,
-    haystack_arg
+    v_ops
   ), &n_prot);
 
   r_obj* o_haystack = r_list_get(container_info, 0);
@@ -449,7 +459,8 @@ r_obj* df_locate_matches(r_obj* needles,
     v_loc_filter_match_o_haystack,
     p_haystack,
     needles_arg,
-    haystack_arg
+    haystack_arg,
+    call
   ), &n_prot);
 
   FREE(n_prot);
@@ -1281,9 +1292,14 @@ void parse_condition(r_obj* condition, r_ssize n_cols, enum vctrs_ops* v_ops) {
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
+struct vctrs_incomplete parse_incomplete(r_obj* incomplete,
+                                         struct r_lazy call) {
   if (r_length(incomplete) != 1) {
-    r_abort("`incomplete` must be length 1, not length %i.", r_length(incomplete));
+    r_abort_lazy_call(
+      call,
+      "`incomplete` must be length 1, not length %i.",
+      r_length(incomplete)
+    );
   }
 
   if (r_is_string(incomplete)) {
@@ -1317,10 +1333,19 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
       };
     }
 
-    r_abort("`incomplete` must be one of: \"compare\", \"match\", \"drop\", or \"error\".");
+    r_abort_lazy_call(
+      call,
+      "`incomplete` must be one of: \"compare\", \"match\", \"drop\", or \"error\"."
+    );
   }
 
-  incomplete = vec_cast(incomplete, vctrs_shared_empty_int, args_incomplete, vec_args.empty, r_lazy_null);
+  incomplete = vec_cast(
+    incomplete,
+    vctrs_shared_empty_int,
+    args_incomplete,
+    vec_args.empty,
+    call
+  );
   int c_incomplete = r_int_get(incomplete, 0);
 
   return (struct vctrs_incomplete) {
@@ -1332,9 +1357,9 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete) {
 // -----------------------------------------------------------------------------
 
 static inline
-enum vctrs_multiple parse_multiple(r_obj* multiple) {
+enum vctrs_multiple parse_multiple(r_obj* multiple, struct r_lazy call) {
   if (!r_is_string(multiple)) {
-    r_abort("`multiple` must be a string.");
+    r_abort_lazy_call(call, "`multiple` must be a string.");
   }
 
   const char* c_multiple = r_chr_get_c_string(multiple, 0);
@@ -1346,7 +1371,10 @@ enum vctrs_multiple parse_multiple(r_obj* multiple) {
   if (!strcmp(c_multiple, "warning")) return VCTRS_MULTIPLE_warning;
   if (!strcmp(c_multiple, "error")) return VCTRS_MULTIPLE_error;
 
-  r_abort("`multiple` must be one of \"all\", \"any\", \"first\", \"last\", \"warning\", or \"error\".");
+  r_abort_lazy_call(
+    call,
+    "`multiple` must be one of \"all\", \"any\", \"first\", \"last\", \"warning\", or \"error\"."
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -1398,9 +1426,14 @@ void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters) {
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_no_match parse_no_match(r_obj* no_match) {
+struct vctrs_no_match parse_no_match(r_obj* no_match,
+                                     struct r_lazy call) {
   if (r_length(no_match) != 1) {
-    r_abort("`no_match` must be length 1, not length %i.", r_length(no_match));
+    r_abort_lazy_call(
+      call,
+      "`no_match` must be length 1, not length %i.",
+      r_length(no_match)
+    );
   }
 
   if (r_is_string(no_match)) {
@@ -1420,10 +1453,19 @@ struct vctrs_no_match parse_no_match(r_obj* no_match) {
       };
     }
 
-    r_abort("`no_match` must be either \"drop\" or \"error\".");
+    r_abort_lazy_call(
+      call,
+      "`no_match` must be either \"drop\" or \"error\"."
+    );
   }
 
-  no_match = vec_cast(no_match, vctrs_shared_empty_int, args_no_match, vec_args.empty, r_lazy_null);
+  no_match = vec_cast(
+    no_match,
+    vctrs_shared_empty_int,
+    args_no_match,
+    vec_args.empty,
+    call
+  );
   int c_no_match = r_int_get(no_match, 0);
 
   return (struct vctrs_no_match) {
@@ -1435,9 +1477,14 @@ struct vctrs_no_match parse_no_match(r_obj* no_match) {
 // -----------------------------------------------------------------------------
 
 static inline
-struct vctrs_remaining parse_remaining(r_obj* remaining) {
+struct vctrs_remaining parse_remaining(r_obj* remaining,
+                                       struct r_lazy call) {
   if (r_length(remaining) != 1) {
-    r_abort("`remaining` must be length 1, not length %i.", r_length(remaining));
+    r_abort_lazy_call(
+      call,
+      "`remaining` must be length 1, not length %i.",
+      r_length(remaining)
+    );
   }
 
   if (r_is_string(remaining)) {
@@ -1457,10 +1504,19 @@ struct vctrs_remaining parse_remaining(r_obj* remaining) {
       };
     }
 
-    r_abort("`remaining` must be either \"drop\" or \"error\".");
+    r_abort_lazy_call(
+      call,
+      "`remaining` must be either \"drop\" or \"error\"."
+    );
   }
 
-  remaining = vec_cast(remaining, vctrs_shared_empty_int, args_remaining, vec_args.empty, r_lazy_null);
+  remaining = vec_cast(
+    remaining,
+    vctrs_shared_empty_int,
+    args_remaining,
+    vec_args.empty,
+    call
+  );
   int c_remaining = r_int_get(remaining, 0);
 
   return (struct vctrs_remaining) {
@@ -1511,7 +1567,8 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const int* v_loc_filter_match_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
-                              struct vctrs_arg* haystack_arg) {
+                              struct vctrs_arg* haystack_arg,
+                              struct r_lazy call) {
   int n_prot = 0;
 
   const r_ssize n_used = p_loc_first_match_o_haystack->count;
@@ -1621,7 +1678,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_INCOMPLETE_ACTION_error: {
-        stop_matches_incomplete(loc_needles, needles_arg);
+        stop_matches_incomplete(loc_needles, needles_arg, call);
       }
       case VCTRS_INCOMPLETE_ACTION_compare:
       case VCTRS_INCOMPLETE_ACTION_match: {
@@ -1654,7 +1711,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_NO_MATCH_ACTION_error: {
-        stop_matches_nothing(loc_needles, needles_arg, haystack_arg);
+        stop_matches_nothing(loc_needles, needles_arg, haystack_arg, call);
       }
       default: {
         r_stop_internal("Unknown `no_match->action`.");
@@ -1703,9 +1760,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       if (any_multiple) {
         if (multiple == VCTRS_MULTIPLE_error) {
-          stop_matches_multiple(loc_needles, needles_arg, haystack_arg);
+          stop_matches_multiple(loc_needles, needles_arg, haystack_arg, call);
         } else if (multiple == VCTRS_MULTIPLE_warning) {
-          warn_matches_multiple(loc_needles, needles_arg, haystack_arg);
+          warn_matches_multiple(loc_needles, needles_arg, haystack_arg, call);
         }
 
         // We know there are multiple and don't need to continue checking
@@ -1866,7 +1923,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       }
 
       if (remaining->action == VCTRS_REMAINING_ACTION_error) {
-        stop_matches_remaining(i, needles_arg, haystack_arg);
+        stop_matches_remaining(i, needles_arg, haystack_arg, call);
       }
 
       // Overwrite with location, this moves all "remaining" locations to the
@@ -1912,15 +1969,13 @@ r_obj* ffi_compute_nesting_container_info(r_obj* haystack, r_obj* condition) {
   enum vctrs_ops* v_ops = (enum vctrs_ops*) R_alloc(n_cols, sizeof(enum vctrs_ops));
   parse_condition(condition, n_cols, v_ops);
   const r_ssize size_haystack = vec_size(haystack);
-  struct vctrs_arg haystack_arg = new_wrapper_arg(NULL, "haystack");
-  return compute_nesting_container_info(haystack, size_haystack, v_ops, &haystack_arg);
+  return compute_nesting_container_info(haystack, size_haystack, v_ops);
 }
 
 static
 r_obj* compute_nesting_container_info(r_obj* haystack,
                                       r_ssize size_haystack,
-                                      const enum vctrs_ops* v_ops,
-                                      struct vctrs_arg* haystack_arg) {
+                                      const enum vctrs_ops* v_ops) {
   int n_prot = 0;
 
   const r_ssize n_cols = r_length(haystack);
@@ -2352,11 +2407,9 @@ r_ssize midpoint(r_ssize lhs, r_ssize rhs) {
 
 static inline
 void stop_matches_overflow(double size) {
-  r_abort(
+  r_stop_internal(
     "Match procedure results in an allocation larger than 2^31-1 elements. "
-    "Attempted allocation size was %.0lf. "
-    "Please report this to the vctrs maintainers at "
-    "<https://github.com/r-lib/vctrs/issues>.",
+    "Attempted allocation size was %.0lf.",
     size
   );
 }
@@ -2364,22 +2417,25 @@ void stop_matches_overflow(double size) {
 static inline
 void stop_matches_nothing(r_ssize i,
                           struct vctrs_arg* needles_arg,
-                          struct vctrs_arg* haystack_arg) {
-  r_obj* syms[4] = {
+                          struct vctrs_arg* haystack_arg,
+                          struct r_lazy call) {
+  r_obj* syms[5] = {
     syms_i,
     syms_needles_arg,
     syms_haystack_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
     KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_nothing, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_nothing, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_nothing");
 }
@@ -2387,41 +2443,48 @@ void stop_matches_nothing(r_ssize i,
 static inline
 void stop_matches_remaining(r_ssize i,
                             struct vctrs_arg* needles_arg,
-                            struct vctrs_arg* haystack_arg) {
-  r_obj* syms[4] = {
+                            struct vctrs_arg* haystack_arg,
+                            struct r_lazy call) {
+  r_obj* syms[5] = {
     syms_i,
     syms_needles_arg,
     syms_haystack_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
     KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_remaining, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_remaining, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_remaining");
 }
 
 static inline
-void stop_matches_incomplete(r_ssize i, struct vctrs_arg* needles_arg) {
-  r_obj* syms[3] = {
+void stop_matches_incomplete(r_ssize i,
+                             struct vctrs_arg* needles_arg,
+                             struct r_lazy call) {
+  r_obj* syms[4] = {
     syms_i,
     syms_needles_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[3] = {
+  r_obj* args[4] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_incomplete, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_incomplete, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_incomplete");
 }
@@ -2429,22 +2492,25 @@ void stop_matches_incomplete(r_ssize i, struct vctrs_arg* needles_arg) {
 static inline
 void stop_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
-                           struct vctrs_arg* haystack_arg) {
-  r_obj* syms[4] = {
+                           struct vctrs_arg* haystack_arg,
+                           struct r_lazy call) {
+  r_obj* syms[5] = {
     syms_i,
     syms_needles_arg,
     syms_haystack_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
     KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_matches_multiple, syms, args));
-  Rf_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_multiple, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
 
   never_reached("stop_matches_multiple");
 }
@@ -2452,23 +2518,26 @@ void stop_matches_multiple(r_ssize i,
 static inline
 void warn_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
-                           struct vctrs_arg* haystack_arg) {
-  r_obj* syms[4] = {
+                           struct vctrs_arg* haystack_arg,
+                           struct r_lazy call) {
+  r_obj* syms[5] = {
     syms_i,
     syms_needles_arg,
     syms_haystack_arg,
+    syms_call,
     NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int((int)i + 1)),
     KEEP(vctrs_arg(needles_arg)),
     KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_warn_matches_multiple, syms, args));
-  Rf_eval(call, vctrs_ns_env);
-  FREE(4);
+  r_obj* ffi_call = KEEP(r_call_n(syms_warn_matches_multiple, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+  FREE(5);
 }
 
 // -----------------------------------------------------------------------------

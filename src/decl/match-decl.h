@@ -21,7 +21,8 @@ r_obj* vec_locate_matches(r_obj* needles,
                           bool nan_distinct,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
-                          struct vctrs_arg* haystack_arg);
+                          struct vctrs_arg* haystack_arg,
+                          struct r_lazy call);
 
 static
 r_obj* df_locate_matches(r_obj* needles,
@@ -38,7 +39,8 @@ r_obj* df_locate_matches(r_obj* needles,
                          const enum vctrs_filter* v_filters,
                          const enum vctrs_ops* v_ops,
                          struct vctrs_arg* needles_arg,
-                         struct vctrs_arg* haystack_arg);
+                         struct vctrs_arg* haystack_arg,
+                         struct r_lazy call);
 
 static
 void df_locate_matches_recurse(r_ssize col,
@@ -127,16 +129,20 @@ static inline
 void parse_condition(r_obj* condition, r_ssize n_cols, enum vctrs_ops* v_ops);
 
 static inline
-struct vctrs_no_match parse_no_match(r_obj* no_match);
+struct vctrs_no_match parse_no_match(r_obj* no_match,
+                                     struct r_lazy call);
 
 static inline
-struct vctrs_remaining parse_remaining(r_obj* remaining);
+struct vctrs_remaining parse_remaining(r_obj* remaining,
+                                       struct r_lazy call);
 
 static inline
-struct vctrs_incomplete parse_incomplete(r_obj* incomplete);
+struct vctrs_incomplete parse_incomplete(r_obj* incomplete,
+                                         struct r_lazy call);
 
 static inline
-enum vctrs_multiple parse_multiple(r_obj* multiple);
+enum vctrs_multiple parse_multiple(r_obj* multiple,
+                                   struct r_lazy call);
 
 static inline
 void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters);
@@ -160,13 +166,13 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const int* v_loc_filter_match_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
-                              struct vctrs_arg* haystack_arg);
+                              struct vctrs_arg* haystack_arg,
+                              struct r_lazy call);
 
 static
 r_obj* compute_nesting_container_info(r_obj* haystack,
                                       r_ssize size_haystack,
-                                      const enum vctrs_ops* v_ops,
-                                      struct vctrs_arg* haystack_arg);
+                                      const enum vctrs_ops* v_ops);
 
 static
 r_obj* compute_nesting_container_ids(r_obj* x,
@@ -206,22 +212,28 @@ void stop_matches_overflow(double size);
 static inline
 void stop_matches_nothing(r_ssize i,
                           struct vctrs_arg* needles_arg,
-                          struct vctrs_arg* haystack_arg);
+                          struct vctrs_arg* haystack_arg,
+                          struct r_lazy call);
 
 static inline
 void stop_matches_remaining(r_ssize i,
                             struct vctrs_arg* needles_arg,
-                            struct vctrs_arg* haystack_arg);
+                            struct vctrs_arg* haystack_arg,
+                            struct r_lazy call);
 
 static inline
-void stop_matches_incomplete(r_ssize i, struct vctrs_arg* needles_arg);
+void stop_matches_incomplete(r_ssize i,
+                             struct vctrs_arg* needles_arg,
+                             struct r_lazy call);
 
 static inline
 void stop_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
-                           struct vctrs_arg* haystack_arg);
+                           struct vctrs_arg* haystack_arg,
+                           struct r_lazy call);
 
 static inline
 void warn_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
-                           struct vctrs_arg* haystack_arg);
+                           struct vctrs_arg* haystack_arg,
+                           struct r_lazy call);

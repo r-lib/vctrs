@@ -42,6 +42,7 @@ r_obj* vec_cast_params(r_obj* x,
                        r_obj* to,
                        struct vctrs_arg* p_x_arg,
                        struct vctrs_arg* p_to_arg,
+                       struct r_lazy call,
                        enum df_fallback df_fallback,
                        enum s3_fallback s3_fallback) {
   const struct cast_opts opts = {
@@ -49,6 +50,7 @@ r_obj* vec_cast_params(r_obj* x,
     .to = to,
     .p_x_arg = p_x_arg,
     .p_to_arg = p_to_arg,
+    .call = call,
     .fallback = {
       .df = df_fallback,
       .s3 = s3_fallback

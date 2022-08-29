@@ -390,6 +390,15 @@ test_that("df-cols aren't flattened, so `condition` is applied jointly on the df
   expect_identical(res$haystack, 1L)
 })
 
+test_that("must have at least 1 column to match", {
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(data_frame(), data_frame())
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(data_frame(), data_frame(), call = call("foo"))
+  })
+})
+
 # ------------------------------------------------------------------------------
 # vec_locate_matches() - rcrd
 
@@ -522,6 +531,21 @@ test_that("AsIs types are combined before order proxies are taken (#1557)", {
   res <- vec_locate_matches(x, y)
   expect_identical(res$needles, c(1L, 1L, 2L))
   expect_identical(res$haystack, c(2L, 3L, NA))
+})
+
+# ------------------------------------------------------------------------------
+# vec_locate_matches() - ptype2 / casting
+
+test_that("common type of `needles` and `haystack` is taken", {
+  x <- 1
+  y <- "a"
+
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(x, y)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(x, y, needles_arg = "x", call = call("foo"))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -793,6 +817,7 @@ test_that("`incomplete` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(NA, 1, incomplete = "error")))
     (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo", call = call("fn"))))
   })
 })
 
@@ -805,6 +830,8 @@ test_that("`incomplete` is validated", {
     (expect_error(vec_locate_matches(1, 2, incomplete = 1.5)))
     (expect_error(vec_locate_matches(1, 2, incomplete = c("match", "drop"))))
     (expect_error(vec_locate_matches(1, 2, incomplete = "x")))
+    # Uses internal call
+    (expect_error(vec_locate_matches(1, 2, incomplete = "x", call = call("fn"))))
   })
 })
 
@@ -882,6 +909,7 @@ test_that("`multiple` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error")))
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", call = call("fn"))))
     (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error", needles_arg = "foo", haystack_arg = "bar")))
   })
 })
@@ -890,6 +918,7 @@ test_that("`multiple` can warn informatively", {
   expect_snapshot({
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning")))
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo")))
+    (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", call = call("fn"))))
     (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning", needles_arg = "foo", haystack_arg = "bar")))
   })
 })
@@ -1000,9 +1029,13 @@ test_that("`multiple = 'error'` doesn't error errneously on the last observation
 })
 
 test_that("`multiple` is validated", {
-  expect_error(vec_locate_matches(1, 2, multiple = 1.5), "`multiple` must be a string")
-  expect_error(vec_locate_matches(1, 2, multiple = c("first", "last")), "`multiple` must be a string")
-  expect_error(vec_locate_matches(1, 2, multiple = "x"), '`multiple` must be one of "all", "any", "first", "last", "warning", or "error"')
+  expect_snapshot({
+    (expect_error(vec_locate_matches(1, 2, multiple = 1.5)))
+    (expect_error(vec_locate_matches(1, 2, multiple = c("first", "last"))))
+    (expect_error(vec_locate_matches(1, 2, multiple = "x")))
+    # Uses internal error
+    (expect_error(vec_locate_matches(1, 2, multiple = "x", call = call("fn"))))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -1047,6 +1080,7 @@ test_that("`no_match` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1, 2, no_match = "error")))
     (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo", call = call("fn"))))
     (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo", haystack_arg = "bar")))
   })
 })
@@ -1080,6 +1114,8 @@ test_that("`no_match` is validated", {
     (expect_error(vec_locate_matches(1, 2, no_match = 1.5)))
     (expect_error(vec_locate_matches(1, 2, no_match = c(1L, 2L))))
     (expect_error(vec_locate_matches(1, 2, no_match = "x")))
+    # Uses internal call
+    (expect_error(vec_locate_matches(1, 2, no_match = "x", call = call("fn"))))
   })
 })
 
@@ -1168,6 +1204,7 @@ test_that("`remaining` can error informatively", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1, 2, remaining = "error")))
     (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo")))
+    (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo", call = call("fn"))))
     (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo", haystack_arg = "bar")))
   })
 })
@@ -1177,6 +1214,8 @@ test_that("`remaining` is validated", {
     (expect_error(vec_locate_matches(1, 2, remaining = 1.5)))
     (expect_error(vec_locate_matches(1, 2, remaining = c(1L, 2L))))
     (expect_error(vec_locate_matches(1, 2, remaining = "x")))
+    # Uses internal call
+    (expect_error(vec_locate_matches(1, 2, remaining = "x", call = call("fn"))))
   })
 })
 
@@ -1398,7 +1437,7 @@ test_that("potential overflow on large output size is caught informatively", {
   # intermediate `r_ssize` will be too large
   skip_if(.Machine$sizeof.pointer < 8L, message = "No long vector support")
 
-  expect_snapshot({
+  expect_snapshot(transform = scrub_internal_error_line_number, {
     (expect_error(vec_locate_matches(1:1e7, 1:1e7, condition = ">=")))
   })
 })

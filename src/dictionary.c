@@ -330,6 +330,8 @@ SEXP vctrs_id(SEXP x) {
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
                  SEXP frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
+
   struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame };
   struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
 
@@ -340,7 +342,8 @@ SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
                           haystack,
                           r_bool_as_int(na_equal),
                           &needles_arg,
-                          &haystack_arg);
+                          &haystack_arg,
+                          call);
 }
 
 static inline void vec_match_loop(int* p_out,
@@ -356,23 +359,27 @@ SEXP vec_match_params(SEXP needles,
                       SEXP haystack,
                       bool na_equal,
                       struct vctrs_arg* needles_arg,
-                      struct vctrs_arg* haystack_arg) {
+                      struct vctrs_arg* haystack_arg,
+                      struct r_lazy call) {
   int nprot = 0;
   int _;
   SEXP type = vec_ptype2_params(needles, haystack,
                                 needles_arg, haystack_arg,
+                                call,
                                 DF_FALLBACK_quiet,
                                 &_);
   PROTECT_N(type, &nprot);
 
   needles = vec_cast_params(needles, type,
                             needles_arg, vec_args.empty,
+                            call,
                             DF_FALLBACK_quiet,
                             S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
                              haystack_arg, vec_args.empty,
+                             call,
                              DF_FALLBACK_quiet,
                              S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
@@ -453,6 +460,8 @@ static inline void vec_match_loop_propagate(int* p_out,
 
 // [[ register() ]]
 SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
+
   int nprot = 0;
   bool na_equal = r_bool_as_int(na_equal_);
 
@@ -466,18 +475,21 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
 
   SEXP type = vec_ptype2_params(needles, haystack,
                                 &needles_arg, &haystack_arg,
+                                call,
                                 DF_FALLBACK_quiet,
                                 &_);
   PROTECT_N(type, &nprot);
 
   needles = vec_cast_params(needles, type,
                             &needles_arg, vec_args.empty,
+                            call,
                             DF_FALLBACK_quiet,
                             S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
                              &haystack_arg, vec_args.empty,
+                             call,
                              DF_FALLBACK_quiet,
                              S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
