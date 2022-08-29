@@ -216,7 +216,11 @@ r_obj* int_invert_location(r_obj* subscript,
     }
     if (j >= 0) {
       if (j == 0) {
-        continue;
+        switch (opts->loc_zero) {
+        case LOC_ZERO_REMOVE: continue;
+        case LOC_ZERO_IGNORE: continue;
+        case LOC_ZERO_ERROR: stop_location_zero(subscript, opts);
+        }
       } else {
         stop_location_negative_positive(subscript, opts);
       }

@@ -531,6 +531,26 @@
       i Location 4 doesn't exist.
       i There are only 3 elements.
 
+# num_as_location() errors on disallowed zeros when inverting negatives (#1612)
+
+    Code
+      num_as_location(c(0, -1), n = 2L, negative = "invert", zero = "error")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript `c(0, -1)` can't contain `0` values.
+      i It has a `0` value at location 1.
+
+---
+
+    Code
+      num_as_location(c(-1, 0), n = 2L, negative = "invert", zero = "error")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript `c(-1, 0)` can't contain `0` values.
+      i It has a `0` value at location 2.
+
 # missing values are supported in error formatters
 
     Code

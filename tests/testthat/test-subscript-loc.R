@@ -298,6 +298,31 @@ test_that("num_as_location() errors when inverting oob negatives unless `oob = '
   expect_identical(num_as_location(c(-4, -2), 3, oob = "remove", negative = "invert"), c(1L, 3L))
 })
 
+test_that("num_as_location() generally drops zeros when inverting negatives (#1612)", {
+  expect_identical(
+    num_as_location(c(-3, 0, -1), n = 5L, negative = "invert", zero = "remove"),
+    c(2L, 4L, 5L)
+  )
+
+  # Trying to "ignore" and retain the zeroes in the output doesn't make sense,
+  # where would they be placed? Instead, think of the ignored zeros as being
+  # inverted as well, they just don't correspond to any location after the
+  # inversion so they aren't in the output.
+  expect_identical(
+    num_as_location(c(-3, 0, -1, 0), n = 5L, negative = "invert", zero = "ignore"),
+    c(2L, 4L, 5L)
+  )
+})
+
+test_that("num_as_location() errors on disallowed zeros when inverting negatives (#1612)", {
+  expect_snapshot(error = TRUE, {
+    num_as_location(c(0, -1), n = 2L, negative = "invert", zero = "error")
+  })
+  expect_snapshot(error = TRUE, {
+    num_as_location(c(-1, 0), n = 2L, negative = "invert", zero = "error")
+  })
+})
+
 test_that("num_as_location() with `oob = 'remove'` doesn't remove missings if they are being propagated", {
   expect_identical(num_as_location(NA_integer_, 1, oob = "remove"), NA_integer_)
 })
