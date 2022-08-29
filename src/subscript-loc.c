@@ -142,27 +142,32 @@ r_obj* int_as_location(r_obj* subscript,
       if (opts->missing == SUBSCRIPT_MISSING_ERROR) {
         stop_subscript_missing(subscript, opts);
       }
-    } else {
-      if (elt < 0) {
-        switch (opts->loc_negative) {
-        case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n, opts);
-        case LOC_NEGATIVE_ERROR: stop_location_negative(subscript, opts);
-        case LOC_NEGATIVE_IGNORE: break;
-        }
+    } else if (elt == 0) {
+      switch (opts->loc_zero) {
+      case LOC_ZERO_REMOVE: ++n_zero; break;
+      case LOC_ZERO_ERROR: stop_location_zero(subscript, opts);
+      case LOC_ZERO_IGNORE: break;
       }
-
-      if (elt == 0) {
-        switch (opts->loc_zero) {
-        case LOC_ZERO_REMOVE: ++n_zero; break;
-        case LOC_ZERO_ERROR: stop_location_zero(subscript, opts);
-        case LOC_ZERO_IGNORE: break;
+    } else if (elt < 0) {
+      switch (opts->loc_negative) {
+      case LOC_NEGATIVE_INVERT: return int_invert_location(subscript, n, opts);
+      case LOC_NEGATIVE_ERROR: stop_location_negative(subscript, opts);
+      case LOC_NEGATIVE_IGNORE: {
+        if (abs(elt) > n) {
+          switch (opts->loc_oob) {
+          case LOC_OOB_ERROR: stop_subscript_oob_location(subscript, n, opts);
+          case LOC_OOB_EXTEND: stop_subscript_negative_oob_location(subscript, n, opts);
+          case LOC_OOB_REMOVE: ++n_oob; break;
+          }
         }
-      } else if (abs(elt) > n) {
-        switch (opts->loc_oob) {
-        case LOC_OOB_ERROR: stop_subscript_oob_location(subscript, n, opts);
-        case LOC_OOB_EXTEND:
-        case LOC_OOB_REMOVE: ++n_oob; break;
-        }
+        break;
+      }
+      }
+    } else if (elt > n) {
+      switch (opts->loc_oob) {
+      case LOC_OOB_ERROR: stop_subscript_oob_location(subscript, n, opts);
+      case LOC_OOB_EXTEND: ++n_oob; break;
+      case LOC_OOB_REMOVE: ++n_oob; break;
       }
     }
   }
@@ -236,9 +241,7 @@ r_obj* int_invert_location(r_obj* subscript,
       case LOC_OOB_ERROR: {
         // Setting `oob` to `"error"` and `"extend"` result in errors here,
         // because extending with a negative subscript is nonsensical
-        struct location_opts updated_opts = *opts;
-        updated_opts.subscript_opts.action = SUBSCRIPT_ACTION_NEGATE;
-        stop_subscript_oob_location(subscript, n, &updated_opts);
+        stop_subscript_negative_oob_location(subscript, n, opts);
       }
       }
     }
@@ -591,6 +594,14 @@ void stop_subscript_oob_location(r_obj* i,
                    syms_subscript_arg, arg,
                    syms_call, call);
   r_stop_unreachable();
+}
+static
+void stop_subscript_negative_oob_location(r_obj* i,
+                                          r_ssize size,
+                                          const struct location_opts* opts) {
+  struct location_opts error_opts = *opts;
+  error_opts.subscript_opts.action = SUBSCRIPT_ACTION_NEGATE;
+  stop_subscript_oob_location(i, size, &error_opts);
 }
 static
 void stop_subscript_oob_name(r_obj* i,

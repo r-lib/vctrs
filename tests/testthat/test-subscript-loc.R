@@ -287,12 +287,12 @@ test_that("num_as_location() can optionally remove oob values (#1595)", {
   expect_identical(num_as_location(c(-4, 5, 2, -1), 3, oob = "remove", negative = "ignore"), c(2L, -1L))
 })
 
-test_that("num_as_location() errors when inverting oob negatives unless `oob = 'remove'`", {
+test_that("num_as_location() errors when inverting oob negatives unless `oob = 'remove'` (#1630)", {
   expect_snapshot(error = TRUE, {
     num_as_location(-4, 3, oob = "error", negative = "invert")
   })
   expect_snapshot(error = TRUE, {
-    num_as_location(-4, 3, oob = "extend", negative = "invert")
+    num_as_location(c(-4, 4, 5), 3, oob = "extend", negative = "invert")
   })
   expect_identical(num_as_location(-4, 3, oob = "remove", negative = "invert"), c(1L, 2L, 3L))
   expect_identical(num_as_location(c(-4, -2), 3, oob = "remove", negative = "invert"), c(1L, 3L))
@@ -330,6 +330,29 @@ test_that("num_as_location() with `oob = 'remove'` doesn't remove missings if th
 test_that("num_as_location() with `oob = 'remove'` doesn't remove zeros if they are being ignored", {
   expect_identical(num_as_location(0, 1, oob = "remove", zero = "ignore"), 0L)
   expect_identical(num_as_location(0, 0, oob = "remove", zero = "ignore"), 0L)
+})
+
+test_that("num_as_location() with `oob = 'extend'` doesn't allow ignored oob negative values (#1614)", {
+  # This is fine (ignored negative that is in bounds)
+  expect_identical(num_as_location(c(-5L, 6L), 5L, oob = "extend", negative = "ignore"), c(-5L, 6L))
+
+  expect_snapshot(error = TRUE, {
+    # Ignored negatives aren't allowed to extend the vector
+    num_as_location(-6L, 5L, oob = "extend", negative = "ignore")
+  })
+  expect_snapshot(error = TRUE, {
+    # Ensure error only reports negative indices
+    num_as_location(c(-7L, 6L), 5L, oob = "extend", negative = "ignore")
+  })
+  expect_snapshot(error = TRUE, {
+    num_as_location(c(-7L, NA), 5L, oob = "extend", negative = "ignore")
+  })
+})
+
+test_that("num_as_location() with `oob = 'error'` reports negative and positive oob values", {
+  expect_snapshot(error = TRUE, {
+    num_as_location(c(-6L, 7L), n = 5L, oob = "error", negative = "ignore")
+  })
 })
 
 test_that("missing values are supported in error formatters", {
