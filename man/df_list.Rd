@@ -9,7 +9,7 @@ df_list(
   .size = NULL,
   .unpack = TRUE,
   .name_repair = c("check_unique", "unique", "universal", "minimal"),
-  .call = caller_env()
+  .call = current_env()
 )
 }
 \arguments{

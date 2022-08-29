@@ -188,7 +188,7 @@
       (expect_error(df_list(a = 1, a = 1)))
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error:
+      Error in `df_list()`:
       ! Names must be unique.
       x These names are duplicated:
         * "a" at locations 1 and 2.
@@ -206,7 +206,7 @@
       (expect_error(df_list(a = 1:2, b = int())))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `df_list()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
     Code
       (expect_error(df_list(a = 1:2, b = int(), .call = call("foo"))))
