@@ -164,10 +164,25 @@
         * "a" at locations 1 and 2.
       i Use argument `.name_repair` to specify repair strategy.
     Code
+      (expect_error(data_frame(a = 1, a = 1, .call = call("foo"))))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `foo()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+      i Use argument `.name_repair` to specify repair strategy.
+    Code
       (expect_error(data_frame(a = 1:2, b = int())))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `data_frame()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+    Code
+      (expect_error(data_frame(a = 1:2, b = int(), .call = call("foo"))))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `foo()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
     Code
       (expect_error(df_list(a = 1, a = 1)))
@@ -179,10 +194,25 @@
         * "a" at locations 1 and 2.
       i Use argument `.name_repair` to specify repair strategy.
     Code
+      (expect_error(df_list(a = 1, a = 1, .call = call("foo"))))
+    Output
+      <error/vctrs_error_names_must_be_unique>
+      Error in `foo()`:
+      ! Names must be unique.
+      x These names are duplicated:
+        * "a" at locations 1 and 2.
+      i Use argument `.name_repair` to specify repair strategy.
+    Code
       (expect_error(df_list(a = 1:2, b = int())))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `df_list()`:
+      ! Can't recycle `a` (size 2) to match `b` (size 0).
+    Code
+      (expect_error(df_list(a = 1:2, b = int(), .call = call("foo"))))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `foo()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
 
 # input is tidy recycled
