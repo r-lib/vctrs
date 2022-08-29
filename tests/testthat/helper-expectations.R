@@ -101,3 +101,8 @@ expect_df_fallback_warning_maybe <- function(expr) {
     expr
   }
 }
+
+scrub_internal_error_line_number <- function(x) {
+  # Because it varies by OS
+  sub(pattern = "at line [[:digit:]]+", replacement = "at line <scrubbed>", x = x)
+}

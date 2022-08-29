@@ -1437,7 +1437,7 @@ test_that("potential overflow on large output size is caught informatively", {
   # intermediate `r_ssize` will be too large
   skip_if(.Machine$sizeof.pointer < 8L, message = "No long vector support")
 
-  expect_snapshot({
+  expect_snapshot(transform = scrub_internal_error_line_number, {
     (expect_error(vec_locate_matches(1:1e7, 1:1e7, condition = ">=")))
   })
 })
