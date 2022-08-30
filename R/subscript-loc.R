@@ -28,6 +28,7 @@
 #' @param missing Whether to throw an `"error"` when `i` is a missing
 #'   value, or `"propagate"` it (return it as is). By default, vector
 #'   subscripts can contain missing values and scalar subscripts can't.
+#'   Propagated missing values can't be combined with negative indices.
 #' @param arg The argument name to be displayed in error messages when
 #'   `vec_as_location()` and `vec_as_location2()` are used to check the
 #'   type of a function input.

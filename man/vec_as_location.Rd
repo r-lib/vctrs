@@ -67,7 +67,8 @@ if \code{i} is a character vector.}
 
 \item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
 value, or \code{"propagate"} it (return it as is). By default, vector
-subscripts can contain missing values and scalar subscripts can't.}
+subscripts can contain missing values and scalar subscripts can't.
+Propagated missing values can't be combined with negative indices.}
 
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the
