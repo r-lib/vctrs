@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/data_frame.html">data_frame()</a></code> and <code><a href="../reference/df_list.html">df_list()</a></code> have gained <code>.call</code> arguments (<a href="https://github.com/r-lib/vctrs/issues/1610" class="external-link">#1610</a>).</p></li>
+<ul><li><p><code><a href="../reference/vec_as_location.html">num_as_location()</a></code> now works correctly when a combination of <code>zero = "error"</code> and <code>negative = "invert"</code> are used (<a href="https://github.com/r-lib/vctrs/issues/1612" class="external-link">#1612</a>).</p></li>
+<li><p><code><a href="../reference/data_frame.html">data_frame()</a></code> and <code><a href="../reference/df_list.html">df_list()</a></code> have gained <code>.call</code> arguments (<a href="https://github.com/r-lib/vctrs/issues/1610" class="external-link">#1610</a>).</p></li>
 <li><p><code><a href="../reference/vec_locate_matches.html">vec_locate_matches()</a></code> has gained a <code>call</code> argument (<a href="https://github.com/r-lib/vctrs/issues/1611" class="external-link">#1611</a>).</p></li>
 <li><p><code>"select"</code> and <code>"relocate"</code> have been added as valid subscript actions to support tidyselect and dplyr (<a href="https://github.com/r-lib/vctrs/issues/1596" class="external-link">#1596</a>).</p></li>
 <li><p><code><a href="../reference/vec_as_location.html">num_as_location()</a></code> has a new <code>oob = "remove"</code> argument to remove out-of-bounds locations (<a href="https://github.com/r-lib/vctrs/issues/1595" class="external-link">#1595</a>).</p></li>
