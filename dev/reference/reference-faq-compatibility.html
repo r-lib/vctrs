@@ -15,15 +15,14 @@ All vctrs operations are based on four primitive generics described in
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.
-vec_slice() falls back to the base [ generic if
-no vec_proxy() method is implemented. This way
-foreign classes that do not implement
-vec_restore() can restore attributes based on the
-new subsetted contents.
-vec_c() and vec_rbind() now fall back
-to base::c() if the inputs have a common parent class
-with a c() method (only if they have no self-to-self
-vec_ptype2() method).
+vec_slice() falls back to the base [ generic if no
+vec_proxy() method is implemented. This way foreign
+classes that do not implement vec_restore() can
+restore attributes based on the new subsetted contents.
+vec_c() and vec_rbind() now fall back to
+base::c() if the inputs have a common parent class with
+a c() method (only if they have no self-to-self vec_ptype2()
+method).
 vctrs works hard to make your c() method success in various
 situations (with NULL and NA inputs, even as first input which
 would normally prevent dispatch to your method). The main downside
@@ -98,15 +97,14 @@ All vctrs operations are based on four primitive generics described in
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.
-vec_slice() falls back to the base [ generic if
-no vec_proxy() method is implemented. This way
-foreign classes that do not implement
-vec_restore() can restore attributes based on the
-new subsetted contents.
-vec_c() and vec_rbind() now fall back
-to base::c() if the inputs have a common parent class
-with a c() method (only if they have no self-to-self
-vec_ptype2() method).
+vec_slice() falls back to the base [ generic if no
+vec_proxy() method is implemented. This way foreign
+classes that do not implement vec_restore() can
+restore attributes based on the new subsetted contents.
+vec_c() and vec_rbind() now fall back to
+base::c() if the inputs have a common parent class with
+a c() method (only if they have no self-to-self vec_ptype2()
+method).
 vctrs works hard to make your c() method success in various
 situations (with NULL and NA inputs, even as first input which
 would normally prevent dispatch to your method). The main downside
@@ -236,15 +234,14 @@ existing vector classes.</p><div class="section">
 <p>All vctrs operations are based on four primitive generics described in
 the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
-compatibility with existing classes.</p><ul><li><p><code><a href="vec_slice.html">vec_slice()</a></code> falls back to the base <code>[</code> generic if
-no <code><a href="vec_proxy.html">vec_proxy()</a></code> method is implemented. This way
-foreign classes that do not implement
-<code><a href="vec_proxy.html">vec_restore()</a></code> can restore attributes based on the
-new subsetted contents.</p></li>
-<li><p><code><a href="vec_c.html">vec_c()</a></code> and <code><a href="vec_bind.html">vec_rbind()</a></code> now fall back
-to <code><a href="https://rdrr.io/r/base/c.html" class="external-link">base::c()</a></code> if the inputs have a common parent class
-with a <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> method (only if they have no self-to-self
-<code><a href="vec_ptype2.html">vec_ptype2()</a></code> method).</p>
+compatibility with existing classes.</p><ul><li><p><code><a href="vec_slice.html">vec_slice()</a></code> falls back to the base <code>[</code> generic if no
+<code><a href="vec_proxy.html">vec_proxy()</a></code> method is implemented. This way foreign
+classes that do not implement <code><a href="vec_proxy.html">vec_restore()</a></code> can
+restore attributes based on the new subsetted contents.</p></li>
+<li><p><code><a href="vec_c.html">vec_c()</a></code> and <code><a href="vec_bind.html">vec_rbind()</a></code> now fall back to
+<code><a href="https://rdrr.io/r/base/c.html" class="external-link">base::c()</a></code> if the inputs have a common parent class with
+a <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> method (only if they have no self-to-self <code><a href="vec_ptype2.html">vec_ptype2()</a></code>
+method).</p>
 <p>vctrs works hard to make your <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> method success in various
 situations (with <code>NULL</code> and <code>NA</code> inputs, even as first input which
 would normally prevent dispatch to your method). The main downside

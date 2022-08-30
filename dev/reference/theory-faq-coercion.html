@@ -67,9 +67,9 @@ vec_ptype2()
 
 Methods for vec_ptype2() are passed two prototypes, i.e. two inputs
 emptied of their elements. They implement two behaviours:
-If the types of their inputs are compatible, indicate which of them
-is the richer type by returning it. If the types are of equal
-resolution, return any of the two.
+If the types of their inputs are compatible, indicate which of them is
+the richer type by returning it. If the types are of equal resolution,
+return any of the two.
 Throw an error with stop_incompatible_type() when it can be
 determined from the attributes that the types of the inputs are not
 compatible.
@@ -186,14 +186,14 @@ Determine that the prototypes of the two inputs are not compatible.
 This must be decided in exactly the same way as for vec_ptype2().
 Call stop_incompatible_cast() if you can determine from the
 attributes that the types are not compatible.
-Detect incompatible values. Usually this is because the target type
-is too restricted for the values supported by the input type. For
+Detect incompatible values. Usually this is because the target type is
+too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.
-Return the input vector converted to the target type if all values
-are compatible. Whereas vec_ptype2() must return the same type
-when the inputs are permuted, vec_cast() is directional. It
-always returns the type of the right-hand side, or dies trying.
+Return the input vector converted to the target type if all values are
+compatible. Whereas vec_ptype2() must return the same type when the
+inputs are permuted, vec_cast() is directional. It always returns
+the type of the right-hand side, or dies trying.
 
 
 
@@ -209,8 +209,8 @@ It dispatches on the classes of the first two inputs.
 There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.
-NextMethod() does not work. Parent methods must be called
-explicitly if necessary.
+NextMethod() does not work. Parent methods must be called explicitly
+if necessary.
 The default method is hard-coded.
 
 
@@ -347,9 +347,9 @@ vec_ptype2()
 
 Methods for vec_ptype2() are passed two prototypes, i.e. two inputs
 emptied of their elements. They implement two behaviours:
-If the types of their inputs are compatible, indicate which of them
-is the richer type by returning it. If the types are of equal
-resolution, return any of the two.
+If the types of their inputs are compatible, indicate which of them is
+the richer type by returning it. If the types are of equal resolution,
+return any of the two.
 Throw an error with stop_incompatible_type() when it can be
 determined from the attributes that the types of the inputs are not
 compatible.
@@ -466,14 +466,14 @@ Determine that the prototypes of the two inputs are not compatible.
 This must be decided in exactly the same way as for vec_ptype2().
 Call stop_incompatible_cast() if you can determine from the
 attributes that the types are not compatible.
-Detect incompatible values. Usually this is because the target type
-is too restricted for the values supported by the input type. For
+Detect incompatible values. Usually this is because the target type is
+too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.
-Return the input vector converted to the target type if all values
-are compatible. Whereas vec_ptype2() must return the same type
-when the inputs are permuted, vec_cast() is directional. It
-always returns the type of the right-hand side, or dies trying.
+Return the input vector converted to the target type if all values are
+compatible. Whereas vec_ptype2() must return the same type when the
+inputs are permuted, vec_cast() is directional. It always returns
+the type of the right-hand side, or dies trying.
 
 
 
@@ -489,8 +489,8 @@ It dispatches on the classes of the first two inputs.
 There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.
-NextMethod() does not work. Parent methods must be called
-explicitly if necessary.
+NextMethod() does not work. Parent methods must be called explicitly
+if necessary.
 The default method is hard-coded.
 
 
@@ -676,9 +676,9 @@ steps, which require <code><a href="vec_ptype2.html">vec_ptype2()</a></code> and
 
 
 <p>Methods for <code><a href="vec_ptype2.html">vec_ptype2()</a></code> are passed two <em>prototypes</em>, i.e. two inputs
-emptied of their elements. They implement two behaviours:</p><ul><li><p>If the types of their inputs are compatible, indicate which of them
-is the richer type by returning it. If the types are of equal
-resolution, return any of the two.</p></li>
+emptied of their elements. They implement two behaviours:</p><ul><li><p>If the types of their inputs are compatible, indicate which of them is
+the richer type by returning it. If the types are of equal resolution,
+return any of the two.</p></li>
 <li><p>Throw an error with <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code> when it can be
 determined from the attributes that the types of the inputs are not
 compatible.</p></li>
@@ -790,14 +790,14 @@ in more cases. <code><a href="vec_cast.html">vec_cast()</a></code> has three pos
 This must be decided in exactly the same way as for <code><a href="vec_ptype2.html">vec_ptype2()</a></code>.
 Call <code><a href="vctrs-conditions.html">stop_incompatible_cast()</a></code> if you can determine from the
 attributes that the types are not compatible.</p></li>
-<li><p>Detect incompatible values. Usually this is because the target type
-is too restricted for the values supported by the input type. For
+<li><p>Detect incompatible values. Usually this is because the target type is
+too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.</p></li>
-<li><p>Return the input vector converted to the target type if all values
-are compatible. Whereas <code><a href="vec_ptype2.html">vec_ptype2()</a></code> must return the same type
-when the inputs are permuted, <code><a href="vec_cast.html">vec_cast()</a></code> is <em>directional</em>. It
-always returns the type of the right-hand side, or dies trying.</p></li>
+<li><p>Return the input vector converted to the target type if all values are
+compatible. Whereas <code><a href="vec_ptype2.html">vec_ptype2()</a></code> must return the same type when the
+inputs are permuted, <code><a href="vec_cast.html">vec_cast()</a></code> is <em>directional</em>. It always returns
+the type of the right-hand side, or dies trying.</p></li>
 </ul></div>
 
 <div class="section">
@@ -810,8 +810,8 @@ differences:</p><ul><li><p>It dispatches on the classes of the first two inputs.
 <li><p>There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> does not work. Parent methods must be called
-explicitly if necessary.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> does not work. Parent methods must be called explicitly
+if necessary.</p></li>
 <li><p>The default method is hard-coded.</p></li>
 </ul></div>
 
