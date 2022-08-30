@@ -43,6 +43,10 @@ void stop_subscript_oob_location(r_obj* i,
                                  r_ssize size,
                                  const struct location_opts* opts);
 static
+void stop_subscript_negative_oob_location(r_obj* i,
+                                          r_ssize size,
+                                          const struct location_opts* opts);
+static
 void stop_subscript_oob_name(r_obj* i,
                              r_obj* names,
                              const struct location_opts* opts);

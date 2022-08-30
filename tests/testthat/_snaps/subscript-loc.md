@@ -511,7 +511,7 @@
       i Input has size 3.
       x Subscript `c(1:5, 7, 1, 10)` contains non-consecutive locations 4, 7, and 10.
 
-# num_as_location() errors when inverting oob negatives unless `oob = 'remove'`
+# num_as_location() errors when inverting oob negatives unless `oob = 'remove'` (#1630)
 
     Code
       num_as_location(-4, 3, oob = "error", negative = "invert")
@@ -524,7 +524,7 @@
 ---
 
     Code
-      num_as_location(-4, 3, oob = "extend", negative = "invert")
+      num_as_location(c(-4, 4, 5), 3, oob = "extend", negative = "invert")
     Condition
       Error:
       ! Can't negate elements past the end.
@@ -550,6 +550,46 @@
       ! Must subset elements with a valid subscript vector.
       x Subscript `c(-1, 0)` can't contain `0` values.
       i It has a `0` value at location 2.
+
+# num_as_location() with `oob = 'extend'` doesn't allow ignored oob negative values (#1614)
+
+    Code
+      num_as_location(-6L, 5L, oob = "extend", negative = "ignore")
+    Condition
+      Error:
+      ! Can't negate elements past the end.
+      i Location 6 doesn't exist.
+      i There are only 5 elements.
+
+---
+
+    Code
+      num_as_location(c(-7L, 6L), 5L, oob = "extend", negative = "ignore")
+    Condition
+      Error:
+      ! Can't negate elements past the end.
+      i Location 7 doesn't exist.
+      i There are only 5 elements.
+
+---
+
+    Code
+      num_as_location(c(-7L, NA), 5L, oob = "extend", negative = "ignore")
+    Condition
+      Error:
+      ! Can't negate elements past the end.
+      i Location 7 doesn't exist.
+      i There are only 5 elements.
+
+# num_as_location() with `oob = 'error'` reports negative and positive oob values
+
+    Code
+      num_as_location(c(-6L, 7L), n = 5L, oob = "error", negative = "ignore")
+    Condition
+      Error:
+      ! Can't subset elements past the end.
+      i Locations 6 and 7 don't exist.
+      i There are only 5 elements.
 
 # missing values are supported in error formatters
 
