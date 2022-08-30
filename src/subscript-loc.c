@@ -581,7 +581,7 @@ enum num_loc_zero parse_loc_zero(r_obj* x,
 
 static
 void stop_subscript_arg_missing(struct r_lazy call) {
-  r_abort_call(call.env, "`missing` must be one of \"propagate\" or \"error\".");
+  r_abort_call(call.env, "`missing` must be one of \"propagate\", \"remove\", or \"error\".");
 }
 static
 void stop_bad_negative(struct r_lazy call) {

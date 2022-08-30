@@ -1069,7 +1069,7 @@
       vec_as_location(1, 1L, missing = "bogus")
     Condition
       Error in `vec_as_location()`:
-      ! `missing` must be one of "propagate" or "error".
+      ! `missing` must be one of "propagate", "remove", or "error".
 
 # num_as_location() UI
 
@@ -1077,7 +1077,7 @@
       num_as_location(1, 1L, missing = "bogus")
     Condition
       Error in `num_as_location()`:
-      ! `missing` must be one of "propagate" or "error".
+      ! `missing` must be one of "propagate", "remove", or "error".
 
 ---
 
