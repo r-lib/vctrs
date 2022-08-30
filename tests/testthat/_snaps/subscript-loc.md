@@ -694,6 +694,16 @@
       x Subscript can't contain missing values.
       x It has a missing value at location 1.
 
+# can alter character missing value handling (#1595)
+
+    Code
+      vec_as_location(x, n = 2L, names = names, missing = "error")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain missing values.
+      x It has missing values at locations 1 and 3.
+
 # can alter integer missing value handling (#1595)
 
     Code
@@ -723,6 +733,26 @@
       ! Must subset elements with a valid subscript vector.
       x Negative locations can't have missing values.
       i Subscript `x` has 2 missing values at locations 2 and 3.
+
+# empty string character indices never match empty string names (#1489)
+
+    Code
+      vec_as_location("", n = 2L, names = names)
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain the empty string.
+      x It has an empty string at location 1.
+
+---
+
+    Code
+      vec_as_location(c("", "y", ""), n = 2L, names = names)
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain the empty string.
+      x It has an empty string at locations 1 and 3.
 
 # can customise subscript type errors
 

@@ -39,6 +39,9 @@ r_obj* chr_as_location(r_obj* subscript,
 static
 void stop_subscript_missing(r_obj* i,
                             const struct location_opts* opts);
+static
+void stop_subscript_empty(r_obj* i,
+                          const struct location_opts* opts);
 
 static
 void stop_subscript_oob_location(r_obj* i,

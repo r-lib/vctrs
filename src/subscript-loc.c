@@ -436,31 +436,52 @@ r_obj* chr_as_location(r_obj* subscript,
     r_abort("`names` must be a character vector.");
   }
 
+  bool remove_missing = false;
+
   r_obj* matched = KEEP(Rf_match(names, subscript, r_globals.na_int));
+  r_attrib_poke_names(matched, r_names(subscript));
 
   r_ssize n = r_length(matched);
-  const int* p = r_int_cbegin(matched);
+  int* p = r_int_begin(matched);
   r_obj* const * ip = r_chr_cbegin(subscript);
 
   for (r_ssize k = 0; k < n; ++k) {
-    if (p[k] != r_globals.na_int) {
-      continue;
+    const r_obj* elt = ip[k];
+
+    if (elt == r_strs.empty) {
+      // `""` never matches, even if `names` contains a `""` name
+      stop_subscript_empty(subscript, opts);
     }
 
-    if (ip[k] != r_globals.na_str) {
+    if (elt == r_globals.na_str) {
+      // `NA_character_` never matches, even if `names` contains a missing name
+      p[k] = r_globals.na_int;
+
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: continue;
+      case SUBSCRIPT_MISSING_REMOVE: remove_missing = true; continue;
+      case SUBSCRIPT_MISSING_ERROR: stop_subscript_missing(subscript, opts);
+      }
+    }
+
+    if (p[k] == r_globals.na_int) {
       stop_subscript_oob_name(subscript, names, opts);
     }
-
-    if (opts->missing != SUBSCRIPT_MISSING_ERROR) {
-      continue;
-    }
-
-    stop_subscript_missing(subscript, opts);
   }
 
-  r_attrib_poke_names(matched, KEEP(r_names(subscript))); FREE(1);
+  if (remove_missing) {
+    if (opts->missing != SUBSCRIPT_MISSING_REMOVE) {
+      r_stop_internal("`missing = 'remove'` must be set if `n_missing > 0`.");
+    }
 
-  FREE(1);
+    r_obj* not_missing = KEEP(vec_detect_complete(matched));
+    matched = KEEP(vec_slice(matched, not_missing));
+
+    FREE(2);
+  }
+  KEEP(matched);
+
+  FREE(2);
   return matched;
 }
 
@@ -601,6 +622,16 @@ void stop_subscript_missing(r_obj* i,
                             const struct location_opts* opts) {
   r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts.call));
   vctrs_eval_mask2(r_sym("stop_subscript_missing"),
+                   syms_i, i,
+                   syms_call, call);
+  r_stop_unreachable();
+}
+
+static
+void stop_subscript_empty(r_obj* i,
+                          const struct location_opts* opts) {
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts.call));
+  vctrs_eval_mask2(r_sym("stop_subscript_empty"),
                    syms_i, i,
                    syms_call, call);
   r_stop_unreachable();

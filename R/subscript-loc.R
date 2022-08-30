@@ -415,6 +415,31 @@ cnd_bullets_subscript_missing <- function(cnd, ...) {
   ))
 }
 
+stop_subscript_empty <- function(i, ..., call = caller_env()) {
+  cnd_signal(new_error_subscript_type(
+    i = i,
+    body = cnd_bullets_subscript_empty,
+    ...,
+    call = call
+  ))
+}
+cnd_bullets_subscript_empty <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+
+  loc <- which(cnd$i == "")
+  if (length(loc) == 1) {
+    line <- glue::glue("It has an empty string at location {loc}.")
+  } else {
+    enum <- ensure_full_stop(enumerate(loc))
+    line <- glue::glue("It has an empty string at locations {enum}")
+  }
+
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "{subscript_arg} can't contain the empty string."),
+    x = line
+  ))
+}
+
 stop_indicator_size <- function(i, n, ..., call = caller_env()) {
   cnd_signal(new_error_subscript_size(
     i,

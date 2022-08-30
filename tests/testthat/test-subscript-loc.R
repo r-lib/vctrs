@@ -418,6 +418,24 @@ test_that("can alter logical missing value handling (#1595)", {
   })
 })
 
+test_that("can alter character missing value handling (#1595)", {
+  x <- c(NA, "z", NA)
+  names(x) <- c("a", "b", "c")
+  names <- c("x", "z")
+
+  expect_identical(
+    vec_as_location(x, n = 2L, names = names, missing = "propagate"),
+    set_names(c(NA, 2L, NA), names(x))
+  )
+  expect_identical(
+    vec_as_location(x, n = 2L, names = names, missing = "remove"),
+    set_names(2L, "b")
+  )
+  expect_snapshot(error = TRUE, {
+    vec_as_location(x, n = 2L, names = names, missing = "error")
+  })
+})
+
 test_that("can alter integer missing value handling (#1595)", {
   x <- c(NA, 1L, NA, 3L)
 
@@ -446,6 +464,25 @@ test_that("can alter negative integer missing value handling (#1595)", {
   )
   expect_snapshot(error = TRUE, {
     num_as_location(x, n = 4L, missing = "error", negative = "invert")
+  })
+})
+
+test_that("missing value character indices never match missing value names (#1489)", {
+  x <- NA_character_
+  names <- NA_character_
+
+  expect_identical(vec_as_location(x, n = 1L, names = names, missing = "propagate"), NA_integer_)
+  expect_identical(vec_as_location(x, n = 1L, names = names, missing = "remove"), integer())
+})
+
+test_that("empty string character indices never match empty string names (#1489)", {
+  names <- c("", "y")
+
+  expect_snapshot(error = TRUE, {
+    vec_as_location("", n = 2L, names = names)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_as_location(c("", "y", ""), n = 2L, names = names)
   })
 })
 
