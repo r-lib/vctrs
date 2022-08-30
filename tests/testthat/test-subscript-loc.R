@@ -401,6 +401,23 @@ test_that("can disallow missing values", {
   })
 })
 
+test_that("can alter logical missing value handling (#1595)", {
+  x <- c(TRUE, NA, FALSE, NA)
+
+  expect_identical(vec_as_location(x, n = 4L, missing = "propagate"), c(1L, NA, NA))
+  expect_identical(vec_as_location(x, n = 4L, missing = "remove"), 1L)
+  expect_snapshot(error = TRUE, {
+    vec_as_location(x, n = 4L, missing = "error")
+  })
+
+  # Specifically test size 1 case, which has its own special path
+  expect_identical(vec_as_location(NA, n = 2L, missing = "propagate"), c(NA_integer_, NA_integer_))
+  expect_identical(vec_as_location(NA, n = 2L, missing = "remove"), integer())
+  expect_snapshot(error = TRUE, {
+    vec_as_location(NA, n = 2L, missing = "error")
+  })
+})
+
 test_that("can customise subscript type errors", {
   expect_snapshot({
     "With custom `arg`"

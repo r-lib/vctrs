@@ -674,6 +674,26 @@
       x Subscript `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
 
+# can alter logical missing value handling (#1595)
+
+    Code
+      vec_as_location(x, n = 4L, missing = "error")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain missing values.
+      x It has missing values at locations 2 and 4.
+
+---
+
+    Code
+      vec_as_location(NA, n = 2L, missing = "error")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain missing values.
+      x It has a missing value at location 1.
+
 # can customise subscript type errors
 
     Code

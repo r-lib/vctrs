@@ -62,18 +62,27 @@ r_obj* lgl_as_location(r_obj* subscript,
                        const struct location_opts* opts) {
   r_ssize subscript_n = r_length(subscript);
 
-  if (opts->missing == SUBSCRIPT_MISSING_ERROR && lgl_any_na(subscript)) {
-    stop_subscript_missing(subscript, opts);
-  }
-
   if (subscript_n == n) {
-    r_obj* out = KEEP(r_lgl_which(subscript, true));
+    bool na_propagate;
+
+    switch (opts->missing) {
+    case SUBSCRIPT_MISSING_PROPAGATE: na_propagate = true; break;
+    case SUBSCRIPT_MISSING_REMOVE: na_propagate = false; break;
+    case SUBSCRIPT_MISSING_ERROR: {
+      if (lgl_any_na(subscript)) {
+        stop_subscript_missing(subscript, opts);
+      }
+      na_propagate = false;
+      break;
+    }
+    }
+
+    r_obj* out = KEEP(r_lgl_which(subscript, na_propagate));
 
     r_obj* nms = KEEP(r_names(subscript));
     if (nms != R_NilValue) {
-      nms = KEEP(vec_slice(nms, out));
+      nms = vec_slice(nms, out);
       r_attrib_poke_names(out, nms);
-      FREE(1);
     }
 
     FREE(2);
@@ -92,23 +101,43 @@ r_obj* lgl_as_location(r_obj* subscript,
   if (subscript_n == 1) {
     int elt = r_lgl_get(subscript, 0);
 
-    r_obj* out;
+    r_ssize recycle_size = n;
+
+    r_obj* out = r_null;
+    r_keep_loc out_shelter;
+    KEEP_HERE(out, &out_shelter);
+
     if (elt == r_globals.na_lgl) {
-      out = KEEP(r_alloc_integer(n));
-      r_int_fill(out, r_globals.na_int, n);
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: {
+        out = r_alloc_integer(n);
+        KEEP_AT(out, out_shelter);
+        r_int_fill(out, r_globals.na_int, n);
+        break;
+      }
+      case SUBSCRIPT_MISSING_REMOVE: {
+        out = r_globals.empty_int;
+        recycle_size = 0;
+        break;
+      }
+      case SUBSCRIPT_MISSING_ERROR: {
+        stop_subscript_missing(subscript, opts);
+      }
+      }
     } else if (elt) {
-      out = KEEP(r_alloc_integer(n));
+      out = r_alloc_integer(n);
+      KEEP_AT(out, out_shelter);
       r_int_fill_seq(out, 1, n);
     } else {
-      return r_globals.empty_int;
+      out = r_globals.empty_int;
+      recycle_size = 0;
     }
 
     r_obj* nms = KEEP(r_names(subscript));
     if (nms != R_NilValue) {
-      r_obj* recycled_nms = KEEP(r_alloc_character(n));
-      r_chr_fill(recycled_nms, r_chr_get(nms, 0), n);
+      r_obj* recycled_nms = r_alloc_character(recycle_size);
       r_attrib_poke_names(out, recycled_nms);
-      FREE(1);
+      r_chr_fill(recycled_nms, r_chr_get(nms, 0), recycle_size);
     }
 
     FREE(2);
@@ -473,6 +502,7 @@ enum subscript_missing parse_subscript_arg_missing(r_obj* x,
   const char* str = r_chr_get_c_string(x, 0);
 
   if (!strcmp(str, "propagate")) return SUBSCRIPT_MISSING_PROPAGATE;
+  if (!strcmp(str, "remove")) return SUBSCRIPT_MISSING_REMOVE;
   if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
   stop_subscript_arg_missing(call);
 
