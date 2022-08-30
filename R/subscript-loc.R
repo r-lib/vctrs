@@ -25,8 +25,8 @@
 #'   vector that `i` will be matched against to construct the index. Otherwise,
 #'   not used. The default value of `NULL` will result in an error
 #'   if `i` is a character vector.
-#' @param missing Whether to throw an `"error"` when `i` is a missing
-#'   value, or `"propagate"` it (return it as is). By default, vector
+#' @param missing Whether to throw an `"error"` when `i` is a missing value,
+#'   `"propagate"` it (return it as is), or `"remove"` it. By default, vector
 #'   subscripts can contain missing values and scalar subscripts can't.
 #'   Propagated missing values can't be combined with negative indices.
 #' @param arg The argument name to be displayed in error messages when
@@ -60,7 +60,7 @@ vec_as_location <- function(i,
                             n,
                             names = NULL,
                             ...,
-                            missing = c("propagate", "error"),
+                            missing = c("propagate", "remove", "error"),
                             arg = caller_arg(i),
                             call = caller_env()) {
   check_dots_empty0(...)
@@ -91,7 +91,7 @@ vec_as_location <- function(i,
 num_as_location <- function(i,
                             n,
                             ...,
-                            missing = c("propagate", "error"),
+                            missing = c("propagate", "remove", "error"),
                             negative = c("invert", "error", "ignore"),
                             oob = c("error", "remove", "extend"),
                             zero = c("remove", "error", "ignore"),
