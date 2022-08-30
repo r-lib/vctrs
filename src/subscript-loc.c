@@ -163,13 +163,16 @@ r_obj* int_as_location(r_obj* subscript,
   r_ssize n_zero = 0;
 
   r_ssize n_oob = 0;
+  r_ssize n_missing = 0;
 
   for (r_ssize i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
 
     if (elt == r_globals.na_int) {
-      if (opts->missing == SUBSCRIPT_MISSING_ERROR) {
-        stop_subscript_missing(subscript, opts);
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: break;
+      case SUBSCRIPT_MISSING_REMOVE: ++n_missing; break;
+      case SUBSCRIPT_MISSING_ERROR: stop_subscript_missing(subscript, opts);
       }
     } else if (elt == 0) {
       switch (opts->loc_zero) {
@@ -204,7 +207,12 @@ r_obj* int_as_location(r_obj* subscript,
   r_keep_loc subscript_shelter;
   KEEP_HERE(subscript, &subscript_shelter);
 
-  if (n_zero) {
+  if (n_missing > 0) {
+    subscript = int_filter_missing(subscript, n_missing);
+    KEEP_AT(subscript, subscript_shelter);
+  }
+
+  if (n_zero > 0) {
     subscript = int_filter_zero(subscript, n_zero);
     KEEP_AT(subscript, subscript_shelter);
   }
@@ -246,8 +254,13 @@ r_obj* int_invert_location(r_obj* subscript,
     int j = *data;
 
     if (j == r_globals.na_int) {
-      stop_location_negative_missing(subscript, opts);
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: stop_location_negative_missing(subscript, opts);
+      case SUBSCRIPT_MISSING_REMOVE: continue;
+      case SUBSCRIPT_MISSING_ERROR: stop_location_negative_missing(subscript, opts);
+      }
     }
+
     if (j >= 0) {
       if (j == 0) {
         switch (opts->loc_zero) {
@@ -285,24 +298,33 @@ r_obj* int_invert_location(r_obj* subscript,
 }
 
 static
-r_obj* int_filter_zero(r_obj* subscript,
-                       r_ssize n_zero) {
-  r_ssize loc_n = vec_size(subscript);
-  const int* data = r_int_cbegin(subscript);
+r_obj* int_filter(r_obj* subscript, r_ssize n_filter, int value) {
+  const r_ssize size = r_length(subscript);
+  const int* v_subscript = r_int_cbegin(subscript);
 
-  r_obj* out = KEEP(r_alloc_integer(loc_n - n_zero));
-  int* out_data = r_int_begin(out);
+  r_obj* out = KEEP(r_alloc_integer(size - n_filter));
+  int* v_out = r_int_begin(out);
+  r_ssize j = 0;
 
-  for (r_ssize i = 0; i < loc_n; ++i, ++data) {
-    int elt = *data;
-    if (elt != 0) {
-      *out_data = elt;
-      ++out_data;
+  for (r_ssize i = 0; i < size; ++i) {
+    const int elt = v_subscript[i];
+
+    if (elt != value) {
+      v_out[j] = elt;
+      ++j;
     }
   }
 
   FREE(1);
   return out;
+}
+static
+r_obj* int_filter_zero(r_obj* subscript, r_ssize n_zero) {
+  return int_filter(subscript, n_zero, 0);
+}
+static
+r_obj* int_filter_missing(r_obj* subscript, r_ssize n_missing) {
+  return int_filter(subscript, n_missing, r_globals.na_int);
 }
 
 static

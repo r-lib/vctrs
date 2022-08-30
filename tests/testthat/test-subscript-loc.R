@@ -418,6 +418,37 @@ test_that("can alter logical missing value handling (#1595)", {
   })
 })
 
+test_that("can alter integer missing value handling (#1595)", {
+  x <- c(NA, 1L, NA, 3L)
+
+  expect_identical(
+    vec_as_location(x, n = 4L, missing = "propagate"),
+    x
+  )
+  expect_identical(
+    vec_as_location(x, n = 4L, missing = "remove"),
+    c(1L, 3L)
+  )
+  expect_snapshot(error = TRUE, {
+    vec_as_location(x, n = 4L, missing = "error")
+  })
+})
+
+test_that("can alter negative integer missing value handling (#1595)", {
+  x <- c(-1L, NA, NA, -3L)
+
+  expect_snapshot(error = TRUE, {
+    num_as_location(x, n = 4L, missing = "propagate", negative = "invert")
+  })
+  expect_identical(
+    num_as_location(x, n = 4L, missing = "remove", negative = "invert"),
+    c(2L, 4L)
+  )
+  expect_snapshot(error = TRUE, {
+    num_as_location(x, n = 4L, missing = "error", negative = "invert")
+  })
+})
+
 test_that("can customise subscript type errors", {
   expect_snapshot({
     "With custom `arg`"

@@ -694,6 +694,36 @@
       x Subscript can't contain missing values.
       x It has a missing value at location 1.
 
+# can alter integer missing value handling (#1595)
+
+    Code
+      vec_as_location(x, n = 4L, missing = "error")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Subscript can't contain missing values.
+      x It has missing values at locations 1 and 3.
+
+# can alter negative integer missing value handling (#1595)
+
+    Code
+      num_as_location(x, n = 4L, missing = "propagate", negative = "invert")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Negative locations can't have missing values.
+      i Subscript `x` has 2 missing values at locations 2 and 3.
+
+---
+
+    Code
+      num_as_location(x, n = 4L, missing = "error", negative = "invert")
+    Condition
+      Error:
+      ! Must subset elements with a valid subscript vector.
+      x Negative locations can't have missing values.
+      i Subscript `x` has 2 missing values at locations 2 and 3.
+
 # can customise subscript type errors
 
     Code
