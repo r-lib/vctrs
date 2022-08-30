@@ -1,8 +1,3 @@
-# TODO: Use this NEWS bullet when we export `vec_rank()`
-#
-# * New `vec_rank()` to compute various types of sample ranks.
-
-
 #' Compute ranks
 #'
 #' `vec_rank()` computes the sample ranks of a vector. For data frames, ranks
