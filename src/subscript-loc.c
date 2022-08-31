@@ -115,7 +115,8 @@ r_obj* lgl_as_location(r_obj* subscript,
         break;
       }
       case SUBSCRIPT_MISSING_REMOVE: {
-        out = r_globals.empty_int;
+        out = r_copy(r_globals.empty_int);
+        KEEP_AT(out, out_shelter);
         recycle_size = 0;
         break;
       }
@@ -128,7 +129,8 @@ r_obj* lgl_as_location(r_obj* subscript,
       KEEP_AT(out, out_shelter);
       r_int_fill_seq(out, 1, n);
     } else {
-      out = r_globals.empty_int;
+      out = r_copy(r_globals.empty_int);
+      KEEP_AT(out, out_shelter);
       recycle_size = 0;
     }
 

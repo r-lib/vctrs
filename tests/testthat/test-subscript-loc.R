@@ -486,6 +486,25 @@ test_that("empty string character indices never match empty string names (#1489)
   })
 })
 
+test_that("scalar logical `FALSE` and `NA` cases don't modify a shared object (#1633)", {
+  x <- vec_as_location(FALSE, n = 2)
+  expect_identical(x, integer())
+
+  y <- vec_as_location(c(a = FALSE), n = 2)
+  expect_identical(y, named(integer()))
+  # Still unnamed
+  expect_identical(x, integer())
+
+
+  x <- vec_as_location(NA, n = 2, missing = "remove")
+  expect_identical(x, integer())
+
+  y <- vec_as_location(c(a = FALSE), n = 2, missing = "remove")
+  expect_identical(y, named(integer()))
+  # Still unnamed
+  expect_identical(x, integer())
+})
+
 test_that("can customise subscript type errors", {
   expect_snapshot({
     "With custom `arg`"
