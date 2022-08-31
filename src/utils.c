@@ -1503,6 +1503,7 @@ SEXP vctrs_shared_false = NULL;
 
 Rcomplex vctrs_shared_na_cpl;
 SEXP vctrs_shared_na_lgl = NULL;
+SEXP vctrs_shared_na_int = NULL;
 SEXP vctrs_shared_na_list = NULL;
 
 SEXP vctrs_shared_zero_int = NULL;
@@ -1828,6 +1829,9 @@ void vctrs_init_utils(SEXP ns) {
 
   vctrs_shared_na_lgl = r_new_shared_vector(LGLSXP, 1);
   LOGICAL(vctrs_shared_na_lgl)[0] = NA_LOGICAL;
+
+  vctrs_shared_na_int = r_new_shared_vector(INTSXP, 1);
+  INTEGER(vctrs_shared_na_int)[0] = NA_INTEGER;
 
   vctrs_shared_na_list = r_new_shared_vector(VECSXP, 1);
   SET_VECTOR_ELT(vctrs_shared_na_list, 0, R_NilValue);

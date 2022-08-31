@@ -252,6 +252,21 @@ test_that("vec_match works with empty data frame", {
   expect_equal(out, vec_init(integer(), 3))
 })
 
+test_that("vec_match() and vec_in() work for empty vectors", {
+  expect_equal(vctrs::vec_in(1:2, integer()), c(FALSE, FALSE))
+  expect_equal(vctrs::vec_in(integer(), 1:2), logical())
+
+  expect_equal(vctrs::vec_match(1:2, integer()), c(NA_integer_, NA_integer_))
+  expect_equal(vctrs::vec_match(integer(), 1:2), integer())
+
+  expect_snapshot({
+    (expect_error(vctrs::vec_in(1:2, character()), class = "vctrs_error_incompatible_type"))
+    (expect_error(vctrs::vec_in(character(), 1:2), class = "vctrs_error_incompatible_type"))
+    (expect_error(vctrs::vec_match(1:2, character()), class = "vctrs_error_incompatible_type"))
+    (expect_error(vctrs::vec_match(character(), 1:2), class = "vctrs_error_incompatible_type"))
+  })
+})
+
 test_that("matching functions take the equality proxy (#375)", {
   local_comparable_tuple()
   x <- tuple(c(1, 2, 1), 1:3)

@@ -369,6 +369,19 @@ SEXP vec_match_params(SEXP needles,
                                 DF_FALLBACK_quiet,
                                 &_);
   PROTECT_N(type, &nprot);
+  // can exit early here. Following operations cannot fail:
+  // * `vec_cast()` must work
+  // * `vec_proxy_equal()`
+  // * `vec_normalize_encoding()`
+  if (vec_size(needles) == 0) {
+    UNPROTECT(nprot);
+    return vctrs_shared_empty_int;
+  }
+
+  if (vec_size(haystack) == 0) {
+    UNPROTECT(nprot);
+    return vec_recycle(vctrs_shared_na_int, vec_size(needles));
+  }
 
   needles = vec_cast_params(needles, type,
                             needles_arg, vec_args.empty,
@@ -479,6 +492,19 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
                                 DF_FALLBACK_quiet,
                                 &_);
   PROTECT_N(type, &nprot);
+  // can exit early here. Following operations cannot fail:
+  // * `vec_cast()` must work
+  // * `vec_proxy_equal()`
+  // * `vec_normalize_encoding()`
+  if (vec_size(needles) == 0) {
+    UNPROTECT(nprot);
+    return vctrs_shared_empty_lgl;
+  }
+
+  if (vec_size(haystack) == 0) {
+    UNPROTECT(nprot);
+    return vec_recycle(vctrs_shared_false, vec_size(needles));
+  }
 
   needles = vec_cast_params(needles, type,
                             &needles_arg, vec_args.empty,
