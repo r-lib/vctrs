@@ -105,38 +105,38 @@
     Output
       [1] 1.7KB
     Code
-      # # `vec_unchop()` 
+      # # `list_unchop()` 
       # Integers
-      with_memory_prof(vec_unchop(ints))
+      with_memory_prof(list_unchop(ints))
     Output
       [1] 1.13KB
     Code
       # Doubles
-      with_memory_prof(vec_unchop(dbls))
+      with_memory_prof(list_unchop(dbls))
     Output
       [1] 1.52KB
     Code
       # Integers to integer
-      with_memory_prof(vec_unchop(ints, ptype = int()))
+      with_memory_prof(list_unchop(ints, ptype = int()))
     Output
       [1] 896B
     Code
       # Doubles to integer
-      with_memory_prof(vec_unchop(dbls, ptype = int()))
+      with_memory_prof(list_unchop(dbls, ptype = int()))
     Output
       [1] 896B
     Code
       # # Concatenation with names
       # Named integers
       ints <- rep(list(set_names(1:3, letters[1:3])), 100)
-      with_memory_prof(vec_unchop(ints))
+      with_memory_prof(list_unchop(ints))
     Output
       [1] 4.3KB
     Code
       # Named matrices
       mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
       mats <- rep(list(mat), 100)
-      with_memory_prof(vec_unchop(mats))
+      with_memory_prof(list_unchop(mats))
     Output
       [1] 5.52KB
     Code
@@ -144,7 +144,7 @@
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
         "A", "B")), z = data_frame(Z = set_names(1:2, c("Za", "Zb"))))
       dfs <- rep(list(df), 100)
-      with_memory_prof(vec_unchop(dfs))
+      with_memory_prof(list_unchop(dfs))
     Output
       [1] 9.05KB
     Code
@@ -152,13 +152,13 @@
       df <- data_frame(x = 1:2)
       dfs <- rep(list(df), 100)
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-      with_memory_prof(vec_unchop(dfs))
+      with_memory_prof(list_unchop(dfs))
     Output
       [1] 6.28KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
-      with_memory_prof(vec_unchop(dfs))
+      with_memory_prof(list_unchop(dfs))
     Output
       [1] 12.4KB
     Code
@@ -166,13 +166,13 @@
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
       dfs <- rep(list(df), 100)
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-      with_memory_prof(vec_unchop(dfs))
+      with_memory_prof(list_unchop(dfs))
     Output
       [1] 908KB
     Code
       # FIXME (#1217): Data frame with rownames (repaired, recursive case)
       dfs <- map(dfs, set_rownames_recursively)
-      with_memory_prof(vec_unchop(dfs))
+      with_memory_prof(list_unchop(dfs))
     Output
       [1] 920KB
 

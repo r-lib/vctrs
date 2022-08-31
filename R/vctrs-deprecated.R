@@ -114,3 +114,35 @@ vec_repeat <- function(x, each = 1L, times = 1L) {
   idx <- rep(vec_seq_along(x), times = times, each = each)
   vec_slice(x, idx)
 }
+
+#' Chopping
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `vec_unchop()` has been renamed to [list_unchop()] and is deprecated as of
+#' vctrs 0.5.0.
+#'
+#' @inheritParams list_unchop
+#' @inherit list_unchop return
+#'
+#' @keywords internal
+#' @export
+vec_unchop <- function(x,
+                       indices = NULL,
+                       ptype = NULL,
+                       name_spec = NULL,
+                       name_repair = c("minimal", "unique", "check_unique", "universal")) {
+  signal_soft_deprecated(paste_line(
+    "`vec_unchop()` is deprecated as of vctrs 0.5.0.",
+    "Please use `list_unchop()` instead."
+  ))
+
+  list_unchop(
+    x = x,
+    indices = indices,
+    ptype = ptype,
+    name_spec = name_spec,
+    name_repair = name_repair
+  )
+}

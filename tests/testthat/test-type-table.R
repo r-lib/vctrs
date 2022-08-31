@@ -198,11 +198,11 @@ test_that("names of the first dimension are kept in `vec_c()`", {
   expect_identical(dimnames(xx), list(c("r1", "r2", "r1", "r2"), NULL))
 })
 
-test_that("can use a table in `vec_unchop()`", {
+test_that("can use a table in `list_unchop()`", {
   x <- new_table(1:4, dim = c(2L, 2L))
 
-  expect_identical(vec_unchop(list(x)), x)
-  expect_identical(vec_unchop(list(x, x), list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
+  expect_identical(list_unchop(list(x)), x)
+  expect_identical(list_unchop(list(x, x), list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
 })
 
 test_that("can concatenate tables", {
