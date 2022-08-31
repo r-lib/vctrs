@@ -307,6 +307,17 @@ r_obj* int_filter(r_obj* subscript, r_ssize n_filter, int value) {
 
   r_obj* out = KEEP(r_alloc_integer(size - n_filter));
   int* v_out = r_int_begin(out);
+
+  r_obj* names = r_names(subscript);
+  const bool has_names = names != r_null;
+  r_obj* const* v_names = NULL;
+  r_obj* out_names = r_null;
+  if (has_names) {
+    v_names = r_chr_cbegin(names);
+    out_names = r_alloc_character(size - n_filter);
+    r_attrib_poke_names(out, out_names);
+  }
+
   r_ssize j = 0;
 
   for (r_ssize i = 0; i < size; ++i) {
@@ -314,6 +325,11 @@ r_obj* int_filter(r_obj* subscript, r_ssize n_filter, int value) {
 
     if (elt != value) {
       v_out[j] = elt;
+
+      if (has_names) {
+        r_chr_poke(out_names, j, v_names[i]);
+      }
+
       ++j;
     }
   }
@@ -335,18 +351,34 @@ r_obj* int_filter_oob(r_obj* subscript, r_ssize n, r_ssize n_oob) {
   const r_ssize n_subscript = r_length(subscript);
   const r_ssize n_out = n_subscript - n_oob;
 
+  const int* v_subscript = r_int_cbegin(subscript);
+
   r_obj* out = KEEP(r_alloc_integer(n_out));
   int* v_out = r_int_begin(out);
-  r_ssize i_out = 0;
 
-  const int* v_subscript = r_int_cbegin(subscript);
+  r_obj* names = r_names(subscript);
+  const bool has_names = names != r_null;
+  r_obj* const* v_names = NULL;
+  r_obj* out_names = r_null;
+  if (has_names) {
+    v_names = r_chr_cbegin(names);
+    out_names = r_alloc_character(n_out);
+    r_attrib_poke_names(out, out_names);
+  }
+
+  r_ssize j = 0;
 
   for (r_ssize i = 0; i < n_subscript; ++i) {
     const int elt = v_subscript[i];
 
     if (abs(elt) <= n || elt == r_globals.na_int) {
-      v_out[i_out] = elt;
-      ++i_out;
+      v_out[j] = elt;
+
+      if (has_names) {
+        r_chr_poke(out_names, j, v_names[i]);
+      }
+
+      ++j;
     }
   }
 

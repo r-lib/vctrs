@@ -355,6 +355,27 @@ test_that("num_as_location() with `oob = 'error'` reports negative and positive 
   })
 })
 
+test_that("num_as_location() with `missing = 'remove'` retains names (#1633)", {
+  x <- c(a = 1, b = NA, c = 2, d = NA)
+  expect_named(num_as_location(x, n = 2, missing = "remove"), c("a", "c"))
+})
+
+test_that("num_as_location() with `zero = 'remove'` retains names (#1633)", {
+  x <- c(a = 1, b = 0, c = 2, d = 0)
+  expect_named(num_as_location(x, n = 2, zero = "remove"), c("a", "c"))
+})
+
+test_that("num_as_location() with `oob = 'remove'` retains names (#1633)", {
+  x <- c(a = 1, b = 3, c = 2, d = 4)
+  expect_named(num_as_location(x, n = 2, oob = "remove"), c("a", "c"))
+})
+
+test_that("num_as_location() with `negative = 'invert'` drops names (#1633)", {
+  # The inputs don't map 1:1 to outputs
+  x <- c(a = -1, b = -3)
+  expect_named(num_as_location(x, n = 5), NULL)
+})
+
 test_that("missing values are supported in error formatters", {
   expect_snapshot({
     (expect_error(
@@ -438,6 +459,7 @@ test_that("can alter character missing value handling (#1595)", {
 
 test_that("can alter integer missing value handling (#1595)", {
   x <- c(NA, 1L, NA, 3L)
+  names(x) <- c("a", "b", "c", "d")
 
   expect_identical(
     vec_as_location(x, n = 4L, missing = "propagate"),
@@ -445,7 +467,7 @@ test_that("can alter integer missing value handling (#1595)", {
   )
   expect_identical(
     vec_as_location(x, n = 4L, missing = "remove"),
-    c(1L, 3L)
+    c(b = 1L, d = 3L)
   )
   expect_snapshot(error = TRUE, {
     vec_as_location(x, n = 4L, missing = "error")
