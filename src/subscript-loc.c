@@ -63,16 +63,15 @@ r_obj* lgl_as_location(r_obj* subscript,
   r_ssize subscript_n = r_length(subscript);
 
   if (subscript_n == n) {
-    bool na_propagate;
+    bool na_propagate = false;
 
     switch (opts->missing) {
     case SUBSCRIPT_MISSING_PROPAGATE: na_propagate = true; break;
-    case SUBSCRIPT_MISSING_REMOVE: na_propagate = false; break;
+    case SUBSCRIPT_MISSING_REMOVE: break;
     case SUBSCRIPT_MISSING_ERROR: {
       if (lgl_any_na(subscript)) {
         stop_subscript_missing(subscript, opts);
       }
-      na_propagate = false;
       break;
     }
     }
