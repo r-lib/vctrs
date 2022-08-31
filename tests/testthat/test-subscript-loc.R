@@ -141,6 +141,7 @@ test_that("vec_as_location() preserves names if possible", {
   expect_identical(vec_as_location(c(a = 1, b = 3), 3L), c(a = 1L, b = 3L))
   expect_identical(vec_as_location(c(a = "z", b = "y"), 26L, letters), c(a = 26L, b = 25L))
 
+  skip("Until https://github.com/r-lib/rlang/pull/1471 is merged and `rlang:::use_rlang_c_library()` is rerun.")
   expect_identical(vec_as_location(c(foo = TRUE, bar = FALSE, baz = TRUE), 3L), c(foo = 1L, baz = 3L))
   expect_identical(vec_as_location(c(foo = TRUE), 3L), c(foo = 1L, foo = 2L, foo = 3L))
   expect_identical(vec_as_location(c(foo = NA), 3L), c(foo = na_int, foo = na_int, foo = na_int))
@@ -423,19 +424,34 @@ test_that("can disallow missing values", {
 })
 
 test_that("can alter logical missing value handling (#1595)", {
-  x <- c(TRUE, NA, FALSE, NA)
+  skip("Until https://github.com/r-lib/rlang/pull/1471 is merged and `rlang:::use_rlang_c_library()` is rerun.")
+  x <- c(a = TRUE, b = NA, c = FALSE, d = NA)
 
-  expect_identical(vec_as_location(x, n = 4L, missing = "propagate"), c(1L, NA, NA))
-  expect_identical(vec_as_location(x, n = 4L, missing = "remove"), 1L)
+  expect_identical(
+    vec_as_location(x, n = 4L, missing = "propagate"),
+    c(a = 1L, b = NA, d = NA)
+  )
+  expect_identical(
+    vec_as_location(x, n = 4L, missing = "remove"),
+    c(a = 1L)
+  )
   expect_snapshot(error = TRUE, {
     vec_as_location(x, n = 4L, missing = "error")
   })
 
   # Specifically test size 1 case, which has its own special path
-  expect_identical(vec_as_location(NA, n = 2L, missing = "propagate"), c(NA_integer_, NA_integer_))
-  expect_identical(vec_as_location(NA, n = 2L, missing = "remove"), integer())
+  x <- c(a = NA)
+
+  expect_identical(
+    vec_as_location(x, n = 2L, missing = "propagate"),
+    c(a = NA_integer_, a = NA_integer_)
+  )
+  expect_identical(
+    vec_as_location(x, n = 2L, missing = "remove"),
+    named(integer())
+  )
   expect_snapshot(error = TRUE, {
-    vec_as_location(NA, n = 2L, missing = "error")
+    vec_as_location(x, n = 2L, missing = "error")
   })
 })
 

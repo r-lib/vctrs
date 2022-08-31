@@ -76,16 +76,7 @@ r_obj* lgl_as_location(r_obj* subscript,
     }
     }
 
-    r_obj* out = KEEP(r_lgl_which(subscript, na_propagate));
-
-    r_obj* nms = KEEP(r_names(subscript));
-    if (nms != R_NilValue) {
-      nms = vec_slice(nms, out);
-      r_attrib_poke_names(out, nms);
-    }
-
-    FREE(2);
-    return out;
+    return r_lgl_which(subscript, na_propagate);
   }
 
   /* A single `TRUE` or `FALSE` index is recycled to the full vector
