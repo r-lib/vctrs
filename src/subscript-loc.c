@@ -255,6 +255,8 @@ r_obj* int_invert_location(r_obj* subscript,
     int j = *data;
 
     if (j == r_globals.na_int) {
+      // Following base R by erroring on `missing = "propagate"`, e.g. `1[c(NA, -1)]`.
+      // Doesn't make sense to invert an `NA`, so we can't meaningfully propagate.
       switch (opts->missing) {
       case SUBSCRIPT_MISSING_PROPAGATE: stop_location_negative_missing(subscript, opts);
       case SUBSCRIPT_MISSING_REMOVE: continue;
