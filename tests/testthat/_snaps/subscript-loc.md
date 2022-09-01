@@ -54,16 +54,14 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `2.5` has the wrong type `double`.
-      i It must be numeric or character.
+      x Can't convert from `2.5` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `Inf` has the wrong type `double`.
-      i It must be numeric or character.
+      x Can't convert from `Inf` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type")
       )
@@ -71,8 +69,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `-Inf` has the wrong type `double`.
-      i It must be numeric or character.
+      x Can't convert from `-Inf` <double> to <integer> due to loss of precision.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(foobar(), 10L, arg = "foo", call = call(
@@ -90,8 +87,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has the wrong type `double`.
-      i It must be numeric or character.
+      x Can't convert from `foo` <double> to <integer> due to loss of precision.
     Code
       (expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type")
       )

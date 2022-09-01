@@ -104,25 +104,10 @@ vec_as_subscript2_result <- function(i,
     character = character
   )
 
-  # Return a child of subscript error. The child error messages refer
-  # to single subscripts instead of subscript vectors.
   if (!is_null(result$err)) {
-    parent <- result$err$parent
-    if (inherits(parent, "vctrs_error_cast_lossy")) {
-      bullets <- new_cnd_bullets_subscript_lossy_cast(parent)
-    } else {
-      bullets <- cnd_body.vctrs_error_subscript_type
-    }
-
-    result$err <- new_error_subscript2_type(
-      i = result$err$i,
-      numeric = numeric,
-      character = character,
-      subscript_arg = arg,
-      body = bullets,
-      call = call
-    )
-
+    # This should normally be a `vctrs_error_subscript`. Indicate to
+    # message methods that this error refers to a `[[` subscript.
+    result$err$subscript_scalar <- TRUE
     return(result)
   }
 
