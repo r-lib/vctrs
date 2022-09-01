@@ -117,3 +117,10 @@ test_that("`logical = 'cast'` is deprecated", {
     vec_as_subscript2(TRUE, logical = "error")
   )
 })
+
+test_that("lossy cast errors for scalar subscripts work (#1606)", {
+  expect_snapshot(
+    error = TRUE,
+    vec_as_subscript2(1.5)
+  )
+})

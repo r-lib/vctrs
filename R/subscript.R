@@ -104,15 +104,10 @@ vec_as_subscript2_result <- function(i,
     character = character
   )
 
-  # Transform `[` errors into `[[` errors
+  # This should normally be a `vctrs_error_subscript`. Indicate to
+  # message methods that this error refers to a `[[` subscript.
   if (!is_null(result$err)) {
-    result$err <- new_error_subscript2_type(
-      i = result$err$i,
-      numeric = numeric,
-      character = character,
-      subscript_arg = arg,
-      call = call
-    )
+    result$err$subscript_scalar <- TRUE
   }
 
   result

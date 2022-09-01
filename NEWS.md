@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Lossy cast errors during scalar subscript validation now have the
+  correct message (#1606).
+
 * Fixed confusing error message with logical `[[` subscripts (#1608).
 
 * New `vec_rank()` to compute various types of sample ranks (#1600).

@@ -156,8 +156,7 @@
     Condition
       Error in `foo()`:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `double`.
-      i It must be numeric or character.
+      x Can't convert from <double> to <integer> due to loss of precision.
 
 # vec_as_subscript2() retains the call when erroring on logical input (#1605)
 
@@ -186,4 +185,13 @@
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `logical`.
       i It must be numeric or character.
+
+# lossy cast errors for scalar subscripts work (#1606)
+
+    Code
+      vec_as_subscript2(1.5)
+    Condition
+      Error:
+      ! Must extract element with a single valid subscript.
+      x Can't convert from <double> to <integer> due to loss of precision.
 
