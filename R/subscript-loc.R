@@ -174,7 +174,6 @@ vec_as_location2_result <- function(i,
   result <- vec_as_subscript2_result(
     i = i,
     arg = arg,
-    logical = "error",
     call = call
   )
 
@@ -324,7 +323,6 @@ new_error_location2_type <- function(i,
   new_error_subscript2_type(
     class = class,
     i = i,
-    logical = "error",
     numeric = "cast",
     character = "cast",
     ...

@@ -18,7 +18,6 @@ vec_as_subscript(
 vec_as_subscript2(
   i,
   ...,
-  logical = c("cast", "error"),
   numeric = c("cast", "error"),
   character = c("cast", "error"),
   arg = NULL,

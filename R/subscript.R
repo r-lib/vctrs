@@ -64,17 +64,25 @@ vec_as_subscript_result <- function(i,
 #' @export
 vec_as_subscript2 <- function(i,
                               ...,
-                              logical = c("cast", "error"),
                               numeric = c("cast", "error"),
                               character = c("cast", "error"),
                               arg = NULL,
                               call = caller_env()) {
-  check_dots_empty0(...)
+  check_dots <- function(..., logical = "error") {
+    if (!is_string(logical, "error")) {
+      lifecycle::deprecate_stop(
+        "0.4.1.9000",
+        "vctrs::vec_as_subscript2(logical = 'no longer supports \"cast\"')"
+      )
+    }
+    check_dots_empty0(...)
+  }
+  check_dots(...)
+
   result_get(vec_as_subscript2_result(
     i,
     arg,
     call,
-    logical = logical,
     numeric = numeric,
     character = character
   ))
@@ -82,10 +90,8 @@ vec_as_subscript2 <- function(i,
 vec_as_subscript2_result <- function(i,
                                      arg,
                                      call,
-                                     logical = "cast",
                                      numeric = "cast",
                                      character = "cast") {
-  logical <- arg_match0(logical, c("cast", "error"))
   numeric <- arg_match0(numeric, c("cast", "error"))
   character <- arg_match0(character, c("cast", "error"))
 
@@ -93,7 +99,7 @@ vec_as_subscript2_result <- function(i,
     i,
     arg = arg,
     call = call,
-    logical = logical,
+    logical = "error",
     numeric = numeric,
     character = character
   )
@@ -110,7 +116,6 @@ vec_as_subscript2_result <- function(i,
 
     result$err <- new_error_subscript2_type(
       i = result$err$i,
-      logical = logical,
       numeric = numeric,
       character = character,
       subscript_arg = arg,
@@ -126,7 +131,6 @@ vec_as_subscript2_result <- function(i,
   if (typeof(i) == "logical") {
     return(result(err = new_error_subscript2_type(
       i = i,
-      logical = logical,
       numeric = numeric,
       character = character,
       subscript_arg = arg,
@@ -254,13 +258,12 @@ cnd_header.vctrs_error_subscript_size <- function(cnd, ...) {
 }
 
 new_error_subscript2_type <- function(i,
-                                      logical,
                                       numeric,
                                       character,
                                       ...) {
   new_error_subscript_type(
     i = i,
-    logical = logical,
+    logical = "error",
     numeric = numeric,
     character = character,
     subscript_scalar = TRUE,
