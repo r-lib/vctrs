@@ -70,9 +70,9 @@ vec_as_subscript2 <- function(i,
                               call = caller_env()) {
   check_dots <- function(..., logical = "error") {
     if (!is_string(logical, "error")) {
-      lifecycle::deprecate_stop(
-        "0.4.1.9000",
-        "vctrs::vec_as_subscript2(logical = 'no longer supports \"cast\"')"
+      abort(
+        "`vctrs::vec_as_subscript2(logical = 'cast')` is deprecated.",
+        call = caller_env()
       )
     }
     check_dots_empty0(...)
