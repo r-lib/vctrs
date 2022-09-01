@@ -174,8 +174,8 @@
     Code
       vec_as_subscript2(TRUE, logical = "cast")
     Condition
-      Error:
-      ! The `logical` argument of `vec_as_subscript2()` no longer supports "cast" as of vctrs 0.4.1.9000.
+      Error in `vec_as_subscript2()`:
+      ! `vctrs::vec_as_subscript2(logical = 'cast')` is deprecated.
 
 ---
 
