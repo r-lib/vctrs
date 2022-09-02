@@ -330,7 +330,7 @@ r_obj* as_df_row_impl(r_obj* x,
 // [[ register() ]]
 r_obj* ffi_as_df_row(r_obj* x, r_obj* quiet, r_obj* frame) {
   struct name_repair_opts name_repair_opts = {
-    .type = name_repair_unique,
+    .type = NAME_REPAIR_unique,
     .fn = r_null,
     .quiet = r_lgl_get(quiet, 0)
   };
@@ -624,12 +624,12 @@ struct name_repair_opts validate_bind_name_repair(r_obj* name_repair, bool allow
                                                       r_lazy_null);
 
   switch (opts.type) {
-  case name_repair_custom:
-  case name_repair_unique:
-  case name_repair_universal:
-  case name_repair_check_unique:
+  case NAME_REPAIR_custom:
+  case NAME_REPAIR_unique:
+  case NAME_REPAIR_universal:
+  case NAME_REPAIR_check_unique:
     break;
-  case name_repair_minimal:
+  case NAME_REPAIR_minimal:
     if (allow_minimal) break; // else fallthrough
   default:
     if (allow_minimal) {

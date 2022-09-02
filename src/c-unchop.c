@@ -213,7 +213,7 @@ static SEXP vec_unchop_fallback(SEXP ptype,
   }
 
   const struct name_repair_opts name_repair_opts = {
-    .type = name_repair_none,
+    .type = NAME_REPAIR_none,
     .fn = R_NilValue
   };
 

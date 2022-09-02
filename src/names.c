@@ -12,12 +12,12 @@ r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
     return names;
   }
   switch (opts->type) {
-  case name_repair_none: return names;
-  case name_repair_minimal: return ffi_as_minimal_names(names);
-  case name_repair_unique: return vec_as_unique_names(names, opts->quiet);
-  case name_repair_universal: return vec_as_universal_names(names, opts->quiet);
-  case name_repair_check_unique: return check_unique_names(names, opts);
-  case name_repair_custom: return vec_as_custom_names(names, opts);
+  case NAME_REPAIR_none: return names;
+  case NAME_REPAIR_minimal: return ffi_as_minimal_names(names);
+  case NAME_REPAIR_unique: return vec_as_unique_names(names, opts->quiet);
+  case NAME_REPAIR_universal: return vec_as_universal_names(names, opts->quiet);
+  case NAME_REPAIR_check_unique: return check_unique_names(names, opts);
+  case NAME_REPAIR_custom: return vec_as_custom_names(names, opts);
   }
   never_reached("vec_as_names");
 }
@@ -799,7 +799,7 @@ r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
                                                       vec_args.empty,
                                                       true,
                                                       r_lazy_null);
-  if (opts.type == name_repair_custom) {
+  if (opts.type == NAME_REPAIR_custom) {
     return opts.fn;
   } else if (r_length(arg) != 1) {
     return r_str_as_character(r_str(name_repair_arg_as_c_string(opts.type)));
@@ -834,15 +834,15 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     r_obj* c = r_chr_get(name_repair, 0);
 
     if (c == strings_none) {
-      opts.type = name_repair_none;
+      opts.type = NAME_REPAIR_none;
     } else if (c == strings_minimal) {
-      opts.type = name_repair_minimal;
+      opts.type = NAME_REPAIR_minimal;
     } else if (c == strings_unique) {
-      opts.type = name_repair_unique;
+      opts.type = NAME_REPAIR_unique;
     } else if (c == strings_universal) {
-      opts.type = name_repair_universal;
+      opts.type = NAME_REPAIR_universal;
     } else if (c == strings_check_unique) {
-      opts.type = name_repair_check_unique;
+      opts.type = NAME_REPAIR_check_unique;
     } else {
       r_abort_call(r_null, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", r_str_c_string(c));
     }
@@ -853,12 +853,12 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
   case R_TYPE_call:
     opts.fn = r_as_function(name_repair, ".name_repair");
     opts.shelter = opts.fn;
-    opts.type = name_repair_custom;
+    opts.type = NAME_REPAIR_custom;
     return opts;
 
   case R_TYPE_closure:
     opts.fn = name_repair;
-    opts.type = name_repair_custom;
+    opts.type = NAME_REPAIR_custom;
     return opts;
 
   default:
@@ -870,12 +870,12 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
 
 const char* name_repair_arg_as_c_string(enum name_repair_type type) {
   switch (type) {
-  case name_repair_none: return "none";
-  case name_repair_minimal: return "minimal";
-  case name_repair_unique: return "unique";
-  case name_repair_universal: return "universal";
-  case name_repair_check_unique: return "check_unique";
-  case name_repair_custom: return "custom";
+  case NAME_REPAIR_none: return "none";
+  case NAME_REPAIR_minimal: return "minimal";
+  case NAME_REPAIR_unique: return "unique";
+  case NAME_REPAIR_universal: return "universal";
+  case NAME_REPAIR_check_unique: return "check_unique";
+  case NAME_REPAIR_custom: return "custom";
   }
   never_reached("name_repair_arg_as_c_string");
 }
@@ -935,15 +935,15 @@ void vctrs_init_names(r_obj* ns) {
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
   syms_internal_spec = r_sym("_spec");
 
-  unique_repair_default_opts.type = name_repair_unique;
+  unique_repair_default_opts.type = NAME_REPAIR_unique;
   unique_repair_default_opts.fn = r_null;
   unique_repair_default_opts.quiet = false;
 
-  unique_repair_silent_opts.type = name_repair_unique;
+  unique_repair_silent_opts.type = NAME_REPAIR_unique;
   unique_repair_silent_opts.fn = r_null;
   unique_repair_silent_opts.quiet = true;
 
-  no_repair_opts.type = name_repair_none;
+  no_repair_opts.type = NAME_REPAIR_none;
   no_repair_opts.fn = r_null;
   no_repair_opts.quiet = true;
 }

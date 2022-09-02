@@ -67,7 +67,7 @@ static SEXP levels_union(SEXP x, SEXP y) {
   SET_VECTOR_ELT(args, 1, y);
 
   const struct name_repair_opts name_repair_opts = {
-    .type = name_repair_none,
+    .type = NAME_REPAIR_none,
     .fn = R_NilValue
   };
 

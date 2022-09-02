@@ -667,7 +667,7 @@ r_obj* vec_interval_complement(r_obj* start,
     r_obj* args = KEEP_N(r_new_list(2), &n_prot);
 
     const struct name_repair_opts name_repair_opts = {
-      .type = name_repair_none,
+      .type = NAME_REPAIR_none,
       .fn = R_NilValue
     };
 

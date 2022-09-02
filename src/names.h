@@ -16,12 +16,12 @@ r_obj* outer_names(r_obj* names, r_obj* outer, r_ssize n);
 r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n);
 
 enum name_repair_type {
-  name_repair_none = 0,
-  name_repair_minimal,
-  name_repair_unique,
-  name_repair_universal,
-  name_repair_check_unique,
-  name_repair_custom = 99
+  NAME_REPAIR_none = 0,
+  NAME_REPAIR_minimal,
+  NAME_REPAIR_unique,
+  NAME_REPAIR_universal,
+  NAME_REPAIR_check_unique,
+  NAME_REPAIR_custom = 99
 };
 
 struct name_repair_opts {
