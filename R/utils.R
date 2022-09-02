@@ -21,7 +21,7 @@ vec_coerce_bare <- function(x, type) {
 # Matches the semantics of c() - based on experimenting with the output
 # of c(), not reading the source code.
 outer_names <- function(names, outer, n) {
-  .Call(vctrs_outer_names, names, outer, vec_cast(n, int()))
+  .Call(ffi_outer_names, names, outer, vec_cast(n, int()))
 }
 
 has_inner_names <- function(x) {

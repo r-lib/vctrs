@@ -63,9 +63,9 @@ extern r_obj* ffi_df_proxy(r_obj*, r_obj*);
 extern SEXP vctrs_unspecified(SEXP);
 extern r_obj* ffi_ptype(r_obj*, r_obj*, r_obj*);
 extern SEXP vec_ptype_finalise(SEXP);
-extern SEXP vctrs_minimal_names(SEXP);
-extern SEXP vctrs_unique_names(SEXP, SEXP);
-extern SEXP vctrs_as_minimal_names(SEXP);
+extern r_obj* ffi_minimal_names(r_obj*);
+extern r_obj* ffi_unique_names(r_obj*, r_obj*);
+extern SEXP ffi_as_minimal_names(SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
@@ -81,10 +81,10 @@ extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern r_obj* ffi_as_df_row(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
+extern r_obj* ffi_outer_names(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_df_size(SEXP);
 extern r_obj* ffi_as_df_col(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_apply_name_spec(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_unset_s4(r_obj*);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
@@ -132,7 +132,7 @@ extern SEXP vctrs_locate_sorted_groups(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_unrep(SEXP);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
-extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
+extern r_obj* ffi_chr_paste_prefix(r_obj*, r_obj*, r_obj*);
 extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* vctrs_integer64_proxy(r_obj*);
 extern r_obj* vctrs_integer64_restore(r_obj*);
@@ -231,9 +231,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_unspecified",                     (DL_FUNC) &vctrs_unspecified, 1},
   {"ffi_ptype",                             (DL_FUNC) &ffi_ptype, 3},
   {"vctrs_ptype_finalise",                  (DL_FUNC) &vec_ptype_finalise, 1},
-  {"vctrs_minimal_names",                   (DL_FUNC) &vctrs_minimal_names, 1},
-  {"vctrs_unique_names",                    (DL_FUNC) &vctrs_unique_names, 2},
-  {"vctrs_as_minimal_names",                (DL_FUNC) &vctrs_as_minimal_names, 1},
+  {"ffi_minimal_names",                     (DL_FUNC) &ffi_minimal_names, 1},
+  {"ffi_unique_names",                      (DL_FUNC) &ffi_unique_names, 2},
+  {"ffi_as_minimal_names",                  (DL_FUNC) &ffi_as_minimal_names, 1},
   {"vctrs_names",                           (DL_FUNC) &vec_names, 1},
   {"vctrs_is_unique_names",                 (DL_FUNC) &vctrs_is_unique_names, 1},
   {"vctrs_as_unique_names",                 (DL_FUNC) &vctrs_as_unique_names, 2},
@@ -249,10 +249,10 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_assign_seq",                        (DL_FUNC) &ffi_assign_seq, 5},
   {"vctrs_set_attributes",                  (DL_FUNC) &vctrs_set_attributes, 2},
   {"ffi_as_df_row",                         (DL_FUNC) &ffi_as_df_row, 3},
-  {"vctrs_outer_names",                     (DL_FUNC) &vctrs_outer_names, 3},
+  {"ffi_outer_names",                       (DL_FUNC) &ffi_outer_names, 3},
   {"vctrs_df_size",                         (DL_FUNC) &vctrs_df_size, 1},
   {"ffi_as_df_col",                         (DL_FUNC) &ffi_as_df_col, 3},
-  {"vctrs_apply_name_spec",                 (DL_FUNC) &vctrs_apply_name_spec, 4},
+  {"ffi_apply_name_spec",                   (DL_FUNC) &ffi_apply_name_spec, 4},
   {"ffi_unset_s4",                          (DL_FUNC) &ffi_unset_s4, 1},
   {"vctrs_altrep_rle_Make",                 (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_altrep_rle_is_materialized",      (DL_FUNC) &altrep_rle_is_materialized, 1},
@@ -302,7 +302,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_order_info",                      (DL_FUNC) &vctrs_order_info, 6},
   {"vctrs_unrep",                           (DL_FUNC) &vctrs_unrep, 1},
   {"vctrs_fill_missing",                    (DL_FUNC) &vctrs_fill_missing, 3},
-  {"vctrs_chr_paste_prefix",                (DL_FUNC) &vctrs_chr_paste_prefix, 3},
+  {"ffi_chr_paste_prefix",                  (DL_FUNC) &ffi_chr_paste_prefix, 3},
   {"vctrs_rank",                            (DL_FUNC) &vctrs_rank, 7},
   {"vctrs_integer64_proxy",                 (DL_FUNC) &vctrs_integer64_proxy, 1},
   {"vctrs_integer64_restore",               (DL_FUNC) &vctrs_integer64_restore, 1},

@@ -132,9 +132,6 @@ SEXP int_resize(SEXP x, r_ssize x_size, r_ssize size);
 SEXP raw_resize(SEXP x, r_ssize x_size, r_ssize size);
 SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size);
 
-SEXP vec_unique_names(SEXP x, bool quiet);
-SEXP vec_unique_colnames(SEXP x, bool quiet);
-
 // Returns S3 / S4 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
 SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
@@ -198,9 +195,6 @@ bool is_integer64(SEXP x);
 
 bool lgl_any_na(SEXP x);
 
-SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n);
-SEXP outer_names(SEXP names, SEXP outer, R_len_t n);
-SEXP vec_set_names(SEXP x, SEXP names);
 SEXP colnames(SEXP x);
 r_obj* colnames2(r_obj* x);
 

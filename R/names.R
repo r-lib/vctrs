@@ -290,10 +290,10 @@ vec_repair_names <- function(x,
 }
 
 minimal_names <- function(x) {
-  .Call(vctrs_minimal_names, x)
+  .Call(ffi_minimal_names, x)
 }
 unique_names <- function(x, quiet = FALSE) {
-  .Call(vctrs_unique_names, x, quiet)
+  .Call(ffi_unique_names, x, quiet)
 }
 
 #' @rdname vec_names
@@ -303,7 +303,7 @@ vec_names <- function(x) {
 }
 
 as_minimal_names <- function(names) {
-  .Call(vctrs_as_minimal_names, names)
+  .Call(ffi_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
   .Call(vctrs_as_unique_names, names, quiet)
@@ -576,7 +576,7 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 NULL
 
 apply_name_spec <- function(name_spec, outer, inner, n = length(inner)) {
-  .Call(vctrs_apply_name_spec, name_spec, outer, inner, n)
+  .Call(ffi_apply_name_spec, name_spec, outer, inner, n)
 }
 
 glue_as_name_spec <- function(`_spec`) {

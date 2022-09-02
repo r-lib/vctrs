@@ -840,7 +840,7 @@ test_that("r_chr_paste_prefix() works", {
   nms <- c("foo", "bar")
 
   expect_equal(
-    .Call(vctrs_chr_paste_prefix, nms, "baz", "."),
+    .Call(ffi_chr_paste_prefix, nms, "baz", "."),
     c("baz.foo", "baz.bar")
   )
 
@@ -848,7 +848,7 @@ test_that("r_chr_paste_prefix() works", {
   long_prefix <- strrep("a", 5000)
 
   expect_equal(
-    .Call(vctrs_chr_paste_prefix, nms, long_prefix, "."),
+    .Call(ffi_chr_paste_prefix, nms, long_prefix, "."),
     paste0(long_prefix, ".", nms)
   )
 })
