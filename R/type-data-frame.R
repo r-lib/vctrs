@@ -196,7 +196,7 @@ VCTRS_PROXY_KIND_compare <- 2L
 VCTRS_PROXY_KIND_order <- 3L
 
 df_proxy <- function(x, kind) {
-  .Call(vctrs_df_proxy, x, kind)
+  .Call(ffi_df_proxy, x, kind)
 }
 
 df_is_coercible <- function(x, y, opts) {

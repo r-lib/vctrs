@@ -1,23 +1,8 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
+#include "decl/proxy.h"
 
-// Initialised at load time
-SEXP syms_vec_proxy = NULL;
-SEXP syms_vec_proxy_equal = NULL;
-SEXP syms_vec_proxy_equal_array = NULL;
-SEXP syms_vec_proxy_compare = NULL;
-SEXP syms_vec_proxy_compare_array = NULL;
-SEXP syms_vec_proxy_order = NULL;
-SEXP syms_vec_proxy_order_array = NULL;
-
-SEXP fns_vec_proxy_equal_array = NULL;
-SEXP fns_vec_proxy_compare_array = NULL;
-SEXP fns_vec_proxy_order_array = NULL;
-
-SEXP vec_proxy_method(SEXP x);
-SEXP vec_proxy_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
+// [[ register() ]]
 r_obj* vec_proxy(r_obj* x) {
   struct vctrs_type_info info = vec_type_info(x);
   KEEP(info.shelter);
@@ -33,48 +18,39 @@ r_obj* vec_proxy(r_obj* x) {
   return out;
 }
 
-static inline SEXP vec_proxy_equal_method(SEXP x);
-static inline SEXP vec_proxy_equal_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy_equal(SEXP x) {
-  SEXP method = PROTECT(vec_proxy_equal_method(x));
-  SEXP out = vec_proxy_equal_invoke(x, method);
-  UNPROTECT(1);
+// [[ register() ]]
+r_obj* vec_proxy_equal(r_obj* x) {
+  r_obj* method = KEEP(vec_proxy_equal_method(x));
+  r_obj* out = vec_proxy_equal_invoke(x, method);
+  FREE(1);
   return out;
 }
 
-static inline SEXP vec_proxy_compare_method(SEXP x);
-static inline SEXP vec_proxy_compare_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy_compare(SEXP x) {
-  SEXP method = PROTECT(vec_proxy_compare_method(x));
-  SEXP out = vec_proxy_compare_invoke(x, method);
-  UNPROTECT(1);
+// [[ register() ]]
+r_obj* vec_proxy_compare(r_obj* x) {
+  r_obj* method = KEEP(vec_proxy_compare_method(x));
+  r_obj* out = vec_proxy_compare_invoke(x, method);
+  FREE(1);
   return out;
 }
 
-static inline SEXP vec_proxy_order_method(SEXP x);
-static inline SEXP vec_proxy_order_invoke(SEXP x, SEXP method);
-
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_proxy_order(SEXP x) {
-  SEXP method = PROTECT(vec_proxy_order_method(x));
-  SEXP out = vec_proxy_order_invoke(x, method);
-  UNPROTECT(1);
+// [[ register() ]]
+r_obj* vec_proxy_order(r_obj* x) {
+  r_obj* method = KEEP(vec_proxy_order_method(x));
+  r_obj* out = vec_proxy_order_invoke(x, method);
+  FREE(1);
   return out;
 }
 
-SEXP vec_proxy_method(SEXP x) {
+r_obj* vec_proxy_method(r_obj* x) {
   return s3_find_method("vec_proxy", x, vctrs_method_table);
 }
 
 // This should be faster than normal dispatch but also means that
 // proxy methods can't call `NextMethod()`. This could be changed if
 // it turns out a problem.
-SEXP vec_proxy_invoke(SEXP x, SEXP method) {
-  if (method == R_NilValue) {
+r_obj* vec_proxy_invoke(r_obj* x, r_obj* method) {
+  if (method == r_null) {
     return x;
   } else {
     return vctrs_dispatch1(syms_vec_proxy, method, syms_x, x);
@@ -82,45 +58,45 @@ SEXP vec_proxy_invoke(SEXP x, SEXP method) {
 }
 
 static inline
-SEXP vec_proxy_method_impl(SEXP x, const char* generic, SEXP fn_proxy_array) {
-  SEXP cls = PROTECT(s3_get_class(x));
-  SEXP method = s3_class_find_method(generic, cls, vctrs_method_table);
+r_obj* vec_proxy_method_impl(r_obj* x, const char* generic, r_obj* fn_proxy_array) {
+  r_obj* cls = KEEP(s3_get_class(x));
+  r_obj* method = s3_class_find_method(generic, cls, vctrs_method_table);
 
-  if (method != R_NilValue) {
-    UNPROTECT(1);
+  if (method != r_null) {
+    FREE(1);
     return method;
   }
 
   /* FIXME: Stopgap check for bare arrays */
   /* which equality functions don't handle well */
   if (vec_dim_n(x) > 1) {
-    UNPROTECT(1);
+    FREE(1);
     return fn_proxy_array;
   }
 
-  UNPROTECT(1);
-  return R_NilValue;
+  FREE(1);
+  return r_null;
 }
 
 static inline
-SEXP vec_proxy_equal_method(SEXP x) {
+r_obj* vec_proxy_equal_method(r_obj* x) {
   return vec_proxy_method_impl(x, "vec_proxy_equal", fns_vec_proxy_equal_array);
 }
 static inline
-SEXP vec_proxy_compare_method(SEXP x) {
+r_obj* vec_proxy_compare_method(r_obj* x) {
   return vec_proxy_method_impl(x, "vec_proxy_compare", fns_vec_proxy_compare_array);
 }
 static inline
-SEXP vec_proxy_order_method(SEXP x) {
+r_obj* vec_proxy_order_method(r_obj* x) {
   return vec_proxy_method_impl(x, "vec_proxy_order", fns_vec_proxy_order_array);
 }
 
 static inline
-SEXP vec_proxy_invoke_impl(SEXP x,
-                           SEXP method,
-                           SEXP vec_proxy_sym,
-                           SEXP (*vec_proxy_fn)(SEXP)) {
-  if (method != R_NilValue) {
+r_obj* vec_proxy_invoke_impl(r_obj* x,
+                           r_obj* method,
+                           r_obj* vec_proxy_sym,
+                           r_obj* (*vec_proxy_fn)(r_obj*)) {
+  if (method != r_null) {
     return vctrs_dispatch1(vec_proxy_sym, method, syms_x, x);
   }
 
@@ -133,31 +109,31 @@ SEXP vec_proxy_invoke_impl(SEXP x,
 }
 
 static inline
-SEXP vec_proxy_equal_invoke(SEXP x, SEXP method) {
+r_obj* vec_proxy_equal_invoke(r_obj* x, r_obj* method) {
   return vec_proxy_invoke_impl(x, method, syms_vec_proxy_equal, vec_proxy);
 }
 static inline
-SEXP vec_proxy_compare_invoke(SEXP x, SEXP method) {
+r_obj* vec_proxy_compare_invoke(r_obj* x, r_obj* method) {
   return vec_proxy_invoke_impl(x, method, syms_vec_proxy_compare, &vec_proxy_equal);
 }
 static inline
-SEXP vec_proxy_order_invoke(SEXP x, SEXP method) {
+r_obj* vec_proxy_order_invoke(r_obj* x, r_obj* method) {
   return vec_proxy_invoke_impl(x, method, syms_vec_proxy_order, &vec_proxy_compare);
 }
 
 
 #define DF_PROXY(PROXY) do {                                   \
-  R_len_t n_cols = Rf_length(x);                               \
+  r_ssize n_cols = r_length(x);                                \
                                                                \
-  for (R_len_t i = 0; i < n_cols; ++i) {                       \
-    SEXP col = VECTOR_ELT(x, i);                               \
-    SET_VECTOR_ELT(x, i, PROXY(col));                          \
+  for (r_ssize i = 0; i < n_cols; ++i) {                       \
+    r_obj* col = r_list_get(x, i);                             \
+    r_list_poke(x, i, PROXY(col));                             \
   }                                                            \
 } while (0)
 
 static
-SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
-  x = PROTECT(r_clone_referenced(x));
+r_obj* df_proxy(r_obj* x, enum vctrs_proxy_kind kind) {
+  x = KEEP(r_clone_referenced(x));
 
   switch (kind) {
   case VCTRS_PROXY_KIND_default: DF_PROXY(vec_proxy); break;
@@ -166,17 +142,14 @@ SEXP df_proxy(SEXP x, enum vctrs_proxy_kind kind) {
   case VCTRS_PROXY_KIND_order: DF_PROXY(vec_proxy_order); break;
   }
 
-  x = PROTECT(df_flatten(x));
+  x = KEEP(df_flatten(x));
   x = vec_proxy_unwrap(x);
 
-  UNPROTECT(2);
+  FREE(2);
   return x;
 }
 
-#undef DF_PROXY
-
-// [[ register() ]]
-SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
+r_obj* ffi_df_proxy(r_obj* x, r_obj* kind) {
   if (!r_is_number(kind)) {
     r_stop_internal("`kind` must be a single integer.");
   }
@@ -186,36 +159,46 @@ SEXP vctrs_df_proxy(SEXP x, SEXP kind) {
   return df_proxy(x, c_kind);
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_proxy_unwrap(SEXP x) {
-  if (TYPEOF(x) == VECSXP && XLENGTH(x) == 1 && is_data_frame(x)) {
-    x = vec_proxy_unwrap(VECTOR_ELT(x, 0));
+r_obj* vec_proxy_unwrap(r_obj* x) {
+  if (r_typeof(x) == R_TYPE_list && r_length(x) == 1 && is_data_frame(x)) {
+    x = vec_proxy_unwrap(r_list_get(x, 0));
   }
   return x;
 }
 
 
-// [[ register() ]]
-SEXP vctrs_unset_s4(SEXP x) {
+r_obj* ffi_unset_s4(r_obj* x) {
   x = r_clone_referenced(x);
   r_unmark_s4(x);
   return x;
 }
 
 
-void vctrs_init_data(SEXP ns) {
-  syms_vec_proxy = Rf_install("vec_proxy");
+void vctrs_init_data(r_obj* ns) {
+  syms_vec_proxy = r_sym("vec_proxy");
 
-  syms_vec_proxy_equal = Rf_install("vec_proxy_equal");
-  syms_vec_proxy_equal_array = Rf_install("vec_proxy_equal.array");
+  syms_vec_proxy_equal = r_sym("vec_proxy_equal");
+  syms_vec_proxy_equal_array = r_sym("vec_proxy_equal.array");
 
-  syms_vec_proxy_compare = Rf_install("vec_proxy_compare");
-  syms_vec_proxy_compare_array = Rf_install("vec_proxy_compare.array");
+  syms_vec_proxy_compare = r_sym("vec_proxy_compare");
+  syms_vec_proxy_compare_array = r_sym("vec_proxy_compare.array");
 
-  syms_vec_proxy_order = Rf_install("vec_proxy_order");
-  syms_vec_proxy_order_array = Rf_install("vec_proxy_order.array");
+  syms_vec_proxy_order = r_sym("vec_proxy_order");
+  syms_vec_proxy_order_array = r_sym("vec_proxy_order.array");
 
   fns_vec_proxy_equal_array = r_env_get(ns, syms_vec_proxy_equal_array);
   fns_vec_proxy_compare_array = r_env_get(ns, syms_vec_proxy_compare_array);
   fns_vec_proxy_order_array = r_env_get(ns, syms_vec_proxy_order_array);
 }
+
+r_obj* syms_vec_proxy = NULL;
+r_obj* syms_vec_proxy_equal = NULL;
+r_obj* syms_vec_proxy_equal_array = NULL;
+r_obj* syms_vec_proxy_compare = NULL;
+r_obj* syms_vec_proxy_compare_array = NULL;
+r_obj* syms_vec_proxy_order = NULL;
+r_obj* syms_vec_proxy_order_array = NULL;
+
+r_obj* fns_vec_proxy_equal_array = NULL;
+r_obj* fns_vec_proxy_compare_array = NULL;
+r_obj* fns_vec_proxy_order_array = NULL;

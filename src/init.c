@@ -59,7 +59,7 @@ extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vec_proxy_compare(SEXP);
 extern SEXP vec_proxy_order(SEXP);
-extern SEXP vctrs_df_proxy(SEXP, SEXP);
+extern r_obj* ffi_df_proxy(r_obj*, r_obj*);
 extern SEXP vctrs_unspecified(SEXP);
 extern r_obj* ffi_ptype(r_obj*, r_obj*, r_obj*);
 extern SEXP vec_ptype_finalise(SEXP);
@@ -85,7 +85,7 @@ extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
 extern SEXP vctrs_df_size(SEXP);
 extern r_obj* ffi_as_df_col(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_unset_s4(SEXP);
+extern r_obj* ffi_unset_s4(r_obj*);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
 extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -227,7 +227,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_proxy_equal",                     (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_proxy_compare",                   (DL_FUNC) &vec_proxy_compare, 1},
   {"vctrs_proxy_order",                     (DL_FUNC) &vec_proxy_order, 1},
-  {"vctrs_df_proxy",                        (DL_FUNC) &vctrs_df_proxy, 2},
+  {"ffi_df_proxy",                          (DL_FUNC) &ffi_df_proxy, 2},
   {"vctrs_unspecified",                     (DL_FUNC) &vctrs_unspecified, 1},
   {"ffi_ptype",                             (DL_FUNC) &ffi_ptype, 3},
   {"vctrs_ptype_finalise",                  (DL_FUNC) &vec_ptype_finalise, 1},
@@ -253,7 +253,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_df_size",                         (DL_FUNC) &vctrs_df_size, 1},
   {"ffi_as_df_col",                         (DL_FUNC) &ffi_as_df_col, 3},
   {"vctrs_apply_name_spec",                 (DL_FUNC) &vctrs_apply_name_spec, 4},
-  {"vctrs_unset_s4",                        (DL_FUNC) &vctrs_unset_s4, 1},
+  {"ffi_unset_s4",                          (DL_FUNC) &ffi_unset_s4, 1},
   {"vctrs_altrep_rle_Make",                 (DL_FUNC) &altrep_rle_Make, 1},
   {"vctrs_altrep_rle_is_materialized",      (DL_FUNC) &altrep_rle_is_materialized, 1},
   {"vctrs_validate_name_repair_arg",        (DL_FUNC) &vctrs_validate_name_repair_arg, 1},

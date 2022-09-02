@@ -277,6 +277,7 @@ bool vec_is_unspecified(SEXP x);
 #include "order.h"
 #include "owned.h"
 #include "poly-op.h"
+#include "proxy.h"
 #include "ptype-common.h"
 #include "ptype.h"
 #include "ptype2-dispatch.h"

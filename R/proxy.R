@@ -217,5 +217,5 @@ vec_data <- function(x) {
   unset_s4(x)
 }
 unset_s4 <- function(x) {
-  .Call(vctrs_unset_s4, x)
+  .Call(ffi_unset_s4, x)
 }
