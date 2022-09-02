@@ -203,6 +203,7 @@ r_obj* vec_rbind(r_obj* xs,
     }
     r_obj* x = r_list_get(xs, i);
 
+    // Update `loc` to assign within `out[counter:counter + size, ]`
     init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
