@@ -1,6 +1,6 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include "decl/proxy.h"
+#include "decl/proxy-decl.h"
 
 // [[ register() ]]
 r_obj* vec_proxy(r_obj* x) {
