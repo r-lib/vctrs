@@ -93,9 +93,9 @@ r_obj* vec_proxy_order_method(r_obj* x) {
 
 static inline
 r_obj* vec_proxy_invoke_impl(r_obj* x,
-                           r_obj* method,
-                           r_obj* vec_proxy_sym,
-                           r_obj* (*vec_proxy_fn)(r_obj*)) {
+                             r_obj* method,
+                             r_obj* vec_proxy_sym,
+                             r_obj* (*vec_proxy_fn)(r_obj*)) {
   if (method != r_null) {
     return vctrs_dispatch1(vec_proxy_sym, method, syms_x, x);
   }
