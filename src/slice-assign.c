@@ -80,15 +80,15 @@ r_obj* vec_assign_switch(r_obj* proxy,
                          const enum vctrs_owned owned,
                          const struct vec_assign_opts* opts) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value, owned);
-  case vctrs_type_integer:   return int_assign(proxy, index, value, owned);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value, owned);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value, owned);
-  case vctrs_type_character: return chr_assign(proxy, index, value, owned);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value, owned);
-  case vctrs_type_list:      return list_assign(proxy, index, value, owned);
-  case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
-  case vctrs_type_scalar:    stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
+  case VCTRS_TYPE_logical:   return lgl_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_integer:   return int_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_double:    return dbl_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_complex:   return cpl_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_character: return chr_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_raw:       return raw_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_list:      return list_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_dataframe: return df_assign(proxy, index, value, owned, opts);
+  case VCTRS_TYPE_scalar:    stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default:                   stop_unimplemented_vctrs_type("vec_assign_switch", vec_typeof(proxy));
   }
   r_stop_unreachable();

@@ -20,16 +20,16 @@ r_obj* proxy_equal_na(r_obj* proxy) {
   const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
-  case vctrs_type_logical: return lgl_equal_na(proxy);
-  case vctrs_type_integer: return int_equal_na(proxy);
-  case vctrs_type_double: return dbl_equal_na(proxy);
-  case vctrs_type_complex: return cpl_equal_na(proxy);
-  case vctrs_type_raw: return raw_equal_na(proxy);
-  case vctrs_type_character: return chr_equal_na(proxy);
-  case vctrs_type_list: return list_equal_na(proxy);
-  case vctrs_type_dataframe: return df_equal_na(proxy);
-  case vctrs_type_null: return vctrs_shared_empty_lgl;
-  case vctrs_type_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
+  case VCTRS_TYPE_logical: return lgl_equal_na(proxy);
+  case VCTRS_TYPE_integer: return int_equal_na(proxy);
+  case VCTRS_TYPE_double: return dbl_equal_na(proxy);
+  case VCTRS_TYPE_complex: return cpl_equal_na(proxy);
+  case VCTRS_TYPE_raw: return raw_equal_na(proxy);
+  case VCTRS_TYPE_character: return chr_equal_na(proxy);
+  case VCTRS_TYPE_list: return list_equal_na(proxy);
+  case VCTRS_TYPE_dataframe: return df_equal_na(proxy);
+  case VCTRS_TYPE_null: return vctrs_shared_empty_lgl;
+  case VCTRS_TYPE_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default: stop_unimplemented_vctrs_type("vec_equal_na", type);
   }
 
@@ -139,16 +139,16 @@ r_ssize col_equal_na(r_obj* x,
   const enum vctrs_type type = vec_proxy_typeof(x);
 
   switch (type) {
-  case vctrs_type_logical: return lgl_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_integer: return int_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_double: return dbl_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_complex: return cpl_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_raw: return raw_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_character: return chr_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_list: return list_col_equal_na(x, v_loc, loc_size);
-  case vctrs_type_dataframe: r_stop_internal("Data frame columns should have been flattened by now.");
-  case vctrs_type_null: r_abort("Unexpected `NULL` column found in a data frame.");
-  case vctrs_type_scalar: stop_scalar_type(x, vec_args.empty, r_lazy_null);
+  case VCTRS_TYPE_logical: return lgl_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_integer: return int_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_double: return dbl_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_complex: return cpl_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_raw: return raw_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_character: return chr_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_list: return list_col_equal_na(x, v_loc, loc_size);
+  case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should have been flattened by now.");
+  case VCTRS_TYPE_null: r_abort("Unexpected `NULL` column found in a data frame.");
+  case VCTRS_TYPE_scalar: stop_scalar_type(x, vec_args.empty, r_lazy_null);
   default: stop_unimplemented_vctrs_type("vec_equal_na", type);
   }
 }
@@ -280,16 +280,16 @@ r_ssize proxy_first_missing(r_obj* proxy) {
   const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
-  case vctrs_type_logical: return lgl_first_missing(proxy);
-  case vctrs_type_integer: return int_first_missing(proxy);
-  case vctrs_type_double: return dbl_first_missing(proxy);
-  case vctrs_type_complex: return cpl_first_missing(proxy);
-  case vctrs_type_raw: return raw_first_missing(proxy);
-  case vctrs_type_character: return chr_first_missing(proxy);
-  case vctrs_type_list: return list_first_missing(proxy);
-  case vctrs_type_dataframe: return df_first_missing(proxy);
-  case vctrs_type_null: return 0;
-  case vctrs_type_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
+  case VCTRS_TYPE_logical: return lgl_first_missing(proxy);
+  case VCTRS_TYPE_integer: return int_first_missing(proxy);
+  case VCTRS_TYPE_double: return dbl_first_missing(proxy);
+  case VCTRS_TYPE_complex: return cpl_first_missing(proxy);
+  case VCTRS_TYPE_raw: return raw_first_missing(proxy);
+  case VCTRS_TYPE_character: return chr_first_missing(proxy);
+  case VCTRS_TYPE_list: return list_first_missing(proxy);
+  case VCTRS_TYPE_dataframe: return df_first_missing(proxy);
+  case VCTRS_TYPE_null: return 0;
+  case VCTRS_TYPE_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default: stop_unimplemented_vctrs_type("vec_first_missing", type);
   }
 
@@ -368,9 +368,9 @@ r_ssize df_first_missing(r_obj* x) {
 
   int n_prot = 0;
 
-  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(vctrs_type_dataframe);
+  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(VCTRS_TYPE_dataframe);
 
-  struct poly_vec* p_poly_x = new_poly_vec(x, vctrs_type_dataframe);
+  struct poly_vec* p_poly_x = new_poly_vec(x, VCTRS_TYPE_dataframe);
   PROTECT_POLY_VEC(p_poly_x, &n_prot);
   const void* v_x = p_poly_x->p_vec;
 

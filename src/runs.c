@@ -199,14 +199,14 @@ SEXP vec_identify_runs(SEXP x) {
   int n;
 
   switch (type) {
-  case vctrs_type_logical: n = lgl_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_integer: n = int_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_double: n = dbl_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_complex: n = cpl_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_character: n = chr_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_raw: n = raw_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_list: n = list_identify_runs(proxy, size, p_out); break;
-  case vctrs_type_dataframe: n = df_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_logical: n = lgl_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_integer: n = int_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_double: n = dbl_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_complex: n = cpl_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_character: n = chr_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_raw: n = raw_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_list: n = list_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_dataframe: n = df_identify_runs(proxy, size, p_out); break;
   default: stop_unimplemented_vctrs_type("vec_identify_runs", type);
   }
 
@@ -371,15 +371,15 @@ int vec_identify_runs_col(SEXP x,
                           struct df_short_circuit_info* p_info,
                           int* p_out) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical: return lgl_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_integer: return int_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_double: return dbl_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_complex: return cpl_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_character: return chr_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_raw: return raw_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_list: return list_identify_runs_col(x, id, p_info, p_out);
-  case vctrs_type_dataframe: r_stop_internal("Data frame columns should be flattened.");
-  case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_identify_runs()`");
+  case VCTRS_TYPE_logical: return lgl_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_integer: return int_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_double: return dbl_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_complex: return cpl_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_character: return chr_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_raw: return raw_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_list: return list_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should be flattened.");
+  case VCTRS_TYPE_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_identify_runs()`");
   default: Rf_error("Unimplemented type in `vec_identify_runs()`");
   }
 }

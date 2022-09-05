@@ -127,7 +127,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, proxy_info)) {
-    if (proxy_info.type == vctrs_type_scalar) {
+    if (proxy_info.type == VCTRS_TYPE_scalar) {
       Rf_errorcall(R_NilValue, "Can't slice a scalar");
     }
 
@@ -149,20 +149,20 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   }
 
   switch (proxy_info.type) {
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list: {
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
+  case VCTRS_TYPE_character:
+  case VCTRS_TYPE_raw:
+  case VCTRS_TYPE_list: {
     if (has_dim(x)) {
       return chop_shaped(x, indices, info);
     }
 
     return chop(x, indices, info);
   }
-  case vctrs_type_dataframe: {
+  case VCTRS_TYPE_dataframe: {
     return chop_df(x, indices, info);
   }
   default:

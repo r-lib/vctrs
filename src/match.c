@@ -362,19 +362,19 @@ r_obj* df_locate_matches(r_obj* needles,
     v_loc_filter_match_o_haystack = r_int_begin(loc_filter_match_o_haystack);
   }
 
-  struct poly_vec* p_poly_needles = new_poly_vec(needles, vctrs_type_dataframe);
+  struct poly_vec* p_poly_needles = new_poly_vec(needles, VCTRS_TYPE_dataframe);
   PROTECT_POLY_VEC(p_poly_needles, &n_prot);
   const struct poly_df_data* p_needles = (const struct poly_df_data*) p_poly_needles->p_vec;
 
-  struct poly_vec* p_poly_haystack = new_poly_vec(haystack, vctrs_type_dataframe);
+  struct poly_vec* p_poly_haystack = new_poly_vec(haystack, VCTRS_TYPE_dataframe);
   PROTECT_POLY_VEC(p_poly_haystack, &n_prot);
   const struct poly_df_data* p_haystack = (const struct poly_df_data*) p_poly_haystack->p_vec;
 
-  const struct poly_vec* p_poly_needles_complete = new_poly_vec(needles_complete, vctrs_type_dataframe);
+  const struct poly_vec* p_poly_needles_complete = new_poly_vec(needles_complete, VCTRS_TYPE_dataframe);
   PROTECT_POLY_VEC(p_poly_needles_complete, &n_prot);
   const struct poly_df_data* p_needles_complete = (const struct poly_df_data*) p_poly_needles_complete->p_vec;
 
-  struct poly_vec* p_poly_haystack_complete = new_poly_vec(haystack_complete, vctrs_type_dataframe);
+  struct poly_vec* p_poly_haystack_complete = new_poly_vec(haystack_complete, VCTRS_TYPE_dataframe);
   PROTECT_POLY_VEC(p_poly_haystack_complete, &n_prot);
   const struct poly_df_data* p_haystack_complete = (const struct poly_df_data*) p_poly_haystack_complete->p_vec;
 
@@ -2218,7 +2218,7 @@ r_obj* compute_nesting_container_ids(r_obj* x,
   struct r_dyn_array* p_prev_rows = r_new_dyn_vector(R_TYPE_integer, 10000);
   KEEP_N(p_prev_rows->shelter, &n_prot);
 
-  struct poly_vec* p_poly_x = new_poly_vec(x, vctrs_type_dataframe);
+  struct poly_vec* p_poly_x = new_poly_vec(x, VCTRS_TYPE_dataframe);
   PROTECT_POLY_VEC(p_poly_x, &n_prot);
   const void* v_x = p_poly_x->p_vec;
 

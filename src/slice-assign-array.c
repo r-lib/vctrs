@@ -195,13 +195,13 @@ static inline SEXP vec_assign_shaped_switch(SEXP proxy,
                                             const enum vctrs_owned owned,
                                             struct strides_info* p_info) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign_shaped(proxy, index, value, owned, p_info);
-  case vctrs_type_integer:   return int_assign_shaped(proxy, index, value, owned, p_info);
-  case vctrs_type_double:    return dbl_assign_shaped(proxy, index, value, owned, p_info);
-  case vctrs_type_complex:   return cpl_assign_shaped(proxy, index, value, owned, p_info);
-  case vctrs_type_character: return chr_assign_shaped(proxy, index, value, owned, p_info);
-  case vctrs_type_raw:       return raw_assign_shaped(proxy, index, value, owned, p_info);
-  case vctrs_type_list:      return list_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_logical:   return lgl_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_integer:   return int_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_double:    return dbl_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_complex:   return cpl_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_character: return chr_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_raw:       return raw_assign_shaped(proxy, index, value, owned, p_info);
+  case VCTRS_TYPE_list:      return list_assign_shaped(proxy, index, value, owned, p_info);
   default:                   stop_unimplemented_vctrs_type("vec_assign_shaped_switch",
                                                            vec_proxy_typeof(proxy));
   }

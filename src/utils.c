@@ -663,9 +663,9 @@ SEXP s4_class_find_method(SEXP class, SEXP table) {
 // [[ include("utils.h") ]]
 bool vec_implements_ptype2(SEXP x) {
   switch (vec_typeof(x)) {
-  case vctrs_type_scalar:
+  case VCTRS_TYPE_scalar:
     return false;
-  case vctrs_type_s3: {
+  case VCTRS_TYPE_s3: {
     SEXP method_sym = R_NilValue;
     SEXP method = s3_find_method_xy("vec_ptype2", x, x, vctrs_method_table, &method_sym);
 

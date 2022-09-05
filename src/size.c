@@ -28,20 +28,20 @@ r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
 
   r_ssize size;
   switch (info.type) {
-  case vctrs_type_null:
+  case VCTRS_TYPE_null:
     size = 0;
     break;
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list:
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
+  case VCTRS_TYPE_character:
+  case VCTRS_TYPE_raw:
+  case VCTRS_TYPE_list:
     size = vec_raw_size(data);
     break;
 
-  case vctrs_type_dataframe:
+  case VCTRS_TYPE_dataframe:
     size = df_size(data);
     break;
 

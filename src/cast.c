@@ -39,14 +39,14 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type to_type = vec_typeof(to);
 
-  if (x_type == vctrs_type_unspecified) {
+  if (x_type == VCTRS_TYPE_unspecified) {
     return vec_init(to, vec_size(x));
   }
 
-  if (x_type == vctrs_type_scalar) {
+  if (x_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(x, x_arg, opts->call);
   }
-  if (to_type == vctrs_type_scalar) {
+  if (to_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(to, to_arg, opts->call);
   }
 
@@ -57,7 +57,7 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   r_obj* out = r_null;
   bool lossy = false;
 
-  if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
+  if (to_type == VCTRS_TYPE_s3 || x_type == VCTRS_TYPE_s3) {
     out = vec_cast_dispatch_native(opts, x_type, to_type, &lossy);
   } else {
     out = vec_cast_switch_native(opts, x_type, to_type, &lossy);

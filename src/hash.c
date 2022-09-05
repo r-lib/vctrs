@@ -252,26 +252,26 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
 
   if (na_equal) {
     switch (vec_proxy_typeof(x)) {
-    case vctrs_type_logical: lgl_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_integer: int_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_double: dbl_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_complex: cpl_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_character: chr_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_raw: raw_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_list: list_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_dataframe: df_hash_fill(p, size, x, true); return;
+    case VCTRS_TYPE_logical: lgl_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_integer: int_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_double: dbl_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_complex: cpl_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_character: chr_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_raw: raw_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_list: list_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_dataframe: df_hash_fill(p, size, x, true); return;
     default: break;
     }
   } else {
     switch (vec_proxy_typeof(x)) {
-    case vctrs_type_logical: lgl_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_integer: int_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_double: dbl_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_complex: cpl_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_character: chr_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_raw: raw_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_list: list_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_dataframe: df_hash_fill(p, size, x, false); return;
+    case VCTRS_TYPE_logical: lgl_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_integer: int_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_double: dbl_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_complex: cpl_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_character: chr_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_raw: raw_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_list: list_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_dataframe: df_hash_fill(p, size, x, false); return;
     default: break;
     }
   }

@@ -87,13 +87,13 @@ bool p_is_missing(const void* p_x,
                   r_ssize i,
                   const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_logical: return p_lgl_is_missing(p_x, i);
-  case vctrs_type_integer: return p_int_is_missing(p_x, i);
-  case vctrs_type_double: return p_dbl_is_missing(p_x, i);
-  case vctrs_type_complex: return p_cpl_is_missing(p_x, i);
-  case vctrs_type_character: return p_chr_is_missing(p_x, i);
-  case vctrs_type_raw: return p_raw_is_missing(p_x, i);
-  case vctrs_type_list: return p_list_is_missing(p_x, i);
+  case VCTRS_TYPE_logical: return p_lgl_is_missing(p_x, i);
+  case VCTRS_TYPE_integer: return p_int_is_missing(p_x, i);
+  case VCTRS_TYPE_double: return p_dbl_is_missing(p_x, i);
+  case VCTRS_TYPE_complex: return p_cpl_is_missing(p_x, i);
+  case VCTRS_TYPE_character: return p_chr_is_missing(p_x, i);
+  case VCTRS_TYPE_raw: return p_raw_is_missing(p_x, i);
+  case VCTRS_TYPE_list: return p_list_is_missing(p_x, i);
   default: stop_unimplemented_vctrs_type("p_is_missing", type);
   }
 }

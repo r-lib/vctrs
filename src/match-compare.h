@@ -118,11 +118,11 @@ int p_order_compare_na_equal(const void* p_x,
                              bool nan_distinct,
                              const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_logical: return p_lgl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_integer: return p_int_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_double: return p_dbl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_complex: return p_cpl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_character: return p_chr_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_logical: return p_lgl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_integer: return p_int_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_double: return p_dbl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_complex: return p_cpl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_character: return p_chr_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
   default: stop_unimplemented_vctrs_type("p_order_compare_na_equal", type);
   }
 }

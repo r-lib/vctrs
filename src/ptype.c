@@ -12,18 +12,18 @@ r_obj* ffi_ptype(r_obj* x, r_obj* x_arg_ffi, r_obj* frame) {
 
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   switch (vec_typeof(x)) {
-  case vctrs_type_null:        return r_null;
-  case vctrs_type_unspecified: return vctrs_shared_empty_uns;
-  case vctrs_type_logical:     return vec_ptype_slice(x, vctrs_shared_empty_lgl);
-  case vctrs_type_integer:     return vec_ptype_slice(x, vctrs_shared_empty_int);
-  case vctrs_type_double:      return vec_ptype_slice(x, vctrs_shared_empty_dbl);
-  case vctrs_type_complex:     return vec_ptype_slice(x, vctrs_shared_empty_cpl);
-  case vctrs_type_character:   return vec_ptype_slice(x, vctrs_shared_empty_chr);
-  case vctrs_type_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
-  case vctrs_type_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe:   return df_ptype(x, true);
-  case vctrs_type_s3:          return s3_ptype(x, x_arg, call);
-  case vctrs_type_scalar:      stop_scalar_type(x, x_arg, call);
+  case VCTRS_TYPE_null:        return r_null;
+  case VCTRS_TYPE_unspecified: return vctrs_shared_empty_uns;
+  case VCTRS_TYPE_logical:     return vec_ptype_slice(x, vctrs_shared_empty_lgl);
+  case VCTRS_TYPE_integer:     return vec_ptype_slice(x, vctrs_shared_empty_int);
+  case VCTRS_TYPE_double:      return vec_ptype_slice(x, vctrs_shared_empty_dbl);
+  case VCTRS_TYPE_complex:     return vec_ptype_slice(x, vctrs_shared_empty_cpl);
+  case VCTRS_TYPE_character:   return vec_ptype_slice(x, vctrs_shared_empty_chr);
+  case VCTRS_TYPE_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
+  case VCTRS_TYPE_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
+  case VCTRS_TYPE_dataframe:   return df_ptype(x, true);
+  case VCTRS_TYPE_s3:          return s3_ptype(x, x_arg, call);
+  case VCTRS_TYPE_scalar:      stop_scalar_type(x, x_arg, call);
   }
   r_stop_unreachable();
 }

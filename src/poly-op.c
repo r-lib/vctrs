@@ -7,15 +7,15 @@ static int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize 
 // [[ include("poly-op.h") ]]
 poly_binary_int_fn_ptr new_poly_p_equal_na_equal(enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_null: return p_nil_equal_na_equal;
-  case vctrs_type_logical: return p_lgl_equal_na_equal;
-  case vctrs_type_integer: return p_int_equal_na_equal;
-  case vctrs_type_double: return p_dbl_equal_na_equal;
-  case vctrs_type_complex: return p_cpl_equal_na_equal;
-  case vctrs_type_character: return p_chr_equal_na_equal;
-  case vctrs_type_raw: return p_raw_equal_na_equal;
-  case vctrs_type_list: return p_list_equal_na_equal;
-  case vctrs_type_dataframe: return p_df_equal_na_equal;
+  case VCTRS_TYPE_null: return p_nil_equal_na_equal;
+  case VCTRS_TYPE_logical: return p_lgl_equal_na_equal;
+  case VCTRS_TYPE_integer: return p_int_equal_na_equal;
+  case VCTRS_TYPE_double: return p_dbl_equal_na_equal;
+  case VCTRS_TYPE_complex: return p_cpl_equal_na_equal;
+  case VCTRS_TYPE_character: return p_chr_equal_na_equal;
+  case VCTRS_TYPE_raw: return p_raw_equal_na_equal;
+  case VCTRS_TYPE_list: return p_list_equal_na_equal;
+  case VCTRS_TYPE_dataframe: return p_df_equal_na_equal;
   default: stop_unimplemented_vctrs_type("new_poly_p_equal_na_equal", type);
   }
 }
@@ -51,15 +51,15 @@ static int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssiz
 // [[ include("poly-op.h") ]]
 poly_binary_int_fn_ptr new_poly_p_compare_na_equal(enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_null: return p_nil_compare_na_equal;
-  case vctrs_type_logical: return p_lgl_compare_na_equal;
-  case vctrs_type_integer: return p_int_compare_na_equal;
-  case vctrs_type_double: return p_dbl_compare_na_equal;
-  case vctrs_type_complex: return p_cpl_compare_na_equal;
-  case vctrs_type_character: return p_chr_compare_na_equal;
-  case vctrs_type_raw: return p_raw_compare_na_equal;
-  case vctrs_type_list: return p_list_compare_na_equal;
-  case vctrs_type_dataframe: return p_df_compare_na_equal;
+  case VCTRS_TYPE_null: return p_nil_compare_na_equal;
+  case VCTRS_TYPE_logical: return p_lgl_compare_na_equal;
+  case VCTRS_TYPE_integer: return p_int_compare_na_equal;
+  case VCTRS_TYPE_double: return p_dbl_compare_na_equal;
+  case VCTRS_TYPE_complex: return p_cpl_compare_na_equal;
+  case VCTRS_TYPE_character: return p_chr_compare_na_equal;
+  case VCTRS_TYPE_raw: return p_raw_compare_na_equal;
+  case VCTRS_TYPE_list: return p_list_compare_na_equal;
+  case VCTRS_TYPE_dataframe: return p_df_compare_na_equal;
   default: stop_unimplemented_vctrs_type("new_poly_p_compare_na_equal", type);
   }
 }
@@ -101,15 +101,15 @@ static bool p_df_is_missing(const void* x, r_ssize i);
 // [[ include("poly-op.h") ]]
 poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_null: return p_nil_is_missing;
-  case vctrs_type_logical: return p_lgl_is_missing;
-  case vctrs_type_integer: return p_int_is_missing;
-  case vctrs_type_double: return p_dbl_is_missing;
-  case vctrs_type_complex: return p_cpl_is_missing;
-  case vctrs_type_character: return p_chr_is_missing;
-  case vctrs_type_raw: return p_raw_is_missing;
-  case vctrs_type_list: return p_list_is_missing;
-  case vctrs_type_dataframe: return p_df_is_missing;
+  case VCTRS_TYPE_null: return p_nil_is_missing;
+  case VCTRS_TYPE_logical: return p_lgl_is_missing;
+  case VCTRS_TYPE_integer: return p_int_is_missing;
+  case VCTRS_TYPE_double: return p_dbl_is_missing;
+  case VCTRS_TYPE_complex: return p_cpl_is_missing;
+  case VCTRS_TYPE_character: return p_chr_is_missing;
+  case VCTRS_TYPE_raw: return p_raw_is_missing;
+  case VCTRS_TYPE_list: return p_list_is_missing;
+  case VCTRS_TYPE_dataframe: return p_df_is_missing;
   default: stop_unimplemented_vctrs_type("new_poly_p_is_missing", type);
   }
 }
@@ -139,15 +139,15 @@ static bool p_df_is_incomplete(const void* x, r_ssize i);
 // [[ include("poly-op.h") ]]
 poly_unary_bool_fn_ptr new_poly_p_is_incomplete(enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_null: return p_nil_is_missing;
-  case vctrs_type_logical: return p_lgl_is_missing;
-  case vctrs_type_integer: return p_int_is_missing;
-  case vctrs_type_double: return p_dbl_is_missing;
-  case vctrs_type_complex: return p_cpl_is_missing;
-  case vctrs_type_character: return p_chr_is_missing;
-  case vctrs_type_raw: return p_raw_is_missing;
-  case vctrs_type_list: return p_list_is_missing;
-  case vctrs_type_dataframe: return p_df_is_incomplete;
+  case VCTRS_TYPE_null: return p_nil_is_missing;
+  case VCTRS_TYPE_logical: return p_lgl_is_missing;
+  case VCTRS_TYPE_integer: return p_int_is_missing;
+  case VCTRS_TYPE_double: return p_dbl_is_missing;
+  case VCTRS_TYPE_complex: return p_cpl_is_missing;
+  case VCTRS_TYPE_character: return p_chr_is_missing;
+  case VCTRS_TYPE_raw: return p_raw_is_missing;
+  case VCTRS_TYPE_list: return p_list_is_missing;
+  case VCTRS_TYPE_dataframe: return p_df_is_incomplete;
   default: stop_unimplemented_vctrs_type("new_poly_p_is_incomplete", type);
   }
 }
@@ -192,15 +192,15 @@ struct poly_vec* new_poly_vec(SEXP proxy, enum vctrs_type type) {
   p_poly_vec->vec = proxy;
 
   switch (type) {
-  case vctrs_type_null: init_nil_poly_vec(p_poly_vec); break;
-  case vctrs_type_logical: init_lgl_poly_vec(p_poly_vec); break;
-  case vctrs_type_integer: init_int_poly_vec(p_poly_vec); break;
-  case vctrs_type_double: init_dbl_poly_vec(p_poly_vec); break;
-  case vctrs_type_complex: init_cpl_poly_vec(p_poly_vec); break;
-  case vctrs_type_character: init_chr_poly_vec(p_poly_vec); break;
-  case vctrs_type_raw: init_raw_poly_vec(p_poly_vec); break;
-  case vctrs_type_list: init_list_poly_vec(p_poly_vec); break;
-  case vctrs_type_dataframe: init_df_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_null: init_nil_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_logical: init_lgl_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_integer: init_int_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_double: init_dbl_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_complex: init_cpl_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_character: init_chr_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_raw: init_raw_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_list: init_list_poly_vec(p_poly_vec); break;
+  case VCTRS_TYPE_dataframe: init_df_poly_vec(p_poly_vec); break;
   default: stop_unimplemented_vctrs_type("new_poly_vec", type);
   }
 

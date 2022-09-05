@@ -37,34 +37,34 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type y_type = vec_typeof(y);
 
-  if (x_type == vctrs_type_null) {
+  if (x_type == VCTRS_TYPE_null) {
     *left = y == r_null;
     return vec_ptype2_from_unspecified(opts, x_type, y, y_arg);
   }
-  if (y_type == vctrs_type_null) {
+  if (y_type == VCTRS_TYPE_null) {
     *left = x == r_null;
     return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 
-  if (x_type == vctrs_type_unspecified) {
+  if (x_type == VCTRS_TYPE_unspecified) {
     return vec_ptype2_from_unspecified(opts, y_type, y, y_arg);
   }
-  if (y_type == vctrs_type_unspecified) {
+  if (y_type == VCTRS_TYPE_unspecified) {
     return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 
-  if (x_type == vctrs_type_scalar) {
+  if (x_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(x, x_arg, opts->call);
   }
-  if (y_type == vctrs_type_scalar) {
+  if (y_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(y, y_arg, opts->call);
   }
 
-  if (x_type != vctrs_type_s3 && y_type != vctrs_type_s3) {
+  if (x_type != VCTRS_TYPE_s3 && y_type != VCTRS_TYPE_s3) {
     return vec_ptype2_switch_native(opts, x_type, y_type, left);
   }
 
-  if (x_type == vctrs_type_s3 || y_type == vctrs_type_s3) {
+  if (x_type == VCTRS_TYPE_s3 || y_type == VCTRS_TYPE_s3) {
     r_obj* out = vec_ptype2_dispatch_native(opts, x_type, y_type, left);
     if (out != r_null) {
       return out;
@@ -154,7 +154,7 @@ r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
                                    enum vctrs_type other_type,
                                    r_obj* other,
                                    struct vctrs_arg* other_arg) {
-  if (other_type == vctrs_type_unspecified || other_type == vctrs_type_null) {
+  if (other_type == VCTRS_TYPE_unspecified || other_type == VCTRS_TYPE_null) {
     return vec_ptype(other, other_arg, opts->call);
   }
 

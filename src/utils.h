@@ -366,12 +366,12 @@ static inline SEXP expr_protect(SEXP x) {
 
 static inline const void* vec_type_missing_value(enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_logical: return &NA_LOGICAL;
-  case vctrs_type_integer: return &NA_INTEGER;
-  case vctrs_type_double: return &NA_REAL;
-  case vctrs_type_complex: return &vctrs_shared_na_cpl;
-  case vctrs_type_character: return &NA_STRING;
-  case vctrs_type_list: return &R_NilValue;
+  case VCTRS_TYPE_logical: return &NA_LOGICAL;
+  case VCTRS_TYPE_integer: return &NA_INTEGER;
+  case VCTRS_TYPE_double: return &NA_REAL;
+  case VCTRS_TYPE_complex: return &vctrs_shared_na_cpl;
+  case VCTRS_TYPE_character: return &NA_STRING;
+  case VCTRS_TYPE_list: return &R_NilValue;
   default: stop_unimplemented_vctrs_type("vec_type_missing_value", type);
   }
 }

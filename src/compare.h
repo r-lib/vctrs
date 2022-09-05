@@ -153,14 +153,14 @@ int p_compare_na_equal(const void* p_x,
                        r_ssize j,
                        const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_null: return p_nil_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_logical: return p_lgl_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_integer: return p_int_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_double: return p_dbl_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_complex: return p_cpl_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_character: return p_chr_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_raw: return p_raw_compare_na_equal(p_x, i, p_y, j);
-  case vctrs_type_list: return p_list_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_null: return p_nil_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_logical: return p_lgl_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_integer: return p_int_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_double: return p_dbl_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_complex: return p_cpl_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_character: return p_chr_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_raw: return p_raw_compare_na_equal(p_x, i, p_y, j);
+  case VCTRS_TYPE_list: return p_list_compare_na_equal(p_x, i, p_y, j);
   default: stop_unimplemented_vctrs_type("p_compare_na_equal", type);
   }
 }
@@ -266,14 +266,14 @@ int p_compare_na_propagate(const void* p_x,
                            r_ssize j,
                            const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_null: return p_nil_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_logical: return p_lgl_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_integer: return p_int_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_double: return p_dbl_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_complex: return p_cpl_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_character: return p_chr_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_raw: return p_raw_compare_na_propagate(p_x, i, p_y, j);
-  case vctrs_type_list: return p_list_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_null: return p_nil_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_logical: return p_lgl_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_integer: return p_int_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_double: return p_dbl_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_complex: return p_cpl_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_character: return p_chr_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_raw: return p_raw_compare_na_propagate(p_x, i, p_y, j);
+  case VCTRS_TYPE_list: return p_list_compare_na_propagate(p_x, i, p_y, j);
   default: stop_unimplemented_vctrs_type("p_compare_na_propagate", type);
   }
 }

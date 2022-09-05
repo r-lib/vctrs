@@ -8,7 +8,7 @@ r_obj* vec_proxy(r_obj* x) {
   KEEP(info.shelter);
 
   r_obj* out;
-  if (info.type == vctrs_type_s3) {
+  if (info.type == VCTRS_TYPE_s3) {
     out = vec_proxy_invoke(x, info.proxy_method);
   } else {
     out = x;
@@ -101,7 +101,7 @@ r_obj* vec_proxy_invoke_impl(r_obj* x,
   }
 
   /* Fallback on S3 objects with no proxy */
-  if (vec_typeof(x) == vctrs_type_s3) {
+  if (vec_typeof(x) == VCTRS_TYPE_s3) {
     return vec_proxy_fn(x);
   } else {
     return x;

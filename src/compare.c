@@ -38,7 +38,7 @@ SEXP vec_compare(SEXP x, SEXP y, bool na_equal) {
   x = PROTECT(vec_normalize_encoding(x));
   y = PROTECT(vec_normalize_encoding(y));
 
-  if (type == vctrs_type_dataframe) {
+  if (type == VCTRS_TYPE_dataframe) {
     SEXP out = df_compare(x, y, na_equal, size);
     UNPROTECT(2);
     return out;
@@ -46,22 +46,22 @@ SEXP vec_compare(SEXP x, SEXP y, bool na_equal) {
 
   if (na_equal) {
     switch (type) {
-    case vctrs_type_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_na_equal);
-    case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_equal);
-    case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_equal);
-    case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_equal);
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vec_compare()`");
+    case VCTRS_TYPE_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_na_equal);
+    case VCTRS_TYPE_integer:   COMPARE(int, INTEGER_RO, int_compare_na_equal);
+    case VCTRS_TYPE_double:    COMPARE(double, REAL_RO, dbl_compare_na_equal);
+    case VCTRS_TYPE_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_equal);
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vec_compare()`");
     default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   } else {
     switch (type) {
-    case vctrs_type_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_na_propagate);
-    case vctrs_type_integer:   COMPARE(int, INTEGER_RO, int_compare_na_propagate);
-    case vctrs_type_double:    COMPARE(double, REAL_RO, dbl_compare_na_propagate);
-    case vctrs_type_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_propagate);
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vec_compare()`");
+    case VCTRS_TYPE_logical:   COMPARE(int, LOGICAL_RO, lgl_compare_na_propagate);
+    case VCTRS_TYPE_integer:   COMPARE(int, INTEGER_RO, int_compare_na_propagate);
+    case VCTRS_TYPE_double:    COMPARE(double, REAL_RO, dbl_compare_na_propagate);
+    case VCTRS_TYPE_character: COMPARE(SEXP, STRING_PTR_RO, chr_compare_na_propagate);
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vec_compare()`");
     default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   }
@@ -167,29 +167,29 @@ static void vec_compare_col(int* p_out,
                             bool na_equal) {
   enum vctrs_type type = vec_proxy_typeof(x);
 
-  if (type == vctrs_type_dataframe) {
+  if (type == VCTRS_TYPE_dataframe) {
     df_compare_impl(p_out, p_info, x, y, na_equal);
     return;
   }
 
   if (na_equal) {
     switch (type) {
-    case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_na_equal); break;
-    case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_na_equal); break;
-    case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_na_equal); break;
-    case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_na_equal); break;
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
+    case VCTRS_TYPE_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_na_equal); break;
+    case VCTRS_TYPE_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_na_equal); break;
+    case VCTRS_TYPE_double:    COMPARE_COL(double, REAL_RO, dbl_compare_na_equal); break;
+    case VCTRS_TYPE_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_na_equal); break;
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vctrs_compare()`");
     default:                   stop_unimplemented_vctrs_type("vec_compare_col", type);
     }
   } else {
     switch (type) {
-    case vctrs_type_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_na_propagate); break;
-    case vctrs_type_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_na_propagate); break;
-    case vctrs_type_double:    COMPARE_COL(double, REAL_RO, dbl_compare_na_propagate); break;
-    case vctrs_type_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_na_propagate); break;
-    case vctrs_type_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
-    case vctrs_type_list:      r_abort("Can't compare lists with `vctrs_compare()`");
+    case VCTRS_TYPE_logical:   COMPARE_COL(int, LOGICAL_RO, lgl_compare_na_propagate); break;
+    case VCTRS_TYPE_integer:   COMPARE_COL(int, INTEGER_RO, int_compare_na_propagate); break;
+    case VCTRS_TYPE_double:    COMPARE_COL(double, REAL_RO, dbl_compare_na_propagate); break;
+    case VCTRS_TYPE_character: COMPARE_COL(SEXP, STRING_PTR_RO, chr_compare_na_propagate); break;
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vctrs_compare()`");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vctrs_compare()`");
     default:                   stop_unimplemented_vctrs_type("vec_compare_col", type);
     }
   }
