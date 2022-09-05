@@ -165,7 +165,7 @@ static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
   // need to put something in the struct
   SEXP steps;
   if (is_compact(index)) {
-    steps = vctrs_shared_empty_int;
+    steps = r_globals.empty_int;
   } else {
     steps = vec_steps(p_index, index_n);
   }

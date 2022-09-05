@@ -322,7 +322,7 @@ static SEXP new_datetime(SEXP x, SEXP tzone) {
 
 
 static SEXP new_empty_datetime(SEXP tzone) {
-  return new_datetime(vctrs_shared_empty_dbl, tzone);
+  return new_datetime(r_globals.empty_dbl, tzone);
 }
 
 // -----------------------------------------------------------------------------

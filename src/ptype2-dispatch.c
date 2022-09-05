@@ -15,7 +15,7 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
   switch (type2_s3) {
   case VCTRS_TYPE2_S3_character_bare_factor:
   case VCTRS_TYPE2_S3_character_bare_ordered:
-    return vctrs_shared_empty_chr;
+    return r_globals.empty_chr;
 
   case VCTRS_TYPE2_S3_bare_factor_bare_factor:
     return fct_ptype2(opts);
@@ -63,7 +63,7 @@ r_obj* vec_ptype2_default(r_obj* x,
                                 syms_x_arg, ffi_x_arg,
                                 syms_y_arg, ffi_y_arg,
                                 syms_call, ffi_call,
-                                syms_from_dispatch, vctrs_shared_true,
+                                syms_from_dispatch, r_true,
                                 syms_df_fallback, df_fallback_obj,
                                 syms_s3_fallback, s3_fallback_obj);
 

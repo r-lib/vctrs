@@ -43,7 +43,7 @@ r_obj* vec_as_location_opts(r_obj* subscript,
 
   r_obj* out = r_null;
   switch (r_typeof(subscript)) {
-  case R_TYPE_null: out = vctrs_shared_empty_int; break;
+  case R_TYPE_null: out = r_globals.empty_int; break;
   case R_TYPE_logical: out = lgl_as_location(subscript, n, opts); break;
   case R_TYPE_integer: out = int_as_location(subscript, n, opts); break;
   case R_TYPE_double: out = dbl_as_location(subscript, n, opts); break;
@@ -100,7 +100,7 @@ r_obj* lgl_as_location(r_obj* subscript,
       out = KEEP(r_alloc_integer(n));
       r_int_fill_seq(out, 1, n);
     } else {
-      return vctrs_shared_empty_int;
+      return r_globals.empty_int;
     }
 
     r_obj* nms = KEEP(r_names(subscript));
@@ -364,7 +364,7 @@ r_obj* dbl_as_location(r_obj* subscript,
                        r_ssize n,
                        const struct location_opts* opts) {
   subscript = KEEP(vec_cast(subscript,
-                            vctrs_shared_empty_int,
+                            r_globals.empty_int,
                             vec_args.empty,
                             vec_args.empty,
                             r_lazy_null));
@@ -429,7 +429,7 @@ r_obj* ffi_as_location(r_obj* subscript,
   } else {
     if (r_is_object(ffi_n) || r_typeof(ffi_n) != R_TYPE_integer) {
       ffi_n = vec_cast(ffi_n,
-                       vctrs_shared_empty_int,
+                       r_globals.empty_int,
                        vec_args.n,
                        vec_args.empty,
                        (struct r_lazy) { .x = frame, .env = r_null });

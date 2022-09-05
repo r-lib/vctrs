@@ -2,6 +2,7 @@
 #define VCTRS_GLOBALS_H
 
 #include <rlang.h>
+#include "globals.h"
 #include "rlang-dev.h"
 
 struct syms {
@@ -60,5 +61,14 @@ extern struct strings strings;
 extern struct fns fns;
 extern struct vec_args vec_args;
 extern struct lazy_calls lazy_calls;
+
+
+extern r_obj* vctrs_shared_empty_date;
+extern r_obj* vctrs_shared_empty_uns;
+
+extern Rcomplex vctrs_shared_na_cpl;
+extern r_obj* vctrs_shared_na_lgl;
+extern r_obj* vctrs_shared_na_list;
+
 
 #endif

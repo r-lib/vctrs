@@ -6,23 +6,6 @@
 
 // Vector types -------------------------------------------------
 
-extern SEXP vctrs_shared_empty_lgl;
-extern SEXP vctrs_shared_empty_int;
-extern SEXP vctrs_shared_empty_dbl;
-extern SEXP vctrs_shared_empty_cpl;
-extern SEXP vctrs_shared_empty_chr;
-extern SEXP vctrs_shared_empty_raw;
-extern SEXP vctrs_shared_empty_list;
-extern SEXP vctrs_shared_empty_date;
-extern SEXP vctrs_shared_empty_uns;
-
-extern SEXP vctrs_shared_true;
-extern SEXP vctrs_shared_false;
-
-extern Rcomplex vctrs_shared_na_cpl;
-extern SEXP vctrs_shared_na_lgl;
-extern SEXP vctrs_shared_na_list;
-
 SEXP vec_unspecified(R_len_t n);
 bool vec_is_unspecified(SEXP x);
 

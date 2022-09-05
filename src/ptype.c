@@ -14,13 +14,13 @@ r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   switch (vec_typeof(x)) {
   case VCTRS_TYPE_null:        return r_null;
   case VCTRS_TYPE_unspecified: return vctrs_shared_empty_uns;
-  case VCTRS_TYPE_logical:     return vec_ptype_slice(x, vctrs_shared_empty_lgl);
-  case VCTRS_TYPE_integer:     return vec_ptype_slice(x, vctrs_shared_empty_int);
-  case VCTRS_TYPE_double:      return vec_ptype_slice(x, vctrs_shared_empty_dbl);
-  case VCTRS_TYPE_complex:     return vec_ptype_slice(x, vctrs_shared_empty_cpl);
-  case VCTRS_TYPE_character:   return vec_ptype_slice(x, vctrs_shared_empty_chr);
-  case VCTRS_TYPE_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
-  case VCTRS_TYPE_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
+  case VCTRS_TYPE_logical:     return vec_ptype_slice(x, r_globals.empty_lgl);
+  case VCTRS_TYPE_integer:     return vec_ptype_slice(x, r_globals.empty_int);
+  case VCTRS_TYPE_double:      return vec_ptype_slice(x, r_globals.empty_dbl);
+  case VCTRS_TYPE_complex:     return vec_ptype_slice(x, r_globals.empty_cpl);
+  case VCTRS_TYPE_character:   return vec_ptype_slice(x, r_globals.empty_chr);
+  case VCTRS_TYPE_raw:         return vec_ptype_slice(x, r_globals.empty_raw);
+  case VCTRS_TYPE_list:        return vec_ptype_slice(x, r_globals.empty_list);
   case VCTRS_TYPE_dataframe:   return df_ptype(x, true);
   case VCTRS_TYPE_s3:          return s3_ptype(x, x_arg, call);
   case VCTRS_TYPE_scalar:      stop_scalar_type(x, x_arg, call);
@@ -107,7 +107,7 @@ r_obj* df_ptype(r_obj* x, bool bare) {
   }
 
   if (r_typeof(row_nms) == R_TYPE_character) {
-    r_attrib_poke(ptype, r_syms.row_names, vctrs_shared_empty_chr);
+    r_attrib_poke(ptype, r_syms.row_names, r_globals.empty_chr);
   }
 
   FREE(2);
@@ -177,7 +177,7 @@ r_obj* vec_ptype_finalise_unspecified(r_obj* x) {
   r_ssize size = r_length(x);
 
   if (size == 0) {
-    return vctrs_shared_empty_lgl;
+    return r_globals.empty_lgl;
   }
 
   r_obj* out = KEEP(r_alloc_logical(size));

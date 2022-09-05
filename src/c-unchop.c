@@ -219,7 +219,7 @@ static SEXP vec_unchop_fallback(SEXP ptype,
 
   indices = PROTECT(vec_c(
     indices,
-    vctrs_shared_empty_int,
+    r_globals.empty_int,
     R_NilValue,
     &name_repair_opts
   ));

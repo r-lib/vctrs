@@ -528,7 +528,7 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
 
   if (r_is_empty_names(inner)) {
     if (n == 0) {
-      return vctrs_shared_empty_chr;
+      return r_globals.empty_chr;
     }
     if (n == 1) {
       return r_str_as_character(outer);

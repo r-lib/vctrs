@@ -138,7 +138,7 @@ r_obj* vec_cast_default(r_obj* x,
                                 syms_x_arg, p_x_arg,
                                 syms_to_arg, p_to_arg,
                                 syms_call, ffi_call,
-                                syms_from_dispatch, vctrs_shared_true,
+                                syms_from_dispatch, r_true,
                                 syms_df_fallback, df_fallback,
                                 syms_s3_fallback, s3_fallback);
   FREE(3);

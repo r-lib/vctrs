@@ -21,7 +21,7 @@ struct group_info* new_group_info() {
 
   p_group_info->self = self;
   p_group_info->data_size = 0;
-  p_group_info->data = vctrs_shared_empty_int;
+  p_group_info->data = r_globals.empty_int;
   p_group_info->n_groups = 0;
   p_group_info->max_group_size = 0;
 

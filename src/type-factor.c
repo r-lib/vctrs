@@ -75,7 +75,7 @@ static SEXP levels_union(SEXP x, SEXP y) {
   // No name repair because this is just combining factor levels
   SEXP xy = PROTECT(vec_c(
     args,
-    vctrs_shared_empty_chr,
+    r_globals.empty_chr,
     R_NilValue,
     &name_repair_opts
   ));

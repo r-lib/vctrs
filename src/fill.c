@@ -249,7 +249,7 @@ int parse_max_fill(r_obj* x) {
   }
 
   x = KEEP(vec_cast(x,
-                    vctrs_shared_empty_int,
+                    r_globals.empty_int,
                     vec_args.max_fill,
                     vec_args.empty,
                     r_lazy_null));

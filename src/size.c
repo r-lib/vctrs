@@ -194,7 +194,7 @@ r_obj* ffi_recycle(r_obj* x,
   struct r_lazy recycle_call = { .x = frame, .env = r_null };
 
   size_obj = KEEP(vec_cast(size_obj,
-                           vctrs_shared_empty_int,
+                           r_globals.empty_int,
                            vec_args.empty,
                            vec_args.empty,
                            recycle_call));

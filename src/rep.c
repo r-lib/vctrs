@@ -23,7 +23,7 @@ SEXP vctrs_rep(SEXP x, SEXP times) {
   struct r_lazy call = r_lazy_null;
 
   times = PROTECT(vec_cast(times,
-                           vctrs_shared_empty_int,
+                           r_globals.empty_int,
                            args_times,
                            vec_args.empty,
                            call));
@@ -91,7 +91,7 @@ static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size);
 
 static SEXP vec_rep_each(SEXP x, SEXP times) {
   times = PROTECT(vec_cast(times,
-                           vctrs_shared_empty_int,
+                           r_globals.empty_int,
                            args_times,
                            vec_args.empty,
                            r_lazy_null));
@@ -321,7 +321,7 @@ SEXP vec_unrep(SEXP x) {
   r_ssize x_size = r_length(id);
 
   if (x_size == 0) {
-    SEXP out = new_unrep_data_frame(x, vctrs_shared_empty_int, 0);
+    SEXP out = new_unrep_data_frame(x, r_globals.empty_int, 0);
     UNPROTECT(1);
     return out;
   }

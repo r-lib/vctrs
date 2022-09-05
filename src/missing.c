@@ -28,7 +28,7 @@ r_obj* proxy_equal_na(r_obj* proxy) {
   case VCTRS_TYPE_character: return chr_equal_na(proxy);
   case VCTRS_TYPE_list: return list_equal_na(proxy);
   case VCTRS_TYPE_dataframe: return df_equal_na(proxy);
-  case VCTRS_TYPE_null: return vctrs_shared_empty_lgl;
+  case VCTRS_TYPE_null: return r_globals.empty_lgl;
   case VCTRS_TYPE_scalar: stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default: stop_unimplemented_vctrs_type("vec_equal_na", type);
   }

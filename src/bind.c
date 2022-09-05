@@ -77,7 +77,7 @@ r_obj* vec_rbind(r_obj* xs,
 
   if (ptype == r_null) {
     FREE(n_prot);
-    return new_data_frame(vctrs_shared_empty_list, 0);
+    return new_data_frame(r_globals.empty_list, 0);
   }
   if (r_typeof(ptype) == R_TYPE_logical && !n_cols) {
     ptype = as_df_row_impl(vctrs_shared_na_lgl,
@@ -343,7 +343,7 @@ r_obj* cbind_names_to(bool has_names,
                       r_obj* names_to,
                       r_obj* ptype,
                       struct r_lazy call) {
-  r_obj* index_ptype = has_names ? vctrs_shared_empty_chr : vctrs_shared_empty_int;
+  r_obj* index_ptype = has_names ? r_globals.empty_chr : r_globals.empty_int;
 
   r_obj* tmp = KEEP(r_alloc_list(2));
   r_list_poke(tmp, 0, index_ptype);
@@ -406,7 +406,7 @@ r_obj* vec_cbind(r_obj* xs,
                                              p_arg,
                                              call));
   if (type == r_null) {
-    type = new_data_frame(vctrs_shared_empty_list, 0);
+    type = new_data_frame(r_globals.empty_list, 0);
   } else if (!is_data_frame(type)) {
     type = r_as_data_frame(type);
   }

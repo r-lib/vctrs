@@ -1341,7 +1341,7 @@ struct vctrs_incomplete parse_incomplete(r_obj* incomplete,
 
   incomplete = vec_cast(
     incomplete,
-    vctrs_shared_empty_int,
+    r_globals.empty_int,
     args_incomplete,
     vec_args.empty,
     call
@@ -1461,7 +1461,7 @@ struct vctrs_no_match parse_no_match(r_obj* no_match,
 
   no_match = vec_cast(
     no_match,
-    vctrs_shared_empty_int,
+    r_globals.empty_int,
     args_no_match,
     vec_args.empty,
     call
@@ -1512,7 +1512,7 @@ struct vctrs_remaining parse_remaining(r_obj* remaining,
 
   remaining = vec_cast(
     remaining,
-    vctrs_shared_empty_int,
+    r_globals.empty_int,
     args_remaining,
     vec_args.empty,
     call
@@ -2002,7 +2002,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
   if (!any_non_equi) {
     // Container info isn't required for only `==`
     r_list_poke(out, 0, vec_order(haystack, chrs_asc, chrs_smallest, true, r_null));
-    r_list_poke(out, 1, vctrs_shared_empty_int);
+    r_list_poke(out, 1, r_globals.empty_int);
     r_list_poke(out, 2, r_int(1));
     r_list_poke(out, 3, r_lgl(any_non_equi));
     FREE(n_prot);
@@ -2107,7 +2107,7 @@ r_obj* compute_nesting_container_info(r_obj* haystack,
     // that is already in nested containment order. In that case, original
     // haystack ordering is sufficient and we don't need the ids.
     r_list_poke(out, 0, o_haystack);
-    r_list_poke(out, 1, vctrs_shared_empty_int);
+    r_list_poke(out, 1, r_globals.empty_int);
     r_list_poke(out, 2, r_int(1));
     r_list_poke(out, 3, r_lgl(any_non_equi));
     FREE(n_prot);

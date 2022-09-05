@@ -1490,16 +1490,7 @@ bool vctrs_debug_verbose = false;
 SEXP vctrs_ns_env = NULL;
 SEXP vctrs_shared_empty_str = NULL;
 
-SEXP vctrs_shared_empty_lgl = NULL;
-SEXP vctrs_shared_empty_int = NULL;
-SEXP vctrs_shared_empty_dbl = NULL;
-SEXP vctrs_shared_empty_cpl = NULL;
-SEXP vctrs_shared_empty_chr = NULL;
-SEXP vctrs_shared_empty_raw = NULL;
-SEXP vctrs_shared_empty_list = NULL;
 SEXP vctrs_shared_empty_date = NULL;
-SEXP vctrs_shared_true = NULL;
-SEXP vctrs_shared_false = NULL;
 
 Rcomplex vctrs_shared_na_cpl;
 SEXP vctrs_shared_na_lgl = NULL;
@@ -1807,21 +1798,8 @@ void vctrs_init_utils(SEXP ns) {
   SET_STRING_ELT(classes_vctrs_group_rle, 2, Rf_mkChar("vctrs_vctr"));
 
 
-  vctrs_shared_empty_lgl = r_new_shared_vector(LGLSXP, 0);
-  vctrs_shared_empty_int = r_new_shared_vector(INTSXP, 0);
-  vctrs_shared_empty_dbl = r_new_shared_vector(REALSXP, 0);
-  vctrs_shared_empty_cpl = r_new_shared_vector(CPLXSXP, 0);
-  vctrs_shared_empty_chr = r_new_shared_vector(STRSXP, 0);
-  vctrs_shared_empty_raw = r_new_shared_vector(RAWSXP, 0);
-  vctrs_shared_empty_list = r_new_shared_vector(VECSXP, 0);
   vctrs_shared_empty_date = r_new_shared_vector(REALSXP, 0);
   Rf_setAttrib(vctrs_shared_empty_date, R_ClassSymbol, classes_date);
-
-  vctrs_shared_true = r_new_shared_vector(LGLSXP, 1);
-  LOGICAL(vctrs_shared_true)[0] = 1;
-
-  vctrs_shared_false = r_new_shared_vector(LGLSXP, 1);
-  LOGICAL(vctrs_shared_false)[0] = 0;
 
   vctrs_shared_na_cpl.i = NA_REAL;
   vctrs_shared_na_cpl.r = NA_REAL;

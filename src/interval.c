@@ -439,8 +439,8 @@ r_obj* vec_interval_complement(r_obj* start,
     // - `lower > upper` is an invalid interval.
     // - `lower = upper` will always result in an empty complement.
     r_obj* out = KEEP_N(r_new_list(2), &n_prot);
-    r_list_poke(out, 0, vec_slice_unsafe(start, vctrs_shared_empty_int));
-    r_list_poke(out, 1, vec_slice_unsafe(end, vctrs_shared_empty_int));
+    r_list_poke(out, 0, vec_slice_unsafe(start, r_globals.empty_int));
+    r_list_poke(out, 1, vec_slice_unsafe(end, r_globals.empty_int));
 
     r_obj* out_names = r_new_character(2);
     r_attrib_poke_names(out, out_names);

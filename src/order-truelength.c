@@ -33,17 +33,17 @@ struct truelength_info* new_truelength_info(r_ssize n_max) {
 
   p_truelength_info->self = self;
 
-  p_truelength_info->strings = vctrs_shared_empty_chr;
-  p_truelength_info->truelengths = vctrs_shared_empty_raw;
+  p_truelength_info->strings = r_globals.empty_chr;
+  p_truelength_info->truelengths = r_globals.empty_raw;
   p_truelength_info->n_strings_alloc = 0;
   p_truelength_info->n_strings_used = 0;
 
-  p_truelength_info->uniques = vctrs_shared_empty_chr;
+  p_truelength_info->uniques = r_globals.empty_chr;
   p_truelength_info->n_uniques_alloc = 0;
   p_truelength_info->n_uniques_used = 0;
 
-  p_truelength_info->sizes = vctrs_shared_empty_int;
-  p_truelength_info->sizes_aux = vctrs_shared_empty_int;
+  p_truelength_info->sizes = r_globals.empty_int;
+  p_truelength_info->sizes_aux = r_globals.empty_int;
   p_truelength_info->n_sizes_alloc = 0;
   p_truelength_info->n_sizes_used = 0;
   p_truelength_info->max_string_size = 0;

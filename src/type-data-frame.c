@@ -85,7 +85,7 @@ r_obj* ffi_new_data_frame(r_obj* args) {
 
   // Take names from `x` if `attrib` doesn't have any
   if (!has_names) {
-    r_obj* nms = vctrs_shared_empty_chr;
+    r_obj* nms = r_globals.empty_chr;
     if (r_length(out)) {
       nms = r_names(out);
     }
@@ -457,7 +457,7 @@ void init_tibble(r_obj* x, r_ssize n) {
 static
 void init_bare_data_frame(r_obj* x, r_ssize n) {
   if (r_length(x) == 0) {
-    r_attrib_poke(x, r_syms.names, vctrs_shared_empty_chr);
+    r_attrib_poke(x, r_syms.names, r_globals.empty_chr);
   }
 
   init_compact_rownames(x, n);
@@ -473,7 +473,7 @@ void init_compact_rownames(r_obj* x, r_ssize n) {
 static
 r_obj* new_compact_rownames(r_ssize n) {
   if (n <= 0) {
-    return vctrs_shared_empty_int;
+    return r_globals.empty_int;
   }
 
   r_obj* out = r_alloc_integer(2);
@@ -744,7 +744,7 @@ r_obj* df_cast_match(const struct cast_opts* opts,
       // `base_c_invoke()`.
       if (opts->fallback.s3 && vec_is_common_class_fallback(to_col)) {
         KEEP(col);
-        r_attrib_poke(col, r_sym("vctrs:::unspecified"), vctrs_shared_true);
+        r_attrib_poke(col, r_sym("vctrs:::unspecified"), r_true);
         FREE(1);
       }
     } else {
