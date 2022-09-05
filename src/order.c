@@ -2188,19 +2188,19 @@ void dbl_adjust_nan_distinct(const bool decreasing,
 
   for (r_ssize i = 0; i < size; ++i) {
     double elt = p_x_dbl[i];
-    const enum vctrs_dbl_class type = dbl_classify(elt);
+    const enum vctrs_dbl type = dbl_classify(elt);
 
     switch (type) {
-    case vctrs_dbl_number: {
+    case VCTRS_DBL_number: {
       elt = elt * direction;
       p_x_u64[i] = dbl_map_to_uint64(elt);
       break;
     }
-    case vctrs_dbl_missing: {
+    case VCTRS_DBL_missing: {
       p_x_u64[i] = na_u64;
       break;
     }
-    case vctrs_dbl_nan: {
+    case VCTRS_DBL_nan: {
       p_x_u64[i] = nan_u64;
       break;
     }

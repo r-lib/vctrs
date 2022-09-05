@@ -51,29 +51,29 @@ int int_compare_na_equal(int x, int y) {
 }
 static inline
 int dbl_compare_na_equal(double x, double y) {
-  enum vctrs_dbl_class x_class = dbl_classify(x);
-  enum vctrs_dbl_class y_class = dbl_classify(y);
+  enum vctrs_dbl x_class = dbl_classify(x);
+  enum vctrs_dbl y_class = dbl_classify(y);
 
   switch (x_class) {
-  case vctrs_dbl_number: {
+  case VCTRS_DBL_number: {
     switch (y_class) {
-    case vctrs_dbl_number: return dbl_compare_scalar(x, y);
-    case vctrs_dbl_missing: return 1;
-    case vctrs_dbl_nan: return 1;
+    case VCTRS_DBL_number: return dbl_compare_scalar(x, y);
+    case VCTRS_DBL_missing: return 1;
+    case VCTRS_DBL_nan: return 1;
     }
   }
-  case vctrs_dbl_missing: {
+  case VCTRS_DBL_missing: {
     switch (y_class) {
-    case vctrs_dbl_number: return -1;
-    case vctrs_dbl_missing: return 0;
-    case vctrs_dbl_nan: return 1;
+    case VCTRS_DBL_number: return -1;
+    case VCTRS_DBL_missing: return 0;
+    case VCTRS_DBL_nan: return 1;
     }
   }
-  case vctrs_dbl_nan: {
+  case VCTRS_DBL_nan: {
     switch (y_class) {
-    case vctrs_dbl_number: return -1;
-    case vctrs_dbl_missing: return -1;
-    case vctrs_dbl_nan: return 0;
+    case VCTRS_DBL_number: return -1;
+    case VCTRS_DBL_missing: return -1;
+    case VCTRS_DBL_nan: return 0;
     }
   }
   }

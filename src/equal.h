@@ -21,9 +21,9 @@ static inline int int_equal_na_equal(int x, int y) {
 }
 static inline int dbl_equal_na_equal(double x, double y) {
   switch (dbl_classify(x)) {
-  case vctrs_dbl_number: break;
-  case vctrs_dbl_missing: return dbl_classify(y) == vctrs_dbl_missing;
-  case vctrs_dbl_nan: return dbl_classify(y) == vctrs_dbl_nan;
+  case VCTRS_DBL_number: break;
+  case VCTRS_DBL_missing: return dbl_classify(y) == VCTRS_DBL_missing;
+  case VCTRS_DBL_nan: return dbl_classify(y) == VCTRS_DBL_nan;
   }
 
   return isnan(y) ? false : x == y;

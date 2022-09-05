@@ -73,13 +73,13 @@ union vctrs_dbl_indicator {
   unsigned int key[2]; // 4 * 2 bytes
 };
 
-enum vctrs_dbl_class {
-  vctrs_dbl_number,
-  vctrs_dbl_missing,
-  vctrs_dbl_nan
+enum vctrs_dbl {
+  VCTRS_DBL_number,
+  VCTRS_DBL_missing,
+  VCTRS_DBL_nan
 };
 
-enum vctrs_dbl_class dbl_classify(double x);
+enum vctrs_dbl dbl_classify(double x);
 
 
 // Compatibility ------------------------------------------------
