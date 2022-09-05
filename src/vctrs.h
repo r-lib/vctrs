@@ -289,6 +289,7 @@ bool vec_is_unspecified(SEXP x);
 #include "subscript.h"
 #include "translate.h"
 #include "typeof2.h"
+#include "typeof2-s3.h"
 #include "utils-dispatch.h"
 #include "utils.h"
 

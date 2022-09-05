@@ -43,7 +43,7 @@ extern SEXP vctrs_typeof(SEXP, SEXP);
 extern SEXP vctrs_is_vector(SEXP);
 extern r_obj* ffi_ptype2(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_typeof2(r_obj*, r_obj*);
-extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
+extern r_obj* ffi_typeof2_s3(r_obj*, r_obj*);
 extern r_obj* ffi_cast(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_location(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
@@ -211,7 +211,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_vector",                       (DL_FUNC) &vctrs_is_vector, 1},
   {"ffi_ptype2",                            (DL_FUNC) &ffi_ptype2, 3},
   {"ffi_typeof2",                           (DL_FUNC) &ffi_typeof2, 2},
-  {"vctrs_typeof2_s3",                      (DL_FUNC) &vctrs_typeof2_s3, 2},
+  {"ffi_typeof2_s3",                        (DL_FUNC) &ffi_typeof2_s3, 2},
   {"ffi_cast",                              (DL_FUNC) &ffi_cast, 3},
   {"ffi_as_location",                       (DL_FUNC) &ffi_as_location, 8},
   {"ffi_slice",                             (DL_FUNC) &ffi_slice, 3},

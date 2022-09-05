@@ -1,13 +1,8 @@
 #include "vctrs.h"
+#include "decl/typeof2-s3-decl.h"
 
-static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
-                                                SEXP y,
-                                                enum vctrs_type type_y,
-                                                int* left);
-
-// [[ include("ptype2.h") ]]
-enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x,
-                                        SEXP y,
+enum vctrs_type2_s3 vec_typeof2_s3_impl(r_obj* x,
+                                        r_obj* y,
                                         enum vctrs_type type_x,
                                         enum vctrs_type type_y,
                                         int* left) {
@@ -137,14 +132,15 @@ enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x,
     return vec_typeof2_s3_impl2(x, y, type_y, left);
   }}
 
-  never_reached("vec_typeof2_s3_impl()");
+  r_stop_unreachable();
 }
 
 
-static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
-                                                SEXP y,
-                                                enum vctrs_type type_y,
-                                                int* left) {
+static
+enum vctrs_type2_s3 vec_typeof2_s3_impl2(r_obj* x,
+                                         r_obj* y,
+                                         enum vctrs_type type_y,
+                                         int* left) {
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_factor: {
     switch (type_y) {
@@ -322,14 +318,16 @@ static enum vctrs_type2_s3 vec_typeof2_s3_impl2(SEXP x,
     }}
   }}
 
-  never_reached("vec_typeof2_s3_impl2()");
+  r_stop_unreachable();
 }
 
-enum vctrs_type2_s3 vec_typeof2_s3(SEXP x, SEXP y) {
+static
+enum vctrs_type2_s3 vec_typeof2_s3(r_obj* x, r_obj* y) {
   int _;
   return vec_typeof2_s3_impl(x, y, vec_typeof(x), vec_typeof(y), &_);
 }
 
+static
 const char* vctrs_type2_s3_as_str(enum vctrs_type2_s3 type) {
   switch (type) {
   case VCTRS_TYPE2_S3_null_bare_factor:            return "VCTRS_TYPE2_S3_null_bare_factor";
@@ -456,11 +454,10 @@ const char* vctrs_type2_s3_as_str(enum vctrs_type2_s3 type) {
   case VCTRS_TYPE2_S3_unknown_unknown:             return "VCTRS_TYPE2_S3_unknown_unknown";
   }
 
-  never_reached("vctrs_type2_s3_as_str");
+  r_stop_unreachable();
 }
 
-// [[ register() ]]
-SEXP vctrs_typeof2_s3(SEXP x, SEXP y) {
+r_obj* ffi_typeof2_s3(r_obj* x, r_obj* y) {
   enum vctrs_type2_s3 type = vec_typeof2_s3(x, y);
-  return Rf_mkString(vctrs_type2_s3_as_str(type));
+  return r_chr(vctrs_type2_s3_as_str(type));
 }

@@ -374,7 +374,7 @@ vec_typeof2 <- function(x, y) {
 }
 
 vec_typeof2_s3 <- function(x, y) {
-  .Call(vctrs_typeof2_s3, x, y)
+  .Call(ffi_typeof2_s3, x, y)
 }
 
 # https://github.com/r-lib/vctrs/issues/571
