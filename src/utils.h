@@ -170,9 +170,6 @@ SEXP node_compact_d(SEXP xs);
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
-enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x, enum vctrs_type type_y, int* left);
-enum vctrs_type2_s3 vec_typeof2_s3_impl(SEXP x, SEXP y, enum vctrs_type type_x, enum vctrs_type type_y, int* left);
-
 SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
 

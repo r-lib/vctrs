@@ -215,11 +215,10 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
     }
   }}
 
-  never_reached("vec_typeof2_impl()");
+  r_stop_unreachable();
 }
 
-// [[ include("vctrs.h") ]]
-enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
+enum vctrs_type2 vec_typeof2(r_obj* x, r_obj* y) {
   int _;
   return vec_typeof2_impl(vec_typeof(x), vec_typeof(y), &_);
 }
@@ -317,10 +316,10 @@ const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   case VCTRS_TYPE2_scalar_scalar:           return "VCTRS_TYPE2_scalar_scalar";
   }
 
-  never_reached("vctrs_type2_as_str");
+  r_stop_unreachable();
 }
 
-SEXP vctrs_typeof2(SEXP x, SEXP y) {
+r_obj* ffi_typeof2(r_obj* x, r_obj* y) {
   enum vctrs_type2 type = vec_typeof2(x, y);
-  return Rf_mkString(vctrs_type2_as_str(type));
+  return r_chr(vctrs_type2_as_str(type));
 }

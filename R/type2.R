@@ -370,7 +370,7 @@ with_fallback_quiet <- function(expr) {
 }
 
 vec_typeof2 <- function(x, y) {
-  .Call(vctrs_typeof2, x, y)
+  .Call(ffi_typeof2, x, y)
 }
 
 vec_typeof2_s3 <- function(x, y) {

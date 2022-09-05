@@ -225,9 +225,6 @@ enum vctrs_type2_s3 {
   VCTRS_TYPE2_S3_unknown_unknown
 };
 
-enum vctrs_type2 vec_typeof2(SEXP x, SEXP y);
-const char* vctrs_type2_as_str(enum vctrs_type2 type);
-
 extern SEXP vctrs_shared_empty_lgl;
 extern SEXP vctrs_shared_empty_int;
 extern SEXP vctrs_shared_empty_dbl;
@@ -291,6 +288,7 @@ bool vec_is_unspecified(SEXP x);
 #include "subscript-loc.h"
 #include "subscript.h"
 #include "translate.h"
+#include "typeof2.h"
 #include "utils-dispatch.h"
 #include "utils.h"
 
