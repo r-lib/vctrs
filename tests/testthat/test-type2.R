@@ -30,9 +30,9 @@ test_that("vec_typeof2() returns common type", {
       that <- nms[[j]]
 
       if (i <= j) {
-        exp <- paste0("vctrs_type2_", this, "_", that)
+        exp <- paste0("VCTRS_TYPE2_", this, "_", that)
       } else {
-        exp <- paste0("vctrs_type2_", that, "_", this)
+        exp <- paste0("VCTRS_TYPE2_", that, "_", this)
       }
       out <- vec_typeof2(base_empty_types[[this]], base_empty_types[[that]])
 
@@ -59,9 +59,9 @@ test_that("vec_typeof2_s3() returns common type", {
       }
 
       if (i <= j) {
-        exp <- paste0("vctrs_type2_s3_", this, "_", that)
+        exp <- paste0("VCTRS_TYPE2_S3_", this, "_", that)
       } else {
-        exp <- paste0("vctrs_type2_s3_", that, "_", this)
+        exp <- paste0("VCTRS_TYPE2_S3_", that, "_", this)
       }
       out <- vec_typeof2_s3(all_base_empty_types[[this]], all_base_empty_types[[that]])
 

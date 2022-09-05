@@ -17,64 +17,64 @@ r_obj* vec_cast_dispatch_native(const struct cast_opts* opts,
 
   switch (type2_s3) {
 
-  case vctrs_type2_s3_character_bare_factor:
+  case VCTRS_TYPE2_S3_character_bare_factor:
     if (dir == 0) {
       return chr_as_factor(x, to, lossy, to_arg);
     } else {
       return fct_as_character(x, x_arg);
     }
 
-  case vctrs_type2_s3_character_bare_ordered:
+  case VCTRS_TYPE2_S3_character_bare_ordered:
     if (dir == 0) {
       return chr_as_ordered(x, to, lossy, to_arg);
     } else {
       return ord_as_character(x, x_arg);
     }
 
-  case vctrs_type2_s3_bare_factor_bare_factor:
+  case VCTRS_TYPE2_S3_bare_factor_bare_factor:
     return fct_as_factor(x, to, lossy, x_arg, to_arg);
 
-  case vctrs_type2_s3_bare_ordered_bare_ordered:
+  case VCTRS_TYPE2_S3_bare_ordered_bare_ordered:
     return ord_as_ordered(opts);
 
-  case vctrs_type2_s3_bare_date_bare_posixct:
+  case VCTRS_TYPE2_S3_bare_date_bare_posixct:
     if (dir == 0) {
       return date_as_posixct(x, to);
     } else {
       return posixct_as_date(x, lossy);
     }
 
-  case vctrs_type2_s3_bare_date_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_date_bare_posixlt:
     if (dir == 0) {
       return date_as_posixlt(x, to);
     } else {
       return posixlt_as_date(x, lossy);
     }
 
-  case vctrs_type2_s3_bare_posixct_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_posixct_bare_posixlt:
     if (dir == 0) {
       return posixct_as_posixlt(x, to);
     } else {
       return posixlt_as_posixct(x, to);
     }
 
-  case vctrs_type2_s3_bare_date_bare_date:
+  case VCTRS_TYPE2_S3_bare_date_bare_date:
     return date_as_date(x);
 
-  case vctrs_type2_s3_bare_posixct_bare_posixct:
+  case VCTRS_TYPE2_S3_bare_posixct_bare_posixct:
     return posixct_as_posixct(x, to);
 
-  case vctrs_type2_s3_bare_posixlt_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_posixlt_bare_posixlt:
     return posixlt_as_posixlt(x, to);
 
-  case vctrs_type2_s3_dataframe_bare_tibble:
+  case VCTRS_TYPE2_S3_dataframe_bare_tibble:
     if (dir == 0) {
       return tib_cast(opts);
     } else {
       return df_cast_opts(opts);
     }
 
-  case vctrs_type2_s3_bare_tibble_bare_tibble:
+  case VCTRS_TYPE2_S3_bare_tibble_bare_tibble:
     return tib_cast(opts);
 
   default:

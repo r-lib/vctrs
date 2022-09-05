@@ -82,37 +82,37 @@ r_obj* vec_cast_switch_native(const struct cast_opts* opts,
 
   switch (type2) {
 
-  case vctrs_type2_logical_logical:
-  case vctrs_type2_integer_integer:
-  case vctrs_type2_double_double:
-  case vctrs_type2_complex_complex:
-  case vctrs_type2_raw_raw:
-  case vctrs_type2_character_character:
-  case vctrs_type2_list_list:
+  case VCTRS_TYPE2_logical_logical:
+  case VCTRS_TYPE2_integer_integer:
+  case VCTRS_TYPE2_double_double:
+  case VCTRS_TYPE2_complex_complex:
+  case VCTRS_TYPE2_raw_raw:
+  case VCTRS_TYPE2_character_character:
+  case VCTRS_TYPE2_list_list:
     return x;
 
-  case vctrs_type2_logical_integer:
+  case VCTRS_TYPE2_logical_integer:
     if (dir == 0) {
       return lgl_as_integer(x, lossy);
     } else {
       return int_as_logical(x, lossy);
     }
 
-  case vctrs_type2_logical_double:
+  case VCTRS_TYPE2_logical_double:
     if (dir == 0) {
       return lgl_as_double(x, lossy);
     } else {
       return dbl_as_logical(x, lossy);
     }
 
-  case vctrs_type2_integer_double:
+  case VCTRS_TYPE2_integer_double:
     if (dir == 0) {
       return int_as_double(x, lossy);
     } else {
       return dbl_as_integer(x, lossy);
     }
 
-  case vctrs_type2_dataframe_dataframe:
+  case VCTRS_TYPE2_dataframe_dataframe:
     return df_cast_opts(opts);
 
   default:

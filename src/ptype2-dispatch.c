@@ -13,30 +13,30 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
   switch (type2_s3) {
-  case vctrs_type2_s3_character_bare_factor:
-  case vctrs_type2_s3_character_bare_ordered:
+  case VCTRS_TYPE2_S3_character_bare_factor:
+  case VCTRS_TYPE2_S3_character_bare_ordered:
     return vctrs_shared_empty_chr;
 
-  case vctrs_type2_s3_bare_factor_bare_factor:
+  case VCTRS_TYPE2_S3_bare_factor_bare_factor:
     return fct_ptype2(opts);
 
-  case vctrs_type2_s3_bare_ordered_bare_ordered:
+  case VCTRS_TYPE2_S3_bare_ordered_bare_ordered:
     return ord_ptype2(opts);
 
-  case vctrs_type2_s3_bare_date_bare_date:
+  case VCTRS_TYPE2_S3_bare_date_bare_date:
     return vctrs_shared_empty_date;
 
-  case vctrs_type2_s3_bare_date_bare_posixct:
-  case vctrs_type2_s3_bare_date_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_date_bare_posixct:
+  case VCTRS_TYPE2_S3_bare_date_bare_posixlt:
     return date_datetime_ptype2(x, y);
 
-  case vctrs_type2_s3_bare_posixct_bare_posixct:
-  case vctrs_type2_s3_bare_posixct_bare_posixlt:
-  case vctrs_type2_s3_bare_posixlt_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_posixct_bare_posixct:
+  case VCTRS_TYPE2_S3_bare_posixct_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_posixlt_bare_posixlt:
     return datetime_datetime_ptype2(x, y);
 
-  case vctrs_type2_s3_dataframe_bare_tibble:
-  case vctrs_type2_s3_bare_tibble_bare_tibble:
+  case VCTRS_TYPE2_S3_dataframe_bare_tibble:
+  case VCTRS_TYPE2_S3_bare_tibble_bare_tibble:
     return tib_ptype2(opts);
 
   default:
