@@ -9,7 +9,6 @@ enum vctrs_interval_missing {
 
 // -----------------------------------------------------------------------------
 
-// [[ register() ]]
 r_obj* ffi_interval_groups(r_obj* start,
                            r_obj* end,
                            r_obj* ffi_abutting,
@@ -30,7 +29,6 @@ r_obj* ffi_interval_groups(r_obj* start,
   return out;
 }
 
-// [[ register() ]]
 r_obj* ffi_interval_locate_groups(r_obj* start,
                                   r_obj* end,
                                   r_obj* ffi_abutting,
@@ -136,7 +134,14 @@ r_obj* vec_interval_group_info(r_obj* start,
   // Order is computed as ascending order, placing missing intervals up front
   // as the "smallest" values. We document that we assume that if `start` is
   // missing, then `end` is missing too.
-  r_obj* order = KEEP_N(interval_order(start_proxy, end_proxy, size), &n_prot);
+  r_obj* order = interval_order(
+    start_proxy,
+    end_proxy,
+    chrs_asc,
+    chrs_smallest,
+    size
+  );
+  KEEP_N(order, &n_prot);
   const int* v_order = r_int_cbegin(order);
 
   // Assume the intervals can be merged into half their original size.
@@ -298,7 +303,6 @@ r_obj* vec_interval_group_info(r_obj* start,
 
 // -----------------------------------------------------------------------------
 
-// [[ register() ]]
 r_obj* ffi_interval_complement(r_obj* start,
                                r_obj* end,
                                r_obj* lower,
@@ -715,16 +719,175 @@ r_obj* vec_interval_complement(r_obj* start,
 
 // -----------------------------------------------------------------------------
 
+r_obj* ffi_interval_locate_containers(r_obj* start, r_obj* end) {
+  return vec_interval_locate_containers(start, end);
+}
+
+static
+r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
+  int n_prot = 0;
+
+  int _;
+  r_obj* ptype = vec_ptype2_params(
+    start,
+    end,
+    args_start,
+    args_end,
+    r_lazy_null,
+    DF_FALLBACK_quiet,
+    &_
+  );
+  KEEP_N(ptype, &n_prot);
+
+  start = vec_cast_params(
+    start,
+    ptype,
+    args_start,
+    vec_args.empty,
+    r_lazy_null,
+    DF_FALLBACK_quiet,
+    S3_FALLBACK_false
+  );
+  KEEP_N(start, &n_prot);
+
+  end = vec_cast_params(
+    end,
+    ptype,
+    args_end,
+    vec_args.empty,
+    r_lazy_null,
+    DF_FALLBACK_quiet,
+    S3_FALLBACK_false
+  );
+  KEEP_N(end, &n_prot);
+
+  r_obj* start_proxy = KEEP_N(vec_proxy_compare(start), &n_prot);
+  start_proxy = KEEP_N(vec_normalize_encoding(start_proxy), &n_prot);
+
+  r_obj* end_proxy = KEEP_N(vec_proxy_compare(end), &n_prot);
+  end_proxy = KEEP_N(vec_normalize_encoding(end_proxy), &n_prot);
+
+  const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
+
+  struct poly_vec* p_poly_start = new_poly_vec(start_proxy, type_proxy);
+  PROTECT_POLY_VEC(p_poly_start, &n_prot);
+  const void* p_start = p_poly_start->p_vec;
+
+  struct poly_vec* p_poly_end = new_poly_vec(end_proxy, type_proxy);
+  PROTECT_POLY_VEC(p_poly_end, &n_prot);
+  const void* p_end = p_poly_end->p_vec;
+
+  const poly_binary_int_fn_ptr fn_compare = new_poly_p_compare_na_equal(type_proxy);
+  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(type_proxy);
+
+  const r_ssize size = vec_size(start_proxy);
+
+  if (size != vec_size(end_proxy)) {
+    r_abort("`start` and `end` must have the same size.");
+  }
+
+  // Order is computed with the first column in ascending order, and the
+  // second column in descending order. This makes it easy to find the
+  // containers, as any time we detect something that isn't contained in the
+  // current container, it must be a new container. Missing intervals are up
+  // front for easy detection. We document that we assume that if `start` is
+  // missing, then `end` is missing too.
+  r_obj* direction = KEEP_N(r_new_character(2), &n_prot);
+  r_chr_poke(direction, 0, r_str("asc"));
+  r_chr_poke(direction, 1, r_str("desc"));
+
+  r_obj* na_value = KEEP_N(r_new_character(2), &n_prot);
+  r_chr_poke(na_value, 0, r_str("smallest"));
+  r_chr_poke(na_value, 1, r_str("largest"));
+
+  r_obj* order = interval_order(
+    start_proxy,
+    end_proxy,
+    direction,
+    na_value,
+    size
+  );
+  KEEP_N(order, &n_prot);
+  const int* v_order = r_int_cbegin(order);
+
+  // Assume that half the intervals are containers.
+  // This is probably a little high.
+  // Apply a minimum size to avoid a size of zero.
+  const r_ssize initial_size = r_ssize_max(size / 2, 1);
+
+  struct r_dyn_array* p_loc = r_new_dyn_vector(R_TYPE_integer, initial_size);
+  KEEP_N(p_loc->shelter, &n_prot);
+
+  r_ssize i = 0;
+  bool any_missing = false;
+
+  // Move `i` past any missing intervals (they are at the front),
+  // recording if there are any missing intervals for later. Only need to check
+  // missingness of `start`, because we document that we assume that `end`
+  // is missing if `start` is missing.
+  for (; i < size; ++i) {
+    const r_ssize loc = v_order[i] - 1;
+
+    if (!fn_is_missing(p_start, loc)) {
+      break;
+    }
+
+    any_missing = true;
+  }
+
+  r_ssize loc_container = -1;
+
+  if (i < size) {
+    // Set information about first usable container
+    const r_ssize loc = v_order[i] - 1;
+    loc_container = loc;
+    r_dyn_int_push_back(p_loc, loc_container + 1);
+    ++i;
+  }
+
+  for (; i < size; ++i) {
+    const r_ssize loc = v_order[i] - 1;
+
+    if ((fn_compare(p_start, loc_container, p_start, loc) != 1) &&
+        (fn_compare(p_end, loc_container, p_end, loc) != -1)) {
+      // Still in current container
+      continue;
+    }
+
+    // New container
+    loc_container = loc;
+    r_dyn_int_push_back(p_loc, loc_container + 1);
+  }
+
+  if (any_missing) {
+    // Push missing container as the last container.
+    // We know missings are at the front, so just use the first order value
+    // as the location. This matches ascending ordering with missing values
+    // at the end, and breaking ties with the first missing location we saw.
+    r_dyn_int_push_back(p_loc, v_order[0]);
+  }
+
+  r_obj* out = r_dyn_unwrap(p_loc);
+
+  FREE(n_prot);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
+
 /*
  * `interval_order()` orders the `start` and `end` values of a vector of
- * intervals in ascending order. It places missing intervals at the front.
- * We document that we make the assumption that if `start` is missing, then
- * `end` is also missing. We also document the assumption that partially missing
- * (i.e. incomplete but not missing) observations are not allowed in either
- * bound.
+ * intervals. We document that we make the assumption that if `start` is
+ * missing, then `end` is also missing. We also document the assumption that
+ * partially missing (i.e. incomplete but not missing) observations are not
+ * allowed in either bound.
  */
 static inline
-r_obj* interval_order(r_obj* start, r_obj* end, r_ssize size) {
+r_obj* interval_order(r_obj* start,
+                      r_obj* end,
+                      r_obj* direction,
+                      r_obj* na_value,
+                      r_ssize size) {
   // Put them in a data frame to compute joint ordering
   r_obj* df = KEEP(r_new_list(2));
   r_list_poke(df, 0, start);
@@ -742,8 +905,8 @@ r_obj* interval_order(r_obj* start, r_obj* end, r_ssize size) {
 
   r_obj* out = vec_order(
     df,
-    chrs_asc,
-    chrs_smallest,
+    direction,
+    na_value,
     nan_distinct,
     chr_proxy_collate
   );

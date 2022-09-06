@@ -34,10 +34,10 @@
 #' If any of these assumptions are invalid, then the result is undefined.
 #'
 #' Developer note: These assumptions stem from the idea that if these functions
-#' were in iv itself, then we could safely make these assumptions in the C code,
-#' because the `iv()` helper would assert them for us ahead of time. Trying to
-#' re-assert these checks in the C code here is wasteful and makes the code
-#' more complex.
+#' were in ivs itself, then we could safely make these assumptions in the C
+#' code, because the `iv()` helper would assert them for us ahead of time.
+#' Trying to re-assert these checks in the C code here is wasteful and makes the
+#' code more complex.
 #'
 #' @inheritParams rlang::args_dots_empty
 #'
@@ -176,16 +176,70 @@ vec_interval_complement <- function(start,
 
 # ------------------------------------------------------------------------------
 
-# Experimental shims of interval functions used by other packages (mainly, iv).
+#' Interval containers
+#'
+#' @description
+#' `vec_interval_locate_containers()` locates interval _containers_. Containers
+#' are defined as the widest intervals that aren't contained by any other
+#' interval. The returned locations will arrange the containers in ascending
+#' order.
+#'
+#' For example, with the following vector of intervals: `[1, 5), [2, 6), [3, 4),
+#' [5, 9), [5, 8)`, the containers are: `[1, 5), [2, 6), [5, 9)`. The intervals
+#' `[3, 4)` and `[5, 8)` aren't containers because they are completely contained
+#' within at least one other interval. Note that containers can partially
+#' overlap, i.e. `[1, 5)` and `[2, 6)`, and multiple containers can contain the
+#' same intervals, i.e. both `[1, 5)` and `[2, 6)` contain `[3, 4)`.
+#'
+#' Missing intervals are placed into their own container at the end, separate
+#' from all other intervals.
+#'
+#' These functions require that `start < end`. Additionally, intervals are
+#' treated as if they are right-open, i.e. `[start, end)`.
+#'
+#' @inheritSection interval-groups Assumptions
+#'
+#' @param start,end
+#'   A pair of vectors representing the starts and ends of the intervals.
+#'
+#'   It is required that `start < end`.
+#'
+#'   `start` and `end` will be cast to their common type, and must have the same
+#'   size.
+#'
+#' @return
+#' An integer vector that represents the locations of the containers in `start`
+#' and `end`.
+#'
+#' @examples
+#' x <- data_frame(
+#'   start = c(10, 0, NA, 3, 2, 2, NA, 11),
+#'   end = c(12, 5, NA, 5, 6, 6, NA, 12)
+#' )
+#' x
+#'
+#' loc <- vec_interval_locate_containers(x$start, x$end)
+#' loc
+#'
+#' vec_slice(x, loc)
+#'
+#' @noRd
+vec_interval_locate_containers <- function(start, end) {
+  .Call(ffi_interval_locate_containers, start, end)
+}
+
+# ------------------------------------------------------------------------------
+
+# Experimental shims of interval functions used by other packages (mainly, ivs).
 #
 # This gives us the freedom to experiment with the signature of these functions
-# while being backwards compatible with iv in the meantime.
+# while being backwards compatible with ivs in the meantime.
 #
 # We can remove these after:
 # - The interval functions are exported
-# - iv updates to use them directly
+# - ivs updates to use them directly
 # - A short deprecation period goes by that allows users time to update their
-#   version of iv
+#   version of ivs
 
 exp_vec_interval_groups <- function(start,
                                     end,
@@ -226,5 +280,12 @@ exp_vec_interval_complement <- function(start,
     ...,
     lower = lower,
     upper = upper
+  )
+}
+
+exp_vec_interval_locate_containers <- function(start, end) {
+  vec_interval_locate_containers(
+    start = start,
+    end = end
   )
 }

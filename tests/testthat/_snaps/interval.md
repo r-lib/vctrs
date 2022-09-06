@@ -25,6 +25,15 @@
       Error:
       ! Can't combine `start` <double> and `end` <character>.
 
+---
+
+    Code
+      (expect_error(vec_interval_locate_containers(1, "x")))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error:
+      ! Can't combine `start` <double> and `end` <character>.
+
 # `lower` and `upper` can't contain missing values
 
     Code
