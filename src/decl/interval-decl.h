@@ -23,8 +23,15 @@ r_obj* vec_interval_complement(r_obj* start,
                                r_obj* lower,
                                r_obj* upper);
 
+static
+r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end);
+
 static inline
-r_obj* interval_order(r_obj* start, r_obj* end, r_ssize size);
+r_obj* interval_order(r_obj* start,
+                      r_obj* end,
+                      r_obj* direction,
+                      r_obj* na_value,
+                      r_ssize size);
 
 static inline
 enum vctrs_interval_missing parse_missing(r_obj* missing);
