@@ -55,16 +55,6 @@ void r_abort(const char* fmt, ...) {
 }
 
 r_no_return
-void (r_stop_c_internal)(const char* file,
-                         int line,
-                         const char* fn,
-                         const char* fmt, ...) {
-  char buf[BUFSIZE];
-  INTERP(buf, fmt, ...);
-  r_abort("TODO");
-}
-
-r_no_return
 void r_abort_n(const struct r_pair* args, int n) {
   r_exec_mask_n(r_null, r_syms.abort, args, n, r_peek_frame());
   r_stop_unreachable();
@@ -169,6 +159,7 @@ void r_init_library_cnd() {
   r_stop_internal = (r_stop_internal_t) R_GetCCallable("rlang", "rlang_stop_internal2");
 
   r_format_error_arg = (const char* (*)(r_obj*)) r_peek_c_callable("rlang", "rlang_format_error_arg");
+  r_obj_type_friendly_full = (const char* (*)(r_obj*, bool, bool)) r_peek_c_callable("rlang", "rlang_obj_type_friendly_full");
 }
 
 r_no_return
@@ -182,3 +173,11 @@ static
 r_obj* cnd_signal_call = NULL;
 
 const char* (*r_format_error_arg)(r_obj* arg) = NULL;
+const char* (*r_obj_type_friendly_full)(r_obj* x, bool value, bool length) = NULL;
+
+const char* r_format_lazy_error_arg(struct r_lazy arg) {
+  r_obj* ffi_arg = KEEP(r_lazy_eval(arg));
+  const char* out = r_format_error_arg(ffi_arg);
+  FREE(1);
+  return out;
+}
