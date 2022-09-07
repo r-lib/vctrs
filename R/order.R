@@ -294,7 +294,7 @@ vec_order_base <- function(x,
     }
     args <- map(unstructure(proxy), function(.x) {
       if (is.data.frame(.x)) {
-        .x <- order(vec_order(.x, direction = direction, na_value = na_value))
+        .x <- order(vec_order_base(.x, direction = direction, na_value = na_value))
       }
       .x
     })
@@ -307,65 +307,4 @@ vec_order_base <- function(x,
   } else {
     abort("Invalid type returned by `vec_proxy_order()`.")
   }
-}
-
-# ------------------------------------------------------------------------------
-
-#' Order and sort vectors
-#'
-#' @param x A vector
-#' @param direction Direction to sort in. Defaults to `asc`ending.
-#' @param na_value Should `NA`s be treated as the largest or smallest values?
-#' @return
-#' * `vec_order()` an integer vector the same size as `x`.
-#' * `vec_sort()` a vector with the same size and type as `x`.
-#'
-#' @section Differences with `order()`:
-#' Unlike the `na.last` argument of `order()` which decides the
-#' positions of missing values irrespective of the `decreasing`
-#' argument, the `na_value` argument of `vec_order()` interacts with
-#' `direction`. If missing values are considered the largest value,
-#' they will appear last in ascending order, and first in descending
-#' order.
-#'
-#' @section Dependencies of `vec_order()`:
-#' * [vec_proxy_order()]
-#'
-#' @section Dependencies of `vec_sort()`:
-#' * [vec_proxy_order()]
-#' * [vec_order()]
-#' * [vec_slice()]
-#' @export
-#' @examples
-#' x <- round(c(runif(9), NA), 3)
-#' vec_order(x)
-#' vec_sort(x)
-#' vec_sort(x, "desc")
-#'
-#' # Can also handle data frames
-#' df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
-#' vec_order(df)
-#' vec_sort(df)
-#' vec_sort(df, "desc")
-#'
-#' # Missing values interpreted as largest values are last when
-#' # in increasing order:
-#' vec_order(c(1, NA), na_value = "largest", direction = "asc")
-#' vec_order(c(1, NA), na_value = "largest", direction = "desc")
-vec_order <- function(x,
-                      direction = c("asc", "desc"),
-                      na_value = c("largest", "smallest")) {
-  vec_order_base(x = x, direction = direction, na_value = na_value)
-}
-
-#' @export
-#' @rdname vec_order
-vec_sort <- function(x,
-                     direction = c("asc", "desc"),
-                     na_value = c("largest", "smallest")) {
-  direction <- arg_match0(direction, c("asc", "desc"))
-  na_value <- arg_match0(na_value, c("largest", "smallest"))
-
-  idx <- vec_order(x, direction = direction, na_value = na_value)
-  vec_slice(x, idx)
 }
