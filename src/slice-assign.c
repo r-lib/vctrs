@@ -347,12 +347,22 @@ r_obj* df_assign(r_obj* x,
 
     // No need to cast or recycle because those operations are
     // recursive and have already been performed. However, proxy and
-    // restore are not recursive so need to be done for each element
-    // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
-    r_obj* proxy_elt = KEEP(vec_proxy(out_elt));
+    // restore are not necessarily recursive and we wight need to
+    // proxy each element we recurse into.
+    //
+    // NOTE: `vec_proxy_assign()` proxies `value_elt`.
+    r_obj* proxy_elt = r_null;
+    if (opts->recursive) {
+      proxy_elt = KEEP(out_elt);
+    } else {
+      proxy_elt = KEEP(vec_proxy(out_elt));
+    }
 
     r_obj* assigned = KEEP(vec_proxy_assign_opts(proxy_elt, index, value_elt, owned, opts));
-    assigned = vec_restore(assigned, out_elt, owned);
+
+    if (!opts->recursive) {
+      assigned = vec_restore(assigned, out_elt, owned);
+    }
 
     r_list_poke(out, i, assigned);
     FREE(2);

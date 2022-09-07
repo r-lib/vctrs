@@ -1068,6 +1068,31 @@ test_that("can repair names of row-binded matrices", {
   })
 })
 
+test_that("vec_rbind() only restores one time", {
+  restored <- list()
+
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) x,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      # Ignore proxying and restoration of ptypes
+      if (length(x)) {
+        restored <<- c(restored, list(x))
+      }
+      foobar(x)
+    }
+  )
+
+  df <- data_frame(x = foobar(1:3))
+  vec_rbind(df, df)
+
+  expect_equal(restored, list(
+    rep(na_int, 6),       # From `vec_init()`
+    foobar(c(1:3, 1:3))   # Final restoration
+  ))
+})
+
 
 # Golden tests -------------------------------------------------------
 
@@ -1103,10 +1128,7 @@ test_that("row-binding performs expected allocations", {
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
 
-    # FIXME: The following recursive cases duplicate rownames
-    # excessively because df-cols are restored at each chunk
-    # assignment, causing a premature name-repair
-    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
+    "Data frame with rownames (non-repaired, recursive case) (#1217)"
     df <- data_frame(
       x = 1:2,
       y = data_frame(x = 1:2)
@@ -1115,7 +1137,7 @@ test_that("row-binding performs expected allocations", {
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
 
-    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
+    "Data frame with rownames (repaired, recursive case) (#1217)"
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
   })

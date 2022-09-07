@@ -137,7 +137,7 @@ r_obj* vec_rbind(r_obj* xs,
     ns[i] = size;
   }
 
-  r_obj* proxy = KEEP_N(vec_proxy(ptype), &n_prot);
+  r_obj* proxy = KEEP_N(vec_proxy_recurse(ptype), &n_prot);
   if (!is_data_frame(proxy)) {
     r_abort_lazy_call(call, "Can't fill a data frame that doesn't have a data frame proxy.");
   }
@@ -190,6 +190,7 @@ r_obj* vec_rbind(r_obj* xs,
   r_ssize counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
+    .recursive = true,
     .assign_names = assign_names,
     // Unlike in `vec_c()` we don't need to ignore outer names because
     // `df_assign()` doesn't deal with those
@@ -261,7 +262,7 @@ r_obj* vec_rbind(r_obj* xs,
     }
   }
 
-  out = vec_restore(out, ptype, VCTRS_OWNED_true);
+  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
 
   FREE(n_prot);
   return out;
