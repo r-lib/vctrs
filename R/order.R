@@ -1,26 +1,3 @@
-# TODO: Use this NEWS bullet when we move to the new `vec_order()` algorithm
-#
-# * `vec_order()` and `vec_sort()` now use a custom radix sort algorithm, rather
-#    than relying on `order()`. The implementation is based on data.table’s
-#    `forder()` and their earlier contribution to R’s `order()`. There are four
-#    major changes, outlined below, the first two of which are breaking changes.
-#    If you need to retain the old ordering behavior, use `vec_order_base()`.
-#
-#    * Character vectors now order in the C locale by default, which is _much_
-#      faster than ordering in the system's locale. To order in a specific locale,
-#      you can provide a character proxy function through `chr_proxy_collate`,
-#      such as `stringi::stri_sort_key()`.
-#
-#    * Optional arguments, such as `direction` and `na_value`, must now be
-#      specified by name. Specifying by position will result in an error.
-#
-#    * When ordering data frames, you can now control the behavior of `direction`
-#      and `na_value` on a per column basis.
-#
-#    * There is a new `nan_distinct` argument for differentiating between `NaN`
-#      and `NA` in double and complex vectors.
-
-
 #' Order and sort vectors
 #'
 #' @description
@@ -299,7 +276,37 @@ vec_order_info <- function(x,
 vec_order_base <- function(x,
                            direction = c("asc", "desc"),
                            na_value = c("largest", "smallest")) {
-  vec_order(x = x, direction = direction, na_value = na_value)
+  direction <- arg_match0(direction, c("asc", "desc"))
+  na_value <- arg_match0(na_value, c("largest", "smallest"))
+
+  decreasing <- !identical(direction, "asc")
+  na.last <- identical(na_value, "largest")
+  if (decreasing) {
+    na.last <- !na.last
+  }
+
+  proxy <- vec_proxy_order(x)
+
+  if (is.data.frame(proxy)) {
+    if (length(proxy) == 0L) {
+      # Work around type-instability in `base::order()`
+      return(vec_seq_along(proxy))
+    }
+    args <- map(unstructure(proxy), function(.x) {
+      if (is.data.frame(.x)) {
+        .x <- order(vec_order(.x, direction = direction, na_value = na_value))
+      }
+      .x
+    })
+    exec("order", !!!args, decreasing = decreasing, na.last = na.last)
+  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy) || is.complex(proxy)) {
+    if (is.object(proxy)) {
+      proxy <- unstructure(proxy)
+    }
+    order(proxy, decreasing = decreasing, na.last = na.last)
+  } else {
+    abort("Invalid type returned by `vec_proxy_order()`.")
+  }
 }
 
 # ------------------------------------------------------------------------------
@@ -348,37 +355,7 @@ vec_order_base <- function(x,
 vec_order <- function(x,
                       direction = c("asc", "desc"),
                       na_value = c("largest", "smallest")) {
-  direction <- arg_match0(direction, c("asc", "desc"))
-  na_value <- arg_match0(na_value, c("largest", "smallest"))
-
-  decreasing <- !identical(direction, "asc")
-  na.last <- identical(na_value, "largest")
-  if (decreasing) {
-    na.last <- !na.last
-  }
-
-  proxy <- vec_proxy_order(x)
-
-  if (is.data.frame(proxy)) {
-    if (length(proxy) == 0L) {
-      # Work around type-instability in `base::order()`
-      return(vec_seq_along(proxy))
-    }
-    args <- map(unstructure(proxy), function(.x) {
-      if (is.data.frame(.x)) {
-        .x <- order(vec_order(.x, direction = direction, na_value = na_value))
-      }
-      .x
-    })
-    exec("order", !!!args, decreasing = decreasing, na.last = na.last)
-  } else if (is_character(proxy) || is_logical(proxy) || is_integer(proxy) || is_double(proxy) || is.complex(proxy)) {
-    if (is.object(proxy)) {
-      proxy <- unstructure(proxy)
-    }
-    order(proxy, decreasing = decreasing, na.last = na.last)
-  } else {
-    abort("Invalid type returned by `vec_proxy_order()`.")
-  }
+  vec_order_base(x = x, direction = direction, na_value = na_value)
 }
 
 #' @export
