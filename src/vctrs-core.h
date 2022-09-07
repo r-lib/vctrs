@@ -21,6 +21,13 @@ extern bool vctrs_debug_verbose;
 #define ERR SEXP
 
 
+// Ownership is recursive
+enum vctrs_owned {
+  VCTRS_OWNED_false = 0,
+  VCTRS_OWNED_true
+};
+
+
 /**
  * Structure for argument tags
  *

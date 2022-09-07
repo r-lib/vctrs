@@ -6,13 +6,6 @@
 #include "utils.h"
 
 
-// Ownership is recursive
-enum vctrs_owned {
-  VCTRS_OWNED_false = 0,
-  VCTRS_OWNED_true
-};
-
-
 static inline enum vctrs_owned vec_owned(SEXP x) {
   return NO_REFERENCES(x) ? VCTRS_OWNED_true : VCTRS_OWNED_false;
 }
