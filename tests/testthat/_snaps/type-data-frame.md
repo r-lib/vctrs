@@ -226,7 +226,7 @@
       df_list(.unpack = 1)
     Condition
       Error in `df_list()`:
-      ! `.unpack` must be a logical value.
+      ! `.unpack` must be `TRUE` or `FALSE`.
 
 ---
 
@@ -234,7 +234,7 @@
       df_list(.unpack = c(TRUE, FALSE))
     Condition
       Error in `df_list()`:
-      ! `.unpack` must be a logical value.
+      ! `.unpack` must be `TRUE` or `FALSE`.
 
 # data frame fallback handles column types (#999)
 
