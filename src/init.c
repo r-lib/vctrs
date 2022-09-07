@@ -55,6 +55,7 @@ extern r_obj* ffi_slice_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_rep(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_restore(r_obj*, r_obj*);
 extern r_obj* ffi_vec_restore_default(r_obj*, r_obj*);
+extern r_obj* ffi_vec_restore_recurse(r_obj*, r_obj*);
 extern r_obj* vec_proxy(r_obj*);
 extern r_obj* vec_proxy_recurse(r_obj*);
 extern SEXP vec_proxy_equal(SEXP);
@@ -225,6 +226,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_slice_rep",                         (DL_FUNC) &ffi_slice_rep, 3},
   {"ffi_vec_restore",                       (DL_FUNC) &ffi_vec_restore, 2},
   {"ffi_vec_restore_default",               (DL_FUNC) &ffi_vec_restore_default, 2},
+  {"ffi_vec_restore_recurse",               (DL_FUNC) &ffi_vec_restore_recurse, 2},
   {"ffi_vec_proxy",                         (DL_FUNC) &vec_proxy, 1},
   {"ffi_vec_proxy_recurse",                 (DL_FUNC) &vec_proxy_recurse, 1},
   {"vctrs_proxy_equal",                     (DL_FUNC) &vec_proxy_equal, 1},

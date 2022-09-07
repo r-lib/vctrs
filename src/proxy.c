@@ -47,7 +47,7 @@ r_obj* vec_proxy_2(r_obj* x, bool recurse) {
 // Recurse into data frames
 static
 r_obj* df_proxy_recurse(r_obj* x) {
-  r_obj* out = KEEP(vec_clone_referenced(x, VCTRS_OWNED_false));
+  r_obj* out = KEEP(r_clone(x));
 
   for (r_ssize i = 0, n = r_length(out); i < n; ++i) {
     r_obj* col = r_list_get(out, i);

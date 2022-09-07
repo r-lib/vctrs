@@ -144,11 +144,6 @@ vec_proxy.default <- function(x, ...) {
   x
 }
 
-vec_proxy_recurse <- function(x, ...) {
-  check_dots_empty0(...)
-  .Call(ffi_vec_proxy_recurse, x)
-}
-
 #' @rdname vec_proxy
 #' @param to The original vector to restore to.
 #' @export
@@ -166,6 +161,15 @@ vec_restore.default <- function(x, to, ...) {
 }
 vec_restore_default <- function(x, to, ...) {
   .Call(ffi_vec_restore_default, x, to)
+}
+
+vec_proxy_recurse <- function(x, ...) {
+  check_dots_empty0(...)
+  .Call(ffi_vec_proxy_recurse, x)
+}
+vec_restore_recurse <- function(x, to, ...) {
+  check_dots_empty0(...)
+  .Call(ffi_vec_restore_recurse, x, to)
 }
 
 #' Extract underlying data
