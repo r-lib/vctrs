@@ -168,11 +168,11 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 908KB
+      [1] 11.6KB
     Code
       # FIXME (#1217): Data frame with rownames (repaired, recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 920KB
+      [1] 23.9KB
 

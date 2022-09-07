@@ -7,6 +7,7 @@
 struct vec_assign_opts {
   bool assign_names;
   bool ignore_outer_names;
+  bool recursive;
   struct vctrs_arg* x_arg;
   struct vctrs_arg* value_arg;
   struct r_lazy call;
