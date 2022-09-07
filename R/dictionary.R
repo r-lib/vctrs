@@ -57,8 +57,7 @@ vec_count <- function(x, sort = c("count", "key", "location", "none")) {
   } else if (sort == "count") {
     # Order by descending count, but ascending original location.
     # This retains stable ordering in case of ties in the `count`.
-    # Need `vec_order_radix()` to handle different `direction`s.
-    loc <- vec_order_radix(info[c("count", "loc")], direction = c("desc", "asc"))
+    loc <- vec_order(info[c("count", "loc")], direction = c("desc", "asc"))
     info <- vec_slice(info, loc)
   }
 

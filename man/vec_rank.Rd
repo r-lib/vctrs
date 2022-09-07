@@ -94,15 +94,15 @@ given the same rank, rather than an increasing sequence of ranks. When
 \code{nan_distinct = FALSE}, \code{NaN} values are given the same rank as \code{NA},
 otherwise they are given a rank that differentiates them from \code{NA}.
 
-Like \code{\link[=vec_order_radix]{vec_order_radix()}}, ordering is done in the C-locale. This can affect
-the ranks of character vectors, especially regarding how uppercase and
-lowercase letters are ranked. See the documentation of \code{\link[=vec_order_radix]{vec_order_radix()}}
-for more information.
+Like \code{\link[=vec_order]{vec_order()}}, ordering is done in the C-locale. This can affect the
+ranks of character vectors, especially regarding how uppercase and lowercase
+letters are ranked. See the documentation of \code{\link[=vec_order]{vec_order()}} for more
+information.
 }
 \section{Dependencies}{
 
 \itemize{
-\item \code{\link[=vec_order_radix]{vec_order_radix()}}
+\item \code{\link[=vec_order]{vec_order()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
 }
 }

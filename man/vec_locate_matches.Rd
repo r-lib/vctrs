@@ -183,7 +183,7 @@ large number of matches.
 \section{Dependencies of \code{vec_locate_matches()}}{
 
 \itemize{
-\item \code{\link[=vec_order_radix]{vec_order_radix()}}
+\item \code{\link[=vec_order]{vec_order()}}
 \item \code{\link[=vec_detect_complete]{vec_detect_complete()}}
 }
 }
