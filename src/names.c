@@ -65,7 +65,7 @@ r_obj* check_unique_names(r_obj* names,
 
   r_obj* out = KEEP(vctrs_dispatch3(syms_check_unique_names, fns_check_unique_names,
                                     syms_names, names,
-                                    syms_arg, ffi_arg,
+                                    r_syms.arg, ffi_arg,
                                     syms_call, ffi_call));
 
   // Restore visibility
