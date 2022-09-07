@@ -136,12 +136,17 @@
 #' @export
 vec_proxy <- function(x, ...) {
   check_dots_empty0(...)
-  return(.Call(vctrs_proxy, x))
+  return(.Call(ffi_vec_proxy, x))
   UseMethod("vec_proxy")
 }
 #' @export
 vec_proxy.default <- function(x, ...) {
   x
+}
+
+vec_proxy_recurse <- function(x, ...) {
+  check_dots_empty0(...)
+  .Call(ffi_vec_proxy_recurse, x)
 }
 
 #' @rdname vec_proxy

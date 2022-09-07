@@ -2,16 +2,56 @@
 #include "type-data-frame.h"
 #include "decl/proxy-decl.h"
 
+
 // [[ register() ]]
 r_obj* vec_proxy(r_obj* x) {
+  return vec_proxy_2(x, false);
+}
+
+// [[ register() ]]
+r_obj* vec_proxy_recurse(r_obj* x) {
+  return vec_proxy_2(x, true);
+}
+
+static
+r_obj* vec_proxy_2(r_obj* x, bool recurse) {
   struct vctrs_type_info info = vec_type_info(x);
   KEEP(info.shelter);
 
-  r_obj* out;
-  if (info.type == VCTRS_TYPE_s3) {
-    out = vec_proxy_invoke(x, info.proxy_method);
-  } else {
-    out = x;
+  switch (info.type) {
+  case VCTRS_TYPE_dataframe: {
+    r_obj* out = recurse ? df_proxy_recurse(x) : x;
+    FREE(1);
+    return out;
+  }
+
+  case VCTRS_TYPE_s3: {
+    r_obj* out = KEEP(vec_proxy_invoke(x, info.proxy_method));
+    if (!is_data_frame(out)) {
+      FREE(2);
+      return out;
+    }
+
+    out = KEEP(recurse ? df_proxy_recurse(out) : out);
+
+    FREE(3);
+    return out;
+  }
+
+  default:
+    FREE(1);
+    return x;
+  }
+}
+
+// Recurse into data frames
+static
+r_obj* df_proxy_recurse(r_obj* x) {
+  r_obj* out = KEEP(vec_clone_referenced(x, VCTRS_OWNED_false));
+
+  for (r_ssize i = 0, n = r_length(out); i < n; ++i) {
+    r_obj* col = r_list_get(out, i);
+    r_list_poke(out, i, vec_proxy_recurse(col));
   }
 
   FREE(1);
