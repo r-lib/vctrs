@@ -39,6 +39,7 @@ bool vec_is_unspecified(SEXP x);
 #include "owned.h"
 #include "poly-op.h"
 #include "proxy.h"
+#include "proxy-restore.h"
 #include "ptype-common.h"
 #include "ptype.h"
 #include "ptype2-dispatch.h"
@@ -72,8 +73,6 @@ SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
 SEXP vec_proxy_order(SEXP x);
 SEXP vec_proxy_unwrap(SEXP x);
-SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
-SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
 SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
@@ -103,9 +102,6 @@ SEXP vec_c(SEXP xs,
            const struct name_repair_opts* name_repair);
 
 bool is_data_frame(SEXP x);
-
-SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
-SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 
 uint32_t hash_object(SEXP x);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);

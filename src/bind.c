@@ -533,7 +533,7 @@ r_obj* cbind_container_type(r_obj* x, void* data) {
   if (is_data_frame(x)) {
     r_obj* rn = df_rownames(x);
 
-    if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
+    if (rownames_type(rn) == ROWNAMES_TYPE_identifiers) {
       r_obj** learned_rn_p = (r_obj**) data;
       r_obj* learned_rn = *learned_rn_p;
 

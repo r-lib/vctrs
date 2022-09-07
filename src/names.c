@@ -99,7 +99,7 @@ r_obj* vec_names_impl(r_obj* x, bool proxy) {
     // Only return row names if they are character. Data frames with
     // automatic row names are treated as unnamed.
     r_obj* rn = df_rownames(x);
-    if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
+    if (rownames_type(rn) == ROWNAMES_TYPE_identifiers) {
       return rn;
     } else {
       return r_null;
@@ -726,7 +726,7 @@ r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_own
 
 r_obj* vec_set_df_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
   if (names == r_null) {
-    if (rownames_type(df_rownames(x)) != ROWNAMES_IDENTIFIERS) {
+    if (rownames_type(df_rownames(x)) != ROWNAMES_TYPE_identifiers) {
       return(x);
     }
 

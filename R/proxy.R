@@ -156,7 +156,7 @@ vec_proxy.default <- function(x, ...) {
 #' @export
 vec_restore <- function(x, to, ..., n = NULL) {
   check_dots_empty0(...)
-  return(.Call(vctrs_restore, x, to, n))
+  return(.Call(ffi_restore, x, to, n))
   UseMethod("vec_restore", to)
 }
 vec_restore_dispatch <- function(x, to, ..., n = NULL) {
@@ -164,10 +164,10 @@ vec_restore_dispatch <- function(x, to, ..., n = NULL) {
 }
 #' @export
 vec_restore.default <- function(x, to, ..., n = NULL) {
-  .Call(vctrs_restore_default, x, to)
+  .Call(ffi_restore_default, x, to)
 }
 vec_restore_default <- function(x, to, ...) {
-  .Call(vctrs_restore_default, x, to)
+  .Call(ffi_restore_default, x, to)
 }
 
 #' Extract underlying data

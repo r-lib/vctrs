@@ -485,7 +485,7 @@ vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") 
 
 #' @export
 vec_restore.data.frame <- function(x, to, ..., n = NULL) {
-  .Call(vctrs_bare_df_restore, x, to, n)
+  .Call(ffi_bare_df_restore, x, to, n)
 }
 
 # Helpers -----------------------------------------------------------------

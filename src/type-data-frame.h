@@ -41,9 +41,9 @@ r_obj* df_cast(r_obj* x,
 }
 
 enum rownames_type {
-  ROWNAMES_AUTOMATIC,
-  ROWNAMES_AUTOMATIC_COMPACT,
-  ROWNAMES_IDENTIFIERS
+  ROWNAMES_TYPE_automatic,
+  ROWNAMES_TYPE_automatic_compact,
+  ROWNAMES_TYPE_identifiers
 };
 enum rownames_type rownames_type(r_obj* rn);
 r_ssize rownames_size(r_obj* rn);

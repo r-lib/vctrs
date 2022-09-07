@@ -413,12 +413,12 @@ r_obj* df_list_unpack(r_obj* x) {
 enum rownames_type rownames_type(r_obj* x) {
   switch (r_typeof(x)) {
   case R_TYPE_character:
-    return ROWNAMES_IDENTIFIERS;
+    return ROWNAMES_TYPE_identifiers;
   case R_TYPE_integer:
     if (r_length(x) == 2 && r_int_begin(x)[0] == r_globals.na_int) {
-      return ROWNAMES_AUTOMATIC_COMPACT;
+      return ROWNAMES_TYPE_automatic_compact;
     } else {
-      return ROWNAMES_AUTOMATIC;
+      return ROWNAMES_TYPE_automatic;
     }
   default:
     r_stop_internal("Unexpected type `%s`.", Rf_type2char(r_typeof(x)));
@@ -433,10 +433,10 @@ r_ssize compact_rownames_length(r_obj* x) {
 // [[ include("type-data-frame.h") ]]
 r_ssize rownames_size(r_obj* rn) {
   switch (rownames_type(rn)) {
-  case ROWNAMES_IDENTIFIERS:
-  case ROWNAMES_AUTOMATIC:
+  case ROWNAMES_TYPE_identifiers:
+  case ROWNAMES_TYPE_automatic:
     return r_length(rn);
-  case ROWNAMES_AUTOMATIC_COMPACT:
+  case ROWNAMES_TYPE_automatic_compact:
     return compact_rownames_length(rn);
   }
 
