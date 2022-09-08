@@ -83,7 +83,7 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
     r_abort_lazy_call(opts->call,
                       "%s must be a list, not %s.",
                       r_c_str_format_error_arg("x"),
-                      r_friendly_type_of(x));
+                      r_obj_type_friendly(x));
   }
 
   r_ssize size = vec_size(x);
@@ -331,6 +331,6 @@ r_ssize vec_as_ssize(r_obj* n,
     r_abort_lazy_call(call,
                       "%s must be a single number, not %s.",
                       vec_arg_format(p_arg),
-                      r_friendly_type_of_length(n));
+                      r_obj_type_friendly_length(n));
   }
 }

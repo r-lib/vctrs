@@ -1552,7 +1552,6 @@ SEXP syms_y_size = NULL;
 SEXP syms_to = NULL;
 SEXP syms_dots = NULL;
 SEXP syms_bracket = NULL;
-SEXP syms_arg = NULL;
 SEXP syms_x_arg = NULL;
 SEXP syms_y_arg = NULL;
 SEXP syms_to_arg = NULL;
@@ -1645,8 +1644,6 @@ void c_print_backtrace() {
 #endif
 }
 
-
-struct r_lazy r_lazy_null;
 
 void vctrs_init_utils(SEXP ns) {
   vctrs_ns_env = ns;
@@ -1822,7 +1819,6 @@ void vctrs_init_utils(SEXP ns) {
   syms_to = Rf_install("to");
   syms_dots = Rf_install("...");
   syms_bracket = Rf_install("[");
-  syms_arg = Rf_install("arg");
   syms_x_arg = Rf_install("x_arg");
   syms_y_arg = Rf_install("y_arg");
   syms_to_arg = Rf_install("to_arg");
@@ -1927,8 +1923,6 @@ void vctrs_init_utils(SEXP ns) {
     MARK_NOT_MUTABLE(result_attrib);
     UNPROTECT(4);
   }
-
-  r_lazy_null = (struct r_lazy) { 0 };
 
   // We assume the following in `union vctrs_dbl_indicator`
   VCTRS_ASSERT(sizeof(double) == sizeof(int64_t));

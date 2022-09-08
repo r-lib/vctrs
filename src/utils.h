@@ -453,7 +453,6 @@ extern SEXP syms_y_size;
 extern SEXP syms_to;
 extern SEXP syms_dots;
 extern SEXP syms_bracket;
-extern SEXP syms_arg;
 extern SEXP syms_x_arg;
 extern SEXP syms_y_arg;
 extern SEXP syms_to_arg;

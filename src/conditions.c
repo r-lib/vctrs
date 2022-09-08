@@ -23,7 +23,7 @@ void stop_assert_size(r_ssize actual,
   r_obj* syms[4] = {
    syms_actual,
    syms_required,
-   syms_arg,
+   r_syms.arg,
    NULL
   };
   r_obj* args[4] = {
