@@ -68,14 +68,14 @@ vec_as_subscript2 <- function(i,
                               character = c("cast", "error"),
                               arg = NULL,
                               call = caller_env()) {
-  check_dots <- function(..., logical = "error") {
+  check_dots <- function(..., logical = "error", call = caller_env()) {
     if (!is_string(logical, "error")) {
       abort(
         "`vctrs::vec_as_subscript2(logical = 'cast')` is deprecated.",
         call = caller_env()
       )
     }
-    check_dots_empty0(...)
+    check_dots_empty0(..., call = call)
   }
   check_dots(...)
 
