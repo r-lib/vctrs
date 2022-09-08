@@ -143,6 +143,12 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
                              const struct vec_assign_opts* opts) {
   int n_protect = 0;
 
+  // Ignore vectors marked as fallback because the caller will apply
+  // a fallback method instead
+  if (vec_is_common_class_fallback(proxy)) {
+    return proxy;
+  }
+
   struct vec_assign_opts mut_opts = *opts;
   bool ignore_outer_names = mut_opts.ignore_outer_names;
   mut_opts.ignore_outer_names = false;

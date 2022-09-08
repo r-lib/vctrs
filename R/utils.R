@@ -328,3 +328,8 @@ browser <- function(...,
   # contexts.
   on.exit(base::browser(..., skipCalls = skipCalls + 1))
 }
+
+vec_paste0 <- function(...) {
+  args <- vec_recycle_common(...)
+  exec(paste0, !!!args)
+}
