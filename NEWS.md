@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Fixed confusing error message with logical `[[` subscripts (#1608).
+
 * New `vec_rank()` to compute various types of sample ranks (#1600).
 
 * `num_as_location()` now throws the right error when there are out-of-bounds

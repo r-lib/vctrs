@@ -81,9 +81,9 @@ test_that("vec_as_subscript() forbids subscript types", {
 })
 
 test_that("vec_as_subscript2() forbids subscript types", {
-  expect_snapshot(error = TRUE, vec_as_subscript2(1L, numeric = "error", logical = "error"))
-  expect_snapshot(error = TRUE, vec_as_subscript2("foo", character = "error", logical = "error"))
-  expect_snapshot(error = TRUE, vec_as_subscript2(TRUE, logical = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript2(1L, numeric = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript2("foo", character = "error"))
+  expect_snapshot(error = TRUE, vec_as_subscript2(TRUE))
 })
 
 test_that("vec_as_subscript2() retains the call when throwing vec_as_subscript() errors (#1605)", {
@@ -102,5 +102,18 @@ test_that("vec_as_subscript() evaluates arg lazily", {
 
 test_that("vec_as_subscript2() evaluates arg lazily", {
   expect_silent(vec_as_subscript2(1L, arg = print("oof")))
-  expect_silent(vec_as_subscript2_result(1L, arg = print("oof"), NULL, logical = "error", numeric = "cast", character = "error"))
+  expect_silent(vec_as_subscript2_result(1L, arg = print("oof"), NULL, numeric = "cast", character = "error"))
+})
+
+test_that("`logical = 'cast'` is deprecated", {
+  expect_snapshot(
+    error = TRUE,
+    vec_as_subscript2(TRUE, logical = "cast")
+  )
+
+  # `logical = "error"` still works
+  expect_snapshot(
+    error = TRUE,
+    vec_as_subscript2(TRUE, logical = "error")
+  )
 })

@@ -112,7 +112,7 @@
 # vec_as_subscript2() forbids subscript types
 
     Code
-      vec_as_subscript2(1L, numeric = "error", logical = "error")
+      vec_as_subscript2(1L, numeric = "error")
     Condition
       Error:
       ! Must extract element with a single valid subscript.
@@ -122,7 +122,7 @@
 ---
 
     Code
-      vec_as_subscript2("foo", character = "error", logical = "error")
+      vec_as_subscript2("foo", character = "error")
     Condition
       Error:
       ! Must extract element with a single valid subscript.
@@ -132,7 +132,7 @@
 ---
 
     Code
-      vec_as_subscript2(TRUE, logical = "error")
+      vec_as_subscript2(TRUE)
     Condition
       Error:
       ! Must extract element with a single valid subscript.
@@ -147,7 +147,7 @@
       Error in `foo()`:
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `integer`.
-      i It must be logical or character.
+      i It must be character.
 
 ---
 
@@ -157,7 +157,7 @@
       Error in `foo()`:
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `double`.
-      i It must be logical, numeric, or character.
+      i It must be numeric or character.
 
 # vec_as_subscript2() retains the call when erroring on logical input (#1605)
 
@@ -167,5 +167,23 @@
       Error in `foo()`:
       ! Must extract element with a single valid subscript.
       x Subscript has the wrong type `logical`.
-      i It must be logical, numeric, or character.
+      i It must be numeric or character.
+
+# `logical = 'cast'` is deprecated
+
+    Code
+      vec_as_subscript2(TRUE, logical = "cast")
+    Condition
+      Error in `vec_as_subscript2()`:
+      ! `vctrs::vec_as_subscript2(logical = 'cast')` is deprecated.
+
+---
+
+    Code
+      vec_as_subscript2(TRUE, logical = "error")
+    Condition
+      Error:
+      ! Must extract element with a single valid subscript.
+      x Subscript has the wrong type `logical`.
+      i It must be numeric or character.
 
