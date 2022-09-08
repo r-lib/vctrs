@@ -793,16 +793,18 @@ bool list_has_inner_vec_names(SEXP x, R_len_t size) {
  * @return A list of the same length as `xs`.
  */
 // [[ include("utils.h") ]]
-SEXP list_pluck(SEXP xs, R_len_t i) {
-  R_len_t n = Rf_length(xs);
-  SEXP out = PROTECT(r_new_list(n));
+r_obj* list_pluck(r_obj* xs, r_ssize i) {
+  r_ssize n = r_length(xs);
+  r_obj* out = KEEP(r_new_list(n));
 
-  for (R_len_t j = 0; j < n; ++j) {
-    SEXP x = r_list_get(xs, j);
-    r_list_poke(out, j, r_list_get(x, i));
+  for (r_ssize j = 0; j < n; ++j) {
+    r_obj* x = r_list_get(xs, j);
+    if (x != r_null) {
+      r_list_poke(out, j, r_list_get(x, i));
+    }
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 

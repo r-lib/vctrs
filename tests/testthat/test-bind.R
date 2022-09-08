@@ -860,8 +860,8 @@ test_that("c() fallback works with unspecified columns", {
 
 test_that("c() fallback works with vctrs-powered data frame subclass", {
   local_methods(
-    c.vctrs_quux = function(...) quux(NextMethod(), c_dispatched = TRUE),
-    `[.vctrs_quux` = function(x, i, ...) quux(NextMethod(), bracket_dispatched = TRUE)
+    c.vctrs_quux = function(...) quux(vec_paste0(NextMethod(), "-c")),
+    `[.vctrs_quux` = function(x, i, ...) quux(vec_paste0(NextMethod(), "-["))
   )
   local_foobar_df_methods()
 
@@ -870,11 +870,11 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   df2 <- data_frame(x = quux(4:5))
 
   out <- vctrs::vec_rbind(df1, df2)
-  exp <- foobar(data_frame(x = quux(1:5, c_dispatched = TRUE)))
+  exp <- foobar(data_frame(x = quux(paste0(1:5, "-c"))))
   expect_identical(out, exp)
 
   out <- vctrs::vec_rbind(df2, df1)
-  exp <- foobar(data_frame(x = quux(c(4:5, 1:3), c_dispatched = TRUE)))
+  exp <- foobar(data_frame(x = quux(paste0(c(4:5, 1:3), "-c"))))
   expect_identical(out, exp)
 
   ### Disjoint case
@@ -883,7 +883,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
 
   out <- vctrs::vec_rbind(df1, df2)
   exp <- foobar(data_frame(
-    x = quux(c(1:3, NA, NA), bracket_dispatched = TRUE),
+    x = quux(c(paste0(1:3, "-c-["), paste0(c(NA, NA), "-["))),
     y = c(rep(NA, 3), 4:5)
   ))
   expect_identical(out, exp)
@@ -891,7 +891,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   out <- vctrs::vec_rbind(df2, df1)
   exp <- foobar(data_frame(
     y = c(4:5, rep(NA, 3)),
-    x = quux(c(NA, NA, 1:3), bracket_dispatched = TRUE)
+    x = quux(c(paste0(c(NA, NA), "-["), paste0(1:3, "-c-[")))
   ))
   expect_identical(out, exp)
 })
@@ -1089,6 +1089,14 @@ test_that("vec_rbind() only restores one time", {
     rep(na_int, 6),       # From `vec_init()`
     foobar(c(1:3, 1:3))   # Final restoration
   ))
+})
+
+test_that("vec_rbind() applies `base::c()` fallback to df-cols (#1462, #1640)", {
+  x <- structure(1, class = "myclass")
+  df <- tibble(a = tibble(x = x))
+  df <- vec_rbind(df, df)
+
+  expect_equal(df$a$x, structure(c(1, 1), class = "myclass"))
 })
 
 

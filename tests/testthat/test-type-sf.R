@@ -256,6 +256,21 @@ test_that("`vec_locate_matches()` works with `sfc` vectors", {
   expect_identical(out$haystack, c(2L, 4L, 5L, NA, 1L))
 })
 
+test_that("`vec_rbind()` doesn't leak common type fallbacks (#1331)", {
+	sf = st_sf(id = 1:2, geo = st_sfc(st_point(c(1, 1)), st_point(c(2, 2))))
+
+	expect_equal(
+		vec_rbind(sf, sf),
+		data_frame(id = rep(1:2, 2), geo = rep(sf$geo, 2))
+	)
+
+	expect_equal(
+		vec_rbind(sf, sf, .names_to = "id"),
+		data_frame(id = rep(1:2, each = 2), geo = rep(sf$geo, 2))
+	)
+})
+
+
 # Local Variables:
 # indent-tabs-mode: t
 # ess-indent-offset: 4

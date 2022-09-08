@@ -174,7 +174,7 @@ SEXP new_empty_factor(SEXP levels);
 SEXP new_empty_ordered(SEXP levels);
 
 bool list_has_inner_vec_names(SEXP x, R_len_t size);
-SEXP list_pluck(SEXP xs, R_len_t i);
+r_obj* list_pluck(r_obj* xs, r_ssize i);
 
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing);
 SEXP compact_seq(R_len_t start, R_len_t size, bool increasing);

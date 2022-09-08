@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_rbind()` now applies `base::c()` fallback recursively within
+  packed df-cols (#1331, #1462, #1640).
+
 * `vec_c()`, `vec_unchop()`, and `vec_rbind()` now proxy and restore
   recursively (#1107). This prevents `vec_restore()` from being called
   with partially filled vectors and improves performance (#1217,
