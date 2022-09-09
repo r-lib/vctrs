@@ -97,11 +97,6 @@ SEXP vec_match(SEXP needles, SEXP haystack) {
 }
 
 
-SEXP vec_c(SEXP xs,
-           SEXP ptype,
-           SEXP name_spec,
-           const struct name_repair_opts* name_repair);
-
 bool is_data_frame(SEXP x);
 
 uint32_t hash_object(SEXP x);

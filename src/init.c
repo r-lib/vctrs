@@ -332,7 +332,7 @@ extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_rbind(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cbind(r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_vec_c(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_new_data_frame(r_obj*);
 
 static
@@ -345,7 +345,7 @@ const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_cast_common_opts",             (DL_FUNC) &ffi_cast_common_opts, 2},
   {"ffi_rbind",                        (DL_FUNC) &ffi_rbind, 4},
   {"ffi_cbind",                        (DL_FUNC) &ffi_cbind, 3},
-  {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
+  {"ffi_vec_c",                        (DL_FUNC) &ffi_vec_c, 3},
   {"ffi_new_data_frame",               (DL_FUNC) &ffi_new_data_frame, -1},
   {NULL, NULL, 0}
 };

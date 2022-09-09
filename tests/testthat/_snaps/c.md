@@ -56,9 +56,11 @@
       (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .name_spec = "{outer}_{inner}")),
       "name specification"))
     Output
-      <simpleError: Can't use a name specification with non-vctrs types.
+      <error/rlang_error>
+      Error in `vec_c()`:
+      ! Can't use a name specification with non-vctrs types.
       vctrs methods must be implemented for class `vctrs_foobar`.
-      See <https://vctrs.r-lib.org/articles/s3-vector.html>.>
+      See <https://vctrs.r-lib.org/articles/s3-vector.html>.
     Code
       (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")), class = "vctrs_error_incompatible_type")
       )

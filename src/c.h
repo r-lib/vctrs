@@ -6,20 +6,25 @@
 #include "ptype2.h"
 
 
-SEXP vec_c_opts(SEXP xs,
-                SEXP ptype,
-                SEXP name_spec,
-                const struct name_repair_opts* name_repair,
-                const struct fallback_opts* fallback_opts);
+r_obj* vec_c(r_obj* xs,
+             r_obj* ptype,
+             r_obj* name_spec,
+             const struct name_repair_opts* name_repair);
 
-SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec);
-SEXP vec_c_fallback(SEXP ptype,
-                    SEXP xs,
-                    SEXP name_spec,
-                    const struct name_repair_opts* name_repair);
+r_obj* vec_c_opts(r_obj* xs,
+                  r_obj* ptype,
+                  r_obj* name_spec,
+                  const struct name_repair_opts* name_repair,
+                  const struct fallback_opts* fallback_opts);
 
-bool needs_vec_c_fallback(SEXP ptype);
-bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype);
+r_obj* vec_c_fallback_invoke(r_obj* xs, r_obj* name_spec);
+r_obj* vec_c_fallback(r_obj* ptype,
+                      r_obj* xs,
+                      r_obj* name_spec,
+                      const struct name_repair_opts* name_repair);
+
+bool needs_vec_c_fallback(r_obj* ptype);
+bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype);
 
 
 #endif
