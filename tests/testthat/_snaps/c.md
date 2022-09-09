@@ -162,7 +162,7 @@
     Output
       [1] 12.4KB
     Code
-      # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
+      # Data frame with rownames (non-repaired, recursive case) (#1217)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
       dfs <- rep(list(df), 100)
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
@@ -170,7 +170,7 @@
     Output
       [1] 11.6KB
     Code
-      # FIXME (#1217): Data frame with rownames (repaired, recursive case)
+      # Data frame with rownames (repaired, recursive case) (#1217)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
