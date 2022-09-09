@@ -175,4 +175,21 @@
       with_memory_prof(list_unchop(dfs))
     Output
       [1] 23.9KB
+    Code
+      # list-ofs (#1496)
+      make_list_of <- (function(n) {
+        df <- tibble::tibble(x = new_list_of(vec_chop(1:n), ptype = integer()))
+        vec_chop(df)
+      })
+      with_memory_prof(list_unchop(make_list_of(1000)))
+    Output
+      [1] 112KB
+    Code
+      with_memory_prof(list_unchop(make_list_of(2000)))
+    Output
+      [1] 222KB
+    Code
+      with_memory_prof(list_unchop(make_list_of(4000)))
+    Output
+      [1] 440KB
 

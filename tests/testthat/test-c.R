@@ -508,6 +508,17 @@ test_that("concatenation performs expected allocations", {
     "Data frame with rownames (repaired, recursive case) (#1217)"
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(list_unchop(dfs))
+
+    "list-ofs (#1496)"
+    make_list_of <- function(n) {
+      df <- tibble::tibble(
+        x = new_list_of(vec_chop(1:n), ptype = integer())
+      )
+      vec_chop(df)
+    }
+    with_memory_prof(list_unchop(make_list_of(1e3)))
+    with_memory_prof(list_unchop(make_list_of(2e3)))
+    with_memory_prof(list_unchop(make_list_of(4e3)))
   })
 })
 
