@@ -262,7 +262,9 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned o
   int* index_data = r_int_begin(index);                                 \
                                                                         \
   if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` should have been recycled to fit `x`.");   \
+    r_stop_internal("`value` (size %d) doesn't match `x` (size %d).",   \
+                    r_length(value),                                    \
+                    n);                                                 \
   }                                                                     \
                                                                         \
   r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
@@ -284,7 +286,9 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned o
   r_ssize step = index_data[2];                                         \
                                                                         \
   if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` should have been recycled to fit `x`.");   \
+    r_stop_internal("`value` (size %d) doesn't match `x` (size %d).",   \
+                    r_length(value),                                    \
+                    n);                                                 \
   }                                                                     \
                                                                         \
   r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
