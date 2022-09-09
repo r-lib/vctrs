@@ -72,8 +72,6 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 
 static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
 
-SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
-
 // [[ register() ]]
 SEXP vctrs_chop_seq(SEXP x, SEXP starts, SEXP sizes, SEXP increasings) {
   int* p_starts = INTEGER(starts);
@@ -359,7 +357,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   return info.out;
 }
 
-static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+static r_obj* chop_fallback_shaped(r_obj* x, r_obj* indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
@@ -368,7 +366,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
     }
 
     // `vec_slice_fallback()` will also `vec_restore()` for us
-    SEXP elt = PROTECT(vec_slice_fallback(x, info.index));
+    r_obj* elt = PROTECT(vec_slice_fallback(x, info.index));
 
     SET_VECTOR_ELT(info.out, i, elt);
     UNPROTECT(1);
@@ -379,7 +377,7 @@ static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info in
 
 // -----------------------------------------------------------------------------
 
-SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
+SEXP vec_as_indices(SEXP indices, r_ssize n, SEXP names) {
   if (indices == R_NilValue) {
     return indices;
   }
@@ -390,7 +388,7 @@ SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
 
   indices = PROTECT(r_clone_referenced(indices));
 
-  R_len_t size = vec_size(indices);
+  r_ssize size = vec_size(indices);
 
   // Restrict index values to positive integer locations
   const struct location_opts opts = {
