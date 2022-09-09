@@ -26,15 +26,8 @@ r_obj* vec_proxy_2(r_obj* x, bool recurse) {
   }
 
   case VCTRS_TYPE_s3: {
-    r_obj* out = KEEP(vec_proxy_invoke(x, info.proxy_method));
-    if (!is_data_frame(out)) {
-      FREE(2);
-      return out;
-    }
-
-    out = KEEP(recurse ? df_proxy_recurse(out) : out);
-
-    FREE(3);
+    r_obj* out = vec_proxy_invoke(x, info.proxy_method);
+    FREE(1);
     return out;
   }
 
