@@ -97,7 +97,7 @@ vec_unchop <- function(x,
                        ptype = NULL,
                        name_spec = NULL,
                        name_repair = c("minimal", "unique", "check_unique", "universal")) {
-  .Call(vctrs_unchop, x, indices, ptype, name_spec, name_repair)
+  .Call(ffi_vec_unchop, x, indices, ptype, name_spec, name_repair)
 }
 
 # Exposed for testing  (`starts` is 0-based)
