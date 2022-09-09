@@ -77,7 +77,7 @@ r_obj* vec_c_opts(r_obj* xs,
   r_keep_loc out_pi;
   KEEP_HERE(out, &out_pi);
 
-  out = vec_proxy(out);
+  out = vec_proxy_recurse(out);
   KEEP_AT(out, out_pi);
 
   r_obj* loc = KEEP(compact_seq(0, 0, true));
@@ -95,6 +95,7 @@ r_obj* vec_c_opts(r_obj* xs,
   r_ssize counter = 0;
 
   const struct vec_assign_opts c_assign_opts = {
+    .recursive = true,
     .assign_names = assign_names,
     .ignore_outer_names = true
   };
@@ -143,7 +144,7 @@ r_obj* vec_c_opts(r_obj* xs,
     FREE(1);
   }
 
-  out = KEEP(vec_restore(out, ptype, VCTRS_OWNED_true));
+  out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));

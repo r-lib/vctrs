@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* `vec_c()`, `vec_unchop()`, and `vec_rbind()` now proxy and restore
+  recursively (#1107). This prevents `vec_restore()` from being called
+  with partially filled vectors and improves performance (#1217,
+  #1496).
+
 * S3 vignette was extended to show how to make the polynomial class
   atomic instead of a list (#1030).
 
