@@ -15,12 +15,12 @@ test_that("vec_repeat() still works", {
 })
 
 test_that("vec_unchop() is soft-deprecated", {
-  local_lifecycle_warnings()
+  local_options(lifecycle_verbosity = "warning")
   expect_snapshot(vec_unchop(list(1), indices = list(1)))
 })
 
 test_that("vec_unchop() still works", {
-  local_lifecycle_silence()
+  local_options(lifecycle_verbosity = "quiet")
   expect_identical(
     vec_unchop(list(1L, 2:3), indices = list(2, c(3, 1))),
     c(3L, 1L, 2L)

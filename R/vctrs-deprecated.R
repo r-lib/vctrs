@@ -133,10 +133,7 @@ vec_unchop <- function(x,
                        ptype = NULL,
                        name_spec = NULL,
                        name_repair = c("minimal", "unique", "check_unique", "universal")) {
-  signal_soft_deprecated(paste_line(
-    "`vec_unchop()` is deprecated as of vctrs 0.5.0.",
-    "Please use `list_unchop()` instead."
-  ))
+  lifecycle::deprecate_soft("0.5.0", "vec_unchop()", "list_unchop()")
 
   list_unchop(
     x = x,
