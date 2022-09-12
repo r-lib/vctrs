@@ -11,14 +11,14 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal) {
   return vec_equal(x, y, c_na_equal);
 }
 
-static SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP int_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP dbl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP cpl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP chr_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP df_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP int_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP dbl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP cpl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP chr_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP df_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
 
 /*
  * Recycling and casting is done at the R level
@@ -80,31 +80,31 @@ SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
   return out;
 
 
-static
+static inline
 SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(int, LOGICAL_RO, lgl_equal_na_equal, lgl_equal_na_propagate);
 }
-static
+static inline
 SEXP int_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(int, INTEGER_RO, int_equal_na_equal, int_equal_na_propagate);
 }
-static
+static inline
 SEXP dbl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(double, REAL_RO, dbl_equal_na_equal, dbl_equal_na_propagate);
 }
-static
+static inline
 SEXP cpl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal, cpl_equal_na_propagate);
 }
-static
+static inline
 SEXP chr_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(SEXP, STRING_PTR_RO, chr_equal_na_equal, chr_equal_na_propagate);
 }
-static
+static inline
 SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(Rbyte, RAW_RO, raw_equal_na_equal, raw_equal_na_propagate);
 }
-static
+static inline
 SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(SEXP, VECTOR_PTR_RO, list_equal_na_equal, list_equal_na_propagate);
 }
