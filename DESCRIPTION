@@ -29,7 +29,7 @@ BugReports: https://github.com/r-lib/vctrs/issues
 Depends: 
     R (>= 3.3)
 Imports:
-    cli (>= 3.2.0),
+    cli (>= 3.4.0),
     glue,
     rlang (>= 1.0.5)
 Suggests: 

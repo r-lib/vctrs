@@ -100,7 +100,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements past the end.
-      i Locations 100, 101, 102, 103, 104, ... don't exist.
+      i Locations 100, 101, 102, ..., 109, and 110 don't exist.
       i There are only 26 elements.
 
 ---
