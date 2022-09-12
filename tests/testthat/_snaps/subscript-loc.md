@@ -687,7 +687,7 @@
 ---
 
     Code
-      vec_as_location(NA, n = 2L, missing = "error")
+      vec_as_location(x, n = 2L, missing = "error")
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
