@@ -1,5 +1,11 @@
 # vctrs (development version)
 
+* `vec_as_location()` and `num_as_location()` have gained a `missing = "remove"`
+  option (#1595).
+
+* `vec_as_location()` no longer matches `NA_character_` and `""` indices if
+  those invalid names appear in `names` (#1489).
+
 * `vec_unchop()` has been renamed to `list_unchop()` to better indicate that it
   requires list input. `vec_unchop()` will stick around for a few minor
   versions, but has been formally soft-deprecated (#1209).

@@ -14,6 +14,8 @@ r_obj* int_invert_location(r_obj* subscript,
                            const struct location_opts* opts);
 static
 r_obj* int_filter_zero(r_obj* subscript, r_ssize n_zero);
+static
+r_obj* int_filter_missing(r_obj* subscript, r_ssize n_missing);
 
 static
 r_obj* int_filter_oob(r_obj* subscript, r_ssize n, r_ssize n_oob);
@@ -37,6 +39,9 @@ r_obj* chr_as_location(r_obj* subscript,
 static
 void stop_subscript_missing(r_obj* i,
                             const struct location_opts* opts);
+static
+void stop_subscript_empty(r_obj* i,
+                          const struct location_opts* opts);
 
 static
 void stop_subscript_oob_location(r_obj* i,

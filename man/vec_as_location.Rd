@@ -12,7 +12,7 @@ vec_as_location(
   n,
   names = NULL,
   ...,
-  missing = c("propagate", "error"),
+  missing = c("propagate", "remove", "error"),
   arg = caller_arg(i),
   call = caller_env()
 )
@@ -21,7 +21,7 @@ num_as_location(
   i,
   n,
   ...,
-  missing = c("propagate", "error"),
+  missing = c("propagate", "remove", "error"),
   negative = c("invert", "error", "ignore"),
   oob = c("error", "remove", "extend"),
   zero = c("remove", "error", "ignore"),
@@ -65,9 +65,10 @@ if \code{i} is a character vector.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing
-value, or \code{"propagate"} it (return it as is). By default, vector
-subscripts can contain missing values and scalar subscripts can't.}
+\item{missing}{Whether to throw an \code{"error"} when \code{i} is a missing value,
+\code{"propagate"} it (return it as is), or \code{"remove"} it. By default, vector
+subscripts can contain missing values and scalar subscripts can't.
+Propagated missing values can't be combined with negative indices.}
 
 \item{arg}{The argument name to be displayed in error messages when
 \code{vec_as_location()} and \code{vec_as_location2()} are used to check the

@@ -62,22 +62,21 @@ r_obj* lgl_as_location(r_obj* subscript,
                        const struct location_opts* opts) {
   r_ssize subscript_n = r_length(subscript);
 
-  if (opts->missing == SUBSCRIPT_MISSING_ERROR && lgl_any_na(subscript)) {
-    stop_subscript_missing(subscript, opts);
-  }
-
   if (subscript_n == n) {
-    r_obj* out = KEEP(r_lgl_which(subscript, true));
+    bool na_propagate = false;
 
-    r_obj* nms = KEEP(r_names(subscript));
-    if (nms != R_NilValue) {
-      nms = KEEP(vec_slice(nms, out));
-      r_attrib_poke_names(out, nms);
-      FREE(1);
+    switch (opts->missing) {
+    case SUBSCRIPT_MISSING_PROPAGATE: na_propagate = true; break;
+    case SUBSCRIPT_MISSING_REMOVE: break;
+    case SUBSCRIPT_MISSING_ERROR: {
+      if (lgl_any_na(subscript)) {
+        stop_subscript_missing(subscript, opts);
+      }
+      break;
+    }
     }
 
-    FREE(2);
-    return out;
+    return r_lgl_which(subscript, na_propagate);
   }
 
   /* A single `TRUE` or `FALSE` index is recycled to the full vector
@@ -92,23 +91,45 @@ r_obj* lgl_as_location(r_obj* subscript,
   if (subscript_n == 1) {
     int elt = r_lgl_get(subscript, 0);
 
-    r_obj* out;
+    r_ssize recycle_size = n;
+
+    r_obj* out = r_null;
+    r_keep_loc out_shelter;
+    KEEP_HERE(out, &out_shelter);
+
     if (elt == r_globals.na_lgl) {
-      out = KEEP(r_alloc_integer(n));
-      r_int_fill(out, r_globals.na_int, n);
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: {
+        out = r_alloc_integer(n);
+        KEEP_AT(out, out_shelter);
+        r_int_fill(out, r_globals.na_int, n);
+        break;
+      }
+      case SUBSCRIPT_MISSING_REMOVE: {
+        out = r_copy(r_globals.empty_int);
+        KEEP_AT(out, out_shelter);
+        recycle_size = 0;
+        break;
+      }
+      case SUBSCRIPT_MISSING_ERROR: {
+        stop_subscript_missing(subscript, opts);
+      }
+      }
     } else if (elt) {
-      out = KEEP(r_alloc_integer(n));
+      out = r_alloc_integer(n);
+      KEEP_AT(out, out_shelter);
       r_int_fill_seq(out, 1, n);
     } else {
-      return r_globals.empty_int;
+      out = r_copy(r_globals.empty_int);
+      KEEP_AT(out, out_shelter);
+      recycle_size = 0;
     }
 
     r_obj* nms = KEEP(r_names(subscript));
     if (nms != R_NilValue) {
-      r_obj* recycled_nms = KEEP(r_alloc_character(n));
-      r_chr_fill(recycled_nms, r_chr_get(nms, 0), n);
+      r_obj* recycled_nms = r_alloc_character(recycle_size);
       r_attrib_poke_names(out, recycled_nms);
-      FREE(1);
+      r_chr_fill(recycled_nms, r_chr_get(nms, 0), recycle_size);
     }
 
     FREE(2);
@@ -134,13 +155,16 @@ r_obj* int_as_location(r_obj* subscript,
   r_ssize n_zero = 0;
 
   r_ssize n_oob = 0;
+  r_ssize n_missing = 0;
 
   for (r_ssize i = 0; i < loc_n; ++i, ++data) {
     int elt = *data;
 
     if (elt == r_globals.na_int) {
-      if (opts->missing == SUBSCRIPT_MISSING_ERROR) {
-        stop_subscript_missing(subscript, opts);
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: break;
+      case SUBSCRIPT_MISSING_REMOVE: ++n_missing; break;
+      case SUBSCRIPT_MISSING_ERROR: stop_subscript_missing(subscript, opts);
       }
     } else if (elt == 0) {
       switch (opts->loc_zero) {
@@ -175,7 +199,12 @@ r_obj* int_as_location(r_obj* subscript,
   r_keep_loc subscript_shelter;
   KEEP_HERE(subscript, &subscript_shelter);
 
-  if (n_zero) {
+  if (n_missing > 0) {
+    subscript = int_filter_missing(subscript, n_missing);
+    KEEP_AT(subscript, subscript_shelter);
+  }
+
+  if (n_zero > 0) {
     subscript = int_filter_zero(subscript, n_zero);
     KEEP_AT(subscript, subscript_shelter);
   }
@@ -217,8 +246,15 @@ r_obj* int_invert_location(r_obj* subscript,
     int j = *data;
 
     if (j == r_globals.na_int) {
-      stop_location_negative_missing(subscript, opts);
+      // Following base R by erroring on `missing = "propagate"`, e.g. `1[c(NA, -1)]`.
+      // Doesn't make sense to invert an `NA`, so we can't meaningfully propagate.
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: stop_location_negative_missing(subscript, opts);
+      case SUBSCRIPT_MISSING_REMOVE: continue;
+      case SUBSCRIPT_MISSING_ERROR: stop_location_negative_missing(subscript, opts);
+      }
     }
+
     if (j >= 0) {
       if (j == 0) {
         switch (opts->loc_zero) {
@@ -256,24 +292,49 @@ r_obj* int_invert_location(r_obj* subscript,
 }
 
 static
-r_obj* int_filter_zero(r_obj* subscript,
-                       r_ssize n_zero) {
-  r_ssize loc_n = vec_size(subscript);
-  const int* data = r_int_cbegin(subscript);
+r_obj* int_filter(r_obj* subscript, r_ssize n_filter, int value) {
+  const r_ssize size = r_length(subscript);
+  const int* v_subscript = r_int_cbegin(subscript);
 
-  r_obj* out = KEEP(r_alloc_integer(loc_n - n_zero));
-  int* out_data = r_int_begin(out);
+  r_obj* out = KEEP(r_alloc_integer(size - n_filter));
+  int* v_out = r_int_begin(out);
 
-  for (r_ssize i = 0; i < loc_n; ++i, ++data) {
-    int elt = *data;
-    if (elt != 0) {
-      *out_data = elt;
-      ++out_data;
+  r_obj* names = r_names(subscript);
+  const bool has_names = names != r_null;
+  r_obj* const* v_names = NULL;
+  r_obj* out_names = r_null;
+  if (has_names) {
+    v_names = r_chr_cbegin(names);
+    out_names = r_alloc_character(size - n_filter);
+    r_attrib_poke_names(out, out_names);
+  }
+
+  r_ssize j = 0;
+
+  for (r_ssize i = 0; i < size; ++i) {
+    const int elt = v_subscript[i];
+
+    if (elt != value) {
+      v_out[j] = elt;
+
+      if (has_names) {
+        r_chr_poke(out_names, j, v_names[i]);
+      }
+
+      ++j;
     }
   }
 
   FREE(1);
   return out;
+}
+static
+r_obj* int_filter_zero(r_obj* subscript, r_ssize n_zero) {
+  return int_filter(subscript, n_zero, 0);
+}
+static
+r_obj* int_filter_missing(r_obj* subscript, r_ssize n_missing) {
+  return int_filter(subscript, n_missing, r_globals.na_int);
 }
 
 static
@@ -281,18 +342,34 @@ r_obj* int_filter_oob(r_obj* subscript, r_ssize n, r_ssize n_oob) {
   const r_ssize n_subscript = r_length(subscript);
   const r_ssize n_out = n_subscript - n_oob;
 
+  const int* v_subscript = r_int_cbegin(subscript);
+
   r_obj* out = KEEP(r_alloc_integer(n_out));
   int* v_out = r_int_begin(out);
-  r_ssize i_out = 0;
 
-  const int* v_subscript = r_int_cbegin(subscript);
+  r_obj* names = r_names(subscript);
+  const bool has_names = names != r_null;
+  r_obj* const* v_names = NULL;
+  r_obj* out_names = r_null;
+  if (has_names) {
+    v_names = r_chr_cbegin(names);
+    out_names = r_alloc_character(n_out);
+    r_attrib_poke_names(out, out_names);
+  }
+
+  r_ssize j = 0;
 
   for (r_ssize i = 0; i < n_subscript; ++i) {
     const int elt = v_subscript[i];
 
     if (abs(elt) <= n || elt == r_globals.na_int) {
-      v_out[i_out] = elt;
-      ++i_out;
+      v_out[j] = elt;
+
+      if (has_names) {
+        r_chr_poke(out_names, j, v_names[i]);
+      }
+
+      ++j;
     }
   }
 
@@ -385,31 +462,52 @@ r_obj* chr_as_location(r_obj* subscript,
     r_abort("`names` must be a character vector.");
   }
 
+  bool remove_missing = false;
+
   r_obj* matched = KEEP(Rf_match(names, subscript, r_globals.na_int));
+  r_attrib_poke_names(matched, r_names(subscript));
 
   r_ssize n = r_length(matched);
-  const int* p = r_int_cbegin(matched);
+  int* p = r_int_begin(matched);
   r_obj* const * ip = r_chr_cbegin(subscript);
 
   for (r_ssize k = 0; k < n; ++k) {
-    if (p[k] != r_globals.na_int) {
-      continue;
+    const r_obj* elt = ip[k];
+
+    if (elt == r_strs.empty) {
+      // `""` never matches, even if `names` contains a `""` name
+      stop_subscript_empty(subscript, opts);
     }
 
-    if (ip[k] != r_globals.na_str) {
+    if (elt == r_globals.na_str) {
+      // `NA_character_` never matches, even if `names` contains a missing name
+      p[k] = r_globals.na_int;
+
+      switch (opts->missing) {
+      case SUBSCRIPT_MISSING_PROPAGATE: continue;
+      case SUBSCRIPT_MISSING_REMOVE: remove_missing = true; continue;
+      case SUBSCRIPT_MISSING_ERROR: stop_subscript_missing(subscript, opts);
+      }
+    }
+
+    if (p[k] == r_globals.na_int) {
       stop_subscript_oob_name(subscript, names, opts);
     }
-
-    if (opts->missing != SUBSCRIPT_MISSING_ERROR) {
-      continue;
-    }
-
-    stop_subscript_missing(subscript, opts);
   }
 
-  r_attrib_poke_names(matched, KEEP(r_names(subscript))); FREE(1);
+  if (remove_missing) {
+    if (opts->missing != SUBSCRIPT_MISSING_REMOVE) {
+      r_stop_internal("`missing = 'remove'` must be set if `n_missing > 0`.");
+    }
 
-  FREE(1);
+    r_obj* not_missing = KEEP(vec_detect_complete(matched));
+    matched = KEEP(vec_slice(matched, not_missing));
+
+    FREE(2);
+  }
+  KEEP(matched);
+
+  FREE(2);
   return matched;
 }
 
@@ -473,6 +571,7 @@ enum subscript_missing parse_subscript_arg_missing(r_obj* x,
   const char* str = r_chr_get_c_string(x, 0);
 
   if (!strcmp(str, "propagate")) return SUBSCRIPT_MISSING_PROPAGATE;
+  if (!strcmp(str, "remove")) return SUBSCRIPT_MISSING_REMOVE;
   if (!strcmp(str, "error")) return SUBSCRIPT_MISSING_ERROR;
   stop_subscript_arg_missing(call);
 
@@ -529,7 +628,7 @@ enum num_loc_zero parse_loc_zero(r_obj* x,
 
 static
 void stop_subscript_arg_missing(struct r_lazy call) {
-  r_abort_call(call.env, "`missing` must be one of \"propagate\" or \"error\".");
+  r_abort_call(call.env, "`missing` must be one of \"propagate\", \"remove\", or \"error\".");
 }
 static
 void stop_bad_negative(struct r_lazy call) {
@@ -549,6 +648,16 @@ void stop_subscript_missing(r_obj* i,
                             const struct location_opts* opts) {
   r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts.call));
   vctrs_eval_mask2(r_sym("stop_subscript_missing"),
+                   syms_i, i,
+                   syms_call, call);
+  r_stop_unreachable();
+}
+
+static
+void stop_subscript_empty(r_obj* i,
+                          const struct location_opts* opts) {
+  r_obj* call = KEEP(r_lazy_eval(opts->subscript_opts.call));
+  vctrs_eval_mask2(r_sym("stop_subscript_empty"),
                    syms_i, i,
                    syms_call, call);
   r_stop_unreachable();

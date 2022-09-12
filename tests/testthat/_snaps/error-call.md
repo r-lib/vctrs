@@ -198,7 +198,7 @@
     Output
       <error/rlang_error>
       Error in `vctrs::num_as_location()`:
-      ! `missing` must be one of "propagate" or "error".
+      ! `missing` must be one of "propagate", "remove", or "error".
 
 ---
 
