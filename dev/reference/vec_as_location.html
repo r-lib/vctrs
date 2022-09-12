@@ -98,7 +98,7 @@ for extracting with <code>[[</code>.</p></li>
 <span>  <span class="va">n</span>,</span>
 <span>  names <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"propagate"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"propagate"</span>, <span class="st">"remove"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
 <span>  arg <span class="op">=</span> <span class="fu">caller_arg</span><span class="op">(</span><span class="va">i</span><span class="op">)</span>,</span>
 <span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -107,7 +107,7 @@ for extracting with <code>[[</code>.</p></li>
 <span>  <span class="va">i</span>,</span>
 <span>  <span class="va">n</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"propagate"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"propagate"</span>, <span class="st">"remove"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
 <span>  negative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"invert"</span>, <span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,</span>
 <span>  oob <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error"</span>, <span class="st">"remove"</span>, <span class="st">"extend"</span><span class="op">)</span>,</span>
 <span>  zero <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"remove"</span>, <span class="st">"error"</span>, <span class="st">"ignore"</span><span class="op">)</span>,</span>
@@ -162,9 +162,10 @@ if <code>i</code> is a character vector.</p></dd>
 
 
 <dt>missing</dt>
-<dd><p>Whether to throw an <code>"error"</code> when <code>i</code> is a missing
-value, or <code>"propagate"</code> it (return it as is). By default, vector
-subscripts can contain missing values and scalar subscripts can't.</p></dd>
+<dd><p>Whether to throw an <code>"error"</code> when <code>i</code> is a missing value,
+<code>"propagate"</code> it (return it as is), or <code>"remove"</code> it. By default, vector
+subscripts can contain missing values and scalar subscripts can't.
+Propagated missing values can't be combined with negative indices.</p></dd>
 
 
 <dt>arg</dt>
