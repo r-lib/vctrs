@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_unchop()` has been renamed to `list_unchop()` to better indicate that it
+  requires list input. `vec_unchop()` will stick around for a few minor
+  versions, but has been formally soft-deprecated (#1209).
+
 * Lossy cast errors during scalar subscript validation now have the
   correct message (#1606).
 

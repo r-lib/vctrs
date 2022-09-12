@@ -57,7 +57,7 @@ It is a more efficient equivalent to the following usage of \code{vec_c()}:
 
 \subsection{vctrs dependencies}{
 \itemize{
-\item \code{\link[=vec_unchop]{vec_unchop()}}
+\item \code{\link[=list_unchop]{list_unchop()}}
 }
 }
 }

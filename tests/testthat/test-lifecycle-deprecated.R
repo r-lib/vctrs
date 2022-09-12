@@ -13,3 +13,16 @@ test_that("vec_repeat() still works", {
   expect_identical(vec_repeat(1:2, times = 2), vec_rep(1:2, 2))
   expect_identical(vec_repeat(1:2, each = 2), vec_rep_each(1:2, 2))
 })
+
+test_that("vec_unchop() is soft-deprecated", {
+  local_options(lifecycle_verbosity = "warning")
+  expect_snapshot(vec_unchop(list(1), indices = list(1)))
+})
+
+test_that("vec_unchop() still works", {
+  local_options(lifecycle_verbosity = "quiet")
+  expect_identical(
+    vec_unchop(list(1L, 2:3), indices = list(2, c(3, 1))),
+    c(3L, 1L, 2L)
+  )
+})

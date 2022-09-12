@@ -15,7 +15,7 @@
 #'
 #' ## vctrs dependencies
 #'
-#' - [vec_unchop()]
+#' - [list_unchop()]
 #'
 #' @inheritParams vec_c
 #'
@@ -53,7 +53,7 @@ vec_interleave <- function(...,
 
   indices <- vec_interleave_indices(n, size)
 
-  vec_unchop(
+  list_unchop(
     x = args,
     indices = indices,
     ptype = .ptype,

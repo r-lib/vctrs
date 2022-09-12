@@ -10,11 +10,11 @@ enum fallback_homogeneous {
 
 
 static
-r_obj* vec_unchop(r_obj* xs,
-                  r_obj* indices,
-                  r_obj* ptype,
-                  r_obj* name_spec,
-                  const struct name_repair_opts* name_repair) {
+r_obj* list_unchop(r_obj* xs,
+                   r_obj* indices,
+                   r_obj* ptype,
+                   r_obj* name_spec,
+                   const struct name_repair_opts* name_repair) {
   if (!vec_is_list(xs)) {
     r_abort("`x` must be a list.");
   }
@@ -43,14 +43,14 @@ r_obj* vec_unchop(r_obj* xs,
                                        r_lazy_null));
 
   if (needs_vec_c_fallback(ptype)) {
-    r_obj* out = vec_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
+    r_obj* out = list_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
     FREE(1);
     return out;
   }
 
   // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
   if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
-    r_obj* out = vec_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true);
+    r_obj* out = list_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true);
     FREE(1);
     return out;
   }
@@ -155,11 +155,11 @@ r_obj* vec_unchop(r_obj* xs,
   return out;
 }
 
-r_obj* ffi_vec_unchop(r_obj* x,
-                      r_obj* indices,
-                      r_obj* ptype,
-                      r_obj* name_spec,
-                      r_obj* name_repair) {
+r_obj* ffi_list_unchop(r_obj* x,
+                       r_obj* indices,
+                       r_obj* ptype,
+                       r_obj* name_spec,
+                       r_obj* name_repair) {
   struct name_repair_opts name_repair_opts =
     new_name_repair_opts(name_repair,
                          vec_args.empty,
@@ -167,7 +167,7 @@ r_obj* ffi_vec_unchop(r_obj* x,
                          r_lazy_null);
   KEEP(name_repair_opts.shelter);
 
-  r_obj* out = vec_unchop(x, indices, ptype, name_spec, &name_repair_opts);
+  r_obj* out = list_unchop(x, indices, ptype, name_spec, &name_repair_opts);
 
   FREE(1);
   return out;
@@ -178,12 +178,12 @@ r_obj* ffi_vec_unchop(r_obj* x,
 // vec_slice_fallback(vec_c_fallback_invoke(!!!x), order(vec_c(!!!indices)))
 // with recycling of each element of `x` to the corresponding index size
 static
-r_obj* vec_unchop_fallback(r_obj* ptype,
-                           r_obj* x,
-                           r_obj* indices,
-                           r_obj* name_spec,
-                           const struct name_repair_opts* name_repair,
-                           enum fallback_homogeneous homogeneous) {
+r_obj* list_unchop_fallback(r_obj* ptype,
+                            r_obj* x,
+                            r_obj* indices,
+                            r_obj* name_spec,
+                            const struct name_repair_opts* name_repair,
+                            enum fallback_homogeneous homogeneous) {
   r_ssize x_size = vec_size(x);
   x = KEEP(r_clone_referenced(x));
 
