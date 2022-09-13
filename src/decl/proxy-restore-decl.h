@@ -8,4 +8,4 @@ r_obj* vec_restore_4(r_obj* x,
                      bool recurse);
 
 static
-r_obj* vec_restore_dispatch(r_obj* x, r_obj* to);
+r_obj* vec_restore_dispatch(r_obj* x, r_obj* to, bool recurse);

@@ -3,14 +3,19 @@
 #include "decl/proxy-decl.h"
 
 
-// [[ register() ]]
 r_obj* vec_proxy(r_obj* x) {
   return vec_proxy_2(x, false);
 }
-
-// [[ register() ]]
 r_obj* vec_proxy_recurse(r_obj* x) {
   return vec_proxy_2(x, true);
+}
+
+r_obj* ffi_vec_proxy(r_obj* x, r_obj* recurse) {
+  if (r_as_bool(recurse)) {
+    return vec_proxy_2(x, true);
+  } else {
+    return vec_proxy_2(x, false);
+  }
 }
 
 static
@@ -26,7 +31,7 @@ r_obj* vec_proxy_2(r_obj* x, bool recurse) {
   }
 
   case VCTRS_TYPE_s3: {
-    r_obj* out = vec_proxy_invoke(x, info.proxy_method);
+    r_obj* out = vec_proxy_invoke(x, info.proxy_method, recurse);
     FREE(1);
     return out;
   }
@@ -82,11 +87,13 @@ r_obj* vec_proxy_method(r_obj* x) {
 // This should be faster than normal dispatch but also means that
 // proxy methods can't call `NextMethod()`. This could be changed if
 // it turns out a problem.
-r_obj* vec_proxy_invoke(r_obj* x, r_obj* method) {
+r_obj* vec_proxy_invoke(r_obj* x, r_obj* method, bool recurse) {
   if (method == r_null) {
     return x;
   } else {
-    return vctrs_dispatch1(syms_vec_proxy, method, syms_x, x);
+    return vctrs_dispatch2(syms_vec_proxy, method,
+                           syms_x, x,
+                           syms.recurse, r_lgl(recurse));
   }
 }
 

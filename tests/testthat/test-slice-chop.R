@@ -170,7 +170,7 @@ test_that("vec_chop() falls back to `[` for shaped objects with no proxy when in
 
 test_that("vec_chop() with data frame proxies always uses the proxy's length info", {
   local_methods(
-    vec_proxy.vctrs_proxy = function(x) {
+    vec_proxy.vctrs_proxy = function(x, ...) {
       x <- proxy_deref(x)
       new_data_frame(list(x = x$x, y = x$y))
     },
