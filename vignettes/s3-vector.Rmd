@@ -700,14 +700,12 @@ sort(x)
 A related problem occurs if we build our vector on top of a list. The following code defines a polynomial class that represents polynomials (like `1 + 3x - 2x^2`) using a list of integer vectors (like `c(1, 3, -2)`). Note the use of `new_list_of()` in the constructor.
 
 ```{r}
+poly <- function(...) {
+  x <- vec_cast_common(..., .to = integer())
+  new_poly(x)
+}
 new_poly <- function(x) {
   new_list_of(x, ptype = integer(), class = "vctrs_poly_list")
-}
-
-poly <- function(...) {
-  x <- list(...)
-  x <- lapply(x, vec_cast, integer())
-  new_poly(x)
 }
 
 vec_ptype_full.vctrs_poly_list <- function(x, ...) "polynomial"
