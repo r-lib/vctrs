@@ -717,7 +717,9 @@ format.vctrs_poly <- function(x, ...) {
   format_one <- function(x) {
     if (length(x) == 0) {
       return("")
-    } else if (length(x) == 1) {
+    }
+
+    if (length(x) == 1) {
       format(x)
     } else {
       suffix <- c(paste0("\u22C5x^", seq(length(x) - 1, 1)), "")
@@ -726,13 +728,14 @@ format.vctrs_poly <- function(x, ...) {
       paste0(out, collapse = " + ")
     }
   }
+
   vapply(x, format_one, character(1))
 }
 
 obj_print_data.vctrs_poly <- function(x, ...) {
-  if (length(x) == 0)
-    return()
-  print(format(x), quote = FALSE)
+  if (length(x) != 0) {
+    print(format(x), quote = FALSE)
+  }
 }
 
 p <- poly(1, c(1, 0, 0, 0, 2), c(1, 0, 1))
