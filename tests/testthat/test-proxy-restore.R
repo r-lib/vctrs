@@ -120,3 +120,20 @@ test_that("attributes are properly restored when they contain special attributes
   out <- vec_restore_default(list(), x)
   expect_identical(attributes(out), exp)
 })
+
+test_that("names<- is not called with partial data (#1108)", {
+  x <- set_names(foobar(1:2), c("a", "b"))
+
+  values <- list()
+  local_methods(
+    `names<-.vctrs_foobar` = function(x, value) {
+      if (!is_null(value)) {
+        values <<- c(values, list(value))
+      }
+      NextMethod()
+    }
+  )
+
+  vec_c(x, x)
+  expect_equal(values, list(c("a", "b", "a", "b")))
+})
