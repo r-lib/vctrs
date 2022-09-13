@@ -759,7 +759,9 @@ This is fine for the internal implementation of this class but it would be more 
 
 #### Make an atomic polynomial vector
 
-To make it an atomic vector, we'll wrap the internal `list_of()` class within a record vector.
+An atomic vector is a vector like integer or character for which `[[` returns the same type. Unlike lists, you can't reach inside an atomic vector.
+
+To make the polynomial class an atomic vector, we'll wrap the internal `list_of()` class within a record vector. Usually records are used because they can store several fields of data for each observation. Here we have only one, but we use the class anyway to inherit its atomicity.
 
 ```{r}
 poly <- function(...) {
