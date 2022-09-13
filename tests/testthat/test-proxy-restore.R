@@ -44,14 +44,6 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
   expect_identical(vec_slice(foobar, 2), "woot")
 })
 
-test_that("vec_restore() passes `n` argument to methods", {
-  local_methods(
-    vec_proxy.vctrs_foobar = identity,
-    vec_restore.vctrs_foobar = function(x, to, ..., n) n
-  )
-  expect_identical(vec_slice(foobar(1:3), 2), 1L)
-})
-
 test_that("dimensions are preserved by default restore method", {
   x <- foobar(1:4)
   dim(x) <- c(2, 2)
