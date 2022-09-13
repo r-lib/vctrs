@@ -711,3 +711,9 @@ test_that("Summary generics behave as expected for empty vctrs (#1357)", {
   expect_identical(max(new_vctr(logical()), na.rm = TRUE), new_vctr(NA))
   expect_identical(range(new_vctr(logical()), na.rm = TRUE), new_vctr(c(NA, NA)))
 })
+
+test_that("anyNA(recursive = TRUE) works with lists (#1278)", {
+  x <- list_of(1:4, c(2, NA, 5))
+  expect_false(anyNA(x))
+  expect_true(anyNA(x, recursive = TRUE))
+})
