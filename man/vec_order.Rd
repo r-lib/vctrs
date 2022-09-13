@@ -5,12 +5,24 @@
 \alias{vec_sort}
 \title{Order and sort vectors}
 \usage{
-vec_order(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
+vec_order(
+  x,
+  ...,
+  direction = c("asc", "desc"),
+  na_value = c("largest", "smallest")
+)
 
-vec_sort(x, direction = c("asc", "desc"), na_value = c("largest", "smallest"))
+vec_sort(
+  x,
+  ...,
+  direction = c("asc", "desc"),
+  na_value = c("largest", "smallest")
+)
 }
 \arguments{
 \item{x}{A vector}
+
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{direction}{Direction to sort in. Defaults to \code{asc}ending.}
 
@@ -55,13 +67,13 @@ order.
 x <- round(c(runif(9), NA), 3)
 vec_order(x)
 vec_sort(x)
-vec_sort(x, "desc")
+vec_sort(x, direction = "desc")
 
 # Can also handle data frames
 df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 vec_order(df)
 vec_sort(df)
-vec_sort(df, "desc")
+vec_sort(df, direction = "desc")
 
 # Missing values interpreted as largest values are last when
 # in increasing order:

@@ -306,6 +306,8 @@ vec_order_base <- function(x,
 
 #' Order and sort vectors
 #'
+#' @inheritParams rlang::args_dots_empty
+#'
 #' @param x A vector
 #' @param direction Direction to sort in. Defaults to `asc`ending.
 #' @param na_value Should `NA`s be treated as the largest or smallest values?
@@ -333,21 +335,24 @@ vec_order_base <- function(x,
 #' x <- round(c(runif(9), NA), 3)
 #' vec_order(x)
 #' vec_sort(x)
-#' vec_sort(x, "desc")
+#' vec_sort(x, direction = "desc")
 #'
 #' # Can also handle data frames
 #' df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
 #' vec_order(df)
 #' vec_sort(df)
-#' vec_sort(df, "desc")
+#' vec_sort(df, direction = "desc")
 #'
 #' # Missing values interpreted as largest values are last when
 #' # in increasing order:
 #' vec_order(c(1, NA), na_value = "largest", direction = "asc")
 #' vec_order(c(1, NA), na_value = "largest", direction = "desc")
 vec_order <- function(x,
+                      ...,
                       direction = c("asc", "desc"),
                       na_value = c("largest", "smallest")) {
+  check_dots_empty0(...)
+
   direction <- arg_match0(direction, c("asc", "desc"))
   na_value <- arg_match0(na_value, c("largest", "smallest"))
 
@@ -384,8 +389,11 @@ vec_order <- function(x,
 #' @export
 #' @rdname vec_order
 vec_sort <- function(x,
+                     ...,
                      direction = c("asc", "desc"),
                      na_value = c("largest", "smallest")) {
+  check_dots_empty0(...)
+
   direction <- arg_match0(direction, c("asc", "desc"))
   na_value <- arg_match0(na_value, c("largest", "smallest"))
 

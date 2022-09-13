@@ -1246,11 +1246,11 @@ test_that("can sort empty data frames (#356)", {
 # vec_order
 
 test_that("can request NAs sorted first", {
-  expect_equal(vec_order(c(1, NA), "asc", "largest"), 1:2)
-  expect_equal(vec_order(c(1, NA), "desc", "largest"), 2:1)
+  expect_equal(vec_order(c(1, NA), direction = "asc", na_value = "largest"), 1:2)
+  expect_equal(vec_order(c(1, NA), direction = "desc", na_value = "largest"), 2:1)
 
-  expect_equal(vec_order(c(1, NA), "asc", "smallest"), 2:1)
-  expect_equal(vec_order(c(1, NA), "desc", "smallest"), 1:2)
+  expect_equal(vec_order(c(1, NA), direction = "asc", na_value = "smallest"), 2:1)
+  expect_equal(vec_order(c(1, NA), direction = "desc", na_value = "smallest"), 1:2)
 })
 
 test_that("can order complex vectors", {
@@ -1342,4 +1342,13 @@ test_that("missing values in lists are respected (#1401)", {
   x <- list(1, NULL, 2, NULL)
   expect_identical(vec_order(x, na_value = "largest"), c(1L, 3L, 2L, 4L))
   expect_identical(vec_order(x, na_value = "smallest"), c(2L, 4L, 1L, 3L))
+})
+
+test_that("dots must be empty (#1647)", {
+  expect_snapshot(error = TRUE, {
+    vec_order(1, 2)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_sort(1, 2)
+  })
 })
