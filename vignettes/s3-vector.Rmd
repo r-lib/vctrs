@@ -701,7 +701,7 @@ A related problem occurs if we build our vector on top of a list. The following 
 
 ```{r}
 new_poly <- function(x) {
-  new_list_of(x, ptype = integer(), class = "vctrs_poly")
+  new_list_of(x, ptype = integer(), class = "vctrs_poly_list")
 }
 
 poly <- function(...) {
@@ -710,10 +710,10 @@ poly <- function(...) {
   new_poly(x)
 }
 
-vec_ptype_full.vctrs_poly <- function(x, ...) "polynomial"
-vec_ptype_abbr.vctrs_poly <- function(x, ...) "poly"
+vec_ptype_full.vctrs_poly_list <- function(x, ...) "polynomial"
+vec_ptype_abbr.vctrs_poly_list <- function(x, ...) "poly"
 
-format.vctrs_poly <- function(x, ...) {
+format.vctrs_poly_list <- function(x, ...) {
   format_one <- function(x) {
     if (length(x) == 0) {
       return("")
@@ -732,7 +732,7 @@ format.vctrs_poly <- function(x, ...) {
   vapply(x, format_one, character(1))
 }
 
-obj_print_data.vctrs_poly <- function(x, ...) {
+obj_print_data.vctrs_poly_list <- function(x, ...) {
   if (length(x) != 0) {
     print(format(x), quote = FALSE)
   }
@@ -765,7 +765,7 @@ p < p[2]
 To enable comparison, we implement a `vec_proxy_compare()` method:
 
 ```{r}
-vec_proxy_compare.vctrs_poly <- function(x, ...) {
+vec_proxy_compare.vctrs_poly_list <- function(x, ...) {
   x_raw <- vec_data(x)
   # First figure out the maximum length
   n <- max(vapply(x_raw, length, integer(1)))
@@ -790,7 +790,7 @@ sort(p[c(1:3, 1:2)])
 To ensure consistency between ordering and comparison, we forward `vec_proxy_order()` to `vec_proxy_compare()`:
 
 ```{r}
-vec_proxy_order.vctrs_poly <- function(x, ...) {
+vec_proxy_order.vctrs_poly_list <- function(x, ...) {
   vec_proxy_compare(x, ...)
 }
 
