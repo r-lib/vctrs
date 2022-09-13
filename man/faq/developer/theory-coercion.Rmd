@@ -101,9 +101,14 @@ In any case, permuting the input should not return a fundamentally different typ
 
 ### Coercion hierarchy
 
-Coercible classes form a coercion (or subtyping) hierarchy. Here is a simplified diagram of the hierarchy for base types. In this diagram the directions of the arrows express which type is richer. They flow from the bottom (more constrained types) to the top (richer types).
+The classes that you can coerce together form a coercion (or subtyping) hierarchy. Below is a schema of the hierarchy for the base types like integer and factor. In this diagram the directions of the arrows express which type is richer. They flow from the bottom (more constrained types) to the top (richer types).
 
 \\figure{coerce.png}
+
+A coercion hierarchy is distinct from the structural hierarchy implied by memory types and classes. For instance, in a structural hierarchy, factors are built on top of integers. But in the coercion hierarchy they are more related to character vectors. Similarly, subclasses are not necessarily coercible with their superclasses because the coercion and structural hierarchies are separate.
+
+
+### Implementing a coercion hierarchy
 
 As a class implementor, you have two options. The simplest is to create an entirely separate hierarchy. The date and date-time classes are an example of an S3-based hierarchy that is completely separate. Alternatively, you can integrate your class in an existing hierarchy, typically by adding parent nodes on top of the hierarchy (your class is richer), by adding children node at the root of the hierarchy (your class is more constrained), or by inserting a node in the tree.
 

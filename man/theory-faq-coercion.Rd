@@ -74,9 +74,9 @@ steps, which require \code{vec_ptype2()} and \code{vec_cast()} implementations.
 Methods for \code{vec_ptype2()} are passed two \emph{prototypes}, i.e. two inputs
 emptied of their elements. They implement two behaviours:
 \itemize{
-\item If the types of their inputs are compatible, indicate which of them is
-the richer type by returning it. If the types are of equal resolution,
-return any of the two.
+\item If the types of their inputs are compatible, indicate which of them
+is the richer type by returning it. If the types are of equal
+resolution, return any of the two.
 \item Throw an error with \code{stop_incompatible_type()} when it can be
 determined from the attributes that the types of the inputs are not
 compatible.
@@ -155,12 +155,23 @@ different type or introduce an incompatible type error.
 
 \subsection{Coercion hierarchy}{
 
-Coercible classes form a coercion (or subtyping) hierarchy. Here is a
-simplified diagram of the hierarchy for base types. In this diagram the
-directions of the arrows express which type is richer. They flow from
-the bottom (more constrained types) to the top (richer types).
+The classes that you can coerce together form a coercion (or subtyping)
+hierarchy. Below is a schema of the hierarchy for the base types like
+integer and factor. In this diagram the directions of the arrows express
+which type is richer. They flow from the bottom (more constrained types)
+to the top (richer types).
 
 \figure{coerce.png}
+
+A coercion hierarchy is distinct from the structural hierarchy implied
+by memory types and classes. For instance, in a structural hierarchy,
+factors are built on top of integers. But in the coercion hierarchy they
+are more related to character vectors. Similarly, subclasses are not
+necessarily coercible with their superclasses because the coercion and
+structural hierarchies are separate.
+}
+
+\subsection{Implementing a coercion hierarchy}{
 
 As a class implementor, you have two options. The simplest is to create
 an entirely separate hierarchy. The date and date-time classes are an
@@ -193,14 +204,14 @@ in more cases. \code{vec_cast()} has three possible behaviours:
 This must be decided in exactly the same way as for \code{vec_ptype2()}.
 Call \code{stop_incompatible_cast()} if you can determine from the
 attributes that the types are not compatible.
-\item Detect incompatible values. Usually this is because the target type is
-too restricted for the values supported by the input type. For
+\item Detect incompatible values. Usually this is because the target type
+is too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.
-\item Return the input vector converted to the target type if all values are
-compatible. Whereas \code{vec_ptype2()} must return the same type when the
-inputs are permuted, \code{vec_cast()} is \emph{directional}. It always returns
-the type of the right-hand side, or dies trying.
+\item Return the input vector converted to the target type if all values
+are compatible. Whereas \code{vec_ptype2()} must return the same type
+when the inputs are permuted, \code{vec_cast()} is \emph{directional}. It
+always returns the type of the right-hand side, or dies trying.
 }
 }
 
@@ -214,8 +225,8 @@ differences:
 \item There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.
-\item \code{NextMethod()} does not work. Parent methods must be called explicitly
-if necessary.
+\item \code{NextMethod()} does not work. Parent methods must be called
+explicitly if necessary.
 \item The default method is hard-coded.
 }
 }
