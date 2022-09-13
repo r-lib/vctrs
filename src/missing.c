@@ -368,10 +368,10 @@ r_ssize df_first_missing(r_obj* x) {
 
   int n_prot = 0;
 
-  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(VCTRS_TYPE_dataframe);
+  poly_unary_bool_fn* const fn_is_missing = poly_p_is_missing(VCTRS_TYPE_dataframe);
 
   struct poly_vec* p_poly_x = new_poly_vec(x, VCTRS_TYPE_dataframe);
-  PROTECT_POLY_VEC(p_poly_x, &n_prot);
+  KEEP_N(p_poly_x->shelter, &n_prot);
   const void* v_x = p_poly_x->p_vec;
 
   r_ssize out = size;

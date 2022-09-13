@@ -138,11 +138,11 @@ r_obj* vec_joint_xtfrm(r_obj* x,
   const enum vctrs_type type = vec_proxy_typeof(x_proxy);
 
   const struct poly_vec* p_x_poly = new_poly_vec(x_proxy, type);
-  PROTECT_POLY_VEC(p_x_poly, &n_prot);
+  KEEP_N(p_x_poly->shelter, &n_prot);
   const void* p_x_vec = p_x_poly->p_vec;
 
   const struct poly_vec* p_y_poly = new_poly_vec(y_proxy, type);
-  PROTECT_POLY_VEC(p_x_poly, &n_prot);
+  KEEP_N(p_y_poly->shelter, &n_prot);
   const void* p_y_vec = p_y_poly->p_vec;
 
   r_ssize i = 0;

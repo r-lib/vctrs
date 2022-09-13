@@ -70,11 +70,11 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   enum vctrs_type type = vec_proxy_typeof(x);
 
   struct poly_vec* p_poly_vec = new_poly_vec(x, type);
-  PROTECT_POLY_VEC(p_poly_vec, &nprot);
+  KEEP_N(p_poly_vec->shelter, &nprot);
   d->p_poly_vec = p_poly_vec;
 
-  d->p_equal_na_equal = new_poly_p_equal_na_equal(type);
-  d->p_is_incomplete = new_poly_p_is_incomplete(type);
+  d->p_equal_na_equal = poly_p_equal_na_equal(type);
+  d->p_is_incomplete = poly_p_is_incomplete(type);
 
   d->used = 0;
 

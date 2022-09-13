@@ -1,11 +1,8 @@
 #include "vctrs.h"
+#include "decl/poly-op-decl.h"
 
-// -----------------------------------------------------------------------------
 
-static int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j);
-
-// [[ include("poly-op.h") ]]
-poly_binary_int_fn_ptr new_poly_p_equal_na_equal(enum vctrs_type type) {
+poly_binary_int_fn* poly_p_equal_na_equal(enum vctrs_type type) {
   switch (type) {
   case VCTRS_TYPE_null: return p_nil_equal_na_equal;
   case VCTRS_TYPE_logical: return p_lgl_equal_na_equal;
@@ -16,23 +13,23 @@ poly_binary_int_fn_ptr new_poly_p_equal_na_equal(enum vctrs_type type) {
   case VCTRS_TYPE_raw: return p_raw_equal_na_equal;
   case VCTRS_TYPE_list: return p_list_equal_na_equal;
   case VCTRS_TYPE_dataframe: return p_df_equal_na_equal;
-  default: stop_unimplemented_vctrs_type("new_poly_p_equal_na_equal", type);
+  default: stop_unimplemented_vctrs_type("poly_p_equal_na_equal", type);
   }
 }
 
 static
-int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
-  struct poly_df_data* y_data = (struct poly_df_data*) y;
+int p_df_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
+  struct poly_df_data* p_y_data = (struct poly_df_data*) p_y;
 
-  r_ssize n_col = x_data->n_col;
-  if (n_col != y_data->n_col) {
+  r_ssize n_col = p_x_data->n_col;
+  if (n_col != p_y_data->n_col) {
     r_stop_internal("`x` and `y` must have the same number of columns.");
   }
 
-  enum vctrs_type* v_col_type = x_data->v_col_type;
-  const void** v_x_col_ptr = x_data->v_col_ptr;
-  const void** v_y_col_ptr = y_data->v_col_ptr;
+  enum vctrs_type* v_col_type = p_x_data->v_col_type;
+  const void** v_x_col_ptr = p_x_data->v_col_ptr;
+  const void** v_y_col_ptr = p_y_data->v_col_ptr;
 
   // df-cols should already be flattened
   for (r_ssize col = 0; col < n_col; ++col) {
@@ -44,12 +41,8 @@ int p_df_equal_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
   return true;
 }
 
-// -----------------------------------------------------------------------------
 
-static int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssize j);
-
-// [[ include("poly-op.h") ]]
-poly_binary_int_fn_ptr new_poly_p_compare_na_equal(enum vctrs_type type) {
+poly_binary_int_fn* poly_p_compare_na_equal(enum vctrs_type type) {
   switch (type) {
   case VCTRS_TYPE_null: return p_nil_compare_na_equal;
   case VCTRS_TYPE_logical: return p_lgl_compare_na_equal;
@@ -60,23 +53,23 @@ poly_binary_int_fn_ptr new_poly_p_compare_na_equal(enum vctrs_type type) {
   case VCTRS_TYPE_raw: return p_raw_compare_na_equal;
   case VCTRS_TYPE_list: return p_list_compare_na_equal;
   case VCTRS_TYPE_dataframe: return p_df_compare_na_equal;
-  default: stop_unimplemented_vctrs_type("new_poly_p_compare_na_equal", type);
+  default: stop_unimplemented_vctrs_type("poly_p_compare_na_equal", type);
   }
 }
 
 static
-int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
-  struct poly_df_data* y_data = (struct poly_df_data*) y;
+int p_df_compare_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
+  struct poly_df_data* p_y_data = (struct poly_df_data*) p_y;
 
-  r_ssize n_col = x_data->n_col;
-  if (n_col != y_data->n_col) {
+  r_ssize n_col = p_x_data->n_col;
+  if (n_col != p_y_data->n_col) {
     r_stop_internal("`x` and `y` must have the same number of columns.");
   }
 
-  enum vctrs_type* v_col_type = x_data->v_col_type;
-  const void** v_x_col_ptr = x_data->v_col_ptr;
-  const void** v_y_col_ptr = y_data->v_col_ptr;
+  enum vctrs_type* v_col_type = p_x_data->v_col_type;
+  const void** v_x_col_ptr = p_x_data->v_col_ptr;
+  const void** v_y_col_ptr = p_y_data->v_col_ptr;
 
   // df-cols should already be flattened
   for (r_ssize col = 0; col < n_col; ++col) {
@@ -94,12 +87,8 @@ int p_df_compare_na_equal(const void* x, r_ssize i, const void* y, r_ssize j) {
   return 0;
 }
 
-// -----------------------------------------------------------------------------
 
-static bool p_df_is_missing(const void* x, r_ssize i);
-
-// [[ include("poly-op.h") ]]
-poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
+poly_unary_bool_fn* poly_p_is_missing(enum vctrs_type type) {
   switch (type) {
   case VCTRS_TYPE_null: return p_nil_is_missing;
   case VCTRS_TYPE_logical: return p_lgl_is_missing;
@@ -110,17 +99,17 @@ poly_unary_bool_fn_ptr new_poly_p_is_missing(enum vctrs_type type) {
   case VCTRS_TYPE_raw: return p_raw_is_missing;
   case VCTRS_TYPE_list: return p_list_is_missing;
   case VCTRS_TYPE_dataframe: return p_df_is_missing;
-  default: stop_unimplemented_vctrs_type("new_poly_p_is_missing", type);
+  default: stop_unimplemented_vctrs_type("poly_p_is_missing", type);
   }
 }
 
 static
-bool p_df_is_missing(const void* x, r_ssize i) {
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
+bool p_df_is_missing(const void* p_x, r_ssize i) {
+  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
 
-  enum vctrs_type* v_col_type = x_data->v_col_type;
-  const void** v_col_ptr = x_data->v_col_ptr;
-  r_ssize n_col = x_data->n_col;
+  enum vctrs_type* v_col_type = p_x_data->v_col_type;
+  const void** v_col_ptr = p_x_data->v_col_ptr;
+  r_ssize n_col = p_x_data->n_col;
 
   // df-cols should already be flattened
   for (r_ssize col = 0; col < n_col; ++col) {
@@ -132,12 +121,8 @@ bool p_df_is_missing(const void* x, r_ssize i) {
   return true;
 }
 
-// -----------------------------------------------------------------------------
 
-static bool p_df_is_incomplete(const void* x, r_ssize i);
-
-// [[ include("poly-op.h") ]]
-poly_unary_bool_fn_ptr new_poly_p_is_incomplete(enum vctrs_type type) {
+poly_unary_bool_fn* poly_p_is_incomplete(enum vctrs_type type) {
   switch (type) {
   case VCTRS_TYPE_null: return p_nil_is_missing;
   case VCTRS_TYPE_logical: return p_lgl_is_missing;
@@ -148,17 +133,17 @@ poly_unary_bool_fn_ptr new_poly_p_is_incomplete(enum vctrs_type type) {
   case VCTRS_TYPE_raw: return p_raw_is_missing;
   case VCTRS_TYPE_list: return p_list_is_missing;
   case VCTRS_TYPE_dataframe: return p_df_is_incomplete;
-  default: stop_unimplemented_vctrs_type("new_poly_p_is_incomplete", type);
+  default: stop_unimplemented_vctrs_type("poly_p_is_incomplete", type);
   }
 }
 
 static
-bool p_df_is_incomplete(const void* x, r_ssize i) {
-  struct poly_df_data* x_data = (struct poly_df_data*) x;
+bool p_df_is_incomplete(const void* p_x, r_ssize i) {
+  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
 
-  enum vctrs_type* v_col_type = x_data->v_col_type;
-  const void** v_col_ptr = x_data->v_col_ptr;
-  r_ssize n_col = x_data->n_col;
+  enum vctrs_type* v_col_type = p_x_data->v_col_type;
+  const void** v_col_ptr = p_x_data->v_col_ptr;
+  r_ssize n_col = p_x_data->n_col;
 
   // df-cols should already be flattened,
   // so we only need missingness of each column, not completeness
@@ -171,24 +156,17 @@ bool p_df_is_incomplete(const void* x, r_ssize i) {
   return false;
 }
 
-// -----------------------------------------------------------------------------
 
-static void init_nil_poly_vec(struct poly_vec* p_poly_vec);
-static void init_lgl_poly_vec(struct poly_vec* p_poly_vec);
-static void init_int_poly_vec(struct poly_vec* p_poly_vec);
-static void init_dbl_poly_vec(struct poly_vec* p_poly_vec);
-static void init_cpl_poly_vec(struct poly_vec* p_poly_vec);
-static void init_chr_poly_vec(struct poly_vec* p_poly_vec);
-static void init_raw_poly_vec(struct poly_vec* p_poly_vec);
-static void init_list_poly_vec(struct poly_vec* p_poly_vec);
-static void init_df_poly_vec(struct poly_vec* p_poly_vec);
+struct poly_vec* new_poly_vec(r_obj* proxy, enum vctrs_type type) {
+  r_obj* shelter = KEEP(r_alloc_list(2));
 
-// [[ include("poly-op.h") ]]
-struct poly_vec* new_poly_vec(SEXP proxy, enum vctrs_type type) {
-  SEXP self = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct poly_vec)));
-  struct poly_vec* p_poly_vec = (struct poly_vec*) RAW(self);
+  r_obj* self = r_alloc_raw(sizeof(struct poly_vec));
+  r_list_poke(shelter, 0, self);
+  r_list_poke(shelter, 1, proxy);
 
-  p_poly_vec->self = self;
+  struct poly_vec* p_poly_vec = r_raw_begin(self);
+
+  p_poly_vec->shelter = shelter;
   p_poly_vec->vec = proxy;
 
   switch (type) {
@@ -204,10 +182,7 @@ struct poly_vec* new_poly_vec(SEXP proxy, enum vctrs_type type) {
   default: stop_unimplemented_vctrs_type("new_poly_vec", type);
   }
 
-  // `init_*_poly_vec()` functions may allocate
-  PROTECT(p_poly_vec->self);
-
-  UNPROTECT(2);
+  FREE(1);
   return p_poly_vec;
 }
 
@@ -217,56 +192,56 @@ void init_nil_poly_vec(struct poly_vec* p_poly_vec) {
 }
 static
 void init_lgl_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) LOGICAL_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_lgl_cbegin(p_poly_vec->vec);
 }
 static
 void init_int_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) INTEGER_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_int_cbegin(p_poly_vec->vec);
 }
 static
 void init_dbl_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) REAL_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_dbl_cbegin(p_poly_vec->vec);
 }
 static
 void init_cpl_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) COMPLEX_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_cpl_cbegin(p_poly_vec->vec);
 }
 static
 void init_chr_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) STRING_PTR_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_chr_cbegin(p_poly_vec->vec);
 }
 static
 void init_raw_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) RAW_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_raw_cbegin(p_poly_vec->vec);
 }
 static
 void init_list_poly_vec(struct poly_vec* p_poly_vec) {
-  p_poly_vec->p_vec = (const void*) VECTOR_PTR_RO(p_poly_vec->vec);
+  p_poly_vec->p_vec = (const void*) r_list_cbegin(p_poly_vec->vec);
 }
 static
 void init_df_poly_vec(struct poly_vec* p_poly_vec) {
-  SEXP df = p_poly_vec->vec;
-  r_ssize n_col = Rf_xlength(df);
+  r_obj* df = p_poly_vec->vec;
+  r_ssize n_col = r_length(df);
 
-  SEXP self = PROTECT(Rf_allocVector(VECSXP, 4));
+  r_obj* shelter = KEEP(r_alloc_list(4));
 
-  SET_VECTOR_ELT(self, 0, p_poly_vec->self);
-  p_poly_vec->self = self;
+  r_list_poke(shelter, 0, p_poly_vec->shelter);
+  p_poly_vec->shelter = shelter;
 
-  SEXP data_handle = PROTECT(Rf_allocVector(RAWSXP, sizeof(struct poly_df_data)));
-  struct poly_df_data* data = (struct poly_df_data*) RAW(data_handle);
-  SET_VECTOR_ELT(self, 1, data_handle);
+  r_obj* data_handle = KEEP(r_alloc_raw(sizeof(struct poly_df_data)));
+  struct poly_df_data* data = (struct poly_df_data*) r_raw_begin(data_handle);
+  r_list_poke(shelter, 1, data_handle);
 
-  SEXP col_type_handle = PROTECT(Rf_allocVector(RAWSXP, n_col * sizeof(enum vctrs_type)));
-  enum vctrs_type* v_col_type = (enum vctrs_type*) RAW(col_type_handle);
-  SET_VECTOR_ELT(self, 2, col_type_handle);
+  r_obj* col_type_handle = KEEP(r_alloc_raw(n_col * sizeof(enum vctrs_type)));
+  enum vctrs_type* v_col_type = (enum vctrs_type*) r_raw_begin(col_type_handle);
+  r_list_poke(shelter, 2, col_type_handle);
 
-  SEXP col_ptr_handle = PROTECT(Rf_allocVector(RAWSXP, n_col * sizeof(void*)));
-  const void** v_col_ptr = (const void**) RAW(col_ptr_handle);
-  SET_VECTOR_ELT(self, 3, col_ptr_handle);
+  r_obj* col_ptr_handle = KEEP(r_alloc_raw(n_col * sizeof(void*)));
+  const void** v_col_ptr = (const void**) r_raw_begin(col_ptr_handle);
+  r_list_poke(shelter, 3, col_ptr_handle);
 
   for (r_ssize i = 0; i < n_col; ++i) {
-    SEXP col = VECTOR_ELT(df, i);
+    r_obj* col = r_list_get(df, i);
     v_col_type[i] = vec_proxy_typeof(col);
     v_col_ptr[i] = r_vec_cbegin(col);
   }
@@ -277,5 +252,5 @@ void init_df_poly_vec(struct poly_vec* p_poly_vec) {
 
   p_poly_vec->p_vec = (void*) data;
 
-  UNPROTECT(4);
+  FREE(4);
 }

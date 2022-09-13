@@ -115,15 +115,15 @@ r_obj* vec_interval_group_info(r_obj* start,
   const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
 
   struct poly_vec* p_poly_start = new_poly_vec(start_proxy, type_proxy);
-  PROTECT_POLY_VEC(p_poly_start, &n_prot);
+  KEEP_N(p_poly_start->shelter, &n_prot);
   const void* p_start = p_poly_start->p_vec;
 
   struct poly_vec* p_poly_end = new_poly_vec(end_proxy, type_proxy);
-  PROTECT_POLY_VEC(p_poly_end, &n_prot);
+  KEEP_N(p_poly_end->shelter, &n_prot);
   const void* p_end = p_poly_end->p_vec;
 
-  const poly_binary_int_fn_ptr fn_compare = new_poly_p_compare_na_equal(type_proxy);
-  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(type_proxy);
+  poly_binary_int_fn* const fn_compare = poly_p_compare_na_equal(type_proxy);
+  poly_unary_bool_fn* const fn_is_missing = poly_p_is_missing(type_proxy);
 
   const r_ssize size = vec_size(start_proxy);
 
@@ -360,14 +360,14 @@ r_obj* vec_interval_complement(r_obj* start,
   const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
 
   struct poly_vec* p_poly_start = new_poly_vec(start_proxy, type_proxy);
-  PROTECT_POLY_VEC(p_poly_start, &n_prot);
+  KEEP_N(p_poly_start->shelter, &n_prot);
   const void* p_start = p_poly_start->p_vec;
 
   struct poly_vec* p_poly_end = new_poly_vec(end_proxy, type_proxy);
-  PROTECT_POLY_VEC(p_poly_end, &n_prot);
+  KEEP_N(p_poly_end->shelter, &n_prot);
   const void* p_end = p_poly_end->p_vec;
 
-  const poly_binary_int_fn_ptr fn_compare = new_poly_p_compare_na_equal(type_proxy);
+  poly_binary_int_fn* const fn_compare = poly_p_compare_na_equal(type_proxy);
 
   bool use_lower = (lower != r_null);
   bool use_upper = (upper != r_null);
@@ -401,7 +401,7 @@ r_obj* vec_interval_complement(r_obj* start,
     }
 
     struct poly_vec* p_poly_lower = new_poly_vec(lower_proxy, type_proxy);
-    PROTECT_POLY_VEC(p_poly_lower, &n_prot);
+    KEEP_N(p_poly_lower->shelter, &n_prot);
     p_lower = p_poly_lower->p_vec;
   }
 
@@ -431,7 +431,7 @@ r_obj* vec_interval_complement(r_obj* start,
     }
 
     struct poly_vec* p_poly_upper = new_poly_vec(upper_proxy, type_proxy);
-    PROTECT_POLY_VEC(p_poly_upper, &n_prot);
+    KEEP_N(p_poly_upper->shelter, &n_prot);
     p_upper = p_poly_upper->p_vec;
   }
 
@@ -770,15 +770,15 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
   const enum vctrs_type type_proxy = vec_proxy_typeof(start_proxy);
 
   struct poly_vec* p_poly_start = new_poly_vec(start_proxy, type_proxy);
-  PROTECT_POLY_VEC(p_poly_start, &n_prot);
+  KEEP_N(p_poly_start->shelter, &n_prot);
   const void* p_start = p_poly_start->p_vec;
 
   struct poly_vec* p_poly_end = new_poly_vec(end_proxy, type_proxy);
-  PROTECT_POLY_VEC(p_poly_end, &n_prot);
+  KEEP_N(p_poly_end->shelter, &n_prot);
   const void* p_end = p_poly_end->p_vec;
 
-  const poly_binary_int_fn_ptr fn_compare = new_poly_p_compare_na_equal(type_proxy);
-  const poly_unary_bool_fn_ptr fn_is_missing = new_poly_p_is_missing(type_proxy);
+  poly_binary_int_fn* const fn_compare = poly_p_compare_na_equal(type_proxy);
+  poly_unary_bool_fn* const fn_is_missing = poly_p_is_missing(type_proxy);
 
   const r_ssize size = vec_size(start_proxy);
 
