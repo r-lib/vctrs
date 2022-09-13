@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* The `anyNA()` method for `vctrs_vctr` (and thus `vctrs_list_of`) now
+  supports the `recursive` argument (#1278).
+
 * `vec_as_location()` and `num_as_location()` have gained a `missing = "remove"`
   option (#1595).
 
