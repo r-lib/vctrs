@@ -636,7 +636,7 @@ void stop_bad_negative(struct r_lazy call) {
 }
 static
 void stop_bad_oob(struct r_lazy call) {
-  r_abort_call(call.env, "`oob` must be one of \"error\" or \"extend\".");
+  r_abort_call(call.env, "`oob` must be one of \"error\", \"remove\", or \"extend\".");
 }
 static
 void stop_bad_zero(struct r_lazy call) {

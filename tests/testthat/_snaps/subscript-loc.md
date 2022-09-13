@@ -1123,7 +1123,7 @@
       num_as_location(1, 1L, oob = "bogus")
     Condition
       Error in `num_as_location()`:
-      ! `oob` must be one of "error" or "extend".
+      ! `oob` must be one of "error", "remove", or "extend".
 
 ---
 
