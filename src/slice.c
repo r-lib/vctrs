@@ -195,6 +195,8 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
     r_list_poke(out, i, sliced);
   }
 
+  init_data_frame(out, vec_subscript_size(subscript));
+
   r_obj* row_nms = KEEP(df_rownames(x));
   if (r_typeof(row_nms) == R_TYPE_character) {
     row_nms = slice_rownames(row_nms, subscript);
@@ -355,8 +357,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
   case VCTRS_TYPE_dataframe: {
     r_obj* out = KEEP_N(df_slice(data, subscript), &nprot);
-    r_obj* restore_size = KEEP_N(r_int(vec_subscript_size(subscript)), &nprot);
-    out = vec_restore(out, x, restore_size, vec_owned(out));
+    out = vec_restore(out, x, r_null, vec_owned(out));
     FREE(nprot);
     return out;
   }
