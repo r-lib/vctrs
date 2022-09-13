@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* S3 vignette was extended to show how to make the polynomial class
+  atomic instead of a list (#1030).
+
 * The experimental `n` argument of `vec_restore()` has been
   removed. It was only used to inform on the size of data frames in
   case a bare list is restored. It is now expected that bare lists be

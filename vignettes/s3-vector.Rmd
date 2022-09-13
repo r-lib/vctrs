@@ -748,13 +748,59 @@ p[2]
 p[[2]]
 ```
 
+The class implements the list interface:
+
+```{r}
+vec_is_list(p)
+```
+
+This is fine for the internal implementation of this class but it would be more appropriate if it behaved like an atomic vector rather than a list.
+
+
+#### Make an atomic polynomial vector
+
+To make it an atomic vector, we'll wrap the internal `list_of()` class within a record vector.
+
+```{r}
+poly <- function(...) {
+  x <- vec_cast_common(..., .to = integer())
+  x <- new_poly(x)
+  new_rcrd(list(data = x), class = "vctrs_poly")
+}
+format.vctrs_poly <- function(x, ...) {
+  format(field(x, "data"))
+}
+```
+
+The new `format()` method delegates to the one we wrote for the internal list. The vector looks just like before:
+
+```{r}
+p <- poly(1, c(1, 0, 0, 0, 2), c(1, 0, 1))
+p
+```
+
+Making the class atomic means that `vec_is_list()` now returns `FALSE`. This prevents recursive algorithms that traverse lists from reaching too far inside the polynomial internals.
+
+```{r}
+vec_is_list(p)
+```
+
+Most importantly, it prevents users from reaching into the internals with `[[`:
+
+```{r}
+p[[2]]
+```
+
+
+#### Implementing equality and comparison
+
 Equality works out of the box because we can tell if two integer vectors are equal:
 
 ```{r}
 p == poly(c(1, 0, 1))
 ```
 
-We can't compare individual elements, because by default lists are not comparable:
+We can't compare individual elements, because the data is stored in a list and by default lists are not comparable:
 
 ```{r, error = TRUE}
 p < p[2]
@@ -763,8 +809,10 @@ p < p[2]
 To enable comparison, we implement a `vec_proxy_compare()` method:
 
 ```{r}
-vec_proxy_compare.vctrs_poly_list <- function(x, ...) {
-  x_raw <- vec_data(x)
+vec_proxy_compare.vctrs_poly <- function(x, ...) {
+  # Get the list inside the record vector
+  x_raw <- vec_data(field(x, "data"))
+
   # First figure out the maximum length
   n <- max(vapply(x_raw, length, integer(1)))
 
@@ -788,7 +836,7 @@ sort(p[c(1:3, 1:2)])
 To ensure consistency between ordering and comparison, we forward `vec_proxy_order()` to `vec_proxy_compare()`:
 
 ```{r}
-vec_proxy_order.vctrs_poly_list <- function(x, ...) {
+vec_proxy_order.vctrs_poly <- function(x, ...) {
   vec_proxy_compare(x, ...)
 }
 
