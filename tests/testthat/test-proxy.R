@@ -129,4 +129,8 @@ test_that("vec_proxy() unclasses clonable objects", {
     vec_proxy(foobar(mtcars)),
     mtcars
   )
+  expect_equal(
+    vec_proxy(structure(list(), class = c("foobar", "list"))),
+    list()
+  )
 })

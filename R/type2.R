@@ -216,14 +216,24 @@ can_fall_back <- function(x, y) {
   }
 
   # Suboptimal: Prevent bad interaction with proxy-assign
-  has_no_proxy(x) && has_no_proxy(y)
+  !is_proxied(x) && !is_proxied(y)
 }
-has_no_proxy <- function(x) {
+
+# Don't compare data for performance
+is_proxied <- function(x) {
   proxy <- vec_proxy(x)
 
-  # Don't compare data for performance
-  identical(typeof(x), typeof(proxy)) &&
-    identical(attributes(x), attributes(proxy))
+  if (!identical(typeof(x), typeof(proxy))) {
+    return(FALSE)
+  }
+
+  if (inherits(x, "list")) {
+    class(x) <- NULL
+  } else if (inherits(x, "data.frame")) {
+    class(x) <- "data.frame"
+  }
+
+  !identical(attributes(x), attributes(proxy))
 }
 
 new_common_class_fallback <- function(x, fallback_class) {

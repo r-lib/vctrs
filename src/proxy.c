@@ -41,6 +41,11 @@ r_obj* vec_proxy_2(r_obj* x, bool recurse) {
       r_attrib_poke_class(out, classes_data_frame);
       FREE(1);
       break;
+    case VCTRS_CLASS_list:
+      out = KEEP(r_clone(out));
+      r_attrib_poke_class(out, r_null);
+      FREE(1);
+      break;
     default:
       break;
     }
