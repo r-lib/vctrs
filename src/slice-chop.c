@@ -3,9 +3,6 @@
 
 /*
  * @member proxy_info The result of `vec_proxy_info(x)`.
- * @member restore_size The restore size used in each call to `vec_restore()`.
- *   Will always be 1 for `indices = NULL`.
- * @member p_restore_size A pointer to update the restore size.
  * @member index The current index value. If `indices` are provided, this is
  *   the i-th element of indices. For the default of `indices = NULL`, this
  *   starts at 0 and is incremented by 1 repeatedly through `p_index`.
@@ -18,8 +15,6 @@
  */
 struct vctrs_chop_info {
   struct vctrs_proxy_info proxy_info;
-  SEXP restore_size;
-  int* p_restore_size;
   SEXP index;
   int* p_index;
   bool has_indices;
@@ -29,10 +24,9 @@ struct vctrs_chop_info {
 
 #define PROTECT_CHOP_INFO(info, n) do {         \
     KEEP((info)->proxy_info.shelter);           \
-    KEEP((info)->restore_size);                 \
     KEEP((info)->index);                        \
     KEEP((info)->out);                          \
-    *n += 4;                                    \
+    *n += 3;                                    \
   } while (0)                                   \
 
 static
@@ -41,9 +35,6 @@ struct vctrs_chop_info init_chop_info(r_obj* x, r_obj* indices) {
 
   info.proxy_info = vec_proxy_info(x);
   KEEP(info.proxy_info.shelter);
-
-  info.restore_size = KEEP(r_int(1));
-  info.p_restore_size = INTEGER(info.restore_size);
 
   info.index = KEEP(r_int(0));
   info.p_index = r_int_begin(info.index);
@@ -58,7 +49,7 @@ struct vctrs_chop_info init_chop_info(r_obj* x, r_obj* indices) {
 
   info.out = r_alloc_list(info.out_size);
 
-  FREE(3);
+  FREE(2);
   return info;
 }
 
@@ -176,7 +167,6 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_subscript_size(info.index);
     } else {
       ++(*info.p_index);
     }
@@ -199,7 +189,7 @@ static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       UNPROTECT(1);
     }
 
-    elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+    elt = vec_restore(elt, x, vec_owned(elt));
 
     SET_VECTOR_ELT(info.out, i, elt);
     UNPROTECT(1);
@@ -255,12 +245,8 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
   // Restore each data frame
   for (int i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      *info.p_restore_size = vec_subscript_size(VECTOR_ELT(indices, i));
-    }
-
     SEXP elt = VECTOR_ELT(info.out, i);
-    elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+    elt = vec_restore(elt, x, vec_owned(elt));
     SET_VECTOR_ELT(info.out, i, elt);
   }
 
@@ -280,7 +266,6 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_subscript_size(info.index);
     } else {
       ++(*info.p_index);
     }
@@ -300,7 +285,7 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
       }
     }
 
-    elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+    elt = vec_restore(elt, x, vec_owned(elt));
 
     SET_VECTOR_ELT(info.out, i, elt);
     UNPROTECT(1);
@@ -335,7 +320,6 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
   for (R_len_t i = 0; i < info.out_size; ++i) {
     if (info.has_indices) {
       info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
 
       // Update `i` binding with the new index value
       Rf_defineVar(syms_i, info.index, env);
@@ -346,7 +330,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
     SEXP elt = PROTECT(Rf_eval(call, env));
 
     if (!vec_is_restored(elt, x)) {
-      elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+      elt = vec_restore(elt, x, vec_owned(elt));
     }
 
     SET_VECTOR_ELT(info.out, i, elt);

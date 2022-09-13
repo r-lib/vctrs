@@ -195,6 +195,8 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
     r_list_poke(out, i, sliced);
   }
 
+  init_data_frame(out, vec_subscript_size(subscript));
+
   r_obj* row_nms = KEEP(df_rownames(x));
   if (r_typeof(row_nms) == R_TYPE_character) {
     row_nms = slice_rownames(row_nms, subscript);
@@ -282,8 +284,6 @@ r_obj* slice_rownames(r_obj* names, r_obj* subscript) {
 r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   int nprot = 0;
 
-  r_obj* restore_size = KEEP_N(r_int(vec_subscript_size(subscript)), &nprot);
-
   struct vctrs_proxy_info info = vec_proxy_info(x);
   KEEP_N(info.shelter, &nprot);
 
@@ -310,7 +310,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
     // Take over attribute restoration only if there is no `[` method
     if (!vec_is_restored(out, x)) {
-      out = vec_restore(out, x, restore_size, vec_owned(out));
+      out = vec_restore(out, x, vec_owned(out));
     }
 
     FREE(nprot);
@@ -349,7 +349,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
       r_attrib_poke_names(out, names);
     }
 
-    out = vec_restore(out, x, restore_size, vec_owned(out));
+    out = vec_restore(out, x, vec_owned(out));
 
     FREE(nprot);
     return out;
@@ -357,7 +357,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
   case VCTRS_TYPE_dataframe: {
     r_obj* out = KEEP_N(df_slice(data, subscript), &nprot);
-    out = vec_restore(out, x, restore_size, vec_owned(out));
+    out = vec_restore(out, x, vec_owned(out));
     FREE(nprot);
     return out;
   }

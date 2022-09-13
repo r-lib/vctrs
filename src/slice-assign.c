@@ -35,7 +35,7 @@ r_obj* vec_assign_opts(r_obj* x,
   const enum vctrs_owned owned = vec_owned(proxy);
   proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, owned, &opts));
 
-  r_obj* out = vec_restore(proxy, x, r_null, owned);
+  r_obj* out = vec_restore(proxy, x, owned);
 
   FREE(6);
   return out;
@@ -352,7 +352,7 @@ r_obj* df_assign(r_obj* x,
     r_obj* proxy_elt = KEEP(vec_proxy(out_elt));
 
     r_obj* assigned = KEEP(vec_proxy_assign_opts(proxy_elt, index, value_elt, owned, opts));
-    assigned = vec_restore(assigned, out_elt, r_null, owned);
+    assigned = vec_restore(assigned, out_elt, owned);
 
     r_list_poke(out, i, assigned);
     FREE(2);
@@ -421,7 +421,7 @@ r_obj* ffi_assign_seq(r_obj* x,
   const enum vctrs_owned owned = vec_owned(proxy);
   proxy = KEEP(vec_proxy_check_assign(proxy, index, value, vec_args.x, vec_args.value, call));
 
-  r_obj* out = vec_restore(proxy, x, r_null, owned);
+  r_obj* out = vec_restore(proxy, x, owned);
 
   FREE(5);
   return out;

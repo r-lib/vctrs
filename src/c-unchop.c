@@ -136,9 +136,7 @@ r_obj* list_unchop(r_obj* xs,
     KEEP_AT(proxy, proxy_pi);
   }
 
-  r_obj* out_size_sexp = KEEP(r_int(out_size));
-
-  r_obj* out = KEEP(vec_restore(proxy, ptype, out_size_sexp, VCTRS_OWNED_true));
+  r_obj* out = KEEP(vec_restore(proxy, ptype, VCTRS_OWNED_true));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));
@@ -151,7 +149,7 @@ r_obj* list_unchop(r_obj* xs,
     out = vec_set_names(out, r_null);
   }
 
-  FREE(8);
+  FREE(7);
   return out;
 }
 

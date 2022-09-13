@@ -53,8 +53,8 @@ extern r_obj* ffi_list_unchop(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
 extern r_obj* ffi_slice_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_rep(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_restore(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_restore_default(r_obj*, r_obj*);
+extern r_obj* ffi_vec_restore(r_obj*, r_obj*);
+extern r_obj* ffi_vec_restore_default(r_obj*, r_obj*);
 extern SEXP vec_proxy(SEXP);
 extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vec_proxy_compare(SEXP);
@@ -75,7 +75,7 @@ extern r_obj* ffi_df_ptype2_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_type_info(r_obj*);
 extern SEXP ffi_proxy_info(SEXP);
 extern r_obj* ffi_class_type(r_obj*);
-extern r_obj* ffi_bare_df_restore(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_bare_df_restore(r_obj*, r_obj*);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
@@ -222,8 +222,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_chop_seq",                        (DL_FUNC) &vctrs_chop_seq, 4},
   {"ffi_slice_seq",                         (DL_FUNC) &ffi_slice_seq, 4},
   {"ffi_slice_rep",                         (DL_FUNC) &ffi_slice_rep, 3},
-  {"ffi_restore",                           (DL_FUNC) &ffi_restore, 3},
-  {"ffi_restore_default",                   (DL_FUNC) &ffi_restore_default, 2},
+  {"ffi_vec_restore",                       (DL_FUNC) &ffi_vec_restore, 2},
+  {"ffi_vec_restore_default",               (DL_FUNC) &ffi_vec_restore_default, 2},
   {"vctrs_proxy",                           (DL_FUNC) &vec_proxy, 1},
   {"vctrs_proxy_equal",                     (DL_FUNC) &vec_proxy_equal, 1},
   {"vctrs_proxy_compare",                   (DL_FUNC) &vec_proxy_compare, 1},
@@ -244,7 +244,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_type_info",                         (DL_FUNC) &ffi_type_info, 1},
   {"ffi_proxy_info",                        (DL_FUNC) &ffi_proxy_info, 1},
   {"ffi_class_type",                        (DL_FUNC) &ffi_class_type, 1},
-  {"ffi_bare_df_restore",                   (DL_FUNC) &ffi_bare_df_restore, 3},
+  {"ffi_vec_bare_df_restore",               (DL_FUNC) &ffi_vec_bare_df_restore, 2},
   {"ffi_recycle",                           (DL_FUNC) &ffi_recycle, 3},
   {"ffi_assign",                            (DL_FUNC) &ffi_assign, 4},
   {"ffi_assign_seq",                        (DL_FUNC) &ffi_assign_seq, 5},
