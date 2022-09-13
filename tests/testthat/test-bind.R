@@ -1093,6 +1093,34 @@ test_that("vec_rbind() only restores one time", {
   ))
 })
 
+test_that("vec_rbind() only restores one time (data frame case)", {
+  restored <- list()
+
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) foobar(df_ptype2(x, y, ...)),
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) foobar(df_cast(x, to, ...)),
+    vec_proxy.vctrs_foobar = function(x, ...) x,
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      # Ignore proxying and restoration of ptypes
+      if (vec_size(x)) {
+        restored <<- c(restored, list(duplicate(x)))
+      }
+      foobar(x)
+    }
+  )
+
+  df <- foobar(data_frame(x = 1:3))
+
+  proxy <- vec_proxy(df)
+  vec_init(proxy, 6)
+  expect_equal(restored, list())
+
+  vec_rbind(df, df)
+  expect_equal(restored, list(
+    foobar(data_frame(x = c(1:3, 1:3)))   # Final restoration
+  ))
+})
+
 test_that("vec_rbind() applies `base::c()` fallback to df-cols (#1462, #1640)", {
   x <- structure(1, class = "myclass")
   df <- tibble(a = tibble(x = x))

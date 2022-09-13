@@ -32,6 +32,19 @@ r_obj* vec_proxy_2(r_obj* x, bool recurse) {
 
   case VCTRS_TYPE_s3: {
     r_obj* out = vec_proxy_invoke(x, info.proxy_method, recurse);
+
+    // Unclass clonable proxies to prevent dispatch when manipulating
+    // proxies (#1129)
+    switch (class_type(out)) {
+    case VCTRS_CLASS_data_frame:
+      out = KEEP(r_clone(out));
+      r_attrib_poke_class(out, classes_data_frame);
+      FREE(1);
+      break;
+    default:
+      break;
+    }
+
     FREE(1);
     return out;
   }

@@ -6,7 +6,10 @@ bare_mtcars <- unrownames(mtcars)
 test_that("grouped-df is proxied and restored", {
   gdf <- dplyr::group_by(bare_mtcars, cyl)
 
-  expect_identical(vec_proxy(gdf), gdf)
+  bare_gdf <- gdf
+  class(bare_gdf) <- "data.frame"
+
+  expect_identical(vec_proxy(gdf), bare_gdf)
   expect_identical(vec_restore(bare_mtcars, gdf), gdf)
 
   expect_identical(vec_ptype(gdf), gdf[0, ])
@@ -106,7 +109,10 @@ test_that("can cbind grouped data frames", {
 test_that("rowwise can be proxied and restored", {
   rww <- dplyr::rowwise(unrownames(bare_mtcars))
 
-  expect_identical(vec_proxy(rww), rww)
+  bare_rww <- rww
+  class(bare_rww) <- "data.frame"
+
+  expect_identical(vec_proxy(rww), bare_rww)
   expect_identical(vec_restore(unrownames(bare_mtcars), rww), rww)
 
   expect_identical(vec_ptype(rww), rww[0, ])

@@ -123,3 +123,10 @@ test_that("vec_data() preserves data frames", {
     mtcars
   )
 })
+
+test_that("vec_proxy() unclasses clonable objects", {
+  expect_equal(
+    vec_proxy(foobar(mtcars)),
+    mtcars
+  )
+})
