@@ -205,7 +205,7 @@ test_that("can `vec_slice()` records", {
 
 test_that("vec_restore() is called after proxied slicing", {
   local_methods(
-    vec_proxy.vctrs_foobar = identity,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     vec_restore.vctrs_foobar = function(x, to, ...) "dispatch"
   )
   expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
@@ -236,7 +236,7 @@ test_that("dimensions are preserved by vec_slice()", {
   attrib <- NULL
 
   local_methods(
-    vec_proxy.vctrs_foobar = identity,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     vec_restore.vctrs_foobar = function(x, to, ...) attrib <<- attributes(x)
   )
 
@@ -260,7 +260,7 @@ test_that("can slice shaped objects by name", {
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
   oo <- NULL
   local_methods(
-    vec_proxy.vctrs_foobar = identity,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     vec_restore.vctrs_foobar = function(x, ...) oo <<- is.object(x)
   )
 
@@ -302,7 +302,7 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
 
   expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
   local_methods(
-    vec_proxy.vctrs_foobar = identity
+    vec_proxy.vctrs_foobar = function(x, ...) x
   )
   expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
