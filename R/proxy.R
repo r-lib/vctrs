@@ -146,28 +146,21 @@ vec_proxy.default <- function(x, ...) {
 
 #' @rdname vec_proxy
 #' @param to The original vector to restore to.
-#' @param n `r lifecycle::badge("experimental")`
-#'   The total size to restore to. This is currently passed by
-#'   `vec_slice()` to solve edge cases arising in data frame
-#'   restoration. In most cases you don't need this information and
-#'   can safely ignore that argument. This parameter should be
-#'   considered internal and experimental, it might change in the
-#'   future.
 #' @export
-vec_restore <- function(x, to, ..., n = NULL) {
+vec_restore <- function(x, to, ...) {
   check_dots_empty0(...)
-  return(.Call(ffi_restore, x, to, n))
+  return(.Call(ffi_vec_restore, x, to))
   UseMethod("vec_restore", to)
 }
-vec_restore_dispatch <- function(x, to, ..., n = NULL) {
+vec_restore_dispatch <- function(x, to, ...) {
   UseMethod("vec_restore", to)
 }
 #' @export
-vec_restore.default <- function(x, to, ..., n = NULL) {
-  .Call(ffi_restore_default, x, to)
+vec_restore.default <- function(x, to, ...) {
+  .Call(ffi_vec_restore_default, x, to)
 }
 vec_restore_default <- function(x, to, ...) {
-  .Call(ffi_restore_default, x, to)
+  .Call(ffi_vec_restore_default, x, to)
 }
 
 #' Extract underlying data

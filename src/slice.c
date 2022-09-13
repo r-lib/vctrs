@@ -310,7 +310,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
     // Take over attribute restoration only if there is no `[` method
     if (!vec_is_restored(out, x)) {
-      out = vec_restore(out, x, r_null, vec_owned(out));
+      out = vec_restore(out, x, vec_owned(out));
     }
 
     FREE(nprot);
@@ -349,7 +349,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
       r_attrib_poke_names(out, names);
     }
 
-    out = vec_restore(out, x, r_null, vec_owned(out));
+    out = vec_restore(out, x, vec_owned(out));
 
     FREE(nprot);
     return out;
@@ -357,7 +357,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
   case VCTRS_TYPE_dataframe: {
     r_obj* out = KEEP_N(df_slice(data, subscript), &nprot);
-    out = vec_restore(out, x, r_null, vec_owned(out));
+    out = vec_restore(out, x, vec_owned(out));
     FREE(nprot);
     return out;
   }

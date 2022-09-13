@@ -143,7 +143,7 @@ r_obj* vec_c_opts(r_obj* xs,
     FREE(1);
   }
 
-  out = KEEP(vec_restore(out, ptype, r_null, VCTRS_OWNED_true));
+  out = KEEP(vec_restore(out, ptype, VCTRS_OWNED_true));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));

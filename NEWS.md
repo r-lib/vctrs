@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* The experimental `n` argument of `vec_restore()` has been
+  removed. It was only used to inform on the size of data frames in
+  case a bare list is restored. It is now expected that bare lists be
+  initialised to data frame so that the size is carried through row
+  attributes. This makes the generic simpler and fixes some
+  performance issues (#650).
+
 * The `anyNA()` method for `vctrs_vctr` (and thus `vctrs_list_of`) now
   supports the `recursive` argument (#1278).
 

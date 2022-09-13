@@ -261,8 +261,7 @@ r_obj* vec_rbind(r_obj* xs,
     }
   }
 
-  r_obj* r_n_rows = KEEP_N(r_int(n_rows), &n_prot);
-  out = vec_restore(out, ptype, r_n_rows, VCTRS_OWNED_true);
+  out = vec_restore(out, ptype, VCTRS_OWNED_true);
 
   FREE(n_prot);
   return out;
@@ -515,7 +514,7 @@ r_obj* vec_cbind(r_obj* xs,
     r_attrib_poke(out, r_syms.row_names, rownames);
   }
 
-  out = vec_restore(out, type, r_null, VCTRS_OWNED_true);
+  out = vec_restore(out, type, VCTRS_OWNED_true);
 
   FREE(9);
   return out;

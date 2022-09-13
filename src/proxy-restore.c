@@ -10,7 +10,7 @@
 // causing duplication to occur. Passing `owned` through here allows us to
 // call `vec_clone_referenced()`, which won't attempt to clone if we know we
 // own the object. See #1151.
-r_obj* vec_restore(r_obj* x, r_obj* to, r_obj* n, const enum vctrs_owned owned) {
+r_obj* vec_restore(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
   switch (class_type(to)) {
   case VCTRS_CLASS_bare_factor:
   case VCTRS_CLASS_bare_ordered:
@@ -19,23 +19,22 @@ r_obj* vec_restore(r_obj* x, r_obj* to, r_obj* n, const enum vctrs_owned owned) 
   case VCTRS_CLASS_bare_posixct: return vec_posixct_restore(x, to, owned);
   case VCTRS_CLASS_bare_posixlt: return vec_posixlt_restore(x, to, owned);
   case VCTRS_CLASS_bare_data_frame:
-  case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, n, owned);
-  case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, n, owned);
-  default: return vec_restore_dispatch(x, to, n);
+  case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, owned);
+  case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, owned);
+  default: return vec_restore_dispatch(x, to);
   }
 }
 
-r_obj* ffi_restore(r_obj* x, r_obj* to, r_obj* n) {
-  return vec_restore(x, to, n, vec_owned(x));
+r_obj* ffi_vec_restore(r_obj* x, r_obj* to) {
+  return vec_restore(x, to, vec_owned(x));
 }
 
 
 static
-r_obj* vec_restore_dispatch(r_obj* x, r_obj* to, r_obj* n) {
-  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
+  return vctrs_dispatch2(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
                          syms_x, x,
-                         syms_to, to,
-                         syms_n, n);
+                         syms_to, to);
 }
 
 
@@ -137,7 +136,7 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
   return x;
 }
 
-r_obj* ffi_restore_default(r_obj* x, r_obj* to) {
+r_obj* ffi_vec_restore_default(r_obj* x, r_obj* to) {
   return vec_restore_default(x, to, vec_owned(x));
 }
 
@@ -145,14 +144,14 @@ r_obj* ffi_restore_default(r_obj* x, r_obj* to) {
 // Restore methods are passed the original atomic type back, so we
 // first restore data frames as such before calling the restore
 // method, if any
-r_obj* vec_df_restore(r_obj* x, r_obj* to, r_obj* n, const enum vctrs_owned owned) {
-  r_obj* out = KEEP(vec_bare_df_restore(x, to, n, owned));
-  out = vec_restore_dispatch(out, to, n);
+r_obj* vec_df_restore(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
+  r_obj* out = KEEP(vec_bare_df_restore(x, to, owned));
+  out = vec_restore_dispatch(out, to);
   FREE(1);
   return out;
 }
 
-r_obj* vec_bare_df_restore(r_obj* x, r_obj* to, r_obj* n, const enum vctrs_owned owned) {
+r_obj* vec_bare_df_restore(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_internal("Attempt to restore data frame from a %s.",
                     r_type_as_c_string(r_typeof(x)));
@@ -167,7 +166,7 @@ r_obj* vec_bare_df_restore(r_obj* x, r_obj* to, r_obj* n, const enum vctrs_owned
   }
 
   r_obj* rownames = KEEP(df_rownames(x));
-  r_ssize size = (n == r_null) ? df_raw_size(x) : r_int_get(n, 0);
+  r_ssize size = df_raw_size(x);
 
   if (rownames == r_null) {
     init_compact_rownames(x, size);
@@ -181,8 +180,8 @@ r_obj* vec_bare_df_restore(r_obj* x, r_obj* to, r_obj* n, const enum vctrs_owned
   return x;
 }
 
-r_obj* ffi_bare_df_restore(r_obj* x, r_obj* to, r_obj* n) {
-  return vec_bare_df_restore(x, to, n, vec_owned(x));
+r_obj* ffi_vec_bare_df_restore(r_obj* x, r_obj* to) {
+  return vec_bare_df_restore(x, to, vec_owned(x));
 }
 
 

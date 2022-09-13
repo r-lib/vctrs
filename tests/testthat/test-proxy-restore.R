@@ -71,11 +71,11 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
 
 test_that("arguments are not inlined in the dispatch call (#300)", {
   local_methods(
-    vec_restore.vctrs_foobar = function(x, to, ..., n) sys.call(),
+    vec_restore.vctrs_foobar = function(x, to, ...) sys.call(),
     vec_proxy.vctrs_foobar = unclass
   )
   call <- vec_restore(foobar(list(1)), foobar(list(1)))
-  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, n = n)))
+  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to)))
 })
 
 test_that("restoring to non-bare data frames calls `vec_bare_df_restore()` before dispatching", {
