@@ -462,7 +462,7 @@ na_remove <- function(x, type) {
 #' @export
 anyNA.vctrs_vctr <- function(x, recursive = FALSE) {
   if (recursive && vec_is_list(x)) {
-    any(map_lgl(x, anyNA))
+    any(map_lgl(x, anyNA, recursive = recursive))
   } else {
     any(is.na(x))
   }

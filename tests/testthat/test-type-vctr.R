@@ -716,4 +716,8 @@ test_that("anyNA(recursive = TRUE) works with lists (#1278)", {
   x <- list_of(1:4, c(2, NA, 5))
   expect_false(anyNA(x))
   expect_true(anyNA(x, recursive = TRUE))
+
+  x <- new_vctr(list(1:4, list(c(2, NA, 5))))
+  expect_false(anyNA(x))
+  expect_true(anyNA(x, recursive = TRUE))
 })
