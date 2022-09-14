@@ -95,7 +95,10 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
 
 #' @export
 `[.vctrs_rcrd` <-  function(x, i, ...) {
-  vec_index(x, i, ...)
+  if (!missing(...)) {
+    abort("Can't index record vectors on dimensions greater than 1.")
+  }
+  vec_slice(x, maybe_missing(i))
 }
 
 #' @export

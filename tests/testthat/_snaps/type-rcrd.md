@@ -43,3 +43,11 @@
         .. ..$ : vctrs_tp [1:100] (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7)...
         .. ..$ : int [1:100] 1 2 3 4 5 6 7 8 9 10 ...
 
+# dots are an error (#1295)
+
+    Code
+      foo[1, 2]
+    Condition
+      Error in `foo[1, 2]`:
+      ! Can't index record vectors on dimensions greater than 1.
+

@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Record vectors now fail as expected when indexed along dimensions
+  greater than 1 (#1295).
+
 * `vec_order()` and `vec_sort()` now have `...` between the required and
   optional arguments to make them easier to extend (#1647).
 
