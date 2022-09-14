@@ -29,10 +29,12 @@ test_that("`vec_rep()` errors on long vector output", {
 })
 
 test_that("`vec_rep()` validates `times`", {
-  expect_error(vec_rep(1, "x"), class = "vctrs_error_incompatible_type")
-  expect_error(vec_rep(1, c(1, 2)))
-  expect_error(vec_rep(1, -1))
-  expect_error(vec_rep(1, NA_integer_))
+  expect_snapshot({
+    (expect_error(my_vec_rep(1, "x"), class = "vctrs_error_incompatible_type"))
+    (expect_error(my_vec_rep(1, c(1, 2))))
+    (expect_error(my_vec_rep(1, -1)))
+    (expect_error(my_vec_rep(1, NA_integer_)))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -66,36 +68,40 @@ test_that("`vec_rep_each()` errors on long vector output", {
 })
 
 test_that("`vec_rep_each()` validates `times`", {
-  expect_error(vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type")
-  expect_error(vec_rep_each(1, -1))
-  expect_error(vec_rep_each(c(1, 2), c(1, -1)))
-  expect_error(vec_rep_each(1, NA_integer_))
-  expect_error(vec_rep_each(c(1, 2), c(1, NA_integer_)))
+  expect_snapshot({
+    (expect_error(my_vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type"))
+    (expect_error(my_vec_rep_each(1, -1)))
+    (expect_error(my_vec_rep_each(c(1, 2), c(1, -1))))
+    (expect_error(my_vec_rep_each(1, NA_integer_)))
+    (expect_error(my_vec_rep_each(c(1, 2), c(1, NA_integer_))))
+  })
 })
 
 test_that("`vec_rep_each()` uses recyclying errors", {
-  expect_error(vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size")
+  expect_snapshot({
+    (expect_error(my_vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size"))
+  })
 })
 
 # ------------------------------------------------------------------------------
 
 test_that("`vec_rep()` validates `times`", {
-  expect_snapshot(error = TRUE, vec_rep(1, "x"))
-  expect_snapshot(error = TRUE, vec_rep(1, c(1, 2)))
-  expect_snapshot(error = TRUE, vec_rep(1, -1))
-  expect_snapshot(error = TRUE, vec_rep(1, NA_integer_))
+  expect_snapshot(error = TRUE, my_vec_rep(1, "x"))
+  expect_snapshot(error = TRUE, my_vec_rep(1, c(1, 2)))
+  expect_snapshot(error = TRUE, my_vec_rep(1, -1))
+  expect_snapshot(error = TRUE, my_vec_rep(1, NA_integer_))
 })
 
 test_that("`vec_rep_each()` validates `times`", {
-  expect_snapshot(error = TRUE, vec_rep_each(1, "x"))
-  expect_snapshot(error = TRUE, vec_rep_each(1, -1))
-  expect_snapshot(error = TRUE, vec_rep_each(c(1, 2), c(1, -1)))
-  expect_snapshot(error = TRUE, vec_rep_each(1, NA_integer_))
-  expect_snapshot(error = TRUE, vec_rep_each(c(1, 2), c(1, NA_integer_)))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1, "x"))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1, -1))
+  expect_snapshot(error = TRUE, my_vec_rep_each(c(1, 2), c(1, -1)))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1, NA_integer_))
+  expect_snapshot(error = TRUE, my_vec_rep_each(c(1, 2), c(1, NA_integer_)))
 })
 
 test_that("`vec_rep_each()` uses recyclying errors", {
-  expect_snapshot(error = TRUE, vec_rep_each(1:2, 1:3))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1:2, 1:3))
 })
 
 # vec_unrep --------------------------------------------------------------------

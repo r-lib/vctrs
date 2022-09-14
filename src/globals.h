@@ -2,7 +2,6 @@
 #define VCTRS_GLOBALS_H
 
 #include <rlang.h>
-#include "globals.h"
 #include "rlang-dev.h"
 
 struct syms {
@@ -12,6 +11,7 @@ struct syms {
   r_obj* haystack_arg;
   r_obj* needles_arg;
   r_obj* repair_arg;
+  r_obj* times_arg;
   r_obj* to_arg;
   r_obj* value_arg;
   r_obj* vec_default_cast;

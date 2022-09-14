@@ -7,11 +7,11 @@
 \alias{vec_unrep}
 \title{Repeat a vector}
 \usage{
-vec_rep(x, times, call = current_env())
+vec_rep(x, times, call = current_env(), x_arg = "x", times_arg = "times")
 
-vec_rep_each(x, times, call = current_env())
+vec_rep_each(x, times, call = current_env(), x_arg = "x", times_arg = "times")
 
-vec_unrep(x, call = current_env())
+vec_unrep(x)
 }
 \arguments{
 \item{x}{A vector.}
@@ -27,6 +27,8 @@ the size of \code{x}.}
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
+\item{x_arg, times_arg}{Argument names for errors.}
 }
 \value{
 For \code{vec_rep()}, a vector the same type as \code{x} with size

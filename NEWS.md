@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_rep()` and friends gain `call`, `x_arg`, and `times_arg`
+  arguments so they can be embedded in frontends (#1303).
+
 * Record vectors now fail as expected when indexed along dimensions
   greater than 1 (#1295).
 
