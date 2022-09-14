@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_c()` has gained a `.call` argument (#1641).
+
 * Improved the performance of list-of common type methods (#1686).
 
 * The list-of method for `as_list_of()` now places the optional `.ptype`
