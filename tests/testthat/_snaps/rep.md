@@ -1,80 +1,150 @@
 # `vec_rep()` validates `times`
 
     Code
-      vec_rep(1, "x")
-    Condition
-      Error:
-      ! Can't convert `times` <character> to <integer>.
+      (expect_error(my_vec_rep(1, "x"), class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_vec_rep()`:
+      ! Can't convert `my_times` <character> to <integer>.
+    Code
+      (expect_error(my_vec_rep(1, c(1, 2))))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep()`:
+      ! `my_times` must be a single number.
+    Code
+      (expect_error(my_vec_rep(1, -1)))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep()`:
+      ! `my_times` must be a positive number.
+    Code
+      (expect_error(my_vec_rep(1, NA_integer_)))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep()`:
+      ! `my_times` can't be missing.
 
 ---
 
     Code
-      vec_rep(1, c(1, 2))
+      my_vec_rep(1, "x")
     Condition
-      Error in `vec_rep()`:
-      ! `times` must be a single number.
+      Error in `my_vec_rep()`:
+      ! Can't convert `my_times` <character> to <integer>.
 
 ---
 
     Code
-      vec_rep(1, -1)
+      my_vec_rep(1, c(1, 2))
     Condition
-      Error in `vec_rep()`:
-      ! `times` must be a positive number.
+      Error in `my_vec_rep()`:
+      ! `my_times` must be a single number.
 
 ---
 
     Code
-      vec_rep(1, NA_integer_)
+      my_vec_rep(1, -1)
     Condition
-      Error in `vec_rep()`:
-      ! `times` can't be missing.
+      Error in `my_vec_rep()`:
+      ! `my_times` must be a positive number.
+
+---
+
+    Code
+      my_vec_rep(1, NA_integer_)
+    Condition
+      Error in `my_vec_rep()`:
+      ! `my_times` can't be missing.
 
 # `vec_rep_each()` validates `times`
 
     Code
-      vec_rep_each(1, "x")
-    Condition
-      Error:
-      ! Can't convert `times` <character> to <integer>.
+      (expect_error(my_vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type"))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `my_vec_rep_each()`:
+      ! Can't convert `my_times` <character> to <integer>.
+    Code
+      (expect_error(my_vec_rep_each(1, -1)))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep_each()`:
+      ! `my_times` must be a vector of positive numbers. Location 1 is negative.
+    Code
+      (expect_error(my_vec_rep_each(c(1, 2), c(1, -1))))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep_each()`:
+      ! `my_times` must be a vector of positive numbers. Location 2 is negative.
+    Code
+      (expect_error(my_vec_rep_each(1, NA_integer_)))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep_each()`:
+      ! `my_times` can't be missing. Location 1 is missing.
+    Code
+      (expect_error(my_vec_rep_each(c(1, 2), c(1, NA_integer_))))
+    Output
+      <error/rlang_error>
+      Error in `my_vec_rep_each()`:
+      ! `my_times` can't be missing. Location 2 is missing.
 
 ---
 
     Code
-      vec_rep_each(1, -1)
+      my_vec_rep_each(1, "x")
     Condition
-      Error in `vec_rep_each()`:
-      ! `times` must be a vector of positive numbers. Location 1 is negative.
+      Error in `my_vec_rep_each()`:
+      ! Can't convert `my_times` <character> to <integer>.
 
 ---
 
     Code
-      vec_rep_each(c(1, 2), c(1, -1))
+      my_vec_rep_each(1, -1)
     Condition
-      Error in `vec_rep_each()`:
-      ! `times` must be a vector of positive numbers. Location 2 is negative.
+      Error in `my_vec_rep_each()`:
+      ! `my_times` must be a vector of positive numbers. Location 1 is negative.
 
 ---
 
     Code
-      vec_rep_each(1, NA_integer_)
+      my_vec_rep_each(c(1, 2), c(1, -1))
     Condition
-      Error in `vec_rep_each()`:
-      ! `times` can't be missing. Location 1 is missing.
+      Error in `my_vec_rep_each()`:
+      ! `my_times` must be a vector of positive numbers. Location 2 is negative.
 
 ---
 
     Code
-      vec_rep_each(c(1, 2), c(1, NA_integer_))
+      my_vec_rep_each(1, NA_integer_)
     Condition
-      Error in `vec_rep_each()`:
-      ! `times` can't be missing. Location 2 is missing.
+      Error in `my_vec_rep_each()`:
+      ! `my_times` can't be missing. Location 1 is missing.
+
+---
+
+    Code
+      my_vec_rep_each(c(1, 2), c(1, NA_integer_))
+    Condition
+      Error in `my_vec_rep_each()`:
+      ! `my_times` can't be missing. Location 2 is missing.
 
 # `vec_rep_each()` uses recyclying errors
 
     Code
-      vec_rep_each(1:2, 1:3)
+      (expect_error(my_vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size")
+      )
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `my_vec_rep_each()`:
+      ! Can't recycle `my_times` (size 3) to size 2.
+
+---
+
+    Code
+      my_vec_rep_each(1:2, 1:3)
     Condition
-      Error:
-      ! Can't recycle `times` (size 3) to size 2.
+      Error in `my_vec_rep_each()`:
+      ! Can't recycle `my_times` (size 3) to size 2.
 

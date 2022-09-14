@@ -102,8 +102,8 @@ extern r_obj* ffi_tib_ptype2(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_tib_cast(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_has_dim(SEXP);
-extern r_obj* ffi_vec_rep(r_obj*, r_obj*);
-extern SEXP ffi_vec_rep_each(SEXP, SEXP);
+extern r_obj* ffi_vec_rep(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_rep_each(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unshared_col();
 extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP);
@@ -273,8 +273,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_tib_cast",                          (DL_FUNC) &ffi_tib_cast, 5},
   {"ffi_assign_params",                     (DL_FUNC) &ffi_assign_params, 4},
   {"vctrs_has_dim",                         (DL_FUNC) &vctrs_has_dim, 1},
-  {"ffi_vec_rep",                           (DL_FUNC) &ffi_vec_rep, 2},
-  {"ffi_vec_rep_each",                      (DL_FUNC) &ffi_vec_rep_each, 2},
+  {"ffi_vec_rep",                           (DL_FUNC) &ffi_vec_rep, 3},
+  {"ffi_vec_rep_each",                      (DL_FUNC) &ffi_vec_rep_each, 3},
   {"vctrs_maybe_shared_col",                (DL_FUNC) &vctrs_maybe_shared_col, 2},
   {"vctrs_new_df_unshared_col",             (DL_FUNC) &vctrs_new_df_unshared_col, 0},
   {"vctrs_shaped_ptype",                    (DL_FUNC) &vctrs_shaped_ptype, 4},
