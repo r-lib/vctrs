@@ -200,6 +200,12 @@ test_that("vec_proxy_order() works on deeply nested lists", {
   expect_identical(vec_proxy_order(df2), data_frame(x = c(1L, 2L, 1L), y = 1:3))
 })
 
+test_that("error is thrown when comparing complexes (#1655)", {
+  expect_snapshot({
+    (expect_error(vec_compare(complex(), complex())))
+  })
+})
+
 test_that("error is thrown when comparing lists", {
   expect_error(vec_compare(list(), list()), class = "vctrs_error_unsupported")
   expect_error(.Call(ffi_vec_compare, list(), list(), FALSE), "Can't compare lists")
