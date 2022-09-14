@@ -279,8 +279,9 @@ test_that("dangerous methods marked as unimplemented", {
 
 # slicing -----------------------------------------------------------------
 
-test_that("dots are forwarded", {
-  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "undefined columns selected")
+test_that("dots are an error (#1295)", {
+  foo <- new_rcrd(list(foo = "foo"))
+  expect_snapshot(error = TRUE, foo[1, 2])
 })
 
 test_that("records are restored after slicing the proxy", {
