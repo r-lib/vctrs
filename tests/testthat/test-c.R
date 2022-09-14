@@ -40,6 +40,15 @@ test_that("specified .ptypes do not allow more casts", {
   )
 })
 
+test_that("common type failure uses error call (#1641)", {
+  expect_snapshot(error = TRUE, {
+    vec_c("x", 1, .call = call("foo"))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_c("x", .ptype = integer(), .call = call("foo"))
+  })
+})
+
 test_that("combines outer an inner names", {
   expect_equal(vec_c(x = 1), c(x = 1))
   expect_equal(vec_c(c(x = 1)), c(x = 1))
@@ -183,6 +192,7 @@ test_that("vec_c() fails with complex foreign S3 classes", {
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
     (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_c(x, y, .call = call("foo")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -191,6 +201,7 @@ test_that("vec_c() fails with complex foreign S4 classes", {
     joe <- .Counts(c(1L, 2L), name = "Joe")
     jane <- .Counts(3L, name = "Jane")
     (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_c(joe, jane, .call = call("foo")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -289,6 +300,15 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
     (expect_error(
       with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")),
       class = "vctrs_error_incompatible_type"
+    ))
+
+    # Uses error call (#1641)
+    (expect_error(
+      with_c_foobar(vec_c(
+        foobar(1), foobar(2),
+        .call = call("foo"),
+        .name_spec = "{outer}_{inner}"
+      ))
     ))
   })
 })

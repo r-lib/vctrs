@@ -26,7 +26,7 @@ functions that use the split-apply-combine strategy. For example:
 #> [1] 1 1
 
 vec_c("a", 1)
-#> Error:
+#> Error in `vec_c()`:
 #> ! Can't combine `..1` <character> and `..2` <double>.
 
 vec_rbind(

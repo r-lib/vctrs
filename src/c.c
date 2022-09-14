@@ -4,20 +4,23 @@
 r_obj* vec_c(r_obj* xs,
              r_obj* ptype,
              r_obj* name_spec,
-             const struct name_repair_opts* name_repair) {
+             const struct name_repair_opts* name_repair,
+             struct r_lazy call) {
   struct fallback_opts opts = {
     .df = DF_FALLBACK_DEFAULT,
     .s3 = S3_FALLBACK_true
   };
-  return vec_c_opts(xs, ptype, name_spec, name_repair, &opts);
+  return vec_c_opts(xs, ptype, name_spec, name_repair, &opts, call);
 }
 
 r_obj* vec_c_opts(r_obj* xs,
                   r_obj* ptype,
                   r_obj* name_spec,
                   const struct name_repair_opts* name_repair,
-                  const struct fallback_opts* fallback_opts) {
+                  const struct fallback_opts* fallback_opts,
+                  struct r_lazy call) {
   struct ptype_common_opts ptype_opts = {
+    .call = call,
     .fallback = *fallback_opts
   };
 
@@ -30,13 +33,13 @@ r_obj* vec_c_opts(r_obj* xs,
   }
 
   if (needs_vec_c_fallback(ptype)) {
-    r_obj* out = vec_c_fallback(ptype, xs, name_spec, name_repair);
+    r_obj* out = vec_c_fallback(ptype, xs, name_spec, name_repair, call);
     FREE(1);
     return out;
   }
   // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
   if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
-    r_obj* out = vec_c_fallback_invoke(xs, name_spec);
+    r_obj* out = vec_c_fallback_invoke(xs, name_spec, call);
     FREE(1);
     return out;
   }
@@ -97,7 +100,8 @@ r_obj* vec_c_opts(r_obj* xs,
   const struct vec_assign_opts c_assign_opts = {
     .recursive = true,
     .assign_names = assign_names,
-    .ignore_outer_names = true
+    .ignore_outer_names = true,
+    .call = call
   };
 
   for (r_ssize i = 0; i < n; ++i) {
@@ -132,6 +136,7 @@ r_obj* vec_c_opts(r_obj* xs,
     struct cast_opts opts = (struct cast_opts) {
       .x = x,
       .to = ptype,
+      .call = call,
       .fallback = *fallback_opts
     };
     x = KEEP(vec_cast_opts(&opts));
@@ -161,22 +166,24 @@ r_obj* vec_c_opts(r_obj* xs,
   return out;
 }
 
-r_obj* ffi_vec_c(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
+r_obj* ffi_vec_c(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   args = r_node_cdr(args);
 
-  r_obj* xs = KEEP(rlang_env_dots_list(env));
-  r_obj* ptype = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
-  r_obj* name_spec = KEEP(r_eval(r_node_car(args), env)); args = r_node_cdr(args);
-  r_obj* name_repair = KEEP(r_eval(r_node_car(args), env));
+  r_obj* xs = KEEP(rlang_env_dots_list(frame));
+  r_obj* ptype = KEEP(r_eval(r_node_car(args), frame)); args = r_node_cdr(args);
+  r_obj* name_spec = KEEP(r_eval(r_node_car(args), frame)); args = r_node_cdr(args);
+  r_obj* name_repair = KEEP(r_eval(r_node_car(args), frame));
+
+  struct r_lazy call = { .x = r_syms.dot_call, .env = frame };
 
   struct name_repair_opts name_repair_opts =
     new_name_repair_opts(name_repair,
                          r_lazy_null,
                          false,
-                         r_lazy_null);
+                         call);
   KEEP(name_repair_opts.shelter);
 
-  r_obj* out = vec_c(xs, ptype, name_spec, &name_repair_opts);
+  r_obj* out = vec_c(xs, ptype, name_spec, &name_repair_opts, call);
 
   FREE(5);
   return out;
@@ -256,15 +263,17 @@ bool class_implements_base_c(r_obj* cls) {
 r_obj* vec_c_fallback(r_obj* ptype,
                       r_obj* xs,
                       r_obj* name_spec,
-                      const struct name_repair_opts* name_repair) {
+                      const struct name_repair_opts* name_repair,
+                      struct r_lazy call) {
   r_obj* class = KEEP(r_attrib_get(ptype, syms_fallback_class));
   bool implements_c = class_implements_base_c(class);
   FREE(1);
 
   if (implements_c) {
-    return vec_c_fallback_invoke(xs, name_spec);
+    return vec_c_fallback_invoke(xs, name_spec, call);
   } else {
     struct ptype_common_opts ptype_opts = {
+      .call = call,
       .fallback = {
         .df = DF_FALLBACK_none,
         .s3 = S3_FALLBACK_false
@@ -278,11 +287,11 @@ r_obj* vec_c_fallback(r_obj* ptype,
 
     // Suboptimal: Call `vec_c()` again to combine vector with
     // homogeneous class fallback
-    return vec_c_opts(xs, r_null, name_spec, name_repair, &ptype_opts.fallback);
+    return vec_c_opts(xs, r_null, name_spec, name_repair, &ptype_opts.fallback, call);
   }
 }
 
-r_obj* vec_c_fallback_invoke(r_obj* xs, r_obj* name_spec) {
+r_obj* vec_c_fallback_invoke(r_obj* xs, r_obj* name_spec, struct r_lazy call) {
   r_obj* x = list_first_non_null(xs, NULL);
 
   if (vctrs_debug_verbose) {
@@ -292,11 +301,11 @@ r_obj* vec_c_fallback_invoke(r_obj* xs, r_obj* name_spec) {
 
   int err_type = vec_c_fallback_validate_args(x, name_spec);
   if (err_type) {
-    stop_vec_c_fallback(xs, err_type);
+    stop_vec_c_fallback(xs, err_type, call);
   }
 
-  r_obj* call = KEEP(r_call2(r_sym("base_c_invoke"), xs));
-  r_obj* out = r_eval(call, vctrs_ns_env);
+  r_obj* ffi_call = KEEP(r_call2(r_sym("base_c_invoke"), xs));
+  r_obj* out = r_eval(ffi_call, vctrs_ns_env);
 
   FREE(1);
   return out;
@@ -311,7 +320,7 @@ int vec_c_fallback_validate_args(r_obj* x, r_obj* name_spec) {
 }
 
 static
-void stop_vec_c_fallback(r_obj* xs, int err_type) {
+void stop_vec_c_fallback(r_obj* xs, int err_type, struct r_lazy call) {
   r_obj* common_class = KEEP(r_class(list_first_non_null(xs, NULL)));
   const char* class_str = r_chr_get_c_string(common_class, 0);
 
@@ -322,9 +331,12 @@ void stop_vec_c_fallback(r_obj* xs, int err_type) {
   default: msg = "Internal error: Unexpected error type."; break;
   }
 
-  r_abort("%s\n"
-          "vctrs methods must be implemented for class `%s`.\n"
-          "See <https://vctrs.r-lib.org/articles/s3-vector.html>.",
-          msg,
-          class_str);
+  r_abort_lazy_call(
+    call,
+    "%s\n"
+    "vctrs methods must be implemented for class `%s`.\n"
+    "See <https://vctrs.r-lib.org/articles/s3-vector.html>.",
+    msg,
+    class_str
+  );
 }
