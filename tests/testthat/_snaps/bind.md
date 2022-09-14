@@ -371,7 +371,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -386,7 +386,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 
 # can't zap names when `.names_to` is supplied
