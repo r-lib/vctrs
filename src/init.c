@@ -102,8 +102,8 @@ extern r_obj* ffi_tib_ptype2(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_tib_cast(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_has_dim(SEXP);
-extern SEXP vctrs_rep(SEXP, SEXP);
-extern SEXP vctrs_rep_each(SEXP, SEXP);
+extern r_obj* ffi_vec_rep(r_obj*, r_obj*);
+extern SEXP ffi_vec_rep_each(SEXP, SEXP);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
 extern SEXP vctrs_new_df_unshared_col();
 extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP);
@@ -130,7 +130,7 @@ extern SEXP vctrs_normalize_encoding(SEXP);
 extern SEXP vctrs_order(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_locate_sorted_groups(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_unrep(SEXP);
+extern r_obj* ffi_vec_unrep(r_obj*);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
 extern r_obj* ffi_chr_paste_prefix(r_obj*, r_obj*, r_obj*);
 extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
@@ -273,8 +273,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_tib_cast",                          (DL_FUNC) &ffi_tib_cast, 5},
   {"ffi_assign_params",                     (DL_FUNC) &ffi_assign_params, 4},
   {"vctrs_has_dim",                         (DL_FUNC) &vctrs_has_dim, 1},
-  {"vctrs_rep",                             (DL_FUNC) &vctrs_rep, 2},
-  {"vctrs_rep_each",                        (DL_FUNC) &vctrs_rep_each, 2},
+  {"ffi_vec_rep",                           (DL_FUNC) &ffi_vec_rep, 2},
+  {"ffi_vec_rep_each",                      (DL_FUNC) &ffi_vec_rep_each, 2},
   {"vctrs_maybe_shared_col",                (DL_FUNC) &vctrs_maybe_shared_col, 2},
   {"vctrs_new_df_unshared_col",             (DL_FUNC) &vctrs_new_df_unshared_col, 0},
   {"vctrs_shaped_ptype",                    (DL_FUNC) &vctrs_shaped_ptype, 4},
@@ -301,7 +301,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_order",                           (DL_FUNC) &vctrs_order, 5},
   {"vctrs_locate_sorted_groups",            (DL_FUNC) &vctrs_locate_sorted_groups, 5},
   {"vctrs_order_info",                      (DL_FUNC) &vctrs_order_info, 6},
-  {"vctrs_unrep",                           (DL_FUNC) &vctrs_unrep, 1},
+  {"ffi_vec_unrep",                         (DL_FUNC) &ffi_vec_unrep, 1},
   {"vctrs_fill_missing",                    (DL_FUNC) &vctrs_fill_missing, 3},
   {"ffi_chr_paste_prefix",                  (DL_FUNC) &ffi_chr_paste_prefix, 3},
   {"vctrs_rank",                            (DL_FUNC) &vctrs_rank, 7},

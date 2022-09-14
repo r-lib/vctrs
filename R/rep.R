@@ -84,17 +84,17 @@ NULL
 #' @rdname vec-rep
 #' @export
 vec_rep <- function(x, times) {
-  .Call(vctrs_rep, x, times)
+  .Call(ffi_vec_rep, x, times)
 }
 
 #' @rdname vec-rep
 #' @export
 vec_rep_each <- function(x, times) {
-  .Call(vctrs_rep_each, x, times)
+  .Call(ffi_vec_rep_each, x, times)
 }
 
 #' @rdname vec-rep
 #' @export
 vec_unrep <- function(x) {
-  .Call(vctrs_unrep, x)
+  .Call(ffi_vec_unrep, x)
 }
