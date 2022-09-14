@@ -814,12 +814,14 @@ ensure_full_stop <- function(x) {
 }
 
 
-# TODO! cli + .internal
 stop_native_implementation <- function(fn) {
-  abort(paste_line(
-    glue::glue("`{fn}()` is implemented at C level."),
-    "This R function is purely indicative and should never be called."
-  ))
+  cli::cli_abort(
+    c(
+      "{.fn {fn}} is implemented at C level.",
+      " " = "This R function is purely indicative and should never be called."
+    ),
+    .internal = TRUE
+  )
 }
 
 
