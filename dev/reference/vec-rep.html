@@ -81,9 +81,16 @@ repeated.</p></li>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_rep</span><span class="op">(</span><span class="va">x</span>, <span class="va">times</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_rep</span><span class="op">(</span><span class="va">x</span>, <span class="va">times</span>, <span class="va">...</span>, call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span>, x_arg <span class="op">=</span> <span class="st">"x"</span>, times_arg <span class="op">=</span> <span class="st">"times"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">vec_rep_each</span><span class="op">(</span><span class="va">x</span>, <span class="va">times</span><span class="op">)</span></span>
+<span><span class="fu">vec_rep_each</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">times</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  x_arg <span class="op">=</span> <span class="st">"x"</span>,</span>
+<span>  times_arg <span class="op">=</span> <span class="st">"times"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">vec_unrep</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -100,6 +107,21 @@ the entire vector.</p>
 <p>For <code>vec_rep_each()</code>, an integer vector of the number of times to repeat
 each element of <code>x</code>. <code>times</code> will be <a href="vector_recycling_rules.html">recycled</a> to
 the size of <code>x</code>.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>These dots are for future extensions and must be empty.</p></dd>
+
+
+<dt>call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
+
+
+<dt>x_arg, times_arg</dt>
+<dd><p>Argument names for errors.</p></dd>
 
 </dl></div>
     <div class="section level2">

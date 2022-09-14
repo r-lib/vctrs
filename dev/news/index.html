@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>Record vectors now fail as expected when indexed along dimensions greater than 1 (<a href="https://github.com/r-lib/vctrs/issues/1295" class="external-link">#1295</a>).</p></li>
+<ul><li><p><code><a href="../reference/vec-rep.html">vec_rep()</a></code> and friends gain <code>call</code>, <code>x_arg</code>, and <code>times_arg</code> arguments so they can be embedded in frontends (<a href="https://github.com/r-lib/vctrs/issues/1303" class="external-link">#1303</a>).</p></li>
+<li><p>Record vectors now fail as expected when indexed along dimensions greater than 1 (<a href="https://github.com/r-lib/vctrs/issues/1295" class="external-link">#1295</a>).</p></li>
 <li><p><code><a href="../reference/vec_order.html">vec_order()</a></code> and <code><a href="../reference/vec_order.html">vec_sort()</a></code> now have <code>...</code> between the required and optional arguments to make them easier to extend (<a href="https://github.com/r-lib/vctrs/issues/1647" class="external-link">#1647</a>).</p></li>
 <li><p>S3 vignette was extended to show how to make the polynomial class atomic instead of a list (<a href="https://github.com/r-lib/vctrs/issues/1030" class="external-link">#1030</a>).</p></li>
 <li><p>The experimental <code>n</code> argument of <code><a href="../reference/vec_proxy.html">vec_restore()</a></code> has been removed. It was only used to inform on the size of data frames in case a bare list is restored. It is now expected that bare lists be initialised to data frame so that the size is carried through row attributes. This makes the generic simpler and fixes some performance issues (<a href="https://github.com/r-lib/vctrs/issues/650" class="external-link">#650</a>).</p></li>
