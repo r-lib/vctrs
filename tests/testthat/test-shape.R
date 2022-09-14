@@ -83,3 +83,23 @@ test_that("shape_broadcast_() applies recycling rules", {
     class = "vctrs_error_incompatible_type"
   )
 })
+
+test_that("can combine shaped native classes (#1290, #1329)", {
+  x <- Sys.time() + c(1, 1e6)
+  dim(x) <- c(1, 2)
+  out <- vec_c(x, x)
+
+  expect_s3_class(out, c("POSIXct", "POSIXt"))
+  expect_dim(out, c(2, 2))
+
+  y <- Sys.time() + 1:3
+  dim(y) <- c(1, 3)
+
+  expect_snapshot(error = TRUE, vec_c(x, y))
+
+  d <- structure(Sys.Date(), dim = 1)
+  expect_equal(
+    vec_rbind(data.frame(d), data.frame(d)),
+    data.frame(d = structure(rep(Sys.Date(), 2), dim = 2))
+  )
+})

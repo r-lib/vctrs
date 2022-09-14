@@ -175,3 +175,26 @@ int vec_dimension2(int x_dimension,
     stop_incompatible_shape(x, y, x_dimension, y_dimension, axis, p_x_arg, p_y_arg);
   }
 }
+
+
+// -----------------------------------------------------------------------------
+
+r_obj* vec_shape_broadcast(r_obj* out, const struct cast_opts* p_opts) {
+  r_obj* r_x_arg = KEEP(vctrs_arg(p_opts->p_x_arg));
+  r_obj* r_to_arg = KEEP(vctrs_arg(p_opts->p_to_arg));
+  r_obj* call = KEEP(r_lazy_eval(p_opts->call));
+
+  out = KEEP(r_clone_referenced(out));
+
+  r_attrib_poke_dim(out, r_dim(p_opts->x));
+  r_attrib_poke_dim_names(out, r_dim_names(p_opts->x));
+
+  out = vctrs_eval_mask5(r_sym("shape_broadcast"),
+                         r_syms.x, out,
+                         r_sym("to"), p_opts->to,
+                         syms.x_arg, r_x_arg,
+                         syms.to_arg, r_to_arg,
+                         r_syms.call, call);
+  FREE(4);
+  return out;
+}

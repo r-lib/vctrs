@@ -28,3 +28,12 @@
       ! Can't combine `foo` <integer[,0,5]> and `bar` <integer[,5,1]>.
       x Incompatible sizes 0 and 5 along axis 2.
 
+# can combine shaped native classes (#1290, #1329)
+
+    Code
+      vec_c(x, y)
+    Condition
+      Error:
+      ! Can't combine `..1` <datetime<local>> and `..2` <datetime<local>>.
+      x Incompatible sizes 2 and 3 along axis 2.
+

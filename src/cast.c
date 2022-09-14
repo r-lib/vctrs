@@ -50,24 +50,27 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
     stop_scalar_type(to, to_arg, opts->call);
   }
 
-  if (has_dim(x) || has_dim(to)) {
-    return vec_cast_dispatch_s3(opts);
-  }
-
   r_obj* out = r_null;
   bool lossy = false;
 
   if (to_type == VCTRS_TYPE_s3 || x_type == VCTRS_TYPE_s3) {
-    out = vec_cast_dispatch_native(opts, x_type, to_type, &lossy);
+    out = KEEP(vec_cast_dispatch_native(opts, x_type, to_type, &lossy));
   } else {
-    out = vec_cast_switch_native(opts, x_type, to_type, &lossy);
+    out = KEEP(vec_cast_switch_native(opts, x_type, to_type, &lossy));
   }
 
   if (lossy || out == r_null) {
+    // This broadcasts dimensions too
+    FREE(1);
     return vec_cast_dispatch_s3(opts);
-  } else {
-    return out;
   }
+
+  if (has_dim(x) || has_dim(to)) {
+    out = vec_shape_broadcast(out, opts);
+  }
+
+  FREE(1);
+  return out;
 }
 
 static
