@@ -66,7 +66,7 @@
       "name specification"))
     Output
       <error/rlang_error>
-      Error in `list_unchop()`:
+      Error:
       ! Can't use a name specification with non-vctrs types.
       vctrs methods must be implemented for class `vctrs_foobar`.
       See <https://vctrs.r-lib.org/articles/s3-vector.html>.
