@@ -7,11 +7,11 @@
 \alias{vec_unrep}
 \title{Repeat a vector}
 \usage{
-vec_rep(x, times)
+vec_rep(x, times, call = current_env())
 
-vec_rep_each(x, times)
+vec_rep_each(x, times, call = current_env())
 
-vec_unrep(x)
+vec_unrep(x, call = current_env())
 }
 \arguments{
 \item{x}{A vector.}
@@ -22,6 +22,11 @@ the entire vector.
 For \code{vec_rep_each()}, an integer vector of the number of times to repeat
 each element of \code{x}. \code{times} will be \link[=vector_recycling_rules]{recycled} to
 the size of \code{x}.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 For \code{vec_rep()}, a vector the same type as \code{x} with size

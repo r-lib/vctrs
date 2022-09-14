@@ -3,7 +3,7 @@
     Code
       vec_rep(1, "x")
     Condition
-      Error:
+      Error in `vec_rep()`:
       ! Can't convert `times` <character> to <integer>.
 
 ---
@@ -35,7 +35,7 @@
     Code
       vec_rep_each(1, "x")
     Condition
-      Error:
+      Error in `vec_rep_each()`:
       ! Can't convert `times` <character> to <integer>.
 
 ---
@@ -75,6 +75,6 @@
     Code
       vec_rep_each(1:2, 1:3)
     Condition
-      Error:
+      Error in `vec_rep_each()`:
       ! Can't recycle `times` (size 3) to size 2.
 

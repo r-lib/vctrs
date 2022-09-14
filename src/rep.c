@@ -1,11 +1,12 @@
+#include "rlang.h"
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include "decl/rep-decl.h"
 
 
 static
-r_obj* vec_rep(r_obj* x, int times) {
-  check_rep_times(times);
+r_obj* vec_rep(r_obj* x, int times, struct r_lazy call) {
+  check_rep_times(times, call);
 
   if (times == 1) {
     return x;
@@ -19,7 +20,7 @@ r_obj* vec_rep(r_obj* x, int times) {
   }
 
   if (multiply_would_overflow(x_size, times_)) {
-    stop_rep_size_oob();
+    stop_rep_size_oob(call);
   };
 
   const r_ssize size = x_size * times_;
@@ -41,8 +42,8 @@ r_obj* vec_rep(r_obj* x, int times) {
   return out;
 }
 
-r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times) {
-  struct r_lazy call = r_lazy_null;
+r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times, r_obj* frame) {
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
 
   ffi_times = KEEP(vec_cast(ffi_times,
                             r_globals.empty_int,
@@ -51,11 +52,11 @@ r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times) {
                             call));
 
   if (vec_size(ffi_times) != 1) {
-    stop_rep_times_size();
+    stop_rep_times_size(call);
   }
 
   const int times = r_int_get(ffi_times, 0);
-  r_obj* out = vec_rep(x, times);
+  r_obj* out = vec_rep(x, times, call);
 
   FREE(1);
   return out;
@@ -65,12 +66,12 @@ r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times) {
 // -----------------------------------------------------------------------------
 
 static
-r_obj* vec_rep_each(r_obj* x, r_obj* times) {
+r_obj* vec_rep_each(r_obj* x, r_obj* times, struct r_lazy call) {
   times = KEEP(vec_cast(times,
                         r_globals.empty_int,
                         p_args_times,
                         vec_args.empty,
-                        r_lazy_null));
+                        call));
 
   const r_ssize times_size = vec_size(times);
 
@@ -84,32 +85,33 @@ r_obj* vec_rep_each(r_obj* x, r_obj* times) {
     } else if (times_ == 0) {
       out = vec_ptype(x, vec_args.empty, r_lazy_null);
     } else {
-      out = vec_rep_each_uniform(x, times_);
+      out = vec_rep_each_uniform(x, times_, call);
     }
   } else {
-    out = vec_rep_each_impl(x, times, times_size);
+    out = vec_rep_each_impl(x, times, times_size, call);
   }
 
   FREE(1);
   return out;
 }
 
-r_obj* ffi_vec_rep_each(r_obj* x, r_obj* times) {
-  return vec_rep_each(x, times);
+r_obj* ffi_vec_rep_each(r_obj* x, r_obj* times, r_obj* frame) {
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  return vec_rep_each(x, times, call);
 }
 
 
 // -----------------------------------------------------------------------------
 
 static
-r_obj* vec_rep_each_uniform(r_obj* x, int times) {
-  check_rep_each_times(times, 1);
+r_obj* vec_rep_each_uniform(r_obj* x, int times, struct r_lazy call) {
+  check_rep_each_times(times, 1, call);
 
   const r_ssize times_ = (r_ssize) times;
   const r_ssize x_size = vec_size(x);
 
   if (multiply_would_overflow(x_size, times_)) {
-    stop_rep_size_oob();
+    stop_rep_size_oob(call);
   };
 
   const r_ssize size = x_size * times_;
@@ -131,14 +133,17 @@ r_obj* vec_rep_each_uniform(r_obj* x, int times) {
   return out;
 }
 
-static r_obj* vec_rep_each_impl(r_obj* x, r_obj* times, const r_ssize times_size) {
+static r_obj* vec_rep_each_impl(r_obj* x,
+                                r_obj* times,
+                                const r_ssize times_size,
+                                struct r_lazy call) {
   const r_ssize x_size = vec_size(x);
 
   if (x_size != times_size) {
     stop_recycle_incompatible_size(times_size,
                                    x_size,
                                    p_args_times,
-                                   r_lazy_null);
+                                   call);
   }
 
   const int* v_times = r_int_cbegin(times);
@@ -147,12 +152,12 @@ static r_obj* vec_rep_each_impl(r_obj* x, r_obj* times, const r_ssize times_size
   for (r_ssize i = 0; i < times_size; ++i) {
     const int elt_times = v_times[i];
 
-    check_rep_each_times(elt_times, i + 1);
+    check_rep_each_times(elt_times, i + 1, call);
 
     const r_ssize elt_times_ = (r_ssize) elt_times;
 
     if (plus_would_overflow(size, elt_times_)) {
-      stop_rep_size_oob();
+      stop_rep_size_oob(call);
     }
 
     size += elt_times_;
@@ -203,33 +208,34 @@ bool plus_would_overflow(r_ssize x, r_ssize y) {
 // -----------------------------------------------------------------------------
 
 static inline
-void check_rep_times(int times) {
+void check_rep_times(int times, struct r_lazy call) {
   if (times < 0) {
     if (times == r_globals.na_int) {
-      stop_rep_times_missing();
+      stop_rep_times_missing(call);
     } else {
-      stop_rep_times_negative();
+      stop_rep_times_negative(call);
     }
   } else if (times_is_oob(times)) {
-    stop_rep_times_oob(times);
+    stop_rep_times_oob(times, call);
   }
 }
 
 static inline
-void stop_rep_times_negative() {
-  r_abort("`times` must be a positive number.");
+void stop_rep_times_negative(struct r_lazy call) {
+  r_abort_lazy_call(call, "`times` must be a positive number.");
 }
 
 static inline
-void stop_rep_times_missing() {
-  r_abort("`times` can't be missing.");
+void stop_rep_times_missing(struct r_lazy call) {
+  r_abort_lazy_call(call, "`times` can't be missing.");
 }
 
 // Not currently thrown since `r_ssize == int`, but might be once
 // long vectors are supported
 static inline
-void stop_rep_times_oob(int times) {
-  r_abort(
+void stop_rep_times_oob(int times, struct r_lazy call) {
+  r_abort_lazy_call(
+    call,
     "`times` must be less than %i, not %i.",
     R_LEN_T_MAX,
     times
@@ -240,33 +246,34 @@ void stop_rep_times_oob(int times) {
 // -----------------------------------------------------------------------------
 
 static inline
-void check_rep_each_times(int times, r_ssize i) {
+void check_rep_each_times(int times, r_ssize i, struct r_lazy call) {
   if (times < 0) {
     if (times == r_globals.na_int) {
-      stop_rep_each_times_missing(i);
+      stop_rep_each_times_missing(i, call);
     } else {
-      stop_rep_each_times_negative(i);
+      stop_rep_each_times_negative(i, call);
     }
   } else if (times_is_oob(times)) {
-    stop_rep_each_times_oob(times, i);
+    stop_rep_each_times_oob(times, i, call);
   }
 }
 
 static inline
-void stop_rep_each_times_negative(r_ssize i) {
-  r_abort("`times` must be a vector of positive numbers. Location %i is negative.", i);
+void stop_rep_each_times_negative(r_ssize i, struct r_lazy call) {
+  r_abort_lazy_call(call, "`times` must be a vector of positive numbers. Location %i is negative.", i);
 }
 
 static inline
-void stop_rep_each_times_missing(r_ssize i) {
-  r_abort("`times` can't be missing. Location %i is missing.", i);
+void stop_rep_each_times_missing(r_ssize i, struct r_lazy call) {
+  r_abort_lazy_call(call, "`times` can't be missing. Location %i is missing.", i);
 }
 
 // Not currently thrown since `r_ssize == int`, but might be once
 // long vectors are supported
 static inline
-void stop_rep_each_times_oob(int times, r_ssize i) {
-  r_abort(
+void stop_rep_each_times_oob(int times, r_ssize i, struct r_lazy call) {
+  r_abort_lazy_call(
+    call,
     "`times` must be less than %i, not %i. ",
     "Location %i is too large.",
     R_LEN_T_MAX,
@@ -276,8 +283,9 @@ void stop_rep_each_times_oob(int times, r_ssize i) {
 }
 
 static inline
-void stop_rep_size_oob() {
-  r_abort(
+void stop_rep_size_oob(struct r_lazy call) {
+  r_abort_lazy_call(
+    call,
     "Long vectors are not yet supported. "
     "Requested output size must be less than %i.",
     R_LEN_T_MAX
@@ -285,8 +293,8 @@ void stop_rep_size_oob() {
 }
 
 static inline
-void stop_rep_times_size() {
-  r_abort("`times` must be a single number.");
+void stop_rep_times_size(struct r_lazy call) {
+  r_abort_lazy_call(call, "`times` must be a single number.");
 }
 
 

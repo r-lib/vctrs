@@ -36,6 +36,7 @@
 #'   For `vec_rep_each()`, an integer vector of the number of times to repeat
 #'   each element of `x`. `times` will be [recycled][vector_recycling_rules] to
 #'   the size of `x`.
+#' @inheritParams rlang::args_error_context
 #'
 #' @return
 #' For `vec_rep()`, a vector the same type as `x` with size
@@ -83,14 +84,14 @@ NULL
 
 #' @rdname vec-rep
 #' @export
-vec_rep <- function(x, times) {
-  .Call(ffi_vec_rep, x, times)
+vec_rep <- function(x, times, call = current_env()) {
+  .Call(ffi_vec_rep, x, times, environment())
 }
 
 #' @rdname vec-rep
 #' @export
-vec_rep_each <- function(x, times) {
-  .Call(ffi_vec_rep_each, x, times)
+vec_rep_each <- function(x, times, call = current_env()) {
+  .Call(ffi_vec_rep_each, x, times, environment())
 }
 
 #' @rdname vec-rep
