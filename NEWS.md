@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_order()` and `vec_sort()` now have `...` between the required and
+  optional arguments to make them easier to extend (#1647).
+
 * S3 vignette was extended to show how to make the polynomial class
   atomic instead of a list (#1030).
 
