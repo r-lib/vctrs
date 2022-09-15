@@ -50,8 +50,9 @@ r_obj* vec_compare(r_obj* x, r_obj* y, bool na_equal) {
     case VCTRS_TYPE_integer:   COMPARE(int, r_int_cbegin, int_compare_na_equal);
     case VCTRS_TYPE_double:    COMPARE(double, r_dbl_cbegin, dbl_compare_na_equal);
     case VCTRS_TYPE_character: COMPARE(r_obj*, r_chr_cbegin, chr_compare_na_equal);
-    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
-    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vec_compare()`");
+    case VCTRS_TYPE_complex:   r_abort("Can't compare complexes.");
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars.");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists.");
     default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   } else {
@@ -60,8 +61,9 @@ r_obj* vec_compare(r_obj* x, r_obj* y, bool na_equal) {
     case VCTRS_TYPE_integer:   COMPARE(int, r_int_cbegin, int_compare_na_propagate);
     case VCTRS_TYPE_double:    COMPARE(double, r_dbl_cbegin, dbl_compare_na_propagate);
     case VCTRS_TYPE_character: COMPARE(r_obj*, r_chr_cbegin, chr_compare_na_propagate);
-    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
-    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vec_compare()`");
+    case VCTRS_TYPE_complex:   r_abort("Can't compare complexes.");
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars.");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists.");
     default:                   stop_unimplemented_vctrs_type("vec_compare", type);
     }
   }
@@ -168,8 +170,9 @@ void vec_compare_col(int* v_out,
     case VCTRS_TYPE_integer:   COMPARE_COL(int, r_int_cbegin, int_compare_na_equal); break;
     case VCTRS_TYPE_double:    COMPARE_COL(double, r_dbl_cbegin, dbl_compare_na_equal); break;
     case VCTRS_TYPE_character: COMPARE_COL(r_obj*, r_chr_cbegin, chr_compare_na_equal); break;
-    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
-    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vec_compare()`");
+    case VCTRS_TYPE_complex:   r_abort("Can't compare complexes.");
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars.");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists.");
     default:                   stop_unimplemented_vctrs_type("vec_compare_col", type);
     }
   } else {
@@ -178,8 +181,9 @@ void vec_compare_col(int* v_out,
     case VCTRS_TYPE_integer:   COMPARE_COL(int, r_int_cbegin, int_compare_na_propagate); break;
     case VCTRS_TYPE_double:    COMPARE_COL(double, r_dbl_cbegin, dbl_compare_na_propagate); break;
     case VCTRS_TYPE_character: COMPARE_COL(r_obj*, r_chr_cbegin, chr_compare_na_propagate); break;
-    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars with `vec_compare()`");
-    case VCTRS_TYPE_list:      r_abort("Can't compare lists with `vec_compare()`");
+    case VCTRS_TYPE_complex:   r_abort("Can't compare complexes.");
+    case VCTRS_TYPE_scalar:    r_abort("Can't compare scalars.");
+    case VCTRS_TYPE_list:      r_abort("Can't compare lists.");
     default:                   stop_unimplemented_vctrs_type("vec_compare_col", type);
     }
   }
