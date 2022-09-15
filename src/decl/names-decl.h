@@ -18,7 +18,7 @@ r_obj* check_unique_names(r_obj* names,
                           const struct name_repair_opts* opts);
 
 static
-void vec_validate_minimal_names(r_obj* names, r_ssize n);
+void vec_validate_minimal_names(r_obj* names, r_ssize n, struct r_lazy call);
 
 r_obj* ffi_as_minimal_names(r_obj* names);
 

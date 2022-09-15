@@ -19,7 +19,7 @@ r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
   case NAME_REPAIR_check_unique: return check_unique_names(names, opts);
   case NAME_REPAIR_custom: return vec_as_custom_names(names, opts);
   }
-  never_reached("vec_as_names");
+  r_stop_unreachable();
 }
 
 r_obj* ffi_as_names(r_obj* names,
@@ -83,7 +83,7 @@ r_obj* vec_as_custom_names(r_obj* names, const struct name_repair_opts* opts) {
   r_env_poke(mask, syms_names, names);
   r_obj* out = KEEP(r_eval(call, mask));
 
-  vec_validate_minimal_names(out, r_length(names));
+  vec_validate_minimal_names(out, r_length(names), opts->call);
 
   FREE(4);
   return out;
@@ -142,7 +142,7 @@ r_obj* vec_names2(r_obj* x) {
 
 r_obj* ffi_as_minimal_names(r_obj* names) {
   if (r_typeof(names) != R_TYPE_character) {
-    r_abort_call(r_null, "`names` must be a character vector");
+    r_abort("`names` must be a character vector");
   }
 
   r_ssize i = 0;
@@ -199,7 +199,7 @@ r_obj* vec_as_unique_names(r_obj* names, bool quiet) {
 // [[ include("vctrs.h") ]]
 bool is_unique_names(r_obj* names) {
   if (r_typeof(names) != R_TYPE_character) {
-    r_abort_call(r_null, "`names` must be a character vector");
+    r_abort("`names` must be a character vector");
   }
 
   r_ssize n = r_length(names);
@@ -390,7 +390,7 @@ ptrdiff_t suffix_pos(const char* name) {
 }
 
 static void stop_large_name() {
-  r_abort_call(r_null, "Can't tidy up name because it is too large");
+  r_abort("Can't tidy up name because it is too large.");
 }
 
 static bool needs_suffix(r_obj* str) {
@@ -440,7 +440,7 @@ r_obj* names_iota(r_ssize n) {
   r_obj* nms = r_chr_iota(n, buf, MAX_IOTA_SIZE, "...");
 
   if (nms == r_null) {
-    r_abort_call(r_null, "Too many names to repair.");
+    r_abort("Too many names to repair.");
   }
 
   return nms;
@@ -546,10 +546,9 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
     name_spec = r_as_function(name_spec, ".name_spec");
     break;
   case R_TYPE_null:
-    r_abort_call(r_null,
-                 "Can't merge the outer name `%s` with a vector of length > 1.\n"
-                 "Please supply a `.name_spec` specification.",
-                 r_str_c_string(outer));
+    r_abort("Can't merge the outer name `%s` with a vector of length > 1.\n"
+            "Please supply a `.name_spec` specification.",
+            r_str_c_string(outer));
   }
   KEEP(name_spec);
 
@@ -562,10 +561,10 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
 
   if (out != r_null) {
     if (r_typeof(out) != R_TYPE_character) {
-      r_abort_call(r_null, "`.name_spec` must return a character vector.");
+      r_abort("`.name_spec` must return a character vector.");
     }
     if (r_length(out) != n) {
-      r_abort_call(r_null, "`.name_spec` must return a character vector as long as `inner`.");
+      r_abort("`.name_spec` must return a character vector as long as `inner`.");
     }
   }
 
@@ -577,7 +576,7 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
 static
 r_obj* glue_as_name_spec(r_obj* spec) {
   if (!r_is_string(spec)) {
-    r_abort_call(r_null, "Glue specification in `.name_spec` must be a single string.");
+    r_abort("Glue specification in `.name_spec` must be a single string.");
   }
   return vctrs_dispatch1(syms_glue_as_name_spec, fns_glue_as_name_spec,
                          syms_internal_spec, spec);
@@ -669,8 +668,7 @@ void check_names(r_obj* x, r_obj* names) {
   }
 
   if (r_typeof(names) != R_TYPE_character) {
-    r_abort_call(
-      r_null,
+    r_abort(
       "`names` must be a character vector, not a %s.",
       r_type_as_c_string(r_typeof(names))
     );
@@ -680,8 +678,7 @@ void check_names(r_obj* x, r_obj* names) {
   r_ssize names_size = vec_size(names);
 
   if (x_size != names_size) {
-    r_abort_call(
-      r_null,
+    r_abort(
       "The size of `names`, %i, must be the same as the size of `x`, %i.",
       names_size,
       x_size
@@ -806,8 +803,11 @@ r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
   }
 }
 
-void stop_name_repair() {
-  r_abort_call(r_null, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
+void stop_name_repair(struct r_lazy call,
+                      struct r_lazy name_repair_arg) {
+  r_abort_lazy_call(call,
+                    "%s must be a string or a function. See `?vctrs::vec_as_names`.",
+                    r_format_lazy_error_arg(name_repair_arg));
 }
 
 struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
@@ -826,7 +826,7 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
   switch (r_typeof(name_repair)) {
   case R_TYPE_character: {
     if (!r_length(name_repair)) {
-      stop_name_repair();
+      stop_name_repair(call, name_repair_arg);
     }
 
     r_obj* c = r_chr_get(name_repair, 0);
@@ -842,7 +842,10 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     } else if (c == strings_check_unique) {
       opts.type = NAME_REPAIR_check_unique;
     } else {
-      r_abort_call(r_null, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", r_str_c_string(c));
+      r_abort_lazy_call(call,
+                        "%s can't be \"%s\". See `?vctrs::vec_as_names`.",
+                        r_format_lazy_error_arg(name_repair_arg),
+                        r_str_c_string(c));
     }
 
     return opts;
@@ -860,10 +863,10 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     return opts;
 
   default:
-    stop_name_repair();
+    stop_name_repair(call, name_repair_arg);
   }
 
-  never_reached("new_name_repair_opts");
+  r_stop_unreachable();
 }
 
 const char* name_repair_arg_as_c_string(enum name_repair_type type) {
@@ -875,28 +878,28 @@ const char* name_repair_arg_as_c_string(enum name_repair_type type) {
   case NAME_REPAIR_check_unique: return "check_unique";
   case NAME_REPAIR_custom: return "custom";
   }
-  never_reached("name_repair_arg_as_c_string");
+  r_stop_unreachable();
 }
 
 static
-void vec_validate_minimal_names(r_obj* names, r_ssize n) {
+void vec_validate_minimal_names(r_obj* names, r_ssize n, struct r_lazy call) {
   if (names == r_null) {
-    r_abort_call(r_null, "Names repair functions can't return `NULL`.");
+    r_abort_lazy_call(call, "Names repair functions can't return `NULL`.");
   }
 
   if (r_typeof(names) != R_TYPE_character) {
-    r_abort_call(r_null, "Names repair functions must return a character vector.");
+    r_abort_lazy_call(call, "Names repair functions must return a character vector.");
   }
 
   if (n >= 0 && r_length(names) != n) {
-    r_abort_call(r_null,
-                 "Repaired names have length %d instead of length %d.",
-                 r_length(names),
-                 n);
+    r_abort_lazy_call(call,
+                      "Repaired names have length %d instead of length %d.",
+                      r_length(names),
+                      n);
   }
 
   if (r_chr_has_string(names, r_globals.na_str)) {
-    r_abort_call(r_null, "Names repair functions can't return `NA` values.");
+    r_abort_lazy_call(call, "Names repair functions can't return `NA` values.");
   }
 }
 r_obj* vctrs_validate_minimal_names(r_obj* names, r_obj* n_) {
@@ -909,7 +912,7 @@ r_obj* vctrs_validate_minimal_names(r_obj* names, r_obj* n_) {
     n = r_int_get(n_, 0);
   }
 
-  vec_validate_minimal_names(names, n);
+  vec_validate_minimal_names(names, n, r_lazy_null);
   return names;
 }
 
