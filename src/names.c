@@ -32,12 +32,10 @@ r_obj* ffi_as_names(r_obj* names,
   bool quiet = r_lgl_get(ffi_quiet, 0);
 
   struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
-
-  struct r_lazy repair_arg_ = { .x = syms.repair_arg, .env = frame };
-  struct vctrs_arg repair_arg = new_lazy_arg(&repair_arg_);
+  struct r_lazy repair_arg = { .x = syms.repair_arg, .env = frame };
 
   struct name_repair_opts repair_opts = new_name_repair_opts(repair,
-                                                             &repair_arg,
+                                                             repair_arg,
                                                              quiet,
                                                              call);
   KEEP(repair_opts.shelter);
@@ -60,7 +58,7 @@ r_obj* vec_as_universal_names(r_obj* names, bool quiet) {
 static
 r_obj* check_unique_names(r_obj* names,
                           const struct name_repair_opts* opts) {
-  r_obj* ffi_arg = KEEP(vctrs_arg(opts->name_repair_arg));
+  r_obj* ffi_arg = KEEP(r_lazy_eval(opts->name_repair_arg));
   r_obj* ffi_call = KEEP(r_lazy_eval(opts->call));
 
   r_obj* out = KEEP(vctrs_dispatch3(syms_check_unique_names, fns_check_unique_names,
@@ -796,7 +794,7 @@ r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_owned owned)
 
 r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
   struct name_repair_opts opts = new_name_repair_opts(arg,
-                                                      vec_args.empty,
+                                                      r_lazy_null,
                                                       true,
                                                       r_lazy_null);
   if (opts.type == NAME_REPAIR_custom) {
@@ -813,7 +811,7 @@ void stop_name_repair() {
 }
 
 struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
-                                             struct vctrs_arg* name_repair_arg,
+                                             struct r_lazy name_repair_arg,
                                              bool quiet,
                                              struct r_lazy call) {
   struct name_repair_opts opts = {
