@@ -5,5 +5,5 @@
     Output
       <error/rlang_error>
       Error in `vec_compare()`:
-      ! Can't compare complexes with `vec_compare()`.
+      ! Can't compare complexes.
 
