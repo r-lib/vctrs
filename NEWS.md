@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Added `vec_proxy_compare()` and `vec_proxy_order()` methods for record vectors
+  to ensure that the recursive proxy calls the correct proxy function (#1664).
+
 * The experimental function `vec_list_cast()` has been removed from
   the package (#1382).
 
