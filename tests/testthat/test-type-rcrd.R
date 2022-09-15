@@ -27,21 +27,25 @@ test_that("vec_proxy() transforms records to data frames", {
 })
 
 test_that("equality, comparison, and order proxies are recursive (#1503)", {
-  base <- new_rcrd(list(a = 1))
+  local_methods(
+    vec_proxy_equal.custom = function(x, ...) rep("equal", length(x)),
+    vec_proxy_compare.custom = function(x, ...) rep("compare", length(x)),
+    vec_proxy_order.custom = function(x, ...) rep("order", length(x))
+  )
+
+  base <- new_rcrd(list(a = 1), class = "custom")
   x <- new_rcrd(list(x = base))
 
-  expect_identical(vec_proxy_equal(x), 1)
-  expect_identical(vec_proxy_compare(x), 1)
-  expect_identical(vec_proxy_order(x), 1)
+  expect_identical(vec_proxy_equal(x), "equal")
+  expect_identical(vec_proxy_compare(x), "compare")
+  expect_identical(vec_proxy_order(x), "order")
 
-  base <- new_rcrd(list(a = 1, b = 2))
+  base <- new_rcrd(list(a = 1:2), class = "custom")
   x <- new_rcrd(list(x = base, y = base))
 
-  expect <- data_frame(a = 1, b = 2, a = 1, b = 2, .name_repair = "minimal")
-
-  expect_identical(vec_proxy_equal(x), expect)
-  expect_identical(vec_proxy_compare(x), expect)
-  expect_identical(vec_proxy_order(x), expect)
+  expect_identical(vec_proxy_equal(x), data_frame(x = c("equal", "equal"), y = c("equal", "equal")))
+  expect_identical(vec_proxy_compare(x), data_frame(x = c("compare", "compare"), y = c("compare", "compare")))
+  expect_identical(vec_proxy_order(x), data_frame(x = c("order", "order"), y = c("order", "order")))
 })
 
 # base methods ------------------------------------------------------------

@@ -47,6 +47,18 @@ vec_proxy_equal.vctrs_rcrd <- function(x, ...) {
 }
 
 #' @export
+vec_proxy_compare.vctrs_rcrd <- function(x, ...) {
+  # Recursively proxy using a data frame
+  vec_proxy_compare(new_data_frame(x))
+}
+
+#' @export
+vec_proxy_order.vctrs_rcrd <- function(x, ...) {
+  # Recursively proxy using a data frame
+  vec_proxy_order(new_data_frame(x))
+}
+
+#' @export
 length.vctrs_rcrd <- function(x) {
   vec_size(x)
 }
