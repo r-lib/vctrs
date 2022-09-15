@@ -248,29 +248,26 @@ void check_rep_times(int times,
 
 static inline
 void stop_rep_times_negative(struct r_lazy call, struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(call,
-                    "`%s` must be a positive number.",
-                    r_chr_get_c_string(times_arg, 0));
+                    "%s must be a positive number.",
+                    vec_arg_format(p_times_arg));
 }
 
 static inline
 void stop_rep_times_missing(struct r_lazy call, struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(call,
-                    "`%s` can't be missing.",
-                    r_chr_get_c_string(times_arg, 0));
+                    "%s can't be missing.",
+                    vec_arg_format(p_times_arg));
 }
 
 // Not currently thrown since `r_ssize == int`, but might be once
 // long vectors are supported
 static inline
 void stop_rep_times_oob(int times, struct r_lazy call, struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(
     call,
-    "`%s` must be less than %i, not %i.",
-    r_chr_get_c_string(times_arg, 0),
+    "%s must be less than %i, not %i.",
+    vec_arg_format(p_times_arg),
     R_LEN_T_MAX,
     times
   );
@@ -297,19 +294,17 @@ void check_rep_each_times(int times,
 
 static inline
 void stop_rep_each_times_negative(r_ssize i, struct r_lazy call, struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(call,
-                    "`%s` must be a vector of positive numbers. Location %i is negative.",
-                    r_chr_get_c_string(times_arg, 0),
+                    "%s must be a vector of positive numbers. Location %i is negative.",
+                    vec_arg_format(p_times_arg),
                     i);
 }
 
 static inline
 void stop_rep_each_times_missing(r_ssize i, struct r_lazy call, struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(call,
-                    "`%s` can't be missing. Location %i is missing.",
-                    r_chr_get_c_string(times_arg, 0),
+                    "%s can't be missing. Location %i is missing.",
+                    vec_arg_format(p_times_arg),
                     i);
 }
 
@@ -317,12 +312,11 @@ void stop_rep_each_times_missing(r_ssize i, struct r_lazy call, struct vctrs_arg
 // long vectors are supported
 static inline
 void stop_rep_each_times_oob(int times, r_ssize i, struct r_lazy call, struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(
     call,
-    "`%s` must be less than %i, not %i. ",
+    "%s must be less than %i, not %i. ",
     "Location %i is too large.",
-    r_chr_get_c_string(times_arg, 0),
+    vec_arg_format(p_times_arg),
     R_LEN_T_MAX,
     times,
     i
@@ -342,10 +336,9 @@ void stop_rep_size_oob(struct r_lazy call) {
 static inline
 void stop_rep_times_size(struct r_lazy call,
                          struct vctrs_arg* p_times_arg) {
-  r_obj* times_arg = KEEP(vctrs_arg(p_times_arg));
   r_abort_lazy_call(call,
-                    "`%s` must be a single number.",
-                    r_chr_get_c_string(times_arg, 0));
+                    "%s must be a single number.",
+                    vec_arg_format(p_times_arg));
 }
 
 
