@@ -26,7 +26,7 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
-test_that("equality, comparison, and order proxies are recursive (#1503)", {
+test_that("equality, comparison, and order proxies are recursive (#1503, #1664)", {
   local_methods(
     vec_proxy_equal.custom = function(x, ...) rep("equal", length(x)),
     vec_proxy_compare.custom = function(x, ...) rep("compare", length(x)),
