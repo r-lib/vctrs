@@ -4,6 +4,7 @@ struct syms syms;
 struct strings strings;
 struct fns fns;
 struct vec_args vec_args;
+struct lazy_args lazy_args;
 struct lazy_calls lazy_calls;
 
 struct r_dyn_array* globals_shelter = NULL;
@@ -20,6 +21,14 @@ struct r_dyn_array* globals_shelter = NULL;
 #define INIT_STRING(ARG)                                \
   strings.ARG = r_str(#ARG);                            \
   r_dyn_list_push_back(globals_shelter, strings.ARG);
+
+#define INIT_LAZY_ARG(ARG)                                              \
+  lazy_args.ARG = (struct r_lazy) { .x = r_chr(#ARG), .env = r_null };  \
+  r_dyn_list_push_back(globals_shelter, lazy_calls.ARG.x)
+
+#define INIT_LAZY_ARG_2(ARG, STR)                                       \
+  lazy_args.ARG = (struct r_lazy) { .x = r_chr(STR), .env = r_null };   \
+  r_dyn_list_push_back(globals_shelter, lazy_args.ARG.x)
 
 #define INIT_CALL(ARG)                                                  \
   lazy_calls.ARG = (struct r_lazy) { .x = r_parse(#ARG "()"), .env = r_null }; \
@@ -60,6 +69,9 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_ARG(n);
   INIT_ARG(value);
   INIT_ARG(x);
+
+  // Lazy args ---------------------------------------------------------
+  INIT_LAZY_ARG_2(dot_name_repair, ".name_repair");
 
   // Calls -------------------------------------------------------------
   INIT_CALL(vec_assign);

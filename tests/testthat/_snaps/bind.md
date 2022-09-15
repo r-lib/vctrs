@@ -76,7 +76,7 @@
       (expect_error(vec_rbind(foo = df1, df2, .names_to = NULL), "specification"))
     Output
       <error/rlang_error>
-      Error:
+      Error in `vec_rbind()`:
       ! Can't merge the outer name `foo` with a vector of length > 1.
       Please supply a `.name_spec` specification.
 

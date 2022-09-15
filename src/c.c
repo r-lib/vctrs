@@ -170,7 +170,7 @@ r_obj* ffi_vec_c(r_obj* call, r_obj* op, r_obj* args, r_obj* env) {
 
   struct name_repair_opts name_repair_opts =
     new_name_repair_opts(name_repair,
-                         vec_args.empty,
+                         r_lazy_null,
                          false,
                          r_lazy_null);
   KEEP(name_repair_opts.shelter);

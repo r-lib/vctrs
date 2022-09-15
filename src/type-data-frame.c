@@ -178,7 +178,7 @@ r_obj* ffi_data_frame(r_obj* x,
   struct r_lazy call = { .x = syms_dot_call, .env = frame };
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  vec_args.dot_name_repair,
+                                                                  lazy_args.dot_name_repair,
                                                                   false,
                                                                   call);
   KEEP(name_repair_opts.shelter);
@@ -218,7 +218,7 @@ r_obj* ffi_df_list(r_obj* x,
   struct r_lazy call = { .x = syms_dot_call, .env = frame };
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  vec_args.dot_name_repair,
+                                                                  lazy_args.dot_name_repair,
                                                                   false,
                                                                   call);
   KEEP(name_repair_opts.shelter);

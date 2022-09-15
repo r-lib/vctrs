@@ -160,7 +160,7 @@ r_obj* ffi_list_unchop(r_obj* x,
                        r_obj* name_repair) {
   struct name_repair_opts name_repair_opts =
     new_name_repair_opts(name_repair,
-                         vec_args.empty,
+                         r_lazy_null,
                          false,
                          r_lazy_null);
   KEEP(name_repair_opts.shelter);

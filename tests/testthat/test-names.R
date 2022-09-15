@@ -59,8 +59,10 @@ test_that("vec_as_names() requires character vector", {
 })
 
 test_that("vec_as_names() validates `repair`", {
-  expect_error(vec_as_names("x", repair = "foo"), "can't be \"foo\"")
-  expect_error(vec_as_names(1, repair = 1), "string or a function")
+  expect_snapshot({
+    (expect_error(my_vec_as_names("x", my_repair = "foo"), "can't be \"foo\""))
+    (expect_error(my_vec_as_names(1, my_repair = 1), "string or a function"))
+  })
 })
 
 test_that("vec_as_names() repairs names", {
@@ -71,11 +73,13 @@ test_that("vec_as_names() repairs names", {
 })
 
 test_that("vec_as_names() checks unique names", {
-  expect_error(vec_as_names(chr(NA), repair = "check_unique"))
-  expect_error(vec_as_names(chr(""), repair = "check_unique"))
-  expect_error(vec_as_names(chr("a", "a"), repair = "check_unique"))
-  expect_error(vec_as_names(chr("..1"), repair = "check_unique"))
-  expect_error(vec_as_names(chr("..."), repair = "check_unique"))
+  expect_snapshot({
+    (expect_error(my_vec_as_names(chr(NA), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr(""), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr("a", "a"), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr("..1"), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr("..."), my_repair = "check_unique")))
+  })
 })
 
 test_that("vec_as_names() keeps the names of a named vector", {
@@ -103,7 +107,7 @@ test_that("vec_as_names() accepts and checks repair function", {
     ~ rep_along(.x, local_obj)
   })
   expect_identical(vec_as_names(c("", ""), repair = f), c("foo", "foo"))
-  expect_error(vec_as_names(c("", ""), repair = function(nms) "foo"), "length 1 instead of length 2")
+  expect_snapshot(error = TRUE, my_vec_as_names(c("", ""), my_repair = function(nms) "foo"))
 })
 
 test_that("vec_as_names() repairs names before invoking repair function", {
@@ -122,23 +126,27 @@ test_that("vec_as_names() is noisy by default", {
 
     # Hint at repair argument, if known
     (expect_error(
-      vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
+      my_vec_as_names(c("x", "x"), my_repair = "check_unique")
     ))
   })
 })
 
 test_that("validate_minimal_names() checks names", {
-  expect_error(validate_minimal_names(1), "must return a character vector")
-  expect_error(validate_minimal_names(NULL), "can't return `NULL`")
-  expect_error(validate_minimal_names(chr(NA)), "can't return `NA` values")
+  expect_snapshot({
+    (expect_error(validate_minimal_names(1), "must return a character vector"))
+    (expect_error(validate_minimal_names(NULL), "can't return `NULL`"))
+    (expect_error(validate_minimal_names(chr(NA)), "can't return `NA` values"))
+  })
 })
 
 test_that("validate_unique() checks unique names", {
-  expect_error(validate_unique(chr(NA)), "`NA`")
-  expect_error(validate_unique(chr("")), class = "vctrs_error_names_cannot_be_empty")
-  expect_error(validate_unique(chr("a", "a")), class = "vctrs_error_names_must_be_unique")
-  expect_error(validate_unique(chr("..1")), class = "vctrs_error_names_cannot_be_dot_dot")
-  expect_error(validate_unique(chr("...")), class = "vctrs_error_names_cannot_be_dot_dot")
+  expect_snapshot({
+    (expect_error(validate_unique(chr(NA)), "`NA`"))
+    (expect_error(validate_unique(chr("")), class = "vctrs_error_names_cannot_be_empty"))
+    (expect_error(validate_unique(chr("a", "a")), class = "vctrs_error_names_must_be_unique"))
+    (expect_error(validate_unique(chr("..1")), class = "vctrs_error_names_cannot_be_dot_dot"))
+    (expect_error(validate_unique(chr("...")), class = "vctrs_error_names_cannot_be_dot_dot"))
+  })
 })
 
 test_that("vec_as_names_validate() validates repair arguments", {
@@ -278,8 +286,10 @@ test_that("vec_set_names() can set NULL names", {
 })
 
 test_that("vec_set_names() errors with bad `names`", {
-  expect_error(vec_set_names(1, 1), "character vector, not a double")
-  expect_error(vec_set_names(1, c("x", "y")), "The size of `names`, 2")
+  expect_snapshot({
+    (expect_error(vec_set_names(1, 1), "character vector, not a double"))
+    (expect_error(vec_set_names(1, c("x", "y")), "The size of `names`, 2"))
+  })
 })
 
 test_that("vec_names() and vec_set_names() work with 1-dimensional arrays", {
@@ -783,10 +793,12 @@ test_that("NULL name specs works with scalars", {
   expect_named(vec_c(foo = set_names(dbl()), bar = set_names(dbl())), chr())
 
   expect_error(apply_name_spec(NULL, "foo", c("a", "b")), "vector of length > 1")
-  expect_error(vec_c(foo = c(a = 1, b = 2)), "vector of length > 1")
-
   expect_error(apply_name_spec(NULL, "foo", NULL, 2L), "vector of length > 1")
-  expect_error(vec_c(foo = 1:2), "vector of length > 1")
+
+  expect_snapshot({
+    (expect_error(vec_c(foo = c(a = 1, b = 2)), "vector of length > 1"))
+    (expect_error(vec_c(foo = 1:2), "vector of length > 1"))
+  })
 })
 
 test_that("function name spec is applied", {

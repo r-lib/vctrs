@@ -158,7 +158,7 @@
 vec_as_names <- function(names,
                          ...,
                          repair = c("minimal", "unique", "universal", "check_unique"),
-                         repair_arg = "",
+                         repair_arg = caller_arg(repair),
                          quiet = FALSE,
                          call = caller_env()) {
   check_dots_empty0(...)

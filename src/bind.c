@@ -618,7 +618,7 @@ r_obj* vec_as_df_col(r_obj* x, r_obj* outer) {
 static
 struct name_repair_opts validate_bind_name_repair(r_obj* name_repair, bool allow_minimal) {
   struct name_repair_opts opts = new_name_repair_opts(name_repair,
-                                                      vec_args.empty,
+                                                      r_lazy_null,
                                                       false,
                                                       r_lazy_null);
 

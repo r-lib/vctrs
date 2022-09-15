@@ -44,6 +44,10 @@ struct vec_args {
   struct vctrs_arg* x;
 };
 
+struct lazy_args {
+  struct r_lazy dot_name_repair;
+};
+
 struct lazy_calls {
   struct r_lazy vec_assign;
   struct r_lazy vec_assign_params;
@@ -60,6 +64,7 @@ extern struct syms syms;
 extern struct strings strings;
 extern struct fns fns;
 extern struct vec_args vec_args;
+extern struct lazy_args lazy_args;
 extern struct lazy_calls lazy_calls;
 
 

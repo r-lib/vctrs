@@ -27,7 +27,7 @@ enum name_repair_type {
 struct name_repair_opts {
   r_obj* shelter;
   enum name_repair_type type;
-  struct vctrs_arg* name_repair_arg;
+  struct r_lazy name_repair_arg;
   r_obj* fn;
   bool quiet;
   struct r_lazy call;
@@ -46,7 +46,7 @@ static struct name_repair_opts const * const p_no_repair_opts = &no_repair_opts;
 
 r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts);
 struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
-                                             struct vctrs_arg* name_repair_arg,
+                                             struct r_lazy name_repair_arg,
                                              bool quiet,
                                              struct r_lazy call);
 const char* name_repair_arg_as_c_string(enum name_repair_type type);
