@@ -75,3 +75,10 @@ my_vec_rep_each <- function(my_x, my_times) {
     times_arg = "my_times"
   )
 }
+
+my_vec_as_names <- function(my_names,
+                            ...,
+                            my_repair = "minimal",
+                            my_quiet = FALSE) {
+  vec_as_names(my_names, repair = my_repair, quiet = my_quiet)
+}

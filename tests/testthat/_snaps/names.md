@@ -1,55 +1,55 @@
 # vec_as_names() validates `repair`
 
     Code
-      (expect_error(vec_as_names("x", repair = "foo"), "can't be \"foo\""))
+      (expect_error(my_vec_as_names("x", my_repair = "foo"), "can't be \"foo\""))
     Output
       <error/rlang_error>
-      Error:
-      ! `"foo"` can't be "foo". See `?vctrs::vec_as_names`.
+      Error in `my_vec_as_names()`:
+      ! `my_repair` can't be "foo". See `?vctrs::vec_as_names`.
     Code
-      (expect_error(vec_as_names(1, repair = 1), "string or a function"))
+      (expect_error(my_vec_as_names(1, my_repair = 1), "string or a function"))
     Output
       <error/rlang_error>
-      Error:
-      ! `1` must be a string or a function. See `?vctrs::vec_as_names`.
+      Error in `my_vec_as_names()`:
+      ! `my_repair` must be a string or a function. See `?vctrs::vec_as_names`.
 
 # vec_as_names() checks unique names
 
     Code
-      (expect_error(vec_as_names(chr(NA), repair = "check_unique")))
+      (expect_error(my_vec_as_names(chr(NA), my_repair = "check_unique")))
     Output
       <error/rlang_error>
       Error:
       ! Names repair functions can't return `NA` values.
     Code
-      (expect_error(vec_as_names(chr(""), repair = "check_unique")))
+      (expect_error(my_vec_as_names(chr(""), my_repair = "check_unique")))
     Output
       <error/vctrs_error_names_cannot_be_empty>
-      Error:
+      Error in `my_vec_as_names()`:
       ! Names can't be empty.
       x Empty name found at location 1.
     Code
-      (expect_error(vec_as_names(chr("a", "a"), repair = "check_unique")))
+      (expect_error(my_vec_as_names(chr("a", "a"), my_repair = "check_unique")))
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error:
+      Error in `my_vec_as_names()`:
       ! Names must be unique.
       x These names are duplicated:
         * "a" at locations 1 and 2.
-      i Use argument `"check_unique"` to specify repair strategy.
+      i Use argument `my_repair` to specify repair strategy.
     Code
-      (expect_error(vec_as_names(chr("..1"), repair = "check_unique")))
+      (expect_error(my_vec_as_names(chr("..1"), my_repair = "check_unique")))
     Output
       <error/vctrs_error_names_cannot_be_dot_dot>
-      Error:
+      Error in `my_vec_as_names()`:
       ! Names can't be of the form `...` or `..j`.
       x These names are invalid:
         * "..1" at location 1.
     Code
-      (expect_error(vec_as_names(chr("..."), repair = "check_unique")))
+      (expect_error(my_vec_as_names(chr("..."), my_repair = "check_unique")))
     Output
       <error/vctrs_error_names_cannot_be_dot_dot>
-      Error:
+      Error in `my_vec_as_names()`:
       ! Names can't be of the form `...` or `..j`.
       x These names are invalid:
         * "..." at location 1.
@@ -57,9 +57,9 @@
 # vec_as_names() accepts and checks repair function
 
     Code
-      vec_as_names(c("", ""), repair = function(nms) "foo")
+      my_vec_as_names(c("", ""), my_repair = function(nms) "foo")
     Condition
-      Error:
+      Error in `my_vec_as_names()`:
       ! Repaired names have length 1 instead of length 2.
 
 # vec_as_names() is noisy by default
@@ -77,15 +77,14 @@
     Output
       [1] "x...1" "x...2"
     Code
-      (expect_error(vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair"))
-      )
+      (expect_error(my_vec_as_names(c("x", "x"), my_repair = "check_unique")))
     Output
       <error/vctrs_error_names_must_be_unique>
-      Error:
+      Error in `my_vec_as_names()`:
       ! Names must be unique.
       x These names are duplicated:
         * "x" at locations 1 and 2.
-      i Use argument `repair` to specify repair strategy.
+      i Use argument `my_repair` to specify repair strategy.
 
 # validate_minimal_names() checks names
 

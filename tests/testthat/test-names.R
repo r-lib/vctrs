@@ -60,8 +60,8 @@ test_that("vec_as_names() requires character vector", {
 
 test_that("vec_as_names() validates `repair`", {
   expect_snapshot({
-    (expect_error(vec_as_names("x", repair = "foo"), "can't be \"foo\""))
-    (expect_error(vec_as_names(1, repair = 1), "string or a function"))
+    (expect_error(my_vec_as_names("x", my_repair = "foo"), "can't be \"foo\""))
+    (expect_error(my_vec_as_names(1, my_repair = 1), "string or a function"))
   })
 })
 
@@ -74,11 +74,11 @@ test_that("vec_as_names() repairs names", {
 
 test_that("vec_as_names() checks unique names", {
   expect_snapshot({
-    (expect_error(vec_as_names(chr(NA), repair = "check_unique")))
-    (expect_error(vec_as_names(chr(""), repair = "check_unique")))
-    (expect_error(vec_as_names(chr("a", "a"), repair = "check_unique")))
-    (expect_error(vec_as_names(chr("..1"), repair = "check_unique")))
-    (expect_error(vec_as_names(chr("..."), repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr(NA), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr(""), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr("a", "a"), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr("..1"), my_repair = "check_unique")))
+    (expect_error(my_vec_as_names(chr("..."), my_repair = "check_unique")))
   })
 })
 
@@ -107,7 +107,7 @@ test_that("vec_as_names() accepts and checks repair function", {
     ~ rep_along(.x, local_obj)
   })
   expect_identical(vec_as_names(c("", ""), repair = f), c("foo", "foo"))
-  expect_snapshot(error = TRUE, vec_as_names(c("", ""), repair = function(nms) "foo"))
+  expect_snapshot(error = TRUE, my_vec_as_names(c("", ""), my_repair = function(nms) "foo"))
 })
 
 test_that("vec_as_names() repairs names before invoking repair function", {
@@ -126,7 +126,7 @@ test_that("vec_as_names() is noisy by default", {
 
     # Hint at repair argument, if known
     (expect_error(
-      vec_as_names(c("x", "x"), repair = "check_unique", repair_arg = "repair")
+      my_vec_as_names(c("x", "x"), my_repair = "check_unique")
     ))
   })
 })
