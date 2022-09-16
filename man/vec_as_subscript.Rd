@@ -46,9 +46,7 @@ coercible depending on the setting of \code{character}.
 If \code{"error"}, the subscript type is disallowed and triggers an
 informative error.}
 
-\item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_location()} and \code{vec_as_location2()} are used to check the
-type of a function input.}
+\item{arg}{The argument name to be displayed in error messages.}
 
 \item{call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
