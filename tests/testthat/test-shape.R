@@ -85,14 +85,14 @@ test_that("shape_broadcast_() applies recycling rules", {
 })
 
 test_that("can combine shaped native classes (#1290, #1329)", {
-  x <- Sys.time() + c(1, 1e6)
+  x <- new_datetime(c(1, 1e6))
   dim(x) <- c(1, 2)
   out <- vec_c(x, x)
 
   expect_s3_class(out, c("POSIXct", "POSIXt"))
   expect_dim(out, c(2, 2))
 
-  y <- Sys.time() + 1:3
+  y <- new_datetime(1:3 + 0.0)
   dim(y) <- c(1, 3)
 
   expect_snapshot(error = TRUE, vec_c(x, y))
@@ -102,4 +102,22 @@ test_that("can combine shaped native classes (#1290, #1329)", {
     vec_rbind(data.frame(d), data.frame(d)),
     data.frame(d = structure(rep(Sys.Date(), 2), dim = 2))
   )
+})
+
+test_that("factor casts support shape", {
+  x <- factor(c("x", "y", "z"))
+  dim(x) <- c(3, 1)
+  dimnames(x) <- list(c("r1", "r2", "r3"), "c1")
+
+  y <- factor(c("w", "x", "y", "z"))
+  dim(y) <- c(2, 2)
+
+  exp <- factor(
+    c("x", "y", "z", "x", "y", "z"),
+    levels = c("w", "x", "y", "z")
+  )
+  dim(exp) <- c(3, 2)
+  dimnames(exp) <- list(c("r1", "r2", "r3"), c("c1", "c1"))
+
+  expect_equal(vec_cast(x, y), exp)
 })
