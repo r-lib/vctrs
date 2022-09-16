@@ -44,5 +44,5 @@
     Condition
       Error:
       ! Can't convert `x` <factor<32af0>[,1]> to <factor<32af0>>.
-      Can't decrease dimensions from 2 to 1.
+      Can't decrease dimensionality from 2 to 1.
 

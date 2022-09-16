@@ -146,7 +146,7 @@
       <error/vctrs_error_incompatible_type>
       Error in `my_function()`:
       ! Can't convert `matrix(TRUE)` <double[,1]> to <double>.
-      Can't decrease dimensions from 2 to 1.
+      Can't decrease dimensionality from 2 to 1.
 
 # base S3 casts report correct error call
 

@@ -38,7 +38,7 @@ shape_broadcast <- function(x,
 
   if (length(dim_x) > length(dim_to)) {
     details <- sprintf(
-      "Can't decrease dimensions from %s to %s.",
+      "Can't decrease dimensionality from %s to %s.",
       length(dim_x),
       length(dim_to)
     )
