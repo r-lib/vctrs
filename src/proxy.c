@@ -136,7 +136,6 @@ r_obj* df_proxy(r_obj* x, enum vctrs_proxy_kind kind) {
   x = KEEP(r_clone_referenced(x));
 
   switch (kind) {
-  case VCTRS_PROXY_KIND_default: DF_PROXY(vec_proxy); break;
   case VCTRS_PROXY_KIND_equal: DF_PROXY(vec_proxy_equal); break;
   case VCTRS_PROXY_KIND_compare: DF_PROXY(vec_proxy_compare); break;
   case VCTRS_PROXY_KIND_order: DF_PROXY(vec_proxy_order); break;

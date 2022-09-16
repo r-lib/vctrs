@@ -190,10 +190,9 @@ vec_proxy_order.data.frame <- function(x, ...) {
 }
 
 # Keep in sync with `enum vctrs_proxy_kind` in `vctrs.h`
-VCTRS_PROXY_KIND_default <- 0L
-VCTRS_PROXY_KIND_equal <- 1L
-VCTRS_PROXY_KIND_compare <- 2L
-VCTRS_PROXY_KIND_order <- 3L
+VCTRS_PROXY_KIND_equal <- 0L
+VCTRS_PROXY_KIND_compare <- 1L
+VCTRS_PROXY_KIND_order <- 2L
 
 df_proxy <- function(x, kind) {
   .Call(ffi_df_proxy, x, kind)

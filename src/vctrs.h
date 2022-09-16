@@ -63,8 +63,7 @@ bool vec_is_unspecified(SEXP x);
 // Vector methods ------------------------------------------------
 
 enum vctrs_proxy_kind {
-  VCTRS_PROXY_KIND_default,
-  VCTRS_PROXY_KIND_equal,
+  VCTRS_PROXY_KIND_equal = 0,
   VCTRS_PROXY_KIND_compare,
   VCTRS_PROXY_KIND_order
 };
