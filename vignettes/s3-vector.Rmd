@@ -867,6 +867,7 @@ vec_arith.MYCLASS.default <- function(op, x, y, ...) {
 }
 ```
 
+Correctly exporting `vec_arith()` methods from a package is currently a little awkward. See the instructions in the Arithmetic section of the "Implementing a vctrs S3 class in a package" section below.
 
 ### Cached sum class
 
@@ -1147,6 +1148,45 @@ vec_cast.pizza_percent.double <- function(x, to, ...) percent(x)
 vec_cast.double.pizza_percent <- function(x, to, ...) vec_data(x)
 ```
 
+### Arithmetic
+
+Writing double dispatch methods for `vec_arith()` is currently more awkward than writing them for `vec_ptype2()` or `vec_cast()`. We plan to improve this in the future. For now, you can use the following instructions.
+
+If you define a new type and want to write `vec_arith()` methods for it, you'll need to provide a new single dispatch S3 generic for it of the following form:
+
+```{r, eval=FALSE}
+#' @export
+#' @method vec_arith my_type
+vec_arith.my_type <- function(op, x, y, ...) {
+  UseMethod("vec_arith.my_type", y)
+}
+```
+
+Note that this actually functions as both an S3 method for `vec_arith()` and an S3 generic called `vec_arith.my_type()` that dispatches off `y`. roxygen2 only recognizes it as an S3 generic, so you have to register the S3 method part of this with an explicit `@method` call.
+
+After that, you can define double dispatch methods, but you still need an explicit `@method` tag to ensure it is registered with the correct generic:
+
+```{r, eval=FALSE}
+#' @export
+#' @method vec_arith.my_type my_type
+vec_arith.my_type.my_type <- function(op, x, y, ...) {
+  # implementation here
+}
+
+#' @export
+#' @method vec_arith.my_type integer
+vec_arith.my_type.integer <- function(op, x, y, ...) {
+  # implementation here
+}
+
+#' @export
+#' @method vec_arith.integer my_type
+vec_arith.integer.my_type <- function(op, x, y, ...) {
+  # implementation here
+}
+```
+
+vctrs provides the hybrid S3 generics/methods for most of the base R types, like `vec_arith.integer()`. If you don't fully import vctrs with `@import vctrs`, then you will need to explicitly import the generic you are registering double dispatch methods for with `@importFrom vctrs vec_arith.integer`.
 
 ### Testing
 
