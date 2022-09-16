@@ -80,5 +80,10 @@ my_vec_as_names <- function(my_names,
                             ...,
                             my_repair = "minimal",
                             my_quiet = FALSE) {
-  vec_as_names(my_names, repair = my_repair, quiet = my_quiet)
+  vec_as_names(
+    my_names,
+    repair = my_repair,
+    repair_arg = "my_repair",
+    quiet = my_quiet
+  )
 }

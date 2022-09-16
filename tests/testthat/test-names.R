@@ -864,3 +864,10 @@ test_that("r_chr_paste_prefix() works", {
     paste0(long_prefix, ".", nms)
   )
 })
+
+test_that("vec_as_names() uses internal error if `repair_arg` is not supplied", {
+  expect_snapshot({
+    (expect_error(vec_as_names("", repair = "foobar", call = quote(tilt()))))
+    (expect_error(vec_as_names("", repair = env(), call = quote(tilt()))))
+  })
+})

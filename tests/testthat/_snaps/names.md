@@ -238,3 +238,18 @@
       ! Can't merge the outer name `foo` with a vector of length > 1.
       Please supply a `.name_spec` specification.
 
+# vec_as_names() uses internal error if `repair_arg` is not supplied
+
+    Code
+      (expect_error(vec_as_names("", repair = "foobar", call = quote(tilt()))))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_names()`:
+      ! `repair` can't be "foobar". See `?vctrs::vec_as_names`.
+    Code
+      (expect_error(vec_as_names("", repair = env(), call = quote(tilt()))))
+    Output
+      <error/rlang_error>
+      Error in `vec_as_names()`:
+      ! `repair` must be a string or a function. See `?vctrs::vec_as_names`.
+

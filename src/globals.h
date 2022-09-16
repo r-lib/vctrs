@@ -22,8 +22,15 @@ struct syms {
   r_obj* y_arg;
 };
 
+// These structs must be in sync as their elements are defined
+// together by the `INIT_STRING()` macro
 struct strings {
   r_obj* AsIs;
+  r_obj* repair;
+};
+struct chrs {
+  r_obj* AsIs;
+  r_obj* repair;
 };
 
 struct fns {
@@ -62,6 +69,7 @@ struct lazy_calls {
 
 extern struct syms syms;
 extern struct strings strings;
+extern struct chrs chrs;
 extern struct fns fns;
 extern struct vec_args vec_args;
 extern struct lazy_args lazy_args;

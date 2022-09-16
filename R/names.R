@@ -158,12 +158,12 @@
 vec_as_names <- function(names,
                          ...,
                          repair = c("minimal", "unique", "universal", "check_unique"),
-                         repair_arg = caller_arg(repair),
+                         repair_arg = NULL,
                          quiet = FALSE,
                          call = caller_env()) {
   check_dots_empty0(...)
   .Call(
-    ffi_as_names,
+    ffi_vec_as_names,
     names,
     repair,
     quiet,

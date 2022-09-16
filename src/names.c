@@ -22,16 +22,16 @@ r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
   r_stop_unreachable();
 }
 
-r_obj* ffi_as_names(r_obj* names,
-                    r_obj* repair,
-                    r_obj* ffi_quiet,
-                    r_obj* frame) {
+r_obj* ffi_vec_as_names(r_obj* names,
+                        r_obj* repair,
+                        r_obj* ffi_quiet,
+                        r_obj* frame) {
   if (!r_is_bool(ffi_quiet)) {
     r_abort("`quiet` must a boolean value.");
   }
   bool quiet = r_lgl_get(ffi_quiet, 0);
 
-  struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
+  struct r_lazy call = (struct r_lazy) { .x = r_syms.call, .env = frame };
   struct r_lazy repair_arg = { .x = syms.repair_arg, .env = frame };
 
   struct name_repair_opts repair_opts = new_name_repair_opts(repair,
@@ -45,6 +45,50 @@ r_obj* ffi_as_names(r_obj* names,
   FREE(1);
   return out;
 }
+
+
+struct repair_error_info {
+  r_obj* shelter;
+  r_obj* repair_arg;
+  r_obj* call;
+  r_obj* input_error_repair_arg;
+  r_obj* input_error_call;
+};
+
+struct repair_error_info new_repair_error_info(struct name_repair_opts* p_opts) {
+  struct repair_error_info out;
+
+  out.shelter = r_new_list(4);
+  KEEP(out.shelter);
+
+  out.repair_arg = r_lazy_eval(p_opts->name_repair_arg);
+  r_list_poke(out.shelter, 0, out.repair_arg);
+
+  out.call = r_lazy_eval(p_opts->call);
+  r_list_poke(out.shelter, 1, out.call);
+
+  // If this is NULL, the `repair` value has been hard-coded by the
+  // frontend. Input errors are internal, and we provide no
+  // recommendation to fix user errors by providing a different value
+  // for `repair`.
+  if (out.repair_arg == r_null) {
+    out.input_error_repair_arg = chrs.repair;
+    r_list_poke(out.shelter, 2, out.input_error_repair_arg);
+
+    out.input_error_call = r_call(r_sym("vec_as_names"));
+    r_list_poke(out.shelter, 3, out.input_error_call);
+  } else {
+    out.input_error_repair_arg = r_lazy_eval(p_opts->name_repair_arg);
+    r_list_poke(out.shelter, 2, out.input_error_repair_arg);
+
+    out.input_error_call = r_lazy_eval(p_opts->call);
+    r_list_poke(out.shelter, 3, out.input_error_call);
+  }
+
+  FREE(1);
+  return out;
+}
+
 
 r_obj* vec_as_universal_names(r_obj* names, bool quiet) {
   r_obj* quiet_obj = KEEP(r_lgl(quiet));
@@ -803,11 +847,13 @@ r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
   }
 }
 
-void stop_name_repair(struct r_lazy call,
-                      struct r_lazy name_repair_arg) {
-  r_abort_lazy_call(call,
-                    "%s must be a string or a function. See `?vctrs::vec_as_names`.",
-                    r_format_lazy_error_arg(name_repair_arg));
+void stop_name_repair(struct name_repair_opts* p_opts) {
+  struct repair_error_info info = new_repair_error_info(p_opts);
+  KEEP(info.shelter);
+
+  r_abort_call(info.input_error_call,
+               "%s must be a string or a function. See `?vctrs::vec_as_names`.",
+               r_format_error_arg(info.input_error_repair_arg));
 }
 
 struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
@@ -826,7 +872,7 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
   switch (r_typeof(name_repair)) {
   case R_TYPE_character: {
     if (!r_length(name_repair)) {
-      stop_name_repair(call, name_repair_arg);
+      stop_name_repair(&opts);
     }
 
     r_obj* c = r_chr_get(name_repair, 0);
@@ -842,10 +888,12 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     } else if (c == strings_check_unique) {
       opts.type = NAME_REPAIR_check_unique;
     } else {
-      r_abort_lazy_call(call,
-                        "%s can't be \"%s\". See `?vctrs::vec_as_names`.",
-                        r_format_lazy_error_arg(name_repair_arg),
-                        r_str_c_string(c));
+      struct repair_error_info info = new_repair_error_info(&opts);
+      KEEP(info.shelter);
+      r_abort_call(info.input_error_call,
+                   "%s can't be \"%s\". See `?vctrs::vec_as_names`.",
+                   r_format_error_arg(info.input_error_repair_arg),
+                   r_str_c_string(c));
     }
 
     return opts;
@@ -863,7 +911,7 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     return opts;
 
   default:
-    stop_name_repair(call, name_repair_arg);
+    stop_name_repair(&opts);
   }
 
   r_stop_unreachable();
