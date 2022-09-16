@@ -174,29 +174,14 @@ vec_ptype_abbr.data.frame <- function(x, ...) {
   "df"
 }
 
-#' @export
-vec_proxy_equal.data.frame <- function(x, ...) {
-  df_proxy(x, VCTRS_PROXY_KIND_equal)
-}
-
-#' @export
-vec_proxy_compare.data.frame <- function(x, ...) {
-  df_proxy(x, VCTRS_PROXY_KIND_compare)
-}
-
-#' @export
-vec_proxy_order.data.frame <- function(x, ...) {
-  df_proxy(x, VCTRS_PROXY_KIND_order)
-}
-
+# For testing
 # Keep in sync with `enum vctrs_proxy_kind` in `vctrs.h`
-VCTRS_PROXY_KIND_equal <- 0L
-VCTRS_PROXY_KIND_compare <- 1L
-VCTRS_PROXY_KIND_order <- 2L
-
 df_proxy <- function(x, kind) {
   .Call(ffi_df_proxy, x, kind)
 }
+VCTRS_PROXY_KIND_equal <- 0L
+VCTRS_PROXY_KIND_compare <- 1L
+VCTRS_PROXY_KIND_order <- 2L
 
 df_is_coercible <- function(x, y, opts) {
   vec_is_coercible(

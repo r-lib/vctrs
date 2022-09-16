@@ -11,8 +11,12 @@
 #' not equal-able, provide a `vec_proxy_equal()` method that throws an
 #' error.
 #'
-#' If the proxy for `x` is a data frame, `vec_proxy_equal()` is
-#' recursively applied on all columns as well.
+#' @section Data frames:
+#' If the proxy for `x` is a data frame, the proxy function is automatically
+#' recursively applied on all columns as well. After applying the proxy
+#' recursively, if there are any data frame columns present in the proxy, then
+#' they are unpacked. Finally, if the resulting data frame only has a single
+#' column, then it is unwrapped and a vector is returned as the proxy.
 #'
 #' @param x A vector x.
 #' @inheritParams rlang::args_dots_empty

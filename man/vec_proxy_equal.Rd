@@ -26,10 +26,16 @@ The default method calls \code{\link[=vec_proxy]{vec_proxy()}}, as the default u
 vector data should be equal-able in most cases. If your class is
 not equal-able, provide a \code{vec_proxy_equal()} method that throws an
 error.
-
-If the proxy for \code{x} is a data frame, \code{vec_proxy_equal()} is
-recursively applied on all columns as well.
 }
+\section{Data frames}{
+
+If the proxy for \code{x} is a data frame, the proxy function is automatically
+recursively applied on all columns as well. After applying the proxy
+recursively, if there are any data frame columns present in the proxy, then
+they are unpacked. Finally, if the resulting data frame only has a single
+column, then it is unwrapped and a vector is returned as the proxy.
+}
+
 \section{Dependencies}{
 
 \itemize{

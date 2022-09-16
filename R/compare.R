@@ -36,6 +36,8 @@
 #' classes (with identical implementations) to avoid mismatches between
 #' comparison and sorting.
 #'
+#' @inheritSection vec_proxy_equal Data frames
+#'
 #' @param x A vector x.
 #' @inheritParams rlang::args_dots_empty
 #' @return A 1d atomic vector or a data frame.

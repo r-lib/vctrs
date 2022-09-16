@@ -26,26 +26,41 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
-test_that("equality, comparison, and order proxies are recursive (#1503, #1664)", {
-  local_methods(
-    vec_proxy_equal.custom = function(x, ...) rep("equal", length(x)),
-    vec_proxy_compare.custom = function(x, ...) rep("compare", length(x)),
-    vec_proxy_order.custom = function(x, ...) rep("order", length(x))
-  )
-
+test_that("equality, comparison, and order proxies are recursive and fall through (#1503, #1664)", {
   base <- new_rcrd(list(a = 1), class = "custom")
   x <- new_rcrd(list(x = base))
+
+  expect_identical(vec_proxy_equal(x), 1)
+  expect_identical(vec_proxy_compare(x), 1)
+  expect_identical(vec_proxy_order(x), 1)
+
+  local_methods(vec_proxy_equal.custom = function(x, ...) rep("equal", length(x)))
+
+  expect_identical(vec_proxy_equal(x), "equal")
+  expect_identical(vec_proxy_compare(x), "equal")
+  expect_identical(vec_proxy_order(x), "equal")
+
+  local_methods(vec_proxy_compare.custom = function(x, ...) rep("compare", length(x)))
+
+  expect_identical(vec_proxy_equal(x), "equal")
+  expect_identical(vec_proxy_compare(x), "compare")
+  expect_identical(vec_proxy_order(x), "compare")
+
+  local_methods(vec_proxy_order.custom = function(x, ...) rep("order", length(x)))
 
   expect_identical(vec_proxy_equal(x), "equal")
   expect_identical(vec_proxy_compare(x), "compare")
   expect_identical(vec_proxy_order(x), "order")
 
-  base <- new_rcrd(list(a = 1:2), class = "custom")
-  x <- new_rcrd(list(x = base, y = base))
+  y <- new_rcrd(list(a = 1), class = "custom2")
+  local_methods(vec_proxy_compare.custom2 = function(x, ...) rep("compare2", length(x)))
 
-  expect_identical(vec_proxy_equal(x), data_frame(x = c("equal", "equal"), y = c("equal", "equal")))
-  expect_identical(vec_proxy_compare(x), data_frame(x = c("compare", "compare"), y = c("compare", "compare")))
-  expect_identical(vec_proxy_order(x), data_frame(x = c("order", "order"), y = c("order", "order")))
+  z <- data_frame(x = x, y = y)
+
+  # Each column falls back independently
+  expect_identical(vec_proxy_equal(z), data_frame(x = "equal", y = 1))
+  expect_identical(vec_proxy_compare(z), data_frame(x = "compare", y = "compare2"))
+  expect_identical(vec_proxy_order(z), data_frame(x = "order", y = "compare2"))
 })
 
 # base methods ------------------------------------------------------------
