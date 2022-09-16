@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* The experimental function `vec_list_cast()` has been removed from
+  the package (#1382).
+
 * Native classes like dates and datetimes now accept dimensions (#1290, #1329).
 
 * `vec_compare()` now throws a more informative error when attempting to compare
