@@ -252,58 +252,6 @@ vec_order_info <- function(x,
 
 # ------------------------------------------------------------------------------
 
-#' Order vectors with base compatibility
-#'
-#' @description
-#' `vec_order_base()` orders vectors using [base::order()], but can handle
-#' more complex types, like data frames and [`vctrs_vctr`][vctr] objects, using
-#' vctrs principles.
-#'
-#' `vec_order_base()` is mainly provided for backwards compatibility with vctrs
-#' <= 0.3.7. New code should instead use [vec_order_radix()], which has more
-#' capabilities. The main difference between the two is that `vec_order_radix()`
-#' orders character vectors in the C locale (which is highly performant), while
-#' `vec_order_base()` respects the system locale.
-#'
-#' @param x A vector
-#' @param direction Direction to sort in. Defaults to `asc`ending.
-#' @param na_value Should `NA`s be treated as the largest or smallest values?
-#' @return An integer vector the same size as `x`.
-#'
-#' @section Differences with `order()`:
-#' Unlike the `na.last` argument of `order()` which decides the positions of
-#' missing values irrespective of the `decreasing` argument, the `na_value`
-#' argument of `vec_order_base()` interacts with `direction`. If missing values
-#' are considered the largest value, they will appear last in ascending order,
-#' and first in descending order.
-#'
-#' @section Dependencies of `vec_order_base()`:
-#' * [vec_proxy_order()]
-#'
-#' @noRd
-#' @keywords internal
-#' @examples
-#' x <- round(c(runif(9), NA), 3)
-#' vec_order_base(x)
-#' vec_order_base(x, "desc")
-#'
-#' # Can also handle data frames
-#' df <- data.frame(g = sample(2, 10, replace = TRUE), x = x)
-#' vec_order_base(df)
-#' vec_order_base(df, "desc")
-#'
-#' # Missing values interpreted as largest values are last when
-#' # in increasing order:
-#' vec_order_base(c(1, NA), na_value = "largest", direction = "asc")
-#' vec_order_base(c(1, NA), na_value = "largest", direction = "desc")
-vec_order_base <- function(x,
-                           direction = c("asc", "desc"),
-                           na_value = c("largest", "smallest")) {
-  vec_order(x = x, direction = direction, na_value = na_value)
-}
-
-# ------------------------------------------------------------------------------
-
 #' Order and sort vectors
 #'
 #' @inheritParams rlang::args_dots_empty
