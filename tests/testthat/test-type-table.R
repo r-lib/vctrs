@@ -126,7 +126,9 @@ test_that("cannot decrease dimensionality", {
   x <- new_table(dim = c(0L, 1L, 1L))
   y <- new_table(dim = c(0L, 1L))
 
-  expect_error(vec_cast(x, y), "decrease dimensions", class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    (expect_error(vec_cast(x, y), class = "vctrs_error_incompatible_type"))
+  })
 })
 
 test_that("vec_cast() errors on non-tables", {
