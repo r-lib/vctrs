@@ -65,10 +65,15 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   }
 
   if (x_type == VCTRS_TYPE_s3 || y_type == VCTRS_TYPE_s3) {
-    r_obj* out = vec_ptype2_dispatch_native(opts, x_type, y_type, left);
+    r_obj* out = KEEP(vec_ptype2_dispatch_native(opts, x_type, y_type, left));
+
     if (out != r_null) {
+      out = vec_shaped_ptype(out, x, y, x_arg, y_arg);
+      FREE(1);
       return out;
     }
+
+    FREE(1);
   }
 
   // Try native dispatch again with prototypes, in case the prototype

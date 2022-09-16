@@ -37,10 +37,15 @@ shape_broadcast <- function(x,
   }
 
   if (length(dim_x) > length(dim_to)) {
+    details <- sprintf(
+      "Can't decrease dimensionality from %s to %s.",
+      length(dim_x),
+      length(dim_to)
+    )
     stop_incompatible_cast(
       x,
       to,
-      details = "Cannot decrease dimensions.",
+      details = details,
       x_arg = x_arg,
       to_arg = to_arg,
       call = call

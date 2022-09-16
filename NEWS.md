@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Native classes like dates and datetimes now accept dimensions (#1290, #1329).
+
 * `vec_compare()` now throws a more informative error when attempting to compare
   complex vectors (#1655).
 
