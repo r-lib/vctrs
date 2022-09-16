@@ -114,7 +114,6 @@ reference:
 - title: Developer tools
   contents:
   - vctr
-  - vec_list_cast
   - vec_ptype_full
   - vec_ptype_finalise
   - "vctrs-conditions"
