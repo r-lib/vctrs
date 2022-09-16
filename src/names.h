@@ -31,7 +31,13 @@ struct name_repair_opts {
   r_obj* fn;
   bool quiet;
   struct r_lazy call;
+  r_obj* frame;
 };
+
+struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
+                                             struct r_lazy name_repair_arg,
+                                             bool quiet,
+                                             struct r_lazy call);
 
 r_obj* vec_as_universal_names(r_obj* names, bool quiet);
 r_obj* vec_as_custom_names(r_obj* names, const struct name_repair_opts* opts);
@@ -45,10 +51,6 @@ static struct name_repair_opts const * const p_unique_repair_silent_opts = &uniq
 static struct name_repair_opts const * const p_no_repair_opts = &no_repair_opts;
 
 r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts);
-struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
-                                             struct r_lazy name_repair_arg,
-                                             bool quiet,
-                                             struct r_lazy call);
 const char* name_repair_arg_as_c_string(enum name_repair_type type);
 bool is_unique_names(r_obj* names);
 r_obj* vec_as_unique_names(r_obj* names, bool quiet);

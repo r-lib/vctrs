@@ -8,7 +8,7 @@ vec_as_names(
   names,
   ...,
   repair = c("minimal", "unique", "universal", "check_unique"),
-  repair_arg = caller_arg(repair),
+  repair_arg = NULL,
   quiet = FALSE,
   call = caller_env()
 )
