@@ -22,8 +22,15 @@ struct syms {
   r_obj* y_arg;
 };
 
+// These structs must be in sync as their elements are defined
+// together by the `INIT_STRING()` macro
 struct strings {
   r_obj* AsIs;
+  r_obj* repair;
+};
+struct chrs {
+  r_obj* AsIs;
+  r_obj* repair;
 };
 
 struct fns {

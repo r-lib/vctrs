@@ -2,6 +2,7 @@
 
 struct syms syms;
 struct strings strings;
+struct chrs chrs;
 struct fns fns;
 struct vec_args vec_args;
 struct lazy_args lazy_args;
@@ -18,9 +19,12 @@ struct r_dyn_array* globals_shelter = NULL;
   static struct vctrs_arg ARG; ARG = new_wrapper_arg(NULL, STR); \
   vec_args.ARG = &ARG
 
+// Defines both a string and a length 1 character vector
 #define INIT_STRING(ARG)                                \
   strings.ARG = r_str(#ARG);                            \
-  r_dyn_list_push_back(globals_shelter, strings.ARG);
+  r_dyn_list_push_back(globals_shelter, strings.ARG);   \
+  chrs.ARG = r_chr(#ARG);                               \
+  r_dyn_list_push_back(globals_shelter, chrs.ARG);
 
 #define INIT_LAZY_ARG(ARG)                                              \
   lazy_args.ARG = (struct r_lazy) { .x = r_chr(#ARG), .env = r_null };  \
@@ -56,8 +60,9 @@ void vctrs_init_globals(r_obj* ns) {
   syms.x_arg = r_sym("x_arg");
   syms.y_arg = r_sym("y_arg");
 
-  // Strings -----------------------------------------------------------
+  // Strings and characters --------------------------------------------
   INIT_STRING(AsIs);
+  INIT_STRING(repair);
 
   // Args --------------------------------------------------------------
   INIT_ARG2(dot_name_repair, ".name_repair");
