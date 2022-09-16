@@ -39,7 +39,6 @@ r_obj* ffi_vec_as_names(r_obj* names,
                                                              quiet,
                                                              call);
   KEEP(repair_opts.shelter);
-  repair_opts.frame = frame;
 
   r_obj* out = vec_as_names(names, &repair_opts);
 
@@ -76,13 +75,7 @@ struct repair_error_info new_repair_error_info(struct name_repair_opts* p_opts) 
     out.input_error_repair_arg = chrs.repair;
     r_list_poke(out.shelter, 2, out.input_error_repair_arg);
 
-    if (p_opts->frame) {
-      // This is only set when `vec_as_names()` is called from R
-      out.input_error_call = p_opts->frame;
-    } else {
-      // Create fake `vec_as_names()` call for the C case
-      out.input_error_call = r_call(r_sym("vec_as_names"));
-    }
+    out.input_error_call = r_call(r_sym("vec_as_names"));
     r_list_poke(out.shelter, 3, out.input_error_call);
   } else {
     out.input_error_repair_arg = r_lazy_eval(p_opts->name_repair_arg);

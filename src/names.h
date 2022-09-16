@@ -31,7 +31,6 @@ struct name_repair_opts {
   r_obj* fn;
   bool quiet;
   struct r_lazy call;
-  r_obj* frame;
 };
 
 struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
