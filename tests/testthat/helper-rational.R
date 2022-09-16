@@ -51,8 +51,7 @@ rational_methods <- list(
   vec_cast.vctrs_rational.integer = function(x, to, ...) rational(x, 1),
 
   vec_proxy_equal.vctrs_rational = vec_proxy_equal.vctrs_rational,
-  vec_proxy_compare.vctrs_rational = vec_proxy_compare.vctrs_rational,
-  vec_proxy_order.vctrs_rational = vec_proxy_compare.vctrs_rational
+  vec_proxy_compare.vctrs_rational = vec_proxy_compare.vctrs_rational
 )
 
 local_rational_class <- function(frame = caller_env()) {

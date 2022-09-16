@@ -626,10 +626,7 @@ The default behavior is as follows:
 
 You should only implement these proxies when some preprocessing on the data is needed to make elements comparable. In that case, defining these methods will get you a lot of behaviour for relatively little work.
 
-If you are creating a new record class through `new_rcrd()` and implement at least one of these proxy methods, then you will likely need to implement them all due to the fact that there are `vctrs_rcrd` S3 methods for all of the proxy functions, which will intercept the typical fallthrough default behavior.
-
 These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
-
 
 ### Rational class
 
@@ -688,17 +685,13 @@ vec_proxy_compare.vctrs_rational <- function(x, ...) {
 rational(2, 4) < rational(2, 3)
 ```
 
-(We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
-
-We can use the same proxy to fix `sort()`:
+This also fixes `sort()`, because the default implementation of `vec_proxy_order()` calls `vec_proxy_compare()`.
 
 ```{r}
-vec_proxy_order.vctrs_rational <- vec_proxy_compare.vctrs_rational
-
 sort(x)
 ```
 
-Typically, `vec_proxy_order()` would fallthrough to `vec_proxy_compare()`, but because record vectors define a `vec_proxy_order.vctrs_rcrd()` method, we have to define our own to ensure that our method isn't overriden by the record method.
+(We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
 
 ### Polynomial class
 
