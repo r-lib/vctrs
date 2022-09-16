@@ -37,3 +37,12 @@
       ! Can't combine `..1` <datetime<local>> and `..2` <datetime<local>>.
       x Incompatible sizes 2 and 3 along axis 2.
 
+# factor casts support shape
+
+    Code
+      vec_cast(x, y)
+    Condition
+      Error:
+      ! Can't convert `x` <factor<32af0>> to <factor<32af0>>.
+      Can't decrease dimensions from 2 to 1.
+

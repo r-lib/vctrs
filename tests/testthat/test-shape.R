@@ -120,4 +120,9 @@ test_that("factor casts support shape", {
   dimnames(exp) <- list(c("r1", "r2", "r3"), c("c1", "c1"))
 
   expect_equal(vec_cast(x, y), exp)
+
+  x <- factor(c("x", "y", "z"))
+  dim(x) <- c(3, 1)
+  y <- factor(c("x", "y", "z"))
+  expect_snapshot(error = TRUE, vec_cast(x, y))
 })
