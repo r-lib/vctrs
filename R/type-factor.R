@@ -58,7 +58,7 @@ vec_restore.ordered <- function(x, to, ...) {
 
 #' @export
 vec_ptype_full.factor <- function(x, ...) {
-  paste0("factor<", hash_label(levels(x)), ">")
+  paste0("factor<", hash_label(levels(x)), ">", vec_ptype_shape(x))
 }
 
 #' @export
@@ -68,7 +68,7 @@ vec_ptype_abbr.factor <- function(x, ...) {
 
 #' @export
 vec_ptype_full.ordered <- function(x, ...) {
-  paste0("ordered<", hash_label(levels(x)), ">")
+  paste0("ordered<", hash_label(levels(x)), ">", vec_ptype_shape(x))
 }
 
 #' @export
