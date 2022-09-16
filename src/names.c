@@ -39,6 +39,7 @@ r_obj* ffi_vec_as_names(r_obj* names,
                                                              quiet,
                                                              call);
   KEEP(repair_opts.shelter);
+  repair_opts.frame = frame;
 
   r_obj* out = vec_as_names(names, &repair_opts);
 
@@ -56,18 +57,6 @@ struct repair_error_info {
 };
 
 struct repair_error_info new_repair_error_info(struct name_repair_opts* p_opts) {
-  struct r_lazy input_error_call = p_opts->call;
-  struct r_lazy input_error_repair_arg = p_opts->name_repair_arg;
-
-  // If this is NULL, the `repair` value has been hard-coded by the
-  // frontend. Input errors are internal, and we provide no
-  // recommendation to fix user errors by providing a different value
-  // for `repair`.
-  if (p_opts->name_repair_arg.x == r_null) {
-    input_error_repair_arg = (struct r_lazy) { .x = strings.repair, .env = r_null };
-    input_error_call = (struct r_lazy) { .x = p_opts->frame, .env = r_null };
-  }
-
   struct repair_error_info out;
 
   out.shelter = r_new_list(4);
@@ -79,11 +68,29 @@ struct repair_error_info new_repair_error_info(struct name_repair_opts* p_opts) 
   out.call = r_lazy_eval(p_opts->call);
   r_list_poke(out.shelter, 1, out.call);
 
-  out.input_error_repair_arg = r_lazy_eval(input_error_repair_arg);
-  r_list_poke(out.shelter, 2, out.input_error_repair_arg);
+  // If this is NULL, the `repair` value has been hard-coded by the
+  // frontend. Input errors are internal, and we provide no
+  // recommendation to fix user errors by providing a different value
+  // for `repair`.
+  if (out.repair_arg == r_null) {
+    out.input_error_repair_arg = chrs.repair;
+    r_list_poke(out.shelter, 2, out.input_error_repair_arg);
 
-  out.input_error_call = r_lazy_eval(input_error_call);
-  r_list_poke(out.shelter, 3, out.input_error_call);
+    if (p_opts->frame) {
+      // This is only set when `vec_as_names()` is called from R
+      out.input_error_call = p_opts->frame;
+    } else {
+      // Create fake `vec_as_names()` call for the C case
+      out.input_error_call = r_call(r_sym("vec_as_names"));
+    }
+    r_list_poke(out.shelter, 3, out.input_error_call);
+  } else {
+    out.input_error_repair_arg = r_lazy_eval(p_opts->name_repair_arg);
+    r_list_poke(out.shelter, 2, out.input_error_repair_arg);
+
+    out.input_error_call = r_lazy_eval(p_opts->call);
+    r_list_poke(out.shelter, 3, out.input_error_call);
+  }
 
   FREE(1);
   return out;
@@ -866,7 +873,7 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     .fn = r_null,
     .name_repair_arg = name_repair_arg,
     .quiet = quiet,
-    .call = call,
+    .call = call
   };
 
   switch (r_typeof(name_repair)) {

@@ -69,6 +69,7 @@ struct lazy_calls {
 
 extern struct syms syms;
 extern struct strings strings;
+extern struct chrs chrs;
 extern struct fns fns;
 extern struct vec_args vec_args;
 extern struct lazy_args lazy_args;
