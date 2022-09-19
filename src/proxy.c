@@ -20,27 +20,72 @@ r_obj* vec_proxy(r_obj* x) {
 
 // [[ register() ]]
 r_obj* vec_proxy_equal(r_obj* x) {
-  r_obj* method = KEEP(vec_proxy_equal_method(x));
-  r_obj* out = vec_proxy_equal_invoke(x, method);
+  r_obj* out = KEEP(vec_proxy_equal_impl(x));
+
+  if (is_data_frame(out)) {
+    // Automatically proxy df-proxies recursively.
+    // Also flattens and unwraps them (#1537, #1664).
+    out = df_proxy(out, VCTRS_PROXY_KIND_equal);
+  }
+
   FREE(1);
   return out;
 }
 
 // [[ register() ]]
 r_obj* vec_proxy_compare(r_obj* x) {
-  r_obj* method = KEEP(vec_proxy_compare_method(x));
-  r_obj* out = vec_proxy_compare_invoke(x, method);
+  r_obj* out = KEEP(vec_proxy_compare_impl(x));
+
+  if (is_data_frame(out)) {
+    // Automatically proxy df-proxies recursively.
+    // Also flattens and unwraps them (#1537, #1664).
+    out = df_proxy(out, VCTRS_PROXY_KIND_compare);
+  }
+
   FREE(1);
   return out;
 }
 
 // [[ register() ]]
 r_obj* vec_proxy_order(r_obj* x) {
-  r_obj* method = KEEP(vec_proxy_order_method(x));
-  r_obj* out = vec_proxy_order_invoke(x, method);
+  r_obj* out = KEEP(vec_proxy_order_impl(x));
+
+  if (is_data_frame(out)) {
+    // Automatically proxy df-proxies recursively.
+    // Also flattens and unwraps them (#1537, #1664).
+    out = df_proxy(out, VCTRS_PROXY_KIND_order);
+  }
+
   FREE(1);
   return out;
 }
+
+
+// Non-recursive variants called by the fallback path to ensure we only
+// fallback on the container itself (like a df or rcrd) and not its elements
+// (like columns or fields)
+#define VEC_PROXY_KIND_IMPL(METHOD, INVOKE) do { \
+  r_obj* method = KEEP(METHOD(x));               \
+  r_obj* out = INVOKE(x, method);                \
+  FREE(1);                                       \
+  return out;                                    \
+} while (0)                                      \
+
+static inline
+r_obj* vec_proxy_equal_impl(r_obj* x) {
+  VEC_PROXY_KIND_IMPL(vec_proxy_equal_method, vec_proxy_equal_invoke);
+}
+static inline
+r_obj* vec_proxy_compare_impl(r_obj* x) {
+  VEC_PROXY_KIND_IMPL(vec_proxy_compare_method, vec_proxy_compare_invoke);
+}
+static inline
+r_obj* vec_proxy_order_impl(r_obj* x) {
+  VEC_PROXY_KIND_IMPL(vec_proxy_order_method, vec_proxy_order_invoke);
+}
+
+#undef VEC_PROXY_KIND_IMPL
+
 
 r_obj* vec_proxy_method(r_obj* x) {
   return s3_find_method("vec_proxy", x, vctrs_method_table);
@@ -95,14 +140,14 @@ static inline
 r_obj* vec_proxy_invoke_impl(r_obj* x,
                              r_obj* method,
                              r_obj* vec_proxy_sym,
-                             r_obj* (*vec_proxy_fn)(r_obj*)) {
+                             r_obj* (*vec_proxy_impl_fn)(r_obj*)) {
   if (method != r_null) {
     return vctrs_dispatch1(vec_proxy_sym, method, syms_x, x);
   }
 
   /* Fallback on S3 objects with no proxy */
   if (vec_typeof(x) == VCTRS_TYPE_s3) {
-    return vec_proxy_fn(x);
+    return vec_proxy_impl_fn(x);
   } else {
     return x;
   }
@@ -114,29 +159,29 @@ r_obj* vec_proxy_equal_invoke(r_obj* x, r_obj* method) {
 }
 static inline
 r_obj* vec_proxy_compare_invoke(r_obj* x, r_obj* method) {
-  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_compare, &vec_proxy_equal);
+  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_compare, &vec_proxy_equal_impl);
 }
 static inline
 r_obj* vec_proxy_order_invoke(r_obj* x, r_obj* method) {
-  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_order, &vec_proxy_compare);
+  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_order, &vec_proxy_compare_impl);
 }
 
 
 #define DF_PROXY(PROXY) do {                                   \
-  r_ssize n_cols = r_length(x);                                \
+  const r_ssize n_cols = r_length(x);                          \
+  r_obj* const* v_x = r_list_cbegin(x);                        \
                                                                \
   for (r_ssize i = 0; i < n_cols; ++i) {                       \
-    r_obj* col = r_list_get(x, i);                             \
+    r_obj* col = v_x[i];                                       \
     r_list_poke(x, i, PROXY(col));                             \
   }                                                            \
 } while (0)
 
-static
+static inline
 r_obj* df_proxy(r_obj* x, enum vctrs_proxy_kind kind) {
   x = KEEP(r_clone_referenced(x));
 
   switch (kind) {
-  case VCTRS_PROXY_KIND_default: DF_PROXY(vec_proxy); break;
   case VCTRS_PROXY_KIND_equal: DF_PROXY(vec_proxy_equal); break;
   case VCTRS_PROXY_KIND_compare: DF_PROXY(vec_proxy_compare); break;
   case VCTRS_PROXY_KIND_order: DF_PROXY(vec_proxy_order); break;

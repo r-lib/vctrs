@@ -111,6 +111,38 @@ test_that("vec_proxy_equal() defaults to vec_proxy() and vec_proxy_compare() def
   expect_identical(vec_proxy_compare(x), data_frame(x = letters[3:1], y = 1:3))
 })
 
+test_that("equal/compare/order proxy methods that return data frames are automatically flattened", {
+  x <- new_vctr(1:2, class = "custom")
+
+  equal <- data_frame(a = 1:2, b = 3:4)
+  order <- data_frame(a = 3:4, b = 4:5)
+
+  local_methods(
+    vec_proxy_equal.custom = function(x, ...) data_frame(col = equal),
+    vec_proxy_order.custom = function(x, ...) data_frame(col = order)
+  )
+
+  expect_identical(vec_proxy_equal(x), equal)
+  expect_identical(vec_proxy_compare(x), equal)
+  expect_identical(vec_proxy_order(x), order)
+})
+
+test_that("equal/compare/order proxy methods that return 1 column data frames are automatically unwrapped", {
+  x <- new_vctr(1:2, class = "custom")
+
+  equal <- 1:2
+  order <- 3:4
+
+  local_methods(
+    vec_proxy_equal.custom = function(x, ...) data_frame(a = equal),
+    vec_proxy_order.custom = function(x, ...) data_frame(col = data_frame(a = order))
+  )
+
+  expect_identical(vec_proxy_equal(x), equal)
+  expect_identical(vec_proxy_compare(x), equal)
+  expect_identical(vec_proxy_order(x), order)
+})
+
 test_that("vec_data() preserves data frames", {
   expect_identical(
     vec_data(tibble(x = 1)),

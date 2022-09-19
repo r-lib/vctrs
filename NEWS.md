@@ -1,5 +1,16 @@
 # vctrs (development version)
 
+* If a data frame is returned as the proxy from `vec_proxy_equal()`,
+  `vec_proxy_compare()`, or `vec_proxy_order()`, then the corresponding proxy
+  function is now automatically applied recursively along all of the columns.
+  Additionally, packed data frame columns will be unpacked, and 1 column data
+  frames will be unwrapped. This ensures that the simplest possible types are
+  provided to the native C algorithms, improving both correctness and
+  performance (#1664).
+
+* When used with record vectors, `vec_proxy_compare()` and `vec_proxy_order()`
+  now call the correct proxy function while recursing over the fields (#1664).
+
 * The experimental function `vec_list_cast()` has been removed from
   the package (#1382).
 

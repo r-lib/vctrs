@@ -10,7 +10,7 @@ test_that("equality proxy is taken (#375)", {
   expect_identical(unique(x), rational(c(1, 2, 1, 6), c(1, 1, 2, 2)))
 })
 
-test_that("compare proxy is taken", {
+test_that("order proxy is taken", {
   local_rational_class()
   x <- rational(c(1, 2, 1, 2, 6), c(1, 1, 2, 2, 2))
   expect_identical(sort(x), rational(c(1, 1, 2, 2, 6), c(2, 1, 2, 1, 2)))

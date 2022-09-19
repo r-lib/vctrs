@@ -11,6 +11,13 @@ r_obj* fns_vec_proxy_compare_array;
 r_obj* fns_vec_proxy_order_array;
 
 static inline
+r_obj* vec_proxy_equal_impl(r_obj* x);
+static inline
+r_obj* vec_proxy_compare_impl(r_obj* x);
+static inline
+r_obj* vec_proxy_order_impl(r_obj* x);
+
+static inline
 r_obj* vec_proxy_equal_method(r_obj* x);
 
 static inline
@@ -27,3 +34,6 @@ r_obj* vec_proxy_order_method(r_obj* x);
 
 static inline
 r_obj* vec_proxy_order_invoke(r_obj* x, r_obj* method);
+
+static inline
+r_obj* df_proxy(r_obj* x, enum vctrs_proxy_kind kind);
