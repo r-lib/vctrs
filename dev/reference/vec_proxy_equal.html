@@ -97,8 +97,16 @@ vectors). For <a href="new_vctr.html">vctr</a>s, this determines the behaviour o
 vector data should be equal-able in most cases. If your class is
 not equal-able, provide a <code>vec_proxy_equal()</code> method that throws an
 error.</p>
-<p>If the proxy for <code>x</code> is a data frame, <code>vec_proxy_equal()</code> is
-recursively applied on all columns as well.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a></h2>
+    
+
+<p>If the proxy for <code>x</code> is a data frame, the proxy function is automatically
+recursively applied on all columns as well. After applying the proxy
+recursively, if there are any data frame columns present in the proxy, then
+they are unpacked. Finally, if the resulting data frame only has a single
+column, then it is unwrapped and a vector is returned as the proxy.</p>
     </div>
     <div class="section level2">
     <h2 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a></h2>

@@ -132,6 +132,16 @@ comparison and sorting.</p>
 <ul><li><p><code><a href="vec_proxy_equal.html">vec_proxy_equal()</a></code> called by default in <code>vec_proxy_compare()</code></p></li>
 <li><p><code>vec_proxy_compare()</code> called by default in <code>vec_proxy_order()</code></p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a></h2>
+    
+
+<p>If the proxy for <code>x</code> is a data frame, the proxy function is automatically
+recursively applied on all columns as well. After applying the proxy
+recursively, if there are any data frame columns present in the proxy, then
+they are unpacked. Finally, if the resulting data frame only has a single
+column, then it is unwrapped and a vector is returned as the proxy.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
