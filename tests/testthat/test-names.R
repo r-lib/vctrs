@@ -789,6 +789,7 @@ test_that("NULL name specs works with scalars", {
   expect_named(vec_c(foo = 1), "foo")
 
   expect_identical(apply_name_spec(NULL, "foo", chr(), 0L), chr())
+  expect_equal(vec_c(foo = dbl()), set_names(dbl(), ""))
   expect_named(vec_c(foo = set_names(dbl())), chr())
   expect_named(vec_c(foo = set_names(dbl()), bar = set_names(dbl())), chr())
 
