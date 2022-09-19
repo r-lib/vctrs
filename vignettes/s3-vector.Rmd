@@ -628,6 +628,7 @@ You should only implement these proxies when some preprocessing on the data is n
 
 These proxy functions should always return a simple object (either a bare vector or a data frame) that possesses the same properties as your class. This permits efficient implementation of the vctrs internals because it allows dispatch to happen once in R, and then efficient computations can be written in C.
 
+
 ### Rational class
 
 Let's explore these ideas by with the rational class we started on above. By default, `vec_proxy()` converts a record to a data frame, and the default comparison works column by column:
@@ -692,6 +693,7 @@ sort(x)
 ```
 
 (We could have used the same approach in `vec_proxy_equal()`, but when working with floating point numbers it's not necessarily true that `x == y` implies that `d * x == d * y`.)
+
 
 ### Polynomial class
 
