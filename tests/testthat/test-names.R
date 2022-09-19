@@ -798,6 +798,7 @@ test_that("NULL name specs works with scalars", {
   expect_snapshot({
     (expect_error(vec_c(foo = c(a = 1, b = 2)), "vector of length > 1"))
     (expect_error(vec_c(foo = 1:2), "vector of length > 1"))
+    (expect_error(vec_c(x = c(xx = 1)), "named vector"))
   })
 })
 

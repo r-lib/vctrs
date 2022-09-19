@@ -589,11 +589,18 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
   default:
     name_spec = r_as_function(name_spec, ".name_spec");
     break;
-  case R_TYPE_null:
-    r_abort("Can't merge the outer name `%s` with a vector of length > 1.\n"
+  case R_TYPE_null: {
+    const char* reason;
+    if (n > 1) {
+      reason = "a vector of length > 1";
+    } else {
+      reason = "a named vector";
+    }
+    r_abort("Can't merge the outer name `%s` with %s.\n"
             "Please supply a `.name_spec` specification.",
-            r_str_c_string(outer));
-  }
+            r_str_c_string(outer),
+            reason);
+  }}
   KEEP(name_spec);
 
   r_obj* outer_chr = KEEP(r_str_as_character(outer));
