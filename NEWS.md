@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_c(outer = c(inner = 1))` now produces correct error messages (#522).
+
 * If a data frame is returned as the proxy from `vec_proxy_equal()`,
   `vec_proxy_compare()`, or `vec_proxy_order()`, then the corresponding proxy
   function is now automatically applied recursively along all of the columns.

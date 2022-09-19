@@ -237,6 +237,13 @@
       Error in `vec_c()`:
       ! Can't merge the outer name `foo` with a vector of length > 1.
       Please supply a `.name_spec` specification.
+    Code
+      (expect_error(vec_c(x = c(xx = 1)), "named vector"))
+    Output
+      <error/rlang_error>
+      Error in `vec_c()`:
+      ! Can't merge the outer name `x` with a named vector.
+      Please supply a `.name_spec` specification.
 
 # vec_as_names() uses internal error if `repair_arg` is not supplied
 
