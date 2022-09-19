@@ -891,6 +891,7 @@
 <span><span class="va">vec_arith.MYCLASS.default</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/vctrs-conditions.html">stop_incompatible_op</a></span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+<p>Correctly exporting <code><a href="../reference/vec_arith.html">vec_arith()</a></code> methods from a package is currently a little awkward. See the instructions in the Arithmetic section of the “Implementing a vctrs S3 class in a package” section below.</p>
 <div class="section level3">
 <h3 id="cached-sum-class">Cached sum class<a class="anchor" aria-label="anchor" href="#cached-sum-class"></a>
 </h3>
@@ -1149,6 +1150,39 @@
 <span><span class="va">vec_cast.double.pizza_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span> <span class="fu"><a href="../reference/vec_data.html">vec_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
+<h3 id="arithmetic-1">Arithmetic<a class="anchor" aria-label="anchor" href="#arithmetic-1"></a>
+</h3>
+<p>Writing double dispatch methods for <code><a href="../reference/vec_arith.html">vec_arith()</a></code> is currently more awkward than writing them for <code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> or <code><a href="../reference/vec_cast.html">vec_cast()</a></code>. We plan to improve this in the future. For now, you can use the following instructions.</p>
+<p>If you define a new type and want to write <code><a href="../reference/vec_arith.html">vec_arith()</a></code> methods for it, you’ll need to provide a new single dispatch S3 generic for it of the following form:</p>
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' @export</span></span>
+<span><span class="co">#' @method vec_arith my_type</span></span>
+<span><span class="va">vec_arith.my_type</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">UseMethod</a></span><span class="op">(</span><span class="st">"vec_arith.my_type"</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Note that this actually functions as both an S3 method for <code><a href="../reference/vec_arith.html">vec_arith()</a></code> and an S3 generic called <code>vec_arith.my_type()</code> that dispatches off <code>y</code>. roxygen2 only recognizes it as an S3 generic, so you have to register the S3 method part of this with an explicit <code>@method</code> call.</p>
+<p>After that, you can define double dispatch methods, but you still need an explicit <code>@method</code> tag to ensure it is registered with the correct generic:</p>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#' @export</span></span>
+<span><span class="co">#' @method vec_arith.my_type my_type</span></span>
+<span><span class="va">vec_arith.my_type.my_type</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># implementation here</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#' @export</span></span>
+<span><span class="co">#' @method vec_arith.my_type integer</span></span>
+<span><span class="va">vec_arith.my_type.integer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># implementation here</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#' @export</span></span>
+<span><span class="co">#' @method vec_arith.integer my_type</span></span>
+<span><span class="va">vec_arith.integer.my_type</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">op</span>, <span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># implementation here</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>vctrs provides the hybrid S3 generics/methods for most of the base R types, like <code>vec_arith.integer()</code>. If you don’t fully import vctrs with <code>@import vctrs</code>, then you will need to explicitly import the generic you are registering double dispatch methods for with <code>@importFrom vctrs vec_arith.integer</code>.</p>
+</div>
+<div class="section level3">
 <h3 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a>
 </h3>
 <p>It’s good practice to test your new class. Specific recommendations:</p>
@@ -1159,7 +1193,7 @@
 <li><p>Check for method symmetry; use <code>expect_s3_class()</code>, probably with <code>exact = TRUE</code>, to ensure that <code>vec_c(x, y)</code> and <code>vec_c(y, x)</code> return the same type of output for the important <code>x</code>s and <code>y</code>s in your domain.</p></li>
 <li>
 <p>Use <code><a href="https://testthat.r-lib.org/reference/expect_error.html" class="external-link">testthat::expect_error()</a></code> to check that inputs that can’t be combined fail with an error. Here, you should be generally checking the class of the error, not its message. Relevant classes include <code>vctrs_error_assert_ptype</code>, <code>vctrs_error_assert_size</code>, and <code>vctrs_error_incompatible_type</code>.</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">expect_error</span><span class="op">(</span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"a"</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"vctrs_error_incompatible_type"</span><span class="op">)</span></span></code></pre></div>
 </li>
 </ul>
