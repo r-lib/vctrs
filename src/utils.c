@@ -62,11 +62,7 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args,
  * @param env The environment in which to evaluate.
  */
 SEXP vctrs_eval_mask_n(SEXP fn, SEXP* syms, SEXP* args) {
-  SEXP mask = PROTECT(r_peek_frame());
-  SEXP out = vctrs_eval_mask_n_impl(R_NilValue, fn, syms, args, mask);
-
-  UNPROTECT(1);
-  return out;
+  return vctrs_eval_mask_n_impl(R_NilValue, fn, syms, args, vctrs_ns_env);
 }
 SEXP vctrs_eval_mask1(SEXP fn,
                       SEXP x_sym, SEXP x) {

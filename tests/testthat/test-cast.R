@@ -256,3 +256,13 @@ test_that("vec_cast_common_fallback() works with tibbles", {
   expect_identical(vec_cast_common_fallback(tib, df), exp)
   expect_identical(vec_cast_common_fallback(df, tib), exp)
 })
+
+test_that("can call `vec_cast()` from C (#1666)", {
+  fn <- inject(function(x, i) .Call(!!ffi_exp_vec_cast, x, i))
+  environment(fn) <- ns_env("utils")
+
+  x <- array(1, dim = c(1, 1))
+  y <- array(2, dim = c(2, 2))
+
+  expect_equal(fn(x, y), vec_cast(x, y))
+})
