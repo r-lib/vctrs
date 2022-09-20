@@ -11,11 +11,7 @@ r_obj* vec_proxy_recurse(r_obj* x) {
 }
 
 r_obj* ffi_vec_proxy(r_obj* x, r_obj* recurse) {
-  if (r_as_bool(recurse)) {
-    return vec_proxy_2(x, true);
-  } else {
-    return vec_proxy_2(x, false);
-  }
+  return vec_proxy_2(x, r_as_bool(recurse));
 }
 
 static
