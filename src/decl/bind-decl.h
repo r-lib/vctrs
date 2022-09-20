@@ -57,3 +57,6 @@ void df_c_fallback(r_obj* out,
                    r_ssize n_rows,
                    r_obj* name_spec,
                    struct name_repair_opts* name_repair);
+
+static
+bool df_needs_fallback(r_obj* x);

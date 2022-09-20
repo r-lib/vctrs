@@ -277,7 +277,7 @@ void df_c_fallback(r_obj* out,
     r_obj* ptype_col = r_list_get(ptype, i);
 
     // Recurse into df-cols
-    if (is_data_frame(ptype_col)) {
+    if (is_data_frame(ptype_col) && df_needs_fallback(ptype_col)) {
       r_obj* xs_col = KEEP(list_pluck(xs, i));
       r_obj* out_col = r_list_get(out, i);
       df_c_fallback(out_col, ptype_col, xs_col, n_rows, name_spec, name_repair);
@@ -300,6 +300,25 @@ void df_c_fallback(r_obj* out,
       FREE(1);
     }
   }
+}
+
+static
+bool df_needs_fallback(r_obj* x) {
+  r_ssize n_cols = r_length(x);
+  r_obj* const * v_x = r_list_cbegin(x);
+
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* col = v_x[i];
+
+    if (vec_is_common_class_fallback(col)) {
+      return true;
+    }
+    if (is_data_frame(col) && df_needs_fallback(col)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 
