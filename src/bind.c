@@ -248,9 +248,7 @@ r_obj* vec_rbind(r_obj* xs,
   }
 
   // Not optimal. Happens after the fallback columns have been
-  // assigned already, ideally they should be ignored. Also this is
-  // currently not recursive. Should we deal with this during
-  // restoration?
+  // assigned already, ideally they should be ignored.
   df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair);
 
   out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
