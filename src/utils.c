@@ -795,10 +795,12 @@ bool list_has_inner_vec_names(SEXP x, R_len_t size) {
 // [[ include("utils.h") ]]
 r_obj* list_pluck(r_obj* xs, r_ssize i) {
   r_ssize n = r_length(xs);
+  r_obj* const * v_xs = r_list_cbegin(xs);
+
   r_obj* out = KEEP(r_new_list(n));
 
   for (r_ssize j = 0; j < n; ++j) {
-    r_obj* x = r_list_get(xs, j);
+    r_obj* x = v_xs[j];
     if (x != r_null) {
       r_list_poke(out, j, r_list_get(x, i));
     }

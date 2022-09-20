@@ -47,9 +47,11 @@ static
 r_obj* df_proxy_recurse(r_obj* x) {
   r_obj* out = KEEP(r_clone(x));
 
-  for (r_ssize i = 0, n = r_length(out); i < n; ++i) {
-    r_obj* col = r_list_get(out, i);
-    r_list_poke(out, i, vec_proxy_recurse(col));
+  r_ssize n = r_length(out);
+  r_obj* const * v_out = r_list_cbegin(out);
+
+  for (r_ssize i = 0; i < n; ++i) {
+    r_list_poke(out, i, vec_proxy_recurse(v_out[i]));
   }
 
   FREE(1);

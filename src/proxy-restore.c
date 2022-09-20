@@ -186,10 +186,11 @@ r_obj* vec_bare_df_restore(r_obj* x,
       r_stop_internal("Shape of `x` doesn't match `to` in recursive df restoration.");
     };
 
+    r_obj* const * v_x = r_list_cbegin(x);
+    r_obj* const * v_to = r_list_cbegin(to);
+
     for (r_ssize i = 0; i < n_cols; ++i) {
-      r_obj* x_col = r_list_get(x, i);
-      r_obj* to_col = r_list_get(to, i);
-      r_obj* x_restored = vec_restore_recurse(x_col, to_col, owned);
+      r_obj* x_restored = vec_restore_recurse(v_x[i], v_to[i], owned);
       r_list_poke(x, i, x_restored);
     }
   }
