@@ -37,11 +37,7 @@ r_obj* vec_restore_4(r_obj* x,
 }
 
 r_obj* ffi_vec_restore(r_obj* x, r_obj* to, r_obj* recurse) {
-  if (r_lgl_get(recurse, 0)) {
-    return vec_restore_recurse(x, to, vec_owned(x));
-  } else {
-    return vec_restore(x, to, vec_owned(x));
-  }
+  return vec_restore_4(x, to, vec_owned(x), r_as_bool(recurse));
 }
 r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
   return vec_restore_recurse(x, to, vec_owned(x));
