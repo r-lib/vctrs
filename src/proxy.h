@@ -10,7 +10,7 @@ r_obj* vec_proxy_order(r_obj* x);
 r_obj* vec_proxy_recurse(r_obj* x);
 
 r_obj* vec_proxy_method(r_obj* x);
-r_obj* vec_proxy_invoke(r_obj* x, r_obj* method, bool recurse);
+r_obj* vec_proxy_invoke(r_obj* x, r_obj* method);
 r_obj* vec_proxy_unwrap(r_obj* x);
 
 #endif

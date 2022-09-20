@@ -12,9 +12,15 @@
 r_obj* vec_restore(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
   return vec_restore_4(x, to, owned, false);
 }
-
 r_obj* vec_restore_recurse(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
   return vec_restore_4(x, to, owned, true);
+}
+
+r_obj* ffi_vec_restore(r_obj* x, r_obj* to) {
+  return vec_restore_4(x, to, vec_owned(x), false);
+}
+r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
+  return vec_restore_4(x, to, vec_owned(x), true);
 }
 
 static
@@ -22,7 +28,13 @@ r_obj* vec_restore_4(r_obj* x,
                      r_obj* to,
                      const enum vctrs_owned owned,
                      bool recurse) {
-  switch (class_type(to)) {
+  enum vctrs_class_type to_type = class_type(to);
+
+  if (recurse && !class_type_is_data_frame(to_type) && is_data_frame(x)) {
+    return vec_df_restore(x, to, owned, recurse);
+  }
+
+  switch (to_type) {
   case VCTRS_CLASS_bare_factor:
   case VCTRS_CLASS_bare_ordered:
   case VCTRS_CLASS_none: return vec_restore_default(x, to, owned);
@@ -32,24 +44,16 @@ r_obj* vec_restore_4(r_obj* x,
   case VCTRS_CLASS_bare_data_frame:
   case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, owned, recurse);
   case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, owned, recurse);
-  default: return vec_restore_dispatch(x, to, recurse);
+  default: return vec_restore_dispatch(x, to);
   }
-}
-
-r_obj* ffi_vec_restore(r_obj* x, r_obj* to, r_obj* recurse) {
-  return vec_restore_4(x, to, vec_owned(x), r_as_bool(recurse));
-}
-r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
-  return vec_restore_recurse(x, to, vec_owned(x));
 }
 
 
 static
-r_obj* vec_restore_dispatch(r_obj* x, r_obj* to, bool recurse) {
-  return vctrs_dispatch3(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
+r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
+  return vctrs_dispatch2(syms_vec_restore_dispatch, fns_vec_restore_dispatch,
                          syms_x, x,
-                         syms_to, to,
-                         syms.recurse, r_lgl(recurse));
+                         syms_to, to);
 }
 
 
@@ -156,17 +160,12 @@ r_obj* ffi_vec_restore_default(r_obj* x, r_obj* to) {
 }
 
 
-// TODO: be recursive from the inside out.
-
-// Restore methods are passed the original atomic type back, so we
-// first restore data frames as such before calling the restore
-// method, if any
 r_obj* vec_df_restore(r_obj* x,
                       r_obj* to,
                       const enum vctrs_owned owned,
                       bool recurse) {
   r_obj* out = KEEP(vec_bare_df_restore(x, to, owned, recurse));
-  out = vec_restore_dispatch(out, to, recurse);
+  out = vec_restore_dispatch(out, to);
   FREE(1);
   return out;
 }
@@ -178,6 +177,15 @@ r_obj* vec_bare_df_restore(r_obj* x,
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_internal("Attempt to restore data frame from a %s.",
                     r_type_as_c_string(r_typeof(x)));
+  }
+
+  int n_prot = 0;
+
+  if (!is_data_frame(to)) {
+    to = KEEP_N(vec_proxy(to), &n_prot);
+    if (!is_data_frame(to)) {
+      r_stop_internal("Expected restoration target to have a df proxy.");
+    }
   }
 
   if (recurse) {
@@ -215,6 +223,7 @@ r_obj* vec_bare_df_restore(r_obj* x,
   }
 
   FREE(2);
+  FREE(n_prot);
   return x;
 }
 

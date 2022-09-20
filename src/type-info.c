@@ -27,7 +27,7 @@ struct vctrs_proxy_info vec_proxy_info(r_obj* x) {
     info.type = vec_base_typeof(x, false);
     info.proxy = x;
   } else {
-    r_obj* proxy = KEEP(vec_proxy_invoke(x, info.proxy_method, false));
+    r_obj* proxy = KEEP(vec_proxy_invoke(x, info.proxy_method));
     info.type = vec_base_typeof(proxy, true);
     info.proxy = proxy;
     FREE(1);

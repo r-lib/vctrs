@@ -75,7 +75,7 @@ test_that("arguments are not inlined in the dispatch call (#300)", {
     vec_proxy.vctrs_foobar = unclass
   )
   call <- vec_restore(foobar(list(1)), foobar(list(1)))
-  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, recurse = recurse)))
+  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to)))
 })
 
 test_that("restoring to non-bare data frames calls `vec_bare_df_restore()` before dispatching", {
@@ -130,7 +130,7 @@ test_that("names<- is not called with partial data (#1108)", {
   expect_equal(values, list(c("a", "b", "a", "b")))
 })
 
-test_that("proxy and restore pass `recurse` through `...`", {
+test_that("recursive proxy and restore work with recursive records", {
   new_recursive_rcrd <- function(x) {
     new_rcrd(
       list(field = x),
@@ -141,22 +141,10 @@ test_that("proxy and restore pass `recurse` through `...`", {
   internal <- new_rcrd(list(internal_field = 1:2))
   x <- new_recursive_rcrd(data_frame(col = internal))
 
-  local_methods(
-    vec_proxy.my_recursive_rcrd = function(x, ...) {
-      vec_proxy(field(x, "field"), ...)
-    },
-    vec_restore.my_recursive_rcrd = function(x, to, ...) {
-      out <- vec_restore(x, field(to, "field"), ...)
-      new_recursive_rcrd(out)
-    }
-  )
-
-  proxy <- vec_proxy(x, recurse = TRUE)
-  exp <- data_frame(col = data_frame(internal_field = 1:2))
+  proxy <- vec_proxy_recurse(x)
+  exp <- data_frame(field = data_frame(col = data_frame(internal_field = 1:2)))
   expect_equal(proxy, exp)
-
-  out <- vec_restore(proxy, x, recurse = TRUE)
-  expect_equal(out, x)
+  expect_equal(vec_restore_recurse(proxy, x), x)
 
   x_exp <- new_recursive_rcrd(data_frame(col = vec_rep(internal, 2)))
   expect_equal(

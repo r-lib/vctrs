@@ -20,6 +20,8 @@ enum vctrs_class_type {
 
 enum vctrs_class_type class_type(r_obj* x);
 
+bool class_type_is_data_frame(enum vctrs_class_type type);
+
 bool vec_is_partial(r_obj* x);
 
 

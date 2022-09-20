@@ -135,8 +135,8 @@
 #' @keywords internal
 #' @export
 vec_proxy <- function(x, ...) {
-  recurse <- match_recurse(...)
-  return(.Call(ffi_vec_proxy, x, recurse))
+  check_dots_empty0(...)
+  return(.Call(ffi_vec_proxy, x))
   UseMethod("vec_proxy")
 }
 #' @export
@@ -148,8 +148,8 @@ vec_proxy.default <- function(x, ...) {
 #' @param to The original vector to restore to.
 #' @export
 vec_restore <- function(x, to, ...) {
-  recurse <- match_recurse(...)
-  return(.Call(ffi_vec_restore, x, to, recurse))
+  check_dots_empty0(...)
+  return(.Call(ffi_vec_restore, x, to))
   UseMethod("vec_restore", to)
 }
 vec_restore_dispatch <- function(x, to, ...) {
@@ -163,16 +163,11 @@ vec_restore_default <- function(x, to, ...) {
   .Call(ffi_vec_restore_default, x, to)
 }
 
-match_recurse <- function(..., recurse = FALSE) {
-  check_dots_empty0(..., call = caller_env())
-  recurse
-}
-
 vec_proxy_recurse <- function(x, ...) {
-  vec_proxy(x, ..., recurse = TRUE)
+  .Call(ffi_vec_proxy_recurse, x)
 }
 vec_restore_recurse <- function(x, to, ...) {
-  vec_restore(x, to, ..., recurse = TRUE)
+  .Call(ffi_vec_restore_recurse, x, to)
 }
 
 #' Extract underlying data
