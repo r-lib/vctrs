@@ -413,11 +413,11 @@
       # Integers as rows
       suppressMessages(with_memory_prof(vec_rbind_list(ints)))
     Output
-      [1] 3.62KB
+      [1] 2.79KB
     Code
       suppressMessages(with_memory_prof(vec_rbind_list(named_ints)))
     Output
-      [1] 6.15KB
+      [1] 3.66KB
     Code
       # Data frame with named columns
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
@@ -425,7 +425,7 @@
       dfs <- rep(list(df), 100)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 13.8KB
+      [1] 11.3KB
     Code
       # Data frame with rownames (non-repaired, non-recursive case)
       df <- data_frame(x = 1:2)
@@ -433,13 +433,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 8.51KB
+      [1] 7.68KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 14.7KB
+      [1] 13.8KB
     Code
       # Data frame with rownames (non-repaired, recursive case) (#1217)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
@@ -447,11 +447,11 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 15.5KB
+      [1] 13.8KB
     Code
       # Data frame with rownames (repaired, recursive case) (#1217)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 27.8KB
+      [1] 26.2KB
 

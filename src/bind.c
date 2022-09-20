@@ -275,15 +275,15 @@ void df_c_fallback(r_obj* out,
 
   for (r_ssize i = 0; i < n_cols; ++i) {
     r_obj* ptype_col = r_list_get(ptype, i);
-    r_obj* xs_col = KEEP(list_pluck(xs, i));
 
     // Recurse into df-cols
     if (is_data_frame(ptype_col)) {
+      r_obj* xs_col = KEEP(list_pluck(xs, i));
       r_obj* out_col = r_list_get(out, i);
       df_c_fallback(out_col, ptype_col, xs_col, n_rows, name_spec, name_repair);
-    }
-
-    if (vec_is_common_class_fallback(ptype_col)) {
+      FREE(1);
+    } else if (vec_is_common_class_fallback(ptype_col)) {
+      r_obj* xs_col = KEEP(list_pluck(xs, i));
       r_obj* out_col = vec_c_fallback(ptype_col, xs_col, name_spec, name_repair);
       r_list_poke(out, i, out_col);
 
@@ -296,9 +296,9 @@ void df_c_fallback(r_obj* out,
       // Remove fallback vector from the ptype so it doesn't get in
       // the way of restoration later on
       r_list_poke(ptype, i, vec_slice(out_col, r_null));
-    }
 
-    FREE(1);
+      FREE(1);
+    }
   }
 }
 
