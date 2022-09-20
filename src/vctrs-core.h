@@ -27,6 +27,11 @@ enum vctrs_owned {
   VCTRS_OWNED_true
 };
 
+enum vctrs_recurse {
+  VCTRS_RECURSE_false = 0,
+  VCTRS_RECURSE_true
+};
+
 
 /**
  * Structure for argument tags

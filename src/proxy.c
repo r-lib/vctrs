@@ -4,10 +4,10 @@
 
 
 r_obj* vec_proxy(r_obj* x) {
-  return vec_proxy_2(x, false);
+  return vec_proxy_2(x, VCTRS_RECURSE_false);
 }
 r_obj* vec_proxy_recurse(r_obj* x) {
-  return vec_proxy_2(x, true);
+  return vec_proxy_2(x, VCTRS_RECURSE_true);
 }
 
 static

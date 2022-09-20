@@ -10,17 +10,17 @@
 // call `vec_clone_referenced()`, which won't attempt to clone if we know we
 // own the object. See #1151.
 r_obj* vec_restore(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
-  return vec_restore_4(x, to, owned, false);
+  return vec_restore_4(x, to, owned, VCTRS_RECURSE_false);
 }
 r_obj* vec_restore_recurse(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
-  return vec_restore_4(x, to, owned, true);
+  return vec_restore_4(x, to, owned, VCTRS_RECURSE_true);
 }
 
 r_obj* ffi_vec_restore(r_obj* x, r_obj* to) {
-  return vec_restore_4(x, to, vec_owned(x), false);
+  return vec_restore_4(x, to, vec_owned(x), VCTRS_RECURSE_false);
 }
 r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
-  return vec_restore_4(x, to, vec_owned(x), true);
+  return vec_restore_4(x, to, vec_owned(x), VCTRS_RECURSE_true);
 }
 
 static
@@ -162,8 +162,8 @@ r_obj* ffi_vec_restore_default(r_obj* x, r_obj* to) {
 
 r_obj* vec_df_restore(r_obj* x,
                       r_obj* to,
-                      const enum vctrs_owned owned,
-                      bool recurse) {
+                      enum vctrs_owned owned,
+                      enum vctrs_recurse recurse) {
   r_obj* out = KEEP(vec_bare_df_restore(x, to, owned, recurse));
   out = vec_restore_dispatch(out, to);
   FREE(1);
@@ -173,7 +173,7 @@ r_obj* vec_df_restore(r_obj* x,
 r_obj* vec_bare_df_restore(r_obj* x,
                            r_obj* to,
                            const enum vctrs_owned owned,
-                           bool recurse) {
+                           enum vctrs_recurse recurse) {
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_internal("Attempt to restore data frame from a %s.",
                     r_type_as_c_string(r_typeof(x)));
