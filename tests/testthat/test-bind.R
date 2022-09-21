@@ -39,11 +39,11 @@ test_that("incompatible columns throws common type error", {
       class = "vctrs_error_incompatible_type"
     ))
     (expect_error(
-      vec_rbind(x_int, x_chr, .call = call("foo")),
+      vec_rbind(x_int, x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"
     ))
     (expect_error(
-      vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      vec_rbind(x_int, x_chr, .ptype = x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"
     ))
   })
@@ -221,7 +221,7 @@ test_that("can construct an id column", {
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
   expect_snapshot({
     (expect_error(vec_rbind(array(NA, c(1, 1, 1)))))
-    (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .error_call = call("foo"))))
   })
 })
 
@@ -497,7 +497,7 @@ test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
   expect_snapshot({
     (expect_error(vec_rbind(.names_to = letters)))
     (expect_error(vec_rbind(.names_to = 10)))
-    (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
+    (expect_error(vec_rbind(.names_to = letters, .error_call = call("foo"))))
   })
 
   x <- data_frame(foo = 1:2, bar = 3:4)
@@ -752,7 +752,7 @@ test_that("rbind repairs names of data frames (#704)", {
       class = "vctrs_error_names_must_be_unique"
     ))
     (expect_error(
-      vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo")),
+      vec_rbind(df, df, .name_repair = "check_unique", .error_call = call("foo")),
       class = "vctrs_error_names_must_be_unique"
     ))
   })
@@ -995,7 +995,7 @@ test_that("can't zap names when `.names_to` is supplied", {
       vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
     ))
     (expect_error(
-      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call("foo"))
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .error_call = call("foo"))
     ))
   })
 })
