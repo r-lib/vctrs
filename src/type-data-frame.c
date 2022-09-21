@@ -175,22 +175,22 @@ r_obj* ffi_data_frame(r_obj* x,
                       r_obj* size,
                       r_obj* name_repair,
                       r_obj* frame) {
-  struct r_lazy call = { .x = syms_dot_call, .env = frame };
+  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
                                                                   lazy_args.dot_name_repair,
                                                                   false,
-                                                                  call);
+                                                                  error_call);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == r_null) {
-    c_size = vec_check_size_common(x, 0, vec_args.empty, call);
+    c_size = vec_check_size_common(x, 0, vec_args.empty, error_call);
   } else {
-    c_size = vec_as_short_length(size, vec_args.dot_size, call);
+    c_size = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
 
-  r_obj* out = data_frame(x, c_size, &name_repair_opts, call);
+  r_obj* out = data_frame(x, c_size, &name_repair_opts, error_call);
 
   FREE(1);
   return out;
@@ -200,9 +200,9 @@ static
 r_obj* data_frame(r_obj* x,
                   r_ssize size,
                   const struct name_repair_opts* p_name_repair_opts,
-                  struct r_lazy call) {
+                  struct r_lazy error_call) {
   const bool unpack = true;
-  r_obj* out = KEEP(df_list(x, size, unpack, p_name_repair_opts, call));
+  r_obj* out = KEEP(df_list(x, size, unpack, p_name_repair_opts, error_call));
   out = new_data_frame(out, size);
   FREE(1);
   return out;

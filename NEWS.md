@@ -74,7 +74,7 @@
 * `num_as_location()` now works correctly when a combination of `zero = "error"`
   and `negative = "invert"` are used (#1612).
 
-* `data_frame()` and `df_list()` have gained `.call` arguments (#1610).
+* `data_frame()` and `df_list()` have gained `.error_call` arguments (#1610).
 
 * `vec_locate_matches()` has gained a `call` argument (#1611).
 
