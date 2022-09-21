@@ -143,3 +143,23 @@ vec_unchop <- function(x,
     name_repair = name_repair
   )
 }
+
+#' Missing values
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `vec_equal_na()` has been renamed to [vec_detect_missing()] and is deprecated
+#' as of vctrs 0.5.0.
+#'
+#' @inheritParams vec_detect_missing
+#'
+#' @return
+#' A logical vector the same size as `x`.
+#'
+#' @keywords internal
+#' @export
+vec_equal_na <- function(x) {
+  lifecycle::deprecate_soft("0.5.0", "vec_equal_na()", "vec_detect_missing()")
+  vec_detect_missing(x)
+}

@@ -69,6 +69,7 @@ reference:
   contents:
   - vec_equal
   - vec_detect_complete
+  - vec_detect_missing
   - vec_compare
 
 - title: Sorting
