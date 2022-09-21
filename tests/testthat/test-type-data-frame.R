@@ -453,9 +453,9 @@ test_that("data_frame() and df_list() report error context", {
     (expect_error(data_frame(a = 1:2, b = int(), .error_call = call("foo"))))
 
     (expect_error(df_list(a = 1, a = 1)))
-    (expect_error(df_list(a = 1, a = 1, .call = call("foo"))))
+    (expect_error(df_list(a = 1, a = 1, .error_call = call("foo"))))
     (expect_error(df_list(a = 1:2, b = int())))
-    (expect_error(df_list(a = 1:2, b = int(), .call = call("foo"))))
+    (expect_error(df_list(a = 1:2, b = int(), .error_call = call("foo"))))
   })
 })
 

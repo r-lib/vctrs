@@ -90,7 +90,7 @@ df_list <- function(...,
                     .size = NULL,
                     .unpack = TRUE,
                     .name_repair = c("check_unique", "unique", "universal", "minimal"),
-                    .call = current_env()) {
+                    .error_call = current_env()) {
   .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
