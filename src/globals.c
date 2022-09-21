@@ -51,6 +51,7 @@ void vctrs_init_globals(r_obj* ns) {
   syms.arg = r_sym("arg");
   syms.dot_arg = r_sym(".arg");
   syms.dot_call = r_sym(".call");
+  syms.dot_error_call = r_sym(".error_call");
   syms.haystack_arg = r_sym("haystack_arg");
   syms.needles_arg = r_sym("needles_arg");
   syms.repair_arg = r_sym("repair_arg");
