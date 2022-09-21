@@ -22,7 +22,7 @@ r_obj* vec_locate_matches(r_obj* needles,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
                           struct vctrs_arg* haystack_arg,
-                          struct r_lazy call);
+                          struct r_lazy error_call);
 
 static
 r_obj* df_locate_matches(r_obj* needles,
@@ -40,7 +40,7 @@ r_obj* df_locate_matches(r_obj* needles,
                          const enum vctrs_ops* v_ops,
                          struct vctrs_arg* needles_arg,
                          struct vctrs_arg* haystack_arg,
-                         struct r_lazy call);
+                         struct r_lazy error_call);
 
 static
 void df_locate_matches_recurse(r_ssize col,
@@ -167,7 +167,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
                               struct vctrs_arg* haystack_arg,
-                              struct r_lazy call);
+                              struct r_lazy error_call);
 
 static
 r_obj* compute_nesting_container_info(r_obj* haystack,

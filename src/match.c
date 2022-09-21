@@ -85,7 +85,7 @@ r_obj* ffi_locate_matches(r_obj* needles,
                           r_obj* needles_arg,
                           r_obj* haystack_arg,
                           r_obj* frame) {
-  struct r_lazy call = { .x = syms_call, .env = frame };
+  struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
   struct r_lazy internal_call = { .x = frame, .env = r_null };
 
   const struct vctrs_incomplete c_incomplete = parse_incomplete(incomplete, internal_call);
@@ -110,7 +110,7 @@ r_obj* ffi_locate_matches(r_obj* needles,
     chr_proxy_collate,
     &c_needles_arg,
     &c_haystack_arg,
-    call
+    error_call
   );
 }
 
@@ -127,7 +127,7 @@ r_obj* vec_locate_matches(r_obj* needles,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
                           struct vctrs_arg* haystack_arg,
-                          struct r_lazy call) {
+                          struct r_lazy error_call) {
   int n_prot = 0;
 
   int _;
@@ -136,7 +136,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     haystack,
     needles_arg,
     haystack_arg,
-    call,
+    error_call,
     DF_FALLBACK_quiet,
     &_
   ), &n_prot);
@@ -146,7 +146,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     ptype,
     needles_arg,
     vec_args.empty,
-    call,
+    error_call,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -156,7 +156,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     ptype,
     haystack_arg,
     vec_args.empty,
-    call,
+    error_call,
     DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
@@ -195,7 +195,7 @@ r_obj* vec_locate_matches(r_obj* needles,
 
   if (n_cols == 0) {
     // If there are no columns, this operation isn't well defined.
-    r_abort_lazy_call(call, "Must have at least 1 column to match on.");
+    r_abort_lazy_call(error_call, "Must have at least 1 column to match on.");
   }
 
   // Compute the locations of incomplete values per column since computing
@@ -236,7 +236,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     v_ops,
     needles_arg,
     haystack_arg,
-    call
+    error_call
   );
 
   FREE(n_prot);
@@ -261,7 +261,7 @@ r_obj* df_locate_matches(r_obj* needles,
                          const enum vctrs_ops* v_ops,
                          struct vctrs_arg* needles_arg,
                          struct vctrs_arg* haystack_arg,
-                         struct r_lazy call) {
+                         struct r_lazy error_call) {
   int n_prot = 0;
 
   r_obj* o_needles = KEEP_N(vec_order(
@@ -460,7 +460,7 @@ r_obj* df_locate_matches(r_obj* needles,
     p_haystack,
     needles_arg,
     haystack_arg,
-    call
+    error_call
   ), &n_prot);
 
   FREE(n_prot);
@@ -1568,7 +1568,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const struct poly_df_data* p_haystack,
                               struct vctrs_arg* needles_arg,
                               struct vctrs_arg* haystack_arg,
-                              struct r_lazy call) {
+                              struct r_lazy error_call) {
   int n_prot = 0;
 
   const r_ssize n_used = p_loc_first_match_o_haystack->count;
@@ -1678,7 +1678,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_INCOMPLETE_ACTION_error: {
-        stop_matches_incomplete(loc_needles, needles_arg, call);
+        stop_matches_incomplete(loc_needles, needles_arg, error_call);
       }
       case VCTRS_INCOMPLETE_ACTION_compare:
       case VCTRS_INCOMPLETE_ACTION_match: {
@@ -1711,7 +1711,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         continue;
       }
       case VCTRS_NO_MATCH_ACTION_error: {
-        stop_matches_nothing(loc_needles, needles_arg, haystack_arg, call);
+        stop_matches_nothing(loc_needles, needles_arg, haystack_arg, error_call);
       }
       default: {
         r_stop_internal("Unknown `no_match->action`.");
@@ -1760,9 +1760,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
       if (any_multiple) {
         if (multiple == VCTRS_MULTIPLE_error) {
-          stop_matches_multiple(loc_needles, needles_arg, haystack_arg, call);
+          stop_matches_multiple(loc_needles, needles_arg, haystack_arg, error_call);
         } else if (multiple == VCTRS_MULTIPLE_warning) {
-          warn_matches_multiple(loc_needles, needles_arg, haystack_arg, call);
+          warn_matches_multiple(loc_needles, needles_arg, haystack_arg, error_call);
         }
 
         // We know there are multiple and don't need to continue checking
@@ -1923,7 +1923,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       }
 
       if (remaining->action == VCTRS_REMAINING_ACTION_error) {
-        stop_matches_remaining(i, needles_arg, haystack_arg, call);
+        stop_matches_remaining(i, needles_arg, haystack_arg, error_call);
       }
 
       // Overwrite with location, this moves all "remaining" locations to the

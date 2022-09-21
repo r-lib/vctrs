@@ -9,7 +9,7 @@
 ---
 
     Code
-      vec_locate_matches(data_frame(), data_frame(), call = call("foo"))
+      vec_locate_matches(data_frame(), data_frame(), error_call = call("foo"))
     Condition
       Error in `foo()`:
       ! Must have at least 1 column to match on.
@@ -25,7 +25,7 @@
 ---
 
     Code
-      vec_locate_matches(x, y, needles_arg = "x", call = call("foo"))
+      vec_locate_matches(x, y, needles_arg = "x", error_call = call("foo"))
     Condition
       Error in `foo()`:
       ! Can't combine `x` <double> and <character>.
@@ -49,7 +49,7 @@
       x The element at location 1 contains missing values.
     Code
       (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo",
-        call = call("fn"))))
+        error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_incomplete>
       Error in `fn()`:
@@ -78,7 +78,8 @@
       Error in `vec_locate_matches()`:
       ! `incomplete` must be one of: "compare", "match", "drop", or "error".
     Code
-      (expect_error(vec_locate_matches(1, 2, incomplete = "x", call = call("fn"))))
+      (expect_error(vec_locate_matches(1, 2, incomplete = "x", error_call = call("fn")))
+      )
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
@@ -103,7 +104,7 @@
       x The element at location 1 has multiple matches.
     Code
       (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error",
-      needles_arg = "foo", call = call("fn"))))
+      needles_arg = "foo", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_multiple>
       Error in `fn()`:
@@ -137,7 +138,7 @@
       x The element at location 1 has multiple matches.
     Code
       (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning",
-      needles_arg = "foo", call = call("fn"))))
+      needles_arg = "foo", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_multiple>
       Warning in `fn()`:
@@ -173,7 +174,8 @@
       Error in `vec_locate_matches()`:
       ! `multiple` must be one of "all", "any", "first", "last", "warning", or "error".
     Code
-      (expect_error(vec_locate_matches(1, 2, multiple = "x", call = call("fn"))))
+      (expect_error(vec_locate_matches(1, 2, multiple = "x", error_call = call("fn")))
+      )
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
@@ -198,7 +200,7 @@
       x The element at location 1 does not have a match.
     Code
       (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo",
-        call = call("fn"))))
+        error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_nothing>
       Error in `fn()`:
@@ -246,7 +248,8 @@
       Error in `vec_locate_matches()`:
       ! `no_match` must be either "drop" or "error".
     Code
-      (expect_error(vec_locate_matches(1, 2, no_match = "x", call = call("fn"))))
+      (expect_error(vec_locate_matches(1, 2, no_match = "x", error_call = call("fn")))
+      )
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
@@ -271,7 +274,7 @@
       x The value at location 1 was not matched.
     Code
       (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo",
-        call = call("fn"))))
+        error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_remaining>
       Error in `fn()`:
@@ -308,7 +311,8 @@
       Error in `vec_locate_matches()`:
       ! `remaining` must be either "drop" or "error".
     Code
-      (expect_error(vec_locate_matches(1, 2, remaining = "x", call = call("fn"))))
+      (expect_error(vec_locate_matches(1, 2, remaining = "x", error_call = call("fn")))
+      )
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:

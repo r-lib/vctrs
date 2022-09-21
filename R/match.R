@@ -243,7 +243,7 @@ vec_locate_matches <- function(needles,
                                chr_proxy_collate = NULL,
                                needles_arg = "",
                                haystack_arg = "",
-                               call = current_env()) {
+                               error_call = current_env()) {
   check_dots_empty0(...)
   frame <- environment()
 
