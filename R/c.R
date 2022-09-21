@@ -69,7 +69,7 @@ vec_c <- function(...,
                   .ptype = NULL,
                   .name_spec = NULL,
                   .name_repair = c("minimal", "unique", "check_unique", "universal"),
-                  .call = current_env()) {
+                  .error_call = current_env()) {
   .External2(ffi_vec_c, .ptype, .name_spec, .name_repair)
 }
 vec_c <- fn_inline_formals(vec_c, ".name_repair")

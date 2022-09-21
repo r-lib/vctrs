@@ -1,7 +1,7 @@
 # common type failure uses error call (#1641)
 
     Code
-      vec_c("x", 1, .call = call("foo"))
+      vec_c("x", 1, .error_call = call("foo"))
     Condition
       Error in `foo()`:
       ! Can't combine `..1` <character> and `..2` <double>.
@@ -9,7 +9,7 @@
 ---
 
     Code
-      vec_c("x", .ptype = integer(), .call = call("foo"))
+      vec_c("x", .ptype = integer(), .error_call = call("foo"))
     Condition
       Error in `foo()`:
       ! Can't convert <character> to <integer>.
@@ -52,7 +52,7 @@
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
-      (expect_error(vec_c(x, y, .call = call("foo")), class = "vctrs_error_incompatible_type")
+      (expect_error(vec_c(x, y, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
       )
     Output
       <error/vctrs_error_incompatible_type>
@@ -76,7 +76,7 @@
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
-      (expect_error(vec_c(joe, jane, .call = call("foo")), class = "vctrs_error_incompatible_type")
+      (expect_error(vec_c(joe, jane, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
       )
     Output
       <error/vctrs_error_incompatible_type>
@@ -105,8 +105,8 @@
       Error in `vec_c()`:
       ! Can't convert <vctrs_foobar> to <character>.
     Code
-      (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .call = call("foo"),
-      .name_spec = "{outer}_{inner}"))))
+      (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .error_call = call(
+        "foo"), .name_spec = "{outer}_{inner}"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
