@@ -20,7 +20,7 @@ vec_cbind(
   .ptype = NULL,
   .size = NULL,
   .name_repair = c("unique", "universal", "check_unique", "minimal"),
-  .call = current_env()
+  .error_call = current_env()
 )
 }
 \arguments{
@@ -83,11 +83,6 @@ mentioned in error messages as the source of the error. See the
 
 Alternatively, specify the desired number of rows, and any inputs of length
 1 will be recycled appropriately.}
-
-\item{.call}{The execution environment of a currently
-running function, e.g. \code{caller_env()}. The function will be
-mentioned in error messages as the source of the error. See the
-\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 A data frame, or subclass of data frame.

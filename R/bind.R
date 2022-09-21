@@ -195,7 +195,7 @@ vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
                       .name_repair = c("unique", "universal", "check_unique", "minimal"),
-                      .call = current_env()) {
+                      .error_call = current_env()) {
   .External2(ffi_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")

@@ -89,7 +89,7 @@
       Error in `vec_cbind()`:
       ! `..1` must be a vector, not a <vctrs_foobar> object.
     Code
-      (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+      (expect_error(vec_cbind(foobar(list()), .error_call = call("foo"))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `foo()`:
@@ -101,7 +101,7 @@
       Error in `vec_cbind()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
     Code
-      (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+      (expect_error(vec_cbind(a = 1:2, b = int(), .error_call = call("foo"))))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `foo()`:
@@ -179,7 +179,7 @@
       Error in `vec_cbind()`:
       ! Can't bind arrays.
     Code
-      (expect_error(vec_cbind(a, .call = call("foo"))))
+      (expect_error(vec_cbind(a, .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:

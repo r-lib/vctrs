@@ -24,19 +24,19 @@ r_obj* vec_cbind(r_obj* xs,
                  r_obj* ptype,
                  r_obj* size,
                  struct name_repair_opts* name_repair,
-                 struct r_lazy call);
+                 struct r_lazy error_call);
 
 static
 r_obj* cbind_names_to(bool has_names,
                       r_obj* names_to,
                       r_obj* ptype,
-                      struct r_lazy call);
+                      struct r_lazy error_call);
 
 static
 r_obj* as_df_col(r_obj* x,
                  r_obj* outer,
                  bool* allow_pack,
-                 struct r_lazy call);
+                 struct r_lazy error_call);
 
 static
 r_obj* cbind_container_type(r_obj* x, void* data);

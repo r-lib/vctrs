@@ -84,7 +84,7 @@
 * `num_as_location()` has a new `oob = "remove"` argument to remove
   out-of-bounds locations (#1595).
 
-* `vec_rbind()` and `vec_cbind()` now have `.call` arguments (#1597).
+* `vec_rbind()` and `vec_cbind()` now have `.error_call` arguments (#1597).
 
 * `df_list()` has gained a new `.unpack` argument to optionally disable data
   frame unpacking (#1616).

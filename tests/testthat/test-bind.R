@@ -396,10 +396,10 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 test_that("vec_cbind() reports error context", {
   expect_snapshot({
     (expect_error(vec_cbind(foobar(list()))))
-    (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+    (expect_error(vec_cbind(foobar(list()), .error_call = call("foo"))))
 
     (expect_error(vec_cbind(a = 1:2, b = int())))
-    (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+    (expect_error(vec_cbind(a = 1:2, b = int(), .error_call = call("foo"))))
   })
 })
 
@@ -597,7 +597,7 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
 
   expect_snapshot({
     (expect_error(vec_cbind(a)))
-    (expect_error(vec_cbind(a, .call = call("foo"))))
+    (expect_error(vec_cbind(a, .error_call = call("foo"))))
     (expect_error(vec_cbind(x = a)))
   })
 })
