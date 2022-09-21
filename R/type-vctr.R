@@ -103,7 +103,7 @@ names_repair_missing <- function(x) {
     return(x)
   }
 
-  missing <- vec_equal_na(x)
+  missing <- vec_detect_missing(x)
 
   if (any(missing)) {
     # We never want to allow `NA_character_` names to slip through, but
@@ -404,13 +404,13 @@ as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
 
 #' @export
 is.na.vctrs_vctr <- function(x) {
-  vec_equal_na(x)
+  vec_detect_missing(x)
 }
 
 #' @importFrom stats na.fail
 #' @export
 na.fail.vctrs_vctr <- function(object, ...) {
-  missing <- vec_equal_na(object)
+  missing <- vec_detect_missing(object)
 
   if (any(missing)) {
     # Return the same error as `na.fail.default()`
@@ -436,7 +436,7 @@ na_remove <- function(x, type) {
   # The only difference between `na.omit()` and `na.exclude()` is the class
   # of the `na.action` attribute
 
-  missing <- vec_equal_na(x)
+  missing <- vec_detect_missing(x)
 
   if (!any(missing)) {
     return(x)

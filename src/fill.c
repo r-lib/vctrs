@@ -26,7 +26,7 @@ static
 SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_fill) {
   r_ssize size = vec_size(x);
 
-  SEXP na = PROTECT(vec_equal_na(x));
+  SEXP na = PROTECT(vec_detect_missing(x));
   const int* p_na = LOGICAL_RO(na);
 
   SEXP loc = PROTECT(r_new_integer(size));

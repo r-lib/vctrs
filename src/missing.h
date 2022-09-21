@@ -6,7 +6,7 @@
 
 // -----------------------------------------------------------------------------
 
-r_obj* vec_equal_na(r_obj* x);
+r_obj* vec_detect_missing(r_obj* x);
 bool vec_any_missing(r_obj* x);
 r_ssize vec_first_missing(r_obj* x);
 

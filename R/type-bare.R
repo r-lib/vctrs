@@ -414,7 +414,7 @@ vec_proxy_order.list <- function(x, ...) {
   # This allows list elements to be grouped in `vec_order()`.
   # Have to separately ensure missing values are propagated.
   out <- vec_duplicate_id(x)
-  na <- vec_equal_na(x)
+  na <- vec_detect_missing(x)
   out <- vec_assign(out, na, NA_integer_)
   out
 }

@@ -1,57 +1,57 @@
 static inline
-r_obj* proxy_equal_na(r_obj* proxy);
+r_obj* proxy_detect_missing(r_obj* proxy);
 
 static inline
-r_obj* lgl_equal_na(r_obj* x);
+r_obj* lgl_detect_missing(r_obj* x);
 static inline
-r_obj* int_equal_na(r_obj* x);
+r_obj* int_detect_missing(r_obj* x);
 static inline
-r_obj* dbl_equal_na(r_obj* x);
+r_obj* dbl_detect_missing(r_obj* x);
 static inline
-r_obj* cpl_equal_na(r_obj* x);
+r_obj* cpl_detect_missing(r_obj* x);
 static inline
-r_obj* raw_equal_na(r_obj* x);
+r_obj* raw_detect_missing(r_obj* x);
 static inline
-r_obj* chr_equal_na(r_obj* x);
+r_obj* chr_detect_missing(r_obj* x);
 static inline
-r_obj* list_equal_na(r_obj* x);
+r_obj* list_detect_missing(r_obj* x);
 
 static inline
-r_obj* df_equal_na(r_obj* x);
+r_obj* df_detect_missing(r_obj* x);
 
 static inline
-r_ssize col_equal_na(r_obj* x,
-                     r_ssize* v_loc,
-                     r_ssize loc_size);
+r_ssize col_detect_missing(r_obj* x,
+                           r_ssize* v_loc,
+                           r_ssize loc_size);
 
 static inline
-r_ssize lgl_col_equal_na(r_obj* x,
-                         r_ssize* v_loc,
-                         r_ssize loc_size);
+r_ssize lgl_col_detect_missing(r_obj* x,
+                               r_ssize* v_loc,
+                               r_ssize loc_size);
 static inline
-r_ssize int_col_equal_na(r_obj* x,
-                         r_ssize* v_loc,
-                         r_ssize loc_size);
+r_ssize int_col_detect_missing(r_obj* x,
+                               r_ssize* v_loc,
+                               r_ssize loc_size);
 static inline
-r_ssize dbl_col_equal_na(r_obj* x,
-                         r_ssize* v_loc,
-                         r_ssize loc_size);
+r_ssize dbl_col_detect_missing(r_obj* x,
+                               r_ssize* v_loc,
+                               r_ssize loc_size);
 static inline
-r_ssize cpl_col_equal_na(r_obj* x,
-                         r_ssize* v_loc,
-                         r_ssize loc_size);
+r_ssize cpl_col_detect_missing(r_obj* x,
+                               r_ssize* v_loc,
+                               r_ssize loc_size);
 static inline
-r_ssize raw_col_equal_na(r_obj* x,
-                         r_ssize* v_loc,
-                         r_ssize loc_size);
+r_ssize raw_col_detect_missing(r_obj* x,
+                               r_ssize* v_loc,
+                               r_ssize loc_size);
 static inline
-r_ssize chr_col_equal_na(r_obj* x,
-                         r_ssize* v_loc,
-                         r_ssize loc_size);
+r_ssize chr_col_detect_missing(r_obj* x,
+                               r_ssize* v_loc,
+                               r_ssize loc_size);
 static inline
-r_ssize list_col_equal_na(r_obj* x,
-                          r_ssize* v_loc,
-                          r_ssize loc_size);
+r_ssize list_col_detect_missing(r_obj* x,
+                                r_ssize* v_loc,
+                                r_ssize loc_size);
 
 static inline
 r_ssize proxy_first_missing(r_obj* proxy);
