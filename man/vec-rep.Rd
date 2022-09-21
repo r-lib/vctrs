@@ -7,13 +7,20 @@
 \alias{vec_unrep}
 \title{Repeat a vector}
 \usage{
-vec_rep(x, times, ..., call = current_env(), x_arg = "x", times_arg = "times")
+vec_rep(
+  x,
+  times,
+  ...,
+  error_call = current_env(),
+  x_arg = "x",
+  times_arg = "times"
+)
 
 vec_rep_each(
   x,
   times,
   ...,
-  call = current_env(),
+  error_call = current_env(),
   x_arg = "x",
   times_arg = "times"
 )
@@ -32,7 +39,7 @@ the size of \code{x}.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{call}{The execution environment of a currently
+\item{error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}

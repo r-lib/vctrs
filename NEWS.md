@@ -28,7 +28,7 @@
 * `vec_compare()` now throws a more informative error when attempting to compare
   complex vectors (#1655).
 
-* `vec_rep()` and friends gain `call`, `x_arg`, and `times_arg`
+* `vec_rep()` and friends gain `error_call`, `x_arg`, and `times_arg`
   arguments so they can be embedded in frontends (#1303).
 
 * Record vectors now fail as expected when indexed along dimensions

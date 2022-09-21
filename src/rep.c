@@ -6,10 +6,10 @@
 static
 r_obj* vec_rep(r_obj* x,
                int times,
-               struct r_lazy call,
+               struct r_lazy error_call,
                struct vctrs_arg* p_x_arg,
                struct vctrs_arg* p_times_arg) {
-  check_rep_times(times, call, p_times_arg);
+  check_rep_times(times, error_call, p_times_arg);
 
   if (times == 1) {
     return x;
@@ -19,11 +19,11 @@ r_obj* vec_rep(r_obj* x,
   const r_ssize x_size = vec_size(x);
 
   if (x_size == 1) {
-    return vec_check_recycle(x, times_, p_x_arg, call);
+    return vec_check_recycle(x, times_, p_x_arg, error_call);
   }
 
   if (multiply_would_overflow(x_size, times_)) {
-    stop_rep_size_oob(call);
+    stop_rep_size_oob(error_call);
   };
 
   const r_ssize size = x_size * times_;
@@ -46,7 +46,7 @@ r_obj* vec_rep(r_obj* x,
 }
 
 r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times, r_obj* frame) {
-  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
 
   struct r_lazy x_arg_lazy = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
@@ -58,14 +58,14 @@ r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times, r_obj* frame) {
                             r_globals.empty_int,
                             &times_arg,
                             vec_args.empty,
-                            call));
+                            error_call));
 
   if (vec_size(ffi_times) != 1) {
-    stop_rep_times_size(call, &times_arg);
+    stop_rep_times_size(error_call, &times_arg);
   }
 
   const int times = r_int_get(ffi_times, 0);
-  r_obj* out = vec_rep(x, times, call, &x_arg, &times_arg);
+  r_obj* out = vec_rep(x, times, error_call, &x_arg, &times_arg);
 
   FREE(1);
   return out;
@@ -77,14 +77,14 @@ r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times, r_obj* frame) {
 static
 r_obj* vec_rep_each(r_obj* x,
                     r_obj* times,
-                    struct r_lazy call,
+                    struct r_lazy error_call,
                     struct vctrs_arg* p_x_arg,
                     struct vctrs_arg* p_times_arg) {
   times = KEEP(vec_cast(times,
                         r_globals.empty_int,
                         p_times_arg,
                         vec_args.empty,
-                        call));
+                        error_call));
 
   const r_ssize times_size = vec_size(times);
 
@@ -96,12 +96,12 @@ r_obj* vec_rep_each(r_obj* x,
     if (times_ == 1) {
       out = x;
     } else if (times_ == 0) {
-      out = vec_ptype(x, p_x_arg, call);
+      out = vec_ptype(x, p_x_arg, error_call);
     } else {
-      out = vec_rep_each_uniform(x, times_, call, p_times_arg);
+      out = vec_rep_each_uniform(x, times_, error_call, p_times_arg);
     }
   } else {
-    out = vec_rep_each_impl(x, times, times_size, call, p_times_arg);
+    out = vec_rep_each_impl(x, times, times_size, error_call, p_times_arg);
   }
 
   FREE(1);
@@ -109,7 +109,7 @@ r_obj* vec_rep_each(r_obj* x,
 }
 
 r_obj* ffi_vec_rep_each(r_obj* x, r_obj* times, r_obj* frame) {
-  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
 
   struct r_lazy x_arg_lazy = { .x = syms.times_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
@@ -117,7 +117,7 @@ r_obj* ffi_vec_rep_each(r_obj* x, r_obj* times, r_obj* frame) {
   struct r_lazy times_arg_lazy = { .x = syms.times_arg, .env = frame };
   struct vctrs_arg times_arg = new_lazy_arg(&times_arg_lazy);
 
-  return vec_rep_each(x, times, call, &x_arg, &times_arg);
+  return vec_rep_each(x, times, error_call, &x_arg, &times_arg);
 }
 
 
@@ -126,15 +126,15 @@ r_obj* ffi_vec_rep_each(r_obj* x, r_obj* times, r_obj* frame) {
 static
 r_obj* vec_rep_each_uniform(r_obj* x,
                             int times,
-                            struct r_lazy call,
+                            struct r_lazy error_call,
                             struct vctrs_arg* p_times_arg) {
-  check_rep_each_times(times, 1, call, p_times_arg);
+  check_rep_each_times(times, 1, error_call, p_times_arg);
 
   const r_ssize times_ = (r_ssize) times;
   const r_ssize x_size = vec_size(x);
 
   if (multiply_would_overflow(x_size, times_)) {
-    stop_rep_size_oob(call);
+    stop_rep_size_oob(error_call);
   };
 
   const r_ssize size = x_size * times_;
@@ -159,7 +159,7 @@ r_obj* vec_rep_each_uniform(r_obj* x,
 static r_obj* vec_rep_each_impl(r_obj* x,
                                 r_obj* times,
                                 const r_ssize times_size,
-                                struct r_lazy call,
+                                struct r_lazy error_call,
                                 struct vctrs_arg* p_times_arg) {
   const r_ssize x_size = vec_size(x);
 
@@ -167,7 +167,7 @@ static r_obj* vec_rep_each_impl(r_obj* x,
     stop_recycle_incompatible_size(times_size,
                                    x_size,
                                    p_times_arg,
-                                   call);
+                                   error_call);
   }
 
   const int* v_times = r_int_cbegin(times);
@@ -176,12 +176,12 @@ static r_obj* vec_rep_each_impl(r_obj* x,
   for (r_ssize i = 0; i < times_size; ++i) {
     const int elt_times = v_times[i];
 
-    check_rep_each_times(elt_times, i + 1, call, p_times_arg);
+    check_rep_each_times(elt_times, i + 1, error_call, p_times_arg);
 
     const r_ssize elt_times_ = (r_ssize) elt_times;
 
     if (plus_would_overflow(size, elt_times_)) {
-      stop_rep_size_oob(call);
+      stop_rep_size_oob(error_call);
     }
 
     size += elt_times_;

@@ -89,7 +89,7 @@ NULL
 vec_rep <- function(x,
                     times,
                     ...,
-                    call = current_env(),
+                    error_call = current_env(),
                     x_arg = "x",
                     times_arg = "times") {
   check_dots_empty0(...)
@@ -101,7 +101,7 @@ vec_rep <- function(x,
 vec_rep_each <- function(x,
                          times,
                          ...,
-                         call = current_env(),
+                         error_call = current_env(),
                          x_arg = "x",
                          times_arg = "times") {
   check_dots_empty0(...)
