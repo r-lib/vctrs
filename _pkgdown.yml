@@ -9,7 +9,7 @@ template:
 
   includes:
     in_header: |
-      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>  
+      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
 reference:
 - title: User FAQ
@@ -92,6 +92,10 @@ reference:
   - vec_rep_each
   - vec_seq_along
   - vec_identify_runs
+
+- title: Reducers
+  contents:
+  - vec_pall
 
 - title: New classes
   contents:

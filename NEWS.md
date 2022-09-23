@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `vec_pany()` and `vec_pall()` parallel variants of `any()` and `all()`
+  (in the same way that `pmin()` and `pmax()` are parallel variants of `min()`
+  and `max()`) (#1675).
+
 * `vec_c(outer = c(inner = 1))` now produces correct error messages (#522).
 
 * If a data frame is returned as the proxy from `vec_proxy_equal()`,

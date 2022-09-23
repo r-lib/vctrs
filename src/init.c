@@ -150,6 +150,8 @@ extern r_obj* ffi_list_all_vectors(r_obj*, r_obj*);
 extern r_obj* ffi_list_check_all_vectors(r_obj*, r_obj*);
 extern r_obj* ffi_as_short_length(r_obj*, r_obj*);
 extern r_obj* ffi_s3_get_method(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_pall(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_pany(r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -321,6 +323,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_list_check_all_vectors",            (DL_FUNC) &ffi_list_check_all_vectors, 2},
   {"ffi_as_short_length",                   (DL_FUNC) &ffi_as_short_length, 2},
   {"ffi_s3_get_method",                     (DL_FUNC) &ffi_s3_get_method, 3},
+  {"ffi_vec_pall",                          (DL_FUNC) &ffi_vec_pall, 4},
+  {"ffi_vec_pany",                          (DL_FUNC) &ffi_vec_pany, 4},
   {"ffi_exp_vec_cast",                      (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };
