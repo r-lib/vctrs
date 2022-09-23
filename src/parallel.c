@@ -53,10 +53,10 @@ r_obj* vec_p(r_obj* xs,
   xs = KEEP(vec_recycle_common_opts(xs, size, &recycle_opts));
 
   r_obj* out = KEEP(r_alloc_logical(size));
-  int* restrict v_out = r_lgl_begin(out);
+  int* v_out = r_lgl_begin(out);
 
   const r_ssize n = r_length(xs);
-  r_obj* const* restrict v_xs = r_list_cbegin(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
 
   if (n == 0) {
     switch (parallel) {
@@ -65,7 +65,7 @@ r_obj* vec_p(r_obj* xs,
     }
   } else {
     r_obj* x = v_xs[0];
-    const int* restrict v_x = r_lgl_begin(x);
+    const int* v_x = r_lgl_begin(x);
 
     switch (parallel) {
     case VCTRS_PARALLEL_all: vec_pall_init(v_x, na_rm, size, v_out); break;
@@ -75,7 +75,7 @@ r_obj* vec_p(r_obj* xs,
 
   for (r_ssize i = 1; i < n; ++i) {
     r_obj* x = v_xs[i];
-    const int* restrict v_x = r_lgl_begin(x);
+    const int* v_x = r_lgl_begin(x);
 
     switch (parallel) {
     case VCTRS_PARALLEL_all: vec_pall_fill(v_x, na_rm, size, v_out); break;
@@ -90,7 +90,7 @@ r_obj* vec_p(r_obj* xs,
 // -----------------------------------------------------------------------------
 
 static inline
-void vec_pall_init(const int* restrict v_x, bool na_rm, r_ssize size, int* restrict v_out) {
+void vec_pall_init(const int* v_x, bool na_rm, r_ssize size, int* v_out) {
   if (na_rm) {
     vec_pall_init_na_rm(v_x, size, v_out);
   } else {
@@ -98,7 +98,7 @@ void vec_pall_init(const int* restrict v_x, bool na_rm, r_ssize size, int* restr
   }
 }
 static inline
-void vec_pany_init(const int* restrict v_x, bool na_rm, r_ssize size, int* restrict v_out) {
+void vec_pany_init(const int* v_x, bool na_rm, r_ssize size, int* v_out) {
   if (na_rm) {
     vec_pany_init_na_rm(v_x, size, v_out);
   } else {
@@ -107,7 +107,7 @@ void vec_pany_init(const int* restrict v_x, bool na_rm, r_ssize size, int* restr
 }
 
 static inline
-void vec_pall_fill(const int* restrict v_x, bool na_rm, r_ssize size, int* restrict v_out) {
+void vec_pall_fill(const int* v_x, bool na_rm, r_ssize size, int* v_out) {
   if (na_rm) {
     vec_pall_fill_na_rm(v_x, size, v_out);
   } else {
@@ -157,13 +157,13 @@ void vec_pany_fill(const int* v_x, bool na_rm, r_ssize size, int* v_out) {
  * T && N == T
  */
 static inline
-void vec_pall_init_na_rm(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pall_init_na_rm(const int* v_x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < size; ++i) {
     v_out[i] = (bool) v_x[i];
   }
 }
 static inline
-void vec_pall_fill_na_rm(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pall_fill_na_rm(const int* v_x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < size; ++i) {
     const int elt_out = v_out[i];
     const int elt_x = v_x[i];
@@ -185,14 +185,14 @@ void vec_pall_fill_na_rm(const int* restrict v_x, r_ssize size, int* restrict v_
  * T || N == T
  */
 static inline
-void vec_pany_init_na_rm(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pany_init_na_rm(const int* v_x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < size; ++i) {
     const int elt = v_x[i];
     v_out[i] = (elt != r_globals.na_lgl) * elt;
   }
 }
 static inline
-void vec_pany_fill_na_rm(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pany_fill_na_rm(const int* v_x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < size; ++i) {
     const int elt_out = v_out[i];
     const int elt_x = v_x[i];
@@ -214,11 +214,11 @@ void vec_pany_fill_na_rm(const int* restrict v_x, r_ssize size, int* restrict v_
  * N && N == N
  */
 static inline
-void vec_pall_init_na_keep(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pall_init_na_keep(const int* v_x, r_ssize size, int* v_out) {
   memcpy(v_out, v_x, sizeof(*v_out) * size);
 }
 static inline
-void vec_pall_fill_na_keep(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pall_fill_na_keep(const int* v_x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < size; ++i) {
     const int elt_out = v_out[i];
     const int elt_x = v_x[i];
@@ -243,11 +243,11 @@ void vec_pall_fill_na_keep(const int* restrict v_x, r_ssize size, int* restrict 
  * N || N == N
  */
 static inline
-void vec_pany_init_na_keep(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pany_init_na_keep(const int* v_x, r_ssize size, int* v_out) {
   memcpy(v_out, v_x, sizeof(*v_out) * size);
 }
 static inline
-void vec_pany_fill_na_keep(const int* restrict v_x, r_ssize size, int* restrict v_out) {
+void vec_pany_fill_na_keep(const int* v_x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < size; ++i) {
     const int elt_out = v_out[i];
     const int elt_x = v_x[i];
