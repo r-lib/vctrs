@@ -153,7 +153,7 @@
 #' @export
 vec_as_names <- function(names,
                          ...,
-                         repair = c("minimal", "unique", "universal", "check_unique"),
+                         repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
                          repair_arg = NULL,
                          quiet = FALSE,
                          call = caller_env()) {
@@ -250,7 +250,7 @@ detect_dot_dot <- function(names) {
 #' vec_set_names(data.frame(a = 1:3), letters[1:3])
 vec_names2 <- function(x,
                        ...,
-                       repair = c("minimal", "unique", "universal", "check_unique"),
+                       repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
                        quiet = FALSE) {
   check_dots_empty0(...)
   repair <- validate_name_repair_arg(repair)
@@ -271,11 +271,13 @@ vec_names2 <- function(x,
     minimal = minimal_names(x),
     unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet),
-    check_unique = validate_unique(minimal_names(x))
+    check_unique = validate_unique(minimal_names(x)),
+    unique_quiet = unique_names(x, quiet = TRUE),
+    universal_quiet = as_universal_names(minimal_names(x), quiet = TRUE)
   )
 }
 vec_repair_names <- function(x,
-                             repair = c("minimal", "unique", "universal", "check_unique"),
+                             repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
                              ...,
                              quiet = FALSE) {
   if (is.data.frame(x)) {

@@ -89,6 +89,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 df_list <- function(...,
                     .size = NULL,
                     .unpack = TRUE,
+                    # TODO: confirm that this should be unchanged
                     .name_repair = c("check_unique", "unique", "universal", "minimal"),
                     .error_call = current_env()) {
   .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
@@ -163,6 +164,7 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
 data_frame <- function(...,
                        .size = NULL,
+                       # TODO: confirm that this should be unchanged
                        .name_repair = c("check_unique", "unique", "universal", "minimal"),
                        .error_call = current_env()) {
   .Call(ffi_data_frame, list2(...), .size, .name_repair, environment())

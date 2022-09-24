@@ -244,12 +244,12 @@ constant group.
 
 The coercion methods for data frames operate in two steps:
 \itemize{
-\item They check for compatible subclass attributes. In our case the tibble
-colour has to be the same, or be undefined.
+\item They check for compatible subclass attributes. In our case the
+tibble colour has to be the same, or be undefined.
 \item They call their parent methods, in this case
-\code{\link[=tib_ptype2]{tib_ptype2()}} and \code{\link[=tib_cast]{tib_cast()}} because
-we have a subclass of tibble. This eventually calls the data frame
-methods \code{\link[=df_ptype2]{df_ptype2()}} and
+\code{\link[=tib_ptype2]{tib_ptype2()}} and \code{\link[=tib_cast]{tib_cast()}}
+because we have a subclass of tibble. This eventually calls the data
+frame methods \code{\link[=df_ptype2]{df_ptype2()}} and
 \code{\link[=tib_ptype2]{tib_ptype2()}} which match the columns and their
 types.
 }

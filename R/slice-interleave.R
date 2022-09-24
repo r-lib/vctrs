@@ -38,6 +38,7 @@
 vec_interleave <- function(...,
                            .ptype = NULL,
                            .name_spec = NULL,
+                           # TODO: confirm that this should be unchanged
                            .name_repair = c("minimal", "unique", "check_unique", "universal")) {
   args <- list2(...)
 

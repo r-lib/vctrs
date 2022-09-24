@@ -17,6 +17,12 @@ r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
   case NAME_REPAIR_unique: return vec_as_unique_names(names, opts->quiet);
   case NAME_REPAIR_universal: return vec_as_universal_names(names, opts->quiet);
   case NAME_REPAIR_check_unique: return check_unique_names(names, opts);
+  // I have to handle these elements of the enum to please the compiler, but the
+  // functions that call vec_as_names() generally have `quiet = false`
+  // hard-wired and, on the R side, don't advertise support for unique_quiet and
+  // universal_quiet. What to do?
+  case NAME_REPAIR_unique_quiet: return vec_as_unique_names(names, true);
+  case NAME_REPAIR_universal_quiet: return vec_as_universal_names(names, true);
   case NAME_REPAIR_custom: return vec_as_custom_names(names, opts);
   }
   r_stop_unreachable();
@@ -843,6 +849,7 @@ r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_owned owned)
 r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
   struct name_repair_opts opts = new_name_repair_opts(arg,
                                                       r_lazy_null,
+                                                      // think about this 'true'
                                                       true,
                                                       r_lazy_null);
   if (opts.type == NAME_REPAIR_custom) {
@@ -894,6 +901,12 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
       opts.type = NAME_REPAIR_universal;
     } else if (c == strings_check_unique) {
       opts.type = NAME_REPAIR_check_unique;
+    } else if (c == strings_unique_quiet) {
+      opts.type = NAME_REPAIR_unique;
+      opts.quiet = true;
+    } else if (c == strings_universal_quiet) {
+      opts.type = NAME_REPAIR_universal;
+      opts.quiet = true;
     } else {
       struct repair_error_info info = new_repair_error_info(&opts);
       KEEP(info.shelter);
@@ -931,6 +944,8 @@ const char* name_repair_arg_as_c_string(enum name_repair_type type) {
   case NAME_REPAIR_unique: return "unique";
   case NAME_REPAIR_universal: return "universal";
   case NAME_REPAIR_check_unique: return "check_unique";
+  case NAME_REPAIR_unique_quiet: return "unique_quiet";
+  case NAME_REPAIR_universal_quiet: return "universal_quiet";
   case NAME_REPAIR_custom: return "custom";
   }
   r_stop_unreachable();

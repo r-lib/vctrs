@@ -407,6 +407,8 @@ extern SEXP strings_minimal;
 extern SEXP strings_unique;
 extern SEXP strings_universal;
 extern SEXP strings_check_unique;
+extern SEXP strings_unique_quiet;
+extern SEXP strings_universal_quiet;
 extern SEXP strings_key;
 extern SEXP strings_loc;
 extern SEXP strings_val;

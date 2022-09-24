@@ -21,6 +21,8 @@ enum name_repair_type {
   NAME_REPAIR_unique,
   NAME_REPAIR_universal,
   NAME_REPAIR_check_unique,
+  NAME_REPAIR_unique_quiet,
+  NAME_REPAIR_universal_quiet,
   NAME_REPAIR_custom = 99
 };
 

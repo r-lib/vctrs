@@ -674,9 +674,11 @@ static
 struct name_repair_opts validate_bind_name_repair(r_obj* name_repair, bool allow_minimal) {
   struct name_repair_opts opts = new_name_repair_opts(name_repair,
                                                       r_lazy_null,
+                                                      // think about this 'false'
                                                       false,
                                                       r_lazy_null);
 
+  // TODO something here ... but what?
   switch (opts.type) {
   case NAME_REPAIR_custom:
   case NAME_REPAIR_unique:

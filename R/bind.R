@@ -176,6 +176,7 @@ NULL
 vec_rbind <- function(...,
                       .ptype = NULL,
                       .names_to = rlang::zap(),
+                      # TODO: confirm that this should be unchanged
                       .name_repair = c("unique", "universal", "check_unique"),
                       .name_spec = NULL,
                       .error_call = current_env()) {
@@ -194,6 +195,7 @@ vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
+                      # TODO: confirm that this should be unchanged
                       .name_repair = c("unique", "universal", "check_unique", "minimal"),
                       .error_call = current_env()) {
   .External2(ffi_cbind, .ptype, .size, .name_repair)

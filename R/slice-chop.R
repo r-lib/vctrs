@@ -97,6 +97,7 @@ list_unchop <- function(x,
                         indices = NULL,
                         ptype = NULL,
                         name_spec = NULL,
+                        # TODO: confirm that this should be unchanged
                         name_repair = c("minimal", "unique", "check_unique", "universal")) {
   .Call(ffi_list_unchop, x, indices, ptype, name_spec, name_repair)
 }

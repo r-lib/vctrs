@@ -9,7 +9,8 @@
 vec_names2(
   x,
   ...,
-  repair = c("minimal", "unique", "universal", "check_unique"),
+  repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet",
+    "universal_quiet"),
   quiet = FALSE
 )
 

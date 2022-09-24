@@ -21,14 +21,15 @@ the next section. However there are many higher level operations. The
 most important ones implement fallbacks to base generics for maximum
 compatibility with existing classes.
 \itemize{
-\item \code{\link[=vec_slice]{vec_slice()}} falls back to the base \code{[} generic if no
-\code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This way foreign
-classes that do not implement \code{\link[=vec_restore]{vec_restore()}} can
-restore attributes based on the new subsetted contents.
-\item \code{\link[=vec_c]{vec_c()}} and \code{\link[=vec_rbind]{vec_rbind()}} now fall back to
-\code{\link[base:c]{base::c()}} if the inputs have a common parent class with
-a \code{c()} method (only if they have no self-to-self \code{vec_ptype2()}
-method).
+\item \code{\link[=vec_slice]{vec_slice()}} falls back to the base \code{[} generic if
+no \code{\link[=vec_proxy]{vec_proxy()}} method is implemented. This way
+foreign classes that do not implement
+\code{\link[=vec_restore]{vec_restore()}} can restore attributes based on the
+new subsetted contents.
+\item \code{\link[=vec_c]{vec_c()}} and \code{\link[=vec_rbind]{vec_rbind()}} now fall back
+to \code{\link[base:c]{base::c()}} if the inputs have a common parent class
+with a \code{c()} method (only if they have no self-to-self
+\code{vec_ptype2()} method).
 
 vctrs works hard to make your \code{c()} method success in various
 situations (with \code{NULL} and \code{NA} inputs, even as first input which

@@ -1513,6 +1513,8 @@ SEXP strings_minimal = NULL;
 SEXP strings_unique = NULL;
 SEXP strings_universal = NULL;
 SEXP strings_check_unique = NULL;
+SEXP strings_unique_quiet = NULL;
+SEXP strings_universal_quiet = NULL;
 SEXP strings_key = NULL;
 SEXP strings_loc = NULL;
 SEXP strings_val = NULL;
@@ -1669,7 +1671,7 @@ void vctrs_init_utils(SEXP ns) {
 
   // Holds the CHARSXP objects because unlike symbols they can be
   // garbage collected
-  strings2 = r_new_shared_vector(STRSXP, 23);
+  strings2 = r_new_shared_vector(STRSXP, 25);
 
   strings_dots = Rf_mkChar("...");
   SET_STRING_ELT(strings2, 0, strings_dots);
@@ -1703,6 +1705,12 @@ void vctrs_init_utils(SEXP ns) {
 
   strings_check_unique = Rf_mkChar("check_unique");
   SET_STRING_ELT(strings2, 10, strings_check_unique);
+
+  strings_unique_quiet = Rf_mkChar("unique_quiet");
+  SET_STRING_ELT(strings2, 23, strings_unique_quiet);
+
+  strings_universal_quiet = Rf_mkChar("universal_quiet");
+  SET_STRING_ELT(strings2, 24, strings_universal_quiet);
 
   strings_key = Rf_mkChar("key");
   SET_STRING_ELT(strings2, 11, strings_key);

@@ -162,6 +162,7 @@ r_obj* ffi_list_unchop(r_obj* x,
   struct name_repair_opts name_repair_opts =
     new_name_repair_opts(name_repair,
                          r_lazy_null,
+                         // think about this 'false'
                          false,
                          r_lazy_null);
   KEEP(name_repair_opts.shelter);
