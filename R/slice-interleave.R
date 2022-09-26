@@ -41,10 +41,9 @@ vec_interleave <- function(...,
                            .name_repair = c("minimal", "unique", "check_unique", "universal")) {
   args <- list2(...)
 
-  # TODO: Use `vec_drop_missing()`
   # `NULL`s must be dropped up front to generate appropriate indices
-  missing <- vec_detect_missing(args)
-  if (any(missing)) {
+  if (vec_any_missing(args)) {
+    missing <- vec_detect_missing(args)
     args <- vec_slice(args, !missing)
   }
 
