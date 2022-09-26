@@ -4,7 +4,7 @@
 #' vectors). For [vctr]s, this determines the behaviour of `==` and
 #' `!=` (via [vec_equal()]); [unique()], [duplicated()] (via
 #' [vec_unique()] and [vec_duplicate_detect()]); [is.na()] and [anyNA()]
-#' (via [vec_equal_na()]).
+#' (via [vec_detect_missing()]).
 #'
 #' The default method calls [vec_proxy()], as the default underlying
 #' vector data should be equal-able in most cases. If your class is
@@ -38,36 +38,31 @@ vec_proxy_equal.default <- function(x, ...) {
   stop_native_implementation("vec_proxy_equal.default")
 }
 
-#' Test if two vectors are equal
+#' Equality
 #'
-#' `vec_equal_na()` tests a special case: equality with `NA`. It is similar to
-#' [is.na] but:
-#' * Considers the missing element of a list to be `NULL`.
-#' * Considered data frames and records to be missing if every component
-#'   is missing.
-#' This preserves the invariant that `vec_equal_na(x)` is equal to
-#' `vec_equal(x, vec_init(x), na_equal = TRUE)`.
+#' `vec_equal()` tests if two vectors are equal.
 #'
 #' @inheritParams vec_compare
-#' @return A logical vector the same size as. Will only contain `NA`s if `na_equal` is `FALSE`.
+#' @return A logical vector the same size as the common size of `x` and `y`.
+#'   Will only contain `NA`s if `na_equal` is `FALSE`.
 #'
 #' @section Dependencies:
 #' - [vec_cast_common()] with fallback
 #' - [vec_recycle_common()]
 #' - [vec_proxy_equal()]
 #'
+#' @seealso [vec_detect_missing()]
+#'
 #' @export
 #' @examples
 #' vec_equal(c(TRUE, FALSE, NA), FALSE)
 #' vec_equal(c(TRUE, FALSE, NA), FALSE, na_equal = TRUE)
-#' vec_equal_na(c(TRUE, FALSE, NA))
 #'
 #' vec_equal(5, 1:10)
 #' vec_equal("d", letters[1:10])
 #'
-#' df <- data.frame(x = c(1, 1, 2, 1, NA), y = c(1, 2, 1, NA, NA))
+#' df <- data.frame(x = c(1, 1, 2, 1), y = c(1, 2, 1, NA))
 #' vec_equal(df, data.frame(x = 1, y = 2))
-#' vec_equal_na(df)
 vec_equal <- function(x, y, na_equal = FALSE, .ptype = NULL) {
   vec_assert(na_equal, ptype = logical(), size = 1L)
   args <- vec_recycle_common(x, y)

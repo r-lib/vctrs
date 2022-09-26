@@ -28,7 +28,7 @@
 #' of `end` must also be missing.
 #'
 #' - Each observation of `start` and `end` must be either
-#' [complete][vec_detect_complete] or [missing][vec_equal_na]. Partially
+#' [complete][vec_detect_complete] or [missing][vec_detect_missing]. Partially
 #' complete values such as `start = data_frame(x = 1, y = NA)` are not allowed.
 #'
 #' If any of these assumptions are invalid, then the result is undefined.

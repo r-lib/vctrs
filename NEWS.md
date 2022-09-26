@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* New `vec_any_missing()` for quickly determining if a vector has any missing
+  values (#1672).
+
+* `vec_equal_na()` has been renamed to `vec_detect_missing()` to align better
+  with vctrs naming conventions. `vec_equal_na()` will stick around for a few
+  minor versions, but has been formally soft-deprecated (#1672).
+
 * `vec_c(outer = c(inner = 1))` now produces correct error messages (#522).
 
 * If a data frame is returned as the proxy from `vec_proxy_equal()`,

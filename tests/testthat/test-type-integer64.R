@@ -176,10 +176,10 @@ test_that("equality proxy on >=2-D input converts to data frame and proxies each
 test_that("can detect missing values with integer64 (#1304)", {
   x <- bit64::as.integer64(c(NA, NA, 2, NA, 2, 2))
 
-  expect_identical(vec_equal_na(x), c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
+  expect_identical(vec_detect_missing(x), c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
 
   dim(x) <- c(3, 2)
-  expect_identical(vec_equal_na(x), c(TRUE, FALSE, FALSE))
+  expect_identical(vec_detect_missing(x), c(TRUE, FALSE, FALSE))
 })
 
 test_that("can fill missing values with integer64", {

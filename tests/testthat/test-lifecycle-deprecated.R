@@ -26,3 +26,16 @@ test_that("vec_unchop() still works", {
     c(3L, 1L, 2L)
   )
 })
+
+test_that("vec_equal_na() is soft-deprecated", {
+  local_options(lifecycle_verbosity = "warning")
+  expect_snapshot(vec_equal_na(c(1, NA)))
+})
+
+test_that("vec_equal_na() still works", {
+  local_options(lifecycle_verbosity = "quiet")
+  expect_identical(
+    vec_equal_na(c(1, NA, 2, NA)),
+    c(FALSE, TRUE, FALSE, TRUE)
+  )
+})

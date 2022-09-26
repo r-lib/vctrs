@@ -9,3 +9,14 @@
     Output
       [1] 1
 
+# vec_equal_na() is soft-deprecated
+
+    Code
+      vec_equal_na(c(1, NA))
+    Condition
+      Warning:
+      `vec_equal_na()` was deprecated in vctrs 0.5.0.
+      Please use `vec_detect_missing()` instead.
+    Output
+      [1] FALSE  TRUE
+
