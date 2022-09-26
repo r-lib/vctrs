@@ -85,6 +85,9 @@
     <loc>https://vctrs.r-lib.org/dev/reference/maybe_lossy_cast.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/dev/reference/missing.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/dev/reference/name_spec.html</loc>
   </url>
   <url>
@@ -209,6 +212,9 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/dev/reference/vec_equal.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/dev/reference/vec_equal_na.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/dev/reference/vec_fill_missing.html</loc>
