@@ -32,7 +32,7 @@ Imports:
     cli (>= 3.4.0),
     glue,
     lifecycle (>= 1.0.2),
-    rlang (>= 1.0.5)
+    rlang (>= 1.0.6)
 Suggests: 
     bit64,
     covr,
