@@ -70,7 +70,7 @@ more in line with vctrs principles. The Properties section outlines these.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"check_unique"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"minimal"</span><span class="op">)</span>,</span>
-<span>  .call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
+<span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,7 +91,7 @@ be computed as the common size of the inputs.</p></dd>
 <code>"minimal"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code> for the meaning of these options.</p></dd>
 
 
-<dt>.call</dt>
+<dt>.error_call</dt>
 <dd><p>The execution environment of a currently
 running function, e.g. <code>caller_env()</code>. The function will be
 mentioned in error messages as the source of the error. See the
