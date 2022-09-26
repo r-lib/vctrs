@@ -103,12 +103,11 @@ names_repair_missing <- function(x) {
     return(x)
   }
 
-  missing <- vec_detect_missing(x)
-
-  if (any(missing)) {
+  if (vec_any_missing(x)) {
     # We never want to allow `NA_character_` names to slip through, but
     # erroring on them has caused issues. Instead, we repair them to the
     # empty string (#784).
+    missing <- vec_detect_missing(x)
     x <- vec_assign(x, missing, "")
   }
 
@@ -410,9 +409,7 @@ is.na.vctrs_vctr <- function(x) {
 #' @importFrom stats na.fail
 #' @export
 na.fail.vctrs_vctr <- function(object, ...) {
-  missing <- vec_detect_missing(object)
-
-  if (any(missing)) {
+  if (vec_any_missing(object)) {
     # Return the same error as `na.fail.default()`
     abort("missing values in object")
   }
@@ -436,13 +433,12 @@ na_remove <- function(x, type) {
   # The only difference between `na.omit()` and `na.exclude()` is the class
   # of the `na.action` attribute
 
-  missing <- vec_detect_missing(x)
-
-  if (!any(missing)) {
+  if (!vec_any_missing(x)) {
     return(x)
   }
 
   # `na.omit/exclude()` attach the locations of the omitted values to the result
+  missing <- vec_detect_missing(x)
   loc <- which(missing)
 
   names <- vec_names(x)
