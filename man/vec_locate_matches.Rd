@@ -18,7 +18,7 @@ vec_locate_matches(
   chr_proxy_collate = NULL,
   needles_arg = "",
   haystack_arg = "",
-  call = current_env()
+  error_call = current_env()
 )
 }
 \arguments{
@@ -138,7 +138,7 @@ ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
 \item{needles_arg, haystack_arg}{Argument tags for \code{needles} and \code{haystack}
 used in error messages.}
 
-\item{call}{The execution environment of a currently
+\item{error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}

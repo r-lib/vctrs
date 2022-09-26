@@ -28,7 +28,7 @@
 * `vec_compare()` now throws a more informative error when attempting to compare
   complex vectors (#1655).
 
-* `vec_rep()` and friends gain `call`, `x_arg`, and `times_arg`
+* `vec_rep()` and friends gain `error_call`, `x_arg`, and `times_arg`
   arguments so they can be embedded in frontends (#1303).
 
 * Record vectors now fail as expected when indexed along dimensions
@@ -74,9 +74,9 @@
 * `num_as_location()` now works correctly when a combination of `zero = "error"`
   and `negative = "invert"` are used (#1612).
 
-* `data_frame()` and `df_list()` have gained `.call` arguments (#1610).
+* `data_frame()` and `df_list()` have gained `.error_call` arguments (#1610).
 
-* `vec_locate_matches()` has gained a `call` argument (#1611).
+* `vec_locate_matches()` has gained an `error_call` argument (#1611).
 
 * `"select"` and `"relocate"` have been added as valid subscript actions to
   support tidyselect and dplyr (#1596).
@@ -84,7 +84,7 @@
 * `num_as_location()` has a new `oob = "remove"` argument to remove
   out-of-bounds locations (#1595).
 
-* `vec_rbind()` and `vec_cbind()` now have `.call` arguments (#1597).
+* `vec_rbind()` and `vec_cbind()` now have `.error_call` arguments (#1597).
 
 * `df_list()` has gained a new `.unpack` argument to optionally disable data
   frame unpacking (#1616).

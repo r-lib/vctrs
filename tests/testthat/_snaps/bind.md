@@ -7,14 +7,14 @@
       Error in `vec_rbind()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
     Code
-      (expect_error(vec_rbind(x_int, x_chr, .call = call("foo")), class = "vctrs_error_incompatible_type")
+      (expect_error(vec_rbind(x_int, x_chr, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
       )
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
     Code
-      (expect_error(vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      (expect_error(vec_rbind(x_int, x_chr, .ptype = x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
@@ -64,7 +64,7 @@
       Error in `vec_rbind()`:
       ! Can't bind arrays.
     Code
-      (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
+      (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -89,7 +89,7 @@
       Error in `vec_cbind()`:
       ! `..1` must be a vector, not a <vctrs_foobar> object.
     Code
-      (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+      (expect_error(vec_cbind(foobar(list()), .error_call = call("foo"))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `foo()`:
@@ -101,7 +101,7 @@
       Error in `vec_cbind()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
     Code
-      (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+      (expect_error(vec_cbind(a = 1:2, b = int(), .error_call = call("foo"))))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `foo()`:
@@ -164,7 +164,7 @@
       Error in `vec_rbind()`:
       ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
     Code
-      (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
+      (expect_error(vec_rbind(.names_to = letters, .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -179,7 +179,7 @@
       Error in `vec_cbind()`:
       ! Can't bind arrays.
     Code
-      (expect_error(vec_cbind(a, .call = call("foo"))))
+      (expect_error(vec_cbind(a, .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -353,7 +353,7 @@
       x These names are duplicated:
         * "x" at locations 1 and 2.
     Code
-      (expect_error(vec_rbind(df, df, .name_repair = "check_unique", .call = call(
+      (expect_error(vec_rbind(df, df, .name_repair = "check_unique", .error_call = call(
         "foo")), class = "vctrs_error_names_must_be_unique"))
     Output
       <error/vctrs_error_names_must_be_unique>
@@ -399,7 +399,7 @@
       ! Can't zap outer names when `.names_to` is supplied.
     Code
       (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(),
-      .call = call("foo"))))
+      .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:

@@ -6,7 +6,7 @@
 r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   args = r_node_cdr(args);
 
-  struct r_lazy call = { .x = syms_dot_call, .env = frame };
+  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
   r_obj* xs = KEEP(rlang_env_dots_list(frame));
   r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
@@ -21,7 +21,7 @@ r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
     } else if (r_is_string(names_to)) {
       names_to = r_chr_get(names_to, 0);
     } else {
-      r_abort_lazy_call(call,
+      r_abort_lazy_call(error_call,
                         "%s must be `NULL`, a string, or an `rlang::zap()` object.",
                         r_c_str_format_error_arg(".names_to"));
     }
@@ -30,14 +30,14 @@ r_obj* ffi_rbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, false);
   KEEP(name_repair_opts.shelter);
 
-  name_repair_opts.call = call;
+  name_repair_opts.call = error_call;
 
   r_obj* out = vec_rbind(xs,
                          ptype,
                          names_to,
                          &name_repair_opts,
                          name_spec,
-                         call);
+                         error_call);
 
   FREE(2);
   return out;
@@ -49,7 +49,7 @@ r_obj* vec_rbind(r_obj* xs,
                  r_obj* names_to,
                  struct name_repair_opts* name_repair,
                  r_obj* name_spec,
-                 struct r_lazy call) {
+                 struct r_lazy error_call) {
   // In case `.arg` is added later on
   struct vctrs_arg* p_arg = vec_args.empty;
 
@@ -59,7 +59,7 @@ r_obj* vec_rbind(r_obj* xs,
   for (r_ssize i = 0; i < n_inputs; ++i) {
     r_list_poke(xs, i, as_df_row(r_list_get(xs, i),
                                  name_repair,
-                                 call));
+                                 error_call));
   }
 
   // The common type holds information about common column names,
@@ -70,7 +70,7 @@ r_obj* vec_rbind(r_obj* xs,
                                   DF_FALLBACK_DEFAULT,
                                   S3_FALLBACK_true,
                                   p_arg,
-                                  call);
+                                  error_call);
   KEEP_N(ptype, &n_prot);
 
   r_ssize n_cols = r_length(ptype);
@@ -82,11 +82,11 @@ r_obj* vec_rbind(r_obj* xs,
   if (r_typeof(ptype) == R_TYPE_logical && !n_cols) {
     ptype = as_df_row_impl(vctrs_shared_na_lgl,
                            name_repair,
-                           call);
+                           error_call);
     KEEP_N(ptype, &n_prot);
   }
   if (!is_data_frame(ptype)) {
-    r_abort_lazy_call(call, "Can't bind objects that are not coercible to a data frame.");
+    r_abort_lazy_call(error_call, "Can't bind objects that are not coercible to a data frame.");
   }
 
   bool assign_names = !r_inherits(name_spec, "rlang_zap");
@@ -96,7 +96,7 @@ r_obj* vec_rbind(r_obj* xs,
 
   if (has_names_to) {
     if (!assign_names) {
-      r_abort_lazy_call(call,
+      r_abort_lazy_call(error_call,
                         "Can't zap outer names when %s is supplied.",
                         r_c_str_format_error_arg(".names_to"));
     }
@@ -109,7 +109,7 @@ r_obj* vec_rbind(r_obj* xs,
       ptype = cbind_names_to(r_names(xs) != r_null,
                              names_to,
                              ptype,
-                             call);
+                             error_call);
       KEEP_N(ptype, &n_prot);
       names_to_loc = 0;
     }
@@ -121,7 +121,7 @@ r_obj* vec_rbind(r_obj* xs,
                               DF_FALLBACK_DEFAULT,
                               S3_FALLBACK_true,
                               vec_args.empty,
-                              call);
+                              error_call);
   KEEP_N(xs, &n_prot);
 
   // Find individual input sizes and total size of output
@@ -139,7 +139,7 @@ r_obj* vec_rbind(r_obj* xs,
 
   r_obj* proxy = KEEP_N(vec_proxy(ptype), &n_prot);
   if (!is_data_frame(proxy)) {
-    r_abort_lazy_call(call, "Can't fill a data frame that doesn't have a data frame proxy.");
+    r_abort_lazy_call(error_call, "Can't fill a data frame that doesn't have a data frame proxy.");
   }
 
   r_keep_loc out_pi;
@@ -270,18 +270,18 @@ r_obj* vec_rbind(r_obj* xs,
 static
 r_obj* as_df_row(r_obj* x,
                  struct name_repair_opts* name_repair,
-                 struct r_lazy call) {
+                 struct r_lazy error_call) {
   if (vec_is_unspecified(x) && r_names(x) == r_null) {
     return x;
   } else {
-    return as_df_row_impl(x, name_repair, call);
+    return as_df_row_impl(x, name_repair, error_call);
   }
 }
 
 static
 r_obj* as_df_row_impl(r_obj* x,
                       struct name_repair_opts* name_repair,
-                      struct r_lazy call) {
+                      struct r_lazy error_call) {
   if (x == r_null) {
     return x;
   }
@@ -295,7 +295,7 @@ r_obj* as_df_row_impl(r_obj* x,
   r_ssize ndim = (dim == r_null) ? 1 : r_length(dim);
 
   if (ndim > 2) {
-    r_abort_lazy_call(call, "Can't bind arrays.");
+    r_abort_lazy_call(error_call, "Can't bind arrays.");
   }
   if (ndim == 2) {
     r_obj* out = KEEP(r_as_data_frame(x));
@@ -333,15 +333,15 @@ r_obj* ffi_as_df_row(r_obj* x, r_obj* quiet, r_obj* frame) {
     .fn = r_null,
     .quiet = r_lgl_get(quiet, 0)
   };
-  struct r_lazy call = { .x = frame, .env = r_null };
-  return as_df_row(x, &name_repair_opts, call);
+  struct r_lazy error_call = { .x = frame, .env = r_null };
+  return as_df_row(x, &name_repair_opts, error_call);
 }
 
 static
 r_obj* cbind_names_to(bool has_names,
                       r_obj* names_to,
                       r_obj* ptype,
-                      struct r_lazy call) {
+                      struct r_lazy error_call) {
   r_obj* index_ptype = has_names ? r_globals.empty_chr : r_globals.empty_int;
 
   r_obj* tmp = KEEP(r_alloc_list(2));
@@ -354,7 +354,7 @@ r_obj* cbind_names_to(bool has_names,
 
   r_attrib_poke_names(tmp, tmp_nms);
 
-  r_obj* out = vec_cbind(tmp, r_null, r_null, NULL, call);
+  r_obj* out = vec_cbind(tmp, r_null, r_null, NULL, error_call);
 
   FREE(2);
   return out;
@@ -365,7 +365,7 @@ r_obj* cbind_names_to(bool has_names,
 r_obj* ffi_cbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   args = r_node_cdr(args);
 
-  struct r_lazy call = { .x = syms_dot_call, .env = frame };
+  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
   r_obj* xs = KEEP(rlang_env_dots_list(frame));
   r_obj* ptype = r_node_car(args); args = r_node_cdr(args);
@@ -374,9 +374,9 @@ r_obj* ffi_cbind(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
 
   struct name_repair_opts name_repair_opts = validate_bind_name_repair(name_repair, true);
   KEEP(name_repair_opts.shelter);
-  name_repair_opts.call = call;
+  name_repair_opts.call = error_call;
 
-  r_obj* out = vec_cbind(xs, ptype, size, &name_repair_opts, call);
+  r_obj* out = vec_cbind(xs, ptype, size, &name_repair_opts, error_call);
 
   FREE(2);
   return out;
@@ -387,7 +387,7 @@ r_obj* vec_cbind(r_obj* xs,
                  r_obj* ptype,
                  r_obj* size,
                  struct name_repair_opts* name_repair,
-                 struct r_lazy call) {
+                 struct r_lazy error_call) {
   // In case `.arg` is added later on
   struct vctrs_arg* p_arg = vec_args.empty;
 
@@ -403,7 +403,7 @@ r_obj* vec_cbind(r_obj* xs,
                                              DF_FALLBACK_DEFAULT,
                                              S3_FALLBACK_false,
                                              p_arg,
-                                             call));
+                                             error_call));
   if (type == r_null) {
     type = new_data_frame(r_globals.empty_list, 0);
   } else if (!is_data_frame(type)) {
@@ -415,13 +415,13 @@ r_obj* vec_cbind(r_obj* xs,
 
   r_ssize nrow;
   if (size == r_null) {
-    nrow = vec_check_size_common(xs, 0, p_arg, call);
+    nrow = vec_check_size_common(xs, 0, p_arg, error_call);
   } else {
-    nrow = vec_as_short_length(size, vec_args.dot_size, call);
+    nrow = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
 
   if (rownames != r_null && r_length(rownames) != nrow) {
-    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, call));
+    rownames = KEEP(vec_check_recycle(rownames, nrow, vec_args.empty, error_call));
     rownames = vec_as_unique_names(rownames, false);
     FREE(1);
   }
@@ -444,7 +444,7 @@ r_obj* vec_cbind(r_obj* xs,
 
     r_obj* outer_name = has_names ? xs_names_p[i] : strings_empty;
     bool allow_packing;
-    x = KEEP(as_df_col(x, outer_name, &allow_packing, call));
+    x = KEEP(as_df_col(x, outer_name, &allow_packing, error_call));
 
     // Remove outer name of column vectors because they shouldn't be repacked
     if (has_names && !allow_packing) {
@@ -550,16 +550,16 @@ r_obj* cbind_container_type(r_obj* x, void* data) {
 
 // [[ register() ]]
 r_obj* ffi_as_df_col(r_obj* x, r_obj* outer, r_obj* frame) {
-  struct r_lazy call = { .x = frame, .env = r_null };
+  struct r_lazy error_call = { .x = frame, .env = r_null };
   bool allow_pack;
-  return as_df_col(x, r_chr_get(outer, 0), &allow_pack, call);
+  return as_df_col(x, r_chr_get(outer, 0), &allow_pack, error_call);
 }
 
 static
 r_obj* as_df_col(r_obj* x,
                  r_obj* outer,
                  bool* allow_pack,
-                 struct r_lazy call) {
+                 struct r_lazy error_call) {
   if (is_data_frame(x)) {
     *allow_pack = true;
     return r_clone(x);
@@ -567,7 +567,7 @@ r_obj* as_df_col(r_obj* x,
 
   r_ssize ndim = vec_bare_dim_n(x);
   if (ndim > 2) {
-    r_abort_lazy_call(call, "Can't bind arrays.");
+    r_abort_lazy_call(error_call, "Can't bind arrays.");
   }
   if (ndim > 0) {
     *allow_pack = true;

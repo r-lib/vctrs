@@ -12,7 +12,7 @@ vec_rbind(
   .names_to = rlang::zap(),
   .name_repair = c("unique", "universal", "check_unique"),
   .name_spec = NULL,
-  .call = current_env()
+  .error_call = current_env()
 )
 
 vec_cbind(
@@ -20,7 +20,7 @@ vec_cbind(
   .ptype = NULL,
   .size = NULL,
   .name_repair = c("unique", "universal", "check_unique", "minimal"),
-  .call = current_env()
+  .error_call = current_env()
 )
 }
 \arguments{
@@ -73,7 +73,7 @@ names of the inputs. This only has an effect when \code{.names_to} is
 set to \code{NULL}, which causes the input names to be assigned as row
 names.}
 
-\item{.call}{The execution environment of a currently
+\item{.error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
