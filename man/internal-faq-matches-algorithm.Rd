@@ -4,7 +4,9 @@
 \alias{internal-faq-matches-algorithm}
 \title{Internal FAQ - Implementation of \code{vec_locate_matches()}}
 \description{
-\code{vec_locate_matches()} is similar to \code{vec_match()}, but detects \emph{all} matches by default, and can match on conditions other than equality (like \code{>=} and \code{<}). There are also various other arguments to limit or adjust exactly which kinds of matches are returned. Here is an example:\if{html}{\out{<div class="sourceCode r">}}\preformatted{x <- c("a", "b", "a", "c", "d")
+\code{vec_locate_matches()} is similar to \code{vec_match()}, but detects \emph{all} matches by default, and can match on conditions other than equality (like \code{>=} and \code{<}). There are also various other arguments to limit or adjust exactly which kinds of matches are returned. Here is an example:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{x <- c("a", "b", "a", "c", "d")
 y <- c("d", "b", "a", "d", "a", "e")
 
 # For each value of `x`, find all matches in `y`
@@ -33,7 +35,9 @@ After recording the matches for a single needle, we perform the same procedure o
 
 When we have a data frame with multiple columns, we add a layer of recursion to this. For the first column, we find the locations of the lower/upper duplicate of the current needle, and we find the locations of the lower/upper matches in the haystack. If we are on the final column in the data frame, we record the matches, otherwise we pass this information on to another call to \code{df_locate_matches_recurse()}, bumping the column index and using these refined lower/upper bounds as the starting bounds for the next column.
 
-I think an example would be useful here, so below I step through this process for a few iterations:\if{html}{\out{<div class="sourceCode r">}}\preformatted{# these are sorted already for simplicity
+I think an example would be useful here, so below I step through this process for a few iterations:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# these are sorted already for simplicity
 needles <- data_frame(x = c(1, 1, 2, 2, 2, 3), y = c(1, 2, 3, 4, 5, 3))
 haystack <- data_frame(x = c(1, 1, 2, 2, 3), y = c(2, 3, 4, 4, 1))
 
@@ -145,7 +149,9 @@ In the real code, rather than comparing the double values of the columns directl
 
 \subsection{Non-equi conditions and containers}{
 
-At this point we can talk about non-equi conditions like \code{<} or \code{>=}. The general idea is pretty simple, and just builds on the above algorithm. For example, start with the \code{x} column from needles/haystack above:\if{html}{\out{<div class="sourceCode r">}}\preformatted{needles$x
+At this point we can talk about non-equi conditions like \code{<} or \code{>=}. The general idea is pretty simple, and just builds on the above algorithm. For example, start with the \code{x} column from needles/haystack above:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{needles$x
 #> [1] 1 1 2 2 2 3
 
 haystack$x
@@ -163,7 +169,9 @@ At this point, we need to "adjust" the \code{haystack} match bounds to account f
 
 This approach is really nice, because we only have to exactly match the \code{needle} in \code{haystack}. We don't have to compare each needle against every value in \code{haystack}, which would take a massive amount of time.
 
-However, it gets slightly more complex with data frames with multiple columns. Let's go back to our original \code{needles} and \code{haystack} data frames and apply the condition \code{<=} to each column. Here is another worked example, which shows a case where our "rule" falls apart on the second column.\if{html}{\out{<div class="sourceCode r">}}\preformatted{needles
+However, it gets slightly more complex with data frames with multiple columns. Let's go back to our original \code{needles} and \code{haystack} data frames and apply the condition \code{<=} to each column. Here is another worked example, which shows a case where our "rule" falls apart on the second column.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{needles
 #>   x y
 #> 1 1 1
 #> 2 1 2
@@ -222,7 +230,9 @@ loc_upper_match_haystack <- 5L
 # in the needles! looks like our rule failed us.
 }\if{html}{\out{</div>}}
 
-If you read through the above example, you'll see that the rule didn't work here. The problem is that while \code{haystack} is ordered (by \code{vec_order()}s standards), each column isn't ordered \emph{independently} of the others. Instead, each column is ordered within the "group" created by previous columns. Concretely, \code{haystack} here has an ordered \code{x} column, but if you look at \code{haystack$y} by itself, it isn't ordered (because of that 1 at the end). That is what causes the rule to fail.\if{html}{\out{<div class="sourceCode r">}}\preformatted{haystack
+If you read through the above example, you'll see that the rule didn't work here. The problem is that while \code{haystack} is ordered (by \code{vec_order()}s standards), each column isn't ordered \emph{independently} of the others. Instead, each column is ordered within the "group" created by previous columns. Concretely, \code{haystack} here has an ordered \code{x} column, but if you look at \code{haystack$y} by itself, it isn't ordered (because of that 1 at the end). That is what causes the rule to fail.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{haystack
 #>   x y
 #> 1 1 2
 #> 2 1 3
@@ -231,7 +241,9 @@ If you read through the above example, you'll see that the rule didn't work here
 #> 5 3 1
 }\if{html}{\out{</div>}}
 
-To fix this, we need to create haystack "containers" where the values within each container are all \emph{totally} ordered. For \code{haystack} that would create 2 containers and look like:\if{html}{\out{<div class="sourceCode r">}}\preformatted{haystack[1:4,]
+To fix this, we need to create haystack "containers" where the values within each container are all \emph{totally} ordered. For \code{haystack} that would create 2 containers and look like:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{haystack[1:4,]
 #> # A tibble: 4 × 2
 #>       x     y
 #>   <dbl> <dbl>
@@ -247,7 +259,9 @@ haystack[5,]
 #> 1     3     1
 }\if{html}{\out{</div>}}
 
-This is essentially what \code{computing_nesting_container_ids()} does. You can actually see these ids with the helper, \code{compute_nesting_container_info()}:\if{html}{\out{<div class="sourceCode r">}}\preformatted{haystack2 <- haystack
+This is essentially what \code{computing_nesting_container_ids()} does. You can actually see these ids with the helper, \code{compute_nesting_container_info()}:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{haystack2 <- haystack
 
 # we really pass along the integer ranks, but in this case that is equivalent
 # to converting our double columns to integers

@@ -43,7 +43,7 @@ dots are only for future extensions and should be empty.}
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
-\item{call}{The execution environment of a currently
+\item{call, .call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
@@ -51,11 +51,6 @@ mentioned in error messages as the source of the error. See the
 \item{.arg}{An argument name as a string. This argument
 will be mentioned in error messages as the input that is at the
 origin of a problem.}
-
-\item{.call}{The execution environment of a currently
-running function, e.g. \code{caller_env()}. The function will be
-mentioned in error messages as the source of the error. See the
-\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 A vector the same length as \code{x} with the same type as \code{to},

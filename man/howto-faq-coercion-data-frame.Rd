@@ -36,7 +36,9 @@ includes potentially incompatible attributes.
 \subsection{Roxygen workflow}{
 
 To implement methods for generics, first import the generics in your
-namespace and redocument:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
+namespace and redocument:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @importFrom vctrs vec_ptype2 vec_cast
 NULL
 }\if{html}{\out{</div>}}
 
@@ -87,7 +89,9 @@ data frame class.
 These helpers should always return data tables. To this end we use the
 conversion generic \code{as.data.table()}. Depending on the tools available
 for the particular class at hand, a constructor might be appropriate as
-well.\if{html}{\out{<div class="sourceCode r">}}\preformatted{dt_ptype2 <- function(x, y, ...) \{
+well.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dt_ptype2 <- function(x, y, ...) \{
   as.data.table(df_ptype2(x, y, ...))
 \}
 dt_cast <- function(x, to, ...) \{
@@ -95,7 +99,9 @@ dt_cast <- function(x, to, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-We start with the self-self method:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+We start with the self-self method:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.data.table.data.table <- function(x, y, ...) \{
   dt_ptype2(x, y, ...)
 \}
@@ -106,7 +112,9 @@ data table. This decision is not based on the value coverage of each
 data structures, but on the idea that data tables have richer behaviour.
 Since data tables are the richer type, we call \code{dt_type2()} from the
 \code{vec_ptype2()} method. It always returns a data table, no matter the
-order of arguments:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+order of arguments:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.data.table.data.frame <- function(x, y, ...) \{
   dt_ptype2(x, y, ...)
 \}
@@ -123,7 +131,9 @@ method for coercing to data frame uses \code{df_cast()} rather than
 Also, please note that for historical reasons, the order of the classes
 in the method name is in reverse order of the arguments in the function
 signature. The first class represents \code{to}, whereas the second class
-represents \code{x}.\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+represents \code{x}.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_cast.data.table.data.table <- function(x, to, ...) \{
   dt_cast(x, to, ...)
 \}
@@ -140,7 +150,9 @@ vec_cast.data.frame.data.table <- function(x, to, ...) \{
 }\if{html}{\out{</div>}}
 
 With these methods vctrs is now able to combine data tables with data
-frames:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_cbind(data.frame(x = 1:3), data.table(y = "foo"))
+frames:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_cbind(data.frame(x = 1:3), data.table(y = "foo"))
 #>    x   y
 #> 1: 1 foo
 #> 2: 2 foo
@@ -151,7 +163,9 @@ frames:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_cbind(data.f
 \subsection{A tibble example}{
 
 In this example we implement coercion methods for a tibble subclass that
-carries a colour as a scalar metadata:\if{html}{\out{<div class="sourceCode r">}}\preformatted{# User constructor
+carries a colour as a scalar metadata:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{# User constructor
 my_tibble <- function(colour = NULL, ...) \{
   new_my_tibble(tibble::tibble(...), colour = colour)
 \}
@@ -181,7 +195,9 @@ print.my_tibble <- function(x, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-This subclass is very simple. All it does is modify the header.\if{html}{\out{<div class="sourceCode r">}}\preformatted{red <- my_tibble("red", x = 1, y = 1:2)
+This subclass is very simple. All it does is modify the header.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{red <- my_tibble("red", x = 1, y = 1:2)
 red
 #> <my_tibble: red>
 #>       x     y
@@ -205,7 +221,9 @@ green
 }\if{html}{\out{</div>}}
 
 Combinations do not work properly out of the box, instead vctrs falls
-back to a bare tibble:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
+back to a bare tibble:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
 #> # A tibble: 5 x 2
 #>       x     y
 #>   <dbl> <int>
@@ -242,7 +260,9 @@ derived by other subclasses.
 
 We first implement a helper to determine if two data frames have
 compatible colours. We use the \code{df_colour()} accessor which returns
-\code{NULL} when the data frame colour is undefined.\if{html}{\out{<div class="sourceCode r">}}\preformatted{has_compatible_colours <- function(x, y) \{
+\code{NULL} when the data frame colour is undefined.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{has_compatible_colours <- function(x, y) \{
   x_colour <- df_colour(x) \%||\% df_colour(y)
   y_colour <- df_colour(y) \%||\% x_colour
   identical(x_colour, y_colour)
@@ -260,7 +280,9 @@ In simpler cases (like the data.table example), these methods do not
 need to take the arguments suffixed in \verb{_arg}. Here we do need to take
 these arguments so we can pass them to the \code{stop_} functions when we
 detect an incompatibility. They also should be passed to the parent
-methods.\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+methods.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 my_tib_cast <- function(x, to, ..., x_arg = "", to_arg = "") \{
   out <- tib_cast(x, to, ..., x_arg = x_arg, to_arg = to_arg)
 
@@ -297,7 +319,9 @@ my_tib_ptype2 <- function(x, y, ..., x_arg = "", y_arg = "") \{
 }\if{html}{\out{</div>}}
 
 Let’s now implement the coercion methods, starting with the self-self
-methods.\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+methods.
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_tibble.my_tibble <- function(x, y, ...) \{
   my_tib_ptype2(x, y, ...)
 \}
@@ -307,7 +331,9 @@ vec_cast.my_tibble.my_tibble <- function(x, to, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-We can now combine compatible instances of our class!\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, red)
+We can now combine compatible instances of our class!
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, red)
 #> <my_tibble: red>
 #>       x     y
 #>   <dbl> <int>
@@ -331,7 +357,9 @@ vec_rbind(green, red)
 
 The methods for combining our class with tibbles follow the same
 pattern. For ptype2 we return our class in both cases because it is the
-richer type:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+richer type:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_tibble.tbl_df <- function(x, y, ...) \{
   my_tib_ptype2(x, y, ...)
 \}
@@ -342,7 +370,9 @@ vec_ptype2.tbl_df.my_tibble <- function(x, y, ...) \{
 }\if{html}{\out{</div>}}
 
 For cast are careful about returning a tibble when casting to a tibble.
-Note the call to \code{vctrs::tib_cast()}:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+Note the call to \code{vctrs::tib_cast()}:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_cast.my_tibble.tbl_df <- function(x, to, ...) \{
   my_tib_cast(x, to, ...)
 \}
@@ -352,7 +382,9 @@ vec_cast.tbl_df.my_tibble <- function(x, to, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-From this point, we get correct combinations with tibbles:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
+From this point, we get correct combinations with tibbles:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, tibble::tibble(x = 10:12))
 #> <my_tibble: red>
 #>       x     y
 #>   <dbl> <int>
@@ -366,7 +398,9 @@ From this point, we get correct combinations with tibbles:\if{html}{\out{<div cl
 However we are not done yet. Because the coercion hierarchy is different
 from the class hierarchy, there is no inheritance of coercion methods.
 We’re not getting correct behaviour for data frames yet because we
-haven’t explicitly specified the methods for this class:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
+haven’t explicitly specified the methods for this class:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
 #> # A tibble: 5 x 2
 #>       x     y
 #>   <dbl> <int>
@@ -377,7 +411,9 @@ haven’t explicitly specified the methods for this class:\if{html}{\out{<div cl
 #> 5    12    NA
 }\if{html}{\out{</div>}}
 
-Let’s finish up the boiler plate:\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
+Let’s finish up the boiler plate:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_tibble.data.frame <- function(x, y, ...) \{
   my_tib_ptype2(x, y, ...)
 \}
@@ -396,7 +432,9 @@ vec_cast.data.frame.my_tibble <- function(x, to, ...) \{
 \}
 }\if{html}{\out{</div>}}
 
-This completes the implementation:\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
+This completes the implementation:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_rbind(red, data.frame(x = 10:12))
 #> <my_tibble: red>
 #>       x     y
 #>   <dbl> <int>

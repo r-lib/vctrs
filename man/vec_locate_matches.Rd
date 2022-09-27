@@ -156,14 +156,16 @@ multiple observations in \code{haystack}. Unlike \code{vec_match()},
 binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, and \code{<=}.
 }
 \details{
-\code{\link[=vec_match]{vec_match()}} is identical to (but often slightly faster than):\preformatted{vec_locate_matches(
+\code{\link[=vec_match]{vec_match()}} is identical to (but often slightly faster than):
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vec_locate_matches(
   needles,
   haystack,
   condition = "==",
   multiple = "first",
   nan_distinct = TRUE
 )
-}
+}\if{html}{\out{</div>}}
 
 \code{vec_locate_matches()} is extremely similar to a SQL join between \code{needles}
 and \code{haystack}, with the default being most similar to a left join.

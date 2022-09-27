@@ -44,9 +44,11 @@ repeated.
 \details{
 Using \code{vec_unrep()} and \code{vec_rep_each()} together is similar to using
 \code{\link[base:rle]{base::rle()}} and \code{\link[base:rle]{base::inverse.rle()}}. The following invariant shows
-the relationship between the two functions:\preformatted{compressed <- vec_unrep(x)
+the relationship between the two functions:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{compressed <- vec_unrep(x)
 identical(x, vec_rep_each(compressed$key, compressed$times))
-}
+}\if{html}{\out{</div>}}
 
 There are two main differences between \code{vec_unrep()} and \code{\link[base:rle]{base::rle()}}:
 \itemize{

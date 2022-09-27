@@ -22,11 +22,7 @@ tib_cast(x, to, ..., x_arg = "", to_arg = "", call = caller_env())
 \code{vec_ptype2()} or \code{vec_cast()} method, you must forward the dots
 passed to your method on to \code{df_ptype2()} or \code{df_cast()}.}
 
-\item{x_arg}{Argument names for \code{x} and \code{y}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
-
-\item{y_arg}{Argument names for \code{x} and \code{y}. These are used
+\item{x_arg, y_arg}{Argument names for \code{x} and \code{y}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 
@@ -34,10 +30,6 @@ incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_t
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
-
-\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
-in error messages to inform the user about the locations of
-incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 }
 \value{
 \itemize{
