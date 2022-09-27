@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Improved the performance of list-of common type methods (#1686).
+
 * `vec_rbind()` now applies `base::c()` fallback recursively within
   packed df-cols (#1331, #1462, #1640).
 
