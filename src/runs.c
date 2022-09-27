@@ -20,11 +20,6 @@ r_obj* vec_locate_runs(r_obj* x, bool start) {
   r_obj* out = KEEP(r_new_integer(n));
   int* v_out = r_int_begin(out);
 
-  if (n == 0) {
-    FREE(2);
-    return out;
-  }
-
   if (start) {
     vec_locate_run_starts(v_id, size, v_out);
   } else {
@@ -37,42 +32,39 @@ r_obj* vec_locate_runs(r_obj* x, bool start) {
 
 static inline
 void vec_locate_run_starts(const int* v_id, r_ssize size, int* v_out) {
+  if (size == 0) {
+    return;
+  }
+
   r_ssize loc = 0;
+  int ref = v_id[0];
 
   // Handle first case
-  int ref = v_id[0];
   v_out[loc] = 1;
   ++loc;
 
   for (r_ssize i = 1; i < size; ++i) {
-    const int elt = v_id[i];
-
-    if (elt == ref) {
-      continue;
-    }
-
-    ref = elt;
     v_out[loc] = i + 1;
-    ++loc;
+    const int elt = v_id[i];
+    loc += elt != ref;
+    ref = elt;
   }
 }
 
 static inline
 void vec_locate_run_ends(const int* v_id, r_ssize size, int* v_out) {
-  r_ssize loc = 0;
+  if (size == 0) {
+    return;
+  }
 
+  r_ssize loc = 0;
   int ref = v_id[0];
 
   for (r_ssize i = 1; i < size; ++i) {
-    const int elt = v_id[i];
-
-    if (elt == ref) {
-      continue;
-    }
-
-    ref = elt;
     v_out[loc] = i;
-    ++loc;
+    const int elt = v_id[i];
+    loc += elt != ref;
+    ref = elt;
   }
 
   // Handle last case
@@ -95,12 +87,6 @@ r_obj* vec_detect_runs(r_obj* x, bool start) {
 
   r_obj* out = KEEP(r_new_logical(size));
   int* v_out = r_lgl_begin(out);
-  memset(v_out, 0, size * sizeof(int));
-
-  if (size == 0) {
-    FREE(2);
-    return out;
-  }
 
   if (start) {
     vec_detect_run_starts(v_id, size, v_out);
@@ -114,35 +100,34 @@ r_obj* vec_detect_runs(r_obj* x, bool start) {
 
 static inline
 void vec_detect_run_starts(const int* v_id, r_ssize size, int* v_out) {
-  // Handle first case
+  if (size == 0) {
+    return;
+  }
+
   int ref = v_id[0];
+
+  // Handle first case
   v_out[0] = 1;
 
   for (r_ssize i = 1; i < size; ++i) {
     const int elt = v_id[i];
-
-    if (elt == ref) {
-      continue;
-    }
-
+    v_out[i] = elt != ref;
     ref = elt;
-    v_out[i] = 1;
   }
 }
 
 static inline
 void vec_detect_run_ends(const int* v_id, r_ssize size, int* v_out) {
+  if (size == 0) {
+    return;
+  }
+
   int ref = v_id[0];
 
   for (r_ssize i = 1; i < size; ++i) {
     const int elt = v_id[i];
-
-    if (elt == ref) {
-      continue;
-    }
-
+    v_out[i - 1] = elt != ref;
     ref = elt;
-    v_out[i - 1] = 1;
   }
 
   // Handle last case
@@ -207,13 +192,9 @@ r_obj* vec_identify_runs(r_obj* x) {
                                                                  \
   for (r_ssize i = 1; i < size; ++i) {                           \
     CTYPE const elt = v_x[i];                                    \
-                                                                 \
-    if (EQUAL_NA_EQUAL(elt, ref) == 0) {                         \
-      ++id;                                                      \
-      ref = elt;                                                 \
-    }                                                            \
-                                                                 \
+    id += !EQUAL_NA_EQUAL(elt, ref);                             \
     v_out[i] = id;                                               \
+    ref = elt;                                                   \
   }                                                              \
                                                                  \
   return id;                                                     \
