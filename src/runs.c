@@ -242,15 +242,7 @@ int list_identify_runs(r_obj* x, r_ssize size, int* v_out) {
 
 static inline
 int df_identify_runs(r_obj* x, r_ssize size, int* v_out) {
-  int id = 1;
-  r_ssize n_col = r_length(x);
-
-  if (n_col == 0) {
-    // Define 0 column case to be a single run
-    r_p_int_fill(v_out, id, size);
-    return id;
-  }
-
+  const r_ssize n_col = r_length(x);
   r_obj* const* v_x = r_list_cbegin(x);
 
   // Boolean vector that will eventually be `true` if we are in a run
@@ -266,6 +258,8 @@ int df_identify_runs(r_obj* x, r_ssize size, int* v_out) {
   for (r_ssize i = 0; i < n_col; ++i) {
     col_identify_runs(v_x[i], size, v_where);
   }
+
+  int id = 1;
 
   v_out[0] = id;
   for (r_ssize i = 1; i < size; ++i) {
