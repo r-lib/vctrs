@@ -1,313 +1,286 @@
 #include "vctrs.h"
 
+#include "decl/runs-decl.h"
+
 // -----------------------------------------------------------------------------
 
-static SEXP vec_locate_runs(SEXP x, bool start);
-
-// [[register()]]
-SEXP vctrs_locate_runs(SEXP x, SEXP start) {
-  bool c_start = (bool) r_bool_as_int(start);
-  return vec_locate_runs(x, c_start);
+r_obj* vctrs_locate_runs(r_obj* x, r_obj* ffi_start) {
+  const bool start = r_arg_as_bool(ffi_start, "start");
+  return vec_locate_runs(x, start);
 }
 
-static void vec_locate_run_starts(const int* p_id, r_ssize size, int* p_out);
-static void vec_locate_run_ends(const int* p_id, r_ssize size, int* p_out);
-
 static
-SEXP vec_locate_runs(SEXP x, bool start) {
-  SEXP id = PROTECT(vec_identify_runs(x));
-  const int* p_id = INTEGER(id);
+r_obj* vec_locate_runs(r_obj* x, bool start) {
+  r_obj* id = KEEP(vec_identify_runs(x));
+  const int* v_id = r_int_cbegin(id);
 
-  r_ssize size = r_length(id);
+  const r_ssize size = r_length(id);
+  const int n = r_int_get(r_attrib_get(id, syms_n), 0);
 
-  int n = r_int_get(r_attrib_get(id, syms_n), 0);
-
-  SEXP out = PROTECT(r_new_integer(n));
-  int* p_out = INTEGER(out);
+  r_obj* out = KEEP(r_new_integer(n));
+  int* v_out = r_int_begin(out);
 
   if (n == 0) {
-    UNPROTECT(2);
+    FREE(2);
     return out;
   }
 
   if (start) {
-    vec_locate_run_starts(p_id, size, p_out);
+    vec_locate_run_starts(v_id, size, v_out);
   } else {
-    vec_locate_run_ends(p_id, size, p_out);
+    vec_locate_run_ends(v_id, size, v_out);
   }
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
-static
-void vec_locate_run_starts(const int* p_id, r_ssize size, int* p_out) {
+static inline
+void vec_locate_run_starts(const int* v_id, r_ssize size, int* v_out) {
   r_ssize loc = 0;
 
   // Handle first case
-  int ref = p_id[0];
-  p_out[loc] = 1;
+  int ref = v_id[0];
+  v_out[loc] = 1;
   ++loc;
 
   for (r_ssize i = 1; i < size; ++i) {
-    const int elt = p_id[i];
+    const int elt = v_id[i];
 
     if (elt == ref) {
       continue;
     }
 
     ref = elt;
-    p_out[loc] = i + 1;
+    v_out[loc] = i + 1;
     ++loc;
   }
 }
 
-static
-void vec_locate_run_ends(const int* p_id, r_ssize size, int* p_out) {
+static inline
+void vec_locate_run_ends(const int* v_id, r_ssize size, int* v_out) {
   r_ssize loc = 0;
 
-  int ref = p_id[0];
+  int ref = v_id[0];
 
   for (r_ssize i = 1; i < size; ++i) {
-    const int elt = p_id[i];
+    const int elt = v_id[i];
 
     if (elt == ref) {
       continue;
     }
 
     ref = elt;
-    p_out[loc] = i;
+    v_out[loc] = i;
     ++loc;
   }
 
   // Handle last case
-  p_out[loc] = size;
+  v_out[loc] = size;
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_detect_runs(SEXP x, bool start);
-
-// [[register()]]
-SEXP vctrs_detect_runs(SEXP x, SEXP start) {
-  bool c_start = (bool) r_bool_as_int(start);
-  return vec_detect_runs(x, c_start);
+r_obj* vctrs_detect_runs(r_obj* x, r_obj* ffi_start) {
+  bool start = r_arg_as_bool(ffi_start, "start");
+  return vec_detect_runs(x, start);
 }
 
-static void vec_detect_run_starts(const int* p_id, r_ssize size, int* p_out);
-static void vec_detect_run_ends(const int* p_id, r_ssize size, int* p_out);
-
 static
-SEXP vec_detect_runs(SEXP x, bool start) {
-  SEXP id = PROTECT(vec_identify_runs(x));
-  const int* p_id = INTEGER(id);
+r_obj* vec_detect_runs(r_obj* x, bool start) {
+  r_obj* id = KEEP(vec_identify_runs(x));
+  const int* v_id = r_int_cbegin(id);
 
   r_ssize size = r_length(id);
 
-  SEXP out = PROTECT(r_new_logical(size));
-  int* p_out = LOGICAL(out);
-  memset(p_out, 0, size * sizeof(int));
+  r_obj* out = KEEP(r_new_logical(size));
+  int* v_out = r_lgl_begin(out);
+  memset(v_out, 0, size * sizeof(int));
 
   if (size == 0) {
-    UNPROTECT(2);
+    FREE(2);
     return out;
   }
 
   if (start) {
-    vec_detect_run_starts(p_id, size, p_out);
+    vec_detect_run_starts(v_id, size, v_out);
   } else {
-    vec_detect_run_ends(p_id, size, p_out);
+    vec_detect_run_ends(v_id, size, v_out);
   }
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
-static
-void vec_detect_run_starts(const int* p_id, r_ssize size, int* p_out) {
+static inline
+void vec_detect_run_starts(const int* v_id, r_ssize size, int* v_out) {
   // Handle first case
-  int ref = p_id[0];
-  p_out[0] = 1;
+  int ref = v_id[0];
+  v_out[0] = 1;
 
   for (r_ssize i = 1; i < size; ++i) {
-    const int elt = p_id[i];
+    const int elt = v_id[i];
 
     if (elt == ref) {
       continue;
     }
 
     ref = elt;
-    p_out[i] = 1;
+    v_out[i] = 1;
   }
 }
 
-static
-void vec_detect_run_ends(const int* p_id, r_ssize size, int* p_out) {
-  int ref = p_id[0];
+static inline
+void vec_detect_run_ends(const int* v_id, r_ssize size, int* v_out) {
+  int ref = v_id[0];
 
   for (r_ssize i = 1; i < size; ++i) {
-    const int elt = p_id[i];
+    const int elt = v_id[i];
 
     if (elt == ref) {
       continue;
     }
 
     ref = elt;
-    p_out[i - 1] = 1;
+    v_out[i - 1] = 1;
   }
 
   // Handle last case
-  p_out[size - 1] = 1;
+  v_out[size - 1] = 1;
 }
 
 // -----------------------------------------------------------------------------
 
-// [[register()]]
-SEXP vctrs_identify_runs(SEXP x) {
+r_obj* vctrs_identify_runs(r_obj* x) {
   return vec_identify_runs(x);
 }
 
-static int lgl_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int int_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int dbl_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int cpl_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int chr_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int raw_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int list_identify_runs(SEXP x, R_len_t size, int* p_out);
-static int df_identify_runs(SEXP x, R_len_t size, int* p_out);
+r_obj* vec_identify_runs(r_obj* x) {
+  r_obj* proxy = KEEP(vec_proxy_equal(x));
+  r_ssize size = vec_size(proxy);
+  proxy = KEEP(vec_normalize_encoding(proxy));
 
-// [[ include("vctrs.h") ]]
-SEXP vec_identify_runs(SEXP x) {
-  SEXP proxy = PROTECT(vec_proxy_equal(x));
-  R_len_t size = vec_size(proxy);
-  proxy = PROTECT(vec_normalize_encoding(proxy));
-
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_out = INTEGER(out);
+  r_obj* out = KEEP(r_alloc_integer(size));
+  int* v_out = r_int_begin(out);
 
   // Handle size 0 up front.
   // All implementations assume at least 1 element.
   if (size == 0) {
-    SEXP n = PROTECT(r_int(0));
-    r_attrib_poke(out, syms_n, n);
-    UNPROTECT(4);
+    r_obj* ffi_n = r_int(0);
+    r_attrib_poke(out, syms_n, ffi_n);
+    FREE(3);
     return out;
   }
 
-  enum vctrs_type type = vec_proxy_typeof(proxy);
+  const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   int n;
 
   switch (type) {
-  case VCTRS_TYPE_logical: n = lgl_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_integer: n = int_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_double: n = dbl_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_complex: n = cpl_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_character: n = chr_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_raw: n = raw_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_list: n = list_identify_runs(proxy, size, p_out); break;
-  case VCTRS_TYPE_dataframe: n = df_identify_runs(proxy, size, p_out); break;
+  case VCTRS_TYPE_logical: n = lgl_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_integer: n = int_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_double: n = dbl_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_complex: n = cpl_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_character: n = chr_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_raw: n = raw_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_list: n = list_identify_runs(proxy, size, v_out); break;
+  case VCTRS_TYPE_dataframe: n = df_identify_runs(proxy, size, v_out); break;
   default: stop_unimplemented_vctrs_type("vec_identify_runs", type);
   }
 
-  SEXP r_n = PROTECT(r_int(n));
-  r_attrib_poke(out, syms_n, r_n);
+  r_obj* ffi_n = r_int(n);
+  r_attrib_poke(out, syms_n, ffi_n);
 
-  UNPROTECT(4);
+  FREE(3);
   return out;
 }
 
 // -----------------------------------------------------------------------------
 
-#define VEC_IDENTIFY_RUNS(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL) {  \
+#define VEC_IDENTIFY_RUNS(CTYPE, CBEGIN, EQUAL_NA_EQUAL) {       \
   int id = 1;                                                    \
-  const CTYPE* p_x = CONST_DEREF(x);                             \
+  CTYPE const* v_x = CBEGIN(x);                                  \
                                                                  \
   /* Handle first case */                                        \
-  CTYPE ref = p_x[0];                                            \
-  p_out[0] = id;                                                 \
+  CTYPE ref = v_x[0];                                            \
+  v_out[0] = id;                                                 \
                                                                  \
-  for (R_len_t i = 1; i < size; ++i) {                           \
-    const CTYPE elt = p_x[i];                                    \
+  for (r_ssize i = 1; i < size; ++i) {                           \
+    CTYPE const elt = v_x[i];                                    \
                                                                  \
     if (EQUAL_NA_EQUAL(elt, ref) == 0) {                         \
       ++id;                                                      \
       ref = elt;                                                 \
     }                                                            \
                                                                  \
-    p_out[i] = id;                                               \
+    v_out[i] = id;                                               \
   }                                                              \
                                                                  \
   return id;                                                     \
 }
 
 static
-int lgl_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(int, LOGICAL_RO, lgl_equal_na_equal);
+int lgl_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(int, r_lgl_cbegin, lgl_equal_na_equal);
 }
 static
-int int_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(int, INTEGER_RO, int_equal_na_equal);
+int int_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(int, r_int_cbegin, int_equal_na_equal);
 }
 static
-int dbl_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(double, REAL_RO, dbl_equal_na_equal);
+int dbl_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(double, r_dbl_cbegin, dbl_equal_na_equal);
 }
 static
-int cpl_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
+int cpl_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(Rcomplex, r_cpl_cbegin, cpl_equal_na_equal);
 }
 static
-int chr_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(SEXP, STRING_PTR_RO, chr_equal_na_equal);
+int chr_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(r_obj*, r_chr_cbegin, chr_equal_na_equal);
 }
 static
-int raw_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(Rbyte, RAW_RO, raw_equal_na_equal);
+int raw_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(Rbyte, r_raw_cbegin, raw_equal_na_equal);
 }
 static
-int list_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  VEC_IDENTIFY_RUNS(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
+int list_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  VEC_IDENTIFY_RUNS(r_obj*, r_list_cbegin, list_equal_na_equal);
 }
 
 #undef VEC_IDENTIFY_RUNS
 
 // -----------------------------------------------------------------------------
 
-static inline int vec_identify_runs_col(SEXP x,
-                                        int id,
-                                        struct df_short_circuit_info* p_info,
-                                        int* p_out);
+static inline
+int df_identify_runs(r_obj* x, r_ssize size, int* v_out) {
+  int n_prot = 0;
 
-static
-int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
-  int nprot = 0;
-
-  const SEXP* p_x = VECTOR_PTR_RO(x);
+  r_obj* const* v_x = r_list_cbegin(x);
 
   struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
-  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &nprot);
+  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &n_prot);
 
   int id = 1;
-  R_len_t n_col = Rf_length(x);
+  r_ssize n_col = r_length(x);
 
   // Define 0 column case to be a single run
   if (n_col == 0) {
-    r_p_int_fill(p_out, id, size);
-    UNPROTECT(nprot);
+    r_p_int_fill(v_out, id, size);
+    FREE(n_prot);
     return id;
   }
 
   // Handle first case
-  p_out[0] = id;
+  v_out[0] = id;
   info.p_row_known[0] = true;
   --info.remaining;
 
   // Compute non-sequential run IDs
-  for (R_len_t i = 0; i < n_col; ++i) {
-    SEXP col = p_x[i];
+  for (r_ssize i = 0; i < n_col; ++i) {
+    r_obj* col = v_x[i];
 
-    id = vec_identify_runs_col(col, id, &info, p_out);
+    id = vec_identify_runs_col(col, id, &info, v_out);
 
     // All values are unique
     if (info.remaining == 0) {
@@ -316,106 +289,77 @@ int df_identify_runs(SEXP x, R_len_t size, int* p_out) {
   }
 
   id = 1;
-  int previous = p_out[0];
+  int previous = v_out[0];
 
   // Overwrite with sequential IDs
-  for (R_len_t i = 1; i < size; ++i) {
-    const int current = p_out[i];
+  for (r_ssize i = 1; i < size; ++i) {
+    const int current = v_out[i];
 
     if (current != previous) {
       ++id;
       previous = current;
     }
 
-    p_out[i] = id;
+    v_out[i] = id;
   }
 
-  UNPROTECT(nprot);
+  FREE(n_prot);
   return id;
 }
 
 // -----------------------------------------------------------------------------
 
-static int lgl_identify_runs_col(SEXP x,
-                                 int id,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
-static int int_identify_runs_col(SEXP x,
-                                 int id,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
-static int dbl_identify_runs_col(SEXP x,
-                                 int id,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
-static int cpl_identify_runs_col(SEXP x,
-                                 int id,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
-static int chr_identify_runs_col(SEXP x,
-                                 int id,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
-static int raw_identify_runs_col(SEXP x,
-                                 int id,
-                                 struct df_short_circuit_info* p_info,
-                                 int* p_out);
-static int list_identify_runs_col(SEXP x,
-                                  int id,
-                                  struct df_short_circuit_info* p_info,
-                                  int* p_out);
-
 static inline
-int vec_identify_runs_col(SEXP x,
+int vec_identify_runs_col(r_obj* x,
                           int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
+                          int* v_out) {
   switch (vec_proxy_typeof(x)) {
-  case VCTRS_TYPE_logical: return lgl_identify_runs_col(x, id, p_info, p_out);
-  case VCTRS_TYPE_integer: return int_identify_runs_col(x, id, p_info, p_out);
-  case VCTRS_TYPE_double: return dbl_identify_runs_col(x, id, p_info, p_out);
-  case VCTRS_TYPE_complex: return cpl_identify_runs_col(x, id, p_info, p_out);
-  case VCTRS_TYPE_character: return chr_identify_runs_col(x, id, p_info, p_out);
-  case VCTRS_TYPE_raw: return raw_identify_runs_col(x, id, p_info, p_out);
-  case VCTRS_TYPE_list: return list_identify_runs_col(x, id, p_info, p_out);
+  case VCTRS_TYPE_logical: return lgl_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_integer: return int_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_double: return dbl_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_complex: return cpl_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_character: return chr_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_raw: return raw_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_list: return list_identify_runs_col(x, id, p_info, v_out);
   case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should be flattened.");
-  case VCTRS_TYPE_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_identify_runs()`");
-  default: Rf_error("Unimplemented type in `vec_identify_runs()`");
+  case VCTRS_TYPE_scalar: r_abort("Can't compare scalars.");
+  default: r_abort("Unimplemented type.");
   }
 }
 
 // -----------------------------------------------------------------------------
 
-#define VEC_IDENTIFY_RUNS_COL(CTYPE, CONST_DEREF, EQUAL_NA_EQUAL) { \
-  const CTYPE* p_x = CONST_DEREF(x);                                \
+#define VEC_IDENTIFY_RUNS_COL(CTYPE, CBEGIN, EQUAL_NA_EQUAL) {      \
+  CTYPE const* v_x = CBEGIN(x);                                     \
                                                                     \
   /* First row is always known, so `run_val` and `run_id` */        \
   /* will always be overwritten immediately below. */               \
   /* But for gcc11 we have to initialize these variables. */        \
-  CTYPE run_val = p_x[0];                                           \
+  CTYPE run_val = v_x[0];                                           \
   int run_id = 0;                                                   \
                                                                     \
-  for (R_len_t i = 0; i < p_info->size; ++i) {                      \
+  for (r_ssize i = 0; i < p_info->size; ++i) {                      \
     /* Start of new run */                                          \
     if (p_info->p_row_known[i]) {                                   \
-      run_val = p_x[i];                                             \
-      run_id = p_out[i];                                            \
+      run_val = v_x[i];                                             \
+      run_id = v_out[i];                                            \
       continue;                                                     \
     }                                                               \
                                                                     \
-    const CTYPE elt = p_x[i];                                       \
+    CTYPE const elt = v_x[i];                                       \
     const int eq = EQUAL_NA_EQUAL(elt, run_val);                    \
                                                                     \
     /* Update ID of identical values */                             \
     if (eq != 0) {                                                  \
-      p_out[i] = run_id;                                            \
+      v_out[i] = run_id;                                            \
       continue;                                                     \
     }                                                               \
                                                                     \
     ++id;                                                           \
     run_val = elt;                                                  \
     run_id = id;                                                    \
-    p_out[i] = id;                                                  \
+    v_out[i] = id;                                                  \
                                                                     \
     /* This is a run change, so don't check this row again */       \
     p_info->p_row_known[i] = true;                                  \
@@ -429,54 +373,54 @@ int vec_identify_runs_col(SEXP x,
   return id;                                                        \
 }
 
-static
-int lgl_identify_runs_col(SEXP x,
+static inline
+int lgl_identify_runs_col(r_obj* x,
                           int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(int, LOGICAL_RO, lgl_equal_na_equal);
+                          int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(int, r_lgl_cbegin, lgl_equal_na_equal);
 }
-static
-int int_identify_runs_col(SEXP x,
+static inline
+int int_identify_runs_col(r_obj* x,
                           int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(int, INTEGER_RO, int_equal_na_equal);
+                          int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(int, r_int_cbegin, int_equal_na_equal);
 }
-static
-int dbl_identify_runs_col(SEXP x,
+static inline
+int dbl_identify_runs_col(r_obj* x,
                           int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(double, REAL_RO, dbl_equal_na_equal);
+                          int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(double, r_dbl_cbegin, dbl_equal_na_equal);
 }
-static
-int cpl_identify_runs_col(SEXP x,
+static inline
+int cpl_identify_runs_col(r_obj* x,
                           int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal);
+                          int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(Rcomplex, r_cpl_cbegin, cpl_equal_na_equal);
 }
-static
-int chr_identify_runs_col(SEXP x,
+static inline
+int chr_identify_runs_col(r_obj* x,
                           int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(SEXP, STRING_PTR_RO, chr_equal_na_equal);
+                          int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
 }
-static
-int raw_identify_runs_col(SEXP x,
-                          R_len_t id,
+static inline
+int raw_identify_runs_col(r_obj* x,
+                          int id,
                           struct df_short_circuit_info* p_info,
-                          int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(Rbyte, RAW_RO, raw_equal_na_equal);
+                          int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
 }
-static
-int list_identify_runs_col(SEXP x,
+static inline
+int list_identify_runs_col(r_obj* x,
                            int id,
                            struct df_short_circuit_info* p_info,
-                           int* p_out) {
-  VEC_IDENTIFY_RUNS_COL(SEXP, VECTOR_PTR_RO, list_equal_na_equal);
+                           int* v_out) {
+  VEC_IDENTIFY_RUNS_COL(r_obj*, r_list_cbegin, list_equal_na_equal);
 }
 
 #undef VEC_IDENTIFY_RUNS_COL

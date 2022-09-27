@@ -44,6 +44,7 @@ bool vec_is_unspecified(SEXP x);
 #include "ptype.h"
 #include "ptype2-dispatch.h"
 #include "ptype2.h"
+#include "runs.h"
 #include "shape.h"
 #include "size-common.h"
 #include "size.h"
@@ -82,7 +83,6 @@ bool vec_is_unspecified(SEXP x);
 SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
-SEXP vec_identify_runs(SEXP x);
 SEXP vec_match_params(SEXP needles,
                       SEXP haystack,
                       bool na_equal,

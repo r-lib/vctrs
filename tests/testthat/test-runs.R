@@ -108,9 +108,15 @@ test_that("vec_locate_runs() works with size zero input", {
 })
 
 test_that("vec_locate_runs() validates `start`", {
-  expect_error(vec_locate_runs(1, start = "x"), "single `TRUE` or `FALSE`")
-  expect_error(vec_locate_runs(1, start = NA), "single `TRUE` or `FALSE`")
-  expect_error(vec_locate_runs(1, start = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")
+  expect_snapshot(error = TRUE, {
+    vec_locate_runs(1, start = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_runs(1, start = NA)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_runs(1, start = c(TRUE, TRUE))
+  })
 })
 
 # vec_detect_runs --------------------------------------------------------------
@@ -135,7 +141,13 @@ test_that("vec_detect_runs() works with size zero input", {
 })
 
 test_that("vec_detect_runs() validates `start`", {
-  expect_error(vec_detect_runs(1, start = "x"), "single `TRUE` or `FALSE`")
-  expect_error(vec_detect_runs(1, start = NA), "single `TRUE` or `FALSE`")
-  expect_error(vec_detect_runs(1, start = c(TRUE, TRUE)), "single `TRUE` or `FALSE`")
+  expect_snapshot(error = TRUE, {
+    vec_detect_runs(1, start = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_detect_runs(1, start = NA)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_detect_runs(1, start = c(TRUE, TRUE))
+  })
 })
