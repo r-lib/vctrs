@@ -11,7 +11,7 @@ r_obj* fns_vec_proxy_compare_array;
 r_obj* fns_vec_proxy_order_array;
 
 static
-r_obj* vec_proxy_2(r_obj* x, bool recurse);
+r_obj* vec_proxy_2(r_obj* x, enum vctrs_recurse recurse);
 
 static inline
 r_obj* vec_proxy_equal_impl(r_obj* x);

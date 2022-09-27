@@ -9,25 +9,25 @@
 // causing duplication to occur. Passing `owned` through here allows us to
 // call `vec_clone_referenced()`, which won't attempt to clone if we know we
 // own the object. See #1151.
-r_obj* vec_restore(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
+r_obj* vec_restore(r_obj* x, r_obj* to, enum vctrs_owned owned) {
   return vec_restore_4(x, to, owned, VCTRS_RECURSE_false);
 }
-r_obj* vec_restore_recurse(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
+r_obj* vec_restore_recurse(r_obj* x, r_obj* to, enum vctrs_owned owned) {
   return vec_restore_4(x, to, owned, VCTRS_RECURSE_true);
 }
 
 r_obj* ffi_vec_restore(r_obj* x, r_obj* to) {
-  return vec_restore_4(x, to, vec_owned(x), VCTRS_RECURSE_false);
+  return vec_restore(x, to, vec_owned(x));
 }
 r_obj* ffi_vec_restore_recurse(r_obj* x, r_obj* to) {
-  return vec_restore_4(x, to, vec_owned(x), VCTRS_RECURSE_true);
+  return vec_restore_recurse(x, to, vec_owned(x));
 }
 
 static
 r_obj* vec_restore_4(r_obj* x,
                      r_obj* to,
-                     const enum vctrs_owned owned,
-                     bool recurse) {
+                     enum vctrs_owned owned,
+                     enum vctrs_recurse recurse) {
   enum vctrs_class_type to_type = class_type(to);
 
   if (recurse && !class_type_is_data_frame(to_type) && is_data_frame(x)) {
@@ -58,7 +58,7 @@ r_obj* vec_restore_dispatch(r_obj* x, r_obj* to) {
 
 
 // Copy attributes except names and dim. This duplicates `x` if needed.
-r_obj* vec_restore_default(r_obj* x, r_obj* to, const enum vctrs_owned owned) {
+r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
   r_obj* attrib = r_attrib(to);
 
   const bool is_s4 = IS_S4_OBJECT(to);
@@ -172,7 +172,7 @@ r_obj* vec_df_restore(r_obj* x,
 
 r_obj* vec_bare_df_restore(r_obj* x,
                            r_obj* to,
-                           const enum vctrs_owned owned,
+                           enum vctrs_owned owned,
                            enum vctrs_recurse recurse) {
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_internal("Attempt to restore data frame from a %s.",
@@ -228,7 +228,10 @@ r_obj* vec_bare_df_restore(r_obj* x,
 }
 
 r_obj* ffi_vec_bare_df_restore(r_obj* x, r_obj* to) {
-  return vec_bare_df_restore(x, to, vec_owned(x), false);
+  return vec_bare_df_restore(x,
+                             to,
+                             vec_owned(x),
+                             VCTRS_RECURSE_false);
 }
 
 

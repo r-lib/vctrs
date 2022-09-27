@@ -1,3 +1,4 @@
+#include "vctrs-core.h"
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include <R_ext/Rdynload.h>
@@ -353,7 +354,10 @@ SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
   // Total ownership because `map()` generates a fresh list
-  out = vec_bare_df_restore(out, df, VCTRS_OWNED_true, false);
+  out = vec_bare_df_restore(out,
+                            df,
+                            VCTRS_OWNED_true,
+                            VCTRS_RECURSE_false);
 
   UNPROTECT(1);
   return out;
@@ -364,7 +368,10 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
   // Total ownership because `map()` generates a fresh list
-  out = vec_df_restore(out, df, VCTRS_OWNED_true, false);
+  out = vec_df_restore(out,
+                       df,
+                       VCTRS_OWNED_true,
+                       VCTRS_RECURSE_false);
 
   UNPROTECT(1);
   return out;
