@@ -30,10 +30,6 @@ r_obj* vec_restore_4(r_obj* x,
                      enum vctrs_recurse recurse) {
   enum vctrs_class_type to_type = class_type(to);
 
-  if (recurse && !class_type_is_data_frame(to_type) && is_data_frame(x)) {
-    return vec_df_restore(x, to, owned, recurse);
-  }
-
   switch (to_type) {
   case VCTRS_CLASS_bare_factor:
   case VCTRS_CLASS_bare_ordered:
@@ -44,7 +40,12 @@ r_obj* vec_restore_4(r_obj* x,
   case VCTRS_CLASS_bare_data_frame:
   case VCTRS_CLASS_bare_tibble: return vec_bare_df_restore(x, to, owned, recurse);
   case VCTRS_CLASS_data_frame: return vec_df_restore(x, to, owned, recurse);
-  default: return vec_restore_dispatch(x, to);
+  default:
+    if (recurse && is_data_frame(x)) {
+      return vec_df_restore(x, to, owned, recurse);
+    } else {
+      return vec_restore_dispatch(x, to);
+    }
   }
 }
 
