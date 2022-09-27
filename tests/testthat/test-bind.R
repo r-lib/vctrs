@@ -832,8 +832,6 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   )
   expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
 
-  skip("FIXME: c() fallback with recursion through df-col")
-
   wrapper_x_df <- data_frame(x = x_df)
   wrapper_y_df <- data_frame(x = y_df)
 
@@ -841,7 +839,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
     c.vctrs_foobar = function(...) quux(NextMethod()),
     vec_rbind(wrapper_x_df, wrapper_y_df)
   )
-  expect_identical(out, data_frame(data_frame(x = quux(c(1, 2)))))
+  expect_identical(out, data_frame(x = data_frame(x = quux(c(1, 2)))))
 })
 
 test_that("c() fallback works with unspecified columns", {
@@ -862,8 +860,8 @@ test_that("c() fallback works with unspecified columns", {
 
 test_that("c() fallback works with vctrs-powered data frame subclass", {
   local_methods(
-    c.vctrs_quux = function(...) quux(NextMethod(), c_dispatched = TRUE),
-    `[.vctrs_quux` = function(x, i, ...) quux(NextMethod(), bracket_dispatched = TRUE)
+    c.vctrs_quux = function(...) quux(vec_paste0(NextMethod(), "-c")),
+    `[.vctrs_quux` = function(x, i, ...) quux(vec_paste0(NextMethod(), "-["))
   )
   local_foobar_df_methods()
 
@@ -872,11 +870,11 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   df2 <- data_frame(x = quux(4:5))
 
   out <- vctrs::vec_rbind(df1, df2)
-  exp <- foobar(data_frame(x = quux(1:5, c_dispatched = TRUE)))
+  exp <- foobar(data_frame(x = quux(paste0(1:5, "-c"))))
   expect_identical(out, exp)
 
   out <- vctrs::vec_rbind(df2, df1)
-  exp <- foobar(data_frame(x = quux(c(4:5, 1:3), c_dispatched = TRUE)))
+  exp <- foobar(data_frame(x = quux(paste0(c(4:5, 1:3), "-c"))))
   expect_identical(out, exp)
 
   ### Disjoint case
@@ -885,7 +883,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
 
   out <- vctrs::vec_rbind(df1, df2)
   exp <- foobar(data_frame(
-    x = quux(c(1:3, NA, NA), bracket_dispatched = TRUE),
+    x = quux(c(paste0(1:3, "-c-["), paste0(c(NA, NA), "-["))),
     y = c(rep(NA, 3), 4:5)
   ))
   expect_identical(out, exp)
@@ -893,7 +891,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   out <- vctrs::vec_rbind(df2, df1)
   exp <- foobar(data_frame(
     y = c(4:5, rep(NA, 3)),
-    x = quux(c(NA, NA, 1:3), bracket_dispatched = TRUE)
+    x = quux(c(paste0(c(NA, NA), "-["), paste0(1:3, "-c-[")))
   ))
   expect_identical(out, exp)
 })
@@ -1068,6 +1066,39 @@ test_that("can repair names of row-binded matrices", {
   })
 })
 
+test_that("vec_rbind() only restores one time", {
+  restored <- list()
+
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) x,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      # Ignore proxying and restoration of ptypes
+      if (length(x)) {
+        restored <<- c(restored, list(x))
+      }
+      foobar(x)
+    }
+  )
+
+  df <- data_frame(x = foobar(1:3))
+  vec_rbind(df, df)
+
+  expect_equal(restored, list(
+    rep(na_int, 6),       # From `vec_init()`
+    foobar(c(1:3, 1:3))   # Final restoration
+  ))
+})
+
+test_that("vec_rbind() applies `base::c()` fallback to df-cols (#1462, #1640)", {
+  x <- structure(1, class = "myclass")
+  df <- tibble(a = tibble(x = x))
+  df <- vec_rbind(df, df)
+
+  expect_equal(df$a$x, structure(c(1, 1), class = "myclass"))
+})
+
 
 # Golden tests -------------------------------------------------------
 
@@ -1103,10 +1134,7 @@ test_that("row-binding performs expected allocations", {
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
 
-    # FIXME: The following recursive cases duplicate rownames
-    # excessively because df-cols are restored at each chunk
-    # assignment, causing a premature name-repair
-    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
+    "Data frame with rownames (non-repaired, recursive case) (#1217)"
     df <- data_frame(
       x = 1:2,
       y = data_frame(x = 1:2)
@@ -1115,7 +1143,7 @@ test_that("row-binding performs expected allocations", {
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
 
-    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
+    "Data frame with rownames (repaired, recursive case) (#1217)"
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
   })

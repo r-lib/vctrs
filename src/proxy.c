@@ -2,16 +2,51 @@
 #include "type-data-frame.h"
 #include "decl/proxy-decl.h"
 
-// [[ register() ]]
+
 r_obj* vec_proxy(r_obj* x) {
+  return vec_proxy_2(x, VCTRS_RECURSE_false);
+}
+r_obj* vec_proxy_recurse(r_obj* x) {
+  return vec_proxy_2(x, VCTRS_RECURSE_true);
+}
+
+static
+r_obj* vec_proxy_2(r_obj* x, enum vctrs_recurse recurse) {
   struct vctrs_type_info info = vec_type_info(x);
   KEEP(info.shelter);
 
-  r_obj* out;
-  if (info.type == VCTRS_TYPE_s3) {
-    out = vec_proxy_invoke(x, info.proxy_method);
-  } else {
-    out = x;
+  switch (info.type) {
+  case VCTRS_TYPE_dataframe: {
+    r_obj* out = recurse ? df_proxy_recurse(x) : x;
+    FREE(1);
+    return out;
+  }
+
+  case VCTRS_TYPE_s3: {
+    r_obj* out = KEEP(vec_proxy_invoke(x, info.proxy_method));
+    if (recurse && is_data_frame(out)) {
+      out = df_proxy_recurse(out);
+    }
+    FREE(2);
+    return out;
+  }
+
+  default:
+    FREE(1);
+    return x;
+  }
+}
+
+// Recurse into data frames
+static
+r_obj* df_proxy_recurse(r_obj* x) {
+  r_obj* out = KEEP(r_clone(x));
+
+  r_ssize n = r_length(out);
+  r_obj* const * v_out = r_list_cbegin(out);
+
+  for (r_ssize i = 0; i < n; ++i) {
+    r_list_poke(out, i, vec_proxy_recurse(v_out[i]));
   }
 
   FREE(1);
@@ -98,7 +133,8 @@ r_obj* vec_proxy_invoke(r_obj* x, r_obj* method) {
   if (method == r_null) {
     return x;
   } else {
-    return vctrs_dispatch1(syms_vec_proxy, method, syms_x, x);
+    return vctrs_dispatch1(syms_vec_proxy, method,
+                           syms_x, x);
   }
 }
 

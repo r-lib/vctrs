@@ -1,17 +1,12 @@
+#include "utils-dispatch.h"
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include "decl/type-data-frame-decl.h"
 
 bool is_data_frame(r_obj* x) {
-  if (r_typeof(x) != R_TYPE_list) {
-    return false;
-  }
-
-  enum vctrs_class_type type = class_type(x);
   return
-    type == VCTRS_CLASS_bare_data_frame ||
-    type == VCTRS_CLASS_bare_tibble ||
-    type == VCTRS_CLASS_data_frame;
+    r_typeof(x) == R_TYPE_list &&
+    class_type_is_data_frame(class_type(x));
 }
 
 bool is_native_df(r_obj* x) {

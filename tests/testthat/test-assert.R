@@ -160,7 +160,7 @@ test_that("data frames are always classified as such even when dispatch is off",
 
 test_that("assertion is not applied on proxy", {
   local_methods(
-    vec_proxy.vctrs_foobar = unclass,
+    vec_proxy.vctrs_foobar = function(x, ...) unclass(x),
     vec_restore.vctrs_foobar = function(x, ...) foobar(x),
     `[.vctrs_foobar` = function(x, i) vec_slice(x, i)
   )

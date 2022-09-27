@@ -136,7 +136,7 @@
 #' @export
 vec_proxy <- function(x, ...) {
   check_dots_empty0(...)
-  return(.Call(vctrs_proxy, x))
+  return(.Call(ffi_vec_proxy, x))
   UseMethod("vec_proxy")
 }
 #' @export
@@ -161,6 +161,13 @@ vec_restore.default <- function(x, to, ...) {
 }
 vec_restore_default <- function(x, to, ...) {
   .Call(ffi_vec_restore_default, x, to)
+}
+
+vec_proxy_recurse <- function(x, ...) {
+  .Call(ffi_vec_proxy_recurse, x)
+}
+vec_restore_recurse <- function(x, to, ...) {
+  .Call(ffi_vec_restore_recurse, x, to)
 }
 
 #' Extract underlying data

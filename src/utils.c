@@ -1,3 +1,4 @@
+#include "vctrs-core.h"
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include <R_ext/Rdynload.h>
@@ -353,7 +354,10 @@ SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
   // Total ownership because `map()` generates a fresh list
-  out = vec_bare_df_restore(out, df, VCTRS_OWNED_true);
+  out = vec_bare_df_restore(out,
+                            df,
+                            VCTRS_OWNED_true,
+                            VCTRS_RECURSE_false);
 
   UNPROTECT(1);
   return out;
@@ -364,7 +368,10 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
   // Total ownership because `map()` generates a fresh list
-  out = vec_df_restore(out, df, VCTRS_OWNED_true);
+  out = vec_df_restore(out,
+                       df,
+                       VCTRS_OWNED_true,
+                       VCTRS_RECURSE_false);
 
   UNPROTECT(1);
   return out;
@@ -793,16 +800,20 @@ bool list_has_inner_vec_names(SEXP x, R_len_t size) {
  * @return A list of the same length as `xs`.
  */
 // [[ include("utils.h") ]]
-SEXP list_pluck(SEXP xs, R_len_t i) {
-  R_len_t n = Rf_length(xs);
-  SEXP out = PROTECT(r_new_list(n));
+r_obj* list_pluck(r_obj* xs, r_ssize i) {
+  r_ssize n = r_length(xs);
+  r_obj* const * v_xs = r_list_cbegin(xs);
 
-  for (R_len_t j = 0; j < n; ++j) {
-    SEXP x = r_list_get(xs, j);
-    r_list_poke(out, j, r_list_get(x, i));
+  r_obj* out = KEEP(r_new_list(n));
+
+  for (r_ssize j = 0; j < n; ++j) {
+    r_obj* x = v_xs[j];
+    if (x != r_null) {
+      r_list_poke(out, j, r_list_get(x, i));
+    }
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 

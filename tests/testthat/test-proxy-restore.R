@@ -129,3 +129,37 @@ test_that("names<- is not called with partial data (#1108)", {
   vec_c(x, x)
   expect_equal(values, list(c("a", "b", "a", "b")))
 })
+
+test_that("recursive proxy and restore work with recursive records", {
+  new_recursive_rcrd <- function(x) {
+    new_rcrd(
+      list(field = x),
+      class = "my_recursive_rcrd"
+    )
+  }
+
+  internal <- new_rcrd(list(internal_field = 1:2))
+  x <- new_recursive_rcrd(data_frame(col = internal))
+
+  proxy <- vec_proxy_recurse(x)
+  exp <- data_frame(field = data_frame(col = data_frame(internal_field = 1:2)))
+  expect_equal(proxy, exp)
+  expect_equal(vec_restore_recurse(proxy, x), x)
+
+  # Non-recursive case doesn't proxy `internal`
+  proxy <- vec_proxy(x)
+  exp <- data_frame(field = data_frame(col = internal))
+  expect_equal(proxy, exp)
+  expect_equal(vec_restore(proxy, x), x)
+
+  x_exp <- new_recursive_rcrd(data_frame(col = vec_rep(internal, 2)))
+  expect_equal(
+    list_unchop(list(x, x)),
+    x_exp
+  )
+
+  df <- data_frame(x = x)
+  df_exp <- data_frame(x = x_exp)
+  expect_equal(vec_rbind(df, df), df_exp)
+  expect_equal(vec_c(df, df), df_exp)
+})

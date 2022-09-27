@@ -496,10 +496,7 @@ test_that("concatenation performs expected allocations", {
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(list_unchop(dfs))
 
-    # FIXME: The following recursive cases duplicate rownames
-    # excessively because df-cols are restored at each chunk
-    # assignment, causing a premature name-repair
-    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
+    "Data frame with rownames (non-repaired, recursive case) (#1217)"
     df <- data_frame(
       x = 1:2,
       y = data_frame(x = 1:2)
@@ -508,9 +505,20 @@ test_that("concatenation performs expected allocations", {
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
     with_memory_prof(list_unchop(dfs))
 
-    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
+    "Data frame with rownames (repaired, recursive case) (#1217)"
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(list_unchop(dfs))
+
+    "list-ofs (#1496)"
+    make_list_of <- function(n) {
+      df <- tibble::tibble(
+        x = new_list_of(vec_chop(1:n), ptype = integer())
+      )
+      vec_chop(df)
+    }
+    with_memory_prof(list_unchop(make_list_of(1e3)))
+    with_memory_prof(list_unchop(make_list_of(2e3)))
+    with_memory_prof(list_unchop(make_list_of(4e3)))
   })
 })
 

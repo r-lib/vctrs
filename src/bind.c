@@ -137,7 +137,7 @@ r_obj* vec_rbind(r_obj* xs,
     ns[i] = size;
   }
 
-  r_obj* proxy = KEEP_N(vec_proxy(ptype), &n_prot);
+  r_obj* proxy = KEEP_N(vec_proxy_recurse(ptype), &n_prot);
   if (!is_data_frame(proxy)) {
     r_abort_lazy_call(error_call, "Can't fill a data frame that doesn't have a data frame proxy.");
   }
@@ -190,6 +190,7 @@ r_obj* vec_rbind(r_obj* xs,
   r_ssize counter = 0;
 
   const struct vec_assign_opts bind_assign_opts = {
+    .recursive = true,
     .assign_names = assign_names,
     // Unlike in `vec_c()` we don't need to ignore outer names because
     // `df_assign()` doesn't deal with those
@@ -247,25 +248,79 @@ r_obj* vec_rbind(r_obj* xs,
   }
 
   // Not optimal. Happens after the fallback columns have been
-  // assigned already, ideally they should be ignored. Also this is
-  // currently not recursive. Should we deal with this during
-  // restoration?
-  for (r_ssize i = 0; i < n_cols; ++i) {
-    r_obj* col = r_list_get(ptype, i);
+  // assigned already, ideally they should be ignored.
+  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair);
 
-    if (vec_is_common_class_fallback(col)) {
-      r_obj* col_xs = KEEP(list_pluck(xs, i));
-      r_obj* col_out = vec_c_fallback(col, col_xs, name_spec, name_repair);
-      r_list_poke(out, i, col_out);
-      FREE(1);
-    }
-  }
-
-  out = vec_restore(out, ptype, VCTRS_OWNED_true);
+  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
 
   FREE(n_prot);
   return out;
 }
+
+// `ptype` contains fallback information
+static
+void df_c_fallback(r_obj* out,
+                   r_obj* ptype,
+                   r_obj* xs,
+                   r_ssize n_rows,
+                   r_obj* name_spec,
+                   struct name_repair_opts* name_repair) {
+  r_ssize n_cols = r_length(out);
+
+  if (r_length(ptype) != n_cols ||
+      r_typeof(out) != R_TYPE_list ||
+      r_typeof(ptype) != R_TYPE_list) {
+    r_stop_internal("`ptype` and `out` must be lists of the same length.");
+  }
+
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* ptype_col = r_list_get(ptype, i);
+
+    // Recurse into df-cols
+    if (is_data_frame(ptype_col) && df_needs_fallback(ptype_col)) {
+      r_obj* xs_col = KEEP(list_pluck(xs, i));
+      r_obj* out_col = r_list_get(out, i);
+      df_c_fallback(out_col, ptype_col, xs_col, n_rows, name_spec, name_repair);
+      FREE(1);
+    } else if (vec_is_common_class_fallback(ptype_col)) {
+      r_obj* xs_col = KEEP(list_pluck(xs, i));
+      r_obj* out_col = vec_c_fallback(ptype_col, xs_col, name_spec, name_repair);
+      r_list_poke(out, i, out_col);
+
+      if (vec_size(out_col) != n_rows) {
+        r_stop_internal("`c()` method returned a vector of unexpected size %d instead of %d.",
+                        vec_size(out_col),
+                        n_rows);
+      }
+
+      // Remove fallback vector from the ptype so it doesn't get in
+      // the way of restoration later on
+      r_list_poke(ptype, i, vec_ptype_final(out_col));
+
+      FREE(1);
+    }
+  }
+}
+
+static
+bool df_needs_fallback(r_obj* x) {
+  r_ssize n_cols = r_length(x);
+  r_obj* const * v_x = r_list_cbegin(x);
+
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* col = v_x[i];
+
+    if (vec_is_common_class_fallback(col)) {
+      return true;
+    }
+    if (is_data_frame(col) && df_needs_fallback(col)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 
 static
 r_obj* as_df_row(r_obj* x,
