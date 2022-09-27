@@ -20,7 +20,17 @@ enum vctrs_class_type {
 
 enum vctrs_class_type class_type(r_obj* x);
 
-bool class_type_is_data_frame(enum vctrs_class_type type);
+static inline
+bool class_type_is_data_frame(enum vctrs_class_type type) {
+  switch (type) {
+  case VCTRS_CLASS_data_frame:
+  case VCTRS_CLASS_bare_data_frame:
+  case VCTRS_CLASS_bare_tibble:
+    return true;
+  default:
+    return false;
+  }
+}
 
 bool vec_is_partial(r_obj* x);
 
