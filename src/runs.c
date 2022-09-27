@@ -17,7 +17,10 @@ r_obj* vec_locate_runs(r_obj* x, bool start) {
   const r_ssize size = r_length(id);
   const int n = r_int_get(r_attrib_get(id, syms_n), 0);
 
-  r_obj* out = KEEP(r_new_integer(n));
+  // Share memory with `id`.
+  // `vec_locate_run_starts/ends()` are carefully written to avoid
+  // overwrite issues.
+  r_obj* out = id;
   int* v_out = r_int_begin(out);
 
   if (start) {
@@ -25,6 +28,10 @@ r_obj* vec_locate_runs(r_obj* x, bool start) {
   } else {
     vec_locate_run_ends(v_id, size, v_out);
   }
+
+  // Resize shared memory to output size and clear attribute
+  out = KEEP(r_int_resize(out, n));
+  r_attrib_poke(out, syms_n, r_null);
 
   FREE(2);
   return out;
@@ -44,8 +51,8 @@ void vec_locate_run_starts(const int* v_id, r_ssize size, int* v_out) {
   ++loc;
 
   for (r_ssize i = 1; i < size; ++i) {
-    v_out[loc] = i + 1;
     const int elt = v_id[i];
+    v_out[loc] = i + 1;
     loc += elt != ref;
     ref = elt;
   }
@@ -61,8 +68,8 @@ void vec_locate_run_ends(const int* v_id, r_ssize size, int* v_out) {
   int ref = v_id[0];
 
   for (r_ssize i = 1; i < size; ++i) {
-    v_out[loc] = i;
     const int elt = v_id[i];
+    v_out[loc] = i;
     loc += elt != ref;
     ref = elt;
   }
