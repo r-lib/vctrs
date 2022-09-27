@@ -35,43 +35,19 @@ int df_identify_runs(r_obj* x, r_ssize size, int* v_out);
 
 
 static inline
-int vec_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 
 static inline
-int lgl_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void lgl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 static inline
-int int_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void int_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 static inline
-int dbl_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void dbl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 static inline
-int cpl_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void cpl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 static inline
-int chr_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void chr_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 static inline
-int raw_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out);
+void raw_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
 static inline
-int list_identify_runs_col(r_obj* x,
-                           int id,
-                           struct df_short_circuit_info* p_info,
-                           int* v_out);
+void list_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
