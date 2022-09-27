@@ -295,7 +295,7 @@ void df_c_fallback(r_obj* out,
 
       // Remove fallback vector from the ptype so it doesn't get in
       // the way of restoration later on
-      r_list_poke(ptype, i, vec_slice(out_col, r_null));
+      r_list_poke(ptype, i, vec_ptype_final(out_col));
 
       FREE(1);
     }
