@@ -146,6 +146,12 @@ test_that("recursive proxy and restore work with recursive records", {
   expect_equal(proxy, exp)
   expect_equal(vec_restore_recurse(proxy, x), x)
 
+  # Non-recursive case doesn't proxy `internal`
+  proxy <- vec_proxy(x)
+  exp <- data_frame(field = data_frame(col = internal))
+  expect_equal(proxy, exp)
+  expect_equal(vec_restore(proxy, x), x)
+
   x_exp <- new_recursive_rcrd(data_frame(col = vec_rep(internal, 2)))
   expect_equal(
     list_unchop(list(x, x)),
