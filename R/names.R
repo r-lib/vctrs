@@ -141,10 +141,6 @@
 #'
 #' @seealso [rlang::names2()] returns the names of an object, after
 #'   making them `minimal`.
-#'
-#' The [Names attribute](https://principles.tidyverse.org/names-attribute.html)
-#' section in the "tidyverse package development principles".
-#'
 #' @examples
 #' # By default, `vec_as_names()` returns minimal names:
 #' vec_as_names(c(NA, NA, "foo"))
