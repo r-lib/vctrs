@@ -17,10 +17,10 @@ r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
   case NAME_REPAIR_unique: return vec_as_unique_names(names, opts->quiet);
   case NAME_REPAIR_universal: return vec_as_universal_names(names, opts->quiet);
   case NAME_REPAIR_check_unique: return check_unique_names(names, opts);
-  // I have to handle these elements of the enum to please the compiler, but the
-  // functions that call vec_as_names() generally have `quiet = false`
-  // hard-wired and, on the R side, don't advertise support for unique_quiet and
-  // universal_quiet. What to do?
+  // At the time when unique_quiet and universal_quiet were added, no function
+  // that calls the C function vec_as_names() actually accepts these strings at
+  // the R level, because these functions enforce `quiet = false`.
+  // But we still have to handle every case for the enum.
   case NAME_REPAIR_unique_quiet: return vec_as_unique_names(names, true);
   case NAME_REPAIR_universal_quiet: return vec_as_universal_names(names, true);
   case NAME_REPAIR_custom: return vec_as_custom_names(names, opts);
