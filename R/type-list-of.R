@@ -204,12 +204,18 @@ vec_cast.vctrs_list_of <- function(x, to, ...) {
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
 vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ...) {
-  # Casting list to list_of will warn/err if the cast is lossy,
-  # but the locations refer to the inner vectors,
-  # and the cast fails if all (vector) elements in a single (list) element
-  x <- unclass(x)
-  ptype <- attr(to, "ptype")
-  list_as_list_of(x, ptype = ptype)
+  x_ptype <- attr(x, "ptype", exact = TRUE)
+  to_ptype <- attr(to, "ptype", exact = TRUE)
+
+  if (identical(x_ptype, to_ptype)) {
+    # FIXME: Suboptimal check for "same type", but should be good enough for the
+    # common case of unchopping a list of identically generated list-ofs (#875).
+    # Would be fixed by https://github.com/r-lib/vctrs/issues/1688.
+    x
+  } else {
+    x <- unclass(x)
+    list_as_list_of(x, ptype = to_ptype)
+  }
 }
 
 # Helpers -----------------------------------------------------------------
