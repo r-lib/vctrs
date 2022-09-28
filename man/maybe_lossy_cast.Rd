@@ -44,7 +44,11 @@ locations where \code{x} lost information.}
 messages. Can be loss of precision (for instance from double to
 integer) or loss of generality (from character to factor).}
 
-\item{x_arg, to_arg}{Argument names for \code{x} and \code{to}. These are used
+\item{x_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 

@@ -39,7 +39,11 @@ vec_cast_common(..., .to = NULL, .arg = "", .call = caller_env())
 \code{vec_cast()}, \code{vec_cast_default()}, and \code{vec_restore()}, these
 dots are only for future extensions and should be empty.}
 
-\item{x_arg, to_arg}{Argument names for \code{x} and \code{to}. These are used
+\item{x_arg}{Argument names for \code{x} and \code{to}. These are used
+in error messages to inform the user about the locations of
+incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
+
+\item{to_arg}{Argument names for \code{x} and \code{to}. These are used
 in error messages to inform the user about the locations of
 incompatible types (see \code{\link[=stop_incompatible_type]{stop_incompatible_type()}}).}
 

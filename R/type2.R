@@ -17,7 +17,10 @@
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
 #' @param x,y Vector types.
-#' @param x_arg,y_arg Argument names for `x` and `y`. These are used
+#' @param x_arg Argument names for `x` and `y`. These are used
+#'   in error messages to inform the user about the locations of
+#'   incompatible types (see [stop_incompatible_type()]).
+#' @param y_arg Argument names for `x` and `y`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
 #'

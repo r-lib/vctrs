@@ -14,7 +14,10 @@
 #'   `vec_cast()`, `vec_cast_default()`, and `vec_restore()`, these
 #'   dots are only for future extensions and should be empty.
 #' @param to,.to Type to cast to. If `NULL`, `x` will be returned as is.
-#' @param x_arg,to_arg Argument names for `x` and `to`. These are used
+#' @param x_arg Argument names for `x` and `to`. These are used
+#'   in error messages to inform the user about the locations of
+#'   incompatible types (see [stop_incompatible_type()]).
+#' @param to_arg Argument names for `x` and `to`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types (see [stop_incompatible_type()]).
 #' @return A vector the same length as `x` with the same type as `to`,
