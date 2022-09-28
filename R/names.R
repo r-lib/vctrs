@@ -36,10 +36,11 @@
 #' @inheritParams rlang::args_dots_empty
 #'
 #' @param names A character vector.
-#' @param repair Either a string or a function. If a string, it must
-#'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
-#'   If a function, it is invoked with a vector of minimal names and must
-#'   return minimal names, otherwise an error is thrown.
+
+#' @param repair Either a string or a function. If a string, it must be one of
+#'   `"check_unique"`, `"minimal"`, `"unique"`, `"universal"`, `"unique_quiet"`,
+#'   or `"universal_quiet"` If a function, it is invoked with a vector of
+#'   minimal names and must return minimal names, otherwise an error is thrown.
 #'
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't
 #'     have a name, its minimal name is an empty string.
@@ -54,6 +55,12 @@
 #'   The `"check_unique"` option doesn't perform any name repair.
 #'   Instead, an error is raised if the names don't suit the
 #'   `"unique"` criteria.
+#'
+#'   The options `"unique_quiet"` and `"universal_quiet"` are here to help the
+#'   user who calls this function indirectly, via another function which exposes
+#'   `repair` but not `quiet`. Specifying `repair = "unique_quiet"` is like
+#'   specifying `repair = "unique", quiet = TRUE`. When the `"*_quiet"` options
+#'   are used, any setting of `quiet` is silently overridden.
 #' @param repair_arg If specified and `repair = "check_unique"`, any errors
 #'   will include a hint to set the `repair_arg`.
 #' @param quiet By default, the user is informed of any renaming
