@@ -252,13 +252,27 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
 # list_unchop --------------------------------------------------------------
 
 test_that("`x` must be a list", {
-  expect_error(list_unchop(1, list(1)), "`x` must be a list")
-  expect_error(list_unchop(data.frame(x=1), list(1)), "`x` must be a list")
+  expect_snapshot(error = TRUE, {
+    list_unchop(1, list(1))
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(1, list(1), error_call = call("foo"))
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(data.frame(x=1), list(1))
+  })
 })
 
 test_that("`indices` must be a list", {
-  expect_error(list_unchop(list(1), 1), "`indices` must be a list of integers, or `NULL`")
-  expect_error(list_unchop(list(1), data.frame(x=1)), "`indices` must be a list of integers, or `NULL`")
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), 1)
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), 1, error_call = call("foo"))
+  })
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), data.frame(x=1))
+  })
 })
 
 test_that("`indices` must be a list of integers", {
@@ -376,15 +390,24 @@ test_that("NULL is a valid index", {
 test_that("unchopping recycles elements of x to the size of the index", {
   x <- list(1, 2)
   indices <- list(c(3, 4, 5), c(2, 1))
-
   expect_identical(list_unchop(x, indices), c(2, 2, 1, 1, 1))
+
+  x <- list(1:2)
+  indices <- list(1:3)
+  expect_snapshot({
+    (expect_error(list_unchop(x, indices = indices)))
+    (expect_error(list_unchop(x, indices = indices, error_call = call("foo"))))
+  })
 })
 
 test_that("unchopping takes the common type", {
   x <- list(1, "a")
   indices <- list(1, 2)
 
-  expect_error(list_unchop(x, indices), class = "vctrs_error_incompatible_type")
+  expect_snapshot({
+    (expect_error(list_unchop(x, indices), class = "vctrs_error_incompatible_type"))
+    (expect_error(list_unchop(x, indices, error_call = call("foo")), class = "vctrs_error_incompatible_type"))
+  })
 
   x <- list(1, 2L)
 
@@ -392,10 +415,16 @@ test_that("unchopping takes the common type", {
 })
 
 test_that("can specify a ptype to override common type", {
-  x <- list(1, 2L)
   indices <- list(1, 2)
 
+  x <- list(1, 2L)
   expect_identical(list_unchop(x, indices, ptype = integer()), c(1L, 2L))
+
+  x <- list(1.5, 2)
+  expect_snapshot({
+    (expect_error(list_unchop(x, indices = indices, ptype = integer())))
+    (expect_error(list_unchop(x, indices = indices, ptype = integer(), error_call = call("foo"))))
+  })
 })
 
 test_that("leaving `indices = NULL` unchops sequentially", {
@@ -530,6 +559,7 @@ test_that("list_unchop() fails with complex foreign S3 classes", {
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
     (expect_error(list_unchop(list(x, y)), class = "vctrs_error_incompatible_type"))
+    (expect_error(list_unchop(list(x, y), error_call = call("foo")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -538,6 +568,7 @@ test_that("list_unchop() fails with complex foreign S4 classes", {
     joe <- .Counts(c(1L, 2L), name = "Joe")
     jane <- .Counts(3L, name = "Jane")
     (expect_error(list_unchop(list(joe, jane)), class = "vctrs_error_incompatible_type"))
+    (expect_error(list_unchop(list(joe, jane), error_call = call("foo")), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -683,6 +714,11 @@ test_that("list_unchop() fallback doesn't support `name_spec` or `ptype`", {
       with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
       "name specification"
     ))
+    # With error call
+    (expect_error(
+      with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}", error_call = call("foo"))),
+      "name specification"
+    ))
     # Used to be an error about `ptype`
     (expect_error(
       with_c_foobar(list_unchop(list(foobar(1)), ptype = "")),
@@ -715,7 +751,11 @@ test_that("list_unchop() does not support non-numeric S3 indices", {
 })
 
 test_that("can ignore names in `list_unchop()` by providing a `zap()` name-spec (#232)", {
-  expect_error(list_unchop(list(a = c(b = 1:2))))
+  expect_snapshot({
+    (expect_error(list_unchop(list(a = c(b = 1:2)))))
+    (expect_error(list_unchop(list(a = c(b = 1:2)), error_call = call("foo"))))
+  })
+
   expect_identical(
     list_unchop(list(a = c(b = 1:2), b = 3L), name_spec = zap()),
     1:3
