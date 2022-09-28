@@ -849,7 +849,6 @@ r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_owned owned)
 r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
   struct name_repair_opts opts = new_name_repair_opts(arg,
                                                       r_lazy_null,
-                                                      // think about this 'true'
                                                       true,
                                                       r_lazy_null);
   if (opts.type == NAME_REPAIR_custom) {

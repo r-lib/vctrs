@@ -174,7 +174,6 @@ r_obj* ffi_data_frame(r_obj* x,
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
                                                                   lazy_args.dot_name_repair,
-                                                                  // think about this 'false'
                                                                   false,
                                                                   error_call);
   KEEP(name_repair_opts.shelter);
@@ -215,7 +214,6 @@ r_obj* ffi_df_list(r_obj* x,
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
                                                                   lazy_args.dot_name_repair,
-                                                                  // think about this 'false'
                                                                   false,
                                                                   error_call);
   KEEP(name_repair_opts.shelter);
