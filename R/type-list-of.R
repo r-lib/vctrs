@@ -20,15 +20,7 @@
 #' vec_c(list_of(1, 2), list_of(FALSE, TRUE))
 list_of <- function(..., .ptype = NULL) {
   args <- list2(...)
-
-  ptype <- vec_ptype_common(!!!args, .ptype = .ptype)
-  if (is.null(ptype)) {
-    abort("Could not find common type for elements of `x`.")
-  }
-
-  args <- vec_cast_common(!!!args, .to = ptype)
-
-  new_list_of(args, ptype)
+  list_as_list_of(args, ptype = .ptype)
 }
 
 #' @export
@@ -38,9 +30,10 @@ as_list_of <- function(x, ...) {
 }
 
 #' @export
-as_list_of.vctrs_list_of <- function(x, .ptype = NULL, ...) {
+as_list_of.vctrs_list_of <- function(x, ..., .ptype = NULL) {
   if (!is.null(.ptype)) {
-    list_of(!!!x, .ptype = .ptype)
+    x <- unclass(x)
+    list_as_list_of(x, ptype = .ptype)
   } else {
     x
   }
@@ -48,7 +41,7 @@ as_list_of.vctrs_list_of <- function(x, .ptype = NULL, ...) {
 
 #' @export
 as_list_of.list <- function(x, ..., .ptype = NULL) {
-  list_of(!!!x, .ptype = .ptype)
+  list_as_list_of(x, ptype = .ptype)
 }
 
 #' Create list_of subclass
@@ -68,6 +61,10 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
     abort("`ptype` must have size 0.")
   }
 
+  new_list_of0(x = x, ptype = ptype, ..., class = class)
+}
+
+new_list_of0 <- function(x, ptype, ..., class = character()) {
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }
 
@@ -157,7 +154,7 @@ as.character.vctrs_list_of <- function(x, ...) {
 `[<-.vctrs_list_of` <- function(x, i, value) {
   wrapped_type <- attr(x, "ptype")
   value <- map(value, vec_cast, to = wrapped_type)
-  value <- new_list_of(value, ptype = attr(x, "ptype"))
+  value <- new_list_of0(value, ptype = wrapped_type)
   NextMethod()
 }
 #' @export
@@ -192,8 +189,8 @@ vec_ptype2.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
 #' @method vec_ptype2.vctrs_list_of vctrs_list_of
 #' @export
 vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
-  type <- vec_ptype2(attr(x, "ptype"), attr(y, "ptype"))
-  new_list_of(list(), type)
+  ptype <- vec_ptype2(attr(x, "ptype"), attr(y, "ptype"))
+  new_list_of0(x = list(), ptype = ptype)
 }
 
 #' @rdname list_of
@@ -206,9 +203,25 @@ vec_cast.vctrs_list_of <- function(x, to, ...) {
 
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
-vec_cast.vctrs_list_of.vctrs_list_of <-function(x, to, ...) {
+vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ...) {
   # Casting list to list_of will warn/err if the cast is lossy,
   # but the locations refer to the inner vectors,
   # and the cast fails if all (vector) elements in a single (list) element
-  as_list_of(x, .ptype = attr(to, "ptype"))
+  x <- unclass(x)
+  ptype <- attr(to, "ptype")
+  list_as_list_of(x, ptype = ptype)
+}
+
+# Helpers -----------------------------------------------------------------
+
+list_as_list_of <- function(x, ptype = NULL, error_call = caller_env()) {
+  ptype <- vec_ptype_common(!!!x, .ptype = ptype, .call = error_call)
+
+  if (is.null(ptype)) {
+    abort("Can't find common type for elements of `x`.", call = error_call)
+  }
+
+  x <- vec_cast_common(!!!x, .to = ptype, .call = error_call)
+
+  new_list_of0(x = x, ptype = ptype)
 }
