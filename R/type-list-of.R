@@ -65,13 +65,7 @@ new_list_of <- function(x = list(), ptype = logical(), ..., class = character())
 }
 
 new_list_of0 <- function(x, ptype, ..., class = character()) {
-  if (length(class) == 0L) {
-    class <- "vctrs_list_of"
-  } else {
-    class <- c(class, "vctrs_list_of")
-  }
-
-  new_vctr(x, ..., ptype = ptype, class = class)
+  new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }
 
 #' @export
