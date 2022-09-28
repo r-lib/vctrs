@@ -49,6 +49,19 @@ test_that("common type failure uses error call (#1641)", {
   })
 })
 
+test_that("common type failure uses positional errors", {
+  expect_snapshot({
+    # Looking for `..1` and `a`
+    (expect_error(vec_c(1, a = "x", 2)))
+
+    # Directed cast should also produce directional errors (#1690)
+    (expect_error(vec_c(1, a = "x", 2, .ptype = double())))
+
+    # Lossy cast
+    (expect_error(vec_c(1, a = 2.5, .ptype = integer())))
+  })
+})
+
 test_that("combines outer an inner names", {
   expect_equal(vec_c(x = 1), c(x = 1))
   expect_equal(vec_c(c(x = 1)), c(x = 1))
@@ -102,6 +115,11 @@ test_that("vec_c() handles record classes", {
 test_that("can mix named and unnamed vectors (#271)", {
   expect_identical(vec_c(c(a = 1), 2), c(a = 1, 2))
   expect_identical(vec_c(0, c(a = 1), 2, b = 3), c(0, a = 1, 2, b =3))
+})
+
+test_that("preserves names when inputs are cast to a common type (#1690)", {
+  expect_named(vec_c(c(a = 1), .ptype = integer()), "a")
+  expect_named(vec_c(foo = c(a = 1), .ptype = integer(), .name_spec = "{outer}_{inner}"), "foo_a", )
 })
 
 test_that("vec_c() repairs names", {

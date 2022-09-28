@@ -24,7 +24,9 @@ r_obj* vec_c_opts(r_obj* xs,
     .fallback = *fallback_opts
   };
 
+  r_obj* orig_xs = xs;
   r_obj* orig_ptype = ptype;
+
   ptype = KEEP(vec_ptype_common_opts(xs, orig_ptype, &ptype_opts));
 
   if (ptype == r_null) {
@@ -60,6 +62,12 @@ r_obj* vec_c_opts(r_obj* xs,
   } else {
     ptype = KEEP(vec_ptype_common_opts(xs, ptype, &ptype_opts));
   }
+
+  struct cast_common_opts cast_opts = {
+    .call = error_call,
+    .fallback = *fallback_opts
+  };
+  xs = KEEP(vec_cast_common_opts(xs, ptype, &cast_opts));
 
   // Find individual input sizes and total size of output
   r_ssize n = r_length(xs);
@@ -111,8 +119,12 @@ r_obj* vec_c_opts(r_obj* xs,
     init_compact_seq(p_loc, counter, size, true);
 
     if (assign_names) {
+      // FIXME: Common cast may have lost names, so must pull names from
+      // original `xs` https://github.com/r-lib/vctrs/issues/623
+      r_obj* orig_x = r_list_get(orig_xs, i);
+
       r_obj* outer = xs_is_named ? r_chr_get(xs_names, i) : r_null;
-      r_obj* inner = KEEP(vec_names(x));
+      r_obj* inner = KEEP(vec_names(orig_x));
       r_obj* x_nms = KEEP(apply_name_spec(name_spec, outer, inner, size));
 
       if (x_nms != r_null) {
@@ -133,20 +145,11 @@ r_obj* vec_c_opts(r_obj* xs,
       continue;
     }
 
-    struct cast_opts opts = (struct cast_opts) {
-      .x = x,
-      .to = ptype,
-      .call = error_call,
-      .fallback = *fallback_opts
-    };
-    x = KEEP(vec_cast_opts(&opts));
-
     // Total ownership of `out` because it was freshly created with `vec_init()`
     out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
     KEEP_AT(out, out_pi);
 
     counter += size;
-    FREE(1);
   }
 
   out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
@@ -162,7 +165,7 @@ r_obj* vec_c_opts(r_obj* xs,
     out = vec_set_names(out, r_null);
   }
 
-  FREE(8);
+  FREE(9);
   return out;
 }
 

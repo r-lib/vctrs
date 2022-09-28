@@ -12,7 +12,29 @@
       vec_c("x", .ptype = integer(), .error_call = call("foo"))
     Condition
       Error in `foo()`:
-      ! Can't convert <character> to <integer>.
+      ! Can't convert `..1` <character> to <integer>.
+
+# common type failure uses positional errors
+
+    Code
+      (expect_error(vec_c(1, a = "x", 2)))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `vec_c()`:
+      ! Can't combine `..1` <double> and `a` <character>.
+    Code
+      (expect_error(vec_c(1, a = "x", 2, .ptype = double())))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `vec_c()`:
+      ! Can't convert `a` <character> to <double>.
+    Code
+      (expect_error(vec_c(1, a = 2.5, .ptype = integer())))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `vec_c()`:
+      ! Can't convert from `a` <double> to <integer> due to loss of precision.
+      * Locations: 1
 
 # vec_c() includes index in argument tag
 
@@ -103,7 +125,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `vec_c()`:
-      ! Can't convert <vctrs_foobar> to <character>.
+      ! Can't convert `..1` <vctrs_foobar> to <character>.
     Code
       (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .error_call = call(
         "foo"), .name_spec = "{outer}_{inner}"))))
@@ -133,57 +155,57 @@
       # Integers
       with_memory_prof(vec_c_list(ints))
     Output
-      [1] 1.96KB
+      [1] 2.79KB
     Code
       # Doubles
       with_memory_prof(vec_c_list(dbls))
     Output
-      [1] 2.35KB
+      [1] 3.18KB
     Code
       # Integers to integer
       with_memory_prof(vec_c_list(ints, ptype = int()))
     Output
-      [1] 1.7KB
+      [1] 2.53KB
     Code
       # Doubles to integer
       with_memory_prof(vec_c_list(dbls, ptype = int()))
     Output
-      [1] 1.7KB
+      [1] 2.53KB
     Code
       # # `list_unchop()` 
       # Integers
       with_memory_prof(list_unchop(ints))
     Output
-      [1] 1.13KB
+      [1] 1.96KB
     Code
       # Doubles
       with_memory_prof(list_unchop(dbls))
     Output
-      [1] 1.52KB
+      [1] 2.35KB
     Code
       # Integers to integer
       with_memory_prof(list_unchop(ints, ptype = int()))
     Output
-      [1] 896B
+      [1] 1.7KB
     Code
       # Doubles to integer
       with_memory_prof(list_unchop(dbls, ptype = int()))
     Output
-      [1] 896B
+      [1] 1.7KB
     Code
       # # Concatenation with names
       # Named integers
       ints <- rep(list(set_names(1:3, letters[1:3])), 100)
       with_memory_prof(list_unchop(ints))
     Output
-      [1] 4.3KB
+      [1] 5.13KB
     Code
       # Named matrices
       mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
       mats <- rep(list(mat), 100)
       with_memory_prof(list_unchop(mats))
     Output
-      [1] 5.52KB
+      [1] 6.35KB
     Code
       # Data frame with named columns
       df <- data_frame(x = set_names(as.list(1:2), c("a", "b")), y = set_names(1:2, c(
@@ -191,7 +213,7 @@
       dfs <- rep(list(df), 100)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 9.05KB
+      [1] 9.88KB
     Code
       # Data frame with rownames (non-repaired, non-recursive case)
       df <- data_frame(x = 1:2)
@@ -199,13 +221,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 6.28KB
+      [1] 7.11KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 12.4KB
+      [1] 13.3KB
     Code
       # Data frame with rownames (non-repaired, recursive case) (#1217)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
@@ -213,13 +235,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 11.6KB
+      [1] 12.4KB
     Code
       # Data frame with rownames (repaired, recursive case) (#1217)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 23.9KB
+      [1] 24.8KB
     Code
       # list-ofs (#1496)
       make_list_of <- (function(n) {
@@ -228,13 +250,13 @@
       })
       with_memory_prof(list_unchop(make_list_of(1000)))
     Output
-      [1] 112KB
+      [1] 120KB
     Code
       with_memory_prof(list_unchop(make_list_of(2000)))
     Output
-      [1] 222KB
+      [1] 237KB
     Code
       with_memory_prof(list_unchop(make_list_of(4000)))
     Output
-      [1] 440KB
+      [1] 472KB
 

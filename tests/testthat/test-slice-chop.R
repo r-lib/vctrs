@@ -391,6 +391,22 @@ test_that("unchopping takes the common type", {
   expect_type(list_unchop(x, indices), "double")
 })
 
+test_that("common type failure uses positional errors", {
+  expect_snapshot({
+    # Looking for `..1` and `a`
+    (expect_error(list_unchop(list(1, a = "x", 2))))
+    (expect_error(list_unchop(list(1, a = "x", 2), indices = list(2, 1, 3))))
+
+    # Directed cast should also produce directional errors (#1690)
+    (expect_error(list_unchop(list(1, a = "x", 2), ptype = double())))
+    (expect_error(list_unchop(list(1, a = "x", 2), indices = list(2, 1, 3), ptype = double())))
+
+    # Lossy cast
+    (expect_error(list_unchop(list(1, a = 2.5), ptype = integer())))
+    (expect_error(list_unchop(list(1, a = 2.5), indices = list(2, 1), ptype = integer())))
+  })
+})
+
 test_that("can specify a ptype to override common type", {
   x <- list(1, 2L)
   indices <- list(1, 2)
