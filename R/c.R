@@ -23,6 +23,11 @@
 #' back to `base::c()` if there exists a `c()` method implemented for
 #' this class hierarchy.
 #'
+#' @inheritParams rlang::args_error_context
+#' @inheritParams vec_ptype_show
+#' @inheritParams name_spec
+#' @inheritParams vec_as_names
+#'
 #' @param ... Vectors to coerce.
 #' @param .name_repair How to repair names, see `repair` options in
 #'   [vec_as_names()].
@@ -33,9 +38,7 @@
 #'   (inner names) or if the arguments are named (outer names). If both
 #'   inner and outer names are present, an error is thrown unless a
 #'   `.name_spec` is provided.
-#' @inheritParams vec_ptype_show
-#' @inheritParams name_spec
-#' @inheritParams vec_as_names
+#'
 #' @seealso [vec_cbind()]/[vec_rbind()] for combining data frames by rows
 #'   or columns.
 #' @export
@@ -65,7 +68,8 @@
 vec_c <- function(...,
                   .ptype = NULL,
                   .name_spec = NULL,
-                  .name_repair = c("minimal", "unique", "check_unique", "universal")) {
+                  .name_repair = c("minimal", "unique", "check_unique", "universal"),
+                  .error_call = current_env()) {
   .External2(ffi_vec_c, .ptype, .name_spec, .name_repair)
 }
 vec_c <- fn_inline_formals(vec_c, ".name_repair")

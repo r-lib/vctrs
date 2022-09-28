@@ -297,7 +297,7 @@ r_obj* vec_joint_proxy_order_dependent(r_obj* x, r_obj* y) {
   // size of `vec_locate_matches()` input to
   // `vec_size(x) + vec_size(y) <= INT_MAX`
   // when foreign columns are used.
-  r_obj* combined = KEEP(vec_c(out, ptype, r_null, p_no_repair_opts));
+  r_obj* combined = KEEP(vec_c(out, ptype, r_null, p_no_repair_opts, r_lazy_null));
 
   // Compute joint order-proxy
   r_obj* proxy = KEEP(vec_proxy_order(combined));

@@ -20,7 +20,7 @@ r_obj* list_unchop(r_obj* xs,
   }
 
   if (indices == r_null) {
-    return vec_c(xs, ptype, name_spec, name_repair);
+    return vec_c(xs, ptype, name_spec, name_repair, r_lazy_null);
   }
 
   r_ssize xs_size = vec_size(xs);
@@ -202,9 +202,9 @@ r_obj* list_unchop_fallback(r_obj* ptype,
 
   r_obj* out = r_null;
   if (homogeneous) {
-    out = KEEP(vec_c_fallback_invoke(x, name_spec));
+    out = KEEP(vec_c_fallback_invoke(x, name_spec, r_lazy_null));
   } else {
-    out = KEEP(vec_c_fallback(ptype, x, name_spec, name_repair));
+    out = KEEP(vec_c_fallback(ptype, x, name_spec, name_repair, r_lazy_null));
   }
 
   const struct name_repair_opts name_repair_opts = {
@@ -216,7 +216,8 @@ r_obj* list_unchop_fallback(r_obj* ptype,
     indices,
     r_globals.empty_int,
     r_null,
-    &name_repair_opts
+    &name_repair_opts,
+    r_lazy_null
   ));
 
   const int* p_indices = r_int_cbegin(indices);

@@ -1,9 +1,25 @@
+# common type failure uses error call (#1641)
+
+    Code
+      vec_c("x", 1, .error_call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Can't combine `..1` <character> and `..2` <double>.
+
+---
+
+    Code
+      vec_c("x", .ptype = integer(), .error_call = call("foo"))
+    Condition
+      Error in `foo()`:
+      ! Can't convert <character> to <integer>.
+
 # vec_c() includes index in argument tag
 
     Code
       vec_c(df1, df2)
     Condition
-      Error:
+      Error in `vec_c()`:
       ! Can't combine `..1$x$y$z` <double> and `..2$x$y$z` <character>.
 
 ---
@@ -11,7 +27,7 @@
     Code
       vec_c(df1, df1, df2)
     Condition
-      Error:
+      Error in `vec_c()`:
       ! Can't combine `..1$x$y$z` <double> and `..3$x$y$z` <character>.
 
 ---
@@ -19,7 +35,7 @@
     Code
       vec_c(foo = df1, bar = df2)
     Condition
-      Error:
+      Error in `vec_c()`:
       ! Can't combine `foo$x$y$z` <double> and `bar$x$y$z` <character>.
 
 # vec_c() fails with complex foreign S3 classes
@@ -30,7 +46,17 @@
       (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_c()`:
+      ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+    Code
+      (expect_error(vec_c(x, y, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
+      )
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `foo()`:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -44,7 +70,17 @@
       (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_c()`:
+      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+    Code
+      (expect_error(vec_c(joe, jane, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
+      )
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `foo()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -66,8 +102,17 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_c()`:
       ! Can't convert <vctrs_foobar> to <character>.
+    Code
+      (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .error_call = call(
+        "foo"), .name_spec = "{outer}_{inner}"))))
+    Output
+      <error/rlang_error>
+      Error in `foo()`:
+      ! Can't use a name specification with non-vctrs types.
+      vctrs methods must be implemented for class `vctrs_foobar`.
+      See <https://vctrs.r-lib.org/articles/s3-vector.html>.
 
 # can ignore names in `vec_c()` by providing a `zap()` name-spec (#232)
 
@@ -76,7 +121,7 @@
       )
     Output
       <error/vctrs_error_incompatible_type>
-      Error:
+      Error in `vec_c()`:
       ! Can't combine `a` <character> and `b` <double>.
 
 # concatenation performs expected allocations

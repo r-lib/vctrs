@@ -77,7 +77,8 @@ static SEXP levels_union(SEXP x, SEXP y) {
     args,
     r_globals.empty_chr,
     R_NilValue,
-    &name_repair_opts
+    &name_repair_opts,
+    r_lazy_null
   ));
 
   SEXP out = vec_unique(xy);
