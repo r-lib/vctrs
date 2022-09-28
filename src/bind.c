@@ -249,7 +249,7 @@ r_obj* vec_rbind(r_obj* xs,
 
   // Not optimal. Happens after the fallback columns have been
   // assigned already, ideally they should be ignored.
-  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair);
+  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
 
   out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
 
@@ -264,7 +264,8 @@ void df_c_fallback(r_obj* out,
                    r_obj* xs,
                    r_ssize n_rows,
                    r_obj* name_spec,
-                   struct name_repair_opts* name_repair) {
+                   struct name_repair_opts* name_repair,
+                   struct r_lazy error_call) {
   r_ssize n_cols = r_length(out);
 
   if (r_length(ptype) != n_cols ||
@@ -280,11 +281,11 @@ void df_c_fallback(r_obj* out,
     if (is_data_frame(ptype_col) && df_needs_fallback(ptype_col)) {
       r_obj* xs_col = KEEP(list_pluck(xs, i));
       r_obj* out_col = r_list_get(out, i);
-      df_c_fallback(out_col, ptype_col, xs_col, n_rows, name_spec, name_repair);
+      df_c_fallback(out_col, ptype_col, xs_col, n_rows, name_spec, name_repair, error_call);
       FREE(1);
     } else if (vec_is_common_class_fallback(ptype_col)) {
       r_obj* xs_col = KEEP(list_pluck(xs, i));
-      r_obj* out_col = vec_c_fallback(ptype_col, xs_col, name_spec, name_repair);
+      r_obj* out_col = vec_c_fallback(ptype_col, xs_col, name_spec, name_repair, error_call);
       r_list_poke(out, i, out_col);
 
       if (vec_size(out_col) != n_rows) {

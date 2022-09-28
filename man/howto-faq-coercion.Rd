@@ -256,10 +256,10 @@ doesn’t know how to combine natural with the richer integer and double
 types:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(new_natural(1), 10L)
-#> Error:
+#> Error in `vec_c()`:
 #> ! Can't convert <my_natural> to <integer>.
 vec_c(1.5, new_natural(1))
-#> Error:
+#> Error in `vec_c()`:
 #> ! Can't convert <my_natural> to <double>.
 }\if{html}{\out{</div>}}
 

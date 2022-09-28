@@ -83,6 +83,7 @@ void r_init_library_globals_syms() {
   r_syms.unbound = R_UnboundValue;
   r_syms.warning = r_sym("warning");
 
+  r_syms.dot_call = r_sym(".call");
   r_syms.dot_environment = r_sym(".Environment");
   r_syms.dot_fn = r_sym(".fn");
   r_syms.dot_x = r_sym(".x");
