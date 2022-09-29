@@ -3,7 +3,6 @@
 \name{list_of}
 \alias{list_of}
 \alias{as_list_of}
-\alias{validate_list_of}
 \alias{is_list_of}
 \alias{vec_ptype2.vctrs_list_of}
 \alias{vec_cast.vctrs_list_of}
@@ -12,8 +11,6 @@
 list_of(..., .ptype = NULL)
 
 as_list_of(x, ...)
-
-validate_list_of(x)
 
 is_list_of(x)
 
