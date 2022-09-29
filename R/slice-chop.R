@@ -97,8 +97,9 @@ list_unchop <- function(x,
                         indices = NULL,
                         ptype = NULL,
                         name_spec = NULL,
-                        name_repair = c("minimal", "unique", "check_unique", "universal")) {
-  .Call(ffi_list_unchop, x, indices, ptype, name_spec, name_repair)
+                        name_repair = c("minimal", "unique", "check_unique", "universal"),
+                        error_call = current_env()) {
+  .Call(ffi_list_unchop, x, indices, ptype, name_spec, name_repair, environment())
 }
 
 # Exposed for testing  (`starts` is 0-based)

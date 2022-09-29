@@ -14,25 +14,22 @@ r_obj* list_unchop(r_obj* xs,
                    r_obj* indices,
                    r_obj* ptype,
                    r_obj* name_spec,
-                   const struct name_repair_opts* name_repair) {
-  if (!vec_is_list(xs)) {
-    r_abort("`x` must be a list.");
-  }
+                   const struct name_repair_opts* name_repair,
+                   struct r_lazy error_call) {
+  vec_check_list(xs, vec_args.x, error_call);
 
   if (indices == r_null) {
-    return vec_c(xs, ptype, name_spec, name_repair, r_lazy_null);
+    return vec_c(xs, ptype, name_spec, name_repair, error_call);
   }
+
+  // Apply size/type checking to `indices` before possibly early exiting from
+  // having a `NULL` common type or needing to apply a fallback
+  vec_check_list(indices, vec_args.indices, error_call);
 
   r_ssize xs_size = vec_size(xs);
 
-  // Apply size/type checking to `indices` before possibly exiting early from
-  // having a `NULL` common type
   if (xs_size != vec_size(indices)) {
     r_abort("`x` and `indices` must be lists of the same size.");
-  }
-
-  if (!vec_is_list(indices)) {
-    r_abort("`indices` must be a list of integers, or `NULL`.");
   }
 
   ptype = KEEP(vec_ptype_common_params(xs,
@@ -40,17 +37,17 @@ r_obj* list_unchop(r_obj* xs,
                                        DF_FALLBACK_DEFAULT,
                                        S3_FALLBACK_true,
                                        vec_args.empty,
-                                       r_lazy_null));
+                                       error_call));
 
   if (needs_vec_c_fallback(ptype)) {
-    r_obj* out = list_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false);
+    r_obj* out = list_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_false, error_call);
     FREE(1);
     return out;
   }
 
   // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
   if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
-    r_obj* out = list_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true);
+    r_obj* out = list_unchop_fallback(ptype, xs, indices, name_spec, name_repair, FALLBACK_HOMOGENEOUS_true, error_call);
     FREE(1);
     return out;
   }
@@ -60,7 +57,7 @@ r_obj* list_unchop(r_obj* xs,
     return r_null;
   }
 
-  xs = KEEP(vec_cast_common(xs, ptype, vec_args.empty, r_lazy_null));
+  xs = KEEP(vec_cast_common(xs, ptype, vec_args.empty, error_call));
 
   bool assign_names = !r_inherits(name_spec, "rlang_zap");
   r_obj* xs_names = KEEP(r_names(xs));
@@ -80,7 +77,7 @@ r_obj* list_unchop(r_obj* xs,
     out_size += index_size;
 
     // Each element of `xs` is recycled to its corresponding index's size
-    x = vec_check_recycle(x, index_size, vec_args.empty, r_lazy_null);
+    x = vec_check_recycle(x, index_size, vec_args.empty, error_call);
     r_list_poke(xs, i, x);
   }
 
@@ -100,7 +97,8 @@ r_obj* list_unchop(r_obj* xs,
   const struct vec_assign_opts unchop_assign_opts = {
     .recursive = true,
     .assign_names = assign_names,
-    .ignore_outer_names = true
+    .ignore_outer_names = true,
+    .call = error_call
   };
 
   for (r_ssize i = 0; i < xs_size; ++i) {
@@ -158,15 +156,25 @@ r_obj* ffi_list_unchop(r_obj* x,
                        r_obj* indices,
                        r_obj* ptype,
                        r_obj* name_spec,
-                       r_obj* name_repair) {
+                       r_obj* name_repair,
+                       r_obj* frame) {
+  struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
+
   struct name_repair_opts name_repair_opts =
     new_name_repair_opts(name_repair,
                          r_lazy_null,
                          false,
-                         r_lazy_null);
+                         error_call);
   KEEP(name_repair_opts.shelter);
 
-  r_obj* out = list_unchop(x, indices, ptype, name_spec, &name_repair_opts);
+  r_obj* out = list_unchop(
+    x,
+    indices,
+    ptype,
+    name_spec,
+    &name_repair_opts,
+    error_call
+  );
 
   FREE(1);
   return out;
@@ -182,7 +190,8 @@ r_obj* list_unchop_fallback(r_obj* ptype,
                             r_obj* indices,
                             r_obj* name_spec,
                             const struct name_repair_opts* name_repair,
-                            enum fallback_homogeneous homogeneous) {
+                            enum fallback_homogeneous homogeneous,
+                            struct r_lazy error_call) {
   r_ssize x_size = vec_size(x);
   x = KEEP(r_clone_referenced(x));
 
@@ -202,14 +211,15 @@ r_obj* list_unchop_fallback(r_obj* ptype,
 
   r_obj* out = r_null;
   if (homogeneous) {
-    out = KEEP(vec_c_fallback_invoke(x, name_spec, r_lazy_null));
+    out = KEEP(vec_c_fallback_invoke(x, name_spec, error_call));
   } else {
-    out = KEEP(vec_c_fallback(ptype, x, name_spec, name_repair, r_lazy_null));
+    out = KEEP(vec_c_fallback(ptype, x, name_spec, name_repair, error_call));
   }
 
   const struct name_repair_opts name_repair_opts = {
     .type = NAME_REPAIR_none,
-    .fn = r_null
+    .fn = r_null,
+    .call = error_call
   };
 
   indices = KEEP(vec_c(
@@ -217,7 +227,7 @@ r_obj* list_unchop_fallback(r_obj* ptype,
     r_globals.empty_int,
     r_null,
     &name_repair_opts,
-    r_lazy_null
+    error_call
   ));
 
   const int* p_indices = r_int_cbegin(indices);

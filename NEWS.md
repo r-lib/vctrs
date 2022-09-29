@@ -8,6 +8,8 @@
   options are used, any setting of `quiet` is silently overridden (@jennybc,
   #1629).
 
+* `list_unchop()` has gained an `error_call` argument (#1641).
+
 * `vec_c()` has gained an `.error_call` argument (#1641).
 
 * Improved the performance of list-of common type methods (#1686).
