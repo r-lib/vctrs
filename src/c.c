@@ -56,10 +56,9 @@ r_obj* vec_c_opts(r_obj* xs,
   if ((is_data_frame(ptype) && fallback_opts->s3 == S3_FALLBACK_true) ||
       vec_is_common_class_fallback(ptype)) {
     ptype_opts.fallback.s3 = S3_FALLBACK_false;
-    ptype = KEEP(vec_ptype_common_opts(xs, orig_ptype, &ptype_opts));
-  } else {
-    ptype = KEEP(vec_ptype_common_opts(xs, ptype, &ptype_opts));
+    ptype = vec_ptype_common_opts(xs, orig_ptype, &ptype_opts);
   }
+  KEEP(ptype);
 
   // Find individual input sizes and total size of output
   r_ssize n = r_length(xs);
