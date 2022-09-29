@@ -111,7 +111,8 @@ holds:</p>
 <span>  indices <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span><span class="op">)</span></span>
+<span>  name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span><span class="op">)</span>,</span>
+<span>  error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -157,6 +158,13 @@ names are ignored and the result is unnamed.</p></li>
 <dt>name_repair</dt>
 <dd><p>How to repair names, see <code>repair</code> options in
 <code><a href="vec_as_names.html">vec_as_names()</a></code>.</p></dd>
+
+
+<dt>error_call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 
 </dl></div>
     <div class="section level2">
