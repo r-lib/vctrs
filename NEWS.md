@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Directed calls to `vec_c()`, like `vec_c(.ptype = <type>)`, now mention the
+  position of the problematic argument when there are cast errors (#1690).
+
 * `list_unchop()` no longer drops names in some cases when `indices` were
   supplied (#1689).
 
