@@ -12,7 +12,29 @@
       vec_c("x", .ptype = integer(), .error_call = call("foo"))
     Condition
       Error in `foo()`:
-      ! Can't convert <character> to <integer>.
+      ! Can't convert `..1` <character> to <integer>.
+
+# common type failure uses positional errors
+
+    Code
+      (expect_error(vec_c(1, a = "x", 2)))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `vec_c()`:
+      ! Can't combine `..1` <double> and `a` <character>.
+    Code
+      (expect_error(vec_c(1, a = "x", 2, .ptype = double())))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `vec_c()`:
+      ! Can't convert `a` <character> to <double>.
+    Code
+      (expect_error(vec_c(1, a = 2.5, .ptype = integer())))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `vec_c()`:
+      ! Can't convert from `a` <double> to <integer> due to loss of precision.
+      * Locations: 1
 
 # vec_c() includes index in argument tag
 
@@ -103,7 +125,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `vec_c()`:
-      ! Can't convert <vctrs_foobar> to <character>.
+      ! Can't convert `..1` <vctrs_foobar> to <character>.
     Code
       (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .error_call = call(
         "foo"), .name_spec = "{outer}_{inner}"))))
