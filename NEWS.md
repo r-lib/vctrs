@@ -1,5 +1,13 @@
 # vctrs (development version)
 
+* `"unique_quiet"` and `"universal_quiet"` are newly accepted by
+  `vec_as_names(repair =)` and `vec_names2(repair =)`. These options exist to
+  help users who call these functions indirectly, via another function which
+  only exposes `repair` but not `quiet`. Specifying `repair = "unique_quiet"` is
+  like specifying `repair = "unique", quiet = TRUE`. When the `"*_quiet"`
+  options are used, any setting of `quiet` is silently overridden (@jennybc,
+  #1629).
+
 * `list_unchop()` has gained an `error_call` argument (#1641).
 
 * `vec_c()` has gained an `.error_call` argument (#1641).

@@ -85,6 +85,30 @@
       x These names are duplicated:
         * "x" at locations 1 and 2.
       i Use argument `my_repair` to specify repair strategy.
+    Code
+      vec_as_names(c("1", "1"), repair = "unique_quiet")
+    Output
+      [1] "1...1" "1...2"
+    Code
+      vec_as_names(c("1", "1"), repair = "universal_quiet")
+    Output
+      [1] "...1...1" "...1...2"
+    Code
+      vec_as_names(c("1", "1"), repair = "unique_quiet", quiet = TRUE)
+    Output
+      [1] "1...1" "1...2"
+    Code
+      vec_as_names(c("1", "1"), repair = "universal_quiet", quiet = TRUE)
+    Output
+      [1] "...1...1" "...1...2"
+    Code
+      vec_as_names(c("1", "1"), repair = "unique_quiet", quiet = FALSE)
+    Output
+      [1] "1...1" "1...2"
+    Code
+      vec_as_names(c("1", "1"), repair = "universal_quiet", quiet = FALSE)
+    Output
+      [1] "...1...1" "...1...2"
 
 # validate_minimal_names() checks names
 

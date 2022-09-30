@@ -7,7 +7,8 @@
 vec_as_names(
   names,
   ...,
-  repair = c("minimal", "unique", "universal", "check_unique"),
+  repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet",
+    "universal_quiet"),
   repair_arg = NULL,
   quiet = FALSE,
   call = caller_env()
@@ -18,10 +19,10 @@ vec_as_names(
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{repair}{Either a string or a function. If a string, it must
-be one of \code{"check_unique"}, \code{"minimal"}, \code{"unique"}, or \code{"universal"}.
-If a function, it is invoked with a vector of minimal names and must
-return minimal names, otherwise an error is thrown.
+\item{repair}{Either a string or a function. If a string, it must be one of
+\code{"check_unique"}, \code{"minimal"}, \code{"unique"}, \code{"universal"}, \code{"unique_quiet"},
+or \code{"universal_quiet"} If a function, it is invoked with a vector of
+minimal names and must return minimal names, otherwise an error is thrown.
 \itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
 have a name, its minimal name is an empty string.
@@ -34,7 +35,13 @@ error.
 
 The \code{"check_unique"} option doesn't perform any name repair.
 Instead, an error is raised if the names don't suit the
-\code{"unique"} criteria.}
+\code{"unique"} criteria.
+
+The options \code{"unique_quiet"} and \code{"universal_quiet"} are here to help the
+user who calls this function indirectly, via another function which exposes
+\code{repair} but not \code{quiet}. Specifying \code{repair = "unique_quiet"} is like
+specifying \verb{repair = "unique", quiet = TRUE}. When the \code{"*_quiet"} options
+are used, any setting of \code{quiet} is silently overridden.}
 
 \item{repair_arg}{If specified and \code{repair = "check_unique"}, any errors
 will include a hint to set the \code{repair_arg}.}

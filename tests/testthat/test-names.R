@@ -51,6 +51,10 @@ test_that("vec_names2() repairs names before invoking repair function", {
   expect_identical(vec_names2(x, repair = identity), c("", ""))
 })
 
+test_that("vec_names2() result is correct for *_quiet repair", {
+  expect_identical(vec_names2(1:2, repair = "unique"), vec_names2(1:2, repair = "unique_quiet"))
+  expect_identical(vec_names2(1:2, repair = "universal"), vec_names2(1:2, repair = "universal_quiet"))
+})
 
 # vec_as_names() -----------------------------------------------------------
 
@@ -80,6 +84,17 @@ test_that("vec_as_names() checks unique names", {
     (expect_error(my_vec_as_names(chr("..1"), my_repair = "check_unique")))
     (expect_error(my_vec_as_names(chr("..."), my_repair = "check_unique")))
   })
+})
+
+test_that("vec_as_names() result is correct for *_quiet repair", {
+  expect_identical(
+    vec_as_names(chr("_foo", "_bar"), repair = "unique"),
+    vec_as_names(chr("_foo", "_bar"), repair = "unique_quiet")
+  )
+  expect_identical(
+    vec_as_names(chr("_foo", "_bar"), repair = "universal"),
+    vec_as_names(chr("_foo", "_bar"), repair = "universal_quiet")
+  )
 })
 
 test_that("vec_as_names() keeps the names of a named vector", {
@@ -128,6 +143,18 @@ test_that("vec_as_names() is noisy by default", {
     (expect_error(
       my_vec_as_names(c("x", "x"), my_repair = "check_unique")
     ))
+
+    # request quiet via name repair string, don't specify `quiet`
+    vec_as_names(c("1", "1"), repair = "unique_quiet")
+    vec_as_names(c("1", "1"), repair = "universal_quiet")
+
+    # request quiet via name repair string, specify `quiet` = TRUE
+    vec_as_names(c("1", "1"), repair = "unique_quiet", quiet = TRUE)
+    vec_as_names(c("1", "1"), repair = "universal_quiet", quiet = TRUE)
+
+    # request quiet via name repair string, specify `quiet` = FALSE
+    vec_as_names(c("1", "1"), repair = "unique_quiet", quiet = FALSE)
+    vec_as_names(c("1", "1"), repair = "universal_quiet", quiet = FALSE)
   })
 })
 
