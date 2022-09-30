@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_rep_each(times = 0)` now works correctly with logical vectors that are
+  considered unspecified and with named vectors (#1673).
+
 * `list_of()` was relaxed to make it easier to combine. It is now
   coercible with `list()` (#1161). When incompatible `list_of()` types
   are combined, the result is now a bare `list()`.
