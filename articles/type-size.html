@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Source%20Sans%20Pro-0.4.1/font.css" rel="stylesheet">
-<link href="../deps/_Source%20Code%20Pro-0.4.1/font.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.2/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.2/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Prototypes and sizes">
@@ -35,7 +35,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,7 @@
 
 
 <div class="row">
-  <main id="main"><div class="page-header">
+  <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Prototypes and sizes</h1>
             
       
@@ -95,7 +95,7 @@
 <p>Rather than using <code><a href="https://rdrr.io/r/base/class.html" class="external-link">class()</a></code> and <code><a href="https://rdrr.io/r/base/length.html" class="external-link">length()</a></code>, vctrs has notions of prototype (<code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code>) and size (<code><a href="../reference/vec_size.html">vec_size()</a></code>). This vignette discusses the motivation for why these alternatives are necessary and connects their definitions to type coercion and the recycling rules.</p>
 <p>Size and prototype are motivated by thinking about the optimal behaviour for <code><a href="https://rdrr.io/r/base/c.html" class="external-link">c()</a></code> and <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code>, particularly inspired by data frames with columns that are matrices or data frames.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="prototype">Prototype<a class="anchor" aria-label="anchor" href="#prototype"></a>
 </h2>
@@ -115,73 +115,73 @@
 <li>
 <p>Atomic vectors have no attributes and just display the underlying <code><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: logical</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: integer</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fl">2.5</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: double</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="st">"three"</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: character</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: list</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: logical</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fl">1L</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: integer</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fl">2.5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: double</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="st">"three"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: character</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: list</span></span></code></pre></div>
 </li>
 <li>
 <p>The prototype of matrices and arrays include the base type and the dimensions after the first:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: logical[,3]</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: integer[,3,4]</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: character[,3,4,5]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: logical[,3]</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: integer[,3,4]</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: character[,3,4,5]</span></span></code></pre></div>
 </li>
 <li>
 <p>The prototype of a factor includes its levels. Levels are a character vector, which can be arbitrarily long, so the prototype just shows a hash. If the hash of two factors is equal, it’s highly likely that their levels are also equal.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: factor&lt;4d52a&gt;</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">ordered</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: ordered&lt;9b7e3&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: factor&lt;4d52a&gt;</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">ordered</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: ordered&lt;9b7e3&gt;</span></span></code></pre></div>
 <p>While <code><a href="../reference/vec_ptype.html">vec_ptype_show()</a></code> prints only the hash, the prototype object itself does contain all levels:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; factor(0)</span>
-<span class="co">#&gt; Levels: a</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; factor(0)</span></span>
+<span><span class="co">#&gt; Levels: a</span></span></code></pre></div>
 </li>
 <li>
 <p>Base R has three key date time classes: dates, date-times (<code>POSIXct</code>), and durations (<code>difftime)</code>. Date-times have a timezone, and durations have a unit.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: date</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: datetime&lt;local&gt;</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">as.difftime</a></span><span class="op">(</span><span class="fl">10</span>, units <span class="op">=</span> <span class="st">"mins"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: duration&lt;mins&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: date</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: datetime&lt;local&gt;</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">as.difftime</a></span><span class="op">(</span><span class="fl">10</span>, units <span class="op">=</span> <span class="st">"mins"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: duration&lt;mins&gt;</span></span></code></pre></div>
 </li>
 <li>
 <p>Data frames have the most complex prototype: the prototype of a data frame is the name and prototype of each column:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="cn">FALSE</span>, b <span class="op">=</span> <span class="fl">1L</span>, c <span class="op">=</span> <span class="fl">2.5</span>, d <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: data.frame&lt;</span>
-<span class="co">#&gt;   a: logical</span>
-<span class="co">#&gt;   b: integer</span>
-<span class="co">#&gt;   c: double</span>
-<span class="co">#&gt;   d: character</span>
-<span class="co">#&gt; &gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="cn">FALSE</span>, b <span class="op">=</span> <span class="fl">1L</span>, c <span class="op">=</span> <span class="fl">2.5</span>, d <span class="op">=</span> <span class="st">"x"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: data.frame&lt;</span></span>
+<span><span class="co">#&gt;   a: logical</span></span>
+<span><span class="co">#&gt;   b: integer</span></span>
+<span><span class="co">#&gt;   c: double</span></span>
+<span><span class="co">#&gt;   d: character</span></span>
+<span><span class="co">#&gt; &gt;</span></span></code></pre></div>
 <p>Data frames can have columns that are themselves data frames, making this a “recursive” type:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="va">df</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1L</span>, b <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span>
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: data.frame&lt;</span>
-<span class="co">#&gt;   x: logical</span>
-<span class="co">#&gt;   y: </span>
-<span class="co">#&gt;     data.frame&lt;</span>
-<span class="co">#&gt;       a: integer</span>
-<span class="co">#&gt;       b: double</span>
-<span class="co">#&gt;     &gt;</span>
-<span class="co">#&gt; &gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1L</span>, b <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: data.frame&lt;</span></span>
+<span><span class="co">#&gt;   x: logical</span></span>
+<span><span class="co">#&gt;   y: </span></span>
+<span><span class="co">#&gt;     data.frame&lt;</span></span>
+<span><span class="co">#&gt;       a: integer</span></span>
+<span><span class="co">#&gt;       b: double</span></span>
+<span><span class="co">#&gt;     &gt;</span></span>
+<span><span class="co">#&gt; &gt;</span></span></code></pre></div>
 </li>
 </ul>
 </div>
@@ -200,116 +200,116 @@
 <li>
 <p>The common type of atomic vectors is computed very similar to the rules of base R, except that we do not coerce to character automatically:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;double&gt;</span>
-<span class="co">#&gt; 0. (           , &lt;logical&gt; ) = &lt;logical&gt;</span>
-<span class="co">#&gt; 1. ( &lt;logical&gt; , &lt;integer&gt; ) = &lt;integer&gt;</span>
-<span class="co">#&gt; 2. ( &lt;integer&gt; , &lt;double&gt;  ) = &lt;double&gt;</span>
-
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_ptype_show()`:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `out_types[[i - 1]]` &lt;logical&gt; and `in_types[[i]]` &lt;character&gt;.</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;double&gt;</span></span>
+<span><span class="co">#&gt; 0. (           , &lt;logical&gt; ) = &lt;logical&gt;</span></span>
+<span><span class="co">#&gt; 1. ( &lt;logical&gt; , &lt;integer&gt; ) = &lt;integer&gt;</span></span>
+<span><span class="co">#&gt; 2. ( &lt;integer&gt; , &lt;double&gt;  ) = &lt;double&gt;</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `vec_ptype_show()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `out_types[[i - 1]]` &lt;logical&gt; and `in_types[[i]]` &lt;character&gt;.</span></span></code></pre></div>
 </li>
 <li>
 <p>Matrices and arrays are automatically broadcast to higher dimensions:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;double[,2]&gt;</span>
-<span class="co">#&gt; 0. (              , &lt;double[,1]&gt; ) = &lt;double[,1]&gt;</span>
-<span class="co">#&gt; 1. ( &lt;double[,1]&gt; , &lt;double[,2]&gt; ) = &lt;double[,2]&gt;</span>
-
-<span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;double[,3,4,5]&gt;</span>
-<span class="co">#&gt; 0. (                , &lt;double[,1]&gt;     ) = &lt;double[,1]&gt;    </span>
-<span class="co">#&gt; 1. ( &lt;double[,1]&gt;   , &lt;double[,3]&gt;     ) = &lt;double[,3]&gt;    </span>
-<span class="co">#&gt; 2. ( &lt;double[,3]&gt;   , &lt;double[,3,4]&gt;   ) = &lt;double[,3,4]&gt;  </span>
-<span class="co">#&gt; 3. ( &lt;double[,3,4]&gt; , &lt;double[,3,4,5]&gt; ) = &lt;double[,3,4,5]&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;double[,2]&gt;</span></span>
+<span><span class="co">#&gt; 0. (              , &lt;double[,1]&gt; ) = &lt;double[,1]&gt;</span></span>
+<span><span class="co">#&gt; 1. ( &lt;double[,1]&gt; , &lt;double[,2]&gt; ) = &lt;double[,2]&gt;</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;double[,3,4,5]&gt;</span></span>
+<span><span class="co">#&gt; 0. (                , &lt;double[,1]&gt;     ) = &lt;double[,1]&gt;    </span></span>
+<span><span class="co">#&gt; 1. ( &lt;double[,1]&gt;   , &lt;double[,3]&gt;     ) = &lt;double[,3]&gt;    </span></span>
+<span><span class="co">#&gt; 2. ( &lt;double[,3]&gt;   , &lt;double[,3,4]&gt;   ) = &lt;double[,3,4]&gt;  </span></span>
+<span><span class="co">#&gt; 3. ( &lt;double[,3,4]&gt; , &lt;double[,3,4,5]&gt; ) = &lt;double[,3,4,5]&gt;</span></span></code></pre></div>
 <p>Provided that the dimensions follow the vctrs recycling rules:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `out_types[[i - 1]]` &lt;double[,2]&gt; and `in_types[[i]]` &lt;double[,3]&gt;.</span>
-<span class="co">#&gt; <span style="color: #BB0000;">✖</span> Incompatible sizes 2 and 3 along axis 2.</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't combine `out_types[[i - 1]]` &lt;double[,2]&gt; and `in_types[[i]]` &lt;double[,3]&gt;.</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Incompatible sizes 2 and 3 along axis 2.</span></span></code></pre></div>
 </li>
 <li>
 <p>Factors combine levels in the order in which they appear.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>
-<span class="va">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="va">fa</span>, <span class="va">fb</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "a" "b"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="va">fb</span>, <span class="va">fa</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "b" "a"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span></span>
+<span><span class="va">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="va">fa</span>, <span class="va">fb</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "a" "b"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_common</a></span><span class="op">(</span><span class="va">fb</span>, <span class="va">fa</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "b" "a"</span></span></code></pre></div>
 </li>
 <li>
 <p>Combining a date and date-time yields a date-time:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="../reference/new_date.html">new_date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;datetime&lt;local&gt;&gt;</span>
-<span class="co">#&gt; 0. (        , &lt;date&gt;            ) = &lt;date&gt;           </span>
-<span class="co">#&gt; 1. ( &lt;date&gt; , &lt;datetime&lt;local&gt;&gt; ) = &lt;datetime&lt;local&gt;&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="../reference/new_date.html">new_date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;datetime&lt;local&gt;&gt;</span></span>
+<span><span class="co">#&gt; 0. (        , &lt;date&gt;            ) = &lt;date&gt;           </span></span>
+<span><span class="co">#&gt; 1. ( &lt;date&gt; , &lt;datetime&lt;local&gt;&gt; ) = &lt;datetime&lt;local&gt;&gt;</span></span></code></pre></div>
 <p>When combining two date times, the timezone is taken from the first input:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span>, 
-  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">"Pacific/Auckland"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;datetime&lt;US/Central&gt;&gt;</span>
-<span class="co">#&gt; 0. (                        , &lt;datetime&lt;US/Central&gt;&gt;       ) = &lt;datetime&lt;US/Central&gt;&gt;</span>
-<span class="co">#&gt; 1. ( &lt;datetime&lt;US/Central&gt;&gt; , &lt;datetime&lt;Pacific/Auckland&gt;&gt; ) = &lt;datetime&lt;US/Central&gt;&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">"Pacific/Auckland"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;datetime&lt;US/Central&gt;&gt;</span></span>
+<span><span class="co">#&gt; 0. (                        , &lt;datetime&lt;US/Central&gt;&gt;       ) = &lt;datetime&lt;US/Central&gt;&gt;</span></span>
+<span><span class="co">#&gt; 1. ( &lt;datetime&lt;US/Central&gt;&gt; , &lt;datetime&lt;Pacific/Auckland&gt;&gt; ) = &lt;datetime&lt;US/Central&gt;&gt;</span></span></code></pre></div>
 <p>Unless it’s the local timezone, in which case any explicit time zone will win:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, 
-  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, 
-  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">"Pacific/Auckland"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;datetime&lt;Pacific/Auckland&gt;&gt;</span>
-<span class="co">#&gt; 0. (                   , &lt;datetime&lt;local&gt;&gt;            ) = &lt;datetime&lt;local&gt;&gt;           </span>
-<span class="co">#&gt; 1. ( &lt;datetime&lt;local&gt;&gt; , &lt;datetime&lt;local&gt;&gt;            ) = &lt;datetime&lt;local&gt;&gt;           </span>
-<span class="co">#&gt; 2. ( &lt;datetime&lt;local&gt;&gt; , &lt;datetime&lt;Pacific/Auckland&gt;&gt; ) = &lt;datetime&lt;Pacific/Auckland&gt;&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="../reference/new_date.html">new_datetime</a></span><span class="op">(</span>tzone <span class="op">=</span> <span class="st">"Pacific/Auckland"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;datetime&lt;Pacific/Auckland&gt;&gt;</span></span>
+<span><span class="co">#&gt; 0. (                   , &lt;datetime&lt;local&gt;&gt;            ) = &lt;datetime&lt;local&gt;&gt;           </span></span>
+<span><span class="co">#&gt; 1. ( &lt;datetime&lt;local&gt;&gt; , &lt;datetime&lt;local&gt;&gt;            ) = &lt;datetime&lt;local&gt;&gt;           </span></span>
+<span><span class="co">#&gt; 2. ( &lt;datetime&lt;local&gt;&gt; , &lt;datetime&lt;Pacific/Auckland&gt;&gt; ) = &lt;datetime&lt;Pacific/Auckland&gt;&gt;</span></span></code></pre></div>
 </li>
 <li>
 <p>The common type of two data frames is the common type of each column that occurs in both data frames:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;data.frame&lt;x:double&gt;&gt;</span>
-<span class="co">#&gt; 0. (                         , &lt;data.frame&lt;x:logical&gt;&gt; ) = &lt;data.frame&lt;x:logical&gt;&gt;</span>
-<span class="co">#&gt; 1. ( &lt;data.frame&lt;x:logical&gt;&gt; , &lt;data.frame&lt;x:integer&gt;&gt; ) = &lt;data.frame&lt;x:integer&gt;&gt;</span>
-<span class="co">#&gt; 2. ( &lt;data.frame&lt;x:integer&gt;&gt; , &lt;data.frame&lt;x:double&gt;&gt;  ) = &lt;data.frame&lt;x:double&gt;&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;data.frame&lt;x:double&gt;&gt;</span></span>
+<span><span class="co">#&gt; 0. (                         , &lt;data.frame&lt;x:logical&gt;&gt; ) = &lt;data.frame&lt;x:logical&gt;&gt;</span></span>
+<span><span class="co">#&gt; 1. ( &lt;data.frame&lt;x:logical&gt;&gt; , &lt;data.frame&lt;x:integer&gt;&gt; ) = &lt;data.frame&lt;x:integer&gt;&gt;</span></span>
+<span><span class="co">#&gt; 2. ( &lt;data.frame&lt;x:integer&gt;&gt; , &lt;data.frame&lt;x:double&gt;&gt;  ) = &lt;data.frame&lt;x:double&gt;&gt;</span></span></code></pre></div>
 <p>And the union of the columns that only occur in one:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span>, z <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Prototype: &lt;data.frame&lt;</span>
-<span class="co">#&gt;   x: double</span>
-<span class="co">#&gt;   y: double</span>
-<span class="co">#&gt;   z: double</span>
-<span class="co">#&gt; &gt;&gt;</span>
-<span class="co">#&gt; 0. ┌              , &lt;data.frame&lt; ┐ = &lt;data.frame&lt;</span>
-<span class="co">#&gt;    │                  x: double  │     x: double </span>
-<span class="co">#&gt;    │                  y: double  │     y: double </span>
-<span class="co">#&gt;    └                &gt;&gt;           ┘   &gt;&gt;          </span>
-<span class="co">#&gt; 1. ┌ &lt;data.frame&lt; , &lt;data.frame&lt; ┐ = &lt;data.frame&lt;</span>
-<span class="co">#&gt;    │   x: double      y: double  │     x: double </span>
-<span class="co">#&gt;    │   y: double      z: double  │     y: double </span>
-<span class="co">#&gt;    │ &gt;&gt;             &gt;&gt;           │     z: double </span>
-<span class="co">#&gt;    └                             ┘   &gt;&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_ptype.html">vec_ptype_show</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span>, z <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Prototype: &lt;data.frame&lt;</span></span>
+<span><span class="co">#&gt;   x: double</span></span>
+<span><span class="co">#&gt;   y: double</span></span>
+<span><span class="co">#&gt;   z: double</span></span>
+<span><span class="co">#&gt; &gt;&gt;</span></span>
+<span><span class="co">#&gt; 0. ┌              , &lt;data.frame&lt; ┐ = &lt;data.frame&lt;</span></span>
+<span><span class="co">#&gt;    │                  x: double  │     x: double </span></span>
+<span><span class="co">#&gt;    │                  y: double  │     y: double </span></span>
+<span><span class="co">#&gt;    └                &gt;&gt;           ┘   &gt;&gt;          </span></span>
+<span><span class="co">#&gt; 1. ┌ &lt;data.frame&lt; , &lt;data.frame&lt; ┐ = &lt;data.frame&lt;</span></span>
+<span><span class="co">#&gt;    │   x: double      y: double  │     x: double </span></span>
+<span><span class="co">#&gt;    │   y: double      z: double  │     y: double </span></span>
+<span><span class="co">#&gt;    │ &gt;&gt;             &gt;&gt;           │     z: double </span></span>
+<span><span class="co">#&gt;    └                             ┘   &gt;&gt;</span></span></code></pre></div>
 <p>Note that new columns are added on the right-hand side. This is consistent with the way that factor levels and time zones are handled.</p>
 </li>
 </ul>
@@ -319,65 +319,65 @@
 </h3>
 <p><code><a href="../reference/vec_ptype.html">vec_ptype_common()</a></code> finds the common type of a set of vector. Typically, however, what you want is a set of vectors coerced to that common type. That’s the job of <code><a href="../reference/vec_cast.html">vec_cast_common()</a></code>:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span>
-  <span class="cn">FALSE</span>, 
-  <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, 
-  <span class="fl">2.5</span>
-<span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; List of 3</span>
-<span class="co">#&gt;  $ : num 0</span>
-<span class="co">#&gt;  $ : num [1:5] 1 2 3 4 5</span>
-<span class="co">#&gt;  $ : num 2.5</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, 
-  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"y"</span><span class="op">)</span>
-<span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 1</span>
-<span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 2</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
-  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>
-<span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ :'data.frame':    1 obs. of  2 variables:</span>
-<span class="co">#&gt;   ..$ x: num 1</span>
-<span class="co">#&gt;   ..$ y: int NA</span>
-<span class="co">#&gt;  $ :'data.frame':    2 obs. of  2 variables:</span>
-<span class="co">#&gt;   ..$ x: num [1:2] NA NA</span>
-<span class="co">#&gt;   ..$ y: int [1:2] 1 2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span></span>
+<span>  <span class="cn">FALSE</span>, </span>
+<span>  <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, </span>
+<span>  <span class="fl">2.5</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ : num 0</span></span>
+<span><span class="co">#&gt;  $ : num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;  $ : num 2.5</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"x"</span><span class="op">)</span>, </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"y"</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 1</span></span>
+<span><span class="co">#&gt;  $ : Factor w/ 2 levels "x","y": 2</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="../reference/vec_cast.html">vec_cast_common</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 2</span></span>
+<span><span class="co">#&gt;  $ :'data.frame':    1 obs. of  2 variables:</span></span>
+<span><span class="co">#&gt;   ..$ x: num 1</span></span>
+<span><span class="co">#&gt;   ..$ y: int NA</span></span>
+<span><span class="co">#&gt;  $ :'data.frame':    2 obs. of  2 variables:</span></span>
+<span><span class="co">#&gt;   ..$ x: num [1:2] NA NA</span></span>
+<span><span class="co">#&gt;   ..$ y: int [1:2] 1 2</span></span></code></pre></div>
 <p>Alternatively, you can cast to a specific prototype using <code><a href="../reference/vec_cast.html">vec_cast()</a></code>:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Cast succeeds</span>
-<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] 1 2</span>
-
-<span class="co"># Cast fails</span>
-<span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert `c(1.5, 2.5)` &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Cast succeeds</span></span>
+<span><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1 2</span></span>
+<span></span>
+<span><span class="co"># Cast fails</span></span>
+<span><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert `c(1.5, 2.5)` &lt;double&gt; to &lt;factor&lt;4d52a&gt;&gt;.</span></span></code></pre></div>
 <p>If a cast is possible in general (i.e., double -&gt; integer), but information is lost for a specific input (e.g. 1.5 -&gt; 1), it will generate an error.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span>
-<span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert from `c(1.5, 2)` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">•</span> Locations: 1</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> Can't convert from `c(1.5, 2)` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> Locations: 1</span></span></code></pre></div>
 <p>You can suppress the lossy cast errors with <code><a href="../reference/vctrs-conditions.html">allow_lossy_cast()</a></code>:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; [1] 1 2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1 2</span></span></code></pre></div>
 <p>This will suppress all lossy cast errors. Supply prototypes if you want to be specific about the type of lossy cast allowed:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span><span class="op">(</span>
-  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,
-  x_ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,
-  to_ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="co">#&gt; [1] 1 2</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vctrs-conditions.html">allow_lossy_cast</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  x_ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  to_ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1 2</span></span></code></pre></div>
 <p>The set of casts should not be more permissive than the set of coercions. This is not enforced but it is expected from classes to follow the rule and keep the coercion ecosystem sound.</p>
 </div>
 </div>
@@ -410,15 +410,15 @@
 <code>x[i, , , drop = FALSE]</code> when <code>x</code> is a 3d array.</li>
 </ul>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
-<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span>
-
-<span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt; [1] 5 7</span>
-<span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span>
-<span class="co">#&gt;   x</span>
-<span class="co">#&gt; 1 5</span>
-<span class="co">#&gt; 2 7</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 8 3</span></span>
+<span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   x</span></span>
+<span><span class="co">#&gt; 1 8</span></span>
+<span><span class="co">#&gt; 2 3</span></span></code></pre></div>
 <p><code>vec_slice(data.frame(x), i)</code> equals <code>data.frame(vec_slice(x, i))</code> (modulo variable and row names).</p>
 <p>Prototypes are generated with <code>vec_slice(x, 0L)</code>; given a prototype, you can initialize a vector of given size (filled with <code>NA</code>s) with <code><a href="../reference/vec_init.html">vec_init()</a></code>.</p>
 </div>
@@ -427,12 +427,12 @@
 </h3>
 <p>Closely related to the definition of size are the <strong>recycling rules</strong>. The recycling rules determine the size of the output when two vectors of different sizes are combined. In vctrs, the recycling rules are encoded in <code><a href="../reference/vec_size.html">vec_size_common()</a></code>, which gives the common size of a set of vectors:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3</span>
-<span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; [1] 10</span>
-<span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 3</span></span>
+<span><span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 10</span></span>
+<span><span class="fu"><a href="../reference/vec_size.html">vec_size_common</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p>vctrs obeys a stricter set of recycling rules than base R. Vectors of size 1 are recycled to any other size. All other size combinations will generate an error. This strictness prevents common mistakes like <code>dest == c("IAH", "HOU"))</code>, at the cost of occasionally requiring an explicit calls to <code><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep()</a></code>.</p>
 <div class="figure">
 <img src="../reference/figures/sizes-recycling.png" alt=""><p class="caption">Summary of vctrs recycling rules. X indicates n error</p>
@@ -442,26 +442,26 @@
 <li>
 <p>If you have a vector and desired size, use <code><a href="../reference/vec_recycle.html">vec_recycle()</a></code>:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_recycle.html">vec_recycle</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; [1] 1 2 3</span>
-<span class="fu"><a href="../reference/vec_recycle.html">vec_recycle</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_recycle.html">vec_recycle</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span>
+<span><span class="fu"><a href="../reference/vec_recycle.html">vec_recycle</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></span></code></pre></div>
 </li>
 <li>
 <p>If you have multiple vectors and you want to recycle them to the same size, use <code><a href="../reference/vec_recycle.html">vec_recycle_common()</a></code>:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; [1] 1 2 3</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt; [1] 1 2 3</span>
-<span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; [[2]]</span>
-<span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; [1] 1 2 3</span></span>
+<span><span class="fu"><a href="../reference/vec_recycle.html">vec_recycle_common</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt;  [1] 1 1 1 1 1 1 1 1 1 1</span></span></code></pre></div>
 </li>
 </ul>
 </div>
@@ -472,61 +472,61 @@
 <p>The recycling rules in base R are described in <a href="https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Recycling-rules" class="external-link">The R Language Definition</a> but are not implemented in a single function and thus are not applied consistently. Here, I give a brief overview of their most common realisation, as well as showing some of the exceptions.</p>
 <p>Generally, in base R, when a pair of vectors is not the same length, the shorter vector is recycled to the same length as the longer:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>
-<span class="co">#&gt; [1] 2 2 2 2 2 2</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>
-<span class="co">#&gt; [1] 2 3 2 3 2 3</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>
-<span class="co">#&gt; [1] 2 3 4 2 3 4</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span><span class="co">#&gt; [1] 2 2 2 2 2 2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span></span>
+<span><span class="co">#&gt; [1] 2 3 2 3 2 3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">6</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
+<span><span class="co">#&gt; [1] 2 3 4 2 3 4</span></span></code></pre></div>
 <p>If the length of the longer vector is not an integer multiple of the length of the shorter, you usually get a warning:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Warning in pmax(1:2, 1:3): an argument will be fractionally recycled</span>
-<span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Warning in 1:2 + 1:3: longer object length is not a multiple of shorter</span>
-<span class="co">#&gt; object length</span>
-<span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Warning in cbind(1:2, 1:3): number of rows of result is not a multiple of</span>
-<span class="co">#&gt; vector length (arg 1)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in pmax(1:2, 1:3): an argument will be fractionally recycled</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in 1:2 + 1:3: longer object length is not a multiple of shorter</span></span>
+<span><span class="co">#&gt; object length</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in cbind(1:2, 1:3): number of rows of result is not a multiple of</span></span>
+<span><span class="co">#&gt; vector length (arg 1)</span></span></code></pre></div>
 <p>But some functions recycle silently:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">atan2</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3</span>
-<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">atan2</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 3</span></span></code></pre></div>
 <p>And <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame()</a></code> throws an error:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Error in data.frame(1:2, 1:3): arguments imply differing number of rows: 2, 3</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in data.frame(1:2, 1:3): arguments imply differing number of rows: 2, 3</span></span></code></pre></div>
 <p>The R language definition states that “any arithmetic operation involving a zero-length vector has a zero-length result”. But outside of arithmetic, this rule is not consistently followed:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># length-0 output</span>
-<span class="fl">1</span><span class="op">:</span><span class="fl">2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; integer(0)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">atan2</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; numeric(0)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; integer(0)</span>
-
-<span class="co"># dropped</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt;      [,1]</span>
-<span class="co">#&gt; [1,]    1</span>
-<span class="co">#&gt; [2,]    2</span>
-
-<span class="co"># recycled to length of first</span>
-<span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] NA NA NA NA</span>
-
-<span class="co"># preserved-ish</span>
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "1 " "2 "</span>
-
-<span class="co"># Errors</span>
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Error in data.frame(1:2, integer()): arguments imply differing number of rows: 2, 0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># length-0 output</span></span>
+<span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; integer(0)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">atan2</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; numeric(0)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; integer(0)</span></span>
+<span></span>
+<span><span class="co"># dropped</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      [,1]</span></span>
+<span><span class="co">#&gt; [1,]    1</span></span>
+<span><span class="co">#&gt; [2,]    2</span></span>
+<span></span>
+<span><span class="co"># recycled to length of first</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] NA NA NA NA</span></span>
+<span></span>
+<span><span class="co"># preserved-ish</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "1 " "2 "</span></span>
+<span></span>
+<span><span class="co"># Errors</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in data.frame(1:2, integer()): arguments imply differing number of rows: 2, 0</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -543,7 +543,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
   </div></footer>
