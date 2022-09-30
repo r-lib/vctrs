@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `validate_list_of()` has been removed. It hasn't proven to be practically
+  useful, and isn't used by any packages on CRAN (#1697).
+
 * Directed calls to `vec_c()`, like `vec_c(.ptype = <type>)`, now mention the
   position of the problematic argument when there are cast errors (#1690).
 

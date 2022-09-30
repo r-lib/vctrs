@@ -188,14 +188,6 @@ test_that("invalid casts generate error", {
   expect_error(vec_cast(factor("a"), list_of(1)), class = "vctrs_error_incompatible_type")
 })
 
-test_that("validation", {
-  expect_error(validate_list_of(list_of(1, 2, 3)), NA)
-  expect_error(
-    validate_list_of(new_list_of(list(factor("foo")), vec_ptype(factor("bar")))),
-    class = "vctrs_error_cast_lossy"
-  )
-})
-
 test_that("list_of() has as.character() method (tidyverse/tidyr#654)", {
   exp <- rep(paste0("<", vec_ptype_abbr(mtcars), ">"), 2)
   expect_identical(as.character(list_of(mtcars, mtcars)), exp)
