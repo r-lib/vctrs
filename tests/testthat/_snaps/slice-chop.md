@@ -77,6 +77,49 @@
       Error in `foo()`:
       ! Can't combine `..1` <double> and `..2` <character>.
 
+# common type failure uses positional errors
+
+    Code
+      (expect_error(list_unchop(list(1, a = "x", 2))))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `list_unchop()`:
+      ! Can't combine `..1` <double> and `a` <character>.
+    Code
+      (expect_error(list_unchop(list(1, a = "x", 2), indices = list(2, 1, 3))))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `list_unchop()`:
+      ! Can't combine `..1` <double> and `a` <character>.
+    Code
+      (expect_error(list_unchop(list(1, a = "x", 2), ptype = double())))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `list_unchop()`:
+      ! Can't convert `a` <character> to <double>.
+    Code
+      (expect_error(list_unchop(list(1, a = "x", 2), indices = list(2, 1, 3), ptype = double()))
+      )
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `list_unchop()`:
+      ! Can't convert `a` <character> to <double>.
+    Code
+      (expect_error(list_unchop(list(1, a = 2.5), ptype = integer())))
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `list_unchop()`:
+      ! Can't convert from `a` <double> to <integer> due to loss of precision.
+      * Locations: 1
+    Code
+      (expect_error(list_unchop(list(1, a = 2.5), indices = list(2, 1), ptype = integer()))
+      )
+    Output
+      <error/vctrs_error_cast_lossy>
+      Error in `list_unchop()`:
+      ! Can't convert from `a` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
 # can specify a ptype to override common type
 
     Code
@@ -202,7 +245,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't convert <vctrs_foobar> to <character>.
+      ! Can't convert `..1` <vctrs_foobar> to <character>.
 
 # list_unchop() does not support non-numeric S3 indices
 

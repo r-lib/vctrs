@@ -61,14 +61,14 @@ r_obj* vec_c_opts(r_obj* xs,
   KEEP(ptype);
 
   // Find individual input sizes and total size of output
-  r_ssize n = r_length(xs);
+  r_ssize xs_size = r_length(xs);
   r_ssize out_size = 0;
 
   // Caching the sizes causes an extra allocation but it improves performance
-  r_obj* sizes = KEEP(r_alloc_integer(n));
+  r_obj* sizes = KEEP(r_alloc_integer(xs_size));
   int* p_sizes = r_int_begin(sizes);
 
-  for (r_ssize i = 0; i < n; ++i) {
+  for (r_ssize i = 0; i < xs_size; ++i) {
     r_obj* x = r_list_get(xs, i);
     r_ssize size = (x == r_null) ? 0 : vec_size(x);
     out_size += size;
@@ -96,6 +96,22 @@ r_obj* vec_c_opts(r_obj* xs,
   // Compact sequences use 0-based counters
   r_ssize counter = 0;
 
+  r_ssize i = 0;
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(
+    vec_args.empty,
+    xs_names,
+    xs_size,
+    &i
+  );
+  KEEP(p_x_arg->shelter);
+
+  struct cast_opts c_cast_opts = {
+    .to = ptype,
+    .p_x_arg = p_x_arg,
+    .call = error_call
+  };
+
   const struct vec_assign_opts c_assign_opts = {
     .recursive = true,
     .assign_names = assign_names,
@@ -103,7 +119,7 @@ r_obj* vec_c_opts(r_obj* xs,
     .call = error_call
   };
 
-  for (r_ssize i = 0; i < n; ++i) {
+  for (; i < xs_size; ++i) {
     r_obj* x = r_list_get(xs, i);
     r_ssize size = p_sizes[i];
 
@@ -132,13 +148,8 @@ r_obj* vec_c_opts(r_obj* xs,
       continue;
     }
 
-    struct cast_opts opts = (struct cast_opts) {
-      .x = x,
-      .to = ptype,
-      .call = error_call,
-      .fallback = *fallback_opts
-    };
-    x = KEEP(vec_cast_opts(&opts));
+    c_cast_opts.x = x;
+    x = KEEP(vec_cast_opts(&c_cast_opts));
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
     out = vec_proxy_assign_opts(out, loc, x, VCTRS_OWNED_true, &c_assign_opts);
@@ -161,7 +172,7 @@ r_obj* vec_c_opts(r_obj* xs,
     out = vec_set_names(out, r_null);
   }
 
-  FREE(8);
+  FREE(9);
   return out;
 }
 
