@@ -110,19 +110,11 @@ vec_slice <- function(x, i) {
 }
 
 # Called when `x` has dimensions
-vec_slice_fallback <- function(x, i) {
-  out <- unclass(vec_proxy(x))
-  vec_assert(out)
-
-  d <- vec_dim_n(out)
-  if (d == 2) {
-    out <- out[i, , drop = FALSE]
-  } else {
-    miss_args <- rep(list(missing_arg()), d - 1)
-    out <- eval_bare(expr(out[i, !!!miss_args, drop = FALSE]))
-  }
-
-  vec_restore(out, x)
+bracket_shaped_dispatch <- function(x, i) {
+  d <- vec_dim_n(x)
+  miss_args <- rep(list(missing_arg()), d - 1)
+  x <- eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
+  x
 }
 
 vec_slice_fallback_integer64 <- function(x, i) {

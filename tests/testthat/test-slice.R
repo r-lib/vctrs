@@ -272,6 +272,18 @@ test_that("vec_slice() unclasses input before calling `vec_restore()`", {
 })
 
 test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
+  skip("Until infloop is talked about")
+  # TODO: I don't think it is our job to prevent this.
+  # You can already make this infloop today with non-shaped objects, i.e
+  # `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
+  # x <- structure(1:4, class = "vctrs_foobar")
+  # x[1]
+  # So we shouldn't be special casing shaped objects.
+  # I believe that if your `[` method is going to call `vec_slice()` (i.e. you
+  # are requesting native vctrs slicing), then you need to declare a
+  # `vec_proxy()` method as well to tell vctrs what it needs to be natively
+  # slicing.
+
   local_methods(
     `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
   )
@@ -351,6 +363,7 @@ test_that("vec_restore() is called after slicing data frames", {
 
 test_that("additional subscripts are forwarded to `[`", {
   local_methods(
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     `[.vctrs_foobar` = function(x, i, ...) vec_index(x, i, ...)
   )
 

@@ -207,6 +207,29 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
   return out;
 }
 
+static
+r_obj* bracket_dispatch(r_obj* x, r_obj* subscript) {
+  // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
+  // objects to ensure correct slicing with `NA_integer_`.
+  if (is_integer64(x)) {
+    return vctrs_dispatch2(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64,
+                           syms_x, x,
+                           syms_i, subscript);
+
+  return vctrs_dispatch2(
+    syms_bracket, fns_bracket,
+    syms_x, x,
+    syms_i, subscript
+  );
+}
+static
+r_obj* bracket_shaped_dispatch(r_obj* x, r_obj* subscript) {
+  return vctrs_dispatch2(
+    syms.bracket_shaped_dispatch, fns.bracket_shaped_dispatch,
+    syms_x, x,
+    syms_i, subscript
+  );
+}
 
 r_obj* vec_slice_fallback(r_obj* x, r_obj* subscript) {
   // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
@@ -217,24 +240,21 @@ r_obj* vec_slice_fallback(r_obj* x, r_obj* subscript) {
                            syms_i, subscript);
   }
 
-  return vctrs_dispatch2(syms.vec_slice_fallback, fns.vec_slice_fallback,
-                         syms_x, x,
-                         syms_i, subscript);
-}
+  r_obj* out = r_null;
 
-static
-r_obj* vec_slice_dispatch(r_obj* x, r_obj* subscript) {
-  // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
-  // objects to ensure correct slicing with `NA_integer_`.
-  if (is_integer64(x)) {
-    return vctrs_dispatch2(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64,
-                           syms_x, x,
-                           syms_i, subscript);
+  if (has_dim(x)) {
+    out = KEEP(bracket_shaped_dispatch(x, subscript));
+  } else {
+    out = KEEP(bracket_dispatch(x, subscript));
   }
 
-  return vctrs_dispatch2(syms_bracket, fns_bracket,
-                         syms_x, x,
-                         syms_i, subscript);
+  // Take over attribute restoration only if there is no `[` method
+  if (!vec_is_restored(out, x)) {
+    out = vec_restore(out, x, vec_owned(out));
+  }
+
+  FREE(1);
+  return out;
 }
 
 bool vec_requires_fallback(r_obj* x, struct vctrs_proxy_info info) {
@@ -300,18 +320,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
       subscript = KEEP_N(compact_materialize(subscript), &nprot);
     }
 
-    r_obj* out;
-
-    if (has_dim(x)) {
-      out = KEEP_N(vec_slice_fallback(x, subscript), &nprot);
-    } else {
-      out = KEEP_N(vec_slice_dispatch(x, subscript), &nprot);
-    }
-
-    // Take over attribute restoration only if there is no `[` method
-    if (!vec_is_restored(out, x)) {
-      out = vec_restore(out, x, vec_owned(out));
-    }
+    r_obj* out = vec_slice_fallback(x, subscript);
 
     FREE(nprot);
     return out;
@@ -381,11 +390,15 @@ bool vec_is_restored(r_obj* x, r_obj* to) {
     return false;
   }
 
-  // Class is restored if it contains any other attributes than names.
-  // We might want to add support for data frames later on.
+  // Class is restored if it contains any other attributes than names, dim, or
+  // dimnames. We might want to add support for data frames later on.
   r_obj* node = attrib;
   while (node != r_null) {
-    if (r_node_tag(node) == r_syms.names) {
+    r_obj* tag = r_node_tag(node);
+
+    if (tag == r_syms.names ||
+        tag == r_syms.dim ||
+        tag == r_syms.dim_names) {
       node = r_node_cdr(node);
       continue;
     }
@@ -483,10 +496,10 @@ r_obj* ffi_slice_rep(r_obj* x, r_obj* ffi_i, r_obj* ffi_n) {
 
 void vctrs_init_slice(r_obj* ns) {
   syms.vec_slice_dispatch_integer64 = r_sym("vec_slice_dispatch_integer64");
-  syms.vec_slice_fallback = r_sym("vec_slice_fallback");
   syms.vec_slice_fallback_integer64 = r_sym("vec_slice_fallback_integer64");
 
   fns.vec_slice_dispatch_integer64 = r_eval(syms.vec_slice_dispatch_integer64, ns);
-  fns.vec_slice_fallback = r_eval(syms.vec_slice_fallback, ns);
   fns.vec_slice_fallback_integer64 = r_eval(syms.vec_slice_fallback_integer64, ns);
+  syms.bracket_shaped_dispatch = r_sym("bracket_shaped_dispatch");
+  fns.bracket_shaped_dispatch = r_eval(syms.bracket_shaped_dispatch, ns);
 }

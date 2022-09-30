@@ -296,6 +296,10 @@ static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 }
 
 static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+  // TODO: Do we really care about micro performance that much here? Can we just
+  // merge with `chop_shaped_fallback()` now that `vec_slice_fallback()`
+  // handles shaped an unshaped vectors?
+
   // Evaluate in a child of the global environment to allow dispatch
   // to custom functions. We define `[` to point to its base
   // definition to ensure consistent look-up. This is the same logic
@@ -329,6 +333,7 @@ static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
     SEXP elt = PROTECT(Rf_eval(call, env));
 
+    // Same logic as `vec_slice_fallback()`
     if (!vec_is_restored(elt, x)) {
       elt = vec_restore(elt, x, vec_owned(elt));
     }
@@ -349,7 +354,6 @@ static r_obj* chop_fallback_shaped(r_obj* x, r_obj* indices, struct vctrs_chop_i
       ++(*info.p_index);
     }
 
-    // `vec_slice_fallback()` will also `vec_restore()` for us
     r_obj* elt = PROTECT(vec_slice_fallback(x, info.index));
 
     SET_VECTOR_ELT(info.out, i, elt);
