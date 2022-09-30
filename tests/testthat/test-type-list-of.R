@@ -173,6 +173,11 @@ test_that("safe casts work as expected", {
   expect_identical(vec_cast(x, list()), list(1))
   expect_identical(vec_cast(x, list()), list(1))
 
+  expect_error(
+    vec_cast(list_of(1), list_of("")),
+    class = "vctrs_error_incompatible_type"
+  )
+
   # These used to be allowed
   expect_error(vec_cast(1L, x), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_type")
@@ -208,10 +213,9 @@ test_that("list_of() coerces to list() and list_of()", {
   expect_equal(vec_ptype_common(list_of(1), list("")), list())
   expect_equal(vec_cast_common(list_of(1), list("")), list(list(1), list("")))
 
-  # FIXME
-  expect_error(
+  expect_equal(
     vec_ptype_common(list_of(1), list_of("")),
-    class = "vctrs_error_incompatible_type"
+    list()
   )
   expect_equal(
     vec_ptype_common(list_of(1), list(), list_of("")),

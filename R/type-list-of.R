@@ -171,8 +171,14 @@ vec_ptype2.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 #' @method vec_ptype2.vctrs_list_of vctrs_list_of
 #' @export
-vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
-  ptype <- vec_ptype2(attr(x, "ptype"), attr(y, "ptype"))
+vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
+  frame <- current_env()
+  ptype <- tryCatch(
+    vec_ptype2(attr(x, "ptype"), attr(y, "ptype"), x_arg = x_arg, y_arg = y_arg),
+    vctrs_error_incompatible_type = function(cnd) {
+      return_from(frame, list())
+    }
+  )
   new_list_of0(x = list(), ptype = ptype)
 }
 

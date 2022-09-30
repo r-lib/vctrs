@@ -1,6 +1,12 @@
 # vctrs (development version)
 
-* `list_of()` is now coercible with `list()` (#1161).
+* `list_of()` was relaxed to make it easier to combine. It is now
+  coercible with `list()` (#1161). When incompatible `list_of()` types
+  are combined, the result is now a bare `list()`.
+
+  Following this change, the role of `list_of()` is mainly to carry
+  type information for potential optimisations, rather than to
+  guarantee a certain type throughout an analysis.
 
 * `validate_list_of()` has been removed. It hasn't proven to be practically
   useful, and isn't used by any packages on CRAN (#1697).
