@@ -96,7 +96,7 @@ r_obj* vec_rep_each(r_obj* x,
     if (times_ == 1) {
       out = x;
     } else if (times_ == 0) {
-      out = vec_ptype(x, p_x_arg, error_call);
+      out = vec_slice_unsafe(x, r_globals.empty_int);
     } else {
       out = vec_rep_each_uniform(x, times_, error_call, p_times_arg);
     }
