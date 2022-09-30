@@ -238,10 +238,10 @@ doesn’t know how to combine natural with the richer integer and double
 types:
 vec_c(new_natural(1), 10L)
 #&amp;gt; Error in `vec_c()`:
-#&amp;gt; ! Can't convert &amp;lt;my_natural&amp;gt; to &amp;lt;integer&amp;gt;.
+#&amp;gt; ! Can't convert `..1` &amp;lt;my_natural&amp;gt; to &amp;lt;integer&amp;gt;.
 vec_c(1.5, new_natural(1))
 #&amp;gt; Error in `vec_c()`:
-#&amp;gt; ! Can't convert &amp;lt;my_natural&amp;gt; to &amp;lt;double&amp;gt;.
+#&amp;gt; ! Can't convert `..2` &amp;lt;my_natural&amp;gt; to &amp;lt;double&amp;gt;.
 
 This is quick work which completes the implementation of coercion
 methods for vctrs:
@@ -509,10 +509,10 @@ doesn’t know how to combine natural with the richer integer and double
 types:
 vec_c(new_natural(1), 10L)
 #&amp;gt; Error in `vec_c()`:
-#&amp;gt; ! Can't convert &amp;lt;my_natural&amp;gt; to &amp;lt;integer&amp;gt;.
+#&amp;gt; ! Can't convert `..1` &amp;lt;my_natural&amp;gt; to &amp;lt;integer&amp;gt;.
 vec_c(1.5, new_natural(1))
 #&amp;gt; Error in `vec_c()`:
-#&amp;gt; ! Can't convert &amp;lt;my_natural&amp;gt; to &amp;lt;double&amp;gt;.
+#&amp;gt; ! Can't convert `..2` &amp;lt;my_natural&amp;gt; to &amp;lt;double&amp;gt;.
 
 This is quick work which completes the implementation of coercion
 methods for vctrs:
@@ -821,10 +821,10 @@ doesn’t know how to combine natural with the richer integer and double
 types:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fu">new_natural</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, <span class="fl">10L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in `vec_c()`:</span></span>
-<span><span class="co">#&gt; ! Can't convert &lt;my_natural&gt; to &lt;integer&gt;.</span></span>
+<span><span class="co">#&gt; ! Can't convert `..1` &lt;my_natural&gt; to &lt;integer&gt;.</span></span>
 <span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fu">new_natural</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in `vec_c()`:</span></span>
-<span><span class="co">#&gt; ! Can't convert &lt;my_natural&gt; to &lt;double&gt;.</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; ! Can't convert `..2` &lt;my_natural&gt; to &lt;double&gt;.</span></span></code></pre><p></p></div>
 <p>This is quick work which completes the implementation of coercion
 methods for vctrs:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="co">#' @export</span></span>
