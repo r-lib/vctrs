@@ -296,6 +296,28 @@ test_that("can call `vec_slice()` from `[` methods with shaped objects without i
   expect_identical(x[1], exp)
 })
 
+test_that("slicing shaped S3 objects that don't have a proxy method actually calls the `[` method (#1707)", {
+  # In particular, this is needed for `bit64::integer64()` to allow their `[`
+  # method to handle `NA_integer_` correctly.
+  called <- NULL
+
+  local_methods(
+    `[.vctrs_foobar` = function(x, ...) {
+      called <<- TRUE
+      foobar(NextMethod())
+    }
+  )
+
+  x <- foobar(1:6)
+  dim(x) <- c(3, 2)
+
+  expect <- foobar(c(1L, 4L))
+  dim(expect) <- c(1, 2)
+
+  expect_identical(vec_slice(x, 1), expect)
+  expect_true(called)
+})
+
 test_that("vec_slice() restores attributes on shaped S3 objects correctly", {
   x <- factor(c("a", "b", "c", "d", "e", "f"))
   dim(x) <- c(3, 2)
