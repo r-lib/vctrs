@@ -155,6 +155,13 @@ as.character.vctrs_list_of <- function(x, ...) {
 
 #' @export
 `$<-.vctrs_list_of` <- function(x, i, value) {
+  if (is.null(value)) {
+    # Setting to NULL via `$<-` shortens the list! Example:
+    # `$<-`(list(a = 1), "a", NULL)
+    x[i] <- list(value)
+    return(x)
+  }
+
   value <- vec_cast(value, attr(x, "ptype"))
   NextMethod()
 }

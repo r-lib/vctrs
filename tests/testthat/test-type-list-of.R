@@ -97,13 +97,19 @@ test_that("[<-, [[<- and $<- coerce their input", {
   x[[2]] <- NULL
   expect_equal(x, list_of(x = 0, y = NULL, z = 1, w = 0))
 
+  # #1704
+  x$z <- NULL
+  expect_equal(x, list_of(x = 0, y = NULL, z = NULL, w = 0))
+
   expect_error(x[[2]] <- list(20), class = "vctrs_error_incompatible_type")
   expect_error(x$y <- list(20), class = "vctrs_error_incompatible_type")
 
-  x[3:4] <- list(NULL)
-  expect_equal(x, list_of(x = 0, y = NULL, z = NULL, w = NULL))
+  x[["a"]] <- 1
 
-  expect_equal(is.na(x), c(FALSE, TRUE, TRUE, TRUE))
+  x[4:5] <- list(NULL)
+  expect_equal(x, list_of(x = 0, y = NULL, z = NULL, w = NULL, a = NULL))
+
+  expect_equal(is.na(x), c(FALSE, TRUE, TRUE, TRUE, TRUE))
 })
 
 test_that("assingment can increase size of vector", {
