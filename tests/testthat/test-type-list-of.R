@@ -146,6 +146,23 @@ test_that("max<list_of<a>, list_of<b>> is list_of<max<a, b>>", {
   expect_equal(vec_ptype_common(r_int, r_dbl), r_int)
 })
 
+test_that("can cast to self type", {
+  x <- list_of(1)
+  expect_identical(vec_cast(x, x), x)
+})
+
+test_that("can cast between different list_of types", {
+  x <- list_of(1, 2)
+  to <- list_of(.ptype = integer())
+  expect_identical(vec_cast(x, to), list_of(1L, 2L))
+})
+
+test_that("list_of casting retains outer names", {
+  x <- list_of(x = 1, 2, z = 3)
+  to <- list_of(.ptype = integer())
+  expect_named(vec_cast(x, to), c("x", "", "z"))
+})
+
 test_that("safe casts work as expected", {
   x <- list_of(1)
   expect_equal(vec_cast(NULL, x), NULL)

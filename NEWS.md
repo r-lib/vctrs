@@ -12,7 +12,7 @@
 
 * `vec_c()` has gained an `.error_call` argument (#1641).
 
-* Improved the performance of list-of common type methods (#1686).
+* Improved the performance of list-of common type methods (#1686, #875).
 
 * The list-of method for `as_list_of()` now places the optional `.ptype`
   argument after the `...` (#1686).
