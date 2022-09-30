@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_of()` is now coercible with `list()` (#1161).
+
 * `validate_list_of()` has been removed. It hasn't proven to be practically
   useful, and isn't used by any packages on CRAN (#1697).
 

@@ -176,6 +176,15 @@ vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
   new_list_of0(x = list(), ptype = ptype)
 }
 
+#' @export
+vec_ptype2.list.vctrs_list_of <- function(x, y, ...) {
+  list()
+}
+#' @export
+vec_ptype2.vctrs_list_of.list <- function(x, y, ...) {
+  list()
+}
+
 #' @rdname list_of
 #' @export vec_cast.vctrs_list_of
 #' @method vec_cast vctrs_list_of
@@ -199,6 +208,19 @@ vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ...) {
     x <- unclass(x)
     list_as_list_of(x, ptype = to_ptype)
   }
+}
+
+#' @export
+vec_cast.list.vctrs_list_of <-function(x, to, ...) {
+  vec_data(x)
+}
+#' @export
+vec_cast.vctrs_list_of.list <-function(x, to, ...) {
+  list_as_list_of(
+    x,
+    attr(to, "ptype"),
+    error_call = caller_env()
+  )
 }
 
 # Helpers -----------------------------------------------------------------
