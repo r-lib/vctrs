@@ -145,7 +145,7 @@
 * `vec_locate_matches()` now uses a more conservative heuristic when taking the
   joint ordering proxy. This allows it to work correctly with sf's sfc vectors
   and the classes from the bignum package (#1558).
-  
+
 * An sfc method for `vec_proxy_order()` was added to better support the sf
   package. These vectors are generally treated like list-columns even though
   they don't explicitly have a `"list"` class, and the `vec_proxy_order()`
@@ -154,6 +154,12 @@
 * `vec_proxy_compare()` now works correctly for raw vectors wrapped in `I()`.
   `vec_proxy_order()` now works correctly for raw and list vectors wrapped in
   `I()` (#1557).
+
+
+# vctrs 0.4.2
+
+* HTML documentation fixes for CRAN checks.
+
 
 # vctrs 0.4.1
 
