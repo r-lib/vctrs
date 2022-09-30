@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.1.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.2.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,6 +103,9 @@
 <li><p>An sfc method for <code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> was added to better support the sf package. These vectors are generally treated like list-columns even though they don’t explicitly have a <code>"list"</code> class, and the <code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> method now forwards to the list method to reflect that (<a href="https://github.com/r-lib/vctrs/issues/1558" class="external-link">#1558</a>).</p></li>
 <li><p><code><a href="../reference/vec_proxy_compare.html">vec_proxy_compare()</a></code> now works correctly for raw vectors wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code>. <code><a href="../reference/vec_proxy_compare.html">vec_proxy_order()</a></code> now works correctly for raw and list vectors wrapped in <code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1557" class="external-link">#1557</a>).</p></li>
 </ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.2" id="vctrs-042">vctrs 0.4.2<a class="anchor" aria-label="anchor" href="#vctrs-042"></a></h2><p class="text-muted">CRAN release: 2022-09-29</p>
+<ul><li>HTML documentation fixes for CRAN checks.</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.1" id="vctrs-041">vctrs 0.4.1<a class="anchor" aria-label="anchor" href="#vctrs-041"></a></h2><p class="text-muted">CRAN release: 2022-04-13</p>
 <ul><li><p>OOB errors with <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> indexes use “that don’t exist” instead of “past the end” (<a href="https://github.com/r-lib/vctrs/issues/1543" class="external-link">#1543</a>).</p></li>
