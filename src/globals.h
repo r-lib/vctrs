@@ -17,8 +17,6 @@ struct syms {
   r_obj* to_arg;
   r_obj* value_arg;
   r_obj* vec_default_cast;
-  r_obj* vec_slice_dispatch_integer64;
-  r_obj* vec_slice_fallback_integer64;
   r_obj* bracket_shaped_dispatch;
   r_obj* x_arg;
   r_obj* y_arg;
@@ -36,8 +34,6 @@ struct chrs {
 };
 
 struct fns {
-  r_obj* vec_slice_dispatch_integer64;
-  r_obj* vec_slice_fallback_integer64;
   r_obj* bracket_shaped_dispatch;
 };
 

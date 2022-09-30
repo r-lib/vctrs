@@ -188,8 +188,6 @@ bool is_compact(SEXP x);
 SEXP compact_materialize(SEXP x);
 R_len_t vec_subscript_size(SEXP x);
 
-bool is_integer64(SEXP x);
-
 bool lgl_any_na(SEXP x);
 
 SEXP colnames(SEXP x);

@@ -117,49 +117,6 @@ bracket_shaped_dispatch <- function(x, i) {
   x
 }
 
-vec_slice_fallback_integer64 <- function(x, i) {
-  d <- vec_dim_n(x)
-
-  if (d == 2) {
-    out <- x[i, , drop = FALSE]
-  } else {
-    miss_args <- rep(list(missing_arg()), d - 1)
-    out <- eval_bare(expr(x[i, !!!miss_args, drop = FALSE]))
-  }
-
-  is_na <- is.na(i)
-
-  if (!any(is_na)) {
-    return(out)
-  }
-
-  if (d == 2) {
-    out[is_na,] <- bit64::NA_integer64_
-  } else {
-    eval_bare(expr(out[is_na, !!!miss_args] <- bit64::NA_integer64_))
-  }
-
-  out
-}
-
-# bit64::integer64() objects do not have support for `NA_integer_`
-# slicing. This manually replaces the garbage values that are created
-# any time a slice with `NA_integer_` is made.
-vec_slice_dispatch_integer64 <- function(x, i) {
-  out <- x[i]
-
-  is_na <- is.na(i)
-
-  if (!any(is_na)) {
-    return(out)
-  }
-
-  out[is_na] <- bit64::NA_integer64_
-
-  out
-}
-
-
 #' @rdname vec_slice
 #' @export
 `vec_slice<-` <- function(x, i, value) {

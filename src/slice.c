@@ -209,13 +209,6 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
 
 static
 r_obj* bracket_dispatch(r_obj* x, r_obj* subscript) {
-  // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
-  // objects to ensure correct slicing with `NA_integer_`.
-  if (is_integer64(x)) {
-    return vctrs_dispatch2(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64,
-                           syms_x, x,
-                           syms_i, subscript);
-
   return vctrs_dispatch2(
     syms_bracket, fns_bracket,
     syms_x, x,
@@ -232,14 +225,6 @@ r_obj* bracket_shaped_dispatch(r_obj* x, r_obj* subscript) {
 }
 
 r_obj* vec_slice_fallback(r_obj* x, r_obj* subscript) {
-  // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
-  // objects to ensure correct slicing with `NA_integer_`.
-  if (is_integer64(x)) {
-    return vctrs_dispatch2(syms.vec_slice_fallback_integer64, fns.vec_slice_fallback_integer64,
-                           syms_x, x,
-                           syms_i, subscript);
-  }
-
   r_obj* out = r_null;
 
   if (has_dim(x)) {
@@ -495,11 +480,6 @@ r_obj* ffi_slice_rep(r_obj* x, r_obj* ffi_i, r_obj* ffi_n) {
 
 
 void vctrs_init_slice(r_obj* ns) {
-  syms.vec_slice_dispatch_integer64 = r_sym("vec_slice_dispatch_integer64");
-  syms.vec_slice_fallback_integer64 = r_sym("vec_slice_fallback_integer64");
-
-  fns.vec_slice_dispatch_integer64 = r_eval(syms.vec_slice_dispatch_integer64, ns);
-  fns.vec_slice_fallback_integer64 = r_eval(syms.vec_slice_fallback_integer64, ns);
   syms.bracket_shaped_dispatch = r_sym("bracket_shaped_dispatch");
   fns.bracket_shaped_dispatch = r_eval(syms.bracket_shaped_dispatch, ns);
 }
