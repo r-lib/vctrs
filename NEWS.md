@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `list_unchop()` no longer drops names in some cases when `indices` were
+  supplied (#1689).
+
 * `"unique_quiet"` and `"universal_quiet"` are newly accepted by
   `vec_as_names(repair =)` and `vec_names2(repair =)`. These options exist to
   help users who call these functions indirectly, via another function which

@@ -53,13 +53,13 @@
     Output
       <error/vctrs_error_incompatible_size>
       Error in `list_unchop()`:
-      ! Can't recycle input of size 2 to size 3.
+      ! Can't recycle `..1` (size 2) to size 3.
     Code
       (expect_error(list_unchop(x, indices = indices, error_call = call("foo"))))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `foo()`:
-      ! Can't recycle input of size 2 to size 3.
+      ! Can't recycle `..1` (size 2) to size 3.
 
 # unchopping takes the common type
 

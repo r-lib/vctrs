@@ -307,6 +307,22 @@ test_that("NULLs are ignored when unchopped with other vectors", {
   expect_identical(list_unchop(list("a", NULL, "b"), list(2, integer(), 1)), c("b", "a"))
 })
 
+test_that("can use a `NULL` element with a corresponding index", {
+  # FIXME: Probably not quite right, but not entirely clear what it should be:
+  # - Maybe `unspecified(2)`?
+  # - Or should `NULL`s even be allowed in `list_unchop()`?
+  expect_null(list_unchop(list(NULL), indices = list(1:2)))
+
+  expect_identical(
+    list_unchop(list(NULL), indices = list(1:2), ptype = integer()),
+    c(NA_integer_, NA_integer_)
+  )
+
+  x <- list("a", NULL, c("b", "c"))
+  indices <- list(3L, c(1L, 4L), c(2L, 5L))
+  expect_identical(list_unchop(x, indices = indices), c(NA, "b", "a", NA, "c"))
+})
+
 test_that("can unchop atomic vectors", {
   expect_identical(list_unchop(list(1, 2), list(2, 1)), c(2, 1))
   expect_identical(list_unchop(list("a", "b"), list(2, 1)), c("b", "a"))
@@ -450,6 +466,21 @@ test_that("outer names can be merged with inner names", {
   expect_error(list_unchop(x), "Can't merge")
   expect_named(list_unchop(x, name_spec = "{outer}_{inner}"), c("x_a", "y_b"))
   expect_named(list_unchop(x, list(2, 1), name_spec = "{outer}_{inner}"), c("y_b", "x_a"))
+})
+
+test_that("preserves names when inputs are cast to a common type (#1689)", {
+  expect_named(list_unchop(list(c(a = 1)), ptype = integer()), "a")
+  expect_named(list_unchop(list(c(a = 1)), ptype = integer(), indices = list(1)), "a")
+
+  # With name spec
+  name_spec <- "{outer}_{inner}"
+  expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = name_spec), "foo_a")
+  expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = name_spec, indices = list(1)), "foo_a")
+
+  # When `x` elements are recycled, names are also recycled
+  x <- list(c(a = 1), c(b = 2))
+  indices <- list(1:2, 3:4)
+  expect_named(list_unchop(x, indices = indices, ptype = integer()), c("a", "a", "b", "b"))
 })
 
 test_that("not all inputs have to be named", {

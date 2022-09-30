@@ -57,28 +57,14 @@ r_obj* list_unchop(r_obj* xs,
     return r_null;
   }
 
-  xs = KEEP(vec_cast_common(xs, ptype, vec_args.empty, error_call));
-
   bool assign_names = !r_inherits(name_spec, "rlang_zap");
   r_obj* xs_names = KEEP(r_names(xs));
   bool xs_is_named = xs_names != r_null && !is_data_frame(ptype);
 
-  r_ssize out_size = 0;
-
   // `out_size` is computed from `indices`
+  r_ssize out_size = 0;
   for (r_ssize i = 0; i < xs_size; ++i) {
-    r_obj* x = r_list_get(xs, i);
-
-    if (x == r_null) {
-      continue;
-    }
-
-    r_ssize index_size = r_length(r_list_get(indices, i));
-    out_size += index_size;
-
-    // Each element of `xs` is recycled to its corresponding index's size
-    x = vec_check_recycle(x, index_size, vec_args.empty, error_call);
-    r_list_poke(xs, i, x);
+    out_size += r_length(r_list_get(indices, i));
   }
 
   r_obj* locs = KEEP(vec_as_indices(indices, out_size, r_null));
@@ -94,6 +80,22 @@ r_obj* list_unchop(r_obj* xs,
   r_keep_loc out_names_pi;
   KEEP_HERE(out_names, &out_names_pi);
 
+  r_ssize i = 0;
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(
+    vec_args.empty,
+    xs_names,
+    xs_size,
+    &i
+  );
+  KEEP(p_x_arg->shelter);
+
+  struct cast_opts unchop_cast_opts = {
+    .to = ptype,
+    .p_x_arg = p_x_arg,
+    .call = error_call
+  };
+
   const struct vec_assign_opts unchop_assign_opts = {
     .recursive = true,
     .assign_names = assign_names,
@@ -101,7 +103,7 @@ r_obj* list_unchop(r_obj* xs,
     .call = error_call
   };
 
-  for (r_ssize i = 0; i < xs_size; ++i) {
+  for (; i < xs_size; ++i) {
     r_obj* x = r_list_get(xs, i);
 
     if (x == r_null) {
@@ -109,12 +111,15 @@ r_obj* list_unchop(r_obj* xs,
     }
 
     r_obj* loc = r_list_get(locs, i);
+    const r_ssize loc_size = r_length(loc);
+
+    // Each element of `xs` is recycled to its corresponding index's size
+    x = KEEP(vec_check_recycle(x, loc_size, p_x_arg, error_call));
 
     if (assign_names) {
-      r_ssize size = r_length(loc);
       r_obj* outer = xs_is_named ? r_chr_get(xs_names, i) : r_null;
       r_obj* inner = KEEP(vec_names(x));
-      r_obj* x_nms = KEEP(apply_name_spec(name_spec, outer, inner, size));
+      r_obj* x_nms = KEEP(apply_name_spec(name_spec, outer, inner, loc_size));
 
       if (x_nms != r_null) {
         R_LAZY_ALLOC(out_names, out_names_pi, R_TYPE_character, out_size);
@@ -130,9 +135,14 @@ r_obj* list_unchop(r_obj* xs,
       FREE(2);
     }
 
+    unchop_cast_opts.x = x;
+    x = KEEP(vec_cast_opts(&unchop_cast_opts));
+
     // Total ownership of `proxy` because it was freshly created with `vec_init()`
     proxy = vec_proxy_assign_opts(proxy, loc, x, VCTRS_OWNED_true, &unchop_assign_opts);
     KEEP_AT(proxy, proxy_pi);
+
+    FREE(2);
   }
 
   r_obj* out = KEEP(vec_restore_recurse(proxy, ptype, VCTRS_OWNED_true));
