@@ -39,7 +39,7 @@
 
 #' @param repair Either a string or a function. If a string, it must be one of
 #'   `"check_unique"`, `"minimal"`, `"unique"`, `"universal"`, `"unique_quiet"`,
-#'   or `"universal_quiet"` If a function, it is invoked with a vector of
+#'   or `"universal_quiet"`. If a function, it is invoked with a vector of
 #'   minimal names and must return minimal names, otherwise an error is thrown.
 #'
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't

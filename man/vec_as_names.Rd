@@ -21,7 +21,7 @@ vec_as_names(
 
 \item{repair}{Either a string or a function. If a string, it must be one of
 \code{"check_unique"}, \code{"minimal"}, \code{"unique"}, \code{"universal"}, \code{"unique_quiet"},
-or \code{"universal_quiet"} If a function, it is invoked with a vector of
+or \code{"universal_quiet"}. If a function, it is invoked with a vector of
 minimal names and must return minimal names, otherwise an error is thrown.
 \itemize{
 \item Minimal names are never \code{NULL} or \code{NA}. When an element doesn't
