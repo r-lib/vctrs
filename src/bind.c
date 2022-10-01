@@ -285,7 +285,15 @@ void df_c_fallback(r_obj* out,
       FREE(1);
     } else if (vec_is_common_class_fallback(ptype_col)) {
       r_obj* xs_col = KEEP(list_pluck(xs, i));
-      r_obj* out_col = vec_c_fallback(ptype_col, xs_col, name_spec, name_repair, error_call);
+
+      r_obj* out_col = vec_c_fallback(
+        ptype_col,
+        xs_col,
+        name_spec,
+        name_repair,
+        vec_args.empty,
+        error_call
+      );
       r_list_poke(out, i, out_col);
 
       if (vec_size(out_col) != n_rows) {

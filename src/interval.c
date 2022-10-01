@@ -685,6 +685,7 @@ r_obj* vec_interval_complement(r_obj* start,
         ptype,
         R_NilValue,
         &name_repair_opts,
+        vec_args.empty,
         r_lazy_null
       ), &n_prot);
     }
@@ -699,6 +700,7 @@ r_obj* vec_interval_complement(r_obj* start,
         ptype,
         R_NilValue,
         &name_repair_opts,
+        vec_args.empty,
         r_lazy_null
       ), &n_prot);
     }
