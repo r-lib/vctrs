@@ -77,3 +77,18 @@
       list_of<double>    "list" "list_of<double>"  "list_of<double>" "list"              
       list_of<character> "list" "list"             "list"            "list_of<character>"
 
+# error call is passed to inner cast methods
+
+    Code
+      (expect_error(fn1()))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `fn1()`:
+      ! Can't convert `..1` <double> to <character>.
+    Code
+      (expect_error(fn2()))
+    Output
+      <error/vctrs_error_incompatible_type>
+      Error in `fn2()`:
+      ! Can't convert `..1` <double> to <character>.
+

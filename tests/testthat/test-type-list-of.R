@@ -183,6 +183,15 @@ test_that("safe casts work as expected", {
   expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_type")
 })
 
+test_that("error call is passed to inner cast methods", {
+  fn1 <- function() vec_cast(list_of(1), list_of(""))
+  fn2 <- function() vec_cast(list(1), list_of(""))
+  expect_snapshot({
+    (expect_error(fn1()))
+    (expect_error(fn2()))
+  })
+})
+
 test_that("lossy casts generate warning (no longer the case)", {
   # This used to be a lossy cast warning
   expect_error(
