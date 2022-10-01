@@ -215,7 +215,7 @@ test_that("vec_ptype2(<list_of<>>, NA) is symmetric (#687)", {
   expect_identical(vec_ptype2(NA, lof), vec_ptype(lof))
 })
 
-test_that("list_of() coerces to list() and list_of()", {
+test_that("list_of() coerces to list() and list_of() (#1701)", {
   expect_equal(vec_ptype_common(list_of(1), list()), list())
   expect_equal(vec_cast_common(list_of(1), list()), list(list(1), list()))
 
