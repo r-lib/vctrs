@@ -68,6 +68,12 @@ new_list_of0 <- function(x, ptype, ..., class = character()) {
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }
 
+list_of_unstructure <- function(x) {
+  attr(x, "ptype") <- NULL
+  attr(x, "class") <- NULL
+  x
+}
+
 #' @export
 #' @rdname list_of
 is_list_of <- function(x) {
@@ -113,9 +119,7 @@ vec_ptype_abbr.vctrs_list_of <- function(x, ...) {
 
 #' @export
 as.list.vctrs_list_of <- function(x, ...) {
-  attr(x, "ptype") <- NULL
-  attr(x, "class") <- NULL
-  x
+  list_of_unstructure(x)
 }
 #' @export
 as.character.vctrs_list_of <- function(x, ...) {
@@ -218,7 +222,7 @@ vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ...) {
 
 #' @export
 vec_cast.list.vctrs_list_of <-function(x, to, ...) {
-  vec_data(x)
+ list_of_unstructure(x)
 }
 #' @export
 vec_cast.vctrs_list_of.list <-function(x, to, ...) {
