@@ -168,12 +168,28 @@ test_that("safe casts work as expected", {
   expect_equal(vec_cast(NULL, x), NULL)
   expect_equal(vec_cast(NA, x), list_of(NULL, .ptype = double()))
 
+  expect_identical(vec_cast(list(1), x), list_of(1))
+  expect_identical(vec_cast(list(TRUE), x), list_of(1))
+  expect_identical(vec_cast(x, list()), list(1))
+  expect_identical(vec_cast(x, list()), list(1))
+
+  expect_error(
+    vec_cast(list_of(1), list_of("")),
+    class = "vctrs_error_incompatible_type"
+  )
+
   # These used to be allowed
   expect_error(vec_cast(1L, x), class = "vctrs_error_incompatible_type")
   expect_error(vec_cast(1, x), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list(1), x), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(list(TRUE), x), class = "vctrs_error_incompatible_type")
-  expect_error(vec_cast(x, list()), class = "vctrs_error_incompatible_type")
+})
+
+test_that("error call is passed to inner cast methods", {
+  fn1 <- function() vec_cast(list_of(1), list_of(""))
+  fn2 <- function() vec_cast(list(1), list_of(""))
+  expect_snapshot({
+    (expect_error(fn1()))
+    (expect_error(fn2()))
+  })
 })
 
 test_that("lossy casts generate warning (no longer the case)", {
@@ -197,4 +213,32 @@ test_that("vec_ptype2(<list_of<>>, NA) is symmetric (#687)", {
   lof <- list_of(1, 2, 3)
   expect_identical(vec_ptype2(lof, NA), vec_ptype(lof))
   expect_identical(vec_ptype2(NA, lof), vec_ptype(lof))
+})
+
+test_that("list_of() coerces to list() and list_of() (#1701)", {
+  expect_equal(vec_ptype_common(list_of(1), list()), list())
+  expect_equal(vec_cast_common(list_of(1), list()), list(list(1), list()))
+
+  expect_equal(vec_ptype_common(list_of(1), list("")), list())
+  expect_equal(vec_cast_common(list_of(1), list("")), list(list(1), list("")))
+
+  expect_equal(
+    vec_ptype_common(list_of(1), list_of("")),
+    list()
+  )
+  expect_equal(
+    vec_ptype_common(list_of(1), list(), list_of("")),
+    list()
+  )
+})
+
+test_that("can concatenate list and list-of (#1161)", {
+  expect_equal(
+    vec_c(list(1), list_of(2)),
+    list(1, 2)
+  )
+  expect_equal(
+    vec_c(list(""), list_of(2)),
+    list("", 2)
+  )
 })

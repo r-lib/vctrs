@@ -68,6 +68,12 @@ new_list_of0 <- function(x, ptype, ..., class = character()) {
   new_vctr(x, ..., ptype = ptype, class = c(class, "vctrs_list_of"))
 }
 
+list_of_unstructure <- function(x) {
+  attr(x, "ptype") <- NULL
+  attr(x, "class") <- NULL
+  x
+}
+
 #' @export
 #' @rdname list_of
 is_list_of <- function(x) {
@@ -113,9 +119,7 @@ vec_ptype_abbr.vctrs_list_of <- function(x, ...) {
 
 #' @export
 as.list.vctrs_list_of <- function(x, ...) {
-  attr(x, "ptype") <- NULL
-  attr(x, "class") <- NULL
-  x
+  list_of_unstructure(x)
 }
 #' @export
 as.character.vctrs_list_of <- function(x, ...) {
@@ -171,9 +175,31 @@ vec_ptype2.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
 }
 #' @method vec_ptype2.vctrs_list_of vctrs_list_of
 #' @export
-vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ...) {
-  ptype <- vec_ptype2(attr(x, "ptype"), attr(y, "ptype"))
-  new_list_of0(x = list(), ptype = ptype)
+vec_ptype2.vctrs_list_of.vctrs_list_of <- function(x, y, ..., x_arg = "", y_arg = "") {
+  x_ptype <- attr(x, "ptype", exact = TRUE)
+  y_ptype <- attr(y, "ptype", exact = TRUE)
+  if (identical(x_ptype, y_ptype)) {
+    return(x)
+  }
+
+  tryCatch(
+    expr = {
+      ptype <- vec_ptype2(x_ptype, y_ptype, x_arg = x_arg, y_arg = y_arg)
+      new_list_of0(x = list(), ptype = ptype)
+    },
+    vctrs_error_incompatible_type = function(cnd) {
+      list()
+    }
+  )
+}
+
+#' @export
+vec_ptype2.list.vctrs_list_of <- function(x, y, ...) {
+  list()
+}
+#' @export
+vec_ptype2.vctrs_list_of.list <- function(x, y, ...) {
+  list()
 }
 
 #' @rdname list_of
@@ -186,7 +212,7 @@ vec_cast.vctrs_list_of <- function(x, to, ...) {
 
 #' @export
 #' @method vec_cast.vctrs_list_of vctrs_list_of
-vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ...) {
+vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ..., call = caller_env()) {
   x_ptype <- attr(x, "ptype", exact = TRUE)
   to_ptype <- attr(to, "ptype", exact = TRUE)
 
@@ -197,8 +223,21 @@ vec_cast.vctrs_list_of.vctrs_list_of <- function(x, to, ...) {
     x
   } else {
     x <- unclass(x)
-    list_as_list_of(x, ptype = to_ptype)
+    list_as_list_of(x, ptype = to_ptype, error_call = call)
   }
+}
+
+#' @export
+vec_cast.list.vctrs_list_of <-function(x, to, ...) {
+ list_of_unstructure(x)
+}
+#' @export
+vec_cast.vctrs_list_of.list <-function(x, to, ..., call = caller_env()) {
+  list_as_list_of(
+    x,
+    attr(to, "ptype"),
+    error_call = call
+  )
 }
 
 # Helpers -----------------------------------------------------------------
