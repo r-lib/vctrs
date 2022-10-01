@@ -30,7 +30,7 @@
 
 * `list_unchop()` has gained an `error_call` argument (#1641).
 
-* `vec_c()` has gained an `.error_call` argument (#1641).
+* `vec_c()` has gained `.error_call` and `.error_arg` arguments (#1641, #1692).
 
 * Improved the performance of list-of common type methods (#1686, #875).
 
