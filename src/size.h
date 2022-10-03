@@ -19,7 +19,8 @@ r_obj* vec_recycle(r_obj* x,
 
 r_obj* vec_recycle_fallback(r_obj* x,
                             r_ssize size,
-                            struct vctrs_arg* x_arg);
+                            struct vctrs_arg* x_arg,
+                            struct r_lazy call);
 
 r_ssize df_size(r_obj* x);
 r_ssize df_raw_size(r_obj* x);

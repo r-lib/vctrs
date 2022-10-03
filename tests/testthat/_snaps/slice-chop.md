@@ -228,14 +228,14 @@
       (expect_error(list_unchop(x, indices)))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `list_unchop()`:
       ! Can't recycle `x[[1]]` (size 2) to size 3.
     Code
       (expect_error(list_unchop(x, indices, error_arg = "arg", error_call = call(
         "foo"))))
     Output
       <error/vctrs_error_incompatible_size>
-      Error:
+      Error in `foo()`:
       ! Can't recycle `arg[[1]]` (size 2) to size 3.
 
 # list_unchop() falls back for S4 classes with a registered c() method

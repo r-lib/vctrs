@@ -211,7 +211,8 @@ r_obj* ffi_recycle(r_obj* x,
 
 r_obj* vec_recycle_fallback(r_obj* x,
                             r_ssize size,
-                            struct vctrs_arg* x_arg) {
+                            struct vctrs_arg* x_arg,
+                            struct r_lazy call) {
   if (x == r_null) {
     return r_null;
   }
@@ -232,7 +233,7 @@ r_obj* vec_recycle_fallback(r_obj* x,
     return out;
   }
 
-  stop_recycle_incompatible_size(x_size, size, x_arg, r_lazy_null);
+  stop_recycle_incompatible_size(x_size, size, x_arg, call);
 }
 
 r_obj* ffi_as_short_length(r_obj* n, r_obj* frame) {

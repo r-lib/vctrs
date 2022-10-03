@@ -249,7 +249,7 @@ r_obj* list_unchop_fallback(r_obj* ptype,
     r_ssize index_size = r_length(r_list_get(indices, i));
     out_size += index_size;
 
-    r_list_poke(xs, i, vec_recycle_fallback(x, index_size, p_x_arg));
+    r_list_poke(xs, i, vec_recycle_fallback(x, index_size, p_x_arg, error_call));
   }
 
   indices = KEEP(vec_as_indices(indices, out_size, r_null));
