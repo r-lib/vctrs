@@ -266,3 +266,16 @@ test_that("can call `vec_cast()` from C (#1666)", {
 
   expect_equal(fn(x, y), vec_cast(x, y))
 })
+
+test_that("can supply non-character args to `vec_cast()` (#1581)", {
+  expect_snapshot({
+    (expect_error(vec_cast(2, "x")))
+    (expect_error(vec_cast(2, TRUE)))
+
+    fn <- function(foo, bar) {
+      vctrs::vec_cast(foo, bar, to_arg = quote(bar()))
+    }
+    (expect_error(fn(2, "x")))
+    (expect_error(fn(2, TRUE)))
+  })
+})

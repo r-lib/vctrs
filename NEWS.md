@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_cast()` now better supports non-string `x_arg` and `to_arg` (#1581).
+
 * `vec_rep_each(times = 0)` now works correctly with logical vectors that are
   considered unspecified and with named vectors (#1673).
 

@@ -129,16 +129,17 @@ r_ssize lazy_arg_fill(void* data_, char* buf, r_ssize remaining) {
 
   r_obj* arg = KEEP(r_lazy_eval(*data));
 
-  const char* arg_str = "";
-  if (r_is_string(arg)) {
-    arg_str = r_chr_get_c_string(arg, 0);
-  } else if (arg != r_null) {
-    r_abort("`arg` must be a string.");
+  if (arg == r_null) {
+    arg = r_chrs.empty_string;
+  } else if (!r_is_string(arg)) {
+    arg = r_as_label(arg);
   }
+  KEEP(arg);
 
-  r_ssize out = str_arg_fill(arg_str, buf, remaining);
+  const char* v_arg = r_chr_get_c_string(arg, 0);
+  r_ssize out = str_arg_fill(v_arg, buf, remaining);
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 
