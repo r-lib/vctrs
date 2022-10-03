@@ -17,12 +17,6 @@ r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
   case NAME_REPAIR_unique: return vec_as_unique_names(names, opts->quiet);
   case NAME_REPAIR_universal: return vec_as_universal_names(names, opts->quiet);
   case NAME_REPAIR_check_unique: return check_unique_names(names, opts);
-  // At the time when unique_quiet and universal_quiet were added, no function
-  // that calls the C function vec_as_names() actually accepts these strings at
-  // the R level, because these functions enforce `quiet = false`.
-  // But we still have to handle every case for the enum.
-  case NAME_REPAIR_unique_quiet: return vec_as_unique_names(names, true);
-  case NAME_REPAIR_universal_quiet: return vec_as_universal_names(names, true);
   case NAME_REPAIR_custom: return vec_as_custom_names(names, opts);
   }
   r_stop_unreachable();
@@ -943,8 +937,6 @@ const char* name_repair_arg_as_c_string(enum name_repair_type type) {
   case NAME_REPAIR_unique: return "unique";
   case NAME_REPAIR_universal: return "universal";
   case NAME_REPAIR_check_unique: return "check_unique";
-  case NAME_REPAIR_unique_quiet: return "unique_quiet";
-  case NAME_REPAIR_universal_quiet: return "universal_quiet";
   case NAME_REPAIR_custom: return "custom";
   }
   r_stop_unreachable();
