@@ -40,12 +40,12 @@ test_that("specified .ptypes do not allow more casts", {
   )
 })
 
-test_that("common type failure uses error call (#1641)", {
+test_that("common type failure uses error call and error arg (#1641, #1692)", {
   expect_snapshot(error = TRUE, {
-    vec_c("x", 1, .error_call = call("foo"))
+    vec_c("x", 1, .error_call = call("foo"), .error_arg = "arg")
   })
   expect_snapshot(error = TRUE, {
-    vec_c("x", .ptype = integer(), .error_call = call("foo"))
+    vec_c("x", .ptype = integer(), .error_call = call("foo"), .error_arg = "arg")
   })
 })
 
@@ -54,8 +54,8 @@ test_that("common type failure uses positional errors", {
     # Looking for `..1` and `a`
     (expect_error(vec_c(1, a = "x", 2)))
 
-    # Directed cast should also produce directional errors (#1690)
-    (expect_error(vec_c(1, a = "x", 2, .ptype = double())))
+    # Directed cast should also produce positional errors (#1690)
+    (expect_error(vec_c(1, a = "x", 2, .ptype = double(), .error_arg = "arg")))
 
     # Lossy cast
     (expect_error(vec_c(1, a = 2.5, .ptype = integer())))
@@ -119,7 +119,7 @@ test_that("can mix named and unnamed vectors (#271)", {
 
 test_that("preserves names when inputs are cast to a common type (#1690)", {
   expect_named(vec_c(c(a = 1), .ptype = integer()), "a")
-  expect_named(vec_c(foo = c(a = 1), .ptype = integer(), .name_spec = "{outer}_{inner}"), "foo_a", )
+  expect_named(vec_c(foo = c(a = 1), .ptype = integer(), .name_spec = "{outer}_{inner}"), "foo_a")
 })
 
 test_that("vec_c() repairs names", {
@@ -210,7 +210,7 @@ test_that("vec_c() fails with complex foreign S3 classes", {
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
     (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
-    (expect_error(vec_c(x, y, .error_call = call("foo")), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_c(x, y, .error_call = call("foo"), .error_arg = "arg"), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -219,7 +219,7 @@ test_that("vec_c() fails with complex foreign S4 classes", {
     joe <- .Counts(c(1L, 2L), name = "Joe")
     jane <- .Counts(3L, name = "Jane")
     (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
-    (expect_error(vec_c(joe, jane, .error_call = call("foo")), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_c(joe, jane, .error_call = call("foo"), .error_arg = "arg"), class = "vctrs_error_incompatible_type"))
   })
 })
 

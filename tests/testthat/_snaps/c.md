@@ -1,18 +1,18 @@
-# common type failure uses error call (#1641)
+# common type failure uses error call and error arg (#1641, #1692)
 
     Code
-      vec_c("x", 1, .error_call = call("foo"))
+      vec_c("x", 1, .error_call = call("foo"), .error_arg = "arg")
     Condition
       Error in `foo()`:
-      ! Can't combine `..1` <character> and `..2` <double>.
+      ! Can't combine `arg[[1]]` <character> and `arg[[2]]` <double>.
 
 ---
 
     Code
-      vec_c("x", .ptype = integer(), .error_call = call("foo"))
+      vec_c("x", .ptype = integer(), .error_call = call("foo"), .error_arg = "arg")
     Condition
       Error in `foo()`:
-      ! Can't convert `..1` <character> to <integer>.
+      ! Can't convert `arg[[1]]` <character> to <integer>.
 
 # common type failure uses positional errors
 
@@ -23,11 +23,11 @@
       Error in `vec_c()`:
       ! Can't combine `..1` <double> and `a` <character>.
     Code
-      (expect_error(vec_c(1, a = "x", 2, .ptype = double())))
+      (expect_error(vec_c(1, a = "x", 2, .ptype = double(), .error_arg = "arg")))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `vec_c()`:
-      ! Can't convert `a` <character> to <double>.
+      ! Can't convert `arg$a` <character> to <double>.
     Code
       (expect_error(vec_c(1, a = 2.5, .ptype = integer())))
     Output
@@ -74,12 +74,12 @@
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
-      (expect_error(vec_c(x, y, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(vec_c(x, y, .error_call = call("foo"), .error_arg = "arg"),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      ! Can't combine `arg[[1]]` <vctrs_foobar> and `arg[[2]]` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -98,12 +98,12 @@
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
-      (expect_error(vec_c(joe, jane, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(vec_c(joe, jane, .error_call = call("foo"), .error_arg = "arg"),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      ! Can't combine `arg[[1]]` <vctrs_Counts> and `arg[[2]]` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.

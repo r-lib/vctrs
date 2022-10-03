@@ -5,12 +5,13 @@ r_obj* vec_c(r_obj* xs,
              r_obj* ptype,
              r_obj* name_spec,
              const struct name_repair_opts* name_repair,
+             struct vctrs_arg* p_error_arg,
              struct r_lazy error_call) {
   struct fallback_opts opts = {
     .df = DF_FALLBACK_DEFAULT,
     .s3 = S3_FALLBACK_true
   };
-  return vec_c_opts(xs, ptype, name_spec, name_repair, &opts, error_call);
+  return vec_c_opts(xs, ptype, name_spec, name_repair, &opts, p_error_arg, error_call);
 }
 
 r_obj* vec_c_opts(r_obj* xs,
@@ -18,8 +19,10 @@ r_obj* vec_c_opts(r_obj* xs,
                   r_obj* name_spec,
                   const struct name_repair_opts* name_repair,
                   const struct fallback_opts* fallback_opts,
+                  struct vctrs_arg* p_error_arg,
                   struct r_lazy error_call) {
   struct ptype_common_opts ptype_opts = {
+    .p_arg = p_error_arg,
     .call = error_call,
     .fallback = *fallback_opts
   };
@@ -33,7 +36,7 @@ r_obj* vec_c_opts(r_obj* xs,
   }
 
   if (needs_vec_c_fallback(ptype)) {
-    r_obj* out = vec_c_fallback(ptype, xs, name_spec, name_repair, error_call);
+    r_obj* out = vec_c_fallback(ptype, xs, name_spec, name_repair, p_error_arg, error_call);
     FREE(1);
     return out;
   }
@@ -99,7 +102,7 @@ r_obj* vec_c_opts(r_obj* xs,
   r_ssize i = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
-    vec_args.empty,
+    p_error_arg,
     xs_names,
     xs_size,
     &i
@@ -184,6 +187,9 @@ r_obj* ffi_vec_c(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
   r_obj* name_spec = KEEP(r_eval(r_node_car(args), frame)); args = r_node_cdr(args);
   r_obj* name_repair = KEEP(r_eval(r_node_car(args), frame));
 
+  struct r_lazy error_arg_lazy = { .x = syms.dot_error_arg, .env = frame };
+  struct vctrs_arg error_arg = new_lazy_arg(&error_arg_lazy);
+
   struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
   struct name_repair_opts name_repair_opts =
@@ -193,7 +199,7 @@ r_obj* ffi_vec_c(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* frame) {
                          error_call);
   KEEP(name_repair_opts.shelter);
 
-  r_obj* out = vec_c(xs, ptype, name_spec, &name_repair_opts, error_call);
+  r_obj* out = vec_c(xs, ptype, name_spec, &name_repair_opts, &error_arg, error_call);
 
   FREE(5);
   return out;
@@ -274,6 +280,7 @@ r_obj* vec_c_fallback(r_obj* ptype,
                       r_obj* xs,
                       r_obj* name_spec,
                       const struct name_repair_opts* name_repair,
+                      struct vctrs_arg* p_error_arg,
                       struct r_lazy error_call) {
   r_obj* class = KEEP(r_attrib_get(ptype, syms_fallback_class));
   bool implements_c = class_implements_base_c(class);
@@ -283,6 +290,7 @@ r_obj* vec_c_fallback(r_obj* ptype,
     return vec_c_fallback_invoke(xs, name_spec, error_call);
   } else {
     struct ptype_common_opts ptype_opts = {
+      .p_arg = p_error_arg,
       .call = error_call,
       .fallback = {
         .df = DF_FALLBACK_none,
@@ -303,12 +311,15 @@ r_obj* vec_c_fallback(r_obj* ptype,
       name_spec,
       name_repair,
       &ptype_opts.fallback,
+      p_error_arg,
       error_call
     );
   }
 }
 
-r_obj* vec_c_fallback_invoke(r_obj* xs, r_obj* name_spec, struct r_lazy error_call) {
+r_obj* vec_c_fallback_invoke(r_obj* xs,
+                             r_obj* name_spec,
+                             struct r_lazy error_call) {
   r_obj* x = list_first_non_null(xs, NULL);
 
   if (vctrs_debug_verbose) {
