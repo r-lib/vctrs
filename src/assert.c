@@ -28,7 +28,7 @@ void vec_check_size(r_obj* x,
   r_ssize x_size = vec_size(x);
 
   if (x_size != size) {
-    stop_assert_size(x_size, size, arg);
+    stop_assert_size(x_size, size, arg, call);
   }
 }
 
