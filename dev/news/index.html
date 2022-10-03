@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li>
+<ul><li><p><code>vec_rep_each(times = 0)</code> now works correctly with logical vectors that are considered unspecified and with named vectors (<a href="https://github.com/r-lib/vctrs/issues/1673" class="external-link">#1673</a>).</p></li>
+<li>
 <p><code><a href="../reference/list_of.html">list_of()</a></code> was relaxed to make it easier to combine. It is now coercible with <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1161" class="external-link">#1161</a>). When incompatible <code><a href="../reference/list_of.html">list_of()</a></code> types are combined, the result is now a bare <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>.</p>
 <p>Following this change, the role of <code><a href="../reference/list_of.html">list_of()</a></code> is mainly to carry type information for potential optimisations, rather than to guarantee a certain type throughout an analysis.</p>
 </li>
