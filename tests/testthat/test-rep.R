@@ -58,6 +58,15 @@ test_that("`vec_rep_each()` can repeat 0 `times`", {
   expect_identical(vec_rep_each(1:2, 0), integer())
 })
 
+test_that("`vec_rep_each()` finalizes type when repeating 0 times (#1673)", {
+  expect_identical(vec_rep_each(NA, 0), logical())
+})
+
+test_that("`vec_rep_each()` retains names when repeating 0 times (#1673)", {
+  x <- c(a = 1, b = 2)
+  expect_identical(vec_rep_each(x, 0), named(numeric()))
+})
+
 test_that("`vec_rep_each()` can repeat 1 `time`", {
   expect_identical(vec_rep_each(1:2, 1), 1:2)
 })
