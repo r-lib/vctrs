@@ -5,6 +5,7 @@
 #include "globals.h"
 
 r_ssize vec_size(r_obj* x);
+r_ssize vec_size_params(r_obj* x, struct vctrs_arg* p_arg, struct r_lazy call);
 
 r_obj* vec_check_recycle(r_obj* x,
                          r_ssize size,

@@ -4,17 +4,20 @@
 
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
-  struct vec_error_opts err = {
-    .p_arg = vec_args.x,
-    .call = { .x = frame, .env = r_null }
-  };
-  return r_len(vec_size_opts(x, &err));
+  struct r_lazy call = { .x = frame, .env = r_null };
+  return r_len(vec_size_params(x, vec_args.x, call));
 }
 
 r_ssize vec_size(r_obj* x) {
+  return vec_size_params(x, vec_args.x, lazy_calls.vec_size);
+}
+
+r_ssize vec_size_params(r_obj* x,
+                        struct vctrs_arg* p_arg,
+                        struct r_lazy call) {
   struct vec_error_opts err = {
-    .p_arg = vec_args.x,
-    .call = lazy_calls.vec_size
+    .p_arg = p_arg,
+    .call = call
   };
   return vec_size_opts(x, &err);
 }
