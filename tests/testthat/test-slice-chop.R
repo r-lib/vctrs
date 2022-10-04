@@ -580,6 +580,24 @@ test_that("name repair is respected and happens after ordering according to `ind
   expect_named(list_unchop(x, indices, name_repair = "unique"), c("a...1", "a...2"))
 })
 
+test_that("list_unchop() can repair names quietly", {
+  local_name_repair_verbose()
+
+  x <- c(x = "a", x = "b", x = "c")
+  indices <- list(2, c(3, 1))
+  expect_snapshot({
+    res <- list_unchop(vec_chop(x, indices), indices, name_repair = "unique_quiet")
+  })
+  expect_named(res, c("x...1", "x...2", "x...3"))
+
+  x <- c("if" = "a", "in" = "b", "for" = "c")
+  indices <- list(2, c(3, 1))
+  expect_snapshot({
+    res <- list_unchop(vec_chop(x, indices), indices, name_repair = "universal_quiet")
+  })
+  expect_named(res, c(".if", ".in", ".for"))
+})
+
 test_that("list_unchop() errors on unsupported location values", {
   expect_snapshot({
     (expect_error(
