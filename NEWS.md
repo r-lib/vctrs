@@ -28,7 +28,8 @@
   options are used, any setting of `quiet` is silently overridden (@jennybc,
   #1629).
 
-* `list_unchop()` has gained an `error_call` argument (#1641).
+* `list_unchop()` has gained `error_call` and `error_arg` arguments (#1641,
+  #1692).
 
 * `vec_c()` has gained `.error_call` and `.error_arg` arguments (#1641, #1692).
 

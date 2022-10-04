@@ -13,6 +13,7 @@ list_unchop(
   ptype = NULL,
   name_spec = NULL,
   name_repair = c("minimal", "unique", "check_unique", "universal"),
+  error_arg = "x",
   error_call = current_env()
 )
 }
@@ -53,6 +54,10 @@ See the \link[=name_spec]{name specification topic}.}
 
 \item{name_repair}{How to repair names, see \code{repair} options in
 \code{\link[=vec_as_names]{vec_as_names()}}.}
+
+\item{error_arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
 
 \item{error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be

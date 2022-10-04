@@ -9,10 +9,10 @@
 ---
 
     Code
-      list_unchop(1, list(1), error_call = call("foo"))
+      list_unchop(1, list(1), error_call = call("foo"), error_arg = "arg")
     Condition
       Error in `foo()`:
-      ! `x` must be a list, not a number.
+      ! `arg` must be a list, not a number.
 
 ---
 
@@ -53,13 +53,14 @@
     Output
       <error/vctrs_error_incompatible_size>
       Error in `list_unchop()`:
-      ! Can't recycle `..1` (size 2) to size 3.
+      ! Can't recycle `x[[1]]` (size 2) to size 3.
     Code
-      (expect_error(list_unchop(x, indices = indices, error_call = call("foo"))))
+      (expect_error(list_unchop(x, indices = indices, error_call = call("foo"),
+      error_arg = "arg")))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `foo()`:
-      ! Can't recycle `..1` (size 2) to size 3.
+      ! Can't recycle `arg[[1]]` (size 2) to size 3.
 
 # unchopping takes the common type
 
@@ -68,56 +69,56 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `..1` <double> and `..2` <character>.
+      ! Can't combine `x[[1]]` <double> and `x[[2]]` <character>.
     Code
-      (expect_error(list_unchop(x, indices, error_call = call("foo")), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(list_unchop(x, indices, error_call = call("foo"), error_arg = "arg"),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't combine `..1` <double> and `..2` <character>.
+      ! Can't combine `arg[[1]]` <double> and `arg[[2]]` <character>.
 
 # common type failure uses positional errors
 
     Code
-      (expect_error(list_unchop(list(1, a = "x", 2))))
+      x <- list(1, a = "x", 2)
+      (expect_error(list_unchop(x)))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `..1` <double> and `a` <character>.
+      ! Can't combine `x[[1]]` <double> and `x$a` <character>.
     Code
-      (expect_error(list_unchop(list(1, a = "x", 2), indices = list(2, 1, 3))))
+      (expect_error(list_unchop(x, indices = list(2, 1, 3))))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `..1` <double> and `a` <character>.
+      ! Can't combine `x[[1]]` <double> and `x$a` <character>.
     Code
-      (expect_error(list_unchop(list(1, a = "x", 2), ptype = double())))
+      (expect_error(list_unchop(x, ptype = double())))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't convert `a` <character> to <double>.
+      ! Can't convert `x$a` <character> to <double>.
     Code
-      (expect_error(list_unchop(list(1, a = "x", 2), indices = list(2, 1, 3), ptype = double()))
-      )
+      (expect_error(list_unchop(x, indices = list(2, 1, 3), ptype = double())))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't convert `a` <character> to <double>.
+      ! Can't convert `x$a` <character> to <double>.
     Code
-      (expect_error(list_unchop(list(1, a = 2.5), ptype = integer())))
+      y <- list(1, a = 2.5)
+      (expect_error(list_unchop(y, ptype = integer())))
     Output
       <error/vctrs_error_cast_lossy>
       Error in `list_unchop()`:
-      ! Can't convert from `a` <double> to <integer> due to loss of precision.
+      ! Can't convert from `x$a` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
-      (expect_error(list_unchop(list(1, a = 2.5), indices = list(2, 1), ptype = integer()))
-      )
+      (expect_error(list_unchop(y, indices = list(2, 1), ptype = integer())))
     Output
       <error/vctrs_error_cast_lossy>
       Error in `list_unchop()`:
-      ! Can't convert from `a` <double> to <integer> due to loss of precision.
+      ! Can't convert from `x$a` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 # can specify a ptype to override common type
@@ -127,15 +128,15 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `list_unchop()`:
-      ! Can't convert from `..1` <double> to <integer> due to loss of precision.
+      ! Can't convert from `x[[1]]` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
       (expect_error(list_unchop(x, indices = indices, ptype = integer(), error_call = call(
-        "foo"))))
+        "foo"), error_arg = "arg")))
     Output
       <error/vctrs_error_cast_lossy>
       Error in `foo()`:
-      ! Can't convert from `..1` <double> to <integer> due to loss of precision.
+      ! Can't convert from `arg[[1]]` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 # list_unchop() errors on unsupported location values
@@ -167,17 +168,17 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      ! Can't combine `x[[1]]` <vctrs_foobar> and `x[[2]]` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
-      (expect_error(list_unchop(list(x, y), error_call = call("foo")), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(list_unchop(list(x, y), error_call = call("foo"), error_arg = "arg"),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
+      ! Can't combine `arg[[1]]` <vctrs_foobar> and `arg[[2]]` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -192,20 +193,50 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      ! Can't combine `x[[1]]` <vctrs_Counts> and `x[[2]]` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
-      (expect_error(list_unchop(list(joe, jane), error_call = call("foo")), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(list_unchop(list(joe, jane), error_call = call("foo"), error_arg = "arg"),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
-      ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
+      ! Can't combine `arg[[1]]` <vctrs_Counts> and `arg[[2]]` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
+# list_unchop() falls back to c() if S3 method is available
+
+    Code
+      (expect_error(list_unchop(list(foobar(1), foobar(2)), list(c(1, 3), integer())),
+      class = "vctrs_error_subscript_oob"))
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error:
+      ! Can't subset elements past the end.
+      i Location 3 doesn't exist.
+      i There are only 2 elements.
+
+---
+
+    Code
+      x <- list(foobar(1:2))
+      indices <- list(1:3)
+      (expect_error(list_unchop(x, indices)))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `list_unchop()`:
+      ! Can't recycle `x[[1]]` (size 2) to size 3.
+    Code
+      (expect_error(list_unchop(x, indices, error_arg = "arg", error_call = call(
+        "foo"))))
+    Output
+      <error/vctrs_error_incompatible_size>
+      Error in `foo()`:
+      ! Can't recycle `arg[[1]]` (size 2) to size 3.
 
 # list_unchop() falls back for S4 classes with a registered c() method
 
@@ -215,7 +246,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `..1` <vctrs_Counts> and `..2` <double>.
+      ! Can't combine `x[[1]]` <vctrs_Counts> and `x[[2]]` <double>.
 
 # list_unchop() fallback doesn't support `name_spec` or `ptype`
 
@@ -240,12 +271,13 @@
       vctrs methods must be implemented for class `vctrs_foobar`.
       See <https://vctrs.r-lib.org/articles/s3-vector.html>.
     Code
-      (expect_error(with_c_foobar(list_unchop(list(foobar(1)), ptype = "")), class = "vctrs_error_incompatible_type")
+      x <- list(foobar(1))
+      (expect_error(with_c_foobar(list_unchop(x, ptype = "")), class = "vctrs_error_incompatible_type")
       )
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't convert `..1` <vctrs_foobar> to <character>.
+      ! Can't convert `x[[1]]` <vctrs_foobar> to <character>.
 
 # list_unchop() does not support non-numeric S3 indices
 
@@ -288,17 +320,19 @@
 ---
 
     Code
-      (expect_error(list_unchop(list(a = c(b = letters), b = 3L), name_spec = zap()),
-      class = "vctrs_error_incompatible_type"))
+      x <- list(a = c(b = letters), b = 3L)
+      (expect_error(list_unchop(x, name_spec = zap()), class = "vctrs_error_incompatible_type")
+      )
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `a` <character> and `b` <integer>.
+      ! Can't combine `x$a` <character> and `x$b` <integer>.
     Code
-      (expect_error(list_unchop(list(a = c(foo = 1:2), b = c(bar = "")), indices = list(
-        2:1, 3), name_spec = zap()), class = "vctrs_error_incompatible_type"))
+      x <- list(a = c(foo = 1:2), b = c(bar = ""))
+      (expect_error(list_unchop(x, indices = list(2:1, 3), name_spec = zap()), class = "vctrs_error_incompatible_type")
+      )
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `a` <integer> and `b` <character>.
+      ! Can't combine `x$a` <integer> and `x$b` <character>.
 
