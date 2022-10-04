@@ -572,6 +572,22 @@ test_that("`.name_repair` happens after splicing", {
   expect_named(res, c("x...1", "x...2"))
 })
 
+test_that("`.name_repair` can be quiet", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    dfl_unique <- df_list(1, 2, .name_repair = "unique_quiet")
+    dfl_universal <- df_list("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+    df_unique <- data_frame(1, 2, .name_repair = "unique_quiet")
+    df_universal <- data_frame("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+  })
+
+  expect_named(dfl_unique, c("...1", "...2"))
+  expect_named(dfl_universal, c(".if", ".in"))
+  expect_named(df_unique, c("...1", "...2"))
+  expect_named(df_universal, c(".if", ".in"))
+})
+
 # fallback ----------------------------------------------------------------
 
 test_that("data frame fallback handles column types (#999)", {

@@ -67,8 +67,9 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'   will be computed as the common size of the inputs.
 #' @param .unpack Should unnamed data frame inputs be unpacked? Defaults to
 #'   `TRUE`.
-#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
-#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"`,
+#'   `"minimal"`, `"unique_quiet"`, or `"universal_quiet"`. See [vec_as_names()]
+#'   for the meaning of these options.
 #'
 #' @export
 #' @examples
@@ -89,7 +90,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 df_list <- function(...,
                     .size = NULL,
                     .unpack = TRUE,
-                    .name_repair = c("check_unique", "unique", "universal", "minimal"),
+                    .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet", "universal_quiet"),
                     .error_call = current_env()) {
   .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
 }
@@ -103,10 +104,10 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #' more in line with vctrs principles. The Properties section outlines these.
 #'
 #' @details
-#' If no column names are supplied, `""` will be used as a default for all
-#' columns. This is applied before name repair occurs, so the default
-#' name repair of `"check_unique"` will error if any unnamed inputs
-#' are supplied and `"unique"` will repair the empty string column names
+#' If no column names are supplied, `""` will be used as a default name for all
+#' columns. This is applied before name repair occurs, so the default name
+#' repair of `"check_unique"` will error if any unnamed inputs are supplied and
+#' `"unique"` (or `"unique_quiet"`) will repair the empty string column names
 #' appropriately. If the column names don't matter, use a `"minimal"` name
 #' repair for convenience and performance.
 #'
@@ -125,8 +126,9 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #'   named, those names are used for column names.
 #' @param .size The number of rows in the data frame. If `NULL`, this will
 #'   be computed as the common size of the inputs.
-#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
-#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"`,
+#'   `"minimal"`, `"unique_quiet"`, or `"universal_quiet"`. See [vec_as_names()]
+#'   for the meaning of these options.
 #'
 #' @export
 #' @examples
@@ -163,7 +165,7 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
 data_frame <- function(...,
                        .size = NULL,
-                       .name_repair = c("check_unique", "unique", "universal", "minimal"),
+                       .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet", "universal_quiet"),
                        .error_call = current_env()) {
   .Call(ffi_data_frame, list2(...), .size, .name_repair, environment())
 }
