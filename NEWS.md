@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `list_unchop()` has gained empty `...` to force optional arguments to be
+  named (#1715).
+
 * `vec_rep_each(times = 0)` now works correctly with logical vectors that are
   considered unspecified and with named vectors (#1673).
 
