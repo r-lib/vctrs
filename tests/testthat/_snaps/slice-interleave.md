@@ -10,6 +10,12 @@
       x...1 x...2 
           1     1 
 
+# can repair names quietly
+
+    Code
+      res_unique <- vec_interleave(c(x = 1), c(x = 2), .name_repair = "unique_quiet")
+      res_universal <- vec_interleave(c(`if` = 1), c(`in` = 2), .name_repair = "universal_quiet")
+
 # uses recycling errors
 
     Code

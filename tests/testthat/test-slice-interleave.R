@@ -37,6 +37,17 @@ test_that("allows for name repair", {
   expect_snapshot(vec_interleave(x, x, .name_repair = "unique"))
 })
 
+test_that("can repair names quietly", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    res_unique <- vec_interleave(c(x = 1), c(x = 2), .name_repair = "unique_quiet")
+    res_universal <- vec_interleave(c("if" = 1), c("in" = 2), .name_repair = "universal_quiet")
+  })
+  expect_named(res_unique, c("x...1", "x...2"))
+  expect_named(res_universal, c(".if", ".in"))
+})
+
 test_that("works with name specs", {
   x <- c(x = 1)
   y <- 1
