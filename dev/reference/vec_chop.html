@@ -112,6 +112,7 @@ holds:</p>
 <span>  ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span><span class="op">)</span>,</span>
+<span>  error_arg <span class="op">=</span> <span class="st">"x"</span>,</span>
 <span>  error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -158,6 +159,12 @@ names are ignored and the result is unnamed.</p></li>
 <dt>name_repair</dt>
 <dd><p>How to repair names, see <code>repair</code> options in
 <code><a href="vec_as_names.html">vec_as_names()</a></code>.</p></dd>
+
+
+<dt>error_arg</dt>
+<dd><p>An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.</p></dd>
 
 
 <dt>error_call</dt>
