@@ -355,6 +355,63 @@ test_that("vec_check_list() and list_check_all_vectors() work", {
   })
 })
 
+test_that("list_all_size() works", {
+  expect_true(list_all_size(list(), 2))
+  expect_true(list_all_size(list(integer()), 0))
+  expect_true(list_all_size(list(NULL), 0))
+  expect_true(list_all_size(list(1:2, 2:3), 2))
+
+  expect_false(list_all_size(list(1:2, 1:3), 2))
+  expect_false(list_all_size(list(NULL, 1:2), 2))
+
+  expect_true(list_all_size(list_of(1:3, 2:4), 3))
+  expect_false(list_all_size(list_of(1:3, 2:4), 4))
+})
+
+test_that("list_check_all_size() works", {
+  expect_null(list_check_all_size(list(), 2))
+  expect_null(list_check_all_size(list(integer()), 0))
+  expect_null(list_check_all_size(list(NULL), 0))
+  expect_null(list_check_all_size(list(1:2, 2:3), 2))
+
+  expect_snapshot({
+    # Validates sizes
+    (expect_error(list_check_all_size(list(1:2, 1:3), 2)))
+    (expect_error(list_check_all_size(list(1:2, 1:3), 2, arg = "arg", call = call("foo"))))
+
+    # `NULL` is not ignored
+    (expect_error(list_check_all_size(list(NULL, 1:2), 2)))
+  })
+})
+
+test_that("list_all_size() and list_check_all_size() error on scalars", {
+  x <- list(env())
+
+  expect_snapshot({
+    # Error considered internal to `list_all_size()`
+    (expect_error(list_all_size(x, 2)))
+
+    (expect_error(list_check_all_size(x, 2)))
+    (expect_error(list_check_all_size(x, 2, arg = "arg", call = call("foo"))))
+  })
+})
+
+test_that("list_all_size() and list_check_all_size() throw error using internal call on non-list input", {
+  expect_snapshot({
+    (expect_error(list_all_size(1, 2)))
+
+    # `arg` and `call` are ignored
+    (expect_error(list_check_all_size(1, 2, arg = "arg", call = call("foo"))))
+  })
+})
+
+test_that("list_all_size() and list_check_all_size() validate `size`", {
+  expect_snapshot({
+    (expect_error(list_all_size(list(), size = "x")))
+    (expect_error(list_check_all_size(list(), size = "x")))
+  })
+})
+
 test_that("informative messages when 1d array doesn't match vector", {
   x <- array(1:3)
   expect_snapshot((expect_error(vec_assert(x, int()))))

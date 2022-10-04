@@ -85,3 +85,44 @@ r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
   FREE(1);
   return r_null;
 }
+
+r_obj* ffi_list_check_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
+  // This is an internal error
+  vec_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+
+  struct r_lazy arg_lazy = { .x = syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+
+  r_ssize size = r_arg_as_ssize(ffi_size, "size");
+
+  list_check_all_size(xs, size, &arg, call);
+
+  return r_null;
+}
+
+static
+void list_check_all_size(r_obj* xs,
+                         r_ssize size,
+                         struct vctrs_arg* p_arg,
+                         struct r_lazy call) {
+  if (r_typeof(xs) != R_TYPE_list) {
+   r_stop_unexpected_type(r_typeof(xs));
+  }
+
+  r_ssize i = 0;
+
+  r_ssize xs_size = r_length(xs);
+  r_obj* xs_names = r_names(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(p_arg, xs_names, xs_size, &i);
+  KEEP(p_x_arg->shelter);
+
+  for (; i < xs_size; ++i) {
+    vec_check_size(v_xs[i], size, p_x_arg, call);
+  }
+
+  FREE(1);
+}

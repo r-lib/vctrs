@@ -194,30 +194,34 @@ vec_is_vector <- function(x) {
   .Call(vctrs_is_vector, x)
 }
 
-#' Is the object a list?
+#' List checks
 #'
 #' @description
-#' `vec_is_list()` tests if `x` is considered a list in the vctrs sense. It
-#' returns `TRUE` if:
+#' - `vec_is_list()` tests if `x` is considered a list in the vctrs sense. It
+#'   returns `TRUE` if:
+#'   - `x` is a bare list with no class.
+#'   - `x` is a list explicitly inheriting from `"list"`.
 #'
-#' * `x` is a bare list with no class.
-#' * `x` is a list explicitly inheriting from `"list"`.
+#' - `list_all_vectors()` takes a list and returns `TRUE` if all elements of
+#'   that list are vectors.
 #'
-#' `list_all_vectors()` takes a list and checks that all elements of
-#' `x` are vectors.
+#' - `list_all_size()` takes a list and returns `TRUE` if all elements of that
+#'   list have the same `size`.
 #'
-#' `vec_check_list()` and `list_check_all_vectors()` throw a type
-#' error if the input is not a list as defined by `vec_is_list()` and
-#' `list_all_vectors()` respectively.
+#' - `vec_check_list()`, `list_check_all_vectors()`, and `list_check_all_size()`
+#'   use the above functions, but throw a standardized and informative error if
+#'   they return `FALSE`.
 #'
 #' @inheritParams rlang::args_error_context
 #' @inheritParams rlang::args_dots_empty
-#' @param x An object.
+#' @param x For `vec_*()` functions, an object. For `list_*()` functions, a
+#'   list.
 #'
 #' @details
 #' Notably, data frames and S3 record style classes like POSIXlt are not
 #' considered lists.
 #'
+#' @seealso [list_sizes()]
 #' @export
 #' @examples
 #' vec_is_list(list())
@@ -226,6 +230,9 @@ vec_is_vector <- function(x) {
 #'
 #' list_all_vectors(list(1, mtcars))
 #' list_all_vectors(list(1, environment()))
+#'
+#' list_all_size(list(1:2, 2:3), 2)
+#' list_all_size(list(1:2, 2:4), 2)
 #'
 #' # `list_`-prefixed functions assume a list:
 #' try(list_all_vectors(environment()))
@@ -256,6 +263,23 @@ list_check_all_vectors <- function(x,
                                    call = caller_env()) {
   check_dots_empty0(...)
   invisible(.Call(ffi_list_check_all_vectors, x, environment()))
+}
+
+#' @rdname vec_is_list
+#' @export
+list_all_size <- function(x, size) {
+  .Call(ffi_list_all_size, x, size, environment())
+}
+
+#' @rdname vec_is_list
+#' @export
+list_check_all_size <- function(x,
+                                size,
+                                ...,
+                                arg = caller_arg(x),
+                                call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_list_check_all_size, x, size, environment()))
 }
 
 # Called from C

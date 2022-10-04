@@ -92,4 +92,5 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_CALL(vec_recycle_common);
   INIT_CALL(vec_size);
   INIT_CALL(vec_size_common);
+  INIT_CALL(list_all_size);
 }
