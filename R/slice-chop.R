@@ -19,7 +19,9 @@
 #' list_unchop(vec_chop(x, indices), indices) == x
 #' ```
 #'
+#' @inheritParams rlang::args_dots_empty
 #' @inheritParams vec_c
+#'
 #' @param x A vector
 #' @param indices For `vec_chop()`, a list of positive integer vectors to
 #'   slice `x` with, or `NULL`. If `NULL`, `x` is split into its individual
@@ -58,16 +60,16 @@
 #' x <- c("a", "b", "c", "d")
 #' indices <- list(2, c(3, 1), 4)
 #' vec_chop(x, indices)
-#' list_unchop(vec_chop(x, indices), indices)
+#' list_unchop(vec_chop(x, indices), indices = indices)
 #'
 #' # When unchopping, size 1 elements of `x` are recycled
 #' # to the size of the corresponding index
-#' list_unchop(list(1, 2:3), list(c(1, 3, 5), c(2, 4)))
+#' list_unchop(list(1, 2:3), indices = list(c(1, 3, 5), c(2, 4)))
 #'
 #' # Names are retained, and outer names can be combined with inner
 #' # names through the use of a `name_spec`
 #' lst <- list(x = c(a = 1, b = 2), y = 1)
-#' list_unchop(lst, list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
+#' list_unchop(lst, indices = list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
 #'
 #' # An alternative implementation of `ave()` can be constructed using
 #' # `vec_chop()` and `list_unchop()` in combination with `vec_group_loc()`
@@ -75,7 +77,7 @@
 #'   indices <- vec_group_loc(.by)$loc
 #'   chopped <- vec_chop(.x, indices)
 #'   out <- lapply(chopped, .f, ...)
-#'   list_unchop(out, indices)
+#'   list_unchop(out, indices = indices)
 #' }
 #'
 #' breaks <- warpbreaks$breaks
@@ -94,12 +96,14 @@ vec_chop <- function(x, indices = NULL) {
 #' @rdname vec_chop
 #' @export
 list_unchop <- function(x,
+                        ...,
                         indices = NULL,
                         ptype = NULL,
                         name_spec = NULL,
                         name_repair = c("minimal", "unique", "check_unique", "universal"),
                         error_arg = "x",
                         error_call = current_env()) {
+  check_dots_empty0(...)
   .Call(ffi_list_unchop, x, indices, ptype, name_spec, name_repair, environment())
 }
 

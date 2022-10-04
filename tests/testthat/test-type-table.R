@@ -204,7 +204,7 @@ test_that("can use a table in `list_unchop()`", {
   x <- new_table(1:4, dim = c(2L, 2L))
 
   expect_identical(list_unchop(list(x)), x)
-  expect_identical(list_unchop(list(x, x), list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
+  expect_identical(list_unchop(list(x, x), indices = list(1:2, 4:3)), vec_slice(x, c(1:2, 2:1)))
 })
 
 test_that("can concatenate tables", {
