@@ -4,7 +4,7 @@
       list_unchop(1, list(1))
     Condition
       Error in `list_unchop()`:
-      ! `1` must be a list, not a number.
+      ! `x` must be a list, not a number.
 
 ---
 
@@ -20,7 +20,7 @@
       list_unchop(data.frame(x = 1), list(1))
     Condition
       Error in `list_unchop()`:
-      ! `data.frame(x = 1)` must be a list, not a <data.frame> object.
+      ! `x` must be a list, not a <data.frame> object.
 
 # `indices` must be a list
 
@@ -111,14 +111,14 @@
     Output
       <error/vctrs_error_cast_lossy>
       Error in `list_unchop()`:
-      ! Can't convert from `y$a` <double> to <integer> due to loss of precision.
+      ! Can't convert from `x$a` <double> to <integer> due to loss of precision.
       * Locations: 1
     Code
       (expect_error(list_unchop(y, indices = list(2, 1), ptype = integer())))
     Output
       <error/vctrs_error_cast_lossy>
       Error in `list_unchop()`:
-      ! Can't convert from `y$a` <double> to <integer> due to loss of precision.
+      ! Can't convert from `x$a` <double> to <integer> due to loss of precision.
       * Locations: 1
 
 # can specify a ptype to override common type
@@ -168,7 +168,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `list(x, y)[[1]]` <vctrs_foobar> and `list(x, y)[[2]]` <vctrs_foobar>.
+      ! Can't combine `x[[1]]` <vctrs_foobar> and `x[[2]]` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -193,7 +193,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `list(joe, jane)[[1]]` <vctrs_Counts> and `list(joe, jane)[[2]]` <vctrs_Counts>.
+      ! Can't combine `x[[1]]` <vctrs_Counts> and `x[[2]]` <vctrs_Counts>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
@@ -246,7 +246,7 @@
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
-      ! Can't combine `list(joe, 1, jane)[[1]]` <vctrs_Counts> and `list(joe, 1, jane)[[2]]` <double>.
+      ! Can't combine `x[[1]]` <vctrs_Counts> and `x[[2]]` <double>.
 
 # list_unchop() fallback doesn't support `name_spec` or `ptype`
 
