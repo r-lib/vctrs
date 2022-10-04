@@ -207,6 +207,17 @@ test_that("can repair names in `vec_rbind()` (#229)", {
   expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = ~ toupper(.)), c("A", "A"))
 })
 
+test_that("can repair names quietly", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    res_unique <- vec_rbind(c(x = 1, x = 2), c(x = 3, x = 4), .name_repair = "unique_quiet")
+    res_universal <- vec_rbind(c("if" = 1, "in" = 2), c("if" = 3, "for" = 4), .name_repair = "universal_quiet")
+  })
+  expect_named(res_unique, c("x...1", "x...2"))
+  expect_named(res_universal, c(".if", ".in", ".for"))
+})
+
 test_that("can construct an id column", {
   df <- data.frame(x = 1)
 
@@ -491,6 +502,17 @@ test_that("can repair names in `vec_cbind()` (#227)", {
 
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = "minimal"), c("a", "a"))
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = toupper), c("A", "A"))
+})
+
+test_that("can repair names quietly", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    res_unique <- vec_cbind(x = 1, x = 2, .name_repair = "unique_quiet")
+    res_universal <- vec_cbind("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+  })
+  expect_named(res_unique, c("x...1", "x...2"))
+  expect_named(res_universal, c(".if", ".in"))
 })
 
 test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
