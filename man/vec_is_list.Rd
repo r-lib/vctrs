@@ -35,6 +35,8 @@ origin of a problem.}
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
+\item{size}{The size to check each element for.}
 }
 \description{
 \itemize{

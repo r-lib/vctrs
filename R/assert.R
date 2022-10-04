@@ -214,8 +214,11 @@ vec_is_vector <- function(x) {
 #'
 #' @inheritParams rlang::args_error_context
 #' @inheritParams rlang::args_dots_empty
+#'
 #' @param x For `vec_*()` functions, an object. For `list_*()` functions, a
 #'   list.
+#'
+#' @param size The size to check each element for.
 #'
 #' @details
 #' Notably, data frames and S3 record style classes like POSIXlt are not
