@@ -68,7 +68,7 @@
 vec_c <- function(...,
                   .ptype = NULL,
                   .name_spec = NULL,
-                  .name_repair = c("minimal", "unique", "check_unique", "universal"),
+                  .name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet", "universal_quiet"),
                   .error_arg = "",
                   .error_call = current_env()) {
   .External2(ffi_vec_c, .ptype, .name_spec, .name_repair)

@@ -60,6 +60,12 @@
       Error in `vec_c()`:
       ! Can't combine `foo$x$y$z` <double> and `bar$x$y$z` <character>.
 
+# vec_c() can repair names quietly
+
+    Code
+      res_unique <- vec_c(x = TRUE, x = 0, .name_repair = "unique_quiet")
+      res_universal <- vec_c(`if` = TRUE, `in` = 0, .name_repair = "universal_quiet")
+
 # vec_c() fails with complex foreign S3 classes
 
     Code
