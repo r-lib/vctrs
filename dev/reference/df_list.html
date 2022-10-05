@@ -73,7 +73,8 @@ a helper function for data frame subclasses.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .unpack <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"check_unique"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"minimal"</span><span class="op">)</span>,</span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"check_unique"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"minimal"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
 <span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -96,8 +97,9 @@ will be computed as the common size of the inputs.</p></dd>
 
 
 <dt>.name_repair</dt>
-<dd><p>One of <code>"check_unique"</code>, <code>"unique"</code>, <code>"universal"</code> or
-<code>"minimal"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code> for the meaning of these options.</p></dd>
+<dd><p>One of <code>"check_unique"</code>, <code>"unique"</code>, <code>"universal"</code>,
+<code>"minimal"</code>, <code>"unique_quiet"</code>, or <code>"universal_quiet"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code>
+for the meaning of these options.</p></dd>
 
 
 <dt>.error_call</dt>

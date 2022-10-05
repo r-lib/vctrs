@@ -73,7 +73,8 @@ across all arguments.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .names_to <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/zap.html" class="external-link">zap</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span><span class="op">)</span>,</span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
 <span>  .name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -82,7 +83,8 @@ across all arguments.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span>, <span class="st">"minimal"</span><span class="op">)</span>,</span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span>, <span class="st">"minimal"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
 <span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -119,9 +121,9 @@ not named, an integer column is used instead.</p></li>
 
 
 <dt>.name_repair</dt>
-<dd><p>One of <code>"unique"</code>, <code>"universal"</code>, or
-<code>"check_unique"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code> for the meaning of these
-options.</p>
+<dd><p>One of <code>"unique"</code>, <code>"universal"</code>, <code>"check_unique"</code>,
+<code>"unique_quiet"</code>, or  <code>"universal_quiet"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code> for the
+meaning of these options.</p>
 <p>With <code>vec_rbind()</code>, the repair function is applied to all inputs
 separately. This is because <code>vec_rbind()</code> needs to align their
 columns before binding the rows, and thus needs all inputs to

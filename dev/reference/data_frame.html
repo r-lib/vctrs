@@ -69,7 +69,8 @@ more in line with vctrs principles. The Properties section outlines these.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">data_frame</span><span class="op">(</span></span>
 <span>  <span class="va">...</span>,</span>
 <span>  .size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"check_unique"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"minimal"</span><span class="op">)</span>,</span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"check_unique"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"minimal"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
 <span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -87,8 +88,9 @@ be computed as the common size of the inputs.</p></dd>
 
 
 <dt>.name_repair</dt>
-<dd><p>One of <code>"check_unique"</code>, <code>"unique"</code>, <code>"universal"</code> or
-<code>"minimal"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code> for the meaning of these options.</p></dd>
+<dd><p>One of <code>"check_unique"</code>, <code>"unique"</code>, <code>"universal"</code>,
+<code>"minimal"</code>, <code>"unique_quiet"</code>, or <code>"universal_quiet"</code>. See <code><a href="vec_as_names.html">vec_as_names()</a></code>
+for the meaning of these options.</p></dd>
 
 
 <dt>.error_call</dt>
@@ -100,10 +102,10 @@ mentioned in error messages as the source of the error. See the
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If no column names are supplied, <code>""</code> will be used as a default for all
-columns. This is applied before name repair occurs, so the default
-name repair of <code>"check_unique"</code> will error if any unnamed inputs
-are supplied and <code>"unique"</code> will repair the empty string column names
+    <p>If no column names are supplied, <code>""</code> will be used as a default name for all
+columns. This is applied before name repair occurs, so the default name
+repair of <code>"check_unique"</code> will error if any unnamed inputs are supplied and
+<code>"unique"</code> (or <code>"unique_quiet"</code>) will repair the empty string column names
 appropriately. If the column names don't matter, use a <code>"minimal"</code> name
 repair for convenience and performance.</p>
     </div>
