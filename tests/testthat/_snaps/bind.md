@@ -3,21 +3,21 @@
     Code
       (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_rbind()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
     Code
       (expect_error(vec_rbind(x_int, x_chr, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `foo()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
     Code
       (expect_error(vec_rbind(x_int, x_chr, .ptype = x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `foo()`:
       ! Can't convert `..1$x` <integer> to match type of `x` <character>.
 
@@ -383,7 +383,7 @@
       (expect_error(vec_rbind(set_names(x, "x"), set_names(y, "x")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
@@ -398,7 +398,7 @@
       (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "y")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 

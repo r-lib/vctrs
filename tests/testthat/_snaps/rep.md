@@ -3,7 +3,7 @@
     Code
       (expect_error(my_vec_rep(1, "x"), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_vec_rep()`:
       ! Can't convert `my_times` <character> to <integer>.
     Code
@@ -62,7 +62,7 @@
     Code
       (expect_error(my_vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_vec_rep_each()`:
       ! Can't convert `my_times` <character> to <integer>.
     Code

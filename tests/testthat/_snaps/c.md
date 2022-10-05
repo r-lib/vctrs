@@ -19,13 +19,13 @@
     Code
       (expect_error(vec_c(1, a = "x", 2)))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_c()`:
       ! Can't combine `..1` <double> and `a` <character>.
     Code
       (expect_error(vec_c(1, a = "x", 2, .ptype = double(), .error_arg = "arg")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `vec_c()`:
       ! Can't convert `arg$a` <character> to <double>.
     Code
@@ -73,7 +73,7 @@
       y <- structure(foobar(2), attr_bar = "bar")
       (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_c()`:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
@@ -83,7 +83,7 @@
       (expect_error(vec_c(x, y, .error_call = call("foo"), .error_arg = "arg"),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `foo()`:
       ! Can't combine `arg[[1]]` <vctrs_foobar> and `arg[[2]]` <vctrs_foobar>.
       x Some attributes are incompatible.
@@ -97,7 +97,7 @@
       jane <- .Counts(3L, name = "Jane")
       (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_c()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs_Counts>.
       x Some attributes are incompatible.
@@ -107,7 +107,7 @@
       (expect_error(vec_c(joe, jane, .error_call = call("foo"), .error_arg = "arg"),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `foo()`:
       ! Can't combine `arg[[1]]` <vctrs_Counts> and `arg[[2]]` <vctrs_Counts>.
       x Some attributes are incompatible.
@@ -129,7 +129,7 @@
       (expect_error(with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `vec_c()`:
       ! Can't convert `..1` <vctrs_foobar> to <character>.
     Code
@@ -148,7 +148,7 @@
       (expect_error(vec_c(a = c(b = letters), b = 1, .name_spec = zap()), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_c()`:
       ! Can't combine `a` <character> and `b` <double>.
 

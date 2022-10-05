@@ -179,7 +179,7 @@ vec_default_ptype2 <- function(x,
       `vctrs:::from_dispatch` = match_from_dispatch(...),
       call = call
     ),
-    vctrs_restart_incompatible_type = function(ptype) {
+    vctrs_restart_ptype2 = function(ptype) {
       ptype
     }
   )
@@ -428,12 +428,7 @@ vec_implements_ptype2 <- function(x) {
 with_ordered_restart <- function(expr) {
   withCallingHandlers(
     expr,
-    vctrs_error_incompatible_type = function(cnd) {
-      # Don't handle cast errors
-      if (is_string(cnd[["action"]], "convert")) {
-        return(zap())
-      }
-
+    vctrs_error_ptype2 = function(cnd) {
       x <- cnd[["x"]]
       y <- cnd[["y"]]
 
@@ -455,7 +450,7 @@ with_ordered_restart <- function(expr) {
 
       # Recurse with character methods and restart with the result
       ptype <- vec_ptype2(x, y)
-      maybe_restart("vctrs_restart_incompatible_type", ptype)
+      maybe_restart("vctrs_restart_ptype2", ptype)
     }
   )
 }

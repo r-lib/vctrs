@@ -1,7 +1,12 @@
 # vctrs (development version)
 
+* Common type and cast errors now inherit from `"vctrs_error_ptype2"`
+  and `"vctrs_error_cast"` respectively. They are still both
+  subclasses from `"vctrs_error_incompatible_type"` (which used to be
+  their most specific class and is now a parent class).
+
 * `vec_ptype2()` errors can now be restarted via
-  `"vctrs_restart_incompatible_type"`. The restart resumes execution
+  `"vctrs_restart_ptype2"`. The restart resumes execution
   from `vec_default_ptype2()`.
 
 * New `list_all_size()` and `list_check_all_size()` to quickly determine if a

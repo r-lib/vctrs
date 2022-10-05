@@ -3,7 +3,7 @@
     Code
       (expect_error(my_function()))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `2` <double> and `chr()` <character>.
 
@@ -12,7 +12,7 @@
     Code
       (expect_error(my_function()))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_function()`:
       ! Can't convert `2` <double> to <character>.
 
@@ -21,7 +21,7 @@
     Code
       (expect_error(my_function(df1, df2)))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_function()`:
       ! Can't convert `lhs$y` <logical> to match type of `y` <character>.
 
@@ -30,7 +30,7 @@
     Code
       (expect_error(my_function(df1, df2)))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_function()`:
       ! Can't convert `lhs$y` <logical> to match type of `y` <character>.
 
@@ -143,7 +143,7 @@
     Code
       (expect_error(my_function()))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_function()`:
       ! Can't convert `matrix(TRUE)` <double[,1]> to <double>.
       Can't decrease dimensionality from 2 to 1.
@@ -295,7 +295,7 @@
     Code
       (expect_error(vec_cast(1, list())))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `foo()`:
       ! Can't convert `1` <double> to <list>.
     Code
@@ -392,7 +392,7 @@
     Code
       (expect_error(my_function(this_arg = 1, that_arg = "foo", .arg = "my_arg")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `my_arg$this_arg` <double> and `my_arg$that_arg` <character>.
 
@@ -401,7 +401,7 @@
     Code
       (expect_error(my_function(1, "foo", .arg = "my_arg")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `my_arg[[1]]` <double> and `my_arg[[2]]` <character>.
 
@@ -410,7 +410,7 @@
     Code
       (expect_error(my_function(this_arg = x, that_arg = y)))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `this_arg$x` <character> and `that_arg$x` <double>.
 
@@ -419,7 +419,7 @@
     Code
       (expect_error(my_function(this_arg = 1, that_arg = "foo")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `this_arg` <double> and `that_arg` <character>.
 
@@ -428,7 +428,7 @@
     Code
       (expect_error(my_function(this_arg = 1, that_arg = "foo", .arg = "my_arg")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `my_arg$this_arg` <double> and `my_arg$that_arg` <character>.
 
@@ -437,7 +437,7 @@
     Code
       (expect_error(my_function(1, "foo", .arg = "my_arg")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `my_arg[[1]]` <double> and `my_arg[[2]]` <character>.
 
