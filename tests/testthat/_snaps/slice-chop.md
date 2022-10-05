@@ -1,7 +1,7 @@
 # `x` must be a list
 
     Code
-      list_unchop(1, list(1))
+      list_unchop(1, indices = list(1))
     Condition
       Error in `list_unchop()`:
       ! `x` must be a list, not a number.
@@ -9,7 +9,7 @@
 ---
 
     Code
-      list_unchop(1, list(1), error_call = call("foo"), error_arg = "arg")
+      list_unchop(1, indices = list(1), error_call = call("foo"), error_arg = "arg")
     Condition
       Error in `foo()`:
       ! `arg` must be a list, not a number.
@@ -17,7 +17,7 @@
 ---
 
     Code
-      list_unchop(data.frame(x = 1), list(1))
+      list_unchop(data.frame(x = 1), indices = list(1))
     Condition
       Error in `list_unchop()`:
       ! `x` must be a list, not a <data.frame> object.
@@ -25,7 +25,7 @@
 # `indices` must be a list
 
     Code
-      list_unchop(list(1), 1)
+      list_unchop(list(1), indices = 1)
     Condition
       Error in `list_unchop()`:
       ! `indices` must be a list, not a number.
@@ -33,7 +33,7 @@
 ---
 
     Code
-      list_unchop(list(1), 1, error_call = call("foo"))
+      list_unchop(list(1), indices = 1, error_call = call("foo"))
     Condition
       Error in `foo()`:
       ! `indices` must be a list, not a number.
@@ -41,7 +41,7 @@
 ---
 
     Code
-      list_unchop(list(1), data.frame(x = 1))
+      list_unchop(list(1), indices = data.frame(x = 1))
     Condition
       Error in `list_unchop()`:
       ! `indices` must be a list, not a <data.frame> object.
@@ -65,14 +65,15 @@
 # unchopping takes the common type
 
     Code
-      (expect_error(list_unchop(x, indices), class = "vctrs_error_incompatible_type"))
+      (expect_error(list_unchop(x, indices = indices), class = "vctrs_error_incompatible_type")
+      )
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
       ! Can't combine `x[[1]]` <double> and `x[[2]]` <character>.
     Code
-      (expect_error(list_unchop(x, indices, error_call = call("foo"), error_arg = "arg"),
-      class = "vctrs_error_incompatible_type"))
+      (expect_error(list_unchop(x, indices = indices, error_call = call("foo"),
+      error_arg = "arg"), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `foo()`:
@@ -142,7 +143,7 @@
 # list_unchop() errors on unsupported location values
 
     Code
-      (expect_error(list_unchop(list(1, 2), list(c(1, 2), 0)), class = "vctrs_error_subscript_type")
+      (expect_error(list_unchop(list(1, 2), indices = list(c(1, 2), 0)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
@@ -151,7 +152,7 @@
       x Subscript can't contain `0` values.
       i It has a `0` value at location 1.
     Code
-      (expect_error(list_unchop(list(1), list(-1)), class = "vctrs_error_subscript_type")
+      (expect_error(list_unchop(list(1), indices = list(-1)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
@@ -211,8 +212,8 @@
 # list_unchop() falls back to c() if S3 method is available
 
     Code
-      (expect_error(list_unchop(list(foobar(1), foobar(2)), list(c(1, 3), integer())),
-      class = "vctrs_error_subscript_oob"))
+      (expect_error(list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 3),
+      integer())), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error:
@@ -225,13 +226,13 @@
     Code
       x <- list(foobar(1:2))
       indices <- list(1:3)
-      (expect_error(list_unchop(x, indices)))
+      (expect_error(list_unchop(x, indices = indices)))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `list_unchop()`:
       ! Can't recycle `x[[1]]` (size 2) to size 3.
     Code
-      (expect_error(list_unchop(x, indices, error_arg = "arg", error_call = call(
+      (expect_error(list_unchop(x, indices = indices, error_arg = "arg", error_call = call(
         "foo"))))
     Output
       <error/vctrs_error_incompatible_size>
@@ -241,8 +242,8 @@
 # list_unchop() falls back for S4 classes with a registered c() method
 
     Code
-      (expect_error(list_unchop(list(joe, 1, jane), list(c(1, 2), 3, 4)), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(list_unchop(list(joe, 1, jane), indices = list(c(1, 2), 3, 4)),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_incompatible_type>
       Error in `list_unchop()`:
@@ -282,7 +283,7 @@
 # list_unchop() does not support non-numeric S3 indices
 
     Code
-      (expect_error(list_unchop(list(1), list(factor("x"))), class = "vctrs_error_subscript_type")
+      (expect_error(list_unchop(list(1), indices = list(factor("x"))), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
@@ -291,7 +292,7 @@
       x Subscript has the wrong type `character`.
       i It must be numeric.
     Code
-      (expect_error(list_unchop(list(1), list(foobar(1L))), class = "vctrs_error_subscript_type")
+      (expect_error(list_unchop(list(1), indices = list(foobar(1L))), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>

@@ -253,36 +253,36 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
 
 test_that("`x` must be a list", {
   expect_snapshot(error = TRUE, {
-    list_unchop(1, list(1))
+    list_unchop(1, indices = list(1))
   })
   expect_snapshot(error = TRUE, {
-    list_unchop(1, list(1), error_call = call("foo"), error_arg = "arg")
+    list_unchop(1, indices = list(1), error_call = call("foo"), error_arg = "arg")
   })
   expect_snapshot(error = TRUE, {
-    list_unchop(data.frame(x=1), list(1))
+    list_unchop(data.frame(x=1), indices = list(1))
   })
 })
 
 test_that("`indices` must be a list", {
   expect_snapshot(error = TRUE, {
-    list_unchop(list(1), 1)
+    list_unchop(list(1), indices = 1)
   })
   expect_snapshot(error = TRUE, {
-    list_unchop(list(1), 1, error_call = call("foo"))
+    list_unchop(list(1), indices = 1, error_call = call("foo"))
   })
   expect_snapshot(error = TRUE, {
-    list_unchop(list(1), data.frame(x=1))
+    list_unchop(list(1), indices = data.frame(x=1))
   })
 })
 
 test_that("`indices` must be a list of integers", {
-  expect_error(list_unchop(list(1), list("x")), class = "vctrs_error_subscript_type")
-  expect_error(list_unchop(list(1), list(TRUE)), class = "vctrs_error_subscript_type")
-  expect_error(list_unchop(list(1), list(quote(name))), class = "vctrs_error_subscript_type")
+  expect_error(list_unchop(list(1), indices = list("x")), class = "vctrs_error_subscript_type")
+  expect_error(list_unchop(list(1), indices = list(TRUE)), class = "vctrs_error_subscript_type")
+  expect_error(list_unchop(list(1), indices = list(quote(name))), class = "vctrs_error_subscript_type")
 })
 
 test_that("`x` and `indices` must be lists of the same size", {
-  expect_error(list_unchop(list(1, 2), list(1)), "`x` and `indices` must be lists of the same size")
+  expect_error(list_unchop(list(1, 2), indices = list(1)), "`x` and `indices` must be lists of the same size")
 })
 
 test_that("can unchop with an AsIs list (#1463)", {
@@ -292,19 +292,19 @@ test_that("can unchop with an AsIs list (#1463)", {
 
 test_that("can unchop empty vectors", {
   expect_null(list_unchop(list()))
-  expect_null(list_unchop(list(), list()))
-  expect_identical(list_unchop(list(), list(), ptype = numeric()), numeric())
+  expect_null(list_unchop(list(), indices = list()))
+  expect_identical(list_unchop(list(), indices = list(), ptype = numeric()), numeric())
 })
 
 test_that("can unchop a list of NULL", {
-  expect_null(list_unchop(list(NULL), list(integer())))
-  expect_identical(list_unchop(list(NULL), list(integer()), ptype = numeric()), numeric())
-  expect_identical(list_unchop(list(NULL, NULL), list(integer(), integer()), ptype = numeric()), numeric())
+  expect_null(list_unchop(list(NULL), indices = list(integer())))
+  expect_identical(list_unchop(list(NULL), indices = list(integer()), ptype = numeric()), numeric())
+  expect_identical(list_unchop(list(NULL, NULL), indices = list(integer(), integer()), ptype = numeric()), numeric())
 })
 
 test_that("NULLs are ignored when unchopped with other vectors", {
   expect_identical(list_unchop(list("a", NULL, "b")), c("a", "b"))
-  expect_identical(list_unchop(list("a", NULL, "b"), list(2, integer(), 1)), c("b", "a"))
+  expect_identical(list_unchop(list("a", NULL, "b"), indices = list(2, integer(), 1)), c("b", "a"))
 })
 
 test_that("can use a `NULL` element with a corresponding index", {
@@ -324,15 +324,15 @@ test_that("can use a `NULL` element with a corresponding index", {
 })
 
 test_that("can unchop atomic vectors", {
-  expect_identical(list_unchop(list(1, 2), list(2, 1)), c(2, 1))
-  expect_identical(list_unchop(list("a", "b"), list(2, 1)), c("b", "a"))
+  expect_identical(list_unchop(list(1, 2), indices = list(2, 1)), c(2, 1))
+  expect_identical(list_unchop(list("a", "b"), indices = list(2, 1)), c("b", "a"))
 })
 
 test_that("can unchop lists", {
   x <- list(list("a", "b"), list("c"))
   indices <- list(c(2, 3), 1)
 
-  expect_identical(list_unchop(x, indices), list("c", "a", "b"))
+  expect_identical(list_unchop(x, indices = indices), list("c", "a", "b"))
 })
 
 test_that("can unchop data frames", {
@@ -344,7 +344,7 @@ test_that("can unchop data frames", {
 
   expect <- vec_slice(vec_c(df1, df2), vec_order(vec_c(!!! indices)))
 
-  expect_identical(list_unchop(x, indices), expect)
+  expect_identical(list_unchop(x, indices = indices), expect)
 })
 
 test_that("can unchop factors", {
@@ -357,7 +357,7 @@ test_that("can unchop factors", {
   # levels are in the order they are seen!
   expect <- factor(c("y", "z", "x"), levels = c("z", "x", "y"))
 
-  expect_identical(list_unchop(x, indices), expect)
+  expect_identical(list_unchop(x, indices = indices), expect)
 })
 
 test_that("can fallback when unchopping matrices", {
@@ -369,7 +369,7 @@ test_that("can fallback when unchopping matrices", {
 
   expect <- vec_slice(vec_c(mat1, mat2), vec_order(vec_c(!!! indices)))
 
-  expect_identical(list_unchop(x, indices), expect)
+  expect_identical(list_unchop(x, indices = indices), expect)
   expect_identical(list_unchop(x), vec_c(mat1, mat2))
 })
 
@@ -382,31 +382,31 @@ test_that("can fallback when unchopping arrays of >2D", {
 
   expect <- vec_slice(vec_c(arr1, arr2), vec_order(vec_c(!!! indices)))
 
-  expect_identical(list_unchop(x, indices), expect)
+  expect_identical(list_unchop(x, indices = indices), expect)
   expect_identical(list_unchop(x), vec_c(arr1, arr2))
 })
 
 test_that("can unchop with all size 0 elements and get the right ptype", {
   x <- list(integer(), integer())
   indices <- list(integer(), integer())
-  expect_identical(list_unchop(x, indices), integer())
+  expect_identical(list_unchop(x, indices = indices), integer())
 })
 
 test_that("can unchop with some size 0 elements", {
   x <- list(integer(), 1:2, integer())
   indices <- list(integer(), 2:1, integer())
-  expect_identical(list_unchop(x, indices), 2:1)
+  expect_identical(list_unchop(x, indices = indices), 2:1)
 })
 
 test_that("NULL is a valid index", {
-  expect_equal(list_unchop(list(1, 2), list(NULL, 1)), 2)
-  expect_error(list_unchop(list(1, 2), list(NULL, 2)), class = "vctrs_error_subscript_oob")
+  expect_equal(list_unchop(list(1, 2), indices = list(NULL, 1)), 2)
+  expect_error(list_unchop(list(1, 2), indices = list(NULL, 2)), class = "vctrs_error_subscript_oob")
 })
 
 test_that("unchopping recycles elements of x to the size of the index", {
   x <- list(1, 2)
   indices <- list(c(3, 4, 5), c(2, 1))
-  expect_identical(list_unchop(x, indices), c(2, 2, 1, 1, 1))
+  expect_identical(list_unchop(x, indices = indices), c(2, 2, 1, 1, 1))
 
   x <- list(1:2)
   indices <- list(1:3)
@@ -421,13 +421,13 @@ test_that("unchopping takes the common type", {
   indices <- list(1, 2)
 
   expect_snapshot({
-    (expect_error(list_unchop(x, indices), class = "vctrs_error_incompatible_type"))
-    (expect_error(list_unchop(x, indices, error_call = call("foo"), error_arg = "arg"), class = "vctrs_error_incompatible_type"))
+    (expect_error(list_unchop(x, indices = indices), class = "vctrs_error_incompatible_type"))
+    (expect_error(list_unchop(x, indices = indices, error_call = call("foo"), error_arg = "arg"), class = "vctrs_error_incompatible_type"))
   })
 
   x <- list(1, 2L)
 
-  expect_type(list_unchop(x, indices), "double")
+  expect_type(list_unchop(x, indices = indices), "double")
 })
 
 test_that("common type failure uses positional errors", {
@@ -453,7 +453,7 @@ test_that("can specify a ptype to override common type", {
   indices <- list(1, 2)
 
   x <- list(1, 2L)
-  expect_identical(list_unchop(x, indices, ptype = integer()), c(1L, 2L))
+  expect_identical(list_unchop(x, indices = indices, ptype = integer()), c(1L, 2L))
 
   x <- list(1.5, 2)
   expect_snapshot({
@@ -470,21 +470,21 @@ test_that("leaving `indices = NULL` unchops sequentially", {
 test_that("outer names are kept", {
   x <- list(x = 1, y = 2)
   expect_named(list_unchop(x), c("x", "y"))
-  expect_named(list_unchop(x, list(2, 1)), c("y", "x"))
+  expect_named(list_unchop(x, indices = list(2, 1)), c("y", "x"))
 })
 
 test_that("outer names are recycled in the right order", {
   x <- list(x = 1, y = 2)
-  expect_error(list_unchop(x, list(c(1, 2), 3)), "Can't merge")
-  expect_named(list_unchop(x, list(c(1, 3), 2), name_spec = "{outer}_{inner}"), c("x_1", "y", "x_2"))
-  expect_named(list_unchop(x, list(c(3, 1), 2), name_spec = "{outer}_{inner}"), c("x_2", "y", "x_1"))
+  expect_error(list_unchop(x, indices = list(c(1, 2), 3)), "Can't merge")
+  expect_named(list_unchop(x, indices = list(c(1, 3), 2), name_spec = "{outer}_{inner}"), c("x_1", "y", "x_2"))
+  expect_named(list_unchop(x, indices = list(c(3, 1), 2), name_spec = "{outer}_{inner}"), c("x_2", "y", "x_1"))
 })
 
 test_that("outer names can be merged with inner names", {
   x <- list(x = c(a = 1), y = c(b = 2))
   expect_error(list_unchop(x), "Can't merge")
   expect_named(list_unchop(x, name_spec = "{outer}_{inner}"), c("x_a", "y_b"))
-  expect_named(list_unchop(x, list(2, 1), name_spec = "{outer}_{inner}"), c("y_b", "x_a"))
+  expect_named(list_unchop(x, indices = list(2, 1), name_spec = "{outer}_{inner}"), c("y_b", "x_a"))
 })
 
 test_that("preserves names when inputs are cast to a common type (#1689)", {
@@ -506,7 +506,7 @@ test_that("not all inputs have to be named", {
   x <- list(c(a = 1), 2, c(c = 3))
   indices <- list(2, 1, 3)
 
-  expect_named(list_unchop(x, indices), c("", "a", "c"))
+  expect_named(list_unchop(x, indices = indices), c("", "a", "c"))
 })
 
 test_that("list_unchop() keeps data frame row names", {
@@ -516,7 +516,7 @@ test_that("list_unchop() keeps data frame row names", {
   x <- list(df1, df2)
   indices <- list(c(3, 1), c(2, 4))
 
-  result <- list_unchop(x, indices)
+  result <- list_unchop(x, indices = indices)
   expect <- c("r2", "r3", "r1", "r4")
 
   expect_identical(vec_names(result), expect)
@@ -555,7 +555,7 @@ test_that("monitoring - can technically assign to the same location twice", {
   x <- list(1:2, 3L)
   indices <- list(1:2, 1L)
 
-  expect_identical(list_unchop(x, indices), c(3L, 2L, NA))
+  expect_identical(list_unchop(x, indices = indices), c(3L, 2L, NA))
 })
 
 test_that("index values are validated", {
@@ -564,10 +564,10 @@ test_that("index values are validated", {
   indices2 <- list(c(1, 4), 2)
   indices3 <- list(c(1, 3, 4), 2)
 
-  expect_error(list_unchop(x, indices1), class = "vctrs_error_subscript_oob")
-  expect_error(list_unchop(x, indices2), class = "vctrs_error_subscript_oob")
+  expect_error(list_unchop(x, indices = indices1), class = "vctrs_error_subscript_oob")
+  expect_error(list_unchop(x, indices = indices2), class = "vctrs_error_subscript_oob")
 
-  expect_identical(list_unchop(x, indices3), c(1, 2, 1, 1))
+  expect_identical(list_unchop(x, indices = indices3), c(1, 2, 1, 1))
 })
 
 test_that("name repair is respected and happens after ordering according to `indices`", {
@@ -576,18 +576,18 @@ test_that("name repair is respected and happens after ordering according to `ind
   x <- list(c(a = 1), c(a = 2))
   indices <- list(2, 1)
 
-  expect_named(list_unchop(x, indices), c("a", "a"))
-  expect_named(list_unchop(x, indices, name_repair = "unique"), c("a...1", "a...2"))
+  expect_named(list_unchop(x, indices = indices), c("a", "a"))
+  expect_named(list_unchop(x, indices = indices, name_repair = "unique"), c("a...1", "a...2"))
 })
 
 test_that("list_unchop() errors on unsupported location values", {
   expect_snapshot({
     (expect_error(
-      list_unchop(list(1, 2), list(c(1, 2), 0)),
+      list_unchop(list(1, 2), indices = list(c(1, 2), 0)),
       class = "vctrs_error_subscript_type"
     ))
     (expect_error(
-      list_unchop(list(1), list(-1)),
+      list_unchop(list(1), indices = list(-1)),
       class = "vctrs_error_subscript_type"
     ))
   })
@@ -595,7 +595,7 @@ test_that("list_unchop() errors on unsupported location values", {
 
 test_that("missing values propagate", {
   expect_identical(
-    list_unchop(list(1, 2), list(c(NA_integer_, NA_integer_), c(NA_integer_, 3))),
+    list_unchop(list(1, 2), indices = list(c(NA_integer_, NA_integer_), c(NA_integer_, 3))),
     c(NA, NA, 2, NA)
   )
 })
@@ -625,7 +625,7 @@ test_that("list_unchop() fails with complex foreign S4 classes", {
 test_that("list_unchop() falls back to c() if S3 method is available", {
   # Check off-by-one error
   expect_error(
-    list_unchop(list(foobar(1), "", foobar(2)), list(1, 2, 3)),
+    list_unchop(list(foobar(1), "", foobar(2)), indices = list(1, 2, 3)),
     class = "vctrs_error_incompatible_type"
   )
 
@@ -645,11 +645,11 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
     foobar(c(1, 2))
   )
   expect_identical(
-    list_unchop(list(foobar(1), foobar(2)), list(1, 2)),
+    list_unchop(list(foobar(1), foobar(2)), indices = list(1, 2)),
     foobar(c(1, 2))
   )
   expect_identical(
-    list_unchop(list(foobar(1), foobar(2)), list(2, 1)),
+    list_unchop(list(foobar(1), foobar(2)), indices = list(2, 1)),
     foobar(c(2, 1))
   )
   expect_identical(
@@ -659,47 +659,47 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
 
   # OOB error is respected
   expect_error(
-    list_unchop(list(foobar(1), foobar(2)), list(1, 3)),
+    list_unchop(list(foobar(1), foobar(2)), indices = list(1, 3)),
     class = "vctrs_error_subscript_oob"
   )
 
   # Unassigned locations results in missing values.
   # Repeated assignment uses the last assigned value.
   expect_identical(
-    list_unchop(list(foobar(c(1, 2)), foobar(3)), list(c(1, 3), 1)),
+    list_unchop(list(foobar(c(1, 2)), foobar(3)), indices = list(c(1, 3), 1)),
     foobar(c(3, NA, 2))
   )
   expect_identical(
-    list_unchop(list(foobar(c(1, 2)), foobar(3)), list(c(2, NA), NA)),
+    list_unchop(list(foobar(c(1, 2)), foobar(3)), indices = list(c(2, NA), NA)),
     foobar(c(NA, 1, NA))
   )
 
   # Names are kept
   expect_identical(
-    list_unchop(list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))), list(c(2, 1), 3)),
+    list_unchop(list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))), indices = list(c(2, 1), 3)),
     foobar(c(y = 2, x = 1, x = 1))
   )
 
   # Recycles to the size of index
   expect_identical(
-    list_unchop(list(foobar(1), foobar(2)), list(c(1, 3), 2)),
+    list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 3), 2)),
     foobar(c(1, 2, 1))
   )
   expect_identical(
-    list_unchop(list(foobar(1), foobar(2)), list(c(1, 2), integer())),
+    list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 2), integer())),
     foobar(c(1, 1))
   )
   expect_snapshot({
     (expect_error(
-      list_unchop(list(foobar(1), foobar(2)), list(c(1, 3), integer())),
+      list_unchop(list(foobar(1), foobar(2)), indices = list(c(1, 3), integer())),
       class = "vctrs_error_subscript_oob"
     ))
   })
   expect_snapshot({
     x <- list(foobar(1:2))
     indices <- list(1:3)
-    (expect_error(list_unchop(x, indices)))
-    (expect_error(list_unchop(x, indices, error_arg = "arg", error_call = call("foo"))))
+    (expect_error(list_unchop(x, indices = indices)))
+    (expect_error(list_unchop(x, indices = indices, error_arg = "arg", error_call = call("foo"))))
   })
 
   method_vctrs_c_fallback <- function(...) {
@@ -717,7 +717,7 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
         structure(1, class = "vctrs_c_fallback"),
         structure(2, class = "vctrs_c_fallback")
       ),
-      list(2, 1)
+      indices = list(2, 1)
     ),
     structure(c(2, 1), class = "vctrs_c_fallback")
   )
@@ -735,7 +735,7 @@ test_that("list_unchop() falls back for S4 classes with a registered c() method"
 
   expect_snapshot({
     (expect_error(
-      list_unchop(list(joe, 1, jane), list(c(1, 2), 3, 4)),
+      list_unchop(list(joe, 1, jane), indices = list(c(1, 2), 3, 4)),
       class = "vctrs_error_incompatible_type"
     ))
   })
@@ -743,23 +743,23 @@ test_that("list_unchop() falls back for S4 classes with a registered c() method"
   local_c_counts()
 
   expect_identical(
-    list_unchop(list(joe, jane), list(c(1, 3), 2)),
+    list_unchop(list(joe, jane), indices = list(c(1, 3), 2)),
     .Counts(c(1L, 3L, 2L), name = "Dispatched")
   )
 
   expect_identical(
-    list_unchop(list(NULL, joe, jane), list(integer(), c(1, 3), 2)),
+    list_unchop(list(NULL, joe, jane), indices = list(integer(), c(1, 3), 2)),
     .Counts(c(1L, 3L, 2L), name = "Dispatched")
   )
 
   # Unassigned locations results in missing values.
   # Repeated assignment uses the last assigned value.
   expect_identical(
-    list_unchop(list(joe, jane), list(c(1, 3), 1)),
+    list_unchop(list(joe, jane), indices = list(c(1, 3), 1)),
     .Counts(c(3L, NA, 2L), name = "Dispatched")
   )
   expect_identical(
-    list_unchop(list(joe, jane), list(c(2, NA), NA)),
+    list_unchop(list(joe, jane), indices = list(c(2, NA), NA)),
     .Counts(c(NA, 1L, NA), name = "Dispatched")
   )
 })
@@ -793,17 +793,17 @@ test_that("list_unchop() supports numeric S3 indices", {
     vec_cast.integer.vctrs_foobar = function(x, to, ...) vec_data(x)
   )
 
-  expect_identical(list_unchop(list(1), list(foobar(1L))), 1)
+  expect_identical(list_unchop(list(1), indices = list(foobar(1L))), 1)
 })
 
 test_that("list_unchop() does not support non-numeric S3 indices", {
   expect_snapshot({
     (expect_error(
-      list_unchop(list(1), list(factor("x"))),
+      list_unchop(list(1), indices = list(factor("x"))),
       class = "vctrs_error_subscript_type"
     ))
     (expect_error(
-      list_unchop(list(1), list(foobar(1L))),
+      list_unchop(list(1), indices = list(foobar(1L))),
       class = "vctrs_error_subscript_type"
     ))
   })
@@ -883,7 +883,7 @@ test_that("list_unchop() falls back to c() methods (#1120)", {
     c("dispatched1", "dispatched2", "dispatched3")
   )
   expect_identical(
-    list_unchop(xs, list(c(2, 1), 3)),
+    list_unchop(xs, indices = list(c(2, 1), 3)),
     c("dispatched2", "dispatched1", "dispatched3")
   )
 })
@@ -898,7 +898,7 @@ test_that("list_unchop() fails if foreign classes are not homogeneous and there 
     class = "vctrs_error_incompatible_type"
   )
   expect_error(
-    list_unchop(xs, list(c(2, 1), 3)),
+    list_unchop(xs, indices = list(c(2, 1), 3)),
     class = "vctrs_error_incompatible_type"
   )
 })

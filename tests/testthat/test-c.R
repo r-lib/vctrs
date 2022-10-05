@@ -453,11 +453,11 @@ test_that("named empty vectors force named output (#1263)", {
   expect_named(vec_c(x, 1L), "")
   expect_named(vec_c(x, 1), "")
 
-  expect_named(list_unchop(list(x), list(int())), chr())
-  expect_named(list_unchop(list(x, x), list(int(), int())), chr())
-  expect_named(list_unchop(list(x, 1L), list(int(), 1)), "")
+  expect_named(list_unchop(list(x), indices = list(int())), chr())
+  expect_named(list_unchop(list(x, x), indices = list(int(), int())), chr())
+  expect_named(list_unchop(list(x, 1L), indices = list(int(), 1)), "")
 
-  expect_named(list_unchop(list(x, 1), list(int(), 1)), "")
+  expect_named(list_unchop(list(x, 1), indices = list(int(), 1)), "")
 })
 
 # Golden tests -------------------------------------------------------

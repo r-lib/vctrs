@@ -9,6 +9,7 @@ vec_chop(x, indices = NULL)
 
 list_unchop(
   x,
+  ...,
   indices = NULL,
   ptype = NULL,
   name_spec = NULL,
@@ -29,6 +30,8 @@ locations to place elements of \code{x} in. Each element of \code{x} is recycled
 the size of the corresponding index vector. The size of \code{indices} must
 match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
 provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
+
+\item{...}{These dots are for future extensions and must be empty.}
 
 \item{ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{x}. Alternatively, you
@@ -116,16 +119,16 @@ vec_chop(mtcars, list(1:3, 4:6))
 x <- c("a", "b", "c", "d")
 indices <- list(2, c(3, 1), 4)
 vec_chop(x, indices)
-list_unchop(vec_chop(x, indices), indices)
+list_unchop(vec_chop(x, indices), indices = indices)
 
 # When unchopping, size 1 elements of `x` are recycled
 # to the size of the corresponding index
-list_unchop(list(1, 2:3), list(c(1, 3, 5), c(2, 4)))
+list_unchop(list(1, 2:3), indices = list(c(1, 3, 5), c(2, 4)))
 
 # Names are retained, and outer names can be combined with inner
 # names through the use of a `name_spec`
 lst <- list(x = c(a = 1, b = 2), y = 1)
-list_unchop(lst, list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
+list_unchop(lst, indices = list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}")
 
 # An alternative implementation of `ave()` can be constructed using
 # `vec_chop()` and `list_unchop()` in combination with `vec_group_loc()`
@@ -133,7 +136,7 @@ ave2 <- function(.x, .by, .f, ...) {
   indices <- vec_group_loc(.by)$loc
   chopped <- vec_chop(.x, indices)
   out <- lapply(chopped, .f, ...)
-  list_unchop(out, indices)
+  list_unchop(out, indices = indices)
 }
 
 breaks <- warpbreaks$breaks
