@@ -140,6 +140,16 @@
       ! Can't convert from `arg[[1]]` <double> to <integer> due to loss of precision.
       * Locations: 1
 
+# list_unchop() can repair names quietly
+
+    Code
+      res <- list_unchop(vec_chop(x, indices), indices, name_repair = "unique_quiet")
+
+---
+
+    Code
+      res <- list_unchop(vec_chop(x, indices), indices, name_repair = "universal_quiet")
+
 # list_unchop() errors on unsupported location values
 
     Code

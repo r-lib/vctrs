@@ -38,7 +38,7 @@
 vec_interleave <- function(...,
                            .ptype = NULL,
                            .name_spec = NULL,
-                           .name_repair = c("minimal", "unique", "check_unique", "universal")) {
+                           .name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet", "universal_quiet")) {
   args <- list2(...)
 
   # `NULL`s must be dropped up front to generate appropriate indices

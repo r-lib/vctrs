@@ -8,7 +8,8 @@ df_list(
   ...,
   .size = NULL,
   .unpack = TRUE,
-  .name_repair = c("check_unique", "unique", "universal", "minimal"),
+  .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet",
+    "universal_quiet"),
   .error_call = current_env()
 )
 }
@@ -22,8 +23,9 @@ will be computed as the common size of the inputs.}
 \item{.unpack}{Should unnamed data frame inputs be unpacked? Defaults to
 \code{TRUE}.}
 
-\item{.name_repair}{One of \code{"check_unique"}, \code{"unique"}, \code{"universal"} or
-\code{"minimal"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these options.}
+\item{.name_repair}{One of \code{"check_unique"}, \code{"unique"}, \code{"universal"},
+\code{"minimal"}, \code{"unique_quiet"}, or \code{"universal_quiet"}. See \code{\link[=vec_as_names]{vec_as_names()}}
+for the meaning of these options.}
 
 \item{.error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be

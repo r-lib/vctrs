@@ -55,6 +55,19 @@
       x These names are duplicated:
         * "a" at locations 1 and 2.
 
+# can repair names quietly
+
+    Code
+      res_unique <- vec_rbind(c(x = 1, x = 2), c(x = 3, x = 4), .name_repair = "unique_quiet")
+      res_universal <- vec_rbind(c(`if` = 1, `in` = 2), c(`if` = 3, `for` = 4),
+      .name_repair = "universal_quiet")
+
+---
+
+    Code
+      res_unique <- vec_cbind(x = 1, x = 2, .name_repair = "unique_quiet")
+      res_universal <- vec_cbind(`if` = 1, `in` = 2, .name_repair = "universal_quiet")
+
 # vec_rbind() fails with arrays of dimensionality > 3
 
     Code

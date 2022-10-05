@@ -10,7 +10,8 @@ vec_rbind(
   ...,
   .ptype = NULL,
   .names_to = rlang::zap(),
-  .name_repair = c("unique", "universal", "check_unique"),
+  .name_repair = c("unique", "universal", "check_unique", "unique_quiet",
+    "universal_quiet"),
   .name_spec = NULL,
   .error_call = current_env()
 )
@@ -19,7 +20,8 @@ vec_cbind(
   ...,
   .ptype = NULL,
   .size = NULL,
-  .name_repair = c("unique", "universal", "check_unique", "minimal"),
+  .name_repair = c("unique", "universal", "check_unique", "minimal", "unique_quiet",
+    "universal_quiet"),
   .error_call = current_env()
 )
 }
@@ -55,9 +57,9 @@ not named, an integer column is used instead.
 \item If \code{NULL}, the input names are used as row names.
 }}
 
-\item{.name_repair}{One of \code{"unique"}, \code{"universal"}, or
-\code{"check_unique"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the meaning of these
-options.
+\item{.name_repair}{One of \code{"unique"}, \code{"universal"}, \code{"check_unique"},
+\code{"unique_quiet"}, or  \code{"universal_quiet"}. See \code{\link[=vec_as_names]{vec_as_names()}} for the
+meaning of these options.
 
 With \code{vec_rbind()}, the repair function is applied to all inputs
 separately. This is because \code{vec_rbind()} needs to align their

@@ -8,7 +8,8 @@ vec_c(
   ...,
   .ptype = NULL,
   .name_spec = NULL,
-  .name_repair = c("minimal", "unique", "check_unique", "universal"),
+  .name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet",
+    "universal_quiet"),
   .error_arg = "",
   .error_call = current_env()
 )

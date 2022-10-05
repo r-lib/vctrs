@@ -100,7 +100,7 @@ list_unchop <- function(x,
                         indices = NULL,
                         ptype = NULL,
                         name_spec = NULL,
-                        name_repair = c("minimal", "unique", "check_unique", "universal"),
+                        name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet", "universal_quiet"),
                         error_arg = "x",
                         error_call = current_env()) {
   check_dots_empty0(...)

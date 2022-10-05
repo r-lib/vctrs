@@ -33,6 +33,11 @@
   like specifying `repair = "unique", quiet = TRUE`. When the `"*_quiet"`
   options are used, any setting of `quiet` is silently overridden (@jennybc,
   #1629).
+  
+  `"unique_quiet"` and `"universal_quiet"` are also newly accepted for the name
+  repair argument of several other functions that do not expose a `quiet`
+  argument: `data_frame()`, `df_list()`, `vec_c()`, `list_unchop()`,
+  `vec_interleave()`, `vec_rbind()`, and `vec_cbind()` (@jennybc, #1716).
 
 * `list_unchop()` has gained `error_call` and `error_arg` arguments (#1641,
   #1692).

@@ -236,6 +236,14 @@
       Error in `df_list()`:
       ! `.unpack` must be `TRUE` or `FALSE`.
 
+# `.name_repair` can be quiet
+
+    Code
+      dfl_unique <- df_list(1, 2, .name_repair = "unique_quiet")
+      dfl_universal <- df_list(`if` = 1, `in` = 2, .name_repair = "universal_quiet")
+      df_unique <- data_frame(1, 2, .name_repair = "unique_quiet")
+      df_universal <- data_frame(`if` = 1, `in` = 2, .name_repair = "universal_quiet")
+
 # data frame fallback handles column types (#999)
 
     Code

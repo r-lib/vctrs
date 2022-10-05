@@ -138,6 +138,17 @@ test_that("vec_c() repairs names", {
   expect_named(vec_c(a = 1, a = 2, .name_repair = ~ toupper(.)), c("A", "A"))
 })
 
+test_that("vec_c() can repair names quietly", {
+  local_name_repair_verbose()
+
+   expect_snapshot({
+     res_unique <- vec_c(x = TRUE, x = 0, .name_repair = "unique_quiet")
+     res_universal <- vec_c("if" = TRUE, "in" = 0, .name_repair = "universal_quiet")
+   })
+   expect_named(res_unique, c("x...1", "x...2"))
+   expect_named(res_universal, c(".if", ".in"))
+})
+
 test_that("vec_c() doesn't use outer names for data frames (#524)", {
   x <- data.frame(inner = 1)
   expect_equal(vec_c(outer = x), x)
