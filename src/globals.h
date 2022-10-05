@@ -69,6 +69,7 @@ struct lazy_calls {
   struct r_lazy vec_recycle_common;
   struct r_lazy vec_size;
   struct r_lazy vec_size_common;
+  struct r_lazy list_all_size;
 };
 
 extern struct syms syms;

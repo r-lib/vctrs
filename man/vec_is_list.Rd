@@ -5,7 +5,9 @@
 \alias{vec_check_list}
 \alias{list_all_vectors}
 \alias{list_check_all_vectors}
-\title{Is the object a list?}
+\alias{list_all_size}
+\alias{list_check_all_size}
+\title{List checks}
 \usage{
 vec_is_list(x)
 
@@ -14,9 +16,14 @@ vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
 list_all_vectors(x)
 
 list_check_all_vectors(x, ..., arg = caller_arg(x), call = caller_env())
+
+list_all_size(x, size)
+
+list_check_all_size(x, size, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
-\item{x}{An object.}
+\item{x}{For \verb{vec_*()} functions, an object. For \verb{list_*()} functions, a
+list.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -28,21 +35,25 @@ origin of a problem.}
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
+\item{size}{The size to check each element for.}
 }
 \description{
-\code{vec_is_list()} tests if \code{x} is considered a list in the vctrs sense. It
+\itemize{
+\item \code{vec_is_list()} tests if \code{x} is considered a list in the vctrs sense. It
 returns \code{TRUE} if:
 \itemize{
 \item \code{x} is a bare list with no class.
 \item \code{x} is a list explicitly inheriting from \code{"list"}.
 }
-
-\code{list_all_vectors()} takes a list and checks that all elements of
-\code{x} are vectors.
-
-\code{vec_check_list()} and \code{list_check_all_vectors()} throw a type
-error if the input is not a list as defined by \code{vec_is_list()} and
-\code{list_all_vectors()} respectively.
+\item \code{list_all_vectors()} takes a list and returns \code{TRUE} if all elements of
+that list are vectors.
+\item \code{list_all_size()} takes a list and returns \code{TRUE} if all elements of that
+list have the same \code{size}.
+\item \code{vec_check_list()}, \code{list_check_all_vectors()}, and \code{list_check_all_size()}
+use the above functions, but throw a standardized and informative error if
+they return \code{FALSE}.
+}
 }
 \details{
 Notably, data frames and S3 record style classes like POSIXlt are not
@@ -56,6 +67,12 @@ vec_is_list(data.frame())
 list_all_vectors(list(1, mtcars))
 list_all_vectors(list(1, environment()))
 
+list_all_size(list(1:2, 2:3), 2)
+list_all_size(list(1:2, 2:4), 2)
+
 # `list_`-prefixed functions assume a list:
 try(list_all_vectors(environment()))
+}
+\seealso{
+\code{\link[=list_sizes]{list_sizes()}}
 }

@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* New `list_all_size()` and `list_check_all_size()` to quickly determine if a
+  list contains elements of a particular `size` (#1582).
+
 * `list_unchop()` has gained empty `...` to force optional arguments to be
   named (#1715).
 

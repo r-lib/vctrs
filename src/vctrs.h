@@ -247,7 +247,8 @@ void stop_scalar_type(SEXP x,
 __attribute__((noreturn))
 void stop_assert_size(r_ssize actual,
                       r_ssize required,
-                      struct vctrs_arg* arg);
+                      struct vctrs_arg* arg,
+                      struct r_lazy call);
 __attribute__((noreturn))
 void stop_incompatible_type(SEXP x,
                             SEXP y,
