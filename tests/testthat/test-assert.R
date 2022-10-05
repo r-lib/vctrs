@@ -375,12 +375,14 @@ test_that("list_check_all_size() works", {
   expect_null(list_check_all_size(list(1:2, 2:3), 2))
 
   expect_snapshot({
+    my_function <- function(my_arg, size) list_check_all_size(my_arg, size)
+
     # Validates sizes
     (expect_error(list_check_all_size(list(1:2, 1:3), 2)))
-    (expect_error(list_check_all_size(list(1:2, 1:3), 2, arg = "arg", call = call("foo"))))
+    (expect_error(my_function(list(1:2, 1:3), 2)))
 
     # `NULL` is not ignored
-    (expect_error(list_check_all_size(list(NULL, 1:2), 2)))
+    (expect_error(my_function(list(NULL, 1:2), 2)))
   })
 })
 
@@ -391,8 +393,8 @@ test_that("list_all_size() and list_check_all_size() error on scalars", {
     # Error considered internal to `list_all_size()`
     (expect_error(list_all_size(x, 2)))
 
-    (expect_error(list_check_all_size(x, 2)))
-    (expect_error(list_check_all_size(x, 2, arg = "arg", call = call("foo"))))
+    my_function <- function(my_arg, size) list_check_all_size(my_arg, size)
+    (expect_error(my_function(x, 2)))
   })
 })
 
