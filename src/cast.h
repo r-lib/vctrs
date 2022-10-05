@@ -13,6 +13,19 @@ struct cast_opts {
   struct fallback_opts fallback;
 };
 
+// FIXME: Should we merge these two structs?
+static inline
+struct ptype2_opts cast_opts_as_ptype2_opts(const struct cast_opts* p_opts) {
+  return (struct ptype2_opts) {
+    .x = p_opts->x,
+    .y = p_opts->to,
+    .p_x_arg = p_opts->p_x_arg,
+    .p_y_arg = p_opts->p_to_arg,
+    .call = p_opts->call,
+    .fallback = p_opts->fallback,
+  };
+}
+
 struct cast_common_opts {
   struct vctrs_arg* p_arg;
   struct r_lazy call;
