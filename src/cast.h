@@ -99,11 +99,11 @@ r_obj* vec_cast_e(const struct cast_opts* opts,
                   ERR* err);
 
 r_obj* vec_cast_default(r_obj* x,
-                        r_obj* y,
-                        r_obj* p_x_arg,
-                        r_obj* p_to_arg,
+                        r_obj* to,
+                        struct vctrs_arg* p_x_arg,
+                        struct vctrs_arg* p_to_arg,
                         struct r_lazy call,
-                        const struct fallback_opts* opts);
+                        const struct fallback_opts* p_opts);
 
 
 #endif

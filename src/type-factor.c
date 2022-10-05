@@ -265,12 +265,12 @@ SEXP ord_as_ordered(const struct cast_opts* p_opts) {
   if (ord_ptype2_validate(x_levels, y_levels, &ptype2_opts)) {
     return p_opts->x;
   } else {
-    // FIXME: Call default cast method
-    stop_incompatible_type(p_opts->x,
-                           p_opts->to,
-                           p_opts->p_x_arg,
-                           p_opts->p_to_arg,
-                           true);
+    return vec_cast_default(p_opts->x,
+                            p_opts->to,
+                            p_opts->p_x_arg,
+                            p_opts->p_to_arg,
+                            p_opts->call,
+                            &p_opts->fallback);
   }
 }
 

@@ -106,8 +106,8 @@ r_obj* ffi_cast_dispatch_native(r_obj* x,
   if (lossy || out == r_null) {
     return vec_cast_default(x,
                             to,
-                            x_arg,
-                            to_arg,
+                            &c_x_arg,
+                            &c_to_arg,
                             c_opts.call,
                             &c_opts.fallback);
   } else {
