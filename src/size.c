@@ -5,16 +5,16 @@
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
   struct r_lazy call = { .x = frame, .env = r_null };
-  return r_len(vec_size_params(x, vec_args.x, call));
+  return r_len(vec_size_3(x, vec_args.x, call));
 }
 
 r_ssize vec_size(r_obj* x) {
-  return vec_size_params(x, vec_args.x, lazy_calls.vec_size);
+  return vec_size_3(x, vec_args.x, lazy_calls.vec_size);
 }
 
-r_ssize vec_size_params(r_obj* x,
-                        struct vctrs_arg* p_arg,
-                        struct r_lazy call) {
+r_ssize vec_size_3(r_obj* x,
+                   struct vctrs_arg* p_arg,
+                   struct r_lazy call) {
   struct vec_error_opts err = {
     .p_arg = p_arg,
     .call = call
@@ -143,7 +143,7 @@ bool list_all_size(r_obj* xs, r_ssize size) {
     r_obj* x = v_xs[i];
 
     // Scalar list elements throw an error internal to `list_all_size()`
-    r_ssize x_size = vec_size_params(x, p_x_arg, lazy_calls.list_all_size);
+    r_ssize x_size = vec_size_3(x, p_x_arg, lazy_calls.list_all_size);
 
     if (x_size != size) {
       out = false;

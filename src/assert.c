@@ -25,7 +25,7 @@ void vec_check_size(r_obj* x,
                     r_ssize size,
                     struct vctrs_arg* arg,
                     struct r_lazy call) {
-  r_ssize x_size = vec_size_params(x, arg, call);
+  r_ssize x_size = vec_size_3(x, arg, call);
 
   if (x_size != size) {
     stop_assert_size(x_size, size, arg, call);
