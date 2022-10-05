@@ -586,14 +586,14 @@ test_that("list_unchop() can repair names quietly", {
   x <- c(x = "a", x = "b", x = "c")
   indices <- list(2, c(3, 1))
   expect_snapshot({
-    res <- list_unchop(vec_chop(x, indices), indices, name_repair = "unique_quiet")
+    res <- list_unchop(vec_chop(x, indices), indices = indices, name_repair = "unique_quiet")
   })
   expect_named(res, c("x...1", "x...2", "x...3"))
 
   x <- c("if" = "a", "in" = "b", "for" = "c")
   indices <- list(2, c(3, 1))
   expect_snapshot({
-    res <- list_unchop(vec_chop(x, indices), indices, name_repair = "universal_quiet")
+    res <- list_unchop(vec_chop(x, indices), indices = indices, name_repair = "universal_quiet")
   })
   expect_named(res, c(".if", ".in", ".for"))
 })
