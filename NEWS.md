@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_ptype2()` errors can now be restarted via
+  `"vctrs_restart_incompatible_type"`. The restart resumes execution
+  from `vec_default_ptype2()`.
+
 * New `list_all_size()` and `list_check_all_size()` to quickly determine if a
   list contains elements of a particular `size` (#1582).
 

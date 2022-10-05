@@ -344,3 +344,26 @@ test_that("vec_ptype2() evaluates x_arg and y_arg lazily", {
   expect_silent(vec_ptype2(1L, 1L, x_arg = print("oof")))
   expect_silent(vec_ptype2(1L, 1L, y_arg = print("oof")))
 })
+
+test_that("can restart ptype2 errors", {
+  x <- data_frame(x = ordered(c("a", "b", "c")))
+  y <- data_frame(x = ordered(c("A", "B", "C")))
+
+  expect_equal(
+    with_ordered_restart(vec_rbind(x, y)),
+    data_frame(x = c("a", "b", "c", "A", "B", "C"))
+  )
+
+  expect_equal(
+    with_ordered_restart(vec_ptype_common(x, y)),
+    data_frame(x = chr())
+  )
+
+  expect_equal(
+    with_ordered_restart(vec_cast_common(x, y)),
+    list(
+      data_frame(x = c("a", "b", "c")),
+      data_frame(x = c("A", "B", "C"))
+    )
+  )
+})

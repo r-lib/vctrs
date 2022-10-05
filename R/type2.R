@@ -170,13 +170,18 @@ vec_default_ptype2 <- function(x,
   # dispatch mechanism, when no method is found to dispatch to. It
   # indicates whether the error message should provide advice about
   # diverging attributes.
-  stop_incompatible_type(
-    x,
-    y,
-    x_arg = x_arg,
-    y_arg = y_arg,
-    `vctrs:::from_dispatch` = match_from_dispatch(...),
-    call = call
+  withRestarts(
+    stop_incompatible_type(
+      x,
+      y,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      `vctrs:::from_dispatch` = match_from_dispatch(...),
+      call = call
+    ),
+    vctrs_restart_incompatible_type = function(ptype) {
+      ptype
+    }
   )
 }
 
@@ -219,6 +224,14 @@ can_fall_back <- function(x, y) {
   has_no_proxy(x) && has_no_proxy(y)
 }
 has_no_proxy <- function(x) {
+  if (inherits(x, "vctrs:::common_class_fallback")) {
+    return(TRUE)
+  }
+
+  if (!is_null(s3_get_method(class(x)[[1]], "vec_proxy", ns = "vctrs"))) {
+    return(FALSE)
+  }
+
   proxy <- vec_proxy(x)
 
   # Don't compare data for performance
@@ -408,4 +421,47 @@ vec_is_subtype <- function(x, super, ..., x_arg = "", super_arg = "") {
 
 vec_implements_ptype2 <- function(x) {
   .Call(vctrs_implements_ptype2, x)
+}
+
+# Example usage of ptype2 restart. As there is no cast restart (yet),
+# it requires `x` and `y` to be convertible to the restarted ptype.
+with_ordered_restart <- function(expr) {
+  withCallingHandlers(
+    expr,
+    vctrs_error_incompatible_type = function(cnd) {
+      # Don't handle cast errors
+      if (is_string(cnd[["action"]], "convert")) {
+        return(zap())
+      }
+
+      x <- cnd[["x"]]
+      y <- cnd[["y"]]
+
+      restart <- FALSE
+
+      if (is.ordered(x)) {
+        restart <- TRUE
+        x <- as.character(x)
+      }
+      if (is.ordered(y)) {
+        restart <- TRUE
+        y <- as.character(y)
+      }
+
+      # Don't recurse and let ptype2 error keep its course
+      if (!restart) {
+        return(zap())
+      }
+
+      # Recurse with character methods and restart with the result
+      ptype <- vec_ptype2(x, y)
+      maybe_restart("vctrs_restart_incompatible_type", ptype)
+    }
+  )
+}
+
+maybe_restart <- function(restart, ...) {
+  if (!is_null(findRestart(restart))) {
+    invokeRestart(restart, ...)
+  }
 }
