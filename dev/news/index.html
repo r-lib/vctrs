@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> has gained empty <code>...</code> to force optional arguments to be named (<a href="https://github.com/r-lib/vctrs/issues/1715" class="external-link">#1715</a>).</p></li>
+<ul><li><p>New <code><a href="../reference/vec_is_list.html">list_all_size()</a></code> and <code><a href="../reference/vec_is_list.html">list_check_all_size()</a></code> to quickly determine if a list contains elements of a particular <code>size</code> (<a href="https://github.com/r-lib/vctrs/issues/1582" class="external-link">#1582</a>).</p></li>
+<li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> has gained empty <code>...</code> to force optional arguments to be named (<a href="https://github.com/r-lib/vctrs/issues/1715" class="external-link">#1715</a>).</p></li>
 <li><p><code>vec_rep_each(times = 0)</code> now works correctly with logical vectors that are considered unspecified and with named vectors (<a href="https://github.com/r-lib/vctrs/issues/1673" class="external-link">#1673</a>).</p></li>
 <li>
 <p><code><a href="../reference/list_of.html">list_of()</a></code> was relaxed to make it easier to combine. It is now coercible with <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1161" class="external-link">#1161</a>). When incompatible <code><a href="../reference/list_of.html">list_of()</a></code> types are combined, the result is now a bare <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>.</p>
