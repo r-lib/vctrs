@@ -106,14 +106,11 @@ test_that("vec_ptype2() errors with malformed ordered factors", {
 })
 
 test_that("ordered factors with different levels are not compatible", {
-  expect_error(
-    vec_ptype2(ordered("a"), ordered("b")),
-    class = "vctrs_error_incompatible_type"
-  )
-  expect_error(
-    vec_ptype2(ordered("a"), ordered(c("a", "b"))),
-    class = "vctrs_error_incompatible_type"
-  )
+  # Common type upcasts to character
+  expect_equal(vec_ptype2(ordered("a"), ordered("b")), chr())
+  expect_equal(vec_ptype2(ordered("a"), ordered(c("a", "b"))), chr())
+
+  # Casting to incompatible ordered is not allowed
   expect_error(
     vec_cast(ordered("a"), ordered("b")),
     class = "vctrs_error_incompatible_type"

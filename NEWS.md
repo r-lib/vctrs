@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* The common type of incompatible ordered factors is now
+  `character()`. This relaxed behaviour makes it easier to combine
+  different ordered factors.
+
 * New `list_all_size()` and `list_check_all_size()` to quickly determine if a
   list contains elements of a particular `size` (#1582).
 

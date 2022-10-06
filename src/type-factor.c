@@ -53,12 +53,7 @@ r_obj* ord_ptype2(const struct ptype2_opts* p_opts) {
   if (ord_ptype2_validate(x_levels, y_levels, p_opts)) {
     return new_empty_ordered(x_levels);
   } else {
-    return vec_ptype2_default(p_opts->x,
-                              p_opts->y,
-                              p_opts->p_x_arg,
-                              p_opts->p_y_arg,
-                              r_lazy_null,
-                              &p_opts->fallback);
+    return r_globals.empty_chr;
   }
 }
 
