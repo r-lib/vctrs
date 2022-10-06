@@ -262,7 +262,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `1:2` has size 2 but must be size 1.
+      x Subscript `1:2` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_subscript_type")
       )
@@ -270,7 +270,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `c("foo", "bar")` has size 2 but must be size 1.
+      x Subscript `c("foo", "bar")` must be size 1, not 2.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
@@ -279,7 +279,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has size 2 but must be size 1.
+      x Subscript `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(mtcars, 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -308,7 +308,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has size 2 but must be size 1.
+      x Subscript `foo` must be size 1, not 2.
 
 # vec_as_location2() requires positive integers
 
@@ -796,7 +796,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has size 2 but must be size 1.
+      x Subscript `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location(c(TRUE, FALSE), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_size"))
@@ -882,7 +882,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` has size 2 but must be size 1.
+      x Subscript `foo(bar)` must be size 1, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3)), class = "vctrs_error_subscript_size")
       )

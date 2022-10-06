@@ -354,7 +354,7 @@ new_error_location2_type <- function(i,
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} has size {length(i)} but must be size 1.")
+    x = glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
