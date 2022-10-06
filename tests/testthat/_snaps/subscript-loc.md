@@ -318,14 +318,14 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `0` has value 0 but must be a positive location.
+      x Subscript `0` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(-1, 2L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `-1` has value -1 but must be a positive location.
+      x Subscript `-1` must be a positive location, not -1.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(0, 2L, arg = "foo", call = call("my_function")),
@@ -334,7 +334,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has value 0 but must be a positive location.
+      x Subscript `foo` must be a positive location, not 0.
 
 # vec_as_location2() fails with NA
 
@@ -772,7 +772,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has value -1 but must be a positive location.
+      x Subscript `foo` must be a positive location, not -1.
     Code
       (expect_error(vec_as_location2(0, 2, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -780,7 +780,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has value 0 but must be a positive location.
+      x Subscript `foo` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(na_dbl, 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -858,7 +858,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` has value -1 but must be a positive location.
+      x Subscript `foo(bar)` must be a positive location, not -1.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(0, 2)), class = "vctrs_error_subscript_type")
       )
@@ -866,7 +866,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` has value 0 but must be a positive location.
+      x Subscript `foo(bar)` must be a positive location, not 0.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(na_dbl, 2)), class = "vctrs_error_subscript_type")
       )

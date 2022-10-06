@@ -134,7 +134,7 @@
     Output
       <error/rlang_error>
       Error in `vec_init()`:
-      ! `n` must be a single number, not a double vector of length 2.
+      ! `n` must be a single number, not a double vector.
     Code
       (expect_error(vec_init(1L, -1L)))
     Output
