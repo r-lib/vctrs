@@ -209,24 +209,29 @@ static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
 
   bool has_row_names = TYPEOF(row_names) == STRSXP;
 
-  // Pre-load the `out` container with lists that will become data frames
+  // Pre-load the `out` container with empty bare data frames
   for (R_len_t i = 0; i < info.out_size; ++i) {
-    SEXP elt = PROTECT(Rf_allocVector(VECSXP, n_cols));
+    SEXP elt = Rf_allocVector(VECSXP, n_cols);
+    SET_VECTOR_ELT(info.out, i, elt);
 
     Rf_setAttrib(elt, R_NamesSymbol, col_names);
 
-    if (has_row_names) {
-      if (info.has_indices) {
-        info.index = VECTOR_ELT(indices, i);
-      } else {
-        ++(*info.p_index);
-      }
+    r_ssize size = -1;
 
-      Rf_setAttrib(elt, R_RowNamesSymbol, slice_rownames(row_names, info.index));
+    if (info.has_indices) {
+      info.index = VECTOR_ELT(indices, i);
+      size = vec_subscript_size(info.index);
+    } else {
+      ++(*info.p_index);
+      size = 1;
     }
 
-    SET_VECTOR_ELT(info.out, i, elt);
-    UNPROTECT(1);
+    init_data_frame(elt, size);
+
+    if (has_row_names) {
+      SEXP elt_row_names = slice_rownames(row_names, info.index);
+      Rf_setAttrib(elt, R_RowNamesSymbol, elt_row_names);
+    }
   }
 
   // Split each column according to the indices, and then assign the results

@@ -53,6 +53,33 @@ test_that("vec_chop() keeps data frame row names", {
   expect_equal(result, list("r1", "r2"))
 })
 
+test_that("vec_chop() keeps data frame row names for data frames with 0 columns (#1722)", {
+  x <- data_frame(.size = 3)
+  rownames(x) <- c("r1", "r2", "r3")
+
+  out <- lapply(vec_chop(x), rownames)
+  expect_identical(out, list("r1", "r2", "r3"))
+
+  out <- vec_chop(x, indices = list(c(2, NA), 3))
+  out <- lapply(out, rownames)
+  expect_identical(out, list(c("r2", "...2"), "r3"))
+})
+
+test_that("data frames with 0 columns retain the right number of rows (#1722)", {
+  x <- data_frame(.size = 4)
+
+  one <- data_frame(.size = 1L)
+  expect_identical(
+    vec_chop(x),
+    list(one, one, one, one)
+  )
+
+  expect_identical(
+    vec_chop(x, indices = list(c(1, 3, 2), c(3, NA))),
+    list(data_frame(.size = 3), data_frame(.size = 2))
+  )
+})
+
 test_that("matrices / arrays are split rowwise", {
   x <- array(1:12, c(2, 2, 2))
   result <- list(vec_slice(x, 1), vec_slice(x, 2))
@@ -247,6 +274,15 @@ test_that("can chop S3 objects using the fallback method with compact seqs", {
   expect_equal(vec_chop_seq(x, 0L, 0L), list(vec_slice(x, integer())))
   expect_equal(vec_chop_seq(x, 0L, 1L), list(vec_slice(x, 1L)))
   expect_equal(vec_chop_seq(x, 2L, 2L), list(vec_slice(x, 3:4)))
+})
+
+test_that("data frames with 0 columns retain the right number of rows with compact seqs (#1722)", {
+  x <- data_frame(.size = 4)
+
+  out <- vec_chop_seq(x, starts = c(0L, 0L, 2L), sizes = c(0L, 2L, 1L))
+  out <- map_int(out, vec_size)
+
+  expect_identical(out, c(0L, 2L, 1L))
 })
 
 # list_unchop --------------------------------------------------------------
