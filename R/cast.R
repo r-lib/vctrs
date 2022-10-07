@@ -227,13 +227,18 @@ vec_default_cast <- function(x,
     return(out)
   }
 
-  stop_incompatible_cast(
-    x,
-    to,
-    x_arg = x_arg,
-    to_arg = to_arg,
-    `vctrs:::from_dispatch` = match_from_dispatch(...),
-    call = call
+  withRestarts(
+    stop_incompatible_cast(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      `vctrs:::from_dispatch` = match_from_dispatch(...),
+      call = call
+    ),
+    vctrs_restart_cast = function(out) {
+      out
+    }
   )
 }
 

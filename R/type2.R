@@ -428,7 +428,7 @@ vec_implements_ptype2 <- function(x) {
 with_ordered_restart <- function(expr) {
   withCallingHandlers(
     expr,
-    vctrs_error_ptype2 = function(cnd) {
+    vctrs_error_incompatible_type = function(cnd) {
       x <- cnd[["x"]]
       y <- cnd[["y"]]
 
@@ -436,11 +436,11 @@ with_ordered_restart <- function(expr) {
 
       if (is.ordered(x)) {
         restart <- TRUE
-        x <- as.character(x)
+        x <- factor(as.character(x), levels = levels(x))
       }
       if (is.ordered(y)) {
         restart <- TRUE
-        y <- as.character(y)
+        y <- factor(as.character(y), levels = levels(y))
       }
 
       # Don't recurse and let ptype2 error keep its course
@@ -448,8 +448,23 @@ with_ordered_restart <- function(expr) {
         return(zap())
       }
 
+      x_arg <- cnd[["x_arg"]]
+      y_arg <- cnd[["y_arg"]]
+      call <- cnd[["call"]]
+
       # Recurse with character methods and restart with the result
-      ptype <- vec_ptype2(x, y)
+      switch(
+        cnd[["type"]],
+        ptype2 = {
+          out <- vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg, call = call)
+          restart <- "vctrs_restart_ptype2"
+        },
+        cast = {
+          out <- vec_cast(x, y, x_arg = x_arg, to_arg = y_arg, call = call)
+          restart <- "vctrs_restart_cast"
+        },
+        abort("Unexpected incompatible-type field.", .internal = TRUE)
+      )
 
       # Old-R compat for `tryInvokeRestart()`
       try_restart <- function(restart, ...) {
@@ -457,7 +472,7 @@ with_ordered_restart <- function(expr) {
           invokeRestart(restart, ...)
         }
       }
-      try_restart("vctrs_restart_ptype2", ptype)
+      try_restart(restart, out)
     }
   )
 }

@@ -130,10 +130,16 @@ stop_incompatible_type <- function(x,
     from_dispatch = match_from_dispatch(...)
   )
 
-  subclass <- switch(
+  switch(
     action,
-    combine = "vctrs_error_ptype2",
-    convert = "vctrs_error_cast"
+    combine = {
+      type <- "ptype2"
+      subclass <- "vctrs_error_ptype2"
+    },
+    convert = {
+      type <- "cast"
+      subclass <- "vctrs_error_cast"
+    }
   )
 
   stop_incompatible(
@@ -141,6 +147,7 @@ stop_incompatible_type <- function(x,
     x_arg = x_arg,
     y_arg = y_arg,
     details = details,
+    type = type,
     ...,
     message = message,
     class = c(class, subclass, "vctrs_error_incompatible_type"),
