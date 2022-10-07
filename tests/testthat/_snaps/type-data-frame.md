@@ -250,13 +250,13 @@
       local_error_call(call("my_function"))
       (expect_error(vec_ptype2(df1, df3), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `x` <double> and `x` <character>.
     Code
       (expect_error(vec_ptype2(df3, df1), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `x` <character> and `x` <double>.
 

@@ -170,13 +170,18 @@ vec_default_ptype2 <- function(x,
   # dispatch mechanism, when no method is found to dispatch to. It
   # indicates whether the error message should provide advice about
   # diverging attributes.
-  stop_incompatible_type(
-    x,
-    y,
-    x_arg = x_arg,
-    y_arg = y_arg,
-    `vctrs:::from_dispatch` = match_from_dispatch(...),
-    call = call
+  withRestarts(
+    stop_incompatible_type(
+      x,
+      y,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      `vctrs:::from_dispatch` = match_from_dispatch(...),
+      call = call
+    ),
+    vctrs_restart_ptype2 = function(ptype) {
+      ptype
+    }
   )
 }
 
@@ -219,11 +224,11 @@ can_fall_back <- function(x, y) {
   has_no_proxy(x) && has_no_proxy(y)
 }
 has_no_proxy <- function(x) {
-  proxy <- vec_proxy(x)
+  if (inherits(x, "vctrs:::common_class_fallback")) {
+    return(TRUE)
+  }
 
-  # Don't compare data for performance
-  identical(typeof(x), typeof(proxy)) &&
-    identical(attributes(x), attributes(proxy))
+  is_null(s3_get_method(class(x)[[1]], "vec_proxy", ns = "vctrs"))
 }
 
 new_common_class_fallback <- function(x, fallback_class) {

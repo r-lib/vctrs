@@ -126,35 +126,47 @@ r_obj* vec_cast_switch_native(const struct cast_opts* opts,
 }
 
 
-r_obj* vec_cast_default(r_obj* x,
-                        r_obj* to,
-                        r_obj* p_x_arg,
-                        r_obj* p_to_arg,
-                        struct r_lazy call,
-                        const struct fallback_opts* opts) {
+static inline
+r_obj* vec_cast_default_full(r_obj* x,
+                             r_obj* to,
+                             struct vctrs_arg* p_x_arg,
+                             struct vctrs_arg* p_to_arg,
+                             struct r_lazy call,
+                             const struct fallback_opts* opts,
+                             bool from_dispatch) {
   r_obj* df_fallback = KEEP(r_int(opts->df));
   r_obj* s3_fallback = KEEP(r_int(opts->s3));
+
+  r_obj* ffi_x_arg = KEEP(vctrs_arg(p_x_arg));
+  r_obj* ffi_to_arg = KEEP(vctrs_arg(p_to_arg));
+
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
   r_obj* out = vctrs_eval_mask8(syms.vec_default_cast,
                                 syms_x, x,
                                 syms_to, to,
-                                syms_x_arg, p_x_arg,
-                                syms_to_arg, p_to_arg,
+                                syms_x_arg, ffi_x_arg,
+                                syms_to_arg, ffi_to_arg,
                                 syms_call, ffi_call,
-                                syms_from_dispatch, r_true,
+                                syms_from_dispatch, r_lgl(from_dispatch),
                                 syms_df_fallback, df_fallback,
                                 syms_s3_fallback, s3_fallback);
-  FREE(3);
+  FREE(5);
   return out;
+}
+
+r_obj* vec_cast_default(r_obj* x,
+                        r_obj* to,
+                        struct vctrs_arg* p_x_arg,
+                        struct vctrs_arg* p_to_arg,
+                        struct r_lazy call,
+                        const struct fallback_opts* p_opts) {
+  return vec_cast_default_full(x, to, p_x_arg, p_to_arg, call, p_opts, false);
 }
 
 static
 r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
   r_obj* x = opts->x;
   r_obj* to = opts->to;
-  r_obj* r_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
-  r_obj* r_to_arg = KEEP(vctrs_arg(opts->p_to_arg));
-
   r_obj* method_sym = r_null;
   r_obj* method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
 
@@ -182,15 +194,19 @@ r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
   KEEP(method);
 
   if (method == r_null) {
-    r_obj* out = vec_cast_default(x,
-                                to,
-                                r_x_arg,
-                                r_to_arg,
-                                opts->call,
-                                &(opts->fallback));
-    FREE(3);
+    r_obj* out = vec_cast_default_full(x,
+                                       to,
+                                       opts->p_x_arg,
+                                       opts->p_to_arg,
+                                       opts->call,
+                                       &(opts->fallback),
+                                       true);
+    FREE(1);
     return out;
   }
+
+  r_obj* r_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
+  r_obj* r_to_arg = KEEP(vctrs_arg(opts->p_to_arg));
 
   r_obj* out = vec_invoke_coerce_method(method_sym, method,
                                         syms_x, x,

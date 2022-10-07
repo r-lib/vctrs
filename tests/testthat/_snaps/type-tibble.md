@@ -4,19 +4,19 @@
       local_error_call(call("my_function"))
       (expect_error(vec_ptype2(v, dt), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `v` <logical> and `dt` <tbl_df>.
     Code
       (expect_error(vec_ptype2(dt, v), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `my_function()`:
       ! Can't combine `dt` <tbl_df> and `v` <logical>.
     Code
       (expect_error(vec_cast(v, dt), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `my_function()`:
       ! Can't convert `v` <logical> to <tbl_df>.
 

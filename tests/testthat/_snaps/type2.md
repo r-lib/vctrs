@@ -69,7 +69,7 @@
       (expect_error(vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE)), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error:
       ! Can't convert `foobar(1, bar = TRUE)` <vctrs_foobar> to <vctrs_foobar>.
       x Some attributes are incompatible.
@@ -79,7 +79,7 @@
       (expect_error(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error:
       ! Can't combine `foobar(1, bar = TRUE)` <vctrs_foobar> and `foobar(2, baz = TRUE)` <vctrs_foobar>.
       x Some attributes are incompatible.
@@ -102,14 +102,14 @@
       (expect_error(with_foobar_cast(vec_cast(foobar(1, bar = TRUE), foobar(2, baz = TRUE))),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error:
       ! Can't convert `foobar(1, bar = TRUE)` <vctrs_foobar> to <vctrs_foobar>.
     Code
       (expect_error(with_foobar_ptype2(vec_ptype2(foobar(1, bar = TRUE), foobar(2,
         baz = TRUE))), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error:
       ! Can't combine `foobar(1, bar = TRUE)` <vctrs_foobar> and `foobar(2, baz = TRUE)` <vctrs_foobar>.
 
@@ -122,7 +122,7 @@
       (expect_error(vec_cast_no_fallback(foo, bar), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `vec_cast_no_fallback()`:
       ! Can't convert `x` <vctrs_foo> to <vctrs_bar>.
 
@@ -153,7 +153,7 @@
       (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 
@@ -173,7 +173,7 @@
     Code
       (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error:
       ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
 

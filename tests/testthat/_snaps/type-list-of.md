@@ -82,13 +82,13 @@
     Code
       (expect_error(fn1()))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `fn1()`:
       ! Can't convert `..1` <double> to <character>.
     Code
       (expect_error(fn2()))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `fn2()`:
       ! Can't convert `..1` <double> to <character>.
 

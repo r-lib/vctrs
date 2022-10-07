@@ -344,3 +344,45 @@ test_that("vec_ptype2() evaluates x_arg and y_arg lazily", {
   expect_silent(vec_ptype2(1L, 1L, x_arg = print("oof")))
   expect_silent(vec_ptype2(1L, 1L, y_arg = print("oof")))
 })
+
+test_that("can restart ptype2 errors", {
+  x <- data_frame(x = ordered(c("a", "b", "c")))
+  y <- data_frame(x = ordered(c("A", "B", "C")))
+
+  exp <- c("a", "b", "c", "A", "B", "C")
+  exp <- factor(exp, exp)
+
+  expect_error(vec_rbind(x, y), class = "vctrs_error_incompatible_type")
+
+  expect_equal(
+    with_ordered_restart(vec_rbind(x, y)),
+    data_frame(x = exp)
+  )
+
+  z <- data_frame(x = chr())
+
+  expect_equal(
+    with_ordered_restart(vec_ptype_common(x, y)),
+    data_frame(x = exp[0])
+  )
+  expect_equal(
+    with_ordered_restart(vec_ptype_common(x, y, z)),
+    data_frame(x = chr())
+  )
+
+  expect_equal(
+    with_ordered_restart(vec_cast_common(x, y)),
+    list(
+      data_frame(x = factor(c("a", "b", "c"), levels(exp))),
+      data_frame(x = factor(c("A", "B", "C"), levels(exp)))
+    )
+  )
+  expect_equal(
+    with_ordered_restart(vec_cast_common(x, y, z)),
+    list(
+      data_frame(x = c("a", "b", "c")),
+      data_frame(x = c("A", "B", "C")),
+      data_frame(x = chr())
+    )
+  )
+})

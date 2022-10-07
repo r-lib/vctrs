@@ -93,7 +93,7 @@
       (expect_error(vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar"),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `vec_assign()`:
       ! Can't convert `bar` <character> to match type of `foo` <integer>.
     Code

@@ -32,33 +32,34 @@ SEXP fct_ptype2(const struct ptype2_opts* opts) {
 }
 
 static
-SEXP ord_ptype2_validate(SEXP x,
-                         SEXP y,
-                         struct vctrs_arg* x_arg,
-                         struct vctrs_arg* y_arg,
-                         bool cast) {
-  SEXP x_levels = Rf_getAttrib(x, R_LevelsSymbol);
-  SEXP y_levels = Rf_getAttrib(y, R_LevelsSymbol);
-
+bool ord_ptype2_validate(r_obj* x_levels,
+                         r_obj* y_levels,
+                         const struct ptype2_opts* p_opts) {
   if (TYPEOF(x_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(x, x_arg);
+    stop_corrupt_ordered_levels(p_opts->x, p_opts->p_x_arg);
   }
   if (TYPEOF(y_levels) != STRSXP) {
-    stop_corrupt_ordered_levels(y, y_arg);
+    stop_corrupt_ordered_levels(p_opts->y, p_opts->p_y_arg);
   }
 
-  if (!equal_object(x_levels, y_levels)) {
-    stop_incompatible_type(x, y, x_arg, y_arg, cast);
-  }
-
-  return x_levels;
+  return equal_object(x_levels, y_levels);
 }
 
 // [[ include("type-factor.h") ]]
-SEXP ord_ptype2(const struct ptype2_opts* opts) {
-  SEXP levels = PROTECT(ord_ptype2_validate(opts->x, opts->y, opts->p_x_arg, opts->p_y_arg, false));
-  SEXP out = new_empty_ordered(levels);
-  return UNPROTECT(1), out;
+r_obj* ord_ptype2(const struct ptype2_opts* p_opts) {
+  r_obj* x_levels = r_attrib_get(p_opts->x, R_LevelsSymbol);
+  r_obj* y_levels = r_attrib_get(p_opts->y, R_LevelsSymbol);
+
+  if (ord_ptype2_validate(x_levels, y_levels, p_opts)) {
+    return new_empty_ordered(x_levels);
+  } else {
+    return vec_ptype2_default(p_opts->x,
+                              p_opts->y,
+                              p_opts->p_x_arg,
+                              p_opts->p_y_arg,
+                              r_lazy_null,
+                              &p_opts->fallback);
+  }
 }
 
 static SEXP levels_union(SEXP x, SEXP y) {
@@ -255,9 +256,22 @@ SEXP fct_as_factor(SEXP x,
 }
 
 // [[ include("factor.h") ]]
-SEXP ord_as_ordered(const struct cast_opts* opts) {
-  ord_ptype2_validate(opts->x, opts->to, opts->p_x_arg, opts->p_to_arg, true);
-  return opts->x;
+SEXP ord_as_ordered(const struct cast_opts* p_opts) {
+  r_obj* x_levels = r_attrib_get(p_opts->x, R_LevelsSymbol);
+  r_obj* y_levels = r_attrib_get(p_opts->to, R_LevelsSymbol);
+
+  struct ptype2_opts ptype2_opts = cast_opts_as_ptype2_opts(p_opts);
+
+  if (ord_ptype2_validate(x_levels, y_levels, &ptype2_opts)) {
+    return p_opts->x;
+  } else {
+    return vec_cast_default(p_opts->x,
+                            p_opts->to,
+                            p_opts->p_x_arg,
+                            p_opts->p_to_arg,
+                            p_opts->call,
+                            &p_opts->fallback);
+  }
 }
 
 static SEXP fct_as_factor_impl(SEXP x, SEXP x_levels, SEXP to_levels, bool* lossy, bool ordered) {

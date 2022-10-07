@@ -68,7 +68,7 @@
       (expect_error(vec_cast(foobar(mtcars), 1), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error:
       ! Can't convert `foobar(mtcars)` <vctrs_foobar> to <double>.
 
