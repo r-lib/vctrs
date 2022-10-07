@@ -29,19 +29,16 @@ with_ordered_restart <- function(expr) {
       y_arg <- cnd[["y_arg"]]
       call <- cnd[["call"]]
 
-      # Recurse with character methods and restart with the result
-      switch(
-        cnd[["type"]],
-        ptype2 = {
-          out <- vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg, call = call)
-          restart <- "vctrs_restart_ptype2"
-        },
-        cast = {
-          out <- vec_cast(x, y, x_arg = x_arg, to_arg = y_arg, call = call)
-          restart <- "vctrs_restart_cast"
-        },
-        abort("Unexpected incompatible-type field.", .internal = TRUE)
-      )
+      # Recurse with factor methods and restart with the result
+      if (inherits(cnd, "vctrs_error_ptype2")) {
+        out <- vec_ptype2(x, y, x_arg = x_arg, y_arg = y_arg, call = call)
+        restart <- "vctrs_restart_ptype2"
+      } else if (inherits(cnd, "vctrs_error_cast")) {
+        out <- vec_cast(x, y, x_arg = x_arg, to_arg = y_arg, call = call)
+        restart <- "vctrs_restart_cast"
+      } else {
+        return(zap())
+      }
 
       # Old-R compat for `tryInvokeRestart()`
       try_restart <- function(restart, ...) {
