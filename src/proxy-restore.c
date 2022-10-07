@@ -213,9 +213,9 @@ r_obj* vec_bare_df_restore(r_obj* x,
   }
 
   r_obj* rownames = KEEP(df_rownames(x));
-  r_ssize size = df_raw_size(x);
 
   if (rownames == r_null) {
+    r_ssize size = df_raw_size(x);
     init_compact_rownames(x, size);
   } else if (rownames_type(rownames) == ROWNAMES_TYPE_identifiers) {
     rownames = KEEP(vec_as_names(rownames, p_unique_repair_silent_opts));
