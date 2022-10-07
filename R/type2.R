@@ -450,13 +450,14 @@ with_ordered_restart <- function(expr) {
 
       # Recurse with character methods and restart with the result
       ptype <- vec_ptype2(x, y)
-      maybe_restart("vctrs_restart_ptype2", ptype)
+
+      # Old-R compat for `tryInvokeRestart()`
+      try_restart <- function(restart, ...) {
+        if (!is_null(findRestart(restart))) {
+          invokeRestart(restart, ...)
+        }
+      }
+      try_restart("vctrs_restart_ptype2", ptype)
     }
   )
-}
-
-maybe_restart <- function(restart, ...) {
-  if (!is_null(findRestart(restart))) {
-    invokeRestart(restart, ...)
-  }
 }
