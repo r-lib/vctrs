@@ -228,15 +228,7 @@ has_no_proxy <- function(x) {
     return(TRUE)
   }
 
-  if (!is_null(s3_get_method(class(x)[[1]], "vec_proxy", ns = "vctrs"))) {
-    return(FALSE)
-  }
-
-  proxy <- vec_proxy(x)
-
-  # Don't compare data for performance
-  identical(typeof(x), typeof(proxy)) &&
-    identical(attributes(x), attributes(proxy))
+  is_null(s3_get_method(class(x)[[1]], "vec_proxy", ns = "vctrs"))
 }
 
 new_common_class_fallback <- function(x, fallback_class) {
