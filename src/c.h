@@ -34,5 +34,14 @@ r_obj* vec_c_fallback(r_obj* ptype,
 bool needs_vec_c_fallback(r_obj* ptype);
 bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype);
 
+// Defined in bind.c
+void df_c_fallback(r_obj* out,
+                   r_obj* ptype,
+                   r_obj* xs,
+                   r_ssize n_rows,
+                   r_obj* name_spec,
+                   const struct name_repair_opts* name_repair,
+                   struct r_lazy error_call);
+
 
 #endif
