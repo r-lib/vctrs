@@ -117,13 +117,14 @@ vec_ptype2.ordered.character <- function(x, y, ...) {
 vec_ptype2.character.ordered <- function(x, y, ...) {
   stop_native_implementation("vec_ptype2.character.ordered")
 }
+
 #' @export
 vec_ptype2.ordered.factor <- function(x, y, ...) {
-  vec_incompatible_ptype2(x, y, ...)
+  vec_default_ptype2(x, y, ...)
 }
 #' @export
 vec_ptype2.factor.ordered <- function(x, y, ...) {
-  vec_incompatible_ptype2(x, y, ...)
+  vec_default_ptype2(x, y, ...)
 }
 
 

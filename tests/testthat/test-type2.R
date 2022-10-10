@@ -385,4 +385,11 @@ test_that("can restart ptype2 errors", {
       data_frame(x = chr())
     )
   )
+
+  # Factor case
+  y <- data_frame(x = factor(c("A", "B", "C")))
+  expect_equal(
+    with_ordered_restart(vec_rbind(x, y)),
+    data_frame(x = exp)
+  )
 })
