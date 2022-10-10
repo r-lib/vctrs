@@ -247,11 +247,11 @@ r_obj* vec_rbind(r_obj* xs,
     KEEP_AT(out, out_pi);
   }
 
+  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
+
   // Not optimal. Happens after the fallback columns have been
   // assigned already, ideally they should be ignored.
   df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
-
-  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
 
   FREE(n_prot);
   return out;

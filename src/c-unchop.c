@@ -164,11 +164,11 @@ r_obj* list_unchop(r_obj* xs,
     FREE(2);
   }
 
-  if (is_data_frame(proxy)) {
-    df_c_fallback(proxy, ptype, xs, out_size, name_spec, name_repair, error_call);
-  }
-
   r_obj* out = KEEP(vec_restore_recurse(proxy, ptype, VCTRS_OWNED_true));
+
+  if (is_data_frame(out)) {
+    df_c_fallback(out, ptype, xs, out_size, name_spec, name_repair, error_call);
+  }
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));

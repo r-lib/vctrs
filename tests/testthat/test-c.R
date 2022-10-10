@@ -603,3 +603,32 @@ test_that("dots splicing clones as appropriate", {
   vctrs::vec_c(!!!x, 2)
   expect_equal(x, list(a = 1))
 })
+
+test_that("can combine records wrapped in data frames", {
+  local_methods(
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      data_frame(x = unclass(x), y = seq_along(x))
+    },
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      foobar(x$x)
+    }
+  )
+
+  x <- foobar(1:2)
+  y <- foobar(3:4)
+
+  expect_equal(
+    vec_c(x, y),
+    foobar(1:4)
+  )
+
+  expect_equal(
+    list_unchop(list(x, y), indices = list(1:2, 3:4)),
+    foobar(1:4)
+  )
+
+  expect_equal(
+    vec_rbind(data_frame(x = x), data_frame(x = y)),
+    data_frame(x = foobar(1:4))
+  )
+})

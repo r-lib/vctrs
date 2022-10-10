@@ -147,11 +147,11 @@ r_obj* vec_c_opts(r_obj* xs,
     FREE(1);
   }
 
+  out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
+
   if (is_data_frame(out)) {
     df_c_fallback(out, ptype, xs, out_size, name_spec, name_repair, error_call);
   }
-
-  out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));
