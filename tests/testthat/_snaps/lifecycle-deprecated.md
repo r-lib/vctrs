@@ -5,7 +5,7 @@
     Condition
       Warning:
       `vec_unchop()` was deprecated in vctrs 0.5.0.
-      Please use `list_unchop()` instead.
+      i Please use `list_unchop()` instead.
     Output
       [1] 1
 
@@ -16,7 +16,7 @@
     Condition
       Warning:
       `vec_equal_na()` was deprecated in vctrs 0.5.0.
-      Please use `vec_detect_missing()` instead.
+      i Please use `vec_detect_missing()` instead.
     Output
       [1] FALSE  TRUE
 
