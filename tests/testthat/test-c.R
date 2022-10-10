@@ -272,7 +272,7 @@ test_that("vec_c() falls back to c() if S3 method is available", {
   )
 })
 
-test_that("c() fallback is consistent (FIXME)", {
+test_that("c() fallback is consistent", {
   out <- with_methods(
     c.vctrs_foobar = function(...) structure(NextMethod(), class = "dispatched"),
     list(
@@ -283,13 +283,12 @@ test_that("c() fallback is consistent (FIXME)", {
     )
   )
 
-  # Proper `c()` dispatch:
-  expect_identical(out$direct, structure(1:2, class = "dispatched"))
+  dispatched <- function(x) structure(x, class = "dispatched")
 
-  # Inconsistent:
-  expect_identical(out$df$x, foobar(1:2))
-  expect_identical(out$tib$x, foobar(1:2))
-  expect_identical(out$foreign_df$x, foobar(1:2))
+  expect_identical(out$direct, dispatched(1:2))
+  expect_identical(out$df$x, dispatched(1:2))
+  expect_identical(out$tib$x, dispatched(1:2))
+  expect_identical(out$foreign_df$x, dispatched(1:2))
 })
 
 test_that("vec_c() falls back to c() if S4 method is available", {

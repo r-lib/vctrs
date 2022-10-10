@@ -35,33 +35,18 @@ r_obj* vec_c_opts(r_obj* xs,
     return r_null;
   }
 
-  if (needs_vec_c_fallback(ptype)) {
+  if (vec_is_common_class_fallback(ptype)) {
     r_obj* out = vec_c_fallback(ptype, xs, name_spec, name_repair, p_error_arg, error_call);
     FREE(1);
     return out;
   }
+
   // FIXME: Needed for dplyr::summarise() which passes a non-fallback ptype
   if (needs_vec_c_homogeneous_fallback(xs, ptype)) {
     r_obj* out = vec_c_fallback_invoke(xs, name_spec, error_call);
     FREE(1);
     return out;
   }
-
-  // FIXME: If data frame, recompute ptype without common class
-  // fallback. Should refactor this to allow common class fallback
-  // with data frame columns.
-  //
-  // FIXME: If `ptype` is a `vctrs_vctr` class without a
-  // `vec_ptype2()` method, the common type is a common class
-  // fallback. To avoid infinit recursion through `c.vctrs_vctr()`, we
-  // bail out from `needs_vec_c_fallback()`. In this case recurse with
-  // fallback disabled as well.
-  if ((is_data_frame(ptype) && fallback_opts->s3 == S3_FALLBACK_true) ||
-      vec_is_common_class_fallback(ptype)) {
-    ptype_opts.fallback.s3 = S3_FALLBACK_false;
-    ptype = vec_ptype_common_opts(xs, orig_ptype, &ptype_opts);
-  }
-  KEEP(ptype);
 
   // Find individual input sizes and total size of output
   r_ssize xs_size = r_length(xs);
@@ -162,6 +147,10 @@ r_obj* vec_c_opts(r_obj* xs,
     FREE(1);
   }
 
+  if (is_data_frame(out)) {
+    df_c_fallback(out, ptype, xs, out_size, name_spec, name_repair, error_call);
+  }
+
   out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
 
   if (out_names != r_null) {
@@ -175,7 +164,7 @@ r_obj* vec_c_opts(r_obj* xs,
     out = vec_set_names(out, r_null);
   }
 
-  FREE(9);
+  FREE(8);
   return out;
 }
 
@@ -286,7 +275,7 @@ r_obj* vec_c_fallback(r_obj* ptype,
   bool implements_c = class_implements_base_c(class);
   FREE(1);
 
-  if (implements_c) {
+  if (implements_c && !r_is_true(r_peek_option("vctrs:::base_c_in_progress"))) {
     return vec_c_fallback_invoke(xs, name_spec, error_call);
   } else {
     struct ptype_common_opts ptype_opts = {

@@ -1,8 +1,8 @@
 ## revdepcheck results
 
-We checked 198 reverse dependencies (193 from CRAN + 5 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
+We checked 199 reverse dependencies (194 from CRAN + 5 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
 
- * We saw 4 new problems
+ * We saw 6 new problems
  * We failed to check 0 packages
 
 Issues with CRAN packages are summarised below.
@@ -17,12 +17,16 @@ Issues with CRAN packages are summarised below.
   checking tests ... ERROR
   checking re-building of vignette outputs ... WARNING
 
-* ricu
-  checking examples ... ERROR
+* lubridate
+  checking tests ... ERROR
+
+* quantities
   checking tests ... ERROR
   checking re-building of vignette outputs ... WARNING
 
-* RSDA
+* ricu
   checking tests ... ERROR
-  checking re-building of vignette outputs ... WARNING
+
+* tibble
+  checking tests ... ERROR
 

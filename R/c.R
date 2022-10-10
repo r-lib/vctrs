@@ -81,6 +81,8 @@ base_c <- function(xs) {
 }
 
 base_c_invoke <- function(xs) {
+  local_options("vctrs:::base_c_in_progress" = TRUE)
+
   # Remove all `NULL` arguments which prevent dispatch if in first
   # position and might not be handled correctly by methods
   xs <- compact(xs)

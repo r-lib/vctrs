@@ -219,7 +219,7 @@
       dfs <- rep(list(df), 100)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 9.05KB
+      [1] 8.79KB
     Code
       # Data frame with rownames (non-repaired, non-recursive case)
       df <- data_frame(x = 1:2)
@@ -227,13 +227,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 6.28KB
+      [1] 6.02KB
     Code
       # Data frame with rownames (repaired, non-recursive case)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 12.4KB
+      [1] 12.2KB
     Code
       # Data frame with rownames (non-repaired, recursive case) (#1217)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
@@ -241,13 +241,13 @@
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 11.6KB
+      [1] 11.4KB
     Code
       # Data frame with rownames (repaired, recursive case) (#1217)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(list_unchop(dfs))
     Output
-      [1] 23.9KB
+      [1] 23.7KB
     Code
       # list-ofs (#1496)
       make_list_of <- (function(n) {
@@ -260,7 +260,7 @@
     Code
       with_memory_prof(list_unchop(make_list_of(2000)))
     Output
-      [1] 222KB
+      [1] 221KB
     Code
       with_memory_prof(list_unchop(make_list_of(4000)))
     Output

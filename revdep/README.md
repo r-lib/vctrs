@@ -10,12 +10,14 @@
 |NA      |?       |      |        |     |
 |NA      |?       |      |        |     |
 
-## New problems (4)
+## New problems (6)
 
-|package |version |error  |warning |note |
-|:-------|:-------|:------|:-------|:----|
+|package    |version |error  |warning |note |
+|:----------|:-------|:------|:-------|:----|
 |[errors](problems.md#errors)|0.3.6   |__+1__ |        |     |
 |[groupr](problems.md#groupr)|0.1.0   |__+1__ |__+1__  |1    |
-|[ricu](problems.md#ricu)|0.5.3   |__+2__ |__+1__  |     |
-|[RSDA](problems.md#rsda)|3.0.13  |__+1__ |__+1__  |     |
+|[lubridate](problems.md#lubridate)|1.8.0   |__+1__ |        |1    |
+|[quantities](problems.md#quantities)|0.1.6   |__+1__ |__+1__  |     |
+|[ricu](problems.md#ricu)|0.5.3   |__+1__ |        |     |
+|[tibble](problems.md#tibble)|3.1.8   |__+1__ |        |     |
 
