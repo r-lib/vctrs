@@ -49,15 +49,3 @@ r_obj* shaped_as_df_col(r_obj* x, r_obj* outer);
 
 static
 r_obj* vec_as_df_col(r_obj* x, r_obj* outer);
-
-static
-void df_c_fallback(r_obj* out,
-                   r_obj* ptype,
-                   r_obj* xs,
-                   r_ssize n_rows,
-                   r_obj* name_spec,
-                   struct name_repair_opts* name_repair,
-                   struct r_lazy error_call);
-
-static
-bool df_needs_fallback(r_obj* x);

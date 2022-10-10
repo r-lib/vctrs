@@ -829,39 +829,75 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   y_df <- data_frame(x = y)
 
   expect_error(vec_rbind(x_df, y_df), class = "vctrs_error_incompatible_type")
+  expect_error(vec_c(x_df, y_df), class = "vctrs_error_incompatible_type")
+  expect_error(list_unchop(list(x_df, y_df), indices = list(1, 2)), class = "vctrs_error_incompatible_type")
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_rbind(x_df, y_df)
+  with_c_method <- function(expr) {
+    with_methods(
+      c.vctrs_foobar = function(...) quux(NextMethod()),
+      expr
+    )
+  }
+
+  out <- with_c_method(vec_rbind(x_df, y_df))
+  exp <- data_frame(x = quux(c(1, 2)))
+  expect_identical(out, exp)
+
+  # FIXME: This currently fails
+  # expect_identical(with_c_method(vec_c(x_df, y_df)), exp)
+  expect_identical(
+    with_c_method(list_unchop(list(x_df, y_df), indices = list(1, 2))),
+    exp
   )
-  expect_identical(out, data_frame(x = quux(c(1, 2))))
 
   # Fallback is used with data frame subclasses, with or without
   # ptype2 method
   foo_df <- foobaz(x_df)
   bar_df <- foobaz(y_df)
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_rbind(foo_df, bar_df)
-  )
-  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+  out <- with_c_method(vec_rbind(foo_df, bar_df))
+  exp <- foobaz(data_frame(x = quux(c(1, 2))))
+  expect_identical(out, exp)
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
-    vec_rbind(foo_df, bar_df)
+  # FIXME: This currently fails
+  # expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)
+  expect_identical(
+    with_c_method(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
+    exp
   )
-  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+
+  with_hybrid_methods <- function(expr) {
+    with_methods(
+      c.vctrs_foobar = function(...) quux(NextMethod()),
+      vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+      expr
+    )
+  }
+
+  out <- with_hybrid_methods(vec_rbind(foo_df, bar_df))
+  exp <- foobaz(data_frame(x = quux(c(1, 2))))
+  expect_identical(out, exp)
+
+  # FIXME: This currently fails
+  # expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
+  expect_identical(
+    with_hybrid_methods(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
+    exp
+  )
 
   wrapper_x_df <- data_frame(x = x_df)
   wrapper_y_df <- data_frame(x = y_df)
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_rbind(wrapper_x_df, wrapper_y_df)
+  out <- with_c_method(vec_rbind(wrapper_x_df, wrapper_y_df))
+  exp <- data_frame(x = data_frame(x = quux(c(1, 2))))
+  expect_identical(out, exp)
+
+  # FIXME: This currently fails
+  # expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
+  expect_identical(
+    with_c_method(list_unchop(list(wrapper_x_df, wrapper_y_df), indices = list(1, 2))),
+    exp
   )
-  expect_identical(out, data_frame(x = data_frame(x = quux(c(1, 2)))))
 })
 
 test_that("c() fallback works with unspecified columns", {
