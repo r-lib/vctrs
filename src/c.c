@@ -97,7 +97,10 @@ r_obj* vec_c_opts(r_obj* xs,
   struct cast_opts c_cast_opts = {
     .to = ptype,
     .p_x_arg = p_x_arg,
-    .call = error_call
+    .call = error_call,
+    .fallback = {
+      .s3 = S3_FALLBACK_true
+    }
   };
 
   const struct vec_assign_opts c_assign_opts = {
@@ -147,11 +150,10 @@ r_obj* vec_c_opts(r_obj* xs,
     FREE(1);
   }
 
-  out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
-
   if (is_data_frame(out)) {
     df_c_fallback(out, ptype, xs, out_size, name_spec, name_repair, error_call);
   }
+  out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
 
   if (out_names != r_null) {
     out_names = KEEP(vec_as_names(out_names, name_repair));
@@ -367,7 +369,17 @@ void df_c_fallback(r_obj* out,
                    r_obj* name_spec,
                    const struct name_repair_opts* name_repair,
                    struct r_lazy error_call) {
+  int n_prot = 0;
   r_ssize n_cols = r_length(out);
+
+  r_obj* ptype_orig = ptype;
+
+  if (!is_data_frame(ptype)) {
+    ptype = KEEP_N(vec_proxy(ptype), &n_prot);
+    if (!is_data_frame(ptype)) {
+      r_stop_internal("Expected c fallback target to have a df proxy.");
+    }
+  }
 
   if (r_length(ptype) != n_cols ||
       r_typeof(out) != R_TYPE_list ||
@@ -376,10 +388,11 @@ void df_c_fallback(r_obj* out,
   }
 
   for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* col = r_list_get(out, i);
     r_obj* ptype_col = r_list_get(ptype, i);
 
     // Recurse into df-cols
-    if (is_data_frame(ptype_col) && df_needs_fallback(ptype_col)) {
+    if (is_data_frame(col) && df_needs_fallback(ptype_col)) {
       r_obj* xs_col = KEEP(list_pluck(xs, i));
       r_obj* out_col = r_list_get(out, i);
       df_c_fallback(out_col, ptype_col, xs_col, n_rows, name_spec, name_repair, error_call);
@@ -405,11 +418,13 @@ void df_c_fallback(r_obj* out,
 
       // Remove fallback vector from the ptype so it doesn't get in
       // the way of restoration later on
-      r_list_poke(ptype, i, vec_ptype_final(out_col));
+      r_list_poke(ptype_orig, i, vec_ptype_final(out_col));
 
       FREE(1);
     }
   }
+
+  FREE(n_prot);
 }
 
 static

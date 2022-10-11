@@ -273,8 +273,11 @@ test_that("vec_c() falls back to c() if S3 method is available", {
 })
 
 test_that("c() fallback is consistent", {
+  dispatched <- function(x) structure(x, class = "dispatched")
+  c_method <- function(...) dispatched(NextMethod())
+
   out <- with_methods(
-    c.vctrs_foobar = function(...) structure(NextMethod(), class = "dispatched"),
+    c.vctrs_foobar = c_method,
     list(
       direct = vec_c(foobar(1L), foobar(2L)),
       df = vec_c(data_frame(x = foobar(1L)), data_frame(x = foobar(2L))),
@@ -282,13 +285,30 @@ test_that("c() fallback is consistent", {
       foreign_df = vec_c(foobaz(data_frame(x = foobar(1L))), foobaz(data_frame(x = foobar(2L))))
     )
   )
+  expect_equal(out$direct, dispatched(1:2))
+  expect_equal(out$df$x, dispatched(1:2))
+  expect_equal(out$tib$x, dispatched(1:2))
+  expect_equal(out$foreign_df$x, dispatched(1:2))
 
-  dispatched <- function(x) structure(x, class = "dispatched")
+  # Hard case: generic record vectors
+  my_rec_record <- function(x) {
+    new_rcrd(list(x = x), class = "my_rec_record")
+  }
 
-  expect_identical(out$direct, dispatched(1:2))
-  expect_identical(out$df$x, dispatched(1:2))
-  expect_identical(out$tib$x, dispatched(1:2))
-  expect_identical(out$foreign_df$x, dispatched(1:2))
+  out <- with_methods(
+    c.vctrs_foobar = c_method,
+    vec_ptype2.my_rec_record.my_rec_record = function(x, y, ...) {
+      my_rec_record(vec_ptype2(field(x, "x"), field(y, "x"), ...))
+    },
+    vec_cast.my_rec_record.my_rec_record = function(x, to, ...) {
+      x
+    },
+    vec_c(
+      data_frame(x = my_rec_record(foobar(1L))),
+      data_frame(x = my_rec_record(foobar(2L)))
+    )
+  )
+  expect_equal(field(out$x, "x"), dispatched(1:2))
 })
 
 test_that("vec_c() falls back to c() if S4 method is available", {

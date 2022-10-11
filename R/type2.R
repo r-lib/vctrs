@@ -36,6 +36,14 @@ vec_ptype2 <- function(x,
                        call = caller_env()) {
   if (!missing(...)) {
     check_ptype2_dots_empty(...)
+    return(vec_ptype2_opts(
+      x,
+      y,
+      opts = match_fallback_opts(...),
+      x_arg = x_arg,
+      y_arg = y_arg,
+      call = call
+    ))
   }
   return(.Call(ffi_ptype2, x, y, environment()))
   UseMethod("vec_ptype2")
