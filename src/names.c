@@ -433,7 +433,7 @@ ptrdiff_t suffix_pos(const char* name) {
   }
 }
 
-static void stop_large_name() {
+static void stop_large_name(void) {
   r_abort("Can't tidy up name because it is too large.");
 }
 

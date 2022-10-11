@@ -22,6 +22,6 @@ const char* vctrs_version = "0.4.2.9000";
  */
 
 // [[ register() ]]
-SEXP vctrs_linked_version() {
+SEXP vctrs_linked_version(void) {
   return Rf_mkString(vctrs_version);
 }

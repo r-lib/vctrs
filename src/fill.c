@@ -202,7 +202,7 @@ void vec_fill_missing_up_with_max_fill(const int* p_na, r_ssize size, bool leadi
 
 // -----------------------------------------------------------------------------
 
-static void stop_bad_direction();
+static void stop_bad_direction(void);
 
 static
 void parse_direction(SEXP x, bool* p_down, bool* p_leading) {
@@ -238,7 +238,7 @@ void parse_direction(SEXP x, bool* p_down, bool* p_leading) {
 }
 
 static
-void stop_bad_direction() {
+void stop_bad_direction(void) {
   r_abort("`direction` must be one of \"down\", \"up\", \"downup\", or \"updown\".");
 }
 

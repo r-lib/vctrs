@@ -373,7 +373,7 @@ static inline const void* vec_type_missing_value(enum vctrs_type type) {
   }
 }
 
-void c_print_backtrace();
+void c_print_backtrace(void);
 
 SEXP chr_c(SEXP x, SEXP y);
 
