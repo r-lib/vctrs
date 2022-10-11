@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* vctrs is now compliant with `-Wstrict-prototypes` as requested by CRAN
+  (#1729).
+
 * Common type and cast errors now inherit from `"vctrs_error_ptype2"`
   and `"vctrs_error_cast"` respectively. They are still both
   subclasses from `"vctrs_error_incompatible_type"` (which used to be
