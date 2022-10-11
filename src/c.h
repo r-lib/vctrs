@@ -34,7 +34,6 @@ r_obj* vec_c_fallback(r_obj* ptype,
 bool needs_vec_c_fallback(r_obj* ptype);
 bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype);
 
-// Defined in bind.c
 void df_c_fallback(r_obj* out,
                    r_obj* ptype,
                    r_obj* xs,
