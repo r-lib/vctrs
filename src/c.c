@@ -9,7 +9,9 @@ r_obj* vec_c(r_obj* xs,
              struct r_lazy error_call) {
   struct fallback_opts opts = {
     .df = DF_FALLBACK_DEFAULT,
-    .s3 = S3_FALLBACK_true
+    .s3 = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
+      S3_FALLBACK_false :
+      S3_FALLBACK_true
   };
   return vec_c_opts(xs, ptype, name_spec, name_repair, &opts, p_error_arg, error_call);
 }
@@ -98,9 +100,7 @@ r_obj* vec_c_opts(r_obj* xs,
     .to = ptype,
     .p_x_arg = p_x_arg,
     .call = error_call,
-    .fallback = {
-      .s3 = S3_FALLBACK_true
-    }
+    .fallback = *fallback_opts
   };
 
   const struct vec_assign_opts c_assign_opts = {
@@ -150,7 +150,7 @@ r_obj* vec_c_opts(r_obj* xs,
     FREE(1);
   }
 
-  if (is_data_frame(out)) {
+  if (is_data_frame(out) && fallback_opts->s3) {
     df_c_fallback(out, ptype, xs, out_size, name_spec, name_repair, error_call);
   }
   out = KEEP(vec_restore_recurse(out, ptype, VCTRS_OWNED_true));
@@ -277,7 +277,7 @@ r_obj* vec_c_fallback(r_obj* ptype,
   bool implements_c = class_implements_base_c(class);
   FREE(1);
 
-  if (implements_c && !r_is_true(r_peek_option("vctrs:::base_c_in_progress"))) {
+  if (implements_c) {
     return vec_c_fallback_invoke(xs, name_spec, error_call);
   } else {
     struct ptype_common_opts ptype_opts = {
