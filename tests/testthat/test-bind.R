@@ -855,7 +855,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   bar_df <- foobaz(y_df)
 
   out <- with_c_method(vec_rbind(foo_df, bar_df))
-  exp <- foobaz(data_frame(x = quux(c(1, 2))))
+  exp <- data_frame(x = quux(c(1, 2)))
   expect_identical(out, exp)
 
   expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)

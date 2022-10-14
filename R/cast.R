@@ -192,24 +192,12 @@ vec_default_cast <- function(x,
     return(x)
   }
 
-  # If both data frames, first find the `to` type of columns before
-  # the same-type fallback
-  if (df_needs_normalisation(x, to, opts)) {
-    x <- vec_cast_df_fallback_normalise(
-      x,
-      to,
-      opts,
-      x_arg = x_arg,
-      to_arg = to_arg,
-      call = call
-    )
-  }
-
   if (is_same_type(x, to)) {
     return(x)
   }
 
-  if (has_df_fallback(opts$df_fallback) && is_df_subclass(x) && is.data.frame(to)) {
+  # If both data frames, fall back to base data frame
+  if (is.data.frame(x) && is.data.frame(to)) {
     out <- df_cast_opts(
       x,
       to,

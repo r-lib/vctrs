@@ -312,54 +312,6 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
 }
 
-vec_ptype2_df_fallback_normalise <- function(x, y, opts, ...) {
-  x_orig <- x
-  y_orig <- y
-
-  ptype <- df_ptype2_opts(x, y, opts = opts, ...)
-
-  x <- x[0, , drop = FALSE]
-  y <- y[0, , drop = FALSE]
-
-  x[seq_along(ptype)] <- ptype
-  y[seq_along(ptype)] <- ptype
-
-  # Names might have been repaired by `[<-`
-  names(x) <- names(ptype)
-  names(y) <- names(ptype)
-
-  # Restore attributes if no `[` method is implemented
-  if (df_has_base_subset(x)) {
-    x <- vec_restore(x, x_orig)
-  }
-  if (df_has_base_subset(y)) {
-    y <- vec_restore(y, y_orig)
-  }
-
-  list(x = x, y = y)
-}
-vec_cast_df_fallback_normalise <- function(x, to, opts, ...) {
-  orig <- x
-  cast <- df_cast_opts(x, to, opts = opts, ...)
-
-  # Seq-assign should be more widely implemented than empty-assign?
-  x[seq_along(to)] <- cast
-
-  # Names might have been repaired by `[<-`
-  names(x) <- names(cast)
-
-  # Restore attributes if no `[` method is implemented
-  if (df_has_base_subset(x)) {
-    x <- vec_restore(x, orig)
-  }
-
-  x
-}
-
-df_needs_normalisation <- function(x, y, opts) {
-  is.data.frame(x) && is.data.frame(y) && df_is_coercible(x, y, opts)
-}
-
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x,
                                    y,

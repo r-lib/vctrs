@@ -125,21 +125,6 @@ vec_default_ptype2 <- function(x,
 
   opts <- match_fallback_opts(...)
 
-  # If both data frames, first find common type of columns before the
-  # same-type fallback
-  if (df_needs_normalisation(x, y, opts)) {
-    out <- vec_ptype2_df_fallback_normalise(
-      x,
-      y,
-      opts,
-      x_arg = x_arg,
-      y_arg = y_arg,
-      call = call
-    )
-    x <- out$x
-    y <- out$y
-  }
-
   if (opts$s3_fallback && can_fall_back_2(x, y)) {
     common <- common_class_suffix(x, y)
     if (length(common)) {
@@ -151,27 +136,15 @@ vec_default_ptype2 <- function(x,
     return(vec_ptype(x, x_arg = x_arg))
   }
 
-  if (has_df_fallback(opts$df_fallback)) {
-    if (is_df_subclass(x) && is.data.frame(y)) {
-      return(vec_ptype2_df_fallback(
-        x,
-        y,
-        opts,
-        x_arg = x_arg,
-        y_arg = y_arg,
-        call = call
-      ))
-    }
-    if (is_df_subclass(y) && is.data.frame(x)) {
-      return(vec_ptype2_df_fallback(
-        x,
-        y,
-        opts,
-        x_arg = x_arg,
-        y_arg = y_arg,
-        call = call
-      ))
-    }
+  if (is.data.frame(x) && is.data.frame(y)) {
+    return(vec_ptype2_df_fallback(
+      x,
+      y,
+      opts,
+      x_arg = x_arg,
+      y_arg = y_arg,
+      call = call
+    ))
   }
 
   # The from-dispatch parameter is set only when called from our S3
@@ -392,6 +365,7 @@ S3_FALLBACK_true <- 1L
 has_df_fallback <- function(df_fallback) {
   df_fallback != DF_FALLBACK_none
 }
+# TODO: Remove?
 needs_fallback_warning <- function(df_fallback) {
   if (df_fallback == DF_FALLBACK_warn_maybe) {
     is_true(peek_option("vctrs:::warn_on_fallback"))
