@@ -264,15 +264,11 @@ fallback_class <- function(x) {
 
 check_ptype2_dots_empty <- function(...,
                                     `vctrs:::from_dispatch`,
-                                    `vctrs:::df_fallback`,
                                     `vctrs:::s3_fallback`) {
   check_dots_empty0(...)
 }
-match_fallback_opts <- function(...,
-                                `vctrs:::df_fallback` = NULL,
-                                `vctrs:::s3_fallback` = NULL) {
+match_fallback_opts <- function(..., `vctrs:::s3_fallback` = NULL) {
   fallback_opts(
-    df_fallback = `vctrs:::df_fallback`,
     s3_fallback = `vctrs:::s3_fallback`
   )
 }
@@ -280,18 +276,15 @@ match_from_dispatch <- function(..., `vctrs:::from_dispatch` = FALSE) {
   `vctrs:::from_dispatch`
 }
 
-fallback_opts <- function(df_fallback = NULL,
-                          s3_fallback = NULL) {
+fallback_opts <- function(s3_fallback = NULL) {
   # Order is important for the C side
   list(
-    df_fallback = df_fallback %||% df_fallback_default(),
     s3_fallback = s3_fallback %||% s3_fallback_default()
   )
 }
 
 full_fallback_opts <- function() {
   fallback_opts(
-    df_fallback = DF_FALLBACK_quiet,
     s3_fallback = S3_FALLBACK_true
   )
 }
@@ -308,13 +301,11 @@ vec_ptype2_opts <- function(x,
 vec_ptype2_params <- function(x,
                               y,
                               ...,
-                              df_fallback = NULL,
                               s3_fallback = NULL,
                               x_arg = "",
                               y_arg = "",
                               call = caller_env()) {
   opts <- fallback_opts(
-    df_fallback = df_fallback,
     s3_fallback = s3_fallback
   )
   vec_ptype2_opts(
@@ -334,7 +325,6 @@ vec_ptype2_no_fallback <- function(x,
                                    y_arg = "",
                                    call = caller_env()) {
   opts <- fallback_opts(
-    df_fallback = DF_FALLBACK_none,
     s3_fallback = S3_FALLBACK_false
   )
   vec_ptype2_opts(
@@ -349,36 +339,10 @@ vec_ptype2_no_fallback <- function(x,
   )
 }
 
-
-# Kept in sync with ptype2.h
-df_fallback_default <- function() 0L
-DF_FALLBACK_warn_maybe <- 0L
-DF_FALLBACK_warn <- 1L
-DF_FALLBACK_none <- 2L
-DF_FALLBACK_quiet <- 3L
-
 s3_fallback_default <- function() 0L
 S3_FALLBACK_false <- 0L
 S3_FALLBACK_true <- 1L
 
-
-has_df_fallback <- function(df_fallback) {
-  df_fallback != DF_FALLBACK_none
-}
-# TODO: Remove?
-needs_fallback_warning <- function(df_fallback) {
-  if (df_fallback == DF_FALLBACK_warn_maybe) {
-    is_true(peek_option("vctrs:::warn_on_fallback"))
-  } else {
-    df_fallback == DF_FALLBACK_warn
-  }
-}
-with_fallback_warning <- function(expr) {
-  with_options(expr, `vctrs:::warn_on_fallback` = TRUE)
-}
-with_fallback_quiet <- function(expr) {
-  with_options(expr, `vctrs:::warn_on_fallback` = FALSE)
-}
 
 vec_typeof2 <- function(x, y) {
   .Call(ffi_typeof2, x, y)

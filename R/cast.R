@@ -82,9 +82,6 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
   UseMethod("vec_cast", to)
 }
 
-vec_cast_no_fallback <- function(x, to) {
-  vec_cast_common_params(x = x, .to = to, .df_fallback = DF_FALLBACK_none)$x
-}
 vec_cast_dispatch_native <- function(x,
                                      to,
                                      ...,
@@ -119,12 +116,10 @@ vec_cast_common_opts <- function(...,
 }
 vec_cast_common_params <- function(...,
                                    .to = NULL,
-                                   .df_fallback = NULL,
                                    .s3_fallback = NULL,
                                    .arg = "",
                                    .call = caller_env()) {
   opts <- fallback_opts(
-    df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
   vec_cast_common_opts(
@@ -197,7 +192,7 @@ vec_default_cast <- function(x,
   }
 
   # If both data frames, fall back to base data frame
-  if (is.data.frame(x) && is.data.frame(to)) {
+  if (is.data.frame(x) && is_bare_df(to)) {
     out <- df_cast_opts(
       x,
       to,
@@ -228,6 +223,10 @@ vec_default_cast <- function(x,
       out
     }
   )
+}
+
+is_bare_df <- function(x) {
+  inherits_only(x, "data.frame") || inherits_only(x, c("tbl_df", "tbl", "data.frame"))
 }
 
 is_informative_error.vctrs_error_cast_lossy <- function(x, ...) {

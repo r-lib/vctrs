@@ -159,30 +159,16 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
   expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
 })
 
-test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
-  quux <- tibble()
-  quux <- foobar(quux)
+test_that("Subclasses of `tbl_df` have `tbl_df` common type (#481)", {
+  quux <- foobar(tibble())
 
-  expect_incompatible_df(
+  expect_identical(
     vec_ptype_common(quux, tibble()),
     tibble()
   )
-  expect_incompatible_df(
+  expect_identical(
     vec_ptype_common(tibble(), quux),
     tibble()
-  )
-
-  expect_df_fallback_warning(
-    expect_identical(
-      vec_ptype_common_df_fallback(quux, tibble()),
-      tibble()
-    )
-  )
-  expect_df_fallback_warning(
-    expect_identical(
-      vec_ptype_common_df_fallback(tibble(), quux),
-      tibble()
-    )
   )
 })
 
@@ -276,31 +262,24 @@ test_that("common type errors don't mention columns if they are compatible", {
     bar <- structure(df, class = c("vctrs_bar", "data.frame"))
 
     (expect_error(
-      vec_cast_no_fallback(foo, bar),
+      vec_cast(foo, bar),
       class = "vctrs_error_incompatible_type"
     ))
   })
 })
 
-test_that("common type warnings for data frames take attributes into account", {
+test_that("attributes no longer play a role in bare data frame fallback", {
   foobar_bud <- foobar(mtcars, bud = TRUE)
   foobar_boo <- foobar(mtcars, boo = TRUE)
 
-  expect_df_fallback_warning(vec_ptype2_fallback(foobar_bud, foobar_boo))
-  expect_df_fallback_warning(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
-
-  expect_snapshot({
-    vec_ptype2_fallback(foobar_bud, foobar_boo)
-
-    "For reference, warning for incompatible classes"
-    vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
-
-    "For reference, error when fallback is disabled"
-    (expect_error(
-      vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)),
-      class = "vctrs_error_incompatible_type"
-    ))
-  })
+  expect_equal(
+    vec_ptype2(foobar_bud, foobar_boo),
+    vec_slice(unrownames(mtcars), 0)
+  )
+  expect_equal(
+    vec_ptype2(foobar(mtcars), foobaz(mtcars)),
+    vec_slice(unrownames(mtcars), 0)
+  )
 })
 
 test_that("vec_ptype2() methods get prototypes", {
@@ -328,16 +307,6 @@ test_that("vec_ptype2() allows vec_ptype() to return another type", {
     vec_ptype2(foobar(1), foobar(2))
   )
   expect_identical(out, dbl())
-})
-
-test_that("For reference, warning for incompatible classes", {
-  expect_snapshot(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
-})
-
-test_that("For reference, error when fallback is disabled", {
-  expect_snapshot(
-    (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))))
-  )
 })
 
 test_that("vec_ptype2() evaluates x_arg and y_arg lazily", {

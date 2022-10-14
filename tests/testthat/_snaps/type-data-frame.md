@@ -52,58 +52,6 @@
           >
       >
 
-# combining data frames with foreign classes uses fallback
-
-    Code
-      vec_ptype_common_df_fallback(foo, bar, baz)
-    Condition
-      Warning:
-      Can't combine `..1` <foo> and `..2` <bar>; falling back to <data.frame>.
-      Warning:
-      Can't combine `..1` <data.frame> and `..3` <baz>; falling back to <data.frame>.
-    Output
-      [1] mpg  cyl  disp hp   drat wt   qsec vs   am  
-      <0 rows> (or 0-length row.names)
-    Code
-      vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar)
-    Condition
-      Warning:
-      Can't combine `..1` <foo> and `..2` <baz>; falling back to <data.frame>.
-      Warning:
-      Can't combine `..1` <data.frame> and `..3` <bar>; falling back to <data.frame>.
-    Output
-      [1] mpg  cyl  disp qsec vs   am   hp   drat wt  
-      <0 rows> (or 0-length row.names)
-    Code
-      with_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo)))
-    Condition
-      Warning:
-      Can't combine `..1` <foo> and `..2` <data.frame>; falling back to <data.frame>.
-    Code
-      with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1))))
-    Condition
-      Warning:
-      Can't combine `..1` <foo> and `..2` <data.frame>; falling back to <data.frame>.
-    Code
-      with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
-    Condition
-      Warning:
-      Can't combine `..1` <foo> and `..2` <data.frame>; falling back to <data.frame>.
-      Warning:
-      Can't combine `..1` <data.frame> and `..3` <bar>; falling back to <data.frame>.
-    Code
-      with_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
-    Condition
-      Warning:
-      Can't combine `..1` <foo> and `..2` <baz>; falling back to <data.frame>.
-      Warning:
-      Can't combine `..1` <data.frame> and `..3` <bar>; falling back to <data.frame>.
-    Code
-      with_fallback_quiet(invisible(vec_rbind(foo, data.frame(), foo)))
-      with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1))))
-      with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
-      with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
-
 # `x` must be a list
 
     Code
@@ -252,41 +200,11 @@
     Output
       <error/vctrs_error_ptype2>
       Error in `my_function()`:
-      ! Can't combine `x` <double> and `x` <character>.
+      ! Can't combine `df1$x` <double> and `df3$x` <character>.
     Code
       (expect_error(vec_ptype2(df3, df1), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_ptype2>
       Error in `my_function()`:
-      ! Can't combine `x` <character> and `x` <double>.
-
-# falls back to tibble for tibble subclasses (#1025)
-
-    Code
-      with_fallback_warning(invisible(vec_rbind(foobar(tibble::as_tibble(mtcars)),
-      mtcars, foobaz(mtcars))))
-    Condition
-      Warning:
-      Can't combine `..1` <vctrs_foobar> and `..2` <data.frame>; falling back to <tibble>.
-      Warning:
-      Can't combine `..1` <tibble> and `..3` <vctrs_foobaz>; falling back to <tibble>.
-    Code
-      with_fallback_warning(invisible(vec_rbind(tibble::as_tibble(mtcars), foobar(
-        tibble::as_tibble(mtcars)))))
-    Condition
-      Warning:
-      Can't combine `..1` <tibble> and `..2` <vctrs_foobar>; falling back to <tibble>.
-    Code
-      with_fallback_warning(invisible(vec_rbind(foobar(tibble::as_tibble(mtcars)),
-      mtcars, foobar(tibble::as_tibble(mtcars)))))
-    Condition
-      Warning:
-      Can't combine `..1` <vctrs_foobar> and `..2` <data.frame>; falling back to <tibble>.
-    Code
-      with_fallback_quiet(invisible(vec_rbind(foobar(tibble::as_tibble(mtcars)),
-      mtcars, foobaz(mtcars))))
-      with_fallback_quiet(invisible(vec_rbind(tibble::as_tibble(mtcars), foobar(
-        tibble::as_tibble(mtcars)))))
-      with_fallback_quiet(invisible(vec_rbind(foobar(tibble::as_tibble(mtcars)),
-      mtcars, foobar(tibble::as_tibble(mtcars)))))
+      ! Can't combine `df3$x` <character> and `df1$x` <double>.
 

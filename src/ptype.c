@@ -144,25 +144,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return bare_df_map(x, &vec_ptype_finalise);
 
   case VCTRS_CLASS_data_frame:
-    x = KEEP(df_map(x, &vec_ptype_finalise));
-
-    if (r_inherits(x, "vctrs:::df_fallback")) {
-      r_obj* seen_tibble_attr = KEEP(r_attrib_get(x, r_sym("seen_tibble")));
-      bool seen_tibble = r_is_true(seen_tibble_attr);
-      FREE(1);
-
-      if (seen_tibble) {
-        r_attrib_poke_class(x, classes_tibble);
-      } else {
-        r_attrib_poke_class(x, classes_data_frame);
-      }
-
-      r_attrib_poke(x, r_sym("known_classes"), r_null);
-      r_attrib_poke(x, r_sym("seen_tibble"), r_null);
-    }
-
-    FREE(1);
-    return x;
+    return df_map(x, &vec_ptype_finalise);
 
   case VCTRS_CLASS_none:
     r_stop_internal("Non-S3 classes should have returned by now.");

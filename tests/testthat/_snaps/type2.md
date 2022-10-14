@@ -119,61 +119,9 @@
       df <- data.frame(x = 1, y = "")
       foo <- structure(df, class = c("vctrs_foo", "data.frame"))
       bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-      (expect_error(vec_cast_no_fallback(foo, bar), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(vec_cast(foo, bar), class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_cast>
-      Error in `vec_cast_no_fallback()`:
-      ! Can't convert `x` <vctrs_foo> to <vctrs_bar>.
-
-# common type warnings for data frames take attributes into account
-
-    Code
-      vec_ptype2_fallback(foobar_bud, foobar_boo)
-    Condition
-      Warning:
-      Can't combine <vctrs_foobar> and <vctrs_foobar>; falling back to <data.frame>.
-      x Some attributes are incompatible.
-      i The author of the class should implement vctrs methods.
-      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
-    Output
-       [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
-      <0 rows> (or 0-length row.names)
-    Code
-      # For reference, warning for incompatible classes
-      vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
-    Condition
-      Warning:
-      Can't combine <vctrs_foobar> and <vctrs_foobaz>; falling back to <data.frame>.
-    Output
-       [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
-      <0 rows> (or 0-length row.names)
-    Code
-      # For reference, error when fallback is disabled
-      (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)), class = "vctrs_error_incompatible_type")
-      )
-    Output
-      <error/vctrs_error_ptype2>
       Error:
-      ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
-
-# For reference, warning for incompatible classes
-
-    Code
-      vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
-    Condition
-      Warning:
-      Can't combine <vctrs_foobar> and <vctrs_foobaz>; falling back to <data.frame>.
-    Output
-       [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
-      <0 rows> (or 0-length row.names)
-
-# For reference, error when fallback is disabled
-
-    Code
-      (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))))
-    Output
-      <error/vctrs_error_ptype2>
-      Error:
-      ! Can't combine <vctrs_foobar> and <vctrs_foobaz>.
+      ! Can't convert `foo` <vctrs_foo> to <vctrs_bar>.
 

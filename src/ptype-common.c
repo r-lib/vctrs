@@ -14,7 +14,6 @@ r_obj* ffi_ptype_common(r_obj* ffi_call, r_obj* op, r_obj* args, r_obj* env) {
 
   r_obj* out = vec_ptype_common_params(types,
                                        ptype,
-                                       DF_FALLBACK_DEFAULT,
                                        S3_FALLBACK_false,
                                        &arg,
                                        call);
@@ -70,7 +69,6 @@ r_obj* vec_ptype_common_opts(r_obj* dots,
 
 r_obj* vec_ptype_common_params(r_obj* dots,
                                r_obj* ptype,
-                               enum df_fallback df_fallback,
                                enum s3_fallback s3_fallback,
                                struct vctrs_arg* p_arg,
                                struct r_lazy call) {
@@ -78,7 +76,6 @@ r_obj* vec_ptype_common_params(r_obj* dots,
     .call = call,
     .p_arg = p_arg,
     .fallback = {
-      .df = df_fallback,
       .s3 = s3_fallback
     }
   };

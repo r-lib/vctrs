@@ -55,16 +55,12 @@ static inline
 r_obj* df_ptype2_params(r_obj* x,
                         r_obj* y,
                         struct vctrs_arg* p_x_arg,
-                        struct vctrs_arg* p_y_arg,
-                        enum df_fallback df_fallback) {
+                        struct vctrs_arg* p_y_arg) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
     .p_x_arg = p_x_arg,
-    .p_y_arg = p_y_arg,
-    .fallback = {
-      .df = df_fallback
-    }
+    .p_y_arg = p_y_arg
   };
   return df_ptype2(&opts);
 }

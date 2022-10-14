@@ -55,7 +55,7 @@ test_that("combining data frames with foreign classes uses fallback", {
 
   # Same type fallback
   expect_identical(vec_ptype_common(foo, foo, foo), foo)
-  expect_incompatible_df(vec_ptype_common(foo, foo, df, foo), df)
+  expect_equal(vec_ptype_common(foo, foo, df, foo), df)
 
   expect_df_fallback_warning(res <- vec_ptype2_fallback(foo, df))
   expect_identical(res, new_fallback_df(df, c("vctrs_foobar", "data.frame")))
@@ -86,11 +86,11 @@ test_that("combining data frames with foreign classes uses fallback", {
   expect_s3_class(cnds[[1]], "warning")
   expect_match(cnds[[1]]$message, "falling back to <data.frame>")
 
-  expect_incompatible_df(
+  expect_equal(
     vec_cbind(foobar(data.frame(x = 1)), data.frame(y = 2)),
     data.frame(x = 1, y = 2)
   )
-  expect_incompatible_df(
+  expect_equal(
     vec_rbind(foo, data.frame(), foo),
     df
   )
@@ -629,7 +629,7 @@ test_that("data frame fallback handles column types (#999)", {
   df1_attrib <- foobar(df1, foo = "foo")
   df2_attrib <- foobar(df2, bar = "bar")
   exp <- data.frame(x = c(1, 1), y = c(NA, 2))
-  expect_incompatible_df(
+  expect_equal(
     vec_rbind(df1_attrib, df2_attrib),
     exp
   )
@@ -728,8 +728,8 @@ test_that("fallback is recursive", {
   baz <- new_data_frame(list(y = 1:3, x = foobar(df, bar = TRUE)))
 
   exp <- new_data_frame(list(x = vec_rbind(df, df)))
-  expect_incompatible_df(vec_rbind(foo, bar), exp)
+  expect_equal(vec_rbind(foo, bar), exp)
 
   exp <- new_data_frame(list(x = vec_rbind(df, df), y = c(NA, NA, NA, 1:3)))
-  expect_incompatible_df(vec_rbind(foo, baz), exp)
+  expect_equal(vec_rbind(foo, baz), exp)
 })

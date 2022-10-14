@@ -292,8 +292,7 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
 
 struct fallback_opts new_fallback_opts(r_obj* opts) {
   return (struct fallback_opts) {
-    .df = r_int_get(r_list_get(opts, 0), 0),
-    .s3 = r_int_get(r_list_get(opts, 1), 0)
+    .s3 = r_int_get(r_list_get(opts, 0), 0)
   };
 }
 

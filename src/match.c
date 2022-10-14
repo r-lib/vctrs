@@ -137,7 +137,6 @@ r_obj* vec_locate_matches(r_obj* needles,
     needles_arg,
     haystack_arg,
     error_call,
-    DF_FALLBACK_quiet,
     &_
   ), &n_prot);
 
@@ -147,7 +146,6 @@ r_obj* vec_locate_matches(r_obj* needles,
     needles_arg,
     vec_args.empty,
     error_call,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
 
@@ -157,7 +155,6 @@ r_obj* vec_locate_matches(r_obj* needles,
     haystack_arg,
     vec_args.empty,
     error_call,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   ), &n_prot);
 
