@@ -53,21 +53,13 @@ test_that("combining data frames with foreign classes uses fallback", {
   foo <- foobar(data.frame())
   df <- data.frame()
 
-  # Same type fallback
-  expect_identical(vec_ptype_common(foo, foo, foo), foo)
-  expect_equal(vec_ptype_common(foo, foo, df, foo), df)
+  expect_identical(vec_ptype_common(foo, foo, foo), df)
+  expect_identical(vec_ptype_common(foo, foo, df, foo), df)
 
-  expect_df_fallback_warning(res <- vec_ptype2_fallback(foo, df))
-  expect_identical(res, new_fallback_df(df, c("vctrs_foobar", "data.frame")))
-
-  expect_df_fallback_warning(res <- vec_ptype2_fallback(df, foo))
-  expect_identical(res, new_fallback_df(df, c("data.frame", "vctrs_foobar")))
-
-  expect_df_fallback_warning(res <- vec_ptype_common_df_fallback(foo, df))
-  expect_identical(res, df)
-
-  expect_df_fallback_warning(res <- vec_ptype_common_df_fallback(df, foo))
-  expect_identical(res, df)
+  expect_identical(vec_ptype2(foo, df), data.frame())
+  expect_identical(vec_ptype2(df, foo), data.frame())
+  expect_identical(vec_ptype_common(foo, df), df)
+  expect_identical(vec_ptype_common(df, foo), df)
 
   cnds <- list()
   withCallingHandlers(
@@ -76,15 +68,13 @@ test_that("combining data frames with foreign classes uses fallback", {
       invokeRestart("muffleWarning")
     },
     expect_identical(
-      vec_ptype_common_df_fallback(foo, df, foo, foo),
+      vec_ptype_common(foo, df, foo, foo),
       df
     )
   )
 
-  # There should be only one warning even if many fallbacks
-  expect_length(cnds, 1)
-  expect_s3_class(cnds[[1]], "warning")
-  expect_match(cnds[[1]]$message, "falling back to <data.frame>")
+  # There are no longer any warnings
+  expect_length(cnds, 0)
 
   expect_equal(
     vec_cbind(foobar(data.frame(x = 1)), data.frame(y = 2)),
@@ -94,30 +84,6 @@ test_that("combining data frames with foreign classes uses fallback", {
     vec_rbind(foo, data.frame(), foo),
     df
   )
-
-  foo <- structure(mtcars[1:3], class = c("foo", "data.frame"))
-  bar <- structure(mtcars[4:6], class = c("bar", "data.frame"))
-  baz <- structure(mtcars[7:9], class = c("baz", "data.frame"))
-
-  with_fallback_warning(expect_df_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo))))
-  with_fallback_warning(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1)))))
-  with_fallback_warning(expect_df_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar))))
-  with_fallback_warning(expect_df_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar))))
-
-  expect_snapshot({
-    vec_ptype_common_df_fallback(foo, bar, baz)
-    vec_ptype_common_df_fallback(foo, baz, bar, baz, foo, bar)
-
-    with_fallback_warning(invisible(vec_rbind(foo, data.frame(), foo)))
-    with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1))))
-    with_fallback_warning(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
-    with_fallback_warning(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
-
-    with_fallback_quiet(invisible(vec_rbind(foo, data.frame(), foo)))
-    with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1))))
-    with_fallback_quiet(invisible(vec_cbind(foo, data.frame(x = 1), bar)))
-    with_fallback_quiet(invisible(vec_rbind(foo, baz, bar, baz, foo, bar)))
-  })
 })
 
 
@@ -595,7 +561,7 @@ test_that("data frame fallback handles column types (#999)", {
   df2 <- foobar(data.frame(x = 1, y = 2))
   df3 <- foobar(data.frame(x = "", y = 2))
 
-  common <- foobar(data.frame(x = dbl(), y = dbl()))
+  common <- data.frame(x = dbl(), y = dbl())
   expect_identical(vec_ptype2(df1, df2), common)
   expect_identical(vec_ptype2(df2, df1), common)
 
@@ -609,20 +575,19 @@ test_that("data frame fallback handles column types (#999)", {
       vec_ptype2(df3, df1),
       class = "vctrs_error_incompatible_type"
     ))
+    (expect_error(
+      vec_cast(df1, df2),
+      class = "vctrs_error_incompatible_type"
+    ))
+    (expect_error(
+      vec_cast(df2, df1),
+      class = "vctrs_error_incompatible_type"
+    ))
   })
 
   expect_identical(
-    vec_cast(df1, df2),
-    foobar(data.frame(x = 1, y = na_dbl))
-  )
-  expect_error(
-    vec_cast(df2, df1),
-    class = "vctrs_error_cast_lossy"
-  )
-
-  expect_identical(
     vec_rbind(df1, df2),
-    foobar(data.frame(x = c(1, 1), y = c(NA, 2)))
+    data.frame(x = c(1, 1), y = c(NA, 2))
   )
 
   # Attributes are not restored
@@ -644,80 +609,14 @@ test_that("data frame fallback handles column types (#999)", {
     },
     vec_rbind(df1_attrib, df2_attrib)
   )
-
-  expect_identical(out, foobar(exp, dispatched = TRUE))
+  expect_identical(out, exp)
 })
 
 test_that("falls back to tibble for tibble subclasses (#1025)", {
   foo <- foobar(tibble::as_tibble(mtcars))
-  expect_s3_class(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars)), "tbl_df")
-  expect_s3_class(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, mtcars)), "tbl_df")
-  expect_s3_class(expect_df_fallback_warning_maybe(vec_rbind(foo, mtcars, foobar(mtcars))), "tbl_df")
-
-  with_fallback_warning(expect_df_fallback_warning(
-    vec_rbind(
-      foobar(tibble::as_tibble(mtcars)),
-      mtcars,
-      foobaz(mtcars)
-    )
-  ))
-  with_fallback_warning(expect_df_fallback_warning(
-    vec_rbind(
-      tibble::as_tibble(mtcars),
-      foobar(tibble::as_tibble(mtcars))
-    )
-  ))
-  with_fallback_warning(expect_df_fallback_warning(
-    vec_rbind(
-      foobar(tibble::as_tibble(mtcars)),
-      mtcars,
-      foobar(tibble::as_tibble(mtcars))
-    )
-  ))
-
-  expect_snapshot({
-    with_fallback_warning(
-      invisible(vec_rbind(
-        foobar(tibble::as_tibble(mtcars)),
-        mtcars,
-        foobaz(mtcars)
-      ))
-    )
-    with_fallback_warning(
-      invisible(vec_rbind(
-        tibble::as_tibble(mtcars),
-        foobar(tibble::as_tibble(mtcars))
-      ))
-    )
-    with_fallback_warning(
-      invisible(vec_rbind(
-        foobar(tibble::as_tibble(mtcars)),
-        mtcars,
-        foobar(tibble::as_tibble(mtcars))
-      ))
-    )
-
-    with_fallback_quiet(
-      invisible(vec_rbind(
-        foobar(tibble::as_tibble(mtcars)),
-        mtcars,
-        foobaz(mtcars)
-      ))
-    )
-    with_fallback_quiet(
-      invisible(vec_rbind(
-        tibble::as_tibble(mtcars),
-        foobar(tibble::as_tibble(mtcars))
-      ))
-    )
-    with_fallback_quiet(
-      invisible(vec_rbind(
-        foobar(tibble::as_tibble(mtcars)),
-        mtcars,
-        foobar(tibble::as_tibble(mtcars))
-      ))
-    )
-  })
+  expect_s3_class(vec_rbind(foo, mtcars), "tbl_df")
+  expect_s3_class(vec_rbind(foo, mtcars, mtcars), "tbl_df")
+  expect_s3_class(vec_rbind(foo, mtcars, foobar(mtcars)), "tbl_df")
 })
 
 test_that("fallback is recursive", {

@@ -73,14 +73,16 @@ test_that("data.table and tibble do not have a common type", {
     tibble(y = dbl(), x = lgl())
   )
 
-  expect_equal(
-    vec_cast(tibble(y = 2), data.table(x = TRUE, y = 1L)),
-    data.frame(x = NA, y = 2L)
-  )
-  expect_equal(
+  # Works because tibble is a bare df type
+  expect_identical(
     vec_cast(data.table(y = 2), tibble(x = TRUE, y = 1L)),
-    tibble(x = NA, y = 2L)
+    tibble(x = lgl(NA), y = 2L)
   )
+
+  # Fails because dt isn't
+  expect_snapshot({
+    (expect_error(vec_cast(tibble(y = 2), data.table(x = TRUE, y = 1L))))
+  })
 })
 
 test_that("data table has formatting methods", {

@@ -277,6 +277,8 @@ test_that("c() fallback is consistent", {
   c_method <- function(...) dispatched(NextMethod())
 
   out <- with_methods(
+    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+    vec_cast.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_cast(...)),
     c.vctrs_foobar = c_method,
     list(
       direct = vec_c(foobar(1L), foobar(2L)),

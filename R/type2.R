@@ -132,10 +132,6 @@ vec_default_ptype2 <- function(x,
     }
   }
 
-  if (is_same_type(x, y)) {
-    return(vec_ptype(x, x_arg = x_arg))
-  }
-
   if (is.data.frame(x) && is.data.frame(y)) {
     return(vec_ptype2_df_fallback(
       x,
@@ -145,6 +141,10 @@ vec_default_ptype2 <- function(x,
       y_arg = y_arg,
       call = call
     ))
+  }
+
+  if (is_same_type(x, y)) {
+    return(vec_ptype(x, x_arg = x_arg))
   }
 
   # The from-dispatch parameter is set only when called from our S3

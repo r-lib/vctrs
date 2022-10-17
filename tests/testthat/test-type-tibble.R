@@ -76,7 +76,7 @@ test_that("vec_ptype_finalise() can handle tibble df columns", {
 test_that("can use ptype2 and cast with tibble that has incorrect class vector", {
   tib1 <- structure(data.frame(x = 1), class = c("tbl_df", "data.frame"))
   tib2 <- structure(data.frame(y = 2), class = c("tbl_df", "data.frame"))
-  exp <- structure(data.frame(x = dbl(), y = dbl()), class = c("tbl_df", "data.frame"))
+  exp <- structure(data.frame(x = dbl(), y = dbl()), class = c("tbl_df", "tbl", "data.frame"))
 
   requireNamespace("tibble")
 
@@ -93,24 +93,23 @@ test_that("can use ptype2 and cast with tibble that has incorrect class vector",
     tibble::new_tibble(exp, nrow = nrow(exp))
   )
 
-  expect_identical(
-    vec_cast(tib1, tib1),
-    tib1
-  )
-
   expect_snapshot({
     local_error_call(call("my_function"))
     (expect_error(
+      vec_cast(tib1, tib1),
+      class = "vctrs_error_cast"
+    ))
+    (expect_error(
       vec_cast(tib1, tib2),
-      class = "vctrs_error_cast_lossy_dropped"
+      class = "vctrs_error_cast"
     ))
     (expect_error(
       vec_cast(tib1, data.frame(y = 2)),
-      class = "vctrs_error_cast_lossy_dropped"
+      class = "vctrs_error_cast"
     ))
     (expect_error(
       vec_cast(data.frame(x = 1), tib2),
-      class = "vctrs_error_cast_lossy_dropped"
+      class = "vctrs_error_cast"
     ))
   })
 })

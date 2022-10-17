@@ -72,9 +72,6 @@
       <error/vctrs_error_cast>
       Error:
       ! Can't convert `foobar(1, bar = TRUE)` <vctrs_foobar> to <vctrs_foobar>.
-      x Some attributes are incompatible.
-      i The author of the class should implement vctrs methods.
-      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
     Code
       (expect_error(vec_ptype2(foobar(1, bar = TRUE), foobar(2, baz = TRUE)), class = "vctrs_error_incompatible_type")
       )

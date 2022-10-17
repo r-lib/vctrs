@@ -187,10 +187,6 @@ vec_default_cast <- function(x,
     return(x)
   }
 
-  if (is_same_type(x, to)) {
-    return(x)
-  }
-
   # If both data frames, fall back to base data frame
   if (is.data.frame(x) && is_bare_df(to)) {
     out <- df_cast_opts(
@@ -208,6 +204,12 @@ vec_default_cast <- function(x,
     }
 
     return(out)
+  }
+
+  # Data frames no longer have an is-same-type fallback because their
+  # common types now fall back to bare data frames
+  if (!is.data.frame(x) && is_same_type(x, to)) {
+    return(x)
   }
 
   withRestarts(
