@@ -2,29 +2,59 @@
 
 We checked 3546 reverse dependencies (3534 from CRAN + 12 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
 
- * We saw 2 new problems
- * We failed to check 9 packages
+ * We saw 13 new problems
+ * We failed to check 0 packages
 
 Issues with CRAN packages are summarised below.
 
 ### New problems
 (This reports the first line of each new failure)
 
-* brokenstick
+* codebook
   checking re-building of vignette outputs ... WARNING
 
-* psfmi
+* cubble
+  checking tests ... ERROR
+
+* cutpointr
   checking examples ... ERROR
+  checking tests ... ERROR
   checking re-building of vignette outputs ... WARNING
 
-### Failed to check
+* dm
+  checking tests ... ERROR
 
-* elbird        (NA)
-* ggPMX         (NA)
-* loon.ggplot   (NA)
-* loon.shiny    (NA)
-* nlmixr2plot   (NA)
-* Platypus      (NA)
-* tidySEM       (NA)
-* vivid         (NA)
-* xpose.nlmixr2 (NA)
+* dplyr
+  checking tests ... ERROR
+
+* gratia
+  checking examples ... ERROR
+  checking tests ... ERROR
+
+* groupr
+  checking tests ... ERROR
+  checking re-building of vignette outputs ... WARNING
+
+* multidplyr
+  checking re-building of vignette outputs ... WARNING
+
+* ricu
+  checking tests ... ERROR
+
+* srvyr
+  checking examples ... ERROR
+  checking tests ... ERROR
+  checking re-building of vignette outputs ... WARNING
+
+* tibbletime
+  checking examples ... ERROR
+  checking tests ... ERROR
+
+* tidyjson
+  checking examples ... ERROR
+  checking tests ... ERROR
+  checking re-building of vignette outputs ... WARNING
+
+* yamlet
+  checking tests ... ERROR
+
