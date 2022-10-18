@@ -212,7 +212,7 @@ vec_default_cast <- function(x,
     # eschews any constraints on rows and cols that `[` and `[<-`
     # methods might have. If that is a problem, the class needs to
     # implement vctrs methods.
-    if (is_same_type(x[0, 0], to[0, 0])) {
+    if (identical(non_df_attrib(x), non_df_attrib(to))) {
       attributes(out) <- c(df_attrib(out), non_df_attrib(to))
       return(out)
     }

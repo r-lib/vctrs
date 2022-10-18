@@ -362,3 +362,11 @@ test_that("can restart ptype2 errors", {
     data_frame(x = exp)
   )
 })
+
+test_that("subclasses of tibble are compatible", {
+  tib <- foobar(tibble(x = 1))
+  ptype <- foobar(tibble(x = dbl()))
+
+  expect_equal(vec_ptype_common(tib), ptype)
+  expect_equal(vec_ptype_common(tib, tib), ptype)
+})

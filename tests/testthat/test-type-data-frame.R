@@ -53,7 +53,7 @@ test_that("combining data frames with foreign classes uses fallback", {
   foo <- foobar(data.frame())
   df <- data.frame()
 
-  expect_identical(vec_ptype_common(foo, foo, foo), df)
+  expect_identical(vec_ptype_common(foo, foo, foo), foo)
   expect_identical(vec_ptype_common(foo, foo, df, foo), df)
 
   expect_identical(vec_ptype2(foo, df), data.frame())
@@ -561,7 +561,7 @@ test_that("data frame fallback handles column types (#999)", {
   df2 <- foobar(data.frame(x = 1, y = 2))
   df3 <- foobar(data.frame(x = "", y = 2))
 
-  common <- data.frame(x = dbl(), y = dbl())
+  common <- foobar(data.frame(x = dbl(), y = dbl()))
   expect_identical(vec_ptype2(df1, df2), common)
   expect_identical(vec_ptype2(df2, df1), common)
 
@@ -587,7 +587,7 @@ test_that("data frame fallback handles column types (#999)", {
 
   expect_identical(
     vec_rbind(df1, df2),
-    data.frame(x = c(1, 1), y = c(NA, 2))
+    foobar(data.frame(x = c(1, 1), y = c(NA, 2)))
   )
 
   # Attributes are not restored

@@ -76,7 +76,7 @@ test_that("vec_ptype_finalise() can handle tibble df columns", {
 test_that("can use ptype2 and cast with tibble that has incorrect class vector", {
   tib1 <- structure(data.frame(x = 1), class = c("tbl_df", "data.frame"))
   tib2 <- structure(data.frame(y = 2), class = c("tbl_df", "data.frame"))
-  exp <- structure(data.frame(x = dbl(), y = dbl()), class = c("tbl_df", "tbl", "data.frame"))
+  exp <- structure(data.frame(x = dbl(), y = dbl()), class = c("tbl_df", "data.frame"))
 
   requireNamespace("tibble")
 

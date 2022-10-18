@@ -133,14 +133,20 @@ vec_default_ptype2 <- function(x,
   }
 
   if (is.data.frame(x) && is.data.frame(y)) {
-    return(vec_ptype2_df_fallback(
+    out <- vec_ptype2_df_fallback(
       x,
       y,
       opts,
       x_arg = x_arg,
       y_arg = y_arg,
       call = call
-    ))
+    )
+
+    if (identical(non_df_attrib(x), non_df_attrib(y))) {
+      attributes(out) <- c(df_attrib(out), non_df_attrib(x))
+    }
+
+    return(out)
   }
 
   if (is_same_type(x, y)) {
