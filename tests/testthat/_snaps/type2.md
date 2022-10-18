@@ -110,15 +110,3 @@
       Error:
       ! Can't combine `foobar(1, bar = TRUE)` <vctrs_foobar> and `foobar(2, baz = TRUE)` <vctrs_foobar>.
 
-# common type errors don't mention columns if they are compatible
-
-    Code
-      df <- data.frame(x = 1, y = "")
-      foo <- structure(df, class = c("vctrs_foo", "data.frame"))
-      bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-      (expect_error(vec_cast(foo, bar), class = "vctrs_error_incompatible_type"))
-    Output
-      <error/vctrs_error_cast>
-      Error:
-      ! Can't convert `foo` <vctrs_foo> to <vctrs_bar>.
-

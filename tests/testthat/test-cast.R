@@ -92,12 +92,9 @@ test_that("unspecified can be cast to shaped vectors", {
   expect_identical(out, exp)
 })
 
-test_that("vec_cast() only falls back when casting to base type", {
+test_that("vec_cast() falls back to base class even when casting to non-base type", {
   expect_equal(vec_cast(foobar(mtcars), mtcars), mtcars)
-  expect_error(
-    vec_cast(mtcars, foobar(mtcars)),
-    class = "vctrs_error_incompatible_type"
-  )
+  expect_equal(vec_cast(mtcars, foobar(mtcars)), mtcars)
 })
 
 test_that("vec_cast() only attempts to fall back if `to` is a data frame (#1568)", {

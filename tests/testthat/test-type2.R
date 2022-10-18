@@ -254,20 +254,6 @@ test_that("Incompatible attributes bullets are not show when methods are impleme
   })
 })
 
-test_that("common type errors don't mention columns if they are compatible", {
-  expect_snapshot({
-    df <- data.frame(x = 1, y = "")
-
-    foo <- structure(df, class = c("vctrs_foo", "data.frame"))
-    bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-
-    (expect_error(
-      vec_cast(foo, bar),
-      class = "vctrs_error_incompatible_type"
-    ))
-  })
-})
-
 test_that("attributes no longer play a role in bare data frame fallback", {
   foobar_bud <- foobar(mtcars, bud = TRUE)
   foobar_boo <- foobar(mtcars, boo = TRUE)

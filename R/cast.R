@@ -199,14 +199,6 @@ vec_default_cast <- function(x,
       call = call
     )
 
-    # Bare-class fallback for data frames
-    if (is_bare_df(to)) {
-      if (inherits(to, "tbl_df")) {
-        out <- df_as_tibble(out)
-      }
-      return(out)
-    }
-
     # Same-type fallback for data frames. If attributes of the empty
     # data frames are congruent, just reproduce these attributes. This
     # eschews any constraints on rows and cols that `[` and `[<-`
@@ -217,7 +209,11 @@ vec_default_cast <- function(x,
       return(out)
     }
 
-    # else fallthrough
+    # Bare-class fallback for data frames
+    if (inherits(to, "tbl_df")) {
+      out <- df_as_tibble(out)
+    }
+    return(out)
   }
 
   if (is_same_type(x, to)) {
