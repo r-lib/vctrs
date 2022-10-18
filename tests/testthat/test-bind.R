@@ -883,13 +883,12 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
     with_methods(expr, !!!compact(methods))
   }
 
-  # FIXME!: test without cast method: should not montion common type
-  # fallback in error message
-  expect_snapshot(error = TRUE,
+  expect_equal(
     with_hybrid_methods(
       cast = FALSE,
       vec_rbind(foo_df, bar_df)
-    )
+    ),
+    foobaz(data_frame(x = quux(c(1, 2))))
   )
 
   # Falls back to data frame because there is no ptype2/cast methods

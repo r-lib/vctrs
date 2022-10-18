@@ -187,8 +187,8 @@ vec_default_cast <- function(x,
     return(x)
   }
 
-  # If both data frames, fall back to base data frame
-  if (is.data.frame(x) && is_bare_df(to)) {
+  # Data frames have special bare class and same type fallbacks
+  if (is.data.frame(x) && is.data.frame(to)) {
     out <- df_cast_opts(
       x,
       to,
@@ -199,16 +199,28 @@ vec_default_cast <- function(x,
       call = call
     )
 
-    if (inherits(to, "tbl_df")) {
-      out <- df_as_tibble(out)
+    # Bare-class fallback for data frames
+    if (is_bare_df(to)) {
+      if (inherits(to, "tbl_df")) {
+        out <- df_as_tibble(out)
+      }
+      return(out)
     }
 
-    return(out)
+    # Same-type fallback for data frames. If attributes of the empty
+    # data frames are congruent, just reproduce these attributes. This
+    # eschews any constraints on rows and cols that `[` and `[<-`
+    # methods might have. If that is a problem, the class needs to
+    # implement vctrs methods.
+    if (is_same_type(x[0, 0], to[0, 0])) {
+      attributes(out) <- c(df_attrib(out), non_df_attrib(to))
+      return(out)
+    }
+
+    # else fallthrough
   }
 
-  # Data frames no longer have an is-same-type fallback because their
-  # common types now fall back to bare data frames
-  if (!is.data.frame(x) && is_same_type(x, to)) {
+  if (is_same_type(x, to)) {
     return(x)
   }
 

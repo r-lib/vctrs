@@ -385,3 +385,11 @@ df_lossy_cast <- function(out,
 is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
 }
+
+df_attrib <- function(x) {
+  attributes(x)[c("row.names", "names")]
+}
+non_df_attrib <- function(x) {
+  attrib <- attributes(x)
+  attrib[!names(attrib) %in% c("row.names", "names")]
+}

@@ -402,14 +402,6 @@
       Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 
-# vec_rbind() falls back to c() if S3 method is available
-
-    Code
-      with_hybrid_methods(cast = FALSE, vec_rbind(foo_df, bar_df))
-    Condition
-      Error in `vec_rbind()`:
-      ! Can't convert `..1` <vctrs_foobaz<x:vctrs_foobar>> to <vctrs_foobaz<x:vctrs:::common_class_fallback>>.
-
 # can't zap names when `.names_to` is supplied
 
     Code

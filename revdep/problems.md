@@ -1,63 +1,3 @@
-# codebook
-
-<details>
-
-* Version: 0.9.2
-* GitHub: https://github.com/rubenarslan/codebook
-* Source code: https://github.com/cran/codebook
-* Date/Publication: 2020-06-06 23:40:03 UTC
-* Number of recursive dependencies: 154
-
-Run `cloud_details(, "codebook")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘codebook.Rmd’ using rmarkdown
-    
-    Attaching package: 'dplyr'
-    
-    The following objects are masked from 'package:stats':
-    
-        filter, lag
-    
-    The following objects are masked from 'package:base':
-    ...
-    ! Can't convert `haven_labelled` <one_skim_df> to <one_skim_df>.
-    
-    --- failed re-building ‘codebook_tutorial.Rmd’
-    
-    SUMMARY: processing the following files failed:
-      ‘codebook.Rmd’ ‘codebook_qualtrics.Rmd’ ‘codebook_sav.Rmd’
-      ‘codebook_tutorial.Rmd’
-    
-    Error: Vignette re-building failed.
-    Execution halted
-    ```
-
-## In both
-
-*   checking package dependencies ... NOTE
-    ```
-    Package suggested but not available for checking: ‘userfriendlyscience’
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespaces in Imports field not imported from:
-      ‘graphics’ ‘jsonlite’ ‘rlang’ ‘tidyselect’ ‘vctrs’
-      All declared Imports should be used.
-    ```
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 65 marked UTF-8 strings
-    ```
-
 # cubble
 
 <details>
@@ -118,94 +58,6 @@ Run `cloud_details(, "cubble")` for more info
     
     SUMMARY: processing the following files failed:
       ‘aggregation.Rmd’ ‘matching.Rmd’
-    
-    Error: Vignette re-building failed.
-    Execution halted
-    ```
-
-# cutpointr
-
-<details>
-
-* Version: 1.1.2
-* GitHub: https://github.com/thie1e/cutpointr
-* Source code: https://github.com/cran/cutpointr
-* Date/Publication: 2022-04-13 18:12:29 UTC
-* Number of recursive dependencies: 83
-
-Run `cloud_details(, "cutpointr")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘cutpointr-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: cutpointr
-    > ### Title: Determine and evaluate optimal cutpoints
-    > ### Aliases: cutpointr cutpointr.default cutpointr.numeric
-    > 
-    > ### ** Examples
-    > 
-    > library(cutpointr)
-    ...
-     13.   └─vctrs::vec_default_cast(...)
-     14.     ├─base::withRestarts(...)
-     15.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
-     16.     │   └─base (local) doWithOneRestart(return(expr), restart)
-     17.     └─vctrs::stop_incompatible_cast(...)
-     18.       └─vctrs::stop_incompatible_type(...)
-     19.         └─vctrs:::stop_incompatible(...)
-     20.           └─vctrs:::stop_vctrs(...)
-     21.             └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       12. │       └─vctrs::list_unchop(...)
-       13. └─vctrs (local) `<fn>`()
-       14.   └─vctrs::vec_default_cast(...)
-       15.     ├─base::withRestarts(...)
-       16.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
-       17.     │   └─base (local) doWithOneRestart(return(expr), restart)
-       18.     └─vctrs::stop_incompatible_cast(...)
-       19.       └─vctrs::stop_incompatible_type(...)
-       20.         └─vctrs:::stop_incompatible(...)
-       21.           └─vctrs:::stop_vctrs(...)
-       22.             └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
-      
-      [ FAIL 10 | WARN 8 | SKIP 0 | PASS 273 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘cutpointr.Rmd’ using rmarkdown
-    Quitting from lines 51-52 (cutpointr.Rmd) 
-    Error: processing vignette 'cutpointr.Rmd' failed with diagnostics:
-    Can't convert `x[[1]]` <roc_cutpointr> to <roc_cutpointr>.
-    --- failed re-building ‘cutpointr.Rmd’
-    
-    --- re-building ‘cutpointr_benchmarks.Rmd’ using rmarkdown
-    --- finished re-building ‘cutpointr_benchmarks.Rmd’
-    
-    ...
-    
-    --- re-building ‘cutpointr_user_functions.Rmd’ using rmarkdown
-    --- finished re-building ‘cutpointr_user_functions.Rmd’
-    
-    SUMMARY: processing the following files failed:
-      ‘cutpointr.Rmd’ ‘cutpointr_bootstrapping.Rmd’
-      ‘cutpointr_estimation.Rmd’
     
     Error: Vignette re-building failed.
     Execution halted
@@ -294,69 +146,6 @@ Run `cloud_details(, "dplyr")` for more info
       Note: found 4 marked UTF-8 strings
     ```
 
-# gratia
-
-<details>
-
-* Version: 0.7.3
-* GitHub: https://github.com/gavinsimpson/gratia
-* Source code: https://github.com/cran/gratia
-* Date/Publication: 2022-05-09 11:20:03 UTC
-* Number of recursive dependencies: 83
-
-Run `cloud_details(, "gratia")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘gratia-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: basis
-    > ### Title: Basis expansions for smooths
-    > ### Aliases: basis
-    > 
-    > ### ** Examples
-    > 
-    > load_mgcv()
-    ...
-      7.   \-vctrs::vec_default_cast(...)
-      8.     +-base::withRestarts(...)
-      9.     | \-base (local) withOneRestart(expr, restarts[[1L]])
-     10.     |   \-base (local) doWithOneRestart(return(expr), restart)
-     11.     \-vctrs::stop_incompatible_cast(...)
-     12.       \-vctrs::stop_incompatible_type(...)
-     13.         \-vctrs:::stop_incompatible(...)
-     14.           \-vctrs:::stop_vctrs(...)
-     15.             \-rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘test-all.R’
-    Running the tests in ‘tests/test-all.R’ failed.
-    Last 13 lines of output:
-      • hgam-paper/hgam-paper-bird-move-model-1.svg
-      • hgam-paper/hgam-paper-bird-move-model-2.svg
-      • hgam-paper/hgam-paper-bird-move-model-3.svg
-      • hgam-paper/hgam-paper-bird-move-model-5.svg
-      • hgam-paper/hgam-paper-co2-model-1.svg
-      • hgam-paper/hgam-paper-co2-model-2.svg
-      • hgam-paper/hgam-paper-co2-model-3.svg
-      • hgam-paper/hgam-paper-co2-model-4.svg
-      • hgam-paper/hgam-paper-co2-model-5.svg
-      • hgam-paper/hgam-paper-zoop-model-4.svg
-      • hgam-paper/hgam-paper-zoop-model-5.svg
-      • rootograms/draw-gaussian-rootogram.svg
-      • rootograms/draw-neg-bin-rootogram.svg
-      Error: Test failures
-      Execution halted
-    ```
-
 # groupr
 
 <details>
@@ -422,39 +211,6 @@ Run `cloud_details(, "groupr")` for more info
       'LazyData' is specified without a 'data' directory
     ```
 
-# multidplyr
-
-<details>
-
-* Version: 0.1.2
-* GitHub: https://github.com/tidyverse/multidplyr
-* Source code: https://github.com/cran/multidplyr
-* Date/Publication: 2022-09-26 19:40:02 UTC
-* Number of recursive dependencies: 79
-
-Run `cloud_details(, "multidplyr")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-      ...
-    --- re-building ‘multidplyr.Rmd’ using rmarkdown
-    Quitting from lines 81-85 (multidplyr.Rmd) 
-    Error: processing vignette 'multidplyr.Rmd' failed with diagnostics:
-    Can't convert `..1` <spec_tbl_df> to <spec_tbl_df>.
-    --- failed re-building ‘multidplyr.Rmd’
-    
-    SUMMARY: processing the following file failed:
-      ‘multidplyr.Rmd’
-    
-    Error: Vignette re-building failed.
-    Execution halted
-    ```
-
 # ricu
 
 <details>
@@ -514,23 +270,23 @@ Run `cloud_details(, "srvyr")` for more info
     Running examples in ‘srvyr-Ex.R’ failed
     The error most likely occurred in:
     
-    > ### Name: as_survey_twophase
-    > ### Title: Create a tbl_svy survey object using two phase design
-    > ### Aliases: as_survey_twophase as_survey_twophase.data.frame
-    > ###   as_survey_twophase.twophase2
+    > ### Name: cascade
+    > ### Title: Summarise multiple values into cascading groups
+    > ### Aliases: cascade
     > 
     > ### ** Examples
     > 
+    > library(survey)
     ...
-     13.   └─vctrs::vec_default_cast(...)
-     14.     ├─base::withRestarts(...)
-     15.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
-     16.     │   └─base (local) doWithOneRestart(return(expr), restart)
-     17.     └─vctrs::stop_incompatible_cast(...)
-     18.       └─vctrs::stop_incompatible_type(...)
-     19.         └─vctrs:::stop_incompatible(...)
-     20.           └─vctrs:::stop_vctrs(...)
-     21.             └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
+      8. └─vctrs (local) `<fn>`()
+      9.   └─vctrs::vec_default_ptype2(...)
+     10.     ├─base::withRestarts(...)
+     11.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
+     12.     │   └─base (local) doWithOneRestart(return(expr), restart)
+     13.     └─vctrs::stop_incompatible_type(...)
+     14.       └─vctrs:::stop_incompatible(...)
+     15.         └─vctrs:::stop_vctrs(...)
+     16.           └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
     Execution halted
     ```
 
@@ -539,20 +295,20 @@ Run `cloud_details(, "srvyr")` for more info
       Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-      ! Can't convert `..1` <srvyr_result_df> to <srvyr_result_df>.
-      ── Error ('test_survey_statistics.r:17'): (code run outside of `test_that()`) ──
-      Error in `dplyr::summarise(.data$variables, ..., .groups = .groups)`: Problem while computing `api_ratio = survey_ratio(api00, api99)`.
-      Caused by error in `FUN()`:
-      ! Can't convert `..1` <srvyr_result_df> to <srvyr_result_df>.
-      ── Error ('test_survey_statistics_basic.r:17'): (code run outside of `test_that()`) ──
-      Error in `dplyr::summarise(.data$variables, ..., .groups = .groups)`: Problem while computing `survey_mean = survey_mean(api99)`.
-      Caused by error in `FUN()`:
-      ! Can't convert `..1` <srvyr_result_df> to <srvyr_result_df>.
+      ── Failure (???): deff and df work for grouped survey total ────────────────────
+      `x` not equivalent to `y`.
+      Length mismatch: comparison on first 2 components
+      Component "survey_total": Length mismatch: comparison on first 3 components
+      Component "survey_total": Component 1: Numeric: lengths (3, 1) differ
+      Component "survey_total": Component 2: Numeric: lengths (3, 1) differ
+      Component "survey_total": Component 3: Numeric: lengths (3, 1) differ
+      Backtrace:
+          ▆
+       1. └─global expect_df_equal(out_srvyr, select(out_survey, -survey_total_se))
+       2.   └─testthat::expect_equivalent(x, y)
       
-      [ FAIL 49 | WARN 6 | SKIP 0 | PASS 127 ]
+      [ FAIL 47 | WARN 12 | SKIP 0 | PASS 216 ]
       Error: Test failures
-      In addition: Warning message:
-      call dbDisconnect() when finished working with a connection 
       Execution halted
     ```
 
@@ -569,9 +325,9 @@ Run `cloud_details(, "srvyr")` for more info
     Loading required package: grid
     Loading required package: Matrix
     ...
-    "ci")`.
-    Caused by error in `FUN()`:
-    ! Can't convert `..1` <srvyr_result_df> to <srvyr_result_df>.
+    ! Problem while computing column `n`.
+    Caused by error in `initialize()`:
+    ! attempt to use zero-length variable name
     --- failed re-building ‘srvyr-vs-survey.Rmd’
     
     SUMMARY: processing the following file failed:
@@ -586,157 +342,6 @@ Run `cloud_details(, "srvyr")` for more info
 *   checking package dependencies ... NOTE
     ```
     Package suggested but not available for checking: ‘convey’
-    ```
-
-# tibbletime
-
-<details>
-
-* Version: 0.1.6
-* GitHub: https://github.com/business-science/tibbletime
-* Source code: https://github.com/cran/tibbletime
-* Date/Publication: 2020-07-21 13:50:02 UTC
-* Number of recursive dependencies: 86
-
-Run `cloud_details(, "tibbletime")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘tibbletime-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: collapse_index
-    > ### Title: Collapse an index vector so that all observations in an interval
-    > ###   share the same date
-    > ### Aliases: collapse_index
-    > 
-    > ### ** Examples
-    > 
-    ...
-     14.   └─vctrs::vec_default_cast(...)
-     15.     ├─base::withRestarts(...)
-     16.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
-     17.     │   └─base (local) doWithOneRestart(return(expr), restart)
-     18.     └─vctrs::stop_incompatible_cast(...)
-     19.       └─vctrs::stop_incompatible_type(...)
-     20.         └─vctrs:::stop_incompatible(...)
-     21.           └─vctrs:::stop_vctrs(...)
-     22.             └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      data[[1]])`.
-      Caused by error in `vctrs::as_list_of()`:
-      ! Can't convert `..1` <tbl_time> to <tbl_time>.
-      ── Error ('test_compat-tidyr.R:47'): unnest() with index goes back to tbl_time ──
-      <dplyr:::mutate_error/rlang_error/error/condition>
-      Error in `dplyr::mutate(.data_nested, `:=`(!!nested_column_sym, purrr::map(!!nested_column_sym, 
-          ~reconstruct(.x, ..original_data))), `:=`(!!nested_column_sym, 
-          vctrs::as_list_of(!!nested_column_sym, .ptype = (!!nested_column_sym)[[1]])))`: Problem while computing `data = vctrs::as_list_of(data, .ptype =
-      data[[1]])`.
-      Caused by error in `vctrs::as_list_of()`:
-      ! Can't convert `..1` <tbl_time> to <tbl_time>.
-      
-      [ FAIL 2 | WARN 2 | SKIP 0 | PASS 141 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-# tidyjson
-
-<details>
-
-* Version: 0.3.1
-* GitHub: https://github.com/colearendt/tidyjson
-* Source code: https://github.com/cran/tidyjson
-* Date/Publication: 2020-05-31 21:30:03 UTC
-* Number of recursive dependencies: 96
-
-Run `cloud_details(, "tidyjson")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking examples ... ERROR
-    ```
-    Running examples in ‘tidyjson-Ex.R’ failed
-    The error most likely occurred in:
-    
-    > ### Name: json_schema
-    > ### Title: Create a schema for a JSON document or collection
-    > ### Aliases: json_schema
-    > 
-    > ### ** Examples
-    > 
-    > 
-    ...
-     12.   └─vctrs::vec_default_cast(...)
-     13.     ├─base::withRestarts(...)
-     14.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
-     15.     │   └─base (local) doWithOneRestart(return(expr), restart)
-     16.     └─vctrs::stop_incompatible_cast(...)
-     17.       └─vctrs::stop_incompatible_type(...)
-     18.         └─vctrs:::stop_incompatible(...)
-     19.           └─vctrs:::stop_vctrs(...)
-     20.             └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
-    Execution halted
-    ```
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-       12. │ └─vctrs::vec_rbind(!!!dots, .names_to = .id)
-       13. └─vctrs (local) `<fn>`()
-       14.   └─vctrs::vec_default_cast(...)
-       15.     ├─base::withRestarts(...)
-       16.     │ └─base (local) withOneRestart(expr, restarts[[1L]])
-       17.     │   └─base (local) doWithOneRestart(return(expr), restart)
-       18.     └─vctrs::stop_incompatible_cast(...)
-       19.       └─vctrs::stop_incompatible_type(...)
-       20.         └─vctrs:::stop_incompatible(...)
-       21.           └─vctrs:::stop_vctrs(...)
-       22.             └─rlang::abort(message, class = c(class, "vctrs_error"), ..., call = vctrs_error_call(call))
-      
-      [ FAIL 8 | WARN 0 | SKIP 10 | PASS 347 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-*   checking re-building of vignette outputs ... WARNING
-    ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘introduction-to-tidyjson.Rmd’ using rmarkdown
-    
-    Attaching package: 'tidyjson'
-    
-    The following object is masked from 'package:stats':
-    
-        filter
-    
-    
-    ...
-    Quitting from lines 327-328 (visualizing-json.Rmd) 
-    Error: processing vignette 'visualizing-json.Rmd' failed with diagnostics:
-    Can't convert `..1` <tbl_json> to <tbl_json>.
-    --- failed re-building ‘visualizing-json.Rmd’
-    
-    SUMMARY: processing the following file failed:
-      ‘visualizing-json.Rmd’
-    
-    Error: Vignette re-building failed.
-    Execution halted
     ```
 
 # yamlet

@@ -565,6 +565,10 @@ test_that("data frame fallback handles column types (#999)", {
   expect_identical(vec_ptype2(df1, df2), common)
   expect_identical(vec_ptype2(df2, df1), common)
 
+  exp <- foobar(data_frame(x = 1, y = na_dbl))
+  expect_identical(vec_cast(df1, df2), exp)
+  expect_identical(vec_cast(set_tibble(df1), set_tibble(df2)), set_tibble(exp))
+
   expect_snapshot({
     local_error_call(call("my_function"))
     (expect_error(
@@ -573,10 +577,6 @@ test_that("data frame fallback handles column types (#999)", {
     ))
     (expect_error(
       vec_ptype2(df3, df1),
-      class = "vctrs_error_incompatible_type"
-    ))
-    (expect_error(
-      vec_cast(df1, df2),
       class = "vctrs_error_incompatible_type"
     ))
     (expect_error(

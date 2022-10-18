@@ -208,15 +208,12 @@
       Error in `my_function()`:
       ! Can't combine `df3$x` <character> and `df1$x` <double>.
     Code
-      (expect_error(vec_cast(df1, df2), class = "vctrs_error_incompatible_type"))
-    Output
-      <error/vctrs_error_cast>
-      Error in `my_function()`:
-      ! Can't convert `df1` <vctrs_foobar> to <vctrs_foobar>.
-    Code
       (expect_error(vec_cast(df2, df1), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_cast>
+      <error/vctrs_error_cast_lossy_dropped>
       Error in `my_function()`:
-      ! Can't convert `df2` <vctrs_foobar> to <vctrs_foobar>.
+      ! Can't convert from `df2` <vctrs_foobar<
+        x: double
+        y: double
+      >> to <vctrs_foobar<x:double>> due to loss of precision.
 
