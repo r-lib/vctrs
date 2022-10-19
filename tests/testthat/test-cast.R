@@ -263,3 +263,22 @@ test_that("can call `vec_cast()` from C (#1666)", {
 
   expect_equal(fn(x, y), vec_cast(x, y))
 })
+
+test_that("df-fallback for cast is not sensitive to attributes order", {
+  x <- structure(
+    list(col = ""),
+    class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame"),
+    row.names = c(NA, -1L),
+    foo = "foo",
+    bar = "bar"
+  )
+  ptype <- structure(
+    list(col = character(0)),
+    foo = "foo",
+    bar = "bar",
+    row.names = integer(0),
+    class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame")
+  )
+
+  expect_identical(vec_cast(x, ptype), x)
+})

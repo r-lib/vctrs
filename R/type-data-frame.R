@@ -391,5 +391,8 @@ df_attrib <- function(x) {
 }
 non_df_attrib <- function(x) {
   attrib <- attributes(x)
-  attrib[!names(attrib) %in% c("row.names", "names")]
+  attrib <- attrib[!names(attrib) %in% c("row.names", "names")]
+
+  # Sort to allow comparison
+  attrib[order(names(attrib))]
 }
