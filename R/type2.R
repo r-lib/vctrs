@@ -140,7 +140,7 @@ vec_default_ptype2 <- function(x,
     y <- out$y
   }
 
-  if (opts$s3_fallback && can_fall_back(x, y)) {
+  if (opts$s3_fallback && can_fall_back_2(x, y)) {
     common <- common_class_suffix(x, y)
     if (length(common)) {
       return(new_common_class_fallback(x, common))
@@ -214,32 +214,52 @@ vec_incompatible_ptype2 <- function(x,
 # We can't check for a proxy or ptype2 method to determine whether a
 # class is foreign, because we implement these generics for many base
 # classes and we still need to allow base fallbacks with subclasses.
-can_fall_back <- function(x, y) {
-  if (inherits(x, "vctrs_vctr") || inherits(y, "vctrs_vctr")) {
-    return(FALSE)
-  }
-
-  # Work around bug with hard-coded `tsp` attribute in Rf_setAttrib()
-  if (inherits(x, "ts") || inherits(y, "ts")) {
-    return(FALSE)
-  }
-
-  if (is.data.frame(x) || is.data.frame(y)) {
-    return(FALSE)
-  }
-
+can_fall_back_2 <- function(x, y) {
   if (!identical(typeof(x), typeof(y))) {
     return(FALSE)
   }
 
-  # Suboptimal: Prevent bad interaction with proxy-assign
-  has_no_proxy(x) && has_no_proxy(y)
-}
-has_no_proxy <- function(x) {
-  if (inherits(x, "vctrs:::common_class_fallback")) {
-    return(TRUE)
+  if (!can_fall_back(x) || !can_fall_back(y)) {
+    return(FALSE)
   }
 
+  TRUE
+}
+
+can_fall_back <- function(x) {
+  UseMethod("can_fall_back")
+}
+
+#' @export
+can_fall_back.vctrs_vctr <- function(x) {
+  # Work aronud bad interaction when `c()` method calls back into `vec_c()`
+  FALSE
+}
+#' @export
+can_fall_back.ts <- function(x) {
+  # Work around bug with hard-coded `tsp` attribute in Rf_setAttrib()
+  FALSE
+}
+#' @export
+can_fall_back.data.frame <- function(x) {
+  # The `c()` fallback is only for 1D vectors
+  FALSE
+}
+
+#' @export
+`can_fall_back.vctrs:::common_class_fallback` <- function(x) {
+  TRUE
+}
+
+#' @export
+can_fall_back.default <- function(x) {
+  # Don't all back for classes that directly implement a proxy.
+  #
+  # NOTE: That's suboptimal. For instance this forces us to override
+  # `can_fall_back()` for `vctrs_vctr` to avoid recursing into
+  # `vec_c()` through `c()`. Maybe we want to avoid falling back for
+  # any vector that inherits a `vec_proxy()` method implemented
+  # _outside_ of vctrs, i.e. not for a base class?
   is_null(s3_get_method(class(x)[[1]], "vec_proxy", ns = "vctrs"))
 }
 
