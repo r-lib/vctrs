@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_ptype2()` now consistently falls back to bare data frame in
+  case of incompatible data frame subclasses. This is part of a
+  general move towards relaxed coercion rules.
+
 * Common type and cast errors now inherit from `"vctrs_error_ptype2"`
   and `"vctrs_error_cast"` respectively. They are still both
   subclasses from `"vctrs_error_incompatible_type"` (which used to be
