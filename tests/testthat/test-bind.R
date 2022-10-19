@@ -843,8 +843,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- data_frame(x = quux(c(1, 2)))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_c_method(vec_c(x_df, y_df)), exp)
+  expect_identical(with_c_method(vec_c(x_df, y_df)), exp)
   expect_identical(
     with_c_method(list_unchop(list(x_df, y_df), indices = list(1, 2))),
     exp
@@ -859,8 +858,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- foobaz(data_frame(x = quux(c(1, 2))))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)
+  expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)
   expect_identical(
     with_c_method(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
     exp
@@ -878,8 +876,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- foobaz(data_frame(x = quux(c(1, 2))))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
+  expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
   expect_identical(
     with_hybrid_methods(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
     exp
@@ -892,8 +889,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- data_frame(x = data_frame(x = quux(c(1, 2))))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
+  expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
   expect_identical(
     with_c_method(list_unchop(list(wrapper_x_df, wrapper_y_df), indices = list(1, 2))),
     exp

@@ -1,21 +1,35 @@
 # Revdeps
 
-## Failed to check (5)
+## Failed to check (21)
 
-|package |version |error |warning |note |
-|:-------|:-------|:-----|:-------|:----|
-|NA      |?       |      |        |     |
-|NA      |?       |      |        |     |
-|NA      |?       |      |        |     |
-|NA      |?       |      |        |     |
-|NA      |?       |      |        |     |
+|package       |version |error |warning |note |
+|:-------------|:-------|:-----|:-------|:----|
+|NA            |?       |      |        |     |
+|elbird        |0.2.5   |1     |        |     |
+|ggPMX         |?       |      |        |     |
+|NA            |?       |      |        |     |
+|loon.ggplot   |?       |      |        |     |
+|loon.shiny    |?       |      |        |     |
+|NA            |?       |      |        |     |
+|NA            |?       |      |        |     |
+|NA            |?       |      |        |     |
+|nlmixr2plot   |?       |      |        |     |
+|NA            |?       |      |        |     |
+|NA            |?       |      |        |     |
+|Platypus      |?       |      |        |     |
+|NA            |?       |      |        |     |
+|NA            |?       |      |        |     |
+|NA            |?       |      |        |     |
+|NA            |?       |      |        |     |
+|tidySEM       |?       |      |        |     |
+|NA            |?       |      |        |     |
+|vivid         |?       |      |        |     |
+|xpose.nlmixr2 |?       |      |        |     |
 
-## New problems (4)
+## New problems (2)
 
-|package |version |error  |warning |note |
-|:-------|:-------|:------|:-------|:----|
-|[errors](problems.md#errors)|0.3.6   |__+1__ |        |     |
-|[groupr](problems.md#groupr)|0.1.0   |__+1__ |__+1__  |1    |
-|[ricu](problems.md#ricu)|0.5.3   |__+2__ |__+1__  |     |
-|[RSDA](problems.md#rsda)|3.0.13  |__+1__ |__+1__  |     |
+|package     |version |error  |warning |note |
+|:-----------|:-------|:------|:-------|:----|
+|[brokenstick](problems.md#brokenstick)|2.3.0   |       |__+1__  |     |
+|[psfmi](problems.md#psfmi)|1.0.0   |__+1__ |__+1__  |1    |
 
