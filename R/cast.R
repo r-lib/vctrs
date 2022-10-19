@@ -209,11 +209,13 @@ vec_default_cast <- function(x,
       return(out)
     }
 
-    # Bare-class fallback for data frames
-    if (inherits(to, "tbl_df")) {
-      out <- df_as_tibble(out)
+    if (is_bare_df(to)) {
+      # Bare-class fallback for data frames
+      if (inherits(to, "tbl_df")) {
+        out <- df_as_tibble(out)
+      }
+      return(out)
     }
-    return(out)
   }
 
   if (is_same_type(x, to)) {
