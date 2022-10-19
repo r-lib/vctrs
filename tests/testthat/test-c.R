@@ -652,3 +652,28 @@ test_that("can combine records wrapped in data frames", {
     data_frame(x = foobar(1:4))
   )
 })
+
+test_that("fallback works with subclasses of `vctrs_vctr`", {
+  # Used to fail because of interaction between common class fallback
+  # for `base::c()` and the `c()` method for `vctrs_vctr` that called
+  # back into `vec_c()`.
+
+  # Reprex for failure in the ricu package
+  x <- new_rcrd(list(a = 1), class = "vctrs_foobar")
+  expect_equal(
+    vec_c(x, x, .name_spec = "{inner}"),
+    new_rcrd(list(a = c(1, 1)), class = "vctrs_foobar")
+  )
+
+  # Reprex for failure in the groupr package
+  x <- new_rcrd(list(a = 1), class = "vctrs_foobar")
+  df <- data_frame(x = x)
+  expect_equal(
+    vec_rbind(df, data.frame()),
+    df
+  )
+  expect_equal(
+    vec_cast_common(df, data.frame()),
+    list(df, data_frame(x = x[0]))
+  )
+})

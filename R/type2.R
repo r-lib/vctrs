@@ -215,6 +215,10 @@ vec_incompatible_ptype2 <- function(x,
 # class is foreign, because we implement these generics for many base
 # classes and we still need to allow base fallbacks with subclasses.
 can_fall_back <- function(x, y) {
+  if (inherits(x, "vctrs_vctr") || inherits(y, "vctrs_vctr")) {
+    return(FALSE)
+  }
+
   # Work around bug with hard-coded `tsp` attribute in Rf_setAttrib()
   if (inherits(x, "ts") || inherits(y, "ts")) {
     return(FALSE)
