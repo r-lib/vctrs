@@ -35,7 +35,6 @@ r_obj* list_unchop(r_obj* xs,
 
   ptype = KEEP(vec_ptype_common_params(xs,
                                        ptype,
-                                       DF_FALLBACK_DEFAULT,
                                        S3_FALLBACK_true,
                                        p_error_arg,
                                        error_call));

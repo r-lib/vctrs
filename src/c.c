@@ -8,7 +8,6 @@ r_obj* vec_c(r_obj* xs,
              struct vctrs_arg* p_error_arg,
              struct r_lazy error_call) {
   struct fallback_opts opts = {
-    .df = DF_FALLBACK_DEFAULT,
     .s3 = r_is_true(r_peek_option("vctrs:::base_c_in_progress")) ?
       S3_FALLBACK_false :
       S3_FALLBACK_true
@@ -284,7 +283,6 @@ r_obj* vec_c_fallback(r_obj* ptype,
       .p_arg = p_error_arg,
       .call = error_call,
       .fallback = {
-        .df = DF_FALLBACK_none,
         .s3 = S3_FALLBACK_false
       }
     };

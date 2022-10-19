@@ -1,42 +1,78 @@
-# brokenstick
+# globaltrends
 
 <details>
 
-* Version: 2.3.0
-* GitHub: https://github.com/growthcharts/brokenstick
-* Source code: https://github.com/cran/brokenstick
-* Date/Publication: 2022-09-07 22:23:04 UTC
-* Number of recursive dependencies: 92
+* Version: 0.0.12
+* GitHub: https://github.com/ha-pu/globaltrends
+* Source code: https://github.com/cran/globaltrends
+* Date/Publication: 2022-06-23 07:10:11 UTC
+* Number of recursive dependencies: 108
 
-Run `cloud_details(, "brokenstick")` for more info
+Run `cloud_details(, "globaltrends")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking re-building of vignette outputs ... WARNING
+*   checking tests ... ERROR
     ```
-    Error(s) in re-building vignettes:
-    --- re-building ‘brokenstick.Rmd’ using rmarkdown
-    --- finished re-building ‘brokenstick.Rmd’
-    
-    --- re-building ‘mainfunctions.Rmd’ using rmarkdown
-    Loading required package: brokenstick
-    Loading required package: dplyr
-    
-    Attaching package: 'dplyr'
-    
-    ...
-    --- failed re-building ‘oldfriends.Rmd’
-    
-    --- re-building ‘perfectmodel.Rmd’ using rmarkdown
-    --- finished re-building ‘perfectmodel.Rmd’
-    
-    SUMMARY: processing the following files failed:
-      ‘mainfunctions.Rmd’ ‘oldfriends.Rmd’
-    
-    Error: Vignette re-building failed.
-    Execution halted
+      Running ‘test_functions.r’
+      Running ‘testthat.r’
+    Running the tests in ‘tests/testthat.r’ failed.
+    Last 13 lines of output:
+      Error in `initialize_db()`: Error: File 'db/globaltrends_db.sqlite' already exists.
+      Backtrace:
+          ▆
+       1. └─globaltrends::initialize_db() at test-plot_voi_doi.R:8:0
+      ── Error ('test-synonyms.R:8'): (code run outside of `test_that()`) ────────────
+      Error in `initialize_db()`: Error: File 'db/globaltrends_db.sqlite' already exists.
+      Backtrace:
+          ▆
+       1. └─globaltrends::initialize_db() at test-synonyms.R:8:0
+      
+      [ FAIL 15 | WARN 22 | SKIP 0 | PASS 33 ]
+      Error: Test failures
+      In addition: Warning message:
+      call dbDisconnect() when finished working with a connection 
+      Execution halted
+    ```
+
+# goldilocks
+
+<details>
+
+* Version: 0.3.0
+* GitHub: NA
+* Source code: https://github.com/cran/goldilocks
+* Date/Publication: 2021-05-10 08:20:11 UTC
+* Number of recursive dependencies: 68
+
+Run `cloud_details(, "goldilocks")` for more info
+
+</details>
+
+## Newly broken
+
+*   checking tests ... ERROR
+    ```
+      Running ‘testthat.R’
+    Running the tests in ‘tests/testthat.R’ failed.
+    Last 13 lines of output:
+      ══ Skipped tests ═══════════════════════════════════════════════════════════════
+      • On CRAN (1)
+      
+      ══ Failed tests ════════════════════════════════════════════════════════════════
+      ── Error ('test-survival_adapt.R:54'): survival_adapt-cox ──────────────────────
+      Error in `if (success > prob_ha) {
+          expected_success_test <- expected_success_test + 1
+      }`: missing value where TRUE/FALSE needed
+      Backtrace:
+          ▆
+       1. └─goldilocks::survival_adapt(...) at test-survival_adapt.R:54:2
+      
+      [ FAIL 1 | WARN 2 | SKIP 1 | PASS 17 ]
+      Error: Test failures
+      Execution halted
     ```
 
 # psfmi

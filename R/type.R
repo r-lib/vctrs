@@ -122,11 +122,9 @@ vec_ptype_common_opts <- function(...,
 }
 vec_ptype_common_params <- function(...,
                                     .ptype = NULL,
-                                    .df_fallback = NULL,
                                     .s3_fallback = NULL,
                                     .call = caller_env()) {
   opts <- fallback_opts(
-    df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
   vec_ptype_common_opts(

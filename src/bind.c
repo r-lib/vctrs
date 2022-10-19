@@ -67,7 +67,6 @@ r_obj* vec_rbind(r_obj* xs,
   // before assignment.
   ptype = vec_ptype_common_params(xs,
                                   ptype,
-                                  DF_FALLBACK_DEFAULT,
                                   S3_FALLBACK_true,
                                   p_arg,
                                   error_call);
@@ -118,7 +117,6 @@ r_obj* vec_rbind(r_obj* xs,
   // Must happen after the `names_to` column has been added to `ptype`
   xs = vec_cast_common_params(xs,
                               ptype,
-                              DF_FALLBACK_DEFAULT,
                               S3_FALLBACK_true,
                               vec_args.empty,
                               error_call);
@@ -387,7 +385,6 @@ r_obj* vec_cbind(r_obj* xs,
 
   r_obj* type = KEEP(vec_ptype_common_params(containers,
                                              ptype,
-                                             DF_FALLBACK_DEFAULT,
                                              S3_FALLBACK_false,
                                              p_arg,
                                              error_call));

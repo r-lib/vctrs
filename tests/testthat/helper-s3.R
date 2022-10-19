@@ -154,3 +154,9 @@ with_foobar_df_methods <- function(expr) {
   local_foobar_df_methods()
   expr
 }
+
+set_tibble <- function(x) {
+  base <- class(x)[-length(class(x))]
+  class(x) <- c(base, "tbl_df", "tbl", "data.frame")
+  x
+}

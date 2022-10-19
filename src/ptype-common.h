@@ -18,7 +18,6 @@ bool vec_is_common_class_fallback(r_obj* ptype) {
 
 r_obj* vec_ptype_common_params(r_obj* dots,
                                r_obj* ptype,
-                               enum df_fallback df_fallback,
                                enum s3_fallback s3_fallback,
                                struct vctrs_arg* p_arg,
                                struct r_lazy call);

@@ -33,6 +33,41 @@ Run `cloud_details(, "NA")` for more info
 
 
 ```
+# NA
+
+<details>
+
+* Version: NA
+* GitHub: NA
+* Source code: https://github.com/cran/NA
+* Number of recursive dependencies: 0
+
+Run `cloud_details(, "NA")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
 # elbird
 
 <details>
@@ -103,7 +138,7 @@ ERROR: configuration failed for package ‘elbird’
 * GitHub: https://github.com/ggPMXdevelopment/ggPMX
 * Source code: https://github.com/cran/ggPMX
 * Date/Publication: 2022-06-17 23:10:02 UTC
-* Number of recursive dependencies: 172
+* Number of recursive dependencies: 208
 
 Run `cloud_details(, "ggPMX")` for more info
 
@@ -459,7 +494,7 @@ Run `cloud_details(, "NA")` for more info
 * GitHub: https://github.com/nlmixr2/nlmixr2plot
 * Source code: https://github.com/cran/nlmixr2plot
 * Date/Publication: 2022-05-23 07:50:02 UTC
-* Number of recursive dependencies: 155
+* Number of recursive dependencies: 198
 
 Run `cloud_details(, "nlmixr2plot")` for more info
 
@@ -998,7 +1033,7 @@ Status: 2 NOTEs
 * GitHub: NA
 * Source code: https://github.com/cran/xpose.nlmixr2
 * Date/Publication: 2022-06-08 09:10:02 UTC
-* Number of recursive dependencies: 149
+* Number of recursive dependencies: 204
 
 Run `cloud_details(, "xpose.nlmixr2")` for more info
 
