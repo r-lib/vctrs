@@ -1202,3 +1202,15 @@ test_that("row-binding performs expected allocations", {
     with_memory_prof(vec_rbind_list(dfs))
   })
 })
+
+test_that("`.names_to` is assigned after restoration (#1648)", {
+  df <- data_frame(x = factor("foo"))
+  expect_equal(
+    vec_rbind(name = df, .names_to = "x"),
+    data_frame(x = "name")
+  )
+
+  # This used to fail with:
+  #> Error in `vctrs::vec_rbind()`:
+  #> ! adding class "factor" to an invalid object
+})

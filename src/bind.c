@@ -242,13 +242,13 @@ r_obj* vec_rbind(r_obj* xs,
     r_attrib_poke(out, r_syms.row_names, row_names);
   }
 
+  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
+  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
+
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
     KEEP_AT(out, out_pi);
   }
-
-  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
-  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
 
   FREE(n_prot);
   return out;
