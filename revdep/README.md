@@ -1,9 +1,18 @@
 # Revdeps
 
-## New problems (2)
+## Failed to check (5)
 
-|package |version |error  |warning |note |
-|:-------|:-------|:------|:-------|:----|
-|[groupr](problems.md#groupr)|0.1.0   |__+1__ |__+1__  |1    |
-|[ricu](problems.md#ricu)|0.5.3   |__+1__ |        |     |
+|package |version |error |warning |note |
+|:-------|:-------|:-----|:-------|:----|
+|NA      |?       |      |        |     |
+|NA      |?       |      |        |     |
+|NA      |?       |      |        |     |
+|NA      |?       |      |        |     |
+|NA      |?       |      |        |     |
+
+## New problems (1)
+
+|package    |version |error  |warning |note |
+|:----------|:-------|:------|:-------|:----|
+|[tibbletime](problems.md#tibbletime)|0.1.6   |__+1__ |        |     |
 
