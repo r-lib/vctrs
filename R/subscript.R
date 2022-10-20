@@ -173,6 +173,42 @@ new_error_subscript_type <- function(i,
   )
 }
 
+# Subscripts errors are currently customised by rethrowing errors with
+# special fields. The setter methods forward these fields to parent
+# errors so that causal errors may benefit from these customisations.
+
+#' @export
+`$<-.vctrs_error_subscript_type` <- function(x, i, value) {
+  x <- NextMethod()
+  i <- as_string(i)
+
+  if (!is_null(x[["parent"]]) && is_subscript_field(i)) {
+    x[["parent"]][[i]] <- value
+  }
+
+  x
+}
+#' @export
+`[[<-.vctrs_error_subscript_type` <- function(x, i, value) {
+  x <- NextMethod()
+
+  if (!is_null(x[["parent"]]) && is_subscript_field(i)) {
+    x[["parent"]][[i]] <- value
+  }
+
+  x
+}
+
+is_subscript_field <- function(x) {
+  is_character(x) && x %in% c(
+    "i",
+    "subscript_arg",
+    "subscript_elt",
+    "subscript_action"
+  )
+}
+
+
 #' @export
 cnd_header.vctrs_error_subscript_type <- function(cnd) {
   action <- cnd_subscript_action(cnd)

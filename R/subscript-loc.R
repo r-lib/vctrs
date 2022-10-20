@@ -286,30 +286,36 @@ vec_as_location2_result <- function(i,
 
 
 stop_location_negative_missing <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
+  causal <- error_cnd(
+    i = i,
+    ...,
+    header = cnd_header_location_negative_missing,
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  contextual <- new_error_subscript_type(
     i,
     ...,
-    body = cnd_body_vctrs_error_location_negative_missing,
-    call = call
-  ))
-}
-cnd_body_vctrs_error_location_negative_missing <- function(cnd, ...) {
-  missing_loc <- which(is.na(cnd$i))
-  arg <- append_arg("Subscript", cnd$subscript_arg)
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
 
-  if (length(missing_loc) == 1) {
-    loc <- glue::glue("{arg} has a missing value at location {missing_loc}.")
-  } else {
-    n_loc <- length(missing_loc)
-    missing_loc <- ensure_full_stop(enumerate(missing_loc))
-    loc <- glue::glue(
-      "{arg} has {n_loc} missing values at locations {missing_loc}"
+  cnd_signal(contextual)
+}
+
+cnd_header_location_negative_missing <- function(cnd, ...) {
+  missing_loc <- which(is.na(cnd$i))
+  arg <- cnd_subscript_arg(cnd)
+
+  n_loc <- length(missing_loc)
+
+  c(
+    "Negative locations can't have missing values.",
+    "x" = cli::format_inline(
+      "{arg} has {n_loc} missing value{?s} at location{?s} {missing_loc}."
     )
-  }
-  format_error_bullets(c(
-    x = "Negative locations can't have missing values.",
-    i = loc
-  ))
+  )
 }
 
 stop_location_negative_positive <- function(i, ..., call = caller_env()) {
@@ -371,18 +377,28 @@ cnd_bullets_location2_need_positive <- function(cnd, ...) {
 }
 
 stop_location_negative <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
-    i,
-    body = cnd_bullets_location_need_non_negative,
+  causal <- error_cnd(
+    i = i,
+    header = cnd_header_location_need_non_negative,
     ...,
-    call = call
-  ))
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  contextual <- new_error_subscript_type(
+    i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+
+  cnd_signal(contextual)
 }
-cnd_bullets_location_need_non_negative <- function(cnd, ...) {
+cnd_header_location_need_non_negative <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
+  c(
     x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
-  ))
+  )
 }
 
 stop_location_zero <- function(i, ..., call = caller_env()) {

@@ -60,8 +60,9 @@
     Condition
       Error in `vec_slice()`:
       ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `i` has a missing value at location 2.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `i` has 1 missing value at location 2.
 
 ---
 

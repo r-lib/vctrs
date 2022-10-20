@@ -354,8 +354,9 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `-c(1L, NA)` has a missing value at location 2.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `-c(1L, NA)` has 1 missing value at location 2.
     Code
       (expect_error(vec_as_location(-c(1L, rep(NA, 10)), 30), class = "vctrs_error_subscript_type")
       )
@@ -363,8 +364,9 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `-c(1L, rep(NA, 10))` has 10 missing values at locations 2, 3, 4, 5, 6, etc.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `-c(1L, rep(NA, 10))` has 10 missing values at locations 2, 3, 4, 5, 6, 7, 8, 9, 10, and 11.
 
 # vec_as_location() checks for mix of negative and positive locations
 
@@ -669,8 +671,9 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `x` has 2 missing values at locations 2 and 3.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `x` has 2 missing values at locations 2 and 3.
 
 ---
 
@@ -679,8 +682,9 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `x` has 2 missing values at locations 2 and 3.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `x` has 2 missing values at locations 2 and 3.
 
 # empty string character indices never match empty string names (#1489)
 
@@ -760,8 +764,9 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `foo` has a missing value at location 2.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `foo` has 1 missing value at location 2.
     Code
       (expect_error(vec_as_location(c(-1, 1), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -845,8 +850,9 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename columns with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `foo(bar)` has a missing value at location 2.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `foo(bar)` has 1 missing value at location 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(-1, 1), 3)), class = "vctrs_error_subscript_type")
       )
