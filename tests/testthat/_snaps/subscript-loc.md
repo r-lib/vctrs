@@ -709,7 +709,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript can't contain the empty string.
+      Caused by error:
+      ! Subscript can't contain the empty string.
       x It has an empty string at location 1.
 
 ---
@@ -719,7 +720,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript can't contain the empty string.
+      Caused by error:
+      ! Subscript can't contain the empty string.
       x It has an empty string at locations 1 and 3.
 
 # can customise subscript type errors
