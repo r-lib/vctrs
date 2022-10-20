@@ -435,15 +435,25 @@ cnd_header_location_need_non_zero <- function(cnd, ...) {
 }
 
 stop_subscript_missing <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
+  causal <- error_cnd(
     i = i,
-    body = cnd_bullets_subscript_missing,
+    header = cnd_header_subscript_missing,
     ...,
-    call = call
-  ))
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  contextual <- new_error_subscript_type(
+    i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+  cnd_signal(contextual)
 }
-cnd_bullets_subscript_missing <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+cnd_header_subscript_missing <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
+  header <- glue::glue("{arg} can't contain missing values.")
 
   missing_loc <- which(is.na(cnd$i))
   if (length(missing_loc) == 1) {
@@ -453,10 +463,7 @@ cnd_bullets_subscript_missing <- function(cnd, ...) {
     missing_line <- glue::glue("It has missing values at locations {missing_enum}")
   }
 
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't contain missing values."),
-    x = missing_line
-  ))
+  c(header, x = missing_line)
 }
 
 stop_subscript_empty <- function(i, ..., call = caller_env()) {

@@ -259,7 +259,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has a missing value at location 1.
 
 # `vec_ptype()` reports correct error call

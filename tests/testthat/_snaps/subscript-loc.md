@@ -335,7 +335,7 @@
       Error:
       ! Can't subset elements with `0L`.
       Caused by error:
-      x `0L` can't contain `0` values.
+      ! `0L` can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       (expect_error(num_as_location(c(0, 0, 0, 0, 0, 0), 1, zero = "error"), class = "vctrs_error_subscript_type")
@@ -345,7 +345,7 @@
       Error:
       ! Can't subset elements with `c(0, 0, 0, 0, 0, 0)`.
       Caused by error:
-      x `c(0, 0, 0, 0, 0, 0)` can't contain `0` values.
+      ! `c(0, 0, 0, 0, 0, 0)` can't contain `0` values.
       i It has 6 `0` values at locations 1, 2, 3, 4, 5, etc.
 
 # vec_as_location() checks for mix of negative and missing locations
@@ -488,7 +488,7 @@
       Error:
       ! Can't subset elements with `c(0, -1)`.
       Caused by error:
-      x `c(0, -1)` can't contain `0` values.
+      ! `c(0, -1)` can't contain `0` values.
       i It has a `0` value at location 1.
 
 ---
@@ -499,7 +499,7 @@
       Error:
       ! Can't subset elements with `c(-1, 0)`.
       Caused by error:
-      x `c(-1, 0)` can't contain `0` values.
+      ! `c(-1, 0)` can't contain `0` values.
       i It has a `0` value at location 2.
 
 # num_as_location() with `oob = 'extend'` doesn't allow ignored oob negative values (#1614)
@@ -572,7 +572,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has a missing value at location 2.
     Code
       (expect_error(vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo",
@@ -581,7 +582,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 2 and 4.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error")),
@@ -590,7 +592,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Subscript `foo(bar)` can't contain missing values.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has missing values at locations 2 and 4.
     Code
       (expect_error(with_tibble_cols(vec_as_location(NA, 1, missing = "error")),
@@ -599,7 +602,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Subscript `foo(bar)` can't contain missing values.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
     Code
       (expect_error(with_tibble_cols(vec_as_location(NA, 3, missing = "error")),
@@ -608,7 +612,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Subscript `foo(bar)` can't contain missing values.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(TRUE, NA, FALSE), 3, missing = "error")),
@@ -617,7 +622,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Subscript `foo(bar)` can't contain missing values.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(NA_character_, 2, missing = "error",
@@ -626,7 +632,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Subscript `foo(bar)` can't contain missing values.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
 
 # can alter logical missing value handling (#1595)
@@ -636,7 +643,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 2 and 4.
 
 ---
@@ -646,7 +654,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has a missing value at location 1.
 
 # can alter character missing value handling (#1595)
@@ -656,7 +665,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 1 and 3.
 
 # can alter integer missing value handling (#1595)
@@ -666,7 +676,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript can't contain missing values.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 1 and 3.
 
 # can alter negative integer missing value handling (#1595)
@@ -799,7 +810,7 @@
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
       Caused by error:
-      x `foo` can't contain `0` values.
+      ! `foo` can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       # With tibble columns
@@ -887,7 +898,7 @@
       Error:
       ! Can't rename columns with `foo(bar)`.
       Caused by error:
-      x `foo(bar)` can't contain `0` values.
+      ! `foo(bar)` can't contain `0` values.
       i It has a `0` value at location 1.
 
 # can customise OOB errors

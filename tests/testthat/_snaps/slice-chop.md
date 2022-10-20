@@ -160,7 +160,7 @@
       Error:
       ! Can't subset elements.
       Caused by error:
-      x Subscript can't contain `0` values.
+      ! Subscript can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       (expect_error(list_unchop(list(1), indices = list(-1)), class = "vctrs_error_subscript_type")
