@@ -6,7 +6,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
+      ! Can't rename columns with `foo(bar)`.
       x `foo(bar)` must be logical, numeric, or character, not an environment.
 
 ---
@@ -17,7 +17,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract tables with a valid subscript vector.
+      ! Can't extract tables with `foo(bar)`.
       x `foo(bar)` must be logical, numeric, or character, not an environment.
 
 # vec_as_subscript() checks dimensionality
@@ -28,7 +28,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be a simple vector, not a matrix.
     Code
       (expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type")
@@ -36,7 +36,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be a simple vector, not an array.
     Code
       (expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))),
@@ -44,7 +44,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must remove rows with a valid subscript vector.
+      ! Can't remove rows with `foo(bar)`.
       x Subscript `foo(bar)` must be a simple vector, not a matrix.
 
 # vec_as_subscript() forbids subscript types
@@ -53,7 +53,7 @@
       vec_as_subscript(1L, logical = "error", numeric = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be character, not the number 1.
 
 ---
@@ -62,7 +62,7 @@
       vec_as_subscript("foo", logical = "error", character = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be numeric, not the string "foo".
 
 ---
@@ -71,7 +71,7 @@
       vec_as_subscript(TRUE, logical = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be numeric or character, not `TRUE`.
 
 ---
@@ -80,7 +80,7 @@
       vec_as_subscript("foo", character = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be logical or numeric, not the string "foo".
 
 ---
@@ -89,7 +89,7 @@
       vec_as_subscript(NULL, numeric = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be logical or character, not `NULL`.
 
 ---
@@ -98,7 +98,7 @@
       vec_as_subscript(quote(foo), character = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be logical or numeric, not a symbol.
 
 # vec_as_subscript2() forbids subscript types
@@ -107,7 +107,7 @@
       vec_as_subscript2(1L, numeric = "error")
     Condition
       Error:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Subscript must be character, not the number 1.
 
 ---
@@ -116,7 +116,7 @@
       vec_as_subscript2("foo", character = "error")
     Condition
       Error:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Subscript must be numeric, not the string "foo".
 
 ---
@@ -125,7 +125,7 @@
       vec_as_subscript2(TRUE)
     Condition
       Error:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Subscript must be numeric or character, not `TRUE`.
 
 # vec_as_subscript2() retains the call when throwing vec_as_subscript() errors (#1605)
@@ -134,7 +134,7 @@
       vec_as_subscript2(1L, numeric = "error", call = call("foo"))
     Condition
       Error in `foo()`:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Subscript must be character, not the number 1.
 
 ---
@@ -143,7 +143,7 @@
       vec_as_subscript2(1.5, call = call("foo"))
     Condition
       Error in `foo()`:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Can't convert from <double> to <integer> due to loss of precision.
 
 # vec_as_subscript2() retains the call when erroring on logical input (#1605)
@@ -152,7 +152,7 @@
       vec_as_subscript2(TRUE, call = call("foo"))
     Condition
       Error in `foo()`:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Subscript must be numeric or character, not `TRUE`.
 
 # `logical = 'cast'` is deprecated
@@ -169,7 +169,7 @@
       vec_as_subscript2(TRUE, logical = "error")
     Condition
       Error:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Subscript must be numeric or character, not `TRUE`.
 
 # lossy cast errors for scalar subscripts work (#1606)
@@ -178,6 +178,6 @@
       vec_as_subscript2(1.5)
     Condition
       Error:
-      ! Must extract element with a single valid subscript.
+      ! Can't extract element.
       x Can't convert from <double> to <integer> due to loss of precision.
 
