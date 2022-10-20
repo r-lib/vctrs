@@ -286,22 +286,13 @@ vec_as_location2_result <- function(i,
 
 
 stop_location_negative_missing <- function(i, ..., call = caller_env()) {
-  causal <- error_cnd(
-    i = i,
-    ...,
-    header = cnd_header_location_negative_missing,
-    call = NULL,
-    use_cli_format = TRUE
-  )
-  contextual <- new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
     ...,
-    body = function(...) chr(),
-    call = call,
-    parent = causal
+    header = cnd_header_location_negative_missing,
+    call = call
   )
-
-  cnd_signal(contextual)
+  cnd_signal(cnd)
 }
 
 cnd_header_location_negative_missing <- function(cnd, ...) {
@@ -377,22 +368,13 @@ cnd_bullets_location2_need_positive <- function(cnd, ...) {
 }
 
 stop_location_negative <- function(i, ..., call = caller_env()) {
-  causal <- error_cnd(
-    i = i,
-    header = cnd_header_location_need_non_negative,
-    ...,
-    call = NULL,
-    use_cli_format = TRUE
-  )
-  contextual <- new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
     ...,
-    body = function(...) chr(),
-    call = call,
-    parent = causal
+    header = cnd_header_location_need_non_negative,
+    call = call
   )
-
-  cnd_signal(contextual)
+  cnd_signal(cnd)
 }
 cnd_header_location_need_non_negative <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
@@ -400,21 +382,13 @@ cnd_header_location_need_non_negative <- function(cnd, ...) {
 }
 
 stop_location_zero <- function(i, ..., call = caller_env()) {
-  causal <- error_cnd(
-    i = i,
-    header = cnd_header_location_need_non_zero,
-    ...,
-    call = NULL,
-    use_cli_format = TRUE
-  )
-  contextual <- new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
     ...,
-    body = function(...) chr(),
-    call = call,
-    parent = causal
+    header = cnd_header_location_need_non_zero,
+    call = call
   )
-  cnd_signal(contextual)
+  cnd_signal(cnd)
 }
 cnd_header_location_need_non_zero <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
@@ -435,21 +409,13 @@ cnd_header_location_need_non_zero <- function(cnd, ...) {
 }
 
 stop_subscript_missing <- function(i, ..., call = caller_env()) {
-  causal <- error_cnd(
-    i = i,
-    header = cnd_header_subscript_missing,
-    ...,
-    call = NULL,
-    use_cli_format = TRUE
-  )
-  contextual <- new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
     ...,
-    body = function(...) chr(),
-    call = call,
-    parent = causal
+    header = cnd_header_subscript_missing,
+    call = call
   )
-  cnd_signal(contextual)
+  cnd_signal(cnd)
 }
 cnd_header_subscript_missing <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
@@ -467,21 +433,13 @@ cnd_header_subscript_missing <- function(cnd, ...) {
 }
 
 stop_subscript_empty <- function(i, ..., call = caller_env()) {
-  causal <- error_cnd(
-    i = i,
-    header = cnd_bullets_subscript_empty,
-    ...,
-    call = NULL,
-    use_cli_format = TRUE
-  )
-  contextual <- new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
     ...,
-    body = function(...) chr(),
-    call = call,
-    parent = causal
+    header = cnd_bullets_subscript_empty,
+    call = call
   )
-  cnd_signal(contextual)
+  cnd_signal(cnd)
 }
 cnd_bullets_subscript_empty <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
