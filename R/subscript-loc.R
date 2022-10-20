@@ -199,15 +199,8 @@ vec_as_location2_result <- function(i,
     arg = arg,
     call = call
   )
-
   if (!is_null(result$err)) {
-    parent <- result$err
-    return(result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      body = parent$body,
-      call = call
-    )))
+    return(result)
   }
 
   # Locations must be size 1, can't be NA, and must be positive
@@ -284,6 +277,36 @@ vec_as_location2_result <- function(i,
   }
 }
 
+new_error_location2_type <- function(i,
+                                     ...,
+                                     class = NULL) {
+  new_error_subscript2_type(
+    class = class,
+    i = i,
+    numeric = "cast",
+    character = "cast",
+    ...
+  )
+}
+
+cnd_bullets_location2_need_scalar <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
+  ))
+}
+cnd_bullets_location2_need_present <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
+  ))
+}
+cnd_bullets_location2_need_positive <- function(cnd, ...) {
+  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+  format_error_bullets(c(
+    x = glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
+  ))
+}
 
 stop_location_negative_missing <- function(i, ..., call = caller_env()) {
   cnd <- new_chained_error_subscript_type(
@@ -333,37 +356,6 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   format_error_bullets(c(
     x = "Negative and positive locations can't be mixed.",
     i = loc
-  ))
-}
-
-
-new_error_location2_type <- function(i,
-                                     ...,
-                                     class = NULL) {
-  new_error_subscript2_type(
-    class = class,
-    i = i,
-    numeric = "cast",
-    character = "cast",
-    ...
-  )
-}
-cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
-  ))
-}
-cnd_bullets_location2_need_present <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
-  ))
-}
-cnd_bullets_location2_need_positive <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
   ))
 }
 
