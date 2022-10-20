@@ -7,8 +7,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` has the wrong type `environment`.
-      i It must be logical, numeric, or character.
+      x `foo(bar)` must be logical, numeric, or character, not an environment.
 
 ---
 
@@ -19,8 +18,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract tables with a valid subscript vector.
-      x Subscript `foo(bar)` has the wrong type `environment`.
-      i It must be logical, numeric, or character.
+      x `foo(bar)` must be logical, numeric, or character, not an environment.
 
 # vec_as_subscript() checks dimensionality
 
@@ -56,8 +54,7 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `integer`.
-      i It must be character.
+      x Subscript must be character, not the number 1.
 
 ---
 
@@ -66,8 +63,7 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `character`.
-      i It must be numeric.
+      x Subscript must be numeric, not the string "foo".
 
 ---
 
@@ -76,8 +72,7 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `logical`.
-      i It must be numeric or character.
+      x Subscript must be numeric or character, not `TRUE`.
 
 ---
 
@@ -86,8 +81,7 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `character`.
-      i It must be logical or numeric.
+      x Subscript must be logical or numeric, not the string "foo".
 
 ---
 
@@ -96,8 +90,7 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `NULL`.
-      i It must be logical or character.
+      x Subscript must be logical or character, not `NULL`.
 
 ---
 
@@ -106,8 +99,7 @@
     Condition
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `symbol`.
-      i It must be logical or numeric.
+      x Subscript must be logical or numeric, not a symbol.
 
 # vec_as_subscript2() forbids subscript types
 
@@ -116,8 +108,7 @@
     Condition
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `integer`.
-      i It must be character.
+      x Subscript must be character, not the number 1.
 
 ---
 
@@ -126,8 +117,7 @@
     Condition
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `character`.
-      i It must be numeric.
+      x Subscript must be numeric, not the string "foo".
 
 ---
 
@@ -136,8 +126,7 @@
     Condition
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `logical`.
-      i It must be numeric or character.
+      x Subscript must be numeric or character, not `TRUE`.
 
 # vec_as_subscript2() retains the call when throwing vec_as_subscript() errors (#1605)
 
@@ -146,8 +135,7 @@
     Condition
       Error in `foo()`:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `integer`.
-      i It must be character.
+      x Subscript must be character, not the number 1.
 
 ---
 
@@ -165,8 +153,7 @@
     Condition
       Error in `foo()`:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `logical`.
-      i It must be numeric or character.
+      x Subscript must be numeric or character, not `TRUE`.
 
 # `logical = 'cast'` is deprecated
 
@@ -183,8 +170,7 @@
     Condition
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript has the wrong type `logical`.
-      i It must be numeric or character.
+      x Subscript must be numeric or character, not `TRUE`.
 
 # lossy cast errors for scalar subscripts work (#1606)
 

@@ -185,13 +185,12 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
 }
 #' @export
 cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- append_arg("Subscript", cnd$subscript_arg)
-  type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd)
+  arg <- cnd_subscript_arg(cnd)
+  type <- obj_type_friendly(cnd$i)
+  expected_types <- cnd_subscript_expected_types(cnd)
 
   format_error_bullets(c(
-    x = glue::glue("{arg} has the wrong type `{type}`."),
-    i = glue::glue("It must be {expected_types}.")
+    x = cli::format_inline("{arg} must be {.or {expected_types}}, not {type}.")
   ))
 }
 new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
@@ -201,9 +200,7 @@ new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
 }
 
 collapse_subscript_type <- function(cnd) {
-  types <- c("logical", "numeric", "character")
-  allowed <- cnd[types] != "error"
-  types <- types[allowed]
+  types <- cnd_subscript_expected_types(cnd)
 
   if (length(types) == 2) {
     last <- " or "
@@ -212,6 +209,11 @@ collapse_subscript_type <- function(cnd) {
   }
 
   glue::glue_collapse(types, sep = ", ", last = last)
+}
+cnd_subscript_expected_types <- function(cnd) {
+  types <- c("logical", "numeric", "character")
+  allowed <- cnd[types] != "error"
+  types[allowed]
 }
 
 new_error_subscript_size <- function(i,
@@ -347,6 +349,27 @@ cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   } else {
     action
   }
+}
+
+cnd_subscript_arg <- function(cnd, ...) {
+  format_subscript_arg(cnd[["subscript_arg"]], ...)
+}
+format_subscript_arg <- function(arg, capitalise = TRUE) {
+  if (is_subscript_arg(arg)) {
+    if (!is_string(arg)) {
+      arg <- as_label(arg)
+    }
+    cli::format_inline("{.arg {arg}}")
+  } else {
+    if (capitalise) {
+      "Subscript"
+    } else {
+      "subscript"
+    }
+  }
+}
+is_subscript_arg <- function(x) {
+  !is_null(x) && !is_string(x, "")
 }
 
 cnd_subscript_type <- function(cnd) {

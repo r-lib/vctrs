@@ -239,8 +239,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `my_arg` has the wrong type `list`.
-      i It must be logical, numeric, or character.
+      x `my_arg` must be logical, numeric, or character, not an empty list.
 
 ---
 
@@ -328,8 +327,7 @@
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `i` has the wrong type `environment`.
-      i It must be logical, numeric, or character.
+      x `i` must be logical, numeric, or character, not an environment.
 
 # list_sizes() reports error context
 

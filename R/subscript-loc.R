@@ -354,19 +354,19 @@ new_error_location2_type <- function(i,
 cnd_bullets_location2_need_scalar <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} has size {length(i)} but must be size 1.")
+    x = glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
   ))
 }
 cnd_bullets_location2_need_present <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't be `NA`.")
+    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
   ))
 }
 cnd_bullets_location2_need_positive <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} has value {i} but must be a positive location.")
+    x = glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
   ))
 }
 
@@ -472,11 +472,10 @@ stop_indicator_size <- function(i, n, ..., call = caller_env()) {
   ))
 }
 cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Logical subscript", cnd$subscript_arg)
   glue_data_bullets(
     cnd,
-    i = "Logical subscripts must match the size of the indexed input.",
-    x = "Input has size {n} but {subscript_arg} has size {vec_size(i)}."
+    x = "{subscript_arg} must be size 1 or {n}, not {vec_size(i)}."
   )
 }
 

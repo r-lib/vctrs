@@ -7,8 +7,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `TRUE` has the wrong type `logical`.
-      i It must be numeric or character.
+      x `TRUE` must be numeric or character, not `TRUE`.
     Code
       (expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript_type")
       )
@@ -16,20 +15,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `mtcars` has the wrong type `data.frame<
-        mpg : double
-        cyl : double
-        disp: double
-        hp  : double
-        drat: double
-        wt  : double
-        qsec: double
-        vs  : double
-        am  : double
-        gear: double
-        carb: double
-      >`.
-      i It must be numeric or character.
+      x `mtcars` must be numeric or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -37,8 +23,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `env()` has the wrong type `environment`.
-      i It must be numeric or character.
+      x `env()` must be numeric or character, not an environment.
     Code
       (expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -46,8 +31,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `foobar()` has the wrong type `vctrs_foobar`.
-      i It must be numeric or character.
+      x `foobar()` must be numeric or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
@@ -78,8 +62,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has the wrong type `vctrs_foobar`.
-      i It must be numeric or character.
+      x `foo` must be numeric or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location2(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -95,8 +78,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must remove row with a single valid subscript.
-      x Subscript `foo(bar)` has the wrong type `logical`.
-      i It must be numeric or character.
+      x `foo(bar)` must be numeric or character, not `TRUE`.
 
 # vec_as_location() requires integer, character, or logical inputs
 
@@ -107,20 +89,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `mtcars` has the wrong type `data.frame<
-        mpg : double
-        cyl : double
-        disp: double
-        hp  : double
-        drat: double
-        wt  : double
-        qsec: double
-        vs  : double
-        am  : double
-        gear: double
-        carb: double
-      >`.
-      i It must be logical, numeric, or character.
+      x `mtcars` must be logical, numeric, or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location(env(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -128,8 +97,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `env()` has the wrong type `environment`.
-      i It must be logical, numeric, or character.
+      x `env()` must be logical, numeric, or character, not an environment.
     Code
       (expect_error(vec_as_location(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -137,8 +105,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `foobar()` has the wrong type `vctrs_foobar`.
-      i It must be logical, numeric, or character.
+      x `foobar()` must be logical, numeric, or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
@@ -153,8 +120,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `list()` has the wrong type `list`.
-      i It must be logical, numeric, or character.
+      x `list()` must be logical, numeric, or character, not an empty list.
     Code
       (expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_type")
       )
@@ -162,8 +128,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `function() NULL` has the wrong type `function`.
-      i It must be logical, numeric, or character.
+      x `function() NULL` must be logical, numeric, or character, not a function.
     Code
       (expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
       )
@@ -171,8 +136,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `Sys.Date()` has the wrong type `date`.
-      i It must be logical, numeric, or character.
+      x `Sys.Date()` must be logical, numeric, or character, not a <Date> object.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location(env(), 10L, arg = "foo", call = call(
@@ -181,8 +145,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `foo` has the wrong type `environment`.
-      i It must be logical, numeric, or character.
+      x `foo` must be logical, numeric, or character, not an environment.
     Code
       (expect_error(vec_as_location(foobar(), 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -190,8 +153,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `foo` has the wrong type `vctrs_foobar`.
-      i It must be logical, numeric, or character.
+      x `foo` must be logical, numeric, or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -262,7 +224,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `1:2` has size 2 but must be size 1.
+      x Subscript `1:2` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_subscript_type")
       )
@@ -270,7 +232,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `c("foo", "bar")` has size 2 but must be size 1.
+      x Subscript `c("foo", "bar")` must be size 1, not 2.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
@@ -279,7 +241,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has size 2 but must be size 1.
+      x Subscript `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(mtcars, 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -287,20 +249,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has the wrong type `data.frame<
-        mpg : double
-        cyl : double
-        disp: double
-        hp  : double
-        drat: double
-        wt  : double
-        qsec: double
-        vs  : double
-        am  : double
-        gear: double
-        carb: double
-      >`.
-      i It must be numeric or character.
+      x `foo` must be numeric or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -308,7 +257,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has size 2 but must be size 1.
+      x Subscript `foo` must be size 1, not 2.
 
 # vec_as_location2() requires positive integers
 
@@ -318,14 +267,14 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `0` has value 0 but must be a positive location.
+      x Subscript `0` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(-1, 2L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `-1` has value -1 but must be a positive location.
+      x Subscript `-1` must be a positive location, not -1.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(0, 2L, arg = "foo", call = call("my_function")),
@@ -334,7 +283,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has value 0 but must be a positive location.
+      x Subscript `foo` must be a positive location, not 0.
 
 # vec_as_location2() fails with NA
 
@@ -345,7 +294,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `na_int` can't be `NA`.
+      x Subscript `na_int` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(na_chr, 1L, names = "foo"), class = "vctrs_error_subscript_type")
       )
@@ -353,7 +302,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `na_chr` can't be `NA`.
+      x Subscript `na_chr` must be a location, not a character `NA`.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(na_int, 2L, arg = "foo", call = call(
@@ -362,7 +311,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` can't be `NA`.
+      x Subscript `foo` must be a location, not an integer `NA`.
 
 # num_as_location() optionally forbids negative indices
 
@@ -447,8 +396,7 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Must subset elements with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 3 but subscript `c(TRUE, FALSE)` has size 2.
+      x Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
 
 # character subscripts require named vectors
 
@@ -772,7 +720,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has value -1 but must be a positive location.
+      x Subscript `foo` must be a positive location, not -1.
     Code
       (expect_error(vec_as_location2(0, 2, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -780,7 +728,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has value 0 but must be a positive location.
+      x Subscript `foo` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(na_dbl, 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -788,7 +736,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` can't be `NA`.
+      x Subscript `foo` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(c(1, 2), 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -796,7 +744,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` has size 2 but must be size 1.
+      x Subscript `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location(c(TRUE, FALSE), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_size"))
@@ -804,8 +752,7 @@
       <error/vctrs_error_subscript_size>
       Error in `my_function()`:
       ! Must subset elements with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 3 but subscript `foo` has size 2.
+      x Logical subscript `foo` must be size 1 or 3, not 2.
     Code
       (expect_error(vec_as_location(c(-1, NA), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -858,7 +805,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` has value -1 but must be a positive location.
+      x Subscript `foo(bar)` must be a positive location, not -1.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(0, 2)), class = "vctrs_error_subscript_type")
       )
@@ -866,7 +813,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` has value 0 but must be a positive location.
+      x Subscript `foo(bar)` must be a positive location, not 0.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(na_dbl, 2)), class = "vctrs_error_subscript_type")
       )
@@ -874,7 +821,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` can't be `NA`.
+      x Subscript `foo(bar)` must be a location, not an integer `NA`.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(c(1, 2), 2)), class = "vctrs_error_subscript_type")
       )
@@ -882,7 +829,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` has size 2 but must be size 1.
+      x Subscript `foo(bar)` must be size 1, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3)), class = "vctrs_error_subscript_size")
       )
@@ -890,8 +837,7 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Must rename columns with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 3 but subscript `foo(bar)` has size 2.
+      x Logical subscript `foo(bar)` must be size 1 or 3, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(-1, NA), 3)), class = "vctrs_error_subscript_type")
       )

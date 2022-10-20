@@ -299,8 +299,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `character`.
-      i It must be numeric.
+      x Subscript must be numeric, not the string "x".
     Code
       (expect_error(list_unchop(list(1), indices = list(foobar(1L))), class = "vctrs_error_subscript_type")
       )
@@ -308,8 +307,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must subset elements with a valid subscript vector.
-      x Subscript has the wrong type `vctrs_foobar`.
-      i It must be numeric.
+      x Subscript must be numeric, not a <vctrs_foobar> object.
 
 # can ignore names in `list_unchop()` by providing a `zap()` name-spec (#232)
 
