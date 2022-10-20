@@ -159,6 +159,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
+      Caused by error:
       x Subscript can't contain `0` values.
       i It has a `0` value at location 1.
     Code

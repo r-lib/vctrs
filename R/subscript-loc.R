@@ -400,17 +400,28 @@ cnd_header_location_need_non_negative <- function(cnd, ...) {
 }
 
 stop_location_zero <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
-    i,
-    body = cnd_bullets_location_need_non_zero,
+  causal <- error_cnd(
+    i = i,
+    header = cnd_header_location_need_non_zero,
     ...,
-    call = call
-  ))
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  contextual <- new_error_subscript_type(
+    i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+  cnd_signal(contextual)
 }
-cnd_bullets_location_need_non_zero <- function(cnd, ...) {
+cnd_header_location_need_non_zero <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
+  header <- glue::glue("{arg} can't contain `0` values.")
+
   zero_loc <- which(cnd$i == 0)
   zero_loc_size <- length(zero_loc)
-  arg <- append_arg("Subscript", cnd$subscript_arg)
 
   if (zero_loc_size == 1) {
     loc <- glue::glue("It has a `0` value at location {zero_loc}.")
@@ -420,10 +431,7 @@ cnd_bullets_location_need_non_zero <- function(cnd, ...) {
       "It has {zero_loc_size} `0` values at locations {zero_loc}"
     )
   }
-  format_error_bullets(c(
-    x = glue::glue("{arg} can't contain `0` values."),
-    i = loc
-  ))
+  c(header, i = loc)
 }
 
 stop_subscript_missing <- function(i, ..., call = caller_env()) {

@@ -334,7 +334,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `0L`.
-      x Subscript `0L` can't contain `0` values.
+      Caused by error:
+      x `0L` can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       (expect_error(num_as_location(c(0, 0, 0, 0, 0, 0), 1, zero = "error"), class = "vctrs_error_subscript_type")
@@ -343,7 +344,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `c(0, 0, 0, 0, 0, 0)`.
-      x Subscript `c(0, 0, 0, 0, 0, 0)` can't contain `0` values.
+      Caused by error:
+      x `c(0, 0, 0, 0, 0, 0)` can't contain `0` values.
       i It has 6 `0` values at locations 1, 2, 3, 4, 5, etc.
 
 # vec_as_location() checks for mix of negative and missing locations
@@ -485,7 +487,8 @@
     Condition
       Error:
       ! Can't subset elements with `c(0, -1)`.
-      x Subscript `c(0, -1)` can't contain `0` values.
+      Caused by error:
+      x `c(0, -1)` can't contain `0` values.
       i It has a `0` value at location 1.
 
 ---
@@ -495,7 +498,8 @@
     Condition
       Error:
       ! Can't subset elements with `c(-1, 0)`.
-      x Subscript `c(-1, 0)` can't contain `0` values.
+      Caused by error:
+      x `c(-1, 0)` can't contain `0` values.
       i It has a `0` value at location 2.
 
 # num_as_location() with `oob = 'extend'` doesn't allow ignored oob negative values (#1614)
@@ -794,7 +798,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x Subscript `foo` can't contain `0` values.
+      Caused by error:
+      x `foo` can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       # With tibble columns
@@ -881,7 +886,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Subscript `foo(bar)` can't contain `0` values.
+      Caused by error:
+      x `foo(bar)` can't contain `0` values.
       i It has a `0` value at location 1.
 
 # can customise OOB errors
