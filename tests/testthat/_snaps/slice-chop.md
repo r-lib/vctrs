@@ -168,7 +168,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
-      x Subscript can't contain negative locations.
+      Caused by error:
+      ! Subscript can't contain negative locations.
 
 # list_unchop() fails with complex foreign S3 classes
 

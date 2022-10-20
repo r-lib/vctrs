@@ -323,7 +323,7 @@
       Error:
       ! Can't subset elements with `dbl(1, -1)`.
       Caused by error:
-      x Subscript `dbl(1, -1)` can't contain negative locations.
+      ! `dbl(1, -1)` can't contain negative locations.
 
 # num_as_location() optionally forbids zero indices
 
@@ -718,7 +718,7 @@
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
       Caused by error:
-      x Subscript `foo` can't contain negative locations.
+      ! `foo` can't contain negative locations.
     Code
       (expect_error(num_as_location2(-1, 2, negative = "error", arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -805,7 +805,7 @@
       Error:
       ! Can't rename columns with `foo(bar)`.
       Caused by error:
-      x Subscript `foo(bar)` can't contain negative locations.
+      ! `foo(bar)` can't contain negative locations.
     Code
       (expect_error(with_tibble_cols(num_as_location2(-1, 2, negative = "error")),
       class = "vctrs_error_subscript_type"))

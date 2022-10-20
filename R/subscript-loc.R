@@ -395,10 +395,8 @@ stop_location_negative <- function(i, ..., call = caller_env()) {
   cnd_signal(contextual)
 }
 cnd_header_location_need_non_negative <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
-  )
+  arg <- cnd_subscript_arg(cnd)
+  glue::glue("{arg} can't contain negative locations.")
 }
 
 stop_location_zero <- function(i, ..., call = caller_env()) {
