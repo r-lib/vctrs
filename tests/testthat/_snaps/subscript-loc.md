@@ -224,7 +224,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `1:2`.
-      x Subscript `1:2` must be size 1, not 2.
+      Caused by error:
+      ! `1:2` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_subscript_type")
       )
@@ -232,7 +233,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `c("foo", "bar")`.
-      x Subscript `c("foo", "bar")` must be size 1, not 2.
+      Caused by error:
+      ! `c("foo", "bar")` must be size 1, not 2.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
@@ -241,7 +243,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be size 1, not 2.
+      Caused by error:
+      ! `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(mtcars, 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -257,7 +260,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be size 1, not 2.
+      Caused by error:
+      ! `foo` must be size 1, not 2.
 
 # vec_as_location2() requires positive integers
 
@@ -267,14 +271,16 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `0`.
-      x Subscript `0` must be a positive location, not 0.
+      Caused by error:
+      ! `0` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(-1, 2L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `-1`.
-      x Subscript `-1` must be a positive location, not -1.
+      Caused by error:
+      ! `-1` must be a positive location, not -1.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(0, 2L, arg = "foo", call = call("my_function")),
@@ -283,7 +289,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be a positive location, not 0.
+      Caused by error:
+      ! `foo` must be a positive location, not 0.
 
 # vec_as_location2() fails with NA
 
@@ -294,7 +301,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `na_int`.
-      x Subscript `na_int` must be a location, not an integer `NA`.
+      Caused by error:
+      ! `na_int` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(na_chr, 1L, names = "foo"), class = "vctrs_error_subscript_type")
       )
@@ -302,7 +310,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `na_chr`.
-      x Subscript `na_chr` must be a location, not a character `NA`.
+      Caused by error:
+      ! `na_chr` must be a location, not a character `NA`.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(na_int, 2L, arg = "foo", call = call(
@@ -311,7 +320,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be a location, not an integer `NA`.
+      Caused by error:
+      ! `foo` must be a location, not an integer `NA`.
 
 # num_as_location() optionally forbids negative indices
 
@@ -744,7 +754,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be a positive location, not -1.
+      Caused by error:
+      ! `foo` must be a positive location, not -1.
     Code
       (expect_error(vec_as_location2(0, 2, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -752,7 +763,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be a positive location, not 0.
+      Caused by error:
+      ! `foo` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(na_dbl, 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -760,7 +772,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be a location, not an integer `NA`.
+      Caused by error:
+      ! `foo` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(c(1, 2), 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -768,7 +781,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Subscript `foo` must be size 1, not 2.
+      Caused by error:
+      ! `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location(c(TRUE, FALSE), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_size"))
@@ -833,7 +847,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename column with `foo(bar)`.
-      x Subscript `foo(bar)` must be a positive location, not -1.
+      Caused by error:
+      ! `foo(bar)` must be a positive location, not -1.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(0, 2)), class = "vctrs_error_subscript_type")
       )
@@ -841,7 +856,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename column with `foo(bar)`.
-      x Subscript `foo(bar)` must be a positive location, not 0.
+      Caused by error:
+      ! `foo(bar)` must be a positive location, not 0.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(na_dbl, 2)), class = "vctrs_error_subscript_type")
       )
@@ -849,7 +865,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename column with `foo(bar)`.
-      x Subscript `foo(bar)` must be a location, not an integer `NA`.
+      Caused by error:
+      ! `foo(bar)` must be a location, not an integer `NA`.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(c(1, 2), 2)), class = "vctrs_error_subscript_type")
       )
@@ -857,7 +874,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename column with `foo(bar)`.
-      x Subscript `foo(bar)` must be size 1, not 2.
+      Caused by error:
+      ! `foo(bar)` must be size 1, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3)), class = "vctrs_error_subscript_size")
       )

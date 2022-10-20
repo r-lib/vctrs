@@ -207,10 +207,10 @@ vec_as_location2_result <- function(i,
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location2_type(
+    return(result(err = new_chained_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_scalar,
+      header = cnd_header_location2_need_scalar,
       call = call
     )))
   }
@@ -222,10 +222,10 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location2_type(
+      result <- result(err = new_chained_error_location2_type(
         i = i,
         subscript_arg = arg,
-        body = cnd_bullets_location2_need_present,
+        header = cnd_header_location2_need_present,
         call = call
       ))
     } else {
@@ -235,19 +235,19 @@ vec_as_location2_result <- function(i,
   }
 
   if (identical(i, 0L)) {
-    return(result(err = new_error_location2_type(
+    return(result(err = new_chained_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive,
+      header = cnd_header_location2_need_positive,
       call = call
     )))
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location2_type(
+    return(result(err = new_chained_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive,
+      header = cnd_header_location2_need_positive,
       call = call
     )))
   }
@@ -288,24 +288,37 @@ new_error_location2_type <- function(i,
     ...
   )
 }
+new_chained_error_location2_type <- function(i,
+                                             ...,
+                                             header = NULL,
+                                             call = caller_env()) {
+  causal <- error_cnd(
+    i = i,
+    header = header,
+    ...,
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  new_error_location2_type(
+    i = i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+}
 
-cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
-  ))
+cnd_header_location2_need_scalar <- function(cnd, ...) {
+  cnd$subscript_arg <- cnd_subscript_arg(cnd)
+  glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
 }
-cnd_bullets_location2_need_present <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
-  ))
+cnd_header_location2_need_present <- function(cnd, ...) {
+  cnd$subscript_arg <- cnd_subscript_arg(cnd)
+  glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
 }
-cnd_bullets_location2_need_positive <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
-  ))
+cnd_header_location2_need_positive <- function(cnd, ...) {
+  cnd$subscript_arg <- cnd_subscript_arg(cnd)
+  glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
 }
 
 stop_location_negative_missing <- function(i, ..., call = caller_env()) {
