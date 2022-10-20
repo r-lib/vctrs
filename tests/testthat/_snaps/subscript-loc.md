@@ -294,7 +294,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `na_int` must be an actual location, not an integer `NA`.
+      x Subscript `na_int` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(na_chr, 1L, names = "foo"), class = "vctrs_error_subscript_type")
       )
@@ -302,7 +302,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must extract element with a single valid subscript.
-      x Subscript `na_chr` must be an actual location, not a character `NA`.
+      x Subscript `na_chr` must be a location, not a character `NA`.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(na_int, 2L, arg = "foo", call = call(
@@ -311,7 +311,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be an actual location, not an integer `NA`.
+      x Subscript `foo` must be a location, not an integer `NA`.
 
 # num_as_location() optionally forbids negative indices
 
@@ -736,7 +736,7 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be an actual location, not an integer `NA`.
+      x Subscript `foo` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(c(1, 2), 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -821,7 +821,7 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` must be an actual location, not an integer `NA`.
+      x Subscript `foo(bar)` must be a location, not an integer `NA`.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(c(1, 2), 2)), class = "vctrs_error_subscript_type")
       )

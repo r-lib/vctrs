@@ -360,7 +360,7 @@ cnd_bullets_location2_need_scalar <- function(cnd, ...) {
 cnd_bullets_location2_need_present <- function(cnd, ...) {
   cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
   format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be an actual location, not {obj_type_friendly(i)}.")
+    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
   ))
 }
 cnd_bullets_location2_need_positive <- function(cnd, ...) {
