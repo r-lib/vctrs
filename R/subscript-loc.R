@@ -472,11 +472,10 @@ stop_indicator_size <- function(i, n, ..., call = caller_env()) {
   ))
 }
 cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("subscript", cnd$subscript_arg)
+  cnd$subscript_arg <- append_arg("Logical subscript", cnd$subscript_arg)
   glue_data_bullets(
     cnd,
-    i = "Logical subscripts must match the size of the indexed input.",
-    x = "Input has size {n} but {subscript_arg} has size {vec_size(i)}."
+    x = "{subscript_arg} must be size 1 or {n}, not {vec_size(i)}."
   )
 }
 

@@ -17,8 +17,7 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Must assign to elements with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 2 but subscript has size 3.
+      x Logical subscript must be size 1 or 2, not 3.
 
 ---
 
@@ -29,8 +28,7 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Must assign to elements with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 32 but subscript has size 2.
+      x Logical subscript must be size 1 or 32, not 2.
 
 # must assign existing elements
 
