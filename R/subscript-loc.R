@@ -540,7 +540,8 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
 
 #' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
-  switch(cnd_subscript_type(cnd),
+  switch(
+    cnd_subscript_type(cnd),
     numeric =
       if (cnd_subscript_oob_non_consecutive(cnd)) {
         cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
@@ -549,7 +550,7 @@ cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
       },
     character =
       cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
-    abort("Internal error: subscript type can't be `logical` for OOB errors.")
+    abort("Subscript type can't be `logical` for OOB errors.", .internal = TRUE)
   )
 }
 cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
