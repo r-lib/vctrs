@@ -158,7 +158,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript can't contain `0` values.
       i It has a `0` value at location 1.
     Code
@@ -167,7 +167,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript can't contain negative locations.
 
 # list_unchop() fails with complex foreign S3 classes
@@ -298,7 +298,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be numeric, not the string "x".
     Code
       (expect_error(list_unchop(list(1), indices = list(foobar(1L))), class = "vctrs_error_subscript_type")
@@ -306,7 +306,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript must be numeric, not a <vctrs_foobar> object.
 
 # can ignore names in `list_unchop()` by providing a `zap()` name-spec (#232)
