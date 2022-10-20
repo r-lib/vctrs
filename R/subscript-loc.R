@@ -457,20 +457,18 @@ cnd_bullets_subscript_empty <- function(cnd, ...) {
 }
 
 stop_indicator_size <- function(i, n, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_size(
+  cnd <- new_chained_error_subscript_size(
     i,
     n = n,
     ...,
-    body = cnd_body_vctrs_error_indicator_size,
+    header = cnd_header_logical_subscript_size,
     call = call
-  ))
-}
-cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Logical subscript", cnd$subscript_arg)
-  glue_data_bullets(
-    cnd,
-    x = "{subscript_arg} must be size 1 or {n}, not {vec_size(i)}."
   )
+  cnd_signal(cnd)
+}
+cnd_header_logical_subscript_size <- function(cnd, ...) {
+  cnd$arg <- append_arg("Logical subscript", cnd$subscript_arg)
+  glue::glue_data(cnd, "{arg} must be size 1 or {n}, not {vec_size(i)}.")
 }
 
 stop_subscript_oob <- function(i,

@@ -17,7 +17,8 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Can't assign elements.
-      x Logical subscript must be size 1 or 2, not 3.
+      Caused by error:
+      ! Logical subscript must be size 1 or 2, not 3.
 
 ---
 
@@ -28,7 +29,8 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Can't assign elements.
-      x Logical subscript must be size 1 or 32, not 2.
+      Caused by error:
+      ! Logical subscript must be size 1 or 32, not 2.
 
 # must assign existing elements
 

@@ -401,7 +401,8 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Can't subset elements with `c(TRUE, FALSE)`.
-      x Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
+      Caused by error:
+      ! Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
 
 # character subscripts require named vectors
 
@@ -775,7 +776,8 @@
       <error/vctrs_error_subscript_size>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x Logical subscript `foo` must be size 1 or 3, not 2.
+      Caused by error:
+      ! Logical subscript `foo` must be size 1 or 3, not 2.
     Code
       (expect_error(vec_as_location(c(-1, NA), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -863,7 +865,8 @@
       <error/vctrs_error_subscript_size>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Logical subscript `foo(bar)` must be size 1 or 3, not 2.
+      Caused by error:
+      ! Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(-1, NA), 3)), class = "vctrs_error_subscript_type")
       )

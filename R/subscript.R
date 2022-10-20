@@ -192,6 +192,25 @@ new_chained_error_subscript_type <- function(i,
     parent = causal
   )
 }
+new_chained_error_subscript_size <- function(i,
+                                             ...,
+                                             header = NULL,
+                                             call = caller_env()) {
+  causal <- error_cnd(
+    i = i,
+    header = header,
+    ...,
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  new_error_subscript_size(
+    i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+}
 
 # Subscripts errors are currently customised by rethrowing errors with
 # special fields. The setter methods forward these fields to parent
