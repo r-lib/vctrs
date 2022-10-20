@@ -6,8 +6,7 @@
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
       ! Must subset elements with a valid subscript vector.
-      x Subscript `i` has the wrong type `date`.
-      i It must be logical, numeric, or character.
+      x `i` must be logical, numeric, or character, not a <Date> object.
     Code
       (expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
       )
