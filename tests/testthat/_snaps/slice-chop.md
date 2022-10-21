@@ -301,7 +301,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
-      x Subscript must be numeric, not the string "x".
+      Caused by error:
+      ! Subscript must be numeric, not the string "x".
     Code
       (expect_error(list_unchop(list(1), indices = list(foobar(1L))), class = "vctrs_error_subscript_type")
       )
@@ -309,7 +310,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
-      x Subscript must be numeric, not a <vctrs_foobar> object.
+      Caused by error:
+      ! Subscript must be numeric, not a <vctrs_foobar> object.
 
 # can ignore names in `list_unchop()` by providing a `zap()` name-spec (#232)
 

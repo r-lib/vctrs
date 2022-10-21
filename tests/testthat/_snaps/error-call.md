@@ -219,7 +219,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements with `my_arg`.
-      x Can't convert from `my_arg` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `my_arg` <double> to <integer> due to loss of precision.
 
 ---
 
@@ -229,7 +230,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements.
-      x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from <double> to <integer> due to loss of precision.
 
 ---
 
@@ -239,7 +241,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements with `my_arg`.
-      x `my_arg` must be logical, numeric, or character, not an empty list.
+      Caused by error:
+      ! `my_arg` must be logical, numeric, or character, not an empty list.
 
 ---
 
@@ -328,7 +331,8 @@
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x `i` must be logical, numeric, or character, not an environment.
+      Caused by error:
+      ! `i` must be logical, numeric, or character, not an environment.
 
 # list_sizes() reports error context
 

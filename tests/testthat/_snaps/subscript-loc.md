@@ -7,7 +7,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `TRUE`.
-      x `TRUE` must be numeric or character, not `TRUE`.
+      Caused by error:
+      ! `TRUE` must be numeric or character, not `TRUE`.
     Code
       (expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript_type")
       )
@@ -15,7 +16,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `mtcars`.
-      x `mtcars` must be numeric or character, not a <data.frame> object.
+      Caused by error:
+      ! `mtcars` must be numeric or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -23,7 +25,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `env()`.
-      x `env()` must be numeric or character, not an environment.
+      Caused by error:
+      ! `env()` must be numeric or character, not an environment.
     Code
       (expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -31,21 +34,24 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `foobar()`.
-      x `foobar()` must be numeric or character, not a <vctrs_foobar> object.
+      Caused by error:
+      ! `foobar()` must be numeric or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `2.5`.
-      x Can't convert from `2.5` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `2.5` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `Inf`.
-      x Can't convert from `Inf` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `Inf` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type")
       )
@@ -53,7 +59,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract element with `-Inf`.
-      x Can't convert from `-Inf` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `-Inf` <double> to <integer> due to loss of precision.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(foobar(), 10L, arg = "foo", call = call(
@@ -62,7 +69,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x `foo` must be numeric or character, not a <vctrs_foobar> object.
+      Caused by error:
+      ! `foo` must be numeric or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location2(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -70,7 +78,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x Can't convert from `foo` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `foo` <double> to <integer> due to loss of precision.
     Code
       (expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type")
       )
@@ -78,7 +87,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't remove row with `foo(bar)`.
-      x `foo(bar)` must be numeric or character, not `TRUE`.
+      Caused by error:
+      ! `foo(bar)` must be numeric or character, not `TRUE`.
 
 # vec_as_location() requires integer, character, or logical inputs
 
@@ -89,7 +99,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `mtcars`.
-      x `mtcars` must be logical, numeric, or character, not a <data.frame> object.
+      Caused by error:
+      ! `mtcars` must be logical, numeric, or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location(env(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -97,7 +108,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `env()`.
-      x `env()` must be logical, numeric, or character, not an environment.
+      Caused by error:
+      ! `env()` must be logical, numeric, or character, not an environment.
     Code
       (expect_error(vec_as_location(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -105,14 +117,16 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `foobar()`.
-      x `foobar()` must be logical, numeric, or character, not a <vctrs_foobar> object.
+      Caused by error:
+      ! `foobar()` must be logical, numeric, or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `2.5`.
-      x Can't convert from `2.5` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `2.5` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_type")
       )
@@ -120,7 +134,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `list()`.
-      x `list()` must be logical, numeric, or character, not an empty list.
+      Caused by error:
+      ! `list()` must be logical, numeric, or character, not an empty list.
     Code
       (expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_type")
       )
@@ -128,7 +143,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `function() NULL`.
-      x `function() NULL` must be logical, numeric, or character, not a function.
+      Caused by error:
+      ! `function() NULL` must be logical, numeric, or character, not a function.
     Code
       (expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
       )
@@ -136,7 +152,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `Sys.Date()`.
-      x `Sys.Date()` must be logical, numeric, or character, not a <Date> object.
+      Caused by error:
+      ! `Sys.Date()` must be logical, numeric, or character, not a <Date> object.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location(env(), 10L, arg = "foo", call = call(
@@ -145,7 +162,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x `foo` must be logical, numeric, or character, not an environment.
+      Caused by error:
+      ! `foo` must be logical, numeric, or character, not an environment.
     Code
       (expect_error(vec_as_location(foobar(), 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -153,7 +171,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x `foo` must be logical, numeric, or character, not a <vctrs_foobar> object.
+      Caused by error:
+      ! `foo` must be logical, numeric, or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -161,7 +180,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x Can't convert from `foo` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `foo` <double> to <integer> due to loss of precision.
 
 # vec_as_location() and variants check for OOB elements (#1605)
 
@@ -252,7 +272,8 @@
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
       ! Can't extract element with `foo`.
-      x `foo` must be numeric or character, not a <data.frame> object.
+      Caused by error:
+      ! `foo` must be numeric or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
@@ -1070,7 +1091,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `matrix(TRUE, nrow = 1)`.
-      x Subscript `matrix(TRUE, nrow = 1)` must be a simple vector, not a matrix.
+      Caused by error:
+      ! `matrix(TRUE, nrow = 1)` must be a simple vector, not a matrix.
     Code
       (expect_error(vec_as_location(array(TRUE, dim = c(1, 1, 1)), 3L), class = "vctrs_error_subscript_type")
       )
@@ -1078,7 +1100,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `array(TRUE, dim = c(1, 1, 1))`.
-      x Subscript `array(TRUE, dim = c(1, 1, 1))` must be a simple vector, not an array.
+      Caused by error:
+      ! `array(TRUE, dim = c(1, 1, 1))` must be a simple vector, not an array.
     Code
       (expect_error(with_tibble_rows(vec_as_location(matrix(TRUE, nrow = 1), 3L)),
       class = "vctrs_error_subscript_type"))
@@ -1086,7 +1109,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't remove rows with `foo(bar)`.
-      x Subscript `foo(bar)` must be a simple vector, not a matrix.
+      Caused by error:
+      ! `foo(bar)` must be a simple vector, not a matrix.
 
 # vec_as_location() UI
 

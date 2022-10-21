@@ -177,6 +177,8 @@ new_chained_error_subscript_type <- function(i,
                                              ...,
                                              header = NULL,
                                              call = caller_env()) {
+  header <- header %||% cnd_header_subscript_type
+
   causal <- error_cnd(
     i = i,
     header = header,
@@ -266,19 +268,19 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
     glue::glue("Can't {action} {elt[[2]]}{with}.")
   }
 }
-#' @export
-cnd_body.vctrs_error_subscript_type <- function(cnd) {
+
+cnd_header_subscript_type <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
   type <- obj_type_friendly(cnd$i)
   expected_types <- cnd_subscript_expected_types(cnd)
 
-  format_error_bullets(c(
-    x = cli::format_inline("{arg} must be {.or {expected_types}}, not {type}.")
-  ))
+  cli::format_inline("{arg} must be {.or {expected_types}}, not {type}.")
 }
-new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
+
+new_cnd_header_subscript_lossy_cast <- function(lossy_err) {
+  force(lossy_err)
   function(cnd, ...) {
-    format_error_bullets(c(x = cnd_header(lossy_err)))
+    cnd_header(lossy_err)
   }
 }
 
@@ -327,8 +329,8 @@ new_error_subscript2_type <- function(i,
   )
 }
 
-cnd_body_subscript_dim <- function(cnd, ...) {
-  arg <- append_arg("Subscript", cnd$subscript_arg)
+cnd_header_subscript_dim <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
 
   dim <- length(dim(cnd$i))
   if (dim < 2) {
@@ -340,9 +342,9 @@ cnd_body_subscript_dim <- function(cnd, ...) {
     shape <- "an array"
   }
 
-  format_error_bullets(c(
-    x = glue::glue("{arg} must be a simple vector, not {shape}.")
-  ))
+  c(
+    glue::glue("{arg} must be a simple vector, not {shape}.")
+  )
 }
 
 cnd_subscript_element <- function(cnd, capital = FALSE) {

@@ -6,7 +6,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
                              const struct subscript_opts* opts,
                              ERR* err) {
   if (vec_dim_n(subscript) != 1) {
-    *err = new_error_subscript_type(subscript, opts, fns_cnd_body_subscript_dim);
+    *err = new_chained_error_subscript_type(subscript, opts, fns_cnd_header_subscript_dim);
     return r_null;
   }
 
@@ -32,7 +32,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   KEEP_AT(subscript, subscript_pi);
 
   if (!vec_is_vector(subscript)) {
-    *err = new_error_subscript_type(subscript, opts, r_null);
+    *err = new_chained_error_subscript_type(subscript, opts, r_null);
     FREE(2);
     return r_null;
   }
@@ -78,7 +78,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   }
 
   if (action == SUBSCRIPT_TYPE_ACTION_ERROR) {
-    *err = new_error_subscript_type(subscript, opts, r_null);
+    *err = new_chained_error_subscript_type(subscript, opts, r_null);
     FREE(2);
     return r_null;
   }
@@ -126,7 +126,7 @@ r_obj* obj_cast_subscript(r_obj* subscript,
     return vec_cast_opts(&cast_opts);
   }
 
-  *err = new_error_subscript_type(subscript, opts, r_null);
+  *err = new_chained_error_subscript_type(subscript, opts, r_null);
   return r_null;
 }
 
@@ -185,10 +185,10 @@ r_obj* dbl_cast_subscript_fallback(r_obj* subscript,
   if (*err) {
     r_obj* err_obj = KEEP(*err);
 
-    r_obj* body = KEEP(vctrs_eval_mask1(syms_new_dbl_cast_subscript_body,
-                                        syms_lossy_err, err_obj));
+    r_obj* header = KEEP(vctrs_eval_mask1(syms_new_cnd_header_subscript_lossy_cast,
+                                          syms_lossy_err, err_obj));
 
-    *err = new_error_subscript_type(subscript, opts, body);
+    *err = new_chained_error_subscript_type(subscript, opts, header);
     FREE(3);
     return r_null;
   }
@@ -285,9 +285,9 @@ enum subscript_type_action parse_subscript_arg_type(r_obj* x,
 // Conditions ------------------------------------------------------------------
 
 static
-r_obj* new_error_subscript_type(r_obj* subscript,
-                                const struct subscript_opts* opts,
-                                r_obj* body) {
+r_obj* new_chained_error_subscript_type(r_obj* subscript,
+                                        const struct subscript_opts* opts,
+                                        r_obj* header) {
   r_obj* logical = subscript_type_action_chr(opts->logical);
   r_obj* numeric = subscript_type_action_chr(opts->numeric);
   r_obj* character = subscript_type_action_chr(opts->character);
@@ -296,7 +296,7 @@ r_obj* new_error_subscript_type(r_obj* subscript,
   r_obj* subscript_arg = KEEP(vctrs_arg(opts->subscript_arg));
   r_obj* ffi_call = r_lazy_eval_protect(opts->call);
 
-  r_obj* syms[] = {
+  r_obj* params[] = {
     syms_i,
     syms_subscript_arg,
     syms_subscript_action,
@@ -304,7 +304,7 @@ r_obj* new_error_subscript_type(r_obj* subscript,
     syms_logical,
     syms_numeric,
     syms_character,
-    syms_body,
+    syms.header,
     NULL
   };
   r_obj* args[] = {
@@ -315,11 +315,11 @@ r_obj* new_error_subscript_type(r_obj* subscript,
     logical,
     numeric,
     character,
-    body,
+    header,
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_new_error_subscript_type, syms, args));
+  r_obj* call = KEEP(r_call_n(syms_new_chained_error_subscript_type, params, args));
   r_obj* out = r_eval(call, vctrs_ns_env);
 
   FREE(3);
@@ -330,21 +330,21 @@ r_obj* new_error_subscript_type(r_obj* subscript,
 // Init ----------------------------------------------------------------
 
 void vctrs_init_subscript(r_obj* ns) {
-  syms_new_error_subscript_type = r_sym("new_error_subscript_type");
-  syms_new_dbl_cast_subscript_body = r_sym("new_cnd_bullets_subscript_lossy_cast");
+  syms_new_chained_error_subscript_type = r_sym("new_chained_error_subscript_type");
+  syms_new_cnd_header_subscript_lossy_cast = r_sym("new_cnd_header_subscript_lossy_cast");
   syms_lossy_err = r_sym("lossy_err");
 
-  fns_cnd_body_subscript_dim = r_eval(r_sym("cnd_body_subscript_dim"), ns);
+  fns_cnd_header_subscript_dim = r_eval(r_sym("cnd_header_subscript_dim"), ns);
 }
 
 static
-r_obj* fns_cnd_body_subscript_dim = NULL;
+r_obj* fns_cnd_header_subscript_dim = NULL;
 
 static
-r_obj* syms_new_dbl_cast_subscript_body = NULL;
+r_obj* syms_new_cnd_header_subscript_lossy_cast = NULL;
 
 static
 r_obj* syms_lossy_err = NULL;
 
 static
-r_obj* syms_new_error_subscript_type = NULL;
+r_obj* syms_new_chained_error_subscript_type = NULL;

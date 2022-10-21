@@ -6,7 +6,8 @@
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x `i` must be logical, numeric, or character, not a <Date> object.
+      Caused by error:
+      ! `i` must be logical, numeric, or character, not a <Date> object.
     Code
       (expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
       )
@@ -14,7 +15,8 @@
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x Subscript `i` must be a simple vector, not a matrix.
+      Caused by error:
+      ! `i` must be a simple vector, not a matrix.
 
 # can't index beyond the end of a vector
 
@@ -43,7 +45,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements with `2^31`.
-      x Can't convert from `2^31` <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from `2^31` <double> to <integer> due to loss of precision.
 
 # Unnamed vector with character subscript is caught
 

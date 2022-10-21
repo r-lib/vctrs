@@ -7,7 +7,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x `foo(bar)` must be logical, numeric, or character, not an environment.
+      Caused by error:
+      ! `foo(bar)` must be logical, numeric, or character, not an environment.
 
 ---
 
@@ -18,7 +19,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't extract tables with `foo(bar)`.
-      x `foo(bar)` must be logical, numeric, or character, not an environment.
+      Caused by error:
+      ! `foo(bar)` must be logical, numeric, or character, not an environment.
 
 # vec_as_subscript() checks dimensionality
 
@@ -29,7 +31,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
-      x Subscript must be a simple vector, not a matrix.
+      Caused by error:
+      ! Subscript must be a simple vector, not a matrix.
     Code
       (expect_error(vec_as_subscript(array(TRUE, dim = c(1, 1, 1))), class = "vctrs_error_subscript_type")
       )
@@ -37,7 +40,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't subset elements.
-      x Subscript must be a simple vector, not an array.
+      Caused by error:
+      ! Subscript must be a simple vector, not an array.
     Code
       (expect_error(with_tibble_rows(vec_as_subscript(matrix(TRUE, nrow = 1))),
       class = "vctrs_error_subscript_type"))
@@ -45,7 +49,8 @@
       <error/vctrs_error_subscript_type>
       Error:
       ! Can't remove rows with `foo(bar)`.
-      x Subscript `foo(bar)` must be a simple vector, not a matrix.
+      Caused by error:
+      ! `foo(bar)` must be a simple vector, not a matrix.
 
 # vec_as_subscript() forbids subscript types
 
@@ -54,7 +59,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript must be character, not the number 1.
+      Caused by error:
+      ! Subscript must be character, not the number 1.
 
 ---
 
@@ -63,7 +69,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript must be numeric, not the string "foo".
+      Caused by error:
+      ! Subscript must be numeric, not the string "foo".
 
 ---
 
@@ -72,7 +79,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript must be numeric or character, not `TRUE`.
+      Caused by error:
+      ! Subscript must be numeric or character, not `TRUE`.
 
 ---
 
@@ -81,7 +89,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript must be logical or numeric, not the string "foo".
+      Caused by error:
+      ! Subscript must be logical or numeric, not the string "foo".
 
 ---
 
@@ -90,7 +99,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript must be logical or character, not `NULL`.
+      Caused by error:
+      ! Subscript must be logical or character, not `NULL`.
 
 ---
 
@@ -99,7 +109,8 @@
     Condition
       Error:
       ! Can't subset elements.
-      x Subscript must be logical or numeric, not a symbol.
+      Caused by error:
+      ! Subscript must be logical or numeric, not a symbol.
 
 # vec_as_subscript2() forbids subscript types
 
@@ -108,7 +119,8 @@
     Condition
       Error:
       ! Can't extract element.
-      x Subscript must be character, not the number 1.
+      Caused by error:
+      ! Subscript must be character, not the number 1.
 
 ---
 
@@ -117,7 +129,8 @@
     Condition
       Error:
       ! Can't extract element.
-      x Subscript must be numeric, not the string "foo".
+      Caused by error:
+      ! Subscript must be numeric, not the string "foo".
 
 ---
 
@@ -126,7 +139,8 @@
     Condition
       Error:
       ! Can't extract element.
-      x Subscript must be numeric or character, not `TRUE`.
+      Caused by error:
+      ! Subscript must be numeric or character, not `TRUE`.
 
 # vec_as_subscript2() retains the call when throwing vec_as_subscript() errors (#1605)
 
@@ -135,7 +149,8 @@
     Condition
       Error in `foo()`:
       ! Can't extract element.
-      x Subscript must be character, not the number 1.
+      Caused by error:
+      ! Subscript must be character, not the number 1.
 
 ---
 
@@ -144,7 +159,8 @@
     Condition
       Error in `foo()`:
       ! Can't extract element.
-      x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from <double> to <integer> due to loss of precision.
 
 # vec_as_subscript2() retains the call when erroring on logical input (#1605)
 
@@ -153,7 +169,8 @@
     Condition
       Error in `foo()`:
       ! Can't extract element.
-      x Subscript must be numeric or character, not `TRUE`.
+      Caused by error:
+      ! Subscript must be numeric or character, not `TRUE`.
 
 # `logical = 'cast'` is deprecated
 
@@ -170,7 +187,8 @@
     Condition
       Error:
       ! Can't extract element.
-      x Subscript must be numeric or character, not `TRUE`.
+      Caused by error:
+      ! Subscript must be numeric or character, not `TRUE`.
 
 # lossy cast errors for scalar subscripts work (#1606)
 
@@ -179,5 +197,6 @@
     Condition
       Error:
       ! Can't extract element.
-      x Can't convert from <double> to <integer> due to loss of precision.
+      Caused by error:
+      ! Can't convert from <double> to <integer> due to loss of precision.
 
