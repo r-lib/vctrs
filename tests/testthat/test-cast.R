@@ -92,11 +92,9 @@ test_that("unspecified can be cast to shaped vectors", {
   expect_identical(out, exp)
 })
 
-test_that("vec_cast() only falls back when casting to base type", {
+test_that("vec_cast() falls back to base class even when casting to non-base type", {
   expect_equal(vec_cast(foobar(mtcars), mtcars), mtcars)
-  expect_snapshot({
-    (expect_error(vec_cast(mtcars, foobar(mtcars))))
-  })
+  expect_equal(vec_cast(mtcars, foobar(mtcars)), mtcars)
 })
 
 test_that("vec_cast() only attempts to fall back if `to` is a data frame (#1568)", {
@@ -283,4 +281,21 @@ test_that("df-fallback for cast is not sensitive to attributes order", {
   )
 
   expect_identical(vec_cast(x, ptype), x)
+})
+
+test_that("bare-type fallback for df-cast works", {
+  # NOTE: Not sure why this was necessary. The cubble and yamlet
+  # packages fail without this.
+  local_methods(
+    c.vctrs_foobaz = function(...) quux(NextMethod())
+  )
+
+  df <- data_frame(x = 1, y = foobaz("foo"))
+  gdf <- dplyr::new_grouped_df(
+    df,
+    data_frame(x = 1, .rows = list(1L)),
+    class = "vctrs_foobar"
+  )
+
+  expect_error(vec_rbind(gdf, gdf), NA)
 })
