@@ -36,7 +36,7 @@ struct location_opts {
 };
 
 static inline
-struct location_opts new_location_opts_assign() {
+struct location_opts new_location_opts_assign(void) {
   return (struct location_opts) {
     .subscript_opts = new_subscript_opts_assign()
   };

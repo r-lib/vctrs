@@ -29,7 +29,7 @@ struct subscript_opts {
 };
 
 static inline
-struct subscript_opts new_subscript_opts_assign() {
+struct subscript_opts new_subscript_opts_assign(void) {
   return (struct subscript_opts) {
     .action = SUBSCRIPT_ACTION_ASSIGN
   };
