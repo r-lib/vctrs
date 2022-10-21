@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.5.0
 
 * vctrs is now compliant with `-Wstrict-prototypes` as requested by CRAN
   (#1729).
