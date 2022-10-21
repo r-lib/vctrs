@@ -28,7 +28,7 @@ vec_proxy_order() determines the behavior of order() and sort()
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,6 +132,16 @@ comparison and sorting.</p>
 <ul><li><p><code><a href="vec_proxy_equal.html">vec_proxy_equal()</a></code> called by default in <code>vec_proxy_compare()</code></p></li>
 <li><p><code>vec_proxy_compare()</code> called by default in <code>vec_proxy_order()</code></p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="data-frames">Data frames<a class="anchor" aria-label="anchor" href="#data-frames"></a></h2>
+    
+
+<p>If the proxy for <code>x</code> is a data frame, the proxy function is automatically
+recursively applied on all columns as well. After applying the proxy
+recursively, if there are any data frame columns present in the proxy, then
+they are unpacked. Finally, if the resulting data frame only has a single
+column, then it is unwrapped and a vector is returned as the proxy.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

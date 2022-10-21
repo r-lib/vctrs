@@ -219,12 +219,12 @@ This is similar to how a grouped tibble is a more general type than a
 tibble or a data frame. Conceptually, the latter are pinned to a single
 constant group.
 The coercion methods for data frames operate in two steps:
-They check for compatible subclass attributes. In our case the
-tibble colour has to be the same, or be undefined.
+They check for compatible subclass attributes. In our case the tibble
+colour has to be the same, or be undefined.
 They call their parent methods, in this case
-tib_ptype2() and tib_cast()
-because we have a subclass of tibble. This eventually calls the data
-frame methods df_ptype2() and
+tib_ptype2() and tib_cast() because
+we have a subclass of tibble. This eventually calls the data frame
+methods df_ptype2() and
 tib_ptype2() which match the columns and their
 types.
 
@@ -619,12 +619,12 @@ This is similar to how a grouped tibble is a more general type than a
 tibble or a data frame. Conceptually, the latter are pinned to a single
 constant group.
 The coercion methods for data frames operate in two steps:
-They check for compatible subclass attributes. In our case the
-tibble colour has to be the same, or be undefined.
+They check for compatible subclass attributes. In our case the tibble
+colour has to be the same, or be undefined.
 They call their parent methods, in this case
-tib_ptype2() and tib_cast()
-because we have a subclass of tibble. This eventually calls the data
-frame methods df_ptype2() and
+tib_ptype2() and tib_cast() because
+we have a subclass of tibble. This eventually calls the data frame
+methods df_ptype2() and
 tib_ptype2() which match the columns and their
 types.
 
@@ -810,7 +810,7 @@ vec_rbind(red, data.frame(x = 10:12))
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1062,12 +1062,12 @@ is a <em>supertype</em> of tibble and data frame, i.e. it is the richer type.
 This is similar to how a grouped tibble is a more general type than a
 tibble or a data frame. Conceptually, the latter are pinned to a single
 constant group.</p>
-<p>The coercion methods for data frames operate in two steps:</p><ul><li><p>They check for compatible subclass attributes. In our case the
-tibble colour has to be the same, or be undefined.</p></li>
+<p>The coercion methods for data frames operate in two steps:</p><ul><li><p>They check for compatible subclass attributes. In our case the tibble
+colour has to be the same, or be undefined.</p></li>
 <li><p>They call their parent methods, in this case
-<code><a href="df_ptype2.html">tib_ptype2()</a></code> and <code><a href="df_ptype2.html">tib_cast()</a></code>
-because we have a subclass of tibble. This eventually calls the data
-frame methods <code><a href="df_ptype2.html">df_ptype2()</a></code> and
+<code><a href="df_ptype2.html">tib_ptype2()</a></code> and <code><a href="df_ptype2.html">tib_cast()</a></code> because
+we have a subclass of tibble. This eventually calls the data frame
+methods <code><a href="df_ptype2.html">df_ptype2()</a></code> and
 <code><a href="df_ptype2.html">tib_ptype2()</a></code> which match the columns and their
 types.</p></li>
 </ul><p>This process should usually be wrapped in two functions to avoid

@@ -56,7 +56,7 @@ levels are nested.'><meta property="og:image" content="https://vctrs.r-lib.org/l
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -127,8 +127,9 @@ levels are nested.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_as_names</span><span class="op">(</span></span>
 <span>  <span class="va">names</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span><span class="op">)</span>,</span>
-<span>  repair_arg <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"universal"</span>, <span class="st">"check_unique"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
+<span>  repair_arg <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  call <span class="op">=</span> <span class="fu">caller_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -145,10 +146,10 @@ levels are nested.</p>
 
 
 <dt>repair</dt>
-<dd><p>Either a string or a function. If a string, it must
-be one of <code>"check_unique"</code>, <code>"minimal"</code>, <code>"unique"</code>, or <code>"universal"</code>.
-If a function, it is invoked with a vector of minimal names and must
-return minimal names, otherwise an error is thrown.</p><ul><li><p>Minimal names are never <code>NULL</code> or <code>NA</code>. When an element doesn't
+<dd><p>Either a string or a function. If a string, it must be one of
+<code>"check_unique"</code>, <code>"minimal"</code>, <code>"unique"</code>, <code>"universal"</code>, <code>"unique_quiet"</code>,
+or <code>"universal_quiet"</code>. If a function, it is invoked with a vector of
+minimal names and must return minimal names, otherwise an error is thrown.</p><ul><li><p>Minimal names are never <code>NULL</code> or <code>NA</code>. When an element doesn't
 have a name, its minimal name is an empty string.</p></li>
 <li><p>Unique names are unique. A suffix is appended to duplicate
 names to make them unique.</p></li>
@@ -157,7 +158,12 @@ safely use the names as variables without causing a syntax
 error.</p></li>
 </ul><p>The <code>"check_unique"</code> option doesn't perform any name repair.
 Instead, an error is raised if the names don't suit the
-<code>"unique"</code> criteria.</p></dd>
+<code>"unique"</code> criteria.</p>
+<p>The options <code>"unique_quiet"</code> and <code>"universal_quiet"</code> are here to help the
+user who calls this function indirectly, via another function which exposes
+<code>repair</code> but not <code>quiet</code>. Specifying <code>repair = "unique_quiet"</code> is like
+specifying <code>repair = "unique", quiet = TRUE</code>. When the <code>"*_quiet"</code> options
+are used, any setting of <code>quiet</code> is silently overridden.</p></dd>
 
 
 <dt>repair_arg</dt>

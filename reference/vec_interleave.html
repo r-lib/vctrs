@@ -20,7 +20,7 @@ vec_interleave(x, y) == vec_c(x[1], y[1], x[2], y[2], ..., x[n], y[n])
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,14 +78,16 @@ together.</p>
 <span>  <span class="va">...</span>,</span>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span><span class="op">)</span></span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>...</dt>
-<dd><p>Vectors to interleave. These will be recycled to a common size.</p></dd>
+<dd><p>Vectors to interleave. These will be
+<a href="vector_recycling_rules.html">recycled</a> to a common size.</p></dd>
 
 
 <dt>.ptype</dt>
@@ -124,7 +126,7 @@ names are ignored and the result is unnamed.</p></li>
 <div class="section">
 <h3 id="vctrs-dependencies">vctrs dependencies<a class="anchor" aria-label="anchor" href="#vctrs-dependencies"></a></h3>
 
-<ul><li><p><code><a href="vec_chop.html">vec_unchop()</a></code></p></li>
+<ul><li><p><code><a href="vec_chop.html">list_unchop()</a></code></p></li>
 </ul></div>
 
     </div>

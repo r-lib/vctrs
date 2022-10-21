@@ -14,7 +14,7 @@ by coercing all input items."><meta property="og:image" content="https://vctrs.r
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,8 +70,6 @@ by coercing all input items.</p>
 <span></span>
 <span><span class="fu">as_list_of</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">validate_list_of</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">is_list_of</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for vctrs_list_of</span></span>
@@ -103,13 +101,7 @@ this is a convenient way to make production code demand fixed types.</p></dd>
 <dd><p>Arguments to <code><a href="vec_ptype2.html">vec_ptype2()</a></code> and <code><a href="vec_cast.html">vec_cast()</a></code>.</p></dd>
 
 
-<dt>x_arg</dt>
-<dd><p>Argument names for <code>x</code> and <code>y</code>. These are used
-in error messages to inform the user about the locations of
-incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
-
-
-<dt>y_arg</dt>
+<dt>x_arg, y_arg</dt>
 <dd><p>Argument names for <code>x</code> and <code>y</code>. These are used
 in error messages to inform the user about the locations of
 incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>

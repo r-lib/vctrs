@@ -14,7 +14,7 @@ the foundation of type coercions in vctrs."><meta property="og:image" content="h
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,15 +109,15 @@ dots are only for future extensions and should be empty.</p></dd>
 
 
 <dt>x_arg</dt>
-<dd><p>Argument names for <code>x</code> and <code>to</code>. These are used
-in error messages to inform the user about the locations of
-incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
+<dd><p>Argument name for <code>x</code>, used in error messages to
+inform the user about the locations of incompatible types
+(see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
 
 
 <dt>to_arg</dt>
-<dd><p>Argument names for <code>x</code> and <code>to</code>. These are used
-in error messages to inform the user about the locations of
-incompatible types (see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
+<dd><p>Argument name <code>to</code> used in error messages to
+inform the user about the locations of incompatible types
+(see <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>).</p></dd>
 
 
 <dt>call, .call</dt>
@@ -192,10 +192,12 @@ attributes that an input can't be cast to the target type.</p></div>
 <span class="r-in"><span><span class="co"># When information is lost the cast fails</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">vec_cast</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir, enclos) : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert `c(1, 1.5)` &lt;double&gt; to &lt;integer&gt;.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from `c(1, 1.5)` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Locations: 2</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">vec_cast</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir, enclos) : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert `c(1, 2)` &lt;double&gt; to &lt;logical&gt;.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from `c(1, 2)` &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Locations: 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># You can suppress this error and get the partial results</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="vctrs-conditions.html">allow_lossy_cast</a></span><span class="op">(</span><span class="fu">vec_cast</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -210,7 +212,8 @@ attributes that an input can't be cast to the target type.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 1</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="vctrs-conditions.html">allow_lossy_cast</a></span><span class="op">(</span><span class="fu">vec_cast</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, to_ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir, enclos) : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert `c(1, 2)` &lt;double&gt; to &lt;logical&gt;.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from `c(1, 2)` &lt;double&gt; to &lt;logical&gt; due to loss of precision.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Locations: 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># No sensible coercion is possible so an error is generated</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">vec_cast</span><span class="op">(</span><span class="fl">1.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>

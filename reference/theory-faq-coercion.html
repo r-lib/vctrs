@@ -21,7 +21,7 @@ vec_c(TRUE, 1)
 #&amp;gt; [1] 1 1
 
 vec_c(&quot;a&quot;, 1)
-#&amp;gt; Error:
+#&amp;gt; Error in `vec_c()`:
 #&amp;gt; ! Can't combine `..1` &amp;lt;character&amp;gt; and `..2` &amp;lt;double&amp;gt;.
 
 vec_rbind(
@@ -67,9 +67,9 @@ vec_ptype2()
 
 Methods for vec_ptype2() are passed two prototypes, i.e. two inputs
 emptied of their elements. They implement two behaviours:
-If the types of their inputs are compatible, indicate which of them
-is the richer type by returning it. If the types are of equal
-resolution, return any of the two.
+If the types of their inputs are compatible, indicate which of them is
+the richer type by returning it. If the types are of equal resolution,
+return any of the two.
 Throw an error with stop_incompatible_type() when it can be
 determined from the attributes that the types of the inputs are not
 compatible.
@@ -149,10 +149,23 @@ different type or introduce an incompatible type error.
 Coercion hierarchy
 
 
-Coercible classes form a coercion (or subtyping) hierarchy. Here is a
-simplified diagram of the hierarchy for base types. In this diagram the
-directions of the arrows express which type is richer. They flow from
-the bottom (more constrained types) to the top (richer types).
+The classes that you can coerce together form a coercion (or subtyping)
+hierarchy. Below is a schema of the hierarchy for the base types like
+integer and factor. In this diagram the directions of the arrows express
+which type is richer. They flow from the bottom (more constrained types)
+to the top (richer types).
+
+A coercion hierarchy is distinct from the structural hierarchy implied
+by memory types and classes. For instance, in a structural hierarchy,
+factors are built on top of integers. But in the coercion hierarchy they
+are more related to character vectors. Similarly, subclasses are not
+necessarily coercible with their superclasses because the coercion and
+structural hierarchies are separate.
+
+
+
+Implementing a coercion hierarchy
+
 
 As a class implementor, you have two options. The simplest is to create
 an entirely separate hierarchy. The date and date-time classes are an
@@ -186,14 +199,14 @@ Determine that the prototypes of the two inputs are not compatible.
 This must be decided in exactly the same way as for vec_ptype2().
 Call stop_incompatible_cast() if you can determine from the
 attributes that the types are not compatible.
-Detect incompatible values. Usually this is because the target type
-is too restricted for the values supported by the input type. For
+Detect incompatible values. Usually this is because the target type is
+too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.
-Return the input vector converted to the target type if all values
-are compatible. Whereas vec_ptype2() must return the same type
-when the inputs are permuted, vec_cast() is directional. It
-always returns the type of the right-hand side, or dies trying.
+Return the input vector converted to the target type if all values are
+compatible. Whereas vec_ptype2() must return the same type when the
+inputs are permuted, vec_cast() is directional. It always returns
+the type of the right-hand side, or dies trying.
 
 
 
@@ -209,8 +222,8 @@ It dispatches on the classes of the first two inputs.
 There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.
-NextMethod() does not work. Parent methods must be called
-explicitly if necessary.
+NextMethod() does not work. Parent methods must be called explicitly
+if necessary.
 The default method is hard-coded.
 
 
@@ -301,7 +314,7 @@ vec_c(TRUE, 1)
 #&amp;gt; [1] 1 1
 
 vec_c(&quot;a&quot;, 1)
-#&amp;gt; Error:
+#&amp;gt; Error in `vec_c()`:
 #&amp;gt; ! Can't combine `..1` &amp;lt;character&amp;gt; and `..2` &amp;lt;double&amp;gt;.
 
 vec_rbind(
@@ -347,9 +360,9 @@ vec_ptype2()
 
 Methods for vec_ptype2() are passed two prototypes, i.e. two inputs
 emptied of their elements. They implement two behaviours:
-If the types of their inputs are compatible, indicate which of them
-is the richer type by returning it. If the types are of equal
-resolution, return any of the two.
+If the types of their inputs are compatible, indicate which of them is
+the richer type by returning it. If the types are of equal resolution,
+return any of the two.
 Throw an error with stop_incompatible_type() when it can be
 determined from the attributes that the types of the inputs are not
 compatible.
@@ -429,10 +442,23 @@ different type or introduce an incompatible type error.
 Coercion hierarchy
 
 
-Coercible classes form a coercion (or subtyping) hierarchy. Here is a
-simplified diagram of the hierarchy for base types. In this diagram the
-directions of the arrows express which type is richer. They flow from
-the bottom (more constrained types) to the top (richer types).
+The classes that you can coerce together form a coercion (or subtyping)
+hierarchy. Below is a schema of the hierarchy for the base types like
+integer and factor. In this diagram the directions of the arrows express
+which type is richer. They flow from the bottom (more constrained types)
+to the top (richer types).
+
+A coercion hierarchy is distinct from the structural hierarchy implied
+by memory types and classes. For instance, in a structural hierarchy,
+factors are built on top of integers. But in the coercion hierarchy they
+are more related to character vectors. Similarly, subclasses are not
+necessarily coercible with their superclasses because the coercion and
+structural hierarchies are separate.
+
+
+
+Implementing a coercion hierarchy
+
 
 As a class implementor, you have two options. The simplest is to create
 an entirely separate hierarchy. The date and date-time classes are an
@@ -466,14 +492,14 @@ Determine that the prototypes of the two inputs are not compatible.
 This must be decided in exactly the same way as for vec_ptype2().
 Call stop_incompatible_cast() if you can determine from the
 attributes that the types are not compatible.
-Detect incompatible values. Usually this is because the target type
-is too restricted for the values supported by the input type. For
+Detect incompatible values. Usually this is because the target type is
+too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.
-Return the input vector converted to the target type if all values
-are compatible. Whereas vec_ptype2() must return the same type
-when the inputs are permuted, vec_cast() is directional. It
-always returns the type of the right-hand side, or dies trying.
+Return the input vector converted to the target type if all values are
+compatible. Whereas vec_ptype2() must return the same type when the
+inputs are permuted, vec_cast() is directional. It always returns
+the type of the right-hand side, or dies trying.
 
 
 
@@ -489,8 +515,8 @@ It dispatches on the classes of the first two inputs.
 There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.
-NextMethod() does not work. Parent methods must be called
-explicitly if necessary.
+NextMethod() does not work. Parent methods must be called explicitly
+if necessary.
 The default method is hard-coded.
 
 
@@ -570,7 +596,7 @@ class in R scripts.
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -635,7 +661,7 @@ functions that use the split-apply-combine strategy. For example:</p>
 <span><span class="co">#&gt; [1] 1 1</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vec_c.html">vec_c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error:</span></span>
+<span><span class="co">#&gt; Error in `vec_c()`:</span></span>
 <span><span class="co">#&gt; ! Can't combine `..1` &lt;character&gt; and `..2` &lt;double&gt;.</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vec_bind.html">vec_rbind</a></span><span class="op">(</span></span>
@@ -676,9 +702,9 @@ steps, which require <code><a href="vec_ptype2.html">vec_ptype2()</a></code> and
 
 
 <p>Methods for <code><a href="vec_ptype2.html">vec_ptype2()</a></code> are passed two <em>prototypes</em>, i.e. two inputs
-emptied of their elements. They implement two behaviours:</p><ul><li><p>If the types of their inputs are compatible, indicate which of them
-is the richer type by returning it. If the types are of equal
-resolution, return any of the two.</p></li>
+emptied of their elements. They implement two behaviours:</p><ul><li><p>If the types of their inputs are compatible, indicate which of them is
+the richer type by returning it. If the types are of equal resolution,
+return any of the two.</p></li>
 <li><p>Throw an error with <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code> when it can be
 determined from the attributes that the types of the inputs are not
 compatible.</p></li>
@@ -754,11 +780,24 @@ different type or introduce an incompatible type error.</p>
 <h4 id="coercion-hierarchy">Coercion hierarchy<a class="anchor" aria-label="anchor" href="#coercion-hierarchy"></a></h4>
 
 
-<p>Coercible classes form a coercion (or subtyping) hierarchy. Here is a
-simplified diagram of the hierarchy for base types. In this diagram the
-directions of the arrows express which type is richer. They flow from
-the bottom (more constrained types) to the top (richer types).</p>
+<p>The classes that you can coerce together form a coercion (or subtyping)
+hierarchy. Below is a schema of the hierarchy for the base types like
+integer and factor. In this diagram the directions of the arrows express
+which type is richer. They flow from the bottom (more constrained types)
+to the top (richer types).</p>
 <p><img src="figures/coerce.png" alt=""></p>
+<p>A coercion hierarchy is distinct from the structural hierarchy implied
+by memory types and classes. For instance, in a structural hierarchy,
+factors are built on top of integers. But in the coercion hierarchy they
+are more related to character vectors. Similarly, subclasses are not
+necessarily coercible with their superclasses because the coercion and
+structural hierarchies are separate.</p>
+</div>
+
+<div class="section">
+<h4 id="implementing-a-coercion-hierarchy">Implementing a coercion hierarchy<a class="anchor" aria-label="anchor" href="#implementing-a-coercion-hierarchy"></a></h4>
+
+
 <p>As a class implementor, you have two options. The simplest is to create
 an entirely separate hierarchy. The date and date-time classes are an
 example of an S3-based hierarchy that is completely separate.
@@ -790,14 +829,14 @@ in more cases. <code><a href="vec_cast.html">vec_cast()</a></code> has three pos
 This must be decided in exactly the same way as for <code><a href="vec_ptype2.html">vec_ptype2()</a></code>.
 Call <code><a href="vctrs-conditions.html">stop_incompatible_cast()</a></code> if you can determine from the
 attributes that the types are not compatible.</p></li>
-<li><p>Detect incompatible values. Usually this is because the target type
-is too restricted for the values supported by the input type. For
+<li><p>Detect incompatible values. Usually this is because the target type is
+too restricted for the values supported by the input type. For
 example, a fractional number can’t be converted to an integer. The
 method should throw an error in that case.</p></li>
-<li><p>Return the input vector converted to the target type if all values
-are compatible. Whereas <code><a href="vec_ptype2.html">vec_ptype2()</a></code> must return the same type
-when the inputs are permuted, <code><a href="vec_cast.html">vec_cast()</a></code> is <em>directional</em>. It
-always returns the type of the right-hand side, or dies trying.</p></li>
+<li><p>Return the input vector converted to the target type if all values are
+compatible. Whereas <code><a href="vec_ptype2.html">vec_ptype2()</a></code> must return the same type when the
+inputs are permuted, <code><a href="vec_cast.html">vec_cast()</a></code> is <em>directional</em>. It always returns
+the type of the right-hand side, or dies trying.</p></li>
 </ul></div>
 
 <div class="section">
@@ -810,8 +849,8 @@ differences:</p><ul><li><p>It dispatches on the classes of the first two inputs.
 <li><p>There is no inheritance of ptype2 and cast methods. This is because
 the S3 class hierarchy is not necessarily the same as the coercion
 hierarchy.</p></li>
-<li><p><code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> does not work. Parent methods must be called
-explicitly if necessary.</p></li>
+<li><p><code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> does not work. Parent methods must be called explicitly
+if necessary.</p></li>
 <li><p>The default method is hard-coded.</p></li>
 </ul></div>
 

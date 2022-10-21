@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,15 +60,29 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_order</span><span class="op">(</span><span class="va">x</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"asc"</span>, <span class="st">"desc"</span><span class="op">)</span>, na_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"largest"</span>, <span class="st">"smallest"</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_order</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"asc"</span>, <span class="st">"desc"</span><span class="op">)</span>,</span>
+<span>  na_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"largest"</span>, <span class="st">"smallest"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">vec_sort</span><span class="op">(</span><span class="va">x</span>, direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"asc"</span>, <span class="st">"desc"</span><span class="op">)</span>, na_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"largest"</span>, <span class="st">"smallest"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">vec_sort</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"asc"</span>, <span class="st">"desc"</span><span class="op">)</span>,</span>
+<span>  na_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"largest"</span>, <span class="st">"smallest"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A vector</p></dd>
+
+
+<dt>...</dt>
+<dd><p>These dots are for future extensions and must be empty.</p></dd>
 
 
 <dt>direction</dt>
@@ -119,7 +133,7 @@ order.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  3  6  5  9  1  4  7  2  8 10</span>
 <span class="r-in"><span><span class="fu">vec_sort</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 0.122 0.128 0.207 0.374 0.442 0.561 0.753 0.799 0.895    NA</span>
-<span class="r-in"><span><span class="fu">vec_sort</span><span class="op">(</span><span class="va">x</span>, <span class="st">"desc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">vec_sort</span><span class="op">(</span><span class="va">x</span>, direction <span class="op">=</span> <span class="st">"desc"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]    NA 0.895 0.799 0.753 0.561 0.442 0.374 0.207 0.128 0.122</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Can also handle data frames</span></span></span>
@@ -138,7 +152,7 @@ order.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8  2 0.122</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  2 0.128</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 2 0.799</span>
-<span class="r-in"><span><span class="fu">vec_sort</span><span class="op">(</span><span class="va">df</span>, <span class="st">"desc"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">vec_sort</span><span class="op">(</span><span class="va">df</span>, direction <span class="op">=</span> <span class="st">"desc"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    g     x</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  2 0.799</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  2 0.128</span>

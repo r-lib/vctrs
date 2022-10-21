@@ -88,7 +88,7 @@ if your class has attributes that depend on the data."><meta property="og:image"
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,7 +173,7 @@ if your class has attributes that depend on the data.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vec_proxy</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">vec_restore</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span>, n <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">vec_restore</span><span class="op">(</span><span class="va">x</span>, <span class="va">to</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -188,16 +188,6 @@ if your class has attributes that depend on the data.</p>
 
 <dt>to</dt>
 <dd><p>The original vector to restore to.</p></dd>
-
-
-<dt>n</dt>
-<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a>
-The total size to restore to. This is currently passed by
-<code><a href="vec_slice.html">vec_slice()</a></code> to solve edge cases arising in data frame
-restoration. In most cases you don't need this information and
-can safely ignore that argument. This parameter should be
-considered internal and experimental, it might change in the
-future.</p></dd>
 
 </dl></div>
     <div class="section level2">

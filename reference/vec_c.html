@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,10 @@
 <span>  <span class="va">...</span>,</span>
 <span>  .ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .name_spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span><span class="op">)</span></span>
+<span>  .name_repair <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"minimal"</span>, <span class="st">"unique"</span>, <span class="st">"check_unique"</span>, <span class="st">"universal"</span>, <span class="st">"unique_quiet"</span>,</span>
+<span>    <span class="st">"universal_quiet"</span><span class="op">)</span>,</span>
+<span>  .error_arg <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  .error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -101,6 +104,19 @@ names are ignored and the result is unnamed.</p></li>
 <dt>.name_repair</dt>
 <dd><p>How to repair names, see <code>repair</code> options in
 <code><a href="vec_as_names.html">vec_as_names()</a></code>.</p></dd>
+
+
+<dt>.error_arg</dt>
+<dd><p>An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.</p></dd>
+
+
+<dt>.error_call</dt>
+<dd><p>The execution environment of a currently
+running function, e.g. <code>caller_env()</code>. The function will be
+mentioned in error messages as the source of the error. See the
+<code>call</code> argument of <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort()</a></code> for more information.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -158,14 +174,14 @@ or columns.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Date/times --------------------------</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-09-30" "2022-09-30"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-10-21" "2022-10-21"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-09-30 13:07:26 UTC" "2022-09-30 00:00:00 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-10-21 16:46:41 UTC" "2022-10-21 00:00:00 UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">vec_c</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-09-30 00:00:00 UTC" "2022-09-30 13:07:26 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-10-21 00:00:00 UTC" "2022-10-21 16:46:41 UTC"</span>
 <span class="r-in"><span><span class="fu">vec_c</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-09-30 13:07:26 UTC" "2022-09-30 00:00:00 UTC"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2022-10-21 16:46:41 UTC" "2022-10-21 00:00:00 UTC"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Factors -----------------------------</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -181,7 +197,8 @@ or columns.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> name </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    1 </span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">vec_c</span><span class="op">(</span>name <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error : Can't merge the outer name `name` with a vector of length &gt; 1.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in vec_c(name = 1:3) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't merge the outer name `name` with a vector of length &gt; 1.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Please supply a `.name_spec` specification.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Pass a name specification to work around this:</span></span></span>

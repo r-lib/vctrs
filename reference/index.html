@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -204,9 +204,9 @@
         <dd>Assert an argument has known prototype and/or size</dd>
       </dl><dl><dt>
           
-          <code><a href="vec_is_list.html">vec_is_list()</a></code> <code><a href="vec_is_list.html">vec_check_list()</a></code> <code><a href="vec_is_list.html">list_all_vectors()</a></code> <code><a href="vec_is_list.html">list_check_all_vectors()</a></code> 
+          <code><a href="vec_is_list.html">vec_is_list()</a></code> <code><a href="vec_is_list.html">vec_check_list()</a></code> <code><a href="vec_is_list.html">list_all_vectors()</a></code> <code><a href="vec_is_list.html">list_check_all_vectors()</a></code> <code><a href="vec_is_list.html">list_all_size()</a></code> <code><a href="vec_is_list.html">list_check_all_size()</a></code> 
         </dt>
-        <dd>Is the object a list?</dd>
+        <dd>List checks</dd>
       </dl></div><div class="section level2">
       <h2 id="combining">Combining<a class="anchor" aria-label="anchor" href="#combining"></a></h2>
       
@@ -266,7 +266,7 @@
         <dd>Vector recycling</dd>
       </dl><dl><dt>
           
-          <code><a href="vec_chop.html">vec_chop()</a></code> <code><a href="vec_chop.html">vec_unchop()</a></code> 
+          <code><a href="vec_chop.html">vec_chop()</a></code> <code><a href="vec_chop.html">list_unchop()</a></code> 
         </dt>
         <dd>Chopping</dd>
       </dl><dl><dt>
@@ -308,14 +308,19 @@
 
       <dl><dt>
           
-          <code><a href="vec_equal.html">vec_equal()</a></code> <code><a href="vec_equal.html">vec_equal_na()</a></code> 
+          <code><a href="vec_equal.html">vec_equal()</a></code> 
         </dt>
-        <dd>Test if two vectors are equal</dd>
+        <dd>Equality</dd>
       </dl><dl><dt>
           
           <code><a href="vec_detect_complete.html">vec_detect_complete()</a></code> 
         </dt>
         <dd>Complete</dd>
+      </dl><dl><dt>
+          
+          <code><a href="missing.html">vec_detect_missing()</a></code> <code><a href="missing.html">vec_any_missing()</a></code> 
+        </dt>
+        <dd>Missing values</dd>
       </dl><dl><dt>
           
           <code><a href="vec_compare.html">vec_compare()</a></code> 
@@ -337,6 +342,11 @@
           <code><a href="vec_order.html">vec_order()</a></code> <code><a href="vec_order.html">vec_sort()</a></code> 
         </dt>
         <dd>Order and sort vectors</dd>
+      </dl><dl><dt>
+          
+          <code><a href="vec_rank.html">vec_rank()</a></code> 
+        </dt>
+        <dd>Compute ranks</dd>
       </dl></div><div class="section level2">
       <h2 id="matching-and-splitting">Matching and splitting<a class="anchor" aria-label="anchor" href="#matching-and-splitting"></a></h2>
       
@@ -417,7 +427,7 @@
 
       <dl><dt>
           
-          <code><a href="list_of.html">list_of()</a></code> <code><a href="list_of.html">as_list_of()</a></code> <code><a href="list_of.html">validate_list_of()</a></code> <code><a href="list_of.html">is_list_of()</a></code> <code><a href="list_of.html">vec_ptype2(<i>&lt;vctrs_list_of&gt;</i>)</a></code> <code><a href="list_of.html">vec_cast(<i>&lt;vctrs_list_of&gt;</i>)</a></code> 
+          <code><a href="list_of.html">list_of()</a></code> <code><a href="list_of.html">as_list_of()</a></code> <code><a href="list_of.html">is_list_of()</a></code> <code><a href="list_of.html">vec_ptype2(<i>&lt;vctrs_list_of&gt;</i>)</a></code> <code><a href="list_of.html">vec_cast(<i>&lt;vctrs_list_of&gt;</i>)</a></code> 
         </dt>
         <dd><code>list_of</code> S3 class for homogenous lists</dd>
       </dl></div><div class="section level2">
@@ -483,11 +493,6 @@
           <code><a href="new_vctr.html">new_vctr()</a></code> 
         </dt>
         <dd>vctr (vector) S3 class</dd>
-      </dl><dl><dt>
-          
-          <code><a href="vec_list_cast.html">vec_list_cast()</a></code> 
-        </dt>
-        <dd>Cast a list to vector of specific type</dd>
       </dl><dl><dt>
           
           <code><a href="vec_ptype_full.html">vec_ptype_full()</a></code> <code><a href="vec_ptype_full.html">vec_ptype_abbr()</a></code> 

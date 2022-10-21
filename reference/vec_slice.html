@@ -14,7 +14,7 @@ that matches vec_size() instead of length()."><meta property="og:image" content=
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -207,14 +207,16 @@ method, the vector is sliced with <code>[</code> instead.</p>
 <span class="r-in"><span><span class="co"># But not fractional doubles:</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu"><a href="vec_cast.html">vec_cast</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in eval(expr, envir, enclos) : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert `1.5` &lt;double&gt; to &lt;integer&gt;.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from `1.5` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Locations: 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For this reason you can't assign fractional values in an integer</span></span></span>
 <span class="r-in"><span><span class="co"># vector:</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">vec_slice</span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">1.5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error in `vec_slice&lt;-`(`*tmp*`, 2, value = 1.5) : </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert `1.5` &lt;double&gt; to &lt;integer&gt;.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Can't convert from `1.5` &lt;double&gt; to &lt;integer&gt; due to loss of precision.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">•</span> Locations: 1</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

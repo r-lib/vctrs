@@ -38,7 +38,7 @@ tibble::tibble(x = fit)
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,21 +117,16 @@ but in the tidyverse that’s not the case by default:</p>
 <span><span class="co">#&gt; [1] "lm"</span></span>
 <span></span>
 <span><span class="co"># S3 lists can be subset like a vector using base R:</span></span>
-<span><span class="va">fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
+<span><span class="va">fit</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $coefficients</span></span>
 <span><span class="co">#&gt; (Intercept) </span></span>
 <span><span class="co">#&gt;           2 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $residuals</span></span>
-<span><span class="co">#&gt;             1             2             3 </span></span>
-<span><span class="co">#&gt; -1.000000e+00 -3.246047e-16  1.000000e+00 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $effects</span></span>
-<span><span class="co">#&gt; (Intercept)                         </span></span>
-<span><span class="co">#&gt;  -3.4641016   0.3660254   1.3660254</span></span>
+<span><span class="co">#&gt; $rank</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
 <span></span>
 <span><span class="co"># But not in vctrs</span></span>
-<span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">fit</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in `vctrs::vec_slice()`:</span></span>
 <span><span class="co">#&gt; ! `x` must be a vector, not a &lt;lm&gt; object.</span></span></code></pre><p></p></div>
 <p>Defused function calls are another (more esoteric) example:</p>
