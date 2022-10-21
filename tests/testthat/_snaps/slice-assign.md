@@ -37,7 +37,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't assign to elements past the end.
+      ! Can't assign elements.
       x Location must be less than or equal to 3, not 5.
       i There are only 3 elements.
     Code
@@ -52,7 +52,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't negate elements past the end.
+      ! Can't negate elements.
       x Location must be less than or equal to 26, not 100.
       i There are only 26 elements.
     Code
@@ -61,7 +61,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't assign to elements that don't exist.
+      ! Can't assign elements.
       x Element `foo` doesn't exist.
 
 # must assign with proper negative locations

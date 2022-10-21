@@ -488,23 +488,6 @@ stop_subscript_oob <- function(i,
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
-  if (cnd_subscript_oob_non_consecutive(cnd)) {
-    return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
-  }
-
-  elt <- cnd_subscript_element(cnd)
-  action <- cnd_subscript_action(cnd)
-  type <- cnd_subscript_type(cnd)
-
-  if (action %in% c("rename", "relocate") || type == "character") {
-    glue::glue("Can't {action} {elt[[2]]} that don't exist.")
-  } else {
-    glue::glue("Can't {action} {elt[[2]]} past the end.")
-  }
-}
-
-#' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
   switch(cnd_subscript_type(cnd),
     numeric =
@@ -587,11 +570,6 @@ stop_location_oob_non_consecutive <- function(i,
   )
 }
 
-cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  action <- cnd_subscript_action(cnd)
-  elt <- cnd_subscript_element(cnd)
-  glue::glue("Can't {action} {elt[[2]]} beyond the end with non-consecutive locations.")
-}
 cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
   i <- sort(cnd$i)
   i <- i[i > cnd$size]

@@ -207,7 +207,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements past the end.
+      ! Can't subset elements with `10`.
       x Location must be less than or equal to 2, not 10.
       i There are only 2 elements.
 
