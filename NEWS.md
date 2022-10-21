@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* vctrs is now compliant with `-Wstrict-prototypes` as requested by CRAN
+  (#1729).
+
 * `vec_ptype2()` now consistently falls back to bare data frame in
   case of incompatible data frame subclasses. This is part of a
   general move towards relaxed coercion rules.

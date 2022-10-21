@@ -29,7 +29,7 @@ static
 r_obj* as_unique_names_impl(r_obj* names, bool quiet);
 
 static
-void stop_large_name();
+void stop_large_name(void);
 
 static
 bool is_dotdotint(const char* name);

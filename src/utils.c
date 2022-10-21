@@ -236,7 +236,7 @@ SEXP vctrs_maybe_shared_col(SEXP x, SEXP i) {
 }
 
 // [[ register() ]]
-SEXP vctrs_new_df_unshared_col() {
+SEXP vctrs_new_df_unshared_col(void) {
   SEXP col = PROTECT(Rf_allocVector(INTSXP, 1));
   INTEGER(col)[0] = 1;
 
@@ -1635,7 +1635,7 @@ SEXP r_new_shared_character(const char* name) {
   return out;
 }
 
-void c_print_backtrace() {
+void c_print_backtrace(void) {
 #if defined(RLIB_DEBUG)
 #include <execinfo.h>
 #include <stdlib.h>

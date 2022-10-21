@@ -15,7 +15,7 @@
 // -----------------------------------------------------------------------------
 
 // Pair with `PROTECT_GROUP_INFO()` in the caller
-struct group_info* new_group_info() {
+struct group_info* new_group_info(void) {
   SEXP self = PROTECT(r_new_raw(sizeof(struct group_info)));
   struct group_info* p_group_info = (struct group_info*) RAW(self);
 
