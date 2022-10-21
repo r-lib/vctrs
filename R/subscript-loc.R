@@ -489,15 +489,10 @@ stop_subscript_oob <- function(i,
 
 #' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
-  switch(cnd_subscript_type(cnd),
-    numeric =
-      if (cnd_subscript_oob_non_consecutive(cnd)) {
-        cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
-      } else {
-        cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
-      },
-    character =
-      cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
+  switch(
+    cnd_subscript_type(cnd),
+    numeric = cnd_body_vctrs_error_subscript_oob_location(cnd, ...),
+    character = cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
     abort("Internal error: subscript type can't be `logical` for OOB errors.")
   )
 }
@@ -532,10 +527,13 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
     not <- ""
   }
 
+  allow_extension <- cnd_subscript_oob_non_consecutive(cnd)
+
   # TODO: Switch to `format_inline()` and format bullets lazily through rlang
   cli::format_error(c(
     "x" = "{cli::qty(n_loc)} Location{?s} must be less than or equal to {n}{not}.",
-    "i" = "There {cli::qty(n)} {?is/are} only {elt}."
+    "i" = "There {cli::qty(n)} {?is/are} only {elt}.",
+    "i" = if (allow_extension) "Extension with consecutive locations is allowed."
   ))
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
@@ -567,27 +565,6 @@ stop_location_oob_non_consecutive <- function(i,
     subscript_oob_non_consecutive = TRUE,
     ...,
     call = call
-  )
-}
-
-cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  i <- sort(cnd$i)
-  i <- i[i > cnd$size]
-
-  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
-
-  arg <- append_arg("Subscript", cnd$subscript_arg)
-  if (length(non_consecutive) == 1) {
-    x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
-  } else {
-    non_consecutive <- ensure_full_stop(enumerate(non_consecutive))
-    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}")
-  }
-
-  glue_data_bullets(
-    cnd,
-    i = "Input has size {size}.",
-    x = x_line
   )
 }
 

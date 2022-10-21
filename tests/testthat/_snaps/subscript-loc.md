@@ -416,8 +416,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `3`.
-      i Input has size 1.
-      x Subscript `3` contains non-consecutive location 3.
+      x Location must be less than or equal to 1, not 3.
+      i There is only 1 element.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(c(1, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -425,8 +426,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1, 3)`.
-      i Input has size 1.
-      x Subscript `c(1, 3)` contains non-consecutive location 3.
+      x Location must be less than or equal to 1.
+      i There is only 1 element.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(c(1:5, 7), 3, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -434,8 +436,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1:5, 7)`.
-      i Input has size 3.
-      x Subscript `c(1:5, 7)` contains non-consecutive locations 4 and 7.
+      x Locations must be less than or equal to 3.
+      i There are only 3 elements.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(c(1:5, 7, 1), 3, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
@@ -443,8 +446,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1:5, 7, 1)`.
-      i Input has size 3.
-      x Subscript `c(1:5, 7, 1)` contains non-consecutive locations 4 and 7.
+      x Locations must be less than or equal to 3.
+      i There are only 3 elements.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(class = "vctrs_error_subscript_oob", num_as_location(c(1:5, 7, 1,
       10), 3, oob = "extend")))
@@ -452,8 +456,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1:5, 7, 1, 10)`.
-      i Input has size 3.
-      x Subscript `c(1:5, 7, 1, 10)` contains non-consecutive locations 4, 7, and 10.
+      x Locations must be less than or equal to 3.
+      i There are only 3 elements.
+      i Extension with consecutive locations is allowed.
 
 # num_as_location() errors when inverting oob negatives unless `oob = 'remove'` (#1630)
 
@@ -553,8 +558,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1, NA, 3)`.
-      i Input has size 1.
-      x Subscript `c(1, NA, 3)` contains non-consecutive location 3.
+      x Location must be less than or equal to 1.
+      i There is only 1 element.
+      i Extension with consecutive locations is allowed.
 
 # can disallow missing values
 
@@ -778,8 +784,9 @@
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      i Input has size 2.
-      x Subscript `foo` contains non-consecutive location 4.
+      x Location must be less than or equal to 2.
+      i There are only 2 elements.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(0, 1, zero = "error", arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -863,8 +870,9 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      i Input has size 2.
-      x Subscript `foo(bar)` contains non-consecutive location 4.
+      x Location must be less than or equal to 2.
+      i There are only 2 columns.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(with_tibble_cols(num_as_location(0, 1, zero = "error")), class = "vctrs_error_subscript_type")
       )
