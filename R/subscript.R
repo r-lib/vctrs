@@ -175,12 +175,20 @@ new_error_subscript_type <- function(i,
 
 #' @export
 cnd_header.vctrs_error_subscript_type <- function(cnd) {
-  action <- cnd_subscript_action(cnd)
-  elt <- cnd_subscript_element(cnd)
-  if (cnd_subscript_scalar(cnd)) {
-    glue::glue("Must {action} {elt[[1]]} with a single valid subscript.")
+  arg <- cnd[["subscript_arg"]]
+  if (is_subscript_arg(arg)) {
+    with <- glue::glue(" with {format_subscript_arg(arg)}")
   } else {
-    glue::glue("Must {action} {elt[[2]]} with a valid subscript vector.")
+    with <- ""
+  }
+
+  action <- cnd_subscript_action(cnd, assign_to = FALSE)
+  elt <- cnd_subscript_element(cnd)
+
+  if (cnd_subscript_scalar(cnd)) {
+    glue::glue("Can't {action} {elt[[1]]}{with}.")
+  } else {
+    glue::glue("Can't {action} {elt[[2]]}{with}.")
   }
 }
 #' @export

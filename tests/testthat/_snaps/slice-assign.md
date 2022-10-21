@@ -16,7 +16,7 @@
     Output
       <error/vctrs_error_subscript_size>
       Error:
-      ! Must assign to elements with a valid subscript vector.
+      ! Can't assign elements.
       x Logical subscript must be size 1 or 2, not 3.
 
 ---
@@ -27,7 +27,7 @@
     Output
       <error/vctrs_error_subscript_size>
       Error:
-      ! Must assign to elements with a valid subscript vector.
+      ! Can't assign elements.
       x Logical subscript must be size 1 or 32, not 2.
 
 # must assign existing elements
@@ -72,7 +72,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must assign to elements with a valid subscript vector.
+      ! Can't assign elements.
       x Negative and positive locations can't be mixed.
       i Subscript has a positive value at location 2.
     Code
@@ -81,7 +81,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must assign to elements with a valid subscript vector.
+      ! Can't assign elements.
       x Negative locations can't have missing values.
       i Subscript has a missing value at location 2.
 

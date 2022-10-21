@@ -218,7 +218,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `my_arg`.
       x Can't convert from `my_arg` <double> to <integer> due to loss of precision.
 
 ---
@@ -228,7 +228,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Can't convert from <double> to <integer> due to loss of precision.
 
 ---
@@ -238,7 +238,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `my_arg`.
       x `my_arg` must be logical, numeric, or character, not an empty list.
 
 ---
@@ -258,7 +258,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements.
       x Subscript can't contain missing values.
       x It has a missing value at location 1.
 
@@ -326,7 +326,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `i`.
       x `i` must be logical, numeric, or character, not an environment.
 
 # list_sizes() reports error context
