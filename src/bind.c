@@ -67,7 +67,6 @@ r_obj* vec_rbind(r_obj* xs,
   // before assignment.
   ptype = vec_ptype_common_params(xs,
                                   ptype,
-                                  DF_FALLBACK_DEFAULT,
                                   S3_FALLBACK_true,
                                   p_arg,
                                   error_call);
@@ -118,7 +117,6 @@ r_obj* vec_rbind(r_obj* xs,
   // Must happen after the `names_to` column has been added to `ptype`
   xs = vec_cast_common_params(xs,
                               ptype,
-                              DF_FALLBACK_DEFAULT,
                               S3_FALLBACK_true,
                               vec_args.empty,
                               error_call);
@@ -242,16 +240,13 @@ r_obj* vec_rbind(r_obj* xs,
     r_attrib_poke(out, r_syms.row_names, row_names);
   }
 
+  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
+  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
+
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
     KEEP_AT(out, out_pi);
   }
-
-  // Not optimal. Happens after the fallback columns have been
-  // assigned already, ideally they should be ignored.
-  df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
-
-  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
 
   FREE(n_prot);
   return out;
@@ -390,7 +385,6 @@ r_obj* vec_cbind(r_obj* xs,
 
   r_obj* type = KEEP(vec_ptype_common_params(containers,
                                              ptype,
-                                             DF_FALLBACK_DEFAULT,
                                              S3_FALLBACK_false,
                                              p_arg,
                                              error_call));

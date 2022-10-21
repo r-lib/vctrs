@@ -56,23 +56,21 @@ r_obj* vec_ptype2_default_full(r_obj* x,
                                struct r_lazy call,
                                const struct fallback_opts* opts,
                                bool from_dispatch) {
-  r_obj* df_fallback_obj = KEEP(r_int(opts->df));
-  r_obj* s3_fallback_obj = KEEP(r_int(opts->s3));
+  r_obj* ffi_s3_fallback = KEEP(r_int(opts->s3));
   r_obj* ffi_x_arg = KEEP(vctrs_arg(x_arg));
   r_obj* ffi_y_arg = KEEP(vctrs_arg(y_arg));
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
 
-  r_obj* out = vctrs_eval_mask8(syms_vec_ptype2_default,
+  r_obj* out = vctrs_eval_mask7(syms_vec_ptype2_default,
                                 syms_x, x,
                                 syms_y, y,
                                 syms_x_arg, ffi_x_arg,
                                 syms_y_arg, ffi_y_arg,
                                 syms_call, ffi_call,
                                 syms_from_dispatch, r_lgl(from_dispatch),
-                                syms_df_fallback, df_fallback_obj,
-                                syms_s3_fallback, s3_fallback_obj);
+                                syms_s3_fallback, ffi_s3_fallback);
 
-  FREE(5);
+  FREE(4);
   return out;
 }
 
@@ -151,20 +149,17 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
                                 const struct fallback_opts* opts) {
   r_obj* call = KEEP(r_lazy_eval(lazy_call));
 
-  if (opts->df != DF_FALLBACK_DEFAULT ||
-      opts->s3 != S3_FALLBACK_DEFAULT) {
-    r_obj* df_fallback_obj = KEEP(r_int(opts->df));
-    r_obj* s3_fallback_obj = KEEP(r_int(opts->s3));
+  if (opts->s3 != S3_FALLBACK_DEFAULT) {
+    r_obj* ffi_s3_fallback = KEEP(r_int(opts->s3));
 
-    r_obj* out = vctrs_dispatch7(method_sym, method,
+    r_obj* out = vctrs_dispatch6(method_sym, method,
                                  x_sym, x,
                                  y_sym, y,
                                  x_arg_sym, x_arg,
                                  y_arg_sym, y_arg,
                                  syms_call, call,
-                                 syms_df_fallback, df_fallback_obj,
-                                 syms_s3_fallback, s3_fallback_obj);
-    FREE(3);
+                                 syms_s3_fallback, ffi_s3_fallback);
+    FREE(2);
     return out;
   } else {
     r_obj* out = vctrs_dispatch5(method_sym, method,

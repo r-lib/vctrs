@@ -134,23 +134,21 @@ r_obj* vec_cast_default_full(r_obj* x,
                              struct r_lazy call,
                              const struct fallback_opts* opts,
                              bool from_dispatch) {
-  r_obj* df_fallback = KEEP(r_int(opts->df));
   r_obj* s3_fallback = KEEP(r_int(opts->s3));
 
   r_obj* ffi_x_arg = KEEP(vctrs_arg(p_x_arg));
   r_obj* ffi_to_arg = KEEP(vctrs_arg(p_to_arg));
 
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
-  r_obj* out = vctrs_eval_mask8(syms.vec_default_cast,
+  r_obj* out = vctrs_eval_mask7(syms.vec_default_cast,
                                 syms_x, x,
                                 syms_to, to,
                                 syms_x_arg, ffi_x_arg,
                                 syms_to_arg, ffi_to_arg,
                                 syms_call, ffi_call,
                                 syms_from_dispatch, r_lgl(from_dispatch),
-                                syms_df_fallback, df_fallback,
                                 syms_s3_fallback, s3_fallback);
-  FREE(5);
+  FREE(4);
   return out;
 }
 
@@ -285,7 +283,6 @@ r_obj* vec_cast_common_opts(r_obj* xs,
 }
 r_obj* vec_cast_common_params(r_obj* xs,
                               r_obj* to,
-                              enum df_fallback df_fallback,
                               enum s3_fallback s3_fallback,
                               struct vctrs_arg* p_arg,
                               struct r_lazy call) {
@@ -293,7 +290,6 @@ r_obj* vec_cast_common_params(r_obj* xs,
     .p_arg = p_arg,
     .call = call,
     .fallback = {
-      .df = df_fallback,
       .s3 = s3_fallback
     }
   };
@@ -306,7 +302,6 @@ r_obj* vec_cast_common(r_obj* xs,
                        struct r_lazy call) {
   return vec_cast_common_params(xs,
                                 to,
-                                DF_FALLBACK_DEFAULT,
                                 S3_FALLBACK_DEFAULT,
                                 p_arg,
                                 call);
@@ -365,8 +360,7 @@ struct cast_opts new_cast_opts(r_obj* x,
     .p_to_arg = p_to_arg,
     .call = call,
     .fallback = {
-      .df = r_int_get(r_list_get(opts, 0), 0),
-      .s3 = r_int_get(r_list_get(opts, 1), 0)
+      .s3 = r_int_get(r_list_get(opts, 0), 0)
     }
   };
 }

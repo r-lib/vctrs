@@ -1,3 +1,12 @@
+# data.table and tibble do not have a common type
+
+    Code
+      (expect_error(vec_cast(tibble(y = 2), data.table(x = TRUE, y = 1L))))
+    Output
+      <error/vctrs_error_cast>
+      Error:
+      ! Can't convert `tibble(y = 2)` <tibble> to <data.table>.
+
 # data table has formatting methods
 
     Code

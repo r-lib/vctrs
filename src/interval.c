@@ -79,7 +79,6 @@ r_obj* vec_interval_group_info(r_obj* start,
     args_start,
     args_end,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -90,7 +89,6 @@ r_obj* vec_interval_group_info(r_obj* start,
     args_start,
     vec_args.empty,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
   KEEP_N(start, &n_prot);
@@ -101,7 +99,6 @@ r_obj* vec_interval_group_info(r_obj* start,
     args_end,
     vec_args.empty,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
   KEEP_N(end, &n_prot);
@@ -324,7 +321,6 @@ r_obj* vec_interval_complement(r_obj* start,
     args_start,
     args_end,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -335,7 +331,6 @@ r_obj* vec_interval_complement(r_obj* start,
     args_start,
     vec_args.empty,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
   KEEP_N(start, &n_prot);
@@ -346,7 +341,6 @@ r_obj* vec_interval_complement(r_obj* start,
     args_end,
     vec_args.empty,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
   KEEP_N(end, &n_prot);
@@ -387,7 +381,6 @@ r_obj* vec_interval_complement(r_obj* start,
       args_lower,
       vec_args.empty,
       r_lazy_null,
-      DF_FALLBACK_quiet,
       S3_FALLBACK_false
     );
     KEEP_N(lower, &n_prot);
@@ -417,7 +410,6 @@ r_obj* vec_interval_complement(r_obj* start,
       args_upper,
       vec_args.empty,
       r_lazy_null,
-      DF_FALLBACK_quiet,
       S3_FALLBACK_false
     );
     KEEP_N(upper, &n_prot);
@@ -738,7 +730,6 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
     args_start,
     args_end,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     &_
   );
   KEEP_N(ptype, &n_prot);
@@ -749,7 +740,6 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
     args_start,
     vec_args.empty,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
   KEEP_N(start, &n_prot);
@@ -760,7 +750,6 @@ r_obj* vec_interval_locate_containers(r_obj* start, r_obj* end) {
     args_end,
     vec_args.empty,
     r_lazy_null,
-    DF_FALLBACK_quiet,
     S3_FALLBACK_false
   );
   KEEP_N(end, &n_prot);

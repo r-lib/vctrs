@@ -102,10 +102,6 @@ test_that("can combine sf data frames", {
 	sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
 	sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
 
-	# FIXME: Currently `vec_rbind()` returns a data frame because we
-	# are temporarily working around bugs due to bad interaction of
-	# different fallbacks. `bind_rows()` returns an `sf` data frame as
-	# expected because of `dplyr_reconstruct()`.
 	exp = data_frame(
 		x = c(1, 0, 0),
 		geo1 = sfc1[c(1:2, NA)],

@@ -281,12 +281,8 @@ df_cast_params <- function(x,
                            ...,
                            x_arg = "",
                            to_arg = "",
-                           df_fallback = NULL,
                            s3_fallback = NULL) {
-  opts <- fallback_opts(
-    df_fallback = df_fallback,
-    s3_fallback = s3_fallback
-  )
+  opts <- fallback_opts(s3_fallback = s3_fallback)
   df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -312,54 +308,6 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
 }
 
-vec_ptype2_df_fallback_normalise <- function(x, y, opts, ...) {
-  x_orig <- x
-  y_orig <- y
-
-  ptype <- df_ptype2_opts(x, y, opts = opts, ...)
-
-  x <- x[0, , drop = FALSE]
-  y <- y[0, , drop = FALSE]
-
-  x[seq_along(ptype)] <- ptype
-  y[seq_along(ptype)] <- ptype
-
-  # Names might have been repaired by `[<-`
-  names(x) <- names(ptype)
-  names(y) <- names(ptype)
-
-  # Restore attributes if no `[` method is implemented
-  if (df_has_base_subset(x)) {
-    x <- vec_restore(x, x_orig)
-  }
-  if (df_has_base_subset(y)) {
-    y <- vec_restore(y, y_orig)
-  }
-
-  list(x = x, y = y)
-}
-vec_cast_df_fallback_normalise <- function(x, to, opts, ...) {
-  orig <- x
-  cast <- df_cast_opts(x, to, opts = opts, ...)
-
-  # Seq-assign should be more widely implemented than empty-assign?
-  x[seq_along(to)] <- cast
-
-  # Names might have been repaired by `[<-`
-  names(x) <- names(cast)
-
-  # Restore attributes if no `[` method is implemented
-  if (df_has_base_subset(x)) {
-    x <- vec_restore(x, orig)
-  }
-
-  x
-}
-
-df_needs_normalisation <- function(x, y, opts) {
-  is.data.frame(x) && is.data.frame(y) && df_is_coercible(x, y, opts)
-}
-
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x,
                                    y,
@@ -367,89 +315,20 @@ vec_ptype2_df_fallback <- function(x,
                                    x_arg = "",
                                    y_arg = "",
                                    call = caller_env()) {
-  seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
-
-  ptype <- vec_ptype2_params(
-    new_data_frame(x),
-    new_data_frame(y),
-    df_fallback = opts$df_fallback,
+  vec_ptype2_params(
+    as_base_df(x),
+    as_base_df(y),
     s3_fallback = opts$s3_fallback,
+    x_arg = x_arg,
+    y_arg = y_arg,
     call = call
   )
-
-  classes <- NULL
-  if (is_df_fallback(x)) {
-    classes <- c(classes, known_classes(x))
-    x <- df_fallback_as_df(x)
-  }
-  if (is_df_fallback(y)) {
-    classes <- c(classes, known_classes(y))
-    y <- df_fallback_as_df(y)
-  }
-  x_class <- class(x)[[1]]
-  y_class <- class(y)[[1]]
-
-  if (needs_fallback_warning(opts$df_fallback) &&
-      !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
-    fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
-    msg <- cnd_type_message(
-      x, y,
-      x_arg, y_arg,
-      NULL,
-      "combine",
-      NULL,
-      fallback = fallback_class
-    )
-
-    if (identical(x_class, y_class)) {
-      msg <- c(
-        msg,
-        incompatible_attrib_bullets()
-      )
-    }
-
-    warn(msg)
-  }
-
-  # Return a fallback class so we don't warn multiple times. This
-  # fallback class is stripped in `vec_ptype_finalise()`.
-  new_fallback_df(
-    ptype,
-    known_classes = unique(c(classes, x_class, y_class)),
-    seen_tibble = seen_tibble
-  )
 }
-
-is_df_subclass <- function(x) {
-  inherits(x, "data.frame") && !identical(class(x), "data.frame")
-}
-is_df_fallback <- function(x) {
-  inherits(x, "vctrs:::df_fallback")
-}
-new_fallback_df <- function(x, known_classes, seen_tibble = FALSE, n = nrow(x)) {
-  class <- "vctrs:::df_fallback"
-  if (seen_tibble) {
-    class <- c(class, "tbl_df", "tbl")
-  }
-
-  new_data_frame(
-    x,
-    n = n,
-    known_classes = known_classes,
-    seen_tibble = seen_tibble,
-    class = class
-  )
-}
-df_fallback_as_df <- function(x) {
+as_base_df <- function(x) {
   if (inherits(x, "tbl_df")) {
-    new_data_frame(x, class = c("tbl_df", "tbl", "data.frame"))
+    new_data_frame(x, class = c("tbl_df", "tbl"))
   } else {
     new_data_frame(x)
-  }
-}
-known_classes <- function(x) {
-  if (is_df_fallback(x)) {
-    attr(x, "known_classes")
   }
 }
 
@@ -505,4 +384,15 @@ df_lossy_cast <- function(out,
 
 is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
+}
+
+df_attrib <- function(x) {
+  attributes(x)[c("row.names", "names")]
+}
+non_df_attrib <- function(x) {
+  attrib <- attributes(x)
+  attrib <- attrib[!names(attrib) %in% c("row.names", "names")]
+
+  # Sort to allow comparison
+  attrib[order(names(attrib))]
 }

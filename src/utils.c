@@ -1869,7 +1869,6 @@ void vctrs_init_utils(SEXP ns) {
   syms_parent = Rf_install("parent");
   syms_s3_methods_table = Rf_install(".__S3MethodsTable__.");
   syms_from_dispatch = Rf_install("vctrs:::from_dispatch");
-  syms_df_fallback = Rf_install("vctrs:::df_fallback");
   syms_s3_fallback = Rf_install("vctrs:::s3_fallback");
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");

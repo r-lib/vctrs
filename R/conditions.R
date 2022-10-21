@@ -256,12 +256,14 @@ cnd_type_message <- function(x,
     y_type <- cnd_type_message_type_label(y)
   }
 
+  converting <- action == "convert"
+
   # If we are here directly from dispatch, this means there is no
   # ptype2 method implemented and the is-same-class fallback has
   # failed because of diverging attributes. The author of the class
   # should implement a ptype2 method as documented in the FAQ
   # indicated below.
-  if (from_dispatch && identical(class(x)[[1]], class(y)[[1]])) {
+  if (from_dispatch && !converting && identical(class(x)[[1]], class(y)[[1]])) {
     details <- c(incompatible_attrib_bullets(), details)
     details <- format_error_bullets(details)
   }
@@ -272,7 +274,7 @@ cnd_type_message <- function(x,
     end <- glue::glue("; falling back to {fallback}.")
   }
 
-  if (action == "convert" && nzchar(y_arg)) {
+  if (converting && nzchar(y_arg)) {
     header <- glue::glue("Can't convert{x_name}<{x_type}> to match type of{y_name}<{y_type}>{end}")
   } else {
     header <- glue::glue("Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}")

@@ -313,6 +313,9 @@ test_that("vec_rbind() takes the proxy and restores", {
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
       x
     },
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) {
+      x
+    },
     vec_proxy.vctrs_foobar = function(x, ...) {
       x
     },
@@ -341,6 +344,9 @@ test_that("vec_rbind() proxies before initializing", {
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
       x
     },
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) {
+      x
+    },
     vec_proxy.vctrs_foobar = function(x, ...) {
       new_data_frame(x)
     },
@@ -363,10 +369,14 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
 
   local_methods(
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) x,
     vec_proxy.vctrs_foobar = function(x, ...) 1
   )
 
-  expect_error(vec_rbind(df, df), "Attempt to restore data frame from a double")
+  expect_error(
+    vec_rbind(df, df),
+    "Can't fill a data frame that doesn't have a data frame proxy"
+  )
 })
 
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
@@ -843,8 +853,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- data_frame(x = quux(c(1, 2)))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_c_method(vec_c(x_df, y_df)), exp)
+  expect_identical(with_c_method(vec_c(x_df, y_df)), exp)
   expect_identical(
     with_c_method(list_unchop(list(x_df, y_df), indices = list(1, 2))),
     exp
@@ -859,27 +868,35 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- foobaz(data_frame(x = quux(c(1, 2))))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)
+  expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)
   expect_identical(
     with_c_method(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
     exp
   )
 
-  with_hybrid_methods <- function(expr) {
-    with_methods(
+  with_hybrid_methods <- function(expr, cast = TRUE) {
+    methods <- list(
       c.vctrs_foobar = function(...) quux(NextMethod()),
       vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
-      expr
+      vec_cast.vctrs_foobaz.vctrs_foobaz = if (cast) function(...) foobaz(df_cast(...))
     )
+    with_methods(expr, !!!compact(methods))
   }
 
+  expect_equal(
+    with_hybrid_methods(
+      cast = FALSE,
+      vec_rbind(foo_df, bar_df)
+    ),
+    foobaz(data_frame(x = quux(c(1, 2))))
+  )
+
+  # Falls back to data frame because there is no ptype2/cast methods
   out <- with_hybrid_methods(vec_rbind(foo_df, bar_df))
   exp <- foobaz(data_frame(x = quux(c(1, 2))))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
+  expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
   expect_identical(
     with_hybrid_methods(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
     exp
@@ -892,8 +909,7 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   exp <- data_frame(x = data_frame(x = quux(c(1, 2))))
   expect_identical(out, exp)
 
-  # FIXME: This currently fails
-  # expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
+  expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
   expect_identical(
     with_c_method(list_unchop(list(wrapper_x_df, wrapper_y_df), indices = list(1, 2))),
     exp
@@ -1205,4 +1221,16 @@ test_that("row-binding performs expected allocations", {
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
   })
+})
+
+test_that("`.names_to` is assigned after restoration (#1648)", {
+  df <- data_frame(x = factor("foo"))
+  expect_equal(
+    vec_rbind(name = df, .names_to = "x"),
+    data_frame(x = "name")
+  )
+
+  # This used to fail with:
+  #> Error in `vctrs::vec_rbind()`:
+  #> ! adding class "factor" to an invalid object
 })

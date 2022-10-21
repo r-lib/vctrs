@@ -272,9 +272,14 @@ test_that("vec_c() falls back to c() if S3 method is available", {
   )
 })
 
-test_that("c() fallback is consistent (FIXME)", {
+test_that("c() fallback is consistent", {
+  dispatched <- function(x) structure(x, class = "dispatched")
+  c_method <- function(...) dispatched(NextMethod())
+
   out <- with_methods(
-    c.vctrs_foobar = function(...) structure(NextMethod(), class = "dispatched"),
+    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+    vec_cast.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_cast(...)),
+    c.vctrs_foobar = c_method,
     list(
       direct = vec_c(foobar(1L), foobar(2L)),
       df = vec_c(data_frame(x = foobar(1L)), data_frame(x = foobar(2L))),
@@ -282,14 +287,30 @@ test_that("c() fallback is consistent (FIXME)", {
       foreign_df = vec_c(foobaz(data_frame(x = foobar(1L))), foobaz(data_frame(x = foobar(2L))))
     )
   )
+  expect_equal(out$direct, dispatched(1:2))
+  expect_equal(out$df$x, dispatched(1:2))
+  expect_equal(out$tib$x, dispatched(1:2))
+  expect_equal(out$foreign_df$x, dispatched(1:2))
 
-  # Proper `c()` dispatch:
-  expect_identical(out$direct, structure(1:2, class = "dispatched"))
+  # Hard case: generic record vectors
+  my_rec_record <- function(x) {
+    new_rcrd(list(x = x), class = "my_rec_record")
+  }
 
-  # Inconsistent:
-  expect_identical(out$df$x, foobar(1:2))
-  expect_identical(out$tib$x, foobar(1:2))
-  expect_identical(out$foreign_df$x, foobar(1:2))
+  out <- with_methods(
+    c.vctrs_foobar = c_method,
+    vec_ptype2.my_rec_record.my_rec_record = function(x, y, ...) {
+      my_rec_record(vec_ptype2(field(x, "x"), field(y, "x"), ...))
+    },
+    vec_cast.my_rec_record.my_rec_record = function(x, to, ...) {
+      x
+    },
+    vec_c(
+      data_frame(x = my_rec_record(foobar(1L))),
+      data_frame(x = my_rec_record(foobar(2L)))
+    )
+  )
+  expect_equal(field(out$x, "x"), dispatched(1:2))
 })
 
 test_that("vec_c() falls back to c() if S4 method is available", {
@@ -603,4 +624,58 @@ test_that("dots splicing clones as appropriate", {
   x <- list(a = 1)
   vctrs::vec_c(!!!x, 2)
   expect_equal(x, list(a = 1))
+})
+
+test_that("can combine records wrapped in data frames", {
+  local_methods(
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      data_frame(x = unclass(x), y = seq_along(x))
+    },
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      foobar(x$x)
+    }
+  )
+
+  x <- foobar(1:2)
+  y <- foobar(3:4)
+
+  expect_equal(
+    vec_c(x, y),
+    foobar(1:4)
+  )
+
+  expect_equal(
+    list_unchop(list(x, y), indices = list(1:2, 3:4)),
+    foobar(1:4)
+  )
+
+  expect_equal(
+    vec_rbind(data_frame(x = x), data_frame(x = y)),
+    data_frame(x = foobar(1:4))
+  )
+})
+
+test_that("fallback works with subclasses of `vctrs_vctr`", {
+  # Used to fail because of interaction between common class fallback
+  # for `base::c()` and the `c()` method for `vctrs_vctr` that called
+  # back into `vec_c()`.
+
+  # Reprex for failure in the ricu package
+  x <- new_rcrd(list(a = 1), class = "vctrs_foobar")
+  expect_equal(
+    vec_c(x, x, .name_spec = "{inner}"),
+    new_rcrd(list(a = c(1, 1)), class = "vctrs_foobar")
+  )
+
+  # Reprex for failure in the groupr package
+  x <- new_rcrd(list(a = 1), class = "vctrs_foobar")
+  df <- data_frame(x = x)
+  expect_equal(
+    vec_rbind(df, data.frame()),
+    df
+  )
+  expect_equal(
+    vec_cast_common(df, data.frame()),
+    list(df, data_frame(x = x[0]))
+  )
 })

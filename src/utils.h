@@ -487,7 +487,6 @@ extern SEXP syms_character;
 extern SEXP syms_body;
 extern SEXP syms_parent;
 extern SEXP syms_from_dispatch;
-extern SEXP syms_df_fallback;
 extern SEXP syms_s3_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;

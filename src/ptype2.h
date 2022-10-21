@@ -6,16 +6,6 @@
 
 // Sync with R constants in ptype2.R
 
-#define DF_FALLBACK_DEFAULT 0
-
-enum df_fallback {
-  DF_FALLBACK_warn_maybe = 0,
-  DF_FALLBACK_warn,
-  DF_FALLBACK_none,
-  DF_FALLBACK_quiet
-};
-
-
 #define S3_FALLBACK_DEFAULT 0
 
 enum s3_fallback {
@@ -24,7 +14,6 @@ enum s3_fallback {
 };
 
 struct fallback_opts {
-  enum df_fallback df;
   enum s3_fallback s3;
 };
 
@@ -46,17 +35,13 @@ r_obj* vec_ptype2_params(r_obj* x,
                          struct vctrs_arg* p_x_arg,
                          struct vctrs_arg* p_y_arg,
                          struct r_lazy call,
-                         enum df_fallback df_fallback,
                          int* left) {
   const struct ptype2_opts opts = {
     .x = x,
     .y = y,
     .p_x_arg = p_x_arg,
     .p_y_arg = p_y_arg,
-    .call = call,
-    .fallback = {
-      .df = df_fallback
-    }
+    .call = call
   };
   return vec_ptype2_opts(&opts, left);
 }
