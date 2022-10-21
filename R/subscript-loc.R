@@ -539,9 +539,19 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   n <- cnd$size
   elt <- cnd_subscript_element_cli(n, cnd)
 
+  arg <- cnd_subscript_arg(cnd)
+
+  if (length(i) == 1) {
+    arg <- arg
+    not <- glue::glue(", not {i}")
+  } else {
+    arg <- glue::glue("Locations in {arg}")
+    not <- ""
+  }
+
   # TODO: Switch to `format_inline()` and format bullets lazily through rlang
   cli::format_error(c(
-    "i" = "{cli::qty(n_loc)} Location{?s} {oob_enum} do{?esn't/n't} exist.",
+    "x" = "{cli::qty(n_loc)} Location{?s} must be less than or equal to {n}{not}.",
     "i" = "There {cli::qty(n)} {?is/are} only {elt}."
   ))
 }

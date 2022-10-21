@@ -24,7 +24,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't subset elements past the end.
-      i Location 3 doesn't exist.
+      x Location must be less than or equal to 2, not 3.
       i There are only 2 elements.
     Code
       (expect_error(vec_slice(1:2, -3L), class = "vctrs_error_subscript_oob"))
@@ -32,7 +32,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't negate elements past the end.
-      i Location 3 doesn't exist.
+      x Location must be less than or equal to 2, not 3.
       i There are only 2 elements.
 
 # can slice with double indices
@@ -89,7 +89,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements past the end.
-      i Locations 100 and 1000 don't exist.
+      x Locations must be less than or equal to 26.
       i There are only 26 elements.
 
 ---
@@ -99,7 +99,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements past the end.
-      i Locations 100, 101, 102, ..., 109, and 110 don't exist.
+      x Locations must be less than or equal to 26.
       i There are only 26 elements.
 
 ---
