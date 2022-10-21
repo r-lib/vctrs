@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now consistently falls back to bare data frame in case of incompatible data frame subclasses. This is part of a general move towards relaxed coercion rules.</p></li>
+<ul><li><p>vctrs is now compliant with <code>-Wstrict-prototypes</code> as requested by CRAN (<a href="https://github.com/r-lib/vctrs/issues/1729" class="external-link">#1729</a>).</p></li>
+<li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now consistently falls back to bare data frame in case of incompatible data frame subclasses. This is part of a general move towards relaxed coercion rules.</p></li>
 <li><p>Common type and cast errors now inherit from <code>"vctrs_error_ptype2"</code> and <code>"vctrs_error_cast"</code> respectively. They are still both subclasses from <code>"vctrs_error_incompatible_type"</code> (which used to be their most specific class and is now a parent class).</p></li>
 <li><p>New <code><a href="../reference/vec_is_list.html">list_all_size()</a></code> and <code><a href="../reference/vec_is_list.html">list_check_all_size()</a></code> to quickly determine if a list contains elements of a particular <code>size</code> (<a href="https://github.com/r-lib/vctrs/issues/1582" class="external-link">#1582</a>).</p></li>
 <li><p><code><a href="../reference/vec_chop.html">list_unchop()</a></code> has gained empty <code>...</code> to force optional arguments to be named (<a href="https://github.com/r-lib/vctrs/issues/1715" class="external-link">#1715</a>).</p></li>
