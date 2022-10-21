@@ -511,27 +511,31 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- abs(i)
 
   oob <- i[i > cnd$size]
-  oob_enum <- vctrs_cli_vec(oob)
 
   n_loc <- length(oob)
   n <- cnd$size
   elt <- cnd_subscript_element_cli(n, cnd)
 
+  allow_extension <- cnd_subscript_oob_non_consecutive(cnd)
+  scalar_oob <- length(oob) == 1
+
   arg <- cnd_subscript_arg(cnd)
 
-  if (length(i) == 1) {
+  if (scalar_oob) {
     arg <- arg
-    not <- glue::glue(", not {i}")
+    not <- glue::glue(", not {oob}")
+    oob_line <- NULL
   } else {
     arg <- glue::glue("Locations in {arg}")
     not <- ""
+    oob_enum <- vctrs_cli_vec(oob)
+    oob_line <- cli::format_inline("Larger locations: {oob_enum}")
   }
-
-  allow_extension <- cnd_subscript_oob_non_consecutive(cnd)
 
   # TODO: Switch to `format_inline()` and format bullets lazily through rlang
   cli::format_error(c(
     "x" = "{cli::qty(n_loc)} Location{?s} must be less than or equal to {n}{not}.",
+    "x" = oob_line,
     "i" = "There {cli::qty(n)} {?is/are} only {elt}.",
     "i" = if (allow_extension) "Extension with consecutive locations is allowed."
   ))

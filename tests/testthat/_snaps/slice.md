@@ -90,6 +90,7 @@
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
       x Locations must be less than or equal to 26.
+      x Larger locations: 100 and 1000
       i There are only 26 elements.
 
 ---
@@ -100,6 +101,7 @@
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
       x Locations must be less than or equal to 26.
+      x Larger locations: 100, 101, 102, ..., 109, and 110
       i There are only 26 elements.
 
 ---

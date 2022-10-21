@@ -426,7 +426,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1, 3)`.
-      x Location must be less than or equal to 1.
+      x Location must be less than or equal to 1, not 3.
       i There is only 1 element.
       i Extension with consecutive locations is allowed.
     Code
@@ -437,6 +437,7 @@
       Error:
       ! Can't subset elements with `c(1:5, 7)`.
       x Locations must be less than or equal to 3.
+      x Larger locations: 4, 5, and 7
       i There are only 3 elements.
       i Extension with consecutive locations is allowed.
     Code
@@ -447,6 +448,7 @@
       Error:
       ! Can't subset elements with `c(1:5, 7, 1)`.
       x Locations must be less than or equal to 3.
+      x Larger locations: 4, 5, and 7
       i There are only 3 elements.
       i Extension with consecutive locations is allowed.
     Code
@@ -457,6 +459,7 @@
       Error:
       ! Can't subset elements with `c(1:5, 7, 1, 10)`.
       x Locations must be less than or equal to 3.
+      x Larger locations: 4, 5, 7, and 10
       i There are only 3 elements.
       i Extension with consecutive locations is allowed.
 
@@ -538,6 +541,7 @@
       Error:
       ! Can't subset elements with `c(-6L, 7L)`.
       x Locations must be less than or equal to 5.
+      x Larger locations: 6 and 7
       i There are only 5 elements.
 
 # missing values are supported in error formatters
@@ -550,6 +554,7 @@
       Error:
       ! Can't subset elements with `c(1, NA, 2, 3)`.
       x Locations must be less than or equal to 1.
+      x Larger locations: 2 and 3
       i There is only 1 element.
     Code
       (expect_error(num_as_location(c(1, NA, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
@@ -558,7 +563,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `c(1, NA, 3)`.
-      x Location must be less than or equal to 1.
+      x Location must be less than or equal to 1, not 3.
       i There is only 1 element.
       i Extension with consecutive locations is allowed.
 
@@ -784,7 +789,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x Location must be less than or equal to 2.
+      x Location must be less than or equal to 2, not 4.
       i There are only 2 elements.
       i Extension with consecutive locations is allowed.
     Code
@@ -870,7 +875,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't rename columns with `foo(bar)`.
-      x Location must be less than or equal to 2.
+      x Location must be less than or equal to 2, not 4.
       i There are only 2 columns.
       i Extension with consecutive locations is allowed.
     Code
@@ -955,6 +960,7 @@
       Error in `vec_slice()`:
       ! Can't remove rows with `foo(bar)`.
       x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 rows.
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), -(1:30))), class = "vctrs_error_subscript_oob")
@@ -964,6 +970,7 @@
       Error in `vec_slice()`:
       ! Can't remove rows with `foo(bar)`.
       x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 rows.
     Code
       # With tidyselect select
@@ -991,6 +998,7 @@
       Error in `vec_slice()`:
       ! Can't select columns with `foo(bar)`.
       x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 columns.
     Code
       # With tidyselect relocate
@@ -1018,6 +1026,7 @@
       Error in `vec_slice()`:
       ! Can't relocate columns with `foo(bar)`.
       x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 columns.
 
 # vec_as_location() checks dimensionality

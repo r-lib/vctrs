@@ -228,7 +228,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements.
-      x Location must be less than or equal to 2.
+      x Location must be less than or equal to 2, not 3.
       i There are only 2 elements.
 
 ---
