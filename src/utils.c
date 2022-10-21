@@ -966,11 +966,6 @@ r_obj* colnames2(r_obj* x) {
 }
 
 // [[ include("utils.h") ]]
-bool is_integer64(SEXP x) {
-  return TYPEOF(x) == REALSXP && Rf_inherits(x, "integer64");
-}
-
-// [[ include("utils.h") ]]
 bool lgl_any_na(SEXP x) {
   R_xlen_t size = Rf_xlength(x);
   const int* p_x = LOGICAL_RO(x);

@@ -34,7 +34,7 @@ Imports:
     lifecycle (>= 1.0.3),
     rlang (>= 1.0.6)
 Suggests: 
-    bit64,
+    bit64 (>= 4.0.5),
     covr,
     crayon,
     dplyr (>= 0.8.5),

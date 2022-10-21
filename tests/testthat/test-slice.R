@@ -272,6 +272,18 @@ test_that("vec_slice() unclasses input before calling `vec_restore()`", {
 })
 
 test_that("can call `vec_slice()` from `[` methods with shaped objects without infloop", {
+  skip("Until infloop is talked about")
+  # TODO: I don't think it is our job to prevent this.
+  # You can already make this infloop today with non-shaped objects, i.e
+  # `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
+  # x <- structure(1:4, class = "vctrs_foobar")
+  # x[1]
+  # So we shouldn't be special casing shaped objects.
+  # I believe that if your `[` method is going to call `vec_slice()` (i.e. you
+  # are requesting native vctrs slicing), then you need to declare a
+  # `vec_proxy()` method as well to tell vctrs what it needs to be natively
+  # slicing.
+
   local_methods(
     `[.vctrs_foobar` = function(x, i, ...) vec_slice(x, i)
   )
@@ -282,6 +294,28 @@ test_that("can call `vec_slice()` from `[` methods with shaped objects without i
   exp <- foobar(c(1L, 3L))
   dim(exp) <- c(1, 2)
   expect_identical(x[1], exp)
+})
+
+test_that("slicing shaped S3 objects that don't have a proxy method actually calls the `[` method (#1707)", {
+  # In particular, this is needed for `bit64::integer64()` to allow their `[`
+  # method to handle `NA_integer_` correctly.
+  called <- NULL
+
+  local_methods(
+    `[.vctrs_foobar` = function(x, ...) {
+      called <<- TRUE
+      foobar(NextMethod())
+    }
+  )
+
+  x <- foobar(1:6)
+  dim(x) <- c(3, 2)
+
+  expect <- foobar(c(1L, 4L))
+  dim(expect) <- c(1, 2)
+
+  expect_identical(vec_slice(x, 1), expect)
+  expect_true(called)
 })
 
 test_that("vec_slice() restores attributes on shaped S3 objects correctly", {
@@ -351,6 +385,7 @@ test_that("vec_restore() is called after slicing data frames", {
 
 test_that("additional subscripts are forwarded to `[`", {
   local_methods(
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     `[.vctrs_foobar` = function(x, i, ...) vec_index(x, i, ...)
   )
 

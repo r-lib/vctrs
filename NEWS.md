@@ -29,6 +29,13 @@
   type information for potential optimisations, rather than to
   guarantee a certain type throughout an analysis.
 
+* Internal code around `vec_slice()` fallbacks to `[` has been cleaned up
+  (#1707).
+
+* We have removed some internal hacks required for very old versions of bit64
+  regarding `NA_integer_` indices and slicing. If you notice any issues related
+  to this after updating vctrs, you likely need a newer version of bit64.
+
 * `validate_list_of()` has been removed. It hasn't proven to be practically
   useful, and isn't used by any packages on CRAN (#1697).
 
