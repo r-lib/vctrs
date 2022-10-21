@@ -80,7 +80,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
 
 ---
 
@@ -111,7 +111,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x Elements `foo` and `bar` don't exist.
+      x Can't find elements `foo` and `bar`.
 
 ---
 
@@ -120,7 +120,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x Elements `A`, `B`, `C`, `D`, `E`, etc. don't exist.
+      x Can't find elements `A`, `B`, `C`, `D`, `E`, etc..
 
 # vec_init() validates `n`
 

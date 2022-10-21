@@ -62,7 +62,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't assign elements.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
 
 # must assign with proper negative locations
 

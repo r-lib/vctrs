@@ -541,15 +541,16 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   ))
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
-  elt <- cnd_subscript_element(cnd, capital = TRUE)
+  elt <- cnd_subscript_element(cnd, capital = FALSE)
+  elt_cap <- cnd_subscript_element(cnd, capital = TRUE)
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "{elt[[1]]} {oob_enum} doesn't exist.",
-      "{elt[[2]]} {oob_enum} don't exist."
+      "Can't find {elt[[1]]} {oob_enum}.",
+      "Can't find {elt[[2]]} {oob_enum}.",
     ))
   ))
 }

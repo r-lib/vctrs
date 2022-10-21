@@ -198,7 +198,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't subset elements with `"foo"`.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
       )
@@ -206,7 +206,7 @@
       <error/vctrs_error_subscript_oob>
       Error:
       ! Can't extract element with `"foo"`.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar", call = call("baz")),
       class = "vctrs_error_subscript_oob"))
@@ -214,7 +214,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `baz()`:
       ! Can't extract element with `"foo"`.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
 
 # vec_as_location2() requires length 1 inputs
 
@@ -897,7 +897,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't subset elements with `i`.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
     Code
       # With custom `arg`
       (expect_error(vec_as_location(30, length(letters), arg = "foo", call = call(
@@ -915,7 +915,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
       ! Can't subset elements with `foo`.
-      x Element `foo` doesn't exist.
+      x Can't find element `foo`.
     Code
       # With tibble columns
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), "foo")), class = "vctrs_error_subscript_oob")
@@ -924,7 +924,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't rename columns with `foo(bar)`.
-      x Column `foo` doesn't exist.
+      x Can't find column `foo`.
     Code
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), 30)), class = "vctrs_error_subscript_oob")
       )
@@ -951,7 +951,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't remove rows with `foo(bar)`.
-      x Rows `foo` and `bar` don't exist.
+      x Can't find rows `foo` and `bar`.
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), 1:30)), class = "vctrs_error_subscript_oob")
       )
@@ -980,7 +980,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't select columns with `foo(bar)`.
-      x Columns `foo` and `bar` don't exist.
+      x Can't find columns `foo` and `bar`.
     Code
       (expect_error(with_tidyselect_select(vec_slice(set_names(letters), 30)), class = "vctrs_error_subscript_oob")
       )
@@ -1008,7 +1008,7 @@
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
       ! Can't relocate columns with `foo(bar)`.
-      x Columns `foo` and `bar` don't exist.
+      x Can't find columns `foo` and `bar`.
     Code
       (expect_error(with_tidyselect_relocate(vec_slice(set_names(letters), 30)),
       class = "vctrs_error_subscript_oob"))
