@@ -11,6 +11,7 @@ struct syms {
   r_obj* dot_error_arg;
   r_obj* dot_error_call;
   r_obj* haystack_arg;
+  r_obj* header;
   r_obj* needles_arg;
   r_obj* recurse;
   r_obj* repair_arg;

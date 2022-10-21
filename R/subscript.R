@@ -173,29 +173,114 @@ new_error_subscript_type <- function(i,
   )
 }
 
+new_chained_error_subscript_type <- function(i,
+                                             ...,
+                                             header = NULL,
+                                             call = caller_env()) {
+  header <- header %||% cnd_header_subscript_type
+
+  causal <- error_cnd(
+    i = i,
+    header = header,
+    ...,
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  new_error_subscript_type(
+    i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+}
+new_chained_error_subscript_size <- function(i,
+                                             ...,
+                                             header = NULL,
+                                             call = caller_env()) {
+  causal <- error_cnd(
+    i = i,
+    header = header,
+    ...,
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  new_error_subscript_size(
+    i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+}
+
+# Subscripts errors are currently customised by rethrowing errors with
+# special fields. The setter methods forward these fields to parent
+# errors so that causal errors may benefit from these customisations.
+
 #' @export
-cnd_header.vctrs_error_subscript_type <- function(cnd) {
-  action <- cnd_subscript_action(cnd)
-  elt <- cnd_subscript_element(cnd)
-  if (cnd_subscript_scalar(cnd)) {
-    glue::glue("Must {action} {elt[[1]]} with a single valid subscript.")
-  } else {
-    glue::glue("Must {action} {elt[[2]]} with a valid subscript vector.")
+`$<-.vctrs_error_subscript_type` <- function(x, i, value) {
+  x <- NextMethod()
+  i <- as_string(i)
+
+  if (!is_null(x[["parent"]]) && is_subscript_field(i)) {
+    x[["parent"]][[i]] <- value
   }
+
+  x
 }
 #' @export
-cnd_body.vctrs_error_subscript_type <- function(cnd) {
+`[[<-.vctrs_error_subscript_type` <- function(x, i, value) {
+  x <- NextMethod()
+
+  if (!is_null(x[["parent"]]) && is_subscript_field(i)) {
+    x[["parent"]][[i]] <- value
+  }
+
+  x
+}
+
+is_subscript_field <- function(x) {
+  is_character(x) && x %in% c(
+    "i",
+    "subscript_arg",
+    "subscript_elt",
+    "subscript_action"
+  )
+}
+
+
+#' @export
+cnd_header.vctrs_error_subscript_type <- function(cnd) {
+  arg <- cnd[["subscript_arg"]]
+  if (is_subscript_arg(arg)) {
+    with <- glue::glue(" with {format_subscript_arg(arg)}")
+  } else {
+    with <- ""
+  }
+
+  action <- cnd_subscript_action(cnd, assign_to = FALSE)
+  elt <- cnd_subscript_element(cnd)
+
+  if (cnd_subscript_scalar(cnd)) {
+    glue::glue("Can't {action} {elt[[1]]}{with}.")
+  } else {
+    glue::glue("Can't {action} {elt[[2]]}{with}.")
+  }
+}
+
+cnd_header_subscript_type <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
   type <- obj_type_friendly(cnd$i)
   expected_types <- cnd_subscript_expected_types(cnd)
 
-  format_error_bullets(c(
-    x = cli::format_inline("{arg} must be {.or {expected_types}}, not {type}.")
-  ))
+  cli::format_inline("{arg} must be {.or {expected_types}}, not {type}.")
 }
-new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
+
+new_cnd_header_subscript_lossy_cast <- function(lossy_err) {
+  force(lossy_err)
   function(cnd, ...) {
-    format_error_bullets(c(x = cnd_header(lossy_err)))
+    cnd_header(lossy_err)
   }
 }
 
@@ -244,8 +329,8 @@ new_error_subscript2_type <- function(i,
   )
 }
 
-cnd_body_subscript_dim <- function(cnd, ...) {
-  arg <- append_arg("Subscript", cnd$subscript_arg)
+cnd_header_subscript_dim <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
 
   dim <- length(dim(cnd$i))
   if (dim < 2) {
@@ -257,9 +342,9 @@ cnd_body_subscript_dim <- function(cnd, ...) {
     shape <- "an array"
   }
 
-  format_error_bullets(c(
-    x = glue::glue("{arg} must be a simple vector, not {shape}.")
-  ))
+  c(
+    glue::glue("{arg} must be a simple vector, not {shape}.")
+  )
 }
 
 cnd_subscript_element <- function(cnd, capital = FALSE) {

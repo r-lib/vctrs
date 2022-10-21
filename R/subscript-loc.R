@@ -199,25 +199,18 @@ vec_as_location2_result <- function(i,
     arg = arg,
     call = call
   )
-
   if (!is_null(result$err)) {
-    parent <- result$err
-    return(result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      body = parent$body,
-      call = call
-    )))
+    return(result)
   }
 
   # Locations must be size 1, can't be NA, and must be positive
   i <- result$ok
 
   if (length(i) != 1L) {
-    return(result(err = new_error_location2_type(
+    return(result(err = new_chained_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_scalar,
+      header = cnd_header_location2_need_scalar,
       call = call
     )))
   }
@@ -229,10 +222,10 @@ vec_as_location2_result <- function(i,
 
   if (is.na(i)) {
     if (!allow_missing && is.na(i)) {
-      result <- result(err = new_error_location2_type(
+      result <- result(err = new_chained_error_location2_type(
         i = i,
         subscript_arg = arg,
-        body = cnd_bullets_location2_need_present,
+        header = cnd_header_location2_need_present,
         call = call
       ))
     } else {
@@ -242,19 +235,19 @@ vec_as_location2_result <- function(i,
   }
 
   if (identical(i, 0L)) {
-    return(result(err = new_error_location2_type(
+    return(result(err = new_chained_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive,
+      header = cnd_header_location2_need_positive,
       call = call
     )))
   }
 
   if (!allow_negative && neg) {
-    return(result(err = new_error_location2_type(
+    return(result(err = new_chained_error_location2_type(
       i = i,
       subscript_arg = arg,
-      body = cnd_bullets_location2_need_positive,
+      header = cnd_header_location2_need_positive,
       call = call
     )))
   }
@@ -284,32 +277,72 @@ vec_as_location2_result <- function(i,
   }
 }
 
+new_error_location2_type <- function(i,
+                                     ...,
+                                     class = NULL) {
+  new_error_subscript2_type(
+    class = class,
+    i = i,
+    numeric = "cast",
+    character = "cast",
+    ...
+  )
+}
+new_chained_error_location2_type <- function(i,
+                                             ...,
+                                             header = NULL,
+                                             call = caller_env()) {
+  causal <- error_cnd(
+    i = i,
+    header = header,
+    ...,
+    call = NULL,
+    use_cli_format = TRUE
+  )
+  new_error_location2_type(
+    i = i,
+    ...,
+    body = function(...) chr(),
+    call = call,
+    parent = causal
+  )
+}
+
+cnd_header_location2_need_scalar <- function(cnd, ...) {
+  cnd$subscript_arg <- cnd_subscript_arg(cnd)
+  glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
+}
+cnd_header_location2_need_present <- function(cnd, ...) {
+  cnd$subscript_arg <- cnd_subscript_arg(cnd)
+  glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
+}
+cnd_header_location2_need_positive <- function(cnd, ...) {
+  cnd$subscript_arg <- cnd_subscript_arg(cnd)
+  glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
+}
 
 stop_location_negative_missing <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
     ...,
-    body = cnd_body_vctrs_error_location_negative_missing,
+    header = cnd_header_location_negative_missing,
     call = call
-  ))
+  )
+  cnd_signal(cnd)
 }
-cnd_body_vctrs_error_location_negative_missing <- function(cnd, ...) {
-  missing_loc <- which(is.na(cnd$i))
-  arg <- append_arg("Subscript", cnd$subscript_arg)
 
-  if (length(missing_loc) == 1) {
-    loc <- glue::glue("{arg} has a missing value at location {missing_loc}.")
-  } else {
-    n_loc <- length(missing_loc)
-    missing_loc <- ensure_full_stop(enumerate(missing_loc))
-    loc <- glue::glue(
-      "{arg} has {n_loc} missing values at locations {missing_loc}"
+cnd_header_location_negative_missing <- function(cnd, ...) {
+  missing_loc <- which(is.na(cnd$i))
+  arg <- cnd_subscript_arg(cnd)
+
+  n_loc <- length(missing_loc)
+
+  c(
+    "Negative locations can't have missing values.",
+    "x" = cli::format_inline(
+      "{arg} has {n_loc} missing value{?s} at location{?s} {missing_loc}."
     )
-  }
-  format_error_bullets(c(
-    x = "Negative locations can't have missing values.",
-    i = loc
-  ))
+  )
 }
 
 stop_location_negative_positive <- function(i, ..., call = caller_env()) {
@@ -339,64 +372,35 @@ cnd_body_vctrs_error_location_negative_positive <- function(cnd, ...) {
   ))
 }
 
-
-new_error_location2_type <- function(i,
-                                     ...,
-                                     class = NULL) {
-  new_error_subscript2_type(
-    class = class,
-    i = i,
-    numeric = "cast",
-    character = "cast",
-    ...
-  )
-}
-cnd_bullets_location2_need_scalar <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be size 1, not {length(i)}.")
-  ))
-}
-cnd_bullets_location2_need_present <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a location, not {obj_type_friendly(i)}.")
-  ))
-}
-cnd_bullets_location2_need_positive <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} must be a positive location, not {i}.")
-  ))
-}
-
 stop_location_negative <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
-    body = cnd_bullets_location_need_non_negative,
     ...,
+    header = cnd_header_location_need_non_negative,
     call = call
-  ))
+  )
+  cnd_signal(cnd)
 }
-cnd_bullets_location_need_non_negative <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't contain negative locations.")
-  ))
+cnd_header_location_need_non_negative <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
+  glue::glue("{arg} can't contain negative locations.")
 }
 
 stop_location_zero <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
+  cnd <- new_chained_error_subscript_type(
     i,
-    body = cnd_bullets_location_need_non_zero,
     ...,
+    header = cnd_header_location_need_non_zero,
     call = call
-  ))
+  )
+  cnd_signal(cnd)
 }
-cnd_bullets_location_need_non_zero <- function(cnd, ...) {
+cnd_header_location_need_non_zero <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
+  header <- glue::glue("{arg} can't contain `0` values.")
+
   zero_loc <- which(cnd$i == 0)
   zero_loc_size <- length(zero_loc)
-  arg <- append_arg("Subscript", cnd$subscript_arg)
 
   if (zero_loc_size == 1) {
     loc <- glue::glue("It has a `0` value at location {zero_loc}.")
@@ -406,22 +410,21 @@ cnd_bullets_location_need_non_zero <- function(cnd, ...) {
       "It has {zero_loc_size} `0` values at locations {zero_loc}"
     )
   }
-  format_error_bullets(c(
-    x = glue::glue("{arg} can't contain `0` values."),
-    i = loc
-  ))
+  c(header, i = loc)
 }
 
 stop_subscript_missing <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
-    i = i,
-    body = cnd_bullets_subscript_missing,
+  cnd <- new_chained_error_subscript_type(
+    i,
     ...,
+    header = cnd_header_subscript_missing,
     call = call
-  ))
+  )
+  cnd_signal(cnd)
 }
-cnd_bullets_subscript_missing <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+cnd_header_subscript_missing <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
+  header <- glue::glue("{arg} can't contain missing values.")
 
   missing_loc <- which(is.na(cnd$i))
   if (length(missing_loc) == 1) {
@@ -431,52 +434,46 @@ cnd_bullets_subscript_missing <- function(cnd, ...) {
     missing_line <- glue::glue("It has missing values at locations {missing_enum}")
   }
 
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't contain missing values."),
-    x = missing_line
-  ))
+  c(header, x = missing_line)
 }
 
 stop_subscript_empty <- function(i, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_type(
-    i = i,
-    body = cnd_bullets_subscript_empty,
+  cnd <- new_chained_error_subscript_type(
+    i,
     ...,
+    header = cnd_bullets_subscript_empty,
     call = call
-  ))
+  )
+  cnd_signal(cnd)
 }
 cnd_bullets_subscript_empty <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Subscript", cnd$subscript_arg)
+  arg <- cnd_subscript_arg(cnd)
+  header <- glue::glue("{arg} can't contain the empty string.")
 
   loc <- which(cnd$i == "")
   if (length(loc) == 1) {
-    line <- glue::glue("It has an empty string at location {loc}.")
+    locations <- glue::glue("It has an empty string at location {loc}.")
   } else {
     enum <- ensure_full_stop(enumerate(loc))
-    line <- glue::glue("It has an empty string at locations {enum}")
+    locations <- glue::glue("It has an empty string at locations {enum}")
   }
 
-  format_error_bullets(c(
-    x = glue::glue_data(cnd, "{subscript_arg} can't contain the empty string."),
-    x = line
-  ))
+  c(header, x = locations)
 }
 
 stop_indicator_size <- function(i, n, ..., call = caller_env()) {
-  cnd_signal(new_error_subscript_size(
+  cnd <- new_chained_error_subscript_size(
     i,
     n = n,
     ...,
-    body = cnd_body_vctrs_error_indicator_size,
+    header = cnd_header_logical_subscript_size,
     call = call
-  ))
-}
-cnd_body_vctrs_error_indicator_size <- function(cnd, ...) {
-  cnd$subscript_arg <- append_arg("Logical subscript", cnd$subscript_arg)
-  glue_data_bullets(
-    cnd,
-    x = "{subscript_arg} must be size 1 or {n}, not {vec_size(i)}."
   )
+  cnd_signal(cnd)
+}
+cnd_header_logical_subscript_size <- function(cnd, ...) {
+  cnd$arg <- append_arg("Logical subscript", cnd$subscript_arg)
+  glue::glue_data(cnd, "{arg} must be size 1 or {n}, not {vec_size(i)}.")
 }
 
 stop_subscript_oob <- function(i,
@@ -511,7 +508,8 @@ cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
 
 #' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
-  switch(cnd_subscript_type(cnd),
+  switch(
+    cnd_subscript_type(cnd),
     numeric =
       if (cnd_subscript_oob_non_consecutive(cnd)) {
         cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
@@ -520,7 +518,7 @@ cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
       },
     character =
       cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
-    abort("Internal error: subscript type can't be `logical` for OOB errors.")
+    abort("Subscript type can't be `logical` for OOB errors.", .internal = TRUE)
   )
 }
 cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {

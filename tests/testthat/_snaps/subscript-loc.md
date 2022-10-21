@@ -6,54 +6,61 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x `TRUE` must be numeric or character, not `TRUE`.
+      ! Can't extract element with `TRUE`.
+      Caused by error:
+      ! `TRUE` must be numeric or character, not `TRUE`.
     Code
       (expect_error(vec_as_location2(mtcars, 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x `mtcars` must be numeric or character, not a <data.frame> object.
+      ! Can't extract element with `mtcars`.
+      Caused by error:
+      ! `mtcars` must be numeric or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location2(env(), 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x `env()` must be numeric or character, not an environment.
+      ! Can't extract element with `env()`.
+      Caused by error:
+      ! `env()` must be numeric or character, not an environment.
     Code
       (expect_error(vec_as_location2(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x `foobar()` must be numeric or character, not a <vctrs_foobar> object.
+      ! Can't extract element with `foobar()`.
+      Caused by error:
+      ! `foobar()` must be numeric or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location2(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from `2.5` <double> to <integer> due to loss of precision.
+      ! Can't extract element with `2.5`.
+      Caused by error:
+      ! Can't convert from `2.5` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location2(Inf, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from `Inf` <double> to <integer> due to loss of precision.
+      ! Can't extract element with `Inf`.
+      Caused by error:
+      ! Can't convert from `Inf` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location2(-Inf, 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from `-Inf` <double> to <integer> due to loss of precision.
+      ! Can't extract element with `-Inf`.
+      Caused by error:
+      ! Can't convert from `-Inf` <double> to <integer> due to loss of precision.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(foobar(), 10L, arg = "foo", call = call(
@@ -61,24 +68,27 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x `foo` must be numeric or character, not a <vctrs_foobar> object.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be numeric or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location2(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Can't convert from `foo` <double> to <integer> due to loss of precision.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! Can't convert from `foo` <double> to <integer> due to loss of precision.
     Code
       (expect_error(with_tibble_rows(vec_as_location2(TRUE)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must remove row with a single valid subscript.
-      x `foo(bar)` must be numeric or character, not `TRUE`.
+      ! Can't remove row with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` must be numeric or character, not `TRUE`.
 
 # vec_as_location() requires integer, character, or logical inputs
 
@@ -88,55 +98,62 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x `mtcars` must be logical, numeric, or character, not a <data.frame> object.
+      ! Can't subset elements with `mtcars`.
+      Caused by error:
+      ! `mtcars` must be logical, numeric, or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location(env(), 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x `env()` must be logical, numeric, or character, not an environment.
+      ! Can't subset elements with `env()`.
+      Caused by error:
+      ! `env()` must be logical, numeric, or character, not an environment.
     Code
       (expect_error(vec_as_location(foobar(), 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x `foobar()` must be logical, numeric, or character, not a <vctrs_foobar> object.
+      ! Can't subset elements with `foobar()`.
+      Caused by error:
+      ! `foobar()` must be logical, numeric, or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location(2.5, 10L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Can't convert from `2.5` <double> to <integer> due to loss of precision.
+      ! Can't subset elements with `2.5`.
+      Caused by error:
+      ! Can't convert from `2.5` <double> to <integer> due to loss of precision.
     Code
       (expect_error(vec_as_location(list(), 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x `list()` must be logical, numeric, or character, not an empty list.
+      ! Can't subset elements with `list()`.
+      Caused by error:
+      ! `list()` must be logical, numeric, or character, not an empty list.
     Code
       (expect_error(vec_as_location(function() NULL, 10L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x `function() NULL` must be logical, numeric, or character, not a function.
+      ! Can't subset elements with `function() NULL`.
+      Caused by error:
+      ! `function() NULL` must be logical, numeric, or character, not a function.
     Code
       (expect_error(vec_as_location(Sys.Date(), 3L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x `Sys.Date()` must be logical, numeric, or character, not a <Date> object.
+      ! Can't subset elements with `Sys.Date()`.
+      Caused by error:
+      ! `Sys.Date()` must be logical, numeric, or character, not a <Date> object.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location(env(), 10L, arg = "foo", call = call(
@@ -144,24 +161,27 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x `foo` must be logical, numeric, or character, not an environment.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! `foo` must be logical, numeric, or character, not an environment.
     Code
       (expect_error(vec_as_location(foobar(), 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x `foo` must be logical, numeric, or character, not a <vctrs_foobar> object.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! `foo` must be logical, numeric, or character, not a <vctrs_foobar> object.
     Code
       (expect_error(vec_as_location(2.5, 3L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x Can't convert from `foo` <double> to <integer> due to loss of precision.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! Can't convert from `foo` <double> to <integer> due to loss of precision.
 
 # vec_as_location() and variants check for OOB elements (#1605)
 
@@ -223,16 +243,18 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `1:2` must be size 1, not 2.
+      ! Can't extract element with `1:2`.
+      Caused by error:
+      ! `1:2` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(c("foo", "bar"), 2L, c("foo", "bar")), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `c("foo", "bar")` must be size 1, not 2.
+      ! Can't extract element with `c("foo", "bar")`.
+      Caused by error:
+      ! `c("foo", "bar")` must be size 1, not 2.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
@@ -240,24 +262,27 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be size 1, not 2.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location2(mtcars, 10L, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x `foo` must be numeric or character, not a <data.frame> object.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be numeric or character, not a <data.frame> object.
     Code
       (expect_error(vec_as_location2(1:2, 2L, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be size 1, not 2.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be size 1, not 2.
 
 # vec_as_location2() requires positive integers
 
@@ -266,15 +291,17 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `0` must be a positive location, not 0.
+      ! Can't extract element with `0`.
+      Caused by error:
+      ! `0` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(-1, 2L), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `-1` must be a positive location, not -1.
+      ! Can't extract element with `-1`.
+      Caused by error:
+      ! `-1` must be a positive location, not -1.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(0, 2L, arg = "foo", call = call("my_function")),
@@ -282,8 +309,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be a positive location, not 0.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be a positive location, not 0.
 
 # vec_as_location2() fails with NA
 
@@ -293,16 +321,18 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `na_int` must be a location, not an integer `NA`.
+      ! Can't extract element with `na_int`.
+      Caused by error:
+      ! `na_int` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(na_chr, 1L, names = "foo"), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must extract element with a single valid subscript.
-      x Subscript `na_chr` must be a location, not a character `NA`.
+      ! Can't extract element with `na_chr`.
+      Caused by error:
+      ! `na_chr` must be a location, not a character `NA`.
     Code
       # Idem with custom `arg`
       (expect_error(vec_as_location2(na_int, 2L, arg = "foo", call = call(
@@ -310,8 +340,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be a location, not an integer `NA`.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be a location, not an integer `NA`.
 
 # num_as_location() optionally forbids negative indices
 
@@ -321,8 +352,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `dbl(1, -1)` can't contain negative locations.
+      ! Can't subset elements with `dbl(1, -1)`.
+      Caused by error:
+      ! `dbl(1, -1)` can't contain negative locations.
 
 # num_as_location() optionally forbids zero indices
 
@@ -332,8 +364,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `0L` can't contain `0` values.
+      ! Can't subset elements with `0L`.
+      Caused by error:
+      ! `0L` can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       (expect_error(num_as_location(c(0, 0, 0, 0, 0, 0), 1, zero = "error"), class = "vctrs_error_subscript_type")
@@ -341,8 +374,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `c(0, 0, 0, 0, 0, 0)` can't contain `0` values.
+      ! Can't subset elements with `c(0, 0, 0, 0, 0, 0)`.
+      Caused by error:
+      ! `c(0, 0, 0, 0, 0, 0)` can't contain `0` values.
       i It has 6 `0` values at locations 1, 2, 3, 4, 5, etc.
 
 # vec_as_location() checks for mix of negative and missing locations
@@ -353,18 +387,20 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `-c(1L, NA)` has a missing value at location 2.
+      ! Can't subset elements with `-c(1L, NA)`.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `-c(1L, NA)` has 1 missing value at location 2.
     Code
       (expect_error(vec_as_location(-c(1L, rep(NA, 10)), 30), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `-c(1L, rep(NA, 10))` has 10 missing values at locations 2, 3, 4, 5, 6, etc.
+      ! Can't subset elements with `-c(1L, rep(NA, 10))`.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `-c(1L, rep(NA, 10))` has 10 missing values at locations 2, 3, 4, 5, 6, 7, 8, 9, 10, and 11.
 
 # vec_as_location() checks for mix of negative and positive locations
 
@@ -374,7 +410,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `c(-1L, 1L)`.
       x Negative and positive locations can't be mixed.
       i Subscript `c(-1L, 1L)` has a positive value at location 2.
     Code
@@ -383,7 +419,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `c(-1L, rep(1L, 10))`.
       x Negative and positive locations can't be mixed.
       i Subscript `c(-1L, rep(1L, 10))` has 10 positive values at locations 2, 3, 4, 5, 6, etc.
 
@@ -395,8 +431,9 @@
     Output
       <error/vctrs_error_subscript_size>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
+      ! Can't subset elements with `c(TRUE, FALSE)`.
+      Caused by error:
+      ! Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
 
 # character subscripts require named vectors
 
@@ -481,8 +518,9 @@
       num_as_location(c(0, -1), n = 2L, negative = "invert", zero = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `c(0, -1)` can't contain `0` values.
+      ! Can't subset elements with `c(0, -1)`.
+      Caused by error:
+      ! `c(0, -1)` can't contain `0` values.
       i It has a `0` value at location 1.
 
 ---
@@ -491,8 +529,9 @@
       num_as_location(c(-1, 0), n = 2L, negative = "invert", zero = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `c(-1, 0)` can't contain `0` values.
+      ! Can't subset elements with `c(-1, 0)`.
+      Caused by error:
+      ! `c(-1, 0)` can't contain `0` values.
       i It has a `0` value at location 2.
 
 # num_as_location() with `oob = 'extend'` doesn't allow ignored oob negative values (#1614)
@@ -564,8 +603,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain missing values.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has a missing value at location 2.
     Code
       (expect_error(vec_as_location(c(1, NA, 2, NA), 2, missing = "error", arg = "foo",
@@ -573,8 +613,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain missing values.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 2 and 4.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(1, NA, 2, NA), 2, missing = "error")),
@@ -582,8 +623,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain missing values.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has missing values at locations 2 and 4.
     Code
       (expect_error(with_tibble_cols(vec_as_location(NA, 1, missing = "error")),
@@ -591,8 +633,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain missing values.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
     Code
       (expect_error(with_tibble_cols(vec_as_location(NA, 3, missing = "error")),
@@ -600,8 +643,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain missing values.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(TRUE, NA, FALSE), 3, missing = "error")),
@@ -609,8 +653,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain missing values.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(NA_character_, 2, missing = "error",
@@ -618,8 +663,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain missing values.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain missing values.
       x It has a missing value at location 1.
 
 # can alter logical missing value handling (#1595)
@@ -628,8 +674,9 @@
       vec_as_location(x, n = 4L, missing = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain missing values.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 2 and 4.
 
 ---
@@ -638,8 +685,9 @@
       vec_as_location(x, n = 2L, missing = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain missing values.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has a missing value at location 1.
 
 # can alter character missing value handling (#1595)
@@ -648,8 +696,9 @@
       vec_as_location(x, n = 2L, names = names, missing = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain missing values.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 1 and 3.
 
 # can alter integer missing value handling (#1595)
@@ -658,8 +707,9 @@
       vec_as_location(x, n = 4L, missing = "error")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain missing values.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain missing values.
       x It has missing values at locations 1 and 3.
 
 # can alter negative integer missing value handling (#1595)
@@ -668,9 +718,10 @@
       num_as_location(x, n = 4L, missing = "propagate", negative = "invert")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `x` has 2 missing values at locations 2 and 3.
+      ! Can't subset elements with `x`.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `x` has 2 missing values at locations 2 and 3.
 
 ---
 
@@ -678,9 +729,10 @@
       num_as_location(x, n = 4L, missing = "error", negative = "invert")
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `x` has 2 missing values at locations 2 and 3.
+      ! Can't subset elements with `x`.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `x` has 2 missing values at locations 2 and 3.
 
 # empty string character indices never match empty string names (#1489)
 
@@ -688,8 +740,9 @@
       vec_as_location("", n = 2L, names = names)
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain the empty string.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain the empty string.
       x It has an empty string at location 1.
 
 ---
@@ -698,8 +751,9 @@
       vec_as_location(c("", "y", ""), n = 2L, names = names)
     Condition
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript can't contain the empty string.
+      ! Can't subset elements.
+      Caused by error:
+      ! Subscript can't contain the empty string.
       x It has an empty string at locations 1 and 3.
 
 # can customise subscript type errors
@@ -711,64 +765,71 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `foo` can't contain negative locations.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! `foo` can't contain negative locations.
     Code
       (expect_error(num_as_location2(-1, 2, negative = "error", arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be a positive location, not -1.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be a positive location, not -1.
     Code
       (expect_error(vec_as_location2(0, 2, arg = "foo", call = call("my_function")),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be a positive location, not 0.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be a positive location, not 0.
     Code
       (expect_error(vec_as_location2(na_dbl, 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be a location, not an integer `NA`.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be a location, not an integer `NA`.
     Code
       (expect_error(vec_as_location2(c(1, 2), 2, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must extract element with a single valid subscript.
-      x Subscript `foo` must be size 1, not 2.
+      ! Can't extract element with `foo`.
+      Caused by error:
+      ! `foo` must be size 1, not 2.
     Code
       (expect_error(vec_as_location(c(TRUE, FALSE), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_size"))
     Output
       <error/vctrs_error_subscript_size>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x Logical subscript `foo` must be size 1 or 3, not 2.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! Logical subscript `foo` must be size 1 or 3, not 2.
     Code
       (expect_error(vec_as_location(c(-1, NA), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `foo` has a missing value at location 2.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `foo` has 1 missing value at location 2.
     Code
       (expect_error(vec_as_location(c(-1, 1), 3, arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `foo`.
       x Negative and positive locations can't be mixed.
       i Subscript `foo` has a positive value at location 2.
     Code
@@ -786,8 +847,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `my_function()`:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `foo` can't contain `0` values.
+      ! Can't subset elements with `foo`.
+      Caused by error:
+      ! `foo` can't contain `0` values.
       i It has a `0` value at location 1.
     Code
       # With tibble columns
@@ -796,64 +858,71 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain negative locations.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain negative locations.
     Code
       (expect_error(with_tibble_cols(num_as_location2(-1, 2, negative = "error")),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` must be a positive location, not -1.
+      ! Can't rename column with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` must be a positive location, not -1.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(0, 2)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` must be a positive location, not 0.
+      ! Can't rename column with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` must be a positive location, not 0.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(na_dbl, 2)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` must be a location, not an integer `NA`.
+      ! Can't rename column with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` must be a location, not an integer `NA`.
     Code
       (expect_error(with_tibble_cols(vec_as_location2(c(1, 2), 2)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename column with a single valid subscript.
-      x Subscript `foo(bar)` must be size 1, not 2.
+      ! Can't rename column with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` must be size 1, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(TRUE, FALSE), 3)), class = "vctrs_error_subscript_size")
       )
     Output
       <error/vctrs_error_subscript_size>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Logical subscript `foo(bar)` must be size 1 or 3, not 2.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! Logical subscript `c(TRUE, FALSE)` must be size 1 or 3, not 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(-1, NA), 3)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Negative locations can't have missing values.
-      i Subscript `foo(bar)` has a missing value at location 2.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! Negative locations can't have missing values.
+      x `foo(bar)` has 1 missing value at location 2.
     Code
       (expect_error(with_tibble_cols(vec_as_location(c(-1, 1), 3)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
+      ! Can't rename columns with `foo(bar)`.
       x Negative and positive locations can't be mixed.
       i Subscript `foo(bar)` has a positive value at location 2.
     Code
@@ -871,8 +940,9 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must rename columns with a valid subscript vector.
-      x Subscript `foo(bar)` can't contain `0` values.
+      ! Can't rename columns with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` can't contain `0` values.
       i It has a `0` value at location 1.
 
 # can customise OOB errors
@@ -1020,24 +1090,27 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `matrix(TRUE, nrow = 1)` must be a simple vector, not a matrix.
+      ! Can't subset elements with `matrix(TRUE, nrow = 1)`.
+      Caused by error:
+      ! `matrix(TRUE, nrow = 1)` must be a simple vector, not a matrix.
     Code
       (expect_error(vec_as_location(array(TRUE, dim = c(1, 1, 1)), 3L), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `array(TRUE, dim = c(1, 1, 1))` must be a simple vector, not an array.
+      ! Can't subset elements with `array(TRUE, dim = c(1, 1, 1))`.
+      Caused by error:
+      ! `array(TRUE, dim = c(1, 1, 1))` must be a simple vector, not an array.
     Code
       (expect_error(with_tibble_rows(vec_as_location(matrix(TRUE, nrow = 1), 3L)),
       class = "vctrs_error_subscript_type"))
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must remove rows with a valid subscript vector.
-      x Subscript `foo(bar)` must be a simple vector, not a matrix.
+      ! Can't remove rows with `foo(bar)`.
+      Caused by error:
+      ! `foo(bar)` must be a simple vector, not a matrix.
 
 # vec_as_location() UI
 
