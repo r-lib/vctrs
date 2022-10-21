@@ -55,7 +55,7 @@ void r_init_library_globals(r_obj* ns) {
   r_envs.ns = ns;
 }
 
-void r_init_library_globals_syms() {
+void r_init_library_globals_syms(void) {
   r_syms.abort = r_sym("abort");
   r_syms.arg = r_sym("arg");
   r_syms.brackets = R_BracketSymbol;
@@ -83,7 +83,6 @@ void r_init_library_globals_syms() {
   r_syms.unbound = R_UnboundValue;
   r_syms.warning = r_sym("warning");
 
-  r_syms.dot_call = r_sym(".call");
   r_syms.dot_environment = r_sym(".Environment");
   r_syms.dot_fn = r_sym(".fn");
   r_syms.dot_x = r_sym(".x");
