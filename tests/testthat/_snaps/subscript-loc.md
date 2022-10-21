@@ -187,7 +187,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements past the end.
+      ! Can't extract elements past the end.
       i Location 10 doesn't exist.
       i There are only 2 elements.
     Code
@@ -205,7 +205,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements that don't exist.
+      ! Can't extract elements that don't exist.
       x Element `foo` doesn't exist.
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar", call = call("baz")),
@@ -213,7 +213,7 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `baz()`:
-      ! Can't subset elements that don't exist.
+      ! Can't extract elements that don't exist.
       x Element `foo` doesn't exist.
 
 # vec_as_location2() requires length 1 inputs

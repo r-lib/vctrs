@@ -259,29 +259,24 @@ vec_as_location2_result <- function(i,
     )))
   }
 
-  # FIXME: Use result approach in internal implementation?
   err <- NULL
   i <- tryCatch(
     vec_as_location(i, n, names = names, arg = arg, call = call),
-    vctrs_error_subscript_type = function(err) {
+    vctrs_error_subscript = function(err) {
+      err[["subscript_scalar"]] <- TRUE
       err <<- err
       i
     }
   )
+  if (!is_null(err)) {
+    return(result(err = err))
+  }
 
   if (neg) {
     i <- -i
   }
 
-  if (is_null(err)) {
-    result(i)
-  } else {
-    result(err = new_error_location2_type(
-      i = i,
-      subscript_arg = arg,
-      call = call
-    ))
-  }
+  result(i)
 }
 
 
@@ -610,6 +605,6 @@ cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
 
 cnd_subscript_oob_non_consecutive <- function(cnd) {
   out <- cnd$subscript_oob_non_consecutive %||% FALSE
-  stopifnot(is_bool(out))
+  check_bool(out)
   out
 }
