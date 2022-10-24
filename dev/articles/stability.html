@@ -36,7 +36,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -234,7 +234,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; function (x, ...) </span></span>
 <span><span class="co">#&gt; UseMethod("mean")</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x558ac7500ae0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x559e89977ae0&gt;</span></span>
 <span><span class="co">#&gt; &lt;environment: namespace:base&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
@@ -453,7 +453,7 @@ It is size-unstable for the same reasons as <code><a href="https://rdrr.io/r/bas
 <span><span class="co">#&gt; [1] &lt;NA&gt;  big   big   small small</span></span>
 <span><span class="co">#&gt; Levels: small big</span></span>
 <span><span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">7</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] NA           "2022-10-28" "2022-10-28" "2022-10-21" "2022-10-21"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] NA           "2022-10-31" "2022-10-31" "2022-10-24" "2022-10-24"</span></span></code></pre></div>
 <p>By using <code><a href="../reference/vec_size.html">vec_size()</a></code> and <code><a href="../reference/vec_slice.html">vec_slice()</a></code>, this definition of <code>if_else()</code> automatically works with data.frames and matrices:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">if_else</span><span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>

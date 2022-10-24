@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.4.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,8 +53,9 @@
       <small>Source: <a href="https://github.com/r-lib/vctrs/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2"><h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.5.0" id="vctrs-050">vctrs 0.5.0<a class="anchor" aria-label="anchor" href="#vctrs-050"></a></h2><p class="text-muted">CRAN release: 2022-10-21</p>
 <ul><li><p>vctrs is now compliant with <code>-Wstrict-prototypes</code> as requested by CRAN (<a href="https://github.com/r-lib/vctrs/issues/1729" class="external-link">#1729</a>).</p></li>
 <li><p><code><a href="../reference/vec_ptype2.html">vec_ptype2()</a></code> now consistently falls back to bare data frame in case of incompatible data frame subclasses. This is part of a general move towards relaxed coercion rules.</p></li>
 <li><p>Common type and cast errors now inherit from <code>"vctrs_error_ptype2"</code> and <code>"vctrs_error_cast"</code> respectively. They are still both subclasses from <code>"vctrs_error_incompatible_type"</code> (which used to be their most specific class and is now a parent class).</p></li>
