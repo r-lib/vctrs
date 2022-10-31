@@ -211,7 +211,7 @@ can_fall_back <- function(x) {
 
 #' @export
 can_fall_back.vctrs_vctr <- function(x) {
-  # Work aronud bad interaction when `c()` method calls back into `vec_c()`
+  # Work around bad interaction when `c()` method calls back into `vec_c()`
   FALSE
 }
 #' @export
@@ -232,7 +232,7 @@ can_fall_back.data.frame <- function(x) {
 
 #' @export
 can_fall_back.default <- function(x) {
-  # Don't all back for classes that directly implement a proxy.
+  # Don't fall back for classes that directly implement a proxy.
   #
   # NOTE: That's suboptimal. For instance this forces us to override
   # `can_fall_back()` for `vctrs_vctr` to avoid recursing into
