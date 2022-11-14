@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fix for CRAN checks.
+
+
 # vctrs 0.5.0
 
 * vctrs is now compliant with `-Wstrict-prototypes` as requested by CRAN
