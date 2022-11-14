@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.5.1
 
 * Fix for CRAN checks.
 
