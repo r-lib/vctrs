@@ -35,7 +35,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.5.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,7 +84,8 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Printing vectors nicely in tibbles</h1>
-                        <h4 data-toc-skip class="author">Kirill Müller, Hadley Wickham</h4>
+                        <h4 data-toc-skip class="author">Kirill Müller,
+Hadley Wickham</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/r-lib/vctrs/blob/HEAD/vignettes/pillar.Rmd" class="external-link"><code>vignettes/pillar.Rmd</code></a></small>
@@ -93,26 +94,49 @@
 
     
     
-<p>You can get basic control over how a vector is printed in a tibble by providing a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method. If you want greater control, you need to understand how printing works. The presentation of a column in a tibble is controlled by two S3 generics:</p>
+<p>You can get basic control over how a vector is printed in a tibble by
+providing a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method. If you want greater control,
+you need to understand how printing works. The presentation of a column
+in a tibble is controlled by two S3 generics:</p>
 <ul>
 <li>
-<code><a href="../reference/vec_ptype_full.html">vctrs::vec_ptype_abbr()</a></code> determines what goes into the column header.</li>
+<code><a href="../reference/vec_ptype_full.html">vctrs::vec_ptype_abbr()</a></code> determines what goes into the
+column header.</li>
 <li>
-<code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar::pillar_shaft()</a></code> determines what goes into the body, or the shaft, of the column.</li>
+<code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar::pillar_shaft()</a></code> determines what goes into the
+body, or the shaft, of the column.</li>
 </ul>
-<p>Technically a <a href="https://en.wikipedia.org/wiki/Column#Nomenclature" class="external-link"><em>pillar</em></a> is composed of a <em>shaft</em> (decorated with an <em>ornament</em>), with a <em>capital</em> above and a <em>base</em> below. Multiple pillars form a <em>colonnade</em>, which can be stacked in multiple <em>tiers</em>. This is the motivation behind the names in our API.</p>
-<p>This short vignette shows the basics of column styling using a <code>"latlon"</code> vector. The vignette imagines the code is in a package, so that you can see the roxygen2 commands you’ll need to create documentation and the <code>NAMESPACE</code> file. In this vignette, we’ll attach pillar and vctrs:</p>
+<p>Technically a <a href="https://en.wikipedia.org/wiki/Column#Nomenclature" class="external-link"><em>pillar</em></a>
+is composed of a <em>shaft</em> (decorated with an <em>ornament</em>),
+with a <em>capital</em> above and a <em>base</em> below. Multiple
+pillars form a <em>colonnade</em>, which can be stacked in multiple
+<em>tiers</em>. This is the motivation behind the names in our API.</p>
+<p>This short vignette shows the basics of column styling using a
+<code>"latlon"</code> vector. The vignette imagines the code is in a
+package, so that you can see the roxygen2 commands you’ll need to create
+documentation and the <code>NAMESPACE</code> file. In this vignette,
+we’ll attach pillar and vctrs:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pillar.r-lib.org/" class="external-link">pillar</a></span><span class="op">)</span></span></code></pre></div>
-<p>You don’t need to do this in a package. Instead, you’ll need to <em>import</em> the packages by then to the <code>Imports:</code> section of your <code>DESCRIPTION</code>. The following helper does this for you:</p>
+<p>You don’t need to do this in a package. Instead, you’ll need to
+<em>import</em> the packages by then to the <code>Imports:</code>
+section of your <code>DESCRIPTION</code>. The following helper does this
+for you:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"vctrs"</span><span class="op">)</span></span>
 <span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_package</span><span class="op">(</span><span class="st">"pillar"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
 </h2>
-<p>To illustrate the basic ideas we’re going to create a <code>"latlon"</code> class that encodes geographic coordinates in a record. We’ll pretend that this code lives in a package called earth. For simplicity, the values are printed as degrees and minutes only. By using <code>vctrs_rcrd()</code>, we already get the infrastructure to make this class fully compatible with data frames for free. See <code><a href="../articles/s3-vector.html">vignette("s3-vector", package = "vctrs")</a></code> for details on the record data type.</p>
+<p>To illustrate the basic ideas we’re going to create a
+<code>"latlon"</code> class that encodes geographic coordinates in a
+record. We’ll pretend that this code lives in a package called earth.
+For simplicity, the values are printed as degrees and minutes only. By
+using <code>vctrs_rcrd()</code>, we already get the infrastructure to
+make this class fully compatible with data frames for free. See
+<code><a href="../articles/s3-vector.html">vignette("s3-vector", package = "vctrs")</a></code> for details on the
+record data type.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @export</span></span>
 <span><span class="va">latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">lat</span>, <span class="va">lon</span><span class="op">)</span> <span class="op">{</span></span>
@@ -153,7 +177,9 @@
 <div class="section level2">
 <h2 id="using-in-a-tibble">Using in a tibble<a class="anchor" aria-label="anchor" href="#using-in-a-tibble"></a>
 </h2>
-<p>Columns of this class can be used in a tibble right away because we’ve made a class using the vctrs infrastructure and have provided a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method:</p>
+<p>Columns of this class can be used in a tibble right away because
+we’ve made a class using the vctrs infrastructure and have provided a
+<code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -181,16 +207,23 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> rstudio::conf  <span style="text-decoration: underline;">2</span>022               <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
 <p>This output is ok, but we could improve it by:</p>
 <ol style="list-style-type: decimal">
-<li><p>Using a more description type abbreviation than <code>&lt;erth_ltl&gt;</code>.</p></li>
-<li><p>Using a dash of colour to highlight the most important parts of the value.</p></li>
-<li><p>Providing a narrower view when horizontal space is at a premium.</p></li>
+<li><p>Using a more description type abbreviation than
+<code>&lt;erth_ltl&gt;</code>.</p></li>
+<li><p>Using a dash of colour to highlight the most important parts of
+the value.</p></li>
+<li><p>Providing a narrower view when horizontal space is at a
+premium.</p></li>
 </ol>
 <p>The following sections show how to enhance the rendering.</p>
 </div>
 <div class="section level2">
 <h2 id="fixing-the-data-type">Fixing the data type<a class="anchor" aria-label="anchor" href="#fixing-the-data-type"></a>
 </h2>
-<p>Instead of <code>&lt;erth_ltl&gt;</code> we’d prefer to use <code>&lt;latlon&gt;</code>. We can do that by implementing the <code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> method, which should return a string that can be used in a column header. For your own classes, strive for an evocative abbreviation that’s under 6 characters.</p>
+<p>Instead of <code>&lt;erth_ltl&gt;</code> we’d prefer to use
+<code>&lt;latlon&gt;</code>. We can do that by implementing the
+<code><a href="../reference/vec_ptype_full.html">vec_ptype_abbr()</a></code> method, which should return a string that
+can be used in a column header. For your own classes, strive for an
+evocative abbreviation that’s under 6 characters.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @export</span></span>
 <span><span class="va">vec_ptype_abbr.earth_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -211,8 +244,16 @@
 <div class="section level2">
 <h2 id="custom-rendering">Custom rendering<a class="anchor" aria-label="anchor" href="#custom-rendering"></a>
 </h2>
-<p>The <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method is used by default for rendering. For custom formatting you need to implement the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method. This function should always return a pillar shaft object, created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple()</a></code> or similar. <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple()</a></code> accepts ANSI escape codes for colouring, and pillar includes some built in styles like <code><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle()</a></code>. We can use subtle style for the degree and minute separators to make the data more obvious.</p>
-<p>First we define a degree formatter that makes use of <code><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle()</a></code>:</p>
+<p>The <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method is used by default for rendering.
+For custom formatting you need to implement the
+<code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method. This function should always return a
+pillar shaft object, created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple()</a></code>
+or similar. <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple()</a></code> accepts ANSI escape
+codes for colouring, and pillar includes some built in styles like
+<code><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle()</a></code>. We can use subtle style for the degree and
+minute separators to make the data more obvious.</p>
+<p>First we define a degree formatter that makes use of
+<code><a href="https://pillar.r-lib.org/reference/style_subtle.html" class="external-link">style_subtle()</a></code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deg_min_color</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">direction</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span></span>
@@ -240,7 +281,9 @@
 <span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">x</span>, formatter <span class="op">=</span> <span class="va">deg_min_color</span><span class="op">)</span></span>
 <span>  <span class="fu">pillar</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft_simple</a></span><span class="op">(</span><span class="va">out</span>, align <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Currently, ANSI escapes are not rendered in vignettes, so this result doesn’t look any different, but if you run the code yourself you’ll see an improved display.</p>
+<p>Currently, ANSI escapes are not rendered in vignettes, so this result
+doesn’t look any different, but if you run the code yourself you’ll see
+an improved display.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
@@ -252,12 +295,14 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> rstudio::conf  <span style="text-decoration: underline;">2</span>020 37<span style="color: #949494;">°</span>47<span style="color: #949494;">'</span>N 122<span style="color: #949494;">°</span>25<span style="color: #949494;">'</span>W</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> rstudio::conf  <span style="text-decoration: underline;">2</span>021 28<span style="color: #949494;">°</span>30<span style="color: #949494;">'</span>N  81<span style="color: #949494;">°</span>24<span style="color: #949494;">'</span>W</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> rstudio::conf  <span style="text-decoration: underline;">2</span>022               <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
-<p>As well as the functions in pillar, the <a href="https://cli.r-lib.org/" class="external-link">cli</a> package provides a variety of tools for styling text.</p>
+<p>As well as the functions in pillar, the <a href="https://cli.r-lib.org/" class="external-link">cli</a> package provides a variety of
+tools for styling text.</p>
 </div>
 <div class="section level2">
 <h2 id="truncation">Truncation<a class="anchor" aria-label="anchor" href="#truncation"></a>
 </h2>
-<p>Tibbles can automatically compacts columns when there’s no enough horizontal space to display everything:</p>
+<p>Tibbles can automatically compacts columns when there’s no enough
+horizontal space to display everything:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">data</span>, width <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
@@ -269,7 +314,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> rstu…  <span style="text-decoration: underline;">2</span>020 37<span style="color: #949494;">°</span>47<span style="color: #949494;">'</span>N 122<span style="color: #949494;">°</span>25<span style="color: #949494;">'</span>W</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> rstu…  <span style="text-decoration: underline;">2</span>021 28<span style="color: #949494;">°</span>30<span style="color: #949494;">'</span>N  81<span style="color: #949494;">°</span>24<span style="color: #949494;">'</span>W</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> rstu…  <span style="text-decoration: underline;">2</span>022               <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
-<p>Currently the latlon class isn’t ever compacted because we haven’t specified a minimum width when constructing the shaft. Let’s fix that and re-print the data:</p>
+<p>Currently the latlon class isn’t ever compacted because we haven’t
+specified a minimum width when constructing the shaft. Let’s fix that
+and re-print the data:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @importFrom pillar pillar_shaft</span></span>
 <span><span class="co">#' @export</span></span>
@@ -292,7 +339,9 @@
 <div class="section level2">
 <h2 id="adaptive-rendering">Adaptive rendering<a class="anchor" aria-label="anchor" href="#adaptive-rendering"></a>
 </h2>
-<p>Truncation may be useful for character data, but for lat-lon data it’d be nicer to show full degrees and remove the minutes. We’ll first write a function that does this:</p>
+<p>Truncation may be useful for character data, but for lat-lon data
+it’d be nicer to show full degrees and remove the minutes. We’ll first
+write a function that does this:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deg</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">direction</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">pm</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">direction</span> <span class="op">==</span> <span class="st">"lat"</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"S"</span><span class="op">)</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"W"</span><span class="op">)</span></span>
@@ -304,7 +353,8 @@
 <span>  <span class="va">ret</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"%d°%s"</span>, <span class="va">deg</span>, <span class="va">pm</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">sign</span> <span class="op">&gt;=</span> <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">ret</span>, justify <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Then use it as part of more sophisticated implementation of the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method:</p>
+<p>Then use it as part of more sophisticated implementation of the
+<code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @importFrom pillar pillar_shaft</span></span>
 <span><span class="co">#' @export</span></span>
@@ -319,8 +369,19 @@
 <span>    class <span class="op">=</span> <span class="st">"pillar_shaft_latlon"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Now the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method returns an object of class <code>"pillar_shaft_latlon"</code> created by <code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft()</a></code>. This object contains the necessary information to render the values, and also minimum and maximum width values. For simplicity, both formats are pre-rendered, and the minimum and maximum widths are computed from there. (<code><a href="https://pillar.r-lib.org/reference/get_extent.html" class="external-link">get_max_extent()</a></code> is a helper that computes the maximum display width occupied by the values in a character vector.)</p>
-<p>All that’s left to do is to implement a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method for our new <code>"pillar_shaft_latlon"</code> class. This method will be called with a <code>width</code> argument, which then determines which of the formats to choose. The formatting of our choice is passed to the <code><a href="https://pillar.r-lib.org/reference/new_ornament.html" class="external-link">new_ornament()</a></code> function:</p>
+<p>Now the <code><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft()</a></code> method returns an object of class
+<code>"pillar_shaft_latlon"</code> created by
+<code><a href="https://pillar.r-lib.org/reference/new_pillar_shaft.html" class="external-link">new_pillar_shaft()</a></code>. This object contains the necessary
+information to render the values, and also minimum and maximum width
+values. For simplicity, both formats are pre-rendered, and the minimum
+and maximum widths are computed from there.
+(<code><a href="https://pillar.r-lib.org/reference/get_extent.html" class="external-link">get_max_extent()</a></code> is a helper that computes the maximum
+display width occupied by the values in a character vector.)</p>
+<p>All that’s left to do is to implement a <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code> method
+for our new <code>"pillar_shaft_latlon"</code> class. This method will
+be called with a <code>width</code> argument, which then determines
+which of the formats to choose. The formatting of our choice is passed
+to the <code><a href="https://pillar.r-lib.org/reference/new_ornament.html" class="external-link">new_ornament()</a></code> function:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @export</span></span>
 <span><span class="va">format.pillar_shaft_latlon</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">width</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -357,11 +418,20 @@
 <div class="section level2">
 <h2 id="testing">Testing<a class="anchor" aria-label="anchor" href="#testing"></a>
 </h2>
-<p>If you want to test the output of your code, you can compare it with a known state recorded in a text file. The <code><a href="https://testthat.r-lib.org/reference/expect_snapshot.html" class="external-link">testthat::expect_snapshot()</a></code> function offers an easy way to test output-generating functions. It takes care about details such as Unicode, ANSI escapes, and output width. Furthermore it won’t make the tests fail on CRAN. This is important because your output may rely on details out of your control, which should be fixed eventually but should not lead to your package being removed from CRAN.</p>
-<p>Use this testthat expectation in one of your test files to create a snapshot test:</p>
+<p>If you want to test the output of your code, you can compare it with
+a known state recorded in a text file. The
+<code><a href="https://testthat.r-lib.org/reference/expect_snapshot.html" class="external-link">testthat::expect_snapshot()</a></code> function offers an easy way to
+test output-generating functions. It takes care about details such as
+Unicode, ANSI escapes, and output width. Furthermore it won’t make the
+tests fail on CRAN. This is important because your output may rely on
+details out of your control, which should be fixed eventually but should
+not lead to your package being removed from CRAN.</p>
+<p>Use this testthat expectation in one of your test files to create a
+snapshot test:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">expect_snapshot</span><span class="op">(</span><span class="fu"><a href="https://pillar.r-lib.org/reference/pillar_shaft.html" class="external-link">pillar_shaft</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">loc</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>See <a href="https://testthat.r-lib.org/articles/snapshotting.html" class="external-link uri">https://testthat.r-lib.org/articles/snapshotting.html</a> for more information.</p>
+<p>See <a href="https://testthat.r-lib.org/articles/snapshotting.html" class="external-link uri">https://testthat.r-lib.org/articles/snapshotting.html</a>
+for more information.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
