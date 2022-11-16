@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* `vec_locate_sorted_groups()` has gained an `appearance` argument to optionally
+  return group keys in the order of their first appearance. This makes
+  `vec_locate_sorted_groups()` almost identical to `vec_group_loc()`, but they
+  are implemented with very different algorithms (#1747).
+
 # vctrs 0.5.1
 
 * Fix for CRAN checks.
