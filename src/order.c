@@ -194,7 +194,7 @@ static SEXP vec_order_info_impl(SEXP x,
                                 SEXP na_value,
                                 bool nan_distinct,
                                 SEXP chr_proxy_collate,
-                                bool chr_ordered,
+                                bool appearance,
                                 bool group_sizes);
 
 // [[ include("order.h") ]]
@@ -203,9 +203,9 @@ SEXP vec_order(SEXP x,
                SEXP na_value,
                bool nan_distinct,
                SEXP chr_proxy_collate) {
-  const bool chr_ordered = true;
+  const bool appearance = false;
   const bool group_sizes = false;
-  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered, group_sizes);
+  SEXP info = vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, appearance, group_sizes);
   return r_list_get(info, 0);
 }
 
@@ -215,22 +215,26 @@ static SEXP vec_locate_sorted_groups(SEXP x,
                                      SEXP direction,
                                      SEXP na_value,
                                      bool nan_distinct,
-                                     SEXP chr_proxy_collate);
+                                     SEXP chr_proxy_collate,
+                                     bool appearance);
 
 // [[ register() ]]
 SEXP vctrs_locate_sorted_groups(SEXP x,
                                 SEXP direction,
                                 SEXP na_value,
                                 SEXP nan_distinct,
-                                SEXP chr_proxy_collate) {
+                                SEXP chr_proxy_collate,
+                                SEXP appearance) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
+  bool c_appearance = r_arg_as_bool(appearance, "appearance");
 
   return vec_locate_sorted_groups(
     x,
     direction,
     na_value,
     c_nan_distinct,
-    chr_proxy_collate
+    chr_proxy_collate,
+    c_appearance
   );
 }
 
@@ -239,16 +243,15 @@ SEXP vec_locate_sorted_groups(SEXP x,
                               SEXP direction,
                               SEXP na_value,
                               bool nan_distinct,
-                              SEXP chr_proxy_collate) {
-  const bool chr_ordered = true;
-
+                              SEXP chr_proxy_collate,
+                              bool appearance) {
   SEXP info = KEEP(vec_order_info(
     x,
     direction,
     na_value,
     nan_distinct,
     chr_proxy_collate,
-    chr_ordered
+    appearance
   ));
 
   SEXP o = r_list_get(info, 0);
@@ -257,6 +260,7 @@ SEXP vec_locate_sorted_groups(SEXP x,
   SEXP sizes = r_list_get(info, 1);
   const int* p_sizes = r_int_cbegin(sizes);
 
+  r_ssize x_size = r_length(o);
   r_ssize n_groups = r_length(sizes);
 
   SEXP loc = KEEP(r_alloc_list(n_groups));
@@ -264,23 +268,52 @@ SEXP vec_locate_sorted_groups(SEXP x,
   SEXP key_loc = KEEP(r_alloc_integer(n_groups));
   int* p_key_loc = r_int_begin(key_loc);
 
-  int start = 0;
+  if (appearance) {
+    SEXP o_appearance = r_list_get(info, 3);
+    const int* p_o_appearance = r_int_cbegin(o_appearance);
 
-  for (r_ssize i = 0; i < n_groups; ++i) {
-    p_key_loc[i] = p_o[start];
+    // Accumulate group starts, overwriting group sizes memory.
+    // Group starts are necessary to work with `o_appearance`.
+    r_ssize start = 0;
+    int* p_starts = r_int_begin(sizes);
 
-    const int size = p_sizes[i];
+    for (r_ssize i = 0; i < n_groups; ++i) {
+      const r_ssize size = p_sizes[i];
+      p_starts[i] = start;
+      start += size;
+    }
 
-    SEXP elt = r_alloc_integer(size);
-    r_list_poke(loc, i, elt);
-    int* p_elt = r_int_begin(elt);
+    for (r_ssize i = 0; i < n_groups; ++i) {
+      const r_ssize index = p_o_appearance[i] - 1;
+      r_ssize start = p_starts[index];
+      const r_ssize next_start = (index == n_groups - 1) ? x_size : p_starts[index + 1];
+      const r_ssize size = next_start - start;
 
-    R_len_t k = 0;
+      p_key_loc[i] = p_o[start];
 
-    for (int j = 0; j < size; ++j) {
-      p_elt[k] = p_o[start];
-      ++start;
-      ++k;
+      SEXP elt = r_alloc_integer(size);
+      r_list_poke(loc, i, elt);
+      int* p_elt = r_int_begin(elt);
+
+      for (r_ssize j = 0; j < size; ++j, ++start) {
+        p_elt[j] = p_o[start];
+      }
+    }
+  } else {
+    r_ssize start = 0;
+
+    for (r_ssize i = 0; i < n_groups; ++i) {
+      const r_ssize size = p_sizes[i];
+
+      p_key_loc[i] = p_o[start];
+
+      SEXP elt = r_alloc_integer(size);
+      r_list_poke(loc, i, elt);
+      int* p_elt = r_int_begin(elt);
+
+      for (r_ssize j = 0; j < size; ++j, ++start) {
+        p_elt[j] = p_o[start];
+      }
     }
   }
 
@@ -306,11 +339,14 @@ SEXP vec_locate_sorted_groups(SEXP x,
 // -----------------------------------------------------------------------------
 
 /*
- * Returns a list of size three.
+ * Returns a list of length three or four:
  * - The first element of the list contains the ordering as an integer vector.
  * - The second element of the list contains the group sizes as an integer
  *   vector.
  * - The third element of the list contains the max group size as an integer.
+ * - The optional fourth element of the list contains an additional ordering
+ *   integer vector that re-orders the sorted unique values of `x` to generate
+ *   an appearance ordering. It is only present if `appearance` is `true`.
  */
 // [[ include("order.h") ]]
 SEXP vec_order_info(SEXP x,
@@ -318,9 +354,9 @@ SEXP vec_order_info(SEXP x,
                     SEXP na_value,
                     bool nan_distinct,
                     SEXP chr_proxy_collate,
-                    bool chr_ordered) {
+                    bool appearance) {
   const bool group_sizes = true;
-  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered, group_sizes);
+  return vec_order_info_impl(x, direction, na_value, nan_distinct, chr_proxy_collate, appearance, group_sizes);
 }
 
 // [[ register() ]]
@@ -329,10 +365,10 @@ SEXP vctrs_order_info(SEXP x,
                       SEXP na_value,
                       SEXP nan_distinct,
                       SEXP chr_proxy_collate,
-                      SEXP chr_ordered) {
+                      SEXP appearance) {
   bool c_nan_distinct = parse_nan_distinct(nan_distinct);
-  bool c_chr_ordered = r_bool_as_int(chr_ordered);
-  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_proxy_collate, c_chr_ordered);
+  bool c_appearance = r_bool_as_int(appearance);
+  return vec_order_info(x, direction, na_value, c_nan_distinct, chr_proxy_collate, c_appearance);
 }
 
 static inline size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type);
@@ -365,10 +401,14 @@ SEXP vec_order_info_impl(SEXP x,
                          SEXP na_value,
                          bool nan_distinct,
                          SEXP chr_proxy_collate,
-                         bool chr_ordered,
+                         bool appearance,
                          bool group_sizes) {
   // TODO call
   struct r_lazy call = r_lazy_null;
+
+  if (appearance && !group_sizes) {
+    r_stop_internal("Can't set `appearance` without `group_sizes`.");
+  }
 
   int n_prot = 0;
 
@@ -447,6 +487,10 @@ SEXP vec_order_info_impl(SEXP x,
   struct truelength_info* p_truelength_info = new_truelength_info(size);
   PROTECT_TRUELENGTH_INFO(p_truelength_info, &n_prot);
 
+  // If we are prepping for order-by-appearance, we internally handle character
+  // vectors with `chr_appearance()`, which is much faster than `chr_order()`
+  const bool chr_ordered = !appearance;
+
   struct order* p_order = new_order(size);
   PROTECT_ORDER(p_order, &n_prot);
 
@@ -468,7 +512,9 @@ SEXP vec_order_info_impl(SEXP x,
     p_truelength_info
   );
 
-  SEXP out = PROTECT_N(r_alloc_list(3), &n_prot);
+  const r_ssize out_size = 1 + (2 * group_sizes) + (1 * appearance);
+
+  SEXP out = PROTECT_N(r_alloc_list(out_size), &n_prot);
   r_list_poke(out, 0, p_order->data);
 
   if (group_sizes) {
@@ -477,6 +523,60 @@ SEXP vec_order_info_impl(SEXP x,
     sizes = r_int_resize(sizes, p_group_info->n_groups);
     r_list_poke(out, 1, sizes);
     r_list_poke(out, 2, r_int((int) p_group_info->max_group_size));
+  }
+
+  if (appearance) {
+    struct group_info* p_group_info = groups_current(p_group_infos);
+
+    const r_ssize n_groups = p_group_info->n_groups;
+    const int* p_sizes = p_group_info->p_data;
+
+    // Order of the unique keys
+    SEXP keys = PROTECT_N(r_alloc_integer(n_groups), &n_prot);
+    int* p_keys = r_int_begin(keys);
+
+    r_ssize start = 0;
+
+    for (r_ssize i = 0; i < n_groups; ++i) {
+      p_keys[i] = p_order->p_data[start];
+      start += p_sizes[i];
+    }
+
+    // Appearance order of the unique keys
+    struct order* p_order_appearance = new_order(n_groups);
+    PROTECT_ORDER(p_order_appearance, &n_prot);
+
+    // Ascending order is the only option that matters,
+    // as this is an integer vector with no missing values
+    SEXP decreasing = r_false;
+    SEXP na_last = r_true;
+    const bool nan_distinct = false;
+    const bool chr_ordered = false;
+    const r_ssize size = n_groups;
+    const enum vctrs_type type = VCTRS_TYPE_integer;
+
+    // Turn off group tracking
+    p_group_infos->ignore_groups = true;
+
+    vec_order_switch(
+      keys,
+      decreasing,
+      na_last,
+      nan_distinct,
+      chr_ordered,
+      size,
+      type,
+      p_order_appearance,
+      p_lazy_x_chunk,
+      p_lazy_x_aux,
+      p_lazy_o_aux,
+      p_lazy_bytes,
+      p_lazy_counts,
+      p_group_infos,
+      p_truelength_info
+    );
+
+    r_list_poke(out, 3, p_order_appearance->data);
   }
 
   UNPROTECT(n_prot);
