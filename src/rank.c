@@ -81,9 +81,9 @@ r_obj* vec_rank(r_obj* x,
   r_obj* rank = KEEP(r_alloc_integer(rank_size));
   int* v_rank = r_int_begin(rank);
 
-  const bool chr_ordered = true;
+  const bool appearance = false;
 
-  r_obj* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered));
+  r_obj* info = KEEP(vec_order_info(x, direction, na_value, nan_distinct, chr_proxy_collate, appearance));
 
   r_obj* order = r_list_get(info, 0);
   const int* v_order = r_int_cbegin(order);

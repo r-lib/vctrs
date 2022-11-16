@@ -1164,36 +1164,76 @@ test_that("`chr_proxy_collate` can result in keys being seen as identical", {
   expect_identical(vec_locate_sorted_groups(y, chr_proxy_collate = tolower), y_expect)
 })
 
+test_that("can request groups returned in appearance order", {
+  x <- c(2, 1, 5, 1, 2)
+  expect_identical(
+    vec_locate_sorted_groups(x, appearance = TRUE),
+    data_frame(key = c(2, 1, 5), loc = list(c(1L, 5L), c(2L, 4L), 3L))
+  )
+
+  x <- c(1, 2, 4, 5, 3)
+  expect_identical(
+    vec_locate_sorted_groups(x, appearance = TRUE),
+    data_frame(key = x, loc = list(1L, 2L, 3L, 4L, 5L))
+  )
+})
+
+test_that("appearance order isn't affected by `direction` or `na_value`", {
+  x <- c("b", "B", NA, "a", "B", "A")
+
+  out <- vec_locate_sorted_groups(x, appearance = TRUE)
+  expect <- data_frame(key = c("b", "B", NA, "a", "A"), loc = list(1L, c(2L, 5L), 3L, 4L, 6L))
+
+  expect_identical(out, expect)
+  expect_identical(out, vec_locate_sorted_groups(x, appearance = TRUE, direction = "desc"))
+  expect_identical(out, vec_locate_sorted_groups(x, appearance = TRUE, na_value = "smallest"))
+})
+
+test_that("`appearance` is validated", {
+  expect_snapshot(error = TRUE, {
+    vec_locate_sorted_groups(1, appearance = NA)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_sorted_groups(1, appearance = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_locate_sorted_groups(1, appearance = c(TRUE, FALSE))
+  })
+})
+
 # ------------------------------------------------------------------------------
-# `vec_order_info(chr_ordered = FALSE)`
+# `vec_order_info(appearance = TRUE)`
 
 test_that("can order character vectors in appearance order", {
   x <- c("b", "a", "B", "B", "a")
-  info <- vec_order_info(x, chr_ordered = FALSE)
+  info <- vec_order_info(x, appearance = TRUE)
 
   expect_identical(info[[1]], c(1L, 2L, 5L, 3L, 4L))
   expect_identical(info[[2]], c(1L, 2L, 2L))
   expect_identical(info[[3]], 2L)
+  expect_identical(info[[4]], c(1L, 2L, 3L))
 })
 
 test_that("using appearance order means `direction` has no effect", {
   x <- c("b", "a", "B", "B", "a")
 
-  info1 <- vec_order_info(x, direction = "asc", chr_ordered = FALSE)
-  info2 <- vec_order_info(x, direction = "desc", chr_ordered = FALSE)
+  info1 <- vec_order_info(x, direction = "asc", appearance = TRUE)
+  info2 <- vec_order_info(x, direction = "desc", appearance = TRUE)
 
   expect_identical(info1[[1]], info2[[1]])
   expect_identical(info1[[2]], info2[[2]])
   expect_identical(info1[[3]], info2[[3]])
+  expect_identical(info1[[4]], info2[[4]])
 })
 
 test_that("appearance order works with NA - `na_value` has no effect", {
   x <- c(NA, "foo", NA, "bar")
-  info <- vec_order_info(x, chr_ordered = FALSE)
+  info <- vec_order_info(x, appearance = TRUE)
 
   expect_identical(info[[1]], c(1L, 3L, 2L, 4L))
   expect_identical(info[[2]], c(2L, 1L, 1L))
   expect_identical(info[[3]], 2L)
+  expect_identical(info[[4]], c(1L, 2L, 3L))
 })
 
 test_that("appearance order can be mixed with regular ordering", {
@@ -1202,11 +1242,28 @@ test_that("appearance order can be mixed with regular ordering", {
   df <- data_frame(x = x, y = y)
 
   # `y` breaks ties
-  info <- vec_order_info(df, chr_ordered = FALSE)
+  info <- vec_order_info(df, appearance = TRUE)
 
   expect_identical(info[[1]], c(1L, 5L, 2L, 6L, 3L, 4L))
   expect_identical(info[[2]], c(1L, 1L, 2L, 1L, 1L))
   expect_identical(info[[3]], 2L)
+  expect_identical(info[[4]], c(1L, 3L, 4L, 5L, 2L))
+})
+
+test_that("appearance order can still separate `NA` from `NaN`", {
+  x <- c(NA, NaN, NA)
+
+  info <- vec_order_info(x, appearance = TRUE, nan_distinct = FALSE)
+  expect_identical(info[[1]], 1:3)
+  expect_identical(info[[2]], 3L)
+  expect_identical(info[[3]], 3L)
+  expect_identical(info[[4]], 1L)
+
+  info <- vec_order_info(x, appearance = TRUE, nan_distinct = TRUE)
+  expect_identical(info[[1]], c(2L, 1L, 3L))
+  expect_identical(info[[2]], c(1L, 2L))
+  expect_identical(info[[3]], 2L)
+  expect_identical(info[[4]], c(2L, 1L))
 })
 
 # ------------------------------------------------------------------------------

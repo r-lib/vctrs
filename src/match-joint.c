@@ -115,7 +115,7 @@ r_obj* vec_joint_xtfrm(r_obj* x,
     chrs_smallest,
     nan_distinct,
     r_null,
-    true
+    false
   ), &n_prot);
 
   r_obj* y_info = KEEP_N(vec_order_info(
@@ -124,7 +124,7 @@ r_obj* vec_joint_xtfrm(r_obj* x,
     chrs_smallest,
     nan_distinct,
     r_null,
-    true
+    false
   ), &n_prot);
 
   const int* v_x_o = r_int_cbegin(r_list_get(x_info, 0));

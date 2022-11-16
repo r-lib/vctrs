@@ -185,8 +185,15 @@ vec_sort_radix <- function(x,
 #'
 #' `vec_locate_sorted_groups()` returns a data frame containing a `key` column
 #' with sorted unique groups, and a `loc` column with the locations of each
-#' group in `x`. It is similar to [vec_group_loc()], except the groups are
-#' returned sorted rather than by first appearance.
+#' group in `x`.
+#'
+#' `vec_locate_sorted_groups()` is very similar to [vec_group_loc()], except
+#' the groups are typically sorted by value rather than by first appearance.
+#' If `appearance = TRUE`, then the two functions are roughly identical, with
+#' the main difference being that `vec_locate_sorted_groups(appearance = TRUE)`
+#' computes the groups using a sort-based approach, and `vec_group_loc()`
+#' computes them using a hash-based approach. One may be faster than the other
+#' depending on the structure of the input data.
 #'
 #' @details
 #' `vec_locate_sorted_groups(x)` is equivalent to, but faster than:
@@ -197,6 +204,14 @@ vec_sort_radix <- function(x,
 #' ```
 #'
 #' @inheritParams order-radix
+#'
+#' @param appearance Ordering of returned group keys.
+#'
+#'   If `FALSE`, the default, group keys are returned sorted by value.
+#'
+#'   If `TRUE`, group keys are returned sorted by first appearance in `x`. This
+#'   means `direction`, `na_value`, and `chr_proxy_collate` no longer have any
+#'   effect.
 #'
 #' @return
 #' A two column data frame with size equal to `vec_size(vec_unique(x))`.
@@ -215,16 +230,21 @@ vec_sort_radix <- function(x,
 #' )
 #'
 #' # `vec_locate_sorted_groups()` is similar to `vec_group_loc()`, except keys
-#' # are returned ordered rather than by first appearance.
+#' # are returned ordered rather than by first appearance by default.
 #' vec_locate_sorted_groups(df)
-#'
 #' vec_group_loc(df)
+#'
+#' # Setting `appearance = TRUE` makes `vec_locate_sorted_groups()` mostly
+#' # equivalent to `vec_group_loc()`, but their underlying algorithms are very
+#' # different.
+#' vec_locate_sorted_groups(df, appearance = TRUE)
 vec_locate_sorted_groups <- function(x,
                                      ...,
                                      direction = "asc",
                                      na_value = "largest",
                                      nan_distinct = FALSE,
-                                     chr_proxy_collate = NULL) {
+                                     chr_proxy_collate = NULL,
+                                     appearance = FALSE) {
   check_dots_empty0(...)
 
   .Call(
@@ -233,7 +253,8 @@ vec_locate_sorted_groups <- function(x,
     direction,
     na_value,
     nan_distinct,
-    chr_proxy_collate
+    chr_proxy_collate,
+    appearance
   )
 }
 
@@ -245,9 +266,9 @@ vec_order_info <- function(x,
                            na_value = "largest",
                            nan_distinct = FALSE,
                            chr_proxy_collate = NULL,
-                           chr_ordered = TRUE) {
+                           appearance = FALSE) {
   check_dots_empty0(...)
-  .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_proxy_collate, chr_ordered)
+  .Call(vctrs_order_info, x, direction, na_value, nan_distinct, chr_proxy_collate, appearance)
 }
 
 # ------------------------------------------------------------------------------

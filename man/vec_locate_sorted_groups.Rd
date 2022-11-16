@@ -10,7 +10,8 @@ vec_locate_sorted_groups(
   direction = "asc",
   na_value = "largest",
   nan_distinct = FALSE,
-  chr_proxy_collate = NULL
+  chr_proxy_collate = NULL,
+  appearance = FALSE
 )
 }
 \arguments{
@@ -56,6 +57,14 @@ columns.
 
 Common transformation functions include: \code{tolower()} for case-insensitive
 ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
+
+\item{appearance}{Ordering of returned group keys.
+
+If \code{FALSE}, the default, group keys are returned sorted by value.
+
+If \code{TRUE}, group keys are returned sorted by first appearance in \code{x}. This
+means \code{direction}, \code{na_value}, and \code{chr_proxy_collate} no longer have any
+effect.}
 }
 \value{
 A two column data frame with size equal to \code{vec_size(vec_unique(x))}.
@@ -69,8 +78,15 @@ A two column data frame with size equal to \code{vec_size(vec_unique(x))}.
 
 \code{vec_locate_sorted_groups()} returns a data frame containing a \code{key} column
 with sorted unique groups, and a \code{loc} column with the locations of each
-group in \code{x}. It is similar to \code{\link[=vec_group_loc]{vec_group_loc()}}, except the groups are
-returned sorted rather than by first appearance.
+group in \code{x}.
+
+\code{vec_locate_sorted_groups()} is very similar to \code{\link[=vec_group_loc]{vec_group_loc()}}, except
+the groups are typically sorted by value rather than by first appearance.
+If \code{appearance = TRUE}, then the two functions are roughly identical, with
+the main difference being that \code{vec_locate_sorted_groups(appearance = TRUE)}
+computes the groups using a sort-based approach, and \code{vec_group_loc()}
+computes them using a hash-based approach. One may be faster than the other
+depending on the structure of the input data.
 }
 \details{
 \code{vec_locate_sorted_groups(x)} is equivalent to, but faster than:
@@ -93,9 +109,13 @@ df <- data.frame(
 )
 
 # `vec_locate_sorted_groups()` is similar to `vec_group_loc()`, except keys
-# are returned ordered rather than by first appearance.
+# are returned ordered rather than by first appearance by default.
 vec_locate_sorted_groups(df)
-
 vec_group_loc(df)
+
+# Setting `appearance = TRUE` makes `vec_locate_sorted_groups()` mostly
+# equivalent to `vec_group_loc()`, but their underlying algorithms are very
+# different.
+vec_locate_sorted_groups(df, appearance = TRUE)
 }
 \keyword{internal}
