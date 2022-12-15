@@ -4519,8 +4519,8 @@ static int df_decreasing_expansion(SEXP x);
 
 static
 int vec_decreasing_expansion(SEXP x) {
-  // Bare columns
-  if (!OBJECT(x)) {
+  // Bare vectors
+  if (!OBJECT(x) && !has_dim(x)) {
     return 1;
   }
 

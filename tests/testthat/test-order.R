@@ -885,6 +885,60 @@ test_that("`na_value` and `direction` can both be vectors", {
   )
 })
 
+test_that("`direction` is recycled right with array columns (#1753)", {
+  df <- data_frame(
+    x = matrix(c(1, 1, 1, 3, 2, 2), ncol = 2),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, direction = c("asc", "desc")),
+    c(2L, 3L, 1L)
+  )
+  expect_snapshot(error = TRUE, {
+    vec_order_radix(df, direction = c("asc", "desc", "desc"))
+  })
+
+  df <- data_frame(
+    x = array(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 3, 3), dim = c(3, 2, 2)),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, direction = c("asc", "desc")),
+    c(2L, 3L, 1L)
+  )
+})
+
+test_that("`na_value` is recycled right with array columns (#1753)", {
+  df <- data_frame(
+    x = matrix(c(1, 1, 1, 3, NA, 2), ncol = 2),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("largest", "smallest")),
+    c(3L, 1L, 2L)
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("smallest", "largest")),
+    c(2L, 3L, 1L)
+  )
+  expect_snapshot(error = TRUE, {
+    vec_order_radix(df, direction = c("smallest", "largest", "largest"))
+  })
+
+  df <- data_frame(
+    x = array(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, NA, 3), dim = c(3, 2, 2)),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("largest", "smallest")),
+    c(3L, 1L, 2L)
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("smallest", "largest")),
+    c(2L, 3L, 1L)
+  )
+})
+
 # ------------------------------------------------------------------------------
 # vec_order_radix(<data.frame>) - counting
 
