@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed a bug with the internal `vec_order_radix()` function related to matrix
+  columns (#1753).
+
 # vctrs 0.5.1
 
 * Fix for CRAN checks.
