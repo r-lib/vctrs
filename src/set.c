@@ -111,8 +111,10 @@ r_obj* vec_set_intersect(r_obj* x,
   r_ssize j = 0;
 
   for (r_ssize i = 0; i < x_size; ++i) {
-    v_loc[j] = i + 1;
-    j += v_marked[i];
+    if (v_marked[i]) {
+      v_loc[j] = i + 1;
+      ++j;
+    }
   }
 
   r_obj* out = vec_slice_unsafe(x, loc);
