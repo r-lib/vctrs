@@ -153,7 +153,6 @@ extern r_obj* ffi_s3_get_method(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_list_all_size(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_list_check_all_size(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_intersect(r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_vec_set_intersect2(r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -330,7 +329,6 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_list_all_size",                     (DL_FUNC) &ffi_list_all_size, 3},
   {"ffi_list_check_all_size",               (DL_FUNC) &ffi_list_check_all_size, 3},
   {"ffi_vec_set_intersect",                 (DL_FUNC) &ffi_vec_set_intersect, 4},
-  {"ffi_vec_set_intersect2",                (DL_FUNC) &ffi_vec_set_intersect2, 4},
   {"ffi_exp_vec_cast",                      (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };
