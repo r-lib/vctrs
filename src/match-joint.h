@@ -10,4 +10,6 @@ r_obj* vec_joint_xtfrm(r_obj* x,
                        bool nan_distinct,
                        r_obj* chr_proxy_collate);
 
+r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y);
+
 #endif

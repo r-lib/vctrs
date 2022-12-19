@@ -233,7 +233,6 @@ r_obj* vec_joint_xtfrm(r_obj* x,
  * requires a joint proxy, then we only have to combine those individual columns
  * together rather than the entire data frames.
  */
-static inline
 r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
   if (r_typeof(x) != r_typeof(y)) {
     r_stop_internal("`x` and `y` should have the same type.");
