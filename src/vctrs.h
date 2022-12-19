@@ -45,6 +45,7 @@ bool vec_is_unspecified(SEXP x);
 #include "ptype2-dispatch.h"
 #include "ptype2.h"
 #include "runs.h"
+#include "set.h"
 #include "shape.h"
 #include "size-common.h"
 #include "size.h"
