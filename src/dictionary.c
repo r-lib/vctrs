@@ -98,7 +98,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
       Rf_errorcall(R_NilValue, "Can't allocate hash lookup table. Please free memory.");
     }
 
-    memset(d->hash, 0, n * sizeof(R_len_t));
+    memset(d->hash, 0, n * sizeof(uint32_t));
     hash_fill(d->hash, n, x, opts->na_equal);
   } else {
     d->hash = NULL;
