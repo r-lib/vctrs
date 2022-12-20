@@ -1,3 +1,86 @@
+#' Set operations
+#'
+#' @description
+#' - `vec_set_intersect()` computes a set intersection. It returns the first
+#'   occurrence of values in `x` that also appear in `y`.
+#'
+#' - `vec_set_difference()` computes an asymmetric set difference. If returns
+#'   the first occurrence of values in `x` that don't appear in `y`.
+#'
+#' - `vec_set_union()` computes a set union. It returns the first occurrence of
+#'   values in `x` combined with the first occurrence of values in `y` that
+#'   don't appear in `x`.
+#'
+#' These functions work similarly to [intersect()], [setdiff()], and [union()],
+#' but don't strip attributes and can be used with data frames.
+#'
+#' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
+#'
+#' @param x,y A pair of vectors.
+#'
+#' @param ptype If `NULL`, the default, the output type is determined by
+#'   computing the common type between `x` and `y`. If supplied, both `x` and
+#'   `y` will be cast to this type.
+#'
+#' @param x_arg,y_arg Argument names for `x` and `y`. These are used in error
+#'   messages.
+#'
+#' @returns
+#' A vector of the common type of `x` and `y` (or `ptype`, if supplied)
+#' containing the result of the corresponding set function.
+#'
+#' @details
+#' Missing values are treated as equal to other missing values. For doubles and
+#' complexes, `NaN` are equal to other `NaN`, but not to `NA`.
+#'
+#' @section Dependencies:
+#'
+#' ## `vec_set_intersect()`
+#' - [vec_proxy_equal()]
+#' - [vec_slice()]
+#'
+#' ## `vec_set_difference()`
+#' - [vec_proxy_equal()]
+#' - [vec_slice()]
+#'
+#' ## `vec_set_union()`
+#' - [vec_proxy_equal()]
+#' - [vec_slice()]
+#' - [vec_c()]
+#'
+#' @name vec-set
+#' @examples
+#' x <- c(1, 2, 1, 4, 3)
+#' y <- c(2, 5, 5, 1)
+#'
+#' # All values from `x` that are in `y`.
+#' # Duplicates in `x` are removed.
+#' vec_set_intersect(x, y)
+#'
+#' # All values from `x` that aren't in `y`
+#' vec_set_difference(x, y)
+#'
+#' # All values from `x`, plus values from `y` that aren't in `x`
+#' vec_set_union(x, y)
+#'
+#' # These functions can also be used with data frames
+#' x <- data_frame(
+#'   a = c(2, 3, 2, 2),
+#'   b = c("j", "k", "j", "l")
+#' )
+#' y <- data_frame(
+#'   a = c(1, 2, 2, 2, 3),
+#'   b = c("j", "l", "j", "l", "j")
+#' )
+#'
+#' vec_set_intersect(x, y)
+#' vec_set_difference(x, y)
+#' vec_set_union(x, y)
+NULL
+
+#' @rdname vec-set
+#' @export
 vec_set_intersect <- function(x,
                               y,
                               ...,
@@ -7,4 +90,30 @@ vec_set_intersect <- function(x,
                               error_call = current_env()) {
   check_dots_empty0(...)
   .Call(ffi_vec_set_intersect, x, y, ptype, environment())
+}
+
+#' @rdname vec-set
+#' @export
+vec_set_difference <- function(x,
+                               y,
+                               ...,
+                               ptype = NULL,
+                               x_arg = "x",
+                               y_arg = "y",
+                               error_call = current_env()) {
+  check_dots_empty0(...)
+  .Call(ffi_vec_set_difference, x, y, ptype, environment())
+}
+
+#' @rdname vec-set
+#' @export
+vec_set_union <- function(x,
+                          y,
+                          ...,
+                          ptype = NULL,
+                          x_arg = "x",
+                          y_arg = "y",
+                          error_call = current_env()) {
+  check_dots_empty0(...)
+  .Call(ffi_vec_set_union, x, y, ptype, environment())
 }
