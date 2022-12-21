@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `vec_set_intersect()`, `vec_set_difference()`, and `vec_set_union()` which
+  compute set operations like `intersect()`, `setdiff()`, and `union()`, but
+  the vctrs variants don't strip attributes and work with data frames (#1755).
+
 * Fixed a bug with the internal `vec_order_radix()` function related to matrix
   columns (#1753).
 

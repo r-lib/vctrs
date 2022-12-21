@@ -9,7 +9,7 @@ template:
 
   includes:
     in_header: |
-      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>  
+      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
 reference:
 - title: User FAQ
@@ -85,6 +85,7 @@ reference:
   - vec_unique
   - vec_in
   - vec_locate_matches
+  - vec_set_intersect
   - vec_split
 
 - title: Sequences and repetitions
