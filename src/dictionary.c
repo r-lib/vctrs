@@ -85,7 +85,10 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     uint32_t size = dict_key_size(x);
 
     d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
-    memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
+
+    for (uint32_t i = 0; i < size; ++i) {
+      d->key[i] = DICT_EMPTY;
+    }
 
     d->size = size;
   }
