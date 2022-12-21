@@ -60,14 +60,16 @@ containing the result of the corresponding set function.
 }
 \description{
 \itemize{
-\item \code{vec_set_intersect()} computes a set intersection. It returns the first
-occurrence of values in \code{x} that also appear in \code{y}.
-\item \code{vec_set_difference()} computes an asymmetric set difference. If returns
-the first occurrence of values in \code{x} that don't appear in \code{y}.
-\item \code{vec_set_union()} computes a set union. It returns the first occurrence of
-values in \code{x} combined with the first occurrence of values in \code{y} that
-don't appear in \code{x}.
+\item \code{vec_set_intersect()} returns all values in both \code{x} and \code{y}.
+\item \code{vec_set_difference()} returns all values in \code{x} but not \code{y}. Note
+that this is an asymmetric set difference, meaning it is not commutative.
+\item \code{vec_set_union()} returns all values in either \code{x} or \code{y}.
 }
+
+Because these are \emph{set} operations, these functions only return unique values
+from \code{x} and \code{y}, returned in the order they first appeared in the original
+input. Names of \code{x} and \code{y} are retained on the result, but names are always
+taken from \code{x} if the value appears in both inputs.
 
 These functions work similarly to \code{\link[=intersect]{intersect()}}, \code{\link[=setdiff]{setdiff()}}, and \code{\link[=union]{union()}},
 but don't strip attributes and can be used with data frames.
@@ -82,6 +84,8 @@ complexes, \code{NaN} are equal to other \code{NaN}, but not to \code{NA}.
 \itemize{
 \item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_cast]{vec_cast()}}
 }
 }
 
@@ -89,6 +93,8 @@ complexes, \code{NaN} are equal to other \code{NaN}, but not to \code{NA}.
 \itemize{
 \item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_cast]{vec_cast()}}
 }
 }
 
@@ -96,6 +102,8 @@ complexes, \code{NaN} are equal to other \code{NaN}, but not to \code{NA}.
 \itemize{
 \item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
 \item \code{\link[=vec_slice]{vec_slice()}}
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_cast]{vec_cast()}}
 \item \code{\link[=vec_c]{vec_c()}}
 }
 }
@@ -105,14 +113,14 @@ complexes, \code{NaN} are equal to other \code{NaN}, but not to \code{NA}.
 x <- c(1, 2, 1, 4, 3)
 y <- c(2, 5, 5, 1)
 
-# All values from `x` that are in `y`.
-# Duplicates in `x` are removed.
+# All unique values in both `x` and `y`.
+# Duplicates in `x` and `y` are always removed.
 vec_set_intersect(x, y)
 
-# All values from `x` that aren't in `y`
+# All unique values in `x` but not `y`
 vec_set_difference(x, y)
 
-# All values from `x`, plus values from `y` that aren't in `x`
+# All unique values in either `x` or `y`
 vec_set_union(x, y)
 
 # These functions can also be used with data frames
@@ -128,4 +136,16 @@ y <- data_frame(
 vec_set_intersect(x, y)
 vec_set_difference(x, y)
 vec_set_union(x, y)
+
+# Vector names don't affect set membership, but if you'd like to force
+# them to, you can transform the vector into a two column data frame
+x <- c(a = 1, b = 2, c = 2, d = 3)
+y <- c(c = 2, b = 1, a = 3, d = 3)
+
+vec_set_intersect(x, y)
+
+x <- data_frame(name = names(x), value = unname(x))
+y <- data_frame(name = names(y), value = unname(y))
+
+vec_set_intersect(x, y)
 }

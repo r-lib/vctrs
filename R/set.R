@@ -1,15 +1,17 @@
 #' Set operations
 #'
 #' @description
-#' - `vec_set_intersect()` computes a set intersection. It returns the first
-#'   occurrence of values in `x` that also appear in `y`.
+#' - `vec_set_intersect()` returns all values in both `x` and `y`.
 #'
-#' - `vec_set_difference()` computes an asymmetric set difference. If returns
-#'   the first occurrence of values in `x` that don't appear in `y`.
+#' - `vec_set_difference()` returns all values in `x` but not `y`. Note
+#'   that this is an asymmetric set difference, meaning it is not commutative.
 #'
-#' - `vec_set_union()` computes a set union. It returns the first occurrence of
-#'   values in `x` combined with the first occurrence of values in `y` that
-#'   don't appear in `x`.
+#' - `vec_set_union()` returns all values in either `x` or `y`.
+#'
+#' Because these are _set_ operations, these functions only return unique values
+#' from `x` and `y`, returned in the order they first appeared in the original
+#' input. Names of `x` and `y` are retained on the result, but names are always
+#' taken from `x` if the value appears in both inputs.
 #'
 #' These functions work similarly to [intersect()], [setdiff()], and [union()],
 #' but don't strip attributes and can be used with data frames.
@@ -39,14 +41,20 @@
 #' ## `vec_set_intersect()`
 #' - [vec_proxy_equal()]
 #' - [vec_slice()]
+#' - [vec_ptype2()]
+#' - [vec_cast()]
 #'
 #' ## `vec_set_difference()`
 #' - [vec_proxy_equal()]
 #' - [vec_slice()]
+#' - [vec_ptype2()]
+#' - [vec_cast()]
 #'
 #' ## `vec_set_union()`
 #' - [vec_proxy_equal()]
 #' - [vec_slice()]
+#' - [vec_ptype2()]
+#' - [vec_cast()]
 #' - [vec_c()]
 #'
 #' @name vec-set
@@ -54,14 +62,14 @@
 #' x <- c(1, 2, 1, 4, 3)
 #' y <- c(2, 5, 5, 1)
 #'
-#' # All values from `x` that are in `y`.
-#' # Duplicates in `x` are removed.
+#' # All unique values in both `x` and `y`.
+#' # Duplicates in `x` and `y` are always removed.
 #' vec_set_intersect(x, y)
 #'
-#' # All values from `x` that aren't in `y`
+#' # All unique values in `x` but not `y`
 #' vec_set_difference(x, y)
 #'
-#' # All values from `x`, plus values from `y` that aren't in `x`
+#' # All unique values in either `x` or `y`
 #' vec_set_union(x, y)
 #'
 #' # These functions can also be used with data frames
@@ -77,6 +85,18 @@
 #' vec_set_intersect(x, y)
 #' vec_set_difference(x, y)
 #' vec_set_union(x, y)
+#'
+#' # Vector names don't affect set membership, but if you'd like to force
+#' # them to, you can transform the vector into a two column data frame
+#' x <- c(a = 1, b = 2, c = 2, d = 3)
+#' y <- c(c = 2, b = 1, a = 3, d = 3)
+#'
+#' vec_set_intersect(x, y)
+#'
+#' x <- data_frame(name = names(x), value = unname(x))
+#' y <- data_frame(name = names(y), value = unname(y))
+#'
+#' vec_set_intersect(x, y)
 NULL
 
 #' @rdname vec-set
