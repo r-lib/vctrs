@@ -19,7 +19,7 @@ static inline uint32_t hash_int32(uint32_t x) {
 
 // 64-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L81
-static inline uint32_t hash_int64(int64_t x) {
+static inline uint32_t hash_int64(uint64_t x) {
   x ^= x >> 33;
   x *= UINT64_C(0xff51afd7ed558ccd);
   x ^= x >> 33;
