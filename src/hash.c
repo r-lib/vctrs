@@ -7,7 +7,7 @@ static inline uint32_t hash_combine(uint32_t x, uint32_t y) {
 
 // 32-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L68
-static inline uint32_t hash_int32(uint32_t x) {
+static inline uint32_t hash_uint32(uint32_t x) {
   x ^= x >> 16;
   x *= 0x85ebca6b;
   x ^= x >> 13;
@@ -19,7 +19,7 @@ static inline uint32_t hash_int32(uint32_t x) {
 
 // 64-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L81
-static inline uint32_t hash_int64(int64_t x) {
+static inline uint32_t hash_uint64(uint64_t x) {
   x ^= x >> 33;
   x *= UINT64_C(0xff51afd7ed558ccd);
   x ^= x >> 33;
@@ -42,11 +42,11 @@ static inline uint32_t hash_double(double x) {
   } value;
   value.d = x;
 
-  return hash_int64(value.i);
+  return hash_uint64(value.i);
 }
 
 static inline uint32_t hash_char(SEXP x) {
-  return hash_int64((uintptr_t) x);
+  return hash_uint64((uintptr_t) x);
 }
 
 // Hashing scalars -----------------------------------------------------
@@ -60,10 +60,10 @@ static inline uint32_t raw_hash_scalar(const Rbyte* x);
 
 
 static inline uint32_t lgl_hash_scalar(const int* x) {
-  return hash_int32(*x);
+  return hash_uint32(*x);
 }
 static inline uint32_t int_hash_scalar(const int* x) {
-  return hash_int32(*x);
+  return hash_uint32(*x);
 }
 static inline uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
@@ -87,7 +87,7 @@ static inline uint32_t chr_hash_scalar(const SEXP* x) {
   return hash_char(*x);
 }
 static inline uint32_t raw_hash_scalar(const Rbyte* x) {
-  return hash_int32(*x);
+  return hash_uint32(*x);
 }
 
 static inline uint32_t list_hash_scalar_na_equal(SEXP x, R_len_t i) {
@@ -153,7 +153,7 @@ static uint32_t sexp_hash(SEXP x) {
   case SPECIALSXP:
   case BUILTINSXP:
   case ENVSXP:
-  case EXTPTRSXP: return hash_int64((uintptr_t) x);
+  case EXTPTRSXP: return hash_uint64((uintptr_t) x);
   default: Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 }
