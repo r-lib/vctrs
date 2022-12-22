@@ -6,11 +6,6 @@
 struct vctrs_arg args_needles;
 struct vctrs_arg args_haystack;
 
-double max_load_factor = 0.77;
-r_obj* ffi_set_max_load_factor(r_obj* ffi_max_load_factor) {
-  max_load_factor = r_as_double(ffi_max_load_factor);
-  return r_null;
-}
 
 // http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 static inline
@@ -187,7 +182,7 @@ uint32_t dict_key_size(SEXP x) {
     r_stop_internal("Dictionary functions do not support long vectors.");
   }
 
-  const double load_adjusted_size = x_size / max_load_factor;
+  const double load_adjusted_size = x_size / 0.77;
 
   if (load_adjusted_size > UINT32_MAX) {
     r_stop_internal("Can't safely cast load adjusted size to a `uint32_t`.");

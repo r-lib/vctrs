@@ -273,15 +273,3 @@ vec_in <- function(needles,
   check_dots_empty0(...)
   .Call(vctrs_in, needles, haystack, na_equal, environment())
 }
-
-set_max_load_factor <- function(x) {
-  .Call(ffi_set_max_load_factor, x)
-}
-with_load_50 <- function(expr) {
-  set_max_load_factor(0.50)
-  expr
-}
-with_load_77 <- function(expr) {
-  set_max_load_factor(0.77)
-  expr
-}
