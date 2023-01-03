@@ -166,13 +166,14 @@ void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
 }
 
 // Assume worst case, that every value is distinct, aiming for a load factor
-// of at most 77%. We round up to power of 2 to ensure quadratic probing
+// of at most 50%. We round up to power of 2 to ensure quadratic probing
 // strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
 // as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
 // would result in 2^32 to INT32_MAX to ensure that our maximum ceiling value
-// is only 2^31. This will increase the load factor above 77% for `x` with
-// length greater than 1653562409 (2147483648 * .77), but it ensures that
-// it can run.
+// is only 2^31. This will increase the max load factor above 50% for `x` with
+// length greater than 1073741824 (2147483648 * .50), but it ensures that
+// it can run. See https://github.com/r-lib/vctrs/pull/1760 for further
+// discussion of why 50% was chosen.
 static inline
 uint32_t dict_key_size(SEXP x) {
   const R_len_t x_size = vec_size(x);
@@ -182,7 +183,7 @@ uint32_t dict_key_size(SEXP x) {
     r_stop_internal("Dictionary functions do not support long vectors.");
   }
 
-  const double load_adjusted_size = x_size / 0.77;
+  const double load_adjusted_size = x_size / 0.50;
 
   if (load_adjusted_size > UINT32_MAX) {
     r_stop_internal("Can't safely cast load adjusted size to a `uint32_t`.");
