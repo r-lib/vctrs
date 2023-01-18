@@ -8,6 +8,9 @@
 #'
 #' - `vec_set_union()` returns all values in either `x` or `y`.
 #'
+#' - `vec_set_symmetric_difference()` returns all values in either `x` or `y`
+#'   but not both. This is a commutative difference.
+#'
 #' Because these are _set_ operations, these functions only return unique values
 #' from `x` and `y`, returned in the order they first appeared in the original
 #' input. Names of `x` and `y` are retained on the result, but names are always
@@ -57,6 +60,13 @@
 #' - [vec_cast()]
 #' - [vec_c()]
 #'
+#' ## `vec_set_symmetric_difference()`
+#' - [vec_proxy_equal()]
+#' - [vec_slice()]
+#' - [vec_ptype2()]
+#' - [vec_cast()]
+#' - [vec_c()]
+#'
 #' @name vec-set
 #' @examples
 #' x <- c(1, 2, 1, 4, 3)
@@ -72,6 +82,9 @@
 #' # All unique values in either `x` or `y`
 #' vec_set_union(x, y)
 #'
+#' # All unique values in either `x` or `y` but not both
+#' vec_set_symmetric_difference(x, y)
+#'
 #' # These functions can also be used with data frames
 #' x <- data_frame(
 #'   a = c(2, 3, 2, 2),
@@ -85,6 +98,7 @@
 #' vec_set_intersect(x, y)
 #' vec_set_difference(x, y)
 #' vec_set_union(x, y)
+#' vec_set_symmetric_difference(x, y)
 #'
 #' # Vector names don't affect set membership, but if you'd like to force
 #' # them to, you can transform the vector into a two column data frame
@@ -137,3 +151,17 @@ vec_set_union <- function(x,
   check_dots_empty0(...)
   .Call(ffi_vec_set_union, x, y, ptype, environment())
 }
+
+#' @rdname vec-set
+#' @export
+vec_set_symmetric_difference <- function(x,
+                                         y,
+                                         ...,
+                                         ptype = NULL,
+                                         x_arg = "x",
+                                         y_arg = "y",
+                                         error_call = current_env()) {
+  check_dots_empty0(...)
+  .Call(ffi_vec_set_symmetric_difference, x, y, ptype, environment())
+}
+
