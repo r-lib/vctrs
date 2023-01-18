@@ -94,6 +94,7 @@ reference:
   - vec_rep_each
   - vec_seq_along
   - vec_identify_runs
+  - vec_expand_grid
 
 - title: New classes
   contents:
