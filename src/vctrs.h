@@ -25,6 +25,7 @@ bool vec_is_unspecified(SEXP x);
 #include "dictionary.h"
 #include "dim.h"
 #include "equal.h"
+#include "expand.h"
 #include "hash.h"
 #include "lazy.h"
 #include "match-compare.h"
