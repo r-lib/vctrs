@@ -80,7 +80,6 @@ r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
   return list_sizes(x, &err);
 }
 
-static
 r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
   if (!vec_is_list(x)) {
     r_abort_lazy_call(opts->call,
