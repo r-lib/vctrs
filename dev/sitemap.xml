@@ -220,6 +220,9 @@
     <loc>https://vctrs.r-lib.org/dev/reference/vec_equal_na.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/dev/reference/vec_expand_grid.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/dev/reference/vec_fill_missing.html</loc>
   </url>
   <url>
