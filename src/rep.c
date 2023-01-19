@@ -3,7 +3,6 @@
 #include "decl/rep-decl.h"
 
 
-static
 r_obj* vec_rep(r_obj* x,
                int times,
                struct r_lazy error_call,
@@ -74,7 +73,6 @@ r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times, r_obj* frame) {
 
 // -----------------------------------------------------------------------------
 
-static
 r_obj* vec_rep_each(r_obj* x,
                     r_obj* times,
                     struct r_lazy error_call,

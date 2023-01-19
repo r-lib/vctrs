@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* New `vec_expand_grid()`, which is a lower level helper that is similar to
+  `tidyr::expand_grid()` (#1325).
+
 * The maximum load factor of the internal dictionary was reduced from 77% to
   50%, which improves performance of functions like `vec_match()`,
   `vec_set_intersect()`, and `vec_unique()` in some cases (#1760).
