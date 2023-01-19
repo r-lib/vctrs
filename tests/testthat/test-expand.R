@@ -91,6 +91,15 @@ test_that("can use `.name_repair`", {
   )
 })
 
+test_that("inputs must be named", {
+  expect_snapshot(error = TRUE, {
+    vec_expand_grid(1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_expand_grid(x = 1, 2, y = 3)
+  })
+})
+
 test_that("catches duplicate names by default", {
   expect_snapshot(error = TRUE, {
     vec_expand_grid(a = 1, a = 2)

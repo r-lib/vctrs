@@ -1,3 +1,19 @@
+# inputs must be named
+
+    Code
+      vec_expand_grid(1)
+    Condition
+      Error in `vec_expand_grid()`:
+      ! All inputs must be named.
+
+---
+
+    Code
+      vec_expand_grid(x = 1, 2, y = 3)
+    Condition
+      Error in `vec_expand_grid()`:
+      ! All inputs must be named.
+
 # catches duplicate names by default
 
     Code

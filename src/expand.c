@@ -45,7 +45,7 @@ r_obj* vec_expand_grid(r_obj* xs,
 
   r_obj* names = KEEP(vec_names2(xs));
   if (!r_is_minimal_names(names)) {
-    r_abort_lazy_call(error_call, "Each element must be named.");
+    r_abort_lazy_call(error_call, "All inputs must be named.");
   }
   names = vec_as_names(names, p_name_repair_opts);
   r_attrib_poke_names(out, names);
