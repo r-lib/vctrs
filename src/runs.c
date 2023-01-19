@@ -242,173 +242,89 @@ int list_identify_runs(r_obj* x, r_ssize size, int* v_out) {
 
 static inline
 int df_identify_runs(r_obj* x, r_ssize size, int* v_out) {
-  int n_prot = 0;
-
+  const r_ssize n_col = r_length(x);
   r_obj* const* v_x = r_list_cbegin(x);
 
-  struct df_short_circuit_info info = new_df_short_circuit_info(size, false);
-  PROTECT_DF_SHORT_CIRCUIT_INFO(&info, &n_prot);
+  // Boolean vector that will eventually be `true` if we are in a run
+  // continuation, and `false` if we are starting a new run.
+  r_obj* where_shelter = KEEP(r_alloc_raw(size * sizeof(bool)));
+  bool* v_where = (bool*) r_raw_begin(where_shelter);
+
+  v_where[0] = false;
+  for (r_ssize i = 1; i < size; ++i) {
+    v_where[i] = true;
+  }
+
+  for (r_ssize i = 0; i < n_col; ++i) {
+    col_identify_runs(v_x[i], size, v_where);
+  }
 
   int id = 1;
-  r_ssize n_col = r_length(x);
 
-  // Define 0 column case to be a single run
-  if (n_col == 0) {
-    r_p_int_fill(v_out, id, size);
-    FREE(n_prot);
-    return id;
-  }
-
-  // Handle first case
   v_out[0] = id;
-  info.p_row_known[0] = true;
-  --info.remaining;
-
-  // Compute non-sequential run IDs
-  for (r_ssize i = 0; i < n_col; ++i) {
-    r_obj* col = v_x[i];
-
-    id = vec_identify_runs_col(col, id, &info, v_out);
-
-    // All values are unique
-    if (info.remaining == 0) {
-      break;
-    }
-  }
-
-  id = 1;
-  int previous = v_out[0];
-
-  // Overwrite with sequential IDs
   for (r_ssize i = 1; i < size; ++i) {
-    const int current = v_out[i];
-
-    if (current != previous) {
-      ++id;
-      previous = current;
-    }
-
+    id += !v_where[i];
     v_out[i] = id;
   }
 
-  FREE(n_prot);
+  FREE(1);
   return id;
 }
 
-// -----------------------------------------------------------------------------
-
 static inline
-int vec_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
+void col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
   switch (vec_proxy_typeof(x)) {
-  case VCTRS_TYPE_logical: return lgl_identify_runs_col(x, id, p_info, v_out);
-  case VCTRS_TYPE_integer: return int_identify_runs_col(x, id, p_info, v_out);
-  case VCTRS_TYPE_double: return dbl_identify_runs_col(x, id, p_info, v_out);
-  case VCTRS_TYPE_complex: return cpl_identify_runs_col(x, id, p_info, v_out);
-  case VCTRS_TYPE_character: return chr_identify_runs_col(x, id, p_info, v_out);
-  case VCTRS_TYPE_raw: return raw_identify_runs_col(x, id, p_info, v_out);
-  case VCTRS_TYPE_list: return list_identify_runs_col(x, id, p_info, v_out);
+  case VCTRS_TYPE_logical: lgl_col_identify_runs(x, size, v_where); break;
+  case VCTRS_TYPE_integer: int_col_identify_runs(x, size, v_where); break;
+  case VCTRS_TYPE_double: dbl_col_identify_runs(x, size, v_where); break;
+  case VCTRS_TYPE_complex: cpl_col_identify_runs(x, size, v_where); break;
+  case VCTRS_TYPE_character: chr_col_identify_runs(x, size, v_where); break;
+  case VCTRS_TYPE_raw: raw_col_identify_runs(x, size, v_where); break;
+  case VCTRS_TYPE_list: list_col_identify_runs(x, size, v_where); break;
   case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should be flattened.");
   case VCTRS_TYPE_scalar: r_abort("Can't compare scalars.");
   default: r_abort("Unimplemented type.");
   }
 }
 
-// -----------------------------------------------------------------------------
-
-#define VEC_IDENTIFY_RUNS_COL(CTYPE, CBEGIN, EQUAL_NA_EQUAL) {      \
-  CTYPE const* v_x = CBEGIN(x);                                     \
-                                                                    \
-  /* First row is always known, so `run_val` and `run_id` */        \
-  /* will always be overwritten immediately below. */               \
-  /* But for gcc11 we have to initialize these variables. */        \
-  CTYPE run_val = v_x[0];                                           \
-  int run_id = 0;                                                   \
-                                                                    \
-  for (r_ssize i = 0; i < p_info->size; ++i) {                      \
-    /* Start of new run */                                          \
-    if (p_info->p_row_known[i]) {                                   \
-      run_val = v_x[i];                                             \
-      run_id = v_out[i];                                            \
-      continue;                                                     \
-    }                                                               \
-                                                                    \
-    CTYPE const elt = v_x[i];                                       \
-    const int eq = EQUAL_NA_EQUAL(elt, run_val);                    \
-                                                                    \
-    /* Update ID of identical values */                             \
-    if (eq != 0) {                                                  \
-      v_out[i] = run_id;                                            \
-      continue;                                                     \
-    }                                                               \
-                                                                    \
-    ++id;                                                           \
-    run_val = elt;                                                  \
-    run_id = id;                                                    \
-    v_out[i] = id;                                                  \
-                                                                    \
-    /* This is a run change, so don't check this row again */       \
-    p_info->p_row_known[i] = true;                                  \
-    --p_info->remaining;                                            \
-                                                                    \
-    if (p_info->remaining == 0) {                                   \
-      break;                                                        \
-    }                                                               \
-  }                                                                 \
-                                                                    \
-  return id;                                                        \
+#define VEC_COL_IDENTIFY_RUNS(CTYPE, CBEGIN, EQUAL_NA_EQUAL) { \
+  CTYPE const* v_x = CBEGIN(x);                                \
+  CTYPE ref = v_x[0];                                          \
+                                                               \
+  for (r_ssize i = 1; i < size; ++i) {                         \
+    CTYPE const elt = v_x[i];                                  \
+    v_where[i] = v_where[i] && EQUAL_NA_EQUAL(ref, elt);       \
+    ref = elt;                                                 \
+  }                                                            \
 }
 
 static inline
-int lgl_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(int, r_lgl_cbegin, lgl_equal_na_equal);
+void lgl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(int, r_lgl_cbegin, lgl_equal_na_equal);
 }
 static inline
-int int_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(int, r_int_cbegin, int_equal_na_equal);
+void int_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(int, r_int_cbegin, int_equal_na_equal);
 }
 static inline
-int dbl_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(double, r_dbl_cbegin, dbl_equal_na_equal);
+void dbl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(double, r_dbl_cbegin, dbl_equal_na_equal);
 }
 static inline
-int cpl_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(Rcomplex, r_cpl_cbegin, cpl_equal_na_equal);
+void cpl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(Rcomplex, r_cpl_cbegin, cpl_equal_na_equal);
 }
 static inline
-int chr_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
+void chr_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(r_obj*, r_chr_cbegin, chr_equal_na_equal);
 }
 static inline
-int raw_identify_runs_col(r_obj* x,
-                          int id,
-                          struct df_short_circuit_info* p_info,
-                          int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
+void raw_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(Rbyte, r_raw_cbegin, raw_equal_na_equal);
 }
 static inline
-int list_identify_runs_col(r_obj* x,
-                           int id,
-                           struct df_short_circuit_info* p_info,
-                           int* v_out) {
-  VEC_IDENTIFY_RUNS_COL(r_obj*, r_list_cbegin, list_equal_na_equal);
+void list_col_identify_runs(r_obj* x, r_ssize size, bool* v_where) {
+  VEC_COL_IDENTIFY_RUNS(r_obj*, r_list_cbegin, list_equal_na_equal);
 }
 
-#undef VEC_IDENTIFY_RUNS_COL
+#undef VEC_COL_IDENTIFY_RUNS

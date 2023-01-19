@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_identify_runs()` is now faster when used with data frames (#1684).
+
 * New `vec_expand_grid()`, which is a lower level helper that is similar to
   `tidyr::expand_grid()` (#1325).
 
