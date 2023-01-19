@@ -5,6 +5,8 @@ vec_set_intersect() returns all values in both x and y.
 vec_set_difference() returns all values in x but not y. Note
 that this is an asymmetric set difference, meaning it is not commutative.
 vec_set_union() returns all values in either x or y.
+vec_set_symmetric_difference() returns all values in either x or y
+but not both. This is a commutative difference.
 
 
 Because these are set operations, these functions only return unique values
@@ -18,6 +20,8 @@ vec_set_intersect() returns all values in both x and y.
 vec_set_difference() returns all values in x but not y. Note
 that this is an asymmetric set difference, meaning it is not commutative.
 vec_set_union() returns all values in either x or y.
+vec_set_symmetric_difference() returns all values in either x or y
+but not both. This is a commutative difference.
 
 
 Because these are set operations, these functions only return unique values
@@ -86,6 +90,8 @@ but don't strip attributes and can be used with data frames."><meta property="og
 <li><p><code>vec_set_difference()</code> returns all values in <code>x</code> but not <code>y</code>. Note
 that this is an asymmetric set difference, meaning it is not commutative.</p></li>
 <li><p><code>vec_set_union()</code> returns all values in either <code>x</code> or <code>y</code>.</p></li>
+<li><p><code>vec_set_symmetric_difference()</code> returns all values in either <code>x</code> or <code>y</code>
+but not both. This is a commutative difference.</p></li>
 </ul><p>Because these are <em>set</em> operations, these functions only return unique values
 from <code>x</code> and <code>y</code>, returned in the order they first appeared in the original
 input. Names of <code>x</code> and <code>y</code> are retained on the result, but names are always
@@ -117,6 +123,16 @@ but don't strip attributes and can be used with data frames.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">vec_set_union</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  ptype <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_arg <span class="op">=</span> <span class="st">"x"</span>,</span>
+<span>  y_arg <span class="op">=</span> <span class="st">"y"</span>,</span>
+<span>  error_call <span class="op">=</span> <span class="fu">current_env</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">vec_set_symmetric_difference</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">y</span>,</span>
 <span>  <span class="va">...</span>,</span>
@@ -199,6 +215,16 @@ complexes, <code>NaN</code> are equal to other <code>NaN</code>, but not to <cod
 <li><p><code><a href="vec_c.html">vec_c()</a></code></p></li>
 </ul></div>
 
+<div class="section">
+<h3 id="vec-set-symmetric-difference-"><code>vec_set_symmetric_difference()</code><a class="anchor" aria-label="anchor" href="#vec-set-symmetric-difference-"></a></h3>
+
+<ul><li><p><code><a href="vec_proxy_equal.html">vec_proxy_equal()</a></code></p></li>
+<li><p><code><a href="vec_slice.html">vec_slice()</a></code></p></li>
+<li><p><code><a href="vec_ptype2.html">vec_ptype2()</a></code></p></li>
+<li><p><code><a href="vec_cast.html">vec_cast()</a></code></p></li>
+<li><p><code><a href="vec_c.html">vec_c()</a></code></p></li>
+</ul></div>
+
     </div>
 
     <div class="section level2">
@@ -218,6 +244,10 @@ complexes, <code>NaN</code> are equal to other <code>NaN</code>, but not to <cod
 <span class="r-in"><span><span class="co"># All unique values in either `x` or `y`</span></span></span>
 <span class="r-in"><span><span class="fu">vec_set_union</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 2 4 3 5</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># All unique values in either `x` or `y` but not both</span></span></span>
+<span class="r-in"><span><span class="fu">vec_set_symmetric_difference</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4 3 5</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># These functions can also be used with data frames</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="data_frame.html">data_frame</a></span><span class="op">(</span></span></span>
@@ -243,6 +273,11 @@ complexes, <code>NaN</code> are equal to other <code>NaN</code>, but not to <cod
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 2 l</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 1 j</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 3 j</span>
+<span class="r-in"><span><span class="fu">vec_set_symmetric_difference</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   a b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 3 k</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1 j</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3 j</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Vector names don't affect set membership, but if you'd like to force</span></span></span>
 <span class="r-in"><span><span class="co"># them to, you can transform the vector into a two column data frame</span></span></span>
