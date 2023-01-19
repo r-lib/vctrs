@@ -5,6 +5,7 @@
 \alias{vec_set_intersect}
 \alias{vec_set_difference}
 \alias{vec_set_union}
+\alias{vec_set_symmetric_difference}
 \title{Set operations}
 \usage{
 vec_set_intersect(
@@ -28,6 +29,16 @@ vec_set_difference(
 )
 
 vec_set_union(
+  x,
+  y,
+  ...,
+  ptype = NULL,
+  x_arg = "x",
+  y_arg = "y",
+  error_call = current_env()
+)
+
+vec_set_symmetric_difference(
   x,
   y,
   ...,
@@ -64,6 +75,8 @@ containing the result of the corresponding set function.
 \item \code{vec_set_difference()} returns all values in \code{x} but not \code{y}. Note
 that this is an asymmetric set difference, meaning it is not commutative.
 \item \code{vec_set_union()} returns all values in either \code{x} or \code{y}.
+\item \code{vec_set_symmetric_difference()} returns all values in either \code{x} or \code{y}
+but not both. This is a commutative difference.
 }
 
 Because these are \emph{set} operations, these functions only return unique values
@@ -107,6 +120,16 @@ complexes, \code{NaN} are equal to other \code{NaN}, but not to \code{NA}.
 \item \code{\link[=vec_c]{vec_c()}}
 }
 }
+
+\subsection{\code{vec_set_symmetric_difference()}}{
+\itemize{
+\item \code{\link[=vec_proxy_equal]{vec_proxy_equal()}}
+\item \code{\link[=vec_slice]{vec_slice()}}
+\item \code{\link[=vec_ptype2]{vec_ptype2()}}
+\item \code{\link[=vec_cast]{vec_cast()}}
+\item \code{\link[=vec_c]{vec_c()}}
+}
+}
 }
 
 \examples{
@@ -123,6 +146,9 @@ vec_set_difference(x, y)
 # All unique values in either `x` or `y`
 vec_set_union(x, y)
 
+# All unique values in either `x` or `y` but not both
+vec_set_symmetric_difference(x, y)
+
 # These functions can also be used with data frames
 x <- data_frame(
   a = c(2, 3, 2, 2),
@@ -136,6 +162,7 @@ y <- data_frame(
 vec_set_intersect(x, y)
 vec_set_difference(x, y)
 vec_set_union(x, y)
+vec_set_symmetric_difference(x, y)
 
 # Vector names don't affect set membership, but if you'd like to force
 # them to, you can transform the vector into a two column data frame

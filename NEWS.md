@@ -4,9 +4,10 @@
   50%, which improves performance of functions like `vec_match()`,
   `vec_set_intersect()`, and `vec_unique()` in some cases (#1760).
 
-* New `vec_set_intersect()`, `vec_set_difference()`, and `vec_set_union()` which
-  compute set operations like `intersect()`, `setdiff()`, and `union()`, but
-  the vctrs variants don't strip attributes and work with data frames (#1755).
+* New `vec_set_intersect()`, `vec_set_difference()`, `vec_set_union()`, and
+  `vec_set_symmetric_difference()` which compute set operations like
+  `intersect()`, `setdiff()`, and `union()`, but the vctrs variants don't strip
+  attributes and work with data frames (#1755, #1765).
 
 * Fixed a bug with the internal `vec_order_radix()` function related to matrix
   columns (#1753).
