@@ -1,8 +1,9 @@
 #' Create a data frame from all combinations of the inputs
 #'
 #' @description
-#' `vec_expand_grid()` is inspired by [expand.grid()]. Compared with
-#' `expand.grid()`, it:
+#' `vec_expand_grid()` creates a new data frame by creating a grid of all
+#' possible combinations of the input vectors. It is inspired by
+#' [expand.grid()]. Compared with `expand.grid()`, it:
 #'
 #' - Produces sorted output by default by varying the first column the slowest,
 #'   rather than the fastest. Control this with `.vary`.

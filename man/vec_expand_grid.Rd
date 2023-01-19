@@ -37,8 +37,9 @@ A data frame with as many columns as there are inputs in \code{...} and as many
 rows as the \code{\link[=prod]{prod()}} of the sizes of the inputs.
 }
 \description{
-\code{vec_expand_grid()} is inspired by \code{\link[=expand.grid]{expand.grid()}}. Compared with
-\code{expand.grid()}, it:
+\code{vec_expand_grid()} creates a new data frame by creating a grid of all
+possible combinations of the input vectors. It is inspired by
+\code{\link[=expand.grid]{expand.grid()}}. Compared with \code{expand.grid()}, it:
 \itemize{
 \item Produces sorted output by default by varying the first column the slowest,
 rather than the fastest. Control this with \code{.vary}.
