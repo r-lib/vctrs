@@ -69,7 +69,7 @@ r_obj* vec_expand_grid(r_obj* xs,
   }
 
   // TODO: Support long vectors here
-  if (size > R_SHORT_LEN_MAX) {
+  if (size > R_LEN_T_MAX) {
     r_abort_lazy_call(
       error_call,
       "Long vectors are not yet supported. "
