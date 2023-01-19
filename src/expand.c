@@ -59,7 +59,7 @@ r_obj* vec_expand_grid(r_obj* xs,
   const int* v_sizes = r_int_cbegin(sizes);
 
   r_obj* cumulative = KEEP(r_alloc_raw(n * sizeof(r_ssize)));
-  r_ssize* v_cumulative = (r_ssize*) r_raw_begin(cumulative);
+  r_ssize* v_cumulative = r_raw_begin(cumulative);
 
   r_ssize size = 1;
 
