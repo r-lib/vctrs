@@ -32,13 +32,13 @@
 #'
 #' vec_identify_runs(df)
 vec_identify_runs <- function(x) {
-  .Call(vctrs_identify_runs, x)
+  .Call(ffi_vec_identify_runs, x)
 }
 
-vec_locate_runs <- function(x, start = TRUE) {
-  .Call(vctrs_locate_runs, x, start)
+vec_locate_run_bounds <- function(x, start = TRUE) {
+  .Call(ffi_vec_locate_run_bounds, x, start)
 }
 
-vec_detect_runs <- function(x, start = TRUE) {
-  .Call(vctrs_detect_runs, x, start)
+vec_detect_run_bounds <- function(x, start = TRUE) {
+  .Call(ffi_vec_detect_run_bounds, x, start)
 }
