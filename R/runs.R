@@ -1,9 +1,12 @@
 #' Runs
 #'
 #' @description
-#' `vec_identify_runs()` returns a vector of identifiers for the elements of
-#' `x` that indicate which run of repeated values they fall in. The number of
-#' runs is also returned as an attribute, `n`.
+#' - `vec_identify_runs()` returns a vector of identifiers for the elements of
+#'   `x` that indicate which run of repeated values they fall in. The number of
+#'   runs is also returned as an attribute, `n`.
+#'
+#' - `vec_run_sizes()` returns an integer vector corresponding to the size of
+#'   each run.
 #'
 #' @details
 #' Unlike [base::rle()], adjacent missing values are considered identical when
@@ -13,14 +16,18 @@
 #' @param x A vector.
 #'
 #' @return
-#' An integer vector with the same size as `x`. A scalar integer attribute,
-#' `n`, is attached.
+#' - For `vec_identify_runs()`, an integer vector with the same size as `x`. A
+#'   scalar integer attribute, `n`, is attached.
 #'
-#' @export
+#' - For `vec_run_sizes()`, an integer vector with size equal to the number of
+#'   runs in `x`.
+#'
+#' @name runs
 #' @examples
 #' x <- c("a", "z", "z", "c", "a", "a")
 #'
 #' vec_identify_runs(x)
+#' vec_run_sizes(x)
 #'
 #' y <- c(1, 1, 1, 2, 2, 3)
 #'
@@ -31,8 +38,19 @@
 #' )
 #'
 #' vec_identify_runs(df)
+#' vec_run_sizes(df)
+NULL
+
+#' @rdname runs
+#' @export
 vec_identify_runs <- function(x) {
   .Call(ffi_vec_identify_runs, x)
+}
+
+#' @rdname runs
+#' @export
+vec_run_sizes <- function(x) {
+  .Call(ffi_vec_run_sizes, x)
 }
 
 vec_locate_run_bounds <- function(x, start = TRUE) {

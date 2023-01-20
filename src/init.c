@@ -120,9 +120,10 @@ extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r
 extern SEXP vctrs_fast_c(SEXP, SEXP);
 extern r_obj* ffi_data_frame(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_df_list(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP ffi_vec_detect_run_bounds(r_obj*, r_obj*);
-extern SEXP ffi_vec_locate_run_bounds(r_obj*, r_obj*);
-extern SEXP ffi_vec_identify_runs(r_obj*);
+extern r_obj* ffi_vec_detect_run_bounds(r_obj*, r_obj*);
+extern r_obj* ffi_vec_locate_run_bounds(r_obj*, r_obj*);
+extern r_obj* ffi_vec_identify_runs(r_obj*);
+extern r_obj* ffi_vec_run_sizes(r_obj* x);
 extern SEXP vctrs_slice_complete(SEXP);
 extern SEXP vctrs_locate_complete(SEXP);
 extern SEXP vctrs_detect_complete(SEXP);
@@ -303,6 +304,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_detect_run_bounds",             (DL_FUNC) &ffi_vec_detect_run_bounds, 2},
   {"ffi_vec_locate_run_bounds",             (DL_FUNC) &ffi_vec_locate_run_bounds, 2},
   {"ffi_vec_identify_runs",                 (DL_FUNC) &ffi_vec_identify_runs, 1},
+  {"ffi_vec_run_sizes",                     (DL_FUNC) &ffi_vec_run_sizes, 1},
   {"vctrs_slice_complete",                  (DL_FUNC) &vctrs_slice_complete, 1},
   {"vctrs_locate_complete",                 (DL_FUNC) &vctrs_locate_complete, 1},
   {"vctrs_detect_complete",                 (DL_FUNC) &vctrs_detect_complete, 1},

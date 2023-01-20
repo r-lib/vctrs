@@ -90,6 +90,41 @@ r_obj* vec_identify_runs(r_obj* x) {
 
 // -----------------------------------------------------------------------------
 
+r_obj* ffi_vec_run_sizes(r_obj* x) {
+  return vec_run_sizes(x);
+}
+
+r_obj* vec_run_sizes(r_obj* x) {
+  const bool start = false;
+  r_obj* where = KEEP(vec_detect_run_bounds0(x, start));
+  const bool* v_where = r_raw_cbegin(where);
+
+  const r_ssize size = r_length(where) / sizeof(bool);
+
+  r_ssize n = 0;
+  for (r_ssize i = 0; i < size; ++i) {
+    n += v_where[i];
+  }
+
+  r_obj* out = KEEP(r_alloc_integer(n));
+  int* v_out = r_int_begin(out);
+  r_ssize j = 0;
+
+  int count = 1;
+
+  for (r_ssize i = 0; i < size; ++i) {
+    const bool end = v_where[i];
+    v_out[j] = count;
+    j += end;
+    count = !end * count + 1;
+  }
+
+  FREE(2);
+  return out;
+}
+
+// -----------------------------------------------------------------------------
+
 /*
  * Like `vec_detect_run_bounds()`, but returns a less memory intensive
  * boolean array as a raw vector.
