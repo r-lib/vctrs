@@ -86,68 +86,68 @@ test_that("works with columns of various types", {
   expect_identical(vec_identify_runs(add_col(list(1, 1, 2, 2, 3))), expect)
 })
 
-# vec_locate_runs --------------------------------------------------------------
+# vec_locate_run_bounds --------------------------------------------------------
 
 test_that("can locate run starts", {
   expect_identical(
-    vec_locate_runs(c(1, 3, 3, 1, 5, 5, 6)),
+    vec_locate_run_bounds(c(1, 3, 3, 1, 5, 5, 6)),
     c(1L, 2L, 4L, 5L, 7L)
   )
 })
 
 test_that("can locate run ends", {
   expect_identical(
-    vec_locate_runs(c(1, 3, 3, 1, 5, 5, 6), start = FALSE),
+    vec_locate_run_bounds(c(1, 3, 3, 1, 5, 5, 6), start = FALSE),
     c(1L, 3L, 4L, 6L, 7L)
   )
 })
 
-test_that("vec_locate_runs() works with size zero input", {
-  expect_identical(vec_locate_runs(integer(), start = TRUE), integer())
-  expect_identical(vec_locate_runs(integer(), start = FALSE), integer())
+test_that("vec_locate_run_bounds() works with size zero input", {
+  expect_identical(vec_locate_run_bounds(integer(), start = TRUE), integer())
+  expect_identical(vec_locate_run_bounds(integer(), start = FALSE), integer())
 })
 
-test_that("vec_locate_runs() validates `start`", {
+test_that("vec_locate_run_bounds() validates `start`", {
   expect_snapshot(error = TRUE, {
-    vec_locate_runs(1, start = "x")
+    vec_locate_run_bounds(1, start = "x")
   })
   expect_snapshot(error = TRUE, {
-    vec_locate_runs(1, start = NA)
+    vec_locate_run_bounds(1, start = NA)
   })
   expect_snapshot(error = TRUE, {
-    vec_locate_runs(1, start = c(TRUE, TRUE))
+    vec_locate_run_bounds(1, start = c(TRUE, TRUE))
   })
 })
 
-# vec_detect_runs --------------------------------------------------------------
+# vec_detect_run_bounds --------------------------------------------------------
 
 test_that("can detect run starts", {
   expect_identical(
-    vec_detect_runs(c(1, 3, 3, 1, 5, 5, 6)),
+    vec_detect_run_bounds(c(1, 3, 3, 1, 5, 5, 6)),
     c(TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE)
   )
 })
 
 test_that("can detect run ends", {
   expect_identical(
-    vec_detect_runs(c(1, 3, 3, 1, 5, 5, 6), start = FALSE),
+    vec_detect_run_bounds(c(1, 3, 3, 1, 5, 5, 6), start = FALSE),
     c(TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, TRUE)
   )
 })
 
-test_that("vec_detect_runs() works with size zero input", {
-  expect_identical(vec_detect_runs(integer(), start = TRUE), logical())
-  expect_identical(vec_detect_runs(integer(), start = FALSE), logical())
+test_that("vec_detect_run_bounds() works with size zero input", {
+  expect_identical(vec_detect_run_bounds(integer(), start = TRUE), logical())
+  expect_identical(vec_detect_run_bounds(integer(), start = FALSE), logical())
 })
 
-test_that("vec_detect_runs() validates `start`", {
+test_that("vec_detect_run_bounds() validates `start`", {
   expect_snapshot(error = TRUE, {
-    vec_detect_runs(1, start = "x")
+    vec_detect_run_bounds(1, start = "x")
   })
   expect_snapshot(error = TRUE, {
-    vec_detect_runs(1, start = NA)
+    vec_detect_run_bounds(1, start = NA)
   })
   expect_snapshot(error = TRUE, {
-    vec_detect_runs(1, start = c(TRUE, TRUE))
+    vec_detect_run_bounds(1, start = c(TRUE, TRUE))
   })
 })

@@ -1,53 +1,41 @@
 static
-r_obj* vec_locate_runs(r_obj* x, bool start);
-
-static inline
-void vec_locate_run_starts(const int* v_id, r_ssize size, int* v_out);
-static inline
-void vec_locate_run_ends(const int* v_id, r_ssize size, int* v_out);
-
+r_obj* vec_detect_run_bounds(r_obj* x, bool start);
+static
+r_obj* vec_locate_run_bounds(r_obj* x, bool start);
 
 static
-r_obj* vec_detect_runs(r_obj* x, bool start);
+r_obj* vec_detect_run_bounds0(r_obj* x, bool start);
 
 static inline
-void vec_detect_run_starts(const int* v_id, r_ssize size, int* v_out);
+void lgl_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void vec_detect_run_ends(const int* v_id, r_ssize size, int* v_out);
-
-
+void int_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-int lgl_identify_runs(r_obj* x, r_ssize size, int* v_out);
+void dbl_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-int int_identify_runs(r_obj* x, r_ssize size, int* v_out);
+void cpl_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-int dbl_identify_runs(r_obj* x, r_ssize size, int* v_out);
+void chr_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-int cpl_identify_runs(r_obj* x, r_ssize size, int* v_out);
+void raw_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-int chr_identify_runs(r_obj* x, r_ssize size, int* v_out);
-static inline
-int raw_identify_runs(r_obj* x, r_ssize size, int* v_out);
-static inline
-int list_identify_runs(r_obj* x, r_ssize size, int* v_out);
-static inline
-int df_identify_runs(r_obj* x, r_ssize size, int* v_out);
-
+void list_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 
 static inline
-void col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
-
+void df_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void lgl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void int_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void lgl_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void dbl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void int_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void cpl_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void dbl_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void chr_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void cpl_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void raw_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void chr_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
 static inline
-void list_col_identify_runs(r_obj* x, r_ssize size, bool* v_where);
+void raw_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
+static inline
+void list_col_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);
