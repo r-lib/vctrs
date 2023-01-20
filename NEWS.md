@@ -1,18 +1,18 @@
 # vctrs (development version)
 
-* `vec_identify_runs()` is now faster when used with data frames (#1684).
-
 * New `vec_expand_grid()`, which is a lower level helper that is similar to
   `tidyr::expand_grid()` (#1325).
-
-* The maximum load factor of the internal dictionary was reduced from 77% to
-  50%, which improves performance of functions like `vec_match()`,
-  `vec_set_intersect()`, and `vec_unique()` in some cases (#1760).
-
+  
 * New `vec_set_intersect()`, `vec_set_difference()`, `vec_set_union()`, and
   `vec_set_symmetric_difference()` which compute set operations like
   `intersect()`, `setdiff()`, and `union()`, but the vctrs variants don't strip
   attributes and work with data frames (#1755, #1765).
+
+* `vec_identify_runs()` is now faster when used with data frames (#1684).
+
+* The maximum load factor of the internal dictionary was reduced from 77% to
+  50%, which improves performance of functions like `vec_match()`,
+  `vec_set_intersect()`, and `vec_unique()` in some cases (#1760).
 
 * Fixed a bug with the internal `vec_order_radix()` function related to matrix
   columns (#1753).
