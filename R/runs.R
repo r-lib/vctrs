@@ -6,7 +6,12 @@
 #'   runs is also returned as an attribute, `n`.
 #'
 #' - `vec_run_sizes()` returns an integer vector corresponding to the size of
-#'   each run.
+#'   each run. This is identical to the `times` column from `vec_unrep()`, but
+#'   is faster if you don't need the run keys.
+#'
+#' - [vec_unrep()] is a generalized [base::rle()]. It is documented alongside
+#'   the "repeat" functions of [vec_rep()] and [vec_rep_each()]; look there for
+#'   more information.
 #'
 #' @details
 #' Unlike [base::rle()], adjacent missing values are considered identical when
@@ -22,12 +27,16 @@
 #' - For `vec_run_sizes()`, an integer vector with size equal to the number of
 #'   runs in `x`.
 #'
+#' @seealso
+#' [vec_unrep()] for a generalized [base::rle()].
+#'
 #' @name runs
 #' @examples
 #' x <- c("a", "z", "z", "c", "a", "a")
 #'
 #' vec_identify_runs(x)
 #' vec_run_sizes(x)
+#' vec_unrep(x)
 #'
 #' y <- c(1, 1, 1, 2, 2, 3)
 #'
@@ -39,6 +48,7 @@
 #'
 #' vec_identify_runs(df)
 #' vec_run_sizes(df)
+#' vec_unrep(df)
 NULL
 
 #' @rdname runs

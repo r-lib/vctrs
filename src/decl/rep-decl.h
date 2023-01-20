@@ -55,6 +55,3 @@ void stop_rep_each_times_oob(int times, r_ssize i, struct r_lazy call, struct vc
 
 static
 r_obj* vec_unrep(r_obj* x);
-
-static
-r_obj* new_unrep_data_frame(r_obj* key, r_obj* times, r_ssize size);

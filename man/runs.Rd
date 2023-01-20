@@ -27,7 +27,11 @@ runs in \code{x}.
 \code{x} that indicate which run of repeated values they fall in. The number of
 runs is also returned as an attribute, \code{n}.
 \item \code{vec_run_sizes()} returns an integer vector corresponding to the size of
-each run.
+each run. This is identical to the \code{times} column from \code{vec_unrep()}, but
+is faster if you don't need the run keys.
+\item \code{\link[=vec_unrep]{vec_unrep()}} is a generalized \code{\link[base:rle]{base::rle()}}. It is documented alongside
+the "repeat" functions of \code{\link[=vec_rep]{vec_rep()}} and \code{\link[=vec_rep_each]{vec_rep_each()}}; look there for
+more information.
 }
 }
 \details{
@@ -40,6 +44,7 @@ x <- c("a", "z", "z", "c", "a", "a")
 
 vec_identify_runs(x)
 vec_run_sizes(x)
+vec_unrep(x)
 
 y <- c(1, 1, 1, 2, 2, 3)
 
@@ -51,4 +56,8 @@ df <- data_frame(
 
 vec_identify_runs(df)
 vec_run_sizes(df)
+vec_unrep(df)
+}
+\seealso{
+\code{\link[=vec_unrep]{vec_unrep()}} for a generalized \code{\link[base:rle]{base::rle()}}.
 }

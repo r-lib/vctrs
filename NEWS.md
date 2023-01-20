@@ -1,7 +1,8 @@
 # vctrs (development version)
 
-* New `vec_run_sizes()` for computing the size of each run within a vector
-  (#1210).
+* New `vec_run_sizes()` for computing the size of each run within a vector. It
+  is identical to the `times` column from `vec_unrep()`, but is faster if you
+  don't need the run key (#1210).
 
 # vctrs 0.5.2
 

@@ -344,88 +344,40 @@ void stop_rep_times_size(struct r_lazy call,
 
 static
 r_obj* vec_unrep(r_obj* x) {
-  r_obj* id = KEEP(vec_identify_runs(x));
-  const int* p_id = r_int_cbegin(id);
+  r_obj* times = KEEP(vec_run_sizes(x));
+  const int* v_times = r_int_cbegin(times);
 
-  r_ssize x_size = r_length(id);
+  const r_ssize size = r_length(times);
 
-  if (x_size == 0) {
-    r_obj* out = new_unrep_data_frame(x, r_globals.empty_int, 0);
-    FREE(1);
-    return out;
+  r_obj* loc = KEEP(r_alloc_integer(size));
+  int* v_loc = r_int_begin(loc);
+
+  r_ssize current = 1;
+
+  for (r_ssize i = 0; i < size; ++i) {
+    v_loc[i] = current;
+    current += v_times[i];
   }
 
-  r_ssize out_size = (r_ssize) r_int_get(r_attrib_get(id, syms_n), 0);
+  r_obj* out = KEEP(r_new_list(2));
 
-  // Size of each run
-  r_obj* times = KEEP(r_new_integer(out_size));
-  int* v_times = r_int_begin(times);
+  r_list_poke(out, 0, vec_slice_unsafe(x, loc));
+  r_list_poke(out, 1, times);
 
-  // Location of the start of each run. For slicing `x`.
-  r_obj* loc = KEEP(r_new_integer(out_size));
-  int* p_loc = r_int_begin(loc);
+  r_obj* names = r_new_character(2);
+  r_attrib_poke_names(out, names);
+  r_chr_poke(names, 0, strings_key);
+  r_chr_poke(names, 1, strings_times);
 
-  r_ssize idx = 0;
-  r_ssize previous = 0;
+  init_data_frame(out, size);
 
-  int reference = p_id[0];
-
-  // Handle first case
-  p_loc[idx] = 1;
-  ++idx;
-
-  for (r_ssize i = 1; i < x_size; ++i) {
-    const int elt = p_id[i];
-
-    if (elt == reference) {
-      continue;
-    }
-
-    reference = elt;
-
-    // Size of current run
-    v_times[idx - 1] = i - previous;
-    previous = i;
-
-    // 1-based location of the start of the new run
-    p_loc[idx] = i + 1;
-    ++idx;
-  }
-
-  // Handle last case
-  v_times[idx - 1] = x_size - previous;
-
-  r_obj* key = KEEP(vec_slice(x, loc));
-  r_obj* out = new_unrep_data_frame(key, times, out_size);
-
-  FREE(4);
+  FREE(3);
   return out;
 }
 
 r_obj* ffi_vec_unrep(r_obj* x) {
   return vec_unrep(x);
 }
-
-
-static
-r_obj* new_unrep_data_frame(r_obj* key, r_obj* times, r_ssize size) {
-  r_obj* out = KEEP(r_new_list(2));
-
-  r_list_poke(out, 0, key);
-  r_list_poke(out, 1, times);
-
-  r_obj* names = KEEP(r_new_character(2));
-  r_attrib_poke_names(out, names);
-
-  r_chr_poke(names, 0, strings_key);
-  r_chr_poke(names, 1, strings_times);
-
-  init_data_frame(out, size);
-
-  FREE(2);
-  return out;
-}
-
 
 // -----------------------------------------------------------------------------
 
