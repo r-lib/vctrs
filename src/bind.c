@@ -242,6 +242,7 @@ r_obj* vec_rbind(r_obj* xs,
 
   df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
   out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
+  KEEP_AT(out, out_pi);
 
   if (has_names_to) {
     out = df_poke(out, names_to_loc, names_to_col);
