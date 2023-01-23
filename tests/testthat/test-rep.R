@@ -159,3 +159,9 @@ test_that("works with data frames with rows but no columns", {
   expect <- data_frame(key = data_frame(.size = 1L), times = 5L)
   expect_identical(vec_unrep(x), expect)
 })
+
+test_that("errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_unrep(environment())
+  })
+})

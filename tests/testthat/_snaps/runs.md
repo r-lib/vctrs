@@ -1,3 +1,19 @@
+# errors on scalars
+
+    Code
+      vec_identify_runs(foobar())
+    Condition
+      Error in `vec_identify_runs()`:
+      ! `x` must be a vector, not a <vctrs_foobar> object.
+
+---
+
+    Code
+      vec_run_sizes(foobar())
+    Condition
+      Error in `vec_run_sizes()`:
+      ! `x` must be a vector, not a <vctrs_foobar> object.
+
 # vec_locate_run_bounds() validates `start`
 
     Code

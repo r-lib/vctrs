@@ -111,5 +111,5 @@ vec_rep_each <- function(x,
 #' @rdname vec-rep
 #' @export
 vec_unrep <- function(x) {
-  .Call(ffi_vec_unrep, x)
+  .Call(ffi_vec_unrep, x, environment())
 }
