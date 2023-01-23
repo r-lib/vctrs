@@ -1,3 +1,5 @@
+# vctrs (development version)
+
 # vctrs 0.5.2
 
 * New `vec_expand_grid()`, which is a lower level helper that is similar to
