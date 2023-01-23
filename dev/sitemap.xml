@@ -130,6 +130,9 @@
     <loc>https://vctrs.r-lib.org/dev/reference/reference-faq-compatibility.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/dev/reference/runs.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/dev/reference/s3_register.html</loc>
   </url>
   <url>
@@ -227,9 +230,6 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/dev/reference/vec_group.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/dev/reference/vec_identify_runs.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/dev/reference/vec_init.html</loc>
