@@ -100,14 +100,14 @@ r_obj* ffi_vec_run_sizes(r_obj* x, r_obj* frame) {
 
 r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
   const bool start = false;
-  r_obj* where = KEEP(vec_detect_run_bounds0(x, start, error_call));
-  const bool* v_where = r_raw_cbegin(where);
+  r_obj* ends = KEEP(vec_detect_run_bounds0(x, start, error_call));
+  const bool* v_ends = r_raw_cbegin(ends);
 
-  const r_ssize size = r_length(where) / sizeof(bool);
+  const r_ssize size = r_length(ends) / sizeof(bool);
 
   r_ssize n = 0;
   for (r_ssize i = 0; i < size; ++i) {
-    n += v_where[i];
+    n += v_ends[i];
   }
 
   r_obj* out = KEEP(r_alloc_integer(n));
@@ -117,7 +117,7 @@ r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
   int count = 1;
 
   for (r_ssize i = 0; i < size; ++i) {
-    const bool end = v_where[i];
+    const bool end = v_ends[i];
     v_out[j] = count;
     j += end;
     count = !end * count + 1;
