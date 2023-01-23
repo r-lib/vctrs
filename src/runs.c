@@ -4,14 +4,15 @@
 
 // -----------------------------------------------------------------------------
 
-r_obj* ffi_vec_detect_run_bounds(r_obj* x, r_obj* ffi_start) {
+r_obj* ffi_vec_detect_run_bounds(r_obj* x, r_obj* ffi_start, r_obj* frame) {
+  struct r_lazy error_call = { .x = frame, .env = r_null };
   const bool start = r_arg_as_bool(ffi_start, "start");
-  return vec_detect_run_bounds(x, start);
+  return vec_detect_run_bounds(x, start, error_call);
 }
 
 static
-r_obj* vec_detect_run_bounds(r_obj* x, bool start) {
-  r_obj* where = KEEP(vec_detect_run_bounds0(x, start));
+r_obj* vec_detect_run_bounds(r_obj* x, bool start, struct r_lazy error_call) {
+  r_obj* where = KEEP(vec_detect_run_bounds0(x, start, error_call));
   const bool* v_where = r_raw_cbegin(where);
 
   const r_ssize size = r_length(where) / sizeof(bool);
@@ -29,14 +30,15 @@ r_obj* vec_detect_run_bounds(r_obj* x, bool start) {
 
 // -----------------------------------------------------------------------------
 
-r_obj* ffi_vec_locate_run_bounds(r_obj* x, r_obj* ffi_start) {
+r_obj* ffi_vec_locate_run_bounds(r_obj* x, r_obj* ffi_start, r_obj* frame) {
+  struct r_lazy error_call = { .x = frame, .env = r_null };
   const bool start = r_arg_as_bool(ffi_start, "start");
-  return vec_locate_run_bounds(x, start);
+  return vec_locate_run_bounds(x, start, error_call);
 }
 
 static
-r_obj* vec_locate_run_bounds(r_obj* x, bool start) {
-  r_obj* where = KEEP(vec_detect_run_bounds0(x, start));
+r_obj* vec_locate_run_bounds(r_obj* x, bool start, struct r_lazy error_call) {
+  r_obj* where = KEEP(vec_detect_run_bounds0(x, start, error_call));
   const bool* v_where = r_raw_cbegin(where);
 
   const r_ssize size = r_length(where) / sizeof(bool);
@@ -60,13 +62,14 @@ r_obj* vec_locate_run_bounds(r_obj* x, bool start) {
 
 // -----------------------------------------------------------------------------
 
-r_obj* ffi_vec_identify_runs(r_obj* x) {
-  return vec_identify_runs(x);
+r_obj* ffi_vec_identify_runs(r_obj* x, r_obj* frame) {
+  struct r_lazy error_call = { .x = frame, .env = r_null };
+  return vec_identify_runs(x, error_call);
 }
 
-r_obj* vec_identify_runs(r_obj* x) {
+r_obj* vec_identify_runs(r_obj* x, struct r_lazy error_call) {
   const bool start = true;
-  r_obj* where = KEEP(vec_detect_run_bounds0(x, start));
+  r_obj* where = KEEP(vec_detect_run_bounds0(x, start, error_call));
   const bool* v_where = r_raw_cbegin(where);
 
   const r_ssize size = r_length(where) / sizeof(bool);
@@ -90,13 +93,14 @@ r_obj* vec_identify_runs(r_obj* x) {
 
 // -----------------------------------------------------------------------------
 
-r_obj* ffi_vec_run_sizes(r_obj* x) {
-  return vec_run_sizes(x);
+r_obj* ffi_vec_run_sizes(r_obj* x, r_obj* frame) {
+  struct r_lazy error_call = { .x = frame, .env = r_null };
+  return vec_run_sizes(x, error_call);
 }
 
-r_obj* vec_run_sizes(r_obj* x) {
+r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
   const bool start = false;
-  r_obj* where = KEEP(vec_detect_run_bounds0(x, start));
+  r_obj* where = KEEP(vec_detect_run_bounds0(x, start, error_call));
   const bool* v_where = r_raw_cbegin(where);
 
   const r_ssize size = r_length(where) / sizeof(bool);
@@ -130,7 +134,9 @@ r_obj* vec_run_sizes(r_obj* x) {
  * boolean array as a raw vector.
  */
 static
-r_obj* vec_detect_run_bounds0(r_obj* x, bool start) {
+r_obj* vec_detect_run_bounds0(r_obj* x, bool start, struct r_lazy error_call) {
+  vec_check_vector(x, vec_args.x, error_call);
+
   r_obj* proxy = KEEP(vec_proxy_equal(x));
   proxy = KEEP(vec_normalize_encoding(proxy));
 

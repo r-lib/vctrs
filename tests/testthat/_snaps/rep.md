@@ -148,3 +148,11 @@
       Error in `my_vec_rep_each()`:
       ! Can't recycle `my_times` (size 3) to size 2.
 
+# errors on scalars
+
+    Code
+      vec_unrep(environment())
+    Condition
+      Error in `vec_unrep()`:
+      ! `x` must be a vector, not an environment.
+

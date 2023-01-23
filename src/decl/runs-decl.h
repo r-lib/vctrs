@@ -1,10 +1,10 @@
 static
-r_obj* vec_detect_run_bounds(r_obj* x, bool start);
+r_obj* vec_detect_run_bounds(r_obj* x, bool start, struct r_lazy error_call);
 static
-r_obj* vec_locate_run_bounds(r_obj* x, bool start);
+r_obj* vec_locate_run_bounds(r_obj* x, bool start, struct r_lazy error_call);
 
 static
-r_obj* vec_detect_run_bounds0(r_obj* x, bool start);
+r_obj* vec_detect_run_bounds0(r_obj* x, bool start, struct r_lazy error_call);
 
 static inline
 void lgl_detect_run_bounds0(r_obj* x, r_ssize size, bool start, bool* v_out);

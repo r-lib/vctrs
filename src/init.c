@@ -120,10 +120,10 @@ extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r
 extern SEXP vctrs_fast_c(SEXP, SEXP);
 extern r_obj* ffi_data_frame(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_df_list(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_vec_detect_run_bounds(r_obj*, r_obj*);
-extern r_obj* ffi_vec_locate_run_bounds(r_obj*, r_obj*);
-extern r_obj* ffi_vec_identify_runs(r_obj*);
-extern r_obj* ffi_vec_run_sizes(r_obj* x);
+extern r_obj* ffi_vec_detect_run_bounds(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_locate_run_bounds(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_identify_runs(r_obj*, r_obj*);
+extern r_obj* ffi_vec_run_sizes(r_obj*, r_obj*);
 extern SEXP vctrs_slice_complete(SEXP);
 extern SEXP vctrs_locate_complete(SEXP);
 extern SEXP vctrs_detect_complete(SEXP);
@@ -131,7 +131,7 @@ extern SEXP vctrs_normalize_encoding(SEXP);
 extern SEXP vctrs_order(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_locate_sorted_groups(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern r_obj* ffi_vec_unrep(r_obj*);
+extern r_obj* ffi_vec_unrep(r_obj*, r_obj*);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
 extern r_obj* ffi_chr_paste_prefix(r_obj*, r_obj*, r_obj*);
 extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
@@ -301,10 +301,10 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_fast_c",                          (DL_FUNC) &vctrs_fast_c, 2},
   {"ffi_data_frame",                        (DL_FUNC) &ffi_data_frame, 4},
   {"ffi_df_list",                           (DL_FUNC) &ffi_df_list, 5},
-  {"ffi_vec_detect_run_bounds",             (DL_FUNC) &ffi_vec_detect_run_bounds, 2},
-  {"ffi_vec_locate_run_bounds",             (DL_FUNC) &ffi_vec_locate_run_bounds, 2},
-  {"ffi_vec_identify_runs",                 (DL_FUNC) &ffi_vec_identify_runs, 1},
-  {"ffi_vec_run_sizes",                     (DL_FUNC) &ffi_vec_run_sizes, 1},
+  {"ffi_vec_detect_run_bounds",             (DL_FUNC) &ffi_vec_detect_run_bounds, 3},
+  {"ffi_vec_locate_run_bounds",             (DL_FUNC) &ffi_vec_locate_run_bounds, 3},
+  {"ffi_vec_identify_runs",                 (DL_FUNC) &ffi_vec_identify_runs, 2},
+  {"ffi_vec_run_sizes",                     (DL_FUNC) &ffi_vec_run_sizes, 2},
   {"vctrs_slice_complete",                  (DL_FUNC) &vctrs_slice_complete, 1},
   {"vctrs_locate_complete",                 (DL_FUNC) &vctrs_locate_complete, 1},
   {"vctrs_detect_complete",                 (DL_FUNC) &vctrs_detect_complete, 1},
@@ -312,7 +312,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_order",                           (DL_FUNC) &vctrs_order, 5},
   {"vctrs_locate_sorted_groups",            (DL_FUNC) &vctrs_locate_sorted_groups, 5},
   {"vctrs_order_info",                      (DL_FUNC) &vctrs_order_info, 6},
-  {"ffi_vec_unrep",                         (DL_FUNC) &ffi_vec_unrep, 1},
+  {"ffi_vec_unrep",                         (DL_FUNC) &ffi_vec_unrep, 2},
   {"vctrs_fill_missing",                    (DL_FUNC) &vctrs_fill_missing, 3},
   {"ffi_chr_paste_prefix",                  (DL_FUNC) &ffi_chr_paste_prefix, 3},
   {"vctrs_rank",                            (DL_FUNC) &vctrs_rank, 7},

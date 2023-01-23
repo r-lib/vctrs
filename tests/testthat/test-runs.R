@@ -43,7 +43,9 @@ test_that("normalizes character encodings", {
 })
 
 test_that("errors on scalars", {
-  expect_error(vec_identify_runs(foobar()), class = "vctrs_error_scalar_type")
+  expect_snapshot(error = TRUE, {
+    vec_identify_runs(foobar())
+  })
 })
 
 test_that("works with data frames rowwise", {
@@ -128,7 +130,9 @@ test_that("normalizes character encodings", {
 })
 
 test_that("errors on scalars", {
-  expect_error(vec_run_sizes(foobar()), class = "vctrs_error_scalar_type")
+  expect_snapshot(error = TRUE, {
+    vec_run_sizes(foobar())
+  })
 })
 
 test_that("works with data frames rowwise", {

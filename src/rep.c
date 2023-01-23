@@ -343,8 +343,8 @@ void stop_rep_times_size(struct r_lazy call,
 // -----------------------------------------------------------------------------
 
 static
-r_obj* vec_unrep(r_obj* x) {
-  r_obj* times = KEEP(vec_run_sizes(x));
+r_obj* vec_unrep(r_obj* x, struct r_lazy error_call) {
+  r_obj* times = KEEP(vec_run_sizes(x, error_call));
   const int* v_times = r_int_cbegin(times);
 
   const r_ssize size = r_length(times);
@@ -375,8 +375,9 @@ r_obj* vec_unrep(r_obj* x) {
   return out;
 }
 
-r_obj* ffi_vec_unrep(r_obj* x) {
-  return vec_unrep(x);
+r_obj* ffi_vec_unrep(r_obj* x, r_obj* frame) {
+  struct r_lazy error_call = { .x = frame, .env = r_null };
+  return vec_unrep(x, error_call);
 }
 
 // -----------------------------------------------------------------------------
