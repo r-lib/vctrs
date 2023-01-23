@@ -157,6 +157,9 @@
     <loc>https://vctrs.r-lib.org/reference/vec-rep.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/vec-set.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/vec_arith.html</loc>
   </url>
   <url>
@@ -218,6 +221,9 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_equal_na.html</loc>
+  </url>
+  <url>
+    <loc>https://vctrs.r-lib.org/reference/vec_expand_grid.html</loc>
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vec_fill_missing.html</loc>
