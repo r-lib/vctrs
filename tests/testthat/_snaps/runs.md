@@ -14,51 +14,51 @@
       Error in `vec_run_sizes()`:
       ! `x` must be a vector, not a <vctrs_foobar> object.
 
-# vec_locate_run_bounds() validates `start`
+# vec_locate_run_bounds() validates `which`
 
     Code
-      vec_locate_run_bounds(1, start = "x")
+      vec_locate_run_bounds(1, which = "x")
     Condition
       Error in `vec_locate_run_bounds()`:
-      ! `start` must be `TRUE` or `FALSE`.
+      ! `which` must be one of "start" or "end", not "x".
 
 ---
 
     Code
-      vec_locate_run_bounds(1, start = NA)
+      vec_locate_run_bounds(1, which = 1)
     Condition
       Error in `vec_locate_run_bounds()`:
-      ! `start` must be `TRUE` or `FALSE`.
+      ! `which` must be a string or character vector.
 
 ---
 
     Code
-      vec_locate_run_bounds(1, start = c(TRUE, TRUE))
+      vec_locate_run_bounds(1, which = c("foo", "bar"))
     Condition
-      Error in `vec_locate_run_bounds()`:
-      ! `start` must be `TRUE` or `FALSE`.
+      Error in `arg_match()`:
+      ! `arg` must be length 1 or a permutation of `values`.
 
-# vec_detect_run_bounds() validates `start`
+# vec_detect_run_bounds() validates `which`
 
     Code
-      vec_detect_run_bounds(1, start = "x")
+      vec_detect_run_bounds(1, which = "x")
     Condition
       Error in `vec_detect_run_bounds()`:
-      ! `start` must be `TRUE` or `FALSE`.
+      ! `which` must be one of "start" or "end", not "x".
 
 ---
 
     Code
-      vec_detect_run_bounds(1, start = NA)
+      vec_detect_run_bounds(1, which = 1)
     Condition
       Error in `vec_detect_run_bounds()`:
-      ! `start` must be `TRUE` or `FALSE`.
+      ! `which` must be a string or character vector.
 
 ---
 
     Code
-      vec_detect_run_bounds(1, start = c(TRUE, TRUE))
+      vec_detect_run_bounds(1, which = c("foo", "bar"))
     Condition
-      Error in `vec_detect_run_bounds()`:
-      ! `start` must be `TRUE` or `FALSE`.
+      Error in `arg_match()`:
+      ! `arg` must be length 1 or a permutation of `values`.
 

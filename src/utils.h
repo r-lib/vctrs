@@ -445,6 +445,7 @@ extern SEXP chrs_asc;
 extern SEXP chrs_desc;
 extern SEXP chrs_largest;
 extern SEXP chrs_smallest;
+extern SEXP chrs_which;
 
 extern SEXP syms_i;
 extern SEXP syms_n;

@@ -1551,6 +1551,7 @@ SEXP chrs_asc = NULL;
 SEXP chrs_desc = NULL;
 SEXP chrs_largest = NULL;
 SEXP chrs_smallest = NULL;
+SEXP chrs_which = NULL;
 
 SEXP syms_i = NULL;
 SEXP syms_n = NULL;
@@ -1793,6 +1794,7 @@ void vctrs_init_utils(SEXP ns) {
   chrs_desc = r_new_shared_character("desc");
   chrs_largest = r_new_shared_character("largest");
   chrs_smallest = r_new_shared_character("smallest");
+  chrs_which = r_new_shared_character("which");
 
   classes_tibble = r_new_shared_vector(STRSXP, 3);
 
