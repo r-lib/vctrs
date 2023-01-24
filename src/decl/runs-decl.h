@@ -4,7 +4,9 @@ static
 r_obj* vec_locate_run_bounds(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call);
 
 static
-r_obj* vec_detect_run_bounds_bool(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call);
+struct r_bool_vector* vec_detect_run_bounds_bool(r_obj* x,
+                                                 enum vctrs_run_bound which,
+                                                 struct r_lazy error_call);
 
 static inline
 void lgl_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out);

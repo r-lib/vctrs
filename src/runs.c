@@ -1,4 +1,5 @@
 #include "vctrs.h"
+#include "vec-bool.h"
 
 enum vctrs_run_bound {
   VCTRS_RUN_BOUND_start = 0,
@@ -17,10 +18,11 @@ r_obj* ffi_vec_detect_run_bounds(r_obj* x, r_obj* ffi_start, r_obj* frame) {
 
 static
 r_obj* vec_detect_run_bounds(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call) {
-  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, which, error_call));
-  const bool* v_where = r_raw_cbegin(where);
+  struct r_bool_vector* p_where = vec_detect_run_bounds_bool(x, which, error_call);
+  KEEP(p_where->shelter);
+  const bool* v_where = r_bool_vector_cbegin(p_where);
 
-  const r_ssize size = r_length(where) / sizeof(bool);
+  const r_ssize size = r_bool_vector_length(p_where);
 
   r_obj* out = KEEP(r_alloc_logical(size));
   int* v_out = r_lgl_begin(out);
@@ -43,10 +45,11 @@ r_obj* ffi_vec_locate_run_bounds(r_obj* x, r_obj* ffi_start, r_obj* frame) {
 
 static
 r_obj* vec_locate_run_bounds(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call) {
-  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, which, error_call));
-  const bool* v_where = r_raw_cbegin(where);
+  struct r_bool_vector* p_where = vec_detect_run_bounds_bool(x, which, error_call);
+  KEEP(p_where->shelter);
+  const bool* v_where = r_bool_vector_cbegin(p_where);
 
-  const r_ssize size = r_length(where) / sizeof(bool);
+  const r_ssize size = r_bool_vector_length(p_where);
 
   r_ssize n = 0;
   for (r_ssize i = 0; i < size; ++i) {
@@ -80,10 +83,11 @@ r_obj* ffi_vec_identify_runs(r_obj* x, r_obj* frame) {
 }
 
 r_obj* vec_identify_runs(r_obj* x, struct r_lazy error_call) {
-  r_obj* starts = KEEP(vec_detect_run_bounds_bool(x, VCTRS_RUN_BOUND_start, error_call));
-  const bool* v_starts = r_raw_cbegin(starts);
+  struct r_bool_vector* p_starts = vec_detect_run_bounds_bool(x, VCTRS_RUN_BOUND_start, error_call);
+  KEEP(p_starts->shelter);
+  const bool* v_starts = r_bool_vector_cbegin(p_starts);
 
-  const r_ssize size = r_length(starts) / sizeof(bool);
+  const r_ssize size = r_bool_vector_length(p_starts);
 
   r_obj* out = KEEP(r_alloc_integer(size));
   int* v_out = r_int_begin(out);
@@ -110,10 +114,11 @@ r_obj* ffi_vec_run_sizes(r_obj* x, r_obj* frame) {
 }
 
 r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
-  r_obj* ends = KEEP(vec_detect_run_bounds_bool(x, VCTRS_RUN_BOUND_end, error_call));
-  const bool* v_ends = r_raw_cbegin(ends);
+  struct r_bool_vector* p_ends = vec_detect_run_bounds_bool(x, VCTRS_RUN_BOUND_end, error_call);
+  KEEP(p_ends->shelter);
+  const bool* v_ends = r_bool_vector_cbegin(p_ends);
 
-  const r_ssize size = r_length(ends) / sizeof(bool);
+  const r_ssize size = r_bool_vector_length(p_ends);
 
   r_ssize n = 0;
   for (r_ssize i = 0; i < size; ++i) {
@@ -141,10 +146,12 @@ r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
 
 /*
  * Like `vec_detect_run_bounds()`, but returns a less memory intensive
- * boolean array as a raw vector.
+ * boolean array as an `r_bool_vector`.
  */
 static
-r_obj* vec_detect_run_bounds_bool(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call) {
+struct r_bool_vector* vec_detect_run_bounds_bool(r_obj* x,
+                                                 enum vctrs_run_bound which,
+                                                 struct r_lazy error_call) {
   vec_check_vector(x, vec_args.x, error_call);
 
   r_obj* proxy = KEEP(vec_proxy_equal(x));
@@ -152,8 +159,9 @@ r_obj* vec_detect_run_bounds_bool(r_obj* x, enum vctrs_run_bound which, struct r
 
   const r_ssize size = vec_size(proxy);
 
-  r_obj* out = KEEP(r_alloc_raw(size * sizeof(bool)));
-  bool* v_out = r_raw_begin(out);
+  struct r_bool_vector* p_out = r_new_bool_vector(size);
+  KEEP(p_out->shelter);
+  bool* v_out = r_bool_vector_begin(p_out);
 
   const enum vctrs_type type = vec_proxy_typeof(proxy);
 
@@ -170,7 +178,7 @@ r_obj* vec_detect_run_bounds_bool(r_obj* x, enum vctrs_run_bound which, struct r
   }
 
   FREE(3);
-  return out;
+  return p_out;
 }
 
 // -----------------------------------------------------------------------------
