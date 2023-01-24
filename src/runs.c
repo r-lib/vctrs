@@ -1,18 +1,23 @@
 #include "vctrs.h"
 
+enum vctrs_run_bound {
+  VCTRS_RUN_BOUND_start = 0,
+  VCTRS_RUN_BOUND_end = 1
+};
+
 #include "decl/runs-decl.h"
 
 // -----------------------------------------------------------------------------
 
 r_obj* ffi_vec_detect_run_bounds(r_obj* x, r_obj* ffi_start, r_obj* frame) {
   struct r_lazy error_call = { .x = frame, .env = r_null };
-  const bool start = r_arg_as_bool(ffi_start, "start");
-  return vec_detect_run_bounds(x, start, error_call);
+  const enum vctrs_run_bound which = as_run_bound(ffi_start, error_call);
+  return vec_detect_run_bounds(x, which, error_call);
 }
 
 static
-r_obj* vec_detect_run_bounds(r_obj* x, bool start, struct r_lazy error_call) {
-  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, start, error_call));
+r_obj* vec_detect_run_bounds(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call) {
+  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, which, error_call));
   const bool* v_where = r_raw_cbegin(where);
 
   const r_ssize size = r_length(where) / sizeof(bool);
@@ -32,13 +37,13 @@ r_obj* vec_detect_run_bounds(r_obj* x, bool start, struct r_lazy error_call) {
 
 r_obj* ffi_vec_locate_run_bounds(r_obj* x, r_obj* ffi_start, r_obj* frame) {
   struct r_lazy error_call = { .x = frame, .env = r_null };
-  const bool start = r_arg_as_bool(ffi_start, "start");
-  return vec_locate_run_bounds(x, start, error_call);
+  const enum vctrs_run_bound which = as_run_bound(ffi_start, error_call);
+  return vec_locate_run_bounds(x, which, error_call);
 }
 
 static
-r_obj* vec_locate_run_bounds(r_obj* x, bool start, struct r_lazy error_call) {
-  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, start, error_call));
+r_obj* vec_locate_run_bounds(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call) {
+  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, which, error_call));
   const bool* v_where = r_raw_cbegin(where);
 
   const r_ssize size = r_length(where) / sizeof(bool);
@@ -68,11 +73,10 @@ r_obj* ffi_vec_identify_runs(r_obj* x, r_obj* frame) {
 }
 
 r_obj* vec_identify_runs(r_obj* x, struct r_lazy error_call) {
-  const bool start = true;
-  r_obj* where = KEEP(vec_detect_run_bounds_bool(x, start, error_call));
-  const bool* v_where = r_raw_cbegin(where);
+  r_obj* starts = KEEP(vec_detect_run_bounds_bool(x, VCTRS_RUN_BOUND_start, error_call));
+  const bool* v_starts = r_raw_cbegin(starts);
 
-  const r_ssize size = r_length(where) / sizeof(bool);
+  const r_ssize size = r_length(starts) / sizeof(bool);
 
   r_obj* out = KEEP(r_alloc_integer(size));
   int* v_out = r_int_begin(out);
@@ -80,7 +84,7 @@ r_obj* vec_identify_runs(r_obj* x, struct r_lazy error_call) {
   int n = 0;
 
   for (r_ssize i = 0; i < size; ++i) {
-    n += v_where[i];
+    n += v_starts[i];
     v_out[i] = n;
   }
 
@@ -99,8 +103,7 @@ r_obj* ffi_vec_run_sizes(r_obj* x, r_obj* frame) {
 }
 
 r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
-  const bool start = false;
-  r_obj* ends = KEEP(vec_detect_run_bounds_bool(x, start, error_call));
+  r_obj* ends = KEEP(vec_detect_run_bounds_bool(x, VCTRS_RUN_BOUND_end, error_call));
   const bool* v_ends = r_raw_cbegin(ends);
 
   const r_ssize size = r_length(ends) / sizeof(bool);
@@ -134,7 +137,7 @@ r_obj* vec_run_sizes(r_obj* x, struct r_lazy error_call) {
  * boolean array as a raw vector.
  */
 static
-r_obj* vec_detect_run_bounds_bool(r_obj* x, bool start, struct r_lazy error_call) {
+r_obj* vec_detect_run_bounds_bool(r_obj* x, enum vctrs_run_bound which, struct r_lazy error_call) {
   vec_check_vector(x, vec_args.x, error_call);
 
   r_obj* proxy = KEEP(vec_proxy_equal(x));
@@ -148,14 +151,14 @@ r_obj* vec_detect_run_bounds_bool(r_obj* x, bool start, struct r_lazy error_call
   const enum vctrs_type type = vec_proxy_typeof(proxy);
 
   switch (type) {
-  case VCTRS_TYPE_logical: lgl_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_integer: int_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_double: dbl_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_complex: cpl_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_character: chr_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_raw: raw_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_list: list_detect_run_bounds_bool(proxy, size, start, v_out); break;
-  case VCTRS_TYPE_dataframe: df_detect_run_bounds_bool(proxy, size, start, v_out); break;
+  case VCTRS_TYPE_logical: lgl_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_integer: int_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_double: dbl_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_complex: cpl_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_character: chr_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_raw: raw_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_list: list_detect_run_bounds_bool(proxy, size, which, v_out); break;
+  case VCTRS_TYPE_dataframe: df_detect_run_bounds_bool(proxy, size, which, v_out); break;
   default: stop_unimplemented_vctrs_type("vec_detect_run_bounds_bool", type);
   }
 
@@ -174,7 +177,7 @@ r_obj* vec_detect_run_bounds_bool(r_obj* x, bool start, struct r_lazy error_call
                                                                     \
   CTYPE const* v_x = CBEGIN(x);                                     \
                                                                     \
-  if (start) {                                                      \
+  if (which == VCTRS_RUN_BOUND_start) {                             \
     /* Handle first case */                                         \
     CTYPE ref = v_x[0];                                             \
     v_out[0] = true;                                                \
@@ -198,31 +201,31 @@ r_obj* vec_detect_run_bounds_bool(r_obj* x, bool start, struct r_lazy error_call
 }
 
 static inline
-void lgl_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void lgl_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(int, r_lgl_cbegin, lgl_equal_na_equal);
 }
 static inline
-void int_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void int_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(int, r_int_cbegin, int_equal_na_equal);
 }
 static inline
-void dbl_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void dbl_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(double, r_dbl_cbegin, dbl_equal_na_equal);
 }
 static inline
-void cpl_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void cpl_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(Rcomplex, r_cpl_cbegin, cpl_equal_na_equal);
 }
 static inline
-void chr_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void chr_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
 }
 static inline
-void raw_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void raw_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
 }
 static inline
-void list_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void list_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_DETECT_RUN_BOUNDS_BOOL(r_obj*, r_list_cbegin, list_equal_na_equal);
 }
 
@@ -231,7 +234,7 @@ void list_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out
 // -----------------------------------------------------------------------------
 
 static inline
-void df_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void df_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   if (size == 0) {
     // Algorithm requires at least 1 value
     return;
@@ -242,7 +245,7 @@ void df_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) 
 
   // `v_out` will eventually be `true` if we are in a run
   // continuation, and `false` if we are starting a new run.
-  if (start) {
+  if (which == VCTRS_RUN_BOUND_start) {
     v_out[0] = false;
     for (r_ssize i = 1; i < size; ++i) {
       v_out[i] = true;
@@ -255,7 +258,7 @@ void df_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) 
   }
 
   for (r_ssize i = 0; i < n_col; ++i) {
-    col_detect_run_bounds_bool(v_x[i], size, start, v_out);
+    col_detect_run_bounds_bool(v_x[i], size, which, v_out);
   }
 
   // Now invert to detect the bounds
@@ -265,15 +268,15 @@ void df_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) 
 }
 
 static inline
-void col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   switch (vec_proxy_typeof(x)) {
-  case VCTRS_TYPE_logical: lgl_col_detect_run_bounds_bool(x, size, start, v_out); break;
-  case VCTRS_TYPE_integer: int_col_detect_run_bounds_bool(x, size, start, v_out); break;
-  case VCTRS_TYPE_double: dbl_col_detect_run_bounds_bool(x, size, start, v_out); break;
-  case VCTRS_TYPE_complex: cpl_col_detect_run_bounds_bool(x, size, start, v_out); break;
-  case VCTRS_TYPE_character: chr_col_detect_run_bounds_bool(x, size, start, v_out); break;
-  case VCTRS_TYPE_raw: raw_col_detect_run_bounds_bool(x, size, start, v_out); break;
-  case VCTRS_TYPE_list: list_col_detect_run_bounds_bool(x, size, start, v_out); break;
+  case VCTRS_TYPE_logical: lgl_col_detect_run_bounds_bool(x, size, which, v_out); break;
+  case VCTRS_TYPE_integer: int_col_detect_run_bounds_bool(x, size, which, v_out); break;
+  case VCTRS_TYPE_double: dbl_col_detect_run_bounds_bool(x, size, which, v_out); break;
+  case VCTRS_TYPE_complex: cpl_col_detect_run_bounds_bool(x, size, which, v_out); break;
+  case VCTRS_TYPE_character: chr_col_detect_run_bounds_bool(x, size, which, v_out); break;
+  case VCTRS_TYPE_raw: raw_col_detect_run_bounds_bool(x, size, which, v_out); break;
+  case VCTRS_TYPE_list: list_col_detect_run_bounds_bool(x, size, which, v_out); break;
   case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should be flattened.");
   case VCTRS_TYPE_scalar: r_abort("Can't compare scalars.");
   default: r_abort("Unimplemented type.");
@@ -283,7 +286,7 @@ void col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out)
 #define VEC_COL_DETECT_RUN_BOUNDS_BOOL(CTYPE, CBEGIN, EQUAL_NA_EQUAL) {   \
   CTYPE const* v_x = CBEGIN(x);                                           \
                                                                           \
-  if (start) {                                                            \
+  if (which == VCTRS_RUN_BOUND_start) {                                   \
     CTYPE ref = v_x[0];                                                   \
                                                                           \
     for (r_ssize i = 1; i < size; ++i) {                                  \
@@ -303,32 +306,56 @@ void col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out)
 }
 
 static inline
-void lgl_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void lgl_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(int, r_lgl_cbegin, lgl_equal_na_equal);
 }
 static inline
-void int_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void int_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(int, r_int_cbegin, int_equal_na_equal);
 }
 static inline
-void dbl_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void dbl_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(double, r_dbl_cbegin, dbl_equal_na_equal);
 }
 static inline
-void cpl_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void cpl_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(Rcomplex, r_cpl_cbegin, cpl_equal_na_equal);
 }
 static inline
-void chr_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void chr_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(r_obj*, r_chr_cbegin, chr_equal_na_equal);
 }
 static inline
-void raw_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void raw_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(Rbyte, r_raw_cbegin, raw_equal_na_equal);
 }
 static inline
-void list_col_detect_run_bounds_bool(r_obj* x, r_ssize size, bool start, bool* v_out) {
+void list_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out) {
   VEC_COL_DETECT_RUN_BOUNDS_BOOL(r_obj*, r_list_cbegin, list_equal_na_equal);
 }
 
 #undef VEC_COL_DETECT_RUN_BOUNDS_BOOL
+
+// -----------------------------------------------------------------------------
+
+static inline
+enum vctrs_run_bound as_run_bound(r_obj* which, struct r_lazy error_call) {
+  struct r_lazy error_arg = { .x = chrs_which, .env = r_null };
+
+  r_obj* values = KEEP(r_alloc_character(2));
+  r_chr_poke(values, 0, r_str("start"));
+  r_chr_poke(values, 1, r_str("end"));
+
+  const int match = r_arg_match(which, values, error_arg, error_call);
+
+  enum vctrs_run_bound out;
+
+  switch (match) {
+  case 0: out = VCTRS_RUN_BOUND_start; break;
+  case 1: out = VCTRS_RUN_BOUND_end; break;
+  default: r_stop_internal("Unknown `which` value.");
+  }
+
+  FREE(1);
+  return out;
+}

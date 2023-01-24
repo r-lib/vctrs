@@ -63,10 +63,10 @@ vec_run_sizes <- function(x) {
   .Call(ffi_vec_run_sizes, x, environment())
 }
 
-vec_locate_run_bounds <- function(x, start = TRUE) {
-  .Call(ffi_vec_locate_run_bounds, x, start, environment())
+vec_locate_run_bounds <- function(x, which = c("start", "end")) {
+  .Call(ffi_vec_locate_run_bounds, x, which, environment())
 }
 
-vec_detect_run_bounds <- function(x, start = TRUE) {
-  .Call(ffi_vec_detect_run_bounds, x, start, environment())
+vec_detect_run_bounds <- function(x, which = c("start", "end")) {
+  .Call(ffi_vec_detect_run_bounds, x, which, environment())
 }
