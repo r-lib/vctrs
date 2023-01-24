@@ -55,10 +55,17 @@ r_obj* vec_locate_run_bounds(r_obj* x, enum vctrs_run_bound which, struct r_lazy
 
   r_obj* out = KEEP(r_alloc_integer(n));
   int* v_out = r_int_begin(out);
+  r_ssize j = compute_iter_loc(n, which);
 
-  for (r_ssize i = 0, j = 0; i < size && j < n; ++i) {
-    v_out[j] = i + 1;
-    j += v_where[i];
+  r_ssize loc = compute_iter_loc(size, which);
+  const r_ssize step = compute_iter_step(which);
+
+  // First/last value are always the final bound locations
+  // (depending on `which`), so `j` won't ever write to OOB locations
+  for (r_ssize i = 0; i < size; ++i) {
+    v_out[j] = loc + 1;
+    j += step * v_where[loc];
+    loc += step;
   }
 
   FREE(2);
@@ -177,26 +184,19 @@ r_obj* vec_detect_run_bounds_bool(r_obj* x, enum vctrs_run_bound which, struct r
                                                                     \
   CTYPE const* v_x = CBEGIN(x);                                     \
                                                                     \
-  if (which == VCTRS_RUN_BOUND_start) {                             \
-    /* Handle first case */                                         \
-    CTYPE ref = v_x[0];                                             \
-    v_out[0] = true;                                                \
+  r_ssize loc = compute_iter_loc(size, which);                      \
+  const r_ssize step = compute_iter_step(which);                    \
                                                                     \
-    for (r_ssize i = 1; i < size; ++i) {                            \
-      CTYPE const elt = v_x[i];                                     \
-      v_out[i] = !EQUAL_NA_EQUAL(elt, ref);                         \
-      ref = elt;                                                    \
-    }                                                               \
-  } else {                                                          \
-    /* Handle last case */                                          \
-    CTYPE ref = v_x[size - 1];                                      \
-    v_out[size - 1] = true;                                         \
+  /* Handle first/last value */                                     \
+  CTYPE ref = v_x[loc];                                             \
+  v_out[loc] = true;                                                \
+  loc += step;                                                      \
                                                                     \
-    for (r_ssize i = size - 2; i >= 0; --i) {                       \
-      CTYPE const elt = v_x[i];                                     \
-      v_out[i] = !EQUAL_NA_EQUAL(elt, ref);                         \
-      ref = elt;                                                    \
-    }                                                               \
+  for (r_ssize i = 1; i < size; ++i) {                              \
+    CTYPE const elt = v_x[loc];                                     \
+    v_out[loc] = !EQUAL_NA_EQUAL(elt, ref);                         \
+    ref = elt;                                                      \
+    loc += step;                                                    \
   }                                                                 \
 }
 
@@ -243,18 +243,17 @@ void df_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound whic
   const r_ssize n_col = r_length(x);
   r_obj* const* v_x = r_list_cbegin(x);
 
+  r_ssize loc = compute_iter_loc(size, which);
+  const r_ssize step = compute_iter_step(which);
+
   // `v_out` will eventually be `true` if we are in a run
   // continuation, and `false` if we are starting a new run.
-  if (which == VCTRS_RUN_BOUND_start) {
-    v_out[0] = false;
-    for (r_ssize i = 1; i < size; ++i) {
-      v_out[i] = true;
-    }
-  } else {
-    v_out[size - 1] = false;
-    for (r_ssize i = size - 2; i >= 0; --i) {
-      v_out[i] = true;
-    }
+  v_out[loc] = false;
+  loc += step;
+
+  for (r_ssize i = 1; i < size; ++i) {
+    v_out[loc] = true;
+    loc += step;
   }
 
   for (r_ssize i = 0; i < n_col; ++i) {
@@ -286,22 +285,17 @@ void col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound whi
 #define VEC_COL_DETECT_RUN_BOUNDS_BOOL(CTYPE, CBEGIN, EQUAL_NA_EQUAL) {   \
   CTYPE const* v_x = CBEGIN(x);                                           \
                                                                           \
-  if (which == VCTRS_RUN_BOUND_start) {                                   \
-    CTYPE ref = v_x[0];                                                   \
+  r_ssize loc = compute_iter_loc(size, which);                            \
+  const r_ssize step = compute_iter_step(which);                          \
                                                                           \
-    for (r_ssize i = 1; i < size; ++i) {                                  \
-      CTYPE const elt = v_x[i];                                           \
-      v_out[i] = v_out[i] && EQUAL_NA_EQUAL(ref, elt);                    \
-      ref = elt;                                                          \
-    }                                                                     \
-  } else {                                                                \
-    CTYPE ref = v_x[size - 1];                                            \
+  CTYPE ref = v_x[loc];                                                   \
+  loc += step;                                                            \
                                                                           \
-    for (r_ssize i = size - 2; i >= 0; --i) {                             \
-      CTYPE const elt = v_x[i];                                           \
-      v_out[i] = v_out[i] && EQUAL_NA_EQUAL(ref, elt);                    \
-      ref = elt;                                                          \
-    }                                                                     \
+  for (r_ssize i = 1; i < size; ++i) {                                    \
+    CTYPE const elt = v_x[loc];                                           \
+    v_out[loc] = v_out[loc] && EQUAL_NA_EQUAL(ref, elt);                  \
+    ref = elt;                                                            \
+    loc += step;                                                          \
   }                                                                       \
 }
 
@@ -337,6 +331,24 @@ void list_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_boun
 #undef VEC_COL_DETECT_RUN_BOUNDS_BOOL
 
 // -----------------------------------------------------------------------------
+
+static inline
+r_ssize compute_iter_loc(r_ssize size, enum vctrs_run_bound which) {
+  switch (which) {
+  case VCTRS_RUN_BOUND_start: return 0;
+  case VCTRS_RUN_BOUND_end: return size - 1;
+  default: r_stop_internal("Unknown `which` value.");
+  }
+}
+
+static inline
+r_ssize compute_iter_step(enum vctrs_run_bound which) {
+  switch (which) {
+  case VCTRS_RUN_BOUND_start: return 1;
+  case VCTRS_RUN_BOUND_end: return -1;
+  default: r_stop_internal("Unknown `which` value.");
+  }
+}
 
 static inline
 enum vctrs_run_bound as_run_bound(r_obj* which, struct r_lazy error_call) {

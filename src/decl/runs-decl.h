@@ -41,4 +41,9 @@ static inline
 void list_col_detect_run_bounds_bool(r_obj* x, r_ssize size, enum vctrs_run_bound which, bool* v_out);
 
 static inline
+r_ssize compute_iter_loc(r_ssize size, enum vctrs_run_bound which);
+static inline
+r_ssize compute_iter_step(enum vctrs_run_bound which);
+
+static inline
 enum vctrs_run_bound as_run_bound(r_obj* which, struct r_lazy error_call);
