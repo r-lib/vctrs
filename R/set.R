@@ -31,7 +31,7 @@
 #' @param x_arg,y_arg Argument names for `x` and `y`. These are used in error
 #'   messages.
 #'
-#' @returns
+#' @return
 #' A vector of the common type of `x` and `y` (or `ptype`, if supplied)
 #' containing the result of the corresponding set function.
 #'
