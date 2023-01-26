@@ -36,7 +36,7 @@
 #'   - `"fastest"` to vary the first column fastest. This matches the behavior
 #'     of [expand.grid()].
 #'
-#' @returns
+#' @return
 #' A data frame with as many columns as there are inputs in `...` and as many
 #' rows as the [prod()] of the sizes of the inputs.
 #'
