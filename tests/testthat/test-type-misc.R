@@ -147,6 +147,13 @@ test_that("`numeric_version` proxy can handle at most 8 components", {
   })
 })
 
+test_that("`numeric_version` can compare against components with 8 components", {
+  x <- numeric_version("2.3.4.5.6.7.8.9")
+  y <- c(x, numeric_version(c("1.1", "11.2", "2.1")))
+
+  expect_identical(vec_compare(x, y), c(0L, 1L, -1L, 1L))
+})
+
 test_that("`package_version` and `R_system_version` use the `numeric_version` proxy", {
   x <- numeric_version("1.5.6")
   y <- package_version("1.5.6")
