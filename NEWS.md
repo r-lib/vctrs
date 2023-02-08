@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* The `numeric_version` type from base R is now better supported in equality,
+  comparison, and order based operations (tidyverse/dplyr#6680).
+
 * New `vec_run_sizes()` for computing the size of each run within a vector. It
   is identical to the `times` column from `vec_unrep()`, but is faster if you
   don't need the run key (#1210).
