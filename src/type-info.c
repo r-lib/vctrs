@@ -112,8 +112,7 @@ bool vec_is_list(r_obj* x) {
   return (type == VCTRS_CLASS_list) || (type == VCTRS_CLASS_bare_asis);
 }
 
-// [[ register() ]]
-r_obj* vctrs_is_vector(r_obj* x) {
+r_obj* ffi_vec_is_vector(r_obj* x) {
   return r_lgl(vec_is_vector(x));
 }
 

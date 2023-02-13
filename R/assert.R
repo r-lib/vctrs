@@ -191,7 +191,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #'
 #' S3 lists are thus treated as scalars unless they implement a proxy.
 vec_is_vector <- function(x) {
-  .Call(vctrs_is_vector, x)
+  .Call(ffi_vec_is_vector, x)
 }
 
 #' List checks
