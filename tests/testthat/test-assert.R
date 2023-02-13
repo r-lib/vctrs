@@ -72,8 +72,15 @@ test_that("bare lists are vectors", {
 
 test_that("S3 lists are not vectors by default", {
   expect_false(vec_is_vector(foobar()))
+  expect_false(vec_is_list(foobar()))
+
   local_foobar_proxy()
+
+  # TODO: These seem inconsistent.
+  # Should we require that S3 list proxies satisfy `vec_is_list()`?
+  # (i.e. unclass themselves or explicitly inherit from `"list"`?)
   expect_true(vec_is_vector(foobar()))
+  expect_false(vec_is_list(foobar()))
 })
 
 test_that("data frames and records are vectors", {
@@ -134,6 +141,30 @@ test_that("non-vector types can be proxied", {
   expect_true(vec_is_vector(x))
   expect_true(vec_is(x))
   expect_error(regexp = NA, vec_assert(x))
+})
+
+test_that("vec_check_vector() is silent on vectors", {
+  expect_null(vec_check_vector(1))
+  expect_null(vec_check_vector(data_frame()))
+})
+
+test_that("vec_check_vector() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_check_vector(quote(foo))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_vector(foobar())
+  })
+})
+
+test_that("vec_check_vector() error respects `arg` and `call`", {
+  my_check_vector <- function(foo) {
+    vec_check_vector(foo)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_vector(foobar())
+  })
 })
 
 test_that("vec_assert() uses friendly type in error messages", {
@@ -236,6 +267,59 @@ test_that("names and row names do not influence type identity (#707)", {
   expect_true(vec_is(TRUE, c(a = TRUE)))
   expect_true(vec_is(structure(mtcars, row.names = 1:32), mtcars))
   expect_true(vec_is(mtcars, structure(mtcars, row.names = 1:32)))
+})
+
+# vec_check_size --------------------------------------------------------
+
+test_that("vec_check_size() is silent if the size is right", {
+  expect_null(vec_check_size(1:5, size = 5L))
+  expect_null(vec_check_size(data_frame(.size = 10L), size = 10L))
+})
+
+test_that("vec_check_size() errors on the wrong size", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1:5, size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1:5, size = 10L)
+  })
+})
+
+test_that("vec_check_size() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(quote(foo), size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(foobar(), size = 1L)
+  })
+})
+
+test_that("vec_check_size() error respects `arg` and `call`", {
+  my_check_size <- function(foo, size) {
+    vec_check_size(foo, size)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_size(1L, size = 5L)
+  })
+  expect_snapshot(error = TRUE, {
+    my_check_size(foobar(), size = 5L)
+  })
+})
+
+test_that("vec_check_size() validates `size`", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = c(1L, 2L))
+  })
+
+  # TODO: This should be an error, and we want to know when it changes
+  # https://github.com/r-lib/rlang/issues/1562
+  expect_snapshot({
+    vec_check_size(1, size = 1.5)
+  })
 })
 
 # vec_is_list -----------------------------------------------------------

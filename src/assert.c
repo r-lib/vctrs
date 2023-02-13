@@ -13,6 +13,16 @@ void vec_assert(r_obj* x,
   }
 }
 
+r_obj* ffi_vec_check_vector(r_obj* x, r_obj* frame) {
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  struct r_lazy arg_lazy = { .x = r_syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
+  vec_check_vector(x, &arg, call);
+
+  return r_null;
+}
+
 void vec_check_vector(r_obj* x,
                       struct vctrs_arg* arg,
                       struct r_lazy call) {
@@ -21,11 +31,23 @@ void vec_check_vector(r_obj* x,
   }
 }
 
+r_obj* ffi_vec_check_size(r_obj* x, r_obj* ffi_size, r_obj* frame) {
+  struct r_lazy call = { .x = r_syms.call, .env = frame };
+  struct r_lazy arg_lazy = { .x = r_syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
+
+  const r_ssize size = r_arg_as_ssize(ffi_size, "size");
+
+  vec_check_size(x, size, &arg, call);
+
+  return r_null;
+}
+
 void vec_check_size(r_obj* x,
                     r_ssize size,
                     struct vctrs_arg* arg,
                     struct r_lazy call) {
-  r_ssize x_size = vec_size_3(x, arg, call);
+  const r_ssize x_size = vec_size_3(x, arg, call);
 
   if (x_size != size) {
     stop_assert_size(x_size, size, arg, call);

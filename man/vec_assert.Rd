@@ -40,6 +40,7 @@ throws a typed error (see section on error types) or returns \code{x},
 invisibly.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#questioning}{\figure{lifecycle-questioning.svg}{options: alt='[Questioning]'}}}{\strong{[Questioning]}}
 \itemize{
 \item \code{vec_is()} is a predicate that checks if its input is a vector that
 conforms to a prototype and/or a size.
@@ -47,40 +48,6 @@ conforms to a prototype and/or a size.
 doesn't conform.
 }
 }
-\section{Scalars and vectors}{
-
-
-Informally, a vector is a collection that makes sense to use as
-column in a data frame. An object is a vector if one of the
-following conditions hold:
-\itemize{
-\item A \code{\link[=vec_proxy]{vec_proxy()}} method is implemented for the class of the
-object.
-\item The \link[=typeof]{base type} of the object is atomic: \code{"logical"},
-\code{"integer"}, \code{"double"}, \code{"complex"}, \code{"character"}, \code{"raw"}
-\item The object is a \link{data.frame}.
-\item The base type is \code{"list"}, and one of:
-\itemize{
-\item The object is a bare \code{"list"} without a \code{"class"} attribute.
-\item The object explicitly inherits from \code{"list"}. That is, the
-\code{"class"} attribute contains \code{"list"} and \code{inherits(x, "list")} is \code{TRUE}.
-}
-}
-
-Otherwise an object is treated as scalar and cannot be used as a
-vector. In particular:
-\itemize{
-\item \code{NULL} is not a vector.
-\item S3 lists like \code{lm} objects are treated as scalars by default.
-\item Objects of type \link{expression} are not treated as vectors.
-\item Support for S4 vectors is currently limited to objects that
-inherit from an atomic type.
-\item Subclasses of \link{data.frame} that \emph{append} their class to the \code{"class"}
-attribute are not treated as vectors. If you inherit from an S3 class,
-always prepend your class to the \code{"class"} attribute for correct dispatch.
-}
-}
-
 \section{Error types}{
 
 
@@ -98,3 +65,55 @@ always prepend your class to the \code{"class"} attribute for correct dispatch.
 Both errors inherit from \code{"vctrs_error_assert"}.
 }
 
+\section{Lifecycle}{
+
+
+Both \code{vec_is()} and \code{vec_assert()} are questioning because their \code{ptype}
+arguments have semantics that are challenging to define clearly and are
+rarely useful.
+\itemize{
+\item Use \code{\link[=vec_is_vector]{vec_is_vector()}} or \code{\link[=vec_check_vector]{vec_check_vector()}} for vector checks
+\item Use \code{\link[=vec_check_size]{vec_check_size()}} for size checks
+\item Use \code{\link[=vec_cast]{vec_cast()}}, \code{\link[=inherits]{inherits()}}, or simple type predicates like
+\code{\link[rlang:type-predicates]{rlang::is_logical()}} for specific type checks
+}
+}
+
+\section{Vectors and scalars}{
+
+
+Informally, a vector is a collection that makes sense to use as column in a
+data frame. The following rules define whether or not \code{x} is considered a
+vector.
+
+If no \code{\link[=vec_proxy]{vec_proxy()}} method has been registered, \code{x} is a vector if:
+\itemize{
+\item The \link[=typeof]{base type} of the object is atomic: \code{"logical"}, \code{"integer"},
+\code{"double"}, \code{"complex"}, \code{"character"}, or \code{"raw"}.
+\item \code{x} is a list, as defined by \code{\link[=vec_is_list]{vec_is_list()}}.
+\item \code{x} is a \link{data.frame}.
+}
+
+If a \code{vec_proxy()} method has been registered, \code{x} is a vector if:
+\itemize{
+\item The proxy satisfies one of the above conditions.
+\item The base type of the proxy is \code{"list"}, regardless of its class. S3 lists
+are thus treated as scalars unless they implement a \code{vec_proxy()} method.
+}
+
+Otherwise an object is treated as scalar and cannot be used as a vector.
+In particular:
+\itemize{
+\item \code{NULL} is not a vector.
+\item S3 lists like \code{lm} objects are treated as scalars by default.
+\item Objects of type \link{expression} are not treated as vectors.
+\item Support for S4 vectors is currently limited to objects that inherit from an
+atomic type.
+\item Subclasses of \link{data.frame} that \emph{append} their class to the back of the
+\code{"class"} attribute are not treated as vectors. If you inherit from an S3
+class, always prepend your class to the front of the \code{"class"} attribute
+for correct dispatch.
+}
+}
+
+\keyword{internal}

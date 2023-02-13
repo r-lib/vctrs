@@ -1,6 +1,7 @@
 #' Assert an argument has known prototype and/or size
 #'
 #' @description
+#' `r lifecycle::badge("questioning")`
 #'
 #' * `vec_is()` is a predicate that checks if its input is a vector that
 #'   conforms to a prototype and/or a size.
@@ -8,37 +9,7 @@
 #' * `vec_assert()` throws an error when the input is not a vector or
 #'   doesn't conform.
 #'
-#' @section Scalars and vectors:
-#'
-#' Informally, a vector is a collection that makes sense to use as
-#' column in a data frame. An object is a vector if one of the
-#' following conditions hold:
-#'
-#' - A [vec_proxy()] method is implemented for the class of the
-#'   object.
-#'
-#' - The [base type][typeof] of the object is atomic: `"logical"`,
-#'   `"integer"`, `"double"`, `"complex"`, `"character"`, `"raw"`
-#'
-#' - The object is a [data.frame].
-#'
-#' - The base type is `"list"`, and one of:
-#'     - The object is a bare `"list"` without a `"class"` attribute.
-#'     - The object explicitly inherits from `"list"`. That is, the
-#'       `"class"` attribute contains `"list"` and `inherits(x,
-#'       "list")` is `TRUE`.
-#'
-#' Otherwise an object is treated as scalar and cannot be used as a
-#' vector. In particular:
-#'
-#' - `NULL` is not a vector.
-#' - S3 lists like `lm` objects are treated as scalars by default.
-#' - Objects of type [expression] are not treated as vectors.
-#' - Support for S4 vectors is currently limited to objects that
-#'   inherit from an atomic type.
-#' - Subclasses of [data.frame] that *append* their class to the `"class"`
-#'   attribute are not treated as vectors. If you inherit from an S3 class,
-#'   always prepend your class to the `"class"` attribute for correct dispatch.
+#' @inheritSection vector-checks Vectors and scalars
 #'
 #' @section Error types:
 #'
@@ -56,6 +27,19 @@
 #'
 #' Both errors inherit from `"vctrs_error_assert"`.
 #'
+#' @section Lifecycle:
+#'
+#' Both `vec_is()` and `vec_assert()` are questioning because their `ptype`
+#' arguments have semantics that are challenging to define clearly and are
+#' rarely useful.
+#'
+#' - Use [vec_is_vector()] or [vec_check_vector()] for vector checks
+#'
+#' - Use [vec_check_size()] for size checks
+#'
+#' - Use [vec_cast()], [inherits()], or simple type predicates like
+#'   [rlang::is_logical()] for specific type checks
+#'
 #' @inheritParams rlang::args_error_context
 #'
 #' @param x A vector argument to check.
@@ -71,6 +55,7 @@
 #' @return `vec_is()` returns `TRUE` or `FALSE`. `vec_assert()` either
 #'   throws a typed error (see section on error types) or returns `x`,
 #'   invisibly.
+#' @keywords internal
 #' @export
 vec_assert <- function(x,
                        ptype = NULL,
@@ -178,20 +163,129 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
   TRUE
 }
 
-#' Is object a vector?
-#' @noRd
+#' Vector checks
 #'
 #' @description
 #'
-#' Returns `TRUE` if:
+#' - `vec_is_vector()` tests if `x` is considered a vector in the vctrs sense.
+#'   See _Vectors and scalars_ below for the exact details.
 #'
-#' * `x` is an atomic, whether it has a class or not.
-#' * `x` is a bare list without class.
-#' * `x` implements [vec_proxy()].
+#' - `vec_check_vector()` uses `vec_is_vector()` and throws a standardized and
+#'   informative error if it returns `FALSE`.
 #'
-#' S3 lists are thus treated as scalars unless they implement a proxy.
+#' - `vec_check_size()` tests if `x` has the same size as `size`, and throws
+#'   an informative error if it doesn't.
+#'
+#' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
+#'
+#' @param x An object.
+#'
+#' @param size The size to check for.
+#'
+#' @returns
+#' - `vec_is_vector()` returns a single `TRUE` or `FALSE`.
+#'
+#' - `vec_check_vector()` returns `NULL` invisibly, or errors.
+#'
+#' - `vec_check_size()` returns `NULL` invisibly, or errors.
+#'
+#' @section Vectors and scalars:
+#'
+#' Informally, a vector is a collection that makes sense to use as column in a
+#' data frame. The following rules define whether or not `x` is considered a
+#' vector.
+#'
+#' If no [vec_proxy()] method has been registered, `x` is a vector if:
+#'
+#' - The [base type][typeof] of the object is atomic: `"logical"`, `"integer"`,
+#'   `"double"`, `"complex"`, `"character"`, or `"raw"`.
+#'
+#' - `x` is a list, as defined by [vec_is_list()].
+#'
+#' - `x` is a [data.frame].
+#'
+#' If a `vec_proxy()` method has been registered, `x` is a vector if:
+#'
+#' - The proxy satisfies one of the above conditions.
+#'
+#' - The base type of the proxy is `"list"`, regardless of its class. S3 lists
+#'   are thus treated as scalars unless they implement a `vec_proxy()` method.
+#'
+#' Otherwise an object is treated as scalar and cannot be used as a vector.
+#' In particular:
+#'
+#' - `NULL` is not a vector.
+#'
+#' - S3 lists like `lm` objects are treated as scalars by default.
+#'
+#' - Objects of type [expression] are not treated as vectors.
+#'
+#' - Support for S4 vectors is currently limited to objects that inherit from an
+#'   atomic type.
+#'
+#' - Subclasses of [data.frame] that *append* their class to the back of the
+#'   `"class"` attribute are not treated as vectors. If you inherit from an S3
+#'   class, always prepend your class to the front of the `"class"` attribute
+#'   for correct dispatch.
+#'
+#' @name vector-checks
+#' @examples
+#' vec_is_vector(1)
+#'
+#' # Data frames are vectors
+#' vec_is_vector(data_frame())
+#'
+#' # Bare lists are vectors
+#' vec_is_vector(list())
+#'
+#' # S3 lists are vectors if they explicitly inherit from `"list"`
+#' x <- structure(list(), class = c("my_list", "list"))
+#' vec_is_list(x)
+#' vec_is_vector(x)
+#'
+#' # But if they don't explicitly inherit from `"list"`, they aren't
+#' # automatically considered to be vectors. Instead, vctrs considers this
+#' # to be a scalar object, like a linear model returned from `lm()`.
+#' y <- structure(list(), class = "my_list")
+#' vec_is_list(y)
+#' vec_is_vector(y)
+#'
+#' # `vec_check_vector()` throws an informative error if the input
+#' # isn't a vector
+#' try(vec_check_vector(y))
+#'
+#' # `vec_check_vector()` throws an informative error if the size of the
+#' # input doesn't match `size`
+#' vec_check_size(1:5, size = 5)
+#' try(vec_check_size(1:5, size = 4))
+NULL
+
+#' @export
+#' @rdname vector-checks
 vec_is_vector <- function(x) {
   .Call(ffi_vec_is_vector, x)
+}
+
+#' @export
+#' @rdname vector-checks
+vec_check_vector <- function(x,
+                             ...,
+                             arg = caller_arg(x),
+                             call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_vec_check_vector, x, environment()))
+}
+
+#' @export
+#' @rdname vector-checks
+vec_check_size <- function(x,
+                           size,
+                           ...,
+                           arg = caller_arg(x),
+                           call = caller_env()) {
+  check_dots_empty0(...)
+  invisible(.Call(ffi_vec_check_size, x, size, environment()))
 }
 
 #' List checks

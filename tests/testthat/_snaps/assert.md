@@ -1,3 +1,27 @@
+# vec_check_vector() errors on scalars
+
+    Code
+      vec_check_vector(quote(foo))
+    Condition
+      Error:
+      ! `quote(foo)` must be a vector, not a symbol.
+
+---
+
+    Code
+      vec_check_vector(foobar())
+    Condition
+      Error:
+      ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+
+# vec_check_vector() error respects `arg` and `call`
+
+    Code
+      my_check_vector(foobar())
+    Condition
+      Error in `my_check_vector()`:
+      ! `foo` must be a vector, not a <vctrs_foobar> object.
+
 # assertion failures are explained
 
     Code
@@ -187,6 +211,75 @@
       <error/vctrs_error_cast>
       Error in `vec_assert()`:
       ! Can't convert `size` <character> to <integer>.
+
+# vec_check_size() errors on the wrong size
+
+    Code
+      vec_check_size(1:5, size = 1L)
+    Condition
+      Error:
+      ! `1:5` must have size 1, not size 5.
+
+---
+
+    Code
+      vec_check_size(1:5, size = 10L)
+    Condition
+      Error:
+      ! `1:5` must have size 10, not size 5.
+
+# vec_check_size() errors on scalars
+
+    Code
+      vec_check_size(quote(foo), size = 1L)
+    Condition
+      Error:
+      ! `quote(foo)` must be a vector, not a symbol.
+
+---
+
+    Code
+      vec_check_size(foobar(), size = 1L)
+    Condition
+      Error:
+      ! `foobar()` must be a vector, not a <vctrs_foobar> object.
+
+# vec_check_size() error respects `arg` and `call`
+
+    Code
+      my_check_size(1L, size = 5L)
+    Condition
+      Error in `my_check_size()`:
+      ! `foo` must have size 5, not size 1.
+
+---
+
+    Code
+      my_check_size(foobar(), size = 5L)
+    Condition
+      Error in `my_check_size()`:
+      ! `foo` must be a vector, not a <vctrs_foobar> object.
+
+# vec_check_size() validates `size`
+
+    Code
+      vec_check_size(1, size = "x")
+    Condition
+      Error in `vec_check_size()`:
+      ! `size` must be a scalar integer or double.
+
+---
+
+    Code
+      vec_check_size(1, size = c(1L, 2L))
+    Condition
+      Error in `vec_check_size()`:
+      ! `size` must be a scalar integer or double.
+
+---
+
+    Code
+      vec_check_size(1, size = 1.5)
 
 # list_all_vectors() works
 
