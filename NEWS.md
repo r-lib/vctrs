@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* New `vec_is_vector()`, `vec_check_vector()`, and `vec_check_size()` validation
+  helpers. We believe these are a better approach to vector validation than
+  `vec_assert()` and `vec_is()`, which have been marked as questioning because
+  the semantics of their `ptype` arguments are hard to define and can often be
+  replaced by `vec_cast()` or a type predicate function like
+  `rlang::is_logical()` (#1784).
+
 * The `numeric_version` type from base R is now better supported in equality,
   comparison, and order based operations (tidyverse/dplyr#6680).
 
