@@ -171,7 +171,7 @@ num_as_location2 <- function(i,
   check_dots_empty0(...)
 
   if (!is_integer(i) && !is_double(i)) {
-    abort("`i` must be a numeric vector.", call = vctrs_error_call(call))
+    abort("`i` must be a numeric vector.", call = call)
   }
   result_get(vec_as_location2_result(
     i,

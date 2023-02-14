@@ -401,7 +401,7 @@ r_obj* ffi_slice(r_obj* x,
   struct vec_slice_opts opts = {
     .x_arg = vec_args.x,
     .i_arg = vec_args.i,
-    .call = {.x = r_syms.call, .env = frame}
+    .call = {.x = r_syms.error_call, .env = frame}
   };
   return vec_slice_opts(x, i, &opts);
 }

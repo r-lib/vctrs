@@ -6,7 +6,7 @@
 \alias{vec_assign}
 \title{Get or set observations in a vector}
 \usage{
-vec_slice(x, i)
+vec_slice(x, i, ..., error_call = current_env())
 
 vec_slice(x, i) <- value
 
@@ -20,11 +20,16 @@ locations or names of the observations to get/set. Specify
 \code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
 \code{integer()} to index none (as in \code{x[NULL]}).}
 
+\item{...}{These dots are for future extensions and must be empty.}
+
+\item{error_call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
+
 \item{value}{Replacement values. \code{value} is cast to the type of
 \code{x}, but only if they have a common type. See below for examples
 of this rule.}
-
-\item{...}{These dots are for future extensions and must be empty.}
 
 \item{x_arg, value_arg}{Argument names for \code{x} and \code{value}. These are used
 in error messages to inform the user about the locations of
