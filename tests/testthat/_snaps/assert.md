@@ -1,7 +1,7 @@
-# vec_check_vector() errors on scalars
+# obj_check_vector() errors on scalars
 
     Code
-      vec_check_vector(quote(foo))
+      obj_check_vector(quote(foo))
     Condition
       Error:
       ! `quote(foo)` must be a vector, not a symbol.
@@ -9,12 +9,12 @@
 ---
 
     Code
-      vec_check_vector(foobar())
+      obj_check_vector(foobar())
     Condition
       Error:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
 
-# vec_check_vector() error respects `arg` and `call`
+# obj_check_vector() error respects `arg` and `call`
 
     Code
       my_check_vector(foobar())

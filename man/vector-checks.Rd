@@ -3,13 +3,13 @@
 \name{vector-checks}
 \alias{vector-checks}
 \alias{obj_is_vector}
-\alias{vec_check_vector}
+\alias{obj_check_vector}
 \alias{vec_check_size}
 \title{Vector checks}
 \usage{
 obj_is_vector(x)
 
-vec_check_vector(x, ..., arg = caller_arg(x), call = caller_env())
+obj_check_vector(x, ..., arg = caller_arg(x), call = caller_env())
 
 vec_check_size(x, size, ..., arg = caller_arg(x), call = caller_env())
 }
@@ -32,7 +32,7 @@ mentioned in error messages as the source of the error. See the
 \value{
 \itemize{
 \item \code{obj_is_vector()} returns a single \code{TRUE} or \code{FALSE}.
-\item \code{vec_check_vector()} returns \code{NULL} invisibly, or errors.
+\item \code{obj_check_vector()} returns \code{NULL} invisibly, or errors.
 \item \code{vec_check_size()} returns \code{NULL} invisibly, or errors.
 }
 }
@@ -40,7 +40,7 @@ mentioned in error messages as the source of the error. See the
 \itemize{
 \item \code{obj_is_vector()} tests if \code{x} is considered a vector in the vctrs sense.
 See \emph{Vectors and scalars} below for the exact details.
-\item \code{vec_check_vector()} uses \code{obj_is_vector()} and throws a standardized and
+\item \code{obj_check_vector()} uses \code{obj_is_vector()} and throws a standardized and
 informative error if it returns \code{FALSE}.
 \item \code{vec_check_size()} tests if \code{x} has the same size as \code{size}, and throws
 an informative error if it doesn't.
@@ -104,11 +104,11 @@ y <- structure(list(), class = "my_list")
 vec_is_list(y)
 obj_is_vector(y)
 
-# `vec_check_vector()` throws an informative error if the input
+# `obj_check_vector()` throws an informative error if the input
 # isn't a vector
-try(vec_check_vector(y))
+try(obj_check_vector(y))
 
-# `vec_check_vector()` throws an informative error if the size of the
+# `vec_check_size()` throws an informative error if the size of the
 # input doesn't match `size`
 vec_check_size(1:5, size = 5)
 try(vec_check_size(1:5, size = 4))

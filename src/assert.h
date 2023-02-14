@@ -8,7 +8,7 @@ void vec_assert(r_obj* x,
                 struct vctrs_arg* arg,
                 struct r_lazy call);
 
-void vec_check_vector(r_obj* x,
+void obj_check_vector(r_obj* x,
                       struct vctrs_arg* arg,
                       struct r_lazy call);
 

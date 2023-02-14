@@ -18,8 +18,8 @@ r_obj* vec_assign_opts(r_obj* x,
     opts.value_arg = vec_args.value;
   }
 
-  vec_check_vector(x, opts.x_arg, opts.call);
-  vec_check_vector(value, opts.value_arg, opts.call);
+  obj_check_vector(x, opts.x_arg, opts.call);
+  obj_check_vector(value, opts.value_arg, opts.call);
 
   const struct location_opts location_opts = new_location_opts_assign();
   index = KEEP(vec_as_location_opts(index,

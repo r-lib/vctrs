@@ -33,7 +33,7 @@
 #' arguments have semantics that are challenging to define clearly and are
 #' rarely useful.
 #'
-#' - Use [obj_is_vector()] or [vec_check_vector()] for vector checks
+#' - Use [obj_is_vector()] or [obj_check_vector()] for vector checks
 #'
 #' - Use [vec_check_size()] for size checks
 #'
@@ -170,7 +170,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' - `obj_is_vector()` tests if `x` is considered a vector in the vctrs sense.
 #'   See _Vectors and scalars_ below for the exact details.
 #'
-#' - `vec_check_vector()` uses `obj_is_vector()` and throws a standardized and
+#' - `obj_check_vector()` uses `obj_is_vector()` and throws a standardized and
 #'   informative error if it returns `FALSE`.
 #'
 #' - `vec_check_size()` tests if `x` has the same size as `size`, and throws
@@ -186,7 +186,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' @returns
 #' - `obj_is_vector()` returns a single `TRUE` or `FALSE`.
 #'
-#' - `vec_check_vector()` returns `NULL` invisibly, or errors.
+#' - `obj_check_vector()` returns `NULL` invisibly, or errors.
 #'
 #' - `vec_check_size()` returns `NULL` invisibly, or errors.
 #'
@@ -251,11 +251,11 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' vec_is_list(y)
 #' obj_is_vector(y)
 #'
-#' # `vec_check_vector()` throws an informative error if the input
+#' # `obj_check_vector()` throws an informative error if the input
 #' # isn't a vector
-#' try(vec_check_vector(y))
+#' try(obj_check_vector(y))
 #'
-#' # `vec_check_vector()` throws an informative error if the size of the
+#' # `vec_check_size()` throws an informative error if the size of the
 #' # input doesn't match `size`
 #' vec_check_size(1:5, size = 5)
 #' try(vec_check_size(1:5, size = 4))
@@ -269,12 +269,12 @@ obj_is_vector <- function(x) {
 
 #' @export
 #' @rdname vector-checks
-vec_check_vector <- function(x,
+obj_check_vector <- function(x,
                              ...,
                              arg = caller_arg(x),
                              call = caller_env()) {
   check_dots_empty0(...)
-  invisible(.Call(ffi_vec_check_vector, x, environment()))
+  invisible(.Call(ffi_obj_check_vector, x, environment()))
 }
 
 #' @export

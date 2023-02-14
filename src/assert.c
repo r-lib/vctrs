@@ -5,7 +5,7 @@ void vec_assert(r_obj* x,
                 r_ssize size,
                 struct vctrs_arg* arg,
                 struct r_lazy call) {
-  vec_check_vector(x, arg, call);
+  obj_check_vector(x, arg, call);
 
   if (size != -1) {
     // `size == -1` makes no assertion about size
@@ -13,17 +13,17 @@ void vec_assert(r_obj* x,
   }
 }
 
-r_obj* ffi_vec_check_vector(r_obj* x, r_obj* frame) {
+r_obj* ffi_obj_check_vector(r_obj* x, r_obj* frame) {
   struct r_lazy call = { .x = r_syms.call, .env = frame };
   struct r_lazy arg_lazy = { .x = r_syms.arg, .env = frame };
   struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
-  vec_check_vector(x, &arg, call);
+  obj_check_vector(x, &arg, call);
 
   return r_null;
 }
 
-void vec_check_vector(r_obj* x,
+void obj_check_vector(r_obj* x,
                       struct vctrs_arg* arg,
                       struct r_lazy call) {
   if (!obj_is_vector(x)) {
@@ -101,7 +101,7 @@ r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
   r_obj* const * v_x = r_list_cbegin(x);
 
   for (; i < n; ++i) {
-    vec_check_vector(v_x[i], arg, call);
+    obj_check_vector(v_x[i], arg, call);
   }
 
   FREE(1);

@@ -143,23 +143,23 @@ test_that("non-vector types can be proxied", {
   expect_error(regexp = NA, vec_assert(x))
 })
 
-test_that("vec_check_vector() is silent on vectors", {
-  expect_null(vec_check_vector(1))
-  expect_null(vec_check_vector(data_frame()))
+test_that("obj_check_vector() is silent on vectors", {
+  expect_null(obj_check_vector(1))
+  expect_null(obj_check_vector(data_frame()))
 })
 
-test_that("vec_check_vector() errors on scalars", {
+test_that("obj_check_vector() errors on scalars", {
   expect_snapshot(error = TRUE, {
-    vec_check_vector(quote(foo))
+    obj_check_vector(quote(foo))
   })
   expect_snapshot(error = TRUE, {
-    vec_check_vector(foobar())
+    obj_check_vector(foobar())
   })
 })
 
-test_that("vec_check_vector() error respects `arg` and `call`", {
+test_that("obj_check_vector() error respects `arg` and `call`", {
   my_check_vector <- function(foo) {
-    vec_check_vector(foo)
+    obj_check_vector(foo)
   }
 
   expect_snapshot(error = TRUE, {
