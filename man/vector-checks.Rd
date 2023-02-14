@@ -43,8 +43,8 @@ mentioned in error messages as the source of the error. See the
 See \emph{Vectors and scalars} below for the exact details.
 \item \code{obj_check_vector()} uses \code{obj_is_vector()} and throws a standardized and
 informative error if it returns \code{FALSE}.
-\item \code{vec_check_size()} tests if \code{x} has the same size as \code{size}, and throws
-an informative error if it doesn't.
+\item \code{vec_check_size()} tests if \code{x} has size \code{size}, and throws an informative
+error if it doesn't.
 }
 }
 \section{Vectors and scalars}{

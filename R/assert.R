@@ -173,8 +173,8 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' - `obj_check_vector()` uses `obj_is_vector()` and throws a standardized and
 #'   informative error if it returns `FALSE`.
 #'
-#' - `vec_check_size()` tests if `x` has the same size as `size`, and throws
-#'   an informative error if it doesn't.
+#' - `vec_check_size()` tests if `x` has size `size`, and throws an informative
+#'   error if it doesn't.
 #'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
