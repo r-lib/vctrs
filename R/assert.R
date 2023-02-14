@@ -222,13 +222,16 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #'
 #' - Objects of type [expression] are not treated as vectors.
 #'
+#' @section Technical limitations:
+#'
 #' - Support for S4 vectors is currently limited to objects that inherit from an
 #'   atomic type.
 #'
 #' - Subclasses of [data.frame] that *append* their class to the back of the
 #'   `"class"` attribute are not treated as vectors. If you inherit from an S3
 #'   class, always prepend your class to the front of the `"class"` attribute
-#'   for correct dispatch.
+#'   for correct dispatch. This matches our general principle of allowing
+#'   subclasses but not mixins.
 #'
 #' @name vector-checks
 #' @examples

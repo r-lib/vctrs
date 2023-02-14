@@ -107,12 +107,6 @@ In particular:
 \item \code{NULL} is not a vector.
 \item S3 lists like \code{lm} objects are treated as scalars by default.
 \item Objects of type \link{expression} are not treated as vectors.
-\item Support for S4 vectors is currently limited to objects that inherit from an
-atomic type.
-\item Subclasses of \link{data.frame} that \emph{append} their class to the back of the
-\code{"class"} attribute are not treated as vectors. If you inherit from an S3
-class, always prepend your class to the front of the \code{"class"} attribute
-for correct dispatch.
 }
 }
 
