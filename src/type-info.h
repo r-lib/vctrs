@@ -66,7 +66,7 @@ enum vctrs_type vec_proxy_typeof(r_obj* x);
 const char* vec_type_as_str(enum vctrs_type type);
 
 bool vec_is_list(r_obj* x);
-bool vec_is_vector(r_obj* x);
+bool obj_is_vector(r_obj* x);
 bool list_all_vectors(r_obj* x);
 
 r_no_return

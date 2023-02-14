@@ -40,7 +40,7 @@ reference:
   - vec_data
   - vec_ptype
   - vec_size
-  - vec_is_vector
+  - obj_is_vector
   - vec_is_list
 
 - title: Combining

@@ -214,7 +214,7 @@ bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype) {
   }
 
   r_obj* x = list_first_non_null(xs, NULL);
-  if (!vec_is_vector(x)) {
+  if (!obj_is_vector(x)) {
     return false;
   }
 

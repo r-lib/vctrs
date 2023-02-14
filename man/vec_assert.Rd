@@ -72,7 +72,7 @@ Both \code{vec_is()} and \code{vec_assert()} are questioning because their \code
 arguments have semantics that are challenging to define clearly and are
 rarely useful.
 \itemize{
-\item Use \code{\link[=vec_is_vector]{vec_is_vector()}} or \code{\link[=vec_check_vector]{vec_check_vector()}} for vector checks
+\item Use \code{\link[=obj_is_vector]{obj_is_vector()}} or \code{\link[=vec_check_vector]{vec_check_vector()}} for vector checks
 \item Use \code{\link[=vec_check_size]{vec_check_size()}} for size checks
 \item Use \code{\link[=vec_cast]{vec_cast()}}, \code{\link[=inherits]{inherits()}}, or simple type predicates like
 \code{\link[rlang:type-predicates]{rlang::is_logical()}} for specific type checks

@@ -33,7 +33,7 @@
 #' arguments have semantics that are challenging to define clearly and are
 #' rarely useful.
 #'
-#' - Use [vec_is_vector()] or [vec_check_vector()] for vector checks
+#' - Use [obj_is_vector()] or [vec_check_vector()] for vector checks
 #'
 #' - Use [vec_check_size()] for size checks
 #'
@@ -62,7 +62,7 @@ vec_assert <- function(x,
                        size = NULL,
                        arg = caller_arg(x),
                        call = caller_env()) {
-  if (!vec_is_vector(x)) {
+  if (!obj_is_vector(x)) {
     stop_scalar_type(x, arg, call = call)
   }
 
@@ -140,7 +140,7 @@ stop_assert <- function(message = NULL,
 #' @rdname vec_assert
 #' @export
 vec_is <- function(x, ptype = NULL, size = NULL) {
-  if (!vec_is_vector(x)) {
+  if (!obj_is_vector(x)) {
     return(FALSE)
   }
 
@@ -167,10 +167,10 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #'
 #' @description
 #'
-#' - `vec_is_vector()` tests if `x` is considered a vector in the vctrs sense.
+#' - `obj_is_vector()` tests if `x` is considered a vector in the vctrs sense.
 #'   See _Vectors and scalars_ below for the exact details.
 #'
-#' - `vec_check_vector()` uses `vec_is_vector()` and throws a standardized and
+#' - `vec_check_vector()` uses `obj_is_vector()` and throws a standardized and
 #'   informative error if it returns `FALSE`.
 #'
 #' - `vec_check_size()` tests if `x` has the same size as `size`, and throws
@@ -184,7 +184,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' @param size The size to check for.
 #'
 #' @returns
-#' - `vec_is_vector()` returns a single `TRUE` or `FALSE`.
+#' - `obj_is_vector()` returns a single `TRUE` or `FALSE`.
 #'
 #' - `vec_check_vector()` returns `NULL` invisibly, or errors.
 #'
@@ -231,25 +231,25 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #'
 #' @name vector-checks
 #' @examples
-#' vec_is_vector(1)
+#' obj_is_vector(1)
 #'
 #' # Data frames are vectors
-#' vec_is_vector(data_frame())
+#' obj_is_vector(data_frame())
 #'
 #' # Bare lists are vectors
-#' vec_is_vector(list())
+#' obj_is_vector(list())
 #'
 #' # S3 lists are vectors if they explicitly inherit from `"list"`
 #' x <- structure(list(), class = c("my_list", "list"))
 #' vec_is_list(x)
-#' vec_is_vector(x)
+#' obj_is_vector(x)
 #'
 #' # But if they don't explicitly inherit from `"list"`, they aren't
 #' # automatically considered to be vectors. Instead, vctrs considers this
 #' # to be a scalar object, like a linear model returned from `lm()`.
 #' y <- structure(list(), class = "my_list")
 #' vec_is_list(y)
-#' vec_is_vector(y)
+#' obj_is_vector(y)
 #'
 #' # `vec_check_vector()` throws an informative error if the input
 #' # isn't a vector
@@ -263,8 +263,8 @@ NULL
 
 #' @export
 #' @rdname vector-checks
-vec_is_vector <- function(x) {
-  .Call(ffi_vec_is_vector, x)
+obj_is_vector <- function(x) {
+  .Call(ffi_obj_is_vector, x)
 }
 
 #' @export

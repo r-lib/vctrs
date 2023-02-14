@@ -26,7 +26,7 @@ r_obj* ffi_vec_check_vector(r_obj* x, r_obj* frame) {
 void vec_check_vector(r_obj* x,
                       struct vctrs_arg* arg,
                       struct r_lazy call) {
-  if (!vec_is_vector(x)) {
+  if (!obj_is_vector(x)) {
     stop_scalar_type(x, arg, call);
   }
 }

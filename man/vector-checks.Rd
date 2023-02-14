@@ -2,12 +2,12 @@
 % Please edit documentation in R/assert.R
 \name{vector-checks}
 \alias{vector-checks}
-\alias{vec_is_vector}
+\alias{obj_is_vector}
 \alias{vec_check_vector}
 \alias{vec_check_size}
 \title{Vector checks}
 \usage{
-vec_is_vector(x)
+obj_is_vector(x)
 
 vec_check_vector(x, ..., arg = caller_arg(x), call = caller_env())
 
@@ -31,16 +31,16 @@ mentioned in error messages as the source of the error. See the
 }
 \value{
 \itemize{
-\item \code{vec_is_vector()} returns a single \code{TRUE} or \code{FALSE}.
+\item \code{obj_is_vector()} returns a single \code{TRUE} or \code{FALSE}.
 \item \code{vec_check_vector()} returns \code{NULL} invisibly, or errors.
 \item \code{vec_check_size()} returns \code{NULL} invisibly, or errors.
 }
 }
 \description{
 \itemize{
-\item \code{vec_is_vector()} tests if \code{x} is considered a vector in the vctrs sense.
+\item \code{obj_is_vector()} tests if \code{x} is considered a vector in the vctrs sense.
 See \emph{Vectors and scalars} below for the exact details.
-\item \code{vec_check_vector()} uses \code{vec_is_vector()} and throws a standardized and
+\item \code{vec_check_vector()} uses \code{obj_is_vector()} and throws a standardized and
 informative error if it returns \code{FALSE}.
 \item \code{vec_check_size()} tests if \code{x} has the same size as \code{size}, and throws
 an informative error if it doesn't.
@@ -84,25 +84,25 @@ for correct dispatch.
 }
 
 \examples{
-vec_is_vector(1)
+obj_is_vector(1)
 
 # Data frames are vectors
-vec_is_vector(data_frame())
+obj_is_vector(data_frame())
 
 # Bare lists are vectors
-vec_is_vector(list())
+obj_is_vector(list())
 
 # S3 lists are vectors if they explicitly inherit from `"list"`
 x <- structure(list(), class = c("my_list", "list"))
 vec_is_list(x)
-vec_is_vector(x)
+obj_is_vector(x)
 
 # But if they don't explicitly inherit from `"list"`, they aren't
 # automatically considered to be vectors. Instead, vctrs considers this
 # to be a scalar object, like a linear model returned from `lm()`.
 y <- structure(list(), class = "my_list")
 vec_is_list(y)
-vec_is_vector(y)
+obj_is_vector(y)
 
 # `vec_check_vector()` throws an informative error if the input
 # isn't a vector

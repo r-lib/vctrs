@@ -49,29 +49,29 @@ test_that("vec_assert() labels input", {
 })
 
 test_that("bare atomic vectors are vectors but not recursive", {
-  expect_true(vec_is_vector(TRUE))
-  expect_true(vec_is_vector(1L))
-  expect_true(vec_is_vector(1))
-  expect_true(vec_is_vector(1i))
-  expect_true(vec_is_vector("foo"))
-  expect_true(vec_is_vector(as.raw(1)))
+  expect_true(obj_is_vector(TRUE))
+  expect_true(obj_is_vector(1L))
+  expect_true(obj_is_vector(1))
+  expect_true(obj_is_vector(1i))
+  expect_true(obj_is_vector("foo"))
+  expect_true(obj_is_vector(as.raw(1)))
 })
 
 test_that("S3 atomic vectors are vectors", {
-  expect_true(vec_is_vector(foobar(TRUE)))
-  expect_true(vec_is_vector(foobar(1L)))
-  expect_true(vec_is_vector(foobar(1)))
-  expect_true(vec_is_vector(foobar(1i)))
-  expect_true(vec_is_vector(foobar("foo")))
-  expect_true(vec_is_vector(foobar(as.raw(1))))
+  expect_true(obj_is_vector(foobar(TRUE)))
+  expect_true(obj_is_vector(foobar(1L)))
+  expect_true(obj_is_vector(foobar(1)))
+  expect_true(obj_is_vector(foobar(1i)))
+  expect_true(obj_is_vector(foobar("foo")))
+  expect_true(obj_is_vector(foobar(as.raw(1))))
 })
 
 test_that("bare lists are vectors", {
-  expect_true(vec_is_vector(list()))
+  expect_true(obj_is_vector(list()))
 })
 
 test_that("S3 lists are not vectors by default", {
-  expect_false(vec_is_vector(foobar()))
+  expect_false(obj_is_vector(foobar()))
   expect_false(vec_is_list(foobar()))
 
   local_foobar_proxy()
@@ -79,13 +79,13 @@ test_that("S3 lists are not vectors by default", {
   # TODO: These seem inconsistent.
   # Should we require that S3 list proxies satisfy `vec_is_list()`?
   # (i.e. unclass themselves or explicitly inherit from `"list"`?)
-  expect_true(vec_is_vector(foobar()))
+  expect_true(obj_is_vector(foobar()))
   expect_false(vec_is_list(foobar()))
 })
 
 test_that("data frames and records are vectors", {
-  expect_true(vec_is_vector(mtcars))
-  expect_true(vec_is_vector(new_rcrd(list(x = 1, y = 2))))
+  expect_true(obj_is_vector(mtcars))
+  expect_true(obj_is_vector(new_rcrd(list(x = 1, y = 2))))
 })
 
 test_that("non-vector base types are scalars", {
@@ -99,14 +99,14 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(base::c), "scalar")
   expect_identical(vec_typeof(expression()), "scalar")
 
-  expect_false(vec_is_vector(quote(foo)))
-  expect_false(vec_is_vector(pairlist("")))
-  expect_false(vec_is_vector(function() NULL))
-  expect_false(vec_is_vector(env()))
-  expect_false(vec_is_vector(~foo))
-  expect_false(vec_is_vector(base::`{`))
-  expect_false(vec_is_vector(base::c))
-  expect_false(vec_is_vector(expression()))
+  expect_false(obj_is_vector(quote(foo)))
+  expect_false(obj_is_vector(pairlist("")))
+  expect_false(obj_is_vector(function() NULL))
+  expect_false(obj_is_vector(env()))
+  expect_false(obj_is_vector(~foo))
+  expect_false(obj_is_vector(base::`{`))
+  expect_false(obj_is_vector(base::c))
+  expect_false(obj_is_vector(expression()))
 
   expect_false(vec_is(quote(foo)))
   expect_false(vec_is(pairlist("")))
@@ -131,14 +131,14 @@ test_that("non-vector types can be proxied", {
   x <- new_proxy(1:3)
 
   expect_identical(vec_typeof(x), "scalar")
-  expect_false(vec_is_vector(x))
+  expect_false(obj_is_vector(x))
   expect_false(vec_is(x))
   expect_error(vec_assert(x), class = "vctrs_error_scalar_type")
 
   local_env_proxy()
 
   expect_identical(vec_typeof(x), "integer")
-  expect_true(vec_is_vector(x))
+  expect_true(obj_is_vector(x))
   expect_true(vec_is(x))
   expect_error(regexp = NA, vec_assert(x))
 })
@@ -258,7 +258,7 @@ test_that("vec_assert() validates `size` (#1470)", {
 })
 
 test_that("NULL is not a vector", {
-  expect_false(vec_is_vector(NULL))
+  expect_false(obj_is_vector(NULL))
   expect_false(vec_is(NULL))
 })
 
