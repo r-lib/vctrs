@@ -179,7 +179,8 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
 #'
-#' @param x An object.
+#' @param x For `obj_*()` functions, an object. For `vec_*()` functions, a
+#'   vector.
 #'
 #' @param size The size to check for.
 #'

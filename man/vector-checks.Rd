@@ -14,7 +14,8 @@ obj_check_vector(x, ..., arg = caller_arg(x), call = caller_env())
 vec_check_size(x, size, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
-\item{x}{An object.}
+\item{x}{For \verb{obj_*()} functions, an object. For \verb{vec_*()} functions, a
+vector.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
