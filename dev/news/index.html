@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>The <code>numeric_version</code> type from base R is now better supported in equality, comparison, and order based operations (tidyverse/dplyr#6680).</p></li>
+<ul><li><p>New <code><a href="../reference/vector-checks.html">obj_is_vector()</a></code>, <code><a href="../reference/vector-checks.html">obj_check_vector()</a></code>, and <code><a href="../reference/vector-checks.html">vec_check_size()</a></code> validation helpers. We believe these are a better approach to vector validation than <code><a href="../reference/vec_assert.html">vec_assert()</a></code> and <code><a href="../reference/vec_assert.html">vec_is()</a></code>, which have been marked as questioning because the semantics of their <code>ptype</code> arguments are hard to define and can often be replaced by <code><a href="../reference/vec_cast.html">vec_cast()</a></code> or a type predicate function like <code><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">rlang::is_logical()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1784" class="external-link">#1784</a>).</p></li>
+<li><p>The <code>numeric_version</code> type from base R is now better supported in equality, comparison, and order based operations (tidyverse/dplyr#6680).</p></li>
 <li><p>New <code><a href="../reference/runs.html">vec_run_sizes()</a></code> for computing the size of each run within a vector. It is identical to the <code>times</code> column from <code><a href="../reference/vec-rep.html">vec_unrep()</a></code>, but is faster if you don’t need the run key (<a href="https://github.com/r-lib/vctrs/issues/1210" class="external-link">#1210</a>).</p></li>
 </ul></div>
     <div class="section level2">
