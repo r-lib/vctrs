@@ -65,7 +65,7 @@ stop_vctrs <- function(message = NULL,
     message,
     class = c(class, "vctrs_error"),
     ...,
-    call = vctrs_error_call(call)
+    call = call
   )
 }
 warn_vctrs <- function(message = NULL,
@@ -869,47 +869,4 @@ append_arg <- function(x, arg) {
   } else {
     x
   }
-}
-
-vctrs_local_error_call <- function(call = frame, frame = caller_env()) {
-  # This doesn't implement the semantics of a `local_` function
-  # perfectly in order to be as fast as possible
-  frame$.__vctrs_error_call__. <- call
-  invisible(NULL)
-}
-
-vctrs_error_call <- function(call) {
-  if (is_function(call)) {
-    call <- call()
-  }
-
-  if (is_environment(call)) {
-    caller_call <- get_vctrs_error_call(call)
-    if (!is_null(caller_call)) {
-      return(caller_call)
-    }
-  }
-
-  call
-}
-
-vctrs_error_borrowed_call <- function(call = caller_env(),
-                                      borrower = caller_env(2)) {
-  borrower_call <- get_vctrs_error_call(borrower)
-
-  if (is_null(borrower_call)) {
-    call
-  } else {
-    borrower_call
-  }
-}
-
-get_vctrs_error_call <- function(call) {
-  env_get(
-    call,
-    ".__vctrs_error_call__.",
-    inherit = TRUE,
-    last = topenv(call),
-    default = NULL
-  )
 }

@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `vec_slice()` has gained an `error_call` argument (#1785).
+
 * New `obj_is_vector()`, `obj_check_vector()`, and `vec_check_size()` validation
   helpers. We believe these are a better approach to vector validation than
   `vec_assert()` and `vec_is()`, which have been marked as questioning because

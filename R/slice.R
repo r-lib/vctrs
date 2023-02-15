@@ -4,6 +4,9 @@
 #' for all vector types, regardless of dimensionality. It is an analog to `[`
 #' that matches [vec_size()] instead of `length()`.
 #'
+#' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x A vector
 #' @param i An integer, character or logical vector specifying the
 #'   locations or names of the observations to get/set. Specify
@@ -16,7 +19,7 @@
 #'   in error messages to inform the user about the locations of
 #'   incompatible types and sizes (see [stop_incompatible_type()] and
 #'   [stop_incompatible_size()]).
-#' @param ... These dots are for future extensions and must be empty.
+#'
 #' @return A vector of the same type as `x`.
 #'
 #' @section Genericity:
@@ -104,8 +107,8 @@
 #' # vector:
 #' x <- 1:3
 #' try(vec_slice(x, 2) <- 1.5)
-vec_slice <- function(x, i) {
-  delayedAssign("call", vctrs_error_borrowed_call())
+vec_slice <- function(x, i, ..., error_call = current_env()) {
+  check_dots_empty0(...)
   .Call(ffi_slice, x, i, environment())
 }
 

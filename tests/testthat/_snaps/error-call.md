@@ -277,43 +277,24 @@
       Error in `my_function()`:
       ! Input must be a vector, not a <vctrs_foobar> object.
 
-# can take ownership of vctrs errors
+# `vec_slice()` uses `error_call`
 
     Code
-      (expect_error(vec_assert(foobar(list()))))
+      (expect_error(my_function(env(), 1)))
     Output
       <error/vctrs_error_scalar_type>
-      Error in `foo()`:
-      ! `foobar(list())` must be a vector, not a <vctrs_foobar> object.
-    Code
-      (expect_error(local(vec_assert(foobar(list())))))
-    Output
-      <error/vctrs_error_scalar_type>
-      Error in `foo()`:
-      ! `foobar(list())` must be a vector, not a <vctrs_foobar> object.
-    Code
-      (expect_error(vec_cast(1, list())))
-    Output
-      <error/vctrs_error_cast>
-      Error in `foo()`:
-      ! Can't convert `1` <double> to <list>.
-    Code
-      (expect_error(vec_slice(env(), list())))
-    Output
-      <error/vctrs_error_scalar_type>
-      Error in `foo()`:
+      Error in `my_function()`:
       ! `x` must be a vector, not an environment.
     Code
-      local({
-        vctrs_local_error_call(NULL)
-        (expect_error(vec_slice(env(), list())))
-      })
+      (expect_error(my_function(1, 2)))
     Output
-      <error/vctrs_error_scalar_type>
-      Error in `vec_slice()`:
-      ! `x` must be a vector, not an environment.
+      <error/vctrs_error_subscript_oob>
+      Error in `my_function()`:
+      ! Can't subset elements past the end.
+      i Location 2 doesn't exist.
+      i There is only 1 element.
 
-# vec_slice() reports error context
+# vec_slice() reports self in error context
 
     Code
       (expect_error(vec_slice(foobar(list()), 1)))
