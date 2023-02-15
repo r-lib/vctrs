@@ -49,36 +49,43 @@ test_that("vec_assert() labels input", {
 })
 
 test_that("bare atomic vectors are vectors but not recursive", {
-  expect_true(vec_is_vector(TRUE))
-  expect_true(vec_is_vector(1L))
-  expect_true(vec_is_vector(1))
-  expect_true(vec_is_vector(1i))
-  expect_true(vec_is_vector("foo"))
-  expect_true(vec_is_vector(as.raw(1)))
+  expect_true(obj_is_vector(TRUE))
+  expect_true(obj_is_vector(1L))
+  expect_true(obj_is_vector(1))
+  expect_true(obj_is_vector(1i))
+  expect_true(obj_is_vector("foo"))
+  expect_true(obj_is_vector(as.raw(1)))
 })
 
 test_that("S3 atomic vectors are vectors", {
-  expect_true(vec_is_vector(foobar(TRUE)))
-  expect_true(vec_is_vector(foobar(1L)))
-  expect_true(vec_is_vector(foobar(1)))
-  expect_true(vec_is_vector(foobar(1i)))
-  expect_true(vec_is_vector(foobar("foo")))
-  expect_true(vec_is_vector(foobar(as.raw(1))))
+  expect_true(obj_is_vector(foobar(TRUE)))
+  expect_true(obj_is_vector(foobar(1L)))
+  expect_true(obj_is_vector(foobar(1)))
+  expect_true(obj_is_vector(foobar(1i)))
+  expect_true(obj_is_vector(foobar("foo")))
+  expect_true(obj_is_vector(foobar(as.raw(1))))
 })
 
 test_that("bare lists are vectors", {
-  expect_true(vec_is_vector(list()))
+  expect_true(obj_is_vector(list()))
 })
 
 test_that("S3 lists are not vectors by default", {
-  expect_false(vec_is_vector(foobar()))
+  expect_false(obj_is_vector(foobar()))
+  expect_false(vec_is_list(foobar()))
+
   local_foobar_proxy()
-  expect_true(vec_is_vector(foobar()))
+
+  # TODO: These seem inconsistent.
+  # Should we require that S3 list proxies satisfy `vec_is_list()`?
+  # (i.e. unclass themselves or explicitly inherit from `"list"`?)
+  expect_true(obj_is_vector(foobar()))
+  expect_false(vec_is_list(foobar()))
 })
 
 test_that("data frames and records are vectors", {
-  expect_true(vec_is_vector(mtcars))
-  expect_true(vec_is_vector(new_rcrd(list(x = 1, y = 2))))
+  expect_true(obj_is_vector(mtcars))
+  expect_true(obj_is_vector(new_rcrd(list(x = 1, y = 2))))
 })
 
 test_that("non-vector base types are scalars", {
@@ -92,14 +99,14 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(base::c), "scalar")
   expect_identical(vec_typeof(expression()), "scalar")
 
-  expect_false(vec_is_vector(quote(foo)))
-  expect_false(vec_is_vector(pairlist("")))
-  expect_false(vec_is_vector(function() NULL))
-  expect_false(vec_is_vector(env()))
-  expect_false(vec_is_vector(~foo))
-  expect_false(vec_is_vector(base::`{`))
-  expect_false(vec_is_vector(base::c))
-  expect_false(vec_is_vector(expression()))
+  expect_false(obj_is_vector(quote(foo)))
+  expect_false(obj_is_vector(pairlist("")))
+  expect_false(obj_is_vector(function() NULL))
+  expect_false(obj_is_vector(env()))
+  expect_false(obj_is_vector(~foo))
+  expect_false(obj_is_vector(base::`{`))
+  expect_false(obj_is_vector(base::c))
+  expect_false(obj_is_vector(expression()))
 
   expect_false(vec_is(quote(foo)))
   expect_false(vec_is(pairlist("")))
@@ -124,16 +131,40 @@ test_that("non-vector types can be proxied", {
   x <- new_proxy(1:3)
 
   expect_identical(vec_typeof(x), "scalar")
-  expect_false(vec_is_vector(x))
+  expect_false(obj_is_vector(x))
   expect_false(vec_is(x))
   expect_error(vec_assert(x), class = "vctrs_error_scalar_type")
 
   local_env_proxy()
 
   expect_identical(vec_typeof(x), "integer")
-  expect_true(vec_is_vector(x))
+  expect_true(obj_is_vector(x))
   expect_true(vec_is(x))
   expect_error(regexp = NA, vec_assert(x))
+})
+
+test_that("obj_check_vector() is silent on vectors", {
+  expect_null(obj_check_vector(1))
+  expect_null(obj_check_vector(data_frame()))
+})
+
+test_that("obj_check_vector() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    obj_check_vector(quote(foo))
+  })
+  expect_snapshot(error = TRUE, {
+    obj_check_vector(foobar())
+  })
+})
+
+test_that("obj_check_vector() error respects `arg` and `call`", {
+  my_check_vector <- function(foo) {
+    obj_check_vector(foo)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_vector(foobar())
+  })
 })
 
 test_that("vec_assert() uses friendly type in error messages", {
@@ -227,7 +258,7 @@ test_that("vec_assert() validates `size` (#1470)", {
 })
 
 test_that("NULL is not a vector", {
-  expect_false(vec_is_vector(NULL))
+  expect_false(obj_is_vector(NULL))
   expect_false(vec_is(NULL))
 })
 
@@ -236,6 +267,60 @@ test_that("names and row names do not influence type identity (#707)", {
   expect_true(vec_is(TRUE, c(a = TRUE)))
   expect_true(vec_is(structure(mtcars, row.names = 1:32), mtcars))
   expect_true(vec_is(mtcars, structure(mtcars, row.names = 1:32)))
+})
+
+# vec_check_size --------------------------------------------------------
+
+test_that("vec_check_size() is silent if the size is right", {
+  expect_null(vec_check_size(1:5, size = 5L))
+  expect_null(vec_check_size(data_frame(.size = 10L), size = 10L))
+})
+
+test_that("vec_check_size() errors on the wrong size", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1:5, size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1:5, size = 10L)
+  })
+})
+
+test_that("vec_check_size() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(quote(foo), size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(foobar(), size = 1L)
+  })
+})
+
+test_that("vec_check_size() error respects `arg` and `call`", {
+  my_check_size <- function(foo, size) {
+    vec_check_size(foo, size)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_size(1L, size = 5L)
+  })
+  expect_snapshot(error = TRUE, {
+    my_check_size(foobar(), size = 5L)
+  })
+})
+
+test_that("vec_check_size() validates `size`", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = c(1L, 2L))
+  })
+
+  # TODO: This should be an error, and we want to know when it changes
+  # https://github.com/r-lib/rlang/issues/1562
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = 1.5)
+    abort("`vec_check_size()` should error for us")
+  })
 })
 
 # vec_is_list -----------------------------------------------------------

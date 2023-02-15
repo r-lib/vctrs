@@ -293,7 +293,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, info)) {
     if (info.type == VCTRS_TYPE_scalar) {
-      vec_check_vector(x, NULL, r_lazy_null);
+      obj_check_vector(x, NULL, r_lazy_null);
     }
 
     if (is_compact(subscript)) {
@@ -409,7 +409,7 @@ r_obj* ffi_slice(r_obj* x,
 r_obj* vec_slice_opts(r_obj* x,
                       r_obj* i,
                       const struct vec_slice_opts* opts) {
-  vec_check_vector(x, opts->x_arg, opts->call);
+  obj_check_vector(x, opts->x_arg, opts->call);
 
   r_obj* names = KEEP(vec_names(x));
   i = KEEP(vec_as_location_ctxt(i,
@@ -425,7 +425,7 @@ r_obj* vec_slice_opts(r_obj* x,
 }
 
 r_obj* vec_init(r_obj* x, r_ssize n) {
-  vec_check_vector(x, vec_args.x, lazy_calls.vec_init);
+  obj_check_vector(x, vec_args.x, lazy_calls.vec_init);
 
   if (n < 0) {
     r_abort_lazy_call(lazy_calls.vec_init,

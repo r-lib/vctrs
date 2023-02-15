@@ -40,7 +40,9 @@ extern SEXP vctrs_dim(SEXP);
 extern SEXP vctrs_dim_n(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP, SEXP);
-extern SEXP vctrs_is_vector(SEXP);
+extern r_obj* ffi_obj_is_vector(r_obj*);
+extern r_obj* ffi_obj_check_vector(r_obj*, r_obj*);
+extern r_obj* ffi_vec_check_size(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_ptype2(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_typeof2(r_obj*, r_obj*);
 extern r_obj* ffi_typeof2_s3(r_obj*, r_obj*);
@@ -162,7 +164,7 @@ extern r_obj* ffi_vec_expand_grid(r_obj*, r_obj*, r_obj*, r_obj*);
 
 // Maturing
 // In the public header
-extern bool vec_is_vector(SEXP);
+extern bool obj_is_vector(SEXP);
 extern R_len_t short_vec_size(SEXP);
 extern SEXP short_vec_recycle(SEXP, R_len_t);
 
@@ -217,7 +219,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_in",                              (DL_FUNC) &vctrs_in, 4},
   {"vctrs_typeof",                          (DL_FUNC) &vctrs_typeof, 2},
   {"vctrs_init_library",                    (DL_FUNC) &vctrs_init_library, 1},
-  {"vctrs_is_vector",                       (DL_FUNC) &vctrs_is_vector, 1},
+  {"ffi_obj_is_vector",                     (DL_FUNC) &ffi_obj_is_vector, 1},
+  {"ffi_obj_check_vector",                  (DL_FUNC) &ffi_obj_check_vector, 2},
+  {"ffi_vec_check_size",                    (DL_FUNC) &ffi_vec_check_size, 3},
   {"ffi_ptype2",                            (DL_FUNC) &ffi_ptype2, 3},
   {"ffi_typeof2",                           (DL_FUNC) &ffi_typeof2, 2},
   {"ffi_typeof2_s3",                        (DL_FUNC) &ffi_typeof2_s3, 2},
@@ -376,9 +380,14 @@ export void R_init_vctrs(DllInfo *dll)
 
     // Maturing
     // In the public header
-    R_RegisterCCallable("vctrs", "vec_is_vector",      (DL_FUNC) &vec_is_vector);
+    R_RegisterCCallable("vctrs", "obj_is_vector",      (DL_FUNC) &obj_is_vector);
     R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &short_vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &short_vec_recycle);
+
+    // Deprecated
+    // In the public header
+    // See `inst/include/vctrs.h` for details
+    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &obj_is_vector);
 
     // Experimental
     // Exported but not available in the public header

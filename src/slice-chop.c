@@ -155,7 +155,7 @@ static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
     return chop_df(x, indices, info);
   }
   default:
-    vec_check_vector(x, vec_args.empty, r_lazy_null);
+    obj_check_vector(x, vec_args.empty, r_lazy_null);
     stop_unimplemented_vctrs_type("vec_chop_base", proxy_info.type);
   }
 }

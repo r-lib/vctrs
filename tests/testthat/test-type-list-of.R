@@ -119,7 +119,7 @@ test_that("assingment can increase size of vector", {
 # Type system -------------------------------------------------------------
 
 test_that("list_of() are vectors", {
-  expect_true(vec_is_vector(list_of(1)))
+  expect_true(obj_is_vector(list_of(1)))
   expect_true(vec_is(list_of(1)))
 })
 
