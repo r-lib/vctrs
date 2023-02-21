@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* `vec_locate_matches()` gains a new `relationship` argument that holistically
+  handles multiple matches between `needles` and `haystack`. In particular,
+  `relationship = "many_to_one"` replaces `multiple = "error"` and
+  `multiple = "warning"`, which have been removed from the documentation and
+  silently soft-deprecated. Official deprecation for those options will start in
+  a future release (#1791).
+
 * `vec_slice()` has gained an `error_call` argument (#1785).
 
 * New `obj_is_vector()`, `obj_check_vector()`, and `vec_check_size()` validation
