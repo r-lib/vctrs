@@ -1672,7 +1672,6 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   bool any_multiple_needles = false;
   bool any_multiple_haystack = false;
 
-  // For `relationship = "warn_many_to_many"`
   r_ssize loc_first_multiple_needles = -1;
   r_ssize loc_first_multiple_haystack = -1;
 
