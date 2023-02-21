@@ -1554,6 +1554,7 @@ SEXP chrs_smallest = NULL;
 SEXP chrs_which = NULL;
 
 SEXP syms_i = NULL;
+SEXP syms_j = NULL;
 SEXP syms_n = NULL;
 SEXP syms_x = NULL;
 SEXP syms_y = NULL;
@@ -1605,6 +1606,10 @@ SEXP syms_stop_matches_remaining = NULL;
 SEXP syms_stop_matches_incomplete = NULL;
 SEXP syms_stop_matches_multiple = NULL;
 SEXP syms_warn_matches_multiple = NULL;
+SEXP syms_stop_matches_relationship_one_to_one = NULL;
+SEXP syms_stop_matches_relationship_one_to_many = NULL;
+SEXP syms_stop_matches_relationship_many_to_one = NULL;
+SEXP syms_warn_matches_relationship_many_to_many = NULL;
 SEXP syms_action = NULL;
 SEXP syms_vctrs_common_class_fallback = NULL;
 SEXP syms_fallback_class = NULL;
@@ -1615,6 +1620,7 @@ SEXP syms_actual = NULL;
 SEXP syms_required = NULL;
 SEXP syms_call = NULL;
 SEXP syms_dot_call = NULL;
+SEXP syms_which = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1828,6 +1834,7 @@ void vctrs_init_utils(SEXP ns) {
   INTEGER(vctrs_shared_zero_int)[0] = 0;
 
   syms_i = Rf_install("i");
+  syms_j = Rf_install("j");
   syms_n = Rf_install("n");
   syms_x = Rf_install("x");
   syms_y = Rf_install("y");
@@ -1880,6 +1887,10 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_matches_incomplete = Rf_install("stop_matches_incomplete");
   syms_stop_matches_multiple = Rf_install("stop_matches_multiple");
   syms_warn_matches_multiple = Rf_install("warn_matches_multiple");
+  syms_stop_matches_relationship_one_to_one = Rf_install("stop_matches_relationship_one_to_one");
+  syms_stop_matches_relationship_one_to_many = Rf_install("stop_matches_relationship_one_to_many");
+  syms_stop_matches_relationship_many_to_one = Rf_install("stop_matches_relationship_many_to_one");
+  syms_warn_matches_relationship_many_to_many = Rf_install("warn_matches_relationship_many_to_many");
   syms_action = Rf_install("action");
   syms_vctrs_common_class_fallback = Rf_install(c_strs_vctrs_common_class_fallback);
   syms_fallback_class = Rf_install("fallback_class");
@@ -1890,6 +1901,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_required = Rf_install("required");
   syms_call = Rf_install("call");
   syms_dot_call = Rf_install(".call");
+  syms_which = Rf_install("which");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

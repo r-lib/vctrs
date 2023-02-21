@@ -4,11 +4,22 @@
 
 enum vctrs_multiple {
   VCTRS_MULTIPLE_all = 0,
-  VCTRS_MULTIPLE_warning = 1,
-  VCTRS_MULTIPLE_error = 2,
-  VCTRS_MULTIPLE_first = 3,
-  VCTRS_MULTIPLE_last = 4,
-  VCTRS_MULTIPLE_any = 5
+  VCTRS_MULTIPLE_any = 1,
+  VCTRS_MULTIPLE_first = 2,
+  VCTRS_MULTIPLE_last = 3,
+
+  // Deprecated in favor of `relationship`
+  VCTRS_MULTIPLE_warning = 4,
+  VCTRS_MULTIPLE_error = 5
+};
+
+enum vctrs_relationship {
+  VCTRS_RELATIONSHIP_none = 0,
+  VCTRS_RELATIONSHIP_one_to_one = 1,
+  VCTRS_RELATIONSHIP_one_to_many = 2,
+  VCTRS_RELATIONSHIP_many_to_one = 3,
+  VCTRS_RELATIONSHIP_many_to_many = 4,
+  VCTRS_RELATIONSHIP_warn_many_to_many = 5
 };
 
 enum vctrs_filter {
@@ -80,6 +91,7 @@ r_obj* ffi_locate_matches(r_obj* needles,
                           r_obj* no_match,
                           r_obj* remaining,
                           r_obj* multiple,
+                          r_obj* relationship,
                           r_obj* nan_distinct,
                           r_obj* chr_proxy_collate,
                           r_obj* needles_arg,
@@ -92,6 +104,7 @@ r_obj* ffi_locate_matches(r_obj* needles,
   const struct vctrs_no_match c_no_match = parse_no_match(no_match, internal_call);
   const struct vctrs_remaining c_remaining = parse_remaining(remaining, internal_call);
   const enum vctrs_multiple c_multiple = parse_multiple(multiple, internal_call);
+  const enum vctrs_relationship c_relationship = parse_relationship(relationship, internal_call);
   const bool c_nan_distinct = r_arg_as_bool(nan_distinct, "nan_distinct");
 
   struct vctrs_arg c_needles_arg = vec_as_arg(needles_arg);
@@ -106,6 +119,7 @@ r_obj* ffi_locate_matches(r_obj* needles,
     &c_no_match,
     &c_remaining,
     c_multiple,
+    c_relationship,
     c_nan_distinct,
     chr_proxy_collate,
     &c_needles_arg,
@@ -123,6 +137,7 @@ r_obj* vec_locate_matches(r_obj* needles,
                           const struct vctrs_no_match* no_match,
                           const struct vctrs_remaining* remaining,
                           enum vctrs_multiple multiple,
+                          enum vctrs_relationship relationship,
                           bool nan_distinct,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
@@ -228,6 +243,7 @@ r_obj* vec_locate_matches(r_obj* needles,
     no_match,
     remaining,
     multiple,
+    relationship,
     any_filters,
     v_filters,
     v_ops,
@@ -253,6 +269,7 @@ r_obj* df_locate_matches(r_obj* needles,
                          const struct vctrs_no_match* no_match,
                          const struct vctrs_remaining* remaining,
                          enum vctrs_multiple multiple,
+                         enum vctrs_relationship relationship,
                          bool any_filters,
                          const enum vctrs_filter* v_filters,
                          const enum vctrs_ops* v_ops,
@@ -448,6 +465,7 @@ r_obj* df_locate_matches(r_obj* needles,
     no_match,
     remaining,
     multiple,
+    relationship,
     size_needles,
     size_haystack,
     any_non_equi,
@@ -1365,12 +1383,36 @@ enum vctrs_multiple parse_multiple(r_obj* multiple, struct r_lazy call) {
   if (!strcmp(c_multiple, "any")) return VCTRS_MULTIPLE_any;
   if (!strcmp(c_multiple, "first")) return VCTRS_MULTIPLE_first;
   if (!strcmp(c_multiple, "last")) return VCTRS_MULTIPLE_last;
+  // TODO: Remove deprecated support for `multiple = "error"/"warning"`
   if (!strcmp(c_multiple, "warning")) return VCTRS_MULTIPLE_warning;
   if (!strcmp(c_multiple, "error")) return VCTRS_MULTIPLE_error;
 
   r_abort_lazy_call(
     call,
-    "`multiple` must be one of \"all\", \"any\", \"first\", \"last\", \"warning\", or \"error\"."
+    "`multiple` must be one of \"all\", \"any\", \"first\", or \"last\"."
+  );
+}
+
+// -----------------------------------------------------------------------------
+
+static inline
+enum vctrs_relationship parse_relationship(r_obj* relationship, struct r_lazy call) {
+  if (!r_is_string(relationship)) {
+    r_abort_lazy_call(call, "`relationship` must be a string.");
+  }
+
+  const char* c_relationship = r_chr_get_c_string(relationship, 0);
+
+  if (!strcmp(c_relationship, "none")) return VCTRS_RELATIONSHIP_none;
+  if (!strcmp(c_relationship, "one_to_one")) return VCTRS_RELATIONSHIP_one_to_one;
+  if (!strcmp(c_relationship, "one_to_many")) return VCTRS_RELATIONSHIP_one_to_many;
+  if (!strcmp(c_relationship, "many_to_one")) return VCTRS_RELATIONSHIP_many_to_one;
+  if (!strcmp(c_relationship, "many_to_many")) return VCTRS_RELATIONSHIP_many_to_many;
+  if (!strcmp(c_relationship, "warn_many_to_many")) return VCTRS_RELATIONSHIP_warn_many_to_many;
+
+  r_abort_lazy_call(
+    call,
+    "`relationship` must be one of \"none\", \"one_to_one\", \"one_to_many\", \"many_to_one\", \"many_to_many\", or \"warn_many_to_many\"."
   );
 }
 
@@ -1556,6 +1598,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const struct vctrs_no_match* no_match,
                               const struct vctrs_remaining* remaining,
                               enum vctrs_multiple multiple,
+                              enum vctrs_relationship relationship,
                               r_ssize size_needles,
                               r_ssize size_haystack,
                               bool any_non_equi,
@@ -1626,25 +1669,59 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     v_o_loc_needles = r_int_cbegin(o_loc_needles);
   }
 
-  const bool retain_remaining_haystack = (remaining->action != VCTRS_REMAINING_ACTION_drop);
-  int* v_detect_remaining_haystack = NULL;
-  if (retain_remaining_haystack) {
-    r_obj* detect_remaining_haystack = KEEP_N(r_alloc_integer(size_haystack), &n_prot);
-    v_detect_remaining_haystack = r_int_begin(detect_remaining_haystack);
+  bool any_multiple_needles = false;
+  bool any_multiple_haystack = false;
 
-    for (r_ssize i = 0; i < size_haystack; ++i) {
-      // Initialize to "remaining" (i.e. this haystack value wasn't matched)
-      v_detect_remaining_haystack[i] = 1;
-    }
-  }
+  // For `relationship = "warn_many_to_many"`
+  r_ssize loc_first_multiple_needles = -1;
+  r_ssize loc_first_multiple_haystack = -1;
 
-  bool any_multiple = false;
-  bool check_for_multiple =
+  // Check is always needed for `multiple = "all"`.
+  // This also handles `relationship` options too, since if `multiple` is
+  // `"any"`, `"first"`, or `"last"`, we can't invalidate a `relationship`.
+  bool check_multiple_needles =
     multiple == VCTRS_MULTIPLE_all ||
+    // TODO: Remove deprecated support for `multiple = "error"/"warning"`
     multiple == VCTRS_MULTIPLE_error ||
     multiple == VCTRS_MULTIPLE_warning;
 
-  // For multiple = "first" / "last"
+  bool check_multiple_haystack = false;
+  switch (relationship) {
+  // Expecting `haystack` can match any number of `needles`
+  case VCTRS_RELATIONSHIP_none:
+  case VCTRS_RELATIONSHIP_many_to_one:
+  case VCTRS_RELATIONSHIP_many_to_many: {
+    check_multiple_haystack = false;
+    break;
+  }
+  // Expecting `haystack` to match at most 1 `needles`
+  case VCTRS_RELATIONSHIP_one_to_one:
+  case VCTRS_RELATIONSHIP_one_to_many: {
+    check_multiple_haystack = true;
+    break;
+  }
+  // Only check for multiple matches in `haystack` if we are also checking
+  // for them in `needles`. Otherwise we can't possibly have a many-to-many
+  // issue so there is no need to check for one.
+  case VCTRS_RELATIONSHIP_warn_many_to_many: {
+    check_multiple_haystack = check_multiple_needles;
+    break;
+  }
+  }
+
+  const bool retain_remaining_haystack =
+    remaining->action == VCTRS_REMAINING_ACTION_value ||
+    remaining->action == VCTRS_REMAINING_ACTION_error;
+
+  bool track_matches_haystack = check_multiple_haystack || retain_remaining_haystack;
+  bool* v_detect_matches_haystack = NULL;
+  if (track_matches_haystack) {
+    r_obj* detect_matches_haystack = KEEP_N(r_alloc_raw(size_haystack * sizeof(bool)), &n_prot);
+    v_detect_matches_haystack = r_raw_begin(detect_matches_haystack);
+    memset(v_detect_matches_haystack, 0, size_haystack * sizeof(bool));
+  }
+
+  // For `multiple = "first" / "last"`
   r_ssize loc_haystack_overall = r_globals.na_int;
 
   r_ssize loc_out = 0;
@@ -1747,23 +1824,74 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       }
     }
 
-    if (check_for_multiple) {
+    if (check_multiple_needles) {
       if (loc < size_needles) {
-        any_multiple = size_match > 1;
+        any_multiple_needles = size_match > 1;
       } else {
         // Guaranteed second match if in the "extra" matches section
-        any_multiple = true;
+        any_multiple_needles = true;
       }
 
-      if (any_multiple) {
-        if (multiple == VCTRS_MULTIPLE_error) {
-          stop_matches_multiple(loc_needles, needles_arg, haystack_arg, error_call);
-        } else if (multiple == VCTRS_MULTIPLE_warning) {
-          warn_matches_multiple(loc_needles, needles_arg, haystack_arg, error_call);
+      if (any_multiple_needles) {
+        loc_first_multiple_needles = loc_needles;
+
+        switch (relationship) {
+        case VCTRS_RELATIONSHIP_one_to_one:
+          stop_matches_relationship_one_to_one(
+            loc_first_multiple_needles,
+            "needles",
+            needles_arg,
+            haystack_arg,
+            error_call
+          );
+        case VCTRS_RELATIONSHIP_many_to_one:
+          stop_matches_relationship_many_to_one(
+            loc_first_multiple_needles,
+            needles_arg,
+            haystack_arg,
+            error_call
+          );
+        case VCTRS_RELATIONSHIP_warn_many_to_many: {
+          if (any_multiple_haystack) {
+            warn_matches_relationship_many_to_many(
+              loc_first_multiple_needles,
+              loc_first_multiple_haystack,
+              needles_arg,
+              haystack_arg,
+              error_call
+            );
+          }
+          break;
+        }
+        default: {
+          switch (multiple) {
+          case VCTRS_MULTIPLE_all:
+            break;
+          // TODO: Remove deprecated support for `multiple = "error"/"warning"`
+          case VCTRS_MULTIPLE_error:
+            stop_matches_multiple(
+              loc_first_multiple_needles,
+              needles_arg,
+              haystack_arg,
+              error_call
+            );
+          case VCTRS_MULTIPLE_warning: {
+            warn_matches_multiple(
+              loc_first_multiple_needles,
+              needles_arg,
+              haystack_arg,
+              error_call
+            );
+            break;
+          }
+          default:
+            r_stop_internal("`check_multiple_needles` should have been false.");
+          }
+        }
         }
 
         // We know there are multiple and don't need to continue checking
-        check_for_multiple = false;
+        check_multiple_needles = false;
       }
     }
 
@@ -1829,9 +1957,44 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         v_out_needles[loc_out] = loc_needles + 1;
         v_out_haystack[loc_out] = loc_haystack_overall + 1;
 
-        if (retain_remaining_haystack) {
-          // This haystack value was a match, so it isn't "remaining"
-          v_detect_remaining_haystack[loc_haystack_overall] = 0;
+        if (track_matches_haystack) {
+          if (check_multiple_haystack) {
+            // `true` if a match already existed
+            any_multiple_haystack = v_detect_matches_haystack[loc_haystack_overall];
+
+            if (any_multiple_haystack) {
+              loc_first_multiple_haystack = loc_haystack_overall;
+
+              switch (relationship) {
+              case VCTRS_RELATIONSHIP_one_to_one:
+                stop_matches_relationship_one_to_one(
+                  loc_first_multiple_haystack,
+                  "haystack",
+                  needles_arg,
+                  haystack_arg,
+                  error_call
+                );
+              case VCTRS_RELATIONSHIP_one_to_many:
+                stop_matches_relationship_one_to_many(
+                  loc_first_multiple_haystack,
+                  needles_arg,
+                  haystack_arg,
+                  error_call
+                );
+              case VCTRS_RELATIONSHIP_warn_many_to_many:
+                r_stop_internal(
+                  "`relationship = 'warn_many_to_many'` with "
+                  "`multiple = 'first'/'last' should have resulted in "
+                  "`check_multiple_haystack = false`."
+                );
+              default:
+                r_stop_internal("`check_multiple_haystack` should have been false.");
+              }
+            }
+          }
+
+          // This haystack value was a match, so it isn't "remaining".
+          v_detect_matches_haystack[loc_haystack_overall] = true;
         }
 
         ++loc_out;
@@ -1850,9 +2013,57 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         v_out_needles[loc_out] = loc_needles + 1;
         v_out_haystack[loc_out] = loc_haystack + 1;
 
-        if (retain_remaining_haystack) {
-          // This haystack value was a match, so it isn't "remaining"
-          v_detect_remaining_haystack[loc_haystack] = 0;
+        if (track_matches_haystack) {
+          if (check_multiple_haystack) {
+            // `true` if a match already existed
+            any_multiple_haystack = v_detect_matches_haystack[loc_haystack];
+
+            if (any_multiple_haystack) {
+              loc_first_multiple_haystack = loc_haystack;
+
+              switch (relationship) {
+              case VCTRS_RELATIONSHIP_one_to_one:
+                stop_matches_relationship_one_to_one(
+                  loc_first_multiple_haystack,
+                  "haystack",
+                  needles_arg,
+                  haystack_arg,
+                  error_call
+                );
+              case VCTRS_RELATIONSHIP_one_to_many:
+                stop_matches_relationship_one_to_many(
+                  loc_first_multiple_haystack,
+                  needles_arg,
+                  haystack_arg,
+                  error_call
+                );
+              case VCTRS_RELATIONSHIP_warn_many_to_many: {
+                if (any_multiple_needles) {
+                  warn_matches_relationship_many_to_many(
+                    loc_first_multiple_needles,
+                    loc_first_multiple_haystack,
+                    needles_arg,
+                    haystack_arg,
+                    error_call
+                  );
+                }
+
+                // We know there are multiple and don't need to continue checking
+                check_multiple_haystack = false;
+
+                // Only continue tracking if needed for `remaining`
+                track_matches_haystack = retain_remaining_haystack;
+
+                break;
+              }
+              default:
+                r_stop_internal("`check_multiple_haystack` should have been false.");
+              }
+            }
+          }
+
+          // This haystack value was a match, so it isn't "remaining".
+          v_detect_matches_haystack[loc_haystack] = true;
         }
 
         ++loc_out;
@@ -1881,7 +2092,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     v_out_haystack = r_int_begin(out_haystack);
   }
 
-  if (any_multiple && any_non_equi) {
+  if (any_multiple_needles && any_non_equi) {
     // If we had multiple matches and we were doing a non-equi join, then
     // the needles column will be correct, but any group of multiple matches in
     // the haystack column will be ordered incorrectly within the needle group.
@@ -1914,19 +2125,24 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
   if (retain_remaining_haystack) {
     r_ssize n_remaining_haystack = 0;
 
-    for (r_ssize i = 0; i < size_haystack; ++i) {
-      if (!v_detect_remaining_haystack[i]) {
-        continue;
+    switch (remaining->action) {
+    case VCTRS_REMAINING_ACTION_error: {
+      for (r_ssize i = 0; i < size_haystack; ++i) {
+        if (!v_detect_matches_haystack[i]) {
+          stop_matches_remaining(i, needles_arg, haystack_arg, error_call);
+        }
       }
-
-      if (remaining->action == VCTRS_REMAINING_ACTION_error) {
-        stop_matches_remaining(i, needles_arg, haystack_arg, error_call);
+      break;
+    }
+    case VCTRS_REMAINING_ACTION_value: {
+      for (r_ssize i = 0; i < size_haystack; ++i) {
+        n_remaining_haystack += !v_detect_matches_haystack[i];
       }
-
-      // Overwrite with location, this moves all "remaining" locations to the
-      // front so we can loop over them sequentially
-      v_detect_remaining_haystack[n_remaining_haystack] = i;
-      ++n_remaining_haystack;
+      break;
+    }
+    case VCTRS_REMAINING_ACTION_drop: {
+      r_stop_internal("`remaining` should never be 'drop' here.");
+    }
     }
 
     if (n_remaining_haystack > 0) {
@@ -1942,9 +2158,17 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       v_out_haystack = r_int_begin(out_haystack);
 
       // Add in "remaining" values at the end of the output
-      for (r_ssize i = size_out, j = 0; i < new_size_out; ++i, ++j) {
+      for (r_ssize i = size_out; i < new_size_out; ++i) {
         v_out_needles[i] = remaining->value;
-        v_out_haystack[i] = v_detect_remaining_haystack[j] + 1;
+      }
+
+      r_ssize j = size_out;
+
+      for (r_ssize i = 0; i < size_haystack; ++i) {
+        if (!v_detect_matches_haystack[i]) {
+          v_out_haystack[j] = i + 1;
+          ++j;
+        }
       }
 
       size_out = new_size_out;
@@ -2535,6 +2759,115 @@ void warn_matches_multiple(r_ssize i,
   r_obj* ffi_call = KEEP(r_call_n(syms_warn_matches_multiple, syms, args));
   Rf_eval(ffi_call, vctrs_ns_env);
   FREE(5);
+}
+
+static inline
+void stop_matches_relationship_one_to_one(r_ssize i,
+                                          const char* which,
+                                          struct vctrs_arg* needles_arg,
+                                          struct vctrs_arg* haystack_arg,
+                                          struct r_lazy call) {
+  r_obj* syms[6] = {
+    syms_i,
+    syms_which,
+    syms_needles_arg,
+    syms_haystack_arg,
+    syms_call,
+    NULL
+  };
+  r_obj* args[6] = {
+    KEEP(r_int((int)i + 1)),
+    KEEP(r_chr(which)),
+    KEEP(vctrs_arg(needles_arg)),
+    KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
+    NULL
+  };
+
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_relationship_one_to_one, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+
+  never_reached("stop_matches_relationship_one_to_one");
+}
+
+static inline
+void stop_matches_relationship_one_to_many(r_ssize i,
+                                           struct vctrs_arg* needles_arg,
+                                           struct vctrs_arg* haystack_arg,
+                                           struct r_lazy call) {
+  r_obj* syms[5] = {
+   syms_i,
+   syms_needles_arg,
+   syms_haystack_arg,
+   syms_call,
+   NULL
+  };
+  r_obj* args[5] = {
+    KEEP(r_int((int)i + 1)),
+    KEEP(vctrs_arg(needles_arg)),
+    KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
+    NULL
+  };
+
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_relationship_one_to_many, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+
+  never_reached("stop_matches_relationship_one_to_many");
+}
+
+static inline
+void stop_matches_relationship_many_to_one(r_ssize i,
+                                           struct vctrs_arg* needles_arg,
+                                           struct vctrs_arg* haystack_arg,
+                                           struct r_lazy call) {
+  r_obj* syms[5] = {
+    syms_i,
+    syms_needles_arg,
+    syms_haystack_arg,
+    syms_call,
+    NULL
+  };
+  r_obj* args[5] = {
+    KEEP(r_int((int)i + 1)),
+    KEEP(vctrs_arg(needles_arg)),
+    KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
+    NULL
+  };
+
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_relationship_many_to_one, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+
+  never_reached("stop_matches_relationship_many_to_one");
+}
+
+static inline
+void warn_matches_relationship_many_to_many(r_ssize i,
+                                            r_ssize j,
+                                            struct vctrs_arg* needles_arg,
+                                            struct vctrs_arg* haystack_arg,
+                                            struct r_lazy call) {
+  r_obj* syms[6] = {
+   syms_i,
+   syms_j,
+   syms_needles_arg,
+   syms_haystack_arg,
+   syms_call,
+   NULL
+  };
+  r_obj* args[6] = {
+    KEEP(r_int((int)i + 1)),
+    KEEP(r_int((int)j + 1)),
+    KEEP(vctrs_arg(needles_arg)),
+    KEEP(vctrs_arg(haystack_arg)),
+    KEEP(r_lazy_eval_protect(call)),
+    NULL
+  };
+
+  r_obj* ffi_call = KEEP(r_call_n(syms_warn_matches_relationship_many_to_many, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+  FREE(6);
 }
 
 // -----------------------------------------------------------------------------
