@@ -4,10 +4,10 @@
 #' `r lifecycle::badge("experimental")`
 #'
 #' `vec_locate_matches()` is a more flexible version of [vec_match()] used to
-#' identify locations where each observation of `needles` matches one or
-#' multiple observations in `haystack`. Unlike `vec_match()`,
-#' `vec_locate_matches()` returns all matches by default, and can match on
-#' binary conditions other than equality, such as `>`, `>=`, `<`, and `<=`.
+#' identify locations where each value of `needles` matches one or multiple
+#' values in `haystack`. Unlike `vec_match()`, `vec_locate_matches()` returns
+#' all matches by default, and can match on binary conditions other than
+#' equality, such as `>`, `>=`, `<`, and `<=`.
 #'
 #' @details
 #' [vec_match()] is identical to (but often slightly faster than):
@@ -26,36 +26,44 @@
 #' and `haystack`, with the default being most similar to a left join.
 #'
 #' Be very careful when specifying match `condition`s. If a condition is
-#' mis-specified, it is very easy to accidentally generate an exponentially
+#' misspecified, it is very easy to accidentally generate an exponentially
 #' large number of matches.
 #'
 #' @section Dependencies of `vec_locate_matches()`:
-#' * [vec_order_radix()]
-#' * [vec_detect_complete()]
+#' - [vec_order_radix()]
+#' - [vec_detect_complete()]
 #'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
 #' @inheritParams order-radix
 #'
 #' @param needles,haystack Vectors used for matching.
+#'
 #'   - `needles` represents the vector to search for.
+#'
 #'   - `haystack` represents the vector to search in.
 #'
 #'   Prior to comparison, `needles` and `haystack` are coerced to the same type.
 #'
 #' @param condition Condition controlling how `needles` should be compared
 #'   against `haystack` to identify a successful match.
+#'
 #'   - One of: `"=="`, `">"`, `">="`, `"<"`, or `"<="`.
+#'
 #'   - For data frames, a length `1` or `ncol(needles)` character vector
 #'     containing only the above options, specifying how matching is determined
 #'     for each column.
 #'
 #' @param filter Filter to be applied to the matched results.
+#'
 #'   - `"none"` doesn't apply any filter.
+#'
 #'   - `"min"` returns only the minimum haystack value matching the current
 #'     needle.
+#'
 #'   - `"max"` returns only the maximum haystack value matching the current
 #'     needle.
+#'
 #'   - For data frames, a length `1` or `ncol(needles)` character vector
 #'     containing only the above options, specifying a filter to apply to
 #'     each column.
@@ -67,46 +75,61 @@
 #'   if the maximum or minimum haystack value is duplicated in `haystack`. These
 #'   can be further controlled with `multiple`.
 #'
-#' @param incomplete Handling of missing values and
-#'   [incomplete][vec_detect_complete] observations in `needles`.
+#' @param incomplete Handling of missing and [incomplete][vec_detect_complete]
+#'   values in `needles`.
+#'
 #'   - `"compare"` uses `condition` to determine whether or not a missing value
 #'     in `needles` matches a missing value in `haystack`. If `condition` is
 #'     `==`, `>=`, or `<=`, then missing values will match.
+#'
 #'   - `"match"` always allows missing values in `needles` to match missing
 #'     values in `haystack`, regardless of the `condition`.
-#'   - `"drop"` drops incomplete observations in `needles` from the result.
+#'
+#'   - `"drop"` drops incomplete values in `needles` from the result.
+#'
 #'   - `"error"` throws an error if any `needles` are incomplete.
+#'
 #'   - If a single integer is provided, this represents the value returned
-#'     in the `haystack` column for observations of `needles` that are
-#'     incomplete. If `no_match = NA`, setting `incomplete = NA` forces
-#'     incomplete observations in `needles` to be treated like unmatched values.
+#'     in the `haystack` column for values of `needles` that are incomplete. If
+#'     `no_match = NA`, setting `incomplete = NA` forces incomplete values in
+#'     `needles` to be treated like unmatched values.
 #'
 #'   `nan_distinct` determines whether a `NA` is allowed to match a `NaN`.
 #'
 #' @param no_match Handling of `needles` without a match.
+#'
 #'   - `"drop"` drops `needles` with zero matches from the result.
+#'
 #'   - `"error"` throws an error if any `needles` have zero matches.
+#'
 #'   - If a single integer is provided, this represents the value returned in
-#'     the `haystack` column for observations of `needles` that have zero
-#'     matches. The default represents an unmatched needle with `NA`.
+#'     the `haystack` column for values of `needles` that have zero matches. The
+#'     default represents an unmatched needle with `NA`.
 #'
 #' @param remaining Handling of `haystack` values that `needles` never matched.
+#'
 #'   - `"drop"` drops remaining `haystack` values from the result.
 #'     Typically, this is the desired behavior if you only care when `needles`
 #'     has a match.
+#'
 #'   - `"error"` throws an error if there are any remaining `haystack`
 #'     values.
+#'
 #'   - If a single integer is provided (often `NA`), this represents the value
 #'     returned in the `needles` column for the remaining `haystack` values
 #'     that `needles` never matched. Remaining `haystack` values are always
 #'     returned at the end of the result.
 #'
 #' @param multiple Handling of `needles` with multiple matches. For each needle:
+#'
 #'   - `"all"` returns all matches detected in `haystack`.
+#'
 #'   - `"any"` returns any match detected in `haystack` with no guarantees on
 #'     which match will be returned. It is often faster than `"first"` and
 #'     `"last"` if you just need to detect if there is at least one match.
+#'
 #'   - `"first"` returns the first match detected in `haystack`.
+#'
 #'   - `"last"` returns the last match detected in `haystack`.
 #'
 #' @param relationship Handling of the expected relationship between
@@ -150,8 +173,10 @@
 #'   used in error messages.
 #'
 #' @return A two column data frame containing the locations of the matches.
+#'
 #'   - `needles` is an integer vector containing the location of
 #'     the needle currently being matched.
+#'
 #'   - `haystack` is an integer vector containing the location of the
 #'     corresponding match in the haystack for the current needle.
 #'
@@ -160,7 +185,7 @@
 #' x <- c(1, 2, NA, 3, NaN)
 #' y <- c(2, 1, 4, NA, 1, 2, NaN)
 #'
-#' # By default, for each element of `x`, all matching locations in `y` are
+#' # By default, for each value of `x`, all matching locations in `y` are
 #' # returned
 #' matches <- vec_locate_matches(x, y)
 #' matches
@@ -183,13 +208,13 @@
 #' # In this case, the `NA` in `y` matches two rows in `x`
 #' try(vec_locate_matches(x, y, relationship = "one_to_many"))
 #'
-#' # By default, NA is treated as being identical to NaN.
-#' # Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
-#' # can only match NA, and NaN can only match NaN.
+#' # By default, `NA` is treated as being identical to `NaN`.
+#' # Using `nan_distinct = TRUE` treats `NA` and `NaN` as different values, so
+#' # `NA` can only match `NA`, and `NaN` can only match `NaN`.
 #' vec_locate_matches(x, y, nan_distinct = TRUE)
 #'
 #' # If you never want missing values to match, set `incomplete = NA` to return
-#' # `NA` in the `haystack` column anytime there was an incomplete observation
+#' # `NA` in the `haystack` column anytime there was an incomplete value
 #' # in `needles`.
 #' vec_locate_matches(x, y, incomplete = NA)
 #'
@@ -231,8 +256,8 @@
 #' )
 #'
 #' # In the very rare case that you need to generate locations for a
-#' # cross match, where every observation of `x` is forced to match every
-#' # observation of `y` regardless of what the actual values are, you can
+#' # cross match, where every value of `x` is forced to match every
+#' # value of `y` regardless of what the actual values are, you can
 #' # replace `x` and `y` with integer vectors of the same size that contain
 #' # a single value and match on those instead.
 #' x_proxy <- vec_rep(1L, vec_size(x))
