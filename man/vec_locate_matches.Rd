@@ -17,8 +17,8 @@ vec_locate_matches(
   relationship = "none",
   nan_distinct = FALSE,
   chr_proxy_collate = NULL,
-  needles_arg = "",
-  haystack_arg = "",
+  needles_arg = "needles",
+  haystack_arg = "haystack",
   error_call = current_env()
 )
 }

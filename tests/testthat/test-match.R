@@ -1004,10 +1004,9 @@ test_that("errors on multiple matches that come from different nesting container
   df <- data_frame(x = 0, y = 0)
   df2 <- data_frame(x = 1:2, y = 2:1)
 
-  expect_error(
-    vec_locate_matches(df, df2, condition = c("<=", "<="), multiple = "error"),
-    "multiple matches"
-  )
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(df, df2, condition = c("<=", "<="), multiple = "error")
+  })
 })
 
 test_that("errors when a match from a different nesting container is processed early on", {
@@ -1029,10 +1028,9 @@ test_that("errors when a match from a different nesting container is processed e
   # which is in the 3rd value of `loc_first_match_o_haystack` even though it
   # is processed 2nd (i.e. we need to use `loc` rather than `i` when detecting
   # multiple matches)
-  expect_error(
-    vec_locate_matches(needles, haystack, condition = "<", multiple = "error"),
-    "multiple matches"
-  )
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(needles, haystack, condition = "<", multiple = "error")
+  })
 })
 
 test_that("`multiple = 'error'` doesn't error errneously on the last observation", {

@@ -20,7 +20,7 @@
       vec_locate_matches(x, y)
     Condition
       Error in `vec_locate_matches()`:
-      ! Can't combine <double> and <character>.
+      ! Can't combine `needles` <double> and `haystack` <character>.
 
 ---
 
@@ -28,7 +28,7 @@
       vec_locate_matches(x, y, needles_arg = "x", error_call = call("foo"))
     Condition
       Error in `foo()`:
-      ! Can't combine `x` <double> and <character>.
+      ! Can't combine `x` <double> and `haystack` <character>.
 
 # `incomplete` can error informatively
 
@@ -37,24 +37,24 @@
     Output
       <error/vctrs_error_matches_incomplete>
       Error in `vec_locate_matches()`:
-      ! No element can contain missing values.
-      x The element at location 1 contains missing values.
+      ! `needles` can't contain missing values.
+      x Location 1 contains missing values.
     Code
       (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo"))
       )
     Output
       <error/vctrs_error_matches_incomplete>
       Error in `vec_locate_matches()`:
-      ! No element of `foo` can contain missing values.
-      x The element at location 1 contains missing values.
+      ! `foo` can't contain missing values.
+      x Location 1 contains missing values.
     Code
       (expect_error(vec_locate_matches(NA, 1, incomplete = "error", needles_arg = "foo",
         error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_incomplete>
       Error in `fn()`:
-      ! No element of `foo` can contain missing values.
-      x The element at location 1 contains missing values.
+      ! `foo` can't contain missing values.
+      x Location 1 contains missing values.
 
 # `incomplete` is validated
 
@@ -120,32 +120,32 @@
     Output
       <error/vctrs_error_matches_multiple>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
     Code
       (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error",
       needles_arg = "foo")))
     Output
       <error/vctrs_error_matches_multiple>
       Error in `vec_locate_matches()`:
-      ! Each element of `foo` can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `foo` can match at most 1 value from `haystack`.
+      x Location 1 of `foo` matches multiple values.
     Code
       (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error",
       needles_arg = "foo", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_multiple>
       Error in `fn()`:
-      ! Each element of `foo` can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `foo` can match at most 1 value from `haystack`.
+      x Location 1 of `foo` matches multiple values.
     Code
       (expect_error(vec_locate_matches(1L, c(1L, 1L), multiple = "error",
       needles_arg = "foo", haystack_arg = "bar")))
     Output
       <error/vctrs_error_matches_multiple>
       Error in `vec_locate_matches()`:
-      ! Each element of `foo` can match at most 1 observation from `bar`.
-      x The element at location 1 has multiple matches.
+      ! Each value of `foo` can match at most 1 value from `bar`.
+      x Location 1 of `foo` matches multiple values.
 
 # `multiple` can warn informatively
 
@@ -154,32 +154,50 @@
     Output
       <warning/vctrs_warning_matches_multiple>
       Warning in `vec_locate_matches()`:
-      Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
     Code
       (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning",
       needles_arg = "foo")))
     Output
       <warning/vctrs_warning_matches_multiple>
       Warning in `vec_locate_matches()`:
-      Each element of `foo` can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      Each value of `foo` can match at most 1 value from `haystack`.
+      x Location 1 of `foo` matches multiple values.
     Code
       (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning",
       needles_arg = "foo", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_multiple>
       Warning in `fn()`:
-      Each element of `foo` can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      Each value of `foo` can match at most 1 value from `haystack`.
+      x Location 1 of `foo` matches multiple values.
     Code
       (expect_warning(vec_locate_matches(1L, c(1L, 1L), multiple = "warning",
       needles_arg = "foo", haystack_arg = "bar")))
     Output
       <warning/vctrs_warning_matches_multiple>
       Warning in `vec_locate_matches()`:
-      Each element of `foo` can match at most 1 observation from `bar`.
-      x The element at location 1 has multiple matches.
+      Each value of `foo` can match at most 1 value from `bar`.
+      x Location 1 of `foo` matches multiple values.
+
+# errors on multiple matches that come from different nesting containers
+
+    Code
+      vec_locate_matches(df, df2, condition = c("<=", "<="), multiple = "error")
+    Condition
+      Error in `vec_locate_matches()`:
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
+
+# errors when a match from a different nesting container is processed early on
+
+    Code
+      vec_locate_matches(needles, haystack, condition = "<", multiple = "error")
+    Condition
+      Error in `vec_locate_matches()`:
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
 
 # `relationship` handles one-to-one case
 
@@ -189,16 +207,16 @@
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 2 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 2 of `needles` matches multiple values.
     Code
       (expect_error(vec_locate_matches(c(1, 1), c(1, 2), relationship = "one_to_one"))
       )
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `haystack` can match at most 1 value from `needles`.
+      x Location 1 of `haystack` matches multiple values.
 
 # `relationship` handles one-to-many case
 
@@ -208,8 +226,8 @@
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `haystack` can match at most 1 value from `needles`.
+      x Location 1 of `haystack` matches multiple values.
 
 # `relationship` handles many-to-one case
 
@@ -219,8 +237,8 @@
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 2 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 2 of `needles` matches multiple values.
 
 # `relationship` handles warn-many-to-many case
 
@@ -230,18 +248,18 @@
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
       Warning in `vec_locate_matches()`:
-      Detected an unexpected many-to-many relationship.
-      x The element at location 2 has multiple matches.
-      x The element at location 1 has multiple matches.
+      Detected an unexpected many-to-many relationship between `needles` and `haystack`.
+      x Location 2 of `needles` matches multiple values.
+      x Location 1 of `haystack` matches multiple values.
     Code
       (expect_warning(vec_locate_matches(c(1, 1, 2), c(2, 2, 1), relationship = "warn_many_to_many"))
       )
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
       Warning in `vec_locate_matches()`:
-      Detected an unexpected many-to-many relationship.
-      x The element at location 3 has multiple matches.
-      x The element at location 3 has multiple matches.
+      Detected an unexpected many-to-many relationship between `needles` and `haystack`.
+      x Location 3 of `needles` matches multiple values.
+      x Location 3 of `haystack` matches multiple values.
 
 # `relationship` considers `incomplete` matches as possible multiple matches
 
@@ -250,8 +268,8 @@
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `haystack` can match at most 1 value from `needles`.
+      x Location 1 of `haystack` matches multiple values.
 
 # `relationship` errors on multiple matches that come from different nesting containers
 
@@ -261,8 +279,8 @@
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
 
 # `relationship` errors when a match from a different nesting container is processed early on
 
@@ -272,8 +290,8 @@
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
 
 # `relationship` can still detect problematic `haystack` relationships when `multiple = first/last` are used
 
@@ -283,16 +301,16 @@
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 2 has multiple matches.
+      ! Each value of `haystack` can match at most 1 value from `needles`.
+      x Location 2 of `haystack` matches multiple values.
     Code
       (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first",
       relationship = "one_to_many")))
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 2 has multiple matches.
+      ! Each value of `haystack` can match at most 1 value from `needles`.
+      x Location 2 of `haystack` matches multiple values.
 
 # `relationship` and `remaining` work properly together
 
@@ -301,9 +319,9 @@
       remaining = NA_integer_)
     Condition
       Warning in `vec_locate_matches()`:
-      Detected an unexpected many-to-many relationship.
-      x The element at location 1 has multiple matches.
-      x The element at location 1 has multiple matches.
+      Detected an unexpected many-to-many relationship between `needles` and `haystack`.
+      x Location 1 of `needles` matches multiple values.
+      x Location 1 of `haystack` matches multiple values.
 
 # `relationship` errors if `condition` creates multiple matches
 
@@ -313,8 +331,8 @@
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
 
 # `relationship` still errors if `filter` hasn't removed all multiple matches
 
@@ -324,8 +342,8 @@
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
-      ! Each element can match at most 1 observation.
-      x The element at location 1 has multiple matches.
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
 
 # `relationship` errors respect argument tags and error call
 
@@ -335,32 +353,32 @@
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
       Error in `fn()`:
-      ! Each element of `foo` can match at most 1 observation from `bar`.
-      x The element of `foo` at location 1 has multiple matches.
+      ! Each value of `foo` can match at most 1 value from `bar`.
+      x Location 1 of `foo` matches multiple values.
     Code
       (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one_to_one",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
       Error in `fn()`:
-      ! Each element of `bar` can match at most 1 observation from `foo`.
-      x The element of `bar` at location 1 has multiple matches.
+      ! Each value of `bar` can match at most 1 value from `foo`.
+      x Location 1 of `bar` matches multiple values.
     Code
       (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one_to_many",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
       Error in `fn()`:
-      ! Each element of `bar` can match at most 1 observation from `foo`.
-      x The element of `bar` at location 1 has multiple matches.
+      ! Each value of `bar` can match at most 1 value from `foo`.
+      x Location 1 of `bar` matches multiple values.
     Code
       (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "many_to_one",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `fn()`:
-      ! Each element of `foo` can match at most 1 observation from `bar`.
-      x The element of `foo` at location 1 has multiple matches.
+      ! Each value of `foo` can match at most 1 value from `bar`.
+      x Location 1 of `foo` matches multiple values.
 
 # `relationship` warnings respect argument tags and error call
 
@@ -371,26 +389,26 @@
       <warning/vctrs_warning_matches_relationship_many_to_many>
       Warning in `fn()`:
       Detected an unexpected many-to-many relationship between `foo` and `bar`.
-      x The element of `foo` at location 1 has multiple matches.
-      x The element of `bar` at location 1 has multiple matches.
+      x Location 1 of `foo` matches multiple values.
+      x Location 1 of `bar` matches multiple values.
     Code
       (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many",
       needles_arg = "foo", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
       Warning in `fn()`:
-      Detected an unexpected many-to-many relationship.
-      x The element of `foo` at location 1 has multiple matches.
-      x The element at location 1 has multiple matches.
+      Detected an unexpected many-to-many relationship between `foo` and `haystack`.
+      x Location 1 of `foo` matches multiple values.
+      x Location 1 of `haystack` matches multiple values.
     Code
       (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many",
       haystack_arg = "bar", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
       Warning in `fn()`:
-      Detected an unexpected many-to-many relationship.
-      x The element at location 1 has multiple matches.
-      x The element of `bar` at location 1 has multiple matches.
+      Detected an unexpected many-to-many relationship between `needles` and `bar`.
+      x Location 1 of `needles` matches multiple values.
+      x Location 1 of `bar` matches multiple values.
 
 # `relationship` is validated
 
@@ -428,32 +446,32 @@
     Output
       <error/vctrs_error_matches_nothing>
       Error in `vec_locate_matches()`:
-      ! Each element must have a match.
-      x The element at location 1 does not have a match.
+      ! Each value of `needles` must have a match in `haystack`.
+      x Location 1 of `needles` does not have a match.
     Code
       (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo"))
       )
     Output
       <error/vctrs_error_matches_nothing>
       Error in `vec_locate_matches()`:
-      ! Each element of `foo` must have a match.
-      x The element at location 1 does not have a match.
+      ! Each value of `foo` must have a match in `haystack`.
+      x Location 1 of `foo` does not have a match.
     Code
       (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo",
         error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_nothing>
       Error in `fn()`:
-      ! Each element of `foo` must have a match.
-      x The element at location 1 does not have a match.
+      ! Each value of `foo` must have a match in `haystack`.
+      x Location 1 of `foo` does not have a match.
     Code
       (expect_error(vec_locate_matches(1, 2, no_match = "error", needles_arg = "foo",
         haystack_arg = "bar")))
     Output
       <error/vctrs_error_matches_nothing>
       Error in `vec_locate_matches()`:
-      ! Each element of `foo` must have a match in `bar`.
-      x The element at location 1 does not have a match.
+      ! Each value of `foo` must have a match in `bar`.
+      x Location 1 of `foo` does not have a match.
 
 # errors with the right location on unmatched needles when different nesting containers are present
 
@@ -463,8 +481,8 @@
     Output
       <error/vctrs_error_matches_nothing>
       Error in `vec_locate_matches()`:
-      ! Each element must have a match.
-      x The element at location 2 does not have a match.
+      ! Each value of `needles` must have a match in `haystack`.
+      x Location 2 of `needles` does not have a match.
 
 # `no_match` is validated
 
@@ -502,32 +520,32 @@
     Output
       <error/vctrs_error_matches_remaining>
       Error in `vec_locate_matches()`:
-      ! Each haystack value must be matched.
-      x The value at location 1 was not matched.
+      ! Each value of `haystack` must be matched by `needles`.
+      x Location 1 of `haystack` was not matched.
     Code
       (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo"))
       )
     Output
       <error/vctrs_error_matches_remaining>
       Error in `vec_locate_matches()`:
-      ! Each haystack value must be matched by `foo`.
-      x The value at location 1 was not matched.
+      ! Each value of `haystack` must be matched by `foo`.
+      x Location 1 of `haystack` was not matched.
     Code
       (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo",
         error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_remaining>
       Error in `fn()`:
-      ! Each haystack value must be matched by `foo`.
-      x The value at location 1 was not matched.
+      ! Each value of `haystack` must be matched by `foo`.
+      x Location 1 of `haystack` was not matched.
     Code
       (expect_error(vec_locate_matches(1, 2, remaining = "error", needles_arg = "foo",
         haystack_arg = "bar")))
     Output
       <error/vctrs_error_matches_remaining>
       Error in `vec_locate_matches()`:
-      ! Each haystack value of `bar` must be matched by `foo`.
-      x The value at location 1 was not matched.
+      ! Each value of `bar` must be matched by `foo`.
+      x Location 1 of `bar` was not matched.
 
 # `remaining` is validated
 

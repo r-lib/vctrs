@@ -286,8 +286,8 @@ vec_locate_matches <- function(needles,
                                relationship = "none",
                                nan_distinct = FALSE,
                                chr_proxy_collate = NULL,
-                               needles_arg = "",
-                               haystack_arg = "",
+                               needles_arg = "needles",
+                               haystack_arg = "haystack",
                                error_call = current_env()) {
   check_dots_empty0(...)
   frame <- environment()
@@ -362,24 +362,12 @@ stop_matches_nothing <- function(i, needles_arg, haystack_arg, call) {
 
 #' @export
 cnd_header.vctrs_error_matches_nothing <- function(cnd, ...) {
-  if (nzchar(cnd$needles_arg)) {
-    needles_name <- glue::glue(" of `{cnd$needles_arg}` ")
-  } else {
-    needles_name <- " "
-  }
-
-  if (nzchar(cnd$haystack_arg)) {
-    haystack_name <- glue::glue(" in `{cnd$haystack_arg}`")
-  } else {
-    haystack_name <- ""
-  }
-
-  glue::glue("Each element{needles_name}must have a match{haystack_name}.")
+  glue::glue("Each value of `{cnd$needles_arg}` must have a match in `{cnd$haystack_arg}`.")
 }
 
 #' @export
 cnd_body.vctrs_error_matches_nothing <- function(cnd, ...) {
-  bullet <- glue::glue("The element at location {cnd$i} does not have a match.")
+  bullet <- glue::glue("Location {cnd$i} of `{cnd$needles_arg}` does not have a match.")
   bullet <- c(x = bullet)
   format_error_bullets(bullet)
 }
@@ -398,24 +386,12 @@ stop_matches_remaining <- function(i, needles_arg, haystack_arg, call) {
 
 #' @export
 cnd_header.vctrs_error_matches_remaining <- function(cnd, ...) {
-  if (nzchar(cnd$haystack_arg)) {
-    haystack_name <- glue::glue(" of `{cnd$haystack_arg}` ")
-  } else {
-    haystack_name <- " "
-  }
-
-  if (nzchar(cnd$needles_arg)) {
-    needles_name <- glue::glue(" by `{cnd$needles_arg}`")
-  } else {
-    needles_name <- ""
-  }
-
-  glue::glue("Each haystack value{haystack_name}must be matched{needles_name}.")
+  glue::glue("Each value of `{cnd$haystack_arg}` must be matched by `{cnd$needles_arg}`.")
 }
 
 #' @export
 cnd_body.vctrs_error_matches_remaining <- function(cnd, ...) {
-  bullet <- glue::glue("The value at location {cnd$i} was not matched.")
+  bullet <- glue::glue("Location {cnd$i} of `{cnd$haystack_arg}` was not matched.")
   bullet <- c(x = bullet)
   format_error_bullets(bullet)
 }
@@ -433,18 +409,12 @@ stop_matches_incomplete <- function(i, needles_arg, call) {
 
 #' @export
 cnd_header.vctrs_error_matches_incomplete <- function(cnd, ...) {
-  if (nzchar(cnd$needles_arg)) {
-    needles_name <- glue::glue(" of `{cnd$needles_arg}` ")
-  } else {
-    needles_name <- " "
-  }
-
-  glue::glue("No element{needles_name}can contain missing values.")
+  glue::glue("`{cnd$needles_arg}` can't contain missing values.")
 }
 
 #' @export
 cnd_body.vctrs_error_matches_incomplete <- function(cnd, ...) {
-  bullet <- glue::glue("The element at location {cnd$i} contains missing values.")
+  bullet <- glue::glue("Location {cnd$i} contains missing values.")
   bullet <- c(x = bullet)
   format_error_bullets(bullet)
 }
@@ -468,7 +438,7 @@ cnd_header.vctrs_error_matches_multiple <- function(cnd, ...) {
 
 #' @export
 cnd_body.vctrs_error_matches_multiple <- function(cnd, ...) {
-  cnd_matches_multiple_body(cnd$i)
+  cnd_matches_multiple_body(cnd$i, cnd$needles_arg)
 }
 
 # ------------------------------------------------------------------------------
@@ -476,7 +446,7 @@ cnd_body.vctrs_error_matches_multiple <- function(cnd, ...) {
 warn_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
   message <- paste(
     cnd_matches_multiple_header(needles_arg, haystack_arg),
-    cnd_matches_multiple_body(i),
+    cnd_matches_multiple_body(i, needles_arg),
     sep = "\n"
   )
 
@@ -573,27 +543,11 @@ stop_matches_relationship <- function(class = NULL, ..., call = caller_env()) {
 }
 
 cnd_matches_multiple_header <- function(x_arg, y_arg) {
-  if (nzchar(x_arg)) {
-    x_name <- glue::glue(" of `{x_arg}` ")
-  } else {
-    x_name <- " "
-  }
-
-  if (nzchar(y_arg)) {
-    y_name <- glue::glue(" from `{y_arg}`")
-  } else {
-    y_name <- ""
-  }
-
-  glue::glue("Each element{x_name}can match at most 1 observation{y_name}.")
+  glue::glue("Each value of `{x_arg}` can match at most 1 value from `{y_arg}`.")
 }
 
-cnd_matches_multiple_body <- function(i, name = "") {
-  if (nzchar(name)) {
-    bullet <- glue::glue("The element of `{name}` at location {i} has multiple matches.")
-  } else {
-    bullet <- glue::glue("The element at location {i} has multiple matches.")
-  }
+cnd_matches_multiple_body <- function(i, name) {
+  bullet <- glue::glue("Location {i} of `{name}` matches multiple values.")
   bullet <- c(x = bullet)
   format_error_bullets(bullet)
 }
@@ -601,16 +555,8 @@ cnd_matches_multiple_body <- function(i, name = "") {
 # ------------------------------------------------------------------------------
 
 warn_matches_relationship_many_to_many <- function(i, j, needles_arg, haystack_arg, call) {
-  if (nzchar(needles_arg) && nzchar(haystack_arg)) {
-    name_needles_and_haystack <- glue::glue(" between `{needles_arg}` and `{haystack_arg}`")
-  } else {
-    name_needles_and_haystack <- ""
-  }
-
-  header <- glue::glue("Detected an unexpected many-to-many relationship{name_needles_and_haystack}.")
-
   message <- paste(
-    header,
+    glue::glue("Detected an unexpected many-to-many relationship between `{needles_arg}` and `{haystack_arg}`."),
     cnd_matches_multiple_body(i, needles_arg),
     cnd_matches_multiple_body(j, haystack_arg),
     sep = "\n"
