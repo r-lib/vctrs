@@ -143,7 +143,7 @@ extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
 extern r_obj* ffi_compute_nesting_container_info(r_obj*, r_obj*);
-extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_groups(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_locate_groups(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_complement(r_obj*, r_obj*, r_obj*, r_obj*);
@@ -326,7 +326,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"vctrs_is_altrep",                       (DL_FUNC) &vctrs_is_altrep, 1},
   {"ffi_interleave_indices",                (DL_FUNC) &ffi_interleave_indices, 2},
   {"ffi_compute_nesting_container_info",    (DL_FUNC) &ffi_compute_nesting_container_info, 2},
-  {"ffi_locate_matches",                    (DL_FUNC) &ffi_locate_matches, 13},
+  {"ffi_locate_matches",                    (DL_FUNC) &ffi_locate_matches, 14},
   {"ffi_interval_groups",                   (DL_FUNC) &ffi_interval_groups, 4},
   {"ffi_interval_locate_groups",            (DL_FUNC) &ffi_interval_locate_groups, 4},
   {"ffi_interval_complement",               (DL_FUNC) &ffi_interval_complement, 4},

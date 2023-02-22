@@ -18,6 +18,7 @@ r_obj* vec_locate_matches(r_obj* needles,
                           const struct vctrs_no_match* no_match,
                           const struct vctrs_remaining* remaining,
                           enum vctrs_multiple multiple,
+                          enum vctrs_relationship relationship,
                           bool nan_distinct,
                           r_obj* chr_proxy_collate,
                           struct vctrs_arg* needles_arg,
@@ -35,6 +36,7 @@ r_obj* df_locate_matches(r_obj* needles,
                          const struct vctrs_no_match* no_match,
                          const struct vctrs_remaining* remaining,
                          enum vctrs_multiple multiple,
+                         enum vctrs_relationship relationship,
                          bool any_filters,
                          const enum vctrs_filter* v_filters,
                          const enum vctrs_ops* v_ops,
@@ -145,6 +147,10 @@ enum vctrs_multiple parse_multiple(r_obj* multiple,
                                    struct r_lazy call);
 
 static inline
+enum vctrs_relationship parse_relationship(r_obj* relationship,
+                                           struct r_lazy call);
+
+static inline
 void parse_filter(r_obj* filter, r_ssize n_cols, enum vctrs_filter* v_filters);
 
 static
@@ -158,6 +164,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                               const struct vctrs_no_match* no_match,
                               const struct vctrs_remaining* remaining,
                               enum vctrs_multiple multiple,
+                              enum vctrs_relationship relationship,
                               r_ssize size_needles,
                               r_ssize size_haystack,
                               bool any_non_equi,
@@ -237,3 +244,29 @@ void warn_matches_multiple(r_ssize i,
                            struct vctrs_arg* needles_arg,
                            struct vctrs_arg* haystack_arg,
                            struct r_lazy call);
+
+static inline
+void stop_matches_relationship_one_to_one(r_ssize i,
+                                          const char* which,
+                                          struct vctrs_arg* needles_arg,
+                                          struct vctrs_arg* haystack_arg,
+                                          struct r_lazy call);
+
+static inline
+void stop_matches_relationship_one_to_many(r_ssize i,
+                                           struct vctrs_arg* needles_arg,
+                                           struct vctrs_arg* haystack_arg,
+                                           struct r_lazy call);
+
+static inline
+void stop_matches_relationship_many_to_one(r_ssize i,
+                                           struct vctrs_arg* needles_arg,
+                                           struct vctrs_arg* haystack_arg,
+                                           struct r_lazy call);
+
+static inline
+void warn_matches_relationship_many_to_many(r_ssize i,
+                                            r_ssize j,
+                                            struct vctrs_arg* needles_arg,
+                                            struct vctrs_arg* haystack_arg,
+                                            struct r_lazy call);

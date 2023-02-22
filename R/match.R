@@ -108,9 +108,43 @@
 #'     `"last"` if you just need to detect if there is at least one match.
 #'   - `"first"` returns the first match detected in `haystack`.
 #'   - `"last"` returns the last match detected in `haystack`.
-#'   - `"warning"` throws a warning if multiple matches are detected, but
-#'     otherwise falls back to `"all"`.
-#'   - `"error"` throws an error if multiple matches are detected.
+#'
+#' @param relationship Handling of the expected relationship between
+#'   `needles` and `haystack`. If the expectations chosen from the list below
+#'   are invalidated, an error is thrown.
+#'
+#'   - `"none"` doesn't perform any relationship checks.
+#'
+#'   - `"one_to_one"` expects:
+#'     - Each value in `needles` matches at most 1 value in `haystack`.
+#'     - Each value in `haystack` matches at most 1 value in `needles`.
+#'
+#'   - `"one_to_many"` expects:
+#'     - Each value in `needles` matches any number of values in `haystack`.
+#'     - Each value in `haystack` matches at most 1 value in `needles`.
+#'
+#'   - `"many_to_one"` expects:
+#'     - Each value in `needles` matches at most 1 value in `haystack`.
+#'     - Each value in `haystack` matches any number of values in `needles`.
+#'
+#'   - `"many_to_many"` expects:
+#'     - Each value in `needles` matches any number of values in `haystack`.
+#'     - Each value in `haystack` matches any number of values in `needles`.
+#'
+#'     This performs no checks, and is identical to `"none"`, but is provided to
+#'     allow you to be explicit about this relationship if you know it exists.
+#'
+#'   - `"warn_many_to_many"` doesn't assume there is any known relationship, but
+#'     will warn if `needles` and `haystack` have a many-to-many relationship
+#'     (which is typically unexpected), encouraging you to either take a closer
+#'     look at your inputs or make this relationship explicit by specifying
+#'     `"many_to_many"`.
+#'
+#'   `relationship` is applied after `filter` and `multiple` to allow potential
+#'   multiple matches to be filtered out first.
+#'
+#'   `relationship` doesn't handle cases where there are zero matches. For that,
+#'   see `no_match` and `remaining`.
 #'
 #' @param needles_arg,haystack_arg Argument tags for `needles` and `haystack`
 #'   used in error messages.
@@ -141,7 +175,13 @@
 #' vec_locate_matches(x, y, multiple = "first")
 #' vec_locate_matches(x, y, multiple = "last")
 #' vec_locate_matches(x, y, multiple = "any")
-#' try(vec_locate_matches(x, y, multiple = "error"))
+#'
+#' # Use `relationship` to add constraints and error on multiple matches if
+#' # they aren't expected
+#' try(vec_locate_matches(x, y, relationship = "one_to_one"))
+#'
+#' # In this case, the `NA` in `y` matches two rows in `x`
+#' try(vec_locate_matches(x, y, relationship = "one_to_many"))
 #'
 #' # By default, NA is treated as being identical to NaN.
 #' # Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
@@ -152,6 +192,10 @@
 #' # `NA` in the `haystack` column anytime there was an incomplete observation
 #' # in `needles`.
 #' vec_locate_matches(x, y, incomplete = NA)
+#'
+#' # Using `incomplete = NA` allows us to enforce the one-to-many relationship
+#' # that we couldn't before
+#' vec_locate_matches(x, y, relationship = "one_to_many", incomplete = NA)
 #'
 #' # `no_match` allows you to specify the returned value for a needle with
 #' # zero matches. Note that this is different from an incomplete value,
@@ -239,6 +283,7 @@ vec_locate_matches <- function(needles,
                                no_match = NA_integer_,
                                remaining = "drop",
                                multiple = "all",
+                               relationship = "none",
                                nan_distinct = FALSE,
                                chr_proxy_collate = NULL,
                                needles_arg = "",
@@ -257,6 +302,7 @@ vec_locate_matches <- function(needles,
     no_match,
     remaining,
     multiple,
+    relationship,
     nan_distinct,
     chr_proxy_collate,
     needles_arg,
@@ -419,30 +465,10 @@ stop_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
 cnd_header.vctrs_error_matches_multiple <- function(cnd, ...) {
   cnd_matches_multiple_header(cnd$needles_arg, cnd$haystack_arg)
 }
-cnd_matches_multiple_header <- function(needles_arg, haystack_arg) {
-  if (nzchar(needles_arg)) {
-    needles_name <- glue::glue(" of `{needles_arg}` ")
-  } else {
-    needles_name <- " "
-  }
-
-  if (nzchar(haystack_arg)) {
-    haystack_name <- glue::glue(" from `{haystack_arg}`")
-  } else {
-    haystack_name <- ""
-  }
-
-  glue::glue("Each element{needles_name}can match at most 1 observation{haystack_name}.")
-}
 
 #' @export
 cnd_body.vctrs_error_matches_multiple <- function(cnd, ...) {
   cnd_matches_multiple_body(cnd$i)
-}
-cnd_matches_multiple_body <- function(i) {
-  bullet <- glue::glue("The element at location {i} has multiple matches.")
-  bullet <- c(x = bullet)
-  format_error_bullets(bullet)
 }
 
 # ------------------------------------------------------------------------------
@@ -460,6 +486,152 @@ warn_matches_multiple <- function(i, needles_arg, haystack_arg, call) {
     i = i,
     needles_arg = needles_arg,
     haystack_arg = haystack_arg,
+    call = call
+  )
+}
+
+# ------------------------------------------------------------------------------
+
+stop_matches_relationship_one_to_one <- function(i, which, needles_arg, haystack_arg, call) {
+  stop_matches_relationship(
+    class = "vctrs_error_matches_relationship_one_to_one",
+    i = i,
+    which = which,
+    needles_arg = needles_arg,
+    haystack_arg = haystack_arg,
+    call = call
+  )
+}
+
+#' @export
+cnd_header.vctrs_error_matches_relationship_one_to_one <- function(cnd, ...) {
+  if (cnd$which == "needles") {
+    cnd_matches_multiple_header(cnd$needles_arg, cnd$haystack_arg)
+  } else {
+    cnd_matches_multiple_header(cnd$haystack_arg, cnd$needles_arg)
+  }
+}
+
+#' @export
+cnd_body.vctrs_error_matches_relationship_one_to_one <- function(cnd, ...) {
+  if (cnd$which == "needles") {
+    cnd_matches_multiple_body(cnd$i, cnd$needles_arg)
+  } else {
+    cnd_matches_multiple_body(cnd$i, cnd$haystack_arg)
+  }
+}
+
+
+stop_matches_relationship_one_to_many <- function(i, needles_arg, haystack_arg, call) {
+  stop_matches_relationship(
+    class = "vctrs_error_matches_relationship_one_to_many",
+    i = i,
+    needles_arg = needles_arg,
+    haystack_arg = haystack_arg,
+    call = call
+  )
+}
+
+#' @export
+cnd_header.vctrs_error_matches_relationship_one_to_many <- function(cnd, ...) {
+  cnd_matches_multiple_header(cnd$haystack_arg, cnd$needles_arg)
+}
+
+#' @export
+cnd_body.vctrs_error_matches_relationship_one_to_many <- function(cnd, ...) {
+  cnd_matches_multiple_body(cnd$i, cnd$haystack_arg)
+}
+
+
+stop_matches_relationship_many_to_one <- function(i, needles_arg, haystack_arg, call) {
+  stop_matches_relationship(
+    class = "vctrs_error_matches_relationship_many_to_one",
+    i = i,
+    needles_arg = needles_arg,
+    haystack_arg = haystack_arg,
+    call = call
+  )
+}
+
+#' @export
+cnd_header.vctrs_error_matches_relationship_many_to_one <- function(cnd, ...) {
+  cnd_matches_multiple_header(cnd$needles_arg, cnd$haystack_arg)
+}
+
+#' @export
+cnd_body.vctrs_error_matches_relationship_many_to_one <- function(cnd, ...) {
+  cnd_matches_multiple_body(cnd$i, cnd$needles_arg)
+}
+
+
+stop_matches_relationship <- function(class = NULL, ..., call = caller_env()) {
+  stop_matches(
+    class = c(class, "vctrs_error_matches_relationship"),
+    ...,
+    call = call
+  )
+}
+
+cnd_matches_multiple_header <- function(x_arg, y_arg) {
+  if (nzchar(x_arg)) {
+    x_name <- glue::glue(" of `{x_arg}` ")
+  } else {
+    x_name <- " "
+  }
+
+  if (nzchar(y_arg)) {
+    y_name <- glue::glue(" from `{y_arg}`")
+  } else {
+    y_name <- ""
+  }
+
+  glue::glue("Each element{x_name}can match at most 1 observation{y_name}.")
+}
+
+cnd_matches_multiple_body <- function(i, name = "") {
+  if (nzchar(name)) {
+    bullet <- glue::glue("The element of `{name}` at location {i} has multiple matches.")
+  } else {
+    bullet <- glue::glue("The element at location {i} has multiple matches.")
+  }
+  bullet <- c(x = bullet)
+  format_error_bullets(bullet)
+}
+
+# ------------------------------------------------------------------------------
+
+warn_matches_relationship_many_to_many <- function(i, j, needles_arg, haystack_arg, call) {
+  if (nzchar(needles_arg) && nzchar(haystack_arg)) {
+    name_needles_and_haystack <- glue::glue(" between `{needles_arg}` and `{haystack_arg}`")
+  } else {
+    name_needles_and_haystack <- ""
+  }
+
+  header <- glue::glue("Detected an unexpected many-to-many relationship{name_needles_and_haystack}.")
+
+  message <- paste(
+    header,
+    cnd_matches_multiple_body(i, needles_arg),
+    cnd_matches_multiple_body(j, haystack_arg),
+    sep = "\n"
+  )
+
+  warn_matches_relationship(
+    message = message,
+    class = "vctrs_warning_matches_relationship_many_to_many",
+    i = i,
+    j = j,
+    needles_arg = needles_arg,
+    haystack_arg = haystack_arg,
+    call = call
+  )
+}
+
+warn_matches_relationship <- function(message, class = NULL, ..., call = caller_env()) {
+  warn_matches(
+    message = message,
+    class = c(class, "vctrs_warning_matches_relationship"),
+    ...,
     call = call
   )
 }

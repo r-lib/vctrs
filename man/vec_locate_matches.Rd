@@ -14,6 +14,7 @@ vec_locate_matches(
   no_match = NA_integer_,
   remaining = "drop",
   multiple = "all",
+  relationship = "none",
   nan_distinct = FALSE,
   chr_proxy_collate = NULL,
   needles_arg = "",
@@ -108,10 +109,48 @@ which match will be returned. It is often faster than \code{"first"} and
 \code{"last"} if you just need to detect if there is at least one match.
 \item \code{"first"} returns the first match detected in \code{haystack}.
 \item \code{"last"} returns the last match detected in \code{haystack}.
-\item \code{"warning"} throws a warning if multiple matches are detected, but
-otherwise falls back to \code{"all"}.
-\item \code{"error"} throws an error if multiple matches are detected.
 }}
+
+\item{relationship}{Handling of the expected relationship between
+\code{needles} and \code{haystack}. If the expectations chosen from the list below
+are invalidated, an error is thrown.
+\itemize{
+\item \code{"none"} doesn't perform any relationship checks.
+\item \code{"one_to_one"} expects:
+\itemize{
+\item Each value in \code{needles} matches at most 1 value in \code{haystack}.
+\item Each value in \code{haystack} matches at most 1 value in \code{needles}.
+}
+\item \code{"one_to_many"} expects:
+\itemize{
+\item Each value in \code{needles} matches any number of values in \code{haystack}.
+\item Each value in \code{haystack} matches at most 1 value in \code{needles}.
+}
+\item \code{"many_to_one"} expects:
+\itemize{
+\item Each value in \code{needles} matches at most 1 value in \code{haystack}.
+\item Each value in \code{haystack} matches any number of values in \code{needles}.
+}
+\item \code{"many_to_many"} expects:
+\itemize{
+\item Each value in \code{needles} matches any number of values in \code{haystack}.
+\item Each value in \code{haystack} matches any number of values in \code{needles}.
+}
+
+This performs no checks, and is identical to \code{"none"}, but is provided to
+allow you to be explicit about this relationship if you know it exists.
+\item \code{"warn_many_to_many"} doesn't assume there is any known relationship, but
+will warn if \code{needles} and \code{haystack} have a many-to-many relationship
+(which is typically unexpected), encouraging you to either take a closer
+look at your inputs or make this relationship explicit by specifying
+\code{"many_to_many"}.
+}
+
+\code{relationship} is applied after \code{filter} and \code{multiple} to allow potential
+multiple matches to be filtered out first.
+
+\code{relationship} doesn't handle cases where there are zero matches. For that,
+see \code{no_match} and \code{remaining}.}
 
 \item{nan_distinct}{A single logical specifying whether or not \code{NaN} should
 be considered distinct from \code{NA} for double and complex vectors. If \code{TRUE},
@@ -207,7 +246,13 @@ data_frame(
 vec_locate_matches(x, y, multiple = "first")
 vec_locate_matches(x, y, multiple = "last")
 vec_locate_matches(x, y, multiple = "any")
-try(vec_locate_matches(x, y, multiple = "error"))
+
+# Use `relationship` to add constraints and error on multiple matches if
+# they aren't expected
+try(vec_locate_matches(x, y, relationship = "one_to_one"))
+
+# In this case, the `NA` in `y` matches two rows in `x`
+try(vec_locate_matches(x, y, relationship = "one_to_many"))
 
 # By default, NA is treated as being identical to NaN.
 # Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
@@ -218,6 +263,10 @@ vec_locate_matches(x, y, nan_distinct = TRUE)
 # `NA` in the `haystack` column anytime there was an incomplete observation
 # in `needles`.
 vec_locate_matches(x, y, incomplete = NA)
+
+# Using `incomplete = NA` allows us to enforce the one-to-many relationship
+# that we couldn't before
+vec_locate_matches(x, y, relationship = "one_to_many", incomplete = NA)
 
 # `no_match` allows you to specify the returned value for a needle with
 # zero matches. Note that this is different from an incomplete value,
