@@ -17,8 +17,8 @@ vec_locate_matches(
   relationship = "none",
   nan_distinct = FALSE,
   chr_proxy_collate = NULL,
-  needles_arg = "",
-  haystack_arg = "",
+  needles_arg = "needles",
+  haystack_arg = "haystack",
   error_call = current_env()
 )
 }
@@ -61,20 +61,20 @@ A filter can return multiple haystack matches for a particular needle
 if the maximum or minimum haystack value is duplicated in \code{haystack}. These
 can be further controlled with \code{multiple}.}
 
-\item{incomplete}{Handling of missing values and
-\link[=vec_detect_complete]{incomplete} observations in \code{needles}.
+\item{incomplete}{Handling of missing and \link[=vec_detect_complete]{incomplete}
+values in \code{needles}.
 \itemize{
 \item \code{"compare"} uses \code{condition} to determine whether or not a missing value
 in \code{needles} matches a missing value in \code{haystack}. If \code{condition} is
 \code{==}, \code{>=}, or \code{<=}, then missing values will match.
 \item \code{"match"} always allows missing values in \code{needles} to match missing
 values in \code{haystack}, regardless of the \code{condition}.
-\item \code{"drop"} drops incomplete observations in \code{needles} from the result.
+\item \code{"drop"} drops incomplete values in \code{needles} from the result.
 \item \code{"error"} throws an error if any \code{needles} are incomplete.
 \item If a single integer is provided, this represents the value returned
-in the \code{haystack} column for observations of \code{needles} that are
-incomplete. If \code{no_match = NA}, setting \code{incomplete = NA} forces
-incomplete observations in \code{needles} to be treated like unmatched values.
+in the \code{haystack} column for values of \code{needles} that are incomplete. If
+\code{no_match = NA}, setting \code{incomplete = NA} forces incomplete values in
+\code{needles} to be treated like unmatched values.
 }
 
 \code{nan_distinct} determines whether a \code{NA} is allowed to match a \code{NaN}.}
@@ -84,8 +84,8 @@ incomplete observations in \code{needles} to be treated like unmatched values.
 \item \code{"drop"} drops \code{needles} with zero matches from the result.
 \item \code{"error"} throws an error if any \code{needles} have zero matches.
 \item If a single integer is provided, this represents the value returned in
-the \code{haystack} column for observations of \code{needles} that have zero
-matches. The default represents an unmatched needle with \code{NA}.
+the \code{haystack} column for values of \code{needles} that have zero matches. The
+default represents an unmatched needle with \code{NA}.
 }}
 
 \item{remaining}{Handling of \code{haystack} values that \code{needles} never matched.
@@ -195,10 +195,10 @@ corresponding match in the haystack for the current needle.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{vec_locate_matches()} is a more flexible version of \code{\link[=vec_match]{vec_match()}} used to
-identify locations where each observation of \code{needles} matches one or
-multiple observations in \code{haystack}. Unlike \code{vec_match()},
-\code{vec_locate_matches()} returns all matches by default, and can match on
-binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, and \code{<=}.
+identify locations where each value of \code{needles} matches one or multiple
+values in \code{haystack}. Unlike \code{vec_match()}, \code{vec_locate_matches()} returns
+all matches by default, and can match on binary conditions other than
+equality, such as \code{>}, \code{>=}, \code{<}, and \code{<=}.
 }
 \details{
 \code{\link[=vec_match]{vec_match()}} is identical to (but often slightly faster than):
@@ -216,7 +216,7 @@ binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, an
 and \code{haystack}, with the default being most similar to a left join.
 
 Be very careful when specifying match \code{condition}s. If a condition is
-mis-specified, it is very easy to accidentally generate an exponentially
+misspecified, it is very easy to accidentally generate an exponentially
 large number of matches.
 }
 \section{Dependencies of \code{vec_locate_matches()}}{
@@ -231,7 +231,7 @@ large number of matches.
 x <- c(1, 2, NA, 3, NaN)
 y <- c(2, 1, 4, NA, 1, 2, NaN)
 
-# By default, for each element of `x`, all matching locations in `y` are
+# By default, for each value of `x`, all matching locations in `y` are
 # returned
 matches <- vec_locate_matches(x, y)
 matches
@@ -254,13 +254,13 @@ try(vec_locate_matches(x, y, relationship = "one_to_one"))
 # In this case, the `NA` in `y` matches two rows in `x`
 try(vec_locate_matches(x, y, relationship = "one_to_many"))
 
-# By default, NA is treated as being identical to NaN.
-# Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
-# can only match NA, and NaN can only match NaN.
+# By default, `NA` is treated as being identical to `NaN`.
+# Using `nan_distinct = TRUE` treats `NA` and `NaN` as different values, so
+# `NA` can only match `NA`, and `NaN` can only match `NaN`.
 vec_locate_matches(x, y, nan_distinct = TRUE)
 
 # If you never want missing values to match, set `incomplete = NA` to return
-# `NA` in the `haystack` column anytime there was an incomplete observation
+# `NA` in the `haystack` column anytime there was an incomplete value
 # in `needles`.
 vec_locate_matches(x, y, incomplete = NA)
 
@@ -302,8 +302,8 @@ data_frame(
 )
 
 # In the very rare case that you need to generate locations for a
-# cross match, where every observation of `x` is forced to match every
-# observation of `y` regardless of what the actual values are, you can
+# cross match, where every value of `x` is forced to match every
+# value of `y` regardless of what the actual values are, you can
 # replace `x` and `y` with integer vectors of the same size that contain
 # a single value and match on those instead.
 x_proxy <- vec_rep(1L, vec_size(x))
