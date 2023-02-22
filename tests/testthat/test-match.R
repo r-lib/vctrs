@@ -1039,6 +1039,40 @@ test_that("`multiple = 'error'` doesn't error errneously on the last observation
   expect_identical(res$haystack, 1:2)
 })
 
+test_that("`multiple = 'error' / 'warning'` throw correctly when combined with `relationship`", {
+  x <- c(1, 2, 2)
+  y <- c(2, 1, 2)
+
+  # `multiple` error technically fires first
+  expect_snapshot({
+    (expect_error(vec_locate_matches(x, y, relationship = "one_to_one", multiple = "error")))
+  })
+
+  # Works when warning is also requested
+  expect_snapshot({
+    (expect_error(vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "error")))
+  })
+  # Both warnings are thrown if applicable
+  expect_snapshot({
+    vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "warning")
+  })
+  # Both warning and error are thrown if applicable
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(x, y, relationship = "one_to_one", multiple = "warning")
+  })
+
+  x <- c(1, 2)
+  y <- c(2, 1, 2)
+
+  expect_snapshot({
+    (expect_error(vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "error")))
+  })
+  # Only `multiple` warning is applicable here
+  expect_snapshot({
+    vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "warning")
+  })
+})
+
 # ------------------------------------------------------------------------------
 # vec_locate_matches() - `relationship`
 

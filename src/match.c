@@ -1834,6 +1834,30 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
       if (any_multiple_needles) {
         loc_first_multiple_needles = loc_needles;
 
+        // TODO: Remove deprecated support for `multiple = "error"/"warning"`
+        switch (multiple) {
+        case VCTRS_MULTIPLE_all:
+          break;
+        case VCTRS_MULTIPLE_error:
+          stop_matches_multiple(
+            loc_first_multiple_needles,
+            needles_arg,
+            haystack_arg,
+            error_call
+          );
+        case VCTRS_MULTIPLE_warning: {
+          warn_matches_multiple(
+            loc_first_multiple_needles,
+            needles_arg,
+            haystack_arg,
+            error_call
+          );
+          break;
+        }
+        default:
+          r_stop_internal("`check_multiple_needles` should have been false.");
+        }
+
         switch (relationship) {
         case VCTRS_RELATIONSHIP_one_to_one:
           stop_matches_relationship_one_to_one(
@@ -1865,24 +1889,14 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
         default: {
           switch (multiple) {
           case VCTRS_MULTIPLE_all:
+            // We are tracking if there are multiple matches, but don't throw
+            // any errors or warnings on them
             break;
           // TODO: Remove deprecated support for `multiple = "error"/"warning"`
           case VCTRS_MULTIPLE_error:
-            stop_matches_multiple(
-              loc_first_multiple_needles,
-              needles_arg,
-              haystack_arg,
-              error_call
-            );
-          case VCTRS_MULTIPLE_warning: {
-            warn_matches_multiple(
-              loc_first_multiple_needles,
-              needles_arg,
-              haystack_arg,
-              error_call
-            );
+            r_stop_internal("`multiple = 'error'` should have thrown by now.");
+          case VCTRS_MULTIPLE_warning:
             break;
-          }
           default:
             r_stop_internal("`check_multiple_needles` should have been false.");
           }
