@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* `vec_locate_matches()` has changed its default `needles_arg` and
+  `haystack_arg` values from `""` to `"needles"` and `"haystack"`, respectively.
+  This generally generates more informative error messages (#1792).
+
 * `vec_locate_matches()` gains a new `relationship` argument that holistically
   handles multiple matches between `needles` and `haystack`. In particular,
   `relationship = "many_to_one"` replaces `multiple = "error"` and
