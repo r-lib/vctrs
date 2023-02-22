@@ -37,8 +37,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't assign to elements past the end.
-      i Location 5 doesn't exist.
+      ! Can't assign elements.
+      x Location must be less than or equal to 3, not 5.
       i There are only 3 elements.
     Code
       (expect_error(vec_assign(1:3, "foo", 10), "unnamed vector"))
@@ -52,8 +52,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't negate elements past the end.
-      i Location 100 doesn't exist.
+      ! Can't negate elements.
+      x Location must be less than or equal to 26, not 100.
       i There are only 26 elements.
     Code
       (expect_error(vec_assign(set_names(letters), "foo", "bar"), class = "vctrs_error_subscript_oob")
@@ -61,8 +61,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't assign to elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't assign elements.
+      x Can't find element `foo`.
 
 # must assign with proper negative locations
 

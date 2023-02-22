@@ -171,24 +171,24 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements past the end.
-      i Location 10 doesn't exist.
+      ! Can't subset elements with `10L`.
+      x Location must be less than or equal to 2, not 10.
       i There are only 2 elements.
     Code
       (expect_error(vec_as_location(-10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't negate elements past the end.
-      i Location 10 doesn't exist.
+      ! Can't negate elements with `-10L`.
+      x Location must be less than or equal to 2, not 10.
       i There are only 2 elements.
     Code
       (expect_error(vec_as_location2(10L, 2L), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't extract elements past the end.
-      i Location 10 doesn't exist.
+      ! Can't extract element with `10L`.
+      x Location must be less than or equal to 2, not 10.
       i There are only 2 elements.
     Code
       # Character indexing
@@ -197,24 +197,24 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't subset elements with `"foo"`.
+      x Can't find element `foo`.
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar"), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't extract elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't extract element with `"foo"`.
+      x Can't find element `foo`.
     Code
       (expect_error(vec_as_location2("foo", 1L, names = "bar", call = call("baz")),
       class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error in `baz()`:
-      ! Can't extract elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't extract element with `"foo"`.
+      x Can't find element `foo`.
 
 # vec_as_location2() requires length 1 inputs
 
@@ -415,45 +415,53 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 1.
-      x Subscript `3` contains non-consecutive location 3.
+      ! Can't subset elements with `3`.
+      x Location must be less than or equal to 1, not 3.
+      i There is only 1 element.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(c(1, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 1.
-      x Subscript `c(1, 3)` contains non-consecutive location 3.
+      ! Can't subset elements with `c(1, 3)`.
+      x Location must be less than or equal to 1, not 3.
+      i There is only 1 element.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(c(1:5, 7), 3, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 3.
-      x Subscript `c(1:5, 7)` contains non-consecutive locations 4 and 7.
+      ! Can't subset elements with `c(1:5, 7)`.
+      x Locations must be less than or equal to 3.
+      x Larger locations: 4, 5, and 7
+      i There are only 3 elements.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(c(1:5, 7, 1), 3, oob = "extend"), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 3.
-      x Subscript `c(1:5, 7, 1)` contains non-consecutive locations 4 and 7.
+      ! Can't subset elements with `c(1:5, 7, 1)`.
+      x Locations must be less than or equal to 3.
+      x Larger locations: 4, 5, and 7
+      i There are only 3 elements.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(class = "vctrs_error_subscript_oob", num_as_location(c(1:5, 7, 1,
       10), 3, oob = "extend")))
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 3.
-      x Subscript `c(1:5, 7, 1, 10)` contains non-consecutive locations 4, 7, and 10.
+      ! Can't subset elements with `c(1:5, 7, 1, 10)`.
+      x Locations must be less than or equal to 3.
+      x Larger locations: 4, 5, 7, and 10
+      i There are only 3 elements.
+      i Extension with consecutive locations is allowed.
 
 # num_as_location() errors when inverting oob negatives unless `oob = 'remove'` (#1630)
 
@@ -461,8 +469,8 @@
       num_as_location(-4, 3, oob = "error", negative = "invert")
     Condition
       Error:
-      ! Can't negate elements past the end.
-      i Location 4 doesn't exist.
+      ! Can't negate elements with `-4`.
+      x Location must be less than or equal to 3, not 4.
       i There are only 3 elements.
 
 ---
@@ -471,8 +479,8 @@
       num_as_location(c(-4, 4, 5), 3, oob = "extend", negative = "invert")
     Condition
       Error:
-      ! Can't negate elements past the end.
-      i Location 4 doesn't exist.
+      ! Can't negate elements with `c(-4, 4, 5)`.
+      x Location must be less than or equal to 3, not 4.
       i There are only 3 elements.
 
 # num_as_location() errors on disallowed zeros when inverting negatives (#1612)
@@ -501,8 +509,8 @@
       num_as_location(-6L, 5L, oob = "extend", negative = "ignore")
     Condition
       Error:
-      ! Can't negate elements past the end.
-      i Location 6 doesn't exist.
+      ! Can't negate elements with `-6L`.
+      x Location must be less than or equal to 5, not 6.
       i There are only 5 elements.
 
 ---
@@ -511,8 +519,8 @@
       num_as_location(c(-7L, 6L), 5L, oob = "extend", negative = "ignore")
     Condition
       Error:
-      ! Can't negate elements past the end.
-      i Location 7 doesn't exist.
+      ! Can't negate elements with `c(-7L, 6L)`.
+      x Location must be less than or equal to 5, not 7.
       i There are only 5 elements.
 
 ---
@@ -521,8 +529,8 @@
       num_as_location(c(-7L, NA), 5L, oob = "extend", negative = "ignore")
     Condition
       Error:
-      ! Can't negate elements past the end.
-      i Location 7 doesn't exist.
+      ! Can't negate elements with `c(-7L, NA)`.
+      x Location must be less than or equal to 5, not 7.
       i There are only 5 elements.
 
 # num_as_location() with `oob = 'error'` reports negative and positive oob values
@@ -531,8 +539,9 @@
       num_as_location(c(-6L, 7L), n = 5L, oob = "error", negative = "ignore")
     Condition
       Error:
-      ! Can't subset elements past the end.
-      i Locations 6 and 7 don't exist.
+      ! Can't subset elements with `c(-6L, 7L)`.
+      x Locations must be less than or equal to 5.
+      x Larger locations: 6 and 7
       i There are only 5 elements.
 
 # missing values are supported in error formatters
@@ -543,8 +552,9 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements past the end.
-      i Locations 2 and 3 don't exist.
+      ! Can't subset elements with `c(1, NA, 2, 3)`.
+      x Locations must be less than or equal to 1.
+      x Larger locations: 2 and 3
       i There is only 1 element.
     Code
       (expect_error(num_as_location(c(1, NA, 3), 1, oob = "extend"), class = "vctrs_error_subscript_oob")
@@ -552,9 +562,10 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 1.
-      x Subscript `c(1, NA, 3)` contains non-consecutive location 3.
+      ! Can't subset elements with `c(1, NA, 3)`.
+      x Location must be less than or equal to 1, not 3.
+      i There is only 1 element.
+      i Extension with consecutive locations is allowed.
 
 # can disallow missing values
 
@@ -777,9 +788,10 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements beyond the end with non-consecutive locations.
-      i Input has size 2.
-      x Subscript `foo` contains non-consecutive location 4.
+      ! Can't subset elements with `foo`.
+      x Location must be less than or equal to 2, not 4.
+      i There are only 2 elements.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(num_as_location(0, 1, zero = "error", arg = "foo", call = call(
         "my_function")), class = "vctrs_error_subscript_type"))
@@ -862,9 +874,10 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error:
-      ! Can't rename columns beyond the end with non-consecutive locations.
-      i Input has size 2.
-      x Subscript `foo(bar)` contains non-consecutive location 4.
+      ! Can't rename columns with `foo(bar)`.
+      x Location must be less than or equal to 2, not 4.
+      i There are only 2 columns.
+      i Extension with consecutive locations is allowed.
     Code
       (expect_error(with_tibble_cols(num_as_location(0, 1, zero = "error")), class = "vctrs_error_subscript_type")
       )
@@ -883,8 +896,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't subset elements with `i`.
+      x Can't find element `foo`.
     Code
       # With custom `arg`
       (expect_error(vec_as_location(30, length(letters), arg = "foo", call = call(
@@ -892,8 +905,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements past the end.
-      i Location 30 doesn't exist.
+      ! Can't subset elements with `foo`.
+      x Location must be less than or equal to 26, not 30.
       i There are only 26 elements.
     Code
       (expect_error(vec_as_location("foo", NULL, letters, arg = "foo", call = call(
@@ -901,8 +914,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `my_function()`:
-      ! Can't subset elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't subset elements with `foo`.
+      x Can't find element `foo`.
     Code
       # With tibble columns
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), "foo")), class = "vctrs_error_subscript_oob")
@@ -910,16 +923,16 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't rename columns that don't exist.
-      x Column `foo` doesn't exist.
+      ! Can't rename columns with `foo(bar)`.
+      x Can't find column `foo`.
     Code
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), 30)), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't rename columns that don't exist.
-      i Location 30 doesn't exist.
+      ! Can't rename columns with `foo(bar)`.
+      x Location must be less than or equal to 26, not 30.
       i There are only 26 columns.
     Code
       (expect_error(with_tibble_cols(vec_slice(set_names(letters), -30)), class = "vctrs_error_subscript_oob")
@@ -927,8 +940,8 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't rename columns that don't exist.
-      i Location 30 doesn't exist.
+      ! Can't rename columns with `foo(bar)`.
+      x Location must be less than or equal to 26, not 30.
       i There are only 26 columns.
     Code
       # With tibble rows
@@ -937,16 +950,17 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't remove rows that don't exist.
-      x Rows `foo` and `bar` don't exist.
+      ! Can't remove rows with `foo(bar)`.
+      x Can't find rows `foo` and `bar`.
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), 1:30)), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't remove rows past the end.
-      i Locations 27, 28, 29, and 30 don't exist.
+      ! Can't remove rows with `foo(bar)`.
+      x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 rows.
     Code
       (expect_error(with_tibble_rows(vec_slice(set_names(letters), -(1:30))), class = "vctrs_error_subscript_oob")
@@ -954,8 +968,9 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't remove rows past the end.
-      i Locations 27, 28, 29, and 30 don't exist.
+      ! Can't remove rows with `foo(bar)`.
+      x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 rows.
     Code
       # With tidyselect select
@@ -964,16 +979,16 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't select columns that don't exist.
-      x Columns `foo` and `bar` don't exist.
+      ! Can't select columns with `foo(bar)`.
+      x Can't find columns `foo` and `bar`.
     Code
       (expect_error(with_tidyselect_select(vec_slice(set_names(letters), 30)), class = "vctrs_error_subscript_oob")
       )
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't select columns past the end.
-      i Location 30 doesn't exist.
+      ! Can't select columns with `foo(bar)`.
+      x Location must be less than or equal to 26, not 30.
       i There are only 26 columns.
     Code
       (expect_error(with_tidyselect_select(vec_slice(set_names(letters), -(1:30))),
@@ -981,8 +996,9 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't select columns past the end.
-      i Locations 27, 28, 29, and 30 don't exist.
+      ! Can't select columns with `foo(bar)`.
+      x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 columns.
     Code
       # With tidyselect relocate
@@ -991,16 +1007,16 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't relocate columns that don't exist.
-      x Columns `foo` and `bar` don't exist.
+      ! Can't relocate columns with `foo(bar)`.
+      x Can't find columns `foo` and `bar`.
     Code
       (expect_error(with_tidyselect_relocate(vec_slice(set_names(letters), 30)),
       class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't relocate columns that don't exist.
-      i Location 30 doesn't exist.
+      ! Can't relocate columns with `foo(bar)`.
+      x Location must be less than or equal to 26, not 30.
       i There are only 26 columns.
     Code
       (expect_error(with_tidyselect_relocate(vec_slice(set_names(letters), -(1:30))),
@@ -1008,8 +1024,9 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't relocate columns that don't exist.
-      i Locations 27, 28, 29, and 30 don't exist.
+      ! Can't relocate columns with `foo(bar)`.
+      x Locations must be less than or equal to 26.
+      x Larger locations: 27, 28, 29, and 30
       i There are only 26 columns.
 
 # vec_as_location() checks dimensionality

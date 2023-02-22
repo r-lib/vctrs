@@ -488,33 +488,11 @@ stop_subscript_oob <- function(i,
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_oob <- function(cnd, ...) {
-  if (cnd_subscript_oob_non_consecutive(cnd)) {
-    return(cnd_header_vctrs_error_subscript_oob_non_consecutive(cnd, ...))
-  }
-
-  elt <- cnd_subscript_element(cnd)
-  action <- cnd_subscript_action(cnd)
-  type <- cnd_subscript_type(cnd)
-
-  if (action %in% c("rename", "relocate") || type == "character") {
-    glue::glue("Can't {action} {elt[[2]]} that don't exist.")
-  } else {
-    glue::glue("Can't {action} {elt[[2]]} past the end.")
-  }
-}
-
-#' @export
 cnd_body.vctrs_error_subscript_oob <- function(cnd, ...) {
-  switch(cnd_subscript_type(cnd),
-    numeric =
-      if (cnd_subscript_oob_non_consecutive(cnd)) {
-        cnd_body_vctrs_error_subscript_oob_non_consecutive(cnd, ...)
-      } else {
-        cnd_body_vctrs_error_subscript_oob_location(cnd, ...)
-      },
-    character =
-      cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
+  switch(
+    cnd_subscript_type(cnd),
+    numeric = cnd_body_vctrs_error_subscript_oob_location(cnd, ...),
+    character = cnd_body_vctrs_error_subscript_oob_name(cnd, ...),
     abort("Internal error: subscript type can't be `logical` for OOB errors.")
   )
 }
@@ -533,28 +511,46 @@ cnd_body_vctrs_error_subscript_oob_location <- function(cnd, ...) {
   i <- abs(i)
 
   oob <- i[i > cnd$size]
-  oob_enum <- vctrs_cli_vec(oob)
 
   n_loc <- length(oob)
   n <- cnd$size
   elt <- cnd_subscript_element_cli(n, cnd)
 
+  allow_extension <- cnd_subscript_oob_non_consecutive(cnd)
+  scalar_oob <- length(oob) == 1
+
+  arg <- cnd_subscript_arg(cnd)
+
+  if (scalar_oob) {
+    arg <- arg
+    not <- glue::glue(", not {oob}")
+    oob_line <- NULL
+  } else {
+    arg <- glue::glue("Locations in {arg}")
+    not <- ""
+    oob_enum <- vctrs_cli_vec(oob)
+    oob_line <- cli::format_inline("Larger locations: {oob_enum}")
+  }
+
   # TODO: Switch to `format_inline()` and format bullets lazily through rlang
   cli::format_error(c(
-    "i" = "{cli::qty(n_loc)} Location{?s} {oob_enum} do{?esn't/n't} exist.",
-    "i" = "There {cli::qty(n)} {?is/are} only {elt}."
+    "x" = "{cli::qty(n_loc)} Location{?s} must be less than or equal to {n}{not}.",
+    "x" = oob_line,
+    "i" = "There {cli::qty(n)} {?is/are} only {elt}.",
+    "i" = if (allow_extension) "Extension with consecutive locations is allowed."
   ))
 }
 cnd_body_vctrs_error_subscript_oob_name <- function(cnd, ...) {
-  elt <- cnd_subscript_element(cnd, capital = TRUE)
+  elt <- cnd_subscript_element(cnd, capital = FALSE)
+  elt_cap <- cnd_subscript_element(cnd, capital = TRUE)
   oob <- cnd$i[!cnd$i %in% cnd$names]
   oob_enum <- enumerate(glue::backtick(oob))
 
   format_error_bullets(c(
     x = glue::glue(ngettext(
       length(oob),
-      "{elt[[1]]} {oob_enum} doesn't exist.",
-      "{elt[[2]]} {oob_enum} don't exist."
+      "Can't find {elt[[1]]} {oob_enum}.",
+      "Can't find {elt[[2]]} {oob_enum}.",
     ))
   ))
 }
@@ -574,32 +570,6 @@ stop_location_oob_non_consecutive <- function(i,
     subscript_oob_non_consecutive = TRUE,
     ...,
     call = call
-  )
-}
-
-cnd_header_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  action <- cnd_subscript_action(cnd)
-  elt <- cnd_subscript_element(cnd)
-  glue::glue("Can't {action} {elt[[2]]} beyond the end with non-consecutive locations.")
-}
-cnd_body_vctrs_error_subscript_oob_non_consecutive <- function(cnd, ...) {
-  i <- sort(cnd$i)
-  i <- i[i > cnd$size]
-
-  non_consecutive <- i[c(TRUE, diff(i) != 1L)]
-
-  arg <- append_arg("Subscript", cnd$subscript_arg)
-  if (length(non_consecutive) == 1) {
-    x_line <- glue::glue("{arg} contains non-consecutive location {non_consecutive}.")
-  } else {
-    non_consecutive <- ensure_full_stop(enumerate(non_consecutive))
-    x_line <- glue::glue("{arg} contains non-consecutive locations {non_consecutive}")
-  }
-
-  glue_data_bullets(
-    cnd,
-    i = "Input has size {size}.",
-    x = x_line
   )
 }
 

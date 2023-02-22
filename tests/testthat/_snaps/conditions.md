@@ -22,24 +22,24 @@
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't subset elements.
+      x Can't find element `foo`.
     Code
       (expect_error(with_subscript_data(vec_slice(set_names(letters), "foo"), quote(
         foo)), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't subset elements with `foo`.
+      x Can't find element `foo`.
     Code
       (expect_error(with_subscript_data(vec_slice(set_names(letters), "foo"), quote(
         foo(bar))), class = "vctrs_error_subscript_oob"))
     Output
       <error/vctrs_error_subscript_oob>
       Error in `vec_slice()`:
-      ! Can't subset elements that don't exist.
-      x Element `foo` doesn't exist.
+      ! Can't subset elements with `foo(bar)`.
+      x Can't find element `foo`.
 
 # scalar type errors are informative
 
