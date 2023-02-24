@@ -97,9 +97,10 @@ obj_print_header.vctrs_group_rle <- function(x, ...) {
 
 # For testing
 new_group_rle <- function(group, length, n) {
-  vec_assert(group, integer())
-  vec_assert(length, integer())
-  vec_assert(n, integer(), 1L)
+  stopifnot(is_integer(group))
+  stopifnot(is_integer(length))
+  stopifnot(is_integer(n))
+  vec_check_size(n, size = 1L)
 
   if (vec_size(group) != vec_size(length)) {
     abort("`group` and `length` must have the same size.")
