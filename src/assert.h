@@ -3,11 +3,6 @@
 
 #include "vctrs-core.h"
 
-void vec_assert(r_obj* x,
-                r_ssize size,
-                struct vctrs_arg* arg,
-                struct r_lazy call);
-
 void obj_check_vector(r_obj* x,
                       struct vctrs_arg* arg,
                       struct r_lazy call);
