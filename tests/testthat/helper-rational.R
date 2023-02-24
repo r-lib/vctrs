@@ -2,8 +2,12 @@
 # Rational record class from the S3 vector vignette
 
 new_rational <- function(n = integer(), d = integer()) {
-  vec_assert(n, ptype = integer())
-  vec_assert(d, ptype = integer())
+  if (!is_integer(n)) {
+    abort("`n` must be an integer.")
+  }
+  if (!is_integer(d)) {
+    abort("`d` must be an integer.")
+  }
   new_rcrd(list(n = n, d = d), class = "vctrs_rational")
 }
 

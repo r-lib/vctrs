@@ -224,8 +224,10 @@ test_that("error is thrown when comparing scalars", {
 })
 
 test_that("`na_equal` is validated", {
-  expect_error(vec_compare(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
-  expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
+  expect_snapshot({
+    (expect_error(vec_compare(1, 1, na_equal = 1)))
+    (expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE))))
+  })
 })
 
 test_that("can compare equal strings with different encodings", {
@@ -273,7 +275,9 @@ test_that("can compare unspecified", {
 })
 
 test_that("can't supply NA as `na_equal`", {
-  expect_error(vec_compare(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+  expect_snapshot(error = TRUE, {
+    vec_compare(NA, NA, na_equal = NA)
+  })
 })
 
 test_that("vec_compare() silently falls back to base data frame", {

@@ -69,7 +69,7 @@ vec_as_index <- function(i, n, names = NULL) {
     "Please use `vec_as_location() instead.`"
   ))
   n <- vec_cast(n, integer())
-  vec_assert(n, integer(), 1L)
+  vec_check_size(n, size = 1L)
   i <- vec_as_subscript(i)
 
   # Picked up from the environment at the C level
@@ -108,8 +108,8 @@ vec_repeat <- function(x, each = 1L, times = 1L) {
     "Please use either `vec_rep()` or `vec_rep_each()` instead."
   ))
 
-  vec_assert(each, size = 1L)
-  vec_assert(times, size = 1L)
+  vec_check_size(each, size = 1L)
+  vec_check_size(times, size = 1L)
 
   idx <- rep(vec_seq_along(x), times = times, each = each)
   vec_slice(x, idx)

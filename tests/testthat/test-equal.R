@@ -191,8 +191,12 @@ test_that("equality is known to fail when comparing bytes to other encodings", {
 })
 
 test_that("`na_equal` is validated", {
-  expect_error(vec_equal(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
-  expect_error(vec_equal(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
+  expect_snapshot(error = TRUE, {
+    vec_equal(1, 1, na_equal = 1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_equal(1, 1, na_equal = c(TRUE, FALSE))
+  })
 })
 
 test_that("can compare lists of expressions", {
@@ -349,7 +353,9 @@ test_that("can check equality of unspecified objects", {
 })
 
 test_that("can't supply NA as `na_equal`", {
-  expect_error(vec_equal(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+  expect_snapshot(error = TRUE, {
+    vec_equal(NA, NA, na_equal = NA)
+  })
 })
 
 

@@ -114,8 +114,8 @@ stop_incompatible_type <- function(x,
                                    message = NULL,
                                    class = NULL,
                                    call = caller_env()) {
-  vec_assert(x, arg = x_arg)
-  vec_assert(y, arg = y_arg)
+  obj_check_vector(x, arg = x_arg)
+  obj_check_vector(y, arg = y_arg)
 
   action <- arg_match(action)
 

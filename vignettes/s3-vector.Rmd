@@ -23,6 +23,7 @@ This article refers to "vectors of numbers" as *double vectors*. Here, "double" 
 
 ```{r setup}
 library(vctrs)
+library(rlang)
 library(zeallot)
 ```
 
@@ -66,13 +67,15 @@ In this section you'll learn how to create a new vctrs class by calling `new_vct
 
 ### Percent class
 
-In this section, I'll show you how to make a `percent` class, i.e., a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) that uses `vec_assert()` to checks types and/or sizes then calls `new_vctr()`.
+In this section, I'll show you how to make a `percent` class, i.e., a double vector that is printed as a percentage. We start by defining a low-level [constructor](https://adv-r.hadley.nz/s3.html#s3-constrcutor) to check types and/or sizes and call `new_vctr()`.
 
 `percent` is built on a double vector of any length and doesn't have any attributes.
 
 ```{r}
 new_percent <- function(x = double()) {
-  vec_assert(x, double())
+  if (!is_double(x)) {
+    abort("`x` must be a double vector.")
+  }
   new_vctr(x, class = "vctrs_percent")
 }
 
@@ -306,8 +309,13 @@ We start off as before, defining a low-level constructor, a user-friendly constr
 
 ```{r}
 new_decimal <- function(x = double(), digits = 2L) {
-  vec_assert(x, ptype = double())
-  vec_assert(digits, ptype = integer(), size = 1)
+  if (!is_double(x)) {
+    abort("`x` must be a double vector.")
+  }
+  if (!is_integer(digits)) {
+    abort("`digits` must be an integer vector.")
+  }
+  vec_check_size(digits, size = 1L)
 
   new_vctr(x, digits = digits, class = "vctrs_decimal")
 }
@@ -393,8 +401,13 @@ The next level up in complexity is an object that has data-dependent attributes.
 
 ```{r}
 new_cached_sum <- function(x = double(), sum = 0L) {
-  vec_assert(x, ptype = double())
-  vec_assert(sum, ptype = double(), size = 1L)
+  if (!is_double(x)) {
+    abort("`x` must be a double vector.")
+  }
+  if (!is_double(sum)) {
+    abort("`sum` must be a double vector.")
+  }
+  vec_check_size(sum, size = 1L)
 
   new_vctr(x, sum = sum, class = "vctrs_cached_sum")
 }
@@ -478,8 +491,12 @@ As usual we start with low-level and user-friendly constructors. The low-level c
 
 ```{r}
 new_rational <- function(n = integer(), d = integer()) {
-  vec_assert(n, ptype = integer())
-  vec_assert(d, ptype = integer())
+  if (!is_integer(n)) {
+    abort("`n` must be an integer vector.")
+  }
+  if (!is_integer(d)) {
+    abort("`d` must be an integer vector.")
+  }
 
   new_rcrd(list(n = n, d = d), class = "vctrs_rational")
 }
@@ -576,9 +593,16 @@ A better implementation of a decimal class would be to use pair of integers, one
 
 ```{r}
 new_decimal2 <- function(l, r, scale = 2L) {
-  vec_assert(l, ptype = integer())
-  vec_assert(r, ptype = integer())
-  vec_assert(scale, ptype = integer(), size = 1L)
+  if (!is_integer(l)) {
+    abort("`l` must be an integer vector.")
+  }
+  if (!is_integer(r)) {
+    abort("`r` must be an integer vector.")
+  }
+  if (!is_integer(scale)) {
+    abort("`scale` must be an integer vector.")
+  }
+  vec_check_size(scale, size = 1L)
 
   new_rcrd(list(l = l, r = r), scale = scale, class = "vctrs_decimal2")
 }
@@ -1056,7 +1080,9 @@ Next we add our constructor:
 
 ```{r}
 new_percent <- function(x = double()) {
-  vec_assert(x, double())
+  if (!is_double(x)) {
+    abort("`x` must be a double vector.")
+  }
   new_vctr(x, class = "pizza_percent")
 }
 ```

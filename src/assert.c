@@ -1,18 +1,6 @@
 #include "vctrs.h"
 #include "decl/assert-decl.h"
 
-void vec_assert(r_obj* x,
-                r_ssize size,
-                struct vctrs_arg* arg,
-                struct r_lazy call) {
-  obj_check_vector(x, arg, call);
-
-  if (size != -1) {
-    // `size == -1` makes no assertion about size
-    vec_check_size(x, size, arg, call);
-  }
-}
-
 r_obj* ffi_obj_check_vector(r_obj* x, r_obj* frame) {
   struct r_lazy call = { .x = r_syms.call, .env = frame };
   struct r_lazy arg_lazy = { .x = r_syms.arg, .env = frame };
