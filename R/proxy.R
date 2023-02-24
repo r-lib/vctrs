@@ -200,7 +200,7 @@ vec_restore_recurse <- function(x, to, ...) {
 #' @keywords internal
 #' @export
 vec_data <- function(x) {
-  vec_assert(x)
+  obj_check_vector(x)
   x <- vec_proxy(x)
 
   if (is.data.frame(x)) {
