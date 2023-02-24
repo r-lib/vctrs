@@ -16,19 +16,6 @@ This special class can be passed as a \code{ptype} in order to specify that the
 result should be a factor that contains at least the specified levels.
 }
 \examples{
-# Assert that `x` is a factor
-vec_assert(factor("x"), partial_factor())
-
-# Testing with `factor()` is too strict,
-# because it tries to match the levels exactly
-# rather than learning them from the data.
-try(vec_assert(factor("x"), factor()))
-
-# You can also enforce a minimum set of levels
-try(vec_assert(factor("x"), partial_factor("y")))
-
-vec_assert(factor(c("x", "y")), partial_factor("y"))
-
 pf <- partial_factor(levels = c("x", "y"))
 pf
 
