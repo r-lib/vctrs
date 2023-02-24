@@ -115,7 +115,7 @@ vec_slice <- function(x, i, ..., error_call = current_env()) {
 # Called when `x` has dimensions
 vec_slice_fallback <- function(x, i) {
   out <- unclass(vec_proxy(x))
-  vec_assert(out)
+  obj_check_vector(out)
 
   d <- vec_dim_n(out)
   if (d == 2) {
