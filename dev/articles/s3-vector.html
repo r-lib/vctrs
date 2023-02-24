@@ -108,6 +108,7 @@ precision floating point number”</a>, see also
 <code><a href="https://rdrr.io/r/base/double.html" class="external-link">double()</a></code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vctrs.r-lib.org/">vctrs</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rlang.r-lib.org" class="external-link">rlang</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nteetor/zeallot" class="external-link">zeallot</a></span><span class="op">)</span></span></code></pre></div>
 <p>This vignette works through five big topics:</p>
 <ul>
@@ -173,14 +174,15 @@ gives predictable behaviour and clear error messages.</p></li>
 </h3>
 <p>In this section, I’ll show you how to make a <code>percent</code>
 class, i.e., a double vector that is printed as a percentage. We start
-by defining a low-level <a href="https://adv-r.hadley.nz/s3.html#s3-constrcutor" class="external-link">constructor</a>
-that uses <code><a href="../reference/vec_assert.html">vec_assert()</a></code> to checks types and/or sizes then
-calls <code><a href="../reference/new_vctr.html">new_vctr()</a></code>.</p>
+by defining a low-level <a href="https://adv-r.hadley.nz/s3.html#s3-constrcutor" class="external-link">constructor</a> to
+check types and/or sizes and call <code><a href="../reference/new_vctr.html">new_vctr()</a></code>.</p>
 <p><code>percent</code> is built on a double vector of any length and
 doesn’t have any attributes.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_double</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`x` must be a double vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span>  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span><span class="op">(</span><span class="va">x</span>, class <span class="op">=</span> <span class="st">"vctrs_percent"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
@@ -482,8 +484,13 @@ user-friendly constructor, a <code><a href="https://rdrr.io/r/base/format.html" 
 are simply passed along to <code><a href="../reference/new_vctr.html">new_vctr()</a></code>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_decimal</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">digits</span> <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">x</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">digits</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_double</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`x` must be a double vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_integer</a></span><span class="op">(</span><span class="va">digits</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`digits` must be an integer vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="fu"><a href="../reference/vector-checks.html">vec_check_size</a></span><span class="op">(</span><span class="va">digits</span>, size <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="va">digits</span>, class <span class="op">=</span> <span class="st">"vctrs_decimal"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -589,8 +596,13 @@ sum of its values. As usual, we start with low-level and user-friendly
 constructors:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_cached_sum</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">sum</span> <span class="op">=</span> <span class="fl">0L</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">x</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">sum</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_double</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`x` must be a double vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_double</a></span><span class="op">(</span><span class="va">sum</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`sum` must be a double vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="fu"><a href="../reference/vector-checks.html">vec_check_size</a></span><span class="op">(</span><span class="va">sum</span>, size <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span><span class="op">(</span><span class="va">x</span>, sum <span class="op">=</span> <span class="va">sum</span>, class <span class="op">=</span> <span class="st">"vctrs_cached_sum"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -704,8 +716,12 @@ low-level constructor calls <code><a href="../reference/new_rcrd.html">new_rcrd(
 list of equal-length vectors.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_rational</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">d</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">n</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">d</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_integer</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`n` must be an integer vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_integer</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`d` must be an integer vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span></span>
 <span>  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, d <span class="op">=</span> <span class="va">d</span><span class="op">)</span>, class <span class="op">=</span> <span class="st">"vctrs_rational"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -823,9 +839,16 @@ following code is a very quick sketch of how you might start creating
 such a class:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_decimal2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">l</span>, <span class="va">r</span>, <span class="va">scale</span> <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">l</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">r</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">scale</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_integer</a></span><span class="op">(</span><span class="va">l</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`l` must be an integer vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_integer</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`r` must be an integer vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_integer</a></span><span class="op">(</span><span class="va">scale</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`scale` must be an integer vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="fu"><a href="../reference/vector-checks.html">vec_check_size</a></span><span class="op">(</span><span class="va">scale</span>, size <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span></span>
 <span>  <span class="fu"><a href="../reference/new_rcrd.html">new_rcrd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>l <span class="op">=</span> <span class="va">l</span>, r <span class="op">=</span> <span class="va">r</span><span class="op">)</span>, scale <span class="op">=</span> <span class="va">scale</span>, class <span class="op">=</span> <span class="st">"vctrs_decimal2"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -1437,7 +1460,9 @@ files.</p>
 <p>Next we add our constructor:</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_percent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">is_double</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">abort</a></span><span class="op">(</span><span class="st">"`x` must be a double vector."</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span>  <span class="fu"><a href="../reference/new_vctr.html">new_vctr</a></span><span class="op">(</span><span class="va">x</span>, class <span class="op">=</span> <span class="st">"pizza_percent"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Note that the name of the package must be included in the class name

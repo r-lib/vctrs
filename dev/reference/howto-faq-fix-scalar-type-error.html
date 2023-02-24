@@ -51,13 +51,13 @@ class is not &quot;data.frame&quot;:
 my_df &amp;lt;- data.frame(x = 1)
 class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 
-vctrs::vec_assert(my_df)
+vctrs::obj_check_vector(my_df)
 #&amp;gt; Error:
 #&amp;gt; ! `my_df` must be a vector, not a &amp;lt;data.frame/my_class&amp;gt; object.
 
 This is problematic as many tidyverse functions won’t work properly:
 dplyr::slice(my_df, 1)
-#&amp;gt; Error in `vec_slice()`:
+#&amp;gt; Error in `eval_select_impl()`:
 #&amp;gt; ! `x` must be a vector, not a &amp;lt;data.frame/my_class&amp;gt; object.
 
 It is generally not appropriate to declare your class to be a superclass
@@ -67,7 +67,7 @@ frame class so that &quot;data.frame&quot; is a base class, i.e. it should come
 last in the class vector:
 class(my_df) &amp;lt;- c(&quot;my_class&quot;, &quot;data.frame&quot;)
 
-vctrs::vec_assert(my_df)
+vctrs::obj_check_vector(my_df)
 
 dplyr::slice(my_df, 1)
 #&amp;gt;   x
@@ -126,13 +126,13 @@ class is not &quot;data.frame&quot;:
 my_df &amp;lt;- data.frame(x = 1)
 class(my_df) &amp;lt;- c(&quot;data.frame&quot;, &quot;my_class&quot;)
 
-vctrs::vec_assert(my_df)
+vctrs::obj_check_vector(my_df)
 #&amp;gt; Error:
 #&amp;gt; ! `my_df` must be a vector, not a &amp;lt;data.frame/my_class&amp;gt; object.
 
 This is problematic as many tidyverse functions won’t work properly:
 dplyr::slice(my_df, 1)
-#&amp;gt; Error in `vec_slice()`:
+#&amp;gt; Error in `eval_select_impl()`:
 #&amp;gt; ! `x` must be a vector, not a &amp;lt;data.frame/my_class&amp;gt; object.
 
 It is generally not appropriate to declare your class to be a superclass
@@ -142,7 +142,7 @@ frame class so that &quot;data.frame&quot; is a base class, i.e. it should come
 last in the class vector:
 class(my_df) &amp;lt;- c(&quot;my_class&quot;, &quot;data.frame&quot;)
 
-vctrs::vec_assert(my_df)
+vctrs::obj_check_vector(my_df)
 
 dplyr::slice(my_df, 1)
 #&amp;gt;   x
@@ -253,12 +253,12 @@ class</em> is not <code>"data.frame"</code>:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="va">my_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data.frame"</span>, <span class="st">"my_class"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span></span>
+<span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vector-checks.html">obj_check_vector</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error:</span></span>
 <span><span class="co">#&gt; ! `my_df` must be a vector, not a &lt;data.frame/my_class&gt; object.</span></span></code></pre><p></p></div>
 <p>This is problematic as many tidyverse functions won’t work properly:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="va">my_df</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in `vec_slice()`:</span></span>
+<span><span class="co">#&gt; Error in `eval_select_impl()`:</span></span>
 <span><span class="co">#&gt; ! `x` must be a vector, not a &lt;data.frame/my_class&gt; object.</span></span></code></pre><p></p></div>
 <p>It is generally not appropriate to declare your class to be a superclass
 of another class. We generally consider this undefined behaviour (UB).
@@ -267,7 +267,7 @@ frame class so that <code>"data.frame"</code> is a base class, i.e. it should c
 last in the class vector:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"my_class"</span>, <span class="st">"data.frame"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vec_assert.html">vec_assert</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span></span>
+<span><span class="fu">vctrs</span><span class="fu">::</span><span class="fu"><a href="../reference/vector-checks.html">obj_check_vector</a></span><span class="op">(</span><span class="va">my_df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="va">my_df</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   x</span></span>
