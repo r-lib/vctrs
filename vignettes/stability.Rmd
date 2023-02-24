@@ -20,6 +20,7 @@ This work is partly motivated by a common pattern that I noticed when reviewing 
 
 ```{r setup}
 library(vctrs)
+library(rlang)
 library(zeallot)
 ```
 
@@ -370,7 +371,10 @@ This leads to the following implementation:
 
 ```{r}
 if_else <- function(test, yes, no) {
-  vec_assert(test, logical())
+  if (!is_logical(test)) {
+    abort("`test` must be a logical vector.")
+  }
+  
   c(yes, no) %<-% vec_cast_common(yes, no)
   c(test, yes, no) %<-% vec_recycle_common(test, yes, no)
 
