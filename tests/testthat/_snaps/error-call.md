@@ -89,17 +89,7 @@
       Error in `my_function()`:
       ! `foobar()` must be a vector, not a <vctrs_foobar> object.
 
----
-
-    Code
-      (expect_error(my_function()))
-    Output
-      <error/vctrs_error_assert_ptype>
-      Error in `my_function()`:
-      ! `1:2` must be a vector with type <double>.
-      Instead, it has type <integer>.
-
----
+# size error reports correct error call
 
     Code
       (expect_error(my_function()))
