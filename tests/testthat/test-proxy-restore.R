@@ -34,7 +34,7 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
     vec_restore.vctrs_foobar = function(x, to, ...) {
       vec_ptype(x)
       vec_init(x)
-      vec_assert(x)
+      obj_check_vector(x)
       vec_slice(x, 0)
       "woot"
     }
