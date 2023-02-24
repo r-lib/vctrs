@@ -202,7 +202,7 @@
 # `multiple = 'error' / 'warning'` throw correctly when combined with `relationship`
 
     Code
-      (expect_error(vec_locate_matches(x, y, relationship = "one_to_one", multiple = "error"))
+      (expect_error(vec_locate_matches(x, y, relationship = "one-to-one", multiple = "error"))
       )
     Output
       <error/vctrs_error_matches_multiple>
@@ -213,7 +213,7 @@
 ---
 
     Code
-      (expect_error(vec_locate_matches(x, y, relationship = "warn_many_to_many",
+      (expect_error(vec_locate_matches(x, y, relationship = "warn-many-to-many",
         multiple = "error")))
     Output
       <error/vctrs_error_matches_multiple>
@@ -224,7 +224,7 @@
 ---
 
     Code
-      vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "warning")
+      vec_locate_matches(x, y, relationship = "warn-many-to-many", multiple = "warning")
     Condition
       Warning in `vec_locate_matches()`:
       Each value of `needles` can match at most 1 value from `haystack`.
@@ -244,7 +244,7 @@
 ---
 
     Code
-      vec_locate_matches(x, y, relationship = "one_to_one", multiple = "warning")
+      vec_locate_matches(x, y, relationship = "one-to-one", multiple = "warning")
     Condition
       Warning in `vec_locate_matches()`:
       Each value of `needles` can match at most 1 value from `haystack`.
@@ -256,7 +256,7 @@
 ---
 
     Code
-      (expect_error(vec_locate_matches(x, y, relationship = "warn_many_to_many",
+      (expect_error(vec_locate_matches(x, y, relationship = "warn-many-to-many",
         multiple = "error")))
     Output
       <error/vctrs_error_matches_multiple>
@@ -267,7 +267,7 @@
 ---
 
     Code
-      vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "warning")
+      vec_locate_matches(x, y, relationship = "warn-many-to-many", multiple = "warning")
     Condition
       Warning in `vec_locate_matches()`:
       Each value of `needles` can match at most 1 value from `haystack`.
@@ -281,7 +281,7 @@
 # `relationship` handles one-to-one case
 
     Code
-      (expect_error(vec_locate_matches(c(2, 1), c(1, 1), relationship = "one_to_one"))
+      (expect_error(vec_locate_matches(c(2, 1), c(1, 1), relationship = "one-to-one"))
       )
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
@@ -289,7 +289,7 @@
       ! Each value of `needles` can match at most 1 value from `haystack`.
       x Location 2 of `needles` matches multiple values.
     Code
-      (expect_error(vec_locate_matches(c(1, 1), c(1, 2), relationship = "one_to_one"))
+      (expect_error(vec_locate_matches(c(1, 1), c(1, 2), relationship = "one-to-one"))
       )
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
@@ -300,7 +300,7 @@
 # `relationship` handles one-to-many case
 
     Code
-      (expect_error(vec_locate_matches(c(1, 2, 2), c(2, 1), relationship = "one_to_many"))
+      (expect_error(vec_locate_matches(c(1, 2, 2), c(2, 1), relationship = "one-to-many"))
       )
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
@@ -311,7 +311,7 @@
 # `relationship` handles many-to-one case
 
     Code
-      (expect_error(vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "many_to_one"))
+      (expect_error(vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "many-to-one"))
       )
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
@@ -322,7 +322,7 @@
 # `relationship` handles warn-many-to-many case
 
     Code
-      (expect_warning(vec_locate_matches(c(1, 2, 1), c(1, 2, 2), relationship = "warn_many_to_many"))
+      (expect_warning(vec_locate_matches(c(1, 2, 1), c(1, 2, 2), relationship = "warn-many-to-many"))
       )
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
@@ -331,7 +331,7 @@
       x Location 2 of `needles` matches multiple values.
       x Location 1 of `haystack` matches multiple values.
     Code
-      (expect_warning(vec_locate_matches(c(1, 1, 2), c(2, 2, 1), relationship = "warn_many_to_many"))
+      (expect_warning(vec_locate_matches(c(1, 1, 2), c(2, 2, 1), relationship = "warn-many-to-many"))
       )
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
@@ -343,7 +343,7 @@
 # `relationship` considers `incomplete` matches as possible multiple matches
 
     Code
-      (expect_error(vec_locate_matches(x, y, relationship = "one_to_many")))
+      (expect_error(vec_locate_matches(x, y, relationship = "one-to-many")))
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
       Error in `vec_locate_matches()`:
@@ -354,7 +354,7 @@
 
     Code
       (expect_error(vec_locate_matches(df, df2, condition = c("<=", "<="),
-      relationship = "many_to_one")))
+      relationship = "many-to-one")))
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
@@ -365,7 +365,7 @@
 
     Code
       (expect_error(vec_locate_matches(needles, haystack, condition = "<",
-        relationship = "many_to_one")))
+        relationship = "many-to-one")))
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
@@ -376,7 +376,7 @@
 
     Code
       (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first",
-      relationship = "one_to_one")))
+      relationship = "one-to-one")))
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
       Error in `vec_locate_matches()`:
@@ -384,7 +384,7 @@
       x Location 2 of `haystack` matches multiple values.
     Code
       (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first",
-      relationship = "one_to_many")))
+      relationship = "one-to-many")))
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
       Error in `vec_locate_matches()`:
@@ -394,7 +394,7 @@
 # `relationship` and `remaining` work properly together
 
     Code
-      out <- vec_locate_matches(c(1, 2, 2), c(2, 3, 1, 1, 4), relationship = "warn_many_to_many",
+      out <- vec_locate_matches(c(1, 2, 2), c(2, 3, 1, 1, 4), relationship = "warn-many-to-many",
       remaining = NA_integer_)
     Condition
       Warning in `vec_locate_matches()`:
@@ -405,7 +405,7 @@
 # `relationship` errors if `condition` creates multiple matches
 
     Code
-      (expect_error(vec_locate_matches(1, c(1, 2), condition = "<=", relationship = "many_to_one"))
+      (expect_error(vec_locate_matches(1, c(1, 2), condition = "<=", relationship = "many-to-one"))
       )
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
@@ -417,7 +417,7 @@
 
     Code
       (expect_error(vec_locate_matches(1, c(1, 2, 1), condition = "<=", filter = "min",
-      relationship = "many_to_one")))
+      relationship = "many-to-one")))
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
       Error in `vec_locate_matches()`:
@@ -427,7 +427,7 @@
 # `relationship` errors respect argument tags and error call
 
     Code
-      (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "one_to_one",
+      (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "one-to-one",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
@@ -435,7 +435,7 @@
       ! Each value of `foo` can match at most 1 value from `bar`.
       x Location 1 of `foo` matches multiple values.
     Code
-      (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one_to_one",
+      (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one-to-one",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_one_to_one>
@@ -443,7 +443,7 @@
       ! Each value of `bar` can match at most 1 value from `foo`.
       x Location 1 of `bar` matches multiple values.
     Code
-      (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one_to_many",
+      (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one-to-many",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_one_to_many>
@@ -451,7 +451,7 @@
       ! Each value of `bar` can match at most 1 value from `foo`.
       x Location 1 of `bar` matches multiple values.
     Code
-      (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "many_to_one",
+      (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "many-to-one",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <error/vctrs_error_matches_relationship_many_to_one>
@@ -462,7 +462,7 @@
 # `relationship` warnings respect argument tags and error call
 
     Code
-      (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many",
+      (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn-many-to-many",
       needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
@@ -471,7 +471,7 @@
       x Location 1 of `foo` matches multiple values.
       x Location 1 of `bar` matches multiple values.
     Code
-      (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many",
+      (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn-many-to-many",
       needles_arg = "foo", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
@@ -480,7 +480,7 @@
       x Location 1 of `foo` matches multiple values.
       x Location 1 of `haystack` matches multiple values.
     Code
-      (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many",
+      (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn-many-to-many",
       haystack_arg = "bar", error_call = call("fn"))))
     Output
       <warning/vctrs_warning_matches_relationship_many_to_many>
@@ -498,8 +498,8 @@
       Error in `vec_locate_matches()`:
       ! `relationship` must be a string.
     Code
-      (expect_error(vec_locate_matches(1, 2, relationship = c("one_to_one",
-        "one_to_many"))))
+      (expect_error(vec_locate_matches(1, 2, relationship = c("one-to-one",
+        "one-to-many"))))
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
@@ -509,14 +509,14 @@
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
-      ! `relationship` must be one of "none", "one_to_one", "one_to_many", "many_to_one", "many_to_many", or "warn_many_to_many".
+      ! `relationship` must be one of "none", "one-to-one", "one-to-many", "many-to-one", "many-to-many", or "warn-many-to-many".
     Code
       (expect_error(vec_locate_matches(1, 2, relationship = "x", error_call = call(
         "fn"))))
     Output
       <error/rlang_error>
       Error in `vec_locate_matches()`:
-      ! `relationship` must be one of "none", "one_to_one", "one_to_many", "many_to_one", "many_to_many", or "warn_many_to_many".
+      ! `relationship` must be one of "none", "one-to-one", "one-to-many", "many-to-one", "many-to-many", or "warn-many-to-many".
 
 # `no_match` can error informatively
 

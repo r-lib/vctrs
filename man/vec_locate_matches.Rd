@@ -116,22 +116,22 @@ which match will be returned. It is often faster than \code{"first"} and
 are invalidated, an error is thrown.
 \itemize{
 \item \code{"none"} doesn't perform any relationship checks.
-\item \code{"one_to_one"} expects:
+\item \code{"one-to-one"} expects:
 \itemize{
 \item Each value in \code{needles} matches at most 1 value in \code{haystack}.
 \item Each value in \code{haystack} matches at most 1 value in \code{needles}.
 }
-\item \code{"one_to_many"} expects:
+\item \code{"one-to-many"} expects:
 \itemize{
 \item Each value in \code{needles} matches any number of values in \code{haystack}.
 \item Each value in \code{haystack} matches at most 1 value in \code{needles}.
 }
-\item \code{"many_to_one"} expects:
+\item \code{"many-to-one"} expects:
 \itemize{
 \item Each value in \code{needles} matches at most 1 value in \code{haystack}.
 \item Each value in \code{haystack} matches any number of values in \code{needles}.
 }
-\item \code{"many_to_many"} expects:
+\item \code{"many-to-many"} expects:
 \itemize{
 \item Each value in \code{needles} matches any number of values in \code{haystack}.
 \item Each value in \code{haystack} matches any number of values in \code{needles}.
@@ -139,11 +139,11 @@ are invalidated, an error is thrown.
 
 This performs no checks, and is identical to \code{"none"}, but is provided to
 allow you to be explicit about this relationship if you know it exists.
-\item \code{"warn_many_to_many"} doesn't assume there is any known relationship, but
+\item \code{"warn-many-to-many"} doesn't assume there is any known relationship, but
 will warn if \code{needles} and \code{haystack} have a many-to-many relationship
 (which is typically unexpected), encouraging you to either take a closer
 look at your inputs or make this relationship explicit by specifying
-\code{"many_to_many"}.
+\code{"many-to-many"}.
 }
 
 \code{relationship} is applied after \code{filter} and \code{multiple} to allow potential
@@ -249,10 +249,10 @@ vec_locate_matches(x, y, multiple = "any")
 
 # Use `relationship` to add constraints and error on multiple matches if
 # they aren't expected
-try(vec_locate_matches(x, y, relationship = "one_to_one"))
+try(vec_locate_matches(x, y, relationship = "one-to-one"))
 
 # In this case, the `NA` in `y` matches two rows in `x`
-try(vec_locate_matches(x, y, relationship = "one_to_many"))
+try(vec_locate_matches(x, y, relationship = "one-to-many"))
 
 # By default, `NA` is treated as being identical to `NaN`.
 # Using `nan_distinct = TRUE` treats `NA` and `NaN` as different values, so
@@ -266,7 +266,7 @@ vec_locate_matches(x, y, incomplete = NA)
 
 # Using `incomplete = NA` allows us to enforce the one-to-many relationship
 # that we couldn't before
-vec_locate_matches(x, y, relationship = "one_to_many", incomplete = NA)
+vec_locate_matches(x, y, relationship = "one-to-many", incomplete = NA)
 
 # `no_match` allows you to specify the returned value for a needle with
 # zero matches. Note that this is different from an incomplete value,

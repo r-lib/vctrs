@@ -1045,31 +1045,31 @@ test_that("`multiple = 'error' / 'warning'` throw correctly when combined with `
 
   # `multiple` error technically fires first
   expect_snapshot({
-    (expect_error(vec_locate_matches(x, y, relationship = "one_to_one", multiple = "error")))
+    (expect_error(vec_locate_matches(x, y, relationship = "one-to-one", multiple = "error")))
   })
 
   # Works when warning is also requested
   expect_snapshot({
-    (expect_error(vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "error")))
+    (expect_error(vec_locate_matches(x, y, relationship = "warn-many-to-many", multiple = "error")))
   })
   # Both warnings are thrown if applicable
   expect_snapshot({
-    vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "warning")
+    vec_locate_matches(x, y, relationship = "warn-many-to-many", multiple = "warning")
   })
   # Both warning and error are thrown if applicable
   expect_snapshot(error = TRUE, {
-    vec_locate_matches(x, y, relationship = "one_to_one", multiple = "warning")
+    vec_locate_matches(x, y, relationship = "one-to-one", multiple = "warning")
   })
 
   x <- c(1, 2)
   y <- c(2, 1, 2)
 
   expect_snapshot({
-    (expect_error(vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "error")))
+    (expect_error(vec_locate_matches(x, y, relationship = "warn-many-to-many", multiple = "error")))
   })
   # Only `multiple` warning is applicable here
   expect_snapshot({
-    vec_locate_matches(x, y, relationship = "warn_many_to_many", multiple = "warning")
+    vec_locate_matches(x, y, relationship = "warn-many-to-many", multiple = "warning")
   })
 })
 
@@ -1079,80 +1079,80 @@ test_that("`multiple = 'error' / 'warning'` throw correctly when combined with `
 test_that("`relationship` handles one-to-one case", {
   # No error
   expect_identical(
-    vec_locate_matches(1:2, 2:1, relationship = "one_to_one"),
+    vec_locate_matches(1:2, 2:1, relationship = "one-to-one"),
     vec_locate_matches(1:2, 2:1)
   )
 
   # Doesn't care about the zero match case
   expect_identical(
-    vec_locate_matches(1:2, 3:4, relationship = "one_to_one"),
+    vec_locate_matches(1:2, 3:4, relationship = "one-to-one"),
     vec_locate_matches(1:2, 3:4)
   )
 
   expect_snapshot({
-    (expect_error(vec_locate_matches(c(2, 1), c(1, 1), relationship = "one_to_one")))
-    (expect_error(vec_locate_matches(c(1, 1), c(1, 2), relationship = "one_to_one")))
+    (expect_error(vec_locate_matches(c(2, 1), c(1, 1), relationship = "one-to-one")))
+    (expect_error(vec_locate_matches(c(1, 1), c(1, 2), relationship = "one-to-one")))
   })
 })
 
 test_that("`relationship` handles one-to-many case", {
   # No error
   expect_identical(
-    vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "one_to_many"),
+    vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "one-to-many"),
     vec_locate_matches(c(1, 2), c(1, 2, 2))
   )
 
   # Doesn't care about the zero match case
   expect_identical(
-    vec_locate_matches(1:2, 3:4, relationship = "one_to_many"),
+    vec_locate_matches(1:2, 3:4, relationship = "one-to-many"),
     vec_locate_matches(1:2, 3:4)
   )
 
   expect_snapshot({
-    (expect_error(vec_locate_matches(c(1, 2, 2), c(2, 1), relationship = "one_to_many")))
+    (expect_error(vec_locate_matches(c(1, 2, 2), c(2, 1), relationship = "one-to-many")))
   })
 })
 
 test_that("`relationship` handles many-to-one case", {
   # No error
   expect_identical(
-    vec_locate_matches(c(1, 2, 2), c(1, 2), relationship = "many_to_one"),
+    vec_locate_matches(c(1, 2, 2), c(1, 2), relationship = "many-to-one"),
     vec_locate_matches(c(1, 2, 2), c(1, 2))
   )
 
   # Doesn't care about the zero match case
   expect_identical(
-    vec_locate_matches(1:2, 3:4, relationship = "many_to_one"),
+    vec_locate_matches(1:2, 3:4, relationship = "many-to-one"),
     vec_locate_matches(1:2, 3:4)
   )
 
   expect_snapshot({
-    (expect_error(vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "many_to_one")))
+    (expect_error(vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "many-to-one")))
   })
 })
 
 test_that("`relationship` handles many-to-many case", {
   # No error
   expect_identical(
-    vec_locate_matches(c(1, 2, 2), c(1, 2), relationship = "many_to_many"),
+    vec_locate_matches(c(1, 2, 2), c(1, 2), relationship = "many-to-many"),
     vec_locate_matches(c(1, 2, 2), c(1, 2))
   )
 
   # No error
   expect_identical(
-    vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "many_to_many"),
+    vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "many-to-many"),
     vec_locate_matches(c(1, 2), c(1, 2, 2))
   )
 
   # No error
   expect_identical(
-    vec_locate_matches(c(1, 1, 2), c(1, 2, 2), relationship = "many_to_many"),
+    vec_locate_matches(c(1, 1, 2), c(1, 2, 2), relationship = "many-to-many"),
     vec_locate_matches(c(1, 1, 2), c(1, 2, 2))
   )
 
   # Doesn't care about the zero match case
   expect_identical(
-    vec_locate_matches(1:2, 3:4, relationship = "many_to_many"),
+    vec_locate_matches(1:2, 3:4, relationship = "many-to-many"),
     vec_locate_matches(1:2, 3:4)
   )
 })
@@ -1161,7 +1161,7 @@ test_that("`relationship` handles warn-many-to-many case", {
   # No warning
   expect_identical(
     expect_silent(
-      vec_locate_matches(c(1, 2, 2), c(1, 2), relationship = "warn_many_to_many")
+      vec_locate_matches(c(1, 2, 2), c(1, 2), relationship = "warn-many-to-many")
     ),
     vec_locate_matches(c(1, 2, 2), c(1, 2))
   )
@@ -1169,7 +1169,7 @@ test_that("`relationship` handles warn-many-to-many case", {
   # No warning
   expect_identical(
     expect_silent(
-      vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "warn_many_to_many")
+      vec_locate_matches(c(1, 2), c(1, 2, 2), relationship = "warn-many-to-many")
     ),
     vec_locate_matches(c(1, 2), c(1, 2, 2))
   )
@@ -1177,7 +1177,7 @@ test_that("`relationship` handles warn-many-to-many case", {
   # Doesn't care about the zero match case
   expect_identical(
     expect_silent(
-      vec_locate_matches(1:2, 3:4, relationship = "warn_many_to_many")
+      vec_locate_matches(1:2, 3:4, relationship = "warn-many-to-many")
     ),
     vec_locate_matches(1:2, 3:4)
   )
@@ -1186,8 +1186,8 @@ test_that("`relationship` handles warn-many-to-many case", {
   # - Finding multiple `needles` matches before multiple `haystack` matches
   # - Finding multiple `haystack` matches before multiple `needles` matches
   expect_snapshot({
-    (expect_warning(vec_locate_matches(c(1, 2, 1), c(1, 2, 2), relationship = "warn_many_to_many")))
-    (expect_warning(vec_locate_matches(c(1, 1, 2), c(2, 2, 1), relationship = "warn_many_to_many")))
+    (expect_warning(vec_locate_matches(c(1, 2, 1), c(1, 2, 2), relationship = "warn-many-to-many")))
+    (expect_warning(vec_locate_matches(c(1, 1, 2), c(2, 2, 1), relationship = "warn-many-to-many")))
   })
 })
 
@@ -1196,18 +1196,18 @@ test_that("`relationship` considers `incomplete` matches as possible multiple ma
   y <- c(NA, 1)
 
   expect_snapshot({
-    (expect_error(vec_locate_matches(x, y, relationship = "one_to_many")))
+    (expect_error(vec_locate_matches(x, y, relationship = "one-to-many")))
   })
 
   # No error
   expect_identical(
-    vec_locate_matches(x, y, relationship = "one_to_many", incomplete = NA),
+    vec_locate_matches(x, y, relationship = "one-to-many", incomplete = NA),
     vec_locate_matches(x, y, incomplete = NA)
   )
 
   # No error
   expect_identical(
-    vec_locate_matches(x, y, relationship = "one_to_many", nan_distinct = TRUE),
+    vec_locate_matches(x, y, relationship = "one-to-many", nan_distinct = TRUE),
     vec_locate_matches(x, y, nan_distinct = TRUE)
   )
 })
@@ -1217,7 +1217,7 @@ test_that("`relationship` errors on multiple matches that come from different ne
   df2 <- data_frame(x = 1:2, y = 2:1)
 
   expect_snapshot({
-    (expect_error(vec_locate_matches(df, df2, condition = c("<=", "<="), relationship = "many_to_one")))
+    (expect_error(vec_locate_matches(df, df2, condition = c("<=", "<="), relationship = "many-to-one")))
   })
 })
 
@@ -1241,34 +1241,34 @@ test_that("`relationship` errors when a match from a different nesting container
   # is processed 2nd (i.e. we need to use `loc` rather than `i` when detecting
   # multiple matches)
   expect_snapshot({
-    (expect_error(vec_locate_matches(needles, haystack, condition = "<", relationship = "many_to_one")))
+    (expect_error(vec_locate_matches(needles, haystack, condition = "<", relationship = "many-to-one")))
   })
 })
 
 test_that("`relationship` doesn't error errneously on the last observation", {
-  expect_error(res <- vec_locate_matches(1:2, 1:2, relationship = "many_to_one"), NA)
+  expect_error(res <- vec_locate_matches(1:2, 1:2, relationship = "many-to-one"), NA)
   expect_identical(res$needles, 1:2)
   expect_identical(res$haystack, 1:2)
 })
 
 test_that("`relationship` doesn't error if `multiple` removes multiple matches", {
-  out <- vec_locate_matches(c(1, 2), c(1, 1), multiple = "any", relationship = "one_to_one")
+  out <- vec_locate_matches(c(1, 2), c(1, 1), multiple = "any", relationship = "one-to-one")
   expect_identical(out$needles, c(1L, 2L))
   expect_identical(out$haystack, c(1L, NA))
 
-  out <- vec_locate_matches(c(1, 2), c(1, 1), multiple = "first", relationship = "one_to_one")
+  out <- vec_locate_matches(c(1, 2), c(1, 1), multiple = "first", relationship = "one-to-one")
   expect_identical(out$needles, c(1L, 2L))
   expect_identical(out$haystack, c(1L, NA))
 
-  out <- vec_locate_matches(c(1, 2), c(1, 1), multiple = "last", relationship = "one_to_one")
+  out <- vec_locate_matches(c(1, 2), c(1, 1), multiple = "last", relationship = "one-to-one")
   expect_identical(out$needles, c(1L, 2L))
   expect_identical(out$haystack, c(2L, NA))
 })
 
 test_that("`relationship` can still detect problematic `haystack` relationships when `multiple = first/last` are used", {
   expect_snapshot({
-    (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first", relationship = "one_to_one")))
-    (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first", relationship = "one_to_many")))
+    (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first", relationship = "one-to-one")))
+    (expect_error(vec_locate_matches(c(3, 1, 1), c(2, 1, 3, 3), multiple = "first", relationship = "one-to-many")))
   })
 })
 
@@ -1277,7 +1277,7 @@ test_that("`relationship` and `remaining` work properly together", {
     out <- vec_locate_matches(
       c(1, 2, 2),
       c(2, 3, 1, 1, 4),
-      relationship = "warn_many_to_many",
+      relationship = "warn-many-to-many",
       remaining = NA_integer_
     )
   })
@@ -1287,52 +1287,52 @@ test_that("`relationship` and `remaining` work properly together", {
 
 test_that("`relationship` errors if `condition` creates multiple matches", {
   expect_snapshot({
-    (expect_error(vec_locate_matches(1, c(1, 2), condition = "<=", relationship = "many_to_one")))
+    (expect_error(vec_locate_matches(1, c(1, 2), condition = "<=", relationship = "many-to-one")))
   })
 })
 
 test_that("`relationship` doesn't error if `filter` removes multiple matches", {
-  out <- vec_locate_matches(1, c(1, 2), condition = "<=", filter = "min", relationship = "many_to_one")
+  out <- vec_locate_matches(1, c(1, 2), condition = "<=", filter = "min", relationship = "many-to-one")
   expect_identical(out$needles, 1L)
   expect_identical(out$haystack, 1L)
 
-  out <- vec_locate_matches(1, c(1, 2), condition = "<=", filter = "max", relationship = "many_to_one")
+  out <- vec_locate_matches(1, c(1, 2), condition = "<=", filter = "max", relationship = "many-to-one")
   expect_identical(out$needles, 1L)
   expect_identical(out$haystack, 2L)
 })
 
 test_that("`relationship` still errors if `filter` hasn't removed all multiple matches", {
   expect_snapshot({
-    (expect_error(vec_locate_matches(1, c(1, 2, 1), condition = "<=", filter = "min", relationship = "many_to_one")))
+    (expect_error(vec_locate_matches(1, c(1, 2, 1), condition = "<=", filter = "min", relationship = "many-to-one")))
   })
 
   # But not here
-  out <- vec_locate_matches(c(1, 1), c(1, 2, 1), condition = "<=", filter = "max", relationship = "many_to_one")
+  out <- vec_locate_matches(c(1, 1), c(1, 2, 1), condition = "<=", filter = "max", relationship = "many-to-one")
   expect_identical(out$needles, c(1L, 2L))
   expect_identical(out$haystack, c(2L, 2L))
 })
 
 test_that("`relationship` errors respect argument tags and error call", {
   expect_snapshot({
-    (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "one_to_one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
-    (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one_to_one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
-    (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one_to_many", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
-    (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "many_to_one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
+    (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "one-to-one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
+    (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one-to-one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
+    (expect_error(vec_locate_matches(c(1L, 1L), 1L, relationship = "one-to-many", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
+    (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "many-to-one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
   })
 })
 
 test_that("`relationship` warnings respect argument tags and error call", {
   expect_snapshot({
-    (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
-    (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many", needles_arg = "foo", error_call = call("fn"))))
-    (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn_many_to_many", haystack_arg = "bar", error_call = call("fn"))))
+    (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn-many-to-many", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
+    (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn-many-to-many", needles_arg = "foo", error_call = call("fn"))))
+    (expect_warning(vec_locate_matches(c(1L, 1L), c(1L, 1L), relationship = "warn-many-to-many", haystack_arg = "bar", error_call = call("fn"))))
   })
 })
 
 test_that("`relationship` is validated", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1, 2, relationship = 1.5)))
-    (expect_error(vec_locate_matches(1, 2, relationship = c("one_to_one", "one_to_many"))))
+    (expect_error(vec_locate_matches(1, 2, relationship = c("one-to-one", "one-to-many"))))
     (expect_error(vec_locate_matches(1, 2, relationship = "x")))
     # Uses internal error
     (expect_error(vec_locate_matches(1, 2, relationship = "x", error_call = call("fn"))))

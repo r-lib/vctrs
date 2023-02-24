@@ -1404,15 +1404,15 @@ enum vctrs_relationship parse_relationship(r_obj* relationship, struct r_lazy ca
   const char* c_relationship = r_chr_get_c_string(relationship, 0);
 
   if (!strcmp(c_relationship, "none")) return VCTRS_RELATIONSHIP_none;
-  if (!strcmp(c_relationship, "one_to_one")) return VCTRS_RELATIONSHIP_one_to_one;
-  if (!strcmp(c_relationship, "one_to_many")) return VCTRS_RELATIONSHIP_one_to_many;
-  if (!strcmp(c_relationship, "many_to_one")) return VCTRS_RELATIONSHIP_many_to_one;
-  if (!strcmp(c_relationship, "many_to_many")) return VCTRS_RELATIONSHIP_many_to_many;
-  if (!strcmp(c_relationship, "warn_many_to_many")) return VCTRS_RELATIONSHIP_warn_many_to_many;
+  if (!strcmp(c_relationship, "one-to-one")) return VCTRS_RELATIONSHIP_one_to_one;
+  if (!strcmp(c_relationship, "one-to-many")) return VCTRS_RELATIONSHIP_one_to_many;
+  if (!strcmp(c_relationship, "many-to-one")) return VCTRS_RELATIONSHIP_many_to_one;
+  if (!strcmp(c_relationship, "many-to-many")) return VCTRS_RELATIONSHIP_many_to_many;
+  if (!strcmp(c_relationship, "warn-many-to-many")) return VCTRS_RELATIONSHIP_warn_many_to_many;
 
   r_abort_lazy_call(
     call,
-    "`relationship` must be one of \"none\", \"one_to_one\", \"one_to_many\", \"many_to_one\", \"many_to_many\", or \"warn_many_to_many\"."
+    "`relationship` must be one of \"none\", \"one-to-one\", \"one-to-many\", \"many-to-one\", \"many-to-many\", or \"warn-many-to-many\"."
   );
 }
 
@@ -1996,7 +1996,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
                 );
               case VCTRS_RELATIONSHIP_warn_many_to_many:
                 r_stop_internal(
-                  "`relationship = 'warn_many_to_many'` with "
+                  "`relationship = 'warn-many-to-many'` with "
                   "`multiple = 'first'/'last' should have resulted in "
                   "`check_multiple_haystack = false`."
                 );

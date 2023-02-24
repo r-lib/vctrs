@@ -138,30 +138,30 @@
 #'
 #'   - `"none"` doesn't perform any relationship checks.
 #'
-#'   - `"one_to_one"` expects:
+#'   - `"one-to-one"` expects:
 #'     - Each value in `needles` matches at most 1 value in `haystack`.
 #'     - Each value in `haystack` matches at most 1 value in `needles`.
 #'
-#'   - `"one_to_many"` expects:
+#'   - `"one-to-many"` expects:
 #'     - Each value in `needles` matches any number of values in `haystack`.
 #'     - Each value in `haystack` matches at most 1 value in `needles`.
 #'
-#'   - `"many_to_one"` expects:
+#'   - `"many-to-one"` expects:
 #'     - Each value in `needles` matches at most 1 value in `haystack`.
 #'     - Each value in `haystack` matches any number of values in `needles`.
 #'
-#'   - `"many_to_many"` expects:
+#'   - `"many-to-many"` expects:
 #'     - Each value in `needles` matches any number of values in `haystack`.
 #'     - Each value in `haystack` matches any number of values in `needles`.
 #'
 #'     This performs no checks, and is identical to `"none"`, but is provided to
 #'     allow you to be explicit about this relationship if you know it exists.
 #'
-#'   - `"warn_many_to_many"` doesn't assume there is any known relationship, but
+#'   - `"warn-many-to-many"` doesn't assume there is any known relationship, but
 #'     will warn if `needles` and `haystack` have a many-to-many relationship
 #'     (which is typically unexpected), encouraging you to either take a closer
 #'     look at your inputs or make this relationship explicit by specifying
-#'     `"many_to_many"`.
+#'     `"many-to-many"`.
 #'
 #'   `relationship` is applied after `filter` and `multiple` to allow potential
 #'   multiple matches to be filtered out first.
@@ -203,10 +203,10 @@
 #'
 #' # Use `relationship` to add constraints and error on multiple matches if
 #' # they aren't expected
-#' try(vec_locate_matches(x, y, relationship = "one_to_one"))
+#' try(vec_locate_matches(x, y, relationship = "one-to-one"))
 #'
 #' # In this case, the `NA` in `y` matches two rows in `x`
-#' try(vec_locate_matches(x, y, relationship = "one_to_many"))
+#' try(vec_locate_matches(x, y, relationship = "one-to-many"))
 #'
 #' # By default, `NA` is treated as being identical to `NaN`.
 #' # Using `nan_distinct = TRUE` treats `NA` and `NaN` as different values, so
@@ -220,7 +220,7 @@
 #'
 #' # Using `incomplete = NA` allows us to enforce the one-to-many relationship
 #' # that we couldn't before
-#' vec_locate_matches(x, y, relationship = "one_to_many", incomplete = NA)
+#' vec_locate_matches(x, y, relationship = "one-to-many", incomplete = NA)
 #'
 #' # `no_match` allows you to specify the returned value for a needle with
 #' # zero matches. Note that this is different from an incomplete value,
