@@ -11,10 +11,11 @@
 #' @keywords internal
 #' @export
 vec_empty <- function(x) {
-  stop_defunct(paste_line(
-    "`vec_empty()` is defunct as of vctrs 0.2.0.",
-    "Please use `vec_is_empty()` instead."
-  ))
+  lifecycle::deprecate_stop(
+    when = "0.2.0",
+    what = "vec_empty()",
+    with = "vec_is_empty()"
+  )
 }
 
 #' Deprecated type functions
@@ -34,19 +35,34 @@ vec_empty <- function(x) {
 #' @keywords internal
 #' @export
 vec_type <- function(x) {
-  warn_deprecated(c("`vec_type()` has been renamed to `vec_ptype()`."))
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = "vec_type()",
+    with = "vec_ptype()",
+    always = TRUE
+  )
   vec_ptype(x)
 }
 #' @rdname vec_type
 #' @export
 vec_type_common <- function(..., .ptype = NULL) {
-  warn_deprecated(c("`vec_type_common()` has been renamed to `vec_ptype_common()`."))
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = "vec_type_common()",
+    with = "vec_ptype_common()",
+    always = TRUE
+  )
   vec_ptype_common(..., .ptype = .ptype)
 }
 #' @rdname vec_type
 #' @export
 vec_type2 <- function(x, y, ...) {
-  warn_deprecated(c("`vec_type2()` has been renamed to `vec_ptype2()`."))
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = "vec_type2()",
+    with = "vec_ptype2()",
+    always = TRUE
+  )
   vec_ptype2(x, y, ...)
 }
 
@@ -64,10 +80,11 @@ vec_type2 <- function(x, y, ...) {
 #' @keywords internal
 #' @export
 vec_as_index <- function(i, n, names = NULL) {
-  signal_soft_deprecated(paste_line(
-    "`vec_as_index()` is deprecated as of vctrs 0.2.2.",
-    "Please use `vec_as_location() instead.`"
-  ))
+  lifecycle::deprecate_soft(
+    when = "0.2.2",
+    what = "vec_as_index()",
+    with = "vec_as_location()"
+  )
   n <- vec_cast(n, integer())
   vec_check_size(n, size = 1L)
   i <- vec_as_subscript(i)
@@ -103,10 +120,11 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @keywords internal
 #' @export
 vec_repeat <- function(x, each = 1L, times = 1L) {
-  signal_soft_deprecated(paste_line(
-    "`vec_repeat()` is deprecated as of vctrs 0.3.0.",
-    "Please use either `vec_rep()` or `vec_rep_each()` instead."
-  ))
+  lifecycle::deprecate_soft(
+    when = "0.3.0",
+    what = "vec_repeat()",
+    with = I("either `vec_rep()` or `vec_rep_each()`")
+  )
 
   vec_check_size(each, size = 1L)
   vec_check_size(times, size = 1L)

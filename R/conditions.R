@@ -562,7 +562,12 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   )
 }
 
-maybe_warn_deprecated_lossy_cast <- function(x, to, loss_type, x_arg, to_arg) {
+maybe_warn_deprecated_lossy_cast <- function(x,
+                                             to,
+                                             loss_type,
+                                             x_arg,
+                                             to_arg,
+                                             user_env = caller_env(2)) {
   # Returns `TRUE` if `allow_lossy_cast()` is on the stack and accepts
   # to handle the condition
   handled <- withRestarts(
@@ -591,19 +596,18 @@ maybe_warn_deprecated_lossy_cast <- function(x, to, loss_type, x_arg, to_arg) {
   from <- format_arg_label(vec_ptype_abbr(x), x_arg)
   to <- format_arg_label(vec_ptype_abbr(to), to_arg)
 
-  warn_deprecated(paste_line(
-    glue::glue("We detected a lossy transformation from `{ from }` to `{ to }`."),
-    "The result will contain lower-resolution values or missing values.",
-    "To suppress this warning, wrap your code with `allow_lossy_cast()`:",
-    "",
-    "  # Allow all lossy transformations:",
-    "  vctrs::allow_lossy_cast(mycode())",
-    "",
-    "  # Allow only a specific transformation:",
-    "  vctrs::allow_lossy_cast(mycode(), x_ptype = from, to_ptype = to)",
-    "",
-    "Consult `?vctrs::allow_lossy_cast` for more information."
-  ))
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = I("Coercion with lossy casts"),
+    with = "allow_lossy_cast()",
+    details = paste0(
+      glue::glue("We detected a lossy transformation from { from } to { to }. "),
+      "The result will contain lower-resolution values or missing values. ",
+      "To suppress this warning, wrap your code with `allow_lossy_cast()`."
+    ),
+    always = TRUE,
+    user_env = user_env
+  )
 
   invisible()
 }
