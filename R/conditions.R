@@ -636,7 +636,7 @@ stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
   } else {
     arg <- glue::backtick(arg)
   }
-  msg <- glue::glue("{arg} must be a vector, not {friendly_type_of(x)}.")
+  msg <- glue::glue("{arg} must be a vector, not {obj_type_friendly(x)}.")
   stop_vctrs(
     msg,
     "vctrs_error_scalar_type",

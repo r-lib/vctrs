@@ -310,7 +310,7 @@
       vec_check_list(1, arg = "")
     Condition
       Error:
-      ! Input must be a list, not a number.
+      ! Input must be a list, not the number 1.
 
 # vec_check_list() and list_check_all_vectors() work
 
@@ -385,13 +385,13 @@
     Output
       <error/rlang_error>
       Error in `list_all_size()`:
-      ! `x` must be a list, not a number.
+      ! `x` must be a list, not the number 1.
     Code
       (expect_error(list_check_all_size(1, 2, arg = "arg", call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `list_check_all_size()`:
-      ! `x` must be a list, not a number.
+      ! `x` must be a list, not the number 1.
 
 # list_all_size() and list_check_all_size() validate `size`
 

@@ -4,7 +4,7 @@
       list_unchop(1, indices = list(1))
     Condition
       Error in `list_unchop()`:
-      ! `x` must be a list, not a number.
+      ! `x` must be a list, not the number 1.
 
 ---
 
@@ -12,7 +12,7 @@
       list_unchop(1, indices = list(1), error_call = call("foo"), error_arg = "arg")
     Condition
       Error in `foo()`:
-      ! `arg` must be a list, not a number.
+      ! `arg` must be a list, not the number 1.
 
 ---
 
@@ -28,7 +28,7 @@
       list_unchop(list(1), indices = 1)
     Condition
       Error in `list_unchop()`:
-      ! `indices` must be a list, not a number.
+      ! `indices` must be a list, not the number 1.
 
 ---
 
@@ -36,7 +36,7 @@
       list_unchop(list(1), indices = 1, error_call = call("foo"))
     Condition
       Error in `foo()`:
-      ! `indices` must be a list, not a number.
+      ! `indices` must be a list, not the number 1.
 
 ---
 

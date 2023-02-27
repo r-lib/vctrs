@@ -392,7 +392,7 @@ stop_non_list_type <- function(x, arg, call) {
   }
 
   cli::cli_abort(
-    "{arg} must be a list, not {friendly_type_of(x)}.",
+    "{arg} must be a list, not {obj_type_friendly(x)}.",
     call = call
   )
 }
