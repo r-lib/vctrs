@@ -72,3 +72,14 @@
       Error:
       ! Can't convert `foobar(mtcars)` <vctrs_foobar> to <double>.
 
+# can signal deprecation warnings for lossy casts
+
+    Code
+      (expect_warning(expect_true(lossy_cast())))
+    Output
+      <warning/lifecycle_warning_deprecated>
+      Warning:
+      Coercion with lossy casts was deprecated in vctrs 0.2.0.
+      i Please use `allow_lossy_cast()` instead.
+      i We detected a lossy transformation from `x` <fct> to `to` <fct>. The result will contain lower-resolution values or missing values. To suppress this warning, wrap your code with `allow_lossy_cast()`.
+

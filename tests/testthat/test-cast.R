@@ -126,7 +126,7 @@ test_that("can suppress cast errors selectively", {
 })
 
 test_that("can signal deprecation warnings for lossy casts", {
-  local_lifecycle_warnings()
+  local_options(lifecycle_verbosity = "warning")
 
   lossy_cast <- function() {
     maybe_lossy_cast(
@@ -140,7 +140,9 @@ test_that("can signal deprecation warnings for lossy casts", {
     )
   }
 
-  expect_warning(expect_true(lossy_cast()), "detected a lossy transformation")
+  expect_snapshot({
+    (expect_warning(expect_true(lossy_cast())))
+  })
   expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast())))
   expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
   expect_warning(expect_true(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
