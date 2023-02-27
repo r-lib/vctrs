@@ -35,8 +35,8 @@
     Code
       vec_locate_run_bounds(1, which = c("foo", "bar"))
     Condition
-      Error in `arg_match()`:
-      ! `arg` must be length 1 or a permutation of `values`.
+      Error in `vec_locate_run_bounds()`:
+      ! `arg` must be length 1 or a permutation of `c("start", "end")`.
 
 # vec_detect_run_bounds() validates `which`
 
@@ -59,6 +59,6 @@
     Code
       vec_detect_run_bounds(1, which = c("foo", "bar"))
     Condition
-      Error in `arg_match()`:
-      ! `arg` must be length 1 or a permutation of `values`.
+      Error in `vec_detect_run_bounds()`:
+      ! `arg` must be length 1 or a permutation of `c("start", "end")`.
 

@@ -12,7 +12,7 @@
     Output
       <error/rlang_error>
       Error in `stop_incompatible_type()`:
-      ! `action` must be a character vector, not a number.
+      ! `action` must be a character vector, not the number 1.
 
 # can override arg in OOB conditions
 

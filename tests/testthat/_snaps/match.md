@@ -665,5 +665,5 @@
       ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000.
       i In file 'match.c' at line <scrubbed>.
       i This is an internal error that was detected in the vctrs package.
-        Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://https://tidyverse.org/help/>) and the full backtrace.
+        Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://tidyverse.org/help/>) and the full backtrace.
 

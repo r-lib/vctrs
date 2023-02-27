@@ -58,7 +58,7 @@
       ! Result too large for an `r_ssize`.
       i In file './rlang/c-utils.h' at line <scrubbed>.
       i This is an internal error that was detected in the vctrs package.
-        Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://https://tidyverse.org/help/>) and the full backtrace.
+        Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://tidyverse.org/help/>) and the full backtrace.
 
 # validates `.vary`
 

@@ -54,5 +54,5 @@ expect_equal <- function(object, expected, ...,
 }
 
 raw2 <- function(...) {
-  as.raw(flatten_int(list2(...)))
+  as.raw(list_unchop(list2(...), ptype = integer()))
 }
