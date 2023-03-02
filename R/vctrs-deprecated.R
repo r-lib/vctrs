@@ -209,3 +209,14 @@ vec_is_list <- function(x) {
   # lifecycle::deprecate_soft("0.6.0", "vec_is_list()", "obj_is_list()")
   obj_is_list(x)
 }
+
+#' @rdname vec_is_list
+#' @export
+vec_check_list <- function(x,
+                           ...,
+                           arg = caller_arg(x),
+                           call = caller_env()) {
+  # Silently-deprecated: 2023-03
+  # lifecycle::deprecate_soft("0.6.0", "vec_check_list()", "obj_check_list()")
+  obj_check_list(x, ..., arg = arg, call = call)
+}

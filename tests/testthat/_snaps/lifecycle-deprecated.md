@@ -20,3 +20,19 @@
     Output
       [1] FALSE  TRUE
 
+# vec_check_list() still works
+
+    Code
+      vec_check_list(1)
+    Condition
+      Error:
+      ! `1` must be a list, not the number 1.
+
+---
+
+    Code
+      my_check(1)
+    Condition
+      Error in `my_check()`:
+      ! `x` must be a list, not the number 1.
+

@@ -306,7 +306,7 @@ vec_check_size <- function(x,
 #' - `list_all_size()` takes a list and returns `TRUE` if all elements of that
 #'   list have the same `size`.
 #'
-#' - `vec_check_list()`, `list_check_all_vectors()`, and `list_check_all_size()`
+#' - `obj_check_list()`, `list_check_all_vectors()`, and `list_check_all_size()`
 #'   use the above functions, but throw a standardized and informative error if
 #'   they return `FALSE`.
 #'
@@ -342,7 +342,7 @@ obj_is_list <- function(x) {
 }
 #' @rdname obj_is_list
 #' @export
-vec_check_list <- function(x,
+obj_check_list <- function(x,
                            ...,
                            arg = caller_arg(x),
                            call = caller_env()) {

@@ -29,7 +29,7 @@ r_obj* vec_expand_grid(r_obj* xs,
                        enum vctrs_expand_vary vary,
                        const struct name_repair_opts* p_name_repair_opts,
                        struct r_lazy error_call) {
-  vec_check_list(xs, vec_args.empty, error_call);
+  obj_check_list(xs, vec_args.empty, error_call);
 
   if (vec_any_missing(xs)) {
     // Drop `NULL`s before any other checks

@@ -2,13 +2,27 @@
 % Please edit documentation in R/vctrs-deprecated.R
 \name{vec_is_list}
 \alias{vec_is_list}
+\alias{vec_check_list}
 \title{List checks}
 \usage{
 vec_is_list(x)
+
+vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
 }
 \arguments{
 \item{x}{For \verb{vec_*()} functions, an object. For \verb{list_*()} functions, a
 list.}
+
+\item{...}{These dots are for future extensions and must be empty.}
+
+\item{arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
+
+\item{call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}

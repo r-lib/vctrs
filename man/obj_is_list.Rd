@@ -2,7 +2,7 @@
 % Please edit documentation in R/assert.R
 \name{obj_is_list}
 \alias{obj_is_list}
-\alias{vec_check_list}
+\alias{obj_check_list}
 \alias{list_all_vectors}
 \alias{list_check_all_vectors}
 \alias{list_all_size}
@@ -11,7 +11,7 @@
 \usage{
 obj_is_list(x)
 
-vec_check_list(x, ..., arg = caller_arg(x), call = caller_env())
+obj_check_list(x, ..., arg = caller_arg(x), call = caller_env())
 
 list_all_vectors(x)
 
@@ -50,7 +50,7 @@ returns \code{TRUE} if:
 that list are vectors.
 \item \code{list_all_size()} takes a list and returns \code{TRUE} if all elements of that
 list have the same \code{size}.
-\item \code{vec_check_list()}, \code{list_check_all_vectors()}, and \code{list_check_all_size()}
+\item \code{obj_check_list()}, \code{list_check_all_vectors()}, and \code{list_check_all_size()}
 use the above functions, but throw a standardized and informative error if
 they return \code{FALSE}.
 }

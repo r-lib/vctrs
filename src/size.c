@@ -114,7 +114,7 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
 
 r_obj* ffi_list_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
   // This is an internal error
-  vec_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+  obj_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
 
   r_ssize size = r_arg_as_ssize(ffi_size, "size");
 

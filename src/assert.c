@@ -60,11 +60,11 @@ r_obj* ffi_check_list(r_obj* x, r_obj* frame) {
   struct r_lazy arg_data = { .x = syms.arg, .env = frame };
   struct vctrs_arg arg = new_lazy_arg(&arg_data);
 
-  vec_check_list(x, &arg, call);
+  obj_check_list(x, &arg, call);
   return r_null;
 }
 
-void vec_check_list(r_obj* x,
+void obj_check_list(r_obj* x,
                     struct vctrs_arg* arg,
                     struct r_lazy call) {
   if (!obj_is_list(x)) {
@@ -75,7 +75,7 @@ void vec_check_list(r_obj* x,
 
 r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
   // This is an internal error
-  vec_check_list(x, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+  obj_check_list(x, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
 
   struct r_lazy call = { .x = r_syms.call, .env = frame };
   struct r_lazy arg_caller_data = { .x = syms.arg, .env = frame };
@@ -98,7 +98,7 @@ r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
 
 r_obj* ffi_list_check_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
   // This is an internal error
-  vec_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+  obj_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
 
   struct r_lazy arg_lazy = { .x = syms.arg, .env = frame };
   struct vctrs_arg arg = new_lazy_arg(&arg_lazy);

@@ -413,22 +413,22 @@ test_that("list_all_vectors() works", {
   expect_snapshot((expect_error(list_all_vectors(env()))))
 })
 
-test_that("vec_check_list() works", {
-  expect_null(vec_check_list(list(1)))
-  expect_null(vec_check_list(list_of(1)))
+test_that("obj_check_list() works", {
+  expect_null(obj_check_list(list(1)))
+  expect_null(obj_check_list(list_of(1)))
   expect_snapshot({
-    my_function <- function(my_arg) vec_check_list(my_arg)
+    my_function <- function(my_arg) obj_check_list(my_arg)
     (expect_error(my_function(env())))
   })
 })
 
-test_that("vec_check_list() uses a special error when `arg` is the empty string (#1604)", {
+test_that("obj_check_list() uses a special error when `arg` is the empty string (#1604)", {
   expect_snapshot(error = TRUE, {
-    vec_check_list(1, arg = "")
+    obj_check_list(1, arg = "")
   })
 })
 
-test_that("vec_check_list() and list_check_all_vectors() work", {
+test_that("obj_check_list() and list_check_all_vectors() work", {
   expect_null(list_check_all_vectors(list()))
   expect_null(list_check_all_vectors(list(1, mtcars)))
   expect_snapshot({
