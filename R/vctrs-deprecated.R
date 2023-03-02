@@ -11,6 +11,7 @@
 #' @keywords internal
 #' @export
 vec_empty <- function(x) {
+  # Defunct: 2019-06
   lifecycle::deprecate_stop(
     when = "0.2.0",
     what = "vec_empty()",
@@ -35,6 +36,7 @@ vec_empty <- function(x) {
 #' @keywords internal
 #' @export
 vec_type <- function(x) {
+  # Deprecated: 2019-06
   lifecycle::deprecate_warn(
     when = "0.2.0",
     what = "vec_type()",
@@ -46,6 +48,7 @@ vec_type <- function(x) {
 #' @rdname vec_type
 #' @export
 vec_type_common <- function(..., .ptype = NULL) {
+  # Deprecated: 2019-06
   lifecycle::deprecate_warn(
     when = "0.2.0",
     what = "vec_type_common()",
@@ -57,6 +60,7 @@ vec_type_common <- function(..., .ptype = NULL) {
 #' @rdname vec_type
 #' @export
 vec_type2 <- function(x, y, ...) {
+  # Deprecated: 2019-06
   lifecycle::deprecate_warn(
     when = "0.2.0",
     what = "vec_type2()",
@@ -80,6 +84,7 @@ vec_type2 <- function(x, y, ...) {
 #' @keywords internal
 #' @export
 vec_as_index <- function(i, n, names = NULL) {
+  # Soft-deprecated: 2020-01
   lifecycle::deprecate_soft(
     when = "0.2.2",
     what = "vec_as_index()",
@@ -120,6 +125,7 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @keywords internal
 #' @export
 vec_repeat <- function(x, each = 1L, times = 1L) {
+  # Soft-deprecated: 2020-03
   lifecycle::deprecate_soft(
     when = "0.3.0",
     what = "vec_repeat()",
@@ -151,6 +157,7 @@ vec_unchop <- function(x,
                        ptype = NULL,
                        name_spec = NULL,
                        name_repair = c("minimal", "unique", "check_unique", "universal")) {
+  # Soft-deprecated: 2022-09
   lifecycle::deprecate_soft("0.5.0", "vec_unchop()", "list_unchop()")
 
   list_unchop(
@@ -178,6 +185,7 @@ vec_unchop <- function(x,
 #' @keywords internal
 #' @export
 vec_equal_na <- function(x) {
+  # Soft-deprecated: 2022-09
   lifecycle::deprecate_soft("0.5.0", "vec_equal_na()", "vec_detect_missing()")
   vec_detect_missing(x)
 }
