@@ -90,7 +90,7 @@ If no \code{\link[=vec_proxy]{vec_proxy()}} method has been registered, \code{x}
 \itemize{
 \item The \link[=typeof]{base type} of the object is atomic: \code{"logical"}, \code{"integer"},
 \code{"double"}, \code{"complex"}, \code{"character"}, or \code{"raw"}.
-\item \code{x} is a list, as defined by \code{\link[=vec_is_list]{vec_is_list()}}.
+\item \code{x} is a list, as defined by \code{\link[=obj_is_list]{obj_is_list()}}.
 \item \code{x} is a \link{data.frame}.
 }
 

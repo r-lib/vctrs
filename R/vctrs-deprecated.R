@@ -189,3 +189,23 @@ vec_equal_na <- function(x) {
   lifecycle::deprecate_soft("0.5.0", "vec_equal_na()", "vec_detect_missing()")
   vec_detect_missing(x)
 }
+
+#' List checks
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' These functions have been deprecated as of vctrs 0.6.0.
+#'
+#' - `vec_is_list()` has been renamed to [obj_is_list()].
+#' - `vec_check_list()` has been renamed to [obj_check_list()].
+#'
+#' @inheritParams obj_is_list
+#'
+#' @keywords internal
+#' @export
+vec_is_list <- function(x) {
+  # Silently-deprecated: 2023-03
+  # lifecycle::deprecate_soft("0.6.0", "vec_is_list()", "obj_is_list()")
+  obj_is_list(x)
+}

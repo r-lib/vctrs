@@ -81,7 +81,7 @@ r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
 }
 
 r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
-  if (!vec_is_list(x)) {
+  if (!obj_is_list(x)) {
     r_abort_lazy_call(opts->call,
                       "%s must be a list, not %s.",
                       r_c_str_format_error_arg("x"),

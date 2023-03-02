@@ -39,3 +39,8 @@ test_that("vec_equal_na() still works", {
     c(FALSE, TRUE, FALSE, TRUE)
   )
 })
+
+test_that("vec_is_list() still works", {
+  expect_false(vec_is_list(1))
+  expect_true(vec_is_list(list()))
+})

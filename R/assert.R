@@ -202,7 +202,7 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #' - The [base type][typeof] of the object is atomic: `"logical"`, `"integer"`,
 #'   `"double"`, `"complex"`, `"character"`, or `"raw"`.
 #'
-#' - `x` is a list, as defined by [vec_is_list()].
+#' - `x` is a list, as defined by [obj_is_list()].
 #'
 #' - `x` is a [data.frame].
 #'
@@ -245,14 +245,14 @@ vec_is <- function(x, ptype = NULL, size = NULL) {
 #'
 #' # S3 lists are vectors if they explicitly inherit from `"list"`
 #' x <- structure(list(), class = c("my_list", "list"))
-#' vec_is_list(x)
+#' obj_is_list(x)
 #' obj_is_vector(x)
 #'
 #' # But if they don't explicitly inherit from `"list"`, they aren't
 #' # automatically considered to be vectors. Instead, vctrs considers this
 #' # to be a scalar object, like a linear model returned from `lm()`.
 #' y <- structure(list(), class = "my_list")
-#' vec_is_list(y)
+#' obj_is_list(y)
 #' obj_is_vector(y)
 #'
 #' # `obj_check_vector()` throws an informative error if the input
@@ -295,7 +295,7 @@ vec_check_size <- function(x,
 #' List checks
 #'
 #' @description
-#' - `vec_is_list()` tests if `x` is considered a list in the vctrs sense. It
+#' - `obj_is_list()` tests if `x` is considered a list in the vctrs sense. It
 #'   returns `TRUE` if:
 #'   - `x` is a bare list with no class.
 #'   - `x` is a list explicitly inheriting from `"list"`.
@@ -325,9 +325,9 @@ vec_check_size <- function(x,
 #' @seealso [list_sizes()]
 #' @export
 #' @examples
-#' vec_is_list(list())
-#' vec_is_list(list_of(1))
-#' vec_is_list(data.frame())
+#' obj_is_list(list())
+#' obj_is_list(list_of(1))
+#' obj_is_list(data.frame())
 #'
 #' list_all_vectors(list(1, mtcars))
 #' list_all_vectors(list(1, environment()))
@@ -337,10 +337,10 @@ vec_check_size <- function(x,
 #'
 #' # `list_`-prefixed functions assume a list:
 #' try(list_all_vectors(environment()))
-vec_is_list <- function(x) {
-  .Call(vctrs_is_list, x)
+obj_is_list <- function(x) {
+  .Call(ffi_obj_is_list, x)
 }
-#' @rdname vec_is_list
+#' @rdname obj_is_list
 #' @export
 vec_check_list <- function(x,
                            ...,
@@ -350,13 +350,13 @@ vec_check_list <- function(x,
   invisible(.Call(ffi_check_list, x, environment()))
 }
 
-#' @rdname vec_is_list
+#' @rdname obj_is_list
 #' @export
 list_all_vectors <- function(x) {
   .Call(ffi_list_all_vectors, x, environment())
 }
 
-#' @rdname vec_is_list
+#' @rdname obj_is_list
 #' @export
 list_check_all_vectors <- function(x,
                                    ...,
@@ -366,13 +366,13 @@ list_check_all_vectors <- function(x,
   invisible(.Call(ffi_list_check_all_vectors, x, environment()))
 }
 
-#' @rdname vec_is_list
+#' @rdname obj_is_list
 #' @export
 list_all_size <- function(x, size) {
   .Call(ffi_list_all_size, x, size, environment())
 }
 
-#' @rdname vec_is_list
+#' @rdname obj_is_list
 #' @export
 list_check_all_size <- function(x,
                                 size,

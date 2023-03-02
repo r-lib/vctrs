@@ -72,15 +72,15 @@ test_that("bare lists are vectors", {
 
 test_that("S3 lists are not vectors by default", {
   expect_false(obj_is_vector(foobar()))
-  expect_false(vec_is_list(foobar()))
+  expect_false(obj_is_list(foobar()))
 
   local_foobar_proxy()
 
   # TODO: These seem inconsistent.
-  # Should we require that S3 list proxies satisfy `vec_is_list()`?
+  # Should we require that S3 list proxies satisfy `obj_is_list()`?
   # (i.e. unclass themselves or explicitly inherit from `"list"`?)
   expect_true(obj_is_vector(foobar()))
-  expect_false(vec_is_list(foobar()))
+  expect_false(obj_is_list(foobar()))
 })
 
 test_that("data frames and records are vectors", {
@@ -323,69 +323,69 @@ test_that("vec_check_size() validates `size`", {
   })
 })
 
-# vec_is_list -----------------------------------------------------------
+# obj_is_list -----------------------------------------------------------
 
 test_that("bare lists are lists", {
-  expect_true(vec_is_list(list()))
+  expect_true(obj_is_list(list()))
 })
 
 test_that("AsIs lists are lists (#1463)", {
-  expect_true(vec_is_list(I(list())))
-  expect_true(vec_is_list(I(list_of(1))))
-  expect_false(vec_is_list(I(double())))
+  expect_true(obj_is_list(I(list())))
+  expect_true(obj_is_list(I(list_of(1))))
+  expect_false(obj_is_list(I(double())))
 })
 
 test_that("list_of are lists", {
-  expect_true(vec_is_list(new_list_of()))
+  expect_true(obj_is_list(new_list_of()))
 })
 
 test_that("Vectors with a non-VECSXP type are not lists", {
-  expect_false(vec_is_list(1))
-  expect_false(vec_is_list("a"))
-  expect_false(vec_is_list(quote(name)))
+  expect_false(obj_is_list(1))
+  expect_false(obj_is_list("a"))
+  expect_false(obj_is_list(quote(name)))
 })
 
 test_that("explicitly classed lists are lists", {
   x <- structure(list(), class = "list")
 
-  expect_true(vec_is_list(x))
-  expect_true(vec_is_list(subclass(x)))
+  expect_true(obj_is_list(x))
+  expect_true(obj_is_list(subclass(x)))
 })
 
 test_that("explicit inheritance must be in the base class", {
   x <- structure(1:2, class = c("list", "foobar"))
-  expect_false(vec_is_list(x))
+  expect_false(obj_is_list(x))
 })
 
 test_that("POSIXlt are not considered a list", {
-  expect_false(vec_is_list(as.POSIXlt(new_datetime())))
+  expect_false(obj_is_list(as.POSIXlt(new_datetime())))
 })
 
 test_that("rcrd types are not lists", {
-  expect_false(vec_is_list(new_rcrd(list(x = 1))))
+  expect_false(obj_is_list(new_rcrd(list(x = 1))))
 })
 
 test_that("scalars are not lists", {
-  expect_false(vec_is_list(foobar()))
+  expect_false(obj_is_list(foobar()))
 })
 
 test_that("S3 types can't lie about their internal representation", {
   x <- structure(1:2, class = c("foobar", "list"))
-  expect_false(vec_is_list(x))
+  expect_false(obj_is_list(x))
 })
 
 test_that("data frames of all types are not lists", {
-  expect_false(vec_is_list(data.frame()))
-  expect_false(vec_is_list(subclass(data.frame())))
-  expect_false(vec_is_list(tibble::tibble()))
+  expect_false(obj_is_list(data.frame()))
+  expect_false(obj_is_list(subclass(data.frame())))
+  expect_false(obj_is_list(tibble::tibble()))
 })
 
 test_that("S3 list with non-list proxy is still a list (#1208)", {
   x <- structure(list(), class = c("foobar", "list"))
   local_methods(vec_proxy.foobar = function(x) 1)
   # This used to be an error (#1003)
-  # expect_error(vec_is_list(x), "`x` inherits")
-  expect_true(vec_is_list(x))
+  # expect_error(obj_is_list(x), "`x` inherits")
+  expect_true(obj_is_list(x))
 })
 
 test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
@@ -403,7 +403,7 @@ test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
     }
   )
 
-  expect_true(vec_is_list(x))
+  expect_true(obj_is_list(x))
 })
 
 test_that("list_all_vectors() works", {

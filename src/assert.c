@@ -67,7 +67,7 @@ r_obj* ffi_check_list(r_obj* x, r_obj* frame) {
 void vec_check_list(r_obj* x,
                     struct vctrs_arg* arg,
                     struct r_lazy call) {
-  if (!vec_is_list(x)) {
+  if (!obj_is_list(x)) {
     stop_non_list_type(x, arg, call);
   }
 }
