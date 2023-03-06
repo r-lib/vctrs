@@ -1,10 +1,166 @@
 # Revdeps
 
-## Failed to check (3)
+## Failed to check (149)
 
-|package       |version |error |warning |note |
-|:-------------|:-------|:-----|:-------|:----|
-|NA            |?       |      |        |     |
-|tidybayes     |?       |      |        |     |
-|tidyposterior |?       |      |        |     |
+|package               |version |error |warning |note |
+|:---------------------|:-------|:-----|:-------|:----|
+|accept                |?       |      |        |     |
+|ADAM                  |?       |      |        |     |
+|admiraldev            |?       |      |        |     |
+|afex                  |?       |      |        |     |
+|AGread                |?       |      |        |     |
+|ags                   |?       |      |        |     |
+|AMARETTO              |?       |      |        |     |
+|amplican              |?       |      |        |     |
+|arulesViz             |1.5-1   |1     |        |     |
+|autoTS                |?       |      |        |     |
+|azuremlsdk            |1.10.0  |1     |        |     |
+|bayesian              |0.0.9   |1     |        |1    |
+|bayesmodels           |?       |      |        |     |
+|bayesnec              |2.1.0.2 |1     |        |1    |
+|bayesplot             |?       |      |        |     |
+|BayesPostEst          |?       |      |        |     |
+|bayesrules            |?       |      |        |     |
+|beadplexr             |?       |      |        |     |
+|BiplotML              |1.1.0   |1     |        |     |
+|blocs                 |?       |      |        |     |
+|breathtestcore        |?       |      |        |     |
+|brendaDb              |?       |      |        |     |
+|broom.helpers         |?       |      |        |     |
+|broom.mixed           |?       |      |        |     |
+|BUSpaRse              |?       |      |        |     |
+|cattonum              |?       |      |        |     |
+|ceRNAnetsim           |?       |      |        |     |
+|ChineseNames          |?       |      |        |     |
+|cinaR                 |?       |      |        |     |
+|clustermole           |?       |      |        |     |
+|cmstatr               |0.9.1   |1     |        |     |
+|COMPASS               |?       |      |        |     |
+|conflicted            |1.2.0   |1     |        |     |
+|cort                  |?       |      |        |     |
+|covidmx               |?       |      |        |     |
+|CRE                   |?       |      |        |     |
+|ctDNAtools            |?       |      |        |     |
+|CytoML                |?       |      |        |     |
+|D2MCS                 |?       |      |        |     |
+|datawizard            |?       |      |        |     |
+|DeLorean              |?       |      |        |     |
+|DepecheR              |?       |      |        |     |
+|destiny               |?       |      |        |     |
+|DiffBind              |?       |      |        |     |
+|diffman               |?       |      |        |     |
+|diffrprojects         |?       |      |        |     |
+|dynfrail              |?       |      |        |     |
+|embed                 |?       |      |        |     |
+|EpiForsk              |?       |      |        |     |
+|epiphy                |?       |      |        |     |
+|epitopeR              |?       |      |        |     |
+|escalation            |?       |      |        |     |
+|EScvtmle              |?       |      |        |     |
+|ESTER                 |0.2.0   |1     |        |     |
+|evaluator             |?       |      |        |     |
+|expstudies            |?       |      |        |     |
+|fable.prophet         |?       |      |        |     |
+|FAMetA                |0.1.5   |1     |        |     |
+|finnts                |?       |      |        |     |
+|fipe                  |?       |      |        |     |
+|foieGras              |?       |      |        |     |
+|forceR                |?       |      |        |     |
+|FSelectorRcpp         |?       |      |        |     |
+|genekitr              |?       |      |        |     |
+|geocmeans             |?       |      |        |     |
+|ggPMX                 |?       |      |        |     |
+|ggstatsplot           |?       |      |        |     |
+|healthyR.ai           |?       |      |        |     |
+|healthyR.ts           |?       |      |        |     |
+|healthyverse          |?       |      |        |     |
+|historicalborrowlong  |?       |      |        |     |
+|immcp                 |?       |      |        |     |
+|ImputeRobust          |?       |      |        |     |
+|INSPECTumours         |0.1.0   |1     |        |     |
+|intRinsic             |?       |      |        |     |
+|IPDFileCheck          |0.7.5   |1     |        |     |
+|IRexamples            |?       |      |        |     |
+|irtQ                  |?       |      |        |     |
+|IsoCorrectoR          |?       |      |        |     |
+|journalabbr           |?       |      |        |     |
+|l1spectral            |0.99.6  |1     |        |     |
+|lifeR                 |?       |      |        |     |
+|loon.ggplot           |?       |      |        |     |
+|loon.shiny            |?       |      |        |     |
+|MACP                  |?       |      |        |     |
+|mafs                  |?       |      |        |     |
+|MantaID               |?       |      |        |     |
+|marginaleffects       |?       |      |        |     |
+|MazamaCoreUtils       |0.4.13  |1     |        |     |
+|mbRes                 |?       |      |        |     |
+|merTools              |?       |      |        |     |
+|microservices         |?       |      |        |     |
+|modeltime             |?       |      |        |     |
+|modeltime.ensemble    |?       |      |        |     |
+|modeltime.gluonts     |?       |      |        |     |
+|modeltime.h2o         |?       |      |        |     |
+|modeltime.resample    |?       |      |        |     |
+|moexer                |?       |      |        |     |
+|mpower                |?       |      |        |     |
+|multibiasmeta         |?       |      |        |     |
+|NetFACS               |0.5.0   |1     |        |     |
+|nlmixr2extra          |?       |      |        |     |
+|nlmixr2plot           |?       |      |        |     |
+|nlmixr2rpt            |?       |      |        |     |
+|numbat                |?       |      |        |     |
+|OBL                   |?       |      |        |     |
+|OlinkAnalyze          |?       |      |        |     |
+|OncoBayes2            |0.8-8   |1     |        |     |
+|openai                |?       |      |        |     |
+|OutliersO3            |0.6.3   |1     |        |     |
+|pathwayTMB            |?       |      |        |     |
+|peramo                |?       |      |        |     |
+|performanceEstimation |?       |      |        |     |
+|planningML            |1.0.0   |1     |        |     |
+|Platypus              |?       |      |        |     |
+|PLSiMCpp              |?       |      |        |     |
+|promotionImpact       |?       |      |        |     |
+|prqlr                 |?       |      |        |     |
+|PsychWordVec          |?       |      |        |     |
+|RBesT                 |?       |      |        |     |
+|rcssci                |?       |      |        |     |
+|rdss                  |?       |      |        |     |
+|report                |?       |      |        |     |
+|RevGadgets            |?       |      |        |     |
+|Rigma                 |0.2.1   |1     |        |     |
+|Robyn                 |?       |      |        |     |
+|RVA                   |?       |      |        |     |
+|SAMtool               |?       |      |        |     |
+|scGate                |?       |      |        |     |
+|SCpubr                |?       |      |        |     |
+|shinyHugePlot         |?       |      |        |     |
+|sjPlot                |?       |      |        |     |
+|sknifedatar           |?       |      |        |     |
+|SpaDES.tools          |?       |      |        |     |
+|statsExpressions      |?       |      |        |     |
+|stortingscrape        |?       |      |        |     |
+|tame                  |?       |      |        |     |
+|tidybayes             |?       |      |        |     |
+|tidyposterior         |?       |      |        |     |
+|tidySEM               |?       |      |        |     |
+|tidytags              |?       |      |        |     |
+|timetk                |?       |      |        |     |
+|tinyarray             |?       |      |        |     |
+|tipmap                |?       |      |        |     |
+|vivid                 |?       |      |        |     |
+|wearables             |0.8.1   |1     |        |     |
+|webSDM                |?       |      |        |     |
+|wrappedtools          |?       |      |        |     |
+|xpose.nlmixr2         |?       |      |        |     |
+
+## New problems (5)
+
+|package        |version |error  |warning |note |
+|:--------------|:-------|:------|:-------|:----|
+|[dplyr](problems.md#dplyr)|1.1.0   |__+1__ |        |1    |
+|[GenomeAdmixR](problems.md#genomeadmixr)|2.1.7   |__+1__ |        |2    |
+|[photosynthesis](problems.md#photosynthesis)|2.1.1   |__+1__ |        |2    |
+|[portalr](problems.md#portalr)|0.3.11  |__+1__ |        |     |
+|[rlang](problems.md#rlang)|1.0.6   |__+1__ |        |1    |
 
