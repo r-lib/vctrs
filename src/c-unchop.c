@@ -17,7 +17,7 @@ r_obj* list_unchop(r_obj* xs,
                    const struct name_repair_opts* name_repair,
                    struct vctrs_arg* p_error_arg,
                    struct r_lazy error_call) {
-  vec_check_list(xs, p_error_arg, error_call);
+  obj_check_list(xs, p_error_arg, error_call);
 
   if (indices == r_null) {
     return vec_c(xs, ptype, name_spec, name_repair, p_error_arg, error_call);
@@ -25,7 +25,7 @@ r_obj* list_unchop(r_obj* xs,
 
   // Apply size/type checking to `indices` before possibly early exiting from
   // having a `NULL` common type or needing to apply a fallback
-  vec_check_list(indices, vec_args.indices, error_call);
+  obj_check_list(indices, vec_args.indices, error_call);
 
   r_ssize xs_size = vec_size(xs);
 

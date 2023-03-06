@@ -61,7 +61,7 @@ frame (even data frame and matrix columns) have the same size.
 \code{list_sizes()} returns an integer vector containing the size of each element
 of a list. It is nearly equivalent to, but faster than,
 \code{map_int(x, vec_size)}, with the exception that \code{list_sizes()} will
-error on non-list inputs, as defined by \code{\link[=vec_is_list]{vec_is_list()}}. \code{list_sizes()} is
+error on non-list inputs, as defined by \code{\link[=obj_is_list]{obj_is_list()}}. \code{list_sizes()} is
 to \code{vec_size()} as \code{\link[=lengths]{lengths()}} is to \code{\link[=length]{length()}}.
 }
 \details{

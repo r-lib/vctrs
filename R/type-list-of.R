@@ -53,7 +53,7 @@ as_list_of.list <- function(x, ..., .ptype = NULL) {
 #' @keywords internal
 #' @export
 new_list_of <- function(x = list(), ptype = logical(), ..., class = character()) {
-  if (!vec_is_list(x)) {
+  if (!obj_is_list(x)) {
     abort("`x` must be a list.")
   }
 

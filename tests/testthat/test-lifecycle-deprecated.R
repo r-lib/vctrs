@@ -39,3 +39,19 @@ test_that("vec_equal_na() still works", {
     c(FALSE, TRUE, FALSE, TRUE)
   )
 })
+
+test_that("vec_is_list() still works", {
+  expect_false(vec_is_list(1))
+  expect_true(vec_is_list(list()))
+})
+
+test_that("vec_check_list() still works", {
+  my_check <- function(x) vec_check_list(x)
+
+  expect_snapshot(error = TRUE, {
+    vec_check_list(1)
+  })
+  expect_snapshot(error = TRUE, {
+    my_check(1)
+  })
+})

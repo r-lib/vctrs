@@ -29,7 +29,7 @@ vector classes.
 \details{
 List vctrs are special cases. When created through \code{new_vctr()}, the
 resulting list vctr should always be recognized as a list by
-\code{vec_is_list()}. Because of this, if \code{inherit_base_type} is \code{FALSE}
+\code{obj_is_list()}. Because of this, if \code{inherit_base_type} is \code{FALSE}
 an error is thrown.
 }
 \section{Base methods}{

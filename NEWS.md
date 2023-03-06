@@ -1,5 +1,10 @@
 # vctrs (development version)
 
+* `vec_is_list()` and `vec_check_list()` have been renamed to `obj_is_list()`
+  and `obj_check_list()`, in line with the new `obj_is_vector()` helper. The
+  old functions have been silently deprecated, but an official deprecation
+  process will start in the next vctrs release (#1803).
+
 * `vec_locate_matches()` has changed its default `needles_arg` and
   `haystack_arg` values from `""` to `"needles"` and `"haystack"`, respectively.
   This generally generates more informative error messages (#1792).

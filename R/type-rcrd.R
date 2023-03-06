@@ -18,7 +18,7 @@
 #' @aliases ses rcrd
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
-  if (vec_is_list(fields) && length(vec_unique(list_sizes(fields))) > 1L) {
+  if (obj_is_list(fields) && length(vec_unique(list_sizes(fields))) > 1L) {
     abort("All fields must be the same size.")
   }
 

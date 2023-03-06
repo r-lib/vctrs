@@ -9,7 +9,7 @@
 #' @details
 #' List vctrs are special cases. When created through `new_vctr()`, the
 #' resulting list vctr should always be recognized as a list by
-#' `vec_is_list()`. Because of this, if `inherit_base_type` is `FALSE`
+#' `obj_is_list()`. Because of this, if `inherit_base_type` is `FALSE`
 #' an error is thrown.
 #'
 #' @section Base methods:
@@ -311,7 +311,7 @@ as.character.vctrs_vctr <- function(x, ...) {
 as.list.vctrs_vctr <- function(x, ...) {
   out <- vec_chop(x)
 
-  if (vec_is_list(x)) {
+  if (obj_is_list(x)) {
     out <- lapply(out, `[[`, 1)
   }
 
@@ -457,7 +457,7 @@ na_remove <- function(x, type) {
 
 #' @export
 anyNA.vctrs_vctr <- function(x, recursive = FALSE) {
-  if (recursive && vec_is_list(x)) {
+  if (recursive && obj_is_list(x)) {
     any(map_lgl(x, anyNA, recursive = recursive))
   } else {
     any(is.na(x))

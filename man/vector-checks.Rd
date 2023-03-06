@@ -58,7 +58,7 @@ If no \code{\link[=vec_proxy]{vec_proxy()}} method has been registered, \code{x}
 \itemize{
 \item The \link[=typeof]{base type} of the object is atomic: \code{"logical"}, \code{"integer"},
 \code{"double"}, \code{"complex"}, \code{"character"}, or \code{"raw"}.
-\item \code{x} is a list, as defined by \code{\link[=vec_is_list]{vec_is_list()}}.
+\item \code{x} is a list, as defined by \code{\link[=obj_is_list]{obj_is_list()}}.
 \item \code{x} is a \link{data.frame}.
 }
 
@@ -102,14 +102,14 @@ obj_is_vector(list())
 
 # S3 lists are vectors if they explicitly inherit from `"list"`
 x <- structure(list(), class = c("my_list", "list"))
-vec_is_list(x)
+obj_is_list(x)
 obj_is_vector(x)
 
 # But if they don't explicitly inherit from `"list"`, they aren't
 # automatically considered to be vectors. Instead, vctrs considers this
 # to be a scalar object, like a linear model returned from `lm()`.
 y <- structure(list(), class = "my_list")
-vec_is_list(y)
+obj_is_list(y)
 obj_is_vector(y)
 
 # `obj_check_vector()` throws an informative error if the input

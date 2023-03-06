@@ -90,11 +90,11 @@ enum vctrs_type vec_proxy_typeof(r_obj* x) {
 
 
 // [[ register() ]]
-r_obj* vctrs_is_list(r_obj* x) {
-  return r_lgl(vec_is_list(x));
+r_obj* ffi_obj_is_list(r_obj* x) {
+  return r_lgl(obj_is_list(x));
 }
 
-bool vec_is_list(r_obj* x) {
+bool obj_is_list(r_obj* x) {
   // Require `x` to be a list internally
   if (r_typeof(x) != R_TYPE_list) {
     return false;
@@ -127,7 +127,7 @@ bool obj_is_vector(r_obj* x) {
 
 // [[ register() ]]
 r_obj* ffi_list_all_vectors(r_obj* x, r_obj* frame) {
-  vec_check_list(x, vec_args.x, (struct r_lazy) { frame, r_null });
+  obj_check_list(x, vec_args.x, (struct r_lazy) { frame, r_null });
   return r_lgl(list_all_vectors(x));
 }
 

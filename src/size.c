@@ -81,7 +81,7 @@ r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
 }
 
 r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
-  if (!vec_is_list(x)) {
+  if (!obj_is_list(x)) {
     r_abort_lazy_call(opts->call,
                       "%s must be a list, not %s.",
                       r_c_str_format_error_arg("x"),
@@ -114,7 +114,7 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
 
 r_obj* ffi_list_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
   // This is an internal error
-  vec_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+  obj_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
 
   r_ssize size = r_arg_as_ssize(ffi_size, "size");
 

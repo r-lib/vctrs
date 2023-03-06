@@ -41,7 +41,7 @@ reference:
   - vec_ptype
   - vec_size
   - obj_is_vector
-  - vec_is_list
+  - obj_is_list
 
 - title: Combining
   contents:
