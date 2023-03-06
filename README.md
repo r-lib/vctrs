@@ -52,8 +52,8 @@ install.packages("vctrs")
 Alternatively, if you need the development version, install it with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("r-lib/vctrs")
+# install.packages("pak")
+pak::pak("r-lib/vctrs")
 ```
 
 ## Usage
