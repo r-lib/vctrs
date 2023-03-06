@@ -5,20 +5,20 @@ Authors@R:
     c(person(given = "Hadley",
              family = "Wickham",
              role = "aut",
-             email = "hadley@rstudio.com"),
+             email = "hadley@posit.co"),
       person(given = "Lionel",
              family = "Henry",
              role = c("aut", "cre"),
-             email = "lionel@rstudio.com"),
+             email = "lionel@posit.co"),
       person(given = "Davis",
              family = "Vaughan",
              role = "aut",
-             email = "davis@rstudio.com"),
+             email = "davis@posit.co"),
       person(given = "data.table team",
              role = "cph",
              comment = "Radix sort based on data.table's forder() and their contribution to R's order()"),
-      person(given = "RStudio",
-             role = "cph"))
+      person(given = "Posit, PBC",
+             role = c("cph", "fnd")))
 Description: Defines new notions of prototype and size that are
     used to provide tools for consistent and well-founded type-coercion
     and size-recycling, and are in turn connected to ideas of type- and

@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# vctrs <img src="man/figures/logo.png" align="right" width=120 height=139 alt="" />
+# vctrs <a href="https://vctrs.r-lib.org"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 <!-- badges: start -->
 [![Coverage status](https://codecov.io/gh/r-lib/vctrs/branch/main/graph/badge.svg)](https://codecov.io/github/r-lib/vctrs?branch=master)
@@ -51,8 +51,8 @@ install.packages("vctrs")
 Alternatively, if you need the development version, install it with:
 
 ```{r, eval = FALSE}
-# install.packages("devtools")
-devtools::install_github("r-lib/vctrs")
+# install.packages("pak")
+pak::pak("r-lib/vctrs")
 ```
 
 ## Usage
