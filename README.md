@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# vctrs <img src="man/figures/logo.png" align="right" width=120 height=139 alt="" />
+# vctrs <a href="https://vctrs.r-lib.org"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 <!-- badges: start -->
 
