@@ -310,8 +310,8 @@ explicitly.</p></li>
 <div class="section level3">
 <h3 id="double-dispatch">Double dispatch<a class="anchor" aria-label="anchor" href="#double-dispatch"></a>
 </h3>
-<p>Both generics use <strong><a href="https://en.wikipedia.org/wiki/Double_dispatch" class="external-link">double
-dispatch</a></strong> which means that the implementation is selected
+<p>Both generics use <a href="https://en.wikipedia.org/wiki/Double_dispatch" class="external-link"><strong>double
+dispatch</strong></a> which means that the implementation is selected
 based on the class of two arguments, not just one. S3 does not natively
 support double dispatch, so we implement our own dispatch mechanism. In
 practice, this means:</p>
@@ -1079,7 +1079,7 @@ and other methods.</p>
 <span><span class="co">#&gt; [1] 1 0 0 0 2</span></span></code></pre></div>
 <p>The class implements the list interface:</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_is_list.html">vec_is_list</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/obj_is_list.html">obj_is_list</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>This is fine for the internal implementation of this class but it
 would be more appropriate if it behaved like an atomic vector rather
@@ -1111,12 +1111,12 @@ for the internal list. The vector looks just like before:</p>
 <span><span class="va">p</span></span>
 <span><span class="co">#&gt; &lt;vctrs_poly[3]&gt;</span></span>
 <span><span class="co">#&gt; [1] 1         1⋅x^4 + 2 1⋅x^2 + 1</span></span></code></pre></div>
-<p>Making the class atomic means that <code><a href="../reference/vec_is_list.html">vec_is_list()</a></code> now
+<p>Making the class atomic means that <code><a href="../reference/obj_is_list.html">obj_is_list()</a></code> now
 returns <code>FALSE</code>. This prevents recursive algorithms that
 traverse lists from reaching too far inside the polynomial
 internals.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/vec_is_list.html">vec_is_list</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/obj_is_list.html">obj_is_list</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
 <p>Most importantly, it prevents users from reaching into the internals
 with <code>[[</code>:</p>
