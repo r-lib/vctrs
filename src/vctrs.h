@@ -77,7 +77,7 @@ SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
 SEXP vec_proxy_order(SEXP x);
 SEXP vec_proxy_unwrap(SEXP x);
-SEXP vec_chop(SEXP x, SEXP indices);
+r_obj* vec_chop(r_obj* x, r_obj* indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call);
