@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* R >=3.5.0 is now explicitly required. This is in line with the tidyverse
+  policy of supporting the [5 most recent versions of
+  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+
 * `vec_is_list()` and `vec_check_list()` have been renamed to `obj_is_list()`
   and `obj_check_list()`, in line with the new `obj_is_vector()` helper. The
   old functions have been silently deprecated, but an official deprecation
