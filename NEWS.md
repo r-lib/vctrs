@@ -1,26 +1,8 @@
 # vctrs (development version)
 
-* R >=3.5.0 is now explicitly required. This is in line with the tidyverse
-  policy of supporting the [5 most recent versions of
-  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
-
-* `vec_is_list()` and `vec_check_list()` have been renamed to `obj_is_list()`
-  and `obj_check_list()`, in line with the new `obj_is_vector()` helper. The
-  old functions have been silently deprecated, but an official deprecation
-  process will start in the next vctrs release (#1803).
-
-* `vec_locate_matches()` has changed its default `needles_arg` and
-  `haystack_arg` values from `""` to `"needles"` and `"haystack"`, respectively.
-  This generally generates more informative error messages (#1792).
-
-* `vec_locate_matches()` gains a new `relationship` argument that holistically
-  handles multiple matches between `needles` and `haystack`. In particular,
-  `relationship = "many-to-one"` replaces `multiple = "error"` and
-  `multiple = "warning"`, which have been removed from the documentation and
-  silently soft-deprecated. Official deprecation for those options will start in
-  a future release (#1791).
-
-* `vec_slice()` has gained an `error_call` argument (#1785).
+* New `vec_run_sizes()` for computing the size of each run within a vector. It
+  is identical to the `times` column from `vec_unrep()`, but is faster if you
+  don't need the run key (#1210).
 
 * New `obj_is_vector()`, `obj_check_vector()`, and `vec_check_size()` validation
   helpers. We believe these are a better approach to vector validation than
@@ -29,12 +11,30 @@
   replaced by `vec_cast()` or a type predicate function like
   `rlang::is_logical()` (#1784).
 
+* `vec_is_list()` and `vec_check_list()` have been renamed to `obj_is_list()`
+  and `obj_check_list()`, in line with the new `obj_is_vector()` helper. The
+  old functions have been silently deprecated, but an official deprecation
+  process will start in the next vctrs release (#1803).
+
+* `vec_locate_matches()` gains a new `relationship` argument that holistically
+  handles multiple matches between `needles` and `haystack`. In particular,
+  `relationship = "many-to-one"` replaces `multiple = "error"` and
+  `multiple = "warning"`, which have been removed from the documentation and
+  silently soft-deprecated. Official deprecation for those options will start in
+  a future release (#1791).
+  
+* `vec_locate_matches()` has changed its default `needles_arg` and
+  `haystack_arg` values from `""` to `"needles"` and `"haystack"`, respectively.
+  This generally generates more informative error messages (#1792).
+
+* `vec_slice()` has gained an `error_call` argument (#1785).
+
 * The `numeric_version` type from base R is now better supported in equality,
   comparison, and order based operations (tidyverse/dplyr#6680).
-
-* New `vec_run_sizes()` for computing the size of each run within a vector. It
-  is identical to the `times` column from `vec_unrep()`, but is faster if you
-  don't need the run key (#1210).
+  
+* R >=3.5.0 is now explicitly required. This is in line with the tidyverse
+  policy of supporting the [5 most recent versions of
+  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
 
 # vctrs 0.5.2
 
