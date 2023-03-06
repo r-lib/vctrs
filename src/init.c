@@ -50,9 +50,9 @@ extern r_obj* ffi_cast(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_location(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_init(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_chop(SEXP, SEXP);
+extern r_obj* ffi_vec_chop(r_obj*, r_obj*);
 extern r_obj* ffi_list_unchop(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_vec_chop_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_rep(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_restore(r_obj*, r_obj*);
@@ -229,9 +229,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_as_location",                       (DL_FUNC) &ffi_as_location, 8},
   {"ffi_slice",                             (DL_FUNC) &ffi_slice, 3},
   {"ffi_init",                              (DL_FUNC) &ffi_init, 3},
-  {"vctrs_chop",                            (DL_FUNC) &vctrs_chop, 2},
+  {"ffi_vec_chop",                          (DL_FUNC) &ffi_vec_chop, 2},
   {"ffi_list_unchop",                       (DL_FUNC) &ffi_list_unchop, 6},
-  {"vctrs_chop_seq",                        (DL_FUNC) &vctrs_chop_seq, 4},
+  {"ffi_vec_chop_seq",                      (DL_FUNC) &ffi_vec_chop_seq, 4},
   {"ffi_slice_seq",                         (DL_FUNC) &ffi_slice_seq, 4},
   {"ffi_slice_rep",                         (DL_FUNC) &ffi_slice_rep, 3},
   {"ffi_vec_restore",                       (DL_FUNC) &ffi_vec_restore, 2},

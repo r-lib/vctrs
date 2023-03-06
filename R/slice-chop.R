@@ -90,7 +90,7 @@
 #'   ave(breaks, wool, FUN = mean)
 #' )
 vec_chop <- function(x, indices = NULL) {
-  .Call(vctrs_chop, x, indices)
+  .Call(ffi_vec_chop, x, indices)
 }
 
 #' @rdname vec_chop
@@ -110,5 +110,5 @@ list_unchop <- function(x,
 # Exposed for testing  (`starts` is 0-based)
 vec_chop_seq <- function(x, starts, sizes, increasings = TRUE) {
   args <- vec_recycle_common(starts, sizes, increasings)
-  .Call(vctrs_chop_seq, x, args[[1]], args[[2]], args[[3]])
+  .Call(ffi_vec_chop_seq, x, args[[1]], args[[2]], args[[3]])
 }
