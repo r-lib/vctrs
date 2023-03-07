@@ -304,7 +304,7 @@ r_obj* as_df_row_impl(r_obj* x,
   // Remove names first as they are promoted to data frame column names
   x = KEEP(vec_set_names(x, r_null));
 
-  x = KEEP(vec_chop(x, r_null));
+  x = KEEP(vec_chop_unsafe(x, r_null, r_null));
   r_attrib_poke_names(x, nms);
   x = new_data_frame(x, 1);
 

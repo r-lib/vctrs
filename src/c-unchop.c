@@ -85,7 +85,7 @@ r_obj* list_unchop(r_obj* xs,
     out_size += r_length(r_list_get(indices, i));
   }
 
-  r_obj* locs = KEEP(vec_as_indices(indices, out_size, r_null));
+  r_obj* locs = KEEP(list_as_locations(indices, out_size, r_null));
 
   r_obj* proxy = vec_proxy_recurse(ptype);
   r_keep_loc proxy_pi;
@@ -254,7 +254,7 @@ r_obj* list_unchop_fallback(r_obj* ptype,
     r_list_poke(xs, i, vec_recycle_fallback(x, index_size, p_x_arg, error_call));
   }
 
-  indices = KEEP(vec_as_indices(indices, out_size, r_null));
+  indices = KEEP(list_as_locations(indices, out_size, r_null));
 
   r_obj* out = r_null;
   if (homogeneous) {

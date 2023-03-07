@@ -1,3 +1,82 @@
+# `indices` are validated
+
+    Code
+      vec_chop(1, indices = 1)
+    Condition
+      Error:
+      ! `indices` must be a list of index values, or `NULL`.
+
+---
+
+    Code
+      (expect_error(vec_chop(1, indices = list(1.5)), class = "vctrs_error_subscript_type")
+      )
+    Output
+      <error/vctrs_error_subscript_type>
+      Error:
+      ! Can't subset elements.
+      x Can't convert from <double> to <integer> due to loss of precision.
+
+---
+
+    Code
+      (expect_error(vec_chop(1, indices = list(2)), class = "vctrs_error_subscript_oob")
+      )
+    Output
+      <error/vctrs_error_subscript_oob>
+      Error:
+      ! Can't subset elements past the end.
+      i Location 2 doesn't exist.
+      i There is only 1 element.
+
+# `sizes` are validated
+
+    Code
+      vec_chop("a", sizes = "a")
+    Condition
+      Error:
+      ! Can't convert `sizes` <character> to <integer>.
+
+---
+
+    Code
+      vec_chop("a", sizes = 2)
+    Condition
+      Error:
+      ! `sizes` can't contain sizes larger than 1.
+
+---
+
+    Code
+      vec_chop("a", sizes = -1)
+    Condition
+      Error:
+      ! `sizes` can't contain negative sizes.
+
+---
+
+    Code
+      vec_chop("a", sizes = NA_integer_)
+    Condition
+      Error:
+      ! `sizes` can't contain missing values.
+
+---
+
+    Code
+      vec_chop("a", sizes = c(1, 1))
+    Condition
+      Error:
+      ! `sizes` must sum to size 1, not size 2.
+
+# can't use both `indices` and `sizes`
+
+    Code
+      vec_chop(1, indices = list(1), sizes = 1)
+    Condition
+      Error:
+      ! Can't supply both `indices` and `sizes`.
+
 # `x` must be a list
 
     Code
