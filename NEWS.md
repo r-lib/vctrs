@@ -4,6 +4,11 @@
   is identical to the `times` column from `vec_unrep()`, but is faster if you
   don't need the run key (#1210).
 
+* New `sizes` argument to `vec_chop()` which allows you to partition a vector
+  using an integer vector describing the size of each expected slice. It is
+  particularly useful in combination with `vec_run_sizes()` and `list_sizes()`
+  (#1210, #1598).
+
 * New `obj_is_vector()`, `obj_check_vector()`, and `vec_check_size()` validation
   helpers. We believe these are a better approach to vector validation than
   `vec_assert()` and `vec_is()`, which have been marked as questioning because
