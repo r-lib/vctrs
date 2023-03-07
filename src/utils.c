@@ -822,7 +822,7 @@ r_obj* list_pluck(r_obj* xs, r_ssize i) {
 SEXP compact_seq_attrib = NULL;
 
 // p[0] = Start value
-// p[1] = Sequence size. Always >= 1.
+// p[1] = Sequence size. Always >= 0.
 // p[2] = Step size to increment/decrement `start` with
 void init_compact_seq(int* p, R_len_t start, R_len_t size, bool increasing) {
   int step = increasing ? 1 : -1;
