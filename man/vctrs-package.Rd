@@ -33,7 +33,7 @@ Authors:
 Other contributors:
 \itemize{
   \item data.table team (Radix sort based on data.table's forder() and their contribution to R's order()) [copyright holder]
-  \item Posit, PBC [copyright holder, funder]
+  \item Posit Software, PBC [copyright holder, funder]
 }
 
 }
