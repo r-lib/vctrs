@@ -121,9 +121,33 @@
 #' x_flat <- list_unchop(x)
 #' x_flat <- x_flat + max(x_flat)
 #' vec_chop(x_flat, sizes = list_sizes(x))
-vec_chop <- function(x, indices = NULL, ..., sizes = NULL) {
-  check_dots_empty0(...)
+vec_chop <- function(x, ..., indices = NULL, sizes = NULL) {
+  if (!missing(...)) {
+    indices <- check_dots_chop(..., indices = indices)
+  }
   .Call(ffi_vec_chop, x, indices, sizes)
+}
+
+check_dots_chop <- function(..., indices = NULL, call = caller_env()) {
+  if (!is_null(indices)) {
+    # Definitely can't supply both `indices` and `...`
+    check_dots_empty0(..., call = call)
+  }
+
+  if (dots_n(...) != 1L) {
+    # Backwards compatible case doesn't allow for length >1 `...`.
+    # This must be an error case.
+    check_dots_empty0(..., call = call)
+  }
+
+  # TODO: Soft-deprecate this after dplyr/tidyr have updated all `vec_chop()`
+  # calls to be explicit about `indices =`
+
+  # Assume this is an old style `vec_chop(x, indices)` call, before we
+  # added the `...`
+  indices <- list(...)[[1L]]
+
+  indices
 }
 
 #' @rdname vec_chop

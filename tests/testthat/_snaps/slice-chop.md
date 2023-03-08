@@ -77,6 +77,45 @@
       Error:
       ! Can't supply both `indices` and `sizes`.
 
+# `vec_chop(x, indices)` backwards compatible behavior works
+
+    Code
+      vec_chop(1:2, 1)
+    Condition
+      Error:
+      ! `indices` must be a list of index values, or `NULL`.
+
+---
+
+    Code
+      vec_chop(1, list(1), sizes = 1)
+    Condition
+      Error:
+      ! Can't supply both `indices` and `sizes`.
+
+---
+
+    Code
+      vec_chop(1, list(1), 2)
+    Condition
+      Error in `vec_chop()`:
+      ! `...` must be empty.
+      x Problematic arguments:
+      * ..1 = list(1)
+      * ..2 = 2
+      i Did you forget to name an argument?
+
+---
+
+    Code
+      vec_chop(1, list(1), indices = list(1))
+    Condition
+      Error in `vec_chop()`:
+      ! `...` must be empty.
+      x Problematic argument:
+      * ..1 = list(1)
+      i Did you forget to name an argument?
+
 # `x` must be a list
 
     Code

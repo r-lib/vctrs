@@ -5,7 +5,7 @@
 \alias{list_unchop}
 \title{Chopping}
 \usage{
-vec_chop(x, indices = NULL, ..., sizes = NULL)
+vec_chop(x, ..., indices = NULL, sizes = NULL)
 
 list_unchop(
   x,
@@ -22,6 +22,8 @@ list_unchop(
 \arguments{
 \item{x}{A vector}
 
+\item{...}{These dots are for future extensions and must be empty.}
+
 \item{indices}{For \code{vec_chop()}, a list of positive integer vectors to
 slice \code{x} with, or \code{NULL}. Can't be used if \code{sizes} is already specified.
 If both \code{indices} and \code{sizes} are \code{NULL}, \code{x} is split into its individual
@@ -32,8 +34,6 @@ locations to place elements of \code{x} in. Each element of \code{x} is recycled
 the size of the corresponding index vector. The size of \code{indices} must
 match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
 provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
-
-\item{...}{These dots are for future extensions and must be empty.}
 
 \item{sizes}{An integer vector of non-negative sizes representing sequential
 indices to slice \code{x} with, or \code{NULL}. Can't be used if \code{indices} is already

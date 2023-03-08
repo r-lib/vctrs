@@ -344,6 +344,30 @@ test_that("ALTREP objects always generate materialized chops (#1450)", {
   expect_identical(result, expect)
 })
 
+test_that("`vec_chop(x, indices)` backwards compatible behavior works", {
+  # No issues here
+  expect_identical(
+    vec_chop(1:2, list(1, 2)),
+    vec_chop(1:2, indices = list(1, 2))
+  )
+
+  # Errors still talk about `indices`
+  expect_snapshot(error = TRUE, {
+    vec_chop(1:2, 1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, list(1), sizes = 1)
+  })
+
+  # These cases aren't allowed because they weren't possible previously either
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, list(1), 2)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, list(1), indices = list(1))
+  })
+})
+
 # vec_chop + compact_seq --------------------------------------------------
 
 # `start` is 0-based
