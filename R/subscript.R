@@ -174,7 +174,7 @@ new_error_subscript_type <- function(i,
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_type <- function(cnd) {
+cnd_header.vctrs_error_subscript_type <- function(cnd, ...) {
   arg <- cnd[["subscript_arg"]]
   if (is_subscript_arg(arg)) {
     with <- glue::glue(" with {format_subscript_arg(arg)}")
@@ -192,7 +192,7 @@ cnd_header.vctrs_error_subscript_type <- function(cnd) {
   }
 }
 #' @export
-cnd_body.vctrs_error_subscript_type <- function(cnd) {
+cnd_body.vctrs_error_subscript_type <- function(cnd, ...) {
   arg <- cnd_subscript_arg(cnd)
   type <- obj_type_friendly(cnd$i)
   expected_types <- cnd_subscript_expected_types(cnd)
