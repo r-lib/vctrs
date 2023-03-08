@@ -116,7 +116,7 @@ test_that("can chop integer64 objects with `NA_integer_` indices", {
     bit64::as.integer64(1)
   )
 
-  expect_identical(vec_chop(x, idx), expect)
+  expect_identical(vec_chop(x, indices = idx), expect)
 
   dim(x) <- c(4, 2)
   expect <- list(
@@ -126,7 +126,7 @@ test_that("can chop integer64 objects with `NA_integer_` indices", {
   dim(expect[[1]]) <- c(1, 2)
   dim(expect[[2]]) <- c(1, 2)
 
-  expect_identical(vec_chop(x, idx), expect)
+  expect_identical(vec_chop(x, indices = idx), expect)
 
   dim(x) <- c(2, 2, 2)
   expect <- list(
@@ -136,7 +136,7 @@ test_that("can chop integer64 objects with `NA_integer_` indices", {
   dim(expect[[1]]) <- c(1, 2, 2)
   dim(expect[[2]]) <- c(1, 2, 2)
 
-  expect_identical(vec_chop(x, idx), expect)
+  expect_identical(vec_chop(x, indices = idx), expect)
 })
 
 test_that("equality proxy converts atomic input to data frames of doubles", {

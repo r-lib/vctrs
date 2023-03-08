@@ -222,12 +222,14 @@
 # list_unchop() can repair names quietly
 
     Code
-      res <- list_unchop(vec_chop(x, indices), indices = indices, name_repair = "unique_quiet")
+      res <- list_unchop(vec_chop(x, indices = indices), indices = indices,
+      name_repair = "unique_quiet")
 
 ---
 
     Code
-      res <- list_unchop(vec_chop(x, indices), indices = indices, name_repair = "universal_quiet")
+      res <- list_unchop(vec_chop(x, indices = indices), indices = indices,
+      name_repair = "universal_quiet")
 
 # list_unchop() errors on unsupported location values
 

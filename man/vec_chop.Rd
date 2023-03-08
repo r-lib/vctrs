@@ -82,7 +82,7 @@ mentioned in error messages as the source of the error. See the
 \value{
 \itemize{
 \item \code{vec_chop()}: A list where each element has the same type as \code{x}. The size
-of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)} or
+of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or
 \code{vec_size(x)} depending on whether or not \code{indices} or \code{sizes} is provided.
 \item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
 specified. The size is computed as \code{vec_size_common(!!!indices)} unless
@@ -105,7 +105,7 @@ If \code{indices} selects every value in \code{x} exactly once, in any order, th
 \code{list_unchop()} is the inverse of \code{vec_chop()} and the following invariant
 holds:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{list_unchop(vec_chop(x, indices), indices) == x
+\if{html}{\out{<div class="sourceCode">}}\preformatted{list_unchop(vec_chop(x, indices = indices), indices = indices) == x
 }\if{html}{\out{</div>}}
 }
 \section{Dependencies of \code{vec_chop()}}{
@@ -126,18 +126,18 @@ holds:
 vec_chop(1:5)
 
 # These two are equivalent
-vec_chop(1:5, list(1:2, 3:5))
+vec_chop(1:5, indices = list(1:2, 3:5))
 vec_chop(1:5, sizes = c(2, 3))
 
 # Can also be used on data frames
-vec_chop(mtcars, list(1:3, 4:6))
+vec_chop(mtcars, indices = list(1:3, 4:6))
 
 # If `indices` selects every value in `x` exactly once,
 # in any order, then `list_unchop()` inverts `vec_chop()`
 x <- c("a", "b", "c", "d")
 indices <- list(2, c(3, 1), 4)
-vec_chop(x, indices)
-list_unchop(vec_chop(x, indices), indices = indices)
+vec_chop(x, indices = indices)
+list_unchop(vec_chop(x, indices = indices), indices = indices)
 
 # When unchopping, size 1 elements of `x` are recycled
 # to the size of the corresponding index
@@ -152,7 +152,7 @@ list_unchop(lst, indices = list(c(3, 2), c(1, 4)), name_spec = "{outer}_{inner}"
 # `vec_chop()` and `list_unchop()` in combination with `vec_group_loc()`
 ave2 <- function(.x, .by, .f, ...) {
   indices <- vec_group_loc(.by)$loc
-  chopped <- vec_chop(.x, indices)
+  chopped <- vec_chop(.x, indices = indices)
   out <- lapply(chopped, .f, ...)
   list_unchop(out, indices = indices)
 }

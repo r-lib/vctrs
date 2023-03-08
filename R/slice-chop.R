@@ -16,7 +16,7 @@
 #' holds:
 #'
 #' ```
-#' list_unchop(vec_chop(x, indices), indices) == x
+#' list_unchop(vec_chop(x, indices = indices), indices = indices) == x
 #' ```
 #'
 #' @inheritParams rlang::args_dots_empty
@@ -69,14 +69,14 @@
 #' vec_chop(1:5, sizes = c(2, 3))
 #'
 #' # Can also be used on data frames
-#' vec_chop(mtcars, list(1:3, 4:6))
+#' vec_chop(mtcars, indices = list(1:3, 4:6))
 #'
 #' # If `indices` selects every value in `x` exactly once,
 #' # in any order, then `list_unchop()` inverts `vec_chop()`
 #' x <- c("a", "b", "c", "d")
 #' indices <- list(2, c(3, 1), 4)
-#' vec_chop(x, indices)
-#' list_unchop(vec_chop(x, indices), indices = indices)
+#' vec_chop(x, indices = indices)
+#' list_unchop(vec_chop(x, indices = indices), indices = indices)
 #'
 #' # When unchopping, size 1 elements of `x` are recycled
 #' # to the size of the corresponding index
@@ -91,7 +91,7 @@
 #' # `vec_chop()` and `list_unchop()` in combination with `vec_group_loc()`
 #' ave2 <- function(.x, .by, .f, ...) {
 #'   indices <- vec_group_loc(.by)$loc
-#'   chopped <- vec_chop(.x, indices)
+#'   chopped <- vec_chop(.x, indices = indices)
 #'   out <- lapply(chopped, .f, ...)
 #'   list_unchop(out, indices = indices)
 #' }

@@ -63,7 +63,7 @@ proxy_equal_numeric_version <- function(x, error_call = caller_env()) {
     index <- index + size
   }
 
-  out <- vec_chop(x, indices)
+  out <- vec_chop(x, indices = indices)
 
   n_zeros <- N_COMPONENTS - max
 

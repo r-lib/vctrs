@@ -54,7 +54,7 @@ See the \link[=name_spec]{name specification topic}.}
 \value{
 \itemize{
 \item \code{vec_chop()}: A list where each element has the same type as \code{x}. The size
-of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)} or
+of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or
 \code{vec_size(x)} depending on whether or not \code{indices} or \code{sizes} is provided.
 \item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
 specified. The size is computed as \code{vec_size_common(!!!indices)} unless

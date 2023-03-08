@@ -690,7 +690,7 @@ test_that("vec_slice() restores unrestored but named foreign classes", {
 
   expect_identical(vec_slice(x, 1), x)
   expect_identical(vec_chop(x), list(x))
-  expect_identical(vec_chop(x, list(1)), list(x))
+  expect_identical(vec_chop(x, indices = list(1)), list(x))
   expect_identical(vec_ptype(x), foobar(named(dbl())))
   expect_identical(vec_ptype(x), foobar(named(dbl())))
   expect_identical(vec_ptype_common(x, x), foobar(named(dbl())))
