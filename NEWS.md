@@ -32,6 +32,11 @@
   `haystack_arg` values from `""` to `"needles"` and `"haystack"`, respectively.
   This generally generates more informative error messages (#1792).
 
+* `vec_chop()` has gained empty `...` between `x` and the optional `indices`
+  argument. For backwards compatibility, supplying `vec_chop(x, indices)`
+  without naming `indices` still silently works, but will be deprecated in a
+  future release (#1813).
+
 * `vec_slice()` has gained an `error_call` argument (#1785).
 
 * The `numeric_version` type from base R is now better supported in equality,
