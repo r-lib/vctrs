@@ -10,7 +10,7 @@ SEXP vec_split(SEXP x, SEXP by) {
 
   SEXP indices = VECTOR_ELT(out, 1);
 
-  SEXP val = vec_chop(x, indices);
+  SEXP val = vec_chop_unsafe(x, indices, r_null);
   SET_VECTOR_ELT(out, 1, val);
 
   SEXP names = PROTECT(Rf_getAttrib(out, R_NamesSymbol));

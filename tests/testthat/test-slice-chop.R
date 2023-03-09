@@ -63,6 +63,10 @@ test_that("vec_chop() keeps data frame row names for data frames with 0 columns 
   out <- vec_chop(x, indices = list(c(2, NA), 3))
   out <- lapply(out, rownames)
   expect_identical(out, list(c("r2", "...2"), "r3"))
+
+  out <- vec_chop(x, sizes = c(1, 2, 0))
+  out <- lapply(out, rownames)
+  expect_identical(out, list("r1", c("r2", "r3"), character()))
 })
 
 test_that("data frames with 0 columns retain the right number of rows (#1722)", {
@@ -76,7 +80,19 @@ test_that("data frames with 0 columns retain the right number of rows (#1722)", 
 
   expect_identical(
     vec_chop(x, indices = list(c(1, 3, 2), c(3, NA))),
-    list(data_frame(.size = 3), data_frame(.size = 2))
+    list(
+      data_frame(.size = 3),
+      data_frame(.size = 2)
+    )
+  )
+
+  expect_identical(
+    vec_chop(x, sizes = c(3, 1, 0)),
+    list(
+      data_frame(.size = 3),
+      data_frame(.size = 1),
+      data_frame(.size = 0)
+    )
   )
 })
 
@@ -106,6 +122,12 @@ test_that("vec_chop() doesn't restore when attributes have already been restored
 
   result <- vec_chop(foobar(NA))[[1]]
   expect_equal(result, structure("dispatched", foo = "bar"))
+
+  result <- vec_chop(foobar(NA), indices = list(1))[[1]]
+  expect_equal(result, structure("dispatched", foo = "bar"))
+
+  result <- vec_chop(foobar(NA), sizes = 1)[[1]]
+  expect_equal(result, structure("dispatched", foo = "bar"))
 })
 
 test_that("vec_chop() does not restore when attributes have not been restored by `[`", {
@@ -116,82 +138,165 @@ test_that("vec_chop() does not restore when attributes have not been restored by
 
   result <- vec_chop(foobar(NA))[[1]]
   expect_equal(result, "dispatched")
+
+  result <- vec_chop(foobar(NA), indices = list(1))[[1]]
+  expect_equal(result, "dispatched")
+
+  result <- vec_chop(foobar(NA), sizes = 1)[[1]]
+  expect_equal(result, "dispatched")
 })
 
 test_that("vec_chop() falls back to `[` for shaped objects with no proxy", {
   x <- foobar(1)
   dim(x) <- c(1, 1)
+
   result <- vec_chop(x)[[1]]
+  expect_equal(result, x)
+
+  result <- vec_chop(x, indices = list(1))[[1]]
+  expect_equal(result, x)
+
+  result <- vec_chop(x, sizes = 1)[[1]]
   expect_equal(result, x)
 })
 
 test_that("`indices` are validated", {
-  expect_error(vec_chop(1, 1), "`indices` must be a list of index values, or `NULL`")
-  expect_error(vec_chop(1, list(1.5)), class = "vctrs_error_subscript_type")
-  expect_error(vec_chop(1, list(2)), class = "vctrs_error_subscript_oob")
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, indices = 1)
+  })
+  expect_snapshot({
+    (expect_error(vec_chop(1, indices = list(1.5)), class = "vctrs_error_subscript_type"))
+  })
+  expect_snapshot({
+    (expect_error(vec_chop(1, indices = list(2)), class = "vctrs_error_subscript_oob"))
+  })
+})
+
+test_that("`sizes` are validated", {
+  expect_snapshot(error = TRUE, {
+    vec_chop("a", sizes = "a")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop("a", sizes = 2)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop("a", sizes = -1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop("a", sizes = NA_integer_)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop("a", sizes = c(1, 1))
+  })
+})
+
+test_that("can't use both `indices` and `sizes`", {
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, indices = list(1), sizes = 1)
+  })
+})
+
+test_that("`sizes` allows `0`", {
+  expect_identical(
+    vec_chop(c("a", "b"), sizes = c(1, 0, 0, 1, 0)),
+    list("a", character(), character(), "b", character())
+  )
 })
 
 test_that("size 0 `indices` list is allowed", {
-  expect_equal(vec_chop(1, list()), list())
+  expect_equal(vec_chop(1, indices = list()), list())
 })
 
 test_that("individual index values of size 0 are allowed", {
-  expect_equal(vec_chop(1, list(integer())), list(numeric()))
+  expect_equal(vec_chop(1, indices = list(integer())), list(numeric()))
 
   df <- data.frame(a = 1, b = "1")
-  expect_equal(vec_chop(df, list(integer())), list(vec_ptype(df)))
+  expect_equal(vec_chop(df, indices = list(integer())), list(vec_ptype(df)))
 })
 
-test_that("data frame row names are kept when `indices` are used", {
+test_that("individual index values of `NULL` are allowed", {
+  expect_equal(vec_chop(1, indices = list(NULL)), list(numeric()))
+
+  df <- data.frame(a = 1, b = "1")
+  expect_equal(vec_chop(df, indices = list(NULL)), list(vec_ptype(df)))
+})
+
+test_that("data frame row names are kept when `indices` or `sizes` are used", {
   x <- data_frame(x = 1:2, y = c("a", "b"))
   rownames(x) <- c("r1", "r2")
-  result <- lapply(vec_chop(x, list(1, 1:2)), rownames)
+
+  result <- lapply(vec_chop(x, indices = list(1, 1:2)), rownames)
   expect_equal(result, list("r1", c("r1", "r2")))
+
+  result <- lapply(vec_chop(x, sizes = c(1, 0, 1)), rownames)
+  expect_equal(result, list("r1", character(), "r2"))
 })
 
-test_that("vec_chop(<atomic>, indices =) can be equivalent to the default", {
+test_that("vec_chop(<atomic>, indices/sizes =) can be equivalent to the default", {
   x <- 1:5
+
   indices <- as.list(vec_seq_along(x))
-  expect_equal(vec_chop(x, indices), vec_chop(x))
+  expect_equal(vec_chop(x, indices = indices), vec_chop(x))
+
+  sizes <- vec_rep(1L, times = vec_size(x))
+  expect_equal(vec_chop(x, sizes = sizes), vec_chop(x))
 })
 
-test_that("vec_chop(<data.frame>, indices =) can be equivalent to the default", {
+test_that("vec_chop(<data.frame>, indices/sizes =) can be equivalent to the default", {
   x <- data.frame(x = 1:5)
+
   indices <- as.list(vec_seq_along(x))
-  expect_equal(vec_chop(x, indices), vec_chop(x))
+  expect_equal(vec_chop(x, indices = indices), vec_chop(x))
+
+  sizes <- vec_rep(1L, times = vec_size(x))
+  expect_equal(vec_chop(x, sizes = sizes), vec_chop(x))
 })
 
-test_that("vec_chop(<array>, indices =) can be equivalent to the default", {
+test_that("vec_chop(<array>, indices/sizes =) can be equivalent to the default", {
   x <- array(1:8, c(2, 2, 2))
+
   indices <- as.list(vec_seq_along(x))
-  expect_equal(vec_chop(x, indices), vec_chop(x))
+  expect_equal(vec_chop(x, indices = indices), vec_chop(x))
+
+  sizes <- vec_rep(1L, times = vec_size(x))
+  expect_equal(vec_chop(x, sizes = sizes), vec_chop(x))
 })
 
 test_that("`indices` cannot use names", {
   x <- set_names(1:3, c("a", "b", "c"))
-  expect_error(vec_chop(x, list("a", c("b", "c"))), class = "vctrs_error_subscript_type")
+  expect_error(vec_chop(x, indices = list("a", c("b", "c"))), class = "vctrs_error_subscript_type")
 
   x <- array(1:4, c(2, 2), dimnames = list(c("r1", "r2")))
-  expect_error(vec_chop(x, list("r1")), class = "vctrs_error_subscript_type")
+  expect_error(vec_chop(x, indices = list("r1")), class = "vctrs_error_subscript_type")
 
   x <- data.frame(x = 1, row.names = "r1")
-  expect_error(vec_chop(x, list("r1")), class = "vctrs_error_subscript_type")
+  expect_error(vec_chop(x, indices = list("r1")), class = "vctrs_error_subscript_type")
 })
 
-test_that("fallback method with `indices` works", {
+test_that("fallback method with `indices` and `sizes` works", {
   fctr <- factor(c("a", "b"))
+
   indices <- list(1, c(1, 2))
+  sizes <- c(1, 0, 1)
 
   expect_equal(
-    vec_chop(fctr, indices),
+    vec_chop(fctr, indices = indices),
     map(indices, vec_slice, x = fctr)
+  )
+  expect_equal(
+    vec_chop(fctr, sizes = sizes),
+    list(vec_slice(fctr, 1), vec_slice(fctr, 0), vec_slice(fctr, 2))
   )
 })
 
-test_that("vec_chop() falls back to `[` for shaped objects with no proxy when indices are provided", {
+test_that("vec_chop() falls back to `[` for shaped objects with no proxy when `indices` or `sizes` are provided", {
   x <- foobar(1)
   dim(x) <- c(1, 1)
-  result <- vec_chop(x, list(1))[[1]]
+
+  result <- vec_chop(x, indices = list(1))[[1]]
+  expect_equal(result, x)
+
+  result <- vec_chop(x, sizes = 1)[[1]]
   expect_equal(result, x)
 })
 
@@ -237,6 +342,30 @@ test_that("ALTREP objects always generate materialized chops (#1450)", {
 
   expect <- vec_chop(c(rep("foo", 10), rep("bar", 5)))
   expect_identical(result, expect)
+})
+
+test_that("`vec_chop(x, indices)` backwards compatible behavior works", {
+  # No issues here
+  expect_identical(
+    vec_chop(1:2, list(1, 2)),
+    vec_chop(1:2, indices = list(1, 2))
+  )
+
+  # Errors still talk about `indices`
+  expect_snapshot(error = TRUE, {
+    vec_chop(1:2, 1)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, list(1), sizes = 1)
+  })
+
+  # These cases aren't allowed because they weren't possible previously either
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, list(1), 2)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_chop(1, list(1), indices = list(1))
+  })
 })
 
 # vec_chop + compact_seq --------------------------------------------------
@@ -622,14 +751,14 @@ test_that("list_unchop() can repair names quietly", {
   x <- c(x = "a", x = "b", x = "c")
   indices <- list(2, c(3, 1))
   expect_snapshot({
-    res <- list_unchop(vec_chop(x, indices), indices = indices, name_repair = "unique_quiet")
+    res <- list_unchop(vec_chop(x, indices = indices), indices = indices, name_repair = "unique_quiet")
   })
   expect_named(res, c("x...1", "x...2", "x...3"))
 
   x <- c("if" = "a", "in" = "b", "for" = "c")
   indices <- list(2, c(3, 1))
   expect_snapshot({
-    res <- list_unchop(vec_chop(x, indices), indices = indices, name_repair = "universal_quiet")
+    res <- list_unchop(vec_chop(x, indices = indices), indices = indices, name_repair = "universal_quiet")
   })
   expect_named(res, c(".if", ".in", ".for"))
 })
