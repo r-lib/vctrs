@@ -83,7 +83,8 @@ vctrs 0.5.0.</p>
 
 <dt>indices</dt>
 <dd><p>For <code><a href="vec_chop.html">vec_chop()</a></code>, a list of positive integer vectors to
-slice <code>x</code> with, or <code>NULL</code>. If <code>NULL</code>, <code>x</code> is split into its individual
+slice <code>x</code> with, or <code>NULL</code>. Can't be used if <code>sizes</code> is already specified.
+If both <code>indices</code> and <code>sizes</code> are <code>NULL</code>, <code>x</code> is split into its individual
 elements, equivalent to using an <code>indices</code> of <code>as.list(vec_seq_along(x))</code>.</p>
 <p>For <code><a href="vec_chop.html">list_unchop()</a></code>, a list of positive integer vectors specifying the
 locations to place elements of <code>x</code> in. Each element of <code>x</code> is recycled to
@@ -123,8 +124,9 @@ names are ignored and the result is unnamed.</p></li>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<ul><li><p><code><a href="vec_chop.html">vec_chop()</a></code>: A list of size <code>vec_size(indices)</code> or, if <code>indices == NULL</code>,
-<code>vec_size(x)</code>.</p></li>
+<ul><li><p><code><a href="vec_chop.html">vec_chop()</a></code>: A list where each element has the same type as <code>x</code>. The size
+of the list is equal to <code>vec_size(indices)</code>, <code>vec_size(sizes)</code>, or
+<code>vec_size(x)</code> depending on whether or not <code>indices</code> or <code>sizes</code> is provided.</p></li>
 <li><p><code><a href="vec_chop.html">list_unchop()</a></code>: A vector of type <code>vec_ptype_common(!!!x)</code>, or <code>ptype</code>, if
 specified. The size is computed as <code>vec_size_common(!!!indices)</code> unless
 the indices are <code>NULL</code>, in which case the size is <code>vec_size_common(!!!x)</code>.</p></li>
