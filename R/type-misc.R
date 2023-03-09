@@ -53,17 +53,7 @@ proxy_equal_numeric_version <- function(x, error_call = caller_env()) {
 
   # Transpose with combination of `vec_interleave()` and `vec_chop()`
   x <- vec_interleave(!!!x, .ptype = integer())
-
-  # TODO: `vec_chop(sizes = vec_rep(size, times = max))`
-  index <- seq_len(size)
-  indices <- vector("list", length = max)
-
-  for (i in seq_len(max)) {
-    indices[[i]] <- index
-    index <- index + size
-  }
-
-  out <- vec_chop(x, indices = indices)
+  out <- vec_chop(x, sizes = vec_rep(size, times = max))
 
   n_zeros <- N_COMPONENTS - max
 
