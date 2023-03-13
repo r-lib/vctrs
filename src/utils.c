@@ -205,7 +205,7 @@ SEXP vctrs_dispatch6(SEXP fn_sym, SEXP fn,
 }
 
 static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env) {
-  SEXP mask = PROTECT(r_new_environment(env));
+  SEXP mask = PROTECT(r_alloc_empty_environment(env));
 
   if (fn_sym != R_NilValue) {
     Rf_defineVar(fn_sym, fn, mask);

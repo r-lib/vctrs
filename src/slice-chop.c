@@ -406,7 +406,7 @@ r_obj* chop_fallback(r_obj* x, struct vctrs_chop_indices* p_indices) {
   // definition to ensure consistent look-up. This is the same logic
   // as in `vctrs_dispatch_n()`, reimplemented here to allow repeated
   // evaluations in a loop.
-  r_obj* env = KEEP(r_new_environment(r_envs.global));
+  r_obj* env = KEEP(r_alloc_empty_environment(r_envs.global));
   r_env_poke(env, syms_x, x);
 
   // Construct call with symbols, not values, for performance.
