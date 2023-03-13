@@ -280,10 +280,9 @@
 
     Code
       vec_check_size(1, size = 1.5)
-      abort("`vec_check_size()` should error for us")
     Condition
-      Error:
-      ! `vec_check_size()` should error for us
+      Error in `vec_check_size()`:
+      ! `size` must be a whole number, not a decimal number.
 
 # list_all_vectors() works
 
