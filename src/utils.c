@@ -1179,23 +1179,6 @@ static SEXP new_env_call = NULL;
 static SEXP new_env__parent_node = NULL;
 static SEXP new_env__size_node = NULL;
 
-#if 0
-SEXP r_new_environment(SEXP parent, R_len_t size) {
-  parent = parent ? parent : R_EmptyEnv;
-  SETCAR(new_env__parent_node, parent);
-
-  size = size ? size : 29;
-  SETCAR(new_env__size_node, Rf_ScalarInteger(size));
-
-  SEXP env = Rf_eval(new_env_call, R_BaseEnv);
-
-  // Free for gc
-  SETCAR(new_env__parent_node, R_NilValue);
-
-  return env;
-}
-#endif
-
 // [[ include("utils.h") ]]
 SEXP r_protect(SEXP x) {
   return Rf_lang2(fns_quote, x);
