@@ -10,13 +10,13 @@ a scalar object as column in a data frame:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{fn <- function() NULL
 tibble::tibble(x = fn)
-#> Error:
+#> Error in `tibble::tibble()`:
 #> ! All columns in a tibble must be vectors.
 #> x Column `x` is a function.
 
 fit <- lm(1:3 ~ 1)
 tibble::tibble(x = fit)
-#> Error:
+#> Error in `tibble::tibble()`:
 #> ! All columns in a tibble must be vectors.
 #> x Column `x` is a `lm` object.
 }\if{html}{\out{</div>}}

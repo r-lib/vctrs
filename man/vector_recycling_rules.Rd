@@ -37,7 +37,7 @@ If vectors aren't size 1, they must all be the same size. Otherwise, an error
 is thrown:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = 1:3, y = 4:7)
-#> Error:
+#> Error in `tibble()`:
 #> ! Tibble columns must have compatible sizes.
 #> * Size 3: Existing data.
 #> * Size 4: Column `y`.
