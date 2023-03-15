@@ -94,7 +94,7 @@ recycling rules:</p><ul><li><p>Vectors of size 1 will be recycled to the size of
 <p>If vectors aren't size 1, they must all be the same size. Otherwise, an error
 is thrown:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error:</span></span>
+<span><span class="co">#&gt; Error in `tibble()`:</span></span>
 <span><span class="co">#&gt; ! Tibble columns must have compatible sizes.</span></span>
 <span><span class="co">#&gt; * Size 3: Existing data.</span></span>
 <span><span class="co">#&gt; * Size 4: Column `y`.</span></span>
