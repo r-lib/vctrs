@@ -136,6 +136,7 @@ bool list_all_vectors(r_obj* x) {
     r_stop_unexpected_type(r_typeof(x));
   }
 
+  // TODO: Use `r_list_all_of(x, &obj_is_vector)` when we add it back in
   const r_ssize size = r_length(x);
   r_obj* const* v_x = r_list_cbegin(x);
 
