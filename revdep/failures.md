@@ -1,3 +1,139 @@
+# abmR
+
+<details>
+
+* Version: 1.0.8
+* GitHub: NA
+* Source code: https://github.com/cran/abmR
+* Date/Publication: 2023-01-16 01:20:02 UTC
+* Number of recursive dependencies: 162
+
+Run `revdepcheck::cloud_details(, "abmR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/abmR/new/abmR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘abmR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘abmR’ version ‘1.0.8’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/abmR/old/abmR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘abmR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘abmR’ version ‘1.0.8’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# abstr
+
+<details>
+
+* Version: 0.4.1
+* GitHub: https://github.com/a-b-street/abstr
+* Source code: https://github.com/cran/abstr
+* Date/Publication: 2021-11-30 08:10:05 UTC
+* Number of recursive dependencies: 125
+
+Run `revdepcheck::cloud_details(, "abstr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/abstr/new/abstr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘abstr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘abstr’ version ‘0.4.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/abstr/old/abstr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘abstr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘abstr’ version ‘0.4.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # accept
 
 <details>
@@ -109,42 +245,6 @@ Run `revdepcheck::cloud_details(, "ADAM")` for more info
 
 
 ```
-# admiraldev
-
-<details>
-
-* Version: 0.2.0
-* GitHub: https://github.com/pharmaverse/admiraldev
-* Source code: https://github.com/cran/admiraldev
-* Date/Publication: 2022-12-01 00:10:02 UTC
-* Number of recursive dependencies: 122
-
-Run `revdepcheck::cloud_details(, "admiraldev")` for more info
-
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-
-
-
-
-
-
-```
-### CRAN
-
-```
-
-
-
-
-
-
-```
 # afex
 
 <details>
@@ -228,7 +328,7 @@ Status: 1 NOTE
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/AGread
-* Number of recursive dependencies: 164
+* Number of recursive dependencies: 157
 
 Run `revdepcheck::cloud_details(, "AGread")` for more info
 
@@ -250,6 +350,82 @@ Run `revdepcheck::cloud_details(, "AGread")` for more info
 
 ```
 
+
+
+
+
+
+```
+# agridat
+
+<details>
+
+* Version: 1.21
+* GitHub: https://github.com/kwstat/agridat
+* Source code: https://github.com/cran/agridat
+* Date/Publication: 2022-06-15 08:30:07 UTC
+* Number of recursive dependencies: 257
+
+Run `revdepcheck::cloud_details(, "agridat")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/agridat/new/agridat.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘agridat/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘agridat’ version ‘1.21’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘agridat_data.Rmd’ using ‘UTF-8’... OK
+  ‘agridat_examples.Rmd’ using ‘UTF-8’... OK
+  ‘agridat_intro.Rmd’ using ‘UTF-8’... OK
+  ‘agridat_uniformity.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/agridat/old/agridat.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘agridat/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘agridat’ version ‘1.21’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘agridat_data.Rmd’ using ‘UTF-8’... OK
+  ‘agridat_examples.Rmd’ using ‘UTF-8’... OK
+  ‘agridat_intro.Rmd’ using ‘UTF-8’... OK
+  ‘agridat_uniformity.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
 
 
 
@@ -361,66 +537,6 @@ Run `revdepcheck::cloud_details(, "amplican")` for more info
 
 
 ```
-# arulesViz
-
-<details>
-
-* Version: 1.5-1
-* GitHub: https://github.com/mhahsler/arulesViz
-* Source code: https://github.com/cran/arulesViz
-* Date/Publication: 2021-11-19 17:40:07 UTC
-* Number of recursive dependencies: 111
-
-Run `revdepcheck::cloud_details(, "arulesViz")` for more info
-
-</details>
-
-## In both
-
-*   checking whether package ‘arulesViz’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/arulesViz/new/arulesViz.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
-
-### Devel
-
-```
-* installing *source* package ‘arulesViz’ ...
-** package ‘arulesViz’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘R6’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘arulesViz’
-* removing ‘/tmp/workdir/arulesViz/new/arulesViz.Rcheck/arulesViz’
-
-
-```
-### CRAN
-
-```
-* installing *source* package ‘arulesViz’ ...
-** package ‘arulesViz’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘R6’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘arulesViz’
-* removing ‘/tmp/workdir/arulesViz/old/arulesViz.Rcheck/arulesViz’
-
-
-```
 # autoTS
 
 <details>
@@ -489,63 +605,69 @@ Status: 1 ERROR
 
 
 ```
-# azuremlsdk
+# bangladesh
 
 <details>
 
-* Version: 1.10.0
-* GitHub: https://github.com/azure/azureml-sdk-for-r
-* Source code: https://github.com/cran/azuremlsdk
-* Date/Publication: 2020-09-22 15:40:07 UTC
-* Number of recursive dependencies: 91
+* Version: 1.0.0
+* GitHub: NA
+* Source code: https://github.com/cran/bangladesh
+* Date/Publication: 2022-10-28 16:30:05 UTC
+* Number of recursive dependencies: 94
 
-Run `revdepcheck::cloud_details(, "azuremlsdk")` for more info
+Run `revdepcheck::cloud_details(, "bangladesh")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘azuremlsdk’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/azuremlsdk/new/azuremlsdk.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘azuremlsdk’ ...
-** package ‘azuremlsdk’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘Rcpp’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘azuremlsdk’
-* removing ‘/tmp/workdir/azuremlsdk/new/azuremlsdk.Rcheck/azuremlsdk’
+* using log directory ‘/tmp/workdir/bangladesh/new/bangladesh.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bangladesh/DESCRIPTION’ ... OK
+* this is package ‘bangladesh’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘azuremlsdk’ ...
-** package ‘azuremlsdk’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘Rcpp’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘azuremlsdk’
-* removing ‘/tmp/workdir/azuremlsdk/old/azuremlsdk.Rcheck/azuremlsdk’
+* using log directory ‘/tmp/workdir/bangladesh/old/bangladesh.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bangladesh/DESCRIPTION’ ... OK
+* this is package ‘bangladesh’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -563,52 +685,61 @@ Run `revdepcheck::cloud_details(, "bayesian")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘bayesian’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/bayesian/new/bayesian.Rcheck/00install.out’ for details.
-    ```
-
-*   checking package dependencies ... NOTE
-    ```
-    Package suggested but not available for checking: ‘rstan’
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘bayesian’ ...
-** package ‘bayesian’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘brms’ in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
- there is no package called ‘rstan’
-Execution halted
-ERROR: lazy loading failed for package ‘bayesian’
-* removing ‘/tmp/workdir/bayesian/new/bayesian.Rcheck/bayesian’
+* using log directory ‘/tmp/workdir/bayesian/new/bayesian.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bayesian/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘bayesian’ version ‘0.0.9’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+Package suggested but not available for checking: ‘rstan’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘bayesian’ ...
-** package ‘bayesian’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘brms’ in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
- there is no package called ‘rstan’
-Execution halted
-ERROR: lazy loading failed for package ‘bayesian’
-* removing ‘/tmp/workdir/bayesian/old/bayesian.Rcheck/bayesian’
+* using log directory ‘/tmp/workdir/bayesian/old/bayesian.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bayesian/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘bayesian’ version ‘0.0.9’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+Package suggested but not available for checking: ‘rstan’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -661,72 +792,59 @@ Run `revdepcheck::cloud_details(, "bayesnec")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘bayesnec’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/bayesnec/new/bayesnec.Rcheck/00install.out’ for details.
-    ```
-
-*   checking package dependencies ... NOTE
-    ```
-    Package suggested but not available for checking: ‘rstan’
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘bayesnec’ ...
-** package ‘bayesnec’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-Warning: namespace ‘rstan’ is not available and has been replaced
-by .GlobalEnv when processing object ‘manec_example’
-Warning: namespace ‘brms’ is not available and has been replaced
-by .GlobalEnv when processing object ‘manec_example’
-...
-by .GlobalEnv when processing object ‘manec_example’
-Warning: namespace ‘rstan’ is not available and has been replaced
-by .GlobalEnv when processing object ‘manec_example’
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘brms’ in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
- there is no package called ‘rstan’
-Execution halted
-ERROR: lazy loading failed for package ‘bayesnec’
-* removing ‘/tmp/workdir/bayesnec/new/bayesnec.Rcheck/bayesnec’
+* using log directory ‘/tmp/workdir/bayesnec/new/bayesnec.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bayesnec/DESCRIPTION’ ... OK
+* this is package ‘bayesnec’ version ‘2.1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+Package suggested but not available for checking: ‘rstan’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘bayesnec’ ...
-** package ‘bayesnec’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-Warning: namespace ‘rstan’ is not available and has been replaced
-by .GlobalEnv when processing object ‘manec_example’
-Warning: namespace ‘brms’ is not available and has been replaced
-by .GlobalEnv when processing object ‘manec_example’
-...
-by .GlobalEnv when processing object ‘manec_example’
-Warning: namespace ‘rstan’ is not available and has been replaced
-by .GlobalEnv when processing object ‘manec_example’
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘brms’ in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
- there is no package called ‘rstan’
-Execution halted
-ERROR: lazy loading failed for package ‘bayesnec’
-* removing ‘/tmp/workdir/bayesnec/old/bayesnec.Rcheck/bayesnec’
+* using log directory ‘/tmp/workdir/bayesnec/old/bayesnec.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bayesnec/DESCRIPTION’ ... OK
+* this is package ‘bayesnec’ version ‘2.1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+Package suggested but not available for checking: ‘rstan’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -836,7 +954,7 @@ Run `revdepcheck::cloud_details(, "BayesPostEst")` for more info
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
-Package required but not available: ‘rstanarm’
+Packages required but not available: 'rstanarm', 'brms'
 
 Package suggested but not available for checking: ‘rstan’
 
@@ -864,7 +982,7 @@ Status: 1 ERROR
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
-Package required but not available: ‘rstanarm’
+Packages required but not available: 'rstanarm', 'brms'
 
 Package suggested but not available for checking: ‘rstan’
 
@@ -935,6 +1053,74 @@ Status: 1 ERROR
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
 Package required but not available: ‘rstanarm’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# bdl
+
+<details>
+
+* Version: 1.0.5
+* GitHub: https://github.com/statisticspoland/R_Package_to_API_BDL
+* Source code: https://github.com/cran/bdl
+* Date/Publication: 2023-02-24 15:00:02 UTC
+* Number of recursive dependencies: 145
+
+Run `revdepcheck::cloud_details(, "bdl")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/bdl/new/bdl.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bdl/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘bdl’ version ‘1.0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/bdl/old/bdl.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘bdl/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘bdl’ version ‘1.0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -1022,65 +1208,79 @@ Status: 1 NOTE
 
 
 ```
-# BiplotML
+# BiodiversityR
 
 <details>
 
-* Version: 1.1.0
-* GitHub: https://github.com/jgbabativam/BiplotML
-* Source code: https://github.com/cran/BiplotML
-* Date/Publication: 2022-04-22 21:20:02 UTC
-* Number of recursive dependencies: 88
+* Version: 2.15-1
+* GitHub: NA
+* Source code: https://github.com/cran/BiodiversityR
+* Date/Publication: 2023-01-06 10:00:30 UTC
+* Number of recursive dependencies: 300
 
-Run `revdepcheck::cloud_details(, "BiplotML")` for more info
+Run `revdepcheck::cloud_details(, "BiodiversityR")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘BiplotML’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/BiplotML/new/BiplotML.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘BiplotML’ ...
-** package ‘BiplotML’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘shapes’ in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
- there is no package called ‘htmlwidgets’
-Execution halted
-ERROR: lazy loading failed for package ‘BiplotML’
-* removing ‘/tmp/workdir/BiplotML/new/BiplotML.Rcheck/BiplotML’
+* using log directory ‘/tmp/workdir/BiodiversityR/new/BiodiversityR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘BiodiversityR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘BiodiversityR’ version ‘2.15-1’
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘BiplotML’ ...
-** package ‘BiplotML’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error: package or namespace load failed for ‘shapes’ in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]):
- there is no package called ‘htmlwidgets’
-Execution halted
-ERROR: lazy loading failed for package ‘BiplotML’
-* removing ‘/tmp/workdir/BiplotML/old/BiplotML.Rcheck/BiplotML’
+* using log directory ‘/tmp/workdir/BiodiversityR/old/BiodiversityR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘BiodiversityR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘BiodiversityR’ version ‘2.15-1’
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
 
 
 ```
@@ -1450,6 +1650,82 @@ Run `revdepcheck::cloud_details(, "BUSpaRse")` for more info
 
 
 ```
+# cancensus
+
+<details>
+
+* Version: 0.5.5
+* GitHub: https://github.com/mountainMath/cancensus
+* Source code: https://github.com/cran/cancensus
+* Date/Publication: 2023-01-23 08:40:06 UTC
+* Number of recursive dependencies: 117
+
+Run `revdepcheck::cloud_details(, "cancensus")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/cancensus/new/cancensus.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cancensus/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘cancensus’ version ‘0.5.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+  ‘Making_maps_with_cancensus.Rmd’ using ‘UTF-8’... OK
+  ‘Taxfiler_Data.Rmd’ using ‘UTF-8’... OK
+  ‘cancensus.Rmd’ using ‘UTF-8’... OK
+  ‘data_discovery.Rmd’ using ‘UTF-8’... OK
+  ‘intersecting_geometries.Rmd’ using ‘UTF-8’... OK
+  ‘statcan_attribute_files.Rmd’ using ‘UTF-8’... OK
+  ‘statcan_wds.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 3 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/cancensus/old/cancensus.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cancensus/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘cancensus’ version ‘0.5.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+  ‘Making_maps_with_cancensus.Rmd’ using ‘UTF-8’... OK
+  ‘Taxfiler_Data.Rmd’ using ‘UTF-8’... OK
+  ‘cancensus.Rmd’ using ‘UTF-8’... OK
+  ‘data_discovery.Rmd’ using ‘UTF-8’... OK
+  ‘intersecting_geometries.Rmd’ using ‘UTF-8’... OK
+  ‘statcan_attribute_files.Rmd’ using ‘UTF-8’... OK
+  ‘statcan_wds.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 3 NOTEs
+
+
+
+
+
+```
 # cattonum
 
 <details>
@@ -1479,6 +1755,74 @@ Run `revdepcheck::cloud_details(, "cattonum")` for more info
 
 ```
 
+
+
+
+
+
+```
+# CCAMLRGIS
+
+<details>
+
+* Version: 4.0.4
+* GitHub: https://github.com/ccamlr/CCAMLRGIS
+* Source code: https://github.com/cran/CCAMLRGIS
+* Date/Publication: 2023-02-07 04:12:37 UTC
+* Number of recursive dependencies: 72
+
+Run `revdepcheck::cloud_details(, "CCAMLRGIS")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/CCAMLRGIS/new/CCAMLRGIS.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘CCAMLRGIS/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘CCAMLRGIS’ version ‘4.0.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/CCAMLRGIS/old/CCAMLRGIS.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘CCAMLRGIS/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘CCAMLRGIS’ version ‘4.0.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -1528,7 +1872,7 @@ Run `revdepcheck::cloud_details(, "ceRNAnetsim")` for more info
 * GitHub: https://github.com/psychbruce/ChineseNames
 * Source code: https://github.com/cran/ChineseNames
 * Date/Publication: 2021-11-29 16:40:02 UTC
-* Number of recursive dependencies: 156
+* Number of recursive dependencies: 151
 
 Run `revdepcheck::cloud_details(, "ChineseNames")` for more info
 
@@ -1583,6 +1927,66 @@ Status: 1 ERROR
 
 
 
+
+
+```
+# choroplethr
+
+<details>
+
+* Version: 3.7.1
+* GitHub: NA
+* Source code: https://github.com/cran/choroplethr
+* Date/Publication: 2022-10-05 07:10:06 UTC
+* Number of recursive dependencies: 127
+
+Run `revdepcheck::cloud_details(, "choroplethr")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘choroplethr’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/choroplethr/new/choroplethr.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘choroplethr’ ...
+** package ‘choroplethr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘choroplethr’
+* removing ‘/tmp/workdir/choroplethr/new/choroplethr.Rcheck/choroplethr’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘choroplethr’ ...
+** package ‘choroplethr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘choroplethr’
+* removing ‘/tmp/workdir/choroplethr/old/choroplethr.Rcheck/choroplethr’
 
 
 ```
@@ -1654,138 +2058,6 @@ Status: 1 ERROR
 
 
 ```
-# clustermole
-
-<details>
-
-* Version: 1.1.0
-* GitHub: https://github.com/igordot/clustermole
-* Source code: https://github.com/cran/clustermole
-* Date/Publication: 2021-01-26 06:40:02 UTC
-* Number of recursive dependencies: 149
-
-Run `revdepcheck::cloud_details(, "clustermole")` for more info
-
-</details>
-
-## Error before installation
-
-### Devel
-
-```
-* using log directory ‘/tmp/workdir/clustermole/new/clustermole.Rcheck’
-* using R version 4.1.1 (2021-08-10)
-* using platform: x86_64-pc-linux-gnu (64-bit)
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘clustermole/DESCRIPTION’ ... OK
-* checking extension type ... Package
-* this is package ‘clustermole’ version ‘1.1.0’
-* package encoding: UTF-8
-* checking package namespace information ... OK
-* checking package dependencies ... ERROR
-Packages required but not available: 'GSVA', 'singscore'
-
-See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
-manual.
-* DONE
-Status: 1 ERROR
-
-
-
-
-
-```
-### CRAN
-
-```
-* using log directory ‘/tmp/workdir/clustermole/old/clustermole.Rcheck’
-* using R version 4.1.1 (2021-08-10)
-* using platform: x86_64-pc-linux-gnu (64-bit)
-* using session charset: UTF-8
-* using option ‘--no-manual’
-* checking for file ‘clustermole/DESCRIPTION’ ... OK
-* checking extension type ... Package
-* this is package ‘clustermole’ version ‘1.1.0’
-* package encoding: UTF-8
-* checking package namespace information ... OK
-* checking package dependencies ... ERROR
-Packages required but not available: 'GSVA', 'singscore'
-
-See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
-manual.
-* DONE
-Status: 1 ERROR
-
-
-
-
-
-```
-# cmstatr
-
-<details>
-
-* Version: 0.9.1
-* GitHub: https://github.com/cmstatr/cmstatr
-* Source code: https://github.com/cran/cmstatr
-* Date/Publication: 2021-09-30 16:50:02 UTC
-* Number of recursive dependencies: 86
-
-Run `revdepcheck::cloud_details(, "cmstatr")` for more info
-
-</details>
-
-## In both
-
-*   checking whether package ‘cmstatr’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/cmstatr/new/cmstatr.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
-
-### Devel
-
-```
-* installing *source* package ‘cmstatr’ ...
-** package ‘cmstatr’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  there is no package called ‘scales’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘cmstatr’
-* removing ‘/tmp/workdir/cmstatr/new/cmstatr.Rcheck/cmstatr’
-
-
-```
-### CRAN
-
-```
-* installing *source* package ‘cmstatr’ ...
-** package ‘cmstatr’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  there is no package called ‘scales’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘cmstatr’
-* removing ‘/tmp/workdir/cmstatr/old/cmstatr.Rcheck/cmstatr’
-
-
-```
 # COMPASS
 
 <details>
@@ -1821,26 +2093,26 @@ Run `revdepcheck::cloud_details(, "COMPASS")` for more info
 
 
 ```
-# conflicted
+# CoordinateCleaner
 
 <details>
 
-* Version: 1.2.0
-* GitHub: https://github.com/r-lib/conflicted
-* Source code: https://github.com/cran/conflicted
-* Date/Publication: 2023-02-01 08:20:06 UTC
-* Number of recursive dependencies: 49
+* Version: 2.0-20
+* GitHub: https://github.com/ropensci/CoordinateCleaner
+* Source code: https://github.com/cran/CoordinateCleaner
+* Date/Publication: 2021-10-21 17:10:05 UTC
+* Number of recursive dependencies: 115
 
-Run `revdepcheck::cloud_details(, "conflicted")` for more info
+Run `revdepcheck::cloud_details(, "CoordinateCleaner")` for more info
 
 </details>
 
 ## In both
 
-*   checking whether package ‘conflicted’ can be installed ... ERROR
+*   checking whether package ‘CoordinateCleaner’ can be installed ... ERROR
     ```
     Installation failed.
-    See ‘/tmp/workdir/conflicted/new/conflicted.Rcheck/00install.out’ for details.
+    See ‘/tmp/workdir/CoordinateCleaner/new/CoordinateCleaner.Rcheck/00install.out’ for details.
     ```
 
 ## Installation
@@ -1848,46 +2120,108 @@ Run `revdepcheck::cloud_details(, "conflicted")` for more info
 ### Devel
 
 ```
-* installing *source* package ‘conflicted’ ...
-** package ‘conflicted’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘CoordinateCleaner’ ...
+** package ‘CoordinateCleaner’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** R
+** data
+*** moving datasets to lazyload DB
+** inst
 ** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-Error: package or namespace load failed for ‘conflicted’:
- .onLoad failed in loadNamespace() for 'conflicted', details:
-  call: loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]])
-  error: there is no package called ‘cachem’
-Error: loading failed
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
-ERROR: loading failed
-* removing ‘/tmp/workdir/conflicted/new/conflicted.Rcheck/conflicted’
+ERROR: lazy loading failed for package ‘CoordinateCleaner’
+* removing ‘/tmp/workdir/CoordinateCleaner/new/CoordinateCleaner.Rcheck/CoordinateCleaner’
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘conflicted’ ...
-** package ‘conflicted’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘CoordinateCleaner’ ...
+** package ‘CoordinateCleaner’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** R
+** data
+*** moving datasets to lazyload DB
+** inst
 ** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-Error: package or namespace load failed for ‘conflicted’:
- .onLoad failed in loadNamespace() for 'conflicted', details:
-  call: loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]])
-  error: there is no package called ‘cachem’
-Error: loading failed
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
 Execution halted
-ERROR: loading failed
-* removing ‘/tmp/workdir/conflicted/old/conflicted.Rcheck/conflicted’
+ERROR: lazy loading failed for package ‘CoordinateCleaner’
+* removing ‘/tmp/workdir/CoordinateCleaner/old/CoordinateCleaner.Rcheck/CoordinateCleaner’
+
+
+```
+# CopernicusMarine
+
+<details>
+
+* Version: 0.0.6
+* GitHub: https://github.com/pepijn-devries/CopernicusMarine
+* Source code: https://github.com/cran/CopernicusMarine
+* Date/Publication: 2023-01-30 13:50:02 UTC
+* Number of recursive dependencies: 113
+
+Run `revdepcheck::cloud_details(, "CopernicusMarine")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/CopernicusMarine/new/CopernicusMarine.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘CopernicusMarine/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘CopernicusMarine’ version ‘0.0.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/CopernicusMarine/old/CopernicusMarine.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘CopernicusMarine/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘CopernicusMarine’ version ‘0.0.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -2072,6 +2406,220 @@ Run `revdepcheck::cloud_details(, "ctDNAtools")` for more info
 
 
 ```
+# cubble
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/huizezhang-sherry/cubble
+* Source code: https://github.com/cran/cubble
+* Date/Publication: 2022-11-17 12:30:02 UTC
+* Number of recursive dependencies: 132
+
+Run `revdepcheck::cloud_details(, "cubble")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/cubble/new/cubble.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cubble/DESCRIPTION’ ... OK
+* this is package ‘cubble’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘ozmaps’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/cubble/old/cubble.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cubble/DESCRIPTION’ ... OK
+* this is package ‘cubble’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘ozmaps’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# cxr
+
+<details>
+
+* Version: 1.0.0
+* GitHub: https://github.com/RadicalCommEcol/cxr
+* Source code: https://github.com/cran/cxr
+* Date/Publication: 2021-04-16 09:20:02 UTC
+* Number of recursive dependencies: 128
+
+Run `revdepcheck::cloud_details(, "cxr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/cxr/new/cxr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cxr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘cxr’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘V1_Getting_started.Rmd’ using ‘UTF-8’... OK
+  ‘V2_Data_formats.Rmd’ using ‘UTF-8’... OK
+  ‘V3_Coexistence_metrics.Rmd’ using ‘UTF-8’... OK
+  ‘V4_Models.Rmd’ using ‘UTF-8’... OK
+  ‘V5_Abundance_projections.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/cxr/old/cxr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cxr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘cxr’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘V1_Getting_started.Rmd’ using ‘UTF-8’... OK
+  ‘V2_Data_formats.Rmd’ using ‘UTF-8’... OK
+  ‘V3_Coexistence_metrics.Rmd’ using ‘UTF-8’... OK
+  ‘V4_Models.Rmd’ using ‘UTF-8’... OK
+  ‘V5_Abundance_projections.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+# cyclestreets
+
+<details>
+
+* Version: 0.6.0
+* GitHub: https://github.com/cyclestreets/cyclestreets-r
+* Source code: https://github.com/cran/cyclestreets
+* Date/Publication: 2023-02-17 09:30:06 UTC
+* Number of recursive dependencies: 67
+
+Run `revdepcheck::cloud_details(, "cyclestreets")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/cyclestreets/new/cyclestreets.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cyclestreets/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘cyclestreets’ version ‘0.6.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/cyclestreets/old/cyclestreets.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘cyclestreets/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘cyclestreets’ version ‘0.6.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # CytoML
 
 <details>
@@ -2150,7 +2698,7 @@ Run `revdepcheck::cloud_details(, "D2MCS")` for more info
 * GitHub: https://github.com/easystats/datawizard
 * Source code: https://github.com/cran/datawizard
 * Date/Publication: 2022-12-14 23:50:02 UTC
-* Number of recursive dependencies: 191
+* Number of recursive dependencies: 186
 
 Run `revdepcheck::cloud_details(, "datawizard")` for more info
 
@@ -2212,6 +2760,82 @@ Status: 1 NOTE
 * checking re-building of vignette outputs ... OK
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# dbmss
+
+<details>
+
+* Version: 2.8-0
+* GitHub: https://github.com/EricMarcon/dbmss
+* Source code: https://github.com/cran/dbmss
+* Date/Publication: 2023-01-06 15:10:05 UTC
+* Number of recursive dependencies: 120
+
+Run `revdepcheck::cloud_details(, "dbmss")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/dbmss/new/dbmss.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘dbmss/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘dbmss’ version ‘2.8-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘dbmss.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/dbmss/old/dbmss.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘dbmss/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘dbmss’ version ‘2.8-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘dbmss.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 ERROR
 
 
 
@@ -2428,6 +3052,148 @@ Run `revdepcheck::cloud_details(, "diffrprojects")` for more info
 
 
 ```
+# dycdtools
+
+<details>
+
+* Version: 0.4.3
+* GitHub: https://github.com/SongyanYu/dycdtools
+* Source code: https://github.com/cran/dycdtools
+* Date/Publication: 2022-11-22 00:40:02 UTC
+* Number of recursive dependencies: 89
+
+Run `revdepcheck::cloud_details(, "dycdtools")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/dycdtools/new/dycdtools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘dycdtools/DESCRIPTION’ ... OK
+* this is package ‘dycdtools’ version ‘0.4.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘dycdtools’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/dycdtools/new/dycdtools.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/dycdtools/old/dycdtools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘dycdtools/DESCRIPTION’ ... OK
+* this is package ‘dycdtools’ version ‘0.4.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘dycdtools’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/dycdtools/old/dycdtools.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# dynamicSDM
+
+<details>
+
+* Version: 1.1
+* GitHub: https://github.com/r-a-dobson/dynamicSDM
+* Source code: https://github.com/cran/dynamicSDM
+* Date/Publication: 2023-02-27 13:22:30 UTC
+* Number of recursive dependencies: 156
+
+Run `revdepcheck::cloud_details(, "dynamicSDM")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/dynamicSDM/new/dynamicSDM.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘dynamicSDM/DESCRIPTION’ ... OK
+* this is package ‘dynamicSDM’ version ‘1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/dynamicSDM/old/dynamicSDM.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘dynamicSDM/DESCRIPTION’ ... OK
+* this is package ‘dynamicSDM’ version ‘1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # dynfrail
 
 <details>
@@ -2457,6 +3223,150 @@ Run `revdepcheck::cloud_details(, "dynfrail")` for more info
 
 ```
 
+
+
+
+
+
+```
+# edbuildmapr
+
+<details>
+
+* Version: 0.3.1
+* GitHub: https://github.com/EdBuild/edbuildmapr
+* Source code: https://github.com/cran/edbuildmapr
+* Date/Publication: 2021-06-15 06:00:02 UTC
+* Number of recursive dependencies: 98
+
+Run `revdepcheck::cloud_details(, "edbuildmapr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/edbuildmapr/new/edbuildmapr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘edbuildmapr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘edbuildmapr’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/edbuildmapr/old/edbuildmapr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘edbuildmapr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘edbuildmapr’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# EFDR
+
+<details>
+
+* Version: 1.2
+* GitHub: https://github.com/andrewzm/EFDR
+* Source code: https://github.com/cran/EFDR
+* Date/Publication: 2021-04-18 05:50:03 UTC
+* Number of recursive dependencies: 105
+
+Run `revdepcheck::cloud_details(, "EFDR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/EFDR/new/EFDR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘EFDR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘EFDR’ version ‘1.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘EFDR_documents.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/EFDR/old/EFDR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘EFDR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘EFDR’ version ‘1.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘EFDR_documents.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
 
 
 
@@ -2526,13 +3436,89 @@ Status: 1 ERROR, 2 NOTEs
   i In index: 1.
   i With name: x3.
   Caused by error in `.f()`:
-  ! The package `rstanarm` is required.
+  ! The package "rstanarm" is required.
   
   [ FAIL 1 | WARN 2 | SKIP 56 | PASS 162 ]
   Error: Test failures
   Execution halted
 * DONE
 Status: 1 ERROR, 2 NOTEs
+
+
+
+
+
+```
+# EnvExpInd
+
+<details>
+
+* Version: 0.1.0
+* GitHub: https://github.com/Spatial-R/EnvExpInd
+* Source code: https://github.com/cran/EnvExpInd
+* Date/Publication: 2020-10-23 15:50:02 UTC
+* Number of recursive dependencies: 67
+
+Run `revdepcheck::cloud_details(, "EnvExpInd")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/EnvExpInd/new/EnvExpInd.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘EnvExpInd/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘EnvExpInd’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘environment_exposure.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/EnvExpInd/old/EnvExpInd.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘EnvExpInd/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘EnvExpInd’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘environment_exposure.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
 
 
 
@@ -2747,6 +3733,72 @@ Run `revdepcheck::cloud_details(, "EScvtmle")` for more info
 
 
 ```
+# eSDM
+
+<details>
+
+* Version: 0.3.7
+* GitHub: https://github.com/smwoodman/eSDM
+* Source code: https://github.com/cran/eSDM
+* Date/Publication: 2021-05-04 04:50:08 UTC
+* Number of recursive dependencies: 130
+
+Run `revdepcheck::cloud_details(, "eSDM")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/eSDM/new/eSDM.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘eSDM/DESCRIPTION’ ... OK
+* this is package ‘eSDM’ version ‘0.3.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/eSDM/old/eSDM.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘eSDM/DESCRIPTION’ ... OK
+* this is package ‘eSDM’ version ‘0.3.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # ESTER
 
 <details>
@@ -2761,49 +3813,53 @@ Run `revdepcheck::cloud_details(, "ESTER")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘ESTER’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/ESTER/new/ESTER.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘ESTER’ ...
-** package ‘ESTER’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘rstan’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘ESTER’
-* removing ‘/tmp/workdir/ESTER/new/ESTER.Rcheck/ESTER’
+* using log directory ‘/tmp/workdir/ESTER/new/ESTER.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ESTER/DESCRIPTION’ ... OK
+* this is package ‘ESTER’ version ‘0.2.0’
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘ESTER’ ...
-** package ‘ESTER’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘rstan’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘ESTER’
-* removing ‘/tmp/workdir/ESTER/old/ESTER.Rcheck/ESTER’
+* using log directory ‘/tmp/workdir/ESTER/old/ESTER.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ESTER/DESCRIPTION’ ... OK
+* this is package ‘ESTER’ version ‘0.2.0’
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -3005,6 +4061,72 @@ ERROR: lazy loading failed for package ‘FAMetA’
 
 
 ```
+# fgdr
+
+<details>
+
+* Version: 1.1.1
+* GitHub: https://github.com/uribo/fgdr
+* Source code: https://github.com/cran/fgdr
+* Date/Publication: 2022-02-22 05:00:02 UTC
+* Number of recursive dependencies: 123
+
+Run `revdepcheck::cloud_details(, "fgdr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/fgdr/new/fgdr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘fgdr/DESCRIPTION’ ... OK
+* this is package ‘fgdr’ version ‘1.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/fgdr/old/fgdr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘fgdr/DESCRIPTION’ ... OK
+* this is package ‘fgdr’ version ‘1.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # finnts
 
 <details>
@@ -3186,17 +4308,17 @@ Run `revdepcheck::cloud_details(, "forceR")` for more info
 
 
 ```
-# FSelectorRcpp
+# FORTLS
 
 <details>
 
-* Version: 0.3.8
-* GitHub: https://github.com/mi2-warsaw/FSelectorRcpp
-* Source code: https://github.com/cran/FSelectorRcpp
-* Date/Publication: 2021-01-14 15:00:02 UTC
-* Number of recursive dependencies: 157
+* Version: 1.2.0
+* GitHub: https://github.com/Molina-Valero/FORTLS
+* Source code: https://github.com/cran/FORTLS
+* Date/Publication: 2023-01-08 16:50:05 UTC
+* Number of recursive dependencies: 176
 
-Run `revdepcheck::cloud_details(, "FSelectorRcpp")` for more info
+Run `revdepcheck::cloud_details(, "FORTLS")` for more info
 
 </details>
 
@@ -3205,27 +4327,22 @@ Run `revdepcheck::cloud_details(, "FSelectorRcpp")` for more info
 ### Devel
 
 ```
-* using log directory ‘/tmp/workdir/FSelectorRcpp/new/FSelectorRcpp.Rcheck’
+* using log directory ‘/tmp/workdir/FORTLS/new/FORTLS.Rcheck’
 * using R version 4.1.1 (2021-08-10)
 * using platform: x86_64-pc-linux-gnu (64-bit)
 * using session charset: UTF-8
 * using option ‘--no-manual’
-* checking for file ‘FSelectorRcpp/DESCRIPTION’ ... OK
-* checking extension type ... Package
-* this is package ‘FSelectorRcpp’ version ‘0.3.8’
+* checking for file ‘FORTLS/DESCRIPTION’ ... OK
+* this is package ‘FORTLS’ version ‘1.2.0’
 * package encoding: UTF-8
 * checking package namespace information ... OK
-...
-  Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes in ‘inst/doc’ ... OK
-* checking running R code from vignettes ... NONE
-  ‘benchmarks_discretize.Rmd’ using ‘UTF-8’... OK
-  ‘get_started.Rmd’ using ‘UTF-8’... OK
-  ‘integer-variables.Rmd’ using ‘UTF-8’... OK
-* checking re-building of vignette outputs ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
 * DONE
-Status: 3 NOTEs
+Status: 1 ERROR
 
 
 
@@ -3235,27 +4352,166 @@ Status: 3 NOTEs
 ### CRAN
 
 ```
-* using log directory ‘/tmp/workdir/FSelectorRcpp/old/FSelectorRcpp.Rcheck’
+* using log directory ‘/tmp/workdir/FORTLS/old/FORTLS.Rcheck’
 * using R version 4.1.1 (2021-08-10)
 * using platform: x86_64-pc-linux-gnu (64-bit)
 * using session charset: UTF-8
 * using option ‘--no-manual’
-* checking for file ‘FSelectorRcpp/DESCRIPTION’ ... OK
+* checking for file ‘FORTLS/DESCRIPTION’ ... OK
+* this is package ‘FORTLS’ version ‘1.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# FRK
+
+<details>
+
+* Version: 2.1.5
+* GitHub: https://github.com/andrewzm/FRK
+* Source code: https://github.com/cran/FRK
+* Date/Publication: 2023-02-01 10:20:02 UTC
+* Number of recursive dependencies: 156
+
+Run `revdepcheck::cloud_details(, "FRK")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/FRK/new/FRK.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘FRK/DESCRIPTION’ ... OK
 * checking extension type ... Package
-* this is package ‘FSelectorRcpp’ version ‘0.3.8’
+* this is package ‘FRK’ version ‘2.1.5’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 ...
-  Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... OK
-* checking package vignettes in ‘inst/doc’ ... OK
-* checking running R code from vignettes ... NONE
-  ‘benchmarks_discretize.Rmd’ using ‘UTF-8’... OK
-  ‘get_started.Rmd’ using ‘UTF-8’... OK
-  ‘integer-variables.Rmd’ using ‘UTF-8’... OK
-* checking re-building of vignette outputs ... OK
+--- failed re-building ‘FRK_non-Gaussian.Rnw’
+
+SUMMARY: processing the following files failed:
+  ‘FRK_intro.Rnw’ ‘FRK_non-Gaussian.Rnw’
+
+Error: Vignette re-building failed.
+Execution halted
+
 * DONE
-Status: 3 NOTEs
+Status: 1 ERROR, 1 WARNING, 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/FRK/old/FRK.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘FRK/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘FRK’ version ‘2.1.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+--- failed re-building ‘FRK_non-Gaussian.Rnw’
+
+SUMMARY: processing the following files failed:
+  ‘FRK_intro.Rnw’ ‘FRK_non-Gaussian.Rnw’
+
+Error: Vignette re-building failed.
+Execution halted
+
+* DONE
+Status: 1 ERROR, 1 WARNING, 2 NOTEs
+
+
+
+
+
+```
+# fsr
+
+<details>
+
+* Version: 1.0.2
+* GitHub: https://github.com/accarniel/fsr
+* Source code: https://github.com/cran/fsr
+* Date/Publication: 2022-07-05 02:50:02 UTC
+* Number of recursive dependencies: 71
+
+Run `revdepcheck::cloud_details(, "fsr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/fsr/new/fsr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘fsr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘fsr’ version ‘1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/fsr/old/fsr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘fsr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘fsr’ version ‘1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -3359,17 +4615,13 @@ Run `revdepcheck::cloud_details(, "geocmeans")` for more info
 * this is package ‘geocmeans’ version ‘0.3.3’
 * package encoding: UTF-8
 * checking package namespace information ... OK
-...
---- finished re-building ‘rasters.Rmd’
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
 
-SUMMARY: processing the following file failed:
-  ‘introduction.Rmd’
-
-Error: Vignette re-building failed.
-Execution halted
-
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
 * DONE
-Status: 2 ERRORs, 1 WARNING, 1 NOTE
+Status: 1 ERROR
 
 
 
@@ -3389,17 +4641,221 @@ Status: 2 ERRORs, 1 WARNING, 1 NOTE
 * this is package ‘geocmeans’ version ‘0.3.3’
 * package encoding: UTF-8
 * checking package namespace information ... OK
-...
---- finished re-building ‘rasters.Rmd’
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
 
-SUMMARY: processing the following file failed:
-  ‘introduction.Rmd’
-
-Error: Vignette re-building failed.
-Execution halted
-
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
 * DONE
-Status: 2 ERRORs, 1 WARNING, 1 NOTE
+Status: 1 ERROR
+
+
+
+
+
+```
+# GeodesiCL
+
+<details>
+
+* Version: 1.0.0
+* GitHub: https://github.com/diegoalarc/GeodesiCL
+* Source code: https://github.com/cran/GeodesiCL
+* Date/Publication: 2021-05-25 12:20:02 UTC
+* Number of recursive dependencies: 129
+
+Run `revdepcheck::cloud_details(, "GeodesiCL")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘GeodesiCL’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/GeodesiCL/new/GeodesiCL.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘GeodesiCL’ ...
+** package ‘GeodesiCL’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘GeodesiCL’
+* removing ‘/tmp/workdir/GeodesiCL/new/GeodesiCL.Rcheck/GeodesiCL’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘GeodesiCL’ ...
+** package ‘GeodesiCL’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘GeodesiCL’
+* removing ‘/tmp/workdir/GeodesiCL/old/GeodesiCL.Rcheck/GeodesiCL’
+
+
+```
+# ggchangepoint
+
+<details>
+
+* Version: 0.1.0
+* GitHub: NA
+* Source code: https://github.com/cran/ggchangepoint
+* Date/Publication: 2022-02-24 08:20:04 UTC
+* Number of recursive dependencies: 81
+
+Run `revdepcheck::cloud_details(, "ggchangepoint")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ggchangepoint/new/ggchangepoint.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ggchangepoint/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ggchangepoint’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘introduction.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ggchangepoint/old/ggchangepoint.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ggchangepoint/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ggchangepoint’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘introduction.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+# ggOceanMaps
+
+<details>
+
+* Version: 1.3.4
+* GitHub: https://github.com/MikkoVihtakari/ggOceanMaps
+* Source code: https://github.com/cran/ggOceanMaps
+* Date/Publication: 2022-09-26 11:50:02 UTC
+* Number of recursive dependencies: 92
+
+Run `revdepcheck::cloud_details(, "ggOceanMaps")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ggOceanMaps/new/ggOceanMaps.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ggOceanMaps/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ggOceanMaps’ version ‘1.3.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ggOceanMaps/old/ggOceanMaps.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ggOceanMaps/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ggOceanMaps’ version ‘1.3.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -3414,7 +4870,7 @@ Status: 2 ERRORs, 1 WARNING, 1 NOTE
 * GitHub: https://github.com/ggPMXdevelopment/ggPMX
 * Source code: https://github.com/cran/ggPMX
 * Date/Publication: 2022-06-17 23:10:02 UTC
-* Number of recursive dependencies: 177
+* Number of recursive dependencies: 174
 
 Run `revdepcheck::cloud_details(, "ggPMX")` for more info
 
@@ -3476,6 +4932,113 @@ Status: 1 ERROR, 2 NOTEs
 * checking re-building of vignette outputs ... OK
 * DONE
 Status: 1 ERROR, 2 NOTEs
+
+
+
+
+
+```
+# ggseqplot
+
+<details>
+
+* Version: NA
+* GitHub: NA
+* Source code: https://github.com/cran/ggseqplot
+* Number of recursive dependencies: 130
+
+Run `revdepcheck::cloud_details(, "ggseqplot")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
+# ggspatial
+
+<details>
+
+* Version: 1.1.7
+* GitHub: https://github.com/paleolimbot/ggspatial
+* Source code: https://github.com/cran/ggspatial
+* Date/Publication: 2022-11-24 10:00:02 UTC
+* Number of recursive dependencies: 105
+
+Run `revdepcheck::cloud_details(, "ggspatial")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ggspatial/new/ggspatial.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ggspatial/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ggspatial’ version ‘1.1.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ggspatial/old/ggspatial.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ggspatial/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ggspatial’ version ‘1.1.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -3552,6 +5115,570 @@ Status: 1 NOTE
 * checking re-building of vignette outputs ... OK
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# glottospace
+
+<details>
+
+* Version: 0.0.112
+* GitHub: https://github.com/SietzeN/glottospace
+* Source code: https://github.com/cran/glottospace
+* Date/Publication: 2022-04-12 12:42:29 UTC
+* Number of recursive dependencies: 141
+
+Run `revdepcheck::cloud_details(, "glottospace")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/glottospace/new/glottospace.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘glottospace/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘glottospace’ version ‘0.0.112’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/glottospace/old/glottospace.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘glottospace/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘glottospace’ version ‘0.0.112’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# GPSeqClus
+
+<details>
+
+* Version: 1.3.0
+* GitHub: NA
+* Source code: https://github.com/cran/GPSeqClus
+* Date/Publication: 2022-08-09 14:20:08 UTC
+* Number of recursive dependencies: 103
+
+Run `revdepcheck::cloud_details(, "GPSeqClus")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/GPSeqClus/new/GPSeqClus.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘GPSeqClus/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘GPSeqClus’ version ‘1.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘GPSeqClus’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/GPSeqClus/new/GPSeqClus.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/GPSeqClus/old/GPSeqClus.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘GPSeqClus/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘GPSeqClus’ version ‘1.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘GPSeqClus’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/GPSeqClus/old/GPSeqClus.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# GREENeR
+
+<details>
+
+* Version: 0.1.1
+* GitHub: https://github.com/calfarog/GREENeR
+* Source code: https://github.com/cran/GREENeR
+* Date/Publication: 2022-09-07 12:10:02 UTC
+* Number of recursive dependencies: 133
+
+Run `revdepcheck::cloud_details(, "GREENeR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/GREENeR/new/GREENeR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘GREENeR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘GREENeR’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/GREENeR/old/GREENeR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘GREENeR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘GREENeR’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# gtfs2gps
+
+<details>
+
+* Version: 2.1-0
+* GitHub: https://github.com/ipeaGIT/gtfs2gps
+* Source code: https://github.com/cran/gtfs2gps
+* Date/Publication: 2022-08-16 18:00:02 UTC
+* Number of recursive dependencies: 88
+
+Run `revdepcheck::cloud_details(, "gtfs2gps")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/gtfs2gps/new/gtfs2gps.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘gtfs2gps/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘gtfs2gps’ version ‘2.1-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/gtfs2gps/old/gtfs2gps.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘gtfs2gps/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘gtfs2gps’ version ‘2.1-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# gumboot
+
+<details>
+
+* Version: 1.0.0
+* GitHub: NA
+* Source code: https://github.com/cran/gumboot
+* Date/Publication: 2021-08-06 08:10:01 UTC
+* Number of recursive dependencies: 101
+
+Run `revdepcheck::cloud_details(, "gumboot")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/gumboot/new/gumboot.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘gumboot/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘gumboot’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘gumboot’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/gumboot/new/gumboot.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/gumboot/old/gumboot.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘gumboot/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘gumboot’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘gumboot’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/gumboot/old/gumboot.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# gwavr
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/joshualerickson/gwavr
+* Source code: https://github.com/cran/gwavr
+* Date/Publication: 2022-03-28 21:30:02 UTC
+* Number of recursive dependencies: 140
+
+Run `revdepcheck::cloud_details(, "gwavr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/gwavr/new/gwavr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘gwavr/DESCRIPTION’ ... OK
+* this is package ‘gwavr’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'nhdplusTools', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/gwavr/old/gwavr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘gwavr/DESCRIPTION’ ... OK
+* this is package ‘gwavr’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'nhdplusTools', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# GWPR.light
+
+<details>
+
+* Version: 0.2.1
+* GitHub: https://github.com/MichaelChaoLi-cpu/GWPR.light
+* Source code: https://github.com/cran/GWPR.light
+* Date/Publication: 2022-06-21 11:00:13 UTC
+* Number of recursive dependencies: 129
+
+Run `revdepcheck::cloud_details(, "GWPR.light")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/GWPR.light/new/GWPR.light.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘GWPR.light/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘GWPR.light’ version ‘0.2.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘GWPR.light’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/GWPR.light/new/GWPR.light.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/GWPR.light/old/GWPR.light.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘GWPR.light/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘GWPR.light’ version ‘0.2.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘GWPR.light’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/GWPR.light/old/GWPR.light.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# happign
+
+<details>
+
+* Version: 0.1.8
+* GitHub: https://github.com/paul-carteron/happign
+* Source code: https://github.com/cran/happign
+* Date/Publication: 2023-01-30 20:50:02 UTC
+* Number of recursive dependencies: 121
+
+Run `revdepcheck::cloud_details(, "happign")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/happign/new/happign.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘happign/DESCRIPTION’ ... OK
+* this is package ‘happign’ version ‘0.1.8’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/happign/old/happign.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘happign/DESCRIPTION’ ... OK
+* this is package ‘happign’ version ‘0.1.8’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -3786,6 +5913,74 @@ Status: 1 NOTE
 
 
 ```
+# himach
+
+<details>
+
+* Version: 0.3.1
+* GitHub: https://github.com/david6marsh/himach
+* Source code: https://github.com/cran/himach
+* Date/Publication: 2022-12-05 09:30:02 UTC
+* Number of recursive dependencies: 108
+
+Run `revdepcheck::cloud_details(, "himach")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/himach/new/himach.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘himach/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘himach’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/himach/old/himach.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘himach/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘himach’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # historicalborrowlong
 
 <details>
@@ -3841,6 +6036,140 @@ Status: 1 ERROR
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
 Packages required but not available: 'rstan', 'trialr'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# HYPEtools
+
+<details>
+
+* Version: 1.2.0
+* GitHub: https://github.com/rcapell/HYPEtools
+* Source code: https://github.com/cran/HYPEtools
+* Date/Publication: 2023-02-10 08:50:06 UTC
+* Number of recursive dependencies: 174
+
+Run `revdepcheck::cloud_details(, "HYPEtools")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/HYPEtools/new/HYPEtools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘HYPEtools/DESCRIPTION’ ... OK
+* this is package ‘HYPEtools’ version ‘1.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/HYPEtools/old/HYPEtools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘HYPEtools/DESCRIPTION’ ... OK
+* this is package ‘HYPEtools’ version ‘1.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# hypsoLoop
+
+<details>
+
+* Version: 0.2.0
+* GitHub: NA
+* Source code: https://github.com/cran/hypsoLoop
+* Date/Publication: 2022-02-08 09:00:02 UTC
+* Number of recursive dependencies: 109
+
+Run `revdepcheck::cloud_details(, "hypsoLoop")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/hypsoLoop/new/hypsoLoop.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘hypsoLoop/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘hypsoLoop’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/hypsoLoop/old/hypsoLoop.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘hypsoLoop/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘hypsoLoop’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -3986,6 +6315,68 @@ Status: 1 ERROR
 
 
 ```
+# incidence2
+
+<details>
+
+* Version: 1.2.3
+* GitHub: https://github.com/reconverse/incidence2
+* Source code: https://github.com/cran/incidence2
+* Date/Publication: 2021-11-07 22:00:02 UTC
+* Number of recursive dependencies: 87
+
+Run `revdepcheck::cloud_details(, "incidence2")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘incidence2’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/incidence2/new/incidence2.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘incidence2’ ...
+** package ‘incidence2’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error : The `x` argument of `as_tibble()` can't be missing as of tibble 3.0.0.
+Error: unable to load R code in package ‘incidence2’
+Execution halted
+ERROR: lazy loading failed for package ‘incidence2’
+* removing ‘/tmp/workdir/incidence2/new/incidence2.Rcheck/incidence2’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘incidence2’ ...
+** package ‘incidence2’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error : The `x` argument of `as_tibble()` can't be missing as of tibble 3.0.0.
+Error: unable to load R code in package ‘incidence2’
+Execution halted
+ERROR: lazy loading failed for package ‘incidence2’
+* removing ‘/tmp/workdir/incidence2/old/incidence2.Rcheck/incidence2’
+
+
+```
 # INSPECTumours
 
 <details>
@@ -4000,53 +6391,55 @@ Run `revdepcheck::cloud_details(, "INSPECTumours")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘INSPECTumours’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/INSPECTumours/new/INSPECTumours.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘INSPECTumours’ ...
-** package ‘INSPECTumours’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘rstan’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘INSPECTumours’
-* removing ‘/tmp/workdir/INSPECTumours/new/INSPECTumours.Rcheck/INSPECTumours’
+* using log directory ‘/tmp/workdir/INSPECTumours/new/INSPECTumours.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘INSPECTumours/DESCRIPTION’ ... OK
+* this is package ‘INSPECTumours’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘INSPECTumours’ ...
-** package ‘INSPECTumours’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- imp[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘rstan’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘INSPECTumours’
-* removing ‘/tmp/workdir/INSPECTumours/old/INSPECTumours.Rcheck/INSPECTumours’
+* using log directory ‘/tmp/workdir/INSPECTumours/old/INSPECTumours.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘INSPECTumours/DESCRIPTION’ ... OK
+* this is package ‘INSPECTumours’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘brms’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -4085,26 +6478,31 @@ Run `revdepcheck::cloud_details(, "intRinsic")` for more info
 
 
 ```
-# IPDFileCheck
+# intSDM
 
 <details>
 
-* Version: 0.7.5
+* Version: 1.0.5
 * GitHub: NA
-* Source code: https://github.com/cran/IPDFileCheck
-* Date/Publication: 2022-02-01 08:00:10 UTC
-* Number of recursive dependencies: 150
+* Source code: https://github.com/cran/intSDM
+* Date/Publication: 2023-02-17 09:00:02 UTC
+* Number of recursive dependencies: 154
 
-Run `revdepcheck::cloud_details(, "IPDFileCheck")` for more info
+Run `revdepcheck::cloud_details(, "intSDM")` for more info
 
 </details>
 
 ## In both
 
-*   checking whether package ‘IPDFileCheck’ can be installed ... ERROR
+*   checking whether package ‘intSDM’ can be installed ... ERROR
     ```
     Installation failed.
-    See ‘/tmp/workdir/IPDFileCheck/new/IPDFileCheck.Rcheck/00install.out’ for details.
+    See ‘/tmp/workdir/intSDM/new/intSDM.Rcheck/00install.out’ for details.
+    ```
+
+*   checking package dependencies ... NOTE
+    ```
+    Package suggested but not available for checking: ‘sf’
     ```
 
 ## Installation
@@ -4112,36 +6510,38 @@ Run `revdepcheck::cloud_details(, "IPDFileCheck")` for more info
 ### Devel
 
 ```
-* installing *source* package ‘IPDFileCheck’ ...
-** package ‘IPDFileCheck’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘intSDM’ ...
+** package ‘intSDM’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** R
+** data
+*** moving datasets to lazyload DB
 ** inst
 ** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘tibble’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Error: package or namespace load failed for ‘PointedSDMs’ in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]):
+ there is no package called ‘sf’
 Execution halted
-ERROR: lazy loading failed for package ‘IPDFileCheck’
-* removing ‘/tmp/workdir/IPDFileCheck/new/IPDFileCheck.Rcheck/IPDFileCheck’
+ERROR: lazy loading failed for package ‘intSDM’
+* removing ‘/tmp/workdir/intSDM/new/intSDM.Rcheck/intSDM’
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘IPDFileCheck’ ...
-** package ‘IPDFileCheck’ successfully unpacked and MD5 sums checked
+* installing *source* package ‘intSDM’ ...
+** package ‘intSDM’ successfully unpacked and MD5 sums checked
 ** using staged installation
 ** R
+** data
+*** moving datasets to lazyload DB
 ** inst
 ** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘tibble’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Error: package or namespace load failed for ‘PointedSDMs’ in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]):
+ there is no package called ‘sf’
 Execution halted
-ERROR: lazy loading failed for package ‘IPDFileCheck’
-* removing ‘/tmp/workdir/IPDFileCheck/old/IPDFileCheck.Rcheck/IPDFileCheck’
+ERROR: lazy loading failed for package ‘intSDM’
+* removing ‘/tmp/workdir/intSDM/old/intSDM.Rcheck/intSDM’
 
 
 ```
@@ -4174,7 +6574,7 @@ Run `revdepcheck::cloud_details(, "IRexamples")` for more info
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
-Package required but not available: ‘rstanarm’
+Packages required but not available: 'rstanarm', 'sf'
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -4199,7 +6599,7 @@ Status: 1 ERROR
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
-Package required but not available: ‘rstanarm’
+Packages required but not available: 'rstanarm', 'sf'
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -4281,6 +6681,72 @@ Run `revdepcheck::cloud_details(, "IsoCorrectoR")` for more info
 
 
 ```
+# itsdm
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/LLeiSong/itsdm
+* Source code: https://github.com/cran/itsdm
+* Date/Publication: 2023-01-15 14:30:08 UTC
+* Number of recursive dependencies: 84
+
+Run `revdepcheck::cloud_details(, "itsdm")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/itsdm/new/itsdm.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘itsdm/DESCRIPTION’ ... OK
+* this is package ‘itsdm’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/itsdm/old/itsdm.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘itsdm/DESCRIPTION’ ... OK
+* this is package ‘itsdm’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # journalabbr
 
 <details>
@@ -4316,75 +6782,143 @@ Run `revdepcheck::cloud_details(, "journalabbr")` for more info
 
 
 ```
-# l1spectral
+# jpgrid
 
 <details>
 
-* Version: 0.99.6
-* GitHub: NA
-* Source code: https://github.com/cran/l1spectral
-* Date/Publication: 2022-01-26 17:12:46 UTC
-* Number of recursive dependencies: 83
+* Version: 0.3.0
+* GitHub: https://github.com/UchidaMizuki/jpgrid
+* Source code: https://github.com/cran/jpgrid
+* Date/Publication: 2023-02-11 08:50:06 UTC
+* Number of recursive dependencies: 57
 
-Run `revdepcheck::cloud_details(, "l1spectral")` for more info
+Run `revdepcheck::cloud_details(, "jpgrid")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘l1spectral’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/l1spectral/new/l1spectral.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘l1spectral’ ...
-** package ‘l1spectral’ successfully unpacked and MD5 sums checked
-** using staged installation
-** libs
-g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c RcppExports.cpp -o RcppExports.o
-g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c grahm_schmidtCpp.cpp -o grahm_schmidtCpp.o
-g++ -std=gnu++14 -shared -L/opt/R/4.1.1/lib/R/lib -L/usr/local/lib -o l1spectral.so RcppExports.o grahm_schmidtCpp.o -llapack -lblas -lgfortran -lm -lquadmath -L/opt/R/4.1.1/lib/R/lib -lR
-installing to /tmp/workdir/l1spectral/new/l1spectral.Rcheck/00LOCK-l1spectral/00new/l1spectral/libs
-** R
-** data
-*** moving datasets to lazyload DB
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘pROC’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘l1spectral’
-* removing ‘/tmp/workdir/l1spectral/new/l1spectral.Rcheck/l1spectral’
+* using log directory ‘/tmp/workdir/jpgrid/new/jpgrid.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘jpgrid/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘jpgrid’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘l1spectral’ ...
-** package ‘l1spectral’ successfully unpacked and MD5 sums checked
-** using staged installation
-** libs
-g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c RcppExports.cpp -o RcppExports.o
-g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c grahm_schmidtCpp.cpp -o grahm_schmidtCpp.o
-g++ -std=gnu++14 -shared -L/opt/R/4.1.1/lib/R/lib -L/usr/local/lib -o l1spectral.so RcppExports.o grahm_schmidtCpp.o -llapack -lblas -lgfortran -lm -lquadmath -L/opt/R/4.1.1/lib/R/lib -lR
-installing to /tmp/workdir/l1spectral/old/l1spectral.Rcheck/00LOCK-l1spectral/00new/l1spectral/libs
-** R
-** data
-*** moving datasets to lazyload DB
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘pROC’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘l1spectral’
-* removing ‘/tmp/workdir/l1spectral/old/l1spectral.Rcheck/l1spectral’
+* using log directory ‘/tmp/workdir/jpgrid/old/jpgrid.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘jpgrid/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘jpgrid’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# jpmesh
+
+<details>
+
+* Version: 2.1.0
+* GitHub: https://github.com/uribo/jpmesh
+* Source code: https://github.com/cran/jpmesh
+* Date/Publication: 2022-01-10 03:32:41 UTC
+* Number of recursive dependencies: 108
+
+Run `revdepcheck::cloud_details(, "jpmesh")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/jpmesh/new/jpmesh.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘jpmesh/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘jpmesh’ version ‘2.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/jpmesh/old/jpmesh.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘jpmesh/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘jpmesh’ version ‘2.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -4571,7 +7105,7 @@ Status: 1 ERROR
 * GitHub: https://github.com/mrbakhsh/MACP
 * Source code: https://github.com/cran/MACP
 * Date/Publication: 2023-02-28 17:32:30 UTC
-* Number of recursive dependencies: 235
+* Number of recursive dependencies: 231
 
 Run `revdepcheck::cloud_details(, "MACP")` for more info
 
@@ -4674,6 +7208,72 @@ Run `revdepcheck::cloud_details(, "mafs")` for more info
 
 
 ```
+# MainExistingDatasets
+
+<details>
+
+* Version: 1.0.1
+* GitHub: NA
+* Source code: https://github.com/cran/MainExistingDatasets
+* Date/Publication: 2022-06-27 14:10:02 UTC
+* Number of recursive dependencies: 131
+
+Run `revdepcheck::cloud_details(, "MainExistingDatasets")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/MainExistingDatasets/new/MainExistingDatasets.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MainExistingDatasets/DESCRIPTION’ ... OK
+* this is package ‘MainExistingDatasets’ version ‘1.0.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/MainExistingDatasets/old/MainExistingDatasets.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MainExistingDatasets/DESCRIPTION’ ... OK
+* this is package ‘MainExistingDatasets’ version ‘1.0.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # MantaID
 
 <details>
@@ -4709,14 +7309,422 @@ Run `revdepcheck::cloud_details(, "MantaID")` for more info
 
 
 ```
+# manydata
+
+<details>
+
+* Version: 0.8.2
+* GitHub: https://github.com/globalgov/manydata
+* Source code: https://github.com/cran/manydata
+* Date/Publication: 2022-11-19 13:00:10 UTC
+* Number of recursive dependencies: 169
+
+Run `revdepcheck::cloud_details(, "manydata")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘manydata’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/manydata/new/manydata.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘manydata’ ...
+** package ‘manydata’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘manydata’
+* removing ‘/tmp/workdir/manydata/new/manydata.Rcheck/manydata’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘manydata’ ...
+** package ‘manydata’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘manydata’
+* removing ‘/tmp/workdir/manydata/old/manydata.Rcheck/manydata’
+
+
+```
+# mapboxapi
+
+<details>
+
+* Version: 0.5
+* GitHub: NA
+* Source code: https://github.com/cran/mapboxapi
+* Date/Publication: 2022-09-15 16:06:12 UTC
+* Number of recursive dependencies: 154
+
+Run `revdepcheck::cloud_details(, "mapboxapi")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/mapboxapi/new/mapboxapi.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapboxapi/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘mapboxapi’ version ‘0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/mapboxapi/old/mapboxapi.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapboxapi/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘mapboxapi’ version ‘0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# mapme.biodiversity
+
+<details>
+
+* Version: 0.3.0
+* GitHub: https://github.com/mapme-initiative/mapme.biodiversity
+* Source code: https://github.com/cran/mapme.biodiversity
+* Date/Publication: 2023-01-21 14:10:02 UTC
+* Number of recursive dependencies: 131
+
+Run `revdepcheck::cloud_details(, "mapme.biodiversity")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/mapme.biodiversity/new/mapme.biodiversity.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapme.biodiversity/DESCRIPTION’ ... OK
+* this is package ‘mapme.biodiversity’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/mapme.biodiversity/old/mapme.biodiversity.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapme.biodiversity/DESCRIPTION’ ... OK
+* this is package ‘mapme.biodiversity’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# mapping
+
+<details>
+
+* Version: 1.3
+* GitHub: https://github.com/serafinialessio/mapping
+* Source code: https://github.com/cran/mapping
+* Date/Publication: 2021-07-22 17:40:02 UTC
+* Number of recursive dependencies: 147
+
+Run `revdepcheck::cloud_details(, "mapping")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/mapping/new/mapping.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapping/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘mapping’ version ‘1.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/mapping/old/mapping.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapping/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘mapping’ version ‘1.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# mapsapi
+
+<details>
+
+* Version: 0.5.3
+* GitHub: https://github.com/michaeldorman/mapsapi
+* Source code: https://github.com/cran/mapsapi
+* Date/Publication: 2022-01-13 13:22:41 UTC
+* Number of recursive dependencies: 89
+
+Run `revdepcheck::cloud_details(, "mapsapi")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/mapsapi/new/mapsapi.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapsapi/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘mapsapi’ version ‘0.5.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/mapsapi/old/mapsapi.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapsapi/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘mapsapi’ version ‘0.5.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# mapscanner
+
+<details>
+
+* Version: 0.0.6
+* GitHub: https://github.com/ropensci/mapscanner
+* Source code: https://github.com/cran/mapscanner
+* Date/Publication: 2021-11-25 23:10:03 UTC
+* Number of recursive dependencies: 143
+
+Run `revdepcheck::cloud_details(, "mapscanner")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/mapscanner/new/mapscanner.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapscanner/DESCRIPTION’ ... OK
+* this is package ‘mapscanner’ version ‘0.0.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/mapscanner/old/mapscanner.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘mapscanner/DESCRIPTION’ ... OK
+* this is package ‘mapscanner’ version ‘0.0.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # marginaleffects
 
 <details>
 
-* Version: 0.10.0
+* Version: 0.11.0
 * GitHub: https://github.com/vincentarelbundock/marginaleffects
 * Source code: https://github.com/cran/marginaleffects
-* Date/Publication: 2023-02-22 09:00:02 UTC
+* Date/Publication: 2023-03-10 10:10:02 UTC
 * Number of recursive dependencies: 366
 
 Run `revdepcheck::cloud_details(, "marginaleffects")` for more info
@@ -4734,21 +7742,21 @@ Run `revdepcheck::cloud_details(, "marginaleffects")` for more info
 * using session charset: UTF-8
 * using option ‘--no-manual’
 * checking for file ‘marginaleffects/DESCRIPTION’ ... OK
-* this is package ‘marginaleffects’ version ‘0.10.0’
+* this is package ‘marginaleffects’ version ‘0.11.0’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... NOTE
 ...
-* checking Rd \usage sections ... OK
-* checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking compiled code ... OK
 * checking examples ... OK
 * checking for unstated dependencies in ‘tests’ ... OK
 * checking tests ... OK
   Running ‘spelling.R’
   Running ‘tinytest.R’
 * DONE
-Status: 1 NOTE
+Status: 2 NOTEs
 
 
 
@@ -4764,84 +7772,158 @@ Status: 1 NOTE
 * using session charset: UTF-8
 * using option ‘--no-manual’
 * checking for file ‘marginaleffects/DESCRIPTION’ ... OK
-* this is package ‘marginaleffects’ version ‘0.10.0’
+* this is package ‘marginaleffects’ version ‘0.11.0’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... NOTE
 ...
-* checking Rd \usage sections ... OK
-* checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking compiled code ... OK
 * checking examples ... OK
 * checking for unstated dependencies in ‘tests’ ... OK
 * checking tests ... OK
   Running ‘spelling.R’
   Running ‘tinytest.R’
 * DONE
-Status: 1 NOTE
+Status: 2 NOTEs
 
 
 
 
 
 ```
-# MazamaCoreUtils
+# MarketMatching
 
 <details>
 
-* Version: 0.4.13
-* GitHub: https://github.com/MazamaScience/MazamaCoreUtils
-* Source code: https://github.com/cran/MazamaCoreUtils
-* Date/Publication: 2022-08-24 23:12:34 UTC
-* Number of recursive dependencies: 108
+* Version: 1.2.0
+* GitHub: NA
+* Source code: https://github.com/cran/MarketMatching
+* Date/Publication: 2021-01-08 20:10:02 UTC
+* Number of recursive dependencies: 73
 
-Run `revdepcheck::cloud_details(, "MazamaCoreUtils")` for more info
+Run `revdepcheck::cloud_details(, "MarketMatching")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘MazamaCoreUtils’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/MazamaCoreUtils/new/MazamaCoreUtils.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘MazamaCoreUtils’ ...
-** package ‘MazamaCoreUtils’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘formatR’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘MazamaCoreUtils’
-* removing ‘/tmp/workdir/MazamaCoreUtils/new/MazamaCoreUtils.Rcheck/MazamaCoreUtils’
+* using log directory ‘/tmp/workdir/MarketMatching/new/MarketMatching.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MarketMatching/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MarketMatching’ version ‘1.2.0’
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'CausalImpact', 'bsts', 'Boom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘MazamaCoreUtils’ ...
-** package ‘MazamaCoreUtils’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘formatR’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘MazamaCoreUtils’
-* removing ‘/tmp/workdir/MazamaCoreUtils/old/MazamaCoreUtils.Rcheck/MazamaCoreUtils’
+* using log directory ‘/tmp/workdir/MarketMatching/old/MarketMatching.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MarketMatching/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MarketMatching’ version ‘1.2.0’
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'CausalImpact', 'bsts', 'Boom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# MazamaSpatialPlots
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/MazamaScience/MazamaSpatialPlots
+* Source code: https://github.com/cran/MazamaSpatialPlots
+* Date/Publication: 2022-11-15 21:00:08 UTC
+* Number of recursive dependencies: 180
+
+Run `revdepcheck::cloud_details(, "MazamaSpatialPlots")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/MazamaSpatialPlots/new/MazamaSpatialPlots.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MazamaSpatialPlots/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MazamaSpatialPlots’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/MazamaSpatialPlots/old/MazamaSpatialPlots.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MazamaSpatialPlots/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MazamaSpatialPlots’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -4950,6 +8032,74 @@ Status: 1 NOTE
 * checking re-building of vignette outputs ... OK
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# meteoland
+
+<details>
+
+* Version: 2.0.0
+* GitHub: NA
+* Source code: https://github.com/cran/meteoland
+* Date/Publication: 2023-02-17 22:20:02 UTC
+* Number of recursive dependencies: 155
+
+Run `revdepcheck::cloud_details(, "meteoland")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/meteoland/new/meteoland.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘meteoland/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘meteoland’ version ‘2.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/meteoland/old/meteoland.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘meteoland/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘meteoland’ version ‘2.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -5400,6 +8550,72 @@ Run `revdepcheck::cloud_details(, "moexer")` for more info
 
 
 ```
+# motif
+
+<details>
+
+* Version: 0.5.2
+* GitHub: https://github.com/Nowosad/motif
+* Source code: https://github.com/cran/motif
+* Date/Publication: 2022-06-07 05:10:02 UTC
+* Number of recursive dependencies: 86
+
+Run `revdepcheck::cloud_details(, "motif")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/motif/new/motif.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘motif/DESCRIPTION’ ... OK
+* this is package ‘motif’ version ‘0.5.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/motif/old/motif.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘motif/DESCRIPTION’ ... OK
+* this is package ‘motif’ version ‘0.5.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # mpower
 
 <details>
@@ -5470,6 +8686,74 @@ Status: 1 NOTE
   Running ‘testthat.R’
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# MSclassifR
+
+<details>
+
+* Version: 0.3.1
+* GitHub: https://github.com/agodmer/MSclassifR_examples
+* Source code: https://github.com/cran/MSclassifR
+* Date/Publication: 2022-09-29 06:10:12 UTC
+* Number of recursive dependencies: 227
+
+Run `revdepcheck::cloud_details(, "MSclassifR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/MSclassifR/new/MSclassifR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MSclassifR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MSclassifR’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘VSURF’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/MSclassifR/old/MSclassifR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘MSclassifR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘MSclassifR’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘VSURF’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -5552,67 +8836,285 @@ Status: 1 WARNING, 1 NOTE
 
 
 ```
-# NetFACS
+# naturaList
 
 <details>
 
 * Version: 0.5.0
-* GitHub: NA
-* Source code: https://github.com/cran/NetFACS
-* Date/Publication: 2022-12-06 17:32:35 UTC
-* Number of recursive dependencies: 99
+* GitHub: https://github.com/avrodrigues/naturaList
+* Source code: https://github.com/cran/naturaList
+* Date/Publication: 2022-04-20 13:30:02 UTC
+* Number of recursive dependencies: 129
 
-Run `revdepcheck::cloud_details(, "NetFACS")` for more info
+Run `revdepcheck::cloud_details(, "naturaList")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘NetFACS’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/NetFACS/new/NetFACS.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘NetFACS’ ...
-** package ‘NetFACS’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘R6’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘NetFACS’
-* removing ‘/tmp/workdir/NetFACS/new/NetFACS.Rcheck/NetFACS’
+* using log directory ‘/tmp/workdir/naturaList/new/naturaList.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘naturaList/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘naturaList’ version ‘0.5.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘NetFACS’ ...
-** package ‘NetFACS’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘R6’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘NetFACS’
-* removing ‘/tmp/workdir/NetFACS/old/NetFACS.Rcheck/NetFACS’
+* using log directory ‘/tmp/workdir/naturaList/old/naturaList.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘naturaList/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘naturaList’ version ‘0.5.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# ncdfgeom
+
+<details>
+
+* Version: 1.1.4
+* GitHub: https://github.com/USGS-R/ncdfgeom
+* Source code: https://github.com/cran/ncdfgeom
+* Date/Publication: 2022-11-08 22:40:02 UTC
+* Number of recursive dependencies: 90
+
+Run `revdepcheck::cloud_details(, "ncdfgeom")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ncdfgeom/new/ncdfgeom.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ncdfgeom/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ncdfgeom’ version ‘1.1.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ncdfgeom/old/ncdfgeom.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ncdfgeom/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ncdfgeom’ version ‘1.1.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# nhdplusTools
+
+<details>
+
+* Version: 0.6.2
+* GitHub: https://github.com/doi-usgs/nhdplusTools
+* Source code: https://github.com/cran/nhdplusTools
+* Date/Publication: 2023-03-10 09:40:14 UTC
+* Number of recursive dependencies: 167
+
+Run `revdepcheck::cloud_details(, "nhdplusTools")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/nhdplusTools/new/nhdplusTools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘nhdplusTools/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘nhdplusTools’ version ‘0.6.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/nhdplusTools/old/nhdplusTools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘nhdplusTools/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘nhdplusTools’ version ‘0.6.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# nhdR
+
+<details>
+
+* Version: 0.5.9
+* GitHub: https://github.com/jsta/nhdR
+* Source code: https://github.com/cran/nhdR
+* Date/Publication: 2022-10-09 02:10:02 UTC
+* Number of recursive dependencies: 104
+
+Run `revdepcheck::cloud_details(, "nhdR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/nhdR/new/nhdR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘nhdR/DESCRIPTION’ ... OK
+* this is package ‘nhdR’ version ‘0.5.9’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/nhdR/old/nhdR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘nhdR/DESCRIPTION’ ... OK
+* this is package ‘nhdR’ version ‘0.5.9’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -5647,6 +9149,8 @@ Run `revdepcheck::cloud_details(, "nlmixr2extra")` for more info
 * checking package dependencies ... ERROR
 Packages required but not available: 'nlmixr2est', 'symengine'
 
+Package suggested but not available for checking: ‘brms’
+
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
 * DONE
@@ -5672,6 +9176,8 @@ Status: 1 ERROR
 * checking package dependencies ... ERROR
 Packages required but not available: 'nlmixr2est', 'symengine'
 
+Package suggested but not available for checking: ‘brms’
+
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
 * DONE
@@ -5690,7 +9196,7 @@ Status: 1 ERROR
 * GitHub: https://github.com/nlmixr2/nlmixr2plot
 * Source code: https://github.com/cran/nlmixr2plot
 * Date/Publication: 2022-10-20 03:12:36 UTC
-* Number of recursive dependencies: 166
+* Number of recursive dependencies: 163
 
 Run `revdepcheck::cloud_details(, "nlmixr2plot")` for more info
 
@@ -5756,7 +9262,7 @@ Status: 1 ERROR
 * GitHub: https://github.com/nlmixr2/nlmixr2rpt
 * Source code: https://github.com/cran/nlmixr2rpt
 * Date/Publication: 2022-12-05 10:40:02 UTC
-* Number of recursive dependencies: 221
+* Number of recursive dependencies: 218
 
 Run `revdepcheck::cloud_details(, "nlmixr2rpt")` for more info
 
@@ -5919,6 +9425,336 @@ Run `revdepcheck::cloud_details(, "OBL")` for more info
 
 
 ```
+# occCite
+
+<details>
+
+* Version: 0.5.6
+* GitHub: https://github.com/ropensci/occCite
+* Source code: https://github.com/cran/occCite
+* Date/Publication: 2022-08-05 11:40:02 UTC
+* Number of recursive dependencies: 176
+
+Run `revdepcheck::cloud_details(, "occCite")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/occCite/new/occCite.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘occCite/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘occCite’ version ‘0.5.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘BIEN’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/occCite/old/occCite.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘occCite/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘occCite’ version ‘0.5.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘BIEN’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# occUncertain
+
+<details>
+
+* Version: 0.1.0
+* GitHub: https://github.com/mlammens/occUncertain
+* Source code: https://github.com/cran/occUncertain
+* Date/Publication: 2023-01-20 10:10:06 UTC
+* Number of recursive dependencies: 103
+
+Run `revdepcheck::cloud_details(, "occUncertain")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘occUncertain’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/occUncertain/new/occUncertain.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘occUncertain’ ...
+** package ‘occUncertain’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error: package or namespace load failed for ‘ConR’ in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]):
+ there is no package called ‘sf’
+Execution halted
+ERROR: lazy loading failed for package ‘occUncertain’
+* removing ‘/tmp/workdir/occUncertain/new/occUncertain.Rcheck/occUncertain’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘occUncertain’ ...
+** package ‘occUncertain’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error: package or namespace load failed for ‘ConR’ in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]):
+ there is no package called ‘sf’
+Execution halted
+ERROR: lazy loading failed for package ‘occUncertain’
+* removing ‘/tmp/workdir/occUncertain/old/occUncertain.Rcheck/occUncertain’
+
+
+```
+# oceanexplorer
+
+<details>
+
+* Version: 0.0.2
+* GitHub: https://github.com/UtrechtUniversity/oceanexplorer
+* Source code: https://github.com/cran/oceanexplorer
+* Date/Publication: 2022-09-15 09:10:08 UTC
+* Number of recursive dependencies: 158
+
+Run `revdepcheck::cloud_details(, "oceanexplorer")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/oceanexplorer/new/oceanexplorer.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘oceanexplorer/DESCRIPTION’ ... OK
+* this is package ‘oceanexplorer’ version ‘0.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/oceanexplorer/old/oceanexplorer.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘oceanexplorer/DESCRIPTION’ ... OK
+* this is package ‘oceanexplorer’ version ‘0.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# oceanis
+
+<details>
+
+* Version: 1.8.5
+* GitHub: https://github.com/insee-psar-at/oceanis-package
+* Source code: https://github.com/cran/oceanis
+* Date/Publication: 2022-07-13 13:10:02 UTC
+* Number of recursive dependencies: 117
+
+Run `revdepcheck::cloud_details(, "oceanis")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/oceanis/new/oceanis.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘oceanis/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘oceanis’ version ‘1.8.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/oceanis/old/oceanis.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘oceanis/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘oceanis’ version ‘1.8.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# ohsome
+
+<details>
+
+* Version: 0.2.1
+* GitHub: https://github.com/GIScience/ohsome-r
+* Source code: https://github.com/cran/ohsome
+* Date/Publication: 2023-02-22 14:50:02 UTC
+* Number of recursive dependencies: 150
+
+Run `revdepcheck::cloud_details(, "ohsome")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ohsome/new/ohsome.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ohsome/DESCRIPTION’ ... OK
+* this is package ‘ohsome’ version ‘0.2.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ohsome/old/ohsome.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ohsome/DESCRIPTION’ ... OK
+* this is package ‘ohsome’ version ‘0.2.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # OlinkAnalyze
 
 <details>
@@ -5995,94 +9831,17 @@ Status: 1 NOTE
 
 
 ```
-# OncoBayes2
+# OpenLand
 
 <details>
 
-* Version: 0.8-8
-* GitHub: NA
-* Source code: https://github.com/cran/OncoBayes2
-* Date/Publication: 2023-03-03 22:50:15 UTC
-* Number of recursive dependencies: 100
+* Version: 1.0.2
+* GitHub: https://github.com/reginalexavier/OpenLand
+* Source code: https://github.com/cran/OpenLand
+* Date/Publication: 2021-11-02 07:20:02 UTC
+* Number of recursive dependencies: 121
 
-Run `revdepcheck::cloud_details(, "OncoBayes2")` for more info
-
-</details>
-
-## In both
-
-*   checking whether package ‘OncoBayes2’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/OncoBayes2/new/OncoBayes2.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
-
-### Devel
-
-```
-* installing *source* package ‘OncoBayes2’ ...
-** package ‘OncoBayes2’ successfully unpacked and MD5 sums checked
-** using staged installation
-Info: Found int division at 'string', line 82, column 14 to column 21:
-  current / base
-Values will be rounded towards zero. If rounding is not desired you can write
-the division as
-  current * 1.0 / base
-If rounding is intended please use the integer division operator %/%.
-Info: Found int division at 'string', line 175, column 14 to column 36:
-...
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/ProductEvaluators.h:251:23:   required from ‘static void Eigen::internal::generic_product_impl<Lhs, Rhs, Eigen::DenseShape, Eigen::DenseShape, 6>::evalTo(Dst&, const Lhs&, const Rhs&) [with Dst = Eigen::Matrix<double, 1, 1, 0, 1, 1>; Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>]’
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/ProductEvaluators.h:124:75:   required from ‘Eigen::internal::product_evaluator<Eigen::Product<Lhs, Rhs, Option>, ProductTag, LhsShape, RhsShape>::product_evaluator(const XprType&) [with Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>; int Options = 0; int ProductTag = 6; LhsShape = Eigen::DenseShape; RhsShape = Eigen::DenseShape; typename Eigen::internal::traits<typename Eigen::Product<Lhs, Rhs, Option>::Rhs>::Scalar = double; typename Eigen::internal::traits<typename Eigen::Product<Lhs, Rhs, Option>::Lhs>::Scalar = double; Eigen::internal::product_evaluator<Eigen::Product<Lhs, Rhs, Option>, ProductTag, LhsShape, RhsShape>::XprType = Eigen::Product<Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>, Eigen::Matrix<double, -1, 1>, 0>]’
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/ProductEvaluators.h:35:90:   required from ‘Eigen::internal::evaluator<Eigen::Product<Lhs, Rhs, Option> >::evaluator(const XprType&) [with Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>; int Options = 0; Eigen::internal::evaluator<Eigen::Product<Lhs, Rhs, Option> >::XprType = Eigen::Product<Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>, Eigen::Matrix<double, -1, 1>, 0>]’
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/Product.h:132:22:   required from ‘Eigen::internal::dense_product_base<Lhs, Rhs, Option, 6>::operator const Scalar() const [with Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>; int Option = 0; Eigen::internal::dense_product_base<Lhs, Rhs, Option, 6>::Scalar = double]’
-/opt/R/4.1.1/lib/R/site-library/StanHeaders/include/src/stan/mcmc/hmc/hamiltonians/dense_e_metric.hpp:22:56:   required from ‘double stan::mcmc::dense_e_metric<Model, BaseRNG>::T(stan::mcmc::dense_e_point&) [with Model = model_blrm_exnex_namespace::model_blrm_exnex; BaseRNG = boost::random::additive_combine_engine<boost::random::linear_congruential_engine<unsigned int, 40014, 0, 2147483563>, boost::random::linear_congruential_engine<unsigned int, 40692, 0, 2147483399> >]’
-/opt/R/4.1.1/lib/R/site-library/StanHeaders/include/src/stan/mcmc/hmc/hamiltonians/dense_e_metric.hpp:21:10:   required from here
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/DenseCoeffsBase.h:55:30: warning: ignoring attributes on template argument ‘Eigen::internal::packet_traits<double>::type’ {aka ‘__vector(2) double’} [-Wignored-attributes]
-make: *** [/opt/R/4.1.1/lib/R/etc/Makeconf:175: stanExports_blrm_exnex.o] Error 1
-ERROR: compilation failed for package ‘OncoBayes2’
-* removing ‘/tmp/workdir/OncoBayes2/new/OncoBayes2.Rcheck/OncoBayes2’
-
-
-```
-### CRAN
-
-```
-* installing *source* package ‘OncoBayes2’ ...
-** package ‘OncoBayes2’ successfully unpacked and MD5 sums checked
-** using staged installation
-Info: Found int division at 'string', line 82, column 14 to column 21:
-  current / base
-Values will be rounded towards zero. If rounding is not desired you can write
-the division as
-  current * 1.0 / base
-If rounding is intended please use the integer division operator %/%.
-Info: Found int division at 'string', line 175, column 14 to column 36:
-...
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/ProductEvaluators.h:251:23:   required from ‘static void Eigen::internal::generic_product_impl<Lhs, Rhs, Eigen::DenseShape, Eigen::DenseShape, 6>::evalTo(Dst&, const Lhs&, const Rhs&) [with Dst = Eigen::Matrix<double, 1, 1, 0, 1, 1>; Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>]’
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/ProductEvaluators.h:124:75:   required from ‘Eigen::internal::product_evaluator<Eigen::Product<Lhs, Rhs, Option>, ProductTag, LhsShape, RhsShape>::product_evaluator(const XprType&) [with Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>; int Options = 0; int ProductTag = 6; LhsShape = Eigen::DenseShape; RhsShape = Eigen::DenseShape; typename Eigen::internal::traits<typename Eigen::Product<Lhs, Rhs, Option>::Rhs>::Scalar = double; typename Eigen::internal::traits<typename Eigen::Product<Lhs, Rhs, Option>::Lhs>::Scalar = double; Eigen::internal::product_evaluator<Eigen::Product<Lhs, Rhs, Option>, ProductTag, LhsShape, RhsShape>::XprType = Eigen::Product<Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>, Eigen::Matrix<double, -1, 1>, 0>]’
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/ProductEvaluators.h:35:90:   required from ‘Eigen::internal::evaluator<Eigen::Product<Lhs, Rhs, Option> >::evaluator(const XprType&) [with Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>; int Options = 0; Eigen::internal::evaluator<Eigen::Product<Lhs, Rhs, Option> >::XprType = Eigen::Product<Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>, Eigen::Matrix<double, -1, 1>, 0>]’
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/Product.h:132:22:   required from ‘Eigen::internal::dense_product_base<Lhs, Rhs, Option, 6>::operator const Scalar() const [with Lhs = Eigen::Product<Eigen::CwiseBinaryOp<Eigen::internal::scalar_product_op<double, double>, const Eigen::CwiseNullaryOp<Eigen::internal::scalar_constant_op<double>, const Eigen::Matrix<double, 1, -1> >, const Eigen::Transpose<Eigen::Matrix<double, -1, 1> > >, Eigen::Matrix<double, -1, -1>, 0>; Rhs = Eigen::Matrix<double, -1, 1>; int Option = 0; Eigen::internal::dense_product_base<Lhs, Rhs, Option, 6>::Scalar = double]’
-/opt/R/4.1.1/lib/R/site-library/StanHeaders/include/src/stan/mcmc/hmc/hamiltonians/dense_e_metric.hpp:22:56:   required from ‘double stan::mcmc::dense_e_metric<Model, BaseRNG>::T(stan::mcmc::dense_e_point&) [with Model = model_blrm_exnex_namespace::model_blrm_exnex; BaseRNG = boost::random::additive_combine_engine<boost::random::linear_congruential_engine<unsigned int, 40014, 0, 2147483563>, boost::random::linear_congruential_engine<unsigned int, 40692, 0, 2147483399> >]’
-/opt/R/4.1.1/lib/R/site-library/StanHeaders/include/src/stan/mcmc/hmc/hamiltonians/dense_e_metric.hpp:21:10:   required from here
-/opt/R/4.1.1/lib/R/site-library/RcppEigen/include/Eigen/src/Core/DenseCoeffsBase.h:55:30: warning: ignoring attributes on template argument ‘Eigen::internal::packet_traits<double>::type’ {aka ‘__vector(2) double’} [-Wignored-attributes]
-make: *** [/opt/R/4.1.1/lib/R/etc/Makeconf:175: stanExports_blrm_exnex.o] Error 1
-ERROR: compilation failed for package ‘OncoBayes2’
-* removing ‘/tmp/workdir/OncoBayes2/old/OncoBayes2.Rcheck/OncoBayes2’
-
-
-```
-# openai
-
-<details>
-
-* Version: NA
-* GitHub: NA
-* Source code: https://github.com/cran/openai
-* Number of recursive dependencies: 43
-
-Run `revdepcheck::cloud_details(, "openai")` for more info
+Run `revdepcheck::cloud_details(, "OpenLand")` for more info
 
 </details>
 
@@ -6091,7 +9850,27 @@ Run `revdepcheck::cloud_details(, "openai")` for more info
 ### Devel
 
 ```
-
+* using log directory ‘/tmp/workdir/OpenLand/new/OpenLand.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘OpenLand/DESCRIPTION’ ... OK
+* this is package ‘OpenLand’ version ‘1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘openland_vignette.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
 
 
 
@@ -6101,74 +9880,182 @@ Run `revdepcheck::cloud_details(, "openai")` for more info
 ### CRAN
 
 ```
-
+* using log directory ‘/tmp/workdir/OpenLand/old/OpenLand.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘OpenLand/DESCRIPTION’ ... OK
+* this is package ‘OpenLand’ version ‘1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘openland_vignette.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
 
 
 
 
 
 ```
-# OutliersO3
+# palaeoSig
 
 <details>
 
-* Version: 0.6.3
-* GitHub: NA
-* Source code: https://github.com/cran/OutliersO3
-* Date/Publication: 2020-04-25 00:10:02 UTC
-* Number of recursive dependencies: 133
+* Version: 2.1-3
+* GitHub: https://github.com/richardjtelford/palaeoSig
+* Source code: https://github.com/cran/palaeoSig
+* Date/Publication: 2023-03-10 09:30:02 UTC
+* Number of recursive dependencies: 104
 
-Run `revdepcheck::cloud_details(, "OutliersO3")` for more info
+Run `revdepcheck::cloud_details(, "palaeoSig")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘OutliersO3’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/OutliersO3/new/OutliersO3.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘OutliersO3’ ...
-** package ‘OutliersO3’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘tidyselect’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+* using log directory ‘/tmp/workdir/palaeoSig/new/palaeoSig.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘palaeoSig/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘palaeoSig’ version ‘2.1-3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+--- failed re-building ‘randomTF-spatial.Rmd’
+
+SUMMARY: processing the following files failed:
+  ‘h-block-crossvalidation.Rmd’ ‘randomTF-spatial.Rmd’
+
+Error: Vignette re-building failed.
 Execution halted
-ERROR: lazy loading failed for package ‘OutliersO3’
-* removing ‘/tmp/workdir/OutliersO3/new/OutliersO3.Rcheck/OutliersO3’
+
+* DONE
+Status: 1 ERROR, 1 WARNING, 1 NOTE
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘OutliersO3’ ...
-** package ‘OutliersO3’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘tidyselect’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+* using log directory ‘/tmp/workdir/palaeoSig/old/palaeoSig.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘palaeoSig/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘palaeoSig’ version ‘2.1-3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+--- failed re-building ‘randomTF-spatial.Rmd’
+
+SUMMARY: processing the following files failed:
+  ‘h-block-crossvalidation.Rmd’ ‘randomTF-spatial.Rmd’
+
+Error: Vignette re-building failed.
 Execution halted
-ERROR: lazy loading failed for package ‘OutliersO3’
-* removing ‘/tmp/workdir/OutliersO3/old/OutliersO3.Rcheck/OutliersO3’
+
+* DONE
+Status: 1 ERROR, 1 WARNING, 1 NOTE
+
+
+
+
+
+```
+# panelr
+
+<details>
+
+* Version: 0.7.7
+* GitHub: https://github.com/jacob-long/panelr
+* Source code: https://github.com/cran/panelr
+* Date/Publication: 2023-02-09 16:00:02 UTC
+* Number of recursive dependencies: 169
+
+Run `revdepcheck::cloud_details(, "panelr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/panelr/new/panelr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘panelr/DESCRIPTION’ ... OK
+* this is package ‘panelr’ version ‘0.7.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+  Error: Test failures
+  Execution halted
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘reshape.Rmd’ using ‘UTF-8’... OK
+  ‘wbm.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 ERROR, 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/panelr/old/panelr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘panelr/DESCRIPTION’ ... OK
+* this is package ‘panelr’ version ‘0.7.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+  Error: Test failures
+  Execution halted
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘reshape.Rmd’ using ‘UTF-8’... OK
+  ‘wbm.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 ERROR, 2 NOTEs
+
+
+
 
 
 ```
@@ -6240,6 +10127,74 @@ Status: 1 ERROR
 
 
 ```
+# pct
+
+<details>
+
+* Version: 0.9.8
+* GitHub: https://github.com/ITSLeeds/pct
+* Source code: https://github.com/cran/pct
+* Date/Publication: 2023-02-16 00:30:02 UTC
+* Number of recursive dependencies: 138
+
+Run `revdepcheck::cloud_details(, "pct")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/pct/new/pct.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘pct/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘pct’ version ‘0.9.8’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/pct/old/pct.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘pct/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘pct’ version ‘0.9.8’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # peramo
 
 <details>
@@ -6275,17 +10230,17 @@ Run `revdepcheck::cloud_details(, "peramo")` for more info
 
 
 ```
-# performanceEstimation
+# photosynthesis
 
 <details>
 
-* Version: 1.1.0
-* GitHub: https://github.com/ltorgo/performanceEstimation
-* Source code: https://github.com/cran/performanceEstimation
-* Date/Publication: 2016-10-13 20:37:05
-* Number of recursive dependencies: 131
+* Version: 2.1.1
+* GitHub: https://github.com/cdmuir/photosynthesis
+* Source code: https://github.com/cran/photosynthesis
+* Date/Publication: 2022-11-19 19:40:09 UTC
+* Number of recursive dependencies: 135
 
-Run `revdepcheck::cloud_details(, "performanceEstimation")` for more info
+Run `revdepcheck::cloud_details(, "photosynthesis")` for more info
 
 </details>
 
@@ -6294,7 +10249,27 @@ Run `revdepcheck::cloud_details(, "performanceEstimation")` for more info
 ### Devel
 
 ```
-
+* using log directory ‘/tmp/workdir/photosynthesis/new/photosynthesis.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘photosynthesis/DESCRIPTION’ ... OK
+* this is package ‘photosynthesis’ version ‘2.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+  ‘mesophyll-conductance.Rmd’ using ‘UTF-8’... OK
+  ‘modeling-recommendations.Rmd’ using ‘UTF-8’... OK
+  ‘photosynthesis-introduction.Rmd’ using ‘UTF-8’... OK
+  ‘pressure-volume.Rmd’ using ‘UTF-8’... OK
+  ‘sensitivity-analysis.Rmd’ using ‘UTF-8’... OK
+  ‘stomatal-conductance.Rmd’ using ‘UTF-8’... OK
+  ‘temperature-response.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 ERROR, 4 NOTEs
 
 
 
@@ -6304,70 +10279,30 @@ Run `revdepcheck::cloud_details(, "performanceEstimation")` for more info
 ### CRAN
 
 ```
+* using log directory ‘/tmp/workdir/photosynthesis/old/photosynthesis.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘photosynthesis/DESCRIPTION’ ... OK
+* this is package ‘photosynthesis’ version ‘2.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+  ‘mesophyll-conductance.Rmd’ using ‘UTF-8’... OK
+  ‘modeling-recommendations.Rmd’ using ‘UTF-8’... OK
+  ‘photosynthesis-introduction.Rmd’ using ‘UTF-8’... OK
+  ‘pressure-volume.Rmd’ using ‘UTF-8’... OK
+  ‘sensitivity-analysis.Rmd’ using ‘UTF-8’... OK
+  ‘stomatal-conductance.Rmd’ using ‘UTF-8’... OK
+  ‘temperature-response.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 ERROR, 4 NOTEs
 
 
 
-
-
-
-```
-# planningML
-
-<details>
-
-* Version: 1.0.0
-* GitHub: NA
-* Source code: https://github.com/cran/planningML
-* Date/Publication: 2022-11-08 10:20:02 UTC
-* Number of recursive dependencies: 156
-
-Run `revdepcheck::cloud_details(, "planningML")` for more info
-
-</details>
-
-## In both
-
-*   checking whether package ‘planningML’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/planningML/new/planningML.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
-
-### Devel
-
-```
-* installing *source* package ‘planningML’ ...
-** package ‘planningML’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘tidyr’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘planningML’
-* removing ‘/tmp/workdir/planningML/new/planningML.Rcheck/planningML’
-
-
-```
-### CRAN
-
-```
-* installing *source* package ‘planningML’ ...
-** package ‘planningML’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
-  there is no package called ‘tidyr’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
-Execution halted
-ERROR: lazy loading failed for package ‘planningML’
-* removing ‘/tmp/workdir/planningML/old/planningML.Rcheck/planningML’
 
 
 ```
@@ -6482,6 +10417,300 @@ Run `revdepcheck::cloud_details(, "PLSiMCpp")` for more info
 
 
 ```
+# PoolTestR
+
+<details>
+
+* Version: 0.1.3
+* GitHub: https://github.com/AngusMcLure/PoolTestR
+* Source code: https://github.com/cran/PoolTestR
+* Date/Publication: 2022-07-01 07:30:02 UTC
+* Number of recursive dependencies: 132
+
+Run `revdepcheck::cloud_details(, "PoolTestR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/PoolTestR/new/PoolTestR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘PoolTestR/DESCRIPTION’ ... OK
+* this is package ‘PoolTestR’ version ‘0.1.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'rstan', 'brms'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/PoolTestR/old/PoolTestR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘PoolTestR/DESCRIPTION’ ... OK
+* this is package ‘PoolTestR’ version ‘0.1.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'rstan', 'brms'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# PopGenHelpR
+
+<details>
+
+* Version: 1.0.0
+* GitHub: https://github.com/kfarleigh/PopGenHelpR
+* Source code: https://github.com/cran/PopGenHelpR
+* Date/Publication: 2023-02-13 08:40:05 UTC
+* Number of recursive dependencies: 187
+
+Run `revdepcheck::cloud_details(, "PopGenHelpR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/PopGenHelpR/new/PopGenHelpR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘PopGenHelpR/DESCRIPTION’ ... OK
+* this is package ‘PopGenHelpR’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘PopGenHelpR_vignette.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/PopGenHelpR/old/PopGenHelpR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘PopGenHelpR/DESCRIPTION’ ... OK
+* this is package ‘PopGenHelpR’ version ‘1.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘PopGenHelpR_vignette.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+# ppcSpatial
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/MYaseen208/ppcSpatial
+* Source code: https://github.com/cran/ppcSpatial
+* Date/Publication: 2018-03-07 15:54:23 UTC
+* Number of recursive dependencies: 118
+
+Run `revdepcheck::cloud_details(, "ppcSpatial")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ppcSpatial/new/ppcSpatial.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ppcSpatial/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ppcSpatial’ version ‘0.2.0’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘ppcSpatial’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/ppcSpatial/new/ppcSpatial.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ppcSpatial/old/ppcSpatial.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ppcSpatial/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘ppcSpatial’ version ‘0.2.0’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘ppcSpatial’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/ppcSpatial/old/ppcSpatial.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# prioriactions
+
+<details>
+
+* Version: 0.4.1
+* GitHub: https://github.com/prioriactions/prioriactions
+* Source code: https://github.com/cran/prioriactions
+* Date/Publication: 2022-08-16 13:30:02 UTC
+* Number of recursive dependencies: 130
+
+Run `revdepcheck::cloud_details(, "prioriactions")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/prioriactions/new/prioriactions.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘prioriactions/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘prioriactions’ version ‘0.4.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘objectives.Rmd’ using ‘UTF-8’... OK
+  ‘sensitivities.Rmd’ using ‘UTF-8’... OK
+  ‘MitchellRiver.Rmd’ using ‘UTF-8’... OK
+  ‘prioriactions.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/prioriactions/old/prioriactions.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘prioriactions/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘prioriactions’ version ‘0.4.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘objectives.Rmd’ using ‘UTF-8’... OK
+  ‘sensitivities.Rmd’ using ‘UTF-8’... OK
+  ‘MitchellRiver.Rmd’ using ‘UTF-8’... OK
+  ‘prioriactions.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
 # promotionImpact
 
 <details>
@@ -6585,6 +10814,66 @@ Run `revdepcheck::cloud_details(, "prqlr")` for more info
 
 
 ```
+# PSS.Health
+
+<details>
+
+* Version: 0.6.1
+* GitHub: NA
+* Source code: https://github.com/cran/PSS.Health
+* Date/Publication: 2023-02-01 17:50:11 UTC
+* Number of recursive dependencies: 187
+
+Run `revdepcheck::cloud_details(, "PSS.Health")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘PSS.Health’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/PSS.Health/new/PSS.Health.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘PSS.Health’ ...
+** package ‘PSS.Health’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘PSS.Health’
+* removing ‘/tmp/workdir/PSS.Health/new/PSS.Health.Rcheck/PSS.Health’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘PSS.Health’ ...
+** package ‘PSS.Health’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘PSS.Health’
+* removing ‘/tmp/workdir/PSS.Health/old/PSS.Health.Rcheck/PSS.Health’
+
+
+```
 # PsychWordVec
 
 <details>
@@ -6593,7 +10882,7 @@ Run `revdepcheck::cloud_details(, "prqlr")` for more info
 * GitHub: https://github.com/psychbruce/PsychWordVec
 * Source code: https://github.com/cran/PsychWordVec
 * Date/Publication: 2023-03-04 16:20:02 UTC
-* Number of recursive dependencies: 231
+* Number of recursive dependencies: 228
 
 Run `revdepcheck::cloud_details(, "PsychWordVec")` for more info
 
@@ -6640,6 +10929,154 @@ Status: 1 ERROR
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
 Package required but not available: ‘bruceR’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# rangeModelMetadata
+
+<details>
+
+* Version: 0.1.4
+* GitHub: NA
+* Source code: https://github.com/cran/rangeModelMetadata
+* Date/Publication: 2021-06-11 08:40:02 UTC
+* Number of recursive dependencies: 192
+
+Run `revdepcheck::cloud_details(, "rangeModelMetadata")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/rangeModelMetadata/new/rangeModelMetadata.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rangeModelMetadata/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rangeModelMetadata’ version ‘0.1.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘rmm_Multispecies.Rmd’ using ‘UTF-8’... OK
+  ‘rmm_directory.Rmd’ using ‘UTF-8’... OK
+  ‘rmm_vignette.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 3 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/rangeModelMetadata/old/rangeModelMetadata.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rangeModelMetadata/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rangeModelMetadata’ version ‘0.1.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking examples ... OK
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘rmm_Multispecies.Rmd’ using ‘UTF-8’... OK
+  ‘rmm_directory.Rmd’ using ‘UTF-8’... OK
+  ‘rmm_vignette.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 3 NOTEs
+
+
+
+
+
+```
+# rbenvo
+
+<details>
+
+* Version: 1.0.5
+* GitHub: https://github.com/apeterson91/rbenvo
+* Source code: https://github.com/cran/rbenvo
+* Date/Publication: 2020-11-18 10:40:02 UTC
+* Number of recursive dependencies: 104
+
+Run `revdepcheck::cloud_details(, "rbenvo")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/rbenvo/new/rbenvo.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rbenvo/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rbenvo’ version ‘1.0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/rbenvo/old/rbenvo.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rbenvo/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rbenvo’ version ‘1.0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -6723,6 +11160,82 @@ Status: 1 ERROR
 
 
 ```
+# rcontroll
+
+<details>
+
+* Version: 0.1.0
+* GitHub: https://github.com/sylvainschmitt/rcontroll
+* Source code: https://github.com/cran/rcontroll
+* Date/Publication: 2023-02-11 15:20:02 UTC
+* Number of recursive dependencies: 128
+
+Run `revdepcheck::cloud_details(, "rcontroll")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/rcontroll/new/rcontroll.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rcontroll/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rcontroll’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘rcontroll’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/rcontroll/new/rcontroll.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/rcontroll/old/rcontroll.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rcontroll/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rcontroll’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘rcontroll’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/rcontroll/old/rcontroll.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # rcssci
 
 <details>
@@ -6730,7 +11243,7 @@ Status: 1 ERROR
 * Version: NA
 * GitHub: NA
 * Source code: https://github.com/cran/rcssci
-* Number of recursive dependencies: 139
+* Number of recursive dependencies: 136
 
 Run `revdepcheck::cloud_details(, "rcssci")` for more info
 
@@ -6752,6 +11265,78 @@ Run `revdepcheck::cloud_details(, "rcssci")` for more info
 
 ```
 
+
+
+
+
+
+```
+# RCzechia
+
+<details>
+
+* Version: 1.11.1
+* GitHub: https://github.com/jlacko/RCzechia
+* Source code: https://github.com/cran/RCzechia
+* Date/Publication: 2023-03-05 06:40:07 UTC
+* Number of recursive dependencies: 139
+
+Run `revdepcheck::cloud_details(, "RCzechia")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/RCzechia/new/RCzechia.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘RCzechia/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘RCzechia’ version ‘1.11.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/RCzechia/old/RCzechia.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘RCzechia/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘RCzechia’ version ‘1.11.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -6828,6 +11413,148 @@ Status: 1 NOTE
   Running ‘testthat.R’
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# redist
+
+<details>
+
+* Version: 4.0.1
+* GitHub: https://github.com/alarm-redist/redist
+* Source code: https://github.com/cran/redist
+* Date/Publication: 2022-06-16 06:20:07 UTC
+* Number of recursive dependencies: 147
+
+Run `revdepcheck::cloud_details(, "redist")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/redist/new/redist.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘redist/DESCRIPTION’ ... OK
+* this is package ‘redist’ version ‘4.0.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/redist/old/redist.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘redist/DESCRIPTION’ ... OK
+* this is package ‘redist’ version ‘4.0.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# remap
+
+<details>
+
+* Version: 0.3.0
+* GitHub: https://github.com/jadonwagstaff/remap
+* Source code: https://github.com/cran/remap
+* Date/Publication: 2022-08-12 23:10:02 UTC
+* Number of recursive dependencies: 67
+
+Run `revdepcheck::cloud_details(, "remap")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/remap/new/remap.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘remap/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘remap’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/remap/old/remap.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘remap/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘remap’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -6945,63 +11672,211 @@ Run `revdepcheck::cloud_details(, "RevGadgets")` for more info
 
 
 ```
-# Rigma
+# rGhanaCensus
 
 <details>
 
-* Version: 0.2.1
-* GitHub: https://github.com/AleKoure/Rigma
-* Source code: https://github.com/cran/Rigma
-* Date/Publication: 2022-11-27 22:00:06 UTC
-* Number of recursive dependencies: 71
+* Version: 0.1.0
+* GitHub: https://github.com/ktemadarko/rGhanaCensus
+* Source code: https://github.com/cran/rGhanaCensus
+* Date/Publication: 2022-01-13 20:02:43 UTC
+* Number of recursive dependencies: 94
 
-Run `revdepcheck::cloud_details(, "Rigma")` for more info
+Run `revdepcheck::cloud_details(, "rGhanaCensus")` for more info
 
 </details>
 
-## In both
-
-*   checking whether package ‘Rigma’ can be installed ... ERROR
-    ```
-    Installation failed.
-    See ‘/tmp/workdir/Rigma/new/Rigma.Rcheck/00install.out’ for details.
-    ```
-
-## Installation
+## Error before installation
 
 ### Devel
 
 ```
-* installing *source* package ‘Rigma’ ...
-** package ‘Rigma’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  there is no package called ‘sass’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+* using log directory ‘/tmp/workdir/rGhanaCensus/new/rGhanaCensus.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rGhanaCensus/DESCRIPTION’ ... OK
+* this is package ‘rGhanaCensus’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+--- failed re-building ‘Create_map_displaying_Ghana_2019_School_Attendance_Indicators.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘Create_map_displaying_Ghana_2019_School_Attendance_Indicators.Rmd’
+
+Error: Vignette re-building failed.
 Execution halted
-ERROR: lazy loading failed for package ‘Rigma’
-* removing ‘/tmp/workdir/Rigma/new/Rigma.Rcheck/Rigma’
+
+* DONE
+Status: 1 WARNING, 1 NOTE
+
+
+
 
 
 ```
 ### CRAN
 
 ```
-* installing *source* package ‘Rigma’ ...
-** package ‘Rigma’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  there is no package called ‘sass’
-Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+* using log directory ‘/tmp/workdir/rGhanaCensus/old/rGhanaCensus.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rGhanaCensus/DESCRIPTION’ ... OK
+* this is package ‘rGhanaCensus’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+--- failed re-building ‘Create_map_displaying_Ghana_2019_School_Attendance_Indicators.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘Create_map_displaying_Ghana_2019_School_Attendance_Indicators.Rmd’
+
+Error: Vignette re-building failed.
 Execution halted
-ERROR: lazy loading failed for package ‘Rigma’
-* removing ‘/tmp/workdir/Rigma/old/Rigma.Rcheck/Rigma’
+
+* DONE
+Status: 1 WARNING, 1 NOTE
+
+
+
+
+
+```
+# rnaturalearth
+
+<details>
+
+* Version: 0.3.2
+* GitHub: https://github.com/ropensci/rnaturalearth
+* Source code: https://github.com/cran/rnaturalearth
+* Date/Publication: 2023-01-23 07:50:02 UTC
+* Number of recursive dependencies: 157
+
+Run `revdepcheck::cloud_details(, "rnaturalearth")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/rnaturalearth/new/rnaturalearth.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rnaturalearth/DESCRIPTION’ ... OK
+* this is package ‘rnaturalearth’ version ‘0.3.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/rnaturalearth/old/rnaturalearth.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rnaturalearth/DESCRIPTION’ ... OK
+* this is package ‘rnaturalearth’ version ‘0.3.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# roads
+
+<details>
+
+* Version: 1.1.0
+* GitHub: https://github.com/LandSciTech/roads
+* Source code: https://github.com/cran/roads
+* Date/Publication: 2023-02-02 16:10:02 UTC
+* Number of recursive dependencies: 111
+
+Run `revdepcheck::cloud_details(, "roads")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/roads/new/roads.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘roads/DESCRIPTION’ ... OK
+* this is package ‘roads’ version ‘1.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/roads/old/roads.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘roads/DESCRIPTION’ ... OK
+* this is package ‘roads’ version ‘1.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
 
 
 ```
@@ -7067,6 +11942,226 @@ See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
 * DONE
 Status: 1 ERROR
+
+
+
+
+
+```
+# Rsagacmd
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/stevenpawley/Rsagacmd
+* Source code: https://github.com/cran/Rsagacmd
+* Date/Publication: 2022-04-04 04:10:02 UTC
+* Number of recursive dependencies: 70
+
+Run `revdepcheck::cloud_details(, "Rsagacmd")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/Rsagacmd/new/Rsagacmd.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘Rsagacmd/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘Rsagacmd’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/Rsagacmd/old/Rsagacmd.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘Rsagacmd/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘Rsagacmd’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# rsinaica
+
+<details>
+
+* Version: 0.6.1
+* GitHub: https://github.com/diegovalle/rsinaica
+* Source code: https://github.com/cran/rsinaica
+* Date/Publication: 2019-02-04 21:10:03 UTC
+* Number of recursive dependencies: 126
+
+Run `revdepcheck::cloud_details(, "rsinaica")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/rsinaica/new/rsinaica.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rsinaica/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rsinaica’ version ‘0.6.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking data for non-ASCII characters ... NOTE
+  Note: found 467 marked UTF-8 strings
+* checking LazyData ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: 1 NOTE
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/rsinaica/old/rsinaica.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rsinaica/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘rsinaica’ version ‘0.6.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking data for non-ASCII characters ... NOTE
+  Note: found 467 marked UTF-8 strings
+* checking LazyData ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: 1 NOTE
+
+
+
+
+
+```
+# rstac
+
+<details>
+
+* Version: 0.9.2-2
+* GitHub: https://github.com/brazil-data-cube/rstac
+* Source code: https://github.com/cran/rstac
+* Date/Publication: 2023-02-01 18:00:02 UTC
+* Number of recursive dependencies: 115
+
+Run `revdepcheck::cloud_details(, "rstac")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/rstac/new/rstac.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rstac/DESCRIPTION’ ... OK
+* this is package ‘rstac’ version ‘0.9.2-2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+--- failed re-building ‘rstac-03-cql2-mpc.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘rstac-03-cql2-mpc.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted
+
+* DONE
+Status: 1 WARNING, 1 NOTE
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/rstac/old/rstac.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘rstac/DESCRIPTION’ ... OK
+* this is package ‘rstac’ version ‘0.9.2-2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+--- failed re-building ‘rstac-03-cql2-mpc.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘rstac-03-cql2-mpc.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted
+
+* DONE
+Status: 1 WARNING, 1 NOTE
 
 
 
@@ -7139,6 +12234,66 @@ Status: 1 ERROR
 
 
 ```
+# saeSim
+
+<details>
+
+* Version: 0.11.0
+* GitHub: https://github.com/wahani/saeSim
+* Source code: https://github.com/cran/saeSim
+* Date/Publication: 2022-02-07 16:40:02 UTC
+* Number of recursive dependencies: 97
+
+Run `revdepcheck::cloud_details(, "saeSim")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘saeSim’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/saeSim/new/saeSim.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘saeSim’ ...
+** package ‘saeSim’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘saeSim’
+* removing ‘/tmp/workdir/saeSim/new/saeSim.Rcheck/saeSim’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘saeSim’ ...
+** package ‘saeSim’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘saeSim’
+* removing ‘/tmp/workdir/saeSim/old/saeSim.Rcheck/saeSim’
+
+
+```
 # SAMtool
 
 <details>
@@ -7147,7 +12302,7 @@ Status: 1 ERROR
 * GitHub: https://github.com/Blue-Matter/SAMtool
 * Source code: https://github.com/cran/SAMtool
 * Date/Publication: 2023-02-08 23:20:02 UTC
-* Number of recursive dependencies: 183
+* Number of recursive dependencies: 178
 
 Run `revdepcheck::cloud_details(, "SAMtool")` for more info
 
@@ -7209,6 +12364,72 @@ Status: 2 NOTEs
 * checking examples ... OK
 * DONE
 Status: 2 NOTEs
+
+
+
+
+
+```
+# sandwichr
+
+<details>
+
+* Version: 1.0.3
+* GitHub: https://github.com/linyuehzzz/sandwich_spatial_interpolator
+* Source code: https://github.com/cran/sandwichr
+* Date/Publication: 2023-01-09 08:10:05 UTC
+* Number of recursive dependencies: 143
+
+Run `revdepcheck::cloud_details(, "sandwichr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sandwichr/new/sandwichr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sandwichr/DESCRIPTION’ ... OK
+* this is package ‘sandwichr’ version ‘1.0.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sandwichr/old/sandwichr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sandwichr/DESCRIPTION’ ... OK
+* this is package ‘sandwichr’ version ‘1.0.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -7326,6 +12547,556 @@ Status: 1 WARNING, 2 NOTEs
 
 
 ```
+# SDGdetector
+
+<details>
+
+* Version: 2.7.1
+* GitHub: NA
+* Source code: https://github.com/cran/SDGdetector
+* Date/Publication: 2023-02-22 20:20:06 UTC
+* Number of recursive dependencies: 74
+
+Run `revdepcheck::cloud_details(, "SDGdetector")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘SDGdetector’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/SDGdetector/new/SDGdetector.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘SDGdetector’ ...
+** package ‘SDGdetector’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘SDGdetector’
+* removing ‘/tmp/workdir/SDGdetector/new/SDGdetector.Rcheck/SDGdetector’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘SDGdetector’ ...
+** package ‘SDGdetector’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘SDGdetector’
+* removing ‘/tmp/workdir/SDGdetector/old/SDGdetector.Rcheck/SDGdetector’
+
+
+```
+# SDLfilter
+
+<details>
+
+* Version: 2.3.1
+* GitHub: https://github.com/TakahiroShimada/SDLfilter
+* Source code: https://github.com/cran/SDLfilter
+* Date/Publication: 2023-01-16 08:00:06 UTC
+* Number of recursive dependencies: 96
+
+Run `revdepcheck::cloud_details(, "SDLfilter")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/SDLfilter/new/SDLfilter.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SDLfilter/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SDLfilter’ version ‘2.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/SDLfilter/old/SDLfilter.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SDLfilter/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SDLfilter’ version ‘2.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# sdmApp
+
+<details>
+
+* Version: 0.0.2
+* GitHub: https://github.com/Abson-dev/sdmApp
+* Source code: https://github.com/cran/sdmApp
+* Date/Publication: 2021-07-07 08:30:02 UTC
+* Number of recursive dependencies: 169
+
+Run `revdepcheck::cloud_details(, "sdmApp")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sdmApp/new/sdmApp.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sdmApp/DESCRIPTION’ ... OK
+* this is package ‘sdmApp’ version ‘0.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘sdmApp.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sdmApp/old/sdmApp.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sdmApp/DESCRIPTION’ ... OK
+* this is package ‘sdmApp’ version ‘0.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘sdmApp.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
+# sf
+
+<details>
+
+* Version: 1.0-10
+* GitHub: https://github.com/r-spatial/sf
+* Source code: https://github.com/cran/sf
+* Date/Publication: 2023-03-12 16:10:02 UTC
+* Number of recursive dependencies: 157
+
+Run `revdepcheck::cloud_details(, "sf")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sf/new/sf.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sf/DESCRIPTION’ ... OK
+* this is package ‘sf’ version ‘1.0-10’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘sf’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/sf/new/sf.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR, 1 NOTE
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sf/old/sf.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sf/DESCRIPTION’ ... OK
+* this is package ‘sf’ version ‘1.0-10’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘sf’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/sf/old/sf.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR, 1 NOTE
+
+
+
+
+
+```
+# sfdep
+
+<details>
+
+* Version: 0.2.3
+* GitHub: https://github.com/josiahparry/sfdep
+* Source code: https://github.com/cran/sfdep
+* Date/Publication: 2023-01-11 06:30:02 UTC
+* Number of recursive dependencies: 99
+
+Run `revdepcheck::cloud_details(, "sfdep")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sfdep/new/sfdep.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sfdep/DESCRIPTION’ ... OK
+* this is package ‘sfdep’ version ‘0.2.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sfdep/old/sfdep.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sfdep/DESCRIPTION’ ... OK
+* this is package ‘sfdep’ version ‘0.2.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# sfnetworks
+
+<details>
+
+* Version: 0.6.2
+* GitHub: https://github.com/luukvdmeer/sfnetworks
+* Source code: https://github.com/cran/sfnetworks
+* Date/Publication: 2023-02-26 19:00:02 UTC
+* Number of recursive dependencies: 105
+
+Run `revdepcheck::cloud_details(, "sfnetworks")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sfnetworks/new/sfnetworks.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sfnetworks/DESCRIPTION’ ... OK
+* this is package ‘sfnetworks’ version ‘0.6.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sfnetworks/old/sfnetworks.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sfnetworks/DESCRIPTION’ ... OK
+* this is package ‘sfnetworks’ version ‘0.6.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# sftime
+
+<details>
+
+* Version: 0.2-0
+* GitHub: NA
+* Source code: https://github.com/cran/sftime
+* Date/Publication: 2022-03-17 08:50:01 UTC
+* Number of recursive dependencies: 79
+
+Run `revdepcheck::cloud_details(, "sftime")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sftime/new/sftime.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sftime/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘sftime’ version ‘0.2-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sftime/old/sftime.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sftime/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘sftime’ version ‘0.2-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# ShellChron
+
+<details>
+
+* Version: 0.4.0
+* GitHub: https://github.com/nielsjdewinter/ShellChron
+* Source code: https://github.com/cran/ShellChron
+* Date/Publication: 2021-07-05 12:40:02 UTC
+* Number of recursive dependencies: 118
+
+Run `revdepcheck::cloud_details(, "ShellChron")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/ShellChron/new/ShellChron.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ShellChron/DESCRIPTION’ ... OK
+* this is package ‘ShellChron’ version ‘0.4.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘rtop’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/ShellChron/old/ShellChron.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘ShellChron/DESCRIPTION’ ... OK
+* this is package ‘ShellChron’ version ‘0.4.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘rtop’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # shinyHugePlot
 
 <details>
@@ -7361,14 +13132,216 @@ Run `revdepcheck::cloud_details(, "shinyHugePlot")` for more info
 
 
 ```
+# simodels
+
+<details>
+
+* Version: 0.0.5
+* GitHub: https://github.com/robinlovelace/simodels
+* Source code: https://github.com/cran/simodels
+* Date/Publication: 2022-08-31 21:10:02 UTC
+* Number of recursive dependencies: 97
+
+Run `revdepcheck::cloud_details(, "simodels")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/simodels/new/simodels.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘simodels/DESCRIPTION’ ... OK
+* this is package ‘simodels’ version ‘0.0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/simodels/old/simodels.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘simodels/DESCRIPTION’ ... OK
+* this is package ‘simodels’ version ‘0.0.5’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# simplevis
+
+<details>
+
+* Version: 7.0.0
+* GitHub: https://github.com/StatisticsNZ/simplevis
+* Source code: https://github.com/cran/simplevis
+* Date/Publication: 2023-01-29 20:00:02 UTC
+* Number of recursive dependencies: 122
+
+Run `revdepcheck::cloud_details(, "simplevis")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/simplevis/new/simplevis.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘simplevis/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘simplevis’ version ‘7.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/simplevis/old/simplevis.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘simplevis/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘simplevis’ version ‘7.0.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# sits
+
+<details>
+
+* Version: 1.2.0
+* GitHub: https://github.com/e-sensing/sits
+* Source code: https://github.com/cran/sits
+* Date/Publication: 2022-11-16 19:20:07 UTC
+* Number of recursive dependencies: 204
+
+Run `revdepcheck::cloud_details(, "sits")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sits/new/sits.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sits/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘sits’ version ‘1.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sits/old/sits.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sits/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘sits’ version ‘1.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # sjPlot
 
 <details>
 
-* Version: 2.8.12
+* Version: 2.8.13
 * GitHub: https://github.com/strengejacke/sjPlot
 * Source code: https://github.com/cran/sjPlot
-* Date/Publication: 2022-11-19 22:20:02 UTC
+* Date/Publication: 2023-03-13 17:10:10 UTC
 * Number of recursive dependencies: 186
 
 Run `revdepcheck::cloud_details(, "sjPlot")` for more info
@@ -7387,7 +13360,7 @@ Run `revdepcheck::cloud_details(, "sjPlot")` for more info
 * using option ‘--no-manual’
 * checking for file ‘sjPlot/DESCRIPTION’ ... OK
 * checking extension type ... Package
-* this is package ‘sjPlot’ version ‘2.8.12’
+* this is package ‘sjPlot’ version ‘2.8.13’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 ...
@@ -7417,7 +13390,7 @@ Status: 1 NOTE
 * using option ‘--no-manual’
 * checking for file ‘sjPlot/DESCRIPTION’ ... OK
 * checking extension type ... Package
-* this is package ‘sjPlot’ version ‘2.8.12’
+* this is package ‘sjPlot’ version ‘2.8.13’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 ...
@@ -7431,6 +13404,82 @@ Status: 1 NOTE
 * checking re-building of vignette outputs ... OK
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# sjstats
+
+<details>
+
+* Version: 0.18.2
+* GitHub: https://github.com/strengejacke/sjstats
+* Source code: https://github.com/cran/sjstats
+* Date/Publication: 2022-11-19 22:10:02 UTC
+* Number of recursive dependencies: 166
+
+Run `revdepcheck::cloud_details(, "sjstats")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/sjstats/new/sjstats.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sjstats/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘sjstats’ version ‘0.18.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/sjstats/old/sjstats.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘sjstats/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘sjstats’ version ‘0.18.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: 2 NOTEs
 
 
 
@@ -7513,6 +13562,139 @@ Status: OK
 
 
 ```
+# slendr
+
+<details>
+
+* Version: 0.5.1
+* GitHub: https://github.com/bodkan/slendr
+* Source code: https://github.com/cran/slendr
+* Date/Publication: 2023-03-09 19:40:02 UTC
+* Number of recursive dependencies: 129
+
+Run `revdepcheck::cloud_details(, "slendr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/slendr/new/slendr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘slendr/DESCRIPTION’ ... OK
+* this is package ‘slendr’ version ‘0.5.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/slendr/old/slendr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘slendr/DESCRIPTION’ ... OK
+* this is package ‘slendr’ version ‘0.5.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# sociome
+
+<details>
+
+* Version: 2.1.0
+* GitHub: https://github.com/NikKrieger/sociome
+* Source code: https://github.com/cran/sociome
+* Date/Publication: 2021-10-21 09:10:01 UTC
+* Number of recursive dependencies: 97
+
+Run `revdepcheck::cloud_details(, "sociome")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘sociome’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/sociome/new/sociome.Rcheck/00install.out’ for details.
+    ```
+
+*   checking package dependencies ... NOTE
+    ```
+    Package suggested but not available for checking: ‘sf’
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘sociome’ ...
+** package ‘sociome’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘sociome’
+* removing ‘/tmp/workdir/sociome/new/sociome.Rcheck/sociome’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘sociome’ ...
+** package ‘sociome’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘sociome’
+* removing ‘/tmp/workdir/sociome/old/sociome.Rcheck/sociome’
+
+
+```
 # SpaDES.tools
 
 <details>
@@ -7583,6 +13765,1036 @@ Status: 1 NOTE
   Running ‘test-all.R’
 * DONE
 Status: 1 NOTE
+
+
+
+
+
+```
+# SPARTAAS
+
+<details>
+
+* Version: 1.1.0
+* GitHub: NA
+* Source code: https://github.com/cran/SPARTAAS
+* Date/Publication: 2021-10-22 14:30:02 UTC
+* Number of recursive dependencies: 184
+
+Run `revdepcheck::cloud_details(, "SPARTAAS")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘SPARTAAS’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/SPARTAAS/new/SPARTAAS.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘SPARTAAS’ ...
+** package ‘SPARTAAS’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘SPARTAAS’
+* removing ‘/tmp/workdir/SPARTAAS/new/SPARTAAS.Rcheck/SPARTAAS’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘SPARTAAS’ ...
+** package ‘SPARTAAS’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘SPARTAAS’
+* removing ‘/tmp/workdir/SPARTAAS/old/SPARTAAS.Rcheck/SPARTAAS’
+
+
+```
+# spatgeom
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/maikol-solis/spatgeom
+* Source code: https://github.com/cran/spatgeom
+* Date/Publication: 2023-02-14 19:00:02 UTC
+* Number of recursive dependencies: 81
+
+Run `revdepcheck::cloud_details(, "spatgeom")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spatgeom/new/spatgeom.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spatgeom/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spatgeom’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spatgeom/old/spatgeom.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spatgeom/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spatgeom’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# SpatialEpi
+
+<details>
+
+* Version: 1.2.8
+* GitHub: https://github.com/rudeboybert/SpatialEpi
+* Source code: https://github.com/cran/SpatialEpi
+* Date/Publication: 2023-02-22 00:50:04 UTC
+* Number of recursive dependencies: 86
+
+Run `revdepcheck::cloud_details(, "SpatialEpi")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘SpatialEpi’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/SpatialEpi/new/SpatialEpi.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘SpatialEpi’ ...
+** package ‘SpatialEpi’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c RcppExports.cpp -o RcppExports.o
+g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c bayes_cluster.cpp -o bayes_cluster.o
+g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c cluster_detection.cpp -o cluster_detection.o
+g++ -std=gnu++14 -shared -L/opt/R/4.1.1/lib/R/lib -L/usr/local/lib -o SpatialEpi.so RcppExports.o bayes_cluster.o cluster_detection.o -L/opt/R/4.1.1/lib/R/lib -lR
+installing to /tmp/workdir/SpatialEpi/new/SpatialEpi.Rcheck/00LOCK-SpatialEpi/00new/SpatialEpi/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘SpatialEpi’
+* removing ‘/tmp/workdir/SpatialEpi/new/SpatialEpi.Rcheck/SpatialEpi’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘SpatialEpi’ ...
+** package ‘SpatialEpi’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c RcppExports.cpp -o RcppExports.o
+g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c bayes_cluster.cpp -o bayes_cluster.o
+g++ -std=gnu++14 -I"/opt/R/4.1.1/lib/R/include" -DNDEBUG  -I'/opt/R/4.1.1/lib/R/site-library/Rcpp/include' -I'/opt/R/4.1.1/lib/R/site-library/RcppArmadillo/include' -I/usr/local/include   -fpic  -g -O2  -c cluster_detection.cpp -o cluster_detection.o
+g++ -std=gnu++14 -shared -L/opt/R/4.1.1/lib/R/lib -L/usr/local/lib -o SpatialEpi.so RcppExports.o bayes_cluster.o cluster_detection.o -L/opt/R/4.1.1/lib/R/lib -lR
+installing to /tmp/workdir/SpatialEpi/old/SpatialEpi.Rcheck/00LOCK-SpatialEpi/00new/SpatialEpi/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘SpatialEpi’
+* removing ‘/tmp/workdir/SpatialEpi/old/SpatialEpi.Rcheck/SpatialEpi’
+
+
+```
+# SpatialKDE
+
+<details>
+
+* Version: 0.8.2
+* GitHub: https://github.com/JanCaha/SpatialKDE
+* Source code: https://github.com/cran/SpatialKDE
+* Date/Publication: 2023-02-18 15:10:02 UTC
+* Number of recursive dependencies: 112
+
+Run `revdepcheck::cloud_details(, "SpatialKDE")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/SpatialKDE/new/SpatialKDE.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SpatialKDE/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SpatialKDE’ version ‘0.8.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/SpatialKDE/old/SpatialKDE.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SpatialKDE/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SpatialKDE’ version ‘0.8.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spatialrisk
+
+<details>
+
+* Version: 0.7.0
+* GitHub: https://github.com/mharinga/spatialrisk
+* Source code: https://github.com/cran/spatialrisk
+* Date/Publication: 2021-11-10 15:30:02 UTC
+* Number of recursive dependencies: 134
+
+Run `revdepcheck::cloud_details(, "spatialrisk")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spatialrisk/new/spatialrisk.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spatialrisk/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spatialrisk’ version ‘0.7.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spatialrisk/old/spatialrisk.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spatialrisk/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spatialrisk’ version ‘0.7.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spatialsample
+
+<details>
+
+* Version: 0.3.0
+* GitHub: https://github.com/tidymodels/spatialsample
+* Source code: https://github.com/cran/spatialsample
+* Date/Publication: 2023-01-17 16:10:02 UTC
+* Number of recursive dependencies: 106
+
+Run `revdepcheck::cloud_details(, "spatialsample")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spatialsample/new/spatialsample.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spatialsample/DESCRIPTION’ ... OK
+* this is package ‘spatialsample’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spatialsample/old/spatialsample.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spatialsample/DESCRIPTION’ ... OK
+* this is package ‘spatialsample’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spDates
+
+<details>
+
+* Version: 1.1
+* GitHub: NA
+* Source code: https://github.com/cran/spDates
+* Date/Publication: 2022-10-09 10:30:02 UTC
+* Number of recursive dependencies: 82
+
+Run `revdepcheck::cloud_details(, "spDates")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spDates/new/spDates.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spDates/DESCRIPTION’ ... OK
+* this is package ‘spDates’ version ‘1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘spDates’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/spDates/new/spDates.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spDates/old/spDates.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spDates/DESCRIPTION’ ... OK
+* this is package ‘spDates’ version ‘1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘spDates’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/spDates/old/spDates.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spectacles
+
+<details>
+
+* Version: 0.5-3
+* GitHub: https://github.com/pierreroudier/spectacles
+* Source code: https://github.com/cran/spectacles
+* Date/Publication: 2021-01-11 08:00:02 UTC
+* Number of recursive dependencies: 140
+
+Run `revdepcheck::cloud_details(, "spectacles")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘spectacles’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/spectacles/new/spectacles.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘spectacles’ ...
+** package ‘spectacles’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘spectacles’
+* removing ‘/tmp/workdir/spectacles/new/spectacles.Rcheck/spectacles’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘spectacles’ ...
+** package ‘spectacles’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘spectacles’
+* removing ‘/tmp/workdir/spectacles/old/spectacles.Rcheck/spectacles’
+
+
+```
+# spnaf
+
+<details>
+
+* Version: 0.2.1
+* GitHub: NA
+* Source code: https://github.com/cran/spnaf
+* Date/Publication: 2022-08-25 08:20:02 UTC
+* Number of recursive dependencies: 100
+
+Run `revdepcheck::cloud_details(, "spnaf")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spnaf/new/spnaf.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spnaf/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spnaf’ version ‘0.2.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spnaf/old/spnaf.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spnaf/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spnaf’ version ‘0.2.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spNetwork
+
+<details>
+
+* Version: 0.4.3.6
+* GitHub: https://github.com/JeremyGelb/spNetwork
+* Source code: https://github.com/cran/spNetwork
+* Date/Publication: 2022-11-11 08:10:02 UTC
+* Number of recursive dependencies: 149
+
+Run `revdepcheck::cloud_details(, "spNetwork")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spNetwork/new/spNetwork.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spNetwork/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spNetwork’ version ‘0.4.3.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spNetwork/old/spNetwork.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spNetwork/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spNetwork’ version ‘0.4.3.6’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spqdep
+
+<details>
+
+* Version: 0.1.2
+* GitHub: NA
+* Source code: https://github.com/cran/spqdep
+* Date/Publication: 2022-03-28 16:20:02 UTC
+* Number of recursive dependencies: 102
+
+Run `revdepcheck::cloud_details(, "spqdep")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spqdep/new/spqdep.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spqdep/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spqdep’ version ‘0.1.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spqdep/old/spqdep.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spqdep/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spqdep’ version ‘0.1.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# spup
+
+<details>
+
+* Version: 1.3-2
+* GitHub: NA
+* Source code: https://github.com/cran/spup
+* Date/Publication: 2020-04-30 22:20:06 UTC
+* Number of recursive dependencies: 99
+
+Run `revdepcheck::cloud_details(, "spup")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/spup/new/spup.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spup/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spup’ version ‘1.3-2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘CN_v2.Rmd’ using ‘UTF-8’... OK
+  ‘DEM_v3.Rmd’ using ‘UTF-8’... OK
+  ‘ExternalModel_v2.Rmd’ using ‘UTF-8’... OK
+  ‘Rotterdam.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 NOTE
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/spup/old/spup.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘spup/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘spup’ version ‘1.3-2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘CN_v2.Rmd’ using ‘UTF-8’... OK
+  ‘DEM_v3.Rmd’ using ‘UTF-8’... OK
+  ‘ExternalModel_v2.Rmd’ using ‘UTF-8’... OK
+  ‘Rotterdam.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 1 NOTE
+
+
+
+
+
+```
+# stars
+
+<details>
+
+* Version: 0.6-0
+* GitHub: https://github.com/r-spatial/stars
+* Source code: https://github.com/cran/stars
+* Date/Publication: 2022-11-21 13:10:02 UTC
+* Number of recursive dependencies: 153
+
+Run `revdepcheck::cloud_details(, "stars")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/stars/new/stars.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stars/DESCRIPTION’ ... OK
+* this is package ‘stars’ version ‘0.6-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/stars/old/stars.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stars/DESCRIPTION’ ... OK
+* this is package ‘stars’ version ‘0.6-0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# starsTileServer
+
+<details>
+
+* Version: 0.1.1
+* GitHub: NA
+* Source code: https://github.com/cran/starsTileServer
+* Date/Publication: 2022-08-22 21:50:02 UTC
+* Number of recursive dependencies: 126
+
+Run `revdepcheck::cloud_details(, "starsTileServer")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/starsTileServer/new/starsTileServer.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘starsTileServer/DESCRIPTION’ ... OK
+* this is package ‘starsTileServer’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/starsTileServer/old/starsTileServer.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘starsTileServer/DESCRIPTION’ ... OK
+* this is package ‘starsTileServer’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# stats19
+
+<details>
+
+* Version: 2.0.1
+* GitHub: https://github.com/ropensci/stats19
+* Source code: https://github.com/cran/stats19
+* Date/Publication: 2022-11-17 12:00:06 UTC
+* Number of recursive dependencies: 164
+
+Run `revdepcheck::cloud_details(, "stats19")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/stats19/new/stats19.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stats19/DESCRIPTION’ ... OK
+* this is package ‘stats19’ version ‘2.0.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/stats19/old/stats19.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stats19/DESCRIPTION’ ... OK
+* this is package ‘stats19’ version ‘2.0.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -7700,6 +14912,414 @@ Run `revdepcheck::cloud_details(, "stortingscrape")` for more info
 
 
 ```
+# stplanr
+
+<details>
+
+* Version: 1.0.2
+* GitHub: https://github.com/ropensci/stplanr
+* Source code: https://github.com/cran/stplanr
+* Date/Publication: 2022-11-08 12:40:02 UTC
+* Number of recursive dependencies: 166
+
+Run `revdepcheck::cloud_details(, "stplanr")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/stplanr/new/stplanr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stplanr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘stplanr’ version ‘1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/stplanr/old/stplanr.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stplanr/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘stplanr’ version ‘1.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# stppSim
+
+<details>
+
+* Version: 1.2.7
+* GitHub: https://github.com/Manalytics/stppSim
+* Source code: https://github.com/cran/stppSim
+* Date/Publication: 2022-08-11 10:30:02 UTC
+* Number of recursive dependencies: 128
+
+Run `revdepcheck::cloud_details(, "stppSim")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/stppSim/new/stppSim.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stppSim/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘stppSim’ version ‘1.2.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/stppSim/old/stppSim.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stppSim/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘stppSim’ version ‘1.2.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# stxplore
+
+<details>
+
+* Version: 0.1.0
+* GitHub: NA
+* Source code: https://github.com/cran/stxplore
+* Date/Publication: 2023-02-03 10:10:02 UTC
+* Number of recursive dependencies: 102
+
+Run `revdepcheck::cloud_details(, "stxplore")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/stxplore/new/stxplore.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stxplore/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘stxplore’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘stxplore’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/stxplore/new/stxplore.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/stxplore/old/stxplore.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘stxplore/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘stxplore’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘stxplore’ can be installed ... ERROR
+Installation failed.
+See ‘/tmp/workdir/stxplore/old/stxplore.Rcheck/00install.out’ for details.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# SUNGEO
+
+<details>
+
+* Version: 0.2.292
+* GitHub: NA
+* Source code: https://github.com/cran/SUNGEO
+* Date/Publication: 2022-08-18 14:20:02 UTC
+* Number of recursive dependencies: 109
+
+Run `revdepcheck::cloud_details(, "SUNGEO")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/SUNGEO/new/SUNGEO.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SUNGEO/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SUNGEO’ version ‘0.2.292’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/SUNGEO/old/SUNGEO.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SUNGEO/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SUNGEO’ version ‘0.2.292’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# swfscAirDAS
+
+<details>
+
+* Version: 0.2.3
+* GitHub: https://github.com/smwoodman/swfscAirDAS
+* Source code: https://github.com/cran/swfscAirDAS
+* Date/Publication: 2022-06-02 03:00:02 UTC
+* Number of recursive dependencies: 105
+
+Run `revdepcheck::cloud_details(, "swfscAirDAS")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘swfscAirDAS’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/swfscAirDAS/new/swfscAirDAS.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘swfscAirDAS’ ...
+** package ‘swfscAirDAS’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘swfscAirDAS’
+* removing ‘/tmp/workdir/swfscAirDAS/new/swfscAirDAS.Rcheck/swfscAirDAS’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘swfscAirDAS’ ...
+** package ‘swfscAirDAS’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘swfscAirDAS’
+* removing ‘/tmp/workdir/swfscAirDAS/old/swfscAirDAS.Rcheck/swfscAirDAS’
+
+
+```
+# SWTools
+
+<details>
+
+* Version: 0.2.4
+* GitHub: https://github.com/matt-s-gibbs/swtools
+* Source code: https://github.com/cran/SWTools
+* Date/Publication: 2022-07-04 06:20:02 UTC
+* Number of recursive dependencies: 110
+
+Run `revdepcheck::cloud_details(, "SWTools")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/SWTools/new/SWTools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SWTools/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SWTools’ version ‘0.2.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/SWTools/old/SWTools.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘SWTools/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘SWTools’ version ‘0.2.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # tame
 
 <details>
@@ -7735,14 +15355,82 @@ Run `revdepcheck::cloud_details(, "tame")` for more info
 
 
 ```
+# telemac
+
+<details>
+
+* Version: 0.1.1
+* GitHub: https://github.com/tpilz/telemac
+* Source code: https://github.com/cran/telemac
+* Date/Publication: 2022-02-07 15:50:02 UTC
+* Number of recursive dependencies: 147
+
+Run `revdepcheck::cloud_details(, "telemac")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/telemac/new/telemac.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘telemac/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘telemac’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/telemac/old/telemac.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘telemac/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘telemac’ version ‘0.1.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # tidybayes
 
 <details>
 
-* Version: 3.0.3
+* Version: 3.0.4
 * GitHub: https://github.com/mjskay/tidybayes
 * Source code: https://github.com/cran/tidybayes
-* Date/Publication: 2023-02-04 09:10:02 UTC
+* Date/Publication: 2023-03-14 04:30:02 UTC
 * Number of recursive dependencies: 200
 
 Run `revdepcheck::cloud_details(, "tidybayes")` for more info
@@ -7760,7 +15448,7 @@ Run `revdepcheck::cloud_details(, "tidybayes")` for more info
 * using session charset: UTF-8
 * using option ‘--no-manual’
 * checking for file ‘tidybayes/DESCRIPTION’ ... OK
-* this is package ‘tidybayes’ version ‘3.0.3’
+* this is package ‘tidybayes’ version ‘3.0.4’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... NOTE
@@ -7790,7 +15478,7 @@ Status: 2 NOTEs
 * using session charset: UTF-8
 * using option ‘--no-manual’
 * checking for file ‘tidybayes/DESCRIPTION’ ... OK
-* this is package ‘tidybayes’ version ‘3.0.3’
+* this is package ‘tidybayes’ version ‘3.0.4’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... NOTE
@@ -7978,6 +15666,72 @@ Run `revdepcheck::cloud_details(, "tidytags")` for more info
 
 ```
 
+
+
+
+
+
+```
+# tilemaps
+
+<details>
+
+* Version: 0.2.0
+* GitHub: https://github.com/kaerosen/tilemaps
+* Source code: https://github.com/cran/tilemaps
+* Date/Publication: 2020-07-10 04:20:02 UTC
+* Number of recursive dependencies: 73
+
+Run `revdepcheck::cloud_details(, "tilemaps")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/tilemaps/new/tilemaps.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘tilemaps/DESCRIPTION’ ... OK
+* this is package ‘tilemaps’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/tilemaps/old/tilemaps.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘tilemaps/DESCRIPTION’ ... OK
+* this is package ‘tilemaps’ version ‘0.2.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'lwgeom', 'sf'
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
 
 
 
@@ -8196,6 +15950,370 @@ Status: 1 ERROR
 
 
 ```
+# tmap
+
+<details>
+
+* Version: 3.3-3
+* GitHub: https://github.com/r-tmap/tmap
+* Source code: https://github.com/cran/tmap
+* Date/Publication: 2022-03-02 08:50:02 UTC
+* Number of recursive dependencies: 158
+
+Run `revdepcheck::cloud_details(, "tmap")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/tmap/new/tmap.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘tmap/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘tmap’ version ‘3.3-3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/tmap/old/tmap.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘tmap/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘tmap’ version ‘3.3-3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# trackdf
+
+<details>
+
+* Version: 0.3.1
+* GitHub: https://github.com/swarm-lab/trackdf
+* Source code: https://github.com/cran/trackdf
+* Date/Publication: 2023-01-23 00:50:02 UTC
+* Number of recursive dependencies: 150
+
+Run `revdepcheck::cloud_details(, "trackdf")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/trackdf/new/trackdf.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘trackdf/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘trackdf’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘moveVis’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/trackdf/old/trackdf.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘trackdf/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘trackdf’ version ‘0.3.1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘moveVis’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# trending
+
+<details>
+
+* Version: 0.0.3
+* GitHub: https://github.com/reconhub/trending
+* Source code: https://github.com/cran/trending
+* Date/Publication: 2021-04-19 09:10:02 UTC
+* Number of recursive dependencies: 142
+
+Run `revdepcheck::cloud_details(, "trending")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/trending/new/trending.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘trending/DESCRIPTION’ ... OK
+* this is package ‘trending’ version ‘0.0.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘Introduction.Rmd’ using ‘UTF-8’... OK
+  ‘prediction_intervals.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/trending/old/trending.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘trending/DESCRIPTION’ ... OK
+* this is package ‘trending’ version ‘0.0.3’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking tests ... OK
+  Running ‘testthat.R’
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+  ‘Introduction.Rmd’ using ‘UTF-8’... OK
+  ‘prediction_intervals.Rmd’ using ‘UTF-8’... OK
+* checking re-building of vignette outputs ... OK
+* DONE
+Status: 2 NOTEs
+
+
+
+
+
+```
+# TUFLOWR
+
+<details>
+
+* Version: 0.1.0
+* GitHub: NA
+* Source code: https://github.com/cran/TUFLOWR
+* Date/Publication: 2021-10-18 14:30:05 UTC
+* Number of recursive dependencies: 74
+
+Run `revdepcheck::cloud_details(, "TUFLOWR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/TUFLOWR/new/TUFLOWR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘TUFLOWR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘TUFLOWR’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking examples ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/TUFLOWR/old/TUFLOWR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘TUFLOWR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘TUFLOWR’ version ‘0.1.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+...
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking examples ... OK
+* DONE
+Status: OK
+
+
+
+
+
+```
+# VancouvR
+
+<details>
+
+* Version: 0.1.7
+* GitHub: https://github.com/mountainMath/VancouvR
+* Source code: https://github.com/cran/VancouvR
+* Date/Publication: 2021-10-21 04:30:02 UTC
+* Number of recursive dependencies: 86
+
+Run `revdepcheck::cloud_details(, "VancouvR")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/VancouvR/new/VancouvR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘VancouvR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘VancouvR’ version ‘0.1.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/VancouvR/old/VancouvR.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘VancouvR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘VancouvR’ version ‘0.1.7’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # vivid
 
 <details>
@@ -8272,6 +16390,329 @@ Status: 1 NOTE
 
 
 ```
+# wallace
+
+<details>
+
+* Version: 2.0.4
+* GitHub: NA
+* Source code: https://github.com/cran/wallace
+* Date/Publication: 2023-03-14 08:20:02 UTC
+* Number of recursive dependencies: 282
+
+Run `revdepcheck::cloud_details(, "wallace")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/wallace/new/wallace.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘wallace/DESCRIPTION’ ... OK
+* this is package ‘wallace’ version ‘2.0.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: 1 NOTE
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/wallace/old/wallace.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘wallace/DESCRIPTION’ ... OK
+* this is package ‘wallace’ version ‘2.0.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
+* DONE
+Status: 1 NOTE
+
+
+
+
+
+```
+# waterquality
+
+<details>
+
+* Version: 0.3.0
+* GitHub: https://github.com/RAJohansen/waterquality
+* Source code: https://github.com/cran/waterquality
+* Date/Publication: 2022-02-09 16:50:02 UTC
+* Number of recursive dependencies: 151
+
+Run `revdepcheck::cloud_details(, "waterquality")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/waterquality/new/waterquality.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘waterquality/DESCRIPTION’ ... OK
+* this is package ‘waterquality’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+--- failed re-building ‘waterquality_vignette.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘waterquality_vignette.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted
+
+* DONE
+Status: 1 WARNING, 2 NOTEs
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/waterquality/old/waterquality.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘waterquality/DESCRIPTION’ ... OK
+* this is package ‘waterquality’ version ‘0.3.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... NOTE
+...
+--- failed re-building ‘waterquality_vignette.Rmd’
+
+SUMMARY: processing the following file failed:
+  ‘waterquality_vignette.Rmd’
+
+Error: Vignette re-building failed.
+Execution halted
+
+* DONE
+Status: 1 WARNING, 2 NOTEs
+
+
+
+
+
+```
+# Wats
+
+<details>
+
+* Version: NA
+* GitHub: NA
+* Source code: https://github.com/cran/Wats
+* Number of recursive dependencies: 122
+
+Run `revdepcheck::cloud_details(, "Wats")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+
+
+
+
+
+
+```
+### CRAN
+
+```
+
+
+
+
+
+
+```
+# waves
+
+<details>
+
+* Version: 0.2.4
+* GitHub: https://github.com/GoreLab/waves
+* Source code: https://github.com/cran/waves
+* Date/Publication: 2022-03-29 21:50:02 UTC
+* Number of recursive dependencies: 165
+
+Run `revdepcheck::cloud_details(, "waves")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘waves’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/waves/new/waves.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘waves’ ...
+** package ‘waves’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘waves’
+* removing ‘/tmp/workdir/waves/new/waves.Rcheck/waves’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘waves’ ...
+** package ‘waves’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘waves’
+* removing ‘/tmp/workdir/waves/old/waves.Rcheck/waves’
+
+
+```
+# wdpar
+
+<details>
+
+* Version: 1.3.4
+* GitHub: https://github.com/prioritizr/wdpar
+* Source code: https://github.com/cran/wdpar
+* Date/Publication: 2023-02-24 08:40:02 UTC
+* Number of recursive dependencies: 108
+
+Run `revdepcheck::cloud_details(, "wdpar")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/wdpar/new/wdpar.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘wdpar/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘wdpar’ version ‘1.3.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+Package suggested but not available for checking: ‘prepr’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/wdpar/old/wdpar.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘wdpar/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘wdpar’ version ‘1.3.4’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Packages required but not available: 'sf', 'lwgeom'
+
+Package suggested but not available for checking: ‘prepr’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
 # wearables
 
 <details>
@@ -8338,10 +16779,10 @@ ERROR: lazy loading failed for package ‘wearables’
 
 <details>
 
-* Version: 1.1-1
+* Version: 1.1-3
 * GitHub: https://github.com/giopogg/webSDM
 * Source code: https://github.com/cran/webSDM
-* Date/Publication: 2022-11-25 12:40:02 UTC
+* Date/Publication: 2023-03-14 13:50:02 UTC
 * Number of recursive dependencies: 190
 
 Run `revdepcheck::cloud_details(, "webSDM")` for more info
@@ -8359,11 +16800,11 @@ Run `revdepcheck::cloud_details(, "webSDM")` for more info
 * using session charset: UTF-8
 * using option ‘--no-manual’
 * checking for file ‘webSDM/DESCRIPTION’ ... OK
-* this is package ‘webSDM’ version ‘1.1-1’
+* this is package ‘webSDM’ version ‘1.1-3’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
-Package required but not available: ‘rstanarm’
+Packages required but not available: 'brms', 'rstanarm'
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -8384,11 +16825,11 @@ Status: 1 ERROR
 * using session charset: UTF-8
 * using option ‘--no-manual’
 * checking for file ‘webSDM/DESCRIPTION’ ... OK
-* this is package ‘webSDM’ version ‘1.1-1’
+* this is package ‘webSDM’ version ‘1.1-3’
 * package encoding: UTF-8
 * checking package namespace information ... OK
 * checking package dependencies ... ERROR
-Package required but not available: ‘rstanarm’
+Packages required but not available: 'brms', 'rstanarm'
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.
@@ -8443,7 +16884,7 @@ Run `revdepcheck::cloud_details(, "wrappedtools")` for more info
 * GitHub: NA
 * Source code: https://github.com/cran/xpose.nlmixr2
 * Date/Publication: 2022-06-08 09:10:02 UTC
-* Number of recursive dependencies: 161
+* Number of recursive dependencies: 158
 
 Run `revdepcheck::cloud_details(, "xpose.nlmixr2")` for more info
 
@@ -8496,6 +16937,140 @@ Status: 1 ERROR
 Package required but not available: ‘nlmixr2est’
 
 Package suggested but not available for checking: ‘nlmixr2’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+# zipcodeR
+
+<details>
+
+* Version: 0.3.5
+* GitHub: https://github.com/gavinrozzi/zipcodeR
+* Source code: https://github.com/cran/zipcodeR
+* Date/Publication: 2022-10-03 22:00:02 UTC
+* Number of recursive dependencies: 99
+
+Run `revdepcheck::cloud_details(, "zipcodeR")` for more info
+
+</details>
+
+## In both
+
+*   checking whether package ‘zipcodeR’ can be installed ... ERROR
+    ```
+    Installation failed.
+    See ‘/tmp/workdir/zipcodeR/new/zipcodeR.Rcheck/00install.out’ for details.
+    ```
+
+## Installation
+
+### Devel
+
+```
+* installing *source* package ‘zipcodeR’ ...
+** package ‘zipcodeR’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘zipcodeR’
+* removing ‘/tmp/workdir/zipcodeR/new/zipcodeR.Rcheck/zipcodeR’
+
+
+```
+### CRAN
+
+```
+* installing *source* package ‘zipcodeR’ ...
+** package ‘zipcodeR’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
+  there is no package called ‘sf’
+Calls: <Anonymous> ... loadNamespace -> withRestarts -> withOneRestart -> doWithOneRestart
+Execution halted
+ERROR: lazy loading failed for package ‘zipcodeR’
+* removing ‘/tmp/workdir/zipcodeR/old/zipcodeR.Rcheck/zipcodeR’
+
+
+```
+# zonebuilder
+
+<details>
+
+* Version: 0.0.2
+* GitHub: https://github.com/zonebuilders/zonebuilder
+* Source code: https://github.com/cran/zonebuilder
+* Date/Publication: 2021-07-12 22:30:02 UTC
+* Number of recursive dependencies: 126
+
+Run `revdepcheck::cloud_details(, "zonebuilder")` for more info
+
+</details>
+
+## Error before installation
+
+### Devel
+
+```
+* using log directory ‘/tmp/workdir/zonebuilder/new/zonebuilder.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘zonebuilder/DESCRIPTION’ ... OK
+* this is package ‘zonebuilder’ version ‘0.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
+
+See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
+manual.
+* DONE
+Status: 1 ERROR
+
+
+
+
+
+```
+### CRAN
+
+```
+* using log directory ‘/tmp/workdir/zonebuilder/old/zonebuilder.Rcheck’
+* using R version 4.1.1 (2021-08-10)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-manual’
+* checking for file ‘zonebuilder/DESCRIPTION’ ... OK
+* this is package ‘zonebuilder’ version ‘0.0.2’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... ERROR
+Package required but not available: ‘sf’
+
+Package suggested but not available for checking: ‘lwgeom’
 
 See section ‘The DESCRIPTION file’ in the ‘Writing R Extensions’
 manual.

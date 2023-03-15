@@ -1,152 +1,34 @@
-# dplyr
+# openalexR
 
 <details>
 
-* Version: 1.1.0
-* GitHub: https://github.com/tidyverse/dplyr
-* Source code: https://github.com/cran/dplyr
-* Date/Publication: 2023-01-29 22:50:02 UTC
-* Number of recursive dependencies: 95
+* Version: 1.0.0
+* GitHub: https://github.com/massimoaria/openalexR
+* Source code: https://github.com/cran/openalexR
+* Date/Publication: 2022-10-06 10:40:02 UTC
+* Number of recursive dependencies: 78
 
-Run `revdepcheck::cloud_details(, "dplyr")` for more info
+Run `revdepcheck::cloud_details(, "openalexR")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking re-building of vignette outputs ... WARNING
     ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      • Can't use 'en_US' locale (2)
-      • On CRAN (305)
-      
-      ══ Failed tests ════════════════════════════════════════════════════════════════
-      ── Failure ('test-filter.R:301'): hybrid function row_number does not trigger warning in filter (#3750) ──
-      `out` is not TRUE
-      
-      `actual`:   FALSE
-      `expected`: TRUE 
-      ── Failure ('test-join-by.R:236'): nicely catches missing arguments when wrapped ──
-      `fn(a)` did not throw the expected error.
-      
-      [ FAIL 2 | WARN 270 | SKIP 311 | PASS 2742 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-## In both
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 4 marked UTF-8 strings
-    ```
-
-# GenomeAdmixR
-
-<details>
-
-* Version: 2.1.7
-* GitHub: https://github.com/thijsjanzen/GenomeAdmixR
-* Source code: https://github.com/cran/GenomeAdmixR
-* Date/Publication: 2022-03-01 21:10:15 UTC
-* Number of recursive dependencies: 104
-
-Run `revdepcheck::cloud_details(, "GenomeAdmixR")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-        |                                                                      |   0%
-        |                                                                            
-        |===================================                                   |  50%
-        |                                                                            
-        |======================================================================| 100%[ FAIL 1 | WARN 0 | SKIP 0 | PASS 454 ]
-      
-      ══ Failed tests ════════════════════════════════════════════════════════════════
-      ── Failure ('test-simulate_admixture_data.R:202'): simulate_admixture_data_recombination_map ──
-      `all_j` not equal to `expected_num_j`.
-      1/1 mismatches
-      [1] 71 - 100 == -29
-      
-      [ FAIL 1 | WARN 0 | SKIP 0 | PASS 454 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is 11.9Mb
-      sub-directories of 1Mb or more:
-        doc    2.0Mb
-        libs   9.3Mb
-    ```
-
-*   checking dependencies in R code ... NOTE
-    ```
-    Namespace in Imports field not imported from: ‘methods’
-      All declared Imports should be used.
-    ```
-
-# photosynthesis
-
-<details>
-
-* Version: 2.1.1
-* GitHub: https://github.com/cdmuir/photosynthesis
-* Source code: https://github.com/cran/photosynthesis
-* Date/Publication: 2022-11-19 19:40:09 UTC
-* Number of recursive dependencies: 135
-
-Run `revdepcheck::cloud_details(, "photosynthesis")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Expected `{ ... }` to run without any conditions.
-      ℹ Actually got a <lifecycle_stage>:
-        Condition:
-        `flatten()` is deprecated as of rlang 1.1.0. ℹ Please use
-        `purrr::list_flatten()` or `purrr::list_c()`.
-      ── Failure ('test-fit_aq_response2.R:44'): .vars argument renames variables ────
-      Expected `{ ... }` to run without any conditions.
-      ℹ Actually got a <lifecycle_stage>:
-        Condition:
-        `flatten()` is deprecated as of rlang 1.1.0. ℹ Please use
-        `purrr::list_flatten()` or `purrr::list_c()`.
-      
-      [ FAIL 6 | WARN 2 | SKIP 0 | PASS 320 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-## In both
-
-*   checking installed package size ... NOTE
-    ```
-      installed size is  7.1Mb
-      sub-directories of 1Mb or more:
-        doc   6.1Mb
-    ```
-
-*   checking data for non-ASCII characters ... NOTE
-    ```
-      Note: found 13 marked UTF-8 strings
+    Error(s) in re-building vignettes:
+      ...
+    --- re-building ‘A_Brief_Introduction_to_openalexR.Rmd’ using rmarkdown
+    Quitting from lines 260-269 (A_Brief_Introduction_to_openalexR.Rmd) 
+    Error: processing vignette 'A_Brief_Introduction_to_openalexR.Rmd' failed with diagnostics:
+    $ operator is invalid for atomic vectors
+    --- failed re-building ‘A_Brief_Introduction_to_openalexR.Rmd’
+    
+    SUMMARY: processing the following file failed:
+      ‘A_Brief_Introduction_to_openalexR.Rmd’
+    
+    Error: Vignette re-building failed.
+    Execution halted
     ```
 
 # portalr
@@ -187,17 +69,17 @@ Run `revdepcheck::cloud_details(, "portalr")` for more info
       Execution halted
     ```
 
-# rlang
+# rapbase
 
 <details>
 
-* Version: 1.0.6
-* GitHub: https://github.com/r-lib/rlang
-* Source code: https://github.com/cran/rlang
-* Date/Publication: 2022-09-24 05:40:02 UTC
-* Number of recursive dependencies: 68
+* Version: 1.24.0
+* GitHub: https://github.com/Rapporteket/rapbase
+* Source code: https://github.com/cran/rapbase
+* Date/Publication: 2023-02-27 10:22:31 UTC
+* Number of recursive dependencies: 110
 
-Run `revdepcheck::cloud_details(, "rlang")` for more info
+Run `revdepcheck::cloud_details(, "rapbase")` for more info
 
 </details>
 
@@ -205,31 +87,23 @@ Run `revdepcheck::cloud_details(, "rlang")` for more info
 
 *   checking tests ... ERROR
     ```
-      Running ‘sink.R’
       Running ‘testthat.R’
     Running the tests in ‘tests/testthat.R’ failed.
     Last 13 lines of output:
-       12.   ├─base::namespaceImportFrom(...)
-       13.   │ └─base::asNamespace(ns)
-       14.   └─base::loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]])
-       15.     ├─base::namespaceImportFrom(...)
-       16.     │ └─base::asNamespace(ns)
-       17.     └─base::loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]])
-       18.       ├─base::namespaceImportFrom(...)
-       19.       │ └─base::asNamespace(ns)
-       20.       └─base::loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]])
-       21.         ├─base::namespaceImport(...)
-       22.         └─base::loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]])
+      ══ Failed tests ════════════════════════════════════════════════════════════════
+      ── Failure ('test-github.R:6:3'): contributors are provided ────────────────────
+      class(getGithub("contributors", "rapbase")) not equal to "character".
+      1/1 mismatches
+      x[1]: "NULL"
+      y[1]: "character"
+      ── Failure ('test-github.R:10:3'): key can be provided ─────────────────────────
+      grepl("ssh-rsa", getGithub("keys", "areedv")) is not TRUE
       
-      [ FAIL 2 | WARN 2 | SKIP 235 | PASS 3661 ]
+      `actual`:       
+      `expected`: TRUE
+      
+      [ FAIL 2 | WARN 0 | SKIP 37 | PASS 246 ]
       Error: Test failures
       Execution halted
-    ```
-
-## In both
-
-*   checking package dependencies ... NOTE
-    ```
-    Package which this enhances but not available for checking: ‘winch’
     ```
 
