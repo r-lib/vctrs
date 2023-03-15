@@ -256,13 +256,6 @@ SEXP r_new_list(R_len_t n) {
   return Rf_allocVector(VECSXP, n);
 }
 
-static inline
-SEXP r_new_environment(SEXP parent) {
-  SEXP env = Rf_allocSExp(ENVSXP);
-  SET_ENCLOS(env, parent);
-  return env;
-}
-
 SEXP r_protect(SEXP x);
 bool r_is_number(SEXP x);
 bool r_is_positive_number(SEXP x);

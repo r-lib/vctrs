@@ -122,7 +122,7 @@ r_obj* vec_as_custom_names(r_obj* names, const struct name_repair_opts* opts) {
 
   // Don't use vctrs dispatch utils because we match argument positionally
   r_obj* call = KEEP(r_call2(syms_repair, syms_names));
-  r_obj* mask = KEEP(r_new_environment(R_GlobalEnv));
+  r_obj* mask = KEEP(r_alloc_empty_environment(R_GlobalEnv));
   r_env_poke(mask, syms_repair, opts->fn);
   r_env_poke(mask, syms_names, names);
   r_obj* out = KEEP(r_eval(call, mask));

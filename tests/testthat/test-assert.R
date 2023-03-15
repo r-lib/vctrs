@@ -314,12 +314,8 @@ test_that("vec_check_size() validates `size`", {
   expect_snapshot(error = TRUE, {
     vec_check_size(1, size = c(1L, 2L))
   })
-
-  # TODO: This should be an error, and we want to know when it changes
-  # https://github.com/r-lib/rlang/issues/1562
   expect_snapshot(error = TRUE, {
     vec_check_size(1, size = 1.5)
-    abort("`vec_check_size()` should error for us")
   })
 })
 

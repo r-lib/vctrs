@@ -135,7 +135,20 @@ bool list_all_vectors(r_obj* x) {
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_unexpected_type(r_typeof(x));
   }
-  return r_list_all_of(x, &obj_is_vector);
+
+  // TODO: Use `r_list_all_of(x, &obj_is_vector)` when we add it back in
+  const r_ssize size = r_length(x);
+  r_obj* const* v_x = r_list_cbegin(x);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    r_obj* elt = v_x[i];
+
+    if (!obj_is_vector(elt)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 
