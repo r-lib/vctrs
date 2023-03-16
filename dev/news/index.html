@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.5.2.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.6.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.6.0" id="vctrs-060">vctrs 0.6.0<a class="anchor" aria-label="anchor" href="#vctrs-060"></a></h2><p class="text-muted">CRAN release: 2023-03-15</p>
 <ul><li><p>New <code><a href="../reference/runs.html">vec_run_sizes()</a></code> for computing the size of each run within a vector. It is identical to the <code>times</code> column from <code><a href="../reference/vec-rep.html">vec_unrep()</a></code>, but is faster if you don’t need the run key (<a href="https://github.com/r-lib/vctrs/issues/1210" class="external-link">#1210</a>).</p></li>
 <li><p>New <code>sizes</code> argument to <code><a href="../reference/vec_chop.html">vec_chop()</a></code> which allows you to partition a vector using an integer vector describing the size of each expected slice. It is particularly useful in combination with <code><a href="../reference/runs.html">vec_run_sizes()</a></code> and <code><a href="../reference/vec_size.html">list_sizes()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1210" class="external-link">#1210</a>, <a href="https://github.com/r-lib/vctrs/issues/1598" class="external-link">#1598</a>).</p></li>
 <li><p>New <code><a href="../reference/vector-checks.html">obj_is_vector()</a></code>, <code><a href="../reference/vector-checks.html">obj_check_vector()</a></code>, and <code><a href="../reference/vector-checks.html">vec_check_size()</a></code> validation helpers. We believe these are a better approach to vector validation than <code><a href="../reference/vec_assert.html">vec_assert()</a></code> and <code><a href="../reference/vec_assert.html">vec_is()</a></code>, which have been marked as questioning because the semantics of their <code>ptype</code> arguments are hard to define and can often be replaced by <code><a href="../reference/vec_cast.html">vec_cast()</a></code> or a type predicate function like <code><a href="https://rlang.r-lib.org/reference/type-predicates.html" class="external-link">rlang::is_logical()</a></code> (<a href="https://github.com/r-lib/vctrs/issues/1784" class="external-link">#1784</a>).</p></li>
