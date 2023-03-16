@@ -22,12 +22,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Lionel Henry \email{lionel@posit.co}
+\strong{Maintainer}: Davis Vaughan \email{davis@posit.co}
 
 Authors:
 \itemize{
   \item Hadley Wickham \email{hadley@posit.co}
-  \item Davis Vaughan \email{davis@posit.co}
+  \item Lionel Henry \email{lionel@posit.co}
 }
 
 Other contributors:

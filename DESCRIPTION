@@ -1,6 +1,6 @@
 Package: vctrs
 Title: Vector Helpers
-Version: 0.5.2.9000
+Version: 0.6.0
 Authors@R: 
     c(person(given = "Hadley",
              family = "Wickham",
@@ -8,11 +8,11 @@ Authors@R:
              email = "hadley@posit.co"),
       person(given = "Lionel",
              family = "Henry",
-             role = c("aut", "cre"),
+             role = "aut",
              email = "lionel@posit.co"),
       person(given = "Davis",
              family = "Vaughan",
-             role = "aut",
+             role = c("aut", "cre"),
              email = "davis@posit.co"),
       person(given = "data.table team",
              role = "cph",
