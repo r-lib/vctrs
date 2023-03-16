@@ -12,8 +12,9 @@ testthat_import_from("sf", c(
   "st_multipoint"
 ))
 
-# Need recent version to work around restore bug for sfc lists
-skip_if_not_installed("sf", "0.9-4")
+# Need recent version to work around restore bug for sfc lists and changes
+# to `c.sfc()`
+skip_if_not_installed("sf", "1.0-11")
 
 test_that("sf has a ptype2 method", {
 	sfc1 = st_sfc(st_point(1:2), st_point(3:4))
@@ -213,22 +214,31 @@ test_that("`precision` and `crs` attributes of `sfc` vectors are restored", {
 	expect_identical(st_crs(x), st_crs(out))
 })
 
-test_that("`precision` and `crs` attributes of `sfc` vectors are combined", {
+test_that("`precision` attributes of `sfc` vectors are combined", {
 	x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
 	y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 3857)
 
 	out = vctrs::vec_c(x, y)
 	expect_identical(st_precision(x), st_precision(out))
-	expect_identical(st_crs(x), st_crs(out))
 
-        # These used to be errors before we fell back to c()
+	# These used to be errors before we fell back to c()
 	y = st_sfc(st_point(c(0, 0)), precision = 1e-2, crs = 3857)
 	expect_identical(vctrs::vec_c(x, y), c(x, y))
 	# expect_error(vctrs::vec_c(x, y), "precisions not equal")
+})
 
-	y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 4326)
-	expect_identical(vctrs::vec_c(x, y), c(x, y))
-	# expect_error(vctrs::vec_c(x, y), "coordinate reference systems not equal")
+test_that("`crs` attributes of `sfc` vectors must be the same", {
+  x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
+  y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 3857)
+
+  out = vctrs::vec_c(x, y)
+  expect_identical(st_crs(x), st_crs(out))
+
+  # Error on different `crs` comes from sf as of 1.0-10
+  y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 4326)
+  expect_snapshot(error = TRUE, {
+    vctrs::vec_c(x, y)
+  })
 })
 
 test_that("`vec_locate_matches()` works with `sfc` vectors", {
