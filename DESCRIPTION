@@ -24,7 +24,7 @@ Description: Defines new notions of prototype and size that are
     and size-recycling, and are in turn connected to ideas of type- and
     size-stability useful for analysing function interfaces.
 License: MIT + file LICENSE
-URL: https://vctrs.r-lib.org/
+URL: https://vctrs.r-lib.org/, https://github.com/r-lib/vctrs
 BugReports: https://github.com/r-lib/vctrs/issues
 Depends: 
     R (>= 3.5.0)

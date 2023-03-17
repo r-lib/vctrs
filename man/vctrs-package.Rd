@@ -17,6 +17,7 @@ size-stability useful for analysing function interfaces.
 Useful links:
 \itemize{
   \item \url{https://vctrs.r-lib.org/}
+  \item \url{https://github.com/r-lib/vctrs}
   \item Report bugs at \url{https://github.com/r-lib/vctrs/issues}
 }
 
