@@ -1,5 +1,10 @@
+# Never run on CRAN, even if they have sf, because we don't regularly
+# check these on CI and we don't want a change in sf to force a CRAN
+# failure for vctrs.
+skip_on_cran()
 
-# Avoids adding `sf` to Suggests
+# Avoids adding `sf` to Suggests.
+# These tests are only run on the devs' machines.
 testthat_import_from("sf", c(
   "st_sf",
   "st_sfc",
