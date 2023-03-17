@@ -1,8 +1,13 @@
-test_that("common type of data.table and data.frame is data.table", {
-  # As data.table is not in Suggests, these checks are only run on the
-  # devs' machines
-  testthat_import_from("data.table", "data.table")
+# Never run on CRAN, even if they have data.table, because we don't regularly
+# check these on CI and we don't want a change in data.table to force a CRAN
+# failure for vctrs.
+skip_on_cran()
 
+# Avoids adding `data.table` to Suggests.
+# These tests are only run on the devs' machines.
+testthat_import_from("data.table", "data.table")
+
+test_that("common type of data.table and data.frame is data.table", {
   expect_identical(
     vec_ptype2(data.table(x = TRUE), data.table(y = 2)),
     data.table(x = lgl(), y = dbl())
@@ -31,8 +36,6 @@ test_that("common type of data.table and data.frame is data.table", {
 })
 
 test_that("data.table and tibble do not have a common type", {
-  testthat_import_from("data.table", "data.table")
-
   expect_equal(
     vec_ptype_common(data.table(x = TRUE), tibble(y = 2)),
     tibble(x = lgl(), y = dbl())
@@ -53,7 +56,6 @@ test_that("data.table and tibble do not have a common type", {
 })
 
 test_that("data table has formatting methods", {
-  testthat_import_from("data.table", "data.table")
   expect_snapshot({
     dt <- data.table(x = 1, y = 2, z = 3)
     vec_ptype_abbr(dt)
