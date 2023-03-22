@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.6.1
 
 * Fixed a test related to `c.sfc()` changes in sf 1.0-10 (#1817).
 
