@@ -134,7 +134,7 @@ SEXP chr_resize(SEXP x, r_ssize x_size, r_ssize size);
 
 // Returns S3 / S4 method for `generic` suitable for the class of `x`. The
 // inheritance hierarchy is explored except for the default method.
-SEXP s3_get_method(const char* generic, const char* cls, SEXP table);
+SEXP s3_get_method(const char* generic, const char* class, SEXP table);
 SEXP s3_sym_get_method(SEXP sym, SEXP table);
 SEXP s3_find_method(const char* generic, SEXP x, SEXP table);
 SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table);
@@ -148,7 +148,7 @@ SEXP s3_find_method2(const char* generic,
                      SEXP x,
                      SEXP table,
                      SEXP* method_sym_out);
-SEXP s3_paste_method_sym(const char* generic, const char* cls);
+SEXP s3_paste_method_sym(const char* generic, const char* class);
 SEXP s3_bare_class(SEXP x);
 SEXP s4_find_method(SEXP x, SEXP table);
 SEXP s4_class_find_method(SEXP class, SEXP table);
@@ -166,7 +166,7 @@ SEXP list_first_non_null(SEXP xs, R_len_t* non_null_i);
 bool list_is_homogeneously_classed(SEXP xs);
 
 // Destructive compacting
-SEXP node_compact_d(SEXP xs);
+SEXP node_compact_d(SEXP node);
 
 void never_reached(const char* fn) __attribute__((noreturn));
 
