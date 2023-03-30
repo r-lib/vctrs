@@ -31,7 +31,7 @@ r_obj* vec_rep_each_uniform(r_obj* x,
 static
 r_obj* vec_rep_each_impl(r_obj* x,
                          r_obj* times,
-                         const r_ssize times_size,
+                         r_ssize times_size,
                          struct r_lazy error_call,
                          struct vctrs_arg* p_times_arg);
 

@@ -199,9 +199,9 @@ SEXP posixlt_as_posixct(SEXP x, SEXP to);
 SEXP posixct_as_posixlt(SEXP x, SEXP to);
 SEXP posixlt_as_posixlt(SEXP x, SEXP to);
 
-SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
-SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
-SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
+SEXP vec_date_restore(SEXP x, SEXP to, enum vctrs_owned owned);
+SEXP vec_posixct_restore(SEXP x, SEXP to, enum vctrs_owned owned);
+SEXP vec_posixlt_restore(SEXP x, SEXP to, enum vctrs_owned owned);
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);
