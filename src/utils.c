@@ -34,6 +34,7 @@ SEXP classes_vctrs_group_rle = NULL;
 static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
+
 static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env);
 
 /**
