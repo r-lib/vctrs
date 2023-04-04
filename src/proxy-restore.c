@@ -80,7 +80,7 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
   // Shouldn't matter for GNU R but other R implementations might have checks.
   // Also record class to set it later with `r_attrib_poke()`. This restores
   // the OBJECT bit and is likely more compatible with other implementations.
-  r_obj* class = r_null;
+  r_obj* cls = r_null;
 
   {
     r_obj* node = attrib;
@@ -94,7 +94,7 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
           tag == r_syms.dim_names || tag == r_syms.class_ ||
           tag == r_syms.row_names) {
         if (tag == r_syms.class_) {
-          class = r_node_car(node);
+          cls = r_node_car(node);
         }
 
         if (prev == r_null) {
@@ -144,8 +144,8 @@ r_obj* vec_restore_default(r_obj* x, r_obj* to, enum vctrs_owned owned) {
     FREE(1);
   }
 
-  if (class != r_null) {
-    r_attrib_poke(x, r_syms.class_, class);
+  if (cls != r_null) {
+    r_attrib_poke(x, r_syms.class_, cls);
   }
 
   if (is_s4) {
