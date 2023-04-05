@@ -442,7 +442,7 @@ static char s3_buf[200];
 
 SEXP s3_paste_method_sym(const char* generic, const char* cls) {
   int gen_len = strlen(generic);
-  int class_len = strlen(cls);
+  int cls_len = strlen(cls);
   int dot_len = 1;
   if (gen_len + cls_len + dot_len >= sizeof(s3_buf)) {
     r_stop_internal("Generic or class name is too long.");
