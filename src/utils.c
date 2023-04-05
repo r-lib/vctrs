@@ -452,7 +452,7 @@ SEXP s3_paste_method_sym(const char* generic, const char* cls) {
 
   memcpy(buf, generic, gen_len); buf += gen_len;
   *buf = '.'; ++buf;
-  memcpy(buf, cls, class_len); buf += class_len;
+  memcpy(buf, cls, cls_len); buf += cls_len;
   *buf = '\0';
 
   return Rf_install(s3_buf);
