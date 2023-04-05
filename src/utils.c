@@ -515,11 +515,11 @@ SEXP s3_class_find_method(const char* generic, SEXP cls, SEXP table) {
     return R_NilValue;
   }
 
-  SEXP const* p_class = STRING_PTR_RO(cls);
-  int n_class = Rf_length(cls);
+  SEXP const* p_cls = STRING_PTR_RO(cls);
+  int n_cls = Rf_length(cls);
 
-  for (int i = 0; i < n_class; ++i) {
-    SEXP method = s3_get_method(generic, CHAR(p_class[i]), table);
+  for (int i = 0; i < n_cls; ++i) {
+    SEXP method = s3_get_method(generic, CHAR(p_cls[i]), table);
     if (method != R_NilValue) {
       return method;
     }
