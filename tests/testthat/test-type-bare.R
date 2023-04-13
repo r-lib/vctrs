@@ -246,9 +246,9 @@ test_that("NA casts work as expected", {
   exp <- cpl(NA)
   to <- cpl()
 
-  expect_equal(vec_cast(lgl(NA), to), exp)
-  expect_equal(vec_cast(int(NA), to), exp)
-  expect_equal(vec_cast(dbl(NA), to), exp)
+  expect_equal(vec_cast(lgl(NA), to), NA_complex_)
+  expect_equal(vec_cast(int(NA), to), NA_complex_)
+  expect_equal(vec_cast(dbl(NA), to), as.complex(NA_real_))
 
   # This used to be allowed
   expect_error(vec_cast(list(NA), to), class = "vctrs_error_incompatible_type")
@@ -261,7 +261,7 @@ test_that("Shaped NA casts work as expected", {
 
   expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
   expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
-  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_equal(vec_cast(mat(dbl(NA)), to_mat), matrix(as.complex(NA_real_)))
 
   # This used to be allowed
   expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
