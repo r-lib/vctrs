@@ -288,7 +288,7 @@ test_that("works with complex missing values", {
     imaginary = c(NA_real_, NaN, NA_real_, NaN)
   )
   expect_identical(vec_set_symmetric_difference(na, na), complex())
-  expect_identical(vec_set_symmetric_difference(na[-2], na[-4]), na[c(2, 4)])
+  expect_identical(vec_set_symmetric_difference(na[-2], na[-4]), na[c(4, 2)])
 })
 
 test_that("works correctly with unspecified logical vectors", {

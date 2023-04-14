@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Fixed tests to maintain compatibility with the next version of waldo (#1829).
+
 # vctrs 0.6.1
 
 * Fixed a test related to `c.sfc()` changes in sf 1.0-10 (#1817).
