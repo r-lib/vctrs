@@ -202,10 +202,10 @@ bool needs_vec_c_fallback(r_obj* ptype) {
   }
 
   // Suboptimal: Prevent infinite recursion through `vctrs_vctr` method
-  r_obj* class = r_attrib_get(ptype, syms_fallback_class);
-  class = r_chr_get(class, r_length(class) - 1);
+  r_obj* cls = r_attrib_get(ptype, syms_fallback_class);
+  cls = r_chr_get(cls, r_length(cls) - 1);
 
-  return class != strings_vctrs_vctr;
+  return cls != strings_vctrs_vctr;
 }
 
 bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype) {
@@ -272,8 +272,8 @@ r_obj* vec_c_fallback(r_obj* ptype,
                       const struct name_repair_opts* name_repair,
                       struct vctrs_arg* p_error_arg,
                       struct r_lazy error_call) {
-  r_obj* class = KEEP(r_attrib_get(ptype, syms_fallback_class));
-  bool implements_c = class_implements_base_c(class);
+  r_obj* cls = KEEP(r_attrib_get(ptype, syms_fallback_class));
+  bool implements_c = class_implements_base_c(cls);
   FREE(1);
 
   if (implements_c) {

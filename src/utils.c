@@ -35,7 +35,7 @@ static SEXP syms_as_data_frame2 = NULL;
 static SEXP fns_as_data_frame2 = NULL;
 
 
-static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP mask);
+static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args, SEXP env);
 
 /**
  * Evaluate with masked arguments
@@ -440,11 +440,11 @@ inline void never_reached(const char* fn) {
 
 static char s3_buf[200];
 
-SEXP s3_paste_method_sym(const char* generic, const char* class) {
+SEXP s3_paste_method_sym(const char* generic, const char* cls) {
   int gen_len = strlen(generic);
-  int class_len = strlen(class);
+  int cls_len = strlen(cls);
   int dot_len = 1;
-  if (gen_len + class_len + dot_len >= sizeof(s3_buf)) {
+  if (gen_len + cls_len + dot_len >= sizeof(s3_buf)) {
     r_stop_internal("Generic or class name is too long.");
   }
 
@@ -452,15 +452,15 @@ SEXP s3_paste_method_sym(const char* generic, const char* class) {
 
   memcpy(buf, generic, gen_len); buf += gen_len;
   *buf = '.'; ++buf;
-  memcpy(buf, class, class_len); buf += class_len;
+  memcpy(buf, cls, cls_len); buf += cls_len;
   *buf = '\0';
 
   return Rf_install(s3_buf);
 }
 
 // First check in global env, then in method table
-SEXP s3_get_method(const char* generic, const char* class, SEXP table) {
-  SEXP sym = s3_paste_method_sym(generic, class);
+SEXP s3_get_method(const char* generic, const char* cls, SEXP table) {
+  SEXP sym = s3_paste_method_sym(generic, cls);
   return s3_sym_get_method(sym, table);
 }
 SEXP s3_sym_get_method(SEXP sym, SEXP table) {
@@ -483,15 +483,15 @@ SEXP vctrs_s3_find_method(SEXP generic, SEXP x, SEXP table) {
 }
 
 // [[ register() ]]
-r_obj* ffi_s3_get_method(r_obj* generic, r_obj* class, r_obj* table) {
+r_obj* ffi_s3_get_method(r_obj* generic, r_obj* cls, r_obj* table) {
   if (!r_is_string(generic)) {
     r_stop_internal("`generic` must be a string");
   }
-  if (!r_is_string(class)) {
-    r_stop_internal("`class` must be a string");
+  if (!r_is_string(cls)) {
+    r_stop_internal("`cls` must be a string");
   }
   return s3_get_method(r_chr_get_c_string(generic, 0),
-                       r_chr_get_c_string(class, 0),
+                       r_chr_get_c_string(cls, 0),
                        table);
 }
 
@@ -501,25 +501,25 @@ SEXP s3_find_method(const char* generic, SEXP x, SEXP table) {
     return R_NilValue;
   }
 
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  SEXP method = s3_class_find_method(generic, class, table);
+  SEXP cls = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  SEXP method = s3_class_find_method(generic, cls, table);
 
   UNPROTECT(1);
   return method;
 }
 
 // [[ include("utils.h") ]]
-SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table) {
+SEXP s3_class_find_method(const char* generic, SEXP cls, SEXP table) {
   // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
-  if (class == R_NilValue) {
+  if (cls == R_NilValue) {
     return R_NilValue;
   }
 
-  SEXP const* p_class = STRING_PTR_RO(class);
-  int n_class = Rf_length(class);
+  SEXP const* p_cls = STRING_PTR_RO(cls);
+  int n_cls = Rf_length(cls);
 
-  for (int i = 0; i < n_class; ++i) {
-    SEXP method = s3_get_method(generic, CHAR(p_class[i]), table);
+  for (int i = 0; i < n_cls; ++i) {
+    SEXP method = s3_get_method(generic, CHAR(p_cls[i]), table);
     if (method != R_NilValue) {
       return method;
     }
@@ -530,28 +530,28 @@ SEXP s3_class_find_method(const char* generic, SEXP class, SEXP table) {
 
 // [[ include("utils.h") ]]
 SEXP s3_get_class(SEXP x) {
-  SEXP class = R_NilValue;
+  SEXP cls = R_NilValue;
 
   if (OBJECT(x)) {
-    class = Rf_getAttrib(x, R_ClassSymbol);
+    cls = Rf_getAttrib(x, R_ClassSymbol);
   }
 
   // This handles unclassed objects as well as gremlins objects where
   // `x` is an OBJECT(), but the class is NULL
-  if (class == R_NilValue) {
-    class = s3_bare_class(x);
+  if (cls == R_NilValue) {
+    cls = s3_bare_class(x);
   }
 
-  if (!Rf_length(class)) {
+  if (!Rf_length(cls)) {
     r_stop_internal("Class must have length.");
   }
 
-  return class;
+  return cls;
 }
 
 SEXP s3_get_class0(SEXP x) {
-  SEXP class = PROTECT(s3_get_class(x));
-  SEXP out = STRING_ELT(class, 0);
+  SEXP cls = PROTECT(s3_get_class(x));
+  SEXP out = STRING_ELT(cls, 0);
   UNPROTECT(1);
   return out;
 }
@@ -586,9 +586,9 @@ SEXP s3_find_method2(const char* generic,
                      SEXP x,
                      SEXP table,
                      SEXP* method_sym_out) {
-  SEXP class = PROTECT(s3_get_class0(x));
+  SEXP cls = PROTECT(s3_get_class0(x));
 
-  SEXP method_sym = s3_paste_method_sym(generic, CHAR(class));
+  SEXP method_sym = s3_paste_method_sym(generic, CHAR(cls));
   SEXP method = s3_sym_get_method(method_sym, table);
 
   if (method == R_NilValue) {
@@ -621,8 +621,8 @@ SEXP s3_bare_class(SEXP x) {
   }
 }
 
-static SEXP s4_get_method(const char* class, SEXP table) {
-  SEXP sym = Rf_install(class);
+static SEXP s4_get_method(const char* cls, SEXP table) {
+  SEXP sym = Rf_install(cls);
 
   SEXP method = r_env_get(table, sym);
   if (r_is_function(method)) {
@@ -638,20 +638,20 @@ SEXP s4_find_method(SEXP x, SEXP table) {
     return R_NilValue;
   }
 
-  SEXP class = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
-  SEXP out = s4_class_find_method(class, table);
+  SEXP cls = PROTECT(Rf_getAttrib(x, R_ClassSymbol));
+  SEXP out = s4_class_find_method(cls, table);
 
   UNPROTECT(1);
   return out;
 }
-SEXP s4_class_find_method(SEXP class, SEXP table) {
+SEXP s4_class_find_method(SEXP cls, SEXP table) {
   // Avoid corrupt objects where `x` is an OBJECT(), but the class is NULL
-  if (class == R_NilValue) {
+  if (cls == R_NilValue) {
     return R_NilValue;
   }
 
-  SEXP const* p_class = STRING_PTR_RO(class);
-  int n_class = Rf_length(class);
+  SEXP const* p_class = STRING_PTR_RO(cls);
+  int n_class = Rf_length(cls);
 
   for (int i = 0; i < n_class; ++i) {
     SEXP method = s4_get_method(CHAR(p_class[i]), table);
