@@ -249,7 +249,7 @@ test_that("NA casts work as expected", {
   # TODO: Use our own cast routines here?
   # `as.complex(NA_real_)` and `Rf_CoerceVector(NA_real_)` coerce to
   # `complex(real = NA_real_, imaginary = 0)` for some reason, but this may
-  # change in the future
+  # change in the future https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
   # expect_equal(vec_cast(dbl(NA), cpl()), NA_complex_)
   expect_type(vec_cast(dbl(NA), cpl()), "complex")
   expect_identical(is.na(vec_cast(dbl(NA), cpl())), TRUE)
@@ -269,7 +269,7 @@ test_that("Shaped NA casts work as expected", {
   # TODO: Use our own cast routines here?
   # `as.complex(NA_real_)` and `Rf_CoerceVector(NA_real_)` coerce to
   # `complex(real = NA_real_, imaginary = 0)` for some reason, but this may
-  # change in the future
+  # change in the future https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
   # expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
   expect_type(vec_cast(mat(dbl(NA)), to_mat), "complex")
   expect_identical(is.na(vec_cast(mat(dbl(NA)), to_mat)), matrix(TRUE))
