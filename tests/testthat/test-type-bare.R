@@ -243,25 +243,36 @@ test_that("safe casts to complex works", {
 })
 
 test_that("NA casts work as expected", {
-  exp <- cpl(NA)
-  to <- cpl()
+  expect_equal(vec_cast(lgl(NA), cpl()), NA_complex_)
+  expect_equal(vec_cast(int(NA), cpl()), NA_complex_)
 
-  expect_equal(vec_cast(lgl(NA), to), NA_complex_)
-  expect_equal(vec_cast(int(NA), to), NA_complex_)
-  expect_equal(vec_cast(dbl(NA), to), as.complex(NA_real_))
+  # TODO: Use our own cast routines here?
+  # `as.complex(NA_real_)` and `Rf_CoerceVector(NA_real_)` coerce to
+  # `complex(real = NA_real_, imaginary = 0)` for some reason, but this may
+  # change in the future
+  # expect_equal(vec_cast(dbl(NA), cpl()), NA_complex_)
+  expect_type(vec_cast(dbl(NA), cpl()), "complex")
+  expect_identical(is.na(vec_cast(dbl(NA), cpl())), TRUE)
 
   # This used to be allowed
-  expect_error(vec_cast(list(NA), to), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(list(NA), cpl()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("Shaped NA casts work as expected", {
   mat <- matrix
-  exp_mat <- mat(cpl(NA))
+  exp_mat <- mat(NA_complex_)
   to_mat <- matrix(cpl())
 
   expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
   expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
-  expect_equal(vec_cast(mat(dbl(NA)), to_mat), matrix(as.complex(NA_real_)))
+
+  # TODO: Use our own cast routines here?
+  # `as.complex(NA_real_)` and `Rf_CoerceVector(NA_real_)` coerce to
+  # `complex(real = NA_real_, imaginary = 0)` for some reason, but this may
+  # change in the future
+  # expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_type(vec_cast(mat(dbl(NA)), to_mat), "complex")
+  expect_identical(is.na(vec_cast(mat(dbl(NA)), to_mat)), matrix(TRUE))
 
   # This used to be allowed
   expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")
