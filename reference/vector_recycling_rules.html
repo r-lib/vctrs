@@ -22,7 +22,7 @@ Otherwise, all vectors must have the same size
     
     <a class="navbar-brand me-2" href="../index.html">vctrs</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.6.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,7 +90,7 @@ recycling rules:</p><ul><li><p>Vectors of size 1 will be recycled to the size of
 <p>This includes vectors of size 0:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="op">)</span>, y <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 0 x 2</span></span>
-<span><span class="co">#&gt; # ... with 2 variables: x &lt;int&gt;, y &lt;int&gt;</span></span></code></pre><p></p></div>
+<span><span class="co">#&gt; # i 2 variables: x &lt;int&gt;, y &lt;int&gt;</span></span></code></pre><p></p></div>
 <p>If vectors aren't size 1, they must all be the same size. Otherwise, an error
 is thrown:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span></span>
