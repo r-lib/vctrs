@@ -70,7 +70,7 @@ vctrs::obj_check_vector(my_df)
 This is problematic as many tidyverse functions won’t work properly:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dplyr::slice(my_df, 1)
-#> Error in `eval_select_impl()`:
+#> Error in `vec_slice()`:
 #> ! `x` must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
 

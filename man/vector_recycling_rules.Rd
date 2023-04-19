@@ -30,7 +30,7 @@ This includes vectors of size 0:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{tibble(x = integer(), y = 1L)
 #> # A tibble: 0 x 2
-#> # ... with 2 variables: x <int>, y <int>
+#> # i 2 variables: x <int>, y <int>
 }\if{html}{\out{</div>}}
 
 If vectors aren't size 1, they must all be the same size. Otherwise, an error
