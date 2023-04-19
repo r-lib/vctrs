@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed conditional S3 registration to avoid a CRAN check NOTE that appears in
+  R >=4.3.0 (#1832).
+
 * Fixed tests to maintain compatibility with the next version of waldo (#1829).
 
 # vctrs 0.6.1
