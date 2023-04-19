@@ -17,11 +17,11 @@ sf_env = env()
 local(envir = sf_env, {
 
 # Registered at load-time (same for all other methods)
-vec_proxy.sf = function(x, ...) {
+vec_proxy_sf = function(x, ...) {
 	x
 }
 
-vec_restore.sf = function(x, to, ...) {
+vec_restore_sf = function(x, to, ...) {
 	sfc_name = attr(to, "sf_column")
 	crs = st_crs(to)
 	prec = st_precision(to)
@@ -76,22 +76,22 @@ sf_ptype2 = function(x, y, ...) {
 	)
 }
 
-vec_ptype2.sf.sf = function(x, y, ...) {
+vec_ptype2_sf_sf = function(x, y, ...) {
 	sf_ptype2(x, y, ...)
 }
-vec_ptype2.sf.data.frame = function(x, y, ...) {
+vec_ptype2_sf_data.frame = function(x, y, ...) {
 	sf_ptype2(x, y, ...)
 }
-vec_ptype2.data.frame.sf = function(x, y, ...) {
+vec_ptype2_data.frame_sf = function(x, y, ...) {
 	sf_ptype2(x, y, ...)
 }
 
 # Maybe we should not have these methods, but they are currently
 # required to avoid the base-df fallback
-vec_ptype2.sf.tbl_df = function(x, y, ...) {
+vec_ptype2_sf_tbl_df = function(x, y, ...) {
 	new_data_frame(sf_ptype2(x, y, ...))
 }
-vec_ptype2.tbl_df.sf = function(x, y, ...) {
+vec_ptype2_tbl_df_sf = function(x, y, ...) {
 	new_data_frame(sf_ptype2(x, y, ...))
 }
 
@@ -118,17 +118,17 @@ sf_cast = function(x, to, ...) {
 	)
 }
 
-vec_cast.sf.sf = function(x, to, ...) {
+vec_cast_sf_sf = function(x, to, ...) {
 	sf_cast(x, to, ...)
 }
-vec_cast.sf.data.frame = function(x, to, ...) {
+vec_cast_sf_data.frame = function(x, to, ...) {
 	sf_cast(x, to, ...)
 }
-vec_cast.data.frame.sf = function(x, to, ...) {
+vec_cast_data.frame_sf = function(x, to, ...) {
 	df_cast(x, to, ...)
 }
 
-vec_proxy_order.sfc <- function(x, ...) {
+vec_proxy_order_sfc <- function(x, ...) {
   # These are list columns, so they need to use the order-by-appearance proxy
   # that is defined by `vec_proxy_order.list()`
   x <- unstructure(x)
