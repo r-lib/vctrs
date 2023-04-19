@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.6.2
 
 * Fixed conditional S3 registration to avoid a CRAN check NOTE that appears in
   R >=4.3.0 (#1832).
