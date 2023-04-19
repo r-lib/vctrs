@@ -8,7 +8,7 @@ group_intersect <- function(x, new) {
   intersect(dplyr::group_vars(x), names(new))
 }
 
-vec_restore.grouped_df <- function(x, to, ...) {
+vec_restore_grouped_df <- function(x, to, ...) {
   vars <- group_intersect(to, x)
   drop <- dplyr::group_by_drop_default(to)
   dplyr::grouped_df(x, vars, drop = drop)
@@ -17,21 +17,21 @@ vec_restore.grouped_df <- function(x, to, ...) {
 
 # `vec_ptype2()` -----------------------------------------------------
 
-vec_ptype2.grouped_df.grouped_df <- function(x, y, ...) {
+vec_ptype2_grouped_df_grouped_df <- function(x, y, ...) {
   gdf_ptype2(x, y, ...)
 }
 
-vec_ptype2.grouped_df.data.frame <- function(x, y, ...) {
+vec_ptype2_grouped_df_data.frame <- function(x, y, ...) {
   gdf_ptype2(x, y, ...)
 }
-vec_ptype2.data.frame.grouped_df <- function(x, y, ...) {
+vec_ptype2_data.frame_grouped_df <- function(x, y, ...) {
   gdf_ptype2(x, y, ...)
 }
 
-vec_ptype2.grouped_df.tbl_df <- function(x, y, ...) {
+vec_ptype2_grouped_df_tbl_df <- function(x, y, ...) {
   gdf_ptype2(x, y, ...)
 }
-vec_ptype2.tbl_df.grouped_df <- function(x, y, ...) {
+vec_ptype2_tbl_df_grouped_df <- function(x, y, ...) {
   gdf_ptype2(x, y, ...)
 }
 
@@ -50,21 +50,21 @@ gdf_ptype2 <- function(x, y, ...) {
 
 # `vec_cast()` -------------------------------------------------------
 
-vec_cast.grouped_df.grouped_df <- function(x, to, ...) {
+vec_cast_grouped_df_grouped_df <- function(x, to, ...) {
   gdf_cast(x, to, ...)
 }
 
-vec_cast.grouped_df.data.frame <- function(x, to, ...) {
+vec_cast_grouped_df_data.frame <- function(x, to, ...) {
   gdf_cast(x, to, ...)
 }
-vec_cast.data.frame.grouped_df <- function(x, to, ...) {
+vec_cast_data.frame_grouped_df <- function(x, to, ...) {
   df_cast(x, to, ...)
 }
 
-vec_cast.grouped_df.tbl_df <- function(x, to, ...) {
+vec_cast_grouped_df_tbl_df <- function(x, to, ...) {
   gdf_cast(x, to, ...)
 }
-vec_cast.tbl_df.grouped_df <- function(x, to, ...) {
+vec_cast_tbl_df_grouped_df <- function(x, to, ...) {
   tib_cast(x, to, ...)
 }
 
@@ -80,28 +80,28 @@ gdf_cast <- function(x, to, ...) {
 
 ### `rowwise` --------------------------------------------------------
 
-vec_restore.rowwise_df <- function(x, to, ...) {
+vec_restore_rowwise_df <- function(x, to, ...) {
   dplyr::rowwise(x)
 }
 
 
 # `vec_ptype2()` -----------------------------------------------------
 
-vec_ptype2.rowwise_df.rowwise_df <- function(x, y, ...) {
+vec_ptype2_rowwise_df_rowwise_df <- function(x, y, ...) {
   rww_ptype2(x, y, ...)
 }
 
-vec_ptype2.rowwise_df.data.frame <- function(x, y, ...) {
+vec_ptype2_rowwise_df_data.frame <- function(x, y, ...) {
   rww_ptype2(x, y, ...)
 }
-vec_ptype2.data.frame.rowwise_df <- function(x, y, ...) {
+vec_ptype2_data.frame_rowwise_df <- function(x, y, ...) {
   rww_ptype2(x, y, ...)
 }
 
-vec_ptype2.rowwise_df.tbl_df <- function(x, y, ...) {
+vec_ptype2_rowwise_df_tbl_df <- function(x, y, ...) {
   rww_ptype2(x, y, ...)
 }
-vec_ptype2.tbl_df.rowwise_df <- function(x, y, ...) {
+vec_ptype2_tbl_df_rowwise_df <- function(x, y, ...) {
   rww_ptype2(x, y, ...)
 }
 
@@ -112,21 +112,21 @@ rww_ptype2 <- function(x, y, ...) {
 
 # `vec_cast()` -------------------------------------------------------
 
-vec_cast.rowwise_df.rowwise_df <- function(x, to, ...) {
+vec_cast_rowwise_df_rowwise_df <- function(x, to, ...) {
   rww_cast(x, to, ...)
 }
 
-vec_cast.rowwise_df.data.frame <- function(x, to, ...) {
+vec_cast_rowwise_df_data.frame <- function(x, to, ...) {
   rww_cast(x, to, ...)
 }
-vec_cast.data.frame.rowwise_df <- function(x, to, ...) {
+vec_cast_data.frame_rowwise_df <- function(x, to, ...) {
   df_cast(x, to, ...)
 }
 
-vec_cast.rowwise_df.tbl_df <- function(x, to, ...) {
+vec_cast_rowwise_df_tbl_df <- function(x, to, ...) {
   rww_cast(x, to, ...)
 }
-vec_cast.tbl_df.rowwise_df <- function(x, to, ...) {
+vec_cast_tbl_df_rowwise_df <- function(x, to, ...) {
   tib_cast(x, to, ...)
 }
 

@@ -382,7 +382,7 @@ df_lossy_cast <- function(out,
   )
 }
 
-is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
+is_informative_error_vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
 }
 
