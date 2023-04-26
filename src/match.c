@@ -1684,6 +1684,9 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     multiple == VCTRS_MULTIPLE_error ||
     multiple == VCTRS_MULTIPLE_warning;
 
+  // Used to enforce `check_multiple_needles`
+  r_ssize loc_needles_previous = r_globals.na_int;
+
   bool check_multiple_haystack = false;
   switch (relationship) {
   // Expecting `haystack` can match any number of `needles`
@@ -1824,11 +1827,22 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
     }
 
     if (check_multiple_needles) {
-      if (loc < size_needles) {
-        any_multiple_needles = size_match > 1;
-      } else {
-        // Guaranteed second match if in the "extra" matches section
+      if (size_match > 1) {
+        // Easy, obvious, case.
+        // This containment group had >1 matches for this `needle` so we
+        // immediately handle multiple `needles` matches.
         any_multiple_needles = true;
+      } else if (loc_needles == loc_needles_previous) {
+        // We've recorded a match for this `needle` before. Remember that
+        // `needles` are processed in increasing order across all containment
+        // groups due to `v_o_loc_needles` so this simple tracking of the
+        // previous `needle` works.
+        any_multiple_needles = true;
+      } else {
+        // There was exactly 1 match for the `needle` in this containment group,
+        // and we've never recorded a match for this `needle` before.
+        // In that case we record that we've seen it for the next iteration.
+        loc_needles_previous = loc_needles;
       }
 
       if (any_multiple_needles) {
