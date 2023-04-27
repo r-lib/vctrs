@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed a rare `vec_locate_matches()` bug that could occur when using a max/min
+  `filter` (tidyverse/dplyr#6835).
+
 # vctrs 0.6.2
 
 * Fixed conditional S3 registration to avoid a CRAN check NOTE that appears in

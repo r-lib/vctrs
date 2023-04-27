@@ -424,6 +424,16 @@
       ! Each value of `needles` can match at most 1 value from `haystack`.
       x Location 1 of `needles` matches multiple values.
 
+# `relationship` errors when we have >1 size 1 matches across containers (tidyverse/dplyr#6835)
+
+    Code
+      vec_locate_matches(x, y, condition = c("<=", ">="), filter = c("none", "none"),
+      relationship = "one-to-one")
+    Condition
+      Error in `vec_locate_matches()`:
+      ! Each value of `needles` can match at most 1 value from `haystack`.
+      x Location 1 of `needles` matches multiple values.
+
 # `relationship` errors respect argument tags and error call
 
     Code

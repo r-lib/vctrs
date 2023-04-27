@@ -1312,6 +1312,59 @@ test_that("`relationship` still errors if `filter` hasn't removed all multiple m
   expect_identical(out$haystack, c(2L, 2L))
 })
 
+test_that("`relationship` errors when we have >1 size 1 matches across containers (tidyverse/dplyr#6835)", {
+  # Carefully designed to ensure we get 2 nested containment groups that split
+  # up the rows of `y`, but each of the nested containment groups contain exactly
+  # 1 match, so `size_match` in `expand_compact_indices()` won't ever be >1
+  x <- data_frame(a = 1L, b = 5L)
+  y <- data_frame(a = c(1L, 2L), b = c(4L, 3L))
+
+  expect_snapshot(error = TRUE, {
+    vec_locate_matches(
+      x,
+      y,
+      condition = c("<=", ">="),
+      filter = c("none", "none"),
+      relationship = "one-to-one"
+    )
+  })
+})
+
+test_that("`relationship` doesn't error when the first match from a different container gets filtered out (tidyverse/dplyr#6835)", {
+  # Carefully designed to ensure we get 2 nested containment groups that split
+  # up the rows of `y`. Row 1 (processed first) doesn't hold the minimum `b`
+  # value, so it gets filtered out. Row 2 is in the "extra" matches section
+  # but is actually the first (and only) real match, so we don't want to error
+  # on it.
+  x <- data_frame(a = 1L, b = 5L)
+  y <- data_frame(a = c(1L, 2L), b = c(4L, 3L))
+
+  out <- vec_locate_matches(
+    x,
+    y,
+    condition = c("<=", ">="),
+    filter = c("none", "min"),
+    relationship = "one-to-one"
+  )
+  expect_identical(out$needles, 1L)
+  expect_identical(out$haystack, 2L)
+
+  # Similar to the above example, but with a `max` filter. Row 1 doesn't hold
+  # the max `c` value so it is filtered out even though it is a `>=` match.
+  x <- data_frame(a = 1L, b = 5L, c = 3L)
+  y <- data_frame(a = c(1L, 2L), b = c(4L, 3L), c = c(1L, 2L))
+
+  out <- vec_locate_matches(
+    x,
+    y,
+    condition = c("<=", ">=", ">="),
+    filter = c("none", "none", "max"),
+    relationship = "one-to-one"
+  )
+  expect_identical(out$needles, 1L)
+  expect_identical(out$haystack, 2L)
+})
+
 test_that("`relationship` errors respect argument tags and error call", {
   expect_snapshot({
     (expect_error(vec_locate_matches(1L, c(1L, 1L), relationship = "one-to-one", needles_arg = "foo", haystack_arg = "bar", error_call = call("fn"))))
