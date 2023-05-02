@@ -168,7 +168,7 @@ knitr_local_registration("vctrs::vec_ptype2", "double.my_natural")
 
 Most of the time, inputs are incompatible because they have different classes for which no `vec_ptype2()` method is implemented. More rarely, inputs could be incompatible because of their attributes. In that case incompatibility is signalled by calling `stop_incompatible_type()`.
 
-In the following example, we implement a self-self ptype2 method for a hypothetical subclass of `<factor>` that has stricter combination semantics. The method throws when the levels of the two factors are not compatible.
+In the following example, we implement a self-self ptype2 method for a hypothetical subclass of `<factor>` that has stricter combination semantics. The method throws an error when the levels of the two factors are not compatible.
 
 ```{r, eval = FALSE}
 #' @export
