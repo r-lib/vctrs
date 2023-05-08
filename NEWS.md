@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* Fixed an issue where `vec_set_*()` used with data frames could accidentally
+  return an object with the type of the proxy rather than the type of the
+  original inputs (#1837).
+
 * Fixed a rare `vec_locate_matches()` bug that could occur when using a max/min
   `filter` (tidyverse/dplyr#6835).
 
