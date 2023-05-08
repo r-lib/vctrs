@@ -215,7 +215,10 @@ r_obj* vec_proxy_order_invoke(r_obj* x, r_obj* method) {
 
 static inline
 r_obj* df_proxy(r_obj* x, enum vctrs_proxy_kind kind) {
-  x = KEEP(r_clone_referenced(x));
+  // Always clone to avoid modifying the original object, even if it is one
+  // we freshly created in C, because we often work with both the proxy and the
+  // original object within the same function (#1837)
+  x = KEEP(r_clone(x));
 
   switch (kind) {
   case VCTRS_PROXY_KIND_equal: DF_PROXY(vec_proxy_equal); break;
