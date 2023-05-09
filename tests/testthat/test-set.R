@@ -341,6 +341,20 @@ test_that("works with rcrds", {
 
 # common ------------------------------------------------------------------
 
+test_that("works with package version columns of data frames (#1837)", {
+  package_frame <- function(x) {
+    data_frame(version = package_version(x))
+  }
+
+  x <- package_frame(c("4.0", "2.0"))
+  y <- package_frame(c("1.0", "3.0" ,"4.0"))
+
+  expect_identical(vec_set_intersect(x, y), package_frame("4.0"))
+  expect_identical(vec_set_difference(x, y), package_frame("2.0"))
+  expect_identical(vec_set_union(x, y), package_frame(c("4.0", "2.0", "1.0", "3.0")))
+  expect_identical(vec_set_symmetric_difference(x, y), package_frame(c("2.0", "1.0", "3.0")))
+})
+
 test_that("errors nicely if common type can't be taken", {
   expect_snapshot(error = TRUE, {
     vec_set_intersect(1, "x")
