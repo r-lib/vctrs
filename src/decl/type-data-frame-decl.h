@@ -5,9 +5,6 @@ static
 r_obj* new_compact_rownames(r_ssize n);
 
 static
-r_ssize df_size_from_list(r_obj* x, r_obj* n);
-
-static
 r_ssize df_size_from_n(r_obj* n);
 
 static
