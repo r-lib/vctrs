@@ -59,7 +59,7 @@ They're collectively demonstrated with a number of simple S3 classes:
 -   Meter: a numeric vector with meter units.
     This is the simplest possible class with interesting algebraic properties.
 
--   Period and frequency: a pair of classes represent a period, or it's inverse, frequency.
+-   Period and frequency: a pair of classes represent a period, or its inverse, frequency.
     This allows us to explore more arithmetic operators.
 
 ## Basics
@@ -147,7 +147,7 @@ format.vctrs_percent <- function(x, ...) {
 
 ```{r, include = FALSE}
 # As of R 3.5, print.vctr can not find format.percent since it's not in
-# it's lexical environment. We fix that problem by manually registering.
+# its lexical environment. We fix that problem by manually registering.
 s3_register("base::format", "vctrs_percent")
 ```
 
