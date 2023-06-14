@@ -86,11 +86,10 @@ the first element of <code>x</code>.</p></dd>
 
 
 <dt>..., class</dt>
-<dd><p>Additional arguments for creating subclasses.
-The <code>"names"</code> and <code>"row.names"</code> attributes override input in <code>x</code> and <code>n</code>,
-respectively:</p><ul><li><p><code>"names"</code> is used if provided, overriding existing names in <code>x</code></p></li>
-<li><p><code>"row.names"</code> is used if provided, if <code>n</code> is provided it must be
-consistent.</p></li>
+<dd><p>Additional arguments for creating subclasses.</p>
+<p>The following attributes have special behavior:</p><ul><li><p><code>"names"</code> is preferred if provided, overriding existing names in <code>x</code>.</p></li>
+<li><p><code>"row.names"</code> is preferred if provided, overriding both <code>n</code> and the size
+implied by <code>x</code>.</p></li>
 </ul></dd>
 
 </dl></div>
