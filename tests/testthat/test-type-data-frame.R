@@ -305,8 +305,6 @@ test_that("attributes with special names are merged", {
     -3L
   )
 
-  expect_error(new_data_frame(list(), n = 1L, row.names = 1:3), ".")
-
   expect_identical(
     .row_names_info(new_data_frame(list(), n = 3L, row.names = 1:3)),
     3L
@@ -337,6 +335,34 @@ test_that("n and row.names (#894)", {
     row.names(new_data_frame(list(), row.names = chr())),
     chr()
   )
+})
+
+test_that("`row.names` completely overrides `n` and the implied size of `x`, even if incompatible (tidyverse/dplyr#6596)", {
+  row_names <- c(NA, -3L)
+
+  df <- new_data_frame(list(), n = 2L, row.names = row_names)
+  expect_identical(.row_names_info(df, type = 0L), row_names)
+
+  df <- new_data_frame(list(x = 1:2), row.names = row_names)
+  expect_identical(.row_names_info(df, type = 0L), row_names)
+})
+
+test_that("ALTREP `row.names` are not materialized by `new_data_frame()` (tidyverse/dplyr#6596)", {
+  skip_if(getRversion() <= "3.5.0")
+
+  # We are careful in `new_data_frame()` to not call the `Dataptr()` or
+  # `Length()` ALTREP methods, both of which would materialize our lazy
+  # character here
+  row_names <- new_lazy_character(~ c("a", "b"))
+
+  x <- new_data_frame(list(), row.names = row_names)
+  expect_false(lazy_character_is_materialized(.row_names_info(x, type = 0L)))
+
+  x <- new_data_frame(list(x = 1:2), row.names = row_names)
+  expect_false(lazy_character_is_materialized(.row_names_info(x, type = 0L)))
+
+  x <- new_data_frame(list(), n = 2L, row.names = row_names)
+  expect_false(lazy_character_is_materialized(.row_names_info(x, type = 0L)))
 })
 
 test_that("`x` must be a list", {

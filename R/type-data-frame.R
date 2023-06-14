@@ -16,12 +16,11 @@
 #' @param n Number of rows. If `NULL`, will be computed from the length of
 #'   the first element of `x`.
 #' @param ...,class Additional arguments for creating subclasses.
-#'   The `"names"` and `"row.names"` attributes override input in `x` and `n`,
-#'   respectively:
 #'
-#'   - `"names"` is used if provided, overriding existing names in `x`
-#'   - `"row.names"` is used if provided, if `n` is provided it must be
-#'     consistent.
+#'   The following attributes have special behavior:
+#'   - `"names"` is preferred if provided, overriding existing names in `x`.
+#'   - `"row.names"` is preferred if provided, overriding both `n` and the size
+#'     implied by `x`.
 #'
 #' @export
 #' @examples

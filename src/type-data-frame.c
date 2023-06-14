@@ -50,7 +50,6 @@ r_obj* ffi_new_data_frame(r_obj* args) {
 
   bool has_names = false;
   bool has_rownames = false;
-  r_ssize size = df_size_from_list(x, n);
 
   r_obj* out = KEEP(r_clone_referenced(x));
 
@@ -68,11 +67,12 @@ r_obj* ffi_new_data_frame(r_obj* args) {
     }
 
     if (tag == r_syms.row_names) {
-      // "row.names" is checked for consistency with n (if provided)
-      if (size != rownames_size(r_node_car(node)) && n != r_null) {
-        r_abort_call(r_null, "`n` and `row.names` must be consistent.");
-      }
-
+      // We used to validate a user supplied `n` against a user supplied
+      // `row.names`, but that requires extracting out the `rownames_size()`,
+      // which can materialize ALTREP row name objects and is prohibitively
+      // expensive (tidyverse/dplyr#6596). So instead we say that user supplied
+      // `row.names` overrides both the implied size of `x` and a user supplied
+      // `n`, even if they are incompatible.
       has_rownames = true;
       continue;
     }
@@ -96,6 +96,13 @@ r_obj* ffi_new_data_frame(r_obj* args) {
   }
 
   if (!has_rownames) {
+    // Data frame size is determined in the following order:
+    // - By `row.names`, if provided, which will already be in `attrib`
+    // - By `n`, if provided (this is fully overriden by `row.names`)
+    // - By `x`, if neither `n` nor `row.names` is provided, where `x` could be
+    //   a data frame with its own row names attribute or a bare list
+    const r_ssize size = n != r_null ? df_size_from_n(n) : df_raw_size(x);
+
     r_obj* rn = KEEP(new_compact_rownames(size));
     attrib = r_new_node(rn, attrib);
     r_node_poke_tag(attrib, r_syms.row_names);
@@ -123,19 +130,6 @@ r_obj* ffi_new_data_frame(r_obj* args) {
 
   FREE(2);
   return out;
-}
-
-static
-r_ssize df_size_from_list(r_obj* x, r_obj* n) {
-  if (n == r_null) {
-    if (is_data_frame(x)) {
-      return df_size(x);
-    } else {
-      return df_raw_size_from_list(x);
-    }
-  } else {
-    return df_size_from_n(n);
-  }
 }
 
 static
