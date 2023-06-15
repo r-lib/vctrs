@@ -1,109 +1,82 @@
-# openalexR
+# covidcast
 
 <details>
 
-* Version: 1.0.0
-* GitHub: https://github.com/massimoaria/openalexR
-* Source code: https://github.com/cran/openalexR
-* Date/Publication: 2022-10-06 10:40:02 UTC
-* Number of recursive dependencies: 78
+* Version: 0.5.0
+* GitHub: https://github.com/cmu-delphi/covidcast
+* Source code: https://github.com/cran/covidcast
+* Date/Publication: 2023-06-01 20:10:02 UTC
+* Number of recursive dependencies: 93
 
-Run `revdepcheck::cloud_details(, "openalexR")` for more info
+Run `revdepcheck::cloud_details(, "covidcast")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking re-building of vignette outputs ... WARNING
+*   checking re-building of vignette outputs ... ERROR
     ```
     Error(s) in re-building vignettes:
-      ...
-    --- re-building ‘A_Brief_Introduction_to_openalexR.Rmd’ using rmarkdown
-    Quitting from lines 260-269 (A_Brief_Introduction_to_openalexR.Rmd) 
-    Error: processing vignette 'A_Brief_Introduction_to_openalexR.Rmd' failed with diagnostics:
-    $ operator is invalid for atomic vectors
-    --- failed re-building ‘A_Brief_Introduction_to_openalexR.Rmd’
+    --- re-building ‘correlation-utils.Rmd’ using rmarkdown
+    --- finished re-building ‘correlation-utils.Rmd’
     
-    SUMMARY: processing the following file failed:
-      ‘A_Brief_Introduction_to_openalexR.Rmd’
+    --- re-building ‘covidcast.Rmd’ using rmarkdown
+    --- finished re-building ‘covidcast.Rmd’
+    
+    --- re-building ‘external-data.Rmd’ using rmarkdown
+    --- finished re-building ‘external-data.Rmd’
+    
+    ...
+    ℹ In index: 1.
+    Caused by error in `match.arg()`:
+    ! 'arg' should be one of "day", "week"
+    --- failed re-building ‘plotting-signals.Rmd’
+    
+    SUMMARY: processing the following files failed:
+      ‘multi-signals.Rmd’ ‘plotting-signals.Rmd’
     
     Error: Vignette re-building failed.
     Execution halted
     ```
 
-# portalr
+## In both
+
+*   checking data for non-ASCII characters ... NOTE
+    ```
+      Note: found 20 marked UTF-8 strings
+    ```
+
+# scGOclust
 
 <details>
 
-* Version: 0.3.11
-* GitHub: https://github.com/weecology/portalr
-* Source code: https://github.com/cran/portalr
-* Date/Publication: 2022-12-01 17:40:02 UTC
-* Number of recursive dependencies: 106
+* Version: 0.1.0
+* GitHub: https://github.com/YY-SONG0718/scGOclust
+* Source code: https://github.com/cran/scGOclust
+* Date/Publication: 2023-06-01 11:50:05 UTC
+* Number of recursive dependencies: 211
 
-Run `revdepcheck::cloud_details(, "portalr")` for more info
+Run `revdepcheck::cloud_details(, "scGOclust")` for more info
 
 </details>
 
 ## Newly broken
 
-*   checking tests ... ERROR
+*   checking re-building of vignette outputs ... ERROR
     ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      Backtrace:
-          ▆
-       1. ├─portalr::bait_presence_absence(path = portal_data_path, level = "plot") at test-10-summarize_ants.R:49:2
-       2. │ ├─compute_presence(bait, level) %>% as.data.frame()
-       3. │ └─portalr:::compute_presence(bait, level)
-       4. │   └─... %>% ...
-       5. ├─base::as.data.frame(.)
-       6. ├─tidyr::complete(., !!!grouping, fill = list(presence = 0))
-       7. ├─dplyr::mutate(., presence = 1)
-       8. ├─dplyr::distinct(.)
-       9. └─dplyr::select(., !!!grouping)
-      
-      [ FAIL 12 | WARN 43 | SKIP 42 | PASS 17 ]
-      Error: Test failures
-      Execution halted
-    ```
-
-# rapbase
-
-<details>
-
-* Version: 1.24.0
-* GitHub: https://github.com/Rapporteket/rapbase
-* Source code: https://github.com/cran/rapbase
-* Date/Publication: 2023-02-27 10:22:31 UTC
-* Number of recursive dependencies: 110
-
-Run `revdepcheck::cloud_details(, "rapbase")` for more info
-
-</details>
-
-## Newly broken
-
-*   checking tests ... ERROR
-    ```
-      Running ‘testthat.R’
-    Running the tests in ‘tests/testthat.R’ failed.
-    Last 13 lines of output:
-      ══ Failed tests ════════════════════════════════════════════════════════════════
-      ── Failure ('test-github.R:6:3'): contributors are provided ────────────────────
-      class(getGithub("contributors", "rapbase")) not equal to "character".
-      1/1 mismatches
-      x[1]: "NULL"
-      y[1]: "character"
-      ── Failure ('test-github.R:10:3'): key can be provided ─────────────────────────
-      grepl("ssh-rsa", getGithub("keys", "areedv")) is not TRUE
-      
-      `actual`:       
-      `expected`: TRUE
-      
-      [ FAIL 2 | WARN 0 | SKIP 37 | PASS 246 ]
-      Error: Test failures
-      Execution halted
+    Error(s) in re-building vignettes:
+      ...
+    --- re-building ‘scGOclust_mouse_fly_gut_vignette.Rmd’ using rmarkdown
+    
+    Quitting from lines 37-46 [load_input] (scGOclust_mouse_fly_gut_vignette.Rmd)
+    Error: processing vignette 'scGOclust_mouse_fly_gut_vignette.Rmd' failed with diagnostics:
+    Timeout was reached: [www.ensembl.org:443] Operation timed out after 10001 milliseconds with 0 bytes received
+    --- failed re-building ‘scGOclust_mouse_fly_gut_vignette.Rmd’
+    
+    SUMMARY: processing the following file failed:
+      ‘scGOclust_mouse_fly_gut_vignette.Rmd’
+    
+    Error: Vignette re-building failed.
+    Execution halted
     ```
 

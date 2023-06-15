@@ -1,4 +1,4 @@
-# vctrs (development version)
+# vctrs 0.6.3
 
 * Fixed an issue where certain ALTREP row names were being materialized when
   passed to `new_data_frame()`. We've fixed this by removing a safeguard in
