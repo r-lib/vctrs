@@ -354,3 +354,18 @@ test_that("vec_match() evaluates arg lazily", {
   expect_silent(vec_match(1L, 1L, needles_arg = print("oof")))
   expect_silent(vec_match(1L, 1L, haystack_arg = print("oof")))
 })
+
+
+# deduplication -----------------------------------------------------------
+
+test_that("vec_deduplicate() matches vec_unique_loc and match(x, unique(x))", {
+  rep_vector <- sample(rep(1:10, 10))
+  rep_dedup_indices <- vec_deduplicate(rep_vector)
+  uni_vector <- sample(1:100)
+  uni_dedup_indices <- vec_deduplicate(uni_vector)
+  expect_equal(rep_dedup_indices$unique_loc, vec_unique_loc(rep_vector))
+  expect_equal(uni_dedup_indices$unique_loc, vec_unique_loc(uni_vector))
+
+  expect_equal(rep_dedup_indices$match_unique_loc, match(rep_vector, unique(rep_vector)))
+  expect_equal(uni_dedup_indices$match_unique_loc, match(uni_vector, unique(uni_vector)))
+})

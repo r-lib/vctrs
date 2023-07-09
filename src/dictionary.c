@@ -645,3 +645,47 @@ void vctrs_init_dictionary(SEXP ns) {
   args_needles = new_wrapper_arg(NULL, "needles");
   args_haystack = new_wrapper_arg(NULL, "haystack");
 }
+
+
+SEXP vctrs_deduplicate(SEXP x) {
+  int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+
+  struct dictionary* d = new_dictionary(x);
+  PROTECT_DICT(d, &nprot);
+
+  struct dictionary* d2 = new_dictionary(x);
+  PROTECT_DICT(d2, &nprot);
+
+  SEXP out_match_ids = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  int* p_out_match_ids = INTEGER(out_match_ids);
+
+  struct growable g = new_growable(INTSXP, 256);
+  PROTECT_GROWABLE(&g, &nprot);
+
+  int latest_id = 0;
+  for (int i = 0; i < n; ++i) {
+    uint32_t hash = dict_hash_with(d, d2, i);
+
+    if (d->key[hash] == DICT_EMPTY) {
+      dict_put(d, hash, i);
+      dict_put(d2, hash, latest_id);
+      ++latest_id;
+      growable_push_int(&g, i + 1);
+    }
+    p_out_match_ids[i] = d2->key[hash] + 1;
+  }
+
+  SEXP out_unique_locs = growable_values(&g);
+
+  SEXP out = r_alloc_list(2);
+  SET_VECTOR_ELT(out, 0, out_unique_locs);
+  SET_VECTOR_ELT(out, 1, out_match_ids);
+
+  UNPROTECT(nprot);
+  return out;
+}

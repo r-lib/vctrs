@@ -204,6 +204,40 @@ vec_unique_count <- function(x) {
 }
 
 
+#' Calculate the indices necessary to deduplicate and reduplicate a vector.
+#'
+#' @description
+#' The indices can be used to deduplicate a vector, call a function on the unique values, and then reduplicate.
+#' The result is the same as calling `vec_unique_loc(x)` and `match(x, unique(x))` but more efficient.
+#'
+#' @param x  A vector (including a data frame).
+#'
+#' @return A list containing a vector of the unique indices (like `vec_unique_loc(x)`) and the mapping of unique
+#' values in the original vector (like `match(x, unique(x))`).
+#'
+#' @export
+#'
+#' @examples
+#' with_deduplication <- function(f) {
+#'   function(x, ...) {
+#'     dedup_indices <- vec_deduplicate(x)
+#'     f(dedup_indices$unique_loc, ...)[dedup_indices$match_unique_loc]
+#'   }
+#' }
+#'
+#' x <- as.character(sample.int(1e5, 10)) |>
+#'   rep(1e6)
+#'
+#' x |> with_deduplication(tolower)()
+#'
+vec_deduplicate <- function(x) {
+  res <- .Call(vctrs_deduplicate, x)
+  list(
+    unique_loc = res[[1]],
+    match_unique_loc = res[[2]]
+  )
+}
+
 # Matching ----------------------------------------------------------------
 
 #' Find matching observations across vectors
