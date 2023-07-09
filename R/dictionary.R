@@ -221,12 +221,13 @@ vec_unique_count <- function(x) {
 #' with_deduplication <- function(f) {
 #'   function(x, ...) {
 #'     dedup_indices <- vec_deduplicate(x)
-#'     f(dedup_indices$unique_loc, ...)[dedup_indices$match_unique_loc]
+#'     unique_x <- x[dedup_indices$unique_loc]
+#'     f(unique_x, ...)[dedup_indices$match_unique_loc]
 #'   }
 #' }
 #'
-#' x <- as.character(sample.int(1e5, 10)) |>
-#'   rep(1e6)
+#' x <- as.character(sample.int(1e4, 10)) |>
+#'   rep(1e5)
 #'
 #' x |> with_deduplication(tolower)()
 #'
