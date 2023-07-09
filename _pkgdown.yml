@@ -81,6 +81,7 @@ reference:
   contents:
   - vec_count
   - vec_duplicate
+  - vec_deduplicate
   - vec_unique
   - vec_in
   - vec_locate_matches
