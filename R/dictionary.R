@@ -226,10 +226,9 @@ vec_unique_count <- function(x) {
 #'   }
 #' }
 #'
-#' x <- as.character(sample.int(1e4, 10)) |>
-#'   rep(1e5)
+#' x <- rep(as.character(sample.int(1e4, 10)), 1e5)
 #'
-#' x |> with_deduplication(tolower)()
+#' with_deduplication(tolower)(x)
 #'
 vec_deduplicate <- function(x) {
   res <- .Call(vctrs_deduplicate, x)
