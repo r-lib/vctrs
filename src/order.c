@@ -3971,6 +3971,9 @@ void df_order_internal(SEXP x,
   // Special case no columns
   if (n_cols == 0) {
     init_order(p_order);
+    if (size != 0) {
+      groups_size_maybe_push(size, p_group_infos);
+    }
     return;
   }
 

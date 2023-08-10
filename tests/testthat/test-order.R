@@ -1276,6 +1276,29 @@ test_that("Indistinct NA and NaN are reported in the same group", {
 })
 
 # ------------------------------------------------------------------------------
+# `vec_order_info(<data.frame>)`
+
+test_that("Zero column data frames with >0 rows work (#1863)", {
+  # All rows are treated as being from the same group
+  x <- data_frame(.size = 5)
+  info <- vec_order_info(x)
+
+  expect_identical(info[[1]], 1:5) # Order
+  expect_identical(info[[2]], 5L)  # Group sizes
+  expect_identical(info[[3]], 5L)  # Max group size
+})
+
+test_that("Zero column data frames with exactly 0 rows work (#1863)", {
+  # This is a particularly special case, since we don't actually push a group size
+  x <- data_frame(.size = 0L)
+  info <- vec_order_info(x)
+
+  expect_identical(info[[1]], integer())
+  expect_identical(info[[2]], integer())
+  expect_identical(info[[3]], 0L)
+})
+
+# ------------------------------------------------------------------------------
 # vec_sort
 
 test_that("can sort data frames", {
