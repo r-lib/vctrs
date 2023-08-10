@@ -63,6 +63,22 @@ test_that("works with data frames", {
   expect_identical(vec_rank(df, ties = "sequential"), c(2L, 3L, 1L, 4L, 5L))
 })
 
+test_that("works with data frames with 0 columns and >0 rows (#1863)", {
+  # All rows are treated as being from the same group
+  df <- data_frame(.size = 5)
+
+  expect_identical(vec_rank(df, ties = "min"), c(1L, 1L, 1L, 1L, 1L))
+  expect_identical(vec_rank(df, ties = "sequential"), c(1L, 2L, 3L, 4L, 5L))
+  expect_identical(vec_rank(df, ties = "sequential", direction = "desc"), c(1L, 2L, 3L, 4L, 5L))
+})
+
+test_that("works with data frames with 0 columns and 0 rows (#1863)", {
+  df <- data_frame(.size = 0)
+
+  expect_identical(vec_rank(df, ties = "min"), integer())
+  expect_identical(vec_rank(df, ties = "sequential"), integer())
+})
+
 test_that("can control the direction per column", {
   df <- data_frame(
     x = c(1, 2, 1, 2, 2),
