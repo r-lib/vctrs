@@ -86,7 +86,7 @@ represented in memory with integers but their values are more related to
 character vectors than to round numbers:
 # Two factors are compatible
 vec_ptype2(factor(&quot;a&quot;), factor(&quot;b&quot;))
-#&amp;gt; factor(0)
+#&amp;gt; factor()
 #&amp;gt; Levels: a b
 
 # Factors are compatible with a character
@@ -134,11 +134,11 @@ Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
 levels are aggregated in order:
 vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
-#&amp;gt; factor(0)
+#&amp;gt; factor()
 #&amp;gt; Levels: a c b
 
 vec_ptype2(factor(&quot;b&quot;), factor(c(&quot;a&quot;, &quot;c&quot;)))
-#&amp;gt; factor(0)
+#&amp;gt; factor()
 #&amp;gt; Levels: b a c
 
 In any case, permuting the input should not return a fundamentally
@@ -379,7 +379,7 @@ represented in memory with integers but their values are more related to
 character vectors than to round numbers:
 # Two factors are compatible
 vec_ptype2(factor(&quot;a&quot;), factor(&quot;b&quot;))
-#&amp;gt; factor(0)
+#&amp;gt; factor()
 #&amp;gt; Levels: a b
 
 # Factors are compatible with a character
@@ -427,11 +427,11 @@ Each ptype2 method should strive to have exactly the same behaviour when
 the inputs are permuted. This is not always possible, for example factor
 levels are aggregated in order:
 vec_ptype2(factor(c(&quot;a&quot;, &quot;c&quot;)), factor(&quot;b&quot;))
-#&amp;gt; factor(0)
+#&amp;gt; factor()
 #&amp;gt; Levels: a c b
 
 vec_ptype2(factor(&quot;b&quot;), factor(c(&quot;a&quot;, &quot;c&quot;)))
-#&amp;gt; factor(0)
+#&amp;gt; factor()
 #&amp;gt; Levels: b a c
 
 In any case, permuting the input should not return a fundamentally
@@ -720,7 +720,7 @@ represented in memory with integers but their values are more related to
 character vectors than to round numbers:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="co"># Two factors are compatible</span></span>
 <span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"a"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; factor(0)</span></span>
+<span><span class="co">#&gt; factor()</span></span>
 <span><span class="co">#&gt; Levels: a b</span></span>
 <span></span>
 <span><span class="co"># Factors are compatible with a character</span></span>
@@ -766,11 +766,11 @@ R where <code>stringsAsFactors</code> is still true by default.</p>
 the inputs are permuted. This is not always possible, for example factor
 levels are aggregated in order:</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; factor(0)</span></span>
+<span><span class="co">#&gt; factor()</span></span>
 <span><span class="co">#&gt; Levels: a c b</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vec_ptype2.html">vec_ptype2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="st">"b"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; factor(0)</span></span>
+<span><span class="co">#&gt; factor()</span></span>
 <span><span class="co">#&gt; Levels: b a c</span></span></code></pre><p></p></div>
 <p>In any case, permuting the input should not return a fundamentally
 different type or introduce an incompatible type error.</p>
