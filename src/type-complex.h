@@ -24,18 +24,18 @@ r_complex cpl_normalise_missing(r_complex x) {
   case VCTRS_DBL_number:
     switch (i_type) {
     case VCTRS_DBL_number: return x;
-    case VCTRS_DBL_missing: return (r_complex) {na, na};
-    case VCTRS_DBL_nan: return (r_complex) {nan, nan};
+    case VCTRS_DBL_missing: return (r_complex) { .r = na, .i = na};
+    case VCTRS_DBL_nan: return (r_complex) { .r = nan, .i = nan};
     }
   case VCTRS_DBL_missing:
     switch (i_type) {
-    case VCTRS_DBL_number: return (r_complex) {na, na};
+    case VCTRS_DBL_number: return (r_complex) { .r = na, .i = na};
     case VCTRS_DBL_missing: return x;
     case VCTRS_DBL_nan: return x;
     }
   case VCTRS_DBL_nan:
     switch (i_type) {
-    case VCTRS_DBL_number: return (r_complex) {nan, nan};
+    case VCTRS_DBL_number: return (r_complex) { .r = nan, .i = nan};
     case VCTRS_DBL_missing: return x;
     case VCTRS_DBL_nan: return x;
     }
