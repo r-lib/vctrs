@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Added a class to the `vec_locate_matches()` error that is thrown when an
+  overflow would otherwise occur (#1845).
+
 * Fixed an issue with `vec_rank()` and 0-column data frames (#1863).
 
 # vctrs 0.6.3
