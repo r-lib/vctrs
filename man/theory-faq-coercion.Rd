@@ -92,7 +92,7 @@ character vectors than to round numbers:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{# Two factors are compatible
 vec_ptype2(factor("a"), factor("b"))
-#> factor(0)
+#> factor()
 #> Levels: a b
 
 # Factors are compatible with a character
@@ -141,11 +141,11 @@ the inputs are permuted. This is not always possible, for example factor
 levels are aggregated in order:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_ptype2(factor(c("a", "c")), factor("b"))
-#> factor(0)
+#> factor()
 #> Levels: a c b
 
 vec_ptype2(factor("b"), factor(c("a", "c")))
-#> factor(0)
+#> factor()
 #> Levels: b a c
 }\if{html}{\out{</div>}}
 
