@@ -670,10 +670,10 @@
     Code
       (expect_error(vec_locate_matches(1:1e+07, 1:1e+07, condition = ">=")))
     Output
-      <error/rlang_error>
+      <error/vctrs_error_matches_overflow>
       Error in `vec_locate_matches()`:
-      ! Match procedure results in an allocation larger than 2^31-1 elements. Attempted allocation size was 50000005000000.
-      i In file 'match.c' at line <scrubbed>.
+      ! Match procedure results in an allocation larger than 2^31-1 elements.
+      i Attempted allocation size was 50000005000000.
       i This is an internal error that was detected in the vctrs package.
         Please report it at <https://github.com/r-lib/vctrs/issues> with a reprex (<https://tidyverse.org/help/>) and the full backtrace.
 

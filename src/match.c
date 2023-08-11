@@ -1637,7 +1637,7 @@ r_obj* expand_compact_indices(const int* v_o_haystack,
 
     if (dbl_size_out > R_LEN_T_MAX) {
       // TODO: Update this after a switch to long vector support
-      stop_matches_overflow(dbl_size_out);
+      stop_matches_overflow(dbl_size_out, error_call);
     }
 
     size_out = r_double_as_ssize(dbl_size_out);
@@ -2654,12 +2654,22 @@ r_ssize midpoint(r_ssize lhs, r_ssize rhs) {
 // -----------------------------------------------------------------------------
 
 static inline
-void stop_matches_overflow(double size) {
-  r_stop_internal(
-    "Match procedure results in an allocation larger than 2^31-1 elements. "
-    "Attempted allocation size was %.0lf.",
-    size
-  );
+void stop_matches_overflow(double size, struct r_lazy call) {
+  r_obj* syms[3] = {
+    syms_size,
+    syms_call,
+    NULL
+  };
+  r_obj* args[3] = {
+    KEEP(r_dbl(size)),
+    KEEP(r_lazy_eval_protect(call)),
+    NULL
+  };
+
+  r_obj* ffi_call = KEEP(r_call_n(syms_stop_matches_overflow, syms, args));
+  Rf_eval(ffi_call, vctrs_ns_env);
+
+  never_reached("stop_matches_overflow");
 }
 
 static inline

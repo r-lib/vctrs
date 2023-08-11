@@ -214,7 +214,7 @@ static inline
 r_ssize midpoint(r_ssize lhs, r_ssize rhs);
 
 static inline
-void stop_matches_overflow(double size);
+void stop_matches_overflow(double size, struct r_lazy call);
 
 static inline
 void stop_matches_nothing(r_ssize i,
