@@ -486,6 +486,7 @@ extern SEXP syms_s3_fallback;
 extern SEXP syms_stop_incompatible_type;
 extern SEXP syms_stop_incompatible_size;
 extern SEXP syms_stop_assert_size;
+extern SEXP syms_stop_matches_overflow;
 extern SEXP syms_stop_matches_nothing;
 extern SEXP syms_stop_matches_remaining;
 extern SEXP syms_stop_matches_incomplete;

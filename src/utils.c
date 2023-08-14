@@ -1584,6 +1584,7 @@ SEXP syms_s3_fallback = NULL;
 SEXP syms_stop_incompatible_type = NULL;
 SEXP syms_stop_incompatible_size = NULL;
 SEXP syms_stop_assert_size = NULL;
+SEXP syms_stop_matches_overflow = NULL;
 SEXP syms_stop_matches_nothing = NULL;
 SEXP syms_stop_matches_remaining = NULL;
 SEXP syms_stop_matches_incomplete = NULL;
@@ -1865,6 +1866,7 @@ void vctrs_init_utils(SEXP ns) {
   syms_stop_incompatible_type = Rf_install("stop_incompatible_type");
   syms_stop_incompatible_size = Rf_install("stop_incompatible_size");
   syms_stop_assert_size = Rf_install("stop_assert_size");
+  syms_stop_matches_overflow = Rf_install("stop_matches_overflow");
   syms_stop_matches_nothing = Rf_install("stop_matches_nothing");
   syms_stop_matches_remaining = Rf_install("stop_matches_remaining");
   syms_stop_matches_incomplete = Rf_install("stop_matches_incomplete");

@@ -356,8 +356,9 @@ compute_nesting_container_info <- function(x, condition) {
 
 # ------------------------------------------------------------------------------
 
-stop_matches <- function(class = NULL, ..., call = caller_env()) {
+stop_matches <- function(message = NULL, class = NULL, ..., call = caller_env()) {
   stop_vctrs(
+    message = message,
     class = c(class, "vctrs_error_matches"),
     ...,
     call = call
@@ -370,6 +371,27 @@ warn_matches <- function(message, class = NULL, ..., call = caller_env()) {
     class = c(class, "vctrs_warning_matches"),
     ...,
     call = call
+  )
+}
+
+# ------------------------------------------------------------------------------
+
+stop_matches_overflow <- function(size, call) {
+  size <- format(size, scientific = FALSE)
+
+  # Pre-generating the message in this case because we want to use
+  # `.internal = TRUE` and that doesn't work with lazy messages
+  message <- c(
+    "Match procedure results in an allocation larger than 2^31-1 elements.",
+    i = glue::glue("Attempted allocation size was {size}.")
+  )
+
+  stop_matches(
+    message = message,
+    class = "vctrs_error_matches_overflow",
+    size = size,
+    call = call,
+    .internal = TRUE
   )
 }
 
