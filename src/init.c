@@ -189,7 +189,7 @@ void vctrs_init_altrep_rle(DllInfo*);
 // Defined in altrep-lazy-character.c
 extern r_obj* ffi_altrep_new_lazy_character(r_obj*);
 extern r_obj* ffi_altrep_lazy_character_is_materialized(r_obj*);
-extern r_obj* vctrs_init_altrep_lazy_character(DllInfo*);
+extern void vctrs_init_altrep_lazy_character(DllInfo*);
 
 static const R_CallMethodDef CallEntries[] = {
   {"vctrs_list_get",                            (DL_FUNC) &vctrs_list_get, 2},
