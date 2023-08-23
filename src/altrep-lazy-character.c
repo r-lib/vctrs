@@ -1,8 +1,8 @@
-#include <cstddef>
-
 #include "altrep.h"
 
 #if (!HAS_ALTREP)
+
+#include <cstddef>
 
 #include <R_ext/Altrep.h>
 #include <R_ext/Boolean.h>
