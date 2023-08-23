@@ -4,11 +4,11 @@
 
 #include <cstddef>
 
+#include <Rinternals.h>
 #include <R_ext/Altrep.h>
 #include <R_ext/Boolean.h>
 #include <R_ext/Print.h>
 #include <R_ext/Rdynload.h>
-#include <Rinternals.h>
 
 #include "call.h"
 #include "cnd.h"
