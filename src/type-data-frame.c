@@ -1,3 +1,4 @@
+#include "size.h"
 #include "utils-dispatch.h"
 #include "vctrs.h"
 #include "type-data-frame.h"

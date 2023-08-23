@@ -1,9 +1,22 @@
-#include "vctrs.h"
+#include <cstddef>
+
 #include "altrep.h"
 
 #if (!HAS_ALTREP)
 
+#include <R_ext/Altrep.h>
+#include <R_ext/Boolean.h>
+#include <R_ext/Print.h>
 #include <R_ext/Rdynload.h>
+#include <Rinternals.h>
+
+#include "call.h"
+#include "cnd.h"
+#include "eval.h"
+#include "globals.h"
+#include "obj.h"
+#include "rlang-types.h"
+#include "utils.h"
 
 void vctrs_init_altrep_lazy_character(DllInfo* dll) { }
 

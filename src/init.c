@@ -1,3 +1,4 @@
+#include "proxy.h"
 #include "vctrs.h"
 #include "altrep-rle.h"
 #include <R_ext/Rdynload.h>
