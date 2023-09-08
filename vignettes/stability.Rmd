@@ -196,18 +196,17 @@ vec_c(Sys.Date(), factor("x"), "x")
 
 ### Factors
 
-Combining two factors returns an integer vector:
+Prior to 4.1.0 (May 2021), combining two factors returned an integer vector. The current behavior creates a new factor with a combination of factor levels, similar to `vec_c()`.
 
 ```{r}
 fa <- factor("a")
 fb <- factor("b")
 
 c(fa, fb)
+c(fb, fa)
 ```
 
-(This is documented in `c()` but is still undesirable.)
-
-`vec_c()` returns a factor taking the union of the levels. This behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()`, which is stricter and is a common source of user difficulty.) 
+`vec_c()` also returns a factor taking the union of the levels. This behaviour is motivated by pragmatics: there are many places in base R that automatically convert character vectors to factors, so enforcing stricter behaviour would be unnecessarily onerous. (This is backed up by experience with `dplyr::bind_rows()`, which is stricter and is a common source of user difficulty.) 
 
 ```{r}
 vec_c(fa, fb)
