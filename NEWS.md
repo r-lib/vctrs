@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed an issue with complex vector tests related to changes in R-devel
+  (#1883).
+
 * Added a class to the `vec_locate_matches()` error that is thrown when an
   overflow would otherwise occur (#1845).
 
