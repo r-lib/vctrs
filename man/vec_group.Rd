@@ -38,7 +38,9 @@ into a tibble to better understand the output.
 \itemize{
 \item \code{vec_group_id()} returns an identifier for the group that each element of
 \code{x} falls in, constructed in the order that they appear. The number of
-groups is also returned as an attribute, \code{n}.
+groups is also returned as an attribute, \code{n}. The locations of unique values
+(as would be returned by \code{vec_unique_loc}) is also returned as an attribute,
+\code{unique_loc}.
 \item \code{vec_group_loc()} returns a data frame containing a \code{key} column with the
 unique groups, and a \code{loc} column with the locations of each group in \code{x}.
 \item \code{vec_group_rle()} locates groups in \code{x} and returns them run length
