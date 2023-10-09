@@ -243,13 +243,27 @@ test_that("safe casts to complex works", {
 })
 
 test_that("NA casts work as expected", {
+  # This goes through a special path for <unspecified>
   expect_equal(vec_cast(lgl(NA), cpl()), NA_complex_)
-  expect_equal(vec_cast(int(NA), cpl()), NA_complex_)
 
   # TODO: Use our own cast routines here?
-  # `as.complex(NA_real_)` and `Rf_CoerceVector(NA_real_)` coerce to
-  # `complex(real = NA_real_, imaginary = 0)` for some reason, but this may
-  # change in the future https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
+  # It isn't great that this logical `NA` cast returns a different `NA`
+  # than the one above with just `lgl(NA)` (which is seen as unspecified). i.e.
+  # check the `Im()` slot between the two in R >=4.4.0. We can fix this with our
+  # own cast routines rather than using `vec_coerce_bare()`.
+  expect_type(vec_cast(lgl(NA, TRUE), cpl()), "complex")
+  expect_identical(is.na(vec_cast(lgl(NA, TRUE), cpl())), c(TRUE, FALSE))
+
+  # TODO: Use our own cast routines here?
+  # `as.complex(NA/NA_real_/NA_integer_)` and `Rf_CoerceVector(NA/NA_real_/NA_integer_)`
+  # have gone back and forth about what they return in the `Im()` slot. In some
+  # R versions they return `0` and in others they return `NA_real_`.
+  # https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
+  # https://stat.ethz.ch/pipermail/r-devel/2023-September/082864.html
+  # expect_equal(vec_cast(int(NA), cpl()), NA_complex_)
+  expect_type(vec_cast(int(NA), cpl()), "complex")
+  expect_identical(is.na(vec_cast(int(NA), cpl())), TRUE)
+
   # expect_equal(vec_cast(dbl(NA), cpl()), NA_complex_)
   expect_type(vec_cast(dbl(NA), cpl()), "complex")
   expect_identical(is.na(vec_cast(dbl(NA), cpl())), TRUE)
@@ -263,13 +277,21 @@ test_that("Shaped NA casts work as expected", {
   exp_mat <- mat(NA_complex_)
   to_mat <- matrix(cpl())
 
-  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
-  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
-
   # TODO: Use our own cast routines here?
-  # `as.complex(NA_real_)` and `Rf_CoerceVector(NA_real_)` coerce to
-  # `complex(real = NA_real_, imaginary = 0)` for some reason, but this may
-  # change in the future https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
+  # `as.complex(NA/NA_real_/NA_integer_)` and `Rf_CoerceVector(NA/NA_real_/NA_integer_)`
+  # have gone back and forth about what they return in the `Im()` slot. In some
+  # R versions they return `0` and in others they return `NA_real_`.
+  # https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
+  # https://stat.ethz.ch/pipermail/r-devel/2023-September/082864.html
+
+  # expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
+  expect_type(vec_cast(mat(lgl(NA)), to_mat), "complex")
+  expect_identical(is.na(vec_cast(mat(lgl(NA)), to_mat)), matrix(TRUE))
+
+  # expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_type(vec_cast(mat(int(NA)), to_mat), "complex")
+  expect_identical(is.na(vec_cast(mat(int(NA)), to_mat)), matrix(TRUE))
+
   # expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
   expect_type(vec_cast(mat(dbl(NA)), to_mat), "complex")
   expect_identical(is.na(vec_cast(mat(dbl(NA)), to_mat)), matrix(TRUE))

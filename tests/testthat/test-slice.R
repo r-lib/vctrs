@@ -38,7 +38,7 @@ test_that("can subset with missing indices", {
     expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, NA))
     expect_identical(vec_slice(int(1, 2, 3), i), int(2, NA))
     expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, NA))
-    expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, NA))
+    expect_identical(vec_slice(cpl2(1, 2, 3), i), cpl2(2, NA))
     expect_identical(vec_slice(chr("1", "2", "3"), i), c("2", NA))
     expect_identical(vec_slice(raw2(1, 2, 3), i), raw2(2, 0))
     expect_identical(vec_slice(list(1, 2, 3), i), list(2, NULL))
