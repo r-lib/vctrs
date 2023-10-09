@@ -98,9 +98,11 @@ r_obj* vec_assign_switch(r_obj* proxy,
 // on a number of factors.
 //
 // - If a fallback is required, the `proxy` is duplicated at the R level.
-// - If `owned` is `VCTRS_OWNED_true`, the `proxy` is typically not duplicated.
-//   However, if it is an ALTREP object, it is duplicated because we need to be
-//   able to assign into the object it represents, not the ALTREP r_obj* itself.
+// - If `owned` is `VCTRS_OWNED_true`, the `proxy` is not duplicated. If the
+//   `proxy` happens to be an ALTREP object, materialization will be forced when
+//   we do the actual assignment, but this should really only happen with
+//   cheap-to-materialize ALTREP "wrapper" objects since we've claimed that we
+//   "own" the `proxy`.
 // - If `owned` is `VCTRS_OWNED_false`, the `proxy` is only
 //   duplicated if it is referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
 //
