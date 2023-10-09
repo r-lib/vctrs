@@ -25,7 +25,7 @@
 #' system.time(y <- long_func(large_x))
 #' system.time(y2 <- vec_deduplicate(long_func)(large_x))
 #' all(y == y2)
-vec_deduplicate <- function(f) {
+vec_deduplicated <- function(f) {
   function(x, ...) {
     res <- vec_group_id_and_loc(x)
     group_id <- unclass(res)

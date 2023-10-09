@@ -58,16 +58,16 @@ test_that("vec_group_id takes the equality proxy recursively", {
 
 # vec_deduplicate ---------------------------------------------------------
 
-test_that("vec_deduplicate(f) runs only on deduplicated values", {
+test_that("vec_deduplicated(f) runs only on deduplicated values", {
   ncalls <<- 0
   f <- function(ii) for(i in ii) ncalls <<- ncalls + 1
 
   x <- c(1, 1, 1, 2, 3)
-  vec_deduplicate(f)(x)
+  vec_deduplicated(f)(x)
   expect_equal(ncalls, 3)
 
   ncalls <<- 0
   x <- 1:5
-  vec_deduplicate(f)(x)
+  vec_deduplicated(f)(x)
   expect_equal(ncalls, 5)
 })
