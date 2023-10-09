@@ -16,10 +16,7 @@ SEXP vctrs_group_id(SEXP x) {
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_out = INTEGER(out);
 
-  R_len_t g_id = 1;
-
-  struct growable g_unq = new_growable(INTSXP, 256);
-  PROTECT_GROWABLE(&g_unq, &nprot);
+  R_len_t g = 1;
 
   for (int i = 0; i < n; ++i) {
     uint32_t hash = dict_hash_scalar(d, i);
@@ -27,13 +24,8 @@ SEXP vctrs_group_id(SEXP x) {
 
     if (key == DICT_EMPTY) {
       dict_put(d, hash, i);
-      // Record group id
-      p_out[i] = g_id;
-      ++g_id;
-
-      // Record unique value
-      growable_push_int(&g_unq, i + 1);
-
+      p_out[i] = g;
+      ++g;
     } else {
       p_out[i] = p_out[key];
     }
@@ -41,9 +33,6 @@ SEXP vctrs_group_id(SEXP x) {
 
   SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d->used), &nprot);
   Rf_setAttrib(out, syms_n, n_groups);
-
-  SEXP unq_vals = growable_values(&g_unq);
-  Rf_setAttrib(out, Rf_install("unique_loc"), unq_vals);
 
   UNPROTECT(nprot);
   return out;
@@ -240,6 +229,57 @@ SEXP vec_group_loc(SEXP x) {
   Rf_setAttrib(out, R_NamesSymbol, names);
 
   out = new_data_frame(out, n_groups);
+
+  UNPROTECT(nprot);
+  return out;
+}
+
+
+// -----------------------------------------------------------------------------
+
+// [[ register() ]]
+SEXP vctrs_group_id_and_loc(SEXP x) {
+  int nprot = 0;
+
+  R_len_t n = vec_size(x);
+
+  x = PROTECT_N(vec_proxy_equal(x), &nprot);
+  x = PROTECT_N(vec_normalize_encoding(x), &nprot);
+
+  struct dictionary* d = new_dictionary(x);
+  PROTECT_DICT(d, &nprot);
+
+  SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
+  int* p_out = INTEGER(out);
+
+  R_len_t g_id = 1;
+
+  struct growable g_unq = new_growable(INTSXP, 256);
+  PROTECT_GROWABLE(&g_unq, &nprot);
+
+  for (int i = 0; i < n; ++i) {
+    uint32_t hash = dict_hash_scalar(d, i);
+    R_len_t key = d->key[hash];
+
+    if (key == DICT_EMPTY) {
+      dict_put(d, hash, i);
+      // Record group id
+      p_out[i] = g_id;
+      ++g_id;
+
+      // Record unique locs
+      growable_push_int(&g_unq, i + 1);
+
+    } else {
+      p_out[i] = p_out[key];
+    }
+  }
+
+  SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d->used), &nprot);
+  Rf_setAttrib(out, syms_n, n_groups);
+
+  SEXP unq_vals = growable_values(&g_unq);
+  Rf_setAttrib(out, Rf_install("unique_loc"), unq_vals);
 
   UNPROTECT(nprot);
   return out;

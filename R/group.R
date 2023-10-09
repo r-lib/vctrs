@@ -6,9 +6,7 @@
 #'
 #' * `vec_group_id()` returns an identifier for the group that each element of
 #'   `x` falls in, constructed in the order that they appear. The number of
-#'   groups is also returned as an attribute, `n`. The locations of unique values
-#'   (as would be returned by `vec_unique_loc`) is also returned as an attribute,
-#'   `unique_loc`.
+#'   groups is also returned as an attribute, `n`.
 #'
 #' * `vec_group_loc()` returns a data frame containing a `key` column with the
 #'   unique groups, and a `loc` column with the locations of each group in `x`.

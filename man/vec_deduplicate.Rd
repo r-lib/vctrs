@@ -13,6 +13,8 @@ vec_deduplicate(f)
 A deduplicated function
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 The deduplicated function acts on the unique values in the first input \code{x}
 and expands the output back to return. The return value is equivalent to \code{f(x)}
 but is significantly faster for inputs with significant duplication.
@@ -21,7 +23,7 @@ but is significantly faster for inputs with significant duplication.
 x <- sample(LETTERS, 10)
 x
 
-large_x <- sample(rep(x, 100))
+large_x <- sample(rep(x, 10))
 length(large_x)
 
 long_func <- function(x) for(i in x) {Sys.sleep(0.001)}
