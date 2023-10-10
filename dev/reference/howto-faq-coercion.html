@@ -169,8 +169,8 @@ inputs could be incompatible because of their attributes. In that case
 incompatibility is signalled by calling stop_incompatible_type().
 In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of &amp;lt;factor&amp;gt; that has stricter combination
-semantics. The method throws when the levels of the two factors are not
-compatible.
+semantics. The method throws an error when the levels of the two factors
+are not compatible.
 #' @export
 vec_ptype2.my_strict_factor.my_strict_factor &amp;lt;- function(x, y, ..., x_arg = &quot;&quot;, y_arg = &quot;&quot;) {
   if (!setequal(levels(x), levels(y))) {
@@ -440,8 +440,8 @@ inputs could be incompatible because of their attributes. In that case
 incompatibility is signalled by calling stop_incompatible_type().
 In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of &amp;lt;factor&amp;gt; that has stricter combination
-semantics. The method throws when the levels of the two factors are not
-compatible.
+semantics. The method throws an error when the levels of the two factors
+are not compatible.
 #' @export
 vec_ptype2.my_strict_factor.my_strict_factor &amp;lt;- function(x, y, ..., x_arg = &quot;&quot;, y_arg = &quot;&quot;) {
   if (!setequal(levels(x), levels(y))) {
@@ -756,8 +756,8 @@ inputs could be incompatible because of their attributes. In that case
 incompatibility is signalled by calling <code><a href="vctrs-conditions.html">stop_incompatible_type()</a></code>.</p>
 <p>In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of <code>&lt;factor&gt;</code> that has stricter combination
-semantics. The method throws when the levels of the two factors are not
-compatible.</p>
+semantics. The method throws an error when the levels of the two factors
+are not compatible.</p>
 <p></p><div class="sourceCode r"><pre><code><span><span class="co">#' @export</span></span>
 <span><span class="va">vec_ptype2.my_strict_factor.my_strict_factor</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span>, <span class="va">x_arg</span> <span class="op">=</span> <span class="st">""</span>, <span class="va">y_arg</span> <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setequal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
