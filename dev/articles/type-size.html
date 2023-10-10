@@ -505,11 +505,11 @@ array.</li>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 10  5</span></span>
+<span><span class="co">#&gt; [1] 5 1</span></span>
 <span><span class="fu"><a href="../reference/vec_slice.html">vec_slice</a></span><span class="op">(</span><span class="va">df</span>, <span class="fl">5</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    x</span></span>
-<span><span class="co">#&gt; 1 10</span></span>
-<span><span class="co">#&gt; 2  5</span></span></code></pre></div>
+<span><span class="co">#&gt;   x</span></span>
+<span><span class="co">#&gt; 1 5</span></span>
+<span><span class="co">#&gt; 2 1</span></span></code></pre></div>
 <p><code>vec_slice(data.frame(x), i)</code> equals
 <code>data.frame(vec_slice(x, i))</code> (modulo variable and row
 names).</p>
@@ -538,7 +538,7 @@ generate an error. This strictness prevents common mistakes like
 <code>dest == c("IAH", "HOU"))</code>, at the cost of occasionally
 requiring an explicit calls to <code><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep()</a></code>.</p>
 <div class="figure">
-<img src="../reference/figures/sizes-recycling.png" alt=""><p class="caption">Summary of vctrs recycling rules. X indicates n
+<img src="../reference/figures/sizes-recycling.png" alt=""><p class="caption">Summary of vctrs recycling rules. X indicates an
 error</p>
 </div>
 <p>You can apply the recycling rules in two ways:</p>
