@@ -180,8 +180,8 @@ incompatibility is signalled by calling \code{stop_incompatible_type()}.
 
 In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of \verb{<factor>} that has stricter combination
-semantics. The method throws when the levels of the two factors are not
-compatible.
+semantics. The method throws an error when the levels of the two factors
+are not compatible.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_strict_factor.my_strict_factor <- function(x, y, ..., x_arg = "", y_arg = "") \{
