@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* Fixed a performance issue with `vec_c()` and ALTREP vectors (in particular,
+  the new ALTREP list vectors in R-devel) (#1884).
+
 * Fixed an issue with complex vector tests related to changes in R-devel
   (#1883).
 
