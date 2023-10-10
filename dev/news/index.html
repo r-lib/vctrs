@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="vctrs-development-version">vctrs (development version)<a class="anchor" aria-label="anchor" href="#vctrs-development-version"></a></h2>
-<ul><li><p>Fixed an issue with complex vector tests related to changes in R-devel (<a href="https://github.com/r-lib/vctrs/issues/1883" class="external-link">#1883</a>).</p></li>
+<ul><li><p>Fixed a performance issue with <code><a href="../reference/vec_c.html">vec_c()</a></code> and ALTREP vectors (in particular, the new ALTREP list vectors in R-devel) (<a href="https://github.com/r-lib/vctrs/issues/1884" class="external-link">#1884</a>).</p></li>
+<li><p>Fixed an issue with complex vector tests related to changes in R-devel (<a href="https://github.com/r-lib/vctrs/issues/1883" class="external-link">#1883</a>).</p></li>
 <li><p>Added a class to the <code><a href="../reference/vec_locate_matches.html">vec_locate_matches()</a></code> error that is thrown when an overflow would otherwise occur (<a href="https://github.com/r-lib/vctrs/issues/1845" class="external-link">#1845</a>).</p></li>
 <li><p>Fixed an issue with <code><a href="../reference/vec_rank.html">vec_rank()</a></code> and 0-column data frames (<a href="https://github.com/r-lib/vctrs/issues/1863" class="external-link">#1863</a>).</p></li>
 </ul></div>
