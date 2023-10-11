@@ -34,7 +34,7 @@ vec_unrep(x)
 the entire vector.
 
 For \code{vec_rep_each()}, an integer vector of the number of times to repeat
-each element of \code{x}. \code{times} will be \link[=vector_recycling_rules]{recycled} to
+each element of \code{x}. \code{times} will be \link[=theory-faq-recycling]{recycled} to
 the size of \code{x}.}
 
 \item{...}{These dots are for future extensions and must be empty.}

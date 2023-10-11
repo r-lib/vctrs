@@ -39,7 +39,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'
 #' @section Properties:
 #'
-#' - Inputs are [recycled][vector_recycling_rules] to a common size with
+#' - Inputs are [recycled][theory-faq-recycling] to a common size with
 #'   [vec_recycle_common()].
 #'
 #' - With the exception of data frames, inputs are not modified in any way.

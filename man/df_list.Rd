@@ -41,7 +41,7 @@ a helper function for data frame subclasses.
 \section{Properties}{
 
 \itemize{
-\item Inputs are \link[=vector_recycling_rules]{recycled} to a common size with
+\item Inputs are \link[=theory-faq-recycling]{recycled} to a common size with
 \code{\link[=vec_recycle_common]{vec_recycle_common()}}.
 \item With the exception of data frames, inputs are not modified in any way.
 Character vectors are never converted to factors, and lists are stored

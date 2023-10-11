@@ -119,6 +119,6 @@ list_sizes(list("a", 1:5, letters))
 }
 \seealso{
 \code{\link[=vec_slice]{vec_slice()}} for a variation of \code{[} compatible with \code{vec_size()},
-and \code{\link[=vec_recycle]{vec_recycle()}} to \link[=vector_recycling_rules]{recycle} vectors to common
+and \code{\link[=vec_recycle]{vec_recycle()}} to \link[=theory-faq-recycling]{recycle} vectors to common
 length.
 }

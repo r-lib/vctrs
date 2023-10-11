@@ -39,7 +39,7 @@ origin of a problem.}
 \description{
 \code{vec_recycle(x, size)} recycles a single vector to a given size.
 \code{vec_recycle_common(...)} recycles multiple vectors to their common size. All
-functions obey the \link[=vector_recycling_rules]{vctrs recycling rules}, and will
+functions obey the \link[=theory-faq-recycling]{vctrs recycling rules}, and will
 throw an error if recycling is not possible. See \code{\link[=vec_size]{vec_size()}} for the precise
 definition of size.
 }

@@ -12,6 +12,17 @@ NULL
 #' @name theory-faq-coercion
 NULL
 
+# Also see the `redirects:` section in `_pkgdown.yml`
+# for `vector_recycling_rules.html`
+
+#' FAQ - How does recycling work in vctrs and the tidyverse?
+#'
+#' @includeRmd man/faq/developer/theory-recycling.Rmd description
+#'
+#' @name theory-faq-recycling
+#' @aliases vector_recycling_rules
+NULL
+
 #' FAQ - How to implement ptype2 and cast methods?
 #'
 #' @includeRmd man/faq/developer/howto-coercion.Rmd description

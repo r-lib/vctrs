@@ -36,7 +36,7 @@
 #'   the entire vector.
 #'
 #'   For `vec_rep_each()`, an integer vector of the number of times to repeat
-#'   each element of `x`. `times` will be [recycled][vector_recycling_rules] to
+#'   each element of `x`. `times` will be [recycled][theory-faq-recycling] to
 #'   the size of `x`.
 #' @param x_arg,times_arg Argument names for errors.
 #'
