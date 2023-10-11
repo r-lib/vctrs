@@ -131,3 +131,10 @@ reference:
   - vec_names
   - vec_as_location
   - vec_as_subscript
+
+# Needed to generate a `vector_recycling_rules` page, since it is an `@alias`
+# but pkgdown doesn't currently generate pages for aliases. Other packages
+# link to this old page name, so we don't want it to disappear.
+# https://github.com/r-lib/pkgdown/issues/1876
+redirects:
+  - ["reference/vector_recycling_rules.html", "reference/theory-faq-recycling.html"]

@@ -32,7 +32,7 @@ If vectors aren't size 1, they must all be the same size. Otherwise, an error is
 tibble(x = 1:3, y = 4:7)
 ```
 
-# vctrs backend:
+# vctrs backend
 
 Packages in r-lib and the tidyverse generally use [vec_size_common()] and [vec_recycle_common()] as the backends for handling recycling rules.
 
@@ -48,7 +48,7 @@ vec_recycle_common(1:3, "x")
 vec_size_common(1:3, c("x", "y"))
 ```
 
-# Base R recycling rules:
+# Base R recycling rules
 
 The recycling rules described here are stricter than the ones generally used by base R, which are:
 

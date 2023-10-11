@@ -187,7 +187,7 @@ vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 #' @rdname vec_bind
 #' @param .size If, `NULL`, the default, will determine the number of rows in
 #'   `vec_cbind()` output by using the tidyverse [recycling
-#'   rules][vector_recycling_rules].
+#'   rules][theory-faq-recycling].
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs of length
 #'   1 will be recycled appropriately.

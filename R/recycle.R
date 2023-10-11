@@ -2,7 +2,7 @@
 #'
 #' `vec_recycle(x, size)` recycles a single vector to a given size.
 #' `vec_recycle_common(...)` recycles multiple vectors to their common size. All
-#' functions obey the [vctrs recycling rules][vector_recycling_rules], and will
+#' functions obey the [vctrs recycling rules][theory-faq-recycling], and will
 #' throw an error if recycling is not possible. See [vec_size()] for the precise
 #' definition of size.
 #'
