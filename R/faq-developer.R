@@ -16,6 +16,7 @@ NULL
 # continues to exist for `vector_recycling_rules` since other packages link to
 # this page and currently `@aliases` don't get a page on the pkgdown
 # site due to: https://github.com/r-lib/pkgdown/issues/1876
+
 #' FAQ - How does recycling work in vctrs and the tidyverse?
 #'
 #' @includeRmd man/faq/developer/theory-recycling.Rmd description
