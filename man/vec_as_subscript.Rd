@@ -32,7 +32,7 @@ locations or names of the observations to get/set. Specify
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{logical, location, character}{How to handle logical, numeric,
+\item{logical, numeric, character}{How to handle logical, numeric,
 and character subscripts.
 
 If \code{"cast"} and the subscript is not one of the three base types

@@ -7,7 +7,6 @@
 #'
 #' @inheritParams rlang::args_error_context
 #' @param x,y,to Vectors
-#' @param subclass Use if you want to further customize the class.
 #' @param ...,class Only use these fields when creating a subclass.
 #' @param x_arg,y_arg,to_arg Argument names for `x`, `y`, and `to`. Used in
 #'   error messages to inform the user about the locations of incompatible

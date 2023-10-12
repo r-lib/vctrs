@@ -86,8 +86,6 @@ mentioned in error messages as the source of the error. See the
 
 \item{x_ptype, to_ptype}{Suppress only the casting errors where \code{x}
 or \code{to} match these \link[=vec_ptype]{prototypes}.}
-
-\item{subclass}{Use if you want to further customize the class.}
 }
 \value{
 \verb{stop_incompatible_*()} unconditionally raise an error of class

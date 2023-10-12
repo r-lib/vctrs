@@ -10,7 +10,7 @@
 #'
 #' @inheritParams vec_as_location
 #'
-#' @param logical,location,character How to handle logical, numeric,
+#' @param logical,numeric,character How to handle logical, numeric,
 #'   and character subscripts.
 #'
 #'   If `"cast"` and the subscript is not one of the three base types
