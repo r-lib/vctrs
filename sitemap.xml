@@ -151,6 +151,9 @@
     <loc>https://vctrs.r-lib.org/reference/theory-faq-coercion.html</loc>
   </url>
   <url>
+    <loc>https://vctrs.r-lib.org/reference/theory-faq-recycling.html</loc>
+  </url>
+  <url>
     <loc>https://vctrs.r-lib.org/reference/unspecified.html</loc>
   </url>
   <url>
@@ -317,8 +320,5 @@
   </url>
   <url>
     <loc>https://vctrs.r-lib.org/reference/vector-checks.html</loc>
-  </url>
-  <url>
-    <loc>https://vctrs.r-lib.org/reference/vector_recycling_rules.html</loc>
   </url>
 </urlset>
