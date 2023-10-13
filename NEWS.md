@@ -1,3 +1,5 @@
+# vctrs (development version)
+
 # vctrs 0.6.4
 
 * Fixed a performance issue with `vec_c()` and ALTREP vectors (in particular,
