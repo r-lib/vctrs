@@ -48,8 +48,6 @@ new_table <- function(x = integer(), dim = NULL, dimnames = NULL) {
     abort("`dim` must be an integer vector.")
   }
 
-  dimnames <- dimnames %||% vec_init(list(), length(dim))
-
   n_elements <- prod(dim)
   n_x <- length(x)
 

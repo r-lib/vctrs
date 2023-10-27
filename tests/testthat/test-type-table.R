@@ -18,34 +18,42 @@ test_that("can find a common type among tables with identical dimensions", {
   tab1 <- new_table()
   tab2 <- new_table(1:2, dim = c(1L, 2L, 1L))
 
-  expect_identical(vec_ptype2(tab1, tab1), zap_dimnames(new_table()))
-  expect_identical(vec_ptype2(tab2, tab2), zap_dimnames(new_table(dim = c(0L, 2L, 1L))))
+  expect_identical(vec_ptype2(tab1, tab1), new_table())
+  expect_identical(vec_ptype2(tab2, tab2), new_table(dim = c(0L, 2L, 1L)))
 })
 
 test_that("size is not considered in the ptype", {
   x <- new_table(1:2, dim = 2L)
   y <- new_table(1:3, dim = 3L)
 
-  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table()))
+  expect_identical(vec_ptype2(x, y), new_table())
 })
 
 test_that("vec_ptype2() can broadcast table shapes", {
   x <- new_table(dim = c(0L, 1L))
   y <- new_table(dim = c(0L, 2L))
 
-  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table(dim = c(0L, 2L))))
+  expect_identical(vec_ptype2(x, y), new_table(dim = c(0L, 2L)))
 
   x <- new_table(dim = c(0L, 1L, 3L))
   y <- new_table(dim = c(0L, 2L, 1L))
 
-  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table(dim = c(0L, 2L, 3L))))
+  expect_identical(vec_ptype2(x, y), new_table(dim = c(0L, 2L, 3L)))
+})
+
+test_that("vec_ptype2() never propagates dimnames", {
+  x <- new_table(dim = c(0L, 1L), dimnames = list(character(), "x1"))
+  y <- new_table(dim = c(0L, 2L), dimnames = list(character(), c("y1", "y2")))
+
+  expect_null(dimnames(vec_ptype2(x, x)))
+  expect_null(dimnames(vec_ptype2(x, y)))
 })
 
 test_that("implicit axes are broadcast", {
   x <- new_table(dim = c(0L, 2L))
   y <- new_table(dim = c(0L, 1L, 3L))
 
-  expect_identical(vec_ptype2(x, y), zap_dimnames(new_table(dim = c(0L, 2L, 3L))))
+  expect_identical(vec_ptype2(x, y), new_table(dim = c(0L, 2L, 3L)))
 })
 
 test_that("errors on non-broadcastable dimensions", {
