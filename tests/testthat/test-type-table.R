@@ -88,7 +88,7 @@ test_that("common types have symmetry when mixed with unspecified input", {
 test_that("`table` delegates coercion", {
   expect_identical(
     vec_ptype2(new_table(1), new_table(FALSE)),
-    zap_dimnames(new_table(double()))
+    new_table(double())
   )
   expect_error(
     vec_ptype2(new_table(1), new_table("")),
