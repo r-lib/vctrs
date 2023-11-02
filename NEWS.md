@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Fixed tests related to changes to `dim<-()` in R-devel (#1889).
+
 # vctrs 0.6.4
 
 * Fixed a performance issue with `vec_c()` and ALTREP vectors (in particular,
