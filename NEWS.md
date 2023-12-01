@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* Internal changes requested by CRAN around C level format strings (#1896).
+
 * Fixed tests related to changes to `dim<-()` in R-devel (#1889).
 
 # vctrs 0.6.4
