@@ -1,3 +1,5 @@
+# vctrs (development version)
+
 # vctrs 0.6.5
 
 * Internal changes requested by CRAN around C level format strings (#1896).

@@ -1,6 +1,6 @@
 Package: vctrs
 Title: Vector Helpers
-Version: 0.6.5
+Version: 0.6.5.9000
 Authors@R: c(
     person("Hadley", "Wickham", , "hadley@posit.co", role = "aut"),
     person("Lionel", "Henry", , "lionel@posit.co", role = "aut"),
