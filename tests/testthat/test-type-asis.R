@@ -50,6 +50,16 @@ test_that("order proxy is forwarded correctly for atomic types (#1557)", {
   expect_identical(vec_proxy_order(asis), c(1L, 2L, 1L))
 })
 
+test_that("proxy is restored correctly for non-atomic types (#1903)", {
+  x <- new_rcrd(list(x = 1:3, y = 2:4), class = "test")
+  x_ptype <- new_rcrd(list(x = integer(), y = integer()), class = "test")
+  asis <- I(x)
+  asis_ptype <- I(x_ptype)
+
+  expect_identical(vec_restore(vec_proxy(asis), asis_ptype), I(vec_restore(vec_proxy(x), x_ptype)))
+  expect_identical(vec_restore(vec_proxy(asis), asis_ptype), asis)
+})
+
 # ------------------------------------------------------------------------------
 # Coercion
 
