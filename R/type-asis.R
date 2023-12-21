@@ -35,7 +35,7 @@ vec_proxy.AsIs <- function(x, ...) {
 
 #' @export
 vec_restore.AsIs <- function(x, to, ...) {
-  asis_restore(x)
+  asis_restore(NextMethod())
 }
 
 #' @export
