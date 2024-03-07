@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `vec_detect_complete(NULL)` now returns `logical()`, consistent with
+  `vec_detect_missing(NULL)` (#1916).
+
 # vctrs 0.6.5
 
 * Internal changes requested by CRAN around C level format strings (#1896).
