@@ -1,3 +1,19 @@
+# `x` must not be `NULL` (#1823)
+
+    Code
+      vec_rank(NULL)
+    Condition
+      Error:
+      ! This type is not supported by `vec_order()`.
+
+---
+
+    Code
+      vec_rank(NULL, incomplete = "na")
+    Condition
+      Error:
+      ! This type is not supported by `vec_order()`.
+
 # `ties` is validated
 
     Code
