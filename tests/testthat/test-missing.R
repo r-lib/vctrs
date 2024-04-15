@@ -143,3 +143,25 @@ test_that(">0 row, 0 col data frame always returns `TRUE` (#1585)", {
     any(vec_detect_missing(df))
   )
 })
+
+# ------------------------------------------------------------------------------
+# vec_proxy_missing()
+
+test_that("vec_proxy_missing()/vec_any_missing() takes vec_proxy_equal() by default", {
+  local_methods(
+    vec_proxy_equal.vctrs_foobar = function(x, ...) (ifelse(x == -99, NA, x)),
+  )
+
+  expect_identical(vec_detect_missing(foobar(c(1, 2, -99, 3))), c(FALSE, FALSE, TRUE, FALSE))
+  expect_identical(vec_any_missing(foobar(c(1, 2, -99, 3))), TRUE)
+  expect_identical(vec_any_missing(foobar(c(1, 2, 3))), FALSE)
+})
+
+test_that("vec_detect_missing() calls vec_proxy_missing(), if implemented", {
+  local_methods(
+    vec_proxy_missing.vctrs_foobar = function(x, ...) (ifelse(x == -99, NA, x)),
+  )
+  expect_identical(vec_detect_missing(foobar(c(1, 2, -99, 3))), c(FALSE, FALSE, TRUE, FALSE))
+  expect_identical(vec_any_missing(foobar(c(1, 2, -99, 3))), TRUE)
+  expect_identical(vec_any_missing(foobar(c(1, 2, 3))), FALSE)
+})
