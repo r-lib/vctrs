@@ -68,12 +68,14 @@ bool vec_is_unspecified(SEXP x);
 
 enum vctrs_proxy_kind {
   VCTRS_PROXY_KIND_equal = 0,
+  VCTRS_PROXY_KIND_missing,
   VCTRS_PROXY_KIND_compare,
   VCTRS_PROXY_KIND_order
 };
 
 SEXP vec_proxy(SEXP x);
 SEXP vec_proxy_equal(SEXP x);
+SEXP vec_proxy_missing(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
 SEXP vec_proxy_order(SEXP x);
 SEXP vec_proxy_unwrap(SEXP x);

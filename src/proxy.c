@@ -68,6 +68,20 @@ r_obj* vec_proxy_equal(r_obj* x) {
 }
 
 // [[ register() ]]
+r_obj* vec_proxy_missing(r_obj* x) {
+  r_obj* out = KEEP(vec_proxy_missing_impl(x));
+
+  if (is_data_frame(out)) {
+    // Automatically proxy df-proxies recursively.
+    // Also flattens and unwraps them (#1537, #1664).
+    out = df_proxy(out, VCTRS_PROXY_KIND_missing);
+  }
+
+  FREE(1);
+  return out;
+}
+
+// [[ register() ]]
 r_obj* vec_proxy_compare(r_obj* x) {
   r_obj* out = KEEP(vec_proxy_compare_impl(x));
 
@@ -109,6 +123,10 @@ r_obj* vec_proxy_order(r_obj* x) {
 static inline
 r_obj* vec_proxy_equal_impl(r_obj* x) {
   VEC_PROXY_KIND_IMPL(vec_proxy_equal_method, vec_proxy_equal_invoke);
+}
+static inline
+r_obj* vec_proxy_missing_impl(r_obj* x) {
+  VEC_PROXY_KIND_IMPL(vec_proxy_missing_method, vec_proxy_missing_invoke);
 }
 static inline
 r_obj* vec_proxy_compare_impl(r_obj* x) {
@@ -164,6 +182,10 @@ r_obj* vec_proxy_equal_method(r_obj* x) {
   return vec_proxy_method_impl(x, "vec_proxy_equal", fns_vec_proxy_equal_array);
 }
 static inline
+r_obj* vec_proxy_missing_method(r_obj* x) {
+  return vec_proxy_method_impl(x, "vec_proxy_missing", fns_vec_proxy_missing_array);
+}
+static inline
 r_obj* vec_proxy_compare_method(r_obj* x) {
   return vec_proxy_method_impl(x, "vec_proxy_compare", fns_vec_proxy_compare_array);
 }
@@ -194,6 +216,10 @@ r_obj* vec_proxy_equal_invoke(r_obj* x, r_obj* method) {
   return vec_proxy_invoke_impl(x, method, syms_vec_proxy_equal, vec_proxy);
 }
 static inline
+r_obj* vec_proxy_missing_invoke(r_obj* x, r_obj* method) {
+  return vec_proxy_invoke_impl(x, method, syms_vec_proxy_missing, &vec_proxy_equal_impl);
+}
+static inline
 r_obj* vec_proxy_compare_invoke(r_obj* x, r_obj* method) {
   return vec_proxy_invoke_impl(x, method, syms_vec_proxy_compare, &vec_proxy_equal_impl);
 }
@@ -222,6 +248,7 @@ r_obj* df_proxy(r_obj* x, enum vctrs_proxy_kind kind) {
 
   switch (kind) {
   case VCTRS_PROXY_KIND_equal: DF_PROXY(vec_proxy_equal); break;
+  case VCTRS_PROXY_KIND_missing: DF_PROXY(vec_proxy_missing); break;
   case VCTRS_PROXY_KIND_compare: DF_PROXY(vec_proxy_compare); break;
   case VCTRS_PROXY_KIND_order: DF_PROXY(vec_proxy_order); break;
   }
@@ -264,6 +291,9 @@ void vctrs_init_data(r_obj* ns) {
   syms_vec_proxy_equal = r_sym("vec_proxy_equal");
   syms_vec_proxy_equal_array = r_sym("vec_proxy_equal.array");
 
+  syms_vec_proxy_missing = r_sym("vec_proxy_missing");
+  syms_vec_proxy_missing_array = r_sym("vec_proxy_missing.array");
+
   syms_vec_proxy_compare = r_sym("vec_proxy_compare");
   syms_vec_proxy_compare_array = r_sym("vec_proxy_compare.array");
 
@@ -271,6 +301,7 @@ void vctrs_init_data(r_obj* ns) {
   syms_vec_proxy_order_array = r_sym("vec_proxy_order.array");
 
   fns_vec_proxy_equal_array = r_env_get(ns, syms_vec_proxy_equal_array);
+  fns_vec_proxy_missing_array = r_env_get(ns, syms_vec_proxy_missing_array);
   fns_vec_proxy_compare_array = r_env_get(ns, syms_vec_proxy_compare_array);
   fns_vec_proxy_order_array = r_env_get(ns, syms_vec_proxy_order_array);
 }
@@ -278,11 +309,14 @@ void vctrs_init_data(r_obj* ns) {
 r_obj* syms_vec_proxy = NULL;
 r_obj* syms_vec_proxy_equal = NULL;
 r_obj* syms_vec_proxy_equal_array = NULL;
+r_obj* syms_vec_proxy_missing = NULL;
+r_obj* syms_vec_proxy_missing_array = NULL;
 r_obj* syms_vec_proxy_compare = NULL;
 r_obj* syms_vec_proxy_compare_array = NULL;
 r_obj* syms_vec_proxy_order = NULL;
 r_obj* syms_vec_proxy_order_array = NULL;
 
 r_obj* fns_vec_proxy_equal_array = NULL;
+r_obj* fns_vec_proxy_missing_array = NULL;
 r_obj* fns_vec_proxy_compare_array = NULL;
 r_obj* fns_vec_proxy_order_array = NULL;

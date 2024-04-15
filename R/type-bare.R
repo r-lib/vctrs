@@ -375,6 +375,17 @@ vec_proxy_equal.array <- function(x, ...) {
   vec_proxy_equal(x)
 }
 
+# missing --------------------------------------------------------------
+
+#' @export
+vec_proxy_missing.array <- function(x, ...) {
+  # The conversion to data frame is only a stopgap, in the long
+  # term, we'll hash arrays natively. Note that hashing functions
+  # similarly convert to data frames.
+  x <- as.data.frame(x)
+  vec_proxy_missing(x)
+}
+
 # compare ------------------------------------------------------------
 
 #' @export

@@ -9,7 +9,7 @@ r_obj* ffi_vec_detect_missing(r_obj* x) {
 
 // [[ include("missing.h") ]]
 r_obj* vec_detect_missing(r_obj* x) {
-  r_obj* proxy = KEEP(vec_proxy_equal(x));
+  r_obj* proxy = KEEP(vec_proxy_missing(x));
   r_obj* out = proxy_detect_missing(proxy);
   FREE(1);
   return out;
@@ -269,7 +269,7 @@ bool vec_any_missing(r_obj* x) {
 }
 
 r_ssize vec_first_missing(r_obj* x) {
-  r_obj* proxy = KEEP(vec_proxy_equal(x));
+  r_obj* proxy = KEEP(vec_proxy_missing(x));
   r_ssize out = proxy_first_missing(proxy);
   FREE(1);
   return out;

@@ -66,6 +66,11 @@ vec_proxy_equal.POSIXlt <- function(x, ...) {
   vec_proxy_equal(x, ...)
 }
 #' @export
+vec_proxy_missing.POSIXlt <- function(x, ...) {
+  x <- vec_cast(x, new_datetime(tzone = tzone(x)))
+  vec_proxy_missing(x, ...)
+}
+#' @export
 vec_proxy_compare.POSIXlt <- function(x, ...) {
   x <- vec_cast(x, new_datetime(tzone = tzone(x)))
   vec_proxy_compare(x)
