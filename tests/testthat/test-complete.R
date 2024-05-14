@@ -113,3 +113,22 @@ test_that("works with arrays", {
   expect_identical(vec_detect_complete(x), c(TRUE, FALSE))
   expect_identical(vec_detect_complete(y), c(TRUE, FALSE))
 })
+
+test_that("works with `NULL`", {
+  # Consistent with `vec_detect_missing()`
+  expect_identical(vec_detect_complete(NULL), logical())
+})
+
+test_that("catches `NULL` data frame columns", {
+  df <- new_data_frame(list(x = integer(), y = NULL), n = 0L)
+
+  expect_snapshot(error = TRUE, {
+    vec_detect_complete(df)
+  })
+})
+
+test_that("catches scalar objects", {
+  expect_snapshot(error = TRUE, {
+    vec_detect_complete(lm(1 ~ 1))
+  })
+})
