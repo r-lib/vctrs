@@ -48,6 +48,43 @@
 #' df
 NULL
 
+#' Missing proxy
+#'
+#' Returns a proxy object (i.e. an atomic vector or data frame of atomic
+#' vectors). For [vctr]s, this determines the behaviour of
+#' [is.na()] and [anyNA()] (via [vec_detect_missing()]).
+#'
+#' The default method calls [vec_proxy_equal()], as the default
+#' equal-able proxy should be used to detect missingness in most cases.
+#'
+#' @section Data frames:
+#' If the proxy for `x` is a data frame, the proxy function is automatically
+#' recursively applied on all columns as well. After applying the proxy
+#' recursively, if there are any data frame columns present in the proxy, then
+#' they are unpacked. Finally, if the resulting data frame only has a single
+#' column, then it is unwrapped and a vector is returned as the proxy.
+#'
+#' @param x A vector x.
+#' @inheritParams rlang::args_dots_empty
+#'
+#' @return A 1d atomic vector or a data frame.
+#' @keywords internal
+#'
+#' @section Dependencies:
+#' - [vec_proxy_equal()] called by default
+#'
+#' @export
+vec_proxy_missing <- function(x, ...) {
+  check_dots_empty0(...)
+  return(.Call(vctrs_proxy_missing, x))
+  UseMethod("vec_proxy_missing")
+}
+
+#' @export
+vec_proxy_missing.default <- function(x, ...) {
+  stop_native_implementation("vec_proxy_missing.default")
+}
+
 #' @rdname missing
 #' @export
 vec_detect_missing <- function(x) {

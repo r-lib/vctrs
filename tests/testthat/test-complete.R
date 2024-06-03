@@ -78,6 +78,20 @@ test_that("takes the equality proxy", {
   expect_identical(vec_detect_complete(df), expect)
 })
 
+test_that("takes the missing proxy if defined", {
+  local_methods(
+    vec_proxy_missing.vctrs_foobar = function(x, ...) (
+      data_frame(a=ifelse(x$a == -99, NA, x$a), b=x$b)
+    ),
+  )
+
+  df <- foobar(data_frame(a = c(1, 2, -99), b = c(1, NA, 2)))
+
+  expect <- c(TRUE, FALSE, FALSE)
+
+  expect_identical(vec_detect_complete(df), expect)
+})
+
 test_that("columns with a data frame proxy are incomplete if any columns of the proxy are incomplete (#1404)", {
   df <- data_frame(
     x = c(NA, 0, 1, 2, 3),

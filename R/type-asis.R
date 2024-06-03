@@ -45,6 +45,12 @@ vec_proxy_equal.AsIs <- function(x, ...) {
 }
 
 #' @export
+vec_proxy_missing.AsIs <- function(x, ...) {
+  x <- asis_strip(x)
+  vec_proxy_missing(x)
+}
+
+#' @export
 vec_proxy_compare.AsIs <- function(x, ...) {
   x <- asis_strip(x)
   vec_proxy_compare(x)

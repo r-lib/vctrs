@@ -5,6 +5,7 @@
 
 r_obj* vec_proxy(r_obj* x);
 r_obj* vec_proxy_equal(r_obj* x);
+r_obj* vec_proxy_missing(r_obj* x);
 r_obj* vec_proxy_compare(r_obj* x);
 r_obj* vec_proxy_order(r_obj* x);
 r_obj* vec_proxy_recurse(r_obj* x);
