@@ -27,6 +27,11 @@ r_obj* vec_assign_opts(r_obj* x,
                                        KEEP(vec_names(x)),
                                        &location_opts));
 
+  if (vec_size(index) == 0) {
+    FREE(2);
+    return x;
+  }
+
   // Cast and recycle `value`
   value = KEEP(vec_cast(value, x, opts.value_arg, opts.x_arg, opts.call));
   value = KEEP(vec_check_recycle(value, vec_size(index), opts.value_arg, opts.call));
