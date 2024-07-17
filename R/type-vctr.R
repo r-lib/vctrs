@@ -545,6 +545,10 @@ vec_cast_or_na <- function(x, to, ...) {
 
 #' @export
 min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (dots_n(...) != 0L) {
+    x <- vec_c(x, ...)
+  }
+
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(Inf, x))
   }
@@ -566,6 +570,10 @@ min.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (dots_n(...) != 0L) {
+    x <- vec_c(x, ...)
+  }
+
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(-Inf, x))
   }
@@ -587,6 +595,10 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 
 #' @export
 range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
+  if (dots_n(...) != 0L) {
+    x <- vec_c(x, ...)
+  }
+
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(c(Inf, -Inf), x))
   }
