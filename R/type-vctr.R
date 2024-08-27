@@ -750,6 +750,8 @@ new_hidden <- function(x = double()) {
   stopifnot(is.numeric(x))
   new_vctr(vec_cast(x, double()), class = "hidden", inherit_base_type = FALSE)
 }
+
+#' @export
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
 local_hidden <- function(frame = caller_env()) {

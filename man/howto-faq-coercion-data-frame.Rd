@@ -153,10 +153,11 @@ With these methods vctrs is now able to combine data tables with data
 frames:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_cbind(data.frame(x = 1:3), data.table(y = "foo"))
-#>    x   y
-#> 1: 1 foo
-#> 2: 2 foo
-#> 3: 3 foo
+#>        x      y
+#>    <int> <char>
+#> 1:     1    foo
+#> 2:     2    foo
+#> 3:     3    foo
 }\if{html}{\out{</div>}}
 }
 
