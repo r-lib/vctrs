@@ -235,7 +235,12 @@ vec_index <- function(x, i, ...) {
 #' @examples
 #' vec_init(1:10, 3)
 #' vec_init(Sys.Date(), 5)
+#'
+#' # The "missing" value for a data frame is a row that is entirely missing
 #' vec_init(mtcars, 2)
+#'
+#' # The "missing" value for a list is `NULL`
+#' vec_init(list(), 3)
 vec_init <- function(x, n = 1L) {
   .Call(ffi_init, x, n, environment())
 }
