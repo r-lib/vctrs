@@ -632,6 +632,18 @@ test_that("Summary generics behave identically to base for empty vctrs (#88)", {
   )
 })
 
+test_that("methods combine `x` and `...` when generic expects them to (#1372)", {
+  x <- new_vctr(1)
+  y <- new_vctr(3)
+
+  expect_identical(min(x, y), x)
+  expect_identical(min(y, x), x)
+  expect_identical(max(x, y), y)
+  expect_identical(max(y, x), y)
+  expect_identical(range(x, y), c(x, y))
+  expect_identical(range(y, x), c(x, y))
+})
+
 test_that("generic predicates return logical vectors (#251)", {
   x <- new_vctr(c(1, 2))
   expect_identical(is.finite(x), c(TRUE, TRUE))
