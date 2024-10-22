@@ -12,6 +12,9 @@
 #'   (same sizes), and contain uniquely named vectors (at least
 #'   one). `fields` is validated with [df_list()] to ensure uniquely
 #'   named vectors.
+#' @details
+#' A new rcrd class created with [new_rcrd()] will not have a [format()] method.
+#' New classes must implement their own [format()] method. See [Record-style objects](https://vctrs.r-lib.org/articles/s3-vector.html?q=record#record-style-objects) for more.
 #' @param ... Additional attributes
 #' @param class Name of subclass.
 #' @export
