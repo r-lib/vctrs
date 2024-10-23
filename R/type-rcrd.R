@@ -17,7 +17,6 @@
 #'   (same sizes), and contain uniquely named vectors (at least
 #'   one). `fields` is validated with [df_list()] to ensure uniquely
 #'   named vectors.
-#' 
 #' @param ... Additional attributes
 #' @param class Name of subclass.
 #' @export
