@@ -1,59 +1,41 @@
+#include <ctype.h>
 #include "vctrs.h"
 #include "type-data-frame.h"
-#include <ctype.h>
 #include "decl/names-decl.h"
-
-static void describe_repair(SEXP old_names, SEXP new_names);
 
 // 3 leading '.' + 1 trailing '\0' + 24 characters
 #define MAX_IOTA_SIZE 28
 
-// Initialised at load time
-SEXP syms_as_universal_names = NULL;
-SEXP syms_check_unique_names = NULL;
-SEXP fns_as_universal_names = NULL;
-SEXP fns_check_unique_names = NULL;
 
-// Defined below
-SEXP vctrs_as_minimal_names(SEXP names);
-SEXP vec_as_universal_names(SEXP names, bool quiet);
-SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts);
-static void vec_validate_minimal_names(SEXP names, R_len_t n);
-
-
-// [[ include("names.h") ]]
-SEXP vec_as_names(SEXP names, const struct name_repair_opts* opts) {
+r_obj* vec_as_names(r_obj* names, const struct name_repair_opts* opts) {
   if (!opts) {
     return names;
   }
   switch (opts->type) {
-  case name_repair_none: return names;
-  case name_repair_minimal: return vctrs_as_minimal_names(names);
-  case name_repair_unique: return vec_as_unique_names(names, opts->quiet);
-  case name_repair_universal: return vec_as_universal_names(names, opts->quiet);
-  case name_repair_check_unique: return check_unique_names(names, opts);
-  case name_repair_custom: return vec_as_custom_names(names, opts);
+  case NAME_REPAIR_none: return names;
+  case NAME_REPAIR_minimal: return ffi_as_minimal_names(names);
+  case NAME_REPAIR_unique: return vec_as_unique_names(names, opts->quiet);
+  case NAME_REPAIR_universal: return vec_as_universal_names(names, opts->quiet);
+  case NAME_REPAIR_check_unique: return check_unique_names(names, opts);
+  case NAME_REPAIR_custom: return vec_as_custom_names(names, opts);
   }
-  never_reached("vec_as_names");
+  r_stop_unreachable();
 }
 
-// [[ register() ]]
-r_obj* ffi_as_names(r_obj* names,
-                    r_obj* repair,
-                    r_obj* ffi_quiet,
-                    r_obj* frame) {
+r_obj* ffi_vec_as_names(r_obj* names,
+                        r_obj* repair,
+                        r_obj* ffi_quiet,
+                        r_obj* frame) {
   if (!r_is_bool(ffi_quiet)) {
     r_abort("`quiet` must a boolean value.");
   }
   bool quiet = r_lgl_get(ffi_quiet, 0);
 
-  struct r_lazy call = (struct r_lazy) { .x = syms_call, .env = frame };
-
-  struct r_lazy repair_arg_ = { .x = syms.repair_arg, .env = frame };
-  struct vctrs_arg repair_arg = new_lazy_arg(&repair_arg_);
+  struct r_lazy call = (struct r_lazy) { .x = r_syms.call, .env = frame };
+  struct r_lazy repair_arg = { .x = syms.repair_arg, .env = frame };
 
   struct name_repair_opts repair_opts = new_name_repair_opts(repair,
-                                                             &repair_arg,
+                                                             repair_arg,
                                                              quiet,
                                                              call);
   KEEP(repair_opts.shelter);
@@ -64,24 +46,68 @@ r_obj* ffi_as_names(r_obj* names,
   return out;
 }
 
-SEXP vec_as_universal_names(SEXP names, bool quiet) {
-  SEXP quiet_obj = PROTECT(r_lgl(quiet));
-  SEXP out = vctrs_dispatch2(syms_as_universal_names, fns_as_universal_names,
-                             syms_names, names,
-                             syms_quiet, quiet_obj);
-  UNPROTECT(1);
+
+struct repair_error_info {
+  r_obj* shelter;
+  r_obj* repair_arg;
+  r_obj* call;
+  r_obj* input_error_repair_arg;
+  r_obj* input_error_call;
+};
+
+struct repair_error_info new_repair_error_info(struct name_repair_opts* p_opts) {
+  struct repair_error_info out;
+
+  out.shelter = r_new_list(4);
+  KEEP(out.shelter);
+
+  out.repair_arg = r_lazy_eval(p_opts->name_repair_arg);
+  r_list_poke(out.shelter, 0, out.repair_arg);
+
+  out.call = r_lazy_eval(p_opts->call);
+  r_list_poke(out.shelter, 1, out.call);
+
+  // If this is NULL, the `repair` value has been hard-coded by the
+  // frontend. Input errors are internal, and we provide no
+  // recommendation to fix user errors by providing a different value
+  // for `repair`.
+  if (out.repair_arg == r_null) {
+    out.input_error_repair_arg = chrs.repair;
+    r_list_poke(out.shelter, 2, out.input_error_repair_arg);
+
+    out.input_error_call = r_call(r_sym("vec_as_names"));
+    r_list_poke(out.shelter, 3, out.input_error_call);
+  } else {
+    out.input_error_repair_arg = r_lazy_eval(p_opts->name_repair_arg);
+    r_list_poke(out.shelter, 2, out.input_error_repair_arg);
+
+    out.input_error_call = r_lazy_eval(p_opts->call);
+    r_list_poke(out.shelter, 3, out.input_error_call);
+  }
+
+  FREE(1);
+  return out;
+}
+
+
+r_obj* vec_as_universal_names(r_obj* names, bool quiet) {
+  r_obj* quiet_obj = KEEP(r_lgl(quiet));
+  r_obj* out = vctrs_dispatch2(syms_as_universal_names, fns_as_universal_names,
+                               syms_names, names,
+                               syms_quiet, quiet_obj);
+  FREE(1);
   return out;
 }
 
 static
 r_obj* check_unique_names(r_obj* names,
                           const struct name_repair_opts* opts) {
-  r_obj* ffi_arg = KEEP(vctrs_arg(opts->name_repair_arg));
+  r_obj* ffi_arg = KEEP(r_lazy_eval(opts->name_repair_arg));
   r_obj* ffi_call = KEEP(r_lazy_eval(opts->call));
 
   r_obj* out = KEEP(vctrs_dispatch3(syms_check_unique_names, fns_check_unique_names,
                                     syms_names, names,
-                                    syms_arg, ffi_arg,
+                                    r_syms.arg, ffi_arg,
                                     syms_call, ffi_call));
 
   // Restore visibility
@@ -91,38 +117,38 @@ r_obj* check_unique_names(r_obj* names,
   return out;
 }
 
-SEXP vec_as_custom_names(SEXP names, const struct name_repair_opts* opts) {
-  names = PROTECT(vctrs_as_minimal_names(names));
+r_obj* vec_as_custom_names(r_obj* names, const struct name_repair_opts* opts) {
+  names = KEEP(ffi_as_minimal_names(names));
 
   // Don't use vctrs dispatch utils because we match argument positionally
-  SEXP call = PROTECT(Rf_lang2(syms_repair, syms_names));
-  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv));
-  Rf_defineVar(syms_repair, opts->fn, mask);
-  Rf_defineVar(syms_names, names, mask);
-  SEXP out = PROTECT(Rf_eval(call, mask));
+  r_obj* call = KEEP(r_call2(syms_repair, syms_names));
+  r_obj* mask = KEEP(r_alloc_empty_environment(R_GlobalEnv));
+  r_env_poke(mask, syms_repair, opts->fn);
+  r_env_poke(mask, syms_names, names);
+  r_obj* out = KEEP(r_eval(call, mask));
 
-  vec_validate_minimal_names(out, Rf_length(names));
+  vec_validate_minimal_names(out, r_length(names), opts->call);
 
-  UNPROTECT(4);
+  FREE(4);
   return out;
 }
 
 static
-SEXP vec_names_impl(SEXP x, bool proxy) {
-  bool has_class = OBJECT(x);
+r_obj* vec_names_impl(r_obj* x, bool proxy) {
+  bool has_class = r_is_object(x);
 
-  if (has_class && Rf_inherits(x, "data.frame")) {
+  if (has_class && r_inherits(x, "data.frame")) {
     // Only return row names if they are character. Data frames with
     // automatic row names are treated as unnamed.
-    SEXP rn = df_rownames(x);
-    if (rownames_type(rn) == ROWNAMES_IDENTIFIERS) {
+    r_obj* rn = df_rownames(x);
+    if (rownames_type(rn) == ROWNAMES_TYPE_identifiers) {
       return rn;
     } else {
-      return R_NilValue;
+      return r_null;
     }
   }
 
-  if (vec_bare_dim(x) == R_NilValue) {
+  if (vec_bare_dim(x) == r_null) {
     if (!proxy && has_class) {
       return vctrs_dispatch1(syms_names, fns_names, syms_x, x);
     } else {
@@ -130,23 +156,22 @@ SEXP vec_names_impl(SEXP x, bool proxy) {
     }
   }
 
-  SEXP dimnames = PROTECT(r_attrib_get(x, R_DimNamesSymbol));
-  if (dimnames == R_NilValue || Rf_length(dimnames) < 1) {
-    UNPROTECT(1);
-    return R_NilValue;
+  r_obj* dimnames = KEEP(r_attrib_get(x, r_syms.dim_names));
+  if (dimnames == r_null || r_length(dimnames) < 1) {
+    FREE(1);
+    return r_null;
   }
 
-  SEXP out = VECTOR_ELT(dimnames, 0);
-  UNPROTECT(1);
+  r_obj* out = r_list_get(dimnames, 0);
+  FREE(1);
   return out;
 }
 
-// [[ register(); include("vctrs.h") ]]
-SEXP vec_names(SEXP x) {
+// [[ register() ]]
+r_obj* vec_names(r_obj* x) {
   return vec_names_impl(x, false);
 }
-// [[ include("vctrs.h") ]]
-SEXP vec_proxy_names(SEXP x) {
+r_obj* vec_proxy_names(r_obj* x) {
   return vec_names_impl(x, true);
 }
 
@@ -159,19 +184,17 @@ r_obj* vec_names2(r_obj* x) {
   }
 }
 
-// [[ register() ]]
-SEXP vctrs_as_minimal_names(SEXP names) {
-  if (TYPEOF(names) != STRSXP) {
-    Rf_errorcall(R_NilValue, "`names` must be a character vector");
+r_obj* ffi_as_minimal_names(r_obj* names) {
+  if (r_typeof(names) != R_TYPE_character) {
+    r_abort("`names` must be a character vector");
   }
 
-  R_len_t i = 0;
-  R_len_t n = Rf_length(names);
-  const SEXP* ptr = STRING_PTR_RO(names);
+  r_ssize i = 0;
+  r_ssize n = r_length(names);
+  r_obj* const * v_names = r_chr_cbegin(names);
 
-  for (; i < n; ++i, ++ptr) {
-    SEXP elt = *ptr;
-    if (elt == NA_STRING) {
+  for (; i < n; ++i) {
+    if (v_names[i] == r_globals.na_str) {
       break;
     }
   }
@@ -179,46 +202,37 @@ SEXP vctrs_as_minimal_names(SEXP names) {
     return names;
   }
 
-  names = PROTECT(Rf_shallow_duplicate(names));
+  names = KEEP(r_clone(names));
 
-  for (; i < n; ++i, ++ptr) {
-    SEXP elt = *ptr;
-    if (elt == NA_STRING) {
-      SET_STRING_ELT(names, i, strings_empty);
+  for (; i < n; ++i) {
+    if (v_names[i] == r_globals.na_str) {
+      r_chr_poke(names, i, strings_empty);
     }
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return names;
 }
 
-// [[ register() ]]
-SEXP vctrs_minimal_names(SEXP x) {
-  SEXP names = PROTECT(vec_names(x));
+r_obj* ffi_minimal_names(r_obj* x) {
+  r_obj* names = KEEP(vec_names(x));
 
-  if (names == R_NilValue) {
-    names = Rf_allocVector(STRSXP, vec_size(x));
+  if (names == r_null) {
+    names = r_alloc_character(vec_size(x));
   } else {
-    names = vctrs_as_minimal_names(names);
+    names = ffi_as_minimal_names(names);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return names;
 }
 
 
 // From dictionary.c
-SEXP vctrs_duplicated(SEXP x);
-
-static bool any_has_suffix(SEXP names);
-static SEXP as_unique_names_impl(SEXP names, bool quiet);
-static void stop_large_name();
-static bool is_dotdotint(const char* name);
-static ptrdiff_t suffix_pos(const char* name);
-static bool needs_suffix(SEXP str);
+r_obj* vctrs_duplicated(r_obj* x);
 
 // [[ include("vctrs.h") ]]
-SEXP vec_as_unique_names(SEXP names, bool quiet) {
+r_obj* vec_as_unique_names(r_obj* names, bool quiet) {
   if (is_unique_names(names) && !any_has_suffix(names)) {
     return names;
   } else {
@@ -227,22 +241,20 @@ SEXP vec_as_unique_names(SEXP names, bool quiet) {
 }
 
 // [[ include("vctrs.h") ]]
-bool is_unique_names(SEXP names) {
-  if (TYPEOF(names) != STRSXP) {
-    Rf_errorcall(R_NilValue, "`names` must be a character vector");
+bool is_unique_names(r_obj* names) {
+  if (r_typeof(names) != R_TYPE_character) {
+    r_abort("`names` must be a character vector");
   }
 
-  R_len_t n = Rf_length(names);
-  const SEXP* names_ptr = STRING_PTR_RO(names);
+  r_ssize n = r_length(names);
+  r_obj* const * v_names = r_chr_cbegin(names);
 
   if (duplicated_any(names)) {
     return false;
   }
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = names_ptr[i];
-
-    if (needs_suffix(elt)) {
+  for (r_ssize i = 0; i < n; ++i) {
+    if (needs_suffix(v_names[i])) {
       return false;
     }
   }
@@ -250,14 +262,12 @@ bool is_unique_names(SEXP names) {
   return true;
 }
 
-bool any_has_suffix(SEXP names) {
-  R_len_t n = Rf_length(names);
-  const SEXP* names_ptr = STRING_PTR_RO(names);
+bool any_has_suffix(r_obj* names) {
+  r_ssize n = r_length(names);
+  r_obj* const * v_names = r_chr_cbegin(names);
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = names_ptr[i];
-
-    if (suffix_pos(CHAR(elt)) >= 0) {
+  for (r_ssize i = 0; i < n; ++i) {
+    if (suffix_pos(r_str_c_string(v_names[i])) >= 0) {
       return true;
     }
   }
@@ -265,46 +275,46 @@ bool any_has_suffix(SEXP names) {
   return false;
 }
 
-SEXP as_unique_names_impl(SEXP names, bool quiet) {
-  R_len_t n = Rf_length(names);
+r_obj* as_unique_names_impl(r_obj* names, bool quiet) {
+  r_ssize n = r_length(names);
 
-  SEXP new_names = PROTECT(Rf_shallow_duplicate(names));
-  const SEXP* new_names_ptr = STRING_PTR_RO(new_names);
+  r_obj* new_names = KEEP(r_clone(names));
+  r_obj* const * v_new_names = r_chr_cbegin(new_names);
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = new_names_ptr[i];
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* elt = v_new_names[i];
 
     // Set `NA` and dots values to "" so they get replaced by `...n`
     // later on
     if (needs_suffix(elt)) {
       elt = strings_empty;
-      SET_STRING_ELT(new_names, i, elt);
+      r_chr_poke(new_names, i, elt);
       continue;
     }
 
     // Strip `...n` suffixes
-    const char* nm = CHAR(elt);
+    const char* nm = r_str_c_string(elt);
     int pos = suffix_pos(nm);
     if (pos >= 0) {
       elt = Rf_mkCharLenCE(nm, pos, Rf_getCharCE(elt));
-      SET_STRING_ELT(new_names, i, elt);
+      r_chr_poke(new_names, i, elt);
       continue;
     }
   }
 
   // Append all duplicates with a suffix
 
-  SEXP dups = PROTECT(vctrs_duplicated(new_names));
-  const int* dups_ptr = LOGICAL_RO(dups);
+  r_obj* dups = KEEP(vctrs_duplicated(new_names));
+  const int* dups_ptr = r_lgl_cbegin(dups);
 
-  for (R_len_t i = 0; i < n; ++i) {
-    SEXP elt = new_names_ptr[i];
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* elt = v_new_names[i];
 
     if (elt != strings_empty && !dups_ptr[i]) {
       continue;
     }
 
-    const char* name = CHAR(elt);
+    const char* name = r_str_c_string(elt);
 
     int size = strlen(name);
     int buf_size = size + MAX_IOTA_SIZE;
@@ -316,34 +326,35 @@ SEXP as_unique_names_impl(SEXP names, bool quiet) {
     memcpy(buf, name, size);
     int remaining = buf_size - size;
 
-    int needed = snprintf(buf + size, remaining, "...%d", i + 1);
+    int needed = snprintf(buf + size, remaining, "...%d", (int) i + 1);
     if (needed >= remaining) {
       stop_large_name();
     }
 
-    SET_STRING_ELT(new_names, i, Rf_mkCharLenCE(buf, size + needed, Rf_getCharCE(elt)));
+    r_chr_poke(new_names, i, Rf_mkCharLenCE(buf, size + needed, Rf_getCharCE(elt)));
   }
 
   if (!quiet) {
     describe_repair(names, new_names);
   }
 
-  UNPROTECT(2);
+  FREE(2);
   return new_names;
 }
 
-SEXP vctrs_as_unique_names(SEXP names, SEXP quiet) {
-  SEXP out = PROTECT(vec_as_unique_names(names, LOGICAL(quiet)[0]));
-  UNPROTECT(1);
+r_obj* vctrs_as_unique_names(r_obj* names, r_obj* quiet) {
+  r_obj* out = KEEP(vec_as_unique_names(names, r_lgl_get(quiet, 0)));
+  FREE(1);
   return out;
 }
 
-SEXP vctrs_is_unique_names(SEXP names) {
+r_obj* vctrs_is_unique_names(r_obj* names) {
   bool out = is_unique_names(names);
-  return Rf_ScalarLogical(out);
+  return r_lgl(out);
 }
 
-static bool is_dotdotint(const char* name) {
+static
+bool is_dotdotint(const char* name) {
   int n = strlen(name);
 
   if (n < 3) {
@@ -362,7 +373,8 @@ static bool is_dotdotint(const char* name) {
   return (bool) strtol(name, NULL, 10);
 }
 
-static ptrdiff_t suffix_pos(const char* name) {
+static
+ptrdiff_t suffix_pos(const char* name) {
   int n = strlen(name);
 
   const char* suffix_end = NULL;
@@ -421,63 +433,58 @@ static ptrdiff_t suffix_pos(const char* name) {
   }
 }
 
-static void stop_large_name() {
-  Rf_errorcall(R_NilValue, "Can't tidy up name because it is too large");
+static void stop_large_name(void) {
+  r_abort("Can't tidy up name because it is too large.");
 }
 
-static bool needs_suffix(SEXP str) {
+static bool needs_suffix(r_obj* str) {
   return
-    str == NA_STRING ||
+    str == r_globals.na_str ||
     str == strings_dots ||
     str == strings_empty ||
-    is_dotdotint(CHAR(str));
+    is_dotdotint(r_str_c_string(str));
 }
 
-
-static SEXP names_iota(R_len_t n);
-static SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet);
-
-// [[ register() ]]
-SEXP vctrs_unique_names(SEXP x, SEXP quiet) {
+r_obj* ffi_unique_names(r_obj* x, r_obj* quiet) {
   return vec_unique_names(x, LOGICAL(quiet)[0]);
 }
 
-// [[ include("utils.h") ]]
-SEXP vec_unique_names(SEXP x, bool quiet) {
-  SEXP names = PROTECT(vec_names(x));
-  SEXP out = vec_unique_names_impl(names, vec_size(x), quiet);
-  UNPROTECT(1);
+r_obj* vec_unique_names(r_obj* x, bool quiet) {
+  r_obj* names = KEEP(vec_names(x));
+  r_obj* out = vec_unique_names_impl(names, vec_size(x), quiet);
+  FREE(1);
   return out;
 }
-// [[ include("utils.h") ]]
-SEXP vec_unique_colnames(SEXP x, bool quiet) {
-  SEXP names = PROTECT(colnames(x));
-  SEXP out = vec_unique_names_impl(names, Rf_ncols(x), quiet);
-  UNPROTECT(1);
+r_obj* vec_unique_colnames(r_obj* x, bool quiet) {
+  r_obj* names = KEEP(colnames(x));
+  r_obj* out = vec_unique_names_impl(names, Rf_ncols(x), quiet);
+  FREE(1);
   return out;
 }
 
-static SEXP vec_unique_names_impl(SEXP names, R_len_t n, bool quiet) {
-  SEXP out;
-  if (names == R_NilValue) {
-    out = PROTECT(names_iota(n));
+static
+r_obj* vec_unique_names_impl(r_obj* names, r_ssize n, bool quiet) {
+  r_obj* out;
+  if (names == r_null) {
+    out = KEEP(names_iota(n));
     if (!quiet) {
       describe_repair(names, out);
     }
   } else {
-    out = PROTECT(vec_as_unique_names(names, quiet));
+    out = KEEP(vec_as_unique_names(names, quiet));
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return(out);
 }
 
-static SEXP names_iota(R_len_t n) {
+static
+r_obj* names_iota(r_ssize n) {
   char buf[MAX_IOTA_SIZE];
-  SEXP nms = r_chr_iota(n, buf, MAX_IOTA_SIZE, "...");
+  r_obj* nms = r_chr_iota(n, buf, MAX_IOTA_SIZE, "...");
 
-  if (nms == R_NilValue) {
-    Rf_errorcall(R_NilValue, "Too many names to repair.");
+  if (nms == r_null) {
+    r_abort("Too many names to repair.");
   }
 
   return nms;
@@ -485,44 +492,44 @@ static SEXP names_iota(R_len_t n) {
 
 
 
-static void describe_repair(SEXP old_names, SEXP new_names) {
-  SEXP call = PROTECT(Rf_lang3(Rf_install("describe_repair"),
-    old_names, new_names));
-  Rf_eval(call, vctrs_ns_env);
+static
+void describe_repair(r_obj* old_names, r_obj* new_names) {
+  r_obj* call = KEEP(r_call3(r_sym("describe_repair"),
+                             old_names,
+                             new_names));
+  r_eval(call, vctrs_ns_env);
 
   // To reset visibility when called from a `.External2()`
-  Rf_eval(R_NilValue, R_EmptyEnv);
+  r_eval(r_null, r_envs.empty);
 
-  UNPROTECT(1);
+  FREE(1);
 }
 
 
-// [[ register() ]]
-SEXP vctrs_outer_names(SEXP names, SEXP outer, SEXP n) {
-  if (names != R_NilValue && TYPEOF(names) != STRSXP) {
+r_obj* ffi_outer_names(r_obj* names, r_obj* outer, r_obj* n) {
+  if (names != r_null && r_typeof(names) != R_TYPE_character) {
     r_stop_internal("`names` must be `NULL` or a string.");
   }
   if (!r_is_number(n)) {
     r_stop_internal("`n` must be a single integer.");
   }
 
-  if (outer != R_NilValue) {
+  if (outer != r_null) {
     outer = r_chr_get(outer, 0);
   }
 
   return outer_names(names, outer, r_int_get(n, 0));
 }
 
-// [[ include("utils.h") ]]
-SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
-  if (outer == R_NilValue) {
+r_obj* outer_names(r_obj* names, r_obj* outer, r_ssize n) {
+  if (outer == r_null) {
     return names;
   }
-  if (TYPEOF(outer) != CHARSXP) {
+  if (r_typeof(outer) != R_TYPE_string) {
     r_stop_internal("`outer` must be a scalar string.");
   }
 
-  if (outer == strings_empty || outer == NA_STRING) {
+  if (outer == strings_empty || outer == r_globals.na_str) {
     return names;
   }
 
@@ -530,35 +537,31 @@ SEXP outer_names(SEXP names, SEXP outer, R_len_t n) {
     if (n == 1) {
       return r_str_as_character(outer);
     } else {
-      return r_seq_chr(CHAR(outer), n);
+      return r_seq_chr(r_str_c_string(outer), n);
     }
   } else {
-    return r_chr_paste_prefix(names, CHAR(outer), "..");
+    return r_chr_paste_prefix(names, r_str_c_string(outer), "..");
   }
 }
 
-// [[ register() ]]
-SEXP vctrs_apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, SEXP n) {
+r_obj* ffi_apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_obj* n) {
   return apply_name_spec(name_spec, r_chr_get(outer, 0), inner, r_int_get(n, 0));
 }
 
-static SEXP glue_as_name_spec(SEXP spec);
-
-// [[ include("utils.h") ]]
-SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
-  if (Rf_inherits(name_spec, "rlang_zap")) {
-    return R_NilValue;
+r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) {
+  if (r_inherits(name_spec, "rlang_zap")) {
+    return r_null;
   }
 
-  if (outer == R_NilValue) {
+  if (outer == r_null) {
     return inner;
   }
-  if (TYPEOF(outer) != CHARSXP) {
+  if (r_typeof(outer) != R_TYPE_string) {
     r_stop_internal("`outer` must be a scalar string.");
   }
 
-  if (outer == strings_empty || outer == NA_STRING) {
-    if (inner == R_NilValue) {
+  if (outer == strings_empty || outer == r_globals.na_str) {
+    if (inner == r_null) {
       return chrs_empty;
     } else {
       return inner;
@@ -567,61 +570,64 @@ SEXP apply_name_spec(SEXP name_spec, SEXP outer, SEXP inner, R_len_t n) {
 
   if (r_is_empty_names(inner)) {
     if (n == 0) {
-      return vctrs_shared_empty_chr;
+      return r_globals.empty_chr;
     }
     if (n == 1) {
       return r_str_as_character(outer);
     }
-    inner = PROTECT(r_seq(1, n + 1));
+    inner = KEEP(r_seq(1, n + 1));
   } else {
-    inner = PROTECT(inner);
+    inner = KEEP(inner);
   }
 
-  switch (TYPEOF(name_spec)) {
-  case CLOSXP:
+  switch (r_typeof(name_spec)) {
+  case R_TYPE_closure:
     break;
-  case STRSXP:
+  case R_TYPE_character:
     name_spec = glue_as_name_spec(name_spec);
     break;
   default:
     name_spec = r_as_function(name_spec, ".name_spec");
     break;
-  case NILSXP:
-    Rf_errorcall(R_NilValue,
-                 "Can't merge the outer name `%s` with a vector of length > 1.\n"
-                 "Please supply a `.name_spec` specification.",
-                 CHAR(outer));
-  }
-  PROTECT(name_spec);
+  case R_TYPE_null: {
+    const char* reason;
+    if (n > 1) {
+      reason = "a vector of length > 1";
+    } else {
+      reason = "a named vector";
+    }
+    r_abort("Can't merge the outer name `%s` with %s.\n"
+            "Please supply a `.name_spec` specification.",
+            r_str_c_string(outer),
+            reason);
+  }}
+  KEEP(name_spec);
 
-  SEXP outer_chr = PROTECT(r_str_as_character(outer));
+  r_obj* outer_chr = KEEP(r_str_as_character(outer));
 
-  SEXP out = PROTECT(vctrs_dispatch2(syms_dot_name_spec, name_spec,
-                                     syms_outer, outer_chr,
-                                     syms_inner, inner));
+  r_obj* out = KEEP(vctrs_dispatch2(syms_dot_name_spec, name_spec,
+                                    syms_outer, outer_chr,
+                                    syms_inner, inner));
   out = vec_recycle(out, n);
 
-  if (out != R_NilValue) {
-    if (TYPEOF(out) != STRSXP) {
-      Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector.");
+  if (out != r_null) {
+    if (r_typeof(out) != R_TYPE_character) {
+      r_abort("`.name_spec` must return a character vector.");
     }
-    if (Rf_length(out) != n) {
-      Rf_errorcall(R_NilValue, "`.name_spec` must return a character vector as long as `inner`.");
+    if (r_length(out) != n) {
+      r_abort("`.name_spec` must return a character vector as long as `inner`.");
     }
   }
 
-  UNPROTECT(4);
+  FREE(4);
   return out;
 }
 
 
-static SEXP syms_glue_as_name_spec = NULL;
-static SEXP fns_glue_as_name_spec = NULL;
-static SEXP syms_internal_spec = NULL;
-
-static SEXP glue_as_name_spec(SEXP spec) {
+static
+r_obj* glue_as_name_spec(r_obj* spec) {
   if (!r_is_string(spec)) {
-    Rf_errorcall(R_NilValue, "Glue specification in `.name_spec` must be a single string.");
+    r_abort("Glue specification in `.name_spec` must be a single string.");
   }
   return vctrs_dispatch1(syms_glue_as_name_spec, fns_glue_as_name_spec,
                          syms_internal_spec, spec);
@@ -630,12 +636,11 @@ static SEXP glue_as_name_spec(SEXP spec) {
 #define VCTRS_PASTE_BUFFER_MAX_SIZE 4096
 char vctrs_paste_buffer[VCTRS_PASTE_BUFFER_MAX_SIZE];
 
-// [[ include("names.h") ]]
-SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
-  int n_protect = 0;
+r_obj* r_chr_paste_prefix(r_obj* names, const char* prefix, const char* sep) {
+  int n_prot = 0;
 
-  names = PROTECT_N(Rf_shallow_duplicate(names), &n_protect);
-  R_len_t n = Rf_length(names);
+  names = KEEP_N(r_clone(names), &n_prot);
+  r_ssize n = r_length(names);
 
   int outer_len = strlen(prefix);
   int names_len = r_chr_max_len(names);
@@ -645,9 +650,9 @@ SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
 
   char* buf = vctrs_paste_buffer;
   if (total_len > VCTRS_PASTE_BUFFER_MAX_SIZE) {
-    SEXP buf_box = PROTECT_N(
-      Rf_allocVector(RAWSXP, total_len * sizeof(char)),
-      &n_protect
+    r_obj* buf_box = KEEP_N(
+      r_alloc_raw(total_len * sizeof(char)),
+      &n_prot
     );
     buf = (char*) RAW(buf_box);
   }
@@ -661,31 +666,29 @@ SEXP r_chr_paste_prefix(SEXP names, const char* prefix, const char* sep) {
     *bufp++ = sep[i];
   }
 
-  SEXP const* p_names = STRING_PTR_RO(names);
+  r_obj* const* p_names = r_chr_cbegin(names);
 
-  for (R_len_t i = 0; i < n; ++i) {
-    const char* inner = CHAR(p_names[i]);
+  for (r_ssize i = 0; i < n; ++i) {
+    const char* inner = r_str_c_string(p_names[i]);
     int inner_n = strlen(inner);
 
     memcpy(bufp, inner, inner_n);
     bufp[inner_n] = '\0';
 
-    SET_STRING_ELT(names, i, r_str(buf));
+    r_chr_poke(names, i, r_str(buf));
   }
 
-  UNPROTECT(n_protect);
+  FREE(n_prot);
   return names;
 }
 
-// [[ register() ]]
-SEXP vctrs_chr_paste_prefix(SEXP names, SEXP prefix, SEXP sep) {
+r_obj* ffi_chr_paste_prefix(r_obj* names, r_obj* prefix, r_obj* sep) {
   return r_chr_paste_prefix(names,
                             r_chr_get_c_string(prefix, 0),
                             r_chr_get_c_string(sep, 0));
 }
 
-// [[ include("names.h") ]]
-SEXP r_seq_chr(const char* prefix, R_len_t n) {
+r_obj* r_seq_chr(const char* prefix, r_ssize n) {
   int total_len = 24 + strlen(prefix) + 1;
 
   R_CheckStack2(total_len);
@@ -695,45 +698,38 @@ SEXP r_seq_chr(const char* prefix, R_len_t n) {
 }
 
 
-// Initialised at load time
-SEXP syms_set_rownames_dispatch = NULL;
-SEXP fns_set_rownames_dispatch = NULL;
-
-static SEXP set_rownames_dispatch(SEXP x, SEXP names) {
+static
+r_obj* set_rownames_dispatch(r_obj* x, r_obj* names) {
   return vctrs_dispatch2(syms_set_rownames_dispatch, fns_set_rownames_dispatch,
                          syms_x, x,
                          syms_names, names);
 }
 
-// Initialised at load time
-SEXP syms_set_names_dispatch = NULL;
-SEXP fns_set_names_dispatch = NULL;
-
-static SEXP set_names_dispatch(SEXP x, SEXP names) {
+static
+r_obj* set_names_dispatch(r_obj* x, r_obj* names) {
   return vctrs_dispatch2(syms_set_names_dispatch, fns_set_names_dispatch,
                          syms_x, x,
                          syms_names, names);
 }
 
-static void check_names(SEXP x, SEXP names) {
-  if (names == R_NilValue) {
+static
+void check_names(r_obj* x, r_obj* names) {
+  if (names == r_null) {
     return;
   }
 
-  if (TYPEOF(names) != STRSXP) {
-    Rf_errorcall(
-      R_NilValue,
+  if (r_typeof(names) != R_TYPE_character) {
+    r_abort(
       "`names` must be a character vector, not a %s.",
-      Rf_type2char(TYPEOF(names))
+      r_type_as_c_string(r_typeof(names))
     );
   }
 
-  R_len_t x_size = vec_size(x);
-  R_len_t names_size = vec_size(names);
+  r_ssize x_size = vec_size(x);
+  r_ssize names_size = vec_size(names);
 
   if (x_size != names_size) {
-    Rf_errorcall(
-      R_NilValue,
+    r_abort(
       "The size of `names`, %i, must be the same as the size of `x`, %i.",
       names_size,
       x_size
@@ -741,49 +737,49 @@ static void check_names(SEXP x, SEXP names) {
   }
 }
 
-SEXP vec_set_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
-  if (!proxy && OBJECT(x)) {
+r_obj* vec_set_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
+  if (!proxy && r_is_object(x)) {
     return set_rownames_dispatch(x, names);
   }
 
   int nprot = 0;
 
-  SEXP dim_names = Rf_getAttrib(x, R_DimNamesSymbol);
+  r_obj* dim_names = r_attrib_get(x, r_syms.dim_names);
 
   // Early exit when no new row names and no existing row names
-  if (names == R_NilValue) {
-    if (dim_names == R_NilValue || VECTOR_ELT(dim_names, 0) == R_NilValue) {
+  if (names == r_null) {
+    if (dim_names == r_null || r_list_get(dim_names, 0) == r_null) {
       return x;
     }
   }
 
-  x = PROTECT_N(vec_clone_referenced(x, owned), &nprot);
+  x = KEEP_N(vec_clone_referenced(x, owned), &nprot);
 
-  if (dim_names == R_NilValue) {
-    dim_names = PROTECT_N(Rf_allocVector(VECSXP, vec_dim_n(x)), &nprot);
+  if (dim_names == r_null) {
+    dim_names = KEEP_N(r_alloc_list(vec_dim_n(x)), &nprot);
   } else {
     // Also clone attribute
-    dim_names = PROTECT_N(Rf_shallow_duplicate(dim_names), &nprot);
+    dim_names = KEEP_N(r_clone(dim_names), &nprot);
   }
 
-  SET_VECTOR_ELT(dim_names, 0, names);
+  r_list_poke(dim_names, 0, names);
 
-  Rf_setAttrib(x, R_DimNamesSymbol, dim_names);
+  r_attrib_poke(x, r_syms.dim_names, dim_names);
 
-  UNPROTECT(nprot);
+  FREE(nprot);
   return x;
 }
 
-SEXP vec_set_df_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
-  if (names == R_NilValue) {
-    if (rownames_type(df_rownames(x)) != ROWNAMES_IDENTIFIERS) {
+r_obj* vec_set_df_rownames(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
+  if (names == r_null) {
+    if (rownames_type(df_rownames(x)) != ROWNAMES_TYPE_identifiers) {
       return(x);
     }
 
-    x = PROTECT(vec_clone_referenced(x, owned));
+    x = KEEP(vec_clone_referenced(x, owned));
     init_compact_rownames(x, vec_size(x));
 
-    UNPROTECT(1);
+    FREE(1);
     return x;
   }
 
@@ -791,18 +787,18 @@ SEXP vec_set_df_rownames(SEXP x, SEXP names, bool proxy, const enum vctrs_owned 
   if (!proxy) {
     names = vec_as_names(names, p_unique_repair_silent_opts);
   }
-  PROTECT(names);
+  KEEP(names);
 
-  x = PROTECT(vec_clone_referenced(x, owned));
-  Rf_setAttrib(x, R_RowNamesSymbol, names);
+  x = KEEP(vec_clone_referenced(x, owned));
+  r_attrib_poke(x, r_syms.row_names, names);
 
-  UNPROTECT(2);
+  FREE(2);
   return x;
 }
 
 // FIXME: Do we need to get the vec_proxy() and only fall back if it doesn't
 // exist? See #526 and #531 for discussion and the related issue.
-SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned owned) {
+r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_owned owned) {
   check_names(x, names);
 
   if (is_data_frame(x)) {
@@ -813,58 +809,62 @@ SEXP vec_set_names_impl(SEXP x, SEXP names, bool proxy, const enum vctrs_owned o
     return vec_set_rownames(x, names, proxy, owned);
   }
 
-  if (!proxy && OBJECT(x)) {
+  if (!proxy && r_is_object(x)) {
     return set_names_dispatch(x, names);
   }
 
   // Early exit if no new names and no existing names
-  if (names == R_NilValue && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue) {
+  if (names == r_null && r_attrib_get(x, r_syms.names) == r_null) {
     return x;
   }
 
   if (owned) {
     // Possibly skip the cloning altogether
-    x = PROTECT(vec_clone_referenced(x, owned));
-    Rf_setAttrib(x, R_NamesSymbol, names);
+    x = KEEP(vec_clone_referenced(x, owned));
+    r_attrib_poke(x, r_syms.names, names);
   } else {
     // We need to clone, but to do this we will use `names<-`
     // which can perform a cheaper ALTREP shallow duplication
-    x = PROTECT(set_names_dispatch(x, names));
+    x = KEEP(set_names_dispatch(x, names));
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return x;
 }
-// [[ include("utils.h"); register() ]]
-SEXP vec_set_names(SEXP x, SEXP names) {
+// [[ register() ]]
+r_obj* vec_set_names(r_obj* x, r_obj* names) {
   return vec_set_names_impl(x, names, false, VCTRS_OWNED_false);
 }
-// [[ include("utils.h") ]]
-SEXP vec_proxy_set_names(SEXP x, SEXP names, const enum vctrs_owned owned) {
+r_obj* vec_proxy_set_names(r_obj* x, r_obj* names, const enum vctrs_owned owned) {
   return vec_set_names_impl(x, names, true, owned);
 }
 
 
-SEXP vctrs_validate_name_repair_arg(SEXP arg) {
+r_obj* vctrs_validate_name_repair_arg(r_obj* arg) {
   struct name_repair_opts opts = new_name_repair_opts(arg,
-                                                      vec_args.empty,
+                                                      r_lazy_null,
                                                       true,
                                                       r_lazy_null);
-  if (opts.type == name_repair_custom) {
+  if (opts.type == NAME_REPAIR_custom) {
     return opts.fn;
-  } else if (Rf_length(arg) != 1) {
+  } else if (r_length(arg) != 1) {
     return r_str_as_character(r_str(name_repair_arg_as_c_string(opts.type)));
   } else {
     return arg;
   }
 }
 
-void stop_name_repair() {
-  Rf_errorcall(R_NilValue, "`.name_repair` must be a string or a function. See `?vctrs::vec_as_names`.");
+void stop_name_repair(struct name_repair_opts* p_opts) {
+  struct repair_error_info info = new_repair_error_info(p_opts);
+  KEEP(info.shelter);
+
+  r_abort_call(info.input_error_call,
+               "%s must be a string or a function. See `?vctrs::vec_as_names`.",
+               r_format_error_arg(info.input_error_repair_arg));
 }
 
 struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
-                                             struct vctrs_arg* name_repair_arg,
+                                             struct r_lazy name_repair_arg,
                                              bool quiet,
                                              struct r_lazy call) {
   struct name_repair_opts opts = {
@@ -876,93 +876,104 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
     .call = call
   };
 
-  switch (TYPEOF(name_repair)) {
-  case STRSXP: {
-    if (!Rf_length(name_repair)) {
-      stop_name_repair();
+  switch (r_typeof(name_repair)) {
+  case R_TYPE_character: {
+    if (!r_length(name_repair)) {
+      stop_name_repair(&opts);
     }
 
-    SEXP c = r_chr_get(name_repair, 0);
+    r_obj* c = r_chr_get(name_repair, 0);
 
     if (c == strings_none) {
-      opts.type = name_repair_none;
+      opts.type = NAME_REPAIR_none;
     } else if (c == strings_minimal) {
-      opts.type = name_repair_minimal;
+      opts.type = NAME_REPAIR_minimal;
     } else if (c == strings_unique) {
-      opts.type = name_repair_unique;
+      opts.type = NAME_REPAIR_unique;
     } else if (c == strings_universal) {
-      opts.type = name_repair_universal;
+      opts.type = NAME_REPAIR_universal;
     } else if (c == strings_check_unique) {
-      opts.type = name_repair_check_unique;
+      opts.type = NAME_REPAIR_check_unique;
+    } else if (c == strings_unique_quiet) {
+      opts.type = NAME_REPAIR_unique;
+      opts.quiet = true;
+    } else if (c == strings_universal_quiet) {
+      opts.type = NAME_REPAIR_universal;
+      opts.quiet = true;
     } else {
-      Rf_errorcall(R_NilValue, "`.name_repair` can't be \"%s\". See `?vctrs::vec_as_names`.", CHAR(c));
+      struct repair_error_info info = new_repair_error_info(&opts);
+      KEEP(info.shelter);
+      r_abort_call(info.input_error_call,
+                   "%s can't be \"%s\". See `?vctrs::vec_as_names`.",
+                   r_format_error_arg(info.input_error_repair_arg),
+                   r_str_c_string(c));
     }
 
     return opts;
   }
 
-  case LANGSXP:
+  case R_TYPE_call:
     opts.fn = r_as_function(name_repair, ".name_repair");
     opts.shelter = opts.fn;
-    opts.type = name_repair_custom;
+    opts.type = NAME_REPAIR_custom;
     return opts;
 
-  case CLOSXP:
+  case R_TYPE_closure:
     opts.fn = name_repair;
-    opts.type = name_repair_custom;
+    opts.type = NAME_REPAIR_custom;
     return opts;
 
   default:
-    stop_name_repair();
+    stop_name_repair(&opts);
   }
 
-  never_reached("new_name_repair_opts");
+  r_stop_unreachable();
 }
 
-// [[ include("vctrs.h") ]]
 const char* name_repair_arg_as_c_string(enum name_repair_type type) {
   switch (type) {
-  case name_repair_none: return "none";
-  case name_repair_minimal: return "minimal";
-  case name_repair_unique: return "unique";
-  case name_repair_universal: return "universal";
-  case name_repair_check_unique: return "check_unique";
-  case name_repair_custom: return "custom";
+  case NAME_REPAIR_none: return "none";
+  case NAME_REPAIR_minimal: return "minimal";
+  case NAME_REPAIR_unique: return "unique";
+  case NAME_REPAIR_universal: return "universal";
+  case NAME_REPAIR_check_unique: return "check_unique";
+  case NAME_REPAIR_custom: return "custom";
   }
-  never_reached("name_repair_arg_as_c_string");
+  r_stop_unreachable();
 }
 
-static void vec_validate_minimal_names(SEXP names, R_len_t n) {
-  if (names == R_NilValue) {
-    Rf_errorcall(R_NilValue, "Names repair functions can't return `NULL`.");
+static
+void vec_validate_minimal_names(r_obj* names, r_ssize n, struct r_lazy call) {
+  if (names == r_null) {
+    r_abort_lazy_call(call, "Names repair functions can't return `NULL`.");
   }
 
-  if (TYPEOF(names) != STRSXP) {
-    Rf_errorcall(R_NilValue, "Names repair functions must return a character vector.");
+  if (r_typeof(names) != R_TYPE_character) {
+    r_abort_lazy_call(call, "Names repair functions must return a character vector.");
   }
 
-  if (n >= 0 && Rf_length(names) != n) {
-    Rf_errorcall(R_NilValue,
-                 "Repaired names have length %d instead of length %d.",
-                 Rf_length(names),
-                 n);
+  if (n >= 0 && r_length(names) != n) {
+    r_abort_lazy_call(call,
+                      "Repaired names have length %d instead of length %d.",
+                      r_length(names),
+                      n);
   }
 
-  if (r_chr_has_string(names, NA_STRING)) {
-    Rf_errorcall(R_NilValue, "Names repair functions can't return `NA` values.");
+  if (r_chr_has_string(names, r_globals.na_str)) {
+    r_abort_lazy_call(call, "Names repair functions can't return `NA` values.");
   }
 }
-SEXP vctrs_validate_minimal_names(SEXP names, SEXP n_) {
-  R_len_t n = -1;
+r_obj* vctrs_validate_minimal_names(r_obj* names, r_obj* n_) {
+  r_ssize n = -1;
 
-  if (TYPEOF(n_) == INTSXP) {
-    if (Rf_length(n_) != 1) {
+  if (r_typeof(n_) == R_TYPE_integer) {
+    if (r_length(n_) != 1) {
       r_stop_internal("`n` must be a single number.");
     }
-    n = INTEGER(n_)[0];
+    n = r_int_get(n_, 0);
   }
 
-  vec_validate_minimal_names(names, n);
+  vec_validate_minimal_names(names, n, r_lazy_null);
   return names;
 }
 
@@ -971,30 +982,43 @@ struct name_repair_opts unique_repair_default_opts;
 struct name_repair_opts unique_repair_silent_opts;
 struct name_repair_opts no_repair_opts;
 
-void vctrs_init_names(SEXP ns) {
-  syms_set_rownames_dispatch = Rf_install("set_rownames_dispatch");
-  syms_set_names_dispatch = Rf_install("set_names_dispatch");
-  syms_as_universal_names = Rf_install("as_universal_names");
-  syms_check_unique_names = Rf_install("validate_unique");
+void vctrs_init_names(r_obj* ns) {
+  syms_set_rownames_dispatch = r_sym("set_rownames_dispatch");
+  syms_set_names_dispatch = r_sym("set_names_dispatch");
+  syms_as_universal_names = r_sym("as_universal_names");
+  syms_check_unique_names = r_sym("validate_unique");
 
   fns_set_rownames_dispatch = r_env_get(ns, syms_set_rownames_dispatch);
   fns_set_names_dispatch = r_env_get(ns, syms_set_names_dispatch);
   fns_as_universal_names = r_env_get(ns, syms_as_universal_names);
   fns_check_unique_names = r_env_get(ns, syms_check_unique_names);
 
-  syms_glue_as_name_spec = Rf_install("glue_as_name_spec");
+  syms_glue_as_name_spec = r_sym("glue_as_name_spec");
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
-  syms_internal_spec = Rf_install("_spec");
+  syms_internal_spec = r_sym("_spec");
 
-  unique_repair_default_opts.type = name_repair_unique;
-  unique_repair_default_opts.fn = R_NilValue;
+  unique_repair_default_opts.type = NAME_REPAIR_unique;
+  unique_repair_default_opts.fn = r_null;
   unique_repair_default_opts.quiet = false;
 
-  unique_repair_silent_opts.type = name_repair_unique;
-  unique_repair_silent_opts.fn = R_NilValue;
+  unique_repair_silent_opts.type = NAME_REPAIR_unique;
+  unique_repair_silent_opts.fn = r_null;
   unique_repair_silent_opts.quiet = true;
 
-  no_repair_opts.type = name_repair_none;
-  no_repair_opts.fn = R_NilValue;
+  no_repair_opts.type = NAME_REPAIR_none;
+  no_repair_opts.fn = r_null;
   no_repair_opts.quiet = true;
 }
+
+static r_obj* syms_as_universal_names = NULL;
+static r_obj* syms_check_unique_names = NULL;
+static r_obj* syms_glue_as_name_spec = NULL;
+static r_obj* syms_internal_spec = NULL;
+static r_obj* syms_set_rownames_dispatch = NULL;
+static r_obj* syms_set_names_dispatch = NULL;
+
+static r_obj* fns_as_universal_names = NULL;
+static r_obj* fns_check_unique_names = NULL;
+static r_obj* fns_glue_as_name_spec = NULL;
+static r_obj* fns_set_rownames_dispatch = NULL;
+static r_obj* fns_set_names_dispatch = NULL;

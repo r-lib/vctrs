@@ -1,61 +1,61 @@
 # ------------------------------------------------------------------------------
-# vec_equal_na()
+# vec_detect_missing()
 
 test_that("can detect different types of NA", {
-  expect_true(vec_equal_na(NA))
-  expect_true(vec_equal_na(NA_integer_))
-  expect_true(vec_equal_na(NA_real_))
-  expect_true(vec_equal_na(NA_complex_))
-  expect_true(vec_equal_na(complex(real = NA, imaginary = 1)))
-  expect_true(vec_equal_na(NaN))
-  expect_true(vec_equal_na(NA_character_))
-  expect_true(vec_equal_na(list(NULL)))
+  expect_true(vec_detect_missing(NA))
+  expect_true(vec_detect_missing(NA_integer_))
+  expect_true(vec_detect_missing(NA_real_))
+  expect_true(vec_detect_missing(NA_complex_))
+  expect_true(vec_detect_missing(complex(real = NA, imaginary = 1)))
+  expect_true(vec_detect_missing(NaN))
+  expect_true(vec_detect_missing(NA_character_))
+  expect_true(vec_detect_missing(list(NULL)))
 })
 
 test_that("can detect different types of NA in data frames", {
   # using multiple columns to prevent proxy unwrapping
-  expect_true(vec_equal_na(data.frame(x = NA, y = NA)))
-  expect_true(vec_equal_na(data.frame(x = NA_integer_, y = NA_integer_)))
-  expect_true(vec_equal_na(data.frame(x = NA_real_, y = NaN)))
-  expect_true(vec_equal_na(data.frame(x = NA_complex_, y = NA_complex_)))
-  expect_true(vec_equal_na(data.frame(x = complex(real = NA, imaginary = 1), y = complex(real = 1, imaginary = NA))))
-  expect_true(vec_equal_na(data.frame(x = NA_character_, y = NA_character_)))
-  expect_true(vec_equal_na(new_data_frame(list(x = list(NULL), y = list(NULL)))))
+  expect_true(vec_detect_missing(data.frame(x = NA, y = NA)))
+  expect_true(vec_detect_missing(data.frame(x = NA_integer_, y = NA_integer_)))
+  expect_true(vec_detect_missing(data.frame(x = NA_real_, y = NaN)))
+  expect_true(vec_detect_missing(data.frame(x = NA_complex_, y = NA_complex_)))
+  expect_true(vec_detect_missing(data.frame(x = complex(real = NA, imaginary = 1), y = complex(real = 1, imaginary = NA))))
+  expect_true(vec_detect_missing(data.frame(x = NA_character_, y = NA_character_)))
+  expect_true(vec_detect_missing(new_data_frame(list(x = list(NULL), y = list(NULL)))))
 })
 
 test_that("raw vectors can never be NA", {
-  expect_false(vec_equal_na(raw(1)))
-  expect_false(vec_equal_na(data.frame(x = raw(1), y = raw(1))))
+  expect_false(vec_detect_missing(raw(1)))
+  expect_false(vec_detect_missing(data.frame(x = raw(1), y = raw(1))))
 })
 
 test_that("vectorised over rows of a data frame", {
   df <- data.frame(x = c(1, 1, NA, NA), y = c(1, NA, 1, NA))
-  expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
+  expect_equal(vec_detect_missing(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
 test_that("works recursively with data frame columns", {
   df <- data.frame(x = c(1, 1, NA, NA))
   df$df <- data.frame(y = c(NA, 1, 1, NA), z = c(1, NA, 1, NA))
-  expect_equal(vec_equal_na(df), c(FALSE, FALSE, FALSE, TRUE))
+  expect_equal(vec_detect_missing(df), c(FALSE, FALSE, FALSE, TRUE))
 })
 
 test_that("0 row, N col data frame always returns `logical()` (#1585)", {
-  expect_identical(vec_equal_na(data_frame()), logical())
-  expect_identical(vec_equal_na(data_frame(x = integer(), y = double())), logical())
+  expect_identical(vec_detect_missing(data_frame()), logical())
+  expect_identical(vec_detect_missing(data_frame(x = integer(), y = double())), logical())
 })
 
 test_that(">0 row, 0 col data frame always returns `TRUE` for each row (#1585)", {
-  # `vec_equal_na()` returns `TRUE` for each row because it (in theory) does
+  # `vec_detect_missing()` returns `TRUE` for each row because it (in theory) does
   # `all()` on each row, and since there are 0 columns we get
   # `all(logical()) == TRUE` for each row.
   expect_identical(
-    vec_equal_na(data_frame(.size = 2L)),
+    vec_detect_missing(data_frame(.size = 2L)),
     c(TRUE, TRUE)
   )
 })
 
 test_that("works with `NULL` input (#1494)", {
-  expect_identical(vec_equal_na(NULL), logical())
+  expect_identical(vec_detect_missing(NULL), logical())
 })
 
 # ------------------------------------------------------------------------------
@@ -121,11 +121,11 @@ test_that("0 row, N col data frame always returns `FALSE` (#1585)", {
   expect_false(vec_any_missing(df))
   expect_false(vec_any_missing(data_frame(x = integer(), y = double())))
 
-  # This is consistent with `vec_equal_na()` returning `logical()` for 0 row
+  # This is consistent with `vec_detect_missing()` returning `logical()` for 0 row
   # data frames. Then `any(logical()) == FALSE` to get `vec_any_missing()`.
   expect_identical(
     vec_any_missing(df),
-    any(vec_equal_na(df))
+    any(vec_detect_missing(df))
   )
 })
 
@@ -134,12 +134,12 @@ test_that(">0 row, 0 col data frame always returns `TRUE` (#1585)", {
 
   expect_true(vec_any_missing(df))
 
-  # This is consistent with `vec_equal_na()` returning `TRUE` for each row
+  # This is consistent with `vec_detect_missing()` returning `TRUE` for each row
   # because it (in theory) does `all()` on each row, and since there are 0
   # columns we get `all(logical()) == TRUE` for each row.
   # Then `any(c(TRUE, TRUE)) == TRUE` to get `vec_any_missing()`.
   expect_identical(
     vec_any_missing(df),
-    any(vec_equal_na(df))
+    any(vec_detect_missing(df))
   )
 })

@@ -9,7 +9,7 @@ template:
 
   includes:
     in_header: |
-      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>  
+      <script defer data-domain="vctrs.r-lib.org,all.tidyverse.org" src="https://plausible.io/js/plausible.js"></script>
 
 reference:
 - title: User FAQ
@@ -40,9 +40,8 @@ reference:
   - vec_data
   - vec_ptype
   - vec_size
-  - vec_is
-  - vec_is_list
-  - vec_assert
+  - obj_is_vector
+  - obj_is_list
 
 - title: Combining
   contents:
@@ -69,12 +68,14 @@ reference:
   contents:
   - vec_equal
   - vec_detect_complete
+  - vec_detect_missing
   - vec_compare
 
 - title: Sorting
   contents:
   - vec_sort
   - vec_order
+  - vec_rank
 
 - title: Matching and splitting
   contents:
@@ -83,6 +84,7 @@ reference:
   - vec_unique
   - vec_in
   - vec_locate_matches
+  - vec_set_intersect
   - vec_split
 
 - title: Sequences and repetitions
@@ -91,6 +93,7 @@ reference:
   - vec_rep_each
   - vec_seq_along
   - vec_identify_runs
+  - vec_expand_grid
 
 - title: New classes
   contents:
@@ -113,7 +116,6 @@ reference:
 - title: Developer tools
   contents:
   - vctr
-  - vec_list_cast
   - vec_ptype_full
   - vec_ptype_finalise
   - "vctrs-conditions"
@@ -129,3 +131,10 @@ reference:
   - vec_names
   - vec_as_location
   - vec_as_subscript
+
+# Needed to generate a `vector_recycling_rules` page, since it is an `@alias`
+# but pkgdown doesn't currently generate pages for aliases. Other packages
+# link to this old page name, so we don't want it to disappear.
+# https://github.com/r-lib/pkgdown/issues/1876
+redirects:
+  - ["reference/vector_recycling_rules.html", "reference/theory-faq-recycling.html"]

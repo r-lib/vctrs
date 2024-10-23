@@ -25,13 +25,13 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
 
   if (x == r_null) {
     if (!vec_is_partial(to)) {
-      vec_check_vector(to, to_arg, opts->call);
+      obj_check_vector(to, to_arg, opts->call);
     }
     return x;
   }
   if (to == r_null) {
     if (!vec_is_partial(x)) {
-      vec_check_vector(x, x_arg, opts->call);
+      obj_check_vector(x, x_arg, opts->call);
     }
     return x;
   }
@@ -39,35 +39,38 @@ r_obj* vec_cast_opts(const struct cast_opts* opts) {
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type to_type = vec_typeof(to);
 
-  if (x_type == vctrs_type_unspecified) {
+  if (x_type == VCTRS_TYPE_unspecified) {
     return vec_init(to, vec_size(x));
   }
 
-  if (x_type == vctrs_type_scalar) {
+  if (x_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(x, x_arg, opts->call);
   }
-  if (to_type == vctrs_type_scalar) {
+  if (to_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(to, to_arg, opts->call);
-  }
-
-  if (has_dim(x) || has_dim(to)) {
-    return vec_cast_dispatch_s3(opts);
   }
 
   r_obj* out = r_null;
   bool lossy = false;
 
-  if (to_type == vctrs_type_s3 || x_type == vctrs_type_s3) {
-    out = vec_cast_dispatch_native(opts, x_type, to_type, &lossy);
+  if (to_type == VCTRS_TYPE_s3 || x_type == VCTRS_TYPE_s3) {
+    out = KEEP(vec_cast_dispatch_native(opts, x_type, to_type, &lossy));
   } else {
-    out = vec_cast_switch_native(opts, x_type, to_type, &lossy);
+    out = KEEP(vec_cast_switch_native(opts, x_type, to_type, &lossy));
   }
 
   if (lossy || out == r_null) {
+    // This broadcasts dimensions too
+    FREE(1);
     return vec_cast_dispatch_s3(opts);
-  } else {
-    return out;
   }
+
+  if (has_dim(x) || has_dim(to)) {
+    out = vec_shape_broadcast(out, opts);
+  }
+
+  FREE(1);
+  return out;
 }
 
 static
@@ -82,37 +85,37 @@ r_obj* vec_cast_switch_native(const struct cast_opts* opts,
 
   switch (type2) {
 
-  case vctrs_type2_logical_logical:
-  case vctrs_type2_integer_integer:
-  case vctrs_type2_double_double:
-  case vctrs_type2_complex_complex:
-  case vctrs_type2_raw_raw:
-  case vctrs_type2_character_character:
-  case vctrs_type2_list_list:
+  case VCTRS_TYPE2_logical_logical:
+  case VCTRS_TYPE2_integer_integer:
+  case VCTRS_TYPE2_double_double:
+  case VCTRS_TYPE2_complex_complex:
+  case VCTRS_TYPE2_raw_raw:
+  case VCTRS_TYPE2_character_character:
+  case VCTRS_TYPE2_list_list:
     return x;
 
-  case vctrs_type2_logical_integer:
+  case VCTRS_TYPE2_logical_integer:
     if (dir == 0) {
       return lgl_as_integer(x, lossy);
     } else {
       return int_as_logical(x, lossy);
     }
 
-  case vctrs_type2_logical_double:
+  case VCTRS_TYPE2_logical_double:
     if (dir == 0) {
       return lgl_as_double(x, lossy);
     } else {
       return dbl_as_logical(x, lossy);
     }
 
-  case vctrs_type2_integer_double:
+  case VCTRS_TYPE2_integer_double:
     if (dir == 0) {
       return int_as_double(x, lossy);
     } else {
       return dbl_as_integer(x, lossy);
     }
 
-  case vctrs_type2_dataframe_dataframe:
+  case VCTRS_TYPE2_dataframe_dataframe:
     return df_cast_opts(opts);
 
   default:
@@ -123,35 +126,45 @@ r_obj* vec_cast_switch_native(const struct cast_opts* opts,
 }
 
 
-r_obj* vec_cast_default(r_obj* x,
-                        r_obj* to,
-                        r_obj* p_x_arg,
-                        r_obj* p_to_arg,
-                        struct r_lazy call,
-                        const struct fallback_opts* opts) {
-  r_obj* df_fallback = KEEP(r_int(opts->df));
+static inline
+r_obj* vec_cast_default_full(r_obj* x,
+                             r_obj* to,
+                             struct vctrs_arg* p_x_arg,
+                             struct vctrs_arg* p_to_arg,
+                             struct r_lazy call,
+                             const struct fallback_opts* opts,
+                             bool from_dispatch) {
   r_obj* s3_fallback = KEEP(r_int(opts->s3));
+
+  r_obj* ffi_x_arg = KEEP(vctrs_arg(p_x_arg));
+  r_obj* ffi_to_arg = KEEP(vctrs_arg(p_to_arg));
+
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
-  r_obj* out = vctrs_eval_mask8(syms.vec_default_cast,
+  r_obj* out = vctrs_eval_mask7(syms.vec_default_cast,
                                 syms_x, x,
                                 syms_to, to,
-                                syms_x_arg, p_x_arg,
-                                syms_to_arg, p_to_arg,
+                                syms_x_arg, ffi_x_arg,
+                                syms_to_arg, ffi_to_arg,
                                 syms_call, ffi_call,
-                                syms_from_dispatch, vctrs_shared_true,
-                                syms_df_fallback, df_fallback,
+                                syms_from_dispatch, r_lgl(from_dispatch),
                                 syms_s3_fallback, s3_fallback);
-  FREE(3);
+  FREE(4);
   return out;
+}
+
+r_obj* vec_cast_default(r_obj* x,
+                        r_obj* to,
+                        struct vctrs_arg* p_x_arg,
+                        struct vctrs_arg* p_to_arg,
+                        struct r_lazy call,
+                        const struct fallback_opts* p_opts) {
+  return vec_cast_default_full(x, to, p_x_arg, p_to_arg, call, p_opts, false);
 }
 
 static
 r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
   r_obj* x = opts->x;
   r_obj* to = opts->to;
-  r_obj* r_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
-  r_obj* r_to_arg = KEEP(vctrs_arg(opts->p_to_arg));
-
   r_obj* method_sym = r_null;
   r_obj* method = s3_find_method_xy("vec_cast", to, x, vctrs_method_table, &method_sym);
 
@@ -179,15 +192,19 @@ r_obj* vec_cast_dispatch_s3(const struct cast_opts* opts) {
   KEEP(method);
 
   if (method == r_null) {
-    r_obj* out = vec_cast_default(x,
-                                to,
-                                r_x_arg,
-                                r_to_arg,
-                                opts->call,
-                                &(opts->fallback));
-    FREE(3);
+    r_obj* out = vec_cast_default_full(x,
+                                       to,
+                                       opts->p_x_arg,
+                                       opts->p_to_arg,
+                                       opts->call,
+                                       &(opts->fallback),
+                                       true);
+    FREE(1);
     return out;
   }
+
+  r_obj* r_x_arg = KEEP(vctrs_arg(opts->p_x_arg));
+  r_obj* r_to_arg = KEEP(vctrs_arg(opts->p_to_arg));
 
   r_obj* out = vec_invoke_coerce_method(method_sym, method,
                                         syms_x, x,
@@ -266,7 +283,6 @@ r_obj* vec_cast_common_opts(r_obj* xs,
 }
 r_obj* vec_cast_common_params(r_obj* xs,
                               r_obj* to,
-                              enum df_fallback df_fallback,
                               enum s3_fallback s3_fallback,
                               struct vctrs_arg* p_arg,
                               struct r_lazy call) {
@@ -274,7 +290,6 @@ r_obj* vec_cast_common_params(r_obj* xs,
     .p_arg = p_arg,
     .call = call,
     .fallback = {
-      .df = df_fallback,
       .s3 = s3_fallback
     }
   };
@@ -287,7 +302,6 @@ r_obj* vec_cast_common(r_obj* xs,
                        struct r_lazy call) {
   return vec_cast_common_params(xs,
                                 to,
-                                DF_FALLBACK_DEFAULT,
                                 S3_FALLBACK_DEFAULT,
                                 p_arg,
                                 call);
@@ -346,8 +360,7 @@ struct cast_opts new_cast_opts(r_obj* x,
     .p_to_arg = p_to_arg,
     .call = call,
     .fallback = {
-      .df = r_int_get(r_list_get(opts, 0), 0),
-      .s3 = r_int_get(r_list_get(opts, 1), 0)
+      .s3 = r_int_get(r_list_get(opts, 0), 0)
     }
   };
 }

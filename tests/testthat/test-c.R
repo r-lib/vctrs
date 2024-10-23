@@ -40,6 +40,28 @@ test_that("specified .ptypes do not allow more casts", {
   )
 })
 
+test_that("common type failure uses error call and error arg (#1641, #1692)", {
+  expect_snapshot(error = TRUE, {
+    vec_c("x", 1, .error_call = call("foo"), .error_arg = "arg")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_c("x", .ptype = integer(), .error_call = call("foo"), .error_arg = "arg")
+  })
+})
+
+test_that("common type failure uses positional errors", {
+  expect_snapshot({
+    # Looking for `..1` and `a`
+    (expect_error(vec_c(1, a = "x", 2)))
+
+    # Directed cast should also produce positional errors (#1690)
+    (expect_error(vec_c(1, a = "x", 2, .ptype = double(), .error_arg = "arg")))
+
+    # Lossy cast
+    (expect_error(vec_c(1, a = 2.5, .ptype = integer())))
+  })
+})
+
 test_that("combines outer an inner names", {
   expect_equal(vec_c(x = 1), c(x = 1))
   expect_equal(vec_c(c(x = 1)), c(x = 1))
@@ -95,6 +117,11 @@ test_that("can mix named and unnamed vectors (#271)", {
   expect_identical(vec_c(0, c(a = 1), 2, b = 3), c(0, a = 1, 2, b =3))
 })
 
+test_that("preserves names when inputs are cast to a common type (#1690)", {
+  expect_named(vec_c(c(a = 1), .ptype = integer()), "a")
+  expect_named(vec_c(foo = c(a = 1), .ptype = integer(), .name_spec = "{outer}_{inner}"), "foo_a")
+})
+
 test_that("vec_c() repairs names", {
   local_name_repair_quiet()
 
@@ -109,6 +136,17 @@ test_that("vec_c() repairs names", {
   expect_named(vec_c(a = 1, a = 2, `_` = 3, .name_repair = "universal"), c("a...1", "a...2", "._"))
 
   expect_named(vec_c(a = 1, a = 2, .name_repair = ~ toupper(.)), c("A", "A"))
+})
+
+test_that("vec_c() can repair names quietly", {
+  local_name_repair_verbose()
+
+   expect_snapshot({
+     res_unique <- vec_c(x = TRUE, x = 0, .name_repair = "unique_quiet")
+     res_universal <- vec_c("if" = TRUE, "in" = 0, .name_repair = "universal_quiet")
+   })
+   expect_named(res_unique, c("x...1", "x...2"))
+   expect_named(res_universal, c(".if", ".in"))
 })
 
 test_that("vec_c() doesn't use outer names for data frames (#524)", {
@@ -183,6 +221,7 @@ test_that("vec_c() fails with complex foreign S3 classes", {
     x <- structure(foobar(1), attr_foo = "foo")
     y <- structure(foobar(2), attr_bar = "bar")
     (expect_error(vec_c(x, y), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_c(x, y, .error_call = call("foo"), .error_arg = "arg"), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -191,6 +230,7 @@ test_that("vec_c() fails with complex foreign S4 classes", {
     joe <- .Counts(c(1L, 2L), name = "Joe")
     jane <- .Counts(3L, name = "Jane")
     (expect_error(vec_c(joe, jane), class = "vctrs_error_incompatible_type"))
+    (expect_error(vec_c(joe, jane, .error_call = call("foo"), .error_arg = "arg"), class = "vctrs_error_incompatible_type"))
   })
 })
 
@@ -232,9 +272,14 @@ test_that("vec_c() falls back to c() if S3 method is available", {
   )
 })
 
-test_that("c() fallback is consistent (FIXME)", {
+test_that("c() fallback is consistent", {
+  dispatched <- function(x) structure(x, class = "dispatched")
+  c_method <- function(...) dispatched(NextMethod())
+
   out <- with_methods(
-    c.vctrs_foobar = function(...) structure(NextMethod(), class = "dispatched"),
+    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+    vec_cast.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_cast(...)),
+    c.vctrs_foobar = c_method,
     list(
       direct = vec_c(foobar(1L), foobar(2L)),
       df = vec_c(data_frame(x = foobar(1L)), data_frame(x = foobar(2L))),
@@ -242,14 +287,30 @@ test_that("c() fallback is consistent (FIXME)", {
       foreign_df = vec_c(foobaz(data_frame(x = foobar(1L))), foobaz(data_frame(x = foobar(2L))))
     )
   )
+  expect_equal(out$direct, dispatched(1:2))
+  expect_equal(out$df$x, dispatched(1:2))
+  expect_equal(out$tib$x, dispatched(1:2))
+  expect_equal(out$foreign_df$x, dispatched(1:2))
 
-  # Proper `c()` dispatch:
-  expect_identical(out$direct, structure(1:2, class = "dispatched"))
+  # Hard case: generic record vectors
+  my_rec_record <- function(x) {
+    new_rcrd(list(x = x), class = "my_rec_record")
+  }
 
-  # Inconsistent:
-  expect_identical(out$df$x, foobar(1:2))
-  expect_identical(out$tib$x, foobar(1:2))
-  expect_identical(out$foreign_df$x, foobar(1:2))
+  out <- with_methods(
+    c.vctrs_foobar = c_method,
+    vec_ptype2.my_rec_record.my_rec_record = function(x, y, ...) {
+      my_rec_record(vec_ptype2(field(x, "x"), field(y, "x"), ...))
+    },
+    vec_cast.my_rec_record.my_rec_record = function(x, to, ...) {
+      x
+    },
+    vec_c(
+      data_frame(x = my_rec_record(foobar(1L))),
+      data_frame(x = my_rec_record(foobar(2L)))
+    )
+  )
+  expect_equal(field(out$x, "x"), dispatched(1:2))
 })
 
 test_that("vec_c() falls back to c() if S4 method is available", {
@@ -289,6 +350,15 @@ test_that("vec_c() fallback doesn't support `name_spec` or `ptype`", {
     (expect_error(
       with_c_foobar(vec_c(foobar(1), foobar(2), .ptype = "")),
       class = "vctrs_error_incompatible_type"
+    ))
+
+    # Uses error call (#1641)
+    (expect_error(
+      with_c_foobar(vec_c(
+        foobar(1), foobar(2),
+        .error_call = call("foo"),
+        .name_spec = "{outer}_{inner}"
+      ))
     ))
   })
 })
@@ -399,10 +469,10 @@ test_that("can zap outer names from a name-spec (#1215)", {
   )
 
   expect_null(
-    names(vec_unchop(list(a = 1:2), indices = list(1:2), name_spec = zap_outer_spec))
+    names(list_unchop(list(a = 1:2), indices = list(1:2), name_spec = zap_outer_spec))
   )
   expect_identical(
-    names(vec_unchop(list(a = 1:2, c(foo = 3L)), indices = list(1:2, 3), name_spec = zap_outer_spec)),
+    names(list_unchop(list(a = 1:2, c(foo = 3L)), indices = list(1:2, 3), name_spec = zap_outer_spec)),
     c("", "", "foo")
   )
 })
@@ -415,15 +485,11 @@ test_that("named empty vectors force named output (#1263)", {
   expect_named(vec_c(x, 1L), "")
   expect_named(vec_c(x, 1), "")
 
-  expect_named(vec_unchop(list(x), list(int())), chr())
-  expect_named(vec_unchop(list(x, x), list(int(), int())), chr())
-  expect_named(vec_unchop(list(x, 1L), list(int(), 1)), "")
+  expect_named(list_unchop(list(x), indices = list(int())), chr())
+  expect_named(list_unchop(list(x, x), indices = list(int(), int())), chr())
+  expect_named(list_unchop(list(x, 1L), indices = list(int(), 1)), "")
 
-  # FIXME: `vec_cast_common()` dropped names
-  # https://github.com/r-lib/vctrs/issues/623
-  expect_failure(
-    expect_named(vec_unchop(list(x, 1), list(int(), 1)), "")
-  )
+  expect_named(list_unchop(list(x, 1), indices = list(int(), 1)), "")
 })
 
 # Golden tests -------------------------------------------------------
@@ -452,30 +518,30 @@ test_that("concatenation performs expected allocations", {
     with_memory_prof(vec_c_list(dbls, ptype = int()))
 
 
-    "# `vec_unchop()` "
+    "# `list_unchop()` "
     "Integers"
-    with_memory_prof(vec_unchop(ints))
+    with_memory_prof(list_unchop(ints))
 
     "Doubles"
-    with_memory_prof(vec_unchop(dbls))
+    with_memory_prof(list_unchop(dbls))
 
     "Integers to integer"
-    with_memory_prof(vec_unchop(ints, ptype = int()))
+    with_memory_prof(list_unchop(ints, ptype = int()))
 
     "Doubles to integer"
-    with_memory_prof(vec_unchop(dbls, ptype = int()))
+    with_memory_prof(list_unchop(dbls, ptype = int()))
 
 
     "# Concatenation with names"
 
     "Named integers"
     ints <- rep(list(set_names(1:3, letters[1:3])), 1e2)
-    with_memory_prof(vec_unchop(ints))
+    with_memory_prof(list_unchop(ints))
 
     "Named matrices"
     mat <- matrix(1:4, 2, dimnames = list(c("foo", "bar")))
     mats <- rep(list(mat), 1e2)
-    with_memory_prof(vec_unchop(mats))
+    with_memory_prof(list_unchop(mats))
 
     "Data frame with named columns"
     df <- data_frame(
@@ -484,33 +550,41 @@ test_that("concatenation performs expected allocations", {
       z = data_frame(Z = set_names(1:2, c("Za", "Zb")))
     )
     dfs <- rep(list(df), 1e2)
-    with_memory_prof(vec_unchop(dfs))
+    with_memory_prof(list_unchop(dfs))
 
     "Data frame with rownames (non-repaired, non-recursive case)"
     df <- data_frame(x = 1:2)
     dfs <- rep(list(df), 1e2)
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-    with_memory_prof(vec_unchop(dfs))
+    with_memory_prof(list_unchop(dfs))
 
     "Data frame with rownames (repaired, non-recursive case)"
     dfs <- map(dfs, set_rownames_recursively)
-    with_memory_prof(vec_unchop(dfs))
+    with_memory_prof(list_unchop(dfs))
 
-    # FIXME: The following recursive cases duplicate rownames
-    # excessively because df-cols are restored at each chunk
-    # assignment, causing a premature name-repair
-    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
+    "Data frame with rownames (non-repaired, recursive case) (#1217)"
     df <- data_frame(
       x = 1:2,
       y = data_frame(x = 1:2)
     )
     dfs <- rep(list(df), 1e2)
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
-    with_memory_prof(vec_unchop(dfs))
+    with_memory_prof(list_unchop(dfs))
 
-    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
+    "Data frame with rownames (repaired, recursive case) (#1217)"
     dfs <- map(dfs, set_rownames_recursively)
-    with_memory_prof(vec_unchop(dfs))
+    with_memory_prof(list_unchop(dfs))
+
+    "list-ofs (#1496)"
+    make_list_of <- function(n) {
+      df <- tibble::tibble(
+        x = new_list_of(vec_chop(1:n), ptype = integer())
+      )
+      vec_chop(df)
+    }
+    with_memory_prof(list_unchop(make_list_of(1e3)))
+    with_memory_prof(list_unchop(make_list_of(2e3)))
+    with_memory_prof(list_unchop(make_list_of(4e3)))
   })
 })
 
@@ -522,7 +596,7 @@ test_that("can dispatch many times", {
     class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame")
   )
   x <- lapply(1:200, function(...) foo)
-  expect_error(NA, object = vctrs::vec_unchop(x))
+  expect_error(NA, object = vctrs::list_unchop(x))
 })
 
 test_that("dots splicing clones as appropriate", {
@@ -550,4 +624,58 @@ test_that("dots splicing clones as appropriate", {
   x <- list(a = 1)
   vctrs::vec_c(!!!x, 2)
   expect_equal(x, list(a = 1))
+})
+
+test_that("can combine records wrapped in data frames", {
+  local_methods(
+    vec_proxy.vctrs_foobar = function(x, ...) {
+      data_frame(x = unclass(x), y = seq_along(x))
+    },
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      foobar(x$x)
+    }
+  )
+
+  x <- foobar(1:2)
+  y <- foobar(3:4)
+
+  expect_equal(
+    vec_c(x, y),
+    foobar(1:4)
+  )
+
+  expect_equal(
+    list_unchop(list(x, y), indices = list(1:2, 3:4)),
+    foobar(1:4)
+  )
+
+  expect_equal(
+    vec_rbind(data_frame(x = x), data_frame(x = y)),
+    data_frame(x = foobar(1:4))
+  )
+})
+
+test_that("fallback works with subclasses of `vctrs_vctr`", {
+  # Used to fail because of interaction between common class fallback
+  # for `base::c()` and the `c()` method for `vctrs_vctr` that called
+  # back into `vec_c()`.
+
+  # Reprex for failure in the ricu package
+  x <- new_rcrd(list(a = 1), class = "vctrs_foobar")
+  expect_equal(
+    vec_c(x, x, .name_spec = "{inner}"),
+    new_rcrd(list(a = c(1, 1)), class = "vctrs_foobar")
+  )
+
+  # Reprex for failure in the groupr package
+  x <- new_rcrd(list(a = 1), class = "vctrs_foobar")
+  df <- data_frame(x = x)
+  expect_equal(
+    vec_rbind(df, data.frame()),
+    df
+  )
+  expect_equal(
+    vec_cast_common(df, data.frame()),
+    list(df, data_frame(x = x[0]))
+  )
 })

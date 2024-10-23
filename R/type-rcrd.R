@@ -18,7 +18,7 @@
 #' @aliases ses rcrd
 #' @keywords internal
 new_rcrd <- function(fields, ..., class = character()) {
-  if (vec_is_list(fields) && length(vec_unique(list_sizes(fields))) > 1L) {
+  if (obj_is_list(fields) && length(vec_unique(list_sizes(fields))) > 1L) {
     abort("All fields must be the same size.")
   }
 
@@ -38,12 +38,6 @@ vec_restore.vctrs_rcrd <- function(x, to, ...) {
   x <- NextMethod()
   attr(x, "row.names") <- NULL
   x
-}
-
-#' @export
-vec_proxy_equal.vctrs_rcrd <- function(x, ...) {
-  # Recursively proxy using a data frame
-  vec_proxy_equal(new_data_frame(x))
 }
 
 #' @export
@@ -95,7 +89,10 @@ vec_cast.vctrs_rcrd.vctrs_rcrd <- function(x, to, ...) {
 
 #' @export
 `[.vctrs_rcrd` <-  function(x, i, ...) {
-  vec_index(x, i, ...)
+  if (!missing(...)) {
+    abort("Can't index record vectors on dimensions greater than 1.")
+  }
+  vec_slice(x, maybe_missing(i))
 }
 
 #' @export

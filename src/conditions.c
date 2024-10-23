@@ -19,22 +19,28 @@ void stop_scalar_type(r_obj* x,
 // [[ include("vctrs.h") ]]
 void stop_assert_size(r_ssize actual,
                       r_ssize required,
-                      struct vctrs_arg* arg) {
-  r_obj* syms[4] = {
+                      struct vctrs_arg* arg,
+                      struct r_lazy call) {
+  r_obj* ffi_call = KEEP(r_lazy_eval(call));
+  ffi_call = KEEP(r_expr_protect(ffi_call));
+
+  r_obj* syms[5] = {
    syms_actual,
    syms_required,
-   syms_arg,
+   r_syms.arg,
+   r_syms.call,
    NULL
   };
-  r_obj* args[4] = {
+  r_obj* args[5] = {
     KEEP(r_int(actual)),
     KEEP(r_int(required)),
     KEEP(vctrs_arg(arg)),
+    ffi_call,
     NULL
   };
 
-  r_obj* call = KEEP(r_call_n(syms_stop_assert_size, syms, args));
-  r_eval(call, vctrs_ns_env);
+  r_obj* stop_call = KEEP(r_call_n(syms_stop_assert_size, syms, args));
+  r_eval(stop_call, vctrs_ns_env);
 
   never_reached("stop_assert_size");
 }

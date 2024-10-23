@@ -92,12 +92,9 @@ test_that("unspecified can be cast to shaped vectors", {
   expect_identical(out, exp)
 })
 
-test_that("vec_cast() only falls back when casting to base type", {
-  expect_incompatible_df_cast(vec_cast(foobar(mtcars), mtcars), mtcars)
-  expect_error(
-    vec_cast(mtcars, foobar(mtcars)),
-    class = "vctrs_error_incompatible_type"
-  )
+test_that("vec_cast() falls back to base class even when casting to non-base type", {
+  expect_equal(vec_cast(foobar(mtcars), mtcars), mtcars)
+  expect_equal(vec_cast(mtcars, foobar(mtcars)), mtcars)
 })
 
 test_that("vec_cast() only attempts to fall back if `to` is a data frame (#1568)", {
@@ -129,7 +126,7 @@ test_that("can suppress cast errors selectively", {
 })
 
 test_that("can signal deprecation warnings for lossy casts", {
-  local_lifecycle_warnings()
+  local_options(lifecycle_verbosity = "warning")
 
   lossy_cast <- function() {
     maybe_lossy_cast(
@@ -143,7 +140,9 @@ test_that("can signal deprecation warnings for lossy casts", {
     )
   }
 
-  expect_warning(expect_true(lossy_cast()), "detected a lossy transformation")
+  expect_snapshot({
+    (expect_warning(expect_true(lossy_cast())))
+  })
   expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast())))
   expect_warning(regexp = NA, expect_true(allow_lossy_cast(lossy_cast(), factor("foo"), factor("bar"))))
   expect_warning(expect_true(allow_lossy_cast(lossy_cast(), factor("bar"), double())))
@@ -255,4 +254,50 @@ test_that("vec_cast_common_fallback() works with tibbles", {
   expect_identical(vec_cast_common_fallback(tib, tib), exp)
   expect_identical(vec_cast_common_fallback(tib, df), exp)
   expect_identical(vec_cast_common_fallback(df, tib), exp)
+})
+
+test_that("can call `vec_cast()` from C (#1666)", {
+  fn <- inject(function(x, i) .Call(!!ffi_exp_vec_cast, x, i))
+  environment(fn) <- ns_env("utils")
+
+  x <- array(1, dim = c(1, 1))
+  y <- array(2, dim = c(2, 2))
+
+  expect_equal(fn(x, y), vec_cast(x, y))
+})
+
+test_that("df-fallback for cast is not sensitive to attributes order", {
+  x <- structure(
+    list(col = ""),
+    class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame"),
+    row.names = c(NA, -1L),
+    foo = "foo",
+    bar = "bar"
+  )
+  ptype <- structure(
+    list(col = character(0)),
+    foo = "foo",
+    bar = "bar",
+    row.names = integer(0),
+    class = c("vctrs_foobar", "tbl_df", "tbl", "data.frame")
+  )
+
+  expect_identical(vec_cast(x, ptype), x)
+})
+
+test_that("bare-type fallback for df-cast works", {
+  # NOTE: Not sure why this was necessary. The cubble and yamlet
+  # packages fail without this.
+  local_methods(
+    c.vctrs_foobaz = function(...) quux(NextMethod())
+  )
+
+  df <- data_frame(x = 1, y = foobaz("foo"))
+  gdf <- dplyr::new_grouped_df(
+    df,
+    data_frame(x = 1, .rows = list(1L)),
+    class = "vctrs_foobar"
+  )
+
+  expect_error(vec_rbind(gdf, gdf), NA)
 })

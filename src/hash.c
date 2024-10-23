@@ -7,7 +7,7 @@ static inline uint32_t hash_combine(uint32_t x, uint32_t y) {
 
 // 32-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L68
-static inline uint32_t hash_int32(uint32_t x) {
+static inline uint32_t hash_uint32(uint32_t x) {
   x ^= x >> 16;
   x *= 0x85ebca6b;
   x ^= x >> 13;
@@ -19,7 +19,7 @@ static inline uint32_t hash_int32(uint32_t x) {
 
 // 64-bit mixer from murmurhash
 // https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp#L81
-static inline uint32_t hash_int64(int64_t x) {
+static inline uint32_t hash_uint64(uint64_t x) {
   x ^= x >> 33;
   x *= UINT64_C(0xff51afd7ed558ccd);
   x ^= x >> 33;
@@ -42,11 +42,11 @@ static inline uint32_t hash_double(double x) {
   } value;
   value.d = x;
 
-  return hash_int64(value.i);
+  return hash_uint64(value.i);
 }
 
 static inline uint32_t hash_char(SEXP x) {
-  return hash_int64((uintptr_t) x);
+  return hash_uint64((uintptr_t) x);
 }
 
 // Hashing scalars -----------------------------------------------------
@@ -60,19 +60,19 @@ static inline uint32_t raw_hash_scalar(const Rbyte* x);
 
 
 static inline uint32_t lgl_hash_scalar(const int* x) {
-  return hash_int32(*x);
+  return hash_uint32(*x);
 }
 static inline uint32_t int_hash_scalar(const int* x) {
-  return hash_int32(*x);
+  return hash_uint32(*x);
 }
 static inline uint32_t dbl_hash_scalar(const double* x) {
   double val = *x;
 
   // Hash all NAs and NaNs to same value (i.e. ignoring significand)
   switch (dbl_classify(val)) {
-  case vctrs_dbl_number: break;
-  case vctrs_dbl_missing: val = NA_REAL; break;
-  case vctrs_dbl_nan: val = R_NaN; break;
+  case VCTRS_DBL_number: break;
+  case VCTRS_DBL_missing: val = NA_REAL; break;
+  case VCTRS_DBL_nan: val = R_NaN; break;
   }
 
   return hash_double(val);
@@ -87,7 +87,7 @@ static inline uint32_t chr_hash_scalar(const SEXP* x) {
   return hash_char(*x);
 }
 static inline uint32_t raw_hash_scalar(const Rbyte* x) {
-  return hash_int32(*x);
+  return hash_uint32(*x);
 }
 
 static inline uint32_t list_hash_scalar_na_equal(SEXP x, R_len_t i) {
@@ -153,7 +153,7 @@ static uint32_t sexp_hash(SEXP x) {
   case SPECIALSXP:
   case BUILTINSXP:
   case ENVSXP:
-  case EXTPTRSXP: return hash_int64((uintptr_t) x);
+  case EXTPTRSXP: return hash_uint64((uintptr_t) x);
   default: Rf_errorcall(R_NilValue, "Unsupported type %s", Rf_type2char(TYPEOF(x)));
   }
 }
@@ -252,26 +252,26 @@ void hash_fill(uint32_t* p, R_len_t size, SEXP x, bool na_equal) {
 
   if (na_equal) {
     switch (vec_proxy_typeof(x)) {
-    case vctrs_type_logical: lgl_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_integer: int_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_double: dbl_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_complex: cpl_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_character: chr_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_raw: raw_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_list: list_hash_fill_na_equal(p, size, x); return;
-    case vctrs_type_dataframe: df_hash_fill(p, size, x, true); return;
+    case VCTRS_TYPE_logical: lgl_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_integer: int_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_double: dbl_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_complex: cpl_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_character: chr_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_raw: raw_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_list: list_hash_fill_na_equal(p, size, x); return;
+    case VCTRS_TYPE_dataframe: df_hash_fill(p, size, x, true); return;
     default: break;
     }
   } else {
     switch (vec_proxy_typeof(x)) {
-    case vctrs_type_logical: lgl_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_integer: int_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_double: dbl_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_complex: cpl_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_character: chr_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_raw: raw_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_list: list_hash_fill_na_propagate(p, size, x); return;
-    case vctrs_type_dataframe: df_hash_fill(p, size, x, false); return;
+    case VCTRS_TYPE_logical: lgl_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_integer: int_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_double: dbl_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_complex: cpl_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_character: chr_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_raw: raw_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_list: list_hash_fill_na_propagate(p, size, x); return;
+    case VCTRS_TYPE_dataframe: df_hash_fill(p, size, x, false); return;
     default: break;
     }
   }

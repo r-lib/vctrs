@@ -10,3 +10,9 @@
 #' @import rlang
 #' @useDynLib vctrs, .registration = TRUE
 "_PACKAGE"
+
+release_extra_revdeps <- function() {
+  # Extra revdeps to run before release.
+  # Recognized by `usethis::use_release_issue()`.
+  c("dplyr", "tidyr", "purrr")
+}

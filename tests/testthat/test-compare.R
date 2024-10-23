@@ -89,16 +89,16 @@ test_that("can compare data frames with 0 columns", {
 test_that("C code doesn't crash with bad inputs", {
   df <- data.frame(x = c(1, 1, 1), y = c(-1, 0, 1))
 
-  expect_error(.Call(vctrs_compare, df, df[1], TRUE), "not comparable")
+  expect_error(.Call(ffi_vec_compare, df, df[1], TRUE), "not comparable")
 
   # Names are not checked, as `vec_cast_common()` should take care of the type.
   # So if `vec_cast_common()` is not called, or is improperly specified, then
   # this could result in false equality.
-  expect_equal(.Call(vctrs_compare, df, setNames(df, c("x", "z")), TRUE), c(0, 0, 0))
+  expect_equal(.Call(ffi_vec_compare, df, setNames(df, c("x", "z")), TRUE), c(0, 0, 0))
 
   df1 <- new_data_frame(list(x = 1:3, y = c(1, 1, 1)))
   df2 <- new_data_frame(list(y = 1:2, x = 1:2))
-  expect_error(.Call(vctrs_compare, df1, df2, TRUE), "must have the same types and lengths")
+  expect_error(.Call(ffi_vec_compare, df1, df2, TRUE), "must have the same types and lengths")
 })
 
 test_that("xtfrm.vctrs_vctr works for variety of base classes", {
@@ -200,26 +200,34 @@ test_that("vec_proxy_order() works on deeply nested lists", {
   expect_identical(vec_proxy_order(df2), data_frame(x = c(1L, 2L, 1L), y = 1:3))
 })
 
+test_that("error is thrown when comparing complexes (#1655)", {
+  expect_snapshot({
+    (expect_error(vec_compare(complex(), complex())))
+  })
+})
+
 test_that("error is thrown when comparing lists", {
   expect_error(vec_compare(list(), list()), class = "vctrs_error_unsupported")
-  expect_error(.Call(vctrs_compare, list(), list(), FALSE), "Can't compare lists")
+  expect_error(.Call(ffi_vec_compare, list(), list(), FALSE), "Can't compare lists")
 })
 
 test_that("error is thrown when comparing data frames with list columns", {
   df <- data_frame(x = list())
   expect_error(vec_compare(df, df), class = "vctrs_error_unsupported")
-  expect_error(.Call(vctrs_compare, df, df, FALSE), "Can't compare lists")
+  expect_error(.Call(ffi_vec_compare, df, df, FALSE), "Can't compare lists")
 })
 
 test_that("error is thrown when comparing scalars", {
   x <- new_sclr(x = 1)
   expect_error(vec_compare(x, x), class = "vctrs_error_scalar_type")
-  expect_error(.Call(vctrs_compare, x, x, FALSE), class = "vctrs_error_scalar_type")
+  expect_error(.Call(ffi_vec_compare, x, x, FALSE), class = "vctrs_error_scalar_type")
 })
 
 test_that("`na_equal` is validated", {
-  expect_error(vec_compare(1, 1, na_equal = 1), class = "vctrs_error_assert_ptype")
-  expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE)), class = "vctrs_error_assert_size")
+  expect_snapshot({
+    (expect_error(vec_compare(1, 1, na_equal = 1)))
+    (expect_error(vec_compare(1, 1, na_equal = c(TRUE, FALSE))))
+  })
 })
 
 test_that("can compare equal strings with different encodings", {
@@ -267,7 +275,9 @@ test_that("can compare unspecified", {
 })
 
 test_that("can't supply NA as `na_equal`", {
-  expect_error(vec_compare(NA, NA, na_equal = NA), "single `TRUE` or `FALSE`")
+  expect_snapshot(error = TRUE, {
+    vec_compare(NA, NA, na_equal = NA)
+  })
 })
 
 test_that("vec_compare() silently falls back to base data frame", {

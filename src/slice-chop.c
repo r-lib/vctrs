@@ -2,395 +2,488 @@
 #include "type-data-frame.h"
 
 /*
- * @member proxy_info The result of `vec_proxy_info(x)`.
- * @member restore_size The restore size used in each call to `vec_restore()`.
- *   Will always be 1 for `indices = NULL`.
- * @member p_restore_size A pointer to update the restore size.
- * @member index The current index value. If `indices` are provided, this is
- *   the i-th element of indices. For the default of `indices = NULL`, this
- *   starts at 0 and is incremented by 1 repeatedly through `p_index`.
- * @member p_index A pointer to increment the `index` value for the default
- *   case.
- * @member has_indices Whether indices were provided.
- * @member out_size The size of `out`. Will be `vec_size(x)` in the default
- *   case, otherwise will be `vec_size(indices)`.
- * @member out The list container for the result.
+ * Index manager/generator for chopping purposes
+ *
+ * There are 3 types of possible indices:
+ * - If `indices = NULL, sizes = NULL`, then we use a sequential size 1 index
+ *   that just increments by 1 from `0` to `vec_size(x) - 1`.
+ * - If `indices` is supplied, then each element of `indices` is an integer
+ *   vector of locations to chop with.
+ * - If `sizes` is supplied, then each element of `sizes` is the size of the
+ *   current slice to chop. The sizes are accumulated in order to get the
+ *   start location of the next slice.
+ *
+ * - Generate the next index with `indices_next()`.
+ * - Generate the output size with `indices_out_size()`.
+ *
+ * @member shelter The shelter to protect the entire chop indices manager.
+ * @member indices, v_indices
+ *   - If `NULL`, then `indices` aren't being used. `v_indices` is set to
+ *     `NULL`.
+ *   - Otherwise, a list of integer vector indices to chop with. `v_indices` is
+ *     set to `r_list_cbegin(indices)`.
+ * @member sizes, v_sizes
+ *   - If `NULL`, then `sizes` aren't being used. `v_sizes` is set to `NULL`.
+ *   - Otherwise, an integer vector of sequential sizes to chop with. `v_sizes`
+ *     is set to `r_int_cbegin(sizes)`.
+ * @member index, p_index
+ *   - If neither `indices` nor `sizes` are provided, `index` is a scalar
+ *     integer vector that starts at 0 and is incremented by 1 at every
+ *     iteration. `p_index` points to `r_int_begin(index)` and is used to
+ *     perform the increment.
+ *   - If `indices` is provided, this is set to the i-th element of `indices`
+ *     at each iteration, and `p_index` is set to `NULL`.
+ *   - If `sizes` is provided, this is a compact-seq representing the i-th
+ *     slice. `p_index` points to `r_int_begin(index)` and is used to updated
+ *     the compact-seq at each iteration.
+ * @member has_indices Whether or not `indices` was provided.
+ * @member has_sizes Whether or not `sizes` was provided.
+ * @member loc The current iteration value.
  */
-struct vctrs_chop_info {
-  struct vctrs_proxy_info proxy_info;
-  SEXP restore_size;
-  int* p_restore_size;
-  SEXP index;
+struct vctrs_chop_indices {
+  r_obj* shelter;
+
+  r_obj* indices;
+  r_obj* const* v_indices;
+
+  r_obj* sizes;
+  const int* v_sizes;
+
+  r_obj* index;
   int* p_index;
+
   bool has_indices;
-  R_len_t out_size;
-  SEXP out;
+  bool has_sizes;
+
+  r_ssize loc;
 };
 
-#define PROTECT_CHOP_INFO(info, n) do {         \
-    KEEP((info)->proxy_info.shelter);           \
-    KEEP((info)->restore_size);                 \
-    KEEP((info)->index);                        \
-    KEEP((info)->out);                          \
-    *n += 4;                                    \
-  } while (0)                                   \
+#include "decl/slice-chop-decl.h"
+
+// -----------------------------------------------------------------------------
 
 static
-struct vctrs_chop_info init_chop_info(r_obj* x, r_obj* indices) {
-  struct vctrs_chop_info info;
+struct vctrs_chop_indices* new_chop_indices(r_obj* x, r_obj* indices, r_obj* sizes) {
+  r_obj* shelter = KEEP(r_alloc_list(4));
 
-  info.proxy_info = vec_proxy_info(x);
-  KEEP(info.proxy_info.shelter);
+  r_obj* self = r_alloc_raw(sizeof(struct vctrs_chop_indices));
+  r_list_poke(shelter, 0, self);
 
-  info.restore_size = KEEP(r_int(1));
-  info.p_restore_size = INTEGER(info.restore_size);
+  struct vctrs_chop_indices* p_indices = r_raw_begin(self);
+  p_indices->shelter = shelter;
 
-  info.index = KEEP(r_int(0));
-  info.p_index = r_int_begin(info.index);
+  p_indices->indices = indices;
+  r_list_poke(p_indices->shelter, 1, p_indices->indices);
+  p_indices->has_indices = p_indices->indices != r_null;
 
-  if (indices == r_null) {
-    info.out_size = vec_size(x);
-    info.has_indices = false;
+  p_indices->sizes = sizes;
+  r_list_poke(p_indices->shelter, 2, p_indices->sizes);
+  p_indices->has_sizes = p_indices->sizes != r_null;
+
+  if (p_indices->has_indices) {
+    p_indices->v_indices = r_list_cbegin(p_indices->indices);
+    p_indices->v_sizes = NULL;
+    p_indices->index = r_null;
+    r_list_poke(p_indices->shelter, 3, p_indices->index);
+    p_indices->p_index = NULL;
+  } else if (p_indices->has_sizes) {
+    p_indices->v_indices = NULL;
+    p_indices->v_sizes = r_int_cbegin(p_indices->sizes);
+    p_indices->index = compact_seq(0, 0, true);
+    r_list_poke(p_indices->shelter, 3, p_indices->index);
+    p_indices->p_index = r_int_begin(p_indices->index);
   } else {
-    info.out_size = vec_size(indices);
-    info.has_indices = true;
+    p_indices->v_indices = NULL;
+    p_indices->v_sizes = NULL;
+    p_indices->index = r_int(0);
+    r_list_poke(p_indices->shelter, 3, p_indices->index);
+    p_indices->p_index = r_int_begin(p_indices->index);
   }
 
-  info.out = r_alloc_list(info.out_size);
+  p_indices->loc = 0;
 
-  FREE(3);
-  return info;
+  FREE(1);
+  return p_indices;
+}
+
+/*
+ * Generate the next `index`
+ *
+ * You can assume that the returned `index` is always protected by `p_indices`,
+ * so the caller doesn't need to protect it.
+ */
+static inline
+r_obj* indices_next(struct vctrs_chop_indices* p_indices) {
+  const r_ssize loc = p_indices->loc;
+  ++(p_indices->loc);
+
+  if (p_indices->has_indices) {
+    return p_indices->v_indices[loc];
+  } else if (p_indices->has_sizes) {
+    const r_ssize start = p_indices->p_index[0] + p_indices->p_index[1];
+    const r_ssize size = p_indices->v_sizes[loc];
+    const bool increasing = true;
+    init_compact_seq(p_indices->p_index, start, size, increasing);
+    return p_indices->index;
+  } else {
+    *p_indices->p_index = loc + 1;
+    return p_indices->index;
+  }
+}
+
+static inline
+r_ssize indices_out_size(struct vctrs_chop_indices* p_indices, r_obj* x) {
+  if (p_indices->has_indices) {
+    return r_length(p_indices->indices);
+  } else if (p_indices->has_sizes) {
+    return r_length(p_indices->sizes);
+  } else {
+    return vec_size(x);
+  }
 }
 
 // -----------------------------------------------------------------------------
 
-static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info);
-static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
-static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info);
-static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info);
-static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info);
+r_obj* ffi_vec_chop_seq(r_obj* x, r_obj* starts, r_obj* sizes, r_obj* increasings) {
+  int* v_starts = r_int_begin(starts);
+  int* v_sizes = r_int_begin(sizes);
+  int* v_increasings = r_lgl_begin(increasings);
 
-static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info);
+  const r_ssize n = r_length(starts);
 
-SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names);
+  r_obj* indices = KEEP(r_alloc_list(n));
 
-// [[ register() ]]
-SEXP vctrs_chop_seq(SEXP x, SEXP starts, SEXP sizes, SEXP increasings) {
-  int* p_starts = INTEGER(starts);
-  int* p_sizes = INTEGER(sizes);
-  int* p_increasings = LOGICAL(increasings);
-
-  int n = Rf_length(starts);
-
-  SEXP indices = PROTECT(Rf_allocVector(VECSXP, n));
-
-  for (int i = 0; i < n; ++i) {
-    SEXP index = compact_seq(p_starts[i], p_sizes[i], p_increasings[i]);
-    SET_VECTOR_ELT(indices, i, index);
+  for (r_ssize i = 0; i < n; ++i) {
+    r_obj* index = compact_seq(v_starts[i], v_sizes[i], v_increasings[i]);
+    r_list_poke(indices, i, index);
   }
 
-  SEXP out = PROTECT(vec_chop(x, indices));
+  r_obj* out = KEEP(vec_chop_unsafe(x, indices, r_null));
 
-  UNPROTECT(2);
+  FREE(2);
   return out;
 }
 
-// [[ register() ]]
-SEXP vctrs_chop(SEXP x, SEXP indices) {
-  R_len_t n = vec_size(x);
-  SEXP names = PROTECT(vec_names(x));
+r_obj* ffi_vec_chop(r_obj* x, r_obj* indices, r_obj* sizes) {
+  return vec_chop(x, indices, sizes);
+}
 
-  indices = PROTECT(vec_as_indices(indices, n, names));
+r_obj* vec_chop(r_obj* x, r_obj* indices, r_obj* sizes) {
+  const r_ssize n = vec_size(x);
+  r_obj* names = KEEP(vec_names(x));
 
-  SEXP out = PROTECT(vec_chop(x, indices));
+  if (indices != r_null && sizes != r_null) {
+    r_abort_lazy_call(r_lazy_null, "Can't supply both `indices` and `sizes`.");
+  }
 
-  UNPROTECT(3);
+  if (indices != r_null) {
+    indices = list_as_locations(indices, n, names);
+  }
+  KEEP(indices);
+
+  if (sizes != r_null) {
+    sizes = vec_as_chop_sizes(sizes, n);
+  }
+  KEEP(sizes);
+
+  r_obj* out = vec_chop_unsafe(x, indices, sizes);
+
+  FREE(3);
   return out;
 }
 
-// [[ include("vctrs.h") ]]
-SEXP vec_chop(SEXP x, SEXP indices) {
-  int nprot = 0;
+// Performance variant that doesn't check the types or values of `indices` / `sizes`
+r_obj* vec_chop_unsafe(r_obj* x, r_obj* indices, r_obj* sizes) {
+  struct vctrs_proxy_info info = vec_proxy_info(x);
+  KEEP(info.shelter);
 
-  struct vctrs_chop_info info = init_chop_info(x, indices);
-  PROTECT_CHOP_INFO(&info, &nprot);
+  struct vctrs_chop_indices* p_indices = new_chop_indices(x, indices, sizes);
+  KEEP(p_indices->shelter);
 
-  SEXP out = PROTECT_N(vec_chop_base(x, indices, info), &nprot);
+  r_obj* out = vec_chop_base(x, info, p_indices);
 
-  UNPROTECT(nprot);
+  FREE(2);
   return out;
 }
 
-static SEXP vec_chop_base(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  struct vctrs_proxy_info proxy_info = info.proxy_info;
-
-  // Fallback to `[` if the class doesn't implement a proxy. This is
-  // to be maximally compatible with existing classes.
-  if (vec_requires_fallback(x, proxy_info)) {
-    if (proxy_info.type == vctrs_type_scalar) {
-      Rf_errorcall(R_NilValue, "Can't slice a scalar");
-    }
-
-    if (info.has_indices) {
-      for (int i = 0; i < info.out_size; ++i) {
-        SEXP index = VECTOR_ELT(indices, i);
-
-        if (is_compact(index)) {
-          SET_VECTOR_ELT(indices, i, compact_materialize(index));
-        }
-      }
+static
+r_obj* vec_chop_base(r_obj* x,
+                     struct vctrs_proxy_info info,
+                     struct vctrs_chop_indices* p_indices) {
+  if (vec_requires_fallback(x, info)) {
+    // Fallback to `[` if the class doesn't implement a proxy. This is
+    // to be maximally compatible with existing classes.
+    if (info.type == VCTRS_TYPE_scalar) {
+      r_abort_lazy_call(r_lazy_null, "Can't slice a scalar");
     }
 
     if (has_dim(x)) {
-      return chop_fallback_shaped(x, indices, info);
+      return chop_fallback_shaped(x, p_indices);
+    } else {
+      return chop_fallback(x, p_indices);
     }
-
-    return chop_fallback(x, indices, info);
   }
 
-  switch (proxy_info.type) {
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list: {
+  switch (info.type) {
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
+  case VCTRS_TYPE_character:
+  case VCTRS_TYPE_raw:
+  case VCTRS_TYPE_list: {
     if (has_dim(x)) {
-      return chop_shaped(x, indices, info);
+      return chop_shaped(x, info, p_indices);
+    } else {
+      return chop(x, info, p_indices);
     }
-
-    return chop(x, indices, info);
   }
-  case vctrs_type_dataframe: {
-    return chop_df(x, indices, info);
+  case VCTRS_TYPE_dataframe: {
+    return chop_df(x, info, p_indices);
   }
   default:
-    vec_check_vector(x, vec_args.empty, r_lazy_null);
-    stop_unimplemented_vctrs_type("vec_chop_base", proxy_info.type);
+    obj_check_vector(x, vec_args.empty, r_lazy_null);
+    stop_unimplemented_vctrs_type("vec_chop_base", info.type);
   }
 }
 
-static SEXP chop(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP proxy = info.proxy_info.proxy;
-  SEXP names = PROTECT(Rf_getAttrib(proxy, R_NamesSymbol));
+static
+r_obj* chop(r_obj* x,
+            struct vctrs_proxy_info info,
+            struct vctrs_chop_indices* p_indices) {
+  r_obj* proxy = info.proxy;
+  r_obj* names = KEEP(r_names(proxy));
+  const enum vctrs_type type = info.type;
 
-  for (R_len_t i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_subscript_size(info.index);
-    } else {
-      ++(*info.p_index);
-    }
+  const r_ssize out_size = indices_out_size(p_indices, proxy);
+  r_obj* out = KEEP(r_alloc_list(out_size));
+
+  for (r_ssize i = 0; i < out_size; ++i) {
+    r_obj* index = indices_next(p_indices);
 
     // Always materialize ALTREP vectors when chopping to avoid inefficiently
     // creating a large amount of small ALTREP objects that are used downstream.
     // This is a heuristic and we should also be on the lookout for cases where
     // we chop to create a small amount of large ALTREP objects that are
     // quickly discarded (#1450).
-    SEXP elt = PROTECT(vec_slice_base(
-      info.proxy_info.type,
+    r_obj* elt = KEEP(vec_slice_base(
+      type,
       proxy,
-      info.index,
+      index,
       VCTRS_MATERIALIZE_true
     ));
 
-    if (names != R_NilValue) {
-      SEXP elt_names = PROTECT(slice_names(names, info.index));
+    if (names != r_null) {
+      r_obj* elt_names = slice_names(names, index);
       r_attrib_poke_names(elt, elt_names);
-      UNPROTECT(1);
     }
 
-    elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+    elt = vec_restore(elt, x, vec_owned(elt));
+    r_list_poke(out, i, elt);
 
-    SET_VECTOR_ELT(info.out, i, elt);
-    UNPROTECT(1);
+    FREE(1);
   }
 
-  UNPROTECT(1);
-  return info.out;
+  FREE(2);
+  return out;
 }
 
-static SEXP chop_df(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP proxy = info.proxy_info.proxy;
+static
+r_obj* chop_df(r_obj* x,
+               struct vctrs_proxy_info info,
+               struct vctrs_chop_indices* p_indices) {
+  r_obj* proxy = info.proxy;
+  r_obj* const* v_proxy = r_list_cbegin(proxy);
 
-  int n_cols = Rf_length(proxy);
+  const r_ssize n_cols = r_length(proxy);
 
-  SEXP col_names = PROTECT(Rf_getAttrib(proxy, R_NamesSymbol));
-  SEXP row_names = PROTECT(df_rownames(proxy));
+  r_obj* col_names = KEEP(r_names(proxy));
+  r_obj* row_names = KEEP(df_rownames(proxy));
 
-  bool has_row_names = TYPEOF(row_names) == STRSXP;
+  const bool has_row_names = r_typeof(row_names) == R_TYPE_character;
 
-  // Pre-load the `out` container with lists that will become data frames
-  for (R_len_t i = 0; i < info.out_size; ++i) {
-    SEXP elt = PROTECT(Rf_allocVector(VECSXP, n_cols));
+  const r_ssize out_size = indices_out_size(p_indices, proxy);
+  r_obj* out = KEEP(r_alloc_list(out_size));
+  r_obj* const* v_out = r_list_cbegin(out);
 
-    Rf_setAttrib(elt, R_NamesSymbol, col_names);
+  // Pre-load the `out` container with empty bare data frames
+  for (r_ssize i = 0; i < out_size; ++i) {
+    r_obj* elt = r_alloc_list(n_cols);
+    r_list_poke(out, i, elt);
+
+    r_attrib_poke_names(elt, col_names);
+
+    r_obj* index = indices_next(p_indices);
+    const r_ssize size = vec_subscript_size(index);
+
+    init_data_frame(elt, size);
 
     if (has_row_names) {
-      if (info.has_indices) {
-        info.index = VECTOR_ELT(indices, i);
-      } else {
-        ++(*info.p_index);
-      }
-
-      Rf_setAttrib(elt, R_RowNamesSymbol, slice_rownames(row_names, info.index));
+      r_obj* elt_row_names = slice_rownames(row_names, index);
+      r_attrib_poke(elt, r_syms.row_names, elt_row_names);
     }
-
-    SET_VECTOR_ELT(info.out, i, elt);
-    UNPROTECT(1);
   }
 
-  // Split each column according to the indices, and then assign the results
-  // into the appropriate data frame column in the `out` list
-  for (int i = 0; i < n_cols; ++i) {
-    SEXP col = VECTOR_ELT(proxy, i);
-    SEXP split = PROTECT(vec_chop(col, indices));
+  r_obj* indices = p_indices->indices;
+  r_obj* sizes = p_indices->sizes;
 
-    for (int j = 0; j < info.out_size; ++j) {
-      SEXP elt = VECTOR_ELT(info.out, j);
-      SET_VECTOR_ELT(elt, i, VECTOR_ELT(split, j));
+  // Chop each column according to the indices, and then assign the results
+  // into the appropriate data frame column in the `out` list
+  for (r_ssize i = 0; i < n_cols; ++i) {
+    r_obj* col = v_proxy[i];
+    r_obj* col_chopped = KEEP(vec_chop_unsafe(col, indices, sizes));
+    r_obj* const* v_col_chopped = r_list_cbegin(col_chopped);
+
+    for (r_ssize j = 0; j < out_size; ++j) {
+      r_obj* elt = v_out[j];
+      r_list_poke(elt, i, v_col_chopped[j]);
     }
 
-    UNPROTECT(1);
+    FREE(1);
   }
 
   // Restore each data frame
-  for (int i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      *info.p_restore_size = vec_subscript_size(VECTOR_ELT(indices, i));
-    }
-
-    SEXP elt = VECTOR_ELT(info.out, i);
-    elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
-    SET_VECTOR_ELT(info.out, i, elt);
+  for (r_ssize i = 0; i < out_size; ++i) {
+    r_obj* elt = v_out[i];
+    elt = vec_restore(elt, x, vec_owned(elt));
+    r_list_poke(out, i, elt);
   }
 
-  UNPROTECT(2);
-  return info.out;
+  FREE(3);
+  return out;
 }
 
-static SEXP chop_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  SEXP proxy = info.proxy_info.proxy;
-  SEXP dim_names = PROTECT(Rf_getAttrib(proxy, R_DimNamesSymbol));
+static
+r_obj* chop_shaped(r_obj* x,
+                   struct vctrs_proxy_info info,
+                   struct vctrs_chop_indices* p_indices) {
+  r_obj* proxy = info.proxy;
+  const enum vctrs_type type = info.type;
 
-  SEXP row_names = R_NilValue;
-  if (dim_names != R_NilValue) {
-    row_names = VECTOR_ELT(dim_names, 0);
+  r_obj* dim_names = KEEP(r_dim_names(proxy));
+
+  r_obj* row_names = r_null;
+  if (dim_names != r_null) {
+    row_names = r_list_get(dim_names, 0);
   }
 
-  for (R_len_t i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_subscript_size(info.index);
-    } else {
-      ++(*info.p_index);
-    }
+  const r_ssize out_size = indices_out_size(p_indices, proxy);
+  r_obj* out = KEEP(r_alloc_list(out_size));
 
-    SEXP elt = PROTECT(vec_slice_shaped(info.proxy_info.type, proxy, info.index));
+  for (r_ssize i = 0; i < out_size; ++i) {
+    r_obj* index = indices_next(p_indices);
 
-    if (dim_names != R_NilValue) {
-      if (row_names != R_NilValue) {
-        SEXP new_dim_names = PROTECT(Rf_shallow_duplicate(dim_names));
-        SEXP new_row_names = PROTECT(slice_names(row_names, info.index));
+    r_obj* elt = KEEP(vec_slice_shaped(type, proxy, index));
 
-        SET_VECTOR_ELT(new_dim_names, 0, new_row_names);
-        Rf_setAttrib(elt, R_DimNamesSymbol, new_dim_names);
-        UNPROTECT(2);
+    if (dim_names != r_null) {
+      if (row_names != r_null) {
+        // Required to slice row names to the right size before poking to avoid
+        // erroring on the dimnames length check in `Rf_setAttrib()`
+        r_obj* new_dim_names = KEEP(r_clone(dim_names));
+        r_obj* new_row_names = slice_names(row_names, index);
+        r_list_poke(new_dim_names, 0, new_row_names);
+        r_attrib_poke_dim_names(elt, new_dim_names);
+        FREE(1);
       } else {
-        Rf_setAttrib(elt, R_DimNamesSymbol, dim_names);
+        r_attrib_poke_dim_names(elt, dim_names);
       }
     }
 
-    elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+    elt = vec_restore(elt, x, vec_owned(elt));
+    r_list_poke(out, i, elt);
 
-    SET_VECTOR_ELT(info.out, i, elt);
-    UNPROTECT(1);
+    FREE(1);
   }
 
-  UNPROTECT(1);
-  return info.out;
+  FREE(2);
+  return out;
 }
 
-static SEXP chop_fallback(SEXP x, SEXP indices, struct vctrs_chop_info info) {
+static
+r_obj* chop_fallback(r_obj* x, struct vctrs_chop_indices* p_indices) {
   // Evaluate in a child of the global environment to allow dispatch
   // to custom functions. We define `[` to point to its base
   // definition to ensure consistent look-up. This is the same logic
   // as in `vctrs_dispatch_n()`, reimplemented here to allow repeated
   // evaluations in a loop.
-  SEXP env = PROTECT(r_new_environment(R_GlobalEnv));
-  Rf_defineVar(syms_x, x, env);
-  Rf_defineVar(syms_i, info.index, env);
+  r_obj* env = KEEP(r_alloc_empty_environment(r_envs.global));
+  r_env_poke(env, syms_x, x);
 
   // Construct call with symbols, not values, for performance.
   // TODO - Remove once bit64 is updated on CRAN. Special casing integer64
   // objects to ensure correct slicing with `NA_integer_`.
-  SEXP call;
+  r_obj* call;
   if (is_integer64(x)) {
-    call = PROTECT(Rf_lang3(syms.vec_slice_dispatch_integer64, syms_x, syms_i));
-    Rf_defineVar(syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64, env);
+    call = KEEP(r_call3(syms.vec_slice_dispatch_integer64, syms_x, syms_i));
+    r_env_poke(env, syms.vec_slice_dispatch_integer64, fns.vec_slice_dispatch_integer64);
   } else {
-    call = PROTECT(Rf_lang3(syms_bracket, syms_x, syms_i));
-    Rf_defineVar(syms_bracket, fns_bracket, env);
+    call = KEEP(r_call3(syms_bracket, syms_x, syms_i));
+    r_env_poke(env, syms_bracket, fns_bracket);
   }
 
-  for (R_len_t i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      info.index = VECTOR_ELT(indices, i);
-      *info.p_restore_size = vec_size(info.index);
+  const r_ssize out_size = indices_out_size(p_indices, x);
+  r_obj* out = KEEP(r_alloc_list(out_size));
 
-      // Update `i` binding with the new index value
-      Rf_defineVar(syms_i, info.index, env);
-    } else {
-      ++(*info.p_index);
+  for (r_ssize i = 0; i < out_size; ++i) {
+    r_obj* index = indices_next(p_indices);
+
+    if (is_compact(index)) {
+      index = compact_materialize(index);
     }
+    KEEP(index);
 
-    SEXP elt = PROTECT(Rf_eval(call, env));
+    // Update `i` binding with the new index value
+    r_env_poke(env, syms_i, index);
+
+    r_obj* elt = KEEP(r_eval(call, env));
 
     if (!vec_is_restored(elt, x)) {
-      elt = vec_restore(elt, x, info.restore_size, vec_owned(elt));
+      elt = vec_restore(elt, x, vec_owned(elt));
     }
 
-    SET_VECTOR_ELT(info.out, i, elt);
-    UNPROTECT(1);
+    r_list_poke(out, i, elt);
+    FREE(2);
   }
 
-  UNPROTECT(2);
-  return info.out;
+  FREE(3);
+  return out;
 }
 
-static SEXP chop_fallback_shaped(SEXP x, SEXP indices, struct vctrs_chop_info info) {
-  for (R_len_t i = 0; i < info.out_size; ++i) {
-    if (info.has_indices) {
-      info.index = VECTOR_ELT(indices, i);
-    } else {
-      ++(*info.p_index);
+static
+r_obj* chop_fallback_shaped(r_obj* x, struct vctrs_chop_indices* p_indices) {
+  const r_ssize out_size = indices_out_size(p_indices, x);
+  r_obj* out = KEEP(r_alloc_list(out_size));
+
+  for (r_ssize i = 0; i < out_size; ++i) {
+    r_obj* index = indices_next(p_indices);
+
+    if (is_compact(index)) {
+      index = compact_materialize(index);
     }
+    KEEP(index);
 
     // `vec_slice_fallback()` will also `vec_restore()` for us
-    SEXP elt = PROTECT(vec_slice_fallback(x, info.index));
+    r_obj* elt = vec_slice_fallback(x, index);
+    r_list_poke(out, i, elt);
 
-    SET_VECTOR_ELT(info.out, i, elt);
-    UNPROTECT(1);
+    FREE(1);
   }
 
-  return info.out;
+  FREE(1);
+  return out;
 }
 
 // -----------------------------------------------------------------------------
 
-SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
-  if (indices == R_NilValue) {
-    return indices;
+r_obj* list_as_locations(r_obj* indices, r_ssize n, r_obj* names) {
+  if (r_typeof(indices) != R_TYPE_list) {
+    r_abort_lazy_call(r_lazy_null, "`indices` must be a list of index values, or `NULL`.");
   }
 
-  if (TYPEOF(indices) != VECSXP) {
-    Rf_errorcall(R_NilValue, "`indices` must be a list of index values, or `NULL`.");
-  }
+  indices = KEEP(r_clone_referenced(indices));
 
-  indices = PROTECT(r_clone_referenced(indices));
-
-  R_len_t size = vec_size(indices);
+  const r_ssize size = r_length(indices);
+  r_obj* const* v_indices = r_list_cbegin(indices);
 
   // Restrict index values to positive integer locations
   const struct location_opts opts = {
@@ -405,12 +498,49 @@ SEXP vec_as_indices(SEXP indices, R_len_t n, SEXP names) {
     .loc_zero = LOC_ZERO_ERROR
   };
 
-  for (int i = 0; i < size; ++i) {
-    SEXP index = VECTOR_ELT(indices, i);
+  for (r_ssize i = 0; i < size; ++i) {
+    r_obj* index = v_indices[i];
     index = vec_as_location_opts(index, n, names, &opts);
-    SET_VECTOR_ELT(indices, i, index);
+    r_list_poke(indices, i, index);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return indices;
+}
+
+static
+r_obj* vec_as_chop_sizes(r_obj* sizes, r_ssize size) {
+  sizes = KEEP(vec_cast(
+    sizes,
+    r_globals.empty_int,
+    vec_args.sizes,
+    vec_args.empty,
+    r_lazy_null
+  ));
+
+  const r_ssize n_sizes = r_length(sizes);
+  const int* v_sizes = r_int_cbegin(sizes);
+
+  r_ssize total = 0;
+
+  for (r_ssize i = 0; i < n_sizes; ++i) {
+    const int elt = v_sizes[i];
+
+    if (elt == r_globals.na_int) {
+      r_abort_lazy_call(r_lazy_null, "`sizes` can't contain missing values.");
+    } else if (elt < 0) {
+      r_abort_lazy_call(r_lazy_null, "`sizes` can't contain negative sizes.");
+    } else if (elt > size) {
+      r_abort_lazy_call(r_lazy_null, "`sizes` can't contain sizes larger than %i.", size);
+    }
+
+    total += elt;
+  }
+
+  if (total != size) {
+    r_abort_lazy_call(r_lazy_null, "`sizes` must sum to size %i, not size %i.", size, total);
+  }
+
+  FREE(1);
+  return sizes;
 }

@@ -153,10 +153,11 @@ With these methods vctrs is now able to combine data tables with data
 frames:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_cbind(data.frame(x = 1:3), data.table(y = "foo"))
-#>    x   y
-#> 1: 1 foo
-#> 2: 2 foo
-#> 3: 3 foo
+#>        x      y
+#>    <int> <char>
+#> 1:     1    foo
+#> 2:     2    foo
+#> 3:     3    foo
 }\if{html}{\out{</div>}}
 }
 
@@ -244,12 +245,12 @@ constant group.
 
 The coercion methods for data frames operate in two steps:
 \itemize{
-\item They check for compatible subclass attributes. In our case the
-tibble colour has to be the same, or be undefined.
+\item They check for compatible subclass attributes. In our case the tibble
+colour has to be the same, or be undefined.
 \item They call their parent methods, in this case
-\code{\link[=tib_ptype2]{tib_ptype2()}} and \code{\link[=tib_cast]{tib_cast()}}
-because we have a subclass of tibble. This eventually calls the data
-frame methods \code{\link[=df_ptype2]{df_ptype2()}} and
+\code{\link[=tib_ptype2]{tib_ptype2()}} and \code{\link[=tib_cast]{tib_cast()}} because
+we have a subclass of tibble. This eventually calls the data frame
+methods \code{\link[=df_ptype2]{df_ptype2()}} and
 \code{\link[=tib_ptype2]{tib_ptype2()}} which match the columns and their
 types.
 }

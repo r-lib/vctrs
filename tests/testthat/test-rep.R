@@ -29,10 +29,12 @@ test_that("`vec_rep()` errors on long vector output", {
 })
 
 test_that("`vec_rep()` validates `times`", {
-  expect_error(vec_rep(1, "x"), class = "vctrs_error_incompatible_type")
-  expect_error(vec_rep(1, c(1, 2)))
-  expect_error(vec_rep(1, -1))
-  expect_error(vec_rep(1, NA_integer_))
+  expect_snapshot({
+    (expect_error(my_vec_rep(1, "x"), class = "vctrs_error_incompatible_type"))
+    (expect_error(my_vec_rep(1, c(1, 2))))
+    (expect_error(my_vec_rep(1, -1)))
+    (expect_error(my_vec_rep(1, NA_integer_)))
+  })
 })
 
 # ------------------------------------------------------------------------------
@@ -56,6 +58,15 @@ test_that("`vec_rep_each()` can repeat 0 `times`", {
   expect_identical(vec_rep_each(1:2, 0), integer())
 })
 
+test_that("`vec_rep_each()` finalizes type when repeating 0 times (#1673)", {
+  expect_identical(vec_rep_each(NA, 0), logical())
+})
+
+test_that("`vec_rep_each()` retains names when repeating 0 times (#1673)", {
+  x <- c(a = 1, b = 2)
+  expect_identical(vec_rep_each(x, 0), named(numeric()))
+})
+
 test_that("`vec_rep_each()` can repeat 1 `time`", {
   expect_identical(vec_rep_each(1:2, 1), 1:2)
 })
@@ -66,36 +77,40 @@ test_that("`vec_rep_each()` errors on long vector output", {
 })
 
 test_that("`vec_rep_each()` validates `times`", {
-  expect_error(vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type")
-  expect_error(vec_rep_each(1, -1))
-  expect_error(vec_rep_each(c(1, 2), c(1, -1)))
-  expect_error(vec_rep_each(1, NA_integer_))
-  expect_error(vec_rep_each(c(1, 2), c(1, NA_integer_)))
+  expect_snapshot({
+    (expect_error(my_vec_rep_each(1, "x"), class = "vctrs_error_incompatible_type"))
+    (expect_error(my_vec_rep_each(1, -1)))
+    (expect_error(my_vec_rep_each(c(1, 2), c(1, -1))))
+    (expect_error(my_vec_rep_each(1, NA_integer_)))
+    (expect_error(my_vec_rep_each(c(1, 2), c(1, NA_integer_))))
+  })
 })
 
 test_that("`vec_rep_each()` uses recyclying errors", {
-  expect_error(vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size")
+  expect_snapshot({
+    (expect_error(my_vec_rep_each(1:2, 1:3), class = "vctrs_error_recycle_incompatible_size"))
+  })
 })
 
 # ------------------------------------------------------------------------------
 
 test_that("`vec_rep()` validates `times`", {
-  expect_snapshot(error = TRUE, vec_rep(1, "x"))
-  expect_snapshot(error = TRUE, vec_rep(1, c(1, 2)))
-  expect_snapshot(error = TRUE, vec_rep(1, -1))
-  expect_snapshot(error = TRUE, vec_rep(1, NA_integer_))
+  expect_snapshot(error = TRUE, my_vec_rep(1, "x"))
+  expect_snapshot(error = TRUE, my_vec_rep(1, c(1, 2)))
+  expect_snapshot(error = TRUE, my_vec_rep(1, -1))
+  expect_snapshot(error = TRUE, my_vec_rep(1, NA_integer_))
 })
 
 test_that("`vec_rep_each()` validates `times`", {
-  expect_snapshot(error = TRUE, vec_rep_each(1, "x"))
-  expect_snapshot(error = TRUE, vec_rep_each(1, -1))
-  expect_snapshot(error = TRUE, vec_rep_each(c(1, 2), c(1, -1)))
-  expect_snapshot(error = TRUE, vec_rep_each(1, NA_integer_))
-  expect_snapshot(error = TRUE, vec_rep_each(c(1, 2), c(1, NA_integer_)))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1, "x"))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1, -1))
+  expect_snapshot(error = TRUE, my_vec_rep_each(c(1, 2), c(1, -1)))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1, NA_integer_))
+  expect_snapshot(error = TRUE, my_vec_rep_each(c(1, 2), c(1, NA_integer_)))
 })
 
 test_that("`vec_rep_each()` uses recyclying errors", {
-  expect_snapshot(error = TRUE, vec_rep_each(1:2, 1:3))
+  expect_snapshot(error = TRUE, my_vec_rep_each(1:2, 1:3))
 })
 
 # vec_unrep --------------------------------------------------------------------
@@ -143,4 +158,10 @@ test_that("works with data frames with rows but no columns", {
   x <- data_frame(.size = 5)
   expect <- data_frame(key = data_frame(.size = 1L), times = 5L)
   expect_identical(vec_unrep(x), expect)
+})
+
+test_that("errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_unrep(environment())
+  })
 })

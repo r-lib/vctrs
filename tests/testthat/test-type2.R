@@ -30,9 +30,9 @@ test_that("vec_typeof2() returns common type", {
       that <- nms[[j]]
 
       if (i <= j) {
-        exp <- paste0("vctrs_type2_", this, "_", that)
+        exp <- paste0("VCTRS_TYPE2_", this, "_", that)
       } else {
-        exp <- paste0("vctrs_type2_", that, "_", this)
+        exp <- paste0("VCTRS_TYPE2_", that, "_", this)
       }
       out <- vec_typeof2(base_empty_types[[this]], base_empty_types[[that]])
 
@@ -59,9 +59,9 @@ test_that("vec_typeof2_s3() returns common type", {
       }
 
       if (i <= j) {
-        exp <- paste0("vctrs_type2_s3_", this, "_", that)
+        exp <- paste0("VCTRS_TYPE2_S3_", this, "_", that)
       } else {
-        exp <- paste0("vctrs_type2_s3_", that, "_", this)
+        exp <- paste0("VCTRS_TYPE2_S3_", that, "_", this)
       }
       out <- vec_typeof2_s3(all_base_empty_types[[this]], all_base_empty_types[[that]])
 
@@ -159,30 +159,16 @@ test_that("Subclasses of data.frame dispatch to `vec_ptype2()` methods", {
   expect_identical(vec_ptype2(mtcars, quux), "dispatched!")
 })
 
-test_that("Subclasses of `tbl_df` do not have `tbl_df` common type (#481)", {
-  quux <- tibble()
-  quux <- foobar(quux)
+test_that("Subclasses of `tbl_df` have `tbl_df` common type (#481)", {
+  quux <- foobar(tibble())
 
-  expect_incompatible_df(
+  expect_identical(
     vec_ptype_common(quux, tibble()),
     tibble()
   )
-  expect_incompatible_df(
+  expect_identical(
     vec_ptype_common(tibble(), quux),
     tibble()
-  )
-
-  expect_df_fallback_warning(
-    expect_identical(
-      vec_ptype_common_df_fallback(quux, tibble()),
-      tibble()
-    )
-  )
-  expect_df_fallback_warning(
-    expect_identical(
-      vec_ptype_common_df_fallback(tibble(), quux),
-      tibble()
-    )
   )
 })
 
@@ -268,39 +254,18 @@ test_that("Incompatible attributes bullets are not show when methods are impleme
   })
 })
 
-test_that("common type errors don't mention columns if they are compatible", {
-  expect_snapshot({
-    df <- data.frame(x = 1, y = "")
-
-    foo <- structure(df, class = c("vctrs_foo", "data.frame"))
-    bar <- structure(df, class = c("vctrs_bar", "data.frame"))
-
-    (expect_error(
-      vec_cast_no_fallback(foo, bar),
-      class = "vctrs_error_incompatible_type"
-    ))
-  })
-})
-
-test_that("common type warnings for data frames take attributes into account", {
+test_that("attributes no longer play a role in bare data frame fallback", {
   foobar_bud <- foobar(mtcars, bud = TRUE)
   foobar_boo <- foobar(mtcars, boo = TRUE)
 
-  expect_df_fallback_warning(vec_ptype2_fallback(foobar_bud, foobar_boo))
-  expect_df_fallback_warning(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
-
-  expect_snapshot({
-    vec_ptype2_fallback(foobar_bud, foobar_boo)
-
-    "For reference, warning for incompatible classes"
-    vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars))
-
-    "For reference, error when fallback is disabled"
-    (expect_error(
-      vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars)),
-      class = "vctrs_error_incompatible_type"
-    ))
-  })
+  expect_equal(
+    vec_ptype2(foobar_bud, foobar_boo),
+    vec_slice(unrownames(mtcars), 0)
+  )
+  expect_equal(
+    vec_ptype2(foobar(mtcars), foobaz(mtcars)),
+    vec_slice(unrownames(mtcars), 0)
+  )
 })
 
 test_that("vec_ptype2() methods get prototypes", {
@@ -330,17 +295,64 @@ test_that("vec_ptype2() allows vec_ptype() to return another type", {
   expect_identical(out, dbl())
 })
 
-test_that("For reference, warning for incompatible classes", {
-  expect_snapshot(vec_ptype2_fallback(foobar(mtcars), foobaz(mtcars)))
-})
-
-test_that("For reference, error when fallback is disabled", {
-  expect_snapshot(
-    (expect_error(vec_ptype2_no_fallback(foobar(mtcars), foobaz(mtcars))))
-  )
-})
-
 test_that("vec_ptype2() evaluates x_arg and y_arg lazily", {
   expect_silent(vec_ptype2(1L, 1L, x_arg = print("oof")))
   expect_silent(vec_ptype2(1L, 1L, y_arg = print("oof")))
+})
+
+test_that("can restart ptype2 errors", {
+  x <- data_frame(x = ordered(c("a", "b", "c")))
+  y <- data_frame(x = ordered(c("A", "B", "C")))
+
+  exp <- c("a", "b", "c", "A", "B", "C")
+  exp <- factor(exp, exp)
+
+  expect_error(vec_rbind(x, y), class = "vctrs_error_incompatible_type")
+
+  expect_equal(
+    with_ordered_restart(vec_rbind(x, y)),
+    data_frame(x = exp)
+  )
+
+  z <- data_frame(x = chr())
+
+  expect_equal(
+    with_ordered_restart(vec_ptype_common(x, y)),
+    data_frame(x = exp[0])
+  )
+  expect_equal(
+    with_ordered_restart(vec_ptype_common(x, y, z)),
+    data_frame(x = chr())
+  )
+
+  expect_equal(
+    with_ordered_restart(vec_cast_common(x, y)),
+    list(
+      data_frame(x = factor(c("a", "b", "c"), levels(exp))),
+      data_frame(x = factor(c("A", "B", "C"), levels(exp)))
+    )
+  )
+  expect_equal(
+    with_ordered_restart(vec_cast_common(x, y, z)),
+    list(
+      data_frame(x = c("a", "b", "c")),
+      data_frame(x = c("A", "B", "C")),
+      data_frame(x = chr())
+    )
+  )
+
+  # Factor case
+  y <- data_frame(x = factor(c("A", "B", "C")))
+  expect_equal(
+    with_ordered_restart(vec_rbind(x, y)),
+    data_frame(x = exp)
+  )
+})
+
+test_that("subclasses of tibble are compatible", {
+  tib <- foobar(tibble(x = 1))
+  ptype <- foobar(tibble(x = dbl()))
+
+  expect_equal(vec_ptype_common(tib), ptype)
+  expect_equal(vec_ptype_common(tib, tib), ptype)
 })

@@ -171,16 +171,3 @@ test_that("incompatible size errors", {
     (expect_error(stop_incompatible_size(1:2, 3:5, 2L, 3L, x_arg = quote(foo), y_arg = quote(bar))))
   })
 })
-
-test_that("simplified backtraces include whole vctrs context", {
-  skip_on_cran()
-
-  top <- current_env()
-  trace <- NULL
-  expect_error(withCallingHandlers(vec_slice(1, 2), error = function(...) {
-    trace <<- trace_back(top, sys.frame(-1L))
-  }))
-
-  trace_lines <- format(trace, simplify = "branch")
-  expect_true(any(grepl("vec_slice", trace_lines)))
-})

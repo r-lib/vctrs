@@ -15,8 +15,8 @@
 struct dictionary {
   SEXP protect;
 
-  poly_binary_int_fn_ptr p_equal_na_equal;
-  poly_unary_bool_fn_ptr p_is_incomplete;
+  poly_binary_int_fn* p_equal_na_equal;
+  poly_unary_bool_fn* p_is_incomplete;
   struct poly_vec* p_poly_vec;
 
   uint32_t* hash;
@@ -47,9 +47,9 @@ struct dictionary* new_dictionary_partial(SEXP x);
 
 #define PROTECT_DICT(d, n) do {        \
   struct dictionary* d_ = (d);         \
-  PROTECT_POLY_VEC(d_->p_poly_vec, n); \
-  PROTECT(d_->protect);                \
-  *(n) += 1;                           \
+  KEEP(d_->p_poly_vec->shelter);       \
+  KEEP(d_->protect);                   \
+  *(n) += 2;                           \
 } while(0)
 
 /**

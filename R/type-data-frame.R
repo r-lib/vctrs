@@ -16,12 +16,11 @@
 #' @param n Number of rows. If `NULL`, will be computed from the length of
 #'   the first element of `x`.
 #' @param ...,class Additional arguments for creating subclasses.
-#'   The `"names"` and `"row.names"` attributes override input in `x` and `n`,
-#'   respectively:
 #'
-#'   - `"names"` is used if provided, overriding existing names in `x`
-#'   - `"row.names"` is used if provided, if `n` is provided it must be
-#'     consistent.
+#'   The following attributes have special behavior:
+#'   - `"names"` is preferred if provided, overriding existing names in `x`.
+#'   - `"row.names"` is preferred if provided, overriding both `n` and the size
+#'     implied by `x`.
 #'
 #' @export
 #' @examples
@@ -40,7 +39,7 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #'
 #' @section Properties:
 #'
-#' - Inputs are [recycled][vector_recycling_rules] to a common size with
+#' - Inputs are [recycled][theory-faq-recycling] to a common size with
 #'   [vec_recycle_common()].
 #'
 #' - With the exception of data frames, inputs are not modified in any way.
@@ -59,14 +58,17 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 #' [new_data_frame()] for constructing data frame subclasses from a validated
 #' input. [data_frame()] for a fast data frame creation helper.
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param ... Vectors of equal-length. When inputs are named, those names
 #'   are used for names of the resulting list.
 #' @param .size The common size of vectors supplied in `...`. If `NULL`, this
 #'   will be computed as the common size of the inputs.
 #' @param .unpack Should unnamed data frame inputs be unpacked? Defaults to
 #'   `TRUE`.
-#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
-#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"`,
+#'   `"minimal"`, `"unique_quiet"`, or `"universal_quiet"`. See [vec_as_names()]
+#'   for the meaning of these options.
 #'
 #' @export
 #' @examples
@@ -87,7 +89,8 @@ new_data_frame <- fn_inline_formals(new_data_frame, "x")
 df_list <- function(...,
                     .size = NULL,
                     .unpack = TRUE,
-                    .name_repair = c("check_unique", "unique", "universal", "minimal")) {
+                    .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet", "universal_quiet"),
+                    .error_call = current_env()) {
   .Call(ffi_df_list, list2(...), .size, .unpack, .name_repair, environment())
 }
 df_list <- fn_inline_formals(df_list, ".name_repair")
@@ -100,10 +103,10 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #' more in line with vctrs principles. The Properties section outlines these.
 #'
 #' @details
-#' If no column names are supplied, `""` will be used as a default for all
-#' columns. This is applied before name repair occurs, so the default
-#' name repair of `"check_unique"` will error if any unnamed inputs
-#' are supplied and `"unique"` will repair the empty string column names
+#' If no column names are supplied, `""` will be used as a default name for all
+#' columns. This is applied before name repair occurs, so the default name
+#' repair of `"check_unique"` will error if any unnamed inputs are supplied and
+#' `"unique"` (or `"unique_quiet"`) will repair the empty string column names
 #' appropriately. If the column names don't matter, use a `"minimal"` name
 #' repair for convenience and performance.
 #'
@@ -116,12 +119,15 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #' for developers when creating new data frame subclasses supporting
 #' standard evaluation.
 #'
+#' @inheritParams rlang::args_error_context
+#'
 #' @param ... Vectors to become columns in the data frame. When inputs are
 #'   named, those names are used for column names.
 #' @param .size The number of rows in the data frame. If `NULL`, this will
 #'   be computed as the common size of the inputs.
-#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"` or
-#'   `"minimal"`. See [vec_as_names()] for the meaning of these options.
+#' @param .name_repair One of `"check_unique"`, `"unique"`, `"universal"`,
+#'   `"minimal"`, `"unique_quiet"`, or `"universal_quiet"`. See [vec_as_names()]
+#'   for the meaning of these options.
 #'
 #' @export
 #' @examples
@@ -158,7 +164,8 @@ df_list <- fn_inline_formals(df_list, ".name_repair")
 #' data_frame(x = 1, data_frame(y = 1:2, z = "a"))
 data_frame <- function(...,
                        .size = NULL,
-                       .name_repair = c("check_unique", "unique", "universal", "minimal")) {
+                       .name_repair = c("check_unique", "unique", "universal", "minimal", "unique_quiet", "universal_quiet"),
+                       .error_call = current_env()) {
   .Call(ffi_data_frame, list2(...), .size, .name_repair, environment())
 }
 data_frame <- fn_inline_formals(data_frame, ".name_repair")
@@ -168,30 +175,14 @@ vec_ptype_abbr.data.frame <- function(x, ...) {
   "df"
 }
 
-#' @export
-vec_proxy_equal.data.frame <- function(x, ...) {
-  df_proxy(x, VCTRS_PROXY_KIND_equal)
-}
-
-#' @export
-vec_proxy_compare.data.frame <- function(x, ...) {
-  df_proxy(x, VCTRS_PROXY_KIND_compare)
-}
-
-#' @export
-vec_proxy_order.data.frame <- function(x, ...) {
-  df_proxy(x, VCTRS_PROXY_KIND_order)
-}
-
+# For testing
 # Keep in sync with `enum vctrs_proxy_kind` in `vctrs.h`
-VCTRS_PROXY_KIND_default <- 0L
-VCTRS_PROXY_KIND_equal <- 1L
-VCTRS_PROXY_KIND_compare <- 2L
-VCTRS_PROXY_KIND_order <- 3L
-
 df_proxy <- function(x, kind) {
-  .Call(vctrs_df_proxy, x, kind)
+  .Call(ffi_df_proxy, x, kind)
 }
+VCTRS_PROXY_KIND_equal <- 0L
+VCTRS_PROXY_KIND_compare <- 1L
+VCTRS_PROXY_KIND_order <- 2L
 
 df_is_coercible <- function(x, y, opts) {
   vec_is_coercible(
@@ -289,12 +280,8 @@ df_cast_params <- function(x,
                            ...,
                            x_arg = "",
                            to_arg = "",
-                           df_fallback = NULL,
                            s3_fallback = NULL) {
-  opts <- fallback_opts(
-    df_fallback = df_fallback,
-    s3_fallback = s3_fallback
-  )
+  opts <- fallback_opts(s3_fallback = s3_fallback)
   df_cast_opts(x, to, opts = opts, x_arg = x_arg, to_arg = to_arg)
 }
 
@@ -320,54 +307,6 @@ vec_ptype2.data.frame.data.frame <- function(x, y, ...) {
   df_ptype2(x, y, ...)
 }
 
-vec_ptype2_df_fallback_normalise <- function(x, y, opts, ...) {
-  x_orig <- x
-  y_orig <- y
-
-  ptype <- df_ptype2_opts(x, y, opts = opts, ...)
-
-  x <- x[0, , drop = FALSE]
-  y <- y[0, , drop = FALSE]
-
-  x[seq_along(ptype)] <- ptype
-  y[seq_along(ptype)] <- ptype
-
-  # Names might have been repaired by `[<-`
-  names(x) <- names(ptype)
-  names(y) <- names(ptype)
-
-  # Restore attributes if no `[` method is implemented
-  if (df_has_base_subset(x)) {
-    x <- vec_restore(x, x_orig)
-  }
-  if (df_has_base_subset(y)) {
-    y <- vec_restore(y, y_orig)
-  }
-
-  list(x = x, y = y)
-}
-vec_cast_df_fallback_normalise <- function(x, to, opts, ...) {
-  orig <- x
-  cast <- df_cast_opts(x, to, opts = opts, ...)
-
-  # Seq-assign should be more widely implemented than empty-assign?
-  x[seq_along(to)] <- cast
-
-  # Names might have been repaired by `[<-`
-  names(x) <- names(cast)
-
-  # Restore attributes if no `[` method is implemented
-  if (df_has_base_subset(x)) {
-    x <- vec_restore(x, orig)
-  }
-
-  x
-}
-
-df_needs_normalisation <- function(x, y, opts) {
-  is.data.frame(x) && is.data.frame(y) && df_is_coercible(x, y, opts)
-}
-
 # Fallback for data frame subclasses (#981)
 vec_ptype2_df_fallback <- function(x,
                                    y,
@@ -375,89 +314,20 @@ vec_ptype2_df_fallback <- function(x,
                                    x_arg = "",
                                    y_arg = "",
                                    call = caller_env()) {
-  seen_tibble <- inherits(x, "tbl_df") || inherits(y, "tbl_df")
-
-  ptype <- vec_ptype2_params(
-    new_data_frame(x),
-    new_data_frame(y),
-    df_fallback = opts$df_fallback,
+  vec_ptype2_params(
+    as_base_df(x),
+    as_base_df(y),
     s3_fallback = opts$s3_fallback,
+    x_arg = x_arg,
+    y_arg = y_arg,
     call = call
   )
-
-  classes <- NULL
-  if (is_df_fallback(x)) {
-    classes <- c(classes, known_classes(x))
-    x <- df_fallback_as_df(x)
-  }
-  if (is_df_fallback(y)) {
-    classes <- c(classes, known_classes(y))
-    y <- df_fallback_as_df(y)
-  }
-  x_class <- class(x)[[1]]
-  y_class <- class(y)[[1]]
-
-  if (needs_fallback_warning(opts$df_fallback) &&
-      !all(c(x_class, y_class) %in% c(classes, "tbl_df"))) {
-    fallback_class <- if (seen_tibble) "<tibble>" else "<data.frame>"
-    msg <- cnd_type_message(
-      x, y,
-      x_arg, y_arg,
-      NULL,
-      "combine",
-      NULL,
-      fallback = fallback_class
-    )
-
-    if (identical(x_class, y_class)) {
-      msg <- c(
-        msg,
-        incompatible_attrib_bullets()
-      )
-    }
-
-    warn(msg)
-  }
-
-  # Return a fallback class so we don't warn multiple times. This
-  # fallback class is stripped in `vec_ptype_finalise()`.
-  new_fallback_df(
-    ptype,
-    known_classes = unique(c(classes, x_class, y_class)),
-    seen_tibble = seen_tibble
-  )
 }
-
-is_df_subclass <- function(x) {
-  inherits(x, "data.frame") && !identical(class(x), "data.frame")
-}
-is_df_fallback <- function(x) {
-  inherits(x, "vctrs:::df_fallback")
-}
-new_fallback_df <- function(x, known_classes, seen_tibble = FALSE, n = nrow(x)) {
-  class <- "vctrs:::df_fallback"
-  if (seen_tibble) {
-    class <- c(class, "tbl_df", "tbl")
-  }
-
-  new_data_frame(
-    x,
-    n = n,
-    known_classes = known_classes,
-    seen_tibble = seen_tibble,
-    class = class
-  )
-}
-df_fallback_as_df <- function(x) {
+as_base_df <- function(x) {
   if (inherits(x, "tbl_df")) {
-    new_data_frame(x, class = c("tbl_df", "tbl", "data.frame"))
+    new_data_frame(x, class = c("tbl_df", "tbl"))
   } else {
     new_data_frame(x)
-  }
-}
-known_classes <- function(x) {
-  if (is_df_fallback(x)) {
-    attr(x, "known_classes")
   }
 }
 
@@ -478,8 +348,8 @@ vec_cast.data.frame.data.frame <- function(x, to, ..., x_arg = "", to_arg = "") 
 }
 
 #' @export
-vec_restore.data.frame <- function(x, to, ..., n = NULL) {
-  .Call(vctrs_bare_df_restore, x, to, n)
+vec_restore.data.frame <- function(x, to, ...) {
+  .Call(ffi_vec_bare_df_restore, x, to)
 }
 
 # Helpers -----------------------------------------------------------------
@@ -511,6 +381,17 @@ df_lossy_cast <- function(out,
   )
 }
 
-is_informative_error.vctrs_error_cast_lossy_dropped <- function(x, ...) {
+is_informative_error_vctrs_error_cast_lossy_dropped <- function(x, ...) {
   FALSE
+}
+
+df_attrib <- function(x) {
+  attributes(x)[c("row.names", "names")]
+}
+non_df_attrib <- function(x) {
+  attrib <- attributes(x)
+  attrib <- attrib[!names(attrib) %in% c("row.names", "names")]
+
+  # Sort to allow comparison
+  attrib[order(names(attrib))]
 }

@@ -62,7 +62,7 @@ class} is not \code{"data.frame"}:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{my_df <- data.frame(x = 1)
 class(my_df) <- c("data.frame", "my_class")
 
-vctrs::vec_assert(my_df)
+vctrs::obj_check_vector(my_df)
 #> Error:
 #> ! `my_df` must be a vector, not a <data.frame/my_class> object.
 }\if{html}{\out{</div>}}
@@ -82,7 +82,7 @@ last in the class vector:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{class(my_df) <- c("my_class", "data.frame")
 
-vctrs::vec_assert(my_df)
+vctrs::obj_check_vector(my_df)
 
 dplyr::slice(my_df, 1)
 #>   x

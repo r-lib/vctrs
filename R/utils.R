@@ -21,7 +21,7 @@ vec_coerce_bare <- function(x, type) {
 # Matches the semantics of c() - based on experimenting with the output
 # of c(), not reading the source code.
 outer_names <- function(names, outer, n) {
-  .Call(vctrs_outer_names, names, outer, vec_cast(n, int()))
+  .Call(ffi_outer_names, names, outer, vec_cast(n, int()))
 }
 
 has_inner_names <- function(x) {
@@ -340,4 +340,9 @@ browser <- function(...,
   # expected place. Ideally `skipCalls` would not skip but exit the
   # contexts.
   on.exit(base::browser(..., skipCalls = skipCalls + 1))
+}
+
+vec_paste0 <- function(...) {
+  args <- vec_recycle_common(...)
+  exec(paste0, !!!args)
 }

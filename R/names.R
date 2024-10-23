@@ -36,10 +36,11 @@
 #' @inheritParams rlang::args_dots_empty
 #'
 #' @param names A character vector.
-#' @param repair Either a string or a function. If a string, it must
-#'   be one of `"check_unique"`, `"minimal"`, `"unique"`, or `"universal"`.
-#'   If a function, it is invoked with a vector of minimal names and must
-#'   return minimal names, otherwise an error is thrown.
+
+#' @param repair Either a string or a function. If a string, it must be one of
+#'   `"check_unique"`, `"minimal"`, `"unique"`, `"universal"`, `"unique_quiet"`,
+#'   or `"universal_quiet"`. If a function, it is invoked with a vector of
+#'   minimal names and must return minimal names, otherwise an error is thrown.
 #'
 #'   * Minimal names are never `NULL` or `NA`. When an element doesn't
 #'     have a name, its minimal name is an empty string.
@@ -54,6 +55,12 @@
 #'   The `"check_unique"` option doesn't perform any name repair.
 #'   Instead, an error is raised if the names don't suit the
 #'   `"unique"` criteria.
+#'
+#'   The options `"unique_quiet"` and `"universal_quiet"` are here to help the
+#'   user who calls this function indirectly, via another function which exposes
+#'   `repair` but not `quiet`. Specifying `repair = "unique_quiet"` is like
+#'   specifying `repair = "unique", quiet = TRUE`. When the `"*_quiet"` options
+#'   are used, any setting of `quiet` is silently overridden.
 #' @param repair_arg If specified and `repair = "check_unique"`, any errors
 #'   will include a hint to set the `repair_arg`.
 #' @param quiet By default, the user is informed of any renaming
@@ -141,10 +148,6 @@
 #'
 #' @seealso [rlang::names2()] returns the names of an object, after
 #'   making them `minimal`.
-#'
-#' The [Names attribute](https://principles.tidyverse.org/names-attribute.html)
-#' section in the "tidyverse package development principles".
-#'
 #' @examples
 #' # By default, `vec_as_names()` returns minimal names:
 #' vec_as_names(c(NA, NA, "foo"))
@@ -157,13 +160,13 @@
 #' @export
 vec_as_names <- function(names,
                          ...,
-                         repair = c("minimal", "unique", "universal", "check_unique"),
-                         repair_arg = "",
+                         repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
+                         repair_arg = NULL,
                          quiet = FALSE,
                          call = caller_env()) {
   check_dots_empty0(...)
   .Call(
-    ffi_as_names,
+    ffi_vec_as_names,
     names,
     repair,
     quiet,
@@ -254,7 +257,7 @@ detect_dot_dot <- function(names) {
 #' vec_set_names(data.frame(a = 1:3), letters[1:3])
 vec_names2 <- function(x,
                        ...,
-                       repair = c("minimal", "unique", "universal", "check_unique"),
+                       repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
                        quiet = FALSE) {
   check_dots_empty0(...)
   repair <- validate_name_repair_arg(repair)
@@ -275,11 +278,13 @@ vec_names2 <- function(x,
     minimal = minimal_names(x),
     unique = unique_names(x, quiet = quiet),
     universal = as_universal_names(minimal_names(x), quiet = quiet),
-    check_unique = validate_unique(minimal_names(x))
+    check_unique = validate_unique(minimal_names(x)),
+    unique_quiet = unique_names(x, quiet = TRUE),
+    universal_quiet = as_universal_names(minimal_names(x), quiet = TRUE)
   )
 }
 vec_repair_names <- function(x,
-                             repair = c("minimal", "unique", "universal", "check_unique"),
+                             repair = c("minimal", "unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
                              ...,
                              quiet = FALSE) {
   if (is.data.frame(x)) {
@@ -290,10 +295,10 @@ vec_repair_names <- function(x,
 }
 
 minimal_names <- function(x) {
-  .Call(vctrs_minimal_names, x)
+  .Call(ffi_minimal_names, x)
 }
 unique_names <- function(x, quiet = FALSE) {
-  .Call(vctrs_unique_names, x, quiet)
+  .Call(ffi_unique_names, x, quiet)
 }
 
 #' @rdname vec_names
@@ -303,7 +308,7 @@ vec_names <- function(x) {
 }
 
 as_minimal_names <- function(names) {
-  .Call(vctrs_as_minimal_names, names)
+  .Call(ffi_as_minimal_names, names)
 }
 as_unique_names <- function(names, quiet = FALSE) {
   .Call(vctrs_as_unique_names, names, quiet)
@@ -576,7 +581,7 @@ vec_as_names_legacy <- function(names, prefix = "V", sep = "") {
 NULL
 
 apply_name_spec <- function(name_spec, outer, inner, n = length(inner)) {
-  .Call(vctrs_apply_name_spec, name_spec, outer, inner, n)
+  .Call(ffi_apply_name_spec, name_spec, outer, inner, n)
 }
 
 glue_as_name_spec <- function(`_spec`) {

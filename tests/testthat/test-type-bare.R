@@ -243,25 +243,58 @@ test_that("safe casts to complex works", {
 })
 
 test_that("NA casts work as expected", {
-  exp <- cpl(NA)
-  to <- cpl()
+  # This goes through a special path for <unspecified>
+  expect_equal(vec_cast(lgl(NA), cpl()), NA_complex_)
 
-  expect_equal(vec_cast(lgl(NA), to), exp)
-  expect_equal(vec_cast(int(NA), to), exp)
-  expect_equal(vec_cast(dbl(NA), to), exp)
+  # TODO: Use our own cast routines here?
+  # It isn't great that this logical `NA` cast returns a different `NA`
+  # than the one above with just `lgl(NA)` (which is seen as unspecified). i.e.
+  # check the `Im()` slot between the two in R >=4.4.0. We can fix this with our
+  # own cast routines rather than using `vec_coerce_bare()`.
+  expect_type(vec_cast(lgl(NA, TRUE), cpl()), "complex")
+  expect_identical(is.na(vec_cast(lgl(NA, TRUE), cpl())), c(TRUE, FALSE))
+
+  # TODO: Use our own cast routines here?
+  # `as.complex(NA/NA_real_/NA_integer_)` and `Rf_CoerceVector(NA/NA_real_/NA_integer_)`
+  # have gone back and forth about what they return in the `Im()` slot. In some
+  # R versions they return `0` and in others they return `NA_real_`.
+  # https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
+  # https://stat.ethz.ch/pipermail/r-devel/2023-September/082864.html
+  # expect_equal(vec_cast(int(NA), cpl()), NA_complex_)
+  expect_type(vec_cast(int(NA), cpl()), "complex")
+  expect_identical(is.na(vec_cast(int(NA), cpl())), TRUE)
+
+  # expect_equal(vec_cast(dbl(NA), cpl()), NA_complex_)
+  expect_type(vec_cast(dbl(NA), cpl()), "complex")
+  expect_identical(is.na(vec_cast(dbl(NA), cpl())), TRUE)
 
   # This used to be allowed
-  expect_error(vec_cast(list(NA), to), class = "vctrs_error_incompatible_type")
+  expect_error(vec_cast(list(NA), cpl()), class = "vctrs_error_incompatible_type")
 })
 
 test_that("Shaped NA casts work as expected", {
   mat <- matrix
-  exp_mat <- mat(cpl(NA))
+  exp_mat <- mat(NA_complex_)
   to_mat <- matrix(cpl())
 
-  expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
-  expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
-  expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  # TODO: Use our own cast routines here?
+  # `as.complex(NA/NA_real_/NA_integer_)` and `Rf_CoerceVector(NA/NA_real_/NA_integer_)`
+  # have gone back and forth about what they return in the `Im()` slot. In some
+  # R versions they return `0` and in others they return `NA_real_`.
+  # https://stat.ethz.ch/pipermail/r-devel/2023-April/082545.html
+  # https://stat.ethz.ch/pipermail/r-devel/2023-September/082864.html
+
+  # expect_equal(vec_cast(mat(lgl(NA)), to_mat), exp_mat)
+  expect_type(vec_cast(mat(lgl(NA)), to_mat), "complex")
+  expect_identical(is.na(vec_cast(mat(lgl(NA)), to_mat)), matrix(TRUE))
+
+  # expect_equal(vec_cast(mat(int(NA)), to_mat), exp_mat)
+  expect_type(vec_cast(mat(int(NA)), to_mat), "complex")
+  expect_identical(is.na(vec_cast(mat(int(NA)), to_mat)), matrix(TRUE))
+
+  # expect_equal(vec_cast(mat(dbl(NA)), to_mat), exp_mat)
+  expect_type(vec_cast(mat(dbl(NA)), to_mat), "complex")
+  expect_identical(is.na(vec_cast(mat(dbl(NA)), to_mat)), matrix(TRUE))
 
   # This used to be allowed
   expect_error(vec_cast(mat(list(NA)), to_mat), class = "vctrs_error_incompatible_type")

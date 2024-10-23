@@ -29,67 +29,138 @@ test_that("`numeric_version` falls back to base methods", {
   expect_identical(vec_c(x, y), z)
 })
 
-test_that("common type of data.table and data.frame is data.table", {
-  # As data.table is not in Suggests, these checks are only run on the
-  # devs' machines
-  testthat_import_from("data.table", "data.table")
+test_that("`numeric_version` has an equality, comparison, and order proxy", {
+  numeric_row <- function(...) {
+    out <- list2(...)
+    out <- map(out, as.integer)
+    names(out) <- paste0("...", seq_len(8L))
+    new_data_frame(out, n = 1L)
+  }
+
+  x <- numeric_version(c("1.2-3", "1.21.1", "3", "2.21.0.9000", "0.5.01"))
+
+  expect <- vec_rbind(
+    numeric_row(1, 2, 3, 0, 0, 0, 0, 0),
+    numeric_row(1, 21, 1, 0, 0, 0, 0, 0),
+    numeric_row(3, 0, 0, 0, 0, 0, 0, 0),
+    numeric_row(2, 21, 0, 9000, 0, 0, 0, 0),
+    numeric_row(0, 5, 1, 0, 0, 0, 0, 0)
+  )
+
+  expect_identical(vec_proxy_equal(x), expect)
+  expect_identical(vec_proxy_compare(x), expect)
+  expect_identical(vec_proxy_order(x), expect)
+})
+
+test_that("`numeric_version` proxy works with empty vectors", {
+  x <- numeric_version(character())
+
+  expect <- vec_rep(list(integer()), times = 8L)
+  names(expect) <- paste0("...", seq_len(8L))
+  expect <- new_data_frame(expect, n = 0L)
+
+  expect_identical(vec_proxy_equal(x), expect)
+})
+
+test_that("`numeric_version` proxy handles pseudo-`NA`", {
+  numeric_row <- function(...) {
+    out <- list2(...)
+    out <- map(out, as.integer)
+    names(out) <- paste0("...", seq_len(8L))
+    new_data_frame(out, n = 1L)
+  }
+
+  x <- numeric_version(c("1_1", "1.2", NA), strict = FALSE)
+
+  expect <- vec_rbind(
+    numeric_row(NA, NA, NA, NA, NA, NA, NA, NA),
+    numeric_row(1, 2, 0, 0, 0, 0, 0, 0),
+    numeric_row(NA, NA, NA, NA, NA, NA, NA, NA)
+  )
+
+  expect_identical(vec_proxy_equal(x), expect)
+  expect_identical(vec_proxy_compare(x), expect)
+  expect_identical(vec_proxy_order(x), expect)
+})
+
+test_that("`numeric_version` works with functions using the equality proxy", {
+  x <- numeric_version(c("1.2-3", "1.21.1", "1_1", "0.5", "1.3"), strict = FALSE)
+  y <- numeric_version(c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"), strict = FALSE)
+
+  expect_identical(vec_unique(x), x)
+  expect_identical(vec_unique(y), y[c(1, 3, 4)])
+
+  expect_identical(vec_detect_missing(y), c(FALSE, FALSE, TRUE, FALSE, TRUE))
+
+  expect_identical(vec_equal(x, y), c(FALSE, TRUE, NA, TRUE, NA))
+  expect_identical(vec_equal(x, y, na_equal = TRUE), c(FALSE, TRUE, TRUE, TRUE, FALSE))
+})
+
+test_that("`numeric_version` works with functions using the comparison proxy", {
+  x <- numeric_version(c("1.2-3", "1.21.1", "1_1", "0.5", "1.3"), strict = FALSE)
+  y <- numeric_version(c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"), strict = FALSE)
+
+  expect_identical(vec_compare(x, y), c(-1L, 0L, NA, 0L, NA))
+  expect_identical(vec_compare(x, y, na_equal = TRUE), c(-1L, 0L, 0L, 0L, 1L))
+
+  # Specifically related to base R taking a joint proxy in `Ops.numeric_version`
+  x <- numeric_version("3.3")
+  y <- numeric_version("3.21")
+  # `.encode_numeric_version(x) < .encode_numeric_version(y)` == FALSE
+  # `x < y` == TRUE
+  expect_identical(vec_compare(x, y), -1L)
+})
+
+test_that("`numeric_version` works with functions using the order proxy (tidyverse/dplyr#6680)", {
+  x <- numeric_version(c("1.2-3", "1.21.1", "1_1", "0.5", "1.30"), strict = FALSE)
+  y <- numeric_version(c("1.21.1", "1.21.1", "1_2", "0.05", "1_3"), strict = FALSE)
+
+  expect_identical(vec_order(y), c(4L, 1L, 2L, 3L, 5L))
+  expect_identical(vec_order_radix(y), c(4L, 1L, 2L, 3L, 5L))
+
+  expect_identical(vec_order(y, na_value = "smallest"), c(3L, 5L, 4L, 1L, 2L))
+  expect_identical(vec_order_radix(y, na_value = "smallest"), c(3L, 5L, 4L, 1L, 2L))
 
   expect_identical(
-    vec_ptype2(data.table(x = TRUE), data.table(y = 2)),
-    data.table(x = lgl(), y = dbl())
+    vec_locate_matches(x, y),
+    data_frame(
+      needles = c(1L, 2L, 2L, 3L, 3L, 4L, 5L),
+      haystack = c(NA, 1L, 2L, 3L, 5L, 4L, NA)
+    )
   )
   expect_identical(
-    vec_ptype2(data.table(x = TRUE), data.frame(y = 2)),
-    data.table(x = lgl(), y = dbl())
-  )
-  expect_identical(
-    vec_ptype2(data.frame(y = 2), data.table(x = TRUE)),
-    data.table(y = dbl(), x = lgl())
-  )
-
-  expect_identical(
-    vec_cast(data.table(y = 2), data.table(x = TRUE, y = 1L)),
-    data.table(x = NA, y = 2L)
-  )
-  expect_identical(
-    vec_cast(data.frame(y = 2), data.table(x = TRUE, y = 1L)),
-    data.table(x = NA, y = 2L)
-  )
-  expect_identical(
-    vec_cast(data.table(y = 2), data.frame(x = TRUE, y = 1L)),
-    data.frame(x = NA, y = 2L)
+    vec_locate_matches(x, y, condition = "<"),
+    data_frame(
+      needles = c(1L, 1L, 2L, 3L, 4L, 4L, 5L),
+      haystack = c(1L, 2L, NA, NA, 1L, 2L, NA)
+    )
   )
 })
 
-test_that("data.table and tibble do not have a common type", {
-  testthat_import_from("data.table", "data.table")
+test_that("`numeric_version` proxy can handle at most 8 components", {
+  x <- numeric_version("1.2.3.4.5.6.7.8")
+  expect_silent(vec_proxy_equal(x))
 
-  expect_incompatible_df(
-    vec_ptype_common(data.table(x = TRUE), tibble(y = 2)),
-    tibble(x = lgl(), y = dbl())
-  )
-  expect_incompatible_df(
-    vec_ptype_common(tibble(y = 2), data.table(x = TRUE)),
-    tibble(y = dbl(), x = lgl())
-  )
-
-  expect_incompatible_df_cast(
-    vec_cast(tibble(y = 2), data.table(x = TRUE, y = 1L)),
-    data.frame(x = NA, y = 2L)
-  )
-  expect_incompatible_df_cast(
-    vec_cast(data.table(y = 2), tibble(x = TRUE, y = 1L)),
-    tibble(x = NA, y = 2L)
-  )
-})
-
-test_that("data table has formatting methods", {
-  testthat_import_from("data.table", "data.table")
-  expect_snapshot({
-    dt <- data.table(x = 1, y = 2, z = 3)
-    vec_ptype_abbr(dt)
-    vec_ptype_full(dt)
+  x <- numeric_version("1.2.3.4.5.6.7.8.9")
+  expect_snapshot(error = TRUE, {
+    vec_proxy_equal(x)
   })
+})
+
+test_that("`numeric_version` can compare against components with 8 components", {
+  x <- numeric_version("2.3.4.5.6.7.8.9")
+  y <- c(x, numeric_version(c("1.1", "11.2", "2.1")))
+
+  expect_identical(vec_compare(x, y), c(0L, 1L, -1L, 1L))
+})
+
+test_that("`package_version` and `R_system_version` use the `numeric_version` proxy", {
+  x <- numeric_version("1.5.6")
+  y <- package_version("1.5.6")
+  z <- R_system_version("1.5.6")
+
+  expect_identical(vec_proxy_equal(y), vec_proxy_equal(x))
+  expect_identical(vec_proxy_equal(z), vec_proxy_equal(x))
 })
 
 test_that("can slice `ts` vectors", {

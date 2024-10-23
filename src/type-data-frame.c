@@ -1,17 +1,12 @@
+#include "utils-dispatch.h"
 #include "vctrs.h"
 #include "type-data-frame.h"
 #include "decl/type-data-frame-decl.h"
 
 bool is_data_frame(r_obj* x) {
-  if (r_typeof(x) != R_TYPE_list) {
-    return false;
-  }
-
-  enum vctrs_class_type type = class_type(x);
   return
-    type == VCTRS_CLASS_bare_data_frame ||
-    type == VCTRS_CLASS_bare_tibble ||
-    type == VCTRS_CLASS_data_frame;
+    r_typeof(x) == R_TYPE_list &&
+    class_type_is_data_frame(class_type(x));
 }
 
 bool is_native_df(r_obj* x) {
@@ -55,7 +50,6 @@ r_obj* ffi_new_data_frame(r_obj* args) {
 
   bool has_names = false;
   bool has_rownames = false;
-  r_ssize size = df_size_from_list(x, n);
 
   r_obj* out = KEEP(r_clone_referenced(x));
 
@@ -73,11 +67,12 @@ r_obj* ffi_new_data_frame(r_obj* args) {
     }
 
     if (tag == r_syms.row_names) {
-      // "row.names" is checked for consistency with n (if provided)
-      if (size != rownames_size(r_node_car(node)) && n != r_null) {
-        r_abort_call(r_null, "`n` and `row.names` must be consistent.");
-      }
-
+      // We used to validate a user supplied `n` against a user supplied
+      // `row.names`, but that requires extracting out the `rownames_size()`,
+      // which can materialize ALTREP row name objects and is prohibitively
+      // expensive (tidyverse/dplyr#6596). So instead we say that user supplied
+      // `row.names` overrides both the implied size of `x` and a user supplied
+      // `n`, even if they are incompatible.
       has_rownames = true;
       continue;
     }
@@ -85,7 +80,7 @@ r_obj* ffi_new_data_frame(r_obj* args) {
 
   // Take names from `x` if `attrib` doesn't have any
   if (!has_names) {
-    r_obj* nms = vctrs_shared_empty_chr;
+    r_obj* nms = r_globals.empty_chr;
     if (r_length(out)) {
       nms = r_names(out);
     }
@@ -101,6 +96,13 @@ r_obj* ffi_new_data_frame(r_obj* args) {
   }
 
   if (!has_rownames) {
+    // Data frame size is determined in the following order:
+    // - By `row.names`, if provided, which will already be in `attrib`
+    // - By `n`, if provided (this is fully overriden by `row.names`)
+    // - By `x`, if neither `n` nor `row.names` is provided, where `x` could be
+    //   a data frame with its own row names attribute or a bare list
+    const r_ssize size = n != r_null ? df_size_from_n(n) : df_raw_size(x);
+
     r_obj* rn = KEEP(new_compact_rownames(size));
     attrib = r_new_node(rn, attrib);
     r_node_poke_tag(attrib, r_syms.row_names);
@@ -128,19 +130,6 @@ r_obj* ffi_new_data_frame(r_obj* args) {
 
   FREE(2);
   return out;
-}
-
-static
-r_ssize df_size_from_list(r_obj* x, r_obj* n) {
-  if (n == r_null) {
-    if (is_data_frame(x)) {
-      return df_size(x);
-    } else {
-      return df_raw_size_from_list(x);
-    }
-  } else {
-    return df_size_from_n(n);
-  }
 }
 
 static
@@ -175,22 +164,22 @@ r_obj* ffi_data_frame(r_obj* x,
                       r_obj* size,
                       r_obj* name_repair,
                       r_obj* frame) {
-  struct r_lazy call = { .x = frame, .env = r_null };
+  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  vec_args.dot_name_repair,
+                                                                  lazy_args.dot_name_repair,
                                                                   false,
-                                                                  call);
+                                                                  error_call);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == r_null) {
-    c_size = vec_check_size_common(x, 0, vec_args.empty, call);
+    c_size = vec_check_size_common(x, 0, vec_args.empty, error_call);
   } else {
-    c_size = vec_as_short_length(size, vec_args.dot_size, call);
+    c_size = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
 
-  r_obj* out = data_frame(x, c_size, &name_repair_opts, call);
+  r_obj* out = data_frame(x, c_size, &name_repair_opts, error_call);
 
   FREE(1);
   return out;
@@ -200,9 +189,9 @@ static
 r_obj* data_frame(r_obj* x,
                   r_ssize size,
                   const struct name_repair_opts* p_name_repair_opts,
-                  struct r_lazy call) {
+                  struct r_lazy error_call) {
   const bool unpack = true;
-  r_obj* out = KEEP(df_list(x, size, unpack, p_name_repair_opts, call));
+  r_obj* out = KEEP(df_list(x, size, unpack, p_name_repair_opts, error_call));
   out = new_data_frame(out, size);
   FREE(1);
   return out;
@@ -215,24 +204,24 @@ r_obj* ffi_df_list(r_obj* x,
                    r_obj* unpack,
                    r_obj* name_repair,
                    r_obj* frame) {
-  struct r_lazy call = { .x = frame, .env = r_null };
+  struct r_lazy error_call = { .x = syms.dot_error_call, .env = frame };
 
   struct name_repair_opts name_repair_opts = new_name_repair_opts(name_repair,
-                                                                  vec_args.dot_name_repair,
+                                                                  lazy_args.dot_name_repair,
                                                                   false,
-                                                                  call);
+                                                                  error_call);
   KEEP(name_repair_opts.shelter);
 
   r_ssize c_size = 0;
   if (size == r_null) {
-    c_size = vec_check_size_common(x, 0, vec_args.empty, call);
+    c_size = vec_check_size_common(x, 0, vec_args.empty, error_call);
   } else {
-    c_size = vec_as_short_length(size, vec_args.dot_size, call);
+    c_size = vec_as_short_length(size, vec_args.dot_size, error_call);
   }
 
   const bool c_unpack = r_arg_as_bool(unpack, ".unpack");
 
-  r_obj* out = df_list(x, c_size, c_unpack, &name_repair_opts, call);
+  r_obj* out = df_list(x, c_size, c_unpack, &name_repair_opts, error_call);
 
   FREE(1);
   return out;
@@ -243,12 +232,12 @@ r_obj* df_list(r_obj* x,
                r_ssize size,
                bool unpack,
                const struct name_repair_opts* p_name_repair_opts,
-               struct r_lazy call) {
+               struct r_lazy error_call) {
   if (r_typeof(x) != R_TYPE_list) {
     r_stop_internal("`x` must be a list.");
   }
 
-  x = KEEP(vec_check_recycle_common(x, size, vec_args.empty, call));
+  x = KEEP(vec_check_recycle_common(x, size, vec_args.empty, error_call));
 
   r_ssize n_cols = r_length(x);
 
@@ -413,12 +402,12 @@ r_obj* df_list_unpack(r_obj* x) {
 enum rownames_type rownames_type(r_obj* x) {
   switch (r_typeof(x)) {
   case R_TYPE_character:
-    return ROWNAMES_IDENTIFIERS;
+    return ROWNAMES_TYPE_identifiers;
   case R_TYPE_integer:
     if (r_length(x) == 2 && r_int_begin(x)[0] == r_globals.na_int) {
-      return ROWNAMES_AUTOMATIC_COMPACT;
+      return ROWNAMES_TYPE_automatic_compact;
     } else {
-      return ROWNAMES_AUTOMATIC;
+      return ROWNAMES_TYPE_automatic;
     }
   default:
     r_stop_internal("Unexpected type `%s`.", Rf_type2char(r_typeof(x)));
@@ -433,10 +422,10 @@ r_ssize compact_rownames_length(r_obj* x) {
 // [[ include("type-data-frame.h") ]]
 r_ssize rownames_size(r_obj* rn) {
   switch (rownames_type(rn)) {
-  case ROWNAMES_IDENTIFIERS:
-  case ROWNAMES_AUTOMATIC:
+  case ROWNAMES_TYPE_identifiers:
+  case ROWNAMES_TYPE_automatic:
     return r_length(rn);
-  case ROWNAMES_AUTOMATIC_COMPACT:
+  case ROWNAMES_TYPE_automatic_compact:
     return compact_rownames_length(rn);
   }
 
@@ -457,7 +446,7 @@ void init_tibble(r_obj* x, r_ssize n) {
 static
 void init_bare_data_frame(r_obj* x, r_ssize n) {
   if (r_length(x) == 0) {
-    r_attrib_poke(x, r_syms.names, vctrs_shared_empty_chr);
+    r_attrib_poke(x, r_syms.names, r_globals.empty_chr);
   }
 
   init_compact_rownames(x, n);
@@ -473,7 +462,7 @@ void init_compact_rownames(r_obj* x, r_ssize n) {
 static
 r_obj* new_compact_rownames(r_ssize n) {
   if (n <= 0) {
-    return vctrs_shared_empty_int;
+    return r_globals.empty_int;
   }
 
   r_obj* out = r_alloc_integer(2);
@@ -744,7 +733,7 @@ r_obj* df_cast_match(const struct cast_opts* opts,
       // `base_c_invoke()`.
       if (opts->fallback.s3 && vec_is_common_class_fallback(to_col)) {
         KEEP(col);
-        r_attrib_poke(col, r_sym("vctrs:::unspecified"), vctrs_shared_true);
+        r_attrib_poke(col, r_sym("vctrs:::unspecified"), r_true);
         FREE(1);
       }
     } else {

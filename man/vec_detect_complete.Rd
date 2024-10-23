@@ -15,11 +15,12 @@ A logical vector with the same size as \code{x}.
 \description{
 \code{vec_detect_complete()} detects "complete" observations. An observation is
 considered complete if it is non-missing. For most vectors, this implies that
-\code{vec_detect_complete(x) == !vec_equal_na(x)}.
+\code{vec_detect_complete(x) == !vec_detect_missing(x)}.
 
 For data frames and matrices, a row is only considered complete if all
-elements of that row are non-missing. To compare, \code{!vec_equal_na(x)} detects
-rows that are partially complete (they have at least one non-missing value).
+elements of that row are non-missing. To compare, \code{!vec_detect_missing(x)}
+detects rows that are partially complete (they have at least one non-missing
+value).
 }
 \details{
 A \link[=new_rcrd]{record} type vector is similar to a data frame, and is only
@@ -28,9 +29,9 @@ considered complete if all fields are non-missing.
 \examples{
 x <- c(1, 2, NA, 4, NA)
 
-# For most vectors, this is identical to `!vec_equal_na(x)`
+# For most vectors, this is identical to `!vec_detect_missing(x)`
 vec_detect_complete(x)
-!vec_equal_na(x)
+!vec_detect_missing(x)
 
 df <- data_frame(
   x = x,
@@ -38,11 +39,11 @@ df <- data_frame(
 )
 
 # This returns `TRUE` where all elements of the row are non-missing.
-# Compare that with `!vec_equal_na()`, which detects rows that have at
+# Compare that with `!vec_detect_missing()`, which detects rows that have at
 # least one non-missing value.
 df2 <- df
 df2$all_non_missing <- vec_detect_complete(df)
-df2$any_non_missing <- !vec_equal_na(df)
+df2$any_non_missing <- !vec_detect_missing(df)
 df2
 }
 \seealso{

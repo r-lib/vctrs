@@ -1,7 +1,29 @@
 #include "vctrs.h"
+#include "decl/shape-decl.h"
 
-// [[ register() ]]
-SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP frame) {
+
+// Computes the common shape of `x` and `y` and attaches it as the
+// dimensions of `ptype`. If `x` and `y` are both atomic with `NULL` dimensions,
+// then no dimensions are attached and `ptype` is returned unmodified.
+// [[ include("shape.h") ]]
+r_obj* vec_shaped_ptype(r_obj* ptype,
+                        r_obj* x, r_obj* y,
+                        struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
+  r_obj* ptype_dimensions = KEEP(vec_shape2(x, y, p_x_arg, p_y_arg));
+
+  if (ptype_dimensions == r_null) {
+    FREE(1);
+    return ptype;
+  }
+
+  ptype = KEEP(r_clone_referenced(ptype));
+  r_attrib_poke_dim(ptype, ptype_dimensions);
+
+  FREE(2);
+  return ptype;
+}
+
+r_obj* ffi_vec_shaped_ptype(r_obj* ptype, r_obj* x, r_obj* y, r_obj* frame) {
   struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
@@ -11,34 +33,24 @@ SEXP vctrs_shaped_ptype(SEXP ptype, SEXP x, SEXP y, SEXP frame) {
   return vec_shaped_ptype(ptype, x, y, &x_arg, &y_arg);
 }
 
-static SEXP vec_shape2(SEXP x, SEXP y, struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
-
-// Computes the common shape of `x` and `y` and attaches it as the
-// dimensions of `ptype`. If `x` and `y` are both atomic with `NULL` dimensions,
-// then no dimensions are attached and `ptype` is returned unmodified.
-// [[ include("shape.h") ]]
-SEXP vec_shaped_ptype(SEXP ptype,
-                      SEXP x, SEXP y,
-                      struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
-  SEXP ptype_dimensions = PROTECT(vec_shape2(x, y, p_x_arg, p_y_arg));
-
-  if (ptype_dimensions == R_NilValue) {
-    UNPROTECT(1);
-    return ptype;
-  }
-
-  ptype = PROTECT(r_clone_referenced(ptype));
-
-  r_attrib_poke_dim(ptype, ptype_dimensions);
-
-  UNPROTECT(2);
-  return ptype;
-}
 
 // -----------------------------------------------------------------------------
 
-// [[ register() ]]
-SEXP vctrs_shape2(SEXP x, SEXP y, SEXP frame) {
+static
+r_obj* vec_shape2(r_obj* x,
+                  r_obj* y,
+                  struct vctrs_arg* p_x_arg,
+                  struct vctrs_arg* p_y_arg) {
+  r_obj* x_dimensions = KEEP(r_dim(x));
+  r_obj* y_dimensions = KEEP(r_dim(y));
+
+  r_obj* out = vec_shape2_impl(x_dimensions, y_dimensions, x, y, p_x_arg, p_y_arg);
+
+  FREE(2);
+  return out;
+}
+
+r_obj* ffi_vec_shape2(r_obj* x, r_obj* y, r_obj* frame) {
   struct r_lazy x_arg_ = { .x = syms.x_arg, .env = frame };
   struct vctrs_arg x_arg = new_lazy_arg(&x_arg_);
 
@@ -48,47 +60,32 @@ SEXP vctrs_shape2(SEXP x, SEXP y, SEXP frame) {
   return vec_shape2(x, y, &x_arg, &y_arg);
 }
 
-static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
-                            SEXP x, SEXP y,
-                            struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
-
-static SEXP vec_shape2(SEXP x, SEXP y, struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
-  SEXP x_dimensions = PROTECT(r_dim(x));
-  SEXP y_dimensions = PROTECT(r_dim(y));
-
-  SEXP out = vec_shape2_impl(x_dimensions, y_dimensions, x, y, p_x_arg, p_y_arg);
-
-  UNPROTECT(2);
-  return out;
-}
-
-static SEXP vec_shape(SEXP dimensions);
-static inline int vec_dimension2(int x_dimension, int y_dimension,
-                                 int axis,
-                                 SEXP x, SEXP y,
-                                 struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg);
 
 /*
  * Returns `NULL` if `x` and `y` are atomic.
  * Otherwise returns a dimensions vector where the first dimension length
  * is forcibly set to 0, and the rest are the common shape of `x` and `y`.
  */
-static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
-                            SEXP x, SEXP y,
-                            struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
-  if (x_dimensions == R_NilValue) {
+static
+r_obj* vec_shape2_impl(r_obj* x_dimensions,
+                       r_obj* y_dimensions,
+                       r_obj* x,
+                       r_obj* y,
+                       struct vctrs_arg* p_x_arg,
+                       struct vctrs_arg* p_y_arg) {
+  if (x_dimensions == r_null) {
     return vec_shape(y_dimensions);
   }
-  if (y_dimensions == R_NilValue) {
+  if (y_dimensions == r_null) {
     return vec_shape(x_dimensions);
   }
 
-  R_len_t x_dimensionality = Rf_length(x_dimensions);
-  R_len_t y_dimensionality = Rf_length(y_dimensions);
+  r_ssize x_dimensionality = r_length(x_dimensions);
+  r_ssize y_dimensionality = r_length(y_dimensions);
 
-  SEXP max_dimensions;
-  R_len_t max_dimensionality;
-  R_len_t min_dimensionality;
+  r_obj* max_dimensions;
+  r_ssize max_dimensionality;
+  r_ssize min_dimensionality;
 
   if (x_dimensionality >= y_dimensionality) {
     max_dimensions = x_dimensions;
@@ -105,18 +102,18 @@ static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
     r_stop_internal("`max_dimensionality` must have length.");
   }
 
-  const int* p_x_dimensions = INTEGER_RO(x_dimensions);
-  const int* p_y_dimensions = INTEGER_RO(y_dimensions);
-  const int* p_max_dimensions = INTEGER_RO(max_dimensions);
+  const int* p_x_dimensions = r_int_cbegin(x_dimensions);
+  const int* p_y_dimensions = r_int_cbegin(y_dimensions);
+  const int* p_max_dimensions = r_int_cbegin(max_dimensions);
 
-  SEXP out = PROTECT(Rf_allocVector(INTSXP, max_dimensionality));
-  int* p_out = INTEGER(out);
+  r_obj* out = KEEP(r_alloc_integer(max_dimensionality));
+  int* p_out = r_int_begin(out);
 
   // Set the first axis to zero
   p_out[0] = 0;
 
   // Start loop at the second axis
-  R_len_t i = 1;
+  r_ssize i = 1;
 
   for (; i < min_dimensionality; ++i) {
     const int axis = i + 1;
@@ -130,38 +127,44 @@ static SEXP vec_shape2_impl(SEXP x_dimensions, SEXP y_dimensions,
     p_out[i] = p_max_dimensions[i];
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
+
 
 // -----------------------------------------------------------------------------
 
 // Sets the first axis to zero
-static SEXP vec_shape(SEXP dimensions) {
-  if (dimensions == R_NilValue) {
-    return R_NilValue;
+static
+r_obj* vec_shape(r_obj* dimensions) {
+  if (dimensions == r_null) {
+    return r_null;
   }
 
-  dimensions = PROTECT(r_clone_referenced(dimensions));
+  dimensions = KEEP(r_clone_referenced(dimensions));
 
-  if (Rf_length(dimensions) == 0) {
+  if (r_length(dimensions) == 0) {
     r_stop_internal("`dimensions` must have length.");
   }
 
-  if (TYPEOF(dimensions) != INTSXP) {
+  if (r_typeof(dimensions) != R_TYPE_integer) {
     r_stop_internal("`dimensions` must be an integer vector.");
   }
 
-  INTEGER(dimensions)[0] = 0;
+  r_int_begin(dimensions)[0] = 0;
 
-  UNPROTECT(1);
+  FREE(1);
   return dimensions;
 }
 
-static inline int vec_dimension2(int x_dimension, int y_dimension,
-                                 int axis,
-                                 SEXP x, SEXP y,
-                                 struct vctrs_arg* p_x_arg, struct vctrs_arg* p_y_arg) {
+static inline
+int vec_dimension2(int x_dimension,
+                   int y_dimension,
+                   int axis,
+                   r_obj* x,
+                   r_obj* y,
+                   struct vctrs_arg* p_x_arg,
+                   struct vctrs_arg* p_y_arg) {
   if (x_dimension == y_dimension) {
     return x_dimension;
   } else if (x_dimension == 1) {
@@ -171,4 +174,27 @@ static inline int vec_dimension2(int x_dimension, int y_dimension,
   } else {
     stop_incompatible_shape(x, y, x_dimension, y_dimension, axis, p_x_arg, p_y_arg);
   }
+}
+
+
+// -----------------------------------------------------------------------------
+
+r_obj* vec_shape_broadcast(r_obj* out, const struct cast_opts* p_opts) {
+  r_obj* r_x_arg = KEEP(vctrs_arg(p_opts->p_x_arg));
+  r_obj* r_to_arg = KEEP(vctrs_arg(p_opts->p_to_arg));
+  r_obj* call = KEEP(r_lazy_eval(p_opts->call));
+
+  out = KEEP(r_clone_referenced(out));
+
+  r_attrib_poke_dim(out, r_dim(p_opts->x));
+  r_attrib_poke_dim_names(out, r_dim_names(p_opts->x));
+
+  out = vctrs_eval_mask5(r_sym("shape_broadcast"),
+                         r_syms.x, out,
+                         r_sym("to"), p_opts->to,
+                         syms.x_arg, r_x_arg,
+                         syms.to_arg, r_to_arg,
+                         r_syms.call, call);
+  FREE(4);
+  return out;
 }

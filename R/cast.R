@@ -82,9 +82,6 @@ vec_cast_dispatch <- function(x, to, ..., x_arg = "", to_arg = "") {
   UseMethod("vec_cast", to)
 }
 
-vec_cast_no_fallback <- function(x, to) {
-  vec_cast_common_params(x = x, .to = to, .df_fallback = DF_FALLBACK_none)$x
-}
 vec_cast_dispatch_native <- function(x,
                                      to,
                                      ...,
@@ -119,12 +116,10 @@ vec_cast_common_opts <- function(...,
 }
 vec_cast_common_params <- function(...,
                                    .to = NULL,
-                                   .df_fallback = NULL,
                                    .s3_fallback = NULL,
                                    .arg = "",
                                    .call = caller_env()) {
   opts <- fallback_opts(
-    df_fallback = .df_fallback,
     s3_fallback = .s3_fallback
   )
   vec_cast_common_opts(
@@ -192,24 +187,8 @@ vec_default_cast <- function(x,
     return(x)
   }
 
-  # If both data frames, first find the `to` type of columns before
-  # the same-type fallback
-  if (df_needs_normalisation(x, to, opts)) {
-    x <- vec_cast_df_fallback_normalise(
-      x,
-      to,
-      opts,
-      x_arg = x_arg,
-      to_arg = to_arg,
-      call = call
-    )
-  }
-
-  if (is_same_type(x, to)) {
-    return(x)
-  }
-
-  if (has_df_fallback(opts$df_fallback) && is_df_subclass(x) && is.data.frame(to)) {
+  # Data frames have special bare class and same type fallbacks
+  if (is.data.frame(x) && is.data.frame(to)) {
     out <- df_cast_opts(
       x,
       to,
@@ -220,23 +199,47 @@ vec_default_cast <- function(x,
       call = call
     )
 
+    # Same-type fallback for data frames. If attributes of the empty
+    # data frames are congruent, just reproduce these attributes. This
+    # eschews any constraints on rows and cols that `[` and `[<-`
+    # methods might have. If that is a problem, the class needs to
+    # implement vctrs methods.
+    if (identical(non_df_attrib(x), non_df_attrib(to))) {
+      attributes(out) <- c(df_attrib(out), non_df_attrib(to))
+      return(out)
+    }
+
+    # Bare-class fallback for data frames.
+    # FIXME: Should we only allow it when target is a bare df?
     if (inherits(to, "tbl_df")) {
       out <- df_as_tibble(out)
     }
-
     return(out)
   }
 
-  stop_incompatible_cast(
-    x,
-    to,
-    x_arg = x_arg,
-    to_arg = to_arg,
-    `vctrs:::from_dispatch` = match_from_dispatch(...),
-    call = call
+  if (is_same_type(x, to)) {
+    return(x)
+  }
+
+  withRestarts(
+    stop_incompatible_cast(
+      x,
+      to,
+      x_arg = x_arg,
+      to_arg = to_arg,
+      `vctrs:::from_dispatch` = match_from_dispatch(...),
+      call = call
+    ),
+    vctrs_restart_cast = function(out) {
+      out
+    }
   )
 }
 
-is_informative_error.vctrs_error_cast_lossy <- function(x, ...) {
+is_bare_df <- function(x) {
+  inherits_only(x, "data.frame") || inherits_only(x, c("tbl_df", "tbl", "data.frame"))
+}
+
+is_informative_error_vctrs_error_cast_lossy <- function(x, ...) {
   FALSE
 }

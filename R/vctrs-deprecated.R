@@ -11,10 +11,12 @@
 #' @keywords internal
 #' @export
 vec_empty <- function(x) {
-  stop_defunct(paste_line(
-    "`vec_empty()` is defunct as of vctrs 0.2.0.",
-    "Please use `vec_is_empty()` instead."
-  ))
+  # Defunct: 2019-06
+  lifecycle::deprecate_stop(
+    when = "0.2.0",
+    what = "vec_empty()",
+    with = "vec_is_empty()"
+  )
 }
 
 #' Deprecated type functions
@@ -34,19 +36,37 @@ vec_empty <- function(x) {
 #' @keywords internal
 #' @export
 vec_type <- function(x) {
-  warn_deprecated(c("`vec_type()` has been renamed to `vec_ptype()`."))
+  # Deprecated: 2019-06
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = "vec_type()",
+    with = "vec_ptype()",
+    always = TRUE
+  )
   vec_ptype(x)
 }
 #' @rdname vec_type
 #' @export
 vec_type_common <- function(..., .ptype = NULL) {
-  warn_deprecated(c("`vec_type_common()` has been renamed to `vec_ptype_common()`."))
+  # Deprecated: 2019-06
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = "vec_type_common()",
+    with = "vec_ptype_common()",
+    always = TRUE
+  )
   vec_ptype_common(..., .ptype = .ptype)
 }
 #' @rdname vec_type
 #' @export
 vec_type2 <- function(x, y, ...) {
-  warn_deprecated(c("`vec_type2()` has been renamed to `vec_ptype2()`."))
+  # Deprecated: 2019-06
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = "vec_type2()",
+    with = "vec_ptype2()",
+    always = TRUE
+  )
   vec_ptype2(x, y, ...)
 }
 
@@ -64,12 +84,14 @@ vec_type2 <- function(x, y, ...) {
 #' @keywords internal
 #' @export
 vec_as_index <- function(i, n, names = NULL) {
-  signal_soft_deprecated(paste_line(
-    "`vec_as_index()` is deprecated as of vctrs 0.2.2.",
-    "Please use `vec_as_location() instead.`"
-  ))
+  # Soft-deprecated: 2020-01
+  lifecycle::deprecate_soft(
+    when = "0.2.2",
+    what = "vec_as_index()",
+    with = "vec_as_location()"
+  )
   n <- vec_cast(n, integer())
-  vec_assert(n, integer(), 1L)
+  vec_check_size(n, size = 1L)
   i <- vec_as_subscript(i)
 
   # Picked up from the environment at the C level
@@ -103,14 +125,98 @@ vec_as_index <- function(i, n, names = NULL) {
 #' @keywords internal
 #' @export
 vec_repeat <- function(x, each = 1L, times = 1L) {
-  signal_soft_deprecated(paste_line(
-    "`vec_repeat()` is deprecated as of vctrs 0.3.0.",
-    "Please use either `vec_rep()` or `vec_rep_each()` instead."
-  ))
+  # Soft-deprecated: 2020-03
+  lifecycle::deprecate_soft(
+    when = "0.3.0",
+    what = "vec_repeat()",
+    with = I("either `vec_rep()` or `vec_rep_each()`")
+  )
 
-  vec_assert(each, size = 1L)
-  vec_assert(times, size = 1L)
+  vec_check_size(each, size = 1L)
+  vec_check_size(times, size = 1L)
 
   idx <- rep(vec_seq_along(x), times = times, each = each)
   vec_slice(x, idx)
+}
+
+#' Chopping
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `vec_unchop()` has been renamed to [list_unchop()] and is deprecated as of
+#' vctrs 0.5.0.
+#'
+#' @inheritParams list_unchop
+#' @inherit list_unchop return
+#'
+#' @keywords internal
+#' @export
+vec_unchop <- function(x,
+                       indices = NULL,
+                       ptype = NULL,
+                       name_spec = NULL,
+                       name_repair = c("minimal", "unique", "check_unique", "universal")) {
+  # Soft-deprecated: 2022-09
+  lifecycle::deprecate_soft("0.5.0", "vec_unchop()", "list_unchop()")
+
+  list_unchop(
+    x = x,
+    indices = indices,
+    ptype = ptype,
+    name_spec = name_spec,
+    name_repair = name_repair
+  )
+}
+
+#' Missing values
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' `vec_equal_na()` has been renamed to [vec_detect_missing()] and is deprecated
+#' as of vctrs 0.5.0.
+#'
+#' @inheritParams vec_detect_missing
+#'
+#' @return
+#' A logical vector the same size as `x`.
+#'
+#' @keywords internal
+#' @export
+vec_equal_na <- function(x) {
+  # Soft-deprecated: 2022-09
+  lifecycle::deprecate_soft("0.5.0", "vec_equal_na()", "vec_detect_missing()")
+  vec_detect_missing(x)
+}
+
+#' List checks
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' These functions have been deprecated as of vctrs 0.6.0.
+#'
+#' - `vec_is_list()` has been renamed to [obj_is_list()].
+#' - `vec_check_list()` has been renamed to [obj_check_list()].
+#'
+#' @inheritParams obj_is_list
+#'
+#' @keywords internal
+#' @export
+vec_is_list <- function(x) {
+  # Silently-deprecated: 2023-03
+  # lifecycle::deprecate_soft("0.6.0", "vec_is_list()", "obj_is_list()")
+  obj_is_list(x)
+}
+
+#' @rdname vec_is_list
+#' @export
+vec_check_list <- function(x,
+                           ...,
+                           arg = caller_arg(x),
+                           call = caller_env()) {
+  # Silently-deprecated: 2023-03
+  # lifecycle::deprecate_soft("0.6.0", "vec_check_list()", "obj_check_list()")
+  obj_check_list(x, ..., arg = arg, call = call)
 }

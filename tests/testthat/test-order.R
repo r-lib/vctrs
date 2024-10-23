@@ -885,6 +885,60 @@ test_that("`na_value` and `direction` can both be vectors", {
   )
 })
 
+test_that("`direction` is recycled right with array columns (#1753)", {
+  df <- data_frame(
+    x = matrix(c(1, 1, 1, 3, 2, 2), ncol = 2),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, direction = c("asc", "desc")),
+    c(2L, 3L, 1L)
+  )
+  expect_snapshot(error = TRUE, {
+    vec_order_radix(df, direction = c("asc", "desc", "desc"))
+  })
+
+  df <- data_frame(
+    x = array(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 3, 3), dim = c(3, 2, 2)),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, direction = c("asc", "desc")),
+    c(2L, 3L, 1L)
+  )
+})
+
+test_that("`na_value` is recycled right with array columns (#1753)", {
+  df <- data_frame(
+    x = matrix(c(1, 1, 1, 3, NA, 2), ncol = 2),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("largest", "smallest")),
+    c(3L, 1L, 2L)
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("smallest", "largest")),
+    c(2L, 3L, 1L)
+  )
+  expect_snapshot(error = TRUE, {
+    vec_order_radix(df, direction = c("smallest", "largest", "largest"))
+  })
+
+  df <- data_frame(
+    x = array(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, NA, 3), dim = c(3, 2, 2)),
+    y = 3:1
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("largest", "smallest")),
+    c(3L, 1L, 2L)
+  )
+  expect_identical(
+    vec_order_radix(df, na_value = c("smallest", "largest")),
+    c(2L, 3L, 1L)
+  )
+})
+
 # ------------------------------------------------------------------------------
 # vec_order_radix(<data.frame>) - counting
 
@@ -1222,6 +1276,29 @@ test_that("Indistinct NA and NaN are reported in the same group", {
 })
 
 # ------------------------------------------------------------------------------
+# `vec_order_info(<data.frame>)`
+
+test_that("Zero column data frames with >0 rows work (#1863)", {
+  # All rows are treated as being from the same group
+  x <- data_frame(.size = 5)
+  info <- vec_order_info(x)
+
+  expect_identical(info[[1]], 1:5) # Order
+  expect_identical(info[[2]], 5L)  # Group sizes
+  expect_identical(info[[3]], 5L)  # Max group size
+})
+
+test_that("Zero column data frames with exactly 0 rows work (#1863)", {
+  # This is a particularly special case, since we don't actually push a group size
+  x <- data_frame(.size = 0L)
+  info <- vec_order_info(x)
+
+  expect_identical(info[[1]], integer())
+  expect_identical(info[[2]], integer())
+  expect_identical(info[[3]], 0L)
+})
+
+# ------------------------------------------------------------------------------
 # vec_sort
 
 test_that("can sort data frames", {
@@ -1246,11 +1323,11 @@ test_that("can sort empty data frames (#356)", {
 # vec_order
 
 test_that("can request NAs sorted first", {
-  expect_equal(vec_order(c(1, NA), "asc", "largest"), 1:2)
-  expect_equal(vec_order(c(1, NA), "desc", "largest"), 2:1)
+  expect_equal(vec_order(c(1, NA), direction = "asc", na_value = "largest"), 1:2)
+  expect_equal(vec_order(c(1, NA), direction = "desc", na_value = "largest"), 2:1)
 
-  expect_equal(vec_order(c(1, NA), "asc", "smallest"), 2:1)
-  expect_equal(vec_order(c(1, NA), "desc", "smallest"), 1:2)
+  expect_equal(vec_order(c(1, NA), direction = "asc", na_value = "smallest"), 2:1)
+  expect_equal(vec_order(c(1, NA), direction = "desc", na_value = "smallest"), 1:2)
 })
 
 test_that("can order complex vectors", {
@@ -1342,4 +1419,13 @@ test_that("missing values in lists are respected (#1401)", {
   x <- list(1, NULL, 2, NULL)
   expect_identical(vec_order(x, na_value = "largest"), c(1L, 3L, 2L, 4L))
   expect_identical(vec_order(x, na_value = "smallest"), c(2L, 4L, 1L, 3L))
+})
+
+test_that("dots must be empty (#1647)", {
+  expect_snapshot(error = TRUE, {
+    vec_order(1, 2)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_sort(1, 2)
+  })
 })

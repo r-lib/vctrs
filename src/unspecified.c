@@ -24,7 +24,7 @@ SEXP vctrs_unspecified(SEXP n) {
   }
   if (TYPEOF(n) != INTSXP) {
     n = vec_cast(n,
-                 vctrs_shared_empty_int,
+                 r_globals.empty_int,
                  vec_args.empty,
                  vec_args.empty,
                  r_lazy_null);

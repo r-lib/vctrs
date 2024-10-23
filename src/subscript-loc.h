@@ -8,6 +8,7 @@
 
 enum subscript_missing {
   SUBSCRIPT_MISSING_PROPAGATE = 0,
+  SUBSCRIPT_MISSING_REMOVE,
   SUBSCRIPT_MISSING_ERROR
 };
 enum num_loc_negative {
@@ -35,7 +36,7 @@ struct location_opts {
 };
 
 static inline
-struct location_opts new_location_opts_assign() {
+struct location_opts new_location_opts_assign(void) {
   return (struct location_opts) {
     .subscript_opts = new_subscript_opts_assign()
   };

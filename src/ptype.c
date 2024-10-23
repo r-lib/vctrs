@@ -12,18 +12,18 @@ r_obj* ffi_ptype(r_obj* x, r_obj* x_arg_ffi, r_obj* frame) {
 
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call) {
   switch (vec_typeof(x)) {
-  case vctrs_type_null:        return r_null;
-  case vctrs_type_unspecified: return vctrs_shared_empty_uns;
-  case vctrs_type_logical:     return vec_ptype_slice(x, vctrs_shared_empty_lgl);
-  case vctrs_type_integer:     return vec_ptype_slice(x, vctrs_shared_empty_int);
-  case vctrs_type_double:      return vec_ptype_slice(x, vctrs_shared_empty_dbl);
-  case vctrs_type_complex:     return vec_ptype_slice(x, vctrs_shared_empty_cpl);
-  case vctrs_type_character:   return vec_ptype_slice(x, vctrs_shared_empty_chr);
-  case vctrs_type_raw:         return vec_ptype_slice(x, vctrs_shared_empty_raw);
-  case vctrs_type_list:        return vec_ptype_slice(x, vctrs_shared_empty_list);
-  case vctrs_type_dataframe:   return df_ptype(x, true);
-  case vctrs_type_s3:          return s3_ptype(x, x_arg, call);
-  case vctrs_type_scalar:      stop_scalar_type(x, x_arg, call);
+  case VCTRS_TYPE_null:        return r_null;
+  case VCTRS_TYPE_unspecified: return vctrs_shared_empty_uns;
+  case VCTRS_TYPE_logical:     return vec_ptype_slice(x, r_globals.empty_lgl);
+  case VCTRS_TYPE_integer:     return vec_ptype_slice(x, r_globals.empty_int);
+  case VCTRS_TYPE_double:      return vec_ptype_slice(x, r_globals.empty_dbl);
+  case VCTRS_TYPE_complex:     return vec_ptype_slice(x, r_globals.empty_cpl);
+  case VCTRS_TYPE_character:   return vec_ptype_slice(x, r_globals.empty_chr);
+  case VCTRS_TYPE_raw:         return vec_ptype_slice(x, r_globals.empty_raw);
+  case VCTRS_TYPE_list:        return vec_ptype_slice(x, r_globals.empty_list);
+  case VCTRS_TYPE_dataframe:   return df_ptype(x, true);
+  case VCTRS_TYPE_s3:          return s3_ptype(x, x_arg, call);
+  case VCTRS_TYPE_scalar:      stop_scalar_type(x, x_arg, call);
   }
   r_stop_unreachable();
 }
@@ -73,7 +73,7 @@ r_obj* s3_ptype(r_obj* x,
   r_obj* out;
 
   if (method == r_null) {
-    vec_check_vector(x, x_arg, call);
+    obj_check_vector(x, x_arg, call);
     out = vec_slice(x, r_null);
   } else {
     out = vec_ptype_invoke(x, method);
@@ -107,7 +107,7 @@ r_obj* df_ptype(r_obj* x, bool bare) {
   }
 
   if (r_typeof(row_nms) == R_TYPE_character) {
-    r_attrib_poke(ptype, r_syms.row_names, vctrs_shared_empty_chr);
+    r_attrib_poke(ptype, r_syms.row_names, r_globals.empty_chr);
   }
 
   FREE(2);
@@ -124,7 +124,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
   struct r_lazy call = lazy_calls.vec_ptype_finalise;
 
   if (!r_is_object(x)) {
-    vec_check_vector(x, vec_args.x, call);
+    obj_check_vector(x, vec_args.x, call);
     return x;
   }
 
@@ -136,7 +136,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return vec_ptype_finalise_dispatch(x);
   }
 
-  vec_check_vector(x, vec_args.x, call);
+  obj_check_vector(x, vec_args.x, call);
 
   switch (class_type(x)) {
   case VCTRS_CLASS_bare_tibble:
@@ -144,25 +144,7 @@ r_obj* vec_ptype_finalise(r_obj* x) {
     return bare_df_map(x, &vec_ptype_finalise);
 
   case VCTRS_CLASS_data_frame:
-    x = KEEP(df_map(x, &vec_ptype_finalise));
-
-    if (r_inherits(x, "vctrs:::df_fallback")) {
-      r_obj* seen_tibble_attr = KEEP(r_attrib_get(x, r_sym("seen_tibble")));
-      bool seen_tibble = r_is_true(seen_tibble_attr);
-      FREE(1);
-
-      if (seen_tibble) {
-        r_attrib_poke_class(x, classes_tibble);
-      } else {
-        r_attrib_poke_class(x, classes_data_frame);
-      }
-
-      r_attrib_poke(x, r_sym("known_classes"), r_null);
-      r_attrib_poke(x, r_sym("seen_tibble"), r_null);
-    }
-
-    FREE(1);
-    return x;
+    return df_map(x, &vec_ptype_finalise);
 
   case VCTRS_CLASS_none:
     r_stop_internal("Non-S3 classes should have returned by now.");
@@ -177,7 +159,7 @@ r_obj* vec_ptype_finalise_unspecified(r_obj* x) {
   r_ssize size = r_length(x);
 
   if (size == 0) {
-    return vctrs_shared_empty_lgl;
+    return r_globals.empty_lgl;
   }
 
   r_obj* out = KEEP(r_alloc_logical(size));
@@ -195,18 +177,29 @@ r_obj* vec_ptype_finalise_dispatch(r_obj* x) {
   );
 }
 
+r_obj* vec_ptype_final(r_obj* x) {
+  r_obj* out = KEEP(vec_ptype(x, vec_args.x, vec_ptype_final_lazy_call));
+  out = vec_ptype_finalise(out);
+
+  FREE(1);
+  return out;
+}
+
+
 void vctrs_init_ptype(r_obj* ns) {
   syms_vec_ptype = r_sym("vec_ptype");
 
   syms_vec_ptype_finalise_dispatch = r_sym("vec_ptype_finalise_dispatch");
   fns_vec_ptype_finalise_dispatch = r_eval(syms_vec_ptype_finalise_dispatch, ns);
+
+  vec_ptype_final_call = r_parse("vec_ptype_final()");
+  r_preserve_global(vec_ptype_final_call);
+
+  vec_ptype_final_lazy_call = (struct r_lazy) { .x = vec_ptype_final_call, .env = r_null };
 }
 
-static
-r_obj* syms_vec_ptype = NULL;
-
-static
-r_obj* syms_vec_ptype_finalise_dispatch = NULL;
-
-static
-r_obj* fns_vec_ptype_finalise_dispatch = NULL;
+static r_obj* syms_vec_ptype = NULL;
+static r_obj* syms_vec_ptype_finalise_dispatch = NULL;
+static r_obj* fns_vec_ptype_finalise_dispatch = NULL;
+static r_obj* vec_ptype_final_call = NULL;
+static struct r_lazy vec_ptype_final_lazy_call = { 0 };

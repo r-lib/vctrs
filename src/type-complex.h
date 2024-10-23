@@ -17,27 +17,27 @@ r_complex cpl_normalise_missing(r_complex x) {
   const double na = r_globals.na_dbl;
   const double nan = R_NaN;
 
-  const enum vctrs_dbl_class r_type = dbl_classify(x.r);
-  const enum vctrs_dbl_class i_type = dbl_classify(x.i);
+  const enum vctrs_dbl r_type = dbl_classify(x.r);
+  const enum vctrs_dbl i_type = dbl_classify(x.i);
 
   switch (r_type) {
-  case vctrs_dbl_number:
+  case VCTRS_DBL_number:
     switch (i_type) {
-    case vctrs_dbl_number: return x;
-    case vctrs_dbl_missing: return (r_complex) {na, na};
-    case vctrs_dbl_nan: return (r_complex) {nan, nan};
+    case VCTRS_DBL_number: return x;
+    case VCTRS_DBL_missing: return (r_complex) { .r = na, .i = na};
+    case VCTRS_DBL_nan: return (r_complex) { .r = nan, .i = nan};
     }
-  case vctrs_dbl_missing:
+  case VCTRS_DBL_missing:
     switch (i_type) {
-    case vctrs_dbl_number: return (r_complex) {na, na};
-    case vctrs_dbl_missing: return x;
-    case vctrs_dbl_nan: return x;
+    case VCTRS_DBL_number: return (r_complex) { .r = na, .i = na};
+    case VCTRS_DBL_missing: return x;
+    case VCTRS_DBL_nan: return x;
     }
-  case vctrs_dbl_nan:
+  case VCTRS_DBL_nan:
     switch (i_type) {
-    case vctrs_dbl_number: return (r_complex) {nan, nan};
-    case vctrs_dbl_missing: return x;
-    case vctrs_dbl_nan: return x;
+    case VCTRS_DBL_number: return (r_complex) { .r = nan, .i = nan};
+    case VCTRS_DBL_missing: return x;
+    case VCTRS_DBL_nan: return x;
     }
   }
 

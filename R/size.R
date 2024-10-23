@@ -15,11 +15,11 @@
 #' `list_sizes()` returns an integer vector containing the size of each element
 #' of a list. It is nearly equivalent to, but faster than,
 #' `map_int(x, vec_size)`, with the exception that `list_sizes()` will
-#' error on non-list inputs, as defined by [vec_is_list()]. `list_sizes()` is
+#' error on non-list inputs, as defined by [obj_is_list()]. `list_sizes()` is
 #' to `vec_size()` as [lengths()] is to [length()].
 #'
 #' @seealso [vec_slice()] for a variation of `[` compatible with `vec_size()`,
-#'   and [vec_recycle()] to [recycle][vector_recycling_rules] vectors to common
+#'   and [vec_recycle()] to [recycle][theory-faq-recycling] vectors to common
 #'   length.
 #' @section Invariants:
 #' * `vec_size(dataframe)` == `vec_size(dataframe[[i]])`

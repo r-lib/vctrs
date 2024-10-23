@@ -37,38 +37,43 @@ r_obj* vec_ptype2_opts_impl(const struct ptype2_opts* opts,
   enum vctrs_type x_type = vec_typeof(x);
   enum vctrs_type y_type = vec_typeof(y);
 
-  if (x_type == vctrs_type_null) {
+  if (x_type == VCTRS_TYPE_null) {
     *left = y == r_null;
     return vec_ptype2_from_unspecified(opts, x_type, y, y_arg);
   }
-  if (y_type == vctrs_type_null) {
+  if (y_type == VCTRS_TYPE_null) {
     *left = x == r_null;
     return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 
-  if (x_type == vctrs_type_unspecified) {
+  if (x_type == VCTRS_TYPE_unspecified) {
     return vec_ptype2_from_unspecified(opts, y_type, y, y_arg);
   }
-  if (y_type == vctrs_type_unspecified) {
+  if (y_type == VCTRS_TYPE_unspecified) {
     return vec_ptype2_from_unspecified(opts, x_type, x, x_arg);
   }
 
-  if (x_type == vctrs_type_scalar) {
+  if (x_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(x, x_arg, opts->call);
   }
-  if (y_type == vctrs_type_scalar) {
+  if (y_type == VCTRS_TYPE_scalar) {
     stop_scalar_type(y, y_arg, opts->call);
   }
 
-  if (x_type != vctrs_type_s3 && y_type != vctrs_type_s3) {
+  if (x_type != VCTRS_TYPE_s3 && y_type != VCTRS_TYPE_s3) {
     return vec_ptype2_switch_native(opts, x_type, y_type, left);
   }
 
-  if (x_type == vctrs_type_s3 || y_type == vctrs_type_s3) {
-    r_obj* out = vec_ptype2_dispatch_native(opts, x_type, y_type, left);
+  if (x_type == VCTRS_TYPE_s3 || y_type == VCTRS_TYPE_s3) {
+    r_obj* out = KEEP(vec_ptype2_dispatch_native(opts, x_type, y_type, left));
+
     if (out != r_null) {
+      out = vec_shaped_ptype(out, x, y, x_arg, y_arg);
+      FREE(1);
       return out;
     }
+
+    FREE(1);
   }
 
   // Try native dispatch again with prototypes, in case the prototype
@@ -105,36 +110,36 @@ r_obj* vec_ptype2_switch_native(const struct ptype2_opts* opts,
   enum vctrs_type2 type2 = vec_typeof2_impl(x_type, y_type, left);
 
   switch (type2) {
-  case vctrs_type2_null_null:
+  case VCTRS_TYPE2_null_null:
     return r_null;
 
-  case vctrs_type2_logical_logical:
-    return vec_shaped_ptype(vctrs_shared_empty_lgl, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_logical_logical:
+    return vec_shaped_ptype(r_globals.empty_lgl, x, y, x_arg, y_arg);
 
-  case vctrs_type2_logical_integer:
-  case vctrs_type2_integer_integer:
-    return vec_shaped_ptype(vctrs_shared_empty_int, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_logical_integer:
+  case VCTRS_TYPE2_integer_integer:
+    return vec_shaped_ptype(r_globals.empty_int, x, y, x_arg, y_arg);
 
-  case vctrs_type2_logical_double:
-  case vctrs_type2_integer_double:
-  case vctrs_type2_double_double:
-    return vec_shaped_ptype(vctrs_shared_empty_dbl, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_logical_double:
+  case VCTRS_TYPE2_integer_double:
+  case VCTRS_TYPE2_double_double:
+    return vec_shaped_ptype(r_globals.empty_dbl, x, y, x_arg, y_arg);
 
-  case vctrs_type2_integer_complex:
-  case vctrs_type2_double_complex:
-  case vctrs_type2_complex_complex:
-    return vec_shaped_ptype(vctrs_shared_empty_cpl, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_integer_complex:
+  case VCTRS_TYPE2_double_complex:
+  case VCTRS_TYPE2_complex_complex:
+    return vec_shaped_ptype(r_globals.empty_cpl, x, y, x_arg, y_arg);
 
-  case vctrs_type2_character_character:
-    return vec_shaped_ptype(vctrs_shared_empty_chr, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_character_character:
+    return vec_shaped_ptype(r_globals.empty_chr, x, y, x_arg, y_arg);
 
-  case vctrs_type2_raw_raw:
-    return vec_shaped_ptype(vctrs_shared_empty_raw, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_raw_raw:
+    return vec_shaped_ptype(r_globals.empty_raw, x, y, x_arg, y_arg);
 
-  case vctrs_type2_list_list:
-    return vec_shaped_ptype(vctrs_shared_empty_list, x, y, x_arg, y_arg);
+  case VCTRS_TYPE2_list_list:
+    return vec_shaped_ptype(r_globals.empty_list, x, y, x_arg, y_arg);
 
-  case vctrs_type2_dataframe_dataframe:
+  case VCTRS_TYPE2_dataframe_dataframe:
     return df_ptype2(opts);
 
   default:
@@ -154,7 +159,7 @@ r_obj* vec_ptype2_from_unspecified(const struct ptype2_opts* opts,
                                    enum vctrs_type other_type,
                                    r_obj* other,
                                    struct vctrs_arg* other_arg) {
-  if (other_type == vctrs_type_unspecified || other_type == vctrs_type_null) {
+  if (other_type == VCTRS_TYPE_unspecified || other_type == VCTRS_TYPE_null) {
     return vec_ptype(other, other_arg, opts->call);
   }
 
@@ -287,8 +292,7 @@ struct ptype2_opts new_ptype2_opts(r_obj* x,
 
 struct fallback_opts new_fallback_opts(r_obj* opts) {
   return (struct fallback_opts) {
-    .df = r_int_get(r_list_get(opts, 0), 0),
-    .s3 = r_int_get(r_list_get(opts, 1), 0)
+    .s3 = r_int_get(r_list_get(opts, 0), 0)
   };
 }
 

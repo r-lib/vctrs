@@ -325,7 +325,7 @@ vec_size_common(integer(), 1)
 
 vctrs obeys a stricter set of recycling rules than base R. Vectors of size 1 are recycled to any other size. All other size combinations will generate an error. This strictness prevents common mistakes like `dest == c("IAH", "HOU"))`, at the cost of occasionally requiring an explicit calls to `rep()`.
 
-```{r, echo = FALSE, fig.cap="Summary of vctrs recycling rules. X indicates n error"}
+```{r, echo = FALSE, fig.cap="Summary of vctrs recycling rules. X indicates an error"}
 knitr::include_graphics("../man/figures/sizes-recycling.png", dpi = 300)
 ```
 

@@ -42,13 +42,12 @@ test_that("unsupported error reports correct error call", {
 })
 
 test_that("scalar error reports correct error call", {
-  my_function <- function() vec_assert(foobar())
+  my_function <- function() obj_check_vector(foobar())
   expect_snapshot((expect_error(my_function())))
+})
 
-  my_function <- function() vec_assert(1:2, dbl())
-  expect_snapshot((expect_error(my_function())))
-
-  my_function <- function() vec_assert(1:2, size = 1)
+test_that("size error reports correct error call", {
+  my_function <- function() vec_check_size(1:2, size = 1)
   expect_snapshot((expect_error(my_function())))
 })
 
@@ -114,29 +113,15 @@ test_that("`vec_ptype()` reports correct error call", {
   })
 })
 
-test_that("can take ownership of vctrs errors", {
-  vctrs_local_error_call(call("foo"))
-
+test_that("`vec_slice()` uses `error_call`", {
+  my_function <- function(x, i) vec_slice(x, i, error_call = current_env())
   expect_snapshot({
-    (expect_error(vec_assert(foobar(list()))))
-    (expect_error(local(vec_assert(foobar(list())))))
-
-    (expect_error(vec_cast(1, list())))
-
-    # Suboptimal because `foo()` might not have an `x` argument. It
-    # might be better to comprehensively check inputs with explicit
-    # error context and treat all other errors as programming errors.
-    (expect_error(vec_slice(env(), list())))
-
-    # This should show `vec_slice()` if no local call
-    local({
-      vctrs_local_error_call(NULL)
-      (expect_error(vec_slice(env(), list())))
-    })
+    (expect_error(my_function(env(), 1)))
+    (expect_error(my_function(1, 2)))
   })
 })
 
-test_that("vec_slice() reports error context", {
+test_that("vec_slice() reports self in error context", {
   expect_snapshot({
     (expect_error(vec_slice(foobar(list()), 1)))
     (expect_error(vec_slice(list(), env())))

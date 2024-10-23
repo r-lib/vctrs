@@ -1,104 +1,92 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
+#include "decl/rep-decl.h"
 
-// Initialised at load time
-static struct vctrs_arg args_times_;
-static struct vctrs_arg* const args_times = &args_times_;
 
-static inline void stop_rep_times_size();
-
-static inline void check_rep_times(int times);
-static inline void check_rep_each_times(int times, R_len_t i);
-
-static inline bool multiply_would_overflow(R_len_t x, R_len_t y);
-static inline bool plus_would_overflow(R_len_t x, R_len_t y);
-static inline void stop_rep_size_oob();
-
-// -----------------------------------------------------------------------------
-
-static SEXP vec_rep(SEXP x, int times);
-
-// [[ register() ]]
-SEXP vctrs_rep(SEXP x, SEXP times) {
-  struct r_lazy call = r_lazy_null;
-
-  times = PROTECT(vec_cast(times,
-                           vctrs_shared_empty_int,
-                           args_times,
-                           vec_args.empty,
-                           call));
-
-  if (vec_size(times) != 1) {
-    stop_rep_times_size();
-  }
-
-  const int times_ = r_int_get(times, 0);
-
-  SEXP out = vec_rep(x, times_);
-
-  UNPROTECT(1);
-  return out;
-}
-
-static SEXP vec_rep(SEXP x, int times) {
-  check_rep_times(times);
+r_obj* vec_rep(r_obj* x,
+               int times,
+               struct r_lazy error_call,
+               struct vctrs_arg* p_x_arg,
+               struct vctrs_arg* p_times_arg) {
+  check_rep_times(times, error_call, p_times_arg);
 
   if (times == 1) {
     return x;
   }
 
-  const R_len_t times_ = (R_len_t) times;
-  const R_len_t x_size = vec_size(x);
+  const r_ssize times_ = (r_ssize) times;
+  const r_ssize x_size = vec_size(x);
 
   if (x_size == 1) {
-    return vec_check_recycle(x, times_, args_times, r_lazy_null);
+    return vec_check_recycle(x, times_, p_x_arg, error_call);
   }
 
   if (multiply_would_overflow(x_size, times_)) {
-    stop_rep_size_oob();
+    stop_rep_size_oob(error_call);
   };
 
-  const R_len_t size = x_size * times_;
+  const r_ssize size = x_size * times_;
 
-  SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_subscript = INTEGER(subscript);
+  r_obj* subscript = KEEP(r_alloc_integer(size));
+  int* v_subscript = r_int_begin(subscript);
 
-  R_len_t k = 0;
+  r_ssize k = 0;
 
-  for (R_len_t i = 0; i < times_; ++i) {
-    for (R_len_t j = 1; j <= x_size; ++j, ++k) {
-      p_subscript[k] = j;
+  for (r_ssize i = 0; i < times_; ++i) {
+    for (r_ssize j = 1; j <= x_size; ++j, ++k) {
+      v_subscript[k] = j;
     }
   }
 
-  SEXP out = vec_slice_unsafe(x, subscript);
+  r_obj* out = vec_slice_unsafe(x, subscript);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-// -----------------------------------------------------------------------------
+r_obj* ffi_vec_rep(r_obj* x, r_obj* ffi_times, r_obj* frame) {
+  struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
 
-static SEXP vec_rep_each(SEXP x, SEXP times);
+  struct r_lazy x_arg_lazy = { .x = syms.x_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
 
-// [[ register() ]]
-SEXP vctrs_rep_each(SEXP x, SEXP times) {
-  return vec_rep_each(x, times);
+  struct r_lazy times_arg_lazy = { .x = syms.times_arg, .env = frame };
+  struct vctrs_arg times_arg = new_lazy_arg(&times_arg_lazy);
+
+  ffi_times = KEEP(vec_cast(ffi_times,
+                            r_globals.empty_int,
+                            &times_arg,
+                            vec_args.empty,
+                            error_call));
+
+  if (vec_size(ffi_times) != 1) {
+    stop_rep_times_size(error_call, &times_arg);
+  }
+
+  const int times = r_int_get(ffi_times, 0);
+  r_obj* out = vec_rep(x, times, error_call, &x_arg, &times_arg);
+
+  FREE(1);
+  return out;
 }
 
-static SEXP vec_rep_each_uniform(SEXP x, int times);
-static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size);
 
-static SEXP vec_rep_each(SEXP x, SEXP times) {
-  times = PROTECT(vec_cast(times,
-                           vctrs_shared_empty_int,
-                           args_times,
-                           vec_args.empty,
-                           r_lazy_null));
+// -----------------------------------------------------------------------------
 
-  const R_len_t times_size = vec_size(times);
+r_obj* vec_rep_each(r_obj* x,
+                    r_obj* times,
+                    struct r_lazy error_call,
+                    struct vctrs_arg* p_x_arg,
+                    struct vctrs_arg* p_times_arg) {
+  times = KEEP(vec_cast(times,
+                        r_globals.empty_int,
+                        p_times_arg,
+                        vec_args.empty,
+                        error_call));
 
-  SEXP out;
+  const r_ssize times_size = vec_size(times);
+
+  r_obj* out;
 
   if (times_size == 1) {
     const int times_ = r_int_get(times, 0);
@@ -106,294 +94,292 @@ static SEXP vec_rep_each(SEXP x, SEXP times) {
     if (times_ == 1) {
       out = x;
     } else if (times_ == 0) {
-      out = vec_ptype(x, vec_args.empty, r_lazy_null);
+      out = vec_slice_unsafe(x, r_globals.empty_int);
     } else {
-      out = vec_rep_each_uniform(x, times_);
+      out = vec_rep_each_uniform(x, times_, error_call, p_times_arg);
     }
   } else {
-    out = vec_rep_each_impl(x, times, times_size);
+    out = vec_rep_each_impl(x, times, times_size, error_call, p_times_arg);
   }
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static SEXP vec_rep_each_uniform(SEXP x, int times) {
-  check_rep_each_times(times, 1);
+r_obj* ffi_vec_rep_each(r_obj* x, r_obj* times, r_obj* frame) {
+  struct r_lazy error_call = { .x = r_syms.error_call, .env = frame };
 
-  const R_len_t times_ = (R_len_t) times;
-  const R_len_t x_size = vec_size(x);
+  struct r_lazy x_arg_lazy = { .x = syms.times_arg, .env = frame };
+  struct vctrs_arg x_arg = new_lazy_arg(&x_arg_lazy);
+
+  struct r_lazy times_arg_lazy = { .x = syms.times_arg, .env = frame };
+  struct vctrs_arg times_arg = new_lazy_arg(&times_arg_lazy);
+
+  return vec_rep_each(x, times, error_call, &x_arg, &times_arg);
+}
+
+
+// -----------------------------------------------------------------------------
+
+static
+r_obj* vec_rep_each_uniform(r_obj* x,
+                            int times,
+                            struct r_lazy error_call,
+                            struct vctrs_arg* p_times_arg) {
+  check_rep_each_times(times, 1, error_call, p_times_arg);
+
+  const r_ssize times_ = (r_ssize) times;
+  const r_ssize x_size = vec_size(x);
 
   if (multiply_would_overflow(x_size, times_)) {
-    stop_rep_size_oob();
+    stop_rep_size_oob(error_call);
   };
 
-  const R_len_t size = x_size * times_;
+  const r_ssize size = x_size * times_;
 
-  SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_subscript = INTEGER(subscript);
+  r_obj* subscript = KEEP(r_alloc_integer(size));
+  int* v_subscript = r_int_begin(subscript);
 
-  R_len_t k = 0;
+  r_ssize k = 0;
 
-  for (R_len_t i = 1; i <= x_size; ++i) {
-    for (R_len_t j = 0; j < times_; ++j, ++k) {
-      p_subscript[k] = i;
+  for (r_ssize i = 1; i <= x_size; ++i) {
+    for (r_ssize j = 0; j < times_; ++j, ++k) {
+      v_subscript[k] = i;
     }
   }
 
-  SEXP out = vec_slice_unsafe(x, subscript);
+  r_obj* out = vec_slice_unsafe(x, subscript);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
 
-static SEXP vec_rep_each_impl(SEXP x, SEXP times, const R_len_t times_size) {
-  const R_len_t x_size = vec_size(x);
+static r_obj* vec_rep_each_impl(r_obj* x,
+                                r_obj* times,
+                                const r_ssize times_size,
+                                struct r_lazy error_call,
+                                struct vctrs_arg* p_times_arg) {
+  const r_ssize x_size = vec_size(x);
 
   if (x_size != times_size) {
     stop_recycle_incompatible_size(times_size,
                                    x_size,
-                                   args_times,
-                                   r_lazy_null);
+                                   p_times_arg,
+                                   error_call);
   }
 
-  const int* p_times = INTEGER_RO(times);
+  const int* v_times = r_int_cbegin(times);
 
-  R_len_t size = 0;
-  for (R_len_t i = 0; i < times_size; ++i) {
-    const int elt_times = p_times[i];
+  r_ssize size = 0;
+  for (r_ssize i = 0; i < times_size; ++i) {
+    const int elt_times = v_times[i];
 
-    check_rep_each_times(elt_times, i + 1);
+    check_rep_each_times(elt_times, i + 1, error_call, p_times_arg);
 
-    const R_len_t elt_times_ = (R_len_t) elt_times;
+    const r_ssize elt_times_ = (r_ssize) elt_times;
 
     if (plus_would_overflow(size, elt_times_)) {
-      stop_rep_size_oob();
+      stop_rep_size_oob(error_call);
     }
 
     size += elt_times_;
   }
 
-  SEXP subscript = PROTECT(Rf_allocVector(INTSXP, size));
-  int* p_subscript = INTEGER(subscript);
+  r_obj* subscript = KEEP(r_alloc_integer(size));
+  int* v_subscript = r_int_begin(subscript);
 
-  R_len_t k = 0;
+  r_ssize k = 0;
 
-  for (R_len_t i = 1; i <= x_size; ++i) {
-    const R_len_t elt_times = (R_len_t) p_times[i - 1];
+  for (r_ssize i = 1; i <= x_size; ++i) {
+    const r_ssize elt_times = (r_ssize) v_times[i - 1];
 
-    for (R_len_t j = 0; j < elt_times; ++j, ++k) {
-      p_subscript[k] = i;
+    for (r_ssize j = 0; j < elt_times; ++j, ++k) {
+      v_subscript[k] = i;
     }
   }
 
-  SEXP out = vec_slice_unsafe(x, subscript);
+  r_obj* out = vec_slice_unsafe(x, subscript);
 
-  UNPROTECT(1);
+  FREE(1);
   return out;
 }
+
 
 // -----------------------------------------------------------------------------
 
 // TODO: Modify for long vectors with `R_XLEN_T_MAX` and `R_xlen_t`.
 
-static inline bool times_is_oob(int times) {
+static inline
+bool times_is_oob(int times) {
   return times > R_LEN_T_MAX;
 }
 
 // Only useful for positive or zero inputs
-static inline bool multiply_would_overflow(R_len_t x, R_len_t y) {
+static inline
+bool multiply_would_overflow(r_ssize x, r_ssize y) {
   return (double) x * y > R_LEN_T_MAX;
 }
 
 // Only useful for positive or zero inputs
-static inline bool plus_would_overflow(R_len_t x, R_len_t y) {
+static inline
+bool plus_would_overflow(r_ssize x, r_ssize y) {
   return x > R_LEN_T_MAX - y;
 }
 
+
 // -----------------------------------------------------------------------------
 
-static inline void stop_rep_times_negative();
-static inline void stop_rep_times_missing();
-static inline void stop_rep_times_oob(int times);
-
-static inline void check_rep_times(int times) {
+static inline
+void check_rep_times(int times,
+                     struct r_lazy call,
+                     struct vctrs_arg* p_times_arg) {
   if (times < 0) {
-    if (times == NA_INTEGER) {
-      stop_rep_times_missing();
+    if (times == r_globals.na_int) {
+      stop_rep_times_missing(call, p_times_arg);
     } else {
-      stop_rep_times_negative();
+      stop_rep_times_negative(call, p_times_arg);
     }
   } else if (times_is_oob(times)) {
-    stop_rep_times_oob(times);
+    stop_rep_times_oob(times, call, p_times_arg);
   }
 }
 
-static inline void stop_rep_times_negative() {
-  Rf_errorcall(R_NilValue, "`times` must be a positive number.");
+static inline
+void stop_rep_times_negative(struct r_lazy call, struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(call,
+                    "%s must be a positive number.",
+                    vec_arg_format(p_times_arg));
 }
 
-static inline void stop_rep_times_missing() {
-  Rf_errorcall(R_NilValue, "`times` can't be missing.");
+static inline
+void stop_rep_times_missing(struct r_lazy call, struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(call,
+                    "%s can't be missing.",
+                    vec_arg_format(p_times_arg));
 }
 
-// Not currently thrown since `R_len_t == int`, but might be once
+// Not currently thrown since `r_ssize == int`, but might be once
 // long vectors are supported
-static inline void stop_rep_times_oob(int times) {
-  Rf_errorcall(
-    R_NilValue,
-    "`times` must be less than %i, not %i.",
+static inline
+void stop_rep_times_oob(int times, struct r_lazy call, struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(
+    call,
+    "%s must be less than %i, not %i.",
+    vec_arg_format(p_times_arg),
     R_LEN_T_MAX,
     times
   );
 }
 
+
 // -----------------------------------------------------------------------------
 
-static inline void stop_rep_each_times_negative(R_len_t i);
-static inline void stop_rep_each_times_missing(R_len_t i);
-static inline void stop_rep_each_times_oob(int times, R_len_t i);
-
-static inline void check_rep_each_times(int times, R_len_t i) {
+static inline
+void check_rep_each_times(int times,
+                          r_ssize i,
+                          struct r_lazy call,
+                          struct vctrs_arg* p_times_arg) {
   if (times < 0) {
-    if (times == NA_INTEGER) {
-      stop_rep_each_times_missing(i);
+    if (times == r_globals.na_int) {
+      stop_rep_each_times_missing(i, call, p_times_arg);
     } else {
-      stop_rep_each_times_negative(i);
+      stop_rep_each_times_negative(i, call, p_times_arg);
     }
   } else if (times_is_oob(times)) {
-    stop_rep_each_times_oob(times, i);
+    stop_rep_each_times_oob(times, i, call, p_times_arg);
   }
 }
 
-static inline void stop_rep_each_times_negative(R_len_t i) {
-  Rf_errorcall(R_NilValue, "`times` must be a vector of positive numbers. Location %i is negative.", i);
+static inline
+void stop_rep_each_times_negative(r_ssize i, struct r_lazy call, struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(call,
+                    "%s must be a vector of positive numbers. Location %i is negative.",
+                    vec_arg_format(p_times_arg),
+                    i);
 }
 
-static inline void stop_rep_each_times_missing(R_len_t i) {
-  Rf_errorcall(R_NilValue, "`times` can't be missing. Location %i is missing.", i);
+static inline
+void stop_rep_each_times_missing(r_ssize i, struct r_lazy call, struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(call,
+                    "%s can't be missing. Location %i is missing.",
+                    vec_arg_format(p_times_arg),
+                    i);
 }
 
-// Not currently thrown since `R_len_t == int`, but might be once
+// Not currently thrown since `r_ssize == int`, but might be once
 // long vectors are supported
-static inline void stop_rep_each_times_oob(int times, R_len_t i) {
-  Rf_errorcall(
-    R_NilValue,
-    "`times` must be less than %i, not %i. ",
+static inline
+void stop_rep_each_times_oob(int times, r_ssize i, struct r_lazy call, struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(
+    call,
+    "%s must be less than %i, not %i. ",
     "Location %i is too large.",
+    vec_arg_format(p_times_arg),
     R_LEN_T_MAX,
     times,
     i
   );
 }
 
-// -----------------------------------------------------------------------------
-
-static inline void stop_rep_size_oob() {
-  Rf_errorcall(
-    R_NilValue,
+static inline
+void stop_rep_size_oob(struct r_lazy call) {
+  r_abort_lazy_call(
+    call,
     "Long vectors are not yet supported. "
     "Requested output size must be less than %i.",
     R_LEN_T_MAX
   );
 }
 
-static inline void stop_rep_times_size() {
-  Rf_errorcall(R_NilValue, "`times` must be a single number.");
+static inline
+void stop_rep_times_size(struct r_lazy call,
+                         struct vctrs_arg* p_times_arg) {
+  r_abort_lazy_call(call,
+                    "%s must be a single number.",
+                    vec_arg_format(p_times_arg));
 }
+
 
 // -----------------------------------------------------------------------------
 
-static SEXP vec_unrep(SEXP x);
-
-// [[register()]]
-SEXP vctrs_unrep(SEXP x) {
-  return vec_unrep(x);
-}
-
-static SEXP new_unrep_data_frame(SEXP key, SEXP times, r_ssize size);
-
 static
-SEXP vec_unrep(SEXP x) {
-  SEXP id = PROTECT(vec_identify_runs(x));
-  const int* p_id = INTEGER_RO(id);
+r_obj* vec_unrep(r_obj* x, struct r_lazy error_call) {
+  r_obj* times = KEEP(vec_run_sizes(x, error_call));
+  const int* v_times = r_int_cbegin(times);
 
-  r_ssize x_size = r_length(id);
+  const r_ssize size = r_length(times);
 
-  if (x_size == 0) {
-    SEXP out = new_unrep_data_frame(x, vctrs_shared_empty_int, 0);
-    UNPROTECT(1);
-    return out;
+  r_obj* loc = KEEP(r_alloc_integer(size));
+  int* v_loc = r_int_begin(loc);
+
+  r_ssize current = 1;
+
+  for (r_ssize i = 0; i < size; ++i) {
+    v_loc[i] = current;
+    current += v_times[i];
   }
 
-  r_ssize out_size = (r_ssize) r_int_get(r_attrib_get(id, syms_n), 0);
+  r_obj* out = KEEP(r_new_list(2));
 
-  // Size of each run
-  SEXP times = PROTECT(r_new_integer(out_size));
-  int* p_times = INTEGER(times);
-
-  // Location of the start of each run. For slicing `x`.
-  SEXP loc = PROTECT(r_new_integer(out_size));
-  int* p_loc = INTEGER(loc);
-
-  r_ssize idx = 0;
-  r_ssize previous = 0;
-
-  int reference = p_id[0];
-
-  // Handle first case
-  p_loc[idx] = 1;
-  ++idx;
-
-  for (r_ssize i = 1; i < x_size; ++i) {
-    const int elt = p_id[i];
-
-    if (elt == reference) {
-      continue;
-    }
-
-    reference = elt;
-
-    // Size of current run
-    p_times[idx - 1] = i - previous;
-    previous = i;
-
-    // 1-based location of the start of the new run
-    p_loc[idx] = i + 1;
-    ++idx;
-  }
-
-  // Handle last case
-  p_times[idx - 1] = x_size - previous;
-
-  SEXP key = PROTECT(vec_slice(x, loc));
-  SEXP out = new_unrep_data_frame(key, times, out_size);
-
-  UNPROTECT(4);
-  return out;
-}
-
-static
-SEXP new_unrep_data_frame(SEXP key, SEXP times, r_ssize size) {
-  SEXP out = PROTECT(r_new_list(2));
-
-  r_list_poke(out, 0, key);
+  r_list_poke(out, 0, vec_slice_unsafe(x, loc));
   r_list_poke(out, 1, times);
 
-  SEXP names = PROTECT(r_new_character(2));
+  r_obj* names = r_new_character(2);
   r_attrib_poke_names(out, names);
-
   r_chr_poke(names, 0, strings_key);
   r_chr_poke(names, 1, strings_times);
 
   init_data_frame(out, size);
 
-  UNPROTECT(2);
+  FREE(3);
   return out;
+}
+
+r_obj* ffi_vec_unrep(r_obj* x, r_obj* frame) {
+  struct r_lazy error_call = { .x = frame, .env = r_null };
+  return vec_unrep(x, error_call);
 }
 
 // -----------------------------------------------------------------------------
 
-void vctrs_init_rep(SEXP ns) {
-  args_times_ = new_wrapper_arg(NULL, "times");
-}
+void vctrs_init_rep(r_obj* ns) { }

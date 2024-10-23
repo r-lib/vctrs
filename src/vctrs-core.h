@@ -21,6 +21,18 @@ extern bool vctrs_debug_verbose;
 #define ERR SEXP
 
 
+// Ownership is recursive
+enum vctrs_owned {
+  VCTRS_OWNED_false = 0,
+  VCTRS_OWNED_true
+};
+
+enum vctrs_recurse {
+  VCTRS_RECURSE_false = 0,
+  VCTRS_RECURSE_true
+};
+
+
 /**
  * Structure for argument tags
  *
@@ -73,13 +85,13 @@ union vctrs_dbl_indicator {
   unsigned int key[2]; // 4 * 2 bytes
 };
 
-enum vctrs_dbl_class {
-  vctrs_dbl_number,
-  vctrs_dbl_missing,
-  vctrs_dbl_nan
+enum vctrs_dbl {
+  VCTRS_DBL_number,
+  VCTRS_DBL_missing,
+  VCTRS_DBL_nan
 };
 
-enum vctrs_dbl_class dbl_classify(double x);
+enum vctrs_dbl dbl_classify(double x);
 
 
 // Compatibility ------------------------------------------------
@@ -95,6 +107,16 @@ enum vctrs_dbl_class dbl_classify(double x);
 #endif
 
 #define VECTOR_PTR_RO(x) ((const SEXP*) DATAPTR_RO(x))
+
+// Likely supplied in R 4.4.0
+// https://github.com/wch/r-source/commit/38403c9c347dd5426da6009573b087188ec6be04
+#ifndef R_PRIdXLEN_T
+# ifdef LONG_VECTOR_SUPPORT
+#  define R_PRIdXLEN_T "td"
+# else
+#  define R_PRIdXLEN_T "d"
+# endif
+#endif
 
 
 #endif

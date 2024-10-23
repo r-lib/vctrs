@@ -195,6 +195,8 @@ r_obj* df_slice(r_obj* x, r_obj* subscript) {
     r_list_poke(out, i, sliced);
   }
 
+  init_data_frame(out, vec_subscript_size(subscript));
+
   r_obj* row_nms = KEEP(df_rownames(x));
   if (r_typeof(row_nms) == R_TYPE_character) {
     row_nms = slice_rownames(row_nms, subscript);
@@ -238,7 +240,7 @@ r_obj* vec_slice_dispatch(r_obj* x, r_obj* subscript) {
 bool vec_requires_fallback(r_obj* x, struct vctrs_proxy_info info) {
   return r_is_object(x) &&
     info.proxy_method == r_null &&
-    info.type != vctrs_type_dataframe;
+    info.type != VCTRS_TYPE_dataframe;
 }
 
 r_obj* vec_slice_base(enum vctrs_type type,
@@ -246,13 +248,13 @@ r_obj* vec_slice_base(enum vctrs_type type,
                       r_obj* subscript,
                       enum vctrs_materialize materialize) {
   switch (type) {
-  case vctrs_type_logical:   return lgl_slice(x, subscript, materialize);
-  case vctrs_type_integer:   return int_slice(x, subscript, materialize);
-  case vctrs_type_double:    return dbl_slice(x, subscript, materialize);
-  case vctrs_type_complex:   return cpl_slice(x, subscript, materialize);
-  case vctrs_type_character: return chr_slice(x, subscript, materialize);
-  case vctrs_type_raw:       return raw_slice(x, subscript, materialize);
-  case vctrs_type_list:      return list_slice(x, subscript);
+  case VCTRS_TYPE_logical:   return lgl_slice(x, subscript, materialize);
+  case VCTRS_TYPE_integer:   return int_slice(x, subscript, materialize);
+  case VCTRS_TYPE_double:    return dbl_slice(x, subscript, materialize);
+  case VCTRS_TYPE_complex:   return cpl_slice(x, subscript, materialize);
+  case VCTRS_TYPE_character: return chr_slice(x, subscript, materialize);
+  case VCTRS_TYPE_raw:       return raw_slice(x, subscript, materialize);
+  case VCTRS_TYPE_list:      return list_slice(x, subscript);
   default: stop_unimplemented_vctrs_type("vec_slice_base", type);
   }
 }
@@ -282,8 +284,6 @@ r_obj* slice_rownames(r_obj* names, r_obj* subscript) {
 r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   int nprot = 0;
 
-  r_obj* restore_size = KEEP_N(r_int(vec_subscript_size(subscript)), &nprot);
-
   struct vctrs_proxy_info info = vec_proxy_info(x);
   KEEP_N(info.shelter, &nprot);
 
@@ -292,8 +292,8 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   // Fallback to `[` if the class doesn't implement a proxy. This is
   // to be maximally compatible with existing classes.
   if (vec_requires_fallback(x, info)) {
-    if (info.type == vctrs_type_scalar) {
-      vec_check_vector(x, NULL, r_lazy_null);
+    if (info.type == VCTRS_TYPE_scalar) {
+      obj_check_vector(x, NULL, r_lazy_null);
     }
 
     if (is_compact(subscript)) {
@@ -310,7 +310,7 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
     // Take over attribute restoration only if there is no `[` method
     if (!vec_is_restored(out, x)) {
-      out = vec_restore(out, x, restore_size, vec_owned(out));
+      out = vec_restore(out, x, vec_owned(out));
     }
 
     FREE(nprot);
@@ -318,16 +318,16 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
   }
 
   switch (info.type) {
-  case vctrs_type_null:
+  case VCTRS_TYPE_null:
     r_stop_internal("Unexpected `NULL`.");
 
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list: {
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
+  case VCTRS_TYPE_character:
+  case VCTRS_TYPE_raw:
+  case VCTRS_TYPE_list: {
     r_obj* out;
 
     if (has_dim(x)) {
@@ -349,15 +349,15 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
       r_attrib_poke_names(out, names);
     }
 
-    out = vec_restore(out, x, restore_size, vec_owned(out));
+    out = vec_restore(out, x, vec_owned(out));
 
     FREE(nprot);
     return out;
   }
 
-  case vctrs_type_dataframe: {
+  case VCTRS_TYPE_dataframe: {
     r_obj* out = KEEP_N(df_slice(data, subscript), &nprot);
-    out = vec_restore(out, x, restore_size, vec_owned(out));
+    out = vec_restore(out, x, vec_owned(out));
     FREE(nprot);
     return out;
   }
@@ -401,7 +401,7 @@ r_obj* ffi_slice(r_obj* x,
   struct vec_slice_opts opts = {
     .x_arg = vec_args.x,
     .i_arg = vec_args.i,
-    .call = {.x = r_syms.call, .env = frame}
+    .call = {.x = r_syms.error_call, .env = frame}
   };
   return vec_slice_opts(x, i, &opts);
 }
@@ -409,7 +409,7 @@ r_obj* ffi_slice(r_obj* x,
 r_obj* vec_slice_opts(r_obj* x,
                       r_obj* i,
                       const struct vec_slice_opts* opts) {
-  vec_check_vector(x, opts->x_arg, opts->call);
+  obj_check_vector(x, opts->x_arg, opts->call);
 
   r_obj* names = KEEP(vec_names(x));
   i = KEEP(vec_as_location_ctxt(i,
@@ -425,7 +425,7 @@ r_obj* vec_slice_opts(r_obj* x,
 }
 
 r_obj* vec_init(r_obj* x, r_ssize n) {
-  vec_check_vector(x, vec_args.x, lazy_calls.vec_init);
+  obj_check_vector(x, vec_args.x, lazy_calls.vec_init);
 
   if (n < 0) {
     r_abort_lazy_call(lazy_calls.vec_init,

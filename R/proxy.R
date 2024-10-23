@@ -136,7 +136,7 @@
 #' @export
 vec_proxy <- function(x, ...) {
   check_dots_empty0(...)
-  return(.Call(vctrs_proxy, x))
+  return(.Call(ffi_vec_proxy, x))
   UseMethod("vec_proxy")
 }
 #' @export
@@ -146,28 +146,28 @@ vec_proxy.default <- function(x, ...) {
 
 #' @rdname vec_proxy
 #' @param to The original vector to restore to.
-#' @param n `r lifecycle::badge("experimental")`
-#'   The total size to restore to. This is currently passed by
-#'   `vec_slice()` to solve edge cases arising in data frame
-#'   restoration. In most cases you don't need this information and
-#'   can safely ignore that argument. This parameter should be
-#'   considered internal and experimental, it might change in the
-#'   future.
 #' @export
-vec_restore <- function(x, to, ..., n = NULL) {
+vec_restore <- function(x, to, ...) {
   check_dots_empty0(...)
-  return(.Call(vctrs_restore, x, to, n))
+  return(.Call(ffi_vec_restore, x, to))
   UseMethod("vec_restore", to)
 }
-vec_restore_dispatch <- function(x, to, ..., n = NULL) {
+vec_restore_dispatch <- function(x, to, ...) {
   UseMethod("vec_restore", to)
 }
 #' @export
-vec_restore.default <- function(x, to, ..., n = NULL) {
-  .Call(vctrs_restore_default, x, to)
+vec_restore.default <- function(x, to, ...) {
+  .Call(ffi_vec_restore_default, x, to)
 }
 vec_restore_default <- function(x, to, ...) {
-  .Call(vctrs_restore_default, x, to)
+  .Call(ffi_vec_restore_default, x, to)
+}
+
+vec_proxy_recurse <- function(x, ...) {
+  .Call(ffi_vec_proxy_recurse, x)
+}
+vec_restore_recurse <- function(x, to, ...) {
+  .Call(ffi_vec_restore_recurse, x, to)
 }
 
 #' Extract underlying data
@@ -200,7 +200,7 @@ vec_restore_default <- function(x, to, ...) {
 #' @keywords internal
 #' @export
 vec_data <- function(x) {
-  vec_assert(x)
+  obj_check_vector(x)
   x <- vec_proxy(x)
 
   if (is.data.frame(x)) {
@@ -217,5 +217,5 @@ vec_data <- function(x) {
   unset_s4(x)
 }
 unset_s4 <- function(x) {
-  .Call(vctrs_unset_s4, x)
+  .Call(ffi_unset_s4, x)
 }

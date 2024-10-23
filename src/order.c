@@ -532,7 +532,7 @@ void vec_order_switch(SEXP x,
                       struct lazy_raw* p_lazy_counts,
                       struct group_infos* p_group_infos,
                       struct truelength_info* p_truelength_info) {
-  if (type == vctrs_type_dataframe) {
+  if (type == VCTRS_TYPE_dataframe) {
     df_order(
       x,
       decreasing,
@@ -687,7 +687,7 @@ void vec_order_base_switch(SEXP x,
                            struct group_infos* p_group_infos,
                            struct truelength_info* p_truelength_info) {
   switch (type) {
-  case vctrs_type_integer: {
+  case VCTRS_TYPE_integer: {
     int_order(
       x,
       decreasing,
@@ -704,7 +704,7 @@ void vec_order_base_switch(SEXP x,
 
     break;
   }
-  case vctrs_type_logical: {
+  case VCTRS_TYPE_logical: {
     lgl_order(
       x,
       decreasing,
@@ -721,7 +721,7 @@ void vec_order_base_switch(SEXP x,
 
     break;
   }
-  case vctrs_type_double: {
+  case VCTRS_TYPE_double: {
     dbl_order(
       x,
       decreasing,
@@ -739,7 +739,7 @@ void vec_order_base_switch(SEXP x,
 
     break;
   }
-  case vctrs_type_complex: {
+  case VCTRS_TYPE_complex: {
     cpl_order(
       x,
       decreasing,
@@ -757,7 +757,7 @@ void vec_order_base_switch(SEXP x,
 
     break;
   }
-  case vctrs_type_character: {
+  case VCTRS_TYPE_character: {
     if (chr_ordered) {
       chr_order(
         x,
@@ -792,7 +792,7 @@ void vec_order_base_switch(SEXP x,
 
     break;
   }
-  case vctrs_type_dataframe: {
+  case VCTRS_TYPE_dataframe: {
     Rf_errorcall(R_NilValue, "Internal error: Data frames should have been handled by now");
   }
   default: {
@@ -2188,19 +2188,19 @@ void dbl_adjust_nan_distinct(const bool decreasing,
 
   for (r_ssize i = 0; i < size; ++i) {
     double elt = p_x_dbl[i];
-    const enum vctrs_dbl_class type = dbl_classify(elt);
+    const enum vctrs_dbl type = dbl_classify(elt);
 
     switch (type) {
-    case vctrs_dbl_number: {
+    case VCTRS_DBL_number: {
       elt = elt * direction;
       p_x_u64[i] = dbl_map_to_uint64(elt);
       break;
     }
-    case vctrs_dbl_missing: {
+    case VCTRS_DBL_missing: {
       p_x_u64[i] = na_u64;
       break;
     }
-    case vctrs_dbl_nan: {
+    case VCTRS_DBL_nan: {
       p_x_u64[i] = nan_u64;
       break;
     }
@@ -3971,6 +3971,9 @@ void df_order_internal(SEXP x,
   // Special case no columns
   if (n_cols == 0) {
     init_order(p_order);
+    if (size != 0) {
+      groups_size_maybe_push(size, p_group_infos);
+    }
     return;
   }
 
@@ -4033,13 +4036,13 @@ void df_order_internal(SEXP x,
 
     // If we are on the rerun pass, flip this back off so the
     // imaginary part is extracted below.
-    if (type == vctrs_type_complex) {
+    if (type == VCTRS_TYPE_complex) {
       rerun_complex = rerun_complex ? false : true;
     }
 
     // Pre-sort unique characters once for the whole column.
     // Don't sort uniques if computing appearance ordering.
-    if (chr_ordered && type == vctrs_type_character) {
+    if (chr_ordered && type == VCTRS_TYPE_character) {
       const SEXP* p_col = STRING_PTR_RO(col);
 
       chr_mark_sorted_uniques(
@@ -4078,11 +4081,11 @@ void df_order_internal(SEXP x,
 
       // Extract current chunk and place into `x_chunk` in sequential order
       switch (type) {
-      case vctrs_type_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
-      case vctrs_type_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
-      case vctrs_type_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
-      case vctrs_type_character: DF_ORDER_EXTRACT_CHUNK(STRING_PTR_RO, SEXP); break;
-      case vctrs_type_complex: DF_ORDER_EXTRACT_CHUNK_CPL(); break;
+      case VCTRS_TYPE_integer: DF_ORDER_EXTRACT_CHUNK(INTEGER_RO, int); break;
+      case VCTRS_TYPE_logical: DF_ORDER_EXTRACT_CHUNK(LOGICAL_RO, int); break;
+      case VCTRS_TYPE_double: DF_ORDER_EXTRACT_CHUNK(REAL_RO, double); break;
+      case VCTRS_TYPE_character: DF_ORDER_EXTRACT_CHUNK(STRING_PTR_RO, SEXP); break;
+      case VCTRS_TYPE_complex: DF_ORDER_EXTRACT_CHUNK_CPL(); break;
       default: Rf_errorcall(R_NilValue, "Unknown data frame column type in `vec_order()`.");
       }
 
@@ -4109,7 +4112,7 @@ void df_order_internal(SEXP x,
     // Reset TRUELENGTHs between columns if ordering character vectors.
     // When ordering by appearance, `chr_appearance_counting()` resets the
     // TRUELENGTHs between chunks.
-    if (chr_ordered && type == vctrs_type_character) {
+    if (chr_ordered && type == VCTRS_TYPE_character) {
       truelength_reset(p_truelength_info);
     }
   }
@@ -4140,7 +4143,7 @@ void vec_order_chunk_switch(bool decreasing,
                             struct group_infos* p_group_infos,
                             struct truelength_info* p_truelength_info) {
   switch (type) {
-  case vctrs_type_integer: {
+  case VCTRS_TYPE_integer: {
     int_order_chunk(
       decreasing,
       na_last,
@@ -4156,7 +4159,7 @@ void vec_order_chunk_switch(bool decreasing,
 
     break;
   }
-  case vctrs_type_logical: {
+  case VCTRS_TYPE_logical: {
     lgl_order_chunk(
       decreasing,
       na_last,
@@ -4172,7 +4175,7 @@ void vec_order_chunk_switch(bool decreasing,
 
     break;
   }
-  case vctrs_type_double: {
+  case VCTRS_TYPE_double: {
     dbl_order_chunk(
       decreasing,
       na_last,
@@ -4189,7 +4192,7 @@ void vec_order_chunk_switch(bool decreasing,
 
     break;
   }
-  case vctrs_type_complex: {
+  case VCTRS_TYPE_complex: {
     // Complex types are run in two passes, once over real then over imaginary
     dbl_order_chunk(
       decreasing,
@@ -4207,7 +4210,7 @@ void vec_order_chunk_switch(bool decreasing,
 
     break;
   }
-  case vctrs_type_character: {
+  case VCTRS_TYPE_character: {
     if (chr_ordered) {
       chr_order_chunk(
         decreasing,
@@ -4239,7 +4242,7 @@ void vec_order_chunk_switch(bool decreasing,
 
     break;
   }
-  case vctrs_type_dataframe: {
+  case VCTRS_TYPE_dataframe: {
     Rf_errorcall(R_NilValue, "Internal error: df-cols should have already been flattened.");
     break;
   }
@@ -4263,18 +4266,18 @@ static inline size_t df_compute_n_bytes_lazy_raw(SEXP x);
 static inline
 size_t vec_compute_n_bytes_lazy_raw(SEXP x, const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_integer:
-  case vctrs_type_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_logical:
     return sizeof(int);
-  case vctrs_type_double:
+  case VCTRS_TYPE_double:
     return sizeof(double);
-  case vctrs_type_complex:
+  case VCTRS_TYPE_complex:
     // Complex types will be split into two double vectors
     return sizeof(double);
-  case vctrs_type_character:
+  case VCTRS_TYPE_character:
     // Auxiliary data will store SEXP and ints, so return the larger
     return sizeof(SEXP) > sizeof(int) ? sizeof(SEXP) : sizeof(int);
-  case vctrs_type_dataframe:
+  case VCTRS_TYPE_dataframe:
     return df_compute_n_bytes_lazy_raw(x);
   default:
     Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`.");
@@ -4318,14 +4321,14 @@ static size_t df_compute_n_bytes_lazy_counts(SEXP x);
 static inline
 size_t vec_compute_n_bytes_lazy_counts(SEXP x, const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_integer:
-  case vctrs_type_logical:
-  case vctrs_type_character:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_character:
     return INT_MAX_RADIX_PASS;
-  case vctrs_type_double:
-  case vctrs_type_complex:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
     return DBL_MAX_RADIX_PASS;
-  case vctrs_type_dataframe:
+  case VCTRS_TYPE_dataframe:
     return df_compute_n_bytes_lazy_counts(x);
   default:
     Rf_errorcall(R_NilValue, "This type is not supported by `vec_order()`.");
@@ -4519,8 +4522,8 @@ static int df_decreasing_expansion(SEXP x);
 
 static
 int vec_decreasing_expansion(SEXP x) {
-  // Bare columns
-  if (!OBJECT(x)) {
+  // Bare vectors
+  if (!OBJECT(x) && !has_dim(x)) {
     return 1;
   }
 

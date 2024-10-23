@@ -18,7 +18,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   switch (r_typeof(subscript)) {
   case R_TYPE_null:
     if (opts->numeric == SUBSCRIPT_TYPE_ACTION_CAST) {
-      subscript = vctrs_shared_empty_int;
+      subscript = r_globals.empty_int;
     }
     break;
   case R_TYPE_symbol:
@@ -31,7 +31,7 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
   }
   KEEP_AT(subscript, subscript_pi);
 
-  if (!vec_is_vector(subscript)) {
+  if (!obj_is_vector(subscript)) {
     *err = new_error_subscript_type(subscript, opts, r_null);
     FREE(2);
     return r_null;
@@ -55,13 +55,13 @@ r_obj* vec_as_subscript_opts(r_obj* subscript,
     struct vctrs_arg* arg = opts->subscript_arg;
     if (opts->numeric == SUBSCRIPT_TYPE_ACTION_CAST) {
       subscript = vec_cast(subscript,
-                           vctrs_shared_empty_int,
+                           r_globals.empty_int,
                            arg,
                            NULL,
                            r_lazy_null);
     } else {
       subscript = vec_cast(subscript,
-                           vctrs_shared_empty_chr,
+                           r_globals.empty_chr,
                            arg,
                            NULL,
                            r_lazy_null);
@@ -111,17 +111,17 @@ r_obj* obj_cast_subscript(r_obj* subscript,
     .p_x_arg = opts->subscript_arg
   };
 
-  ptype2_opts.y = cast_opts.to = vctrs_shared_empty_lgl;
+  ptype2_opts.y = cast_opts.to = r_globals.empty_lgl;
   if (vec_is_coercible(&ptype2_opts, &dir)) {
     return vec_cast_opts(&cast_opts);
   }
 
-  ptype2_opts.y = cast_opts.to = vctrs_shared_empty_int;
+  ptype2_opts.y = cast_opts.to = r_globals.empty_int;
   if (vec_is_coercible(&ptype2_opts, &dir)) {
     return vec_cast_opts(&cast_opts);
   }
 
-  ptype2_opts.y = cast_opts.to = vctrs_shared_empty_chr;
+  ptype2_opts.y = cast_opts.to = r_globals.empty_chr;
   if (vec_is_coercible(&ptype2_opts, &dir)) {
     return vec_cast_opts(&cast_opts);
   }
@@ -178,7 +178,7 @@ r_obj* dbl_cast_subscript_fallback(r_obj* subscript,
                                    ERR* err) {
   struct cast_opts cast_opts = {
     .x = subscript,
-    .to = vctrs_shared_empty_int,
+    .to = r_globals.empty_int,
     opts->subscript_arg
   };
   r_obj* out = KEEP(vec_cast_e(&cast_opts, err));

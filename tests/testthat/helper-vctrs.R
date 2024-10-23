@@ -3,17 +3,6 @@ testthat_import_from <- function(ns, names, env = caller_env()) {
   import_from(ns, names, env = env)
 }
 
-vec_ptype2_fallback <- function(x, y, ...) {
-  vec_ptype2_params(x, y, ..., df_fallback = DF_FALLBACK_warn)
-}
-vec_ptype_common_df_fallback <- function(..., .ptype = NULL) {
-  vec_ptype_common_params(
-    ...,
-    .ptype = .ptype,
-    .df_fallback = DF_FALLBACK_warn
-  )
-}
-
 shaped_int <- function(...) {
   array(NA_integer_, c(...))
 }
@@ -65,5 +54,17 @@ expect_equal <- function(object, expected, ...,
 }
 
 raw2 <- function(...) {
-  as.raw(flatten_int(list2(...)))
+  as.raw(list_unchop(list2(...), ptype = integer()))
+}
+cpl2 <- function(...) {
+  # R 4.4.0 changed `as.complex(NA_real/integer/logical)` so that it always uses
+  # a `0` in the imaginary slot. While this is reasonable, it is annoying for
+  # comparison purposes in tests, where we typically propagate the `NA`. As of
+  # rlang 1.1.1, `cpl()` inherits this behavior change so we have a custom version
+  # here that works the same on all R versions.
+  # https://github.com/wch/r-source/commit/1a2aea9ac3c216fea718f33f712764afc34f6ee8
+  out <- list2(...)
+  out <- as.complex(out)
+  out[is.na(out)] <- complex(real = NA_real_, imaginary = NA_real_)
+  out
 }

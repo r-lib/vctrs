@@ -4,17 +4,20 @@
 
 // [[ register() ]]
 r_obj* ffi_size(r_obj* x, r_obj* frame) {
-  struct vec_error_opts err = {
-    .p_arg = vec_args.x,
-    .call = { .x = frame, .env = r_null }
-  };
-  return r_len(vec_size_opts(x, &err));
+  struct r_lazy call = { .x = frame, .env = r_null };
+  return r_len(vec_size_3(x, vec_args.x, call));
 }
 
 r_ssize vec_size(r_obj* x) {
+  return vec_size_3(x, vec_args.x, lazy_calls.vec_size);
+}
+
+r_ssize vec_size_3(r_obj* x,
+                   struct vctrs_arg* p_arg,
+                   struct r_lazy call) {
   struct vec_error_opts err = {
-    .p_arg = vec_args.x,
-    .call = lazy_calls.vec_size
+    .p_arg = p_arg,
+    .call = call
   };
   return vec_size_opts(x, &err);
 }
@@ -28,20 +31,20 @@ r_ssize vec_size_opts(r_obj* x, const struct vec_error_opts* opts) {
 
   r_ssize size;
   switch (info.type) {
-  case vctrs_type_null:
+  case VCTRS_TYPE_null:
     size = 0;
     break;
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw:
-  case vctrs_type_list:
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
+  case VCTRS_TYPE_character:
+  case VCTRS_TYPE_raw:
+  case VCTRS_TYPE_list:
     size = vec_raw_size(data);
     break;
 
-  case vctrs_type_dataframe:
+  case VCTRS_TYPE_dataframe:
     size = df_size(data);
     break;
 
@@ -77,13 +80,12 @@ r_obj* ffi_list_sizes(r_obj* x, r_obj* frame) {
   return list_sizes(x, &err);
 }
 
-static
 r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
-  if (!vec_is_list(x)) {
+  if (!obj_is_list(x)) {
     r_abort_lazy_call(opts->call,
                       "%s must be a list, not %s.",
                       r_c_str_format_error_arg("x"),
-                      r_friendly_type_of(x));
+                      r_obj_type_friendly(x));
   }
 
   r_ssize size = vec_size(x);
@@ -107,6 +109,48 @@ r_obj* list_sizes(r_obj* x, const struct vec_error_opts* opts) {
   }
 
   FREE(2);
+  return out;
+}
+
+r_obj* ffi_list_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
+  // This is an internal error
+  obj_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+
+  r_ssize size = r_arg_as_ssize(ffi_size, "size");
+
+  return r_lgl(list_all_size(xs, size));
+}
+
+static
+bool list_all_size(r_obj* xs, r_ssize size) {
+  if (r_typeof(xs) != R_TYPE_list) {
+    r_stop_unexpected_type(r_typeof(xs));
+  }
+
+  r_ssize i = 0;
+
+  r_ssize xs_size = r_length(xs);
+  r_obj* xs_names = r_names(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(vec_args.x, xs_names, xs_size, &i);
+  KEEP(p_x_arg->shelter);
+
+  bool out = true;
+
+  for (; i < xs_size; ++i) {
+    r_obj* x = v_xs[i];
+
+    // Scalar list elements throw an error internal to `list_all_size()`
+    r_ssize x_size = vec_size_3(x, p_x_arg, lazy_calls.list_all_size);
+
+    if (x_size != size) {
+      out = false;
+      break;
+    }
+  }
+
+  FREE(1);
   return out;
 }
 
@@ -194,7 +238,7 @@ r_obj* ffi_recycle(r_obj* x,
   struct r_lazy recycle_call = { .x = frame, .env = r_null };
 
   size_obj = KEEP(vec_cast(size_obj,
-                           vctrs_shared_empty_int,
+                           r_globals.empty_int,
                            vec_args.empty,
                            vec_args.empty,
                            recycle_call));
@@ -211,7 +255,8 @@ r_obj* ffi_recycle(r_obj* x,
 
 r_obj* vec_recycle_fallback(r_obj* x,
                             r_ssize size,
-                            struct vctrs_arg* x_arg) {
+                            struct vctrs_arg* x_arg,
+                            struct r_lazy call) {
   if (x == r_null) {
     return r_null;
   }
@@ -232,7 +277,7 @@ r_obj* vec_recycle_fallback(r_obj* x,
     return out;
   }
 
-  stop_recycle_incompatible_size(x_size, size, x_arg, r_lazy_null);
+  stop_recycle_incompatible_size(x_size, size, x_arg, call);
 }
 
 r_obj* ffi_as_short_length(r_obj* n, r_obj* frame) {
@@ -331,6 +376,6 @@ r_ssize vec_as_ssize(r_obj* n,
     r_abort_lazy_call(call,
                       "%s must be a single number, not %s.",
                       vec_arg_format(p_arg),
-                      r_friendly_type_of_length(n));
+                      r_obj_type_friendly_length(n));
   }
 }

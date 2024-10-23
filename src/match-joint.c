@@ -138,11 +138,11 @@ r_obj* vec_joint_xtfrm(r_obj* x,
   const enum vctrs_type type = vec_proxy_typeof(x_proxy);
 
   const struct poly_vec* p_x_poly = new_poly_vec(x_proxy, type);
-  PROTECT_POLY_VEC(p_x_poly, &n_prot);
+  KEEP_N(p_x_poly->shelter, &n_prot);
   const void* p_x_vec = p_x_poly->p_vec;
 
   const struct poly_vec* p_y_poly = new_poly_vec(y_proxy, type);
-  PROTECT_POLY_VEC(p_x_poly, &n_prot);
+  KEEP_N(p_y_poly->shelter, &n_prot);
   const void* p_y_vec = p_y_poly->p_vec;
 
   r_ssize i = 0;
@@ -157,12 +157,12 @@ r_obj* vec_joint_xtfrm(r_obj* x,
   // Now that we have the ordering of both vectors,
   // it is just a matter of merging two sorted arrays
   switch (type) {
-  case vctrs_type_logical: VEC_JOINT_XTFRM_LOOP(p_lgl_order_compare_na_equal); break;
-  case vctrs_type_integer: VEC_JOINT_XTFRM_LOOP(p_int_order_compare_na_equal); break;
-  case vctrs_type_double: VEC_JOINT_XTFRM_LOOP(p_dbl_order_compare_na_equal); break;
-  case vctrs_type_complex: VEC_JOINT_XTFRM_LOOP(p_cpl_order_compare_na_equal); break;
-  case vctrs_type_character: VEC_JOINT_XTFRM_LOOP(p_chr_order_compare_na_equal); break;
-  case vctrs_type_dataframe: VEC_JOINT_XTFRM_LOOP(p_df_order_compare_na_equal); break;
+  case VCTRS_TYPE_logical: VEC_JOINT_XTFRM_LOOP(p_lgl_order_compare_na_equal); break;
+  case VCTRS_TYPE_integer: VEC_JOINT_XTFRM_LOOP(p_int_order_compare_na_equal); break;
+  case VCTRS_TYPE_double: VEC_JOINT_XTFRM_LOOP(p_dbl_order_compare_na_equal); break;
+  case VCTRS_TYPE_complex: VEC_JOINT_XTFRM_LOOP(p_cpl_order_compare_na_equal); break;
+  case VCTRS_TYPE_character: VEC_JOINT_XTFRM_LOOP(p_chr_order_compare_na_equal); break;
+  case VCTRS_TYPE_dataframe: VEC_JOINT_XTFRM_LOOP(p_df_order_compare_na_equal); break;
   default: stop_unimplemented_vctrs_type("vec_joint_xtfrm", type);
   }
 
@@ -240,26 +240,26 @@ r_obj* vec_joint_proxy_order(r_obj* x, r_obj* y) {
   }
 
   switch (vec_typeof(x)) {
-  case vctrs_type_unspecified:
-  case vctrs_type_logical:
-  case vctrs_type_integer:
-  case vctrs_type_double:
-  case vctrs_type_complex:
-  case vctrs_type_character:
-  case vctrs_type_raw: {
+  case VCTRS_TYPE_unspecified:
+  case VCTRS_TYPE_logical:
+  case VCTRS_TYPE_integer:
+  case VCTRS_TYPE_double:
+  case VCTRS_TYPE_complex:
+  case VCTRS_TYPE_character:
+  case VCTRS_TYPE_raw: {
     return vec_joint_proxy_order_independent(x, y);
   }
-  case vctrs_type_list: {
+  case VCTRS_TYPE_list: {
     return vec_joint_proxy_order_dependent(x, y);
   }
-  case vctrs_type_dataframe: {
+  case VCTRS_TYPE_dataframe: {
     return df_joint_proxy_order(x, y);
   }
-  case vctrs_type_s3: {
+  case VCTRS_TYPE_s3: {
     return vec_joint_proxy_order_s3(x, y);
   }
-  case vctrs_type_null:
-  case vctrs_type_scalar: {
+  case VCTRS_TYPE_null:
+  case VCTRS_TYPE_scalar: {
     stop_unimplemented_vctrs_type("vec_joint_proxy_order", vec_typeof(x));
   }
   }
@@ -297,7 +297,14 @@ r_obj* vec_joint_proxy_order_dependent(r_obj* x, r_obj* y) {
   // size of `vec_locate_matches()` input to
   // `vec_size(x) + vec_size(y) <= INT_MAX`
   // when foreign columns are used.
-  r_obj* combined = KEEP(vec_c(out, ptype, r_null, p_no_repair_opts));
+  r_obj* combined = KEEP(vec_c(
+    out,
+    ptype,
+    r_null,
+    p_no_repair_opts,
+    vec_args.empty,
+    r_lazy_null
+  ));
 
   // Compute joint order-proxy
   r_obj* proxy = KEEP(vec_proxy_order(combined));

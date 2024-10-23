@@ -26,7 +26,7 @@ static
 SEXP vec_fill_missing(SEXP x, bool down, bool leading, int max_fill) {
   r_ssize size = vec_size(x);
 
-  SEXP na = PROTECT(vec_equal_na(x));
+  SEXP na = PROTECT(vec_detect_missing(x));
   const int* p_na = LOGICAL_RO(na);
 
   SEXP loc = PROTECT(r_new_integer(size));
@@ -202,7 +202,7 @@ void vec_fill_missing_up_with_max_fill(const int* p_na, r_ssize size, bool leadi
 
 // -----------------------------------------------------------------------------
 
-static void stop_bad_direction();
+static void stop_bad_direction(void);
 
 static
 void parse_direction(SEXP x, bool* p_down, bool* p_leading) {
@@ -238,7 +238,7 @@ void parse_direction(SEXP x, bool* p_down, bool* p_leading) {
 }
 
 static
-void stop_bad_direction() {
+void stop_bad_direction(void) {
   r_abort("`direction` must be one of \"down\", \"up\", \"downup\", or \"updown\".");
 }
 
@@ -249,7 +249,7 @@ int parse_max_fill(r_obj* x) {
   }
 
   x = KEEP(vec_cast(x,
-                    vctrs_shared_empty_int,
+                    r_globals.empty_int,
                     vec_args.max_fill,
                     vec_args.empty,
                     r_lazy_null));

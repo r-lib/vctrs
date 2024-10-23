@@ -40,10 +40,16 @@ r_ssize r_arg_as_ssize(r_obj* n, const char* arg) {
     if (r_length(n) != 1) {
       goto invalid;
     }
+
     double out = r_dbl_get(n, 0);
+
     if (out > R_SSIZE_MAX) {
       r_abort("`%s` is too large a number.", arg);
     }
+    if (out != (int_least64_t) out) {
+      r_abort("`%s` must be a whole number, not a decimal number.", arg);
+    }
+
     return (r_ssize) floor(out);
   }
 
@@ -94,6 +100,7 @@ r_obj* r_init_library(r_obj* ns) {
   r_init_library_cnd();
   r_init_library_dyn_array();
   r_init_library_env();
+  r_init_library_eval();
   r_init_library_fn();
   r_init_library_quo();
   r_init_library_session();

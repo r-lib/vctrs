@@ -276,13 +276,13 @@ SEXP vec_slice_shaped_base(enum vctrs_type type,
                            SEXP index,
                            struct strides_info* p_info) {
   switch (type) {
-  case vctrs_type_logical:   return lgl_slice_shaped(x, index, p_info);
-  case vctrs_type_integer:   return int_slice_shaped(x, index, p_info);
-  case vctrs_type_double:    return dbl_slice_shaped(x, index, p_info);
-  case vctrs_type_complex:   return cpl_slice_shaped(x, index, p_info);
-  case vctrs_type_character: return chr_slice_shaped(x, index, p_info);
-  case vctrs_type_raw:       return raw_slice_shaped(x, index, p_info);
-  case vctrs_type_list:      return list_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_logical:   return lgl_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_integer:   return int_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_double:    return dbl_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_complex:   return cpl_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_character: return chr_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_raw:       return raw_slice_shaped(x, index, p_info);
+  case VCTRS_TYPE_list:      return list_slice_shaped(x, index, p_info);
   default: stop_unimplemented_vctrs_type("vec_slice_shaped_base", type);
   }
 }

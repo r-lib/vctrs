@@ -81,15 +81,16 @@ static inline void df_detect_complete(SEXP x, R_len_t size, int* p_out);
 static inline
 void vec_detect_complete_switch(SEXP x, R_len_t size, int* p_out) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical: lgl_detect_complete(x, size, p_out); break;
-  case vctrs_type_integer: int_detect_complete(x, size, p_out); break;
-  case vctrs_type_double: dbl_detect_complete(x, size, p_out); break;
-  case vctrs_type_complex: cpl_detect_complete(x, size, p_out); break;
-  case vctrs_type_character: chr_detect_complete(x, size, p_out); break;
-  case vctrs_type_raw: raw_detect_complete(x, size, p_out); break;
-  case vctrs_type_list: list_detect_complete(x, size, p_out); break;
-  case vctrs_type_dataframe: df_detect_complete(x, size, p_out); break;
-  case vctrs_type_scalar: r_stop_internal("Can't detect missing values in scalars.");
+  case VCTRS_TYPE_logical: lgl_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_integer: int_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_double: dbl_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_complex: cpl_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_character: chr_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_raw: raw_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_list: list_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_dataframe: df_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_null: break;
+  case VCTRS_TYPE_scalar: stop_scalar_type(x, vec_args.empty, r_lazy_null);
   default: stop_unimplemented_vctrs_type("vec_detect_complete", vec_proxy_typeof(x));
   }
 }
@@ -169,12 +170,31 @@ void list_detect_complete(SEXP x, R_len_t size, int* p_out) {
 
 // -----------------------------------------------------------------------------
 
+static inline void col_detect_complete_switch(SEXP x, R_len_t size, int* p_out);
+
 static inline
 void df_detect_complete(SEXP x, R_len_t size, int* p_out) {
   r_ssize n_cols = r_length(x);
   const SEXP* p_x = VECTOR_PTR_RO(x);
 
   for (r_ssize i = 0; i < n_cols; ++i) {
-    vec_detect_complete_switch(p_x[i], size, p_out);
+    col_detect_complete_switch(p_x[i], size, p_out);
+  }
+}
+
+static inline
+void col_detect_complete_switch(SEXP x, R_len_t size, int* p_out) {
+  switch (vec_proxy_typeof(x)) {
+  case VCTRS_TYPE_logical: lgl_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_integer: int_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_double: dbl_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_complex: cpl_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_character: chr_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_raw: raw_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_list: list_detect_complete(x, size, p_out); break;
+  case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should have been flattened by now.");
+  case VCTRS_TYPE_null: r_abort("Unexpected `NULL` column found in a data frame.");
+  case VCTRS_TYPE_scalar: stop_scalar_type(x, vec_args.empty, r_lazy_null);
+  default: stop_unimplemented_vctrs_type("vec_detect_complete", vec_proxy_typeof(x));
   }
 }

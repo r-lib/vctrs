@@ -105,7 +105,7 @@ struct group_infos {
 
 // -----------------------------------------------------------------------------
 
-struct group_info* new_group_info();
+struct group_info* new_group_info(void);
 
 struct group_infos* new_group_infos(struct group_info* p_group_info0,
                                     struct group_info* p_group_info1,

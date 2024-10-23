@@ -1,5 +1,10 @@
+# Never run on CRAN, even if they have sf, because we don't regularly
+# check these on CI and we don't want a change in sf to force a CRAN
+# failure for vctrs.
+skip_on_cran()
 
-# Avoids adding `sf` to Suggests
+# Avoids adding `sf` to Suggests.
+# These tests are only run on the devs' machines.
 testthat_import_from("sf", c(
   "st_sf",
   "st_sfc",
@@ -12,8 +17,9 @@ testthat_import_from("sf", c(
   "st_multipoint"
 ))
 
-# Need recent version to work around restore bug for sfc lists
-skip_if_not_installed("sf", "0.9-4")
+# Need recent version to work around restore bug for sfc lists and changes
+# to `c.sfc()`
+skip_if_not_installed("sf", "1.0-11")
 
 test_that("sf has a ptype2 method", {
 	sfc1 = st_sfc(st_point(1:2), st_point(3:4))
@@ -102,10 +108,6 @@ test_that("can combine sf data frames", {
 	sf1 = st_sf(x = c(TRUE, FALSE), geo1 = sfc1)
 	sf2 = st_sf(y = "", geo2 = sfc2, x = 0, stringsAsFactors = FALSE)
 
-	# FIXME: Currently `vec_rbind()` returns a data frame because we
-	# are temporarily working around bugs due to bad interaction of
-	# different fallbacks. `bind_rows()` returns an `sf` data frame as
-	# expected because of `dplyr_reconstruct()`.
 	exp = data_frame(
 		x = c(1, 0, 0),
 		geo1 = sfc1[c(1:2, NA)],
@@ -217,22 +219,31 @@ test_that("`precision` and `crs` attributes of `sfc` vectors are restored", {
 	expect_identical(st_crs(x), st_crs(out))
 })
 
-test_that("`precision` and `crs` attributes of `sfc` vectors are combined", {
+test_that("`precision` attributes of `sfc` vectors are combined", {
 	x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
 	y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 3857)
 
 	out = vctrs::vec_c(x, y)
 	expect_identical(st_precision(x), st_precision(out))
-	expect_identical(st_crs(x), st_crs(out))
 
-        # These used to be errors before we fell back to c()
+	# These used to be errors before we fell back to c()
 	y = st_sfc(st_point(c(0, 0)), precision = 1e-2, crs = 3857)
 	expect_identical(vctrs::vec_c(x, y), c(x, y))
 	# expect_error(vctrs::vec_c(x, y), "precisions not equal")
+})
 
-	y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 4326)
-	expect_identical(vctrs::vec_c(x, y), c(x, y))
-	# expect_error(vctrs::vec_c(x, y), "coordinate reference systems not equal")
+test_that("`crs` attributes of `sfc` vectors must be the same", {
+  x = st_sfc(st_point(c(pi, pi)), precision = 1e-4, crs = 3857)
+  y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 3857)
+
+  out = vctrs::vec_c(x, y)
+  expect_identical(st_crs(x), st_crs(out))
+
+  # Error on different `crs` comes from sf as of 1.0-10
+  y = st_sfc(st_point(c(0, 0)), precision = 1e-4, crs = 4326)
+  expect_snapshot(error = TRUE, {
+    vctrs::vec_c(x, y)
+  })
 })
 
 test_that("`vec_locate_matches()` works with `sfc` vectors", {
@@ -255,6 +266,21 @@ test_that("`vec_locate_matches()` works with `sfc` vectors", {
   expect_identical(out$needles,  c(1L, 1L, 2L, 3L, 4L))
   expect_identical(out$haystack, c(2L, 4L, 5L, NA, 1L))
 })
+
+test_that("`vec_rbind()` doesn't leak common type fallbacks (#1331)", {
+	sf = st_sf(id = 1:2, geo = st_sfc(st_point(c(1, 1)), st_point(c(2, 2))))
+
+	expect_equal(
+		vec_rbind(sf, sf),
+		data_frame(id = rep(1:2, 2), geo = rep(sf$geo, 2))
+	)
+
+	expect_equal(
+		vec_rbind(sf, sf, .names_to = "id"),
+		data_frame(id = rep(1:2, each = 2), geo = rep(sf$geo, 2))
+	)
+})
+
 
 # Local Variables:
 # indent-tabs-mode: t

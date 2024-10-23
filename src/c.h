@@ -6,20 +6,41 @@
 #include "ptype2.h"
 
 
-SEXP vec_c_opts(SEXP xs,
-                SEXP ptype,
-                SEXP name_spec,
-                const struct name_repair_opts* name_repair,
-                const struct fallback_opts* fallback_opts);
+r_obj* vec_c(r_obj* xs,
+             r_obj* ptype,
+             r_obj* name_spec,
+             const struct name_repair_opts* name_repair,
+             struct vctrs_arg* p_error_arg,
+             struct r_lazy error_call);
 
-SEXP vec_c_fallback_invoke(SEXP xs, SEXP name_spec);
-SEXP vec_c_fallback(SEXP ptype,
-                    SEXP xs,
-                    SEXP name_spec,
-                    const struct name_repair_opts* name_repair);
+r_obj* vec_c_opts(r_obj* xs,
+                  r_obj* ptype,
+                  r_obj* name_spec,
+                  const struct name_repair_opts* name_repair,
+                  const struct fallback_opts* fallback_opts,
+                  struct vctrs_arg* p_error_arg,
+                  struct r_lazy error_call);
 
-bool needs_vec_c_fallback(SEXP ptype);
-bool needs_vec_c_homogeneous_fallback(SEXP xs, SEXP ptype);
+r_obj* vec_c_fallback_invoke(r_obj* xs,
+                             r_obj* name_spec,
+                             struct r_lazy error_call);
+r_obj* vec_c_fallback(r_obj* ptype,
+                      r_obj* xs,
+                      r_obj* name_spec,
+                      const struct name_repair_opts* name_repair,
+                      struct vctrs_arg* p_error_arg,
+                      struct r_lazy error_call);
+
+bool needs_vec_c_fallback(r_obj* ptype);
+bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype);
+
+void df_c_fallback(r_obj* out,
+                   r_obj* ptype,
+                   r_obj* xs,
+                   r_ssize n_rows,
+                   r_obj* name_spec,
+                   const struct name_repair_opts* name_repair,
+                   struct r_lazy error_call);
 
 
 #endif

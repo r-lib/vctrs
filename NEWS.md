@@ -5,13 +5,283 @@
   of items to print. By default, `getOption("max.print")` is consulted
   (#1355, @krlmlr).
 
+* `vec_detect_complete(NULL)` now returns `logical()`, consistent with
+  `vec_detect_missing(NULL)` (#1916).
+
+# vctrs 0.6.5
+
+* Internal changes requested by CRAN around C level format strings (#1896).
+
+* Fixed tests related to changes to `dim<-()` in R-devel (#1889).
+
+# vctrs 0.6.4
+
+* Fixed a performance issue with `vec_c()` and ALTREP vectors (in particular,
+  the new ALTREP list vectors in R-devel) (#1884).
+
+* Fixed an issue with complex vector tests related to changes in R-devel
+  (#1883).
+
+* Added a class to the `vec_locate_matches()` error that is thrown when an
+  overflow would otherwise occur (#1845).
+
+* Fixed an issue with `vec_rank()` and 0-column data frames (#1863).
+
+# vctrs 0.6.3
+
+* Fixed an issue where certain ALTREP row names were being materialized when
+  passed to `new_data_frame()`. We've fixed this by removing a safeguard in
+  `new_data_frame()` that performed a compatibility check when both `n` and
+  `row.names` were provided. Because this is a low level function designed for
+  performance, it is up to the caller to ensure these inputs are compatible
+  (tidyverse/dplyr#6596).
+
+* Fixed an issue where `vec_set_*()` used with data frames could accidentally
+  return an object with the type of the proxy rather than the type of the
+  original inputs (#1837).
+
+* Fixed a rare `vec_locate_matches()` bug that could occur when using a max/min
+  `filter` (tidyverse/dplyr#6835).
+
+# vctrs 0.6.2
+
+* Fixed conditional S3 registration to avoid a CRAN check NOTE that appears in
+  R >=4.3.0 (#1832).
+
+* Fixed tests to maintain compatibility with the next version of waldo (#1829).
+
+# vctrs 0.6.1
+
+* Fixed a test related to `c.sfc()` changes in sf 1.0-10 (#1817).
+
+# vctrs 0.6.0
+
+* New `vec_run_sizes()` for computing the size of each run within a vector. It
+  is identical to the `times` column from `vec_unrep()`, but is faster if you
+  don't need the run key (#1210).
+
+* New `sizes` argument to `vec_chop()` which allows you to partition a vector
+  using an integer vector describing the size of each expected slice. It is
+  particularly useful in combination with `vec_run_sizes()` and `list_sizes()`
+  (#1210, #1598).
+
+* New `obj_is_vector()`, `obj_check_vector()`, and `vec_check_size()` validation
+  helpers. We believe these are a better approach to vector validation than
+  `vec_assert()` and `vec_is()`, which have been marked as questioning because
+  the semantics of their `ptype` arguments are hard to define and can often be
+  replaced by `vec_cast()` or a type predicate function like
+  `rlang::is_logical()` (#1784).
+
+* `vec_is_list()` and `vec_check_list()` have been renamed to `obj_is_list()`
+  and `obj_check_list()`, in line with the new `obj_is_vector()` helper. The
+  old functions have been silently deprecated, but an official deprecation
+  process will start in the next vctrs release (#1803).
+
+* `vec_locate_matches()` gains a new `relationship` argument that holistically
+  handles multiple matches between `needles` and `haystack`. In particular,
+  `relationship = "many-to-one"` replaces `multiple = "error"` and
+  `multiple = "warning"`, which have been removed from the documentation and
+  silently soft-deprecated. Official deprecation for those options will start in
+  a future release (#1791).
+
+* `vec_locate_matches()` has changed its default `needles_arg` and
+  `haystack_arg` values from `""` to `"needles"` and `"haystack"`, respectively.
+  This generally generates more informative error messages (#1792).
+
+* `vec_chop()` has gained empty `...` between `x` and the optional `indices`
+  argument. For backwards compatibility, supplying `vec_chop(x, indices)`
+  without naming `indices` still silently works, but will be deprecated in a
+  future release (#1813).
+
+* `vec_slice()` has gained an `error_call` argument (#1785).
+
+* The `numeric_version` type from base R is now better supported in equality,
+  comparison, and order based operations (tidyverse/dplyr#6680).
+
+* R >=3.5.0 is now explicitly required. This is in line with the tidyverse
+  policy of supporting the [5 most recent versions of
+  R](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+
+# vctrs 0.5.2
+
+* New `vec_expand_grid()`, which is a lower level helper that is similar to
+  `tidyr::expand_grid()` (#1325).
+
+* New `vec_set_intersect()`, `vec_set_difference()`, `vec_set_union()`, and
+  `vec_set_symmetric_difference()` which compute set operations like
+  `intersect()`, `setdiff()`, and `union()`, but the vctrs variants don't strip
+  attributes and work with data frames (#1755, #1765).
+
+* `vec_identify_runs()` is now faster when used with data frames (#1684).
+
+* The maximum load factor of the internal dictionary was reduced from 77% to
+  50%, which improves performance of functions like `vec_match()`,
+  `vec_set_intersect()`, and `vec_unique()` in some cases (#1760).
+
+* Fixed a bug with the internal `vec_order_radix()` function related to matrix
+  columns (#1753).
+
+# vctrs 0.5.1
+
+* Fix for CRAN checks.
+
+
+# vctrs 0.5.0
+
+* vctrs is now compliant with `-Wstrict-prototypes` as requested by CRAN
+  (#1729).
+
+* `vec_ptype2()` now consistently falls back to bare data frame in
+  case of incompatible data frame subclasses. This is part of a
+  general move towards relaxed coercion rules.
+
+* Common type and cast errors now inherit from `"vctrs_error_ptype2"`
+  and `"vctrs_error_cast"` respectively. They are still both
+  subclasses from `"vctrs_error_incompatible_type"` (which used to be
+  their most specific class and is now a parent class).
+
+* New `list_all_size()` and `list_check_all_size()` to quickly determine if a
+  list contains elements of a particular `size` (#1582).
+
+* `list_unchop()` has gained empty `...` to force optional arguments to be
+  named (#1715).
+
+* `vec_rep_each(times = 0)` now works correctly with logical vectors that are
+  considered unspecified and with named vectors (#1673).
+
+* `list_of()` was relaxed to make it easier to combine. It is now
+  coercible with `list()` (#1161). When incompatible `list_of()` types
+  are combined, the result is now a bare `list()`.
+
+  Following this change, the role of `list_of()` is mainly to carry
+  type information for potential optimisations, rather than to
+  guarantee a certain type throughout an analysis.
+
+* `validate_list_of()` has been removed. It hasn't proven to be practically
+  useful, and isn't used by any packages on CRAN (#1697).
+
+* Directed calls to `vec_c()`, like `vec_c(.ptype = <type>)`, now mention the
+  position of the problematic argument when there are cast errors (#1690).
+
+* `list_unchop()` no longer drops names in some cases when `indices` were
+  supplied (#1689).
+
+* `"unique_quiet"` and `"universal_quiet"` are newly accepted by
+  `vec_as_names(repair =)` and `vec_names2(repair =)`. These options exist to
+  help users who call these functions indirectly, via another function which
+  only exposes `repair` but not `quiet`. Specifying `repair = "unique_quiet"` is
+  like specifying `repair = "unique", quiet = TRUE`. When the `"*_quiet"`
+  options are used, any setting of `quiet` is silently overridden (@jennybc,
+  #1629).
+
+  `"unique_quiet"` and `"universal_quiet"` are also newly accepted for the name
+  repair argument of several other functions that do not expose a `quiet`
+  argument: `data_frame()`, `df_list()`, `vec_c()`, `list_unchop()`,
+  `vec_interleave()`, `vec_rbind()`, and `vec_cbind()` (@jennybc, #1716).
+
+* `list_unchop()` has gained `error_call` and `error_arg` arguments (#1641,
+  #1692).
+
+* `vec_c()` has gained `.error_call` and `.error_arg` arguments (#1641, #1692).
+
+* Improved the performance of list-of common type methods (#1686, #875).
+
+* The list-of method for `as_list_of()` now places the optional `.ptype`
+  argument after the `...` (#1686).
+
+* `vec_rbind()` now applies `base::c()` fallback recursively within
+  packed df-cols (#1331, #1462, #1640).
+
+* `vec_c()`, `vec_unchop()`, and `vec_rbind()` now proxy and restore
+  recursively (#1107). This prevents `vec_restore()` from being called
+  with partially filled vectors and improves performance (#1217,
+  #1496).
+
+* New `vec_any_missing()` for quickly determining if a vector has any missing
+  values (#1672).
+
+* `vec_equal_na()` has been renamed to `vec_detect_missing()` to align better
+  with vctrs naming conventions. `vec_equal_na()` will stick around for a few
+  minor versions, but has been formally soft-deprecated (#1672).
+
+* `vec_c(outer = c(inner = 1))` now produces correct error messages (#522).
+
+* If a data frame is returned as the proxy from `vec_proxy_equal()`,
+  `vec_proxy_compare()`, or `vec_proxy_order()`, then the corresponding proxy
+  function is now automatically applied recursively along all of the columns.
+  Additionally, packed data frame columns will be unpacked, and 1 column data
+  frames will be unwrapped. This ensures that the simplest possible types are
+  provided to the native C algorithms, improving both correctness and
+  performance (#1664).
+
+* When used with record vectors, `vec_proxy_compare()` and `vec_proxy_order()`
+  now call the correct proxy function while recursing over the fields (#1664).
+
+* The experimental function `vec_list_cast()` has been removed from
+  the package (#1382).
+
+* Native classes like dates and datetimes now accept dimensions (#1290, #1329).
+
+* `vec_compare()` now throws a more informative error when attempting to compare
+  complex vectors (#1655).
+
+* `vec_rep()` and friends gain `error_call`, `x_arg`, and `times_arg`
+  arguments so they can be embedded in frontends (#1303).
+
+* Record vectors now fail as expected when indexed along dimensions
+  greater than 1 (#1295).
+
+* `vec_order()` and `vec_sort()` now have `...` between the required and
+  optional arguments to make them easier to extend (#1647).
+
+* S3 vignette was extended to show how to make the polynomial class
+  atomic instead of a list (#1030).
+
+* The experimental `n` argument of `vec_restore()` has been
+  removed. It was only used to inform on the size of data frames in
+  case a bare list is restored. It is now expected that bare lists be
+  initialised to data frame so that the size is carried through row
+  attributes. This makes the generic simpler and fixes some
+  performance issues (#650).
+
+* The `anyNA()` method for `vctrs_vctr` (and thus `vctrs_list_of`) now
+  supports the `recursive` argument (#1278).
+
+* `vec_as_location()` and `num_as_location()` have gained a `missing = "remove"`
+  option (#1595).
+
+* `vec_as_location()` no longer matches `NA_character_` and `""` indices if
+  those invalid names appear in `names` (#1489).
+
+* `vec_unchop()` has been renamed to `list_unchop()` to better indicate that it
+  requires list input. `vec_unchop()` will stick around for a few minor
+  versions, but has been formally soft-deprecated (#1209).
+
+* Lossy cast errors during scalar subscript validation now have the
+  correct message (#1606).
+
+* Fixed confusing error message with logical `[[` subscripts (#1608).
+
+* New `vec_rank()` to compute various types of sample ranks (#1600).
+
+* `num_as_location()` now throws the right error when there are out-of-bounds
+  negative values and `oob = "extend"` and `negative = "ignore"` are set
+  (#1614, #1630).
+
+* `num_as_location()` now works correctly when a combination of `zero = "error"`
+  and `negative = "invert"` are used (#1612).
+
+* `data_frame()` and `df_list()` have gained `.error_call` arguments (#1610).
+
+* `vec_locate_matches()` has gained an `error_call` argument (#1611).
+
 * `"select"` and `"relocate"` have been added as valid subscript actions to
   support tidyselect and dplyr (#1596).
 
 * `num_as_location()` has a new `oob = "remove"` argument to remove
   out-of-bounds locations (#1595).
 
-* `vec_rbind()` and `vec_cbind()` now have `.call` arguments (#1597).
+* `vec_rbind()` and `vec_cbind()` now have `.error_call` arguments (#1597).
 
 * `df_list()` has gained a new `.unpack` argument to optionally disable data
   frame unpacking (#1616).
@@ -47,7 +317,7 @@
 * `vec_locate_matches()` now uses a more conservative heuristic when taking the
   joint ordering proxy. This allows it to work correctly with sf's sfc vectors
   and the classes from the bignum package (#1558).
-  
+
 * An sfc method for `vec_proxy_order()` was added to better support the sf
   package. These vectors are generally treated like list-columns even though
   they don't explicitly have a `"list"` class, and the `vec_proxy_order()`
@@ -56,6 +326,12 @@
 * `vec_proxy_compare()` now works correctly for raw vectors wrapped in `I()`.
   `vec_proxy_order()` now works correctly for raw and list vectors wrapped in
   `I()` (#1557).
+
+
+# vctrs 0.4.2
+
+* HTML documentation fixes for CRAN checks.
+
 
 # vctrs 0.4.1
 
@@ -215,11 +491,11 @@
   to implement, but if your class has a static prototype, you might consider
   implementing a custom `vec_ptype()` method that returns a constant to
   improve performance in some cases (such as common type imputation).
-  
+
 * New `vec_detect_complete()`, inspired by `stats::complete.cases()`. For most
   vectors, this is identical to `!vec_equal_na()`. For data frames and
   matrices, this detects rows that only contain non-missing values.
-  
+
 * `vec_order()` can now order complex vectors (#1330).
 
 * Removed dependency on digest in favor of `rlang::hash()`.
@@ -228,7 +504,7 @@
   when used as a data frame column (#1318).
 
 * `register_s3()` is now licensed with the "unlicense" which makes it very
-  clear that it's fine to copy and paste into your own package 
+  clear that it's fine to copy and paste into your own package
   (@maxheld83, #1254).
 
 # vctrs 0.3.6

@@ -49,36 +49,43 @@ test_that("vec_assert() labels input", {
 })
 
 test_that("bare atomic vectors are vectors but not recursive", {
-  expect_true(vec_is_vector(TRUE))
-  expect_true(vec_is_vector(1L))
-  expect_true(vec_is_vector(1))
-  expect_true(vec_is_vector(1i))
-  expect_true(vec_is_vector("foo"))
-  expect_true(vec_is_vector(as.raw(1)))
+  expect_true(obj_is_vector(TRUE))
+  expect_true(obj_is_vector(1L))
+  expect_true(obj_is_vector(1))
+  expect_true(obj_is_vector(1i))
+  expect_true(obj_is_vector("foo"))
+  expect_true(obj_is_vector(as.raw(1)))
 })
 
 test_that("S3 atomic vectors are vectors", {
-  expect_true(vec_is_vector(foobar(TRUE)))
-  expect_true(vec_is_vector(foobar(1L)))
-  expect_true(vec_is_vector(foobar(1)))
-  expect_true(vec_is_vector(foobar(1i)))
-  expect_true(vec_is_vector(foobar("foo")))
-  expect_true(vec_is_vector(foobar(as.raw(1))))
+  expect_true(obj_is_vector(foobar(TRUE)))
+  expect_true(obj_is_vector(foobar(1L)))
+  expect_true(obj_is_vector(foobar(1)))
+  expect_true(obj_is_vector(foobar(1i)))
+  expect_true(obj_is_vector(foobar("foo")))
+  expect_true(obj_is_vector(foobar(as.raw(1))))
 })
 
 test_that("bare lists are vectors", {
-  expect_true(vec_is_vector(list()))
+  expect_true(obj_is_vector(list()))
 })
 
 test_that("S3 lists are not vectors by default", {
-  expect_false(vec_is_vector(foobar()))
+  expect_false(obj_is_vector(foobar()))
+  expect_false(obj_is_list(foobar()))
+
   local_foobar_proxy()
-  expect_true(vec_is_vector(foobar()))
+
+  # TODO: These seem inconsistent.
+  # Should we require that S3 list proxies satisfy `obj_is_list()`?
+  # (i.e. unclass themselves or explicitly inherit from `"list"`?)
+  expect_true(obj_is_vector(foobar()))
+  expect_false(obj_is_list(foobar()))
 })
 
 test_that("data frames and records are vectors", {
-  expect_true(vec_is_vector(mtcars))
-  expect_true(vec_is_vector(new_rcrd(list(x = 1, y = 2))))
+  expect_true(obj_is_vector(mtcars))
+  expect_true(obj_is_vector(new_rcrd(list(x = 1, y = 2))))
 })
 
 test_that("non-vector base types are scalars", {
@@ -92,14 +99,14 @@ test_that("non-vector base types are scalars", {
   expect_identical(vec_typeof(base::c), "scalar")
   expect_identical(vec_typeof(expression()), "scalar")
 
-  expect_false(vec_is_vector(quote(foo)))
-  expect_false(vec_is_vector(pairlist("")))
-  expect_false(vec_is_vector(function() NULL))
-  expect_false(vec_is_vector(env()))
-  expect_false(vec_is_vector(~foo))
-  expect_false(vec_is_vector(base::`{`))
-  expect_false(vec_is_vector(base::c))
-  expect_false(vec_is_vector(expression()))
+  expect_false(obj_is_vector(quote(foo)))
+  expect_false(obj_is_vector(pairlist("")))
+  expect_false(obj_is_vector(function() NULL))
+  expect_false(obj_is_vector(env()))
+  expect_false(obj_is_vector(~foo))
+  expect_false(obj_is_vector(base::`{`))
+  expect_false(obj_is_vector(base::c))
+  expect_false(obj_is_vector(expression()))
 
   expect_false(vec_is(quote(foo)))
   expect_false(vec_is(pairlist("")))
@@ -124,16 +131,40 @@ test_that("non-vector types can be proxied", {
   x <- new_proxy(1:3)
 
   expect_identical(vec_typeof(x), "scalar")
-  expect_false(vec_is_vector(x))
+  expect_false(obj_is_vector(x))
   expect_false(vec_is(x))
   expect_error(vec_assert(x), class = "vctrs_error_scalar_type")
 
   local_env_proxy()
 
   expect_identical(vec_typeof(x), "integer")
-  expect_true(vec_is_vector(x))
+  expect_true(obj_is_vector(x))
   expect_true(vec_is(x))
   expect_error(regexp = NA, vec_assert(x))
+})
+
+test_that("obj_check_vector() is silent on vectors", {
+  expect_null(obj_check_vector(1))
+  expect_null(obj_check_vector(data_frame()))
+})
+
+test_that("obj_check_vector() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    obj_check_vector(quote(foo))
+  })
+  expect_snapshot(error = TRUE, {
+    obj_check_vector(foobar())
+  })
+})
+
+test_that("obj_check_vector() error respects `arg` and `call`", {
+  my_check_vector <- function(foo) {
+    obj_check_vector(foo)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_vector(foobar())
+  })
 })
 
 test_that("vec_assert() uses friendly type in error messages", {
@@ -160,7 +191,7 @@ test_that("data frames are always classified as such even when dispatch is off",
 
 test_that("assertion is not applied on proxy", {
   local_methods(
-    vec_proxy.vctrs_foobar = unclass,
+    vec_proxy.vctrs_foobar = function(x, ...) unclass(x),
     vec_restore.vctrs_foobar = function(x, ...) foobar(x),
     `[.vctrs_foobar` = function(x, i) vec_slice(x, i)
   )
@@ -227,7 +258,7 @@ test_that("vec_assert() validates `size` (#1470)", {
 })
 
 test_that("NULL is not a vector", {
-  expect_false(vec_is_vector(NULL))
+  expect_false(obj_is_vector(NULL))
   expect_false(vec_is(NULL))
 })
 
@@ -238,69 +269,119 @@ test_that("names and row names do not influence type identity (#707)", {
   expect_true(vec_is(mtcars, structure(mtcars, row.names = 1:32)))
 })
 
-# vec_is_list -----------------------------------------------------------
+# vec_check_size --------------------------------------------------------
+
+test_that("vec_check_size() is silent if the size is right", {
+  expect_null(vec_check_size(1:5, size = 5L))
+  expect_null(vec_check_size(data_frame(.size = 10L), size = 10L))
+})
+
+test_that("vec_check_size() errors on the wrong size", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1:5, size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1:5, size = 10L)
+  })
+})
+
+test_that("vec_check_size() errors on scalars", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(quote(foo), size = 1L)
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(foobar(), size = 1L)
+  })
+})
+
+test_that("vec_check_size() error respects `arg` and `call`", {
+  my_check_size <- function(foo, size) {
+    vec_check_size(foo, size)
+  }
+
+  expect_snapshot(error = TRUE, {
+    my_check_size(1L, size = 5L)
+  })
+  expect_snapshot(error = TRUE, {
+    my_check_size(foobar(), size = 5L)
+  })
+})
+
+test_that("vec_check_size() validates `size`", {
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = "x")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = c(1L, 2L))
+  })
+  expect_snapshot(error = TRUE, {
+    vec_check_size(1, size = 1.5)
+  })
+})
+
+# obj_is_list -----------------------------------------------------------
 
 test_that("bare lists are lists", {
-  expect_true(vec_is_list(list()))
+  expect_true(obj_is_list(list()))
 })
 
 test_that("AsIs lists are lists (#1463)", {
-  expect_true(vec_is_list(I(list())))
-  expect_true(vec_is_list(I(list_of(1))))
-  expect_false(vec_is_list(I(double())))
+  expect_true(obj_is_list(I(list())))
+  expect_true(obj_is_list(I(list_of(1))))
+  expect_false(obj_is_list(I(double())))
 })
 
 test_that("list_of are lists", {
-  expect_true(vec_is_list(new_list_of()))
+  expect_true(obj_is_list(new_list_of()))
 })
 
 test_that("Vectors with a non-VECSXP type are not lists", {
-  expect_false(vec_is_list(1))
-  expect_false(vec_is_list("a"))
-  expect_false(vec_is_list(quote(name)))
+  expect_false(obj_is_list(1))
+  expect_false(obj_is_list("a"))
+  expect_false(obj_is_list(quote(name)))
 })
 
 test_that("explicitly classed lists are lists", {
   x <- structure(list(), class = "list")
 
-  expect_true(vec_is_list(x))
-  expect_true(vec_is_list(subclass(x)))
+  expect_true(obj_is_list(x))
+  expect_true(obj_is_list(subclass(x)))
 })
 
 test_that("explicit inheritance must be in the base class", {
   x <- structure(1:2, class = c("list", "foobar"))
-  expect_false(vec_is_list(x))
+  expect_false(obj_is_list(x))
 })
 
 test_that("POSIXlt are not considered a list", {
-  expect_false(vec_is_list(as.POSIXlt(new_datetime())))
+  expect_false(obj_is_list(as.POSIXlt(new_datetime())))
 })
 
 test_that("rcrd types are not lists", {
-  expect_false(vec_is_list(new_rcrd(list(x = 1))))
+  expect_false(obj_is_list(new_rcrd(list(x = 1))))
 })
 
 test_that("scalars are not lists", {
-  expect_false(vec_is_list(foobar()))
+  expect_false(obj_is_list(foobar()))
 })
 
 test_that("S3 types can't lie about their internal representation", {
   x <- structure(1:2, class = c("foobar", "list"))
-  expect_false(vec_is_list(x))
+  expect_false(obj_is_list(x))
 })
 
 test_that("data frames of all types are not lists", {
-  expect_false(vec_is_list(data.frame()))
-  expect_false(vec_is_list(subclass(data.frame())))
-  expect_false(vec_is_list(tibble::tibble()))
+  expect_false(obj_is_list(data.frame()))
+  expect_false(obj_is_list(subclass(data.frame())))
+  expect_false(obj_is_list(tibble::tibble()))
 })
 
 test_that("S3 list with non-list proxy is still a list (#1208)", {
   x <- structure(list(), class = c("foobar", "list"))
   local_methods(vec_proxy.foobar = function(x) 1)
   # This used to be an error (#1003)
-  # expect_error(vec_is_list(x), "`x` inherits")
-  expect_true(vec_is_list(x))
+  # expect_error(obj_is_list(x), "`x` inherits")
+  expect_true(obj_is_list(x))
 })
 
 test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
@@ -318,7 +399,7 @@ test_that("list-rcrds with data frame proxies are considered lists (#1208)", {
     }
   )
 
-  expect_true(vec_is_list(x))
+  expect_true(obj_is_list(x))
 })
 
 test_that("list_all_vectors() works", {
@@ -328,22 +409,22 @@ test_that("list_all_vectors() works", {
   expect_snapshot((expect_error(list_all_vectors(env()))))
 })
 
-test_that("vec_check_list() works", {
-  expect_null(vec_check_list(list(1)))
-  expect_null(vec_check_list(list_of(1)))
+test_that("obj_check_list() works", {
+  expect_null(obj_check_list(list(1)))
+  expect_null(obj_check_list(list_of(1)))
   expect_snapshot({
-    my_function <- function(my_arg) vec_check_list(my_arg)
+    my_function <- function(my_arg) obj_check_list(my_arg)
     (expect_error(my_function(env())))
   })
 })
 
-test_that("vec_check_list() uses a special error when `arg` is the empty string (#1604)", {
+test_that("obj_check_list() uses a special error when `arg` is the empty string (#1604)", {
   expect_snapshot(error = TRUE, {
-    vec_check_list(1, arg = "")
+    obj_check_list(1, arg = "")
   })
 })
 
-test_that("vec_check_list() and list_check_all_vectors() work", {
+test_that("obj_check_list() and list_check_all_vectors() work", {
   expect_null(list_check_all_vectors(list()))
   expect_null(list_check_all_vectors(list(1, mtcars)))
   expect_snapshot({
@@ -352,6 +433,65 @@ test_that("vec_check_list() and list_check_all_vectors() work", {
     (expect_error(my_function(list(1, env()))))
     (expect_error(my_function(list(1, name = env()))))
     (expect_error(my_function(list(1, foo = env()))))
+  })
+})
+
+test_that("list_all_size() works", {
+  expect_true(list_all_size(list(), 2))
+  expect_true(list_all_size(list(integer()), 0))
+  expect_true(list_all_size(list(NULL), 0))
+  expect_true(list_all_size(list(1:2, 2:3), 2))
+
+  expect_false(list_all_size(list(1:2, 1:3), 2))
+  expect_false(list_all_size(list(NULL, 1:2), 2))
+
+  expect_true(list_all_size(list_of(1:3, 2:4), 3))
+  expect_false(list_all_size(list_of(1:3, 2:4), 4))
+})
+
+test_that("list_check_all_size() works", {
+  expect_null(list_check_all_size(list(), 2))
+  expect_null(list_check_all_size(list(integer()), 0))
+  expect_null(list_check_all_size(list(NULL), 0))
+  expect_null(list_check_all_size(list(1:2, 2:3), 2))
+
+  expect_snapshot({
+    my_function <- function(my_arg, size) list_check_all_size(my_arg, size)
+
+    # Validates sizes
+    (expect_error(list_check_all_size(list(1:2, 1:3), 2)))
+    (expect_error(my_function(list(1:2, 1:3), 2)))
+
+    # `NULL` is not ignored
+    (expect_error(my_function(list(NULL, 1:2), 2)))
+  })
+})
+
+test_that("list_all_size() and list_check_all_size() error on scalars", {
+  x <- list(env())
+
+  expect_snapshot({
+    # Error considered internal to `list_all_size()`
+    (expect_error(list_all_size(x, 2)))
+
+    my_function <- function(my_arg, size) list_check_all_size(my_arg, size)
+    (expect_error(my_function(x, 2)))
+  })
+})
+
+test_that("list_all_size() and list_check_all_size() throw error using internal call on non-list input", {
+  expect_snapshot({
+    (expect_error(list_all_size(1, 2)))
+
+    # `arg` and `call` are ignored
+    (expect_error(list_check_all_size(1, 2, arg = "arg", call = call("foo"))))
+  })
+})
+
+test_that("list_all_size() and list_check_all_size() validate `size`", {
+  expect_snapshot({
+    (expect_error(list_all_size(list(), size = "x")))
+    (expect_error(list_check_all_size(list(), size = "x")))
   })
 })
 

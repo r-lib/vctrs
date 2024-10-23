@@ -554,3 +554,116 @@ test_that("`lower` and `upper` can't contain missing values", {
     (expect_error(vec_interval_complement(start, end, upper = data_frame(x = 1, y = NA))))
   })
 })
+
+# ------------------------------------------------------------------------------
+# vec_interval_locate_containers()
+
+test_that("can locate containers", {
+  x <- data_frame(
+    start = c(1L, 9L,  2L, 2L, 10L),
+    end = c(5L, 12L, 6L, 8L, 12L)
+  )
+
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    c(1L, 4L, 2L)
+  )
+})
+
+test_that("can locate containers with size one input", {
+  x <- data_frame(start = 1L, end = 2L)
+
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    1L
+  )
+})
+
+test_that("can locate containers with size zero input", {
+  x <- data_frame(start = integer(), end = integer())
+
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    integer()
+  )
+})
+
+test_that("missing intervals are retained", {
+  x <- data_frame(start = NA, end = NA)
+
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    1L
+  )
+
+  x <- data_frame(start = c(NA, NA), end = c(NA, NA))
+
+  # Ties use first missing value seen
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    1L
+  )
+
+  x <- data_frame(start = c(3, NA, 2, NA), end = c(5, NA, 5, NA))
+
+  # Missing intervals at the end
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    c(3L, 2L)
+  )
+})
+
+test_that("locations order the intervals", {
+  x <- data_frame(start = c(4L, 4L, 1L, NA, 4L), end = c(5L, 6L, 2L, NA, 6L))
+
+  out <- vec_interval_locate_containers(x$start, x$end)
+
+  expect_identical(
+    out,
+    c(3L, 2L, 4L)
+  )
+
+  # This orders `x`
+  expect_identical(
+    vec_slice(x, out),
+    vec_sort(vec_slice(x, out))
+  )
+})
+
+test_that("treats NA and NaN as equivalent with doubles", {
+  x <- data_frame(start = c(NA, NaN, NA, NaN), end = c(NA, NA, NaN, NaN))
+
+  expect_identical(vec_interval_locate_containers(x$start, x$end), 1L)
+})
+
+test_that("recognizes missing rows in data frames", {
+  start <- data_frame(year = c(2019, NA, NA, 2019, 2019), month = c(12, NA, NA, 12, 12))
+  end <- data_frame(year = c(2020, NA, NA, 2020, 2020), month = c(2, NA, NA, 11, 12))
+  x <- data_frame(start = start, end = end)
+
+  expect_identical(
+    vec_interval_locate_containers(x$start, x$end),
+    c(5L, 2L)
+  )
+})
+
+test_that("duplicate containers return the first", {
+  x <- data_frame(start = c(1, 1, 2, 1, 2), end = c(2, 2, 3, 2, 3))
+  expect_identical(vec_interval_locate_containers(x$start, x$end), c(1L, 3L))
+})
+
+test_that("works on various types", {
+  x <- data_frame(start = c(1.5, 3, NA, 1.6, NA), end = c(1.7, 3.1, NA, 3.2, NA))
+
+  out <- vec_interval_locate_containers(x$start, x$end)
+  expect_identical(out, c(1L, 4L, 3L))
+
+  x <- data_frame(start = c("a", "a", NA, "f", NA), end = c("b", "g", NA, "h", NA))
+
+  out <- vec_interval_locate_containers(x$start, x$end)
+  expect_identical(out, c(2L, 4L, 3L))
+})
+
+test_that("common type is taken", {
+  expect_snapshot((expect_error(vec_interval_locate_containers(1, "x"))))
+})

@@ -162,9 +162,7 @@ test_that("can cbind rowwise data frames", {
   expect_identical(vec_cbind(rww, gdf), exp)
 })
 
-test_that("no common type between rowwise and grouped data frames", {
-  expect_df_fallback_warning(
-    out <- vec_ptype_common_df_fallback(dplyr::rowwise(bare_mtcars), dplyr::group_by(bare_mtcars, cyl))
-  )
+test_that("common type between rowwise and grouped data frames is a bare df", {
+  out <- vec_ptype_common(dplyr::rowwise(bare_mtcars), dplyr::group_by(bare_mtcars, cyl))
   expect_identical(out, tibble::as_tibble(bare_mtcars[0, ]))
 })

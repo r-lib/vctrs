@@ -6,245 +6,6 @@
 
 // Vector types -------------------------------------------------
 
-// After adding a new `vctrs_dispatch` type, add the missing entries
-// in `vec_typeof2()`
-enum vctrs_type2 {
-  vctrs_type2_null_null,
-  vctrs_type2_null_unspecified,
-  vctrs_type2_null_logical,
-  vctrs_type2_null_integer,
-  vctrs_type2_null_double,
-  vctrs_type2_null_complex,
-  vctrs_type2_null_character,
-  vctrs_type2_null_raw,
-  vctrs_type2_null_list,
-  vctrs_type2_null_dataframe,
-  vctrs_type2_null_s3,
-  vctrs_type2_null_scalar,
-
-  vctrs_type2_unspecified_unspecified,
-  vctrs_type2_unspecified_logical,
-  vctrs_type2_unspecified_integer,
-  vctrs_type2_unspecified_double,
-  vctrs_type2_unspecified_complex,
-  vctrs_type2_unspecified_character,
-  vctrs_type2_unspecified_raw,
-  vctrs_type2_unspecified_list,
-  vctrs_type2_unspecified_dataframe,
-  vctrs_type2_unspecified_s3,
-  vctrs_type2_unspecified_scalar,
-
-  vctrs_type2_logical_logical,
-  vctrs_type2_logical_integer,
-  vctrs_type2_logical_double,
-  vctrs_type2_logical_complex,
-  vctrs_type2_logical_character,
-  vctrs_type2_logical_raw,
-  vctrs_type2_logical_list,
-  vctrs_type2_logical_dataframe,
-  vctrs_type2_logical_s3,
-  vctrs_type2_logical_scalar,
-
-  vctrs_type2_integer_integer,
-  vctrs_type2_integer_double,
-  vctrs_type2_integer_complex,
-  vctrs_type2_integer_character,
-  vctrs_type2_integer_raw,
-  vctrs_type2_integer_list,
-  vctrs_type2_integer_dataframe,
-  vctrs_type2_integer_s3,
-  vctrs_type2_integer_scalar,
-
-  vctrs_type2_double_double,
-  vctrs_type2_double_complex,
-  vctrs_type2_double_character,
-  vctrs_type2_double_raw,
-  vctrs_type2_double_list,
-  vctrs_type2_double_dataframe,
-  vctrs_type2_double_s3,
-  vctrs_type2_double_scalar,
-
-  vctrs_type2_complex_complex,
-  vctrs_type2_complex_character,
-  vctrs_type2_complex_raw,
-  vctrs_type2_complex_list,
-  vctrs_type2_complex_dataframe,
-  vctrs_type2_complex_s3,
-  vctrs_type2_complex_scalar,
-
-  vctrs_type2_character_character,
-  vctrs_type2_character_raw,
-  vctrs_type2_character_list,
-  vctrs_type2_character_dataframe,
-  vctrs_type2_character_s3,
-  vctrs_type2_character_scalar,
-
-  vctrs_type2_raw_raw,
-  vctrs_type2_raw_list,
-  vctrs_type2_raw_dataframe,
-  vctrs_type2_raw_s3,
-  vctrs_type2_raw_scalar,
-
-  vctrs_type2_list_list,
-  vctrs_type2_list_dataframe,
-  vctrs_type2_list_s3,
-  vctrs_type2_list_scalar,
-
-  vctrs_type2_dataframe_dataframe,
-  vctrs_type2_dataframe_s3,
-  vctrs_type2_dataframe_scalar,
-
-  vctrs_type2_s3_s3,
-  vctrs_type2_s3_scalar,
-
-  vctrs_type2_scalar_scalar
-};
-
-enum vctrs_type2_s3 {
-  vctrs_type2_s3_null_bare_factor,
-  vctrs_type2_s3_null_bare_ordered,
-  vctrs_type2_s3_null_bare_date,
-  vctrs_type2_s3_null_bare_posixct,
-  vctrs_type2_s3_null_bare_posixlt,
-  vctrs_type2_s3_null_bare_tibble,
-  vctrs_type2_s3_null_unknown,
-
-  vctrs_type2_s3_unspecified_bare_factor,
-  vctrs_type2_s3_unspecified_bare_ordered,
-  vctrs_type2_s3_unspecified_bare_date,
-  vctrs_type2_s3_unspecified_bare_posixct,
-  vctrs_type2_s3_unspecified_bare_posixlt,
-  vctrs_type2_s3_unspecified_bare_tibble,
-  vctrs_type2_s3_unspecified_unknown,
-
-  vctrs_type2_s3_logical_bare_factor,
-  vctrs_type2_s3_logical_bare_ordered,
-  vctrs_type2_s3_logical_bare_date,
-  vctrs_type2_s3_logical_bare_posixct,
-  vctrs_type2_s3_logical_bare_posixlt,
-  vctrs_type2_s3_logical_bare_tibble,
-  vctrs_type2_s3_logical_unknown,
-
-  vctrs_type2_s3_integer_bare_factor,
-  vctrs_type2_s3_integer_bare_ordered,
-  vctrs_type2_s3_integer_bare_date,
-  vctrs_type2_s3_integer_bare_posixct,
-  vctrs_type2_s3_integer_bare_posixlt,
-  vctrs_type2_s3_integer_bare_tibble,
-  vctrs_type2_s3_integer_unknown,
-
-  vctrs_type2_s3_double_bare_factor,
-  vctrs_type2_s3_double_bare_ordered,
-  vctrs_type2_s3_double_bare_date,
-  vctrs_type2_s3_double_bare_posixct,
-  vctrs_type2_s3_double_bare_posixlt,
-  vctrs_type2_s3_double_bare_tibble,
-  vctrs_type2_s3_double_unknown,
-
-  vctrs_type2_s3_complex_bare_factor,
-  vctrs_type2_s3_complex_bare_ordered,
-  vctrs_type2_s3_complex_bare_date,
-  vctrs_type2_s3_complex_bare_posixct,
-  vctrs_type2_s3_complex_bare_posixlt,
-  vctrs_type2_s3_complex_bare_tibble,
-  vctrs_type2_s3_complex_unknown,
-
-  vctrs_type2_s3_character_bare_factor,
-  vctrs_type2_s3_character_bare_ordered,
-  vctrs_type2_s3_character_bare_date,
-  vctrs_type2_s3_character_bare_posixct,
-  vctrs_type2_s3_character_bare_posixlt,
-  vctrs_type2_s3_character_bare_tibble,
-  vctrs_type2_s3_character_unknown,
-
-  vctrs_type2_s3_raw_bare_factor,
-  vctrs_type2_s3_raw_bare_ordered,
-  vctrs_type2_s3_raw_bare_date,
-  vctrs_type2_s3_raw_bare_posixct,
-  vctrs_type2_s3_raw_bare_posixlt,
-  vctrs_type2_s3_raw_bare_tibble,
-  vctrs_type2_s3_raw_unknown,
-
-  vctrs_type2_s3_list_bare_factor,
-  vctrs_type2_s3_list_bare_ordered,
-  vctrs_type2_s3_list_bare_date,
-  vctrs_type2_s3_list_bare_posixct,
-  vctrs_type2_s3_list_bare_posixlt,
-  vctrs_type2_s3_list_bare_tibble,
-  vctrs_type2_s3_list_unknown,
-
-  vctrs_type2_s3_dataframe_bare_factor,
-  vctrs_type2_s3_dataframe_bare_ordered,
-  vctrs_type2_s3_dataframe_bare_date,
-  vctrs_type2_s3_dataframe_bare_posixct,
-  vctrs_type2_s3_dataframe_bare_posixlt,
-  vctrs_type2_s3_dataframe_bare_tibble,
-  vctrs_type2_s3_dataframe_unknown,
-
-  vctrs_type2_s3_scalar_bare_factor,
-  vctrs_type2_s3_scalar_bare_ordered,
-  vctrs_type2_s3_scalar_bare_date,
-  vctrs_type2_s3_scalar_bare_posixct,
-  vctrs_type2_s3_scalar_bare_posixlt,
-  vctrs_type2_s3_scalar_bare_tibble,
-  vctrs_type2_s3_scalar_unknown,
-
-  vctrs_type2_s3_bare_factor_bare_factor,
-  vctrs_type2_s3_bare_factor_bare_ordered,
-  vctrs_type2_s3_bare_factor_bare_date,
-  vctrs_type2_s3_bare_factor_bare_posixct,
-  vctrs_type2_s3_bare_factor_bare_posixlt,
-  vctrs_type2_s3_bare_factor_bare_tibble,
-  vctrs_type2_s3_bare_factor_unknown,
-
-  vctrs_type2_s3_bare_ordered_bare_ordered,
-  vctrs_type2_s3_bare_ordered_bare_date,
-  vctrs_type2_s3_bare_ordered_bare_posixct,
-  vctrs_type2_s3_bare_ordered_bare_posixlt,
-  vctrs_type2_s3_bare_ordered_bare_tibble,
-  vctrs_type2_s3_bare_ordered_unknown,
-
-  vctrs_type2_s3_bare_date_bare_date,
-  vctrs_type2_s3_bare_date_bare_posixct,
-  vctrs_type2_s3_bare_date_bare_posixlt,
-  vctrs_type2_s3_bare_date_bare_tibble,
-  vctrs_type2_s3_bare_date_unknown,
-
-  vctrs_type2_s3_bare_posixct_bare_posixct,
-  vctrs_type2_s3_bare_posixct_bare_posixlt,
-  vctrs_type2_s3_bare_posixct_bare_tibble,
-  vctrs_type2_s3_bare_posixct_unknown,
-
-  vctrs_type2_s3_bare_posixlt_bare_posixlt,
-  vctrs_type2_s3_bare_posixlt_bare_tibble,
-  vctrs_type2_s3_bare_posixlt_unknown,
-
-  vctrs_type2_s3_bare_tibble_bare_tibble,
-  vctrs_type2_s3_bare_tibble_unknown,
-
-  vctrs_type2_s3_unknown_unknown
-};
-
-enum vctrs_type2 vec_typeof2(SEXP x, SEXP y);
-const char* vctrs_type2_as_str(enum vctrs_type2 type);
-
-extern SEXP vctrs_shared_empty_lgl;
-extern SEXP vctrs_shared_empty_int;
-extern SEXP vctrs_shared_empty_dbl;
-extern SEXP vctrs_shared_empty_cpl;
-extern SEXP vctrs_shared_empty_chr;
-extern SEXP vctrs_shared_empty_raw;
-extern SEXP vctrs_shared_empty_list;
-extern SEXP vctrs_shared_empty_date;
-extern SEXP vctrs_shared_empty_uns;
-
-extern SEXP vctrs_shared_true;
-extern SEXP vctrs_shared_false;
-
-extern Rcomplex vctrs_shared_na_cpl;
-extern SEXP vctrs_shared_na_lgl;
-extern SEXP vctrs_shared_na_list;
-
 SEXP vec_unspecified(R_len_t n);
 bool vec_is_unspecified(SEXP x);
 
@@ -264,6 +25,7 @@ bool vec_is_unspecified(SEXP x);
 #include "dictionary.h"
 #include "dim.h"
 #include "equal.h"
+#include "expand.h"
 #include "hash.h"
 #include "lazy.h"
 #include "match-compare.h"
@@ -277,19 +39,27 @@ bool vec_is_unspecified(SEXP x);
 #include "order.h"
 #include "owned.h"
 #include "poly-op.h"
+#include "proxy.h"
+#include "proxy-restore.h"
 #include "ptype-common.h"
 #include "ptype.h"
 #include "ptype2-dispatch.h"
 #include "ptype2.h"
+#include "rep.h"
+#include "runs.h"
+#include "set.h"
 #include "shape.h"
 #include "size-common.h"
 #include "size.h"
 #include "slice-assign.h"
 #include "slice.h"
+#include "slice-chop.h"
 #include "strides.h"
 #include "subscript-loc.h"
 #include "subscript.h"
 #include "translate.h"
+#include "typeof2.h"
+#include "typeof2-s3.h"
 #include "utils-dispatch.h"
 #include "utils.h"
 
@@ -297,8 +67,7 @@ bool vec_is_unspecified(SEXP x);
 // Vector methods ------------------------------------------------
 
 enum vctrs_proxy_kind {
-  VCTRS_PROXY_KIND_default,
-  VCTRS_PROXY_KIND_equal,
+  VCTRS_PROXY_KIND_equal = 0,
   VCTRS_PROXY_KIND_compare,
   VCTRS_PROXY_KIND_order
 };
@@ -308,9 +77,6 @@ SEXP vec_proxy_equal(SEXP x);
 SEXP vec_proxy_compare(SEXP x);
 SEXP vec_proxy_order(SEXP x);
 SEXP vec_proxy_unwrap(SEXP x);
-SEXP vec_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
-SEXP vec_restore_default(SEXP x, SEXP to, const enum vctrs_owned owned);
-SEXP vec_chop(SEXP x, SEXP indices);
 SEXP vec_slice_shaped(enum vctrs_type type, SEXP x, SEXP index);
 bool vec_requires_fallback(SEXP x, struct vctrs_proxy_info info);
 r_obj* vec_ptype(r_obj* x, struct vctrs_arg* x_arg, struct r_lazy call);
@@ -319,25 +85,20 @@ bool vec_is_unspecified(SEXP x);
 SEXP vec_names(SEXP x);
 SEXP vec_proxy_names(SEXP x);
 SEXP vec_group_loc(SEXP x);
-SEXP vec_identify_runs(SEXP x);
-SEXP vec_match_params(SEXP needles, SEXP haystack, bool na_equal,
-                      struct vctrs_arg* needles_arg, struct vctrs_arg* haystack_arg);
+SEXP vec_match_params(SEXP needles,
+                      SEXP haystack,
+                      bool na_equal,
+                      struct vctrs_arg* needles_arg,
+                      struct vctrs_arg* haystack_arg,
+                      struct r_lazy call);
 
 static inline
 SEXP vec_match(SEXP needles, SEXP haystack) {
-  return vec_match_params(needles, haystack, true, NULL, NULL);
+  return vec_match_params(needles, haystack, true, NULL, NULL, r_lazy_null);
 }
 
 
-SEXP vec_c(SEXP xs,
-           SEXP ptype,
-           SEXP name_spec,
-           const struct name_repair_opts* name_repair);
-
 bool is_data_frame(SEXP x);
-
-SEXP vec_bare_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
-SEXP vec_df_restore(SEXP x, SEXP to, SEXP n, const enum vctrs_owned owned);
 
 uint32_t hash_object(SEXP x);
 void hash_fill(uint32_t* p, R_len_t n, SEXP x, bool na_equal);
@@ -488,7 +249,8 @@ void stop_scalar_type(SEXP x,
 __attribute__((noreturn))
 void stop_assert_size(r_ssize actual,
                       r_ssize required,
-                      struct vctrs_arg* arg);
+                      struct vctrs_arg* arg,
+                      struct r_lazy call);
 __attribute__((noreturn))
 void stop_incompatible_type(SEXP x,
                             SEXP y,

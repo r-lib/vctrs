@@ -32,3 +32,9 @@ r_obj* vec_ptype_finalise_unspecified(r_obj* x);
 
 static
 r_obj* vec_ptype_finalise_dispatch(r_obj* x);
+
+static
+r_obj* vec_ptype_final_call;
+
+static
+struct r_lazy vec_ptype_final_lazy_call;

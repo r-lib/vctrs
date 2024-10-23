@@ -8,7 +8,7 @@ r_obj* vctrs_list_drop_empty(r_obj* x) {
 
 static
 r_obj* list_drop_empty(r_obj* x) {
-  if (!vec_is_list(x)) {
+  if (!obj_is_list(x)) {
     r_abort("`x` must be a list.");
   }
 

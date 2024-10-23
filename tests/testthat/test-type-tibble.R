@@ -92,7 +92,6 @@ test_that("can use ptype2 and cast with tibble that has incorrect class vector",
     vec_ptype_common(data.frame(x = 1), tib2),
     tibble::new_tibble(exp, nrow = nrow(exp))
   )
-
   expect_identical(
     vec_cast(tib1, tib1),
     tib1
@@ -102,15 +101,15 @@ test_that("can use ptype2 and cast with tibble that has incorrect class vector",
     local_error_call(call("my_function"))
     (expect_error(
       vec_cast(tib1, tib2),
-      class = "vctrs_error_cast_lossy_dropped"
+      class = "vctrs_error_cast"
     ))
     (expect_error(
       vec_cast(tib1, data.frame(y = 2)),
-      class = "vctrs_error_cast_lossy_dropped"
+      class = "vctrs_error_cast"
     ))
     (expect_error(
       vec_cast(data.frame(x = 1), tib2),
-      class = "vctrs_error_cast_lossy_dropped"
+      class = "vctrs_error_cast"
     ))
   })
 })

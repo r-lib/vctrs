@@ -7,7 +7,7 @@
 \usage{
 vec_proxy(x, ...)
 
-vec_restore(x, to, ..., n = NULL)
+vec_restore(x, to, ...)
 }
 \arguments{
 \item{x}{A vector.}
@@ -15,14 +15,6 @@ vec_restore(x, to, ..., n = NULL)
 \item{...}{These dots are for future extensions and must be empty.}
 
 \item{to}{The original vector to restore to.}
-
-\item{n}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-The total size to restore to. This is currently passed by
-\code{vec_slice()} to solve edge cases arising in data frame
-restoration. In most cases you don't need this information and
-can safely ignore that argument. This parameter should be
-considered internal and experimental, it might change in the
-future.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

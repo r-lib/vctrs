@@ -39,11 +39,11 @@ test_that("incompatible columns throws common type error", {
       class = "vctrs_error_incompatible_type"
     ))
     (expect_error(
-      vec_rbind(x_int, x_chr, .call = call("foo")),
+      vec_rbind(x_int, x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"
     ))
     (expect_error(
-      vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      vec_rbind(x_int, x_chr, .ptype = x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"
     ))
   })
@@ -207,6 +207,17 @@ test_that("can repair names in `vec_rbind()` (#229)", {
   expect_named(vec_rbind(list(a = 1, a = 2), .name_repair = ~ toupper(.)), c("A", "A"))
 })
 
+test_that("can repair names quietly", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    res_unique <- vec_rbind(c(x = 1, x = 2), c(x = 3, x = 4), .name_repair = "unique_quiet")
+    res_universal <- vec_rbind(c("if" = 1, "in" = 2), c("if" = 3, "for" = 4), .name_repair = "universal_quiet")
+  })
+  expect_named(res_unique, c("x...1", "x...2"))
+  expect_named(res_universal, c(".if", ".in", ".for"))
+})
+
 test_that("can construct an id column", {
   df <- data.frame(x = 1)
 
@@ -221,7 +232,7 @@ test_that("can construct an id column", {
 test_that("vec_rbind() fails with arrays of dimensionality > 3", {
   expect_snapshot({
     (expect_error(vec_rbind(array(NA, c(1, 1, 1)))))
-    (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
+    (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .error_call = call("foo"))))
   })
 })
 
@@ -302,6 +313,9 @@ test_that("vec_rbind() takes the proxy and restores", {
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
       x
     },
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) {
+      x
+    },
     vec_proxy.vctrs_foobar = function(x, ...) {
       x
     },
@@ -330,6 +344,9 @@ test_that("vec_rbind() proxies before initializing", {
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) {
       x
     },
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) {
+      x
+    },
     vec_proxy.vctrs_foobar = function(x, ...) {
       new_data_frame(x)
     },
@@ -352,10 +369,14 @@ test_that("vec_rbind() requires a data frame proxy for data frame ptypes", {
 
   local_methods(
     vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) x,
     vec_proxy.vctrs_foobar = function(x, ...) 1
   )
 
-  expect_error(vec_rbind(df, df), "Attempt to restore data frame from a double")
+  expect_error(
+    vec_rbind(df, df),
+    "Can't fill a data frame that doesn't have a data frame proxy"
+  )
 })
 
 test_that("monitoring: name repair while rbinding doesn't modify in place", {
@@ -396,10 +417,10 @@ test_that("performance: Row binding with df-cols doesn't duplicate on every assi
 test_that("vec_cbind() reports error context", {
   expect_snapshot({
     (expect_error(vec_cbind(foobar(list()))))
-    (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+    (expect_error(vec_cbind(foobar(list()), .error_call = call("foo"))))
 
     (expect_error(vec_cbind(a = 1:2, b = int())))
-    (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+    (expect_error(vec_cbind(a = 1:2, b = int(), .error_call = call("foo"))))
   })
 })
 
@@ -493,11 +514,22 @@ test_that("can repair names in `vec_cbind()` (#227)", {
   expect_named(vec_cbind(a = 1, a = 2, .name_repair = toupper), c("A", "A"))
 })
 
+test_that("can repair names quietly", {
+  local_name_repair_verbose()
+
+  expect_snapshot({
+    res_unique <- vec_cbind(x = 1, x = 2, .name_repair = "unique_quiet")
+    res_universal <- vec_cbind("if" = 1, "in" = 2, .name_repair = "universal_quiet")
+  })
+  expect_named(res_unique, c("x...1", "x...2"))
+  expect_named(res_universal, c(".if", ".in"))
+})
+
 test_that("can supply `.names_to` to `vec_rbind()` (#229)", {
   expect_snapshot({
     (expect_error(vec_rbind(.names_to = letters)))
     (expect_error(vec_rbind(.names_to = 10)))
-    (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
+    (expect_error(vec_rbind(.names_to = letters, .error_call = call("foo"))))
   })
 
   x <- data_frame(foo = 1:2, bar = 3:4)
@@ -597,7 +629,7 @@ test_that("vec_cbind() fails with arrays of dimensionality > 3", {
 
   expect_snapshot({
     (expect_error(vec_cbind(a)))
-    (expect_error(vec_cbind(a, .call = call("foo"))))
+    (expect_error(vec_cbind(a, .error_call = call("foo"))))
     (expect_error(vec_cbind(x = a)))
   })
 })
@@ -752,7 +784,7 @@ test_that("rbind repairs names of data frames (#704)", {
       class = "vctrs_error_names_must_be_unique"
     ))
     (expect_error(
-      vec_rbind(df, df, .name_repair = "check_unique", .call = call("foo")),
+      vec_rbind(df, df, .name_repair = "check_unique", .error_call = call("foo")),
       class = "vctrs_error_names_must_be_unique"
     ))
   })
@@ -807,41 +839,81 @@ test_that("vec_rbind() falls back to c() if S3 method is available", {
   y_df <- data_frame(x = y)
 
   expect_error(vec_rbind(x_df, y_df), class = "vctrs_error_incompatible_type")
+  expect_error(vec_c(x_df, y_df), class = "vctrs_error_incompatible_type")
+  expect_error(list_unchop(list(x_df, y_df), indices = list(1, 2)), class = "vctrs_error_incompatible_type")
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_rbind(x_df, y_df)
+  with_c_method <- function(expr) {
+    with_methods(
+      c.vctrs_foobar = function(...) quux(NextMethod()),
+      expr
+    )
+  }
+
+  out <- with_c_method(vec_rbind(x_df, y_df))
+  exp <- data_frame(x = quux(c(1, 2)))
+  expect_identical(out, exp)
+
+  expect_identical(with_c_method(vec_c(x_df, y_df)), exp)
+  expect_identical(
+    with_c_method(list_unchop(list(x_df, y_df), indices = list(1, 2))),
+    exp
   )
-  expect_identical(out, data_frame(x = quux(c(1, 2))))
 
   # Fallback is used with data frame subclasses, with or without
   # ptype2 method
   foo_df <- foobaz(x_df)
   bar_df <- foobaz(y_df)
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_rbind(foo_df, bar_df)
-  )
-  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
+  out <- with_c_method(vec_rbind(foo_df, bar_df))
+  exp <- foobaz(data_frame(x = quux(c(1, 2))))
+  expect_identical(out, exp)
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
-    vec_rbind(foo_df, bar_df)
+  expect_identical(with_c_method(vec_c(foo_df, bar_df)), exp)
+  expect_identical(
+    with_c_method(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
+    exp
   )
-  expect_identical(out, foobaz(data_frame(x = quux(c(1, 2)))))
 
-  skip("FIXME: c() fallback with recursion through df-col")
+  with_hybrid_methods <- function(expr, cast = TRUE) {
+    methods <- list(
+      c.vctrs_foobar = function(...) quux(NextMethod()),
+      vec_ptype2.vctrs_foobaz.vctrs_foobaz = function(...) foobaz(df_ptype2(...)),
+      vec_cast.vctrs_foobaz.vctrs_foobaz = if (cast) function(...) foobaz(df_cast(...))
+    )
+    with_methods(expr, !!!compact(methods))
+  }
+
+  expect_equal(
+    with_hybrid_methods(
+      cast = FALSE,
+      vec_rbind(foo_df, bar_df)
+    ),
+    foobaz(data_frame(x = quux(c(1, 2))))
+  )
+
+  # Falls back to data frame because there is no ptype2/cast methods
+  out <- with_hybrid_methods(vec_rbind(foo_df, bar_df))
+  exp <- foobaz(data_frame(x = quux(c(1, 2))))
+  expect_identical(out, exp)
+
+  expect_identical(with_hybrid_methods(vec_c(foo_df, bar_df)), exp)
+  expect_identical(
+    with_hybrid_methods(list_unchop(list(foo_df, bar_df), indices = list(1, 2))),
+    exp
+  )
 
   wrapper_x_df <- data_frame(x = x_df)
   wrapper_y_df <- data_frame(x = y_df)
 
-  out <- with_methods(
-    c.vctrs_foobar = function(...) quux(NextMethod()),
-    vec_rbind(wrapper_x_df, wrapper_y_df)
+  out <- with_c_method(vec_rbind(wrapper_x_df, wrapper_y_df))
+  exp <- data_frame(x = data_frame(x = quux(c(1, 2))))
+  expect_identical(out, exp)
+
+  expect_identical(with_c_method(vec_c(wrapper_x_df, wrapper_y_df)), exp)
+  expect_identical(
+    with_c_method(list_unchop(list(wrapper_x_df, wrapper_y_df), indices = list(1, 2))),
+    exp
   )
-  expect_identical(out, data_frame(data_frame(x = quux(c(1, 2)))))
 })
 
 test_that("c() fallback works with unspecified columns", {
@@ -862,8 +934,8 @@ test_that("c() fallback works with unspecified columns", {
 
 test_that("c() fallback works with vctrs-powered data frame subclass", {
   local_methods(
-    c.vctrs_quux = function(...) quux(NextMethod(), c_dispatched = TRUE),
-    `[.vctrs_quux` = function(x, i, ...) quux(NextMethod(), bracket_dispatched = TRUE)
+    c.vctrs_quux = function(...) quux(vec_paste0(NextMethod(), "-c")),
+    `[.vctrs_quux` = function(x, i, ...) quux(vec_paste0(NextMethod(), "-["))
   )
   local_foobar_df_methods()
 
@@ -872,11 +944,11 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   df2 <- data_frame(x = quux(4:5))
 
   out <- vctrs::vec_rbind(df1, df2)
-  exp <- foobar(data_frame(x = quux(1:5, c_dispatched = TRUE)))
+  exp <- foobar(data_frame(x = quux(paste0(1:5, "-c"))))
   expect_identical(out, exp)
 
   out <- vctrs::vec_rbind(df2, df1)
-  exp <- foobar(data_frame(x = quux(c(4:5, 1:3), c_dispatched = TRUE)))
+  exp <- foobar(data_frame(x = quux(paste0(c(4:5, 1:3), "-c"))))
   expect_identical(out, exp)
 
   ### Disjoint case
@@ -885,7 +957,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
 
   out <- vctrs::vec_rbind(df1, df2)
   exp <- foobar(data_frame(
-    x = quux(c(1:3, NA, NA), bracket_dispatched = TRUE),
+    x = quux(c(paste0(1:3, "-c-["), paste0(c(NA, NA), "-["))),
     y = c(rep(NA, 3), 4:5)
   ))
   expect_identical(out, exp)
@@ -893,7 +965,7 @@ test_that("c() fallback works with vctrs-powered data frame subclass", {
   out <- vctrs::vec_rbind(df2, df1)
   exp <- foobar(data_frame(
     y = c(4:5, rep(NA, 3)),
-    x = quux(c(NA, NA, 1:3), bracket_dispatched = TRUE)
+    x = quux(c(paste0(c(NA, NA), "-["), paste0(1:3, "-c-[")))
   ))
   expect_identical(out, exp)
 })
@@ -995,7 +1067,7 @@ test_that("can't zap names when `.names_to` is supplied", {
       vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())
     ))
     (expect_error(
-      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .call = call("foo"))
+      vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(), .error_call = call("foo"))
     ))
   })
 })
@@ -1068,6 +1140,39 @@ test_that("can repair names of row-binded matrices", {
   })
 })
 
+test_that("vec_rbind() only restores one time", {
+  restored <- list()
+
+  local_methods(
+    vec_ptype2.vctrs_foobar.vctrs_foobar = function(x, y, ...) x,
+    vec_cast.vctrs_foobar.vctrs_foobar = function(x, to, ...) x,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
+    vec_restore.vctrs_foobar = function(x, to, ...) {
+      # Ignore proxying and restoration of ptypes
+      if (length(x)) {
+        restored <<- c(restored, list(x))
+      }
+      foobar(x)
+    }
+  )
+
+  df <- data_frame(x = foobar(1:3))
+  vec_rbind(df, df)
+
+  expect_equal(restored, list(
+    rep(na_int, 6),       # From `vec_init()`
+    foobar(c(1:3, 1:3))   # Final restoration
+  ))
+})
+
+test_that("vec_rbind() applies `base::c()` fallback to df-cols (#1462, #1640)", {
+  x <- structure(1, class = "myclass")
+  df <- tibble(a = tibble(x = x))
+  df <- vec_rbind(df, df)
+
+  expect_equal(df$a$x, structure(c(1, 1), class = "myclass"))
+})
+
 
 # Golden tests -------------------------------------------------------
 
@@ -1103,10 +1208,7 @@ test_that("row-binding performs expected allocations", {
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
 
-    # FIXME: The following recursive cases duplicate rownames
-    # excessively because df-cols are restored at each chunk
-    # assignment, causing a premature name-repair
-    "FIXME (#1217): Data frame with rownames (non-repaired, recursive case)"
+    "Data frame with rownames (non-repaired, recursive case) (#1217)"
     df <- data_frame(
       x = 1:2,
       y = data_frame(x = 1:2)
@@ -1115,8 +1217,20 @@ test_that("row-binding performs expected allocations", {
     dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
 
-    "FIXME (#1217): Data frame with rownames (repaired, recursive case)"
+    "Data frame with rownames (repaired, recursive case) (#1217)"
     dfs <- map(dfs, set_rownames_recursively)
     with_memory_prof(vec_rbind_list(dfs))
   })
+})
+
+test_that("`.names_to` is assigned after restoration (#1648)", {
+  df <- data_frame(x = factor("foo"))
+  expect_equal(
+    vec_rbind(name = df, .names_to = "x"),
+    data_frame(x = "name")
+  )
+
+  # This used to fail with:
+  #> Error in `vctrs::vec_rbind()`:
+  #> ! adding class "factor" to an invalid object
 })

@@ -18,7 +18,6 @@ vec_as_subscript(
 vec_as_subscript2(
   i,
   ...,
-  logical = c("cast", "error"),
   numeric = c("cast", "error"),
   character = c("cast", "error"),
   arg = NULL,
@@ -33,7 +32,7 @@ locations or names of the observations to get/set. Specify
 
 \item{...}{These dots are for future extensions and must be empty.}
 
-\item{logical, location, character}{How to handle logical, numeric,
+\item{logical, numeric, character}{How to handle logical, numeric,
 and character subscripts.
 
 If \code{"cast"} and the subscript is not one of the three base types
@@ -47,9 +46,7 @@ coercible depending on the setting of \code{character}.
 If \code{"error"}, the subscript type is disallowed and triggers an
 informative error.}
 
-\item{arg}{The argument name to be displayed in error messages when
-\code{vec_as_location()} and \code{vec_as_location2()} are used to check the
-type of a function input.}
+\item{arg}{The argument name to be displayed in error messages.}
 
 \item{call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be

@@ -6,14 +6,26 @@
 
 void r_inform(const char* fmt, ...);
 void r_warn(const char* fmt, ...);
-void r_interrupt();
+void r_interrupt(void);
 void r_no_return r_abort(const char* fmt, ...);
 void r_no_return r_abort_n(const struct r_pair* args, int n);
 void r_no_return r_abort_call(r_obj* call, const char* fmt, ...);
 
 // Formats input as an argument, using cli if available. Returns a
 // vmax-protected string.
-extern const char* (*r_format_error_arg)(r_obj* arg);
+extern
+const char* (*r_format_error_arg)(r_obj* arg);
+
+const char* r_format_lazy_error_arg(struct r_lazy arg);
+
+// Return vmax-protected strings
+extern
+const char* (*r_obj_type_friendly_full)(r_obj* x, bool value, bool length);
+
+static inline
+const char* r_obj_type_friendly(r_obj* x) {
+  return r_obj_type_friendly_full(x, true, false);
+}
 
 
 extern
@@ -24,7 +36,7 @@ void (*r_stop_internal)(const char* file,
                         const char* fmt,
                         ...);
 
-r_obj* r_peek_frame();
+r_obj* r_peek_frame(void);
 
 #define r_stop_internal(...)                            \
   (r_stop_internal)(__FILE__, __LINE__, r_peek_frame(), \

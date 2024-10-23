@@ -11,14 +11,14 @@ SEXP vctrs_equal(SEXP x, SEXP y, SEXP na_equal) {
   return vec_equal(x, y, c_na_equal);
 }
 
-static SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP int_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP dbl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP cpl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP chr_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
-static SEXP df_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP int_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP dbl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP cpl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP chr_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
+static inline SEXP df_equal(SEXP x, SEXP y, R_len_t size, bool na_equal);
 
 /*
  * Recycling and casting is done at the R level
@@ -41,15 +41,15 @@ SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
   SEXP out;
 
   switch (type) {
-  case vctrs_type_logical: out = lgl_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_integer: out = int_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_double: out = dbl_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_complex: out = cpl_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_character: out = chr_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_raw: out = raw_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_list: out = list_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_dataframe: out = df_equal(x_proxy, y_proxy, size, na_equal); break;
-  case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
+  case VCTRS_TYPE_logical: out = lgl_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_integer: out = int_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_double: out = dbl_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_complex: out = cpl_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_character: out = chr_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_raw: out = raw_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_list: out = list_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_dataframe: out = df_equal(x_proxy, y_proxy, size, na_equal); break;
+  case VCTRS_TYPE_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
   default: stop_unimplemented_vctrs_type("vec_equal", type);
   }
 
@@ -80,31 +80,31 @@ SEXP vec_equal(SEXP x, SEXP y, bool na_equal) {
   return out;
 
 
-static
+static inline
 SEXP lgl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(int, LOGICAL_RO, lgl_equal_na_equal, lgl_equal_na_propagate);
 }
-static
+static inline
 SEXP int_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(int, INTEGER_RO, int_equal_na_equal, int_equal_na_propagate);
 }
-static
+static inline
 SEXP dbl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(double, REAL_RO, dbl_equal_na_equal, dbl_equal_na_propagate);
 }
-static
+static inline
 SEXP cpl_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal, cpl_equal_na_propagate);
 }
-static
+static inline
 SEXP chr_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(SEXP, STRING_PTR_RO, chr_equal_na_equal, chr_equal_na_propagate);
 }
-static
+static inline
 SEXP raw_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(Rbyte, RAW_RO, raw_equal_na_equal, raw_equal_na_propagate);
 }
-static
+static inline
 SEXP list_equal(SEXP x, SEXP y, R_len_t size, bool na_equal) {
   EQUAL(SEXP, VECTOR_PTR_RO, list_equal_na_equal, list_equal_na_propagate);
 }
@@ -200,15 +200,15 @@ void vec_equal_col_na_equal(SEXP x,
                             int* p_out,
                             struct df_short_circuit_info* p_info) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical: EQUAL_COL(int, LOGICAL_RO, lgl_equal_na_equal); break;
-  case vctrs_type_integer: EQUAL_COL(int, INTEGER_RO, int_equal_na_equal); break;
-  case vctrs_type_double: EQUAL_COL(double, REAL_RO, dbl_equal_na_equal); break;
-  case vctrs_type_complex: EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal); break;
-  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_na_equal); break;
-  case vctrs_type_raw: EQUAL_COL(Rbyte, RAW_RO, raw_equal_na_equal); break;
-  case vctrs_type_list: EQUAL_COL(SEXP, VECTOR_PTR_RO, list_equal_na_equal); break;
-  case vctrs_type_dataframe: r_stop_internal("Data frame columns should be flattened already.");
-  case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
+  case VCTRS_TYPE_logical: EQUAL_COL(int, LOGICAL_RO, lgl_equal_na_equal); break;
+  case VCTRS_TYPE_integer: EQUAL_COL(int, INTEGER_RO, int_equal_na_equal); break;
+  case VCTRS_TYPE_double: EQUAL_COL(double, REAL_RO, dbl_equal_na_equal); break;
+  case VCTRS_TYPE_complex: EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_equal); break;
+  case VCTRS_TYPE_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_na_equal); break;
+  case VCTRS_TYPE_raw: EQUAL_COL(Rbyte, RAW_RO, raw_equal_na_equal); break;
+  case VCTRS_TYPE_list: EQUAL_COL(SEXP, VECTOR_PTR_RO, list_equal_na_equal); break;
+  case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should be flattened already.");
+  case VCTRS_TYPE_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
   default: stop_unimplemented_vctrs_type("vec_equal", vec_proxy_typeof(x));
   }
 }
@@ -219,15 +219,15 @@ void vec_equal_col_na_propagate(SEXP x,
                                 int* p_out,
                                 struct df_short_circuit_info* p_info) {
   switch (vec_proxy_typeof(x)) {
-  case vctrs_type_logical: EQUAL_COL(int, LOGICAL_RO, lgl_equal_na_propagate); break;
-  case vctrs_type_integer: EQUAL_COL(int, INTEGER_RO, int_equal_na_propagate); break;
-  case vctrs_type_double: EQUAL_COL(double, REAL_RO, dbl_equal_na_propagate); break;
-  case vctrs_type_complex: EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_propagate); break;
-  case vctrs_type_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_na_propagate); break;
-  case vctrs_type_raw: EQUAL_COL(Rbyte, RAW_RO, raw_equal_na_propagate); break;
-  case vctrs_type_list: EQUAL_COL(SEXP, VECTOR_PTR_RO, list_equal_na_propagate); break;
-  case vctrs_type_dataframe: r_stop_internal("Data frame columns should be flattened already.");
-  case vctrs_type_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
+  case VCTRS_TYPE_logical: EQUAL_COL(int, LOGICAL_RO, lgl_equal_na_propagate); break;
+  case VCTRS_TYPE_integer: EQUAL_COL(int, INTEGER_RO, int_equal_na_propagate); break;
+  case VCTRS_TYPE_double: EQUAL_COL(double, REAL_RO, dbl_equal_na_propagate); break;
+  case VCTRS_TYPE_complex: EQUAL_COL(Rcomplex, COMPLEX_RO, cpl_equal_na_propagate); break;
+  case VCTRS_TYPE_character: EQUAL_COL(SEXP, STRING_PTR_RO, chr_equal_na_propagate); break;
+  case VCTRS_TYPE_raw: EQUAL_COL(Rbyte, RAW_RO, raw_equal_na_propagate); break;
+  case VCTRS_TYPE_list: EQUAL_COL(SEXP, VECTOR_PTR_RO, list_equal_na_propagate); break;
+  case VCTRS_TYPE_dataframe: r_stop_internal("Data frame columns should be flattened already.");
+  case VCTRS_TYPE_scalar: Rf_errorcall(R_NilValue, "Can't compare scalars with `vec_equal()`.");
   default: stop_unimplemented_vctrs_type("vec_equal", vec_proxy_typeof(x));
   }
 }

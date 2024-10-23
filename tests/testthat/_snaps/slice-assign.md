@@ -16,9 +16,8 @@
     Output
       <error/vctrs_error_subscript_size>
       Error:
-      ! Must assign to elements with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 2 but subscript has size 3.
+      ! Can't assign elements.
+      x Logical subscript must be size 1 or 2, not 3.
 
 ---
 
@@ -28,9 +27,8 @@
     Output
       <error/vctrs_error_subscript_size>
       Error:
-      ! Must assign to elements with a valid subscript vector.
-      i Logical subscripts must match the size of the indexed input.
-      x Input has size 32 but subscript has size 2.
+      ! Can't assign elements.
+      x Logical subscript must be size 1 or 32, not 2.
 
 # must assign existing elements
 
@@ -74,7 +72,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must assign to elements with a valid subscript vector.
+      ! Can't assign elements.
       x Negative and positive locations can't be mixed.
       i Subscript has a positive value at location 2.
     Code
@@ -83,7 +81,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must assign to elements with a valid subscript vector.
+      ! Can't assign elements.
       x Negative locations can't have missing values.
       i Subscript has a missing value at location 2.
 
@@ -93,7 +91,7 @@
       (expect_error(vec_assign(1:2, 1L, "x", x_arg = "foo", value_arg = "bar"),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `vec_assign()`:
       ! Can't convert `bar` <character> to match type of `foo` <integer>.
     Code

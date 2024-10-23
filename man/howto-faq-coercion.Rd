@@ -180,8 +180,8 @@ incompatibility is signalled by calling \code{stop_incompatible_type()}.
 
 In the following example, we implement a self-self ptype2 method for a
 hypothetical subclass of \verb{<factor>} that has stricter combination
-semantics. The method throws when the levels of the two factors are not
-compatible.
+semantics. The method throws an error when the levels of the two factors
+are not compatible.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{#' @export
 vec_ptype2.my_strict_factor.my_strict_factor <- function(x, y, ..., x_arg = "", y_arg = "") \{
@@ -256,11 +256,11 @@ doesn’t know how to combine natural with the richer integer and double
 types:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{vec_c(new_natural(1), 10L)
-#> Error:
-#> ! Can't convert <my_natural> to <integer>.
+#> Error in `vec_c()`:
+#> ! Can't convert `..1` <my_natural> to <integer>.
 vec_c(1.5, new_natural(1))
-#> Error:
-#> ! Can't convert <my_natural> to <double>.
+#> Error in `vec_c()`:
+#> ! Can't convert `..2` <my_natural> to <double>.
 }\if{html}{\out{</div>}}
 
 This is quick work which completes the implementation of coercion

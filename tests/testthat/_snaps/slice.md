@@ -5,16 +5,15 @@
     Output
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
-      ! Must subset elements with a valid subscript vector.
-      x Subscript `i` has the wrong type `date`.
-      i It must be logical, numeric, or character.
+      ! Can't subset elements with `i`.
+      x `i` must be logical, numeric, or character, not a <Date> object.
     Code
       (expect_error(vec_slice(1:3, matrix(TRUE, nrow = 1)), class = "vctrs_error_subscript_type")
       )
     Output
       <error/vctrs_error_subscript_type>
       Error in `vec_slice()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `i`.
       x Subscript `i` must be a simple vector, not a matrix.
 
 # can't index beyond the end of a vector
@@ -43,7 +42,7 @@
     Output
       <error/vctrs_error_subscript_type>
       Error:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `2^31`.
       x Can't convert from `2^31` <double> to <integer> due to loss of precision.
 
 # Unnamed vector with character subscript is caught
@@ -60,7 +59,7 @@
       vec_slice(1:3, -c(1L, NA))
     Condition
       Error in `vec_slice()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `i`.
       x Negative locations can't have missing values.
       i Subscript `i` has a missing value at location 2.
 
@@ -70,7 +69,7 @@
       vec_slice(1:3, c(-1L, 1L))
     Condition
       Error in `vec_slice()`:
-      ! Must subset elements with a valid subscript vector.
+      ! Can't subset elements with `i`.
       x Negative and positive locations can't be mixed.
       i Subscript `i` has a positive value at location 2.
 
@@ -100,7 +99,7 @@
     Condition
       Error in `vec_slice()`:
       ! Can't subset elements past the end.
-      i Locations 100, 101, 102, 103, 104, ... don't exist.
+      i Locations 100, 101, 102, ..., 109, and 110 don't exist.
       i There are only 26 elements.
 
 ---
@@ -134,7 +133,7 @@
     Output
       <error/rlang_error>
       Error in `vec_init()`:
-      ! `n` must be a single number, not a double vector of length 2.
+      ! `n` must be a single number, not a double vector.
     Code
       (expect_error(vec_init(1L, -1L)))
     Output

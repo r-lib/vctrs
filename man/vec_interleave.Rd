@@ -8,12 +8,13 @@ vec_interleave(
   ...,
   .ptype = NULL,
   .name_spec = NULL,
-  .name_repair = c("minimal", "unique", "check_unique", "universal")
+  .name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet",
+    "universal_quiet")
 )
 }
 \arguments{
 \item{...}{Vectors to interleave. These will be
-\link[=vector_recycling_rules]{recycled} to a common size.}
+\link[=theory-faq-recycling]{recycled} to a common size.}
 
 \item{.ptype}{If \code{NULL}, the default, the output type is determined by
 computing the common type across all elements of \code{...}.
@@ -57,7 +58,7 @@ It is a more efficient equivalent to the following usage of \code{vec_c()}:
 
 \subsection{vctrs dependencies}{
 \itemize{
-\item \code{\link[=vec_unchop]{vec_unchop()}}
+\item \code{\link[=list_unchop]{list_unchop()}}
 }
 }
 }

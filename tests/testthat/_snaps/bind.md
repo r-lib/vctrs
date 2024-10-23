@@ -3,21 +3,21 @@
     Code
       (expect_error(vec_rbind(x_int, x_chr), class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `vec_rbind()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
     Code
-      (expect_error(vec_rbind(x_int, x_chr, .call = call("foo")), class = "vctrs_error_incompatible_type")
+      (expect_error(vec_rbind(x_int, x_chr, .error_call = call("foo")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
       Error in `foo()`:
       ! Can't combine `..1$x` <integer> and `..2$x` <character>.
     Code
-      (expect_error(vec_rbind(x_int, x_chr, .ptype = x_chr, .call = call("foo")),
+      (expect_error(vec_rbind(x_int, x_chr, .ptype = x_chr, .error_call = call("foo")),
       class = "vctrs_error_incompatible_type"))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error in `foo()`:
       ! Can't convert `..1$x` <integer> to match type of `x` <character>.
 
@@ -55,6 +55,19 @@
       x These names are duplicated:
         * "a" at locations 1 and 2.
 
+# can repair names quietly
+
+    Code
+      res_unique <- vec_rbind(c(x = 1, x = 2), c(x = 3, x = 4), .name_repair = "unique_quiet")
+      res_universal <- vec_rbind(c(`if` = 1, `in` = 2), c(`if` = 3, `for` = 4),
+      .name_repair = "universal_quiet")
+
+---
+
+    Code
+      res_unique <- vec_cbind(x = 1, x = 2, .name_repair = "unique_quiet")
+      res_universal <- vec_cbind(`if` = 1, `in` = 2, .name_repair = "universal_quiet")
+
 # vec_rbind() fails with arrays of dimensionality > 3
 
     Code
@@ -64,7 +77,7 @@
       Error in `vec_rbind()`:
       ! Can't bind arrays.
     Code
-      (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .call = call("foo"))))
+      (expect_error(vec_rbind(array(NA, c(1, 1, 1)), .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -75,8 +88,10 @@
     Code
       (expect_error(vec_rbind(foo = df1, df2, .names_to = NULL), "specification"))
     Output
-      <simpleError: Can't merge the outer name `foo` with a vector of length > 1.
-      Please supply a `.name_spec` specification.>
+      <error/rlang_error>
+      Error in `vec_rbind()`:
+      ! Can't merge the outer name `foo` with a vector of length > 1.
+      Please supply a `.name_spec` specification.
 
 # vec_cbind() reports error context
 
@@ -87,7 +102,7 @@
       Error in `vec_cbind()`:
       ! `..1` must be a vector, not a <vctrs_foobar> object.
     Code
-      (expect_error(vec_cbind(foobar(list()), .call = call("foo"))))
+      (expect_error(vec_cbind(foobar(list()), .error_call = call("foo"))))
     Output
       <error/vctrs_error_scalar_type>
       Error in `foo()`:
@@ -99,7 +114,7 @@
       Error in `vec_cbind()`:
       ! Can't recycle `a` (size 2) to match `b` (size 0).
     Code
-      (expect_error(vec_cbind(a = 1:2, b = int(), .call = call("foo"))))
+      (expect_error(vec_cbind(a = 1:2, b = int(), .error_call = call("foo"))))
     Output
       <error/vctrs_error_incompatible_size>
       Error in `foo()`:
@@ -162,7 +177,7 @@
       Error in `vec_rbind()`:
       ! `.names_to` must be `NULL`, a string, or an `rlang::zap()` object.
     Code
-      (expect_error(vec_rbind(.names_to = letters, .call = call("foo"))))
+      (expect_error(vec_rbind(.names_to = letters, .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -177,7 +192,7 @@
       Error in `vec_cbind()`:
       ! Can't bind arrays.
     Code
-      (expect_error(vec_cbind(a, .call = call("foo"))))
+      (expect_error(vec_cbind(a, .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -351,7 +366,7 @@
       x These names are duplicated:
         * "x" at locations 1 and 2.
     Code
-      (expect_error(vec_rbind(df, df, .name_repair = "check_unique", .call = call(
+      (expect_error(vec_rbind(df, df, .name_repair = "check_unique", .error_call = call(
         "foo")), class = "vctrs_error_names_must_be_unique"))
     Output
       <error/vctrs_error_names_must_be_unique>
@@ -368,8 +383,8 @@
       (expect_error(vec_rbind(set_names(x, "x"), set_names(y, "x")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
-      Error:
+      <error/vctrs_error_ptype2>
+      Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_foobar> and `..2` <vctrs_foobar>.
       x Some attributes are incompatible.
       i The author of the class should implement vctrs methods.
@@ -383,8 +398,8 @@
       (expect_error(vec_rbind(set_names(joe, "x"), set_names(jane, "y")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
-      Error:
+      <error/vctrs_error_ptype2>
+      Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 
 # can't zap names when `.names_to` is supplied
@@ -397,7 +412,7 @@
       ! Can't zap outer names when `.names_to` is supplied.
     Code
       (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(),
-      .call = call("foo"))))
+      .error_call = call("foo"))))
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -439,17 +454,17 @@
     Output
       [1] 13.8KB
     Code
-      # FIXME (#1217): Data frame with rownames (non-repaired, recursive case)
+      # Data frame with rownames (non-repaired, recursive case) (#1217)
       df <- data_frame(x = 1:2, y = data_frame(x = 1:2))
       dfs <- rep(list(df), 100)
       dfs <- map2(dfs, seq_along(dfs), set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 909KB
+      [1] 13KB
     Code
-      # FIXME (#1217): Data frame with rownames (repaired, recursive case)
+      # Data frame with rownames (repaired, recursive case) (#1217)
       dfs <- map(dfs, set_rownames_recursively)
       with_memory_prof(vec_rbind_list(dfs))
     Output
-      [1] 922KB
+      [1] 25.3KB
 

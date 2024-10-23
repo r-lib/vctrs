@@ -28,9 +28,9 @@ extern SEXP vctrs_group_id(SEXP);
 extern SEXP vctrs_group_rle(SEXP);
 extern SEXP vec_group_loc(SEXP);
 extern SEXP vctrs_equal(SEXP, SEXP, SEXP);
-extern r_obj* ffi_vec_equal_na(r_obj*);
+extern r_obj* ffi_vec_detect_missing(r_obj*);
 extern r_obj* ffi_vec_any_missing(r_obj* x);
-extern SEXP vctrs_compare(SEXP, SEXP, SEXP);
+extern r_obj* ffi_vec_compare(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_match(SEXP, SEXP, SEXP, SEXP);
 extern r_obj* vctrs_in(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_duplicated_any(SEXP);
@@ -40,32 +40,34 @@ extern SEXP vctrs_dim(SEXP);
 extern SEXP vctrs_dim_n(SEXP);
 extern SEXP vctrs_is_unspecified(SEXP);
 extern SEXP vctrs_typeof(SEXP, SEXP);
-extern SEXP vctrs_is_vector(SEXP);
+extern r_obj* ffi_obj_is_vector(r_obj*);
+extern r_obj* ffi_obj_check_vector(r_obj*, r_obj*);
+extern r_obj* ffi_vec_check_size(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_ptype2(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_typeof2(SEXP, SEXP);
-extern SEXP vctrs_typeof2_s3(SEXP, SEXP);
+extern r_obj* ffi_typeof2(r_obj*, r_obj*);
+extern r_obj* ffi_typeof2_s3(r_obj*, r_obj*);
 extern r_obj* ffi_cast(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_location(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_init(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_chop(SEXP, SEXP);
-extern SEXP vctrs_unchop(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_chop_seq(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_vec_chop(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_unchop(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_chop_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_rep(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_restore(SEXP, SEXP, SEXP);
-extern SEXP vctrs_restore_default(SEXP, SEXP);
-extern SEXP vec_proxy(SEXP);
+extern r_obj* ffi_vec_restore(r_obj*, r_obj*);
+extern r_obj* ffi_vec_restore_recurse(r_obj*, r_obj*);
+extern r_obj* ffi_vec_restore_default(r_obj*, r_obj*);
 extern SEXP vec_proxy_equal(SEXP);
 extern SEXP vec_proxy_compare(SEXP);
 extern SEXP vec_proxy_order(SEXP);
-extern SEXP vctrs_df_proxy(SEXP, SEXP);
+extern r_obj* ffi_df_proxy(r_obj*, r_obj*);
 extern SEXP vctrs_unspecified(SEXP);
 extern r_obj* ffi_ptype(r_obj*, r_obj*, r_obj*);
 extern SEXP vec_ptype_finalise(SEXP);
-extern SEXP vctrs_minimal_names(SEXP);
-extern SEXP vctrs_unique_names(SEXP, SEXP);
-extern SEXP vctrs_as_minimal_names(SEXP);
+extern r_obj* ffi_minimal_names(r_obj*);
+extern r_obj* ffi_unique_names(r_obj*, r_obj*);
+extern SEXP ffi_as_minimal_names(SEXP);
 extern SEXP vec_names(SEXP);
 extern SEXP vctrs_is_unique_names(SEXP);
 extern SEXP vctrs_as_unique_names(SEXP, SEXP);
@@ -75,39 +77,39 @@ extern r_obj* ffi_df_ptype2_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_type_info(r_obj*);
 extern SEXP ffi_proxy_info(SEXP);
 extern r_obj* ffi_class_type(r_obj*);
-extern SEXP vctrs_bare_df_restore(SEXP, SEXP, SEXP);
+extern r_obj* ffi_vec_bare_df_restore(r_obj*, r_obj*);
 extern r_obj* ffi_recycle(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_seq(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_set_attributes(SEXP, SEXP);
 extern r_obj* ffi_as_df_row(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_outer_names(SEXP, SEXP, SEXP);
+extern r_obj* ffi_outer_names(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_df_size(SEXP);
 extern r_obj* ffi_as_df_col(r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_apply_name_spec(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_unset_s4(SEXP);
+extern r_obj* ffi_apply_name_spec(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_unset_s4(r_obj*);
 extern SEXP vctrs_validate_name_repair_arg(SEXP);
 extern SEXP vctrs_validate_minimal_names(SEXP, SEXP);
-extern r_obj* ffi_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_as_names(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_is_partial(r_obj*);
-extern SEXP vctrs_is_list(SEXP);
+extern r_obj* ffi_obj_is_list(r_obj*);
 extern SEXP vctrs_try_catch_callback(SEXP, SEXP);
 extern r_obj* ffi_is_coercible(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_as_subscript_result(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_df_flatten_info(r_obj*);
 extern r_obj* df_flatten(r_obj*);
-extern SEXP vctrs_linked_version();
+extern SEXP vctrs_linked_version(void);
 extern r_obj* ffi_tib_ptype2(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_tib_cast(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_assign_params(r_obj*, r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_has_dim(SEXP);
-extern SEXP vctrs_rep(SEXP, SEXP);
-extern SEXP vctrs_rep_each(SEXP, SEXP);
+extern r_obj* ffi_vec_rep(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_rep_each(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_maybe_shared_col(SEXP, SEXP);
-extern SEXP vctrs_new_df_unshared_col();
-extern SEXP vctrs_shaped_ptype(SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_shape2(SEXP, SEXP, SEXP);
+extern SEXP vctrs_new_df_unshared_col(void);
+extern r_obj* ffi_vec_shaped_ptype(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_shape2(r_obj*, r_obj*, r_obj*);
 extern SEXP vctrs_new_date(SEXP);
 extern SEXP vctrs_date_validate(SEXP);
 extern SEXP vctrs_new_datetime(SEXP, SEXP);
@@ -120,9 +122,10 @@ extern r_obj* ffi_cast_dispatch_native(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r
 extern SEXP vctrs_fast_c(SEXP, SEXP);
 extern r_obj* ffi_data_frame(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_df_list(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_identify_runs(SEXP);
-extern SEXP vctrs_locate_runs(SEXP, SEXP);
-extern SEXP vctrs_detect_runs(SEXP, SEXP);
+extern r_obj* ffi_vec_detect_run_bounds(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_locate_run_bounds(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_identify_runs(r_obj*, r_obj*);
+extern r_obj* ffi_vec_run_sizes(r_obj*, r_obj*);
 extern SEXP vctrs_slice_complete(SEXP);
 extern SEXP vctrs_locate_complete(SEXP);
 extern SEXP vctrs_detect_complete(SEXP);
@@ -130,9 +133,9 @@ extern SEXP vctrs_normalize_encoding(SEXP);
 extern SEXP vctrs_order(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_locate_sorted_groups(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP vctrs_order_info(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP vctrs_unrep(SEXP);
+extern r_obj* ffi_vec_unrep(r_obj*, r_obj*);
 extern SEXP vctrs_fill_missing(SEXP, SEXP, SEXP);
-extern SEXP vctrs_chr_paste_prefix(SEXP, SEXP, SEXP);
+extern r_obj* ffi_chr_paste_prefix(r_obj*, r_obj*, r_obj*);
 extern r_obj* vctrs_rank(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* vctrs_integer64_proxy(r_obj*);
 extern r_obj* vctrs_integer64_restore(r_obj*);
@@ -140,20 +143,28 @@ extern r_obj* vctrs_list_drop_empty(r_obj*);
 extern r_obj* vctrs_is_altrep(r_obj* x);
 extern r_obj* ffi_interleave_indices(r_obj*, r_obj*);
 extern r_obj* ffi_compute_nesting_container_info(r_obj*, r_obj*);
-extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_locate_matches(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_groups(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_locate_groups(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_interval_complement(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_interval_locate_containers(r_obj*, r_obj*);
 extern r_obj* ffi_check_list(r_obj*, r_obj*);
 extern r_obj* ffi_list_all_vectors(r_obj*, r_obj*);
 extern r_obj* ffi_list_check_all_vectors(r_obj*, r_obj*);
 extern r_obj* ffi_as_short_length(r_obj*, r_obj*);
 extern r_obj* ffi_s3_get_method(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_all_size(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_check_all_size(r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_set_intersect(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_set_difference(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_set_union(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_set_symmetric_difference(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_expand_grid(r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
 // In the public header
-extern bool vec_is_vector(SEXP);
+extern bool obj_is_vector(SEXP);
 extern R_len_t short_vec_size(SEXP);
 extern SEXP short_vec_recycle(SEXP, R_len_t);
 
@@ -173,152 +184,173 @@ SEXP vctrs_init_library(SEXP);
 // Defined in altrep-rle.h
 extern SEXP altrep_rle_Make(SEXP);
 extern SEXP altrep_rle_is_materialized(SEXP);
-void vctrs_init_altrep_rle(DllInfo* dll);
+void vctrs_init_altrep_rle(DllInfo*);
+
+// Defined in altrep-lazy-character.c
+extern r_obj* ffi_altrep_new_lazy_character(r_obj*);
+extern r_obj* ffi_altrep_lazy_character_is_materialized(r_obj*);
+extern void vctrs_init_altrep_lazy_character(DllInfo*);
 
 static const R_CallMethodDef CallEntries[] = {
-  {"vctrs_list_get",                        (DL_FUNC) &vctrs_list_get, 2},
-  {"vctrs_list_set",                        (DL_FUNC) &vctrs_list_set, 3},
-  {"vctrs_field_get",                       (DL_FUNC) &vctrs_field_get, 2},
-  {"vctrs_field_set",                       (DL_FUNC) &vctrs_field_set, 3},
-  {"vctrs_fields",                          (DL_FUNC) &vctrs_fields, 1},
-  {"vctrs_n_fields",                        (DL_FUNC) &vctrs_n_fields, 1},
-  {"vctrs_hash",                            (DL_FUNC) &vctrs_hash, 1},
-  {"vctrs_hash_object",                     (DL_FUNC) &vctrs_hash_object, 1},
-  {"vctrs_equal_object",                    (DL_FUNC) &vctrs_equal_object, 2},
-  {"vctrs_unique_loc",                      (DL_FUNC) &vctrs_unique_loc, 1},
-  {"vctrs_duplicated",                      (DL_FUNC) &vctrs_duplicated, 1},
-  {"vctrs_duplicated_any",                  (DL_FUNC) &vctrs_duplicated_any, 1},
-  {"vctrs_count",                           (DL_FUNC) &vctrs_count, 1},
-  {"vctrs_id",                              (DL_FUNC) &vctrs_id, 1},
-  {"vctrs_n_distinct",                      (DL_FUNC) &vctrs_n_distinct, 1},
-  {"vctrs_split",                           (DL_FUNC) &vec_split, 2},
-  {"vctrs_group_id",                        (DL_FUNC) &vctrs_group_id, 1},
-  {"vctrs_group_rle",                       (DL_FUNC) &vctrs_group_rle, 1},
-  {"vctrs_group_loc",                       (DL_FUNC) &vec_group_loc, 1},
-  {"ffi_size",                              (DL_FUNC) &ffi_size, 2},
-  {"ffi_list_sizes",                        (DL_FUNC) &ffi_list_sizes, 2},
-  {"vctrs_dim",                             (DL_FUNC) &vctrs_dim, 1},
-  {"vctrs_dim_n",                           (DL_FUNC) &vctrs_dim_n, 1},
-  {"vctrs_is_unspecified",                  (DL_FUNC) &vctrs_is_unspecified, 1},
-  {"vctrs_equal",                           (DL_FUNC) &vctrs_equal, 3},
-  {"ffi_vec_equal_na",                      (DL_FUNC) &ffi_vec_equal_na, 1},
-  {"ffi_vec_any_missing",                   (DL_FUNC) &ffi_vec_any_missing, 1},
-  {"vctrs_compare",                         (DL_FUNC) &vctrs_compare, 3},
-  {"vctrs_match",                           (DL_FUNC) &vctrs_match, 4},
-  {"vctrs_in",                              (DL_FUNC) &vctrs_in, 4},
-  {"vctrs_typeof",                          (DL_FUNC) &vctrs_typeof, 2},
-  {"vctrs_init_library",                    (DL_FUNC) &vctrs_init_library, 1},
-  {"vctrs_is_vector",                       (DL_FUNC) &vctrs_is_vector, 1},
-  {"ffi_ptype2",                            (DL_FUNC) &ffi_ptype2, 3},
-  {"vctrs_typeof2",                         (DL_FUNC) &vctrs_typeof2, 2},
-  {"vctrs_typeof2_s3",                      (DL_FUNC) &vctrs_typeof2_s3, 2},
-  {"ffi_cast",                              (DL_FUNC) &ffi_cast, 3},
-  {"ffi_as_location",                       (DL_FUNC) &ffi_as_location, 8},
-  {"ffi_slice",                             (DL_FUNC) &ffi_slice, 3},
-  {"ffi_init",                              (DL_FUNC) &ffi_init, 3},
-  {"vctrs_chop",                            (DL_FUNC) &vctrs_chop, 2},
-  {"vctrs_unchop",                          (DL_FUNC) &vctrs_unchop, 5},
-  {"vctrs_chop_seq",                        (DL_FUNC) &vctrs_chop_seq, 4},
-  {"ffi_slice_seq",                         (DL_FUNC) &ffi_slice_seq, 4},
-  {"ffi_slice_rep",                         (DL_FUNC) &ffi_slice_rep, 3},
-  {"vctrs_restore",                         (DL_FUNC) &vctrs_restore, 3},
-  {"vctrs_restore_default",                 (DL_FUNC) &vctrs_restore_default, 2},
-  {"vctrs_proxy",                           (DL_FUNC) &vec_proxy, 1},
-  {"vctrs_proxy_equal",                     (DL_FUNC) &vec_proxy_equal, 1},
-  {"vctrs_proxy_compare",                   (DL_FUNC) &vec_proxy_compare, 1},
-  {"vctrs_proxy_order",                     (DL_FUNC) &vec_proxy_order, 1},
-  {"vctrs_df_proxy",                        (DL_FUNC) &vctrs_df_proxy, 2},
-  {"vctrs_unspecified",                     (DL_FUNC) &vctrs_unspecified, 1},
-  {"ffi_ptype",                             (DL_FUNC) &ffi_ptype, 3},
-  {"vctrs_ptype_finalise",                  (DL_FUNC) &vec_ptype_finalise, 1},
-  {"vctrs_minimal_names",                   (DL_FUNC) &vctrs_minimal_names, 1},
-  {"vctrs_unique_names",                    (DL_FUNC) &vctrs_unique_names, 2},
-  {"vctrs_as_minimal_names",                (DL_FUNC) &vctrs_as_minimal_names, 1},
-  {"vctrs_names",                           (DL_FUNC) &vec_names, 1},
-  {"vctrs_is_unique_names",                 (DL_FUNC) &vctrs_is_unique_names, 1},
-  {"vctrs_as_unique_names",                 (DL_FUNC) &vctrs_as_unique_names, 2},
-  {"vctrs_set_names",                       (DL_FUNC) &vec_set_names, 2},
-  {"ffi_df_cast_opts",                      (DL_FUNC) &ffi_df_cast_opts, 4},
-  {"ffi_df_ptype2_opts",                    (DL_FUNC) &ffi_df_ptype2_opts, 4},
-  {"ffi_type_info",                         (DL_FUNC) &ffi_type_info, 1},
-  {"ffi_proxy_info",                        (DL_FUNC) &ffi_proxy_info, 1},
-  {"ffi_class_type",                        (DL_FUNC) &ffi_class_type, 1},
-  {"vctrs_bare_df_restore",                 (DL_FUNC) &vctrs_bare_df_restore, 3},
-  {"ffi_recycle",                           (DL_FUNC) &ffi_recycle, 3},
-  {"ffi_assign",                            (DL_FUNC) &ffi_assign, 4},
-  {"ffi_assign_seq",                        (DL_FUNC) &ffi_assign_seq, 5},
-  {"vctrs_set_attributes",                  (DL_FUNC) &vctrs_set_attributes, 2},
-  {"ffi_as_df_row",                         (DL_FUNC) &ffi_as_df_row, 3},
-  {"vctrs_outer_names",                     (DL_FUNC) &vctrs_outer_names, 3},
-  {"vctrs_df_size",                         (DL_FUNC) &vctrs_df_size, 1},
-  {"ffi_as_df_col",                         (DL_FUNC) &ffi_as_df_col, 3},
-  {"vctrs_apply_name_spec",                 (DL_FUNC) &vctrs_apply_name_spec, 4},
-  {"vctrs_unset_s4",                        (DL_FUNC) &vctrs_unset_s4, 1},
-  {"vctrs_altrep_rle_Make",                 (DL_FUNC) &altrep_rle_Make, 1},
-  {"vctrs_altrep_rle_is_materialized",      (DL_FUNC) &altrep_rle_is_materialized, 1},
-  {"vctrs_validate_name_repair_arg",        (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
-  {"vctrs_validate_minimal_names",          (DL_FUNC) &vctrs_validate_minimal_names, 2},
-  {"ffi_as_names",                          (DL_FUNC) &ffi_as_names, 4},
-  {"ffi_is_partial",                        (DL_FUNC) &ffi_is_partial, 1},
-  {"vctrs_is_list",                         (DL_FUNC) &vctrs_is_list, 1},
-  {"vctrs_try_catch_callback",              (DL_FUNC) &vctrs_try_catch_callback, 2},
-  {"ffi_is_coercible",                      (DL_FUNC) &ffi_is_coercible, 4},
-  {"ffi_as_subscript",                      (DL_FUNC) &ffi_as_subscript, 5},
-  {"ffi_as_subscript_result",               (DL_FUNC) &ffi_as_subscript_result, 5},
-  {"ffi_df_flatten_info",                   (DL_FUNC) &ffi_df_flatten_info, 1},
-  {"ffi_df_flatten",                        (DL_FUNC) &df_flatten, 1},
-  {"vctrs_linked_version",                  (DL_FUNC) &vctrs_linked_version, 0},
-  {"ffi_tib_ptype2",                        (DL_FUNC) &ffi_tib_ptype2, 5},
-  {"ffi_tib_cast",                          (DL_FUNC) &ffi_tib_cast, 5},
-  {"ffi_assign_params",                     (DL_FUNC) &ffi_assign_params, 4},
-  {"vctrs_has_dim",                         (DL_FUNC) &vctrs_has_dim, 1},
-  {"vctrs_rep",                             (DL_FUNC) &vctrs_rep, 2},
-  {"vctrs_rep_each",                        (DL_FUNC) &vctrs_rep_each, 2},
-  {"vctrs_maybe_shared_col",                (DL_FUNC) &vctrs_maybe_shared_col, 2},
-  {"vctrs_new_df_unshared_col",             (DL_FUNC) &vctrs_new_df_unshared_col, 0},
-  {"vctrs_shaped_ptype",                    (DL_FUNC) &vctrs_shaped_ptype, 4},
-  {"vctrs_shape2",                          (DL_FUNC) &vctrs_shape2, 3},
-  {"vctrs_new_date",                        (DL_FUNC) &vctrs_new_date, 1},
-  {"vctrs_date_validate",                   (DL_FUNC) &vctrs_date_validate, 1},
-  {"vctrs_new_datetime",                    (DL_FUNC) &vctrs_new_datetime, 2},
-  {"vctrs_datetime_validate",               (DL_FUNC) &vctrs_datetime_validate, 1},
-  {"ffi_ptype2_opts",                       (DL_FUNC) &ffi_ptype2_opts, 4},
-  {"vctrs_s3_find_method",                  (DL_FUNC) &vctrs_s3_find_method, 3},
-  {"vctrs_implements_ptype2",               (DL_FUNC) &vctrs_implements_ptype2, 1},
-  {"ffi_ptype2_dispatch_native",            (DL_FUNC) &ffi_ptype2_dispatch_native, 4},
-  {"ffi_cast_dispatch_native",              (DL_FUNC) &ffi_cast_dispatch_native, 6},
-  {"vctrs_fast_c",                          (DL_FUNC) &vctrs_fast_c, 2},
-  {"ffi_data_frame",                        (DL_FUNC) &ffi_data_frame, 4},
-  {"ffi_df_list",                           (DL_FUNC) &ffi_df_list, 5},
-  {"vctrs_identify_runs",                   (DL_FUNC) &vctrs_identify_runs, 1},
-  {"vctrs_locate_runs",                     (DL_FUNC) &vctrs_locate_runs, 2},
-  {"vctrs_detect_runs",                     (DL_FUNC) &vctrs_detect_runs, 2},
-  {"vctrs_slice_complete",                  (DL_FUNC) &vctrs_slice_complete, 1},
-  {"vctrs_locate_complete",                 (DL_FUNC) &vctrs_locate_complete, 1},
-  {"vctrs_detect_complete",                 (DL_FUNC) &vctrs_detect_complete, 1},
-  {"vctrs_normalize_encoding",              (DL_FUNC) &vctrs_normalize_encoding, 1},
-  {"vctrs_order",                           (DL_FUNC) &vctrs_order, 5},
-  {"vctrs_locate_sorted_groups",            (DL_FUNC) &vctrs_locate_sorted_groups, 5},
-  {"vctrs_order_info",                      (DL_FUNC) &vctrs_order_info, 6},
-  {"vctrs_unrep",                           (DL_FUNC) &vctrs_unrep, 1},
-  {"vctrs_fill_missing",                    (DL_FUNC) &vctrs_fill_missing, 3},
-  {"vctrs_chr_paste_prefix",                (DL_FUNC) &vctrs_chr_paste_prefix, 3},
-  {"vctrs_rank",                            (DL_FUNC) &vctrs_rank, 7},
-  {"vctrs_integer64_proxy",                 (DL_FUNC) &vctrs_integer64_proxy, 1},
-  {"vctrs_integer64_restore",               (DL_FUNC) &vctrs_integer64_restore, 1},
-  {"vctrs_list_drop_empty",                 (DL_FUNC) &vctrs_list_drop_empty, 1},
-  {"vctrs_is_altrep",                       (DL_FUNC) &vctrs_is_altrep, 1},
-  {"ffi_interleave_indices",                (DL_FUNC) &ffi_interleave_indices, 2},
-  {"ffi_compute_nesting_container_info",    (DL_FUNC) &ffi_compute_nesting_container_info, 2},
-  {"ffi_locate_matches",                    (DL_FUNC) &ffi_locate_matches, 12},
-  {"ffi_interval_groups",                   (DL_FUNC) &ffi_interval_groups, 4},
-  {"ffi_interval_locate_groups",            (DL_FUNC) &ffi_interval_locate_groups, 4},
-  {"ffi_interval_complement",               (DL_FUNC) &ffi_interval_complement, 4},
-  {"ffi_check_list",                        (DL_FUNC) &ffi_check_list, 2},
-  {"ffi_list_all_vectors",                  (DL_FUNC) &ffi_list_all_vectors, 2},
-  {"ffi_list_check_all_vectors",            (DL_FUNC) &ffi_list_check_all_vectors, 2},
-  {"ffi_as_short_length",                   (DL_FUNC) &ffi_as_short_length, 2},
-  {"ffi_s3_get_method",                     (DL_FUNC) &ffi_s3_get_method, 3},
+  {"vctrs_list_get",                            (DL_FUNC) &vctrs_list_get, 2},
+  {"vctrs_list_set",                            (DL_FUNC) &vctrs_list_set, 3},
+  {"vctrs_field_get",                           (DL_FUNC) &vctrs_field_get, 2},
+  {"vctrs_field_set",                           (DL_FUNC) &vctrs_field_set, 3},
+  {"vctrs_fields",                              (DL_FUNC) &vctrs_fields, 1},
+  {"vctrs_n_fields",                            (DL_FUNC) &vctrs_n_fields, 1},
+  {"vctrs_hash",                                (DL_FUNC) &vctrs_hash, 1},
+  {"vctrs_hash_object",                         (DL_FUNC) &vctrs_hash_object, 1},
+  {"vctrs_equal_object",                        (DL_FUNC) &vctrs_equal_object, 2},
+  {"vctrs_unique_loc",                          (DL_FUNC) &vctrs_unique_loc, 1},
+  {"vctrs_duplicated",                          (DL_FUNC) &vctrs_duplicated, 1},
+  {"vctrs_duplicated_any",                      (DL_FUNC) &vctrs_duplicated_any, 1},
+  {"vctrs_count",                               (DL_FUNC) &vctrs_count, 1},
+  {"vctrs_id",                                  (DL_FUNC) &vctrs_id, 1},
+  {"vctrs_n_distinct",                          (DL_FUNC) &vctrs_n_distinct, 1},
+  {"vctrs_split",                               (DL_FUNC) &vec_split, 2},
+  {"vctrs_group_id",                            (DL_FUNC) &vctrs_group_id, 1},
+  {"vctrs_group_rle",                           (DL_FUNC) &vctrs_group_rle, 1},
+  {"vctrs_group_loc",                           (DL_FUNC) &vec_group_loc, 1},
+  {"ffi_size",                                  (DL_FUNC) &ffi_size, 2},
+  {"ffi_list_sizes",                            (DL_FUNC) &ffi_list_sizes, 2},
+  {"vctrs_dim",                                 (DL_FUNC) &vctrs_dim, 1},
+  {"vctrs_dim_n",                               (DL_FUNC) &vctrs_dim_n, 1},
+  {"vctrs_is_unspecified",                      (DL_FUNC) &vctrs_is_unspecified, 1},
+  {"vctrs_equal",                               (DL_FUNC) &vctrs_equal, 3},
+  {"ffi_vec_detect_missing",                    (DL_FUNC) &ffi_vec_detect_missing, 1},
+  {"ffi_vec_any_missing",                       (DL_FUNC) &ffi_vec_any_missing, 1},
+  {"ffi_vec_compare",                           (DL_FUNC) &ffi_vec_compare, 3},
+  {"vctrs_match",                               (DL_FUNC) &vctrs_match, 4},
+  {"vctrs_in",                                  (DL_FUNC) &vctrs_in, 4},
+  {"vctrs_typeof",                              (DL_FUNC) &vctrs_typeof, 2},
+  {"vctrs_init_library",                        (DL_FUNC) &vctrs_init_library, 1},
+  {"ffi_obj_is_vector",                         (DL_FUNC) &ffi_obj_is_vector, 1},
+  {"ffi_obj_check_vector",                      (DL_FUNC) &ffi_obj_check_vector, 2},
+  {"ffi_vec_check_size",                        (DL_FUNC) &ffi_vec_check_size, 3},
+  {"ffi_ptype2",                                (DL_FUNC) &ffi_ptype2, 3},
+  {"ffi_typeof2",                               (DL_FUNC) &ffi_typeof2, 2},
+  {"ffi_typeof2_s3",                            (DL_FUNC) &ffi_typeof2_s3, 2},
+  {"ffi_cast",                                  (DL_FUNC) &ffi_cast, 3},
+  {"ffi_as_location",                           (DL_FUNC) &ffi_as_location, 8},
+  {"ffi_slice",                                 (DL_FUNC) &ffi_slice, 3},
+  {"ffi_init",                                  (DL_FUNC) &ffi_init, 3},
+  {"ffi_vec_chop",                              (DL_FUNC) &ffi_vec_chop, 3},
+  {"ffi_list_unchop",                           (DL_FUNC) &ffi_list_unchop, 6},
+  {"ffi_vec_chop_seq",                          (DL_FUNC) &ffi_vec_chop_seq, 4},
+  {"ffi_slice_seq",                             (DL_FUNC) &ffi_slice_seq, 4},
+  {"ffi_slice_rep",                             (DL_FUNC) &ffi_slice_rep, 3},
+  {"ffi_vec_restore",                           (DL_FUNC) &ffi_vec_restore, 2},
+  {"ffi_vec_restore_recurse",                   (DL_FUNC) &ffi_vec_restore_recurse, 2},
+  {"ffi_vec_restore_default",                   (DL_FUNC) &ffi_vec_restore_default, 2},
+  {"ffi_vec_proxy",                             (DL_FUNC) &vec_proxy, 1},
+  {"ffi_vec_proxy_recurse",                     (DL_FUNC) &vec_proxy_recurse, 1},
+  {"vctrs_proxy_equal",                         (DL_FUNC) &vec_proxy_equal, 1},
+  {"vctrs_proxy_compare",                       (DL_FUNC) &vec_proxy_compare, 1},
+  {"vctrs_proxy_order",                         (DL_FUNC) &vec_proxy_order, 1},
+  {"ffi_df_proxy",                              (DL_FUNC) &ffi_df_proxy, 2},
+  {"vctrs_unspecified",                         (DL_FUNC) &vctrs_unspecified, 1},
+  {"ffi_ptype",                                 (DL_FUNC) &ffi_ptype, 3},
+  {"vctrs_ptype_finalise",                      (DL_FUNC) &vec_ptype_finalise, 1},
+  {"ffi_minimal_names",                         (DL_FUNC) &ffi_minimal_names, 1},
+  {"ffi_unique_names",                          (DL_FUNC) &ffi_unique_names, 2},
+  {"ffi_as_minimal_names",                      (DL_FUNC) &ffi_as_minimal_names, 1},
+  {"vctrs_names",                               (DL_FUNC) &vec_names, 1},
+  {"vctrs_is_unique_names",                     (DL_FUNC) &vctrs_is_unique_names, 1},
+  {"vctrs_as_unique_names",                     (DL_FUNC) &vctrs_as_unique_names, 2},
+  {"vctrs_set_names",                           (DL_FUNC) &vec_set_names, 2},
+  {"ffi_df_cast_opts",                          (DL_FUNC) &ffi_df_cast_opts, 4},
+  {"ffi_df_ptype2_opts",                        (DL_FUNC) &ffi_df_ptype2_opts, 4},
+  {"ffi_type_info",                             (DL_FUNC) &ffi_type_info, 1},
+  {"ffi_proxy_info",                            (DL_FUNC) &ffi_proxy_info, 1},
+  {"ffi_class_type",                            (DL_FUNC) &ffi_class_type, 1},
+  {"ffi_vec_bare_df_restore",                   (DL_FUNC) &ffi_vec_bare_df_restore, 2},
+  {"ffi_recycle",                               (DL_FUNC) &ffi_recycle, 3},
+  {"ffi_assign",                                (DL_FUNC) &ffi_assign, 4},
+  {"ffi_assign_seq",                            (DL_FUNC) &ffi_assign_seq, 5},
+  {"vctrs_set_attributes",                      (DL_FUNC) &vctrs_set_attributes, 2},
+  {"ffi_as_df_row",                             (DL_FUNC) &ffi_as_df_row, 3},
+  {"ffi_outer_names",                           (DL_FUNC) &ffi_outer_names, 3},
+  {"vctrs_df_size",                             (DL_FUNC) &vctrs_df_size, 1},
+  {"ffi_as_df_col",                             (DL_FUNC) &ffi_as_df_col, 3},
+  {"ffi_apply_name_spec",                       (DL_FUNC) &ffi_apply_name_spec, 4},
+  {"ffi_unset_s4",                              (DL_FUNC) &ffi_unset_s4, 1},
+  {"vctrs_altrep_rle_Make",                     (DL_FUNC) &altrep_rle_Make, 1},
+  {"vctrs_altrep_rle_is_materialized",          (DL_FUNC) &altrep_rle_is_materialized, 1},
+  {"ffi_altrep_new_lazy_character",             (DL_FUNC) &ffi_altrep_new_lazy_character, 1},
+  {"ffi_altrep_lazy_character_is_materialized", (DL_FUNC) &ffi_altrep_lazy_character_is_materialized, 1},
+  {"vctrs_validate_name_repair_arg",            (DL_FUNC) &vctrs_validate_name_repair_arg, 1},
+  {"vctrs_validate_minimal_names",              (DL_FUNC) &vctrs_validate_minimal_names, 2},
+  {"ffi_vec_as_names",                          (DL_FUNC) &ffi_vec_as_names, 4},
+  {"ffi_is_partial",                            (DL_FUNC) &ffi_is_partial, 1},
+  {"ffi_obj_is_list",                           (DL_FUNC) &ffi_obj_is_list, 1},
+  {"vctrs_try_catch_callback",                  (DL_FUNC) &vctrs_try_catch_callback, 2},
+  {"ffi_is_coercible",                          (DL_FUNC) &ffi_is_coercible, 4},
+  {"ffi_as_subscript",                          (DL_FUNC) &ffi_as_subscript, 5},
+  {"ffi_as_subscript_result",                   (DL_FUNC) &ffi_as_subscript_result, 5},
+  {"ffi_df_flatten_info",                       (DL_FUNC) &ffi_df_flatten_info, 1},
+  {"ffi_df_flatten",                            (DL_FUNC) &df_flatten, 1},
+  {"vctrs_linked_version",                      (DL_FUNC) &vctrs_linked_version, 0},
+  {"ffi_tib_ptype2",                            (DL_FUNC) &ffi_tib_ptype2, 5},
+  {"ffi_tib_cast",                              (DL_FUNC) &ffi_tib_cast, 5},
+  {"ffi_assign_params",                         (DL_FUNC) &ffi_assign_params, 4},
+  {"vctrs_has_dim",                             (DL_FUNC) &vctrs_has_dim, 1},
+  {"ffi_vec_rep",                               (DL_FUNC) &ffi_vec_rep, 3},
+  {"ffi_vec_rep_each",                          (DL_FUNC) &ffi_vec_rep_each, 3},
+  {"vctrs_maybe_shared_col",                    (DL_FUNC) &vctrs_maybe_shared_col, 2},
+  {"vctrs_new_df_unshared_col",                 (DL_FUNC) &vctrs_new_df_unshared_col, 0},
+  {"ffi_vec_shaped_ptype",                      (DL_FUNC) &ffi_vec_shaped_ptype, 4},
+  {"ffi_vec_shape2",                            (DL_FUNC) &ffi_vec_shape2, 3},
+  {"vctrs_new_date",                            (DL_FUNC) &vctrs_new_date, 1},
+  {"vctrs_date_validate",                       (DL_FUNC) &vctrs_date_validate, 1},
+  {"vctrs_new_datetime",                        (DL_FUNC) &vctrs_new_datetime, 2},
+  {"vctrs_datetime_validate",                   (DL_FUNC) &vctrs_datetime_validate, 1},
+  {"ffi_ptype2_opts",                           (DL_FUNC) &ffi_ptype2_opts, 4},
+  {"vctrs_s3_find_method",                      (DL_FUNC) &vctrs_s3_find_method, 3},
+  {"vctrs_implements_ptype2",                   (DL_FUNC) &vctrs_implements_ptype2, 1},
+  {"ffi_ptype2_dispatch_native",                (DL_FUNC) &ffi_ptype2_dispatch_native, 4},
+  {"ffi_cast_dispatch_native",                  (DL_FUNC) &ffi_cast_dispatch_native, 6},
+  {"vctrs_fast_c",                              (DL_FUNC) &vctrs_fast_c, 2},
+  {"ffi_data_frame",                            (DL_FUNC) &ffi_data_frame, 4},
+  {"ffi_df_list",                               (DL_FUNC) &ffi_df_list, 5},
+  {"ffi_vec_detect_run_bounds",                 (DL_FUNC) &ffi_vec_detect_run_bounds, 3},
+  {"ffi_vec_locate_run_bounds",                 (DL_FUNC) &ffi_vec_locate_run_bounds, 3},
+  {"ffi_vec_identify_runs",                     (DL_FUNC) &ffi_vec_identify_runs, 2},
+  {"ffi_vec_run_sizes",                         (DL_FUNC) &ffi_vec_run_sizes, 2},
+  {"vctrs_slice_complete",                      (DL_FUNC) &vctrs_slice_complete, 1},
+  {"vctrs_locate_complete",                     (DL_FUNC) &vctrs_locate_complete, 1},
+  {"vctrs_detect_complete",                     (DL_FUNC) &vctrs_detect_complete, 1},
+  {"vctrs_normalize_encoding",                  (DL_FUNC) &vctrs_normalize_encoding, 1},
+  {"vctrs_order",                               (DL_FUNC) &vctrs_order, 5},
+  {"vctrs_locate_sorted_groups",                (DL_FUNC) &vctrs_locate_sorted_groups, 5},
+  {"vctrs_order_info",                          (DL_FUNC) &vctrs_order_info, 6},
+  {"ffi_vec_unrep",                             (DL_FUNC) &ffi_vec_unrep, 2},
+  {"vctrs_fill_missing",                        (DL_FUNC) &vctrs_fill_missing, 3},
+  {"ffi_chr_paste_prefix",                      (DL_FUNC) &ffi_chr_paste_prefix, 3},
+  {"vctrs_rank",                                (DL_FUNC) &vctrs_rank, 7},
+  {"vctrs_integer64_proxy",                     (DL_FUNC) &vctrs_integer64_proxy, 1},
+  {"vctrs_integer64_restore",                   (DL_FUNC) &vctrs_integer64_restore, 1},
+  {"vctrs_list_drop_empty",                     (DL_FUNC) &vctrs_list_drop_empty, 1},
+  {"vctrs_is_altrep",                           (DL_FUNC) &vctrs_is_altrep, 1},
+  {"ffi_interleave_indices",                    (DL_FUNC) &ffi_interleave_indices, 2},
+  {"ffi_compute_nesting_container_info",        (DL_FUNC) &ffi_compute_nesting_container_info, 2},
+  {"ffi_locate_matches",                        (DL_FUNC) &ffi_locate_matches, 14},
+  {"ffi_interval_groups",                       (DL_FUNC) &ffi_interval_groups, 4},
+  {"ffi_interval_locate_groups",                (DL_FUNC) &ffi_interval_locate_groups, 4},
+  {"ffi_interval_complement",                   (DL_FUNC) &ffi_interval_complement, 4},
+  {"ffi_interval_locate_containers",            (DL_FUNC) &ffi_interval_locate_containers, 2},
+  {"ffi_check_list",                            (DL_FUNC) &ffi_check_list, 2},
+  {"ffi_list_all_vectors",                      (DL_FUNC) &ffi_list_all_vectors, 2},
+  {"ffi_list_check_all_vectors",                (DL_FUNC) &ffi_list_check_all_vectors, 2},
+  {"ffi_as_short_length",                       (DL_FUNC) &ffi_as_short_length, 2},
+  {"ffi_s3_get_method",                         (DL_FUNC) &ffi_s3_get_method, 3},
+  {"ffi_list_all_size",                         (DL_FUNC) &ffi_list_all_size, 3},
+  {"ffi_list_check_all_size",                   (DL_FUNC) &ffi_list_check_all_size, 3},
+  {"ffi_vec_set_intersect",                     (DL_FUNC) &ffi_vec_set_intersect, 4},
+  {"ffi_vec_set_difference",                    (DL_FUNC) &ffi_vec_set_difference, 4},
+  {"ffi_vec_set_union",                         (DL_FUNC) &ffi_vec_set_union, 4},
+  {"ffi_vec_set_symmetric_difference",          (DL_FUNC) &ffi_vec_set_symmetric_difference, 4},
+  {"ffi_vec_expand_grid",                       (DL_FUNC) &ffi_vec_expand_grid, 4},
+  {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };
 
@@ -330,7 +362,7 @@ extern r_obj* ffi_cast_common(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cast_common_opts(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_rbind(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_cbind(r_obj*, r_obj*, r_obj*, r_obj*);
-extern SEXP vctrs_c(SEXP, SEXP, SEXP, SEXP);
+extern r_obj* ffi_vec_c(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_new_data_frame(r_obj*);
 
 static
@@ -343,7 +375,7 @@ const R_ExternalMethodDef ExtEntries[] = {
   {"ffi_cast_common_opts",             (DL_FUNC) &ffi_cast_common_opts, 2},
   {"ffi_rbind",                        (DL_FUNC) &ffi_rbind, 4},
   {"ffi_cbind",                        (DL_FUNC) &ffi_cbind, 3},
-  {"vctrs_c",                          (DL_FUNC) &vctrs_c, 3},
+  {"ffi_vec_c",                        (DL_FUNC) &ffi_vec_c, 3},
   {"ffi_new_data_frame",               (DL_FUNC) &ffi_new_data_frame, -1},
   {NULL, NULL, 0}
 };
@@ -355,9 +387,14 @@ export void R_init_vctrs(DllInfo *dll)
 
     // Maturing
     // In the public header
-    R_RegisterCCallable("vctrs", "vec_is_vector",      (DL_FUNC) &vec_is_vector);
+    R_RegisterCCallable("vctrs", "obj_is_vector",      (DL_FUNC) &obj_is_vector);
     R_RegisterCCallable("vctrs", "short_vec_size",     (DL_FUNC) &short_vec_size);
     R_RegisterCCallable("vctrs", "short_vec_recycle",  (DL_FUNC) &short_vec_recycle);
+
+    // Deprecated
+    // In the public header
+    // See `inst/include/vctrs.h` for details
+    R_RegisterCCallable("vctrs", "vec_is_vector", (DL_FUNC) &obj_is_vector);
 
     // Experimental
     // Exported but not available in the public header
@@ -371,6 +408,7 @@ export void R_init_vctrs(DllInfo *dll)
 
     // Altrep classes
     vctrs_init_altrep_rle(dll);
+    vctrs_init_altrep_lazy_character(dll);
 }
 
 

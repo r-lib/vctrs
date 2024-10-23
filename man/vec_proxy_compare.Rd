@@ -59,6 +59,15 @@ comparison and sorting.
 }
 }
 
+\section{Data frames}{
+
+If the proxy for \code{x} is a data frame, the proxy function is automatically
+recursively applied on all columns as well. After applying the proxy
+recursively, if there are any data frame columns present in the proxy, then
+they are unpacked. Finally, if the resulting data frame only has a single
+column, then it is unwrapped and a vector is returned as the proxy.
+}
+
 \examples{
 # Lists are not comparable
 x <- list(1:2, 1, 1:2, 3)

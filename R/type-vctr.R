@@ -9,7 +9,7 @@
 #' @details
 #' List vctrs are special cases. When created through `new_vctr()`, the
 #' resulting list vctr should always be recognized as a list by
-#' `vec_is_list()`. Because of this, if `inherit_base_type` is `FALSE`
+#' `obj_is_list()`. Because of this, if `inherit_base_type` is `FALSE`
 #' an error is thrown.
 #'
 #' @section Base methods:
@@ -103,12 +103,11 @@ names_repair_missing <- function(x) {
     return(x)
   }
 
-  missing <- vec_equal_na(x)
-
-  if (any(missing)) {
+  if (vec_any_missing(x)) {
     # We never want to allow `NA_character_` names to slip through, but
     # erroring on them has caused issues. Instead, we repair them to the
     # empty string (#784).
+    missing <- vec_detect_missing(x)
     x <- vec_assign(x, missing, "")
   }
 
@@ -312,7 +311,7 @@ as.character.vctrs_vctr <- function(x, ...) {
 as.list.vctrs_vctr <- function(x, ...) {
   out <- vec_chop(x)
 
-  if (vec_is_list(x)) {
+  if (obj_is_list(x)) {
     out <- lapply(out, `[[`, 1)
   }
 
@@ -404,15 +403,13 @@ as.difftime.vctrs_vctr <- function(x, units = "secs", ...) {
 
 #' @export
 is.na.vctrs_vctr <- function(x) {
-  vec_equal_na(x)
+  vec_detect_missing(x)
 }
 
 #' @importFrom stats na.fail
 #' @export
 na.fail.vctrs_vctr <- function(object, ...) {
-  missing <- vec_equal_na(object)
-
-  if (any(missing)) {
+  if (vec_any_missing(object)) {
     # Return the same error as `na.fail.default()`
     abort("missing values in object")
   }
@@ -436,13 +433,12 @@ na_remove <- function(x, type) {
   # The only difference between `na.omit()` and `na.exclude()` is the class
   # of the `na.action` attribute
 
-  missing <- vec_equal_na(x)
-
-  if (!any(missing)) {
+  if (!vec_any_missing(x)) {
     return(x)
   }
 
   # `na.omit/exclude()` attach the locations of the omitted values to the result
+  missing <- vec_detect_missing(x)
   loc <- which(missing)
 
   names <- vec_names(x)
@@ -460,12 +456,10 @@ na_remove <- function(x, type) {
 }
 
 #' @export
-anyNA.vctrs_vctr <- if (getRversion() >= "3.2") {
-  function(x, recursive = FALSE) {
-    any(is.na(x))
-  }
-} else {
-  function(x) {
+anyNA.vctrs_vctr <- function(x, recursive = FALSE) {
+  if (recursive && obj_is_list(x)) {
+    any(map_lgl(x, anyNA, recursive = recursive))
+  } else {
     any(is.na(x))
   }
 }
@@ -756,6 +750,8 @@ new_hidden <- function(x = double()) {
   stopifnot(is.numeric(x))
   new_vctr(vec_cast(x, double()), class = "hidden", inherit_base_type = FALSE)
 }
+
+#' @export
 format.hidden <- function(x, ...) rep("xxx", length(x))
 
 local_hidden <- function(frame = caller_env()) {

@@ -126,7 +126,7 @@ SEXP vctrs_field_get(SEXP x, SEXP index) {
 SEXP vctrs_field_set(SEXP x, SEXP index, SEXP value) {
   check_rcrd(x);
 
-  if (!vec_is_vector(value)) {
+  if (!obj_is_vector(value)) {
     Rf_errorcall(R_NilValue, "Invalid value: not a vector.");
   }
 

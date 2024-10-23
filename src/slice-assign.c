@@ -18,8 +18,8 @@ r_obj* vec_assign_opts(r_obj* x,
     opts.value_arg = vec_args.value;
   }
 
-  vec_check_vector(x, opts.x_arg, opts.call);
-  vec_check_vector(value, opts.value_arg, opts.call);
+  obj_check_vector(x, opts.x_arg, opts.call);
+  obj_check_vector(value, opts.value_arg, opts.call);
 
   const struct location_opts location_opts = new_location_opts_assign();
   index = KEEP(vec_as_location_opts(index,
@@ -35,7 +35,7 @@ r_obj* vec_assign_opts(r_obj* x,
   const enum vctrs_owned owned = vec_owned(proxy);
   proxy = KEEP(vec_proxy_assign_opts(proxy, index, value, owned, &opts));
 
-  r_obj* out = vec_restore(proxy, x, r_null, owned);
+  r_obj* out = vec_restore(proxy, x, owned);
 
   FREE(6);
   return out;
@@ -80,15 +80,15 @@ r_obj* vec_assign_switch(r_obj* proxy,
                          const enum vctrs_owned owned,
                          const struct vec_assign_opts* opts) {
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_logical:   return lgl_assign(proxy, index, value, owned);
-  case vctrs_type_integer:   return int_assign(proxy, index, value, owned);
-  case vctrs_type_double:    return dbl_assign(proxy, index, value, owned);
-  case vctrs_type_complex:   return cpl_assign(proxy, index, value, owned);
-  case vctrs_type_character: return chr_assign(proxy, index, value, owned);
-  case vctrs_type_raw:       return raw_assign(proxy, index, value, owned);
-  case vctrs_type_list:      return list_assign(proxy, index, value, owned);
-  case vctrs_type_dataframe: return df_assign(proxy, index, value, owned, opts);
-  case vctrs_type_scalar:    stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
+  case VCTRS_TYPE_logical:   return lgl_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_integer:   return int_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_double:    return dbl_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_complex:   return cpl_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_character: return chr_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_raw:       return raw_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_list:      return list_assign(proxy, index, value, owned);
+  case VCTRS_TYPE_dataframe: return df_assign(proxy, index, value, owned, opts);
+  case VCTRS_TYPE_scalar:    stop_scalar_type(proxy, vec_args.empty, r_lazy_null);
   default:                   stop_unimplemented_vctrs_type("vec_assign_switch", vec_typeof(proxy));
   }
   r_stop_unreachable();
@@ -98,9 +98,11 @@ r_obj* vec_assign_switch(r_obj* proxy,
 // on a number of factors.
 //
 // - If a fallback is required, the `proxy` is duplicated at the R level.
-// - If `owned` is `VCTRS_OWNED_true`, the `proxy` is typically not duplicated.
-//   However, if it is an ALTREP object, it is duplicated because we need to be
-//   able to assign into the object it represents, not the ALTREP r_obj* itself.
+// - If `owned` is `VCTRS_OWNED_true`, the `proxy` is not duplicated. If the
+//   `proxy` happens to be an ALTREP object, materialization will be forced when
+//   we do the actual assignment, but this should really only happen with
+//   cheap-to-materialize ALTREP "wrapper" objects since we've claimed that we
+//   "own" the `proxy`.
 // - If `owned` is `VCTRS_OWNED_false`, the `proxy` is only
 //   duplicated if it is referenced, i.e. `MAYBE_REFERENCED()` returns `true`.
 //
@@ -142,6 +144,12 @@ r_obj* vec_proxy_assign_opts(r_obj* proxy,
                              const enum vctrs_owned owned,
                              const struct vec_assign_opts* opts) {
   int n_protect = 0;
+
+  // Ignore vectors marked as fallback because the caller will apply
+  // a fallback method instead
+  if (vec_is_common_class_fallback(proxy)) {
+    return proxy;
+  }
 
   struct vec_assign_opts mut_opts = *opts;
   bool ignore_outer_names = mut_opts.ignore_outer_names;
@@ -256,7 +264,9 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned o
   int* index_data = r_int_begin(index);                                 \
                                                                         \
   if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` should have been recycled to fit `x`.");   \
+    r_stop_internal("`value` (size %d) doesn't match `x` (size %d).",   \
+                    r_length(value),                                    \
+                    n);                                                 \
   }                                                                     \
                                                                         \
   r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
@@ -278,7 +288,9 @@ r_obj* raw_assign(r_obj* x, r_obj* index, r_obj* value, const enum vctrs_owned o
   r_ssize step = index_data[2];                                         \
                                                                         \
   if (n != r_length(value)) {                                           \
-    r_stop_internal("`value` should have been recycled to fit `x`.");   \
+    r_stop_internal("`value` (size %d) doesn't match `x` (size %d).",   \
+                    r_length(value),                                    \
+                    n);                                                 \
   }                                                                     \
                                                                         \
   r_obj* out = KEEP(vec_clone_referenced(x, owned));                    \
@@ -347,12 +359,17 @@ r_obj* df_assign(r_obj* x,
 
     // No need to cast or recycle because those operations are
     // recursive and have already been performed. However, proxy and
-    // restore are not recursive so need to be done for each element
-    // we recurse into. `vec_proxy_assign()` will proxy the `value_elt`.
-    r_obj* proxy_elt = KEEP(vec_proxy(out_elt));
+    // restore are not necessarily recursive and we might need to
+    // proxy each element we recurse into.
+    //
+    // NOTE: `vec_proxy_assign()` proxies `value_elt`.
+    r_obj* proxy_elt = KEEP(opts->recursive ? out_elt : vec_proxy(out_elt));
 
     r_obj* assigned = KEEP(vec_proxy_assign_opts(proxy_elt, index, value_elt, owned, opts));
-    assigned = vec_restore(assigned, out_elt, r_null, owned);
+
+    if (!opts->recursive) {
+      assigned = vec_restore(assigned, out_elt, owned);
+    }
 
     r_list_poke(out, i, assigned);
     FREE(2);
@@ -421,7 +438,7 @@ r_obj* ffi_assign_seq(r_obj* x,
   const enum vctrs_owned owned = vec_owned(proxy);
   proxy = KEEP(vec_proxy_check_assign(proxy, index, value, vec_args.x, vec_args.value, call));
 
-  r_obj* out = vec_restore(proxy, x, r_null, owned);
+  r_obj* out = vec_restore(proxy, x, owned);
 
   FREE(5);
   return out;

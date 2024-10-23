@@ -7,7 +7,6 @@
 #'
 #' @inheritParams rlang::args_error_context
 #' @param x,y,to Vectors
-#' @param subclass Use if you want to further customize the class.
 #' @param ...,class Only use these fields when creating a subclass.
 #' @param x_arg,y_arg,to_arg Argument names for `x`, `y`, and `to`. Used in
 #'   error messages to inform the user about the locations of incompatible
@@ -65,7 +64,7 @@ stop_vctrs <- function(message = NULL,
     message,
     class = c(class, "vctrs_error"),
     ...,
-    call = vctrs_error_call(call)
+    call = call
   )
 }
 warn_vctrs <- function(message = NULL,
@@ -114,8 +113,8 @@ stop_incompatible_type <- function(x,
                                    message = NULL,
                                    class = NULL,
                                    call = caller_env()) {
-  vec_assert(x, arg = x_arg)
-  vec_assert(y, arg = y_arg)
+  obj_check_vector(x, arg = x_arg)
+  obj_check_vector(y, arg = y_arg)
 
   action <- arg_match(action)
 
@@ -130,6 +129,12 @@ stop_incompatible_type <- function(x,
     from_dispatch = match_from_dispatch(...)
   )
 
+  subclass <- switch(
+    action,
+    combine = "vctrs_error_ptype2",
+    convert = "vctrs_error_cast"
+  )
+
   stop_incompatible(
     x, y,
     x_arg = x_arg,
@@ -137,7 +142,7 @@ stop_incompatible_type <- function(x,
     details = details,
     ...,
     message = message,
-    class = c(class, "vctrs_error_incompatible_type"),
+    class = c(class, subclass, "vctrs_error_incompatible_type"),
     call = call
   )
 }
@@ -250,12 +255,14 @@ cnd_type_message <- function(x,
     y_type <- cnd_type_message_type_label(y)
   }
 
+  converting <- action == "convert"
+
   # If we are here directly from dispatch, this means there is no
   # ptype2 method implemented and the is-same-class fallback has
   # failed because of diverging attributes. The author of the class
   # should implement a ptype2 method as documented in the FAQ
   # indicated below.
-  if (from_dispatch && identical(class(x)[[1]], class(y)[[1]])) {
+  if (from_dispatch && !converting && identical(class(x)[[1]], class(y)[[1]])) {
     details <- c(incompatible_attrib_bullets(), details)
     details <- format_error_bullets(details)
   }
@@ -266,7 +273,7 @@ cnd_type_message <- function(x,
     end <- glue::glue("; falling back to {fallback}.")
   }
 
-  if (action == "convert" && nzchar(y_arg)) {
+  if (converting && nzchar(y_arg)) {
     header <- glue::glue("Can't convert{x_name}<{x_type}> to match type of{y_name}<{y_type}>{end}")
   } else {
     header <- glue::glue("Can't {action}{x_name}<{x_type}> {separator}{y_name}<{y_type}>{end}")
@@ -554,7 +561,12 @@ allow_lossy_cast <- function(expr, x_ptype = NULL, to_ptype = NULL) {
   )
 }
 
-maybe_warn_deprecated_lossy_cast <- function(x, to, loss_type, x_arg, to_arg) {
+maybe_warn_deprecated_lossy_cast <- function(x,
+                                             to,
+                                             loss_type,
+                                             x_arg,
+                                             to_arg,
+                                             user_env = caller_env(2)) {
   # Returns `TRUE` if `allow_lossy_cast()` is on the stack and accepts
   # to handle the condition
   handled <- withRestarts(
@@ -583,19 +595,18 @@ maybe_warn_deprecated_lossy_cast <- function(x, to, loss_type, x_arg, to_arg) {
   from <- format_arg_label(vec_ptype_abbr(x), x_arg)
   to <- format_arg_label(vec_ptype_abbr(to), to_arg)
 
-  warn_deprecated(paste_line(
-    glue::glue("We detected a lossy transformation from `{ from }` to `{ to }`."),
-    "The result will contain lower-resolution values or missing values.",
-    "To suppress this warning, wrap your code with `allow_lossy_cast()`:",
-    "",
-    "  # Allow all lossy transformations:",
-    "  vctrs::allow_lossy_cast(mycode())",
-    "",
-    "  # Allow only a specific transformation:",
-    "  vctrs::allow_lossy_cast(mycode(), x_ptype = from, to_ptype = to)",
-    "",
-    "Consult `?vctrs::allow_lossy_cast` for more information."
-  ))
+  lifecycle::deprecate_warn(
+    when = "0.2.0",
+    what = I("Coercion with lossy casts"),
+    with = "allow_lossy_cast()",
+    details = paste0(
+      glue::glue("We detected a lossy transformation from { from } to { to }. "),
+      "The result will contain lower-resolution values or missing values. ",
+      "To suppress this warning, wrap your code with `allow_lossy_cast()`."
+    ),
+    always = TRUE,
+    user_env = user_env
+  )
 
   invisible()
 }
@@ -628,7 +639,7 @@ stop_scalar_type <- function(x, arg = NULL, call = caller_env()) {
   } else {
     arg <- glue::backtick(arg)
   }
-  msg <- glue::glue("{arg} must be a vector, not {friendly_type_of(x)}.")
+  msg <- glue::glue("{arg} must be a vector, not {obj_type_friendly(x)}.")
   stop_vctrs(
     msg,
     "vctrs_error_scalar_type",
@@ -814,12 +825,14 @@ ensure_full_stop <- function(x) {
 }
 
 
-# TODO! cli + .internal
 stop_native_implementation <- function(fn) {
-  abort(paste_line(
-    glue::glue("`{fn}()` is implemented at C level."),
-    "This R function is purely indicative and should never be called."
-  ))
+  cli::cli_abort(
+    c(
+      "{.fn {fn}} is implemented at C level.",
+      " " = "This R function is purely indicative and should never be called."
+    ),
+    .internal = TRUE
+  )
 }
 
 
@@ -859,47 +872,4 @@ append_arg <- function(x, arg) {
   } else {
     x
   }
-}
-
-vctrs_local_error_call <- function(call = frame, frame = caller_env()) {
-  # This doesn't implement the semantics of a `local_` function
-  # perfectly in order to be as fast as possible
-  frame$.__vctrs_error_call__. <- call
-  invisible(NULL)
-}
-
-vctrs_error_call <- function(call) {
-  if (is_function(call)) {
-    call <- call()
-  }
-
-  if (is_environment(call)) {
-    caller_call <- get_vctrs_error_call(call)
-    if (!is_null(caller_call)) {
-      return(caller_call)
-    }
-  }
-
-  call
-}
-
-vctrs_error_borrowed_call <- function(call = caller_env(),
-                                      borrower = caller_env(2)) {
-  borrower_call <- get_vctrs_error_call(borrower)
-
-  if (is_null(borrower_call)) {
-    call
-  } else {
-    borrower_call
-  }
-}
-
-get_vctrs_error_call <- function(call) {
-  env_get(
-    call,
-    ".__vctrs_error_call__.",
-    inherit = TRUE,
-    last = topenv(call),
-    default = NULL
-  )
 }

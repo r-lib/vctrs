@@ -530,14 +530,6 @@ test_that("can optionally assign names", {
     vec_out
   )
 
-  oo_x <- set_names(as_posixlt(c("2020-01-01", "2020-01-02", "2020-01-03")), letters[1:3])
-  oo_y <- as_posixlt(c(FOO = "2020-01-04"))
-  oo_out <- as_posixlt(c(a = "2020-01-01", FOO = "2020-01-04", c = "2020-01-03"))
-  expect_identical(
-    vec_assign_params(oo_x, 2, oo_y, assign_names = TRUE),
-    oo_out
-  )
-
   df_x <- new_data_frame(list(x = 1:3), row.names = letters[1:3])
   df_y <- new_data_frame(list(x = 4L), row.names = "FOO")
   df_out <- new_data_frame(list(x = c(1L, 4L, 3L)), row.names = c("a", "FOO", "c"))
@@ -554,9 +546,33 @@ test_that("can optionally assign names", {
     mat_out
   )
 
-  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x, oo = oo_x), row.names = c("foo", "bar", "baz"))
-  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y, oo = oo_y), row.names = c("quux"))
-  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out, oo = oo_out), row.names = c("foo", "quux", "baz"))
+  nested_x <- new_data_frame(list(df = df_x, mat = mat_x, vec = vec_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(df = df_y, mat = mat_y, vec = vec_y), row.names = c("quux"))
+  nested_out <- new_data_frame(list(df = df_out, mat = mat_out, vec = vec_out), row.names = c("foo", "quux", "baz"))
+
+  expect_identical(
+    vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
+    nested_out
+  )
+})
+
+test_that("can optionally assign names (OO case)", {
+  # In case upstream attributes handling changes
+  skip_on_cran()
+
+  # `set_names()` must be on the inside, otherwise the POSIXlt object
+  # gets a `balanced` attribute of `NA`
+  oo_x <- as_posixlt(set_names(c("2020-01-01", "2020-01-02", "2020-01-03"), letters[1:3]))
+  oo_y <- as_posixlt(c(FOO = "2020-01-04"))
+  oo_out <- as_posixlt(c(a = "2020-01-01", FOO = "2020-01-04", c = "2020-01-03"))
+  expect_identical(
+    vec_assign_params(oo_x, 2, oo_y, assign_names = TRUE),
+    oo_out
+  )
+
+  nested_x <- new_data_frame(list(oo = oo_x), row.names = c("foo", "bar", "baz"))
+  nested_y <- new_data_frame(list(oo = oo_y), row.names = c("quux"))
+  nested_out <- new_data_frame(list(oo = oo_out), row.names = c("foo", "quux", "baz"))
 
   expect_identical(
     vec_assign_params(nested_x, 2, nested_y, assign_names = TRUE),
@@ -665,7 +681,7 @@ test_that("can assign shaped base vectors with compact seqs", {
   expect_identical(vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing), mat(lgl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing), mat(int(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, NA, NA)))
+  expect_identical(vec_assign_seq(mat(cpl2(1, 2, 3)), NA, start, size, increasing), mat(cpl2(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
   expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))
@@ -679,7 +695,7 @@ test_that("can assign shaped base vectors with decreasing compact seqs", {
   expect_identical(vec_assign_seq(mat(lgl(1, 0, 1)), NA, start, size, increasing), mat(lgl(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(int(1, 2, 3)), NA, start, size, increasing), mat(int(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(dbl(1, 2, 3)), NA, start, size, increasing), mat(dbl(1, NA, NA)))
-  expect_identical(vec_assign_seq(mat(cpl(1, 2, 3)), NA, start, size, increasing), mat(cpl(1, NA, NA)))
+  expect_identical(vec_assign_seq(mat(cpl2(1, 2, 3)), NA, start, size, increasing), mat(cpl2(1, NA, NA)))
   expect_identical(vec_assign_seq(mat(chr("1", "2", "3")), NA, start, size, increasing), mat(chr("1", NA, NA)))
   expect_identical(vec_assign_seq(mat(raw2(1, 2, 3)), raw2(1), start, size, increasing), mat(raw2(1, 1, 1)))
   expect_identical(vec_assign_seq(mat(list(1, 2, 3)), NA, start, size, increasing), mat(list(1, NULL, NULL)))

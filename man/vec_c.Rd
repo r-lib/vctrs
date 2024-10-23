@@ -8,7 +8,10 @@ vec_c(
   ...,
   .ptype = NULL,
   .name_spec = NULL,
-  .name_repair = c("minimal", "unique", "check_unique", "universal")
+  .name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet",
+    "universal_quiet"),
+  .error_arg = "",
+  .error_call = current_env()
 )
 }
 \arguments{
@@ -41,6 +44,15 @@ See the \link[=name_spec]{name specification topic}.}
 
 \item{.name_repair}{How to repair names, see \code{repair} options in
 \code{\link[=vec_as_names]{vec_as_names()}}.}
+
+\item{.error_arg}{An argument name as a string. This argument
+will be mentioned in error messages as the input that is at the
+origin of a problem.}
+
+\item{.error_call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 A vector with class given by \code{.ptype}, and length equal to the

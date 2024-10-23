@@ -21,7 +21,16 @@
     Code
       (expect_error(vec_interval_locate_groups(1, "x")))
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_ptype2>
+      Error:
+      ! Can't combine `start` <double> and `end` <character>.
+
+---
+
+    Code
+      (expect_error(vec_interval_locate_containers(1, "x")))
+    Output
+      <error/vctrs_error_ptype2>
       Error:
       ! Can't combine `start` <double> and `end` <character>.
 

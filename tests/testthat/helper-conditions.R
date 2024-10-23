@@ -55,3 +55,35 @@ with_tidyselect_relocate <- function(expr) {
     subscript_action = "relocate"
   )
 }
+
+my_vec_rep <- function(my_x, my_times) {
+  vec_rep(
+    my_x,
+    my_times,
+    error_call = current_env(),
+    x_arg = "my_x",
+    times_arg = "my_times"
+  )
+}
+
+my_vec_rep_each <- function(my_x, my_times) {
+  vec_rep_each(
+    my_x,
+    my_times,
+    error_call = current_env(),
+    x_arg = "my_x",
+    times_arg = "my_times"
+  )
+}
+
+my_vec_as_names <- function(my_names,
+                            ...,
+                            my_repair = "minimal",
+                            my_quiet = FALSE) {
+  vec_as_names(
+    my_names,
+    repair = my_repair,
+    repair_arg = "my_repair",
+    quiet = my_quiet
+  )
+}

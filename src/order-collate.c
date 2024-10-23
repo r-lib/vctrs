@@ -28,8 +28,8 @@ SEXP proxy_apply_chr_proxy_collate(SEXP proxy, SEXP chr_proxy_collate) {
   SEXP out;
 
   switch (vec_proxy_typeof(proxy)) {
-  case vctrs_type_character: out = chr_apply(proxy, chr_proxy_collate); break;
-  case vctrs_type_dataframe: out = df_apply(proxy, chr_proxy_collate); break;
+  case VCTRS_TYPE_character: out = chr_apply(proxy, chr_proxy_collate); break;
+  case VCTRS_TYPE_dataframe: out = df_apply(proxy, chr_proxy_collate); break;
   default: out = proxy;
   }
 
@@ -44,13 +44,13 @@ SEXP chr_apply(SEXP x, SEXP chr_proxy_collate) {
   // Don't use vctrs dispatch utils because we match argument positionally
   SEXP call = PROTECT(Rf_lang2(syms_chr_proxy_collate, syms_x));
 
-  SEXP mask = PROTECT(r_new_environment(R_GlobalEnv));
+  SEXP mask = PROTECT(r_alloc_empty_environment(R_GlobalEnv));
   Rf_defineVar(syms_chr_proxy_collate, chr_proxy_collate, mask);
   Rf_defineVar(syms_x, x, mask);
 
   SEXP out = PROTECT(Rf_eval(call, mask));
 
-  if (vec_typeof(out) != vctrs_type_character) {
+  if (vec_typeof(out) != VCTRS_TYPE_character) {
     Rf_errorcall(
       R_NilValue,
       "`chr_proxy_collate` must return a character vector."
@@ -84,7 +84,7 @@ SEXP df_apply(SEXP x, SEXP chr_proxy_collate) {
 
   for (; i < n_cols; ++i) {
     SEXP col = v_x[i];
-    if (vec_proxy_typeof(col) == vctrs_type_character) {
+    if (vec_proxy_typeof(col) == VCTRS_TYPE_character) {
       break;
     }
   }
@@ -99,7 +99,7 @@ SEXP df_apply(SEXP x, SEXP chr_proxy_collate) {
   for (; i < n_cols; ++i) {
     SEXP col = v_x[i];
 
-    if (vec_proxy_typeof(col) != vctrs_type_character) {
+    if (vec_proxy_typeof(col) != VCTRS_TYPE_character) {
       continue;
     }
 

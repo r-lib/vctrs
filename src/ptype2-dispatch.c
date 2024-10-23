@@ -13,30 +13,30 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
   enum vctrs_type2_s3 type2_s3 = vec_typeof2_s3_impl(x, y, x_type, y_type, left);
 
   switch (type2_s3) {
-  case vctrs_type2_s3_character_bare_factor:
-  case vctrs_type2_s3_character_bare_ordered:
-    return vctrs_shared_empty_chr;
+  case VCTRS_TYPE2_S3_character_bare_factor:
+  case VCTRS_TYPE2_S3_character_bare_ordered:
+    return r_globals.empty_chr;
 
-  case vctrs_type2_s3_bare_factor_bare_factor:
+  case VCTRS_TYPE2_S3_bare_factor_bare_factor:
     return fct_ptype2(opts);
 
-  case vctrs_type2_s3_bare_ordered_bare_ordered:
+  case VCTRS_TYPE2_S3_bare_ordered_bare_ordered:
     return ord_ptype2(opts);
 
-  case vctrs_type2_s3_bare_date_bare_date:
+  case VCTRS_TYPE2_S3_bare_date_bare_date:
     return vctrs_shared_empty_date;
 
-  case vctrs_type2_s3_bare_date_bare_posixct:
-  case vctrs_type2_s3_bare_date_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_date_bare_posixct:
+  case VCTRS_TYPE2_S3_bare_date_bare_posixlt:
     return date_datetime_ptype2(x, y);
 
-  case vctrs_type2_s3_bare_posixct_bare_posixct:
-  case vctrs_type2_s3_bare_posixct_bare_posixlt:
-  case vctrs_type2_s3_bare_posixlt_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_posixct_bare_posixct:
+  case VCTRS_TYPE2_S3_bare_posixct_bare_posixlt:
+  case VCTRS_TYPE2_S3_bare_posixlt_bare_posixlt:
     return datetime_datetime_ptype2(x, y);
 
-  case vctrs_type2_s3_dataframe_bare_tibble:
-  case vctrs_type2_s3_bare_tibble_bare_tibble:
+  case VCTRS_TYPE2_S3_dataframe_bare_tibble:
+  case VCTRS_TYPE2_S3_bare_tibble_bare_tibble:
     return tib_ptype2(opts);
 
   default:
@@ -44,31 +44,43 @@ r_obj* vec_ptype2_dispatch_native(const struct ptype2_opts* opts,
   }
 }
 
+// @param from_dispatch Used to implement special behaviour when
+//   `vec_default_ptype2()` is invoked directly from the dispatch
+//   mechanism as opposed from a method.
+
 static inline
-r_obj* vec_ptype2_default(r_obj* x,
-                          r_obj* y,
-                          struct vctrs_arg* x_arg,
-                          struct vctrs_arg* y_arg,
-                          struct r_lazy call,
-                          const struct fallback_opts* opts) {
-  r_obj* df_fallback_obj = KEEP(r_int(opts->df));
-  r_obj* s3_fallback_obj = KEEP(r_int(opts->s3));
+r_obj* vec_ptype2_default_full(r_obj* x,
+                               r_obj* y,
+                               struct vctrs_arg* x_arg,
+                               struct vctrs_arg* y_arg,
+                               struct r_lazy call,
+                               const struct fallback_opts* opts,
+                               bool from_dispatch) {
+  r_obj* ffi_s3_fallback = KEEP(r_int(opts->s3));
   r_obj* ffi_x_arg = KEEP(vctrs_arg(x_arg));
   r_obj* ffi_y_arg = KEEP(vctrs_arg(y_arg));
   r_obj* ffi_call = KEEP(r_lazy_eval(call));
 
-  r_obj* out = vctrs_eval_mask8(syms_vec_ptype2_default,
+  r_obj* out = vctrs_eval_mask7(syms_vec_ptype2_default,
                                 syms_x, x,
                                 syms_y, y,
                                 syms_x_arg, ffi_x_arg,
                                 syms_y_arg, ffi_y_arg,
                                 syms_call, ffi_call,
-                                syms_from_dispatch, vctrs_shared_true,
-                                syms_df_fallback, df_fallback_obj,
-                                syms_s3_fallback, s3_fallback_obj);
+                                syms_from_dispatch, r_lgl(from_dispatch),
+                                syms_s3_fallback, ffi_s3_fallback);
 
-  FREE(5);
+  FREE(4);
   return out;
+}
+
+r_obj* vec_ptype2_default(r_obj* x,
+                          r_obj* y,
+                          struct vctrs_arg* x_arg,
+                          struct vctrs_arg* y_arg,
+                          struct r_lazy call,
+                          const struct fallback_opts* p_opts) {
+  return vec_ptype2_default_full(x, y, x_arg, y_arg, call, p_opts, false);
 }
 
 r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
@@ -102,12 +114,13 @@ r_obj* vec_ptype2_dispatch_s3(const struct ptype2_opts* opts) {
   KEEP(method);
 
   if (method == r_null) {
-    r_obj* out = vec_ptype2_default(x,
-                                    y,
-                                    opts->p_x_arg,
-                                    opts->p_y_arg,
-                                    opts->call,
-                                    &(opts->fallback));
+    r_obj* out = vec_ptype2_default_full(x,
+                                         y,
+                                         opts->p_x_arg,
+                                         opts->p_y_arg,
+                                         opts->call,
+                                         &(opts->fallback),
+                                         true);
     FREE(3);
     return out;
   }
@@ -136,20 +149,17 @@ r_obj* vec_invoke_coerce_method(r_obj* method_sym, r_obj* method,
                                 const struct fallback_opts* opts) {
   r_obj* call = KEEP(r_lazy_eval(lazy_call));
 
-  if (opts->df != DF_FALLBACK_DEFAULT ||
-      opts->s3 != S3_FALLBACK_DEFAULT) {
-    r_obj* df_fallback_obj = KEEP(r_int(opts->df));
-    r_obj* s3_fallback_obj = KEEP(r_int(opts->s3));
+  if (opts->s3 != S3_FALLBACK_DEFAULT) {
+    r_obj* ffi_s3_fallback = KEEP(r_int(opts->s3));
 
-    r_obj* out = vctrs_dispatch7(method_sym, method,
+    r_obj* out = vctrs_dispatch6(method_sym, method,
                                  x_sym, x,
                                  y_sym, y,
                                  x_arg_sym, x_arg,
                                  y_arg_sym, y_arg,
                                  syms_call, call,
-                                 syms_df_fallback, df_fallback_obj,
-                                 syms_s3_fallback, s3_fallback_obj);
-    FREE(3);
+                                 syms_s3_fallback, ffi_s3_fallback);
+    FREE(2);
     return out;
   } else {
     r_obj* out = vctrs_dispatch5(method_sym, method,
@@ -188,12 +198,13 @@ r_obj* ffi_ptype2_dispatch_native(r_obj* x,
   r_obj* out = vec_ptype2_dispatch_native(&opts, vec_typeof(x), vec_typeof(y), &_left);
 
   if (out == r_null) {
-    out = vec_ptype2_default(x,
-                             y,
-                             &x_arg,
-                             &y_arg,
-                             opts.call,
-                             &opts.fallback);
+    out = vec_ptype2_default_full(x,
+                                  y,
+                                  &x_arg,
+                                  &y_arg,
+                                  opts.call,
+                                  &opts.fallback,
+                                  true);
     return out;
   } else {
     return out;

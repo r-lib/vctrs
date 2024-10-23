@@ -12,7 +12,7 @@
     Output
       <error/rlang_error>
       Error in `stop_incompatible_type()`:
-      ! `action` must be a character vector, not a number.
+      ! `action` must be a character vector, not the number 1.
 
 # can override arg in OOB conditions
 
@@ -163,7 +163,7 @@
       (expect_error(vec_cast(ordered("x"), ordered("y")), class = "vctrs_error_incompatible_type")
       )
     Output
-      <error/vctrs_error_incompatible_type>
+      <error/vctrs_error_cast>
       Error:
       ! Can't convert `ordered("x")` <ordered<bf275>> to <ordered<fd1ad>>.
 

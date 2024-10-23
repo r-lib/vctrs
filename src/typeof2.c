@@ -22,305 +22,304 @@ enum vctrs_type2 vec_typeof2_impl(enum vctrs_type type_x,
                                   enum vctrs_type type_y,
                                   int* left) {
   switch (type_x) {
-  case vctrs_type_null: {
+  case VCTRS_TYPE_null: {
     switch (type_y) {
-    case vctrs_type_null:        *left = -1; return vctrs_type2_null_null;
-    case vctrs_type_unspecified: *left =  0; return vctrs_type2_null_unspecified;
-    case vctrs_type_logical:     *left =  0; return vctrs_type2_null_logical;
-    case vctrs_type_integer:     *left =  0; return vctrs_type2_null_integer;
-    case vctrs_type_double:      *left =  0; return vctrs_type2_null_double;
-    case vctrs_type_complex:     *left =  0; return vctrs_type2_null_complex;
-    case vctrs_type_character:   *left =  0; return vctrs_type2_null_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_null_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_null_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_null_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_null_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_null_scalar;
+    case VCTRS_TYPE_null:        *left = -1; return VCTRS_TYPE2_null_null;
+    case VCTRS_TYPE_unspecified: *left =  0; return VCTRS_TYPE2_null_unspecified;
+    case VCTRS_TYPE_logical:     *left =  0; return VCTRS_TYPE2_null_logical;
+    case VCTRS_TYPE_integer:     *left =  0; return VCTRS_TYPE2_null_integer;
+    case VCTRS_TYPE_double:      *left =  0; return VCTRS_TYPE2_null_double;
+    case VCTRS_TYPE_complex:     *left =  0; return VCTRS_TYPE2_null_complex;
+    case VCTRS_TYPE_character:   *left =  0; return VCTRS_TYPE2_null_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_null_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_null_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_null_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_null_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_null_scalar;
     }
   }
-  case vctrs_type_unspecified: {
+  case VCTRS_TYPE_unspecified: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_unspecified;
-    case vctrs_type_unspecified: *left = -1; return vctrs_type2_unspecified_unspecified;
-    case vctrs_type_logical:     *left =  0; return vctrs_type2_unspecified_logical;
-    case vctrs_type_integer:     *left =  0; return vctrs_type2_unspecified_integer;
-    case vctrs_type_double:      *left =  0; return vctrs_type2_unspecified_double;
-    case vctrs_type_complex:     *left =  0; return vctrs_type2_unspecified_complex;
-    case vctrs_type_character:   *left =  0; return vctrs_type2_unspecified_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_unspecified_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_unspecified_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_unspecified_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_unspecified_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_unspecified_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_unspecified;
+    case VCTRS_TYPE_unspecified: *left = -1; return VCTRS_TYPE2_unspecified_unspecified;
+    case VCTRS_TYPE_logical:     *left =  0; return VCTRS_TYPE2_unspecified_logical;
+    case VCTRS_TYPE_integer:     *left =  0; return VCTRS_TYPE2_unspecified_integer;
+    case VCTRS_TYPE_double:      *left =  0; return VCTRS_TYPE2_unspecified_double;
+    case VCTRS_TYPE_complex:     *left =  0; return VCTRS_TYPE2_unspecified_complex;
+    case VCTRS_TYPE_character:   *left =  0; return VCTRS_TYPE2_unspecified_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_unspecified_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_unspecified_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_unspecified_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_unspecified_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_unspecified_scalar;
     }
   }
-  case vctrs_type_logical: {
+  case VCTRS_TYPE_logical: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_logical;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_logical;
-    case vctrs_type_logical:     *left = -1; return vctrs_type2_logical_logical;
-    case vctrs_type_integer:     *left =  0; return vctrs_type2_logical_integer;
-    case vctrs_type_double:      *left =  0; return vctrs_type2_logical_double;
-    case vctrs_type_complex:     *left =  0; return vctrs_type2_logical_complex;
-    case vctrs_type_character:   *left =  0; return vctrs_type2_logical_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_logical_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_logical_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_logical_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_logical_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_logical_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_logical;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_logical;
+    case VCTRS_TYPE_logical:     *left = -1; return VCTRS_TYPE2_logical_logical;
+    case VCTRS_TYPE_integer:     *left =  0; return VCTRS_TYPE2_logical_integer;
+    case VCTRS_TYPE_double:      *left =  0; return VCTRS_TYPE2_logical_double;
+    case VCTRS_TYPE_complex:     *left =  0; return VCTRS_TYPE2_logical_complex;
+    case VCTRS_TYPE_character:   *left =  0; return VCTRS_TYPE2_logical_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_logical_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_logical_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_logical_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_logical_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_logical_scalar;
     }
   }
-  case vctrs_type_integer: {
+  case VCTRS_TYPE_integer: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_integer;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_integer;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_integer;
-    case vctrs_type_integer:     *left = -1; return vctrs_type2_integer_integer;
-    case vctrs_type_double:      *left =  0; return vctrs_type2_integer_double;
-    case vctrs_type_complex:     *left =  0; return vctrs_type2_integer_complex;
-    case vctrs_type_character:   *left =  0; return vctrs_type2_integer_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_integer_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_integer_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_integer_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_integer_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_integer_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_integer;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_integer;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_integer;
+    case VCTRS_TYPE_integer:     *left = -1; return VCTRS_TYPE2_integer_integer;
+    case VCTRS_TYPE_double:      *left =  0; return VCTRS_TYPE2_integer_double;
+    case VCTRS_TYPE_complex:     *left =  0; return VCTRS_TYPE2_integer_complex;
+    case VCTRS_TYPE_character:   *left =  0; return VCTRS_TYPE2_integer_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_integer_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_integer_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_integer_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_integer_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_integer_scalar;
     }
   }
-  case vctrs_type_double: {
+  case VCTRS_TYPE_double: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_double;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_double;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_double;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_double;
-    case vctrs_type_double:      *left = -1; return vctrs_type2_double_double;
-    case vctrs_type_complex:     *left =  0; return vctrs_type2_double_complex;
-    case vctrs_type_character:   *left =  0; return vctrs_type2_double_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_double_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_double_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_double_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_double_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_double_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_double;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_double;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_double;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_double;
+    case VCTRS_TYPE_double:      *left = -1; return VCTRS_TYPE2_double_double;
+    case VCTRS_TYPE_complex:     *left =  0; return VCTRS_TYPE2_double_complex;
+    case VCTRS_TYPE_character:   *left =  0; return VCTRS_TYPE2_double_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_double_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_double_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_double_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_double_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_double_scalar;
     }
   }
-  case vctrs_type_complex: {
+  case VCTRS_TYPE_complex: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_complex;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_complex;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_complex;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_complex;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_complex;
-    case vctrs_type_complex:     *left = -1; return vctrs_type2_complex_complex;
-    case vctrs_type_character:   *left =  0; return vctrs_type2_complex_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_complex_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_complex_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_complex_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_complex_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_complex_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_complex;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_complex;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_complex;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_complex;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_complex;
+    case VCTRS_TYPE_complex:     *left = -1; return VCTRS_TYPE2_complex_complex;
+    case VCTRS_TYPE_character:   *left =  0; return VCTRS_TYPE2_complex_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_complex_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_complex_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_complex_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_complex_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_complex_scalar;
     }
   }
-  case vctrs_type_character: {
+  case VCTRS_TYPE_character: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_character;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_character;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_character;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_character;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_character;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_character;
-    case vctrs_type_character:   *left = -1; return vctrs_type2_character_character;
-    case vctrs_type_raw:         *left =  0; return vctrs_type2_character_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_character_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_character_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_character_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_character_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_character;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_character;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_character;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_character;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_character;
+    case VCTRS_TYPE_complex:     *left =  1; return VCTRS_TYPE2_complex_character;
+    case VCTRS_TYPE_character:   *left = -1; return VCTRS_TYPE2_character_character;
+    case VCTRS_TYPE_raw:         *left =  0; return VCTRS_TYPE2_character_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_character_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_character_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_character_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_character_scalar;
     }
   }
-  case vctrs_type_raw: {
+  case VCTRS_TYPE_raw: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_raw;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_raw;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_raw;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_raw;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_raw;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_raw;
-    case vctrs_type_character:   *left =  1; return vctrs_type2_character_raw;
-    case vctrs_type_raw:         *left = -1; return vctrs_type2_raw_raw;
-    case vctrs_type_list:        *left =  0; return vctrs_type2_raw_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_raw_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_raw_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_raw_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_raw;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_raw;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_raw;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_raw;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_raw;
+    case VCTRS_TYPE_complex:     *left =  1; return VCTRS_TYPE2_complex_raw;
+    case VCTRS_TYPE_character:   *left =  1; return VCTRS_TYPE2_character_raw;
+    case VCTRS_TYPE_raw:         *left = -1; return VCTRS_TYPE2_raw_raw;
+    case VCTRS_TYPE_list:        *left =  0; return VCTRS_TYPE2_raw_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_raw_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_raw_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_raw_scalar;
     }
   }
-  case vctrs_type_list: {
+  case VCTRS_TYPE_list: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_list;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_list;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_list;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_list;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_list;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_list;
-    case vctrs_type_character:   *left =  1; return vctrs_type2_character_list;
-    case vctrs_type_raw:         *left =  1; return vctrs_type2_raw_list;
-    case vctrs_type_list:        *left = -1; return vctrs_type2_list_list;
-    case vctrs_type_dataframe:   *left =  0; return vctrs_type2_list_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_list_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_list_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_list;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_list;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_list;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_list;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_list;
+    case VCTRS_TYPE_complex:     *left =  1; return VCTRS_TYPE2_complex_list;
+    case VCTRS_TYPE_character:   *left =  1; return VCTRS_TYPE2_character_list;
+    case VCTRS_TYPE_raw:         *left =  1; return VCTRS_TYPE2_raw_list;
+    case VCTRS_TYPE_list:        *left = -1; return VCTRS_TYPE2_list_list;
+    case VCTRS_TYPE_dataframe:   *left =  0; return VCTRS_TYPE2_list_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_list_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_list_scalar;
     }
   }
-  case vctrs_type_dataframe: {
+  case VCTRS_TYPE_dataframe: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_dataframe;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_dataframe;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_dataframe;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_dataframe;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_dataframe;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_dataframe;
-    case vctrs_type_character:   *left =  1; return vctrs_type2_character_dataframe;
-    case vctrs_type_raw:         *left =  1; return vctrs_type2_raw_dataframe;
-    case vctrs_type_list:        *left =  1; return vctrs_type2_list_dataframe;
-    case vctrs_type_dataframe:   *left = -1; return vctrs_type2_dataframe_dataframe;
-    case vctrs_type_s3:          *left =  0; return vctrs_type2_dataframe_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_dataframe_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_dataframe;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_dataframe;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_dataframe;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_dataframe;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_dataframe;
+    case VCTRS_TYPE_complex:     *left =  1; return VCTRS_TYPE2_complex_dataframe;
+    case VCTRS_TYPE_character:   *left =  1; return VCTRS_TYPE2_character_dataframe;
+    case VCTRS_TYPE_raw:         *left =  1; return VCTRS_TYPE2_raw_dataframe;
+    case VCTRS_TYPE_list:        *left =  1; return VCTRS_TYPE2_list_dataframe;
+    case VCTRS_TYPE_dataframe:   *left = -1; return VCTRS_TYPE2_dataframe_dataframe;
+    case VCTRS_TYPE_s3:          *left =  0; return VCTRS_TYPE2_dataframe_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_dataframe_scalar;
     }
   }
-  case vctrs_type_s3: {
+  case VCTRS_TYPE_s3: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_s3;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_s3;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_s3;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_s3;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_s3;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_s3;
-    case vctrs_type_character:   *left =  1; return vctrs_type2_character_s3;
-    case vctrs_type_raw:         *left =  1; return vctrs_type2_raw_s3;
-    case vctrs_type_list:        *left =  1; return vctrs_type2_list_s3;
-    case vctrs_type_dataframe:   *left =  1; return vctrs_type2_dataframe_s3;
-    case vctrs_type_s3:          *left = -1; return vctrs_type2_s3_s3;
-    case vctrs_type_scalar:      *left =  0; return vctrs_type2_s3_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_s3;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_s3;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_s3;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_s3;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_s3;
+    case VCTRS_TYPE_complex:     *left =  1; return VCTRS_TYPE2_complex_s3;
+    case VCTRS_TYPE_character:   *left =  1; return VCTRS_TYPE2_character_s3;
+    case VCTRS_TYPE_raw:         *left =  1; return VCTRS_TYPE2_raw_s3;
+    case VCTRS_TYPE_list:        *left =  1; return VCTRS_TYPE2_list_s3;
+    case VCTRS_TYPE_dataframe:   *left =  1; return VCTRS_TYPE2_dataframe_s3;
+    case VCTRS_TYPE_s3:          *left = -1; return VCTRS_TYPE2_S3_s3;
+    case VCTRS_TYPE_scalar:      *left =  0; return VCTRS_TYPE2_S3_scalar;
     }
   }
-  case vctrs_type_scalar: {
+  case VCTRS_TYPE_scalar: {
     switch (type_y) {
-    case vctrs_type_null:        *left =  1; return vctrs_type2_null_scalar;
-    case vctrs_type_unspecified: *left =  1; return vctrs_type2_unspecified_scalar;
-    case vctrs_type_logical:     *left =  1; return vctrs_type2_logical_scalar;
-    case vctrs_type_integer:     *left =  1; return vctrs_type2_integer_scalar;
-    case vctrs_type_double:      *left =  1; return vctrs_type2_double_scalar;
-    case vctrs_type_complex:     *left =  1; return vctrs_type2_complex_scalar;
-    case vctrs_type_character:   *left =  1; return vctrs_type2_character_scalar;
-    case vctrs_type_raw:         *left =  1; return vctrs_type2_raw_scalar;
-    case vctrs_type_list:        *left =  1; return vctrs_type2_list_scalar;
-    case vctrs_type_dataframe:   *left =  1; return vctrs_type2_dataframe_scalar;
-    case vctrs_type_s3:          *left =  1; return vctrs_type2_s3_scalar;
-    case vctrs_type_scalar:      *left = -1; return vctrs_type2_scalar_scalar;
+    case VCTRS_TYPE_null:        *left =  1; return VCTRS_TYPE2_null_scalar;
+    case VCTRS_TYPE_unspecified: *left =  1; return VCTRS_TYPE2_unspecified_scalar;
+    case VCTRS_TYPE_logical:     *left =  1; return VCTRS_TYPE2_logical_scalar;
+    case VCTRS_TYPE_integer:     *left =  1; return VCTRS_TYPE2_integer_scalar;
+    case VCTRS_TYPE_double:      *left =  1; return VCTRS_TYPE2_double_scalar;
+    case VCTRS_TYPE_complex:     *left =  1; return VCTRS_TYPE2_complex_scalar;
+    case VCTRS_TYPE_character:   *left =  1; return VCTRS_TYPE2_character_scalar;
+    case VCTRS_TYPE_raw:         *left =  1; return VCTRS_TYPE2_raw_scalar;
+    case VCTRS_TYPE_list:        *left =  1; return VCTRS_TYPE2_list_scalar;
+    case VCTRS_TYPE_dataframe:   *left =  1; return VCTRS_TYPE2_dataframe_scalar;
+    case VCTRS_TYPE_s3:          *left =  1; return VCTRS_TYPE2_S3_scalar;
+    case VCTRS_TYPE_scalar:      *left = -1; return VCTRS_TYPE2_scalar_scalar;
     }
   }}
 
-  never_reached("vec_typeof2_impl()");
+  r_stop_unreachable();
 }
 
-// [[ include("vctrs.h") ]]
-enum vctrs_type2 vec_typeof2(SEXP x, SEXP y) {
+enum vctrs_type2 vec_typeof2(r_obj* x, r_obj* y) {
   int _;
   return vec_typeof2_impl(vec_typeof(x), vec_typeof(y), &_);
 }
 
 const char* vctrs_type2_as_str(enum vctrs_type2 type) {
   switch (type) {
-  case vctrs_type2_null_null:               return "vctrs_type2_null_null";
-  case vctrs_type2_null_logical:            return "vctrs_type2_null_logical";
-  case vctrs_type2_null_integer:            return "vctrs_type2_null_integer";
-  case vctrs_type2_null_double:             return "vctrs_type2_null_double";
-  case vctrs_type2_null_complex:            return "vctrs_type2_null_complex";
-  case vctrs_type2_null_character:          return "vctrs_type2_null_character";
-  case vctrs_type2_null_raw:                return "vctrs_type2_null_raw";
-  case vctrs_type2_null_list:               return "vctrs_type2_null_list";
-  case vctrs_type2_null_dataframe:          return "vctrs_type2_null_dataframe";
-  case vctrs_type2_null_s3:                 return "vctrs_type2_null_s3";
-  case vctrs_type2_null_unspecified:        return "vctrs_type2_null_unspecified";
-  case vctrs_type2_null_scalar:             return "vctrs_type2_null_scalar";
+  case VCTRS_TYPE2_null_null:               return "VCTRS_TYPE2_null_null";
+  case VCTRS_TYPE2_null_logical:            return "VCTRS_TYPE2_null_logical";
+  case VCTRS_TYPE2_null_integer:            return "VCTRS_TYPE2_null_integer";
+  case VCTRS_TYPE2_null_double:             return "VCTRS_TYPE2_null_double";
+  case VCTRS_TYPE2_null_complex:            return "VCTRS_TYPE2_null_complex";
+  case VCTRS_TYPE2_null_character:          return "VCTRS_TYPE2_null_character";
+  case VCTRS_TYPE2_null_raw:                return "VCTRS_TYPE2_null_raw";
+  case VCTRS_TYPE2_null_list:               return "VCTRS_TYPE2_null_list";
+  case VCTRS_TYPE2_null_dataframe:          return "VCTRS_TYPE2_null_dataframe";
+  case VCTRS_TYPE2_null_s3:                 return "VCTRS_TYPE2_null_s3";
+  case VCTRS_TYPE2_null_unspecified:        return "VCTRS_TYPE2_null_unspecified";
+  case VCTRS_TYPE2_null_scalar:             return "VCTRS_TYPE2_null_scalar";
 
-  case vctrs_type2_unspecified_logical:     return "vctrs_type2_unspecified_logical";
-  case vctrs_type2_unspecified_integer:     return "vctrs_type2_unspecified_integer";
-  case vctrs_type2_unspecified_double:      return "vctrs_type2_unspecified_double";
-  case vctrs_type2_unspecified_complex:     return "vctrs_type2_unspecified_complex";
-  case vctrs_type2_unspecified_character:   return "vctrs_type2_unspecified_character";
-  case vctrs_type2_unspecified_raw:         return "vctrs_type2_unspecified_raw";
-  case vctrs_type2_unspecified_list:        return "vctrs_type2_unspecified_list";
-  case vctrs_type2_unspecified_dataframe:   return "vctrs_type2_unspecified_dataframe";
-  case vctrs_type2_unspecified_s3:          return "vctrs_type2_unspecified_s3";
-  case vctrs_type2_unspecified_unspecified: return "vctrs_type2_unspecified_unspecified";
-  case vctrs_type2_unspecified_scalar:      return "vctrs_type2_unspecified_scalar";
+  case VCTRS_TYPE2_unspecified_logical:     return "VCTRS_TYPE2_unspecified_logical";
+  case VCTRS_TYPE2_unspecified_integer:     return "VCTRS_TYPE2_unspecified_integer";
+  case VCTRS_TYPE2_unspecified_double:      return "VCTRS_TYPE2_unspecified_double";
+  case VCTRS_TYPE2_unspecified_complex:     return "VCTRS_TYPE2_unspecified_complex";
+  case VCTRS_TYPE2_unspecified_character:   return "VCTRS_TYPE2_unspecified_character";
+  case VCTRS_TYPE2_unspecified_raw:         return "VCTRS_TYPE2_unspecified_raw";
+  case VCTRS_TYPE2_unspecified_list:        return "VCTRS_TYPE2_unspecified_list";
+  case VCTRS_TYPE2_unspecified_dataframe:   return "VCTRS_TYPE2_unspecified_dataframe";
+  case VCTRS_TYPE2_unspecified_s3:          return "VCTRS_TYPE2_unspecified_s3";
+  case VCTRS_TYPE2_unspecified_unspecified: return "VCTRS_TYPE2_unspecified_unspecified";
+  case VCTRS_TYPE2_unspecified_scalar:      return "VCTRS_TYPE2_unspecified_scalar";
 
-  case vctrs_type2_logical_logical:         return "vctrs_type2_logical_logical";
-  case vctrs_type2_logical_integer:         return "vctrs_type2_logical_integer";
-  case vctrs_type2_logical_double:          return "vctrs_type2_logical_double";
-  case vctrs_type2_logical_complex:         return "vctrs_type2_logical_complex";
-  case vctrs_type2_logical_character:       return "vctrs_type2_logical_character";
-  case vctrs_type2_logical_raw:             return "vctrs_type2_logical_raw";
-  case vctrs_type2_logical_list:            return "vctrs_type2_logical_list";
-  case vctrs_type2_logical_dataframe:       return "vctrs_type2_logical_dataframe";
-  case vctrs_type2_logical_s3:              return "vctrs_type2_logical_s3";
-  case vctrs_type2_logical_scalar:          return "vctrs_type2_logical_scalar";
+  case VCTRS_TYPE2_logical_logical:         return "VCTRS_TYPE2_logical_logical";
+  case VCTRS_TYPE2_logical_integer:         return "VCTRS_TYPE2_logical_integer";
+  case VCTRS_TYPE2_logical_double:          return "VCTRS_TYPE2_logical_double";
+  case VCTRS_TYPE2_logical_complex:         return "VCTRS_TYPE2_logical_complex";
+  case VCTRS_TYPE2_logical_character:       return "VCTRS_TYPE2_logical_character";
+  case VCTRS_TYPE2_logical_raw:             return "VCTRS_TYPE2_logical_raw";
+  case VCTRS_TYPE2_logical_list:            return "VCTRS_TYPE2_logical_list";
+  case VCTRS_TYPE2_logical_dataframe:       return "VCTRS_TYPE2_logical_dataframe";
+  case VCTRS_TYPE2_logical_s3:              return "VCTRS_TYPE2_logical_s3";
+  case VCTRS_TYPE2_logical_scalar:          return "VCTRS_TYPE2_logical_scalar";
 
-  case vctrs_type2_integer_integer:         return "vctrs_type2_integer_integer";
-  case vctrs_type2_integer_double:          return "vctrs_type2_integer_double";
-  case vctrs_type2_integer_complex:         return "vctrs_type2_integer_complex";
-  case vctrs_type2_integer_character:       return "vctrs_type2_integer_character";
-  case vctrs_type2_integer_raw:             return "vctrs_type2_integer_raw";
-  case vctrs_type2_integer_list:            return "vctrs_type2_integer_list";
-  case vctrs_type2_integer_dataframe:       return "vctrs_type2_integer_dataframe";
-  case vctrs_type2_integer_s3:              return "vctrs_type2_integer_s3";
-  case vctrs_type2_integer_scalar:          return "vctrs_type2_integer_scalar";
+  case VCTRS_TYPE2_integer_integer:         return "VCTRS_TYPE2_integer_integer";
+  case VCTRS_TYPE2_integer_double:          return "VCTRS_TYPE2_integer_double";
+  case VCTRS_TYPE2_integer_complex:         return "VCTRS_TYPE2_integer_complex";
+  case VCTRS_TYPE2_integer_character:       return "VCTRS_TYPE2_integer_character";
+  case VCTRS_TYPE2_integer_raw:             return "VCTRS_TYPE2_integer_raw";
+  case VCTRS_TYPE2_integer_list:            return "VCTRS_TYPE2_integer_list";
+  case VCTRS_TYPE2_integer_dataframe:       return "VCTRS_TYPE2_integer_dataframe";
+  case VCTRS_TYPE2_integer_s3:              return "VCTRS_TYPE2_integer_s3";
+  case VCTRS_TYPE2_integer_scalar:          return "VCTRS_TYPE2_integer_scalar";
 
-  case vctrs_type2_double_double:           return "vctrs_type2_double_double";
-  case vctrs_type2_double_complex:          return "vctrs_type2_double_complex";
-  case vctrs_type2_double_character:        return "vctrs_type2_double_character";
-  case vctrs_type2_double_raw:              return "vctrs_type2_double_raw";
-  case vctrs_type2_double_list:             return "vctrs_type2_double_list";
-  case vctrs_type2_double_dataframe:        return "vctrs_type2_double_dataframe";
-  case vctrs_type2_double_s3:               return "vctrs_type2_double_s3";
-  case vctrs_type2_double_scalar:           return "vctrs_type2_double_scalar";
+  case VCTRS_TYPE2_double_double:           return "VCTRS_TYPE2_double_double";
+  case VCTRS_TYPE2_double_complex:          return "VCTRS_TYPE2_double_complex";
+  case VCTRS_TYPE2_double_character:        return "VCTRS_TYPE2_double_character";
+  case VCTRS_TYPE2_double_raw:              return "VCTRS_TYPE2_double_raw";
+  case VCTRS_TYPE2_double_list:             return "VCTRS_TYPE2_double_list";
+  case VCTRS_TYPE2_double_dataframe:        return "VCTRS_TYPE2_double_dataframe";
+  case VCTRS_TYPE2_double_s3:               return "VCTRS_TYPE2_double_s3";
+  case VCTRS_TYPE2_double_scalar:           return "VCTRS_TYPE2_double_scalar";
 
-  case vctrs_type2_complex_complex:         return "vctrs_type2_complex_complex";
-  case vctrs_type2_complex_character:       return "vctrs_type2_complex_character";
-  case vctrs_type2_complex_raw:             return "vctrs_type2_complex_raw";
-  case vctrs_type2_complex_list:            return "vctrs_type2_complex_list";
-  case vctrs_type2_complex_dataframe:       return "vctrs_type2_complex_dataframe";
-  case vctrs_type2_complex_s3:              return "vctrs_type2_complex_s3";
-  case vctrs_type2_complex_scalar:          return "vctrs_type2_complex_scalar";
+  case VCTRS_TYPE2_complex_complex:         return "VCTRS_TYPE2_complex_complex";
+  case VCTRS_TYPE2_complex_character:       return "VCTRS_TYPE2_complex_character";
+  case VCTRS_TYPE2_complex_raw:             return "VCTRS_TYPE2_complex_raw";
+  case VCTRS_TYPE2_complex_list:            return "VCTRS_TYPE2_complex_list";
+  case VCTRS_TYPE2_complex_dataframe:       return "VCTRS_TYPE2_complex_dataframe";
+  case VCTRS_TYPE2_complex_s3:              return "VCTRS_TYPE2_complex_s3";
+  case VCTRS_TYPE2_complex_scalar:          return "VCTRS_TYPE2_complex_scalar";
 
-  case vctrs_type2_character_character:     return "vctrs_type2_character_character";
-  case vctrs_type2_character_raw:           return "vctrs_type2_character_raw";
-  case vctrs_type2_character_list:          return "vctrs_type2_character_list";
-  case vctrs_type2_character_dataframe:     return "vctrs_type2_character_dataframe";
-  case vctrs_type2_character_s3:            return "vctrs_type2_character_s3";
-  case vctrs_type2_character_scalar:        return "vctrs_type2_character_scalar";
+  case VCTRS_TYPE2_character_character:     return "VCTRS_TYPE2_character_character";
+  case VCTRS_TYPE2_character_raw:           return "VCTRS_TYPE2_character_raw";
+  case VCTRS_TYPE2_character_list:          return "VCTRS_TYPE2_character_list";
+  case VCTRS_TYPE2_character_dataframe:     return "VCTRS_TYPE2_character_dataframe";
+  case VCTRS_TYPE2_character_s3:            return "VCTRS_TYPE2_character_s3";
+  case VCTRS_TYPE2_character_scalar:        return "VCTRS_TYPE2_character_scalar";
 
-  case vctrs_type2_raw_raw:                 return "vctrs_type2_raw_raw";
-  case vctrs_type2_raw_list:                return "vctrs_type2_raw_list";
-  case vctrs_type2_raw_dataframe:           return "vctrs_type2_raw_dataframe";
-  case vctrs_type2_raw_s3:                  return "vctrs_type2_raw_s3";
-  case vctrs_type2_raw_scalar:              return "vctrs_type2_raw_scalar";
+  case VCTRS_TYPE2_raw_raw:                 return "VCTRS_TYPE2_raw_raw";
+  case VCTRS_TYPE2_raw_list:                return "VCTRS_TYPE2_raw_list";
+  case VCTRS_TYPE2_raw_dataframe:           return "VCTRS_TYPE2_raw_dataframe";
+  case VCTRS_TYPE2_raw_s3:                  return "VCTRS_TYPE2_raw_s3";
+  case VCTRS_TYPE2_raw_scalar:              return "VCTRS_TYPE2_raw_scalar";
 
-  case vctrs_type2_list_list:               return "vctrs_type2_list_list";
-  case vctrs_type2_list_dataframe:          return "vctrs_type2_list_dataframe";
-  case vctrs_type2_list_s3:                 return "vctrs_type2_list_s3";
-  case vctrs_type2_list_scalar:             return "vctrs_type2_list_scalar";
+  case VCTRS_TYPE2_list_list:               return "VCTRS_TYPE2_list_list";
+  case VCTRS_TYPE2_list_dataframe:          return "VCTRS_TYPE2_list_dataframe";
+  case VCTRS_TYPE2_list_s3:                 return "VCTRS_TYPE2_list_s3";
+  case VCTRS_TYPE2_list_scalar:             return "VCTRS_TYPE2_list_scalar";
 
-  case vctrs_type2_dataframe_dataframe:     return "vctrs_type2_dataframe_dataframe";
-  case vctrs_type2_dataframe_s3:            return "vctrs_type2_dataframe_s3";
-  case vctrs_type2_dataframe_scalar:        return "vctrs_type2_dataframe_scalar";
+  case VCTRS_TYPE2_dataframe_dataframe:     return "VCTRS_TYPE2_dataframe_dataframe";
+  case VCTRS_TYPE2_dataframe_s3:            return "VCTRS_TYPE2_dataframe_s3";
+  case VCTRS_TYPE2_dataframe_scalar:        return "VCTRS_TYPE2_dataframe_scalar";
 
-  case vctrs_type2_s3_s3:                   return "vctrs_type2_s3_s3";
-  case vctrs_type2_s3_scalar:               return "vctrs_type2_s3_scalar";
+  case VCTRS_TYPE2_S3_s3:                   return "VCTRS_TYPE2_S3_s3";
+  case VCTRS_TYPE2_S3_scalar:               return "VCTRS_TYPE2_S3_scalar";
 
-  case vctrs_type2_scalar_scalar:           return "vctrs_type2_scalar_scalar";
+  case VCTRS_TYPE2_scalar_scalar:           return "VCTRS_TYPE2_scalar_scalar";
   }
 
-  never_reached("vctrs_type2_as_str");
+  r_stop_unreachable();
 }
 
-SEXP vctrs_typeof2(SEXP x, SEXP y) {
+r_obj* ffi_typeof2(r_obj* x, r_obj* y) {
   enum vctrs_type2 type = vec_typeof2(x, y);
-  return Rf_mkString(vctrs_type2_as_str(type));
+  return r_chr(vctrs_type2_as_str(type));
 }

@@ -31,29 +31,29 @@ int int_order_compare_na_equal(int x, int y, bool nan_distinct) {
 }
 static inline
 int dbl_order_compare_na_equal(double x, double y, bool nan_distinct) {
-  enum vctrs_dbl_class x_class = dbl_classify(x);
-  enum vctrs_dbl_class y_class = dbl_classify(y);
+  enum vctrs_dbl x_class = dbl_classify(x);
+  enum vctrs_dbl y_class = dbl_classify(y);
 
   switch (x_class) {
-  case vctrs_dbl_number: {
+  case VCTRS_DBL_number: {
     switch (y_class) {
-    case vctrs_dbl_number: return dbl_compare_scalar(x, y);
-    case vctrs_dbl_missing: return 1;
-    case vctrs_dbl_nan: return 1;
+    case VCTRS_DBL_number: return dbl_compare_scalar(x, y);
+    case VCTRS_DBL_missing: return 1;
+    case VCTRS_DBL_nan: return 1;
     }
   }
-  case vctrs_dbl_missing: {
+  case VCTRS_DBL_missing: {
     switch (y_class) {
-    case vctrs_dbl_number: return -1;
-    case vctrs_dbl_missing: return 0;
-    case vctrs_dbl_nan: return nan_distinct ? -1 : 0;
+    case VCTRS_DBL_number: return -1;
+    case VCTRS_DBL_missing: return 0;
+    case VCTRS_DBL_nan: return nan_distinct ? -1 : 0;
     }
   }
-  case vctrs_dbl_nan: {
+  case VCTRS_DBL_nan: {
     switch (y_class) {
-    case vctrs_dbl_number: return -1;
-    case vctrs_dbl_missing: return nan_distinct ? 1 : 0;
-    case vctrs_dbl_nan: return 0;
+    case VCTRS_DBL_number: return -1;
+    case VCTRS_DBL_missing: return nan_distinct ? 1 : 0;
+    case VCTRS_DBL_nan: return 0;
     }
   }
   }
@@ -118,11 +118,11 @@ int p_order_compare_na_equal(const void* p_x,
                              bool nan_distinct,
                              const enum vctrs_type type) {
   switch (type) {
-  case vctrs_type_logical: return p_lgl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_integer: return p_int_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_double: return p_dbl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_complex: return p_cpl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
-  case vctrs_type_character: return p_chr_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_logical: return p_lgl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_integer: return p_int_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_double: return p_dbl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_complex: return p_cpl_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
+  case VCTRS_TYPE_character: return p_chr_order_compare_na_equal(p_x, i, p_y, j, nan_distinct);
   default: stop_unimplemented_vctrs_type("p_order_compare_na_equal", type);
   }
 }

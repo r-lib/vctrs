@@ -38,7 +38,7 @@ test_that("can subset with missing indices", {
     expect_identical(vec_slice(lgl(1, 0, 1), i), lgl(0, NA))
     expect_identical(vec_slice(int(1, 2, 3), i), int(2, NA))
     expect_identical(vec_slice(dbl(1, 2, 3), i), dbl(2, NA))
-    expect_identical(vec_slice(cpl(1, 2, 3), i), cpl(2, NA))
+    expect_identical(vec_slice(cpl2(1, 2, 3), i), cpl2(2, NA))
     expect_identical(vec_slice(chr("1", "2", "3"), i), c("2", NA))
     expect_identical(vec_slice(raw2(1, 2, 3), i), raw2(2, 0))
     expect_identical(vec_slice(list(1, 2, 3), i), list(2, NULL))
@@ -205,7 +205,7 @@ test_that("can `vec_slice()` records", {
 
 test_that("vec_restore() is called after proxied slicing", {
   local_methods(
-    vec_proxy.vctrs_foobar = identity,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     vec_restore.vctrs_foobar = function(x, to, ...) "dispatch"
   )
   expect_identical(vec_slice(foobar(1:3), 2), "dispatch")
@@ -236,7 +236,7 @@ test_that("dimensions are preserved by vec_slice()", {
   attrib <- NULL
 
   local_methods(
-    vec_proxy.vctrs_foobar = identity,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     vec_restore.vctrs_foobar = function(x, to, ...) attrib <<- attributes(x)
   )
 
@@ -260,7 +260,7 @@ test_that("can slice shaped objects by name", {
 test_that("vec_slice() unclasses input before calling `vec_restore()`", {
   oo <- NULL
   local_methods(
-    vec_proxy.vctrs_foobar = identity,
+    vec_proxy.vctrs_foobar = function(x, ...) x,
     vec_restore.vctrs_foobar = function(x, ...) oo <<- is.object(x)
   )
 
@@ -302,7 +302,7 @@ test_that("vec_slice() falls back to `[` with S3 objects", {
 
   expect_error(vec_slice(foobar(list(NA)), 1), class = "vctrs_error_scalar_type")
   local_methods(
-    vec_proxy.vctrs_foobar = identity
+    vec_proxy.vctrs_foobar = function(x, ...) x
   )
   expect_identical(vec_slice(foobar(list(NA)), 1), foobar(list(NA)))
 })
@@ -690,7 +690,7 @@ test_that("vec_slice() restores unrestored but named foreign classes", {
 
   expect_identical(vec_slice(x, 1), x)
   expect_identical(vec_chop(x), list(x))
-  expect_identical(vec_chop(x, list(1)), list(x))
+  expect_identical(vec_chop(x, indices = list(1)), list(x))
   expect_identical(vec_ptype(x), foobar(named(dbl())))
   expect_identical(vec_ptype(x), foobar(named(dbl())))
   expect_identical(vec_ptype_common(x, x), foobar(named(dbl())))

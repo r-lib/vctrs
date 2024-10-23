@@ -14,10 +14,12 @@ vec_locate_matches(
   no_match = NA_integer_,
   remaining = "drop",
   multiple = "all",
+  relationship = "none",
   nan_distinct = FALSE,
   chr_proxy_collate = NULL,
-  needles_arg = "",
-  haystack_arg = ""
+  needles_arg = "needles",
+  haystack_arg = "haystack",
+  error_call = current_env()
 )
 }
 \arguments{
@@ -59,20 +61,20 @@ A filter can return multiple haystack matches for a particular needle
 if the maximum or minimum haystack value is duplicated in \code{haystack}. These
 can be further controlled with \code{multiple}.}
 
-\item{incomplete}{Handling of missing values and
-\link[=vec_detect_complete]{incomplete} observations in \code{needles}.
+\item{incomplete}{Handling of missing and \link[=vec_detect_complete]{incomplete}
+values in \code{needles}.
 \itemize{
 \item \code{"compare"} uses \code{condition} to determine whether or not a missing value
 in \code{needles} matches a missing value in \code{haystack}. If \code{condition} is
 \code{==}, \code{>=}, or \code{<=}, then missing values will match.
 \item \code{"match"} always allows missing values in \code{needles} to match missing
 values in \code{haystack}, regardless of the \code{condition}.
-\item \code{"drop"} drops incomplete observations in \code{needles} from the result.
+\item \code{"drop"} drops incomplete values in \code{needles} from the result.
 \item \code{"error"} throws an error if any \code{needles} are incomplete.
 \item If a single integer is provided, this represents the value returned
-in the \code{haystack} column for observations of \code{needles} that are
-incomplete. If \code{no_match = NA}, setting \code{incomplete = NA} forces
-incomplete observations in \code{needles} to be treated like unmatched values.
+in the \code{haystack} column for values of \code{needles} that are incomplete. If
+\code{no_match = NA}, setting \code{incomplete = NA} forces incomplete values in
+\code{needles} to be treated like unmatched values.
 }
 
 \code{nan_distinct} determines whether a \code{NA} is allowed to match a \code{NaN}.}
@@ -82,8 +84,8 @@ incomplete observations in \code{needles} to be treated like unmatched values.
 \item \code{"drop"} drops \code{needles} with zero matches from the result.
 \item \code{"error"} throws an error if any \code{needles} have zero matches.
 \item If a single integer is provided, this represents the value returned in
-the \code{haystack} column for observations of \code{needles} that have zero
-matches. The default represents an unmatched needle with \code{NA}.
+the \code{haystack} column for values of \code{needles} that have zero matches. The
+default represents an unmatched needle with \code{NA}.
 }}
 
 \item{remaining}{Handling of \code{haystack} values that \code{needles} never matched.
@@ -107,10 +109,48 @@ which match will be returned. It is often faster than \code{"first"} and
 \code{"last"} if you just need to detect if there is at least one match.
 \item \code{"first"} returns the first match detected in \code{haystack}.
 \item \code{"last"} returns the last match detected in \code{haystack}.
-\item \code{"warning"} throws a warning if multiple matches are detected, but
-otherwise falls back to \code{"all"}.
-\item \code{"error"} throws an error if multiple matches are detected.
 }}
+
+\item{relationship}{Handling of the expected relationship between
+\code{needles} and \code{haystack}. If the expectations chosen from the list below
+are invalidated, an error is thrown.
+\itemize{
+\item \code{"none"} doesn't perform any relationship checks.
+\item \code{"one-to-one"} expects:
+\itemize{
+\item Each value in \code{needles} matches at most 1 value in \code{haystack}.
+\item Each value in \code{haystack} matches at most 1 value in \code{needles}.
+}
+\item \code{"one-to-many"} expects:
+\itemize{
+\item Each value in \code{needles} matches any number of values in \code{haystack}.
+\item Each value in \code{haystack} matches at most 1 value in \code{needles}.
+}
+\item \code{"many-to-one"} expects:
+\itemize{
+\item Each value in \code{needles} matches at most 1 value in \code{haystack}.
+\item Each value in \code{haystack} matches any number of values in \code{needles}.
+}
+\item \code{"many-to-many"} expects:
+\itemize{
+\item Each value in \code{needles} matches any number of values in \code{haystack}.
+\item Each value in \code{haystack} matches any number of values in \code{needles}.
+}
+
+This performs no checks, and is identical to \code{"none"}, but is provided to
+allow you to be explicit about this relationship if you know it exists.
+\item \code{"warn-many-to-many"} doesn't assume there is any known relationship, but
+will warn if \code{needles} and \code{haystack} have a many-to-many relationship
+(which is typically unexpected), encouraging you to either take a closer
+look at your inputs or make this relationship explicit by specifying
+\code{"many-to-many"}.
+}
+
+\code{relationship} is applied after \code{filter} and \code{multiple} to allow potential
+multiple matches to be filtered out first.
+
+\code{relationship} doesn't handle cases where there are zero matches. For that,
+see \code{no_match} and \code{remaining}.}
 
 \item{nan_distinct}{A single logical specifying whether or not \code{NaN} should
 be considered distinct from \code{NA} for double and complex vectors. If \code{TRUE},
@@ -136,6 +176,11 @@ ordering and \code{stringi::stri_sort_key()} for locale-aware ordering.}
 
 \item{needles_arg, haystack_arg}{Argument tags for \code{needles} and \code{haystack}
 used in error messages.}
+
+\item{error_call}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 }
 \value{
 A two column data frame containing the locations of the matches.
@@ -150,10 +195,10 @@ corresponding match in the haystack for the current needle.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 \code{vec_locate_matches()} is a more flexible version of \code{\link[=vec_match]{vec_match()}} used to
-identify locations where each observation of \code{needles} matches one or
-multiple observations in \code{haystack}. Unlike \code{vec_match()},
-\code{vec_locate_matches()} returns all matches by default, and can match on
-binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, and \code{<=}.
+identify locations where each value of \code{needles} matches one or multiple
+values in \code{haystack}. Unlike \code{vec_match()}, \code{vec_locate_matches()} returns
+all matches by default, and can match on binary conditions other than
+equality, such as \code{>}, \code{>=}, \code{<}, and \code{<=}.
 }
 \details{
 \code{\link[=vec_match]{vec_match()}} is identical to (but often slightly faster than):
@@ -171,7 +216,7 @@ binary conditions other than equality, such as \code{>}, \code{>=}, \code{<}, an
 and \code{haystack}, with the default being most similar to a left join.
 
 Be very careful when specifying match \code{condition}s. If a condition is
-mis-specified, it is very easy to accidentally generate an exponentially
+misspecified, it is very easy to accidentally generate an exponentially
 large number of matches.
 }
 \section{Dependencies of \code{vec_locate_matches()}}{
@@ -186,7 +231,7 @@ large number of matches.
 x <- c(1, 2, NA, 3, NaN)
 y <- c(2, 1, 4, NA, 1, 2, NaN)
 
-# By default, for each element of `x`, all matching locations in `y` are
+# By default, for each value of `x`, all matching locations in `y` are
 # returned
 matches <- vec_locate_matches(x, y)
 matches
@@ -201,17 +246,27 @@ data_frame(
 vec_locate_matches(x, y, multiple = "first")
 vec_locate_matches(x, y, multiple = "last")
 vec_locate_matches(x, y, multiple = "any")
-try(vec_locate_matches(x, y, multiple = "error"))
 
-# By default, NA is treated as being identical to NaN.
-# Using `nan_distinct = TRUE` treats NA and NaN as different values, so NA
-# can only match NA, and NaN can only match NaN.
+# Use `relationship` to add constraints and error on multiple matches if
+# they aren't expected
+try(vec_locate_matches(x, y, relationship = "one-to-one"))
+
+# In this case, the `NA` in `y` matches two rows in `x`
+try(vec_locate_matches(x, y, relationship = "one-to-many"))
+
+# By default, `NA` is treated as being identical to `NaN`.
+# Using `nan_distinct = TRUE` treats `NA` and `NaN` as different values, so
+# `NA` can only match `NA`, and `NaN` can only match `NaN`.
 vec_locate_matches(x, y, nan_distinct = TRUE)
 
 # If you never want missing values to match, set `incomplete = NA` to return
-# `NA` in the `haystack` column anytime there was an incomplete observation
+# `NA` in the `haystack` column anytime there was an incomplete value
 # in `needles`.
 vec_locate_matches(x, y, incomplete = NA)
+
+# Using `incomplete = NA` allows us to enforce the one-to-many relationship
+# that we couldn't before
+vec_locate_matches(x, y, relationship = "one-to-many", incomplete = NA)
 
 # `no_match` allows you to specify the returned value for a needle with
 # zero matches. Note that this is different from an incomplete value,
@@ -247,8 +302,8 @@ data_frame(
 )
 
 # In the very rare case that you need to generate locations for a
-# cross match, where every observation of `x` is forced to match every
-# observation of `y` regardless of what the actual values are, you can
+# cross match, where every value of `x` is forced to match every
+# value of `y` regardless of what the actual values are, you can
 # replace `x` and `y` with integer vectors of the same size that contain
 # a single value and match on those instead.
 x_proxy <- vec_rep(1L, vec_size(x))

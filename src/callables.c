@@ -19,7 +19,7 @@ SEXP exp_vec_cast(SEXP x, SEXP to) {
 }
 
 SEXP exp_vec_chop(SEXP x, SEXP indices) {
-  return vec_chop(x, indices);
+  return vec_chop_unsafe(x, indices, r_null);
 }
 
 SEXP exp_vec_slice_impl(SEXP x, SEXP subscript) {

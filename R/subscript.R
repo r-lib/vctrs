@@ -10,7 +10,7 @@
 #'
 #' @inheritParams vec_as_location
 #'
-#' @param logical,location,character How to handle logical, numeric,
+#' @param logical,numeric,character How to handle logical, numeric,
 #'   and character subscripts.
 #'
 #'   If `"cast"` and the subscript is not one of the three base types
@@ -64,17 +64,25 @@ vec_as_subscript_result <- function(i,
 #' @export
 vec_as_subscript2 <- function(i,
                               ...,
-                              logical = c("cast", "error"),
                               numeric = c("cast", "error"),
                               character = c("cast", "error"),
                               arg = NULL,
                               call = caller_env()) {
-  check_dots_empty0(...)
+  check_dots <- function(..., logical = "error", call = caller_env()) {
+    if (!is_string(logical, "error")) {
+      abort(
+        "`vctrs::vec_as_subscript2(logical = 'cast')` is deprecated.",
+        call = caller_env()
+      )
+    }
+    check_dots_empty0(..., call = call)
+  }
+  check_dots(...)
+
   result_get(vec_as_subscript2_result(
     i,
     arg,
     call,
-    logical = logical,
     numeric = numeric,
     character = character
   ))
@@ -82,10 +90,8 @@ vec_as_subscript2 <- function(i,
 vec_as_subscript2_result <- function(i,
                                      arg,
                                      call,
-                                     logical = "cast",
                                      numeric = "cast",
                                      character = "cast") {
-  logical <- arg_match0(logical, c("cast", "error"))
   numeric <- arg_match0(numeric, c("cast", "error"))
   character <- arg_match0(character, c("cast", "error"))
 
@@ -93,46 +99,15 @@ vec_as_subscript2_result <- function(i,
     i,
     arg = arg,
     call = call,
-    logical = logical,
+    logical = "error",
     numeric = numeric,
     character = character
   )
 
-  # Return a child of subscript error. The child error messages refer
-  # to single subscripts instead of subscript vectors.
+  # This should normally be a `vctrs_error_subscript`. Indicate to
+  # message methods that this error refers to a `[[` subscript.
   if (!is_null(result$err)) {
-    parent <- result$err$parent
-    if (inherits(parent, "vctrs_error_cast_lossy")) {
-      bullets <- new_cnd_bullets_subscript_lossy_cast(parent)
-    } else {
-      bullets <- cnd_body.vctrs_error_subscript_type
-    }
-
-    result$err <- new_error_subscript2_type(
-      i = result$err$i,
-      logical = logical,
-      numeric = numeric,
-      character = character,
-      subscript_arg = arg,
-      body = bullets,
-      call = call
-    )
-
-    return(result)
-  }
-
-  i <- result$ok
-
-  if (typeof(i) == "logical") {
-    return(result(err = new_error_subscript2_type(
-      i = i,
-      logical = logical,
-      numeric = numeric,
-      character = character,
-      subscript_arg = arg,
-      body = cnd_body.vctrs_error_subscript_type,
-      call = call
-    )))
+    result$err$subscript_scalar <- TRUE
   }
 
   result
@@ -170,7 +145,7 @@ stop_subscript <- function(i,
     class = c(class, "vctrs_error_subscript"),
     i = i,
     ...,
-    call = vctrs_error_call(call)
+    call = call
   )
 }
 new_error_subscript <- function(class = NULL, i, ...) {
@@ -194,29 +169,36 @@ new_error_subscript_type <- function(i,
     numeric = numeric,
     character = character,
     ...,
-    call = vctrs_error_call(call)
+    call = call
   )
 }
 
 #' @export
-cnd_header.vctrs_error_subscript_type <- function(cnd) {
-  action <- cnd_subscript_action(cnd)
-  elt <- cnd_subscript_element(cnd)
-  if (cnd_subscript_scalar(cnd)) {
-    glue::glue("Must {action} {elt[[1]]} with a single valid subscript.")
+cnd_header.vctrs_error_subscript_type <- function(cnd, ...) {
+  arg <- cnd[["subscript_arg"]]
+  if (is_subscript_arg(arg)) {
+    with <- glue::glue(" with {format_subscript_arg(arg)}")
   } else {
-    glue::glue("Must {action} {elt[[2]]} with a valid subscript vector.")
+    with <- ""
+  }
+
+  action <- cnd_subscript_action(cnd, assign_to = FALSE)
+  elt <- cnd_subscript_element(cnd)
+
+  if (cnd_subscript_scalar(cnd)) {
+    glue::glue("Can't {action} {elt[[1]]}{with}.")
+  } else {
+    glue::glue("Can't {action} {elt[[2]]}{with}.")
   }
 }
 #' @export
-cnd_body.vctrs_error_subscript_type <- function(cnd) {
-  arg <- append_arg("Subscript", cnd$subscript_arg)
-  type <- obj_type(cnd$i)
-  expected_types <- collapse_subscript_type(cnd)
+cnd_body.vctrs_error_subscript_type <- function(cnd, ...) {
+  arg <- cnd_subscript_arg(cnd)
+  type <- obj_type_friendly(cnd$i)
+  expected_types <- cnd_subscript_expected_types(cnd)
 
   format_error_bullets(c(
-    x = glue::glue("{arg} has the wrong type `{type}`."),
-    i = glue::glue("It must be {expected_types}.")
+    x = cli::format_inline("{arg} must be {.or {expected_types}}, not {type}.")
   ))
 }
 new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
@@ -226,9 +208,7 @@ new_cnd_bullets_subscript_lossy_cast <- function(lossy_err) {
 }
 
 collapse_subscript_type <- function(cnd) {
-  types <- c("logical", "numeric", "character")
-  allowed <- cnd[types] != "error"
-  types <- types[allowed]
+  types <- cnd_subscript_expected_types(cnd)
 
   if (length(types) == 2) {
     last <- " or "
@@ -237,6 +217,11 @@ collapse_subscript_type <- function(cnd) {
   }
 
   glue::glue_collapse(types, sep = ", ", last = last)
+}
+cnd_subscript_expected_types <- function(cnd) {
+  types <- c("logical", "numeric", "character")
+  allowed <- cnd[types] != "error"
+  types[allowed]
 }
 
 new_error_subscript_size <- function(i,
@@ -254,13 +239,12 @@ cnd_header.vctrs_error_subscript_size <- function(cnd, ...) {
 }
 
 new_error_subscript2_type <- function(i,
-                                      logical,
                                       numeric,
                                       character,
                                       ...) {
   new_error_subscript_type(
     i = i,
-    logical = logical,
+    logical = "error",
     numeric = numeric,
     character = character,
     subscript_scalar = TRUE,
@@ -373,6 +357,27 @@ cnd_subscript_action <- function(cnd, assign_to = TRUE) {
   } else {
     action
   }
+}
+
+cnd_subscript_arg <- function(cnd, ...) {
+  format_subscript_arg(cnd[["subscript_arg"]], ...)
+}
+format_subscript_arg <- function(arg, capitalise = TRUE) {
+  if (is_subscript_arg(arg)) {
+    if (!is_string(arg)) {
+      arg <- as_label(arg)
+    }
+    cli::format_inline("{.arg {arg}}")
+  } else {
+    if (capitalise) {
+      "Subscript"
+    } else {
+      "subscript"
+    }
+  }
+}
+is_subscript_arg <- function(x) {
+  !is_null(x) && !is_string(x, "")
 }
 
 cnd_subscript_type <- function(cnd) {

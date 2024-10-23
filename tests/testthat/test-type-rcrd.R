@@ -26,22 +26,41 @@ test_that("vec_proxy() transforms records to data frames", {
   )
 })
 
-test_that("equality, comparison, and order proxies are recursive (#1503)", {
-  base <- new_rcrd(list(a = 1))
+test_that("equality, comparison, and order proxies are recursive and fall through (#1503, #1664)", {
+  base <- new_rcrd(list(a = 1), class = "custom")
   x <- new_rcrd(list(x = base))
 
   expect_identical(vec_proxy_equal(x), 1)
   expect_identical(vec_proxy_compare(x), 1)
   expect_identical(vec_proxy_order(x), 1)
 
-  base <- new_rcrd(list(a = 1, b = 2))
-  x <- new_rcrd(list(x = base, y = base))
+  local_methods(vec_proxy_equal.custom = function(x, ...) rep("equal", length(x)))
 
-  expect <- data_frame(a = 1, b = 2, a = 1, b = 2, .name_repair = "minimal")
+  expect_identical(vec_proxy_equal(x), "equal")
+  expect_identical(vec_proxy_compare(x), "equal")
+  expect_identical(vec_proxy_order(x), "equal")
 
-  expect_identical(vec_proxy_equal(x), expect)
-  expect_identical(vec_proxy_compare(x), expect)
-  expect_identical(vec_proxy_order(x), expect)
+  local_methods(vec_proxy_compare.custom = function(x, ...) rep("compare", length(x)))
+
+  expect_identical(vec_proxy_equal(x), "equal")
+  expect_identical(vec_proxy_compare(x), "compare")
+  expect_identical(vec_proxy_order(x), "compare")
+
+  local_methods(vec_proxy_order.custom = function(x, ...) rep("order", length(x)))
+
+  expect_identical(vec_proxy_equal(x), "equal")
+  expect_identical(vec_proxy_compare(x), "compare")
+  expect_identical(vec_proxy_order(x), "order")
+
+  y <- new_rcrd(list(a = 1), class = "custom2")
+  local_methods(vec_proxy_compare.custom2 = function(x, ...) rep("compare2", length(x)))
+
+  z <- data_frame(x = x, y = y)
+
+  # Each column falls back independently
+  expect_identical(vec_proxy_equal(z), data_frame(x = "equal", y = 1))
+  expect_identical(vec_proxy_compare(z), data_frame(x = "compare", y = "compare2"))
+  expect_identical(vec_proxy_order(z), data_frame(x = "order", y = "compare2"))
 })
 
 # base methods ------------------------------------------------------------
@@ -279,8 +298,9 @@ test_that("dangerous methods marked as unimplemented", {
 
 # slicing -----------------------------------------------------------------
 
-test_that("dots are forwarded", {
-  expect_error(new_rcrd(list(foo = "foo"))[1, 2], "undefined columns selected")
+test_that("dots are an error (#1295)", {
+  foo <- new_rcrd(list(foo = "foo"))
+  expect_snapshot(error = TRUE, foo[1, 2])
 })
 
 test_that("records are restored after slicing the proxy", {

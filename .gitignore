@@ -7,3 +7,5 @@ docs
 .clangd
 launch.json
 .vscode/
+.cache/
+compile_commands.json

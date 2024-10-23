@@ -70,11 +70,11 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   enum vctrs_type type = vec_proxy_typeof(x);
 
   struct poly_vec* p_poly_vec = new_poly_vec(x, type);
-  PROTECT_POLY_VEC(p_poly_vec, &nprot);
+  KEEP_N(p_poly_vec->shelter, &nprot);
   d->p_poly_vec = p_poly_vec;
 
-  d->p_equal_na_equal = new_poly_p_equal_na_equal(type);
-  d->p_is_incomplete = new_poly_p_is_incomplete(type);
+  d->p_equal_na_equal = poly_p_equal_na_equal(type);
+  d->p_is_incomplete = poly_p_is_incomplete(type);
 
   d->used = 0;
 
@@ -85,7 +85,10 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
     uint32_t size = dict_key_size(x);
 
     d->key = (R_len_t*) R_alloc(size, sizeof(R_len_t));
-    memset(d->key, DICT_EMPTY, size * sizeof(R_len_t));
+
+    for (uint32_t i = 0; i < size; ++i) {
+      d->key[i] = DICT_EMPTY;
+    }
 
     d->size = size;
   }
@@ -98,7 +101,7 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
       Rf_errorcall(R_NilValue, "Can't allocate hash lookup table. Please free memory.");
     }
 
-    memset(d->hash, 0, n * sizeof(R_len_t));
+    memset(d->hash, 0, n * sizeof(uint32_t));
     hash_fill(d->hash, n, x, opts->na_equal);
   } else {
     d->hash = NULL;
@@ -163,13 +166,14 @@ void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
 }
 
 // Assume worst case, that every value is distinct, aiming for a load factor
-// of at most 77%. We round up to power of 2 to ensure quadratic probing
+// of at most 50%. We round up to power of 2 to ensure quadratic probing
 // strategy works. Maximum power of 2 we can store in a uint32_t is 2^31,
 // as 2^32 is 1 greater than the max uint32_t value, so we clamp sizes that
 // would result in 2^32 to INT32_MAX to ensure that our maximum ceiling value
-// is only 2^31. This will increase the load factor above 77% for `x` with
-// length greater than 1653562409 (2147483648 * .77), but it ensures that
-// it can run.
+// is only 2^31. This will increase the max load factor above 50% for `x` with
+// length greater than 1073741824 (2147483648 * .50), but it ensures that
+// it can run. See https://github.com/r-lib/vctrs/pull/1760 for further
+// discussion of why 50% was chosen.
 static inline
 uint32_t dict_key_size(SEXP x) {
   const R_len_t x_size = vec_size(x);
@@ -179,7 +183,7 @@ uint32_t dict_key_size(SEXP x) {
     r_stop_internal("Dictionary functions do not support long vectors.");
   }
 
-  const double load_adjusted_size = x_size / 0.77;
+  const double load_adjusted_size = x_size / 0.50;
 
   if (load_adjusted_size > UINT32_MAX) {
     r_stop_internal("Can't safely cast load adjusted size to a `uint32_t`.");
@@ -330,6 +334,8 @@ SEXP vctrs_id(SEXP x) {
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
                  SEXP frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
+
   struct r_lazy needles_arg_ = { .x = syms.needles_arg, .env = frame };
   struct vctrs_arg needles_arg = new_lazy_arg(&needles_arg_);
 
@@ -340,7 +346,8 @@ SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
                           haystack,
                           r_bool_as_int(na_equal),
                           &needles_arg,
-                          &haystack_arg);
+                          &haystack_arg,
+                          call);
 }
 
 static inline void vec_match_loop(int* p_out,
@@ -356,24 +363,25 @@ SEXP vec_match_params(SEXP needles,
                       SEXP haystack,
                       bool na_equal,
                       struct vctrs_arg* needles_arg,
-                      struct vctrs_arg* haystack_arg) {
+                      struct vctrs_arg* haystack_arg,
+                      struct r_lazy call) {
   int nprot = 0;
   int _;
   SEXP type = vec_ptype2_params(needles, haystack,
                                 needles_arg, haystack_arg,
-                                DF_FALLBACK_quiet,
+                                call,
                                 &_);
   PROTECT_N(type, &nprot);
 
   needles = vec_cast_params(needles, type,
                             needles_arg, vec_args.empty,
-                            DF_FALLBACK_quiet,
+                            call,
                             S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
                              haystack_arg, vec_args.empty,
-                             DF_FALLBACK_quiet,
+                             call,
                              S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
 
@@ -453,6 +461,8 @@ static inline void vec_match_loop_propagate(int* p_out,
 
 // [[ register() ]]
 SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
+  struct r_lazy call = { .x = frame, .env = r_null };
+
   int nprot = 0;
   bool na_equal = r_bool_as_int(na_equal_);
 
@@ -466,19 +476,19 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
 
   SEXP type = vec_ptype2_params(needles, haystack,
                                 &needles_arg, &haystack_arg,
-                                DF_FALLBACK_quiet,
+                                call,
                                 &_);
   PROTECT_N(type, &nprot);
 
   needles = vec_cast_params(needles, type,
                             &needles_arg, vec_args.empty,
-                            DF_FALLBACK_quiet,
+                            call,
                             S3_FALLBACK_false);
   PROTECT_N(needles, &nprot);
 
   haystack = vec_cast_params(haystack, type,
                              &haystack_arg, vec_args.empty,
-                             DF_FALLBACK_quiet,
+                             call,
                              S3_FALLBACK_false);
   PROTECT_N(haystack, &nprot);
 

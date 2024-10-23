@@ -4,6 +4,9 @@
 #' for all vector types, regardless of dimensionality. It is an analog to `[`
 #' that matches [vec_size()] instead of `length()`.
 #'
+#' @inheritParams rlang::args_dots_empty
+#' @inheritParams rlang::args_error_context
+#'
 #' @param x A vector
 #' @param i An integer, character or logical vector specifying the
 #'   locations or names of the observations to get/set. Specify
@@ -16,7 +19,7 @@
 #'   in error messages to inform the user about the locations of
 #'   incompatible types and sizes (see [stop_incompatible_type()] and
 #'   [stop_incompatible_size()]).
-#' @param ... These dots are for future extensions and must be empty.
+#'
 #' @return A vector of the same type as `x`.
 #'
 #' @section Genericity:
@@ -104,15 +107,15 @@
 #' # vector:
 #' x <- 1:3
 #' try(vec_slice(x, 2) <- 1.5)
-vec_slice <- function(x, i) {
-  delayedAssign("call", vctrs_error_borrowed_call())
+vec_slice <- function(x, i, ..., error_call = current_env()) {
+  check_dots_empty0(...)
   .Call(ffi_slice, x, i, environment())
 }
 
 # Called when `x` has dimensions
 vec_slice_fallback <- function(x, i) {
   out <- unclass(vec_proxy(x))
-  vec_assert(out)
+  obj_check_vector(out)
 
   d <- vec_dim_n(out)
   if (d == 2) {
@@ -232,7 +235,12 @@ vec_index <- function(x, i, ...) {
 #' @examples
 #' vec_init(1:10, 3)
 #' vec_init(Sys.Date(), 5)
+#'
+#' # The "missing" value for a data frame is a row that is entirely missing
 #' vec_init(mtcars, 2)
+#'
+#' # The "missing" value for a list is `NULL`
+#' vec_init(list(), 3)
 vec_init <- function(x, n = 1L) {
   .Call(ffi_init, x, n, environment())
 }

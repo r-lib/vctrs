@@ -55,7 +55,7 @@ local_proxy <- function(frame = caller_env()) {
 new_proxy <- function(x) {
   structure(list(env(x = x)), class = "vctrs_proxy")
 }
-proxy_deref <- function(x) {
+proxy_deref <- function(x, ...) {
   x[[1]]$x
 }
 local_env_proxy <- function(frame = caller_env()) {
@@ -78,7 +78,7 @@ tibble <- function(...) {
 }
 
 local_foobar_proxy <- function(frame = caller_env()) {
-  local_methods(.frame = frame, vec_proxy.vctrs_foobar = identity)
+  local_methods(.frame = frame, vec_proxy.vctrs_foobar = function(x, ...) x)
 }
 
 subclass <- function(x) {
@@ -153,4 +153,10 @@ local_foobar_df_methods <- function(expr, frame = caller_env()) {
 with_foobar_df_methods <- function(expr) {
   local_foobar_df_methods()
   expr
+}
+
+set_tibble <- function(x) {
+  base <- class(x)[-length(class(x))]
+  class(x) <- c(base, "tbl_df", "tbl", "data.frame")
+  x
 }

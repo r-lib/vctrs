@@ -15,12 +15,12 @@ equal.}
 the first element of \code{x}.}
 
 \item{..., class}{Additional arguments for creating subclasses.
-The \code{"names"} and \code{"row.names"} attributes override input in \code{x} and \code{n},
-respectively:
+
+The following attributes have special behavior:
 \itemize{
-\item \code{"names"} is used if provided, overriding existing names in \code{x}
-\item \code{"row.names"} is used if provided, if \code{n} is provided it must be
-consistent.
+\item \code{"names"} is preferred if provided, overriding existing names in \code{x}.
+\item \code{"row.names"} is preferred if provided, overriding both \code{n} and the size
+implied by \code{x}.
 }}
 }
 \description{

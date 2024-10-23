@@ -36,6 +36,8 @@
 #' classes (with identical implementations) to avoid mismatches between
 #' comparison and sorting.
 #'
+#' @inheritSection vec_proxy_equal Data frames
+#'
 #' @param x A vector x.
 #' @inheritParams rlang::args_dots_empty
 #' @return A 1d atomic vector or a data frame.
@@ -56,23 +58,13 @@
 #' df <- new_data_frame(list(x = x))
 #' vec_sort(df)
 vec_proxy_compare <- function(x, ...) {
-  if (!missing(...)) {
-    # For backward compatibility with older dplyr versions
-    if (match_relax(...)) {
-      return(vec_proxy_order(x))
-    }
-    check_dots_empty0(...)
-  }
+  check_dots_empty0(...)
   return(.Call(vctrs_proxy_compare, x))
   UseMethod("vec_proxy_compare")
 }
 #' @export
 vec_proxy_compare.default <- function(x, ...) {
   stop_native_implementation("vec_proxy_compare.default")
-}
-
-match_relax <- function(..., relax = FALSE) {
-  relax
 }
 
 #' @rdname vec_proxy_compare
@@ -120,18 +112,14 @@ vec_proxy_order.default <- function(x, ...) {
 #' df <- data.frame(x = c(1, 1, 1, 2), y = c(0, 1, 2, 1))
 #' vec_compare(df, data.frame(x = 1, y = 1))
 vec_compare <- function(x, y, na_equal = FALSE, .ptype = NULL) {
-  vec_assert(x)
-  vec_assert(y)
-  vec_assert(na_equal, ptype = logical(), size = 1L)
+  obj_check_vector(x)
+  obj_check_vector(y)
+  check_bool(na_equal)
 
   args <- vec_recycle_common(x, y)
-  args <- vec_cast_common_params(
-    !!!args,
-    .to = .ptype,
-    .df_fallback = DF_FALLBACK_quiet
-  )
+  args <- vec_cast_common_params(!!!args, .to = .ptype)
 
-  .Call(vctrs_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)
+  .Call(ffi_vec_compare, vec_proxy_compare(args[[1]]), vec_proxy_compare(args[[2]]), na_equal)
 }
 
 

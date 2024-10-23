@@ -16,8 +16,8 @@
 
 static inline int dbl_cmp(double x,
                           double y,
-                          enum vctrs_dbl_class x_type,
-                          enum vctrs_dbl_class y_type,
+                          enum vctrs_dbl x_type,
+                          enum vctrs_dbl y_type,
                           int direction,
                           int na_order,
                           int na_nan_order);
@@ -53,7 +53,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   const int na_nan_order = nan_distinct ? na_order : 0;
 
   double previous = p_x[0];
-  enum vctrs_dbl_class previous_type = dbl_classify(previous);
+  enum vctrs_dbl previous_type = dbl_classify(previous);
 
   r_ssize count = 0;
 
@@ -61,7 +61,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // (ties are not allowed so we can reverse the vector stably)
   for (r_ssize i = 1; i < size; ++i, ++count) {
     double current = p_x[i];
-    enum vctrs_dbl_class current_type = dbl_classify(current);
+    enum vctrs_dbl current_type = dbl_classify(current);
 
     int cmp = dbl_cmp(
       current,
@@ -107,7 +107,7 @@ enum vctrs_sortedness dbl_sortedness(const double* p_x,
   // reverse the ordering.
   for (r_ssize i = 1; i < size; ++i) {
     double current = p_x[i];
-    enum vctrs_dbl_class current_type = dbl_classify(current);
+    enum vctrs_dbl current_type = dbl_classify(current);
 
     int cmp = dbl_cmp(
       current,
@@ -154,29 +154,29 @@ static inline int dbl_cmp_numbers(double x, double y, int direction);
 static inline
 int dbl_cmp(double x,
             double y,
-            enum vctrs_dbl_class x_type,
-            enum vctrs_dbl_class y_type,
+            enum vctrs_dbl x_type,
+            enum vctrs_dbl y_type,
             int direction,
             int na_order,
             int na_nan_order) {
   switch (x_type) {
-  case vctrs_dbl_number:
+  case VCTRS_DBL_number:
     switch (y_type) {
-    case vctrs_dbl_number: return dbl_cmp_numbers(x, y, direction);
-    case vctrs_dbl_missing: return -na_order;
-    case vctrs_dbl_nan: return -na_order;
+    case VCTRS_DBL_number: return dbl_cmp_numbers(x, y, direction);
+    case VCTRS_DBL_missing: return -na_order;
+    case VCTRS_DBL_nan: return -na_order;
     }
-  case vctrs_dbl_missing:
+  case VCTRS_DBL_missing:
     switch (y_type) {
-    case vctrs_dbl_number: return na_order;
-    case vctrs_dbl_missing: return 0;
-    case vctrs_dbl_nan: return na_nan_order;
+    case VCTRS_DBL_number: return na_order;
+    case VCTRS_DBL_missing: return 0;
+    case VCTRS_DBL_nan: return na_nan_order;
     }
-  case vctrs_dbl_nan:
+  case VCTRS_DBL_nan:
     switch (y_type) {
-    case vctrs_dbl_number: return na_order;
-    case vctrs_dbl_missing: return -na_nan_order;
-    case vctrs_dbl_nan: return 0;
+    case VCTRS_DBL_number: return na_order;
+    case VCTRS_DBL_missing: return -na_nan_order;
+    case VCTRS_DBL_nan: return 0;
     }
   }
   never_reached("dbl_cmp");

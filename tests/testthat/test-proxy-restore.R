@@ -34,7 +34,7 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
     vec_restore.vctrs_foobar = function(x, to, ...) {
       vec_ptype(x)
       vec_init(x)
-      vec_assert(x)
+      obj_check_vector(x)
       vec_slice(x, 0)
       "woot"
     }
@@ -42,14 +42,6 @@ test_that("can use vctrs primitives from vec_restore() without inflooping", {
 
   foobar <- new_vctr(1:3, class = "vctrs_foobar")
   expect_identical(vec_slice(foobar, 2), "woot")
-})
-
-test_that("vec_restore() passes `n` argument to methods", {
-  local_methods(
-    vec_proxy.vctrs_foobar = identity,
-    vec_restore.vctrs_foobar = function(x, to, ..., n) n
-  )
-  expect_identical(vec_slice(foobar(1:3), 2), 1L)
 })
 
 test_that("dimensions are preserved by default restore method", {
@@ -79,11 +71,11 @@ test_that("names attribute isn't set when restoring 1D arrays using 2D+ objects"
 
 test_that("arguments are not inlined in the dispatch call (#300)", {
   local_methods(
-    vec_restore.vctrs_foobar = function(x, to, ..., n) sys.call(),
+    vec_restore.vctrs_foobar = function(x, to, ...) sys.call(),
     vec_proxy.vctrs_foobar = unclass
   )
   call <- vec_restore(foobar(list(1)), foobar(list(1)))
-  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to, n = n)))
+  expect_equal(call, quote(vec_restore.vctrs_foobar(x = x, to = to)))
 })
 
 test_that("restoring to non-bare data frames calls `vec_bare_df_restore()` before dispatching", {
@@ -119,4 +111,55 @@ test_that("attributes are properly restored when they contain special attributes
   x <- structure(list(), foo = TRUE, names = chr(), row.names = int(), bar = TRUE)
   out <- vec_restore_default(list(), x)
   expect_identical(attributes(out), exp)
+})
+
+test_that("names<- is not called with partial data (#1108)", {
+  x <- set_names(foobar(1:2), c("a", "b"))
+
+  values <- list()
+  local_methods(
+    `names<-.vctrs_foobar` = function(x, value) {
+      if (!is_null(value)) {
+        values <<- c(values, list(value))
+      }
+      NextMethod()
+    }
+  )
+
+  vec_c(x, x)
+  expect_equal(values, list(c("a", "b", "a", "b")))
+})
+
+test_that("recursive proxy and restore work with recursive records", {
+  new_recursive_rcrd <- function(x) {
+    new_rcrd(
+      list(field = x),
+      class = "my_recursive_rcrd"
+    )
+  }
+
+  internal <- new_rcrd(list(internal_field = 1:2))
+  x <- new_recursive_rcrd(data_frame(col = internal))
+
+  proxy <- vec_proxy_recurse(x)
+  exp <- data_frame(field = data_frame(col = data_frame(internal_field = 1:2)))
+  expect_equal(proxy, exp)
+  expect_equal(vec_restore_recurse(proxy, x), x)
+
+  # Non-recursive case doesn't proxy `internal`
+  proxy <- vec_proxy(x)
+  exp <- data_frame(field = data_frame(col = internal))
+  expect_equal(proxy, exp)
+  expect_equal(vec_restore(proxy, x), x)
+
+  x_exp <- new_recursive_rcrd(data_frame(col = vec_rep(internal, 2)))
+  expect_equal(
+    list_unchop(list(x, x)),
+    x_exp
+  )
+
+  df <- data_frame(x = x)
+  df_exp <- data_frame(x = x_exp)
+  expect_equal(vec_rbind(df, df), df_exp)
+  expect_equal(vec_c(df, df), df_exp)
 })

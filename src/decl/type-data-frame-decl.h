@@ -5,9 +5,6 @@ static
 r_obj* new_compact_rownames(r_ssize n);
 
 static
-r_ssize df_size_from_list(r_obj* x, r_obj* n);
-
-static
 r_ssize df_size_from_n(r_obj* n);
 
 static
@@ -17,14 +14,14 @@ static
 r_obj* data_frame(r_obj* x,
                   r_ssize size,
                   const struct name_repair_opts* p_name_repair_opts,
-                  struct r_lazy call);
+                  struct r_lazy error_call);
 
 static
 r_obj* df_list(r_obj* x,
                r_ssize size,
                bool unpack,
                const struct name_repair_opts* p_name_repair_opts,
-               struct r_lazy call);
+               struct r_lazy error_call);
 
 static
 r_obj* df_list_drop_null(r_obj* x);

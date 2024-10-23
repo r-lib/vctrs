@@ -9,12 +9,12 @@ new_shape <- function(type, shape = integer()) {
 
 vec_shaped_ptype  <- function(ptype, x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_shaped_ptype, ptype, x, y, environment())
+  .Call(ffi_vec_shaped_ptype, ptype, x, y, environment())
 }
 
 vec_shape2 <- function(x, y, ..., x_arg = "", y_arg = "") {
   check_dots_empty0(...)
-  .Call(vctrs_shape2, x, y, environment())
+  .Call(ffi_vec_shape2, x, y, environment())
 }
 
 # Should take same signature as `vec_cast()`
@@ -37,10 +37,15 @@ shape_broadcast <- function(x,
   }
 
   if (length(dim_x) > length(dim_to)) {
+    details <- sprintf(
+      "Can't decrease dimensionality from %s to %s.",
+      length(dim_x),
+      length(dim_to)
+    )
     stop_incompatible_cast(
       x,
       to,
-      details = "Cannot decrease dimensions.",
+      details = details,
       x_arg = x_arg,
       to_arg = to_arg,
       call = call

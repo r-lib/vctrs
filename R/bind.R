@@ -54,9 +54,9 @@
 #'     not named, an integer column is used instead.
 #'
 #'   * If `NULL`, the input names are used as row names.
-#' @param .name_repair One of `"unique"`, `"universal"`, or
-#'   `"check_unique"`. See [vec_as_names()] for the meaning of these
-#'   options.
+#' @param .name_repair One of `"unique"`, `"universal"`, `"check_unique"`,
+#'   `"unique_quiet"`, or  `"universal_quiet"`. See [vec_as_names()] for the
+#'   meaning of these options.
 #'
 #'   With `vec_rbind()`, the repair function is applied to all inputs
 #'   separately. This is because `vec_rbind()` needs to align their
@@ -176,9 +176,9 @@ NULL
 vec_rbind <- function(...,
                       .ptype = NULL,
                       .names_to = rlang::zap(),
-                      .name_repair = c("unique", "universal", "check_unique"),
+                      .name_repair = c("unique", "universal", "check_unique", "unique_quiet", "universal_quiet"),
                       .name_spec = NULL,
-                      .call = current_env()) {
+                      .error_call = current_env()) {
   .External2(ffi_rbind, .ptype, .names_to, .name_repair, .name_spec)
 }
 vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
@@ -187,15 +187,15 @@ vec_rbind <- fn_inline_formals(vec_rbind, ".name_repair")
 #' @rdname vec_bind
 #' @param .size If, `NULL`, the default, will determine the number of rows in
 #'   `vec_cbind()` output by using the tidyverse [recycling
-#'   rules][vector_recycling_rules].
+#'   rules][theory-faq-recycling].
 #'
 #'   Alternatively, specify the desired number of rows, and any inputs of length
 #'   1 will be recycled appropriately.
 vec_cbind <- function(...,
                       .ptype = NULL,
                       .size = NULL,
-                      .name_repair = c("unique", "universal", "check_unique", "minimal"),
-                      .call = current_env()) {
+                      .name_repair = c("unique", "universal", "check_unique", "minimal", "unique_quiet", "universal_quiet"),
+                      .error_call = current_env()) {
   .External2(ffi_cbind, .ptype, .size, .name_repair)
 }
 vec_cbind <- fn_inline_formals(vec_cbind, ".name_repair")
