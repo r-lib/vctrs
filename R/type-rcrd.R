@@ -7,6 +7,11 @@
 #' classes that can naturally be decomposed into multiple vectors of the same
 #' length, like [POSIXlt], but where the organisation should be considered
 #' an implementation detail invisible to the user (unlike a [data.frame]).
+#' 
+#' @details
+#' Record-style objects created with [new_rcrd()] do not have a default
+#' [format()] method. See [Record-style objects](https://vctrs.r-lib.org/articles/s3-vector.html?q=record#record-style-objects
+#' for more details on implementing other methods.
 #'
 #' @param fields A list or a data frame. Lists must be rectangular
 #'   (same sizes), and contain uniquely named vectors (at least
