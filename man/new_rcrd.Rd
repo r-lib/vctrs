@@ -25,4 +25,10 @@ classes that can naturally be decomposed into multiple vectors of the same
 length, like \link{POSIXlt}, but where the organisation should be considered
 an implementation detail invisible to the user (unlike a \link{data.frame}).
 }
+\details{
+Record-style objects created with \code{\link[=new_rcrd]{new_rcrd()}} do not do much on their own.
+For instance they do not have a default \code{\link[=format]{format()}} method, which means printing
+the object causes an error. See \link{Record-style objects}(https://vctrs.r-lib.org/articles/s3-vector.html?q=record#record-style-objects
+for details on implementing methods for record vectors.
+}
 \keyword{internal}
