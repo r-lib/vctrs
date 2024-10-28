@@ -86,10 +86,6 @@ problems. The first problem is that `base::c()` has rather undesirable
 behaviour when you mix different S3 vectors:
 
 ``` r
-# combining factors makes integers
-c(factor("a"), factor("b"))
-#> [1] 1 1
-
 # combining dates and date-times gives incorrect values; also, order matters
 dt <- as.Date("2020-01-01")
 dttm <- as.POSIXct(dt)
