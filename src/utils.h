@@ -264,12 +264,12 @@ SEXP r_clone_referenced(SEXP x);
 SEXP r_call_n(SEXP fn, SEXP* tags, SEXP* cars);
 
 static inline SEXP r_mark_s4(SEXP x) {
-  SET_S4_OBJECT(x);
-  return(x);
+  x = Rf_asS4(x, (Rboolean) 1, 1);
+  return x;
 }
 static inline SEXP r_unmark_s4(SEXP x) {
-  UNSET_S4_OBJECT(x);
-  return(x);
+  x = Rf_asS4(x, (Rboolean) 0, 1);
+  return x;
 }
 
 bool r_has_name_at(SEXP names, R_len_t i);
