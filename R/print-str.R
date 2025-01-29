@@ -6,15 +6,55 @@
 #' the `_header()`, `_data()` or `_footer()` components individually. The
 #' default methods are built on top of `format()`.
 #'
+#' @details
+#' If you are implementing `obj_print_header()`, `obj_print_data()` or
+#' `obj_print_footer()`, your method can assume that the `max` argument
+#' is a scalar integer that accurately describes the maximum number of items
+#' to print, and that `getOption("max.print")` is set to at least that value.
+#'
+#' All methods receive `x` unchanged when called from `obj_print()`.
+#' `obj_print_data()` should print only the first `max` elements.
+#'
 #' @param x A vector
 #' @param ... Additional arguments passed on to methods. See [print()] and
 #'   [str()] for commonly used options
+#' @param max The maximum number of items to print, defaults to
+#'   `getOption("print.max")`.
 #' @keywords internal
 #' @export
-obj_print <- function(x, ...) {
+obj_print <- function(x, ..., max = NULL) {
+  if (!vec_is(x)) {
+    delta <- 0
+    x_max <- x
+  } else {
+    max <- local_max_print(max)
+    delta <- vec_size(x) - max
+
+    if (vec_size(x) > max) {
+      x_max <- vec_slice(x, seq_len(max))
+    } else {
+      x_max <- x
+    }
+  }
+
   obj_print_header(x, ...)
-  obj_print_data(x, ...)
+  obj_print_data(x_max, ...)
   obj_print_footer(x, ...)
+
+  if (delta > 0) {
+    max_print <- attr(max, "max_print")
+    if (is.null(max_print)) {
+      max_print <- getOption("max.print")
+    }
+
+    cat_line("... and ", big_mark(delta), " more")
+    if (max < max_print) {
+      cat_line("Set `max` to a larger value to show all items.")
+    } else {
+      cat_line("Set `options(max.print = )` to a larger value to show all items.")
+    }
+  }
+
   invisible(x)
 }
 
@@ -38,8 +78,14 @@ obj_print_data <- function(x, ...) {
 
 #' @export
 obj_print_data.default <- function(x, ...) {
-  if (length(x) == 0)
+  if (!vec_is(x)) {
+    print(x, quote = FALSE)
     return(invisible(x))
+  }
+
+  if (vec_size(x) == 0) {
+    return(invisible(x))
+  }
 
   out <- stats::setNames(format(x), names(x))
   print(out, quote = FALSE)
@@ -56,6 +102,23 @@ obj_print_footer <- function(x, ...) {
 #' @export
 obj_print_footer.default <- function(x, ...) {
   invisible(x)
+}
+
+local_max_print <- function(max, frame = parent.frame()) {
+  max_print <- getOption("max.print")
+  if (is.null(max)) {
+    max <- max_print
+  }
+
+  stopifnot(is_integerish(max, 1L, finite = TRUE), max >= 0, max < 2147483648)
+  max <- as.integer(max)
+
+  if (max > max_print) {
+    # Avoid truncation in case we're forwarding to print()
+    local_options(max.print = max, .frame = frame)
+  }
+
+  structure(max, max_print = max_print)
 }
 
 

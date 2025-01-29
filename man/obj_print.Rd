@@ -11,7 +11,7 @@
 \alias{obj_str_footer}
 \title{\code{print()} and \code{str()} generics.}
 \usage{
-obj_print(x, ...)
+obj_print(x, ..., max = NULL)
 
 obj_print_header(x, ...)
 
@@ -32,10 +32,22 @@ obj_str_footer(x, ...)
 
 \item{...}{Additional arguments passed on to methods. See \code{\link[=print]{print()}} and
 \code{\link[=str]{str()}} for commonly used options}
+
+\item{max}{The maximum number of items to print, defaults to
+\code{getOption("print.max")}.}
 }
 \description{
 These are constructed to be more easily extensible since you can override
 the \verb{_header()}, \verb{_data()} or \verb{_footer()} components individually. The
 default methods are built on top of \code{format()}.
+}
+\details{
+If you are implementing \code{obj_print_header()}, \code{obj_print_data()} or
+\code{obj_print_footer()}, your method can assume that the \code{max} argument
+is a scalar integer that accurately describes the maximum number of items
+to print, and that \code{getOption("max.print")} is set to at least that value.
+
+All methods receive \code{x} unchanged when called from \code{obj_print()}.
+\code{obj_print_data()} should print only the first \code{max} elements.
 }
 \keyword{internal}
