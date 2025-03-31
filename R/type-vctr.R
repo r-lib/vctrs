@@ -594,10 +594,8 @@ max.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
 }
 
 #' @export
-range.vctrs_vctr <- function(x, ..., na.rm = FALSE) {
-  if (dots_n(...) != 0L) {
-    x <- vec_c(x, ...)
-  }
+range.vctrs_vctr <- function(..., na.rm = FALSE) {
+  x <- vec_c(...)
 
   if (vec_is_empty(x)) {
     return(vec_cast_or_na(c(Inf, -Inf), x))
