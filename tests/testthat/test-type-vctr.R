@@ -659,7 +659,7 @@ test_that("`min` and `max` either combine `x` and `...` or abort (#1372)", {
   expect_snapshot(max(rep(x, 5), y), error = TRUE, cnd_class = TRUE)
 })
 
-test_that("`range` combines `...` (#1372)", {
+test_that("`range` combines arguments as expected (#1372)", {
   x <- new_vctr(1)
   y <- new_vctr(3)
   z <- new_vctr(as.numeric(13:11))
