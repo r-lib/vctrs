@@ -389,7 +389,9 @@ SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
                                                                \
   r_ssize copy_size = (size > x_size) ? x_size : size;         \
                                                                \
-  memcpy(p_out, p_x, copy_size * sizeof(CTYPE));               \
+  if (copy_size > 0) {                                         \
+    memcpy(p_out, p_x, copy_size * sizeof(CTYPE));             \
+  }                                                            \
                                                                \
   UNPROTECT(1);                                                \
   return out;                                                  \
