@@ -244,6 +244,11 @@ test_that("works with rcrds", {
   expect_identical(vec_set_union(y, x), vec_c(vec_slice(y, c(1, 2, 3, 4)), vec_slice(x, 1)))
 })
 
+test_that("works on empty inputs", {
+  expect_identical(vec_set_union(integer(), 12L), 12L)
+  expect_identical(vec_set_union(12L, integer()), 12L)
+})
+
 # vec_set_symmetric_difference --------------------------------------------
 
 test_that("retains names of `x` and `y` elements", {
