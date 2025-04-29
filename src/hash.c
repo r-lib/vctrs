@@ -28,7 +28,7 @@ static inline uint32_t hash_uint64(uint64_t x) {
   return x;
 }
 
-// Seems like something designed specificaly for doubles should work better
+// Seems like something designed specifically for doubles should work better
 // but I haven't been able to find anything
 static inline uint32_t hash_double(double x) {
   // Treat positive/negative 0 as equivalent

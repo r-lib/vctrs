@@ -7,7 +7,7 @@ output: github_document
 knitr::opts_chunk$set(collapse = TRUE, comment = "#> ")
 ```
 
-Exploration of the performance of unique as a proxy for the performance of the underyling dictionary + hash code.
+Exploration of the performance of unique as a proxy for the performance of the underlying dictionary + hash code.
 
 ```{r setup, message = FALSE}
 library(tidyverse)

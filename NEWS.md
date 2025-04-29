@@ -815,7 +815,7 @@ The following errors are caused by breaking changes.
   coercion methods are now in principle incompatible.
 
   This is particularly problematic with subclasses of data frames for
-  which throwing incompatible errors would be too incovenient for
+  which throwing incompatible errors would be too inconvenient for
   users. To work around this, we have implemented a fallback to the
   relevant base data frame class (either `data.frame` or `tbl_df`) in
   coercion methods (#981). This fallback is silent unless you set the

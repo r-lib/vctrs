@@ -44,9 +44,9 @@ static SEXP vctrs_eval_mask_n_impl(SEXP fn_sym, SEXP fn, SEXP* syms, SEXP* args,
  * `syms`). The names should correspond to formal arguments of `fn`.
  * Elements of `args` are assigned to their corresponding name in
  * `syms` directly in the current environment, i.e. the environment of
- * the closure wrapping the `.Call()` invokation. Since masked
+ * the closure wrapping the `.Call()` invocation. Since masked
  * evaluation causes side effects and variable assignments in that
- * frame environment, the native code invokation must be tailing: no
+ * frame environment, the native code invocation must be tailing: no
  * further R code (including `on.exit()` expressions) should be
  * evaluated in that closure wrapper.
  *
@@ -1640,7 +1640,7 @@ void c_print_backtrace(void) {
 
   free(strings);
 #else
-  Rprintf("vctrs must be compliled with -DRLIB_DEBUG.");
+  Rprintf("vctrs must be compiled with -DRLIB_DEBUG.");
 #endif
 }
 

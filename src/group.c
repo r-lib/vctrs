@@ -168,7 +168,7 @@ SEXP vec_group_loc(SEXP x) {
 
   const int n_groups = d->used;
 
-  // Location of first occurence of each group in `x`
+  // Location of first occurrence of each group in `x`
   SEXP key_loc = PROTECT_N(Rf_allocVector(INTSXP, n_groups), &nprot);
   int* p_key_loc = INTEGER(key_loc);
   int key_loc_current = 0;
