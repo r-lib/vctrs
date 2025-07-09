@@ -1,47 +1,9 @@
 #include "vctrs.h"
 #include "decl/poly-op-decl.h"
 
-
-poly_binary_int_fn* poly_p_equal_na_equal(enum vctrs_type type) {
-  switch (type) {
-  case VCTRS_TYPE_null: return p_nil_equal_na_equal;
-  case VCTRS_TYPE_logical: return p_lgl_equal_na_equal;
-  case VCTRS_TYPE_integer: return p_int_equal_na_equal;
-  case VCTRS_TYPE_double: return p_dbl_equal_na_equal;
-  case VCTRS_TYPE_complex: return p_cpl_equal_na_equal;
-  case VCTRS_TYPE_character: return p_chr_equal_na_equal;
-  case VCTRS_TYPE_raw: return p_raw_equal_na_equal;
-  case VCTRS_TYPE_list: return p_list_equal_na_equal;
-  case VCTRS_TYPE_dataframe: return p_df_equal_na_equal;
-  default: stop_unimplemented_vctrs_type("poly_p_equal_na_equal", type);
-  }
-}
-
-static
-int p_df_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
-  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
-  struct poly_df_data* p_y_data = (struct poly_df_data*) p_y;
-
-  r_ssize n_col = p_x_data->n_col;
-  if (n_col != p_y_data->n_col) {
-    r_stop_internal("`x` and `y` must have the same number of columns.");
-  }
-
-  enum vctrs_type* v_col_type = p_x_data->v_col_type;
-  const void** v_x_col_ptr = p_x_data->v_col_ptr;
-  const void** v_y_col_ptr = p_y_data->v_col_ptr;
-
-  // df-cols should already be flattened
-  for (r_ssize col = 0; col < n_col; ++col) {
-    if (!p_equal_na_equal(v_x_col_ptr[col], i, v_y_col_ptr[col], j, v_col_type[col])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-
+// TODO: Remove in favor of inlining `p_*_compare_na_equal()`
+// through the use of a macro. As is, this prevents significant
+// inlining optimizations. Currently only used in `interval.c`.
 poly_binary_int_fn* poly_p_compare_na_equal(enum vctrs_type type) {
   switch (type) {
   case VCTRS_TYPE_null: return p_nil_compare_na_equal;
@@ -57,37 +19,9 @@ poly_binary_int_fn* poly_p_compare_na_equal(enum vctrs_type type) {
   }
 }
 
-static
-int p_df_compare_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
-  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
-  struct poly_df_data* p_y_data = (struct poly_df_data*) p_y;
-
-  r_ssize n_col = p_x_data->n_col;
-  if (n_col != p_y_data->n_col) {
-    r_stop_internal("`x` and `y` must have the same number of columns.");
-  }
-
-  enum vctrs_type* v_col_type = p_x_data->v_col_type;
-  const void** v_x_col_ptr = p_x_data->v_col_ptr;
-  const void** v_y_col_ptr = p_y_data->v_col_ptr;
-
-  // df-cols should already be flattened
-  for (r_ssize col = 0; col < n_col; ++col) {
-    const int cmp = p_compare_na_equal(
-      v_x_col_ptr[col], i,
-      v_y_col_ptr[col], j,
-      v_col_type[col]
-    );
-
-    if (cmp != 0) {
-      return cmp;
-    }
-  }
-
-  return 0;
-}
-
-
+// TODO: Remove in favor of inlining `p_*_is_missing()`
+// through the use of a macro. As is, this prevents significant
+// inlining optimizations. Currently only used in `interval.c`.
 poly_unary_bool_fn* poly_p_is_missing(enum vctrs_type type) {
   switch (type) {
   case VCTRS_TYPE_null: return p_nil_is_missing;
@@ -103,60 +37,6 @@ poly_unary_bool_fn* poly_p_is_missing(enum vctrs_type type) {
   }
 }
 
-static
-bool p_df_is_missing(const void* p_x, r_ssize i) {
-  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
-
-  enum vctrs_type* v_col_type = p_x_data->v_col_type;
-  const void** v_col_ptr = p_x_data->v_col_ptr;
-  r_ssize n_col = p_x_data->n_col;
-
-  // df-cols should already be flattened
-  for (r_ssize col = 0; col < n_col; ++col) {
-    if (!p_is_missing(v_col_ptr[col], i, v_col_type[col])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-
-poly_unary_bool_fn* poly_p_is_incomplete(enum vctrs_type type) {
-  switch (type) {
-  case VCTRS_TYPE_null: return p_nil_is_missing;
-  case VCTRS_TYPE_logical: return p_lgl_is_missing;
-  case VCTRS_TYPE_integer: return p_int_is_missing;
-  case VCTRS_TYPE_double: return p_dbl_is_missing;
-  case VCTRS_TYPE_complex: return p_cpl_is_missing;
-  case VCTRS_TYPE_character: return p_chr_is_missing;
-  case VCTRS_TYPE_raw: return p_raw_is_missing;
-  case VCTRS_TYPE_list: return p_list_is_missing;
-  case VCTRS_TYPE_dataframe: return p_df_is_incomplete;
-  default: stop_unimplemented_vctrs_type("poly_p_is_incomplete", type);
-  }
-}
-
-static
-bool p_df_is_incomplete(const void* p_x, r_ssize i) {
-  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
-
-  enum vctrs_type* v_col_type = p_x_data->v_col_type;
-  const void** v_col_ptr = p_x_data->v_col_ptr;
-  r_ssize n_col = p_x_data->n_col;
-
-  // df-cols should already be flattened,
-  // so we only need missingness of each column, not completeness
-  for (r_ssize col = 0; col < n_col; ++col) {
-    if (p_is_missing(v_col_ptr[col], i, v_col_type[col])) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-
 struct poly_vec* new_poly_vec(r_obj* proxy, enum vctrs_type type) {
   r_obj* shelter = KEEP(r_alloc_list(2));
 
@@ -168,6 +48,7 @@ struct poly_vec* new_poly_vec(r_obj* proxy, enum vctrs_type type) {
 
   p_poly_vec->shelter = shelter;
   p_poly_vec->vec = proxy;
+  p_poly_vec->type = type;
 
   switch (type) {
   case VCTRS_TYPE_null: init_nil_poly_vec(p_poly_vec); break;

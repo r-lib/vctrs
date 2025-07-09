@@ -73,9 +73,6 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
   KEEP_N(p_poly_vec->shelter, &nprot);
   d->p_poly_vec = p_poly_vec;
 
-  d->p_equal_na_equal = poly_p_equal_na_equal(type);
-  d->p_is_incomplete = poly_p_is_incomplete(type);
-
   d->used = 0;
 
   if (opts->partial) {
@@ -109,60 +106,6 @@ static struct dictionary* new_dictionary_opts(SEXP x, struct dictionary_opts* op
 
   UNPROTECT(nprot);
   return d;
-}
-
-
-// Use hash from `x` but value from `d`. `x` does not need a full
-// initialisation of the key vector and can be created with
-// `new_dictionary_partial()`.
-uint32_t dict_hash_with(struct dictionary* d, struct dictionary* x, R_len_t i) {
-  uint32_t hash = x->hash[i];
-
-  const void* p_d_vec = d->p_poly_vec->p_vec;
-  const void* p_x_vec = x->p_poly_vec->p_vec;
-
-  // Quadratic probing: will try every slot if d->size is power of 2
-  // http://research.cs.vt.edu/AVresearch/hashing/quadratic.php
-  for (uint32_t k = 0; k < d->size; ++k) {
-    uint32_t probe = (hash + k * (k + 1) / 2) & (d->size - 1);
-    // Rprintf("Probe: %i\n", probe);
-
-    // If we circled back to start, dictionary is full
-    if (k > 1 && probe == hash) {
-      break;
-    }
-
-    // Check for unused slot
-    R_len_t idx = d->key[probe];
-    if (idx == DICT_EMPTY) {
-      return probe;
-    }
-
-    // Check for same value as there might be a collision
-    if (d->p_equal_na_equal(p_d_vec, idx, p_x_vec, i)) {
-      return probe;
-    }
-
-    // Collision. next iteration will find another spot using
-    // quadratic probing.
-  }
-
-  r_stop_internal("Dictionary is full.");
-}
-
-uint32_t dict_hash_scalar(struct dictionary* d, R_len_t i) {
-  return dict_hash_with(d, d, i);
-}
-
-bool dict_is_incomplete(struct dictionary* d, R_len_t i) {
-  return d->hash[i] == HASH_MISSING &&
-    d->p_is_incomplete(d->p_poly_vec->p_vec, i);
-}
-
-
-void dict_put(struct dictionary* d, uint32_t hash, R_len_t i) {
-  d->key[hash] = i;
-  d->used++;
 }
 
 // Assume worst case, that every value is distinct, aiming for a load factor
@@ -224,14 +167,7 @@ SEXP vctrs_unique_loc(SEXP x) {
   struct growable g = new_growable(INTSXP, 256);
   PROTECT_GROWABLE(&g, &nprot);
 
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-      growable_push_int(&g, i + 1);
-    }
-  }
+  vctrs_unique_loc_loop(d, &g, n);
 
   SEXP out = growable_values(&g);
 
@@ -239,10 +175,41 @@ SEXP vctrs_unique_loc(SEXP x) {
   return out;
 }
 
+#define VCTRS_UNIQUE_LOC_LOOP(DICT_HASH_WITH)   \
+do {                                            \
+  for (int i = 0; i < n; ++i) {                 \
+    uint32_t hash = DICT_HASH_WITH(d, d, i);    \
+                                                \
+    if (d->key[hash] == DICT_EMPTY) {           \
+      dict_put(d, hash, i);                     \
+      growable_push_int(g, i + 1);              \
+    }                                           \
+  }                                             \
+}                                               \
+while (0)
+
+static inline
+void vctrs_unique_loc_loop(struct dictionary* d, struct growable* g, R_len_t n) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_UNIQUE_LOC_LOOP(nil_dict_hash_with); break;
+  case VCTRS_TYPE_logical: VCTRS_UNIQUE_LOC_LOOP(lgl_dict_hash_with); break;
+  case VCTRS_TYPE_integer: VCTRS_UNIQUE_LOC_LOOP(int_dict_hash_with); break;
+  case VCTRS_TYPE_double: VCTRS_UNIQUE_LOC_LOOP(dbl_dict_hash_with); break;
+  case VCTRS_TYPE_complex: VCTRS_UNIQUE_LOC_LOOP(cpl_dict_hash_with); break;
+  case VCTRS_TYPE_character: VCTRS_UNIQUE_LOC_LOOP(chr_dict_hash_with); break;
+  case VCTRS_TYPE_raw: VCTRS_UNIQUE_LOC_LOOP(raw_dict_hash_with); break;
+  case VCTRS_TYPE_list: VCTRS_UNIQUE_LOC_LOOP(list_dict_hash_with); break;
+  case VCTRS_TYPE_dataframe: VCTRS_UNIQUE_LOC_LOOP(df_dict_hash_with); break;
+  default: stop_unimplemented_vctrs_type("vctrs_unique_loc_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_UNIQUE_LOC_LOOP
+
 // [[ include("vctrs.h") ]]
 SEXP vec_unique(SEXP x) {
   SEXP index = PROTECT(vctrs_unique_loc(x));
-  SEXP out = vec_slice(x, index);
+  SEXP out = vec_slice_unsafe(x, index);
   UNPROTECT(1);
   return out;
 }
@@ -264,22 +231,45 @@ bool duplicated_any(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  bool out = false;
-
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    } else {
-      out = true;
-      break;
-    }
-  }
+  bool out = duplicated_any_loop(d, n);
 
   UNPROTECT(nprot);
   return out;
 }
+
+#define DUPLICATED_ANY_LOOP(DICT_HASH_SCALAR) \
+do {                                          \
+  for (int i = 0; i < n; ++i) {               \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);   \
+                                              \
+    if (d->key[hash] == DICT_EMPTY) {         \
+      dict_put(d, hash, i);                   \
+    } else {                                  \
+      return true;                            \
+    }                                         \
+  }                                           \
+                                              \
+  return false;                               \
+}                                             \
+while (0)
+
+static inline
+bool duplicated_any_loop(struct dictionary* d, R_len_t n) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: DUPLICATED_ANY_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: DUPLICATED_ANY_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: DUPLICATED_ANY_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: DUPLICATED_ANY_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: DUPLICATED_ANY_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: DUPLICATED_ANY_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: DUPLICATED_ANY_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: DUPLICATED_ANY_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: DUPLICATED_ANY_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("duplicated_any_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef DUPLICATED_ANY_LOOP
 
 SEXP vctrs_n_distinct(SEXP x) {
   int nprot = 0;
@@ -292,17 +282,41 @@ SEXP vctrs_n_distinct(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    }
-  }
+  vctrs_n_distinct_loop(d, n);
 
   UNPROTECT(nprot);
   return Rf_ScalarInteger(d->used);
 }
+
+#define VCTRS_N_DISTINCT_LOOP(DICT_HASH_SCALAR) \
+do {                                            \
+  for (int i = 0; i < n; ++i) {                 \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);     \
+                                                \
+    if (d->key[hash] == DICT_EMPTY) {           \
+      dict_put(d, hash, i);                     \
+    }                                           \
+  }                                             \
+}                                               \
+while (0)
+
+static inline
+void vctrs_n_distinct_loop(struct dictionary* d, R_len_t n) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_N_DISTINCT_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: VCTRS_N_DISTINCT_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: VCTRS_N_DISTINCT_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: VCTRS_N_DISTINCT_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: VCTRS_N_DISTINCT_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: VCTRS_N_DISTINCT_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: VCTRS_N_DISTINCT_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: VCTRS_N_DISTINCT_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: VCTRS_N_DISTINCT_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vctrs_n_distinct_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_N_DISTINCT_LOOP
 
 SEXP vctrs_id(SEXP x) {
   int nprot = 0;
@@ -318,18 +332,43 @@ SEXP vctrs_id(SEXP x) {
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_out = INTEGER(out);
 
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    }
-    p_out[i] = d->key[hash] + 1;
-  }
+  vctrs_id_loop(d, n, p_out);
 
   UNPROTECT(nprot);
   return out;
 }
+
+#define VCTRS_ID_LOOP(DICT_HASH_SCALAR)       \
+do {                                          \
+  for (int i = 0; i < n; ++i) {               \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);   \
+                                              \
+    if (d->key[hash] == DICT_EMPTY) {         \
+      dict_put(d, hash, i);                   \
+    }                                         \
+                                              \
+    p_out[i] = d->key[hash] + 1;              \
+  }                                           \
+}                                             \
+while (0)
+
+static inline
+void vctrs_id_loop(struct dictionary* d, R_len_t n, int* p_out) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_ID_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: VCTRS_ID_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: VCTRS_ID_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: VCTRS_ID_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: VCTRS_ID_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: VCTRS_ID_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: VCTRS_ID_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: VCTRS_ID_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: VCTRS_ID_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vctrs_id_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_ID_LOOP
 
 // [[ register() ]]
 SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
@@ -349,15 +388,6 @@ SEXP vctrs_match(SEXP needles, SEXP haystack, SEXP na_equal,
                           &haystack_arg,
                           call);
 }
-
-static inline void vec_match_loop(int* p_out,
-                                  struct dictionary* d,
-                                  struct dictionary* d_needles,
-                                  R_len_t n_needle);
-static inline void vec_match_loop_propagate(int* p_out,
-                                            struct dictionary* d,
-                                            struct dictionary* d_needles,
-                                            R_len_t n_needle);
 
 SEXP vec_match_params(SEXP needles,
                       SEXP haystack,
@@ -398,13 +428,7 @@ SEXP vec_match_params(SEXP needles,
   PROTECT_DICT(d, &nprot);
 
   // Load dictionary with haystack
-  for (int i = 0; i < n_haystack; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    }
-  }
+  load_with_haystack(d, n_haystack);
 
   struct dictionary* d_needles = new_dictionary_params(needles, true, na_equal);
   PROTECT_DICT(d_needles, &nprot);
@@ -423,41 +447,86 @@ SEXP vec_match_params(SEXP needles,
   return out;
 }
 
-static inline void vec_match_loop(int* p_out,
-                                  struct dictionary* d,
-                                  struct dictionary* d_needles,
-                                  R_len_t n_needle) {
-  for (R_len_t i = 0; i < n_needle; ++i) {
-    uint32_t hash = dict_hash_with(d, d_needles, i);
+#define VEC_MATCH_LOOP(DICT_HASH_WITH)               \
+do {                                                 \
+  for (R_len_t i = 0; i < n_needle; ++i) {           \
+    uint32_t hash = DICT_HASH_WITH(d, d_needles, i); \
+                                                     \
+    if (d->key[hash] == DICT_EMPTY) {                \
+      /* TODO: Return `no_match` instead */          \
+      p_out[i] = NA_INTEGER;                         \
+    } else {                                         \
+      p_out[i] = d->key[hash] + 1;                   \
+    }                                                \
+  }                                                  \
+}                                                    \
+while (0)
 
-    if (d->key[hash] == DICT_EMPTY) {
-      // TODO: Return `no_match` instead
-      p_out[i] = NA_INTEGER;
-    } else {
-      p_out[i] = d->key[hash] + 1;
-    }
+static inline
+void vec_match_loop(
+  int* p_out,
+  struct dictionary* d,
+  struct dictionary* d_needles,
+  R_len_t n_needle
+) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_MATCH_LOOP(nil_dict_hash_with); break;
+  case VCTRS_TYPE_logical: VEC_MATCH_LOOP(lgl_dict_hash_with); break;
+  case VCTRS_TYPE_integer: VEC_MATCH_LOOP(int_dict_hash_with); break;
+  case VCTRS_TYPE_double: VEC_MATCH_LOOP(dbl_dict_hash_with); break;
+  case VCTRS_TYPE_complex: VEC_MATCH_LOOP(cpl_dict_hash_with); break;
+  case VCTRS_TYPE_character: VEC_MATCH_LOOP(chr_dict_hash_with); break;
+  case VCTRS_TYPE_raw: VEC_MATCH_LOOP(raw_dict_hash_with); break;
+  case VCTRS_TYPE_list: VEC_MATCH_LOOP(list_dict_hash_with); break;
+  case VCTRS_TYPE_dataframe: VEC_MATCH_LOOP(df_dict_hash_with); break;
+  default: stop_unimplemented_vctrs_type("vec_match_loop", d->p_poly_vec->type);
   }
 }
-static inline void vec_match_loop_propagate(int* p_out,
-                                            struct dictionary* d,
-                                            struct dictionary* d_needles,
-                                            R_len_t n_needle) {
-  for (R_len_t i = 0; i < n_needle; ++i) {
-    if (dict_is_incomplete(d_needles, i)) {
-      p_out[i] = NA_INTEGER;
-      continue;
-    }
 
-    uint32_t hash = dict_hash_with(d, d_needles, i);
+#undef VEC_MATCH_LOOP
 
-    if (d->key[hash] == DICT_EMPTY) {
-      // TODO: Return `no_match` instead
-      p_out[i] = NA_INTEGER;
-    } else {
-      p_out[i] = d->key[hash] + 1;
-    }
+#define VEC_MATCH_LOOP_PROPAGATE(DICT_HASH_WITH, DICT_IS_INCOMPLETE)  \
+do {                                                                  \
+  for (R_len_t i = 0; i < n_needle; ++i) {                            \
+    if (DICT_IS_INCOMPLETE(d_needles, i)) {                           \
+      p_out[i] = NA_INTEGER;                                          \
+      continue;                                                       \
+    }                                                                 \
+                                                                      \
+    uint32_t hash = DICT_HASH_WITH(d, d_needles, i);                  \
+                                                                      \
+    if (d->key[hash] == DICT_EMPTY) {                                 \
+      /* TODO: Return `no_match` instead */                           \
+      p_out[i] = NA_INTEGER;                                          \
+    } else {                                                          \
+      p_out[i] = d->key[hash] + 1;                                    \
+    }                                                                 \
+  }                                                                   \
+}                                                                     \
+while (0)
+
+static inline
+void vec_match_loop_propagate(
+  int* p_out,
+  struct dictionary* d,
+  struct dictionary* d_needles,
+  R_len_t n_needle
+) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_MATCH_LOOP_PROPAGATE(nil_dict_hash_with, nil_dict_is_incomplete); break;
+  case VCTRS_TYPE_logical: VEC_MATCH_LOOP_PROPAGATE(lgl_dict_hash_with, lgl_dict_is_incomplete); break;
+  case VCTRS_TYPE_integer: VEC_MATCH_LOOP_PROPAGATE(int_dict_hash_with, int_dict_is_incomplete); break;
+  case VCTRS_TYPE_double: VEC_MATCH_LOOP_PROPAGATE(dbl_dict_hash_with, dbl_dict_is_incomplete); break;
+  case VCTRS_TYPE_complex: VEC_MATCH_LOOP_PROPAGATE(cpl_dict_hash_with, cpl_dict_is_incomplete); break;
+  case VCTRS_TYPE_character: VEC_MATCH_LOOP_PROPAGATE(chr_dict_hash_with, chr_dict_is_incomplete); break;
+  case VCTRS_TYPE_raw: VEC_MATCH_LOOP_PROPAGATE(raw_dict_hash_with, raw_dict_is_incomplete); break;
+  case VCTRS_TYPE_list: VEC_MATCH_LOOP_PROPAGATE(list_dict_hash_with, list_dict_is_incomplete); break;
+  case VCTRS_TYPE_dataframe: VEC_MATCH_LOOP_PROPAGATE(df_dict_hash_with, df_dict_is_incomplete); break;
+  default: stop_unimplemented_vctrs_type("vec_match_loop_propagate", d->p_poly_vec->type);
   }
 }
+
+#undef VEC_MATCH_LOOP_PROPAGATE
 
 // [[ register() ]]
 SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
@@ -505,13 +574,7 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
   PROTECT_DICT(d, &nprot);
 
   // Load dictionary with haystack
-  for (int i = 0; i < n_haystack; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    }
-  }
+  load_with_haystack(d, n_haystack);
 
   struct dictionary* d_needles = new_dictionary_params(needles, true, na_equal);
   PROTECT_DICT(d_needles, &nprot);
@@ -520,20 +583,113 @@ SEXP vctrs_in(SEXP needles, SEXP haystack, SEXP na_equal_, SEXP frame) {
   SEXP out = PROTECT_N(Rf_allocVector(LGLSXP, n_needle), &nprot);
   int* p_out = LOGICAL(out);
 
-  bool propagate = !na_equal;
-
-  for (int i = 0; i < n_needle; ++i) {
-    if (propagate && dict_is_incomplete(d_needles, i)) {
-      p_out[i] = NA_LOGICAL;
-    } else {
-      uint32_t hash = dict_hash_with(d, d_needles, i);
-      p_out[i] = (d->key[hash] != DICT_EMPTY);
-    }
+  if (na_equal) {
+    vec_in_loop(p_out, d, d_needles, n_needle);
+  } else {
+    vec_in_loop_propagate(p_out, d, d_needles, n_needle);
   }
 
   UNPROTECT(nprot);
   return out;
 }
+
+#define VEC_IN_LOOP(DICT_HASH_WITH)                  \
+do {                                                 \
+  for (int i = 0; i < n_needle; ++i) {               \
+    uint32_t hash = DICT_HASH_WITH(d, d_needles, i); \
+    p_out[i] = (d->key[hash] != DICT_EMPTY);         \
+  }                                                  \
+}                                                    \
+while (0)
+
+static inline
+void vec_in_loop(
+  int* p_out,
+  struct dictionary* d,
+  struct dictionary* d_needles,
+  R_len_t n_needle
+) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_IN_LOOP(nil_dict_hash_with); break;
+  case VCTRS_TYPE_logical: VEC_IN_LOOP(lgl_dict_hash_with); break;
+  case VCTRS_TYPE_integer: VEC_IN_LOOP(int_dict_hash_with); break;
+  case VCTRS_TYPE_double: VEC_IN_LOOP(dbl_dict_hash_with); break;
+  case VCTRS_TYPE_complex: VEC_IN_LOOP(cpl_dict_hash_with); break;
+  case VCTRS_TYPE_character: VEC_IN_LOOP(chr_dict_hash_with); break;
+  case VCTRS_TYPE_raw: VEC_IN_LOOP(raw_dict_hash_with); break;
+  case VCTRS_TYPE_list: VEC_IN_LOOP(list_dict_hash_with); break;
+  case VCTRS_TYPE_dataframe: VEC_IN_LOOP(df_dict_hash_with); break;
+  default: stop_unimplemented_vctrs_type("vec_in_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VEC_IN_LOOP
+
+#define VEC_IN_LOOP_PROPAGATE(DICT_HASH_WITH, DICT_IS_INCOMPLETE) \
+do {                                                              \
+  for (int i = 0; i < n_needle; ++i) {                            \
+    if (DICT_IS_INCOMPLETE(d_needles, i)) {                       \
+      p_out[i] = NA_LOGICAL;                                      \
+    } else {                                                      \
+      uint32_t hash = DICT_HASH_WITH(d, d_needles, i);            \
+      p_out[i] = (d->key[hash] != DICT_EMPTY);                    \
+    }                                                             \
+  }                                                               \
+}                                                                 \
+while (0)
+
+static inline
+void vec_in_loop_propagate(
+  int* p_out,
+  struct dictionary* d,
+  struct dictionary* d_needles,
+  R_len_t n_needle
+) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_IN_LOOP_PROPAGATE(nil_dict_hash_with, nil_dict_is_incomplete); break;
+  case VCTRS_TYPE_logical: VEC_IN_LOOP_PROPAGATE(lgl_dict_hash_with, lgl_dict_is_incomplete); break;
+  case VCTRS_TYPE_integer: VEC_IN_LOOP_PROPAGATE(int_dict_hash_with, int_dict_is_incomplete); break;
+  case VCTRS_TYPE_double: VEC_IN_LOOP_PROPAGATE(dbl_dict_hash_with, dbl_dict_is_incomplete); break;
+  case VCTRS_TYPE_complex: VEC_IN_LOOP_PROPAGATE(cpl_dict_hash_with, cpl_dict_is_incomplete); break;
+  case VCTRS_TYPE_character: VEC_IN_LOOP_PROPAGATE(chr_dict_hash_with, chr_dict_is_incomplete); break;
+  case VCTRS_TYPE_raw: VEC_IN_LOOP_PROPAGATE(raw_dict_hash_with, raw_dict_is_incomplete); break;
+  case VCTRS_TYPE_list: VEC_IN_LOOP_PROPAGATE(list_dict_hash_with, list_dict_is_incomplete); break;
+  case VCTRS_TYPE_dataframe: VEC_IN_LOOP_PROPAGATE(df_dict_hash_with, df_dict_is_incomplete); break;
+  default: stop_unimplemented_vctrs_type("vec_in_loop_propagate", d->p_poly_vec->type);
+  }
+}
+
+#undef VEC_IN_LOOP_PROPAGATE
+
+#define LOAD_WITH_HAYSTACK(DICT_HASH_SCALAR)      \
+do {                                              \
+  for (int i = 0; i < n_haystack; ++i) {          \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);       \
+                                                  \
+    if (d->key[hash] == DICT_EMPTY) {             \
+      dict_put(d, hash, i);                       \
+    }                                             \
+  }                                               \
+}                                                 \
+while (0)
+
+static inline
+void load_with_haystack(struct dictionary* d, R_len_t n_haystack) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: LOAD_WITH_HAYSTACK(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: LOAD_WITH_HAYSTACK(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: LOAD_WITH_HAYSTACK(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: LOAD_WITH_HAYSTACK(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: LOAD_WITH_HAYSTACK(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: LOAD_WITH_HAYSTACK(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: LOAD_WITH_HAYSTACK(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: LOAD_WITH_HAYSTACK(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: LOAD_WITH_HAYSTACK(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vec_match_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef LOAD_WITH_HAYSTACK
 
 SEXP vctrs_count(SEXP x) {
   int nprot = 0;
@@ -549,15 +705,8 @@ SEXP vctrs_count(SEXP x) {
   SEXP count = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
   int* p_count = INTEGER(count);
 
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-      p_count[hash] = 0;
-    }
-    p_count[hash]++;
-  }
+  // Load dictionary and accumulate `p_count`
+  vctrs_count_loop(d, n, p_count);
 
   // Create output
   SEXP out_loc = PROTECT_N(Rf_allocVector(INTSXP, d->used), &nprot);
@@ -569,8 +718,9 @@ SEXP vctrs_count(SEXP x) {
 
   int i = 0;
   for (uint32_t hash = 0; hash < d->size; ++hash) {
-    if (d->key[hash] == DICT_EMPTY)
+    if (d->key[hash] == DICT_EMPTY) {
       continue;
+    }
 
     p_out_loc[i] = d->key[hash] + 1;
     p_out_count[i] = p_count[hash];
@@ -592,6 +742,39 @@ SEXP vctrs_count(SEXP x) {
   return out;
 }
 
+#define VCTRS_COUNT_LOOP(DICT_HASH_SCALAR)      \
+do {                                            \
+  for (int i = 0; i < n; ++i) {                 \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);     \
+                                                \
+    if (d->key[hash] == DICT_EMPTY) {           \
+      dict_put(d, hash, i);                     \
+      p_count[hash] = 0;                        \
+    }                                           \
+                                                \
+    p_count[hash]++;                            \
+  }                                             \
+}                                               \
+while (0)
+
+static inline
+void vctrs_count_loop(struct dictionary* d, R_len_t n, int* p_count) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_COUNT_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: VCTRS_COUNT_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: VCTRS_COUNT_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: VCTRS_COUNT_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: VCTRS_COUNT_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: VCTRS_COUNT_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: VCTRS_COUNT_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: VCTRS_COUNT_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: VCTRS_COUNT_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vctrs_count_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_COUNT_LOOP
+
 SEXP vctrs_duplicated(SEXP x) {
   int nprot = 0;
 
@@ -609,37 +792,60 @@ SEXP vctrs_duplicated(SEXP x) {
 
   uint32_t* p_hashes = (uint32_t*) R_alloc(n, sizeof(uint32_t));
 
-  // Forward pass
-  for (R_len_t i = 0; i < n; ++i) {
-    const uint32_t hash = dict_hash_scalar(d, i);
-    p_hashes[i] = hash;
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    } else {
-      p_out[i] = 1;
-    }
-  }
-
-  for (uint32_t i = 0; i < d->size; ++i) {
-    d->key[i] = DICT_EMPTY;
-  }
-
-  // Reverse pass
-  for (R_len_t i = n - 1; i >= 0; --i) {
-    const uint32_t hash = p_hashes[i];
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-    } else {
-      p_out[i] = 1;
-    }
-  }
+  vctrs_duplicated_loop(d, n, p_hashes, p_out);
 
   UNPROTECT(nprot);
   return out;
 }
 
+#define VCTRS_DUPLICATED_LOOP(DICT_HASH_SCALAR)   \
+do {                                              \
+  /* Forward pass */                              \
+  for (R_len_t i = 0; i < n; ++i) {               \
+    const uint32_t hash = DICT_HASH_SCALAR(d, i); \
+    p_hashes[i] = hash;                           \
+                                                  \
+    if (d->key[hash] == DICT_EMPTY) {             \
+      dict_put(d, hash, i);                       \
+    } else {                                      \
+      p_out[i] = 1;                               \
+    }                                             \
+  }                                               \
+                                                  \
+  for (uint32_t i = 0; i < d->size; ++i) {        \
+    d->key[i] = DICT_EMPTY;                       \
+  }                                               \
+                                                  \
+  /* Reverse pass */                              \
+  for (R_len_t i = n - 1; i >= 0; --i) {          \
+    const uint32_t hash = p_hashes[i];            \
+                                                  \
+    if (d->key[hash] == DICT_EMPTY) {             \
+      dict_put(d, hash, i);                       \
+    } else {                                      \
+      p_out[i] = 1;                               \
+    }                                             \
+  }                                               \
+}                                                 \
+while (0)
+
+static inline
+void vctrs_duplicated_loop(struct dictionary* d, R_len_t n, uint32_t* p_hashes, int* p_out) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_DUPLICATED_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: VCTRS_DUPLICATED_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: VCTRS_DUPLICATED_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: VCTRS_DUPLICATED_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: VCTRS_DUPLICATED_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: VCTRS_DUPLICATED_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: VCTRS_DUPLICATED_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: VCTRS_DUPLICATED_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: VCTRS_DUPLICATED_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vctrs_duplicated_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_DUPLICATED_LOOP
 
 void vctrs_init_dictionary(SEXP ns) {
   args_needles = new_wrapper_arg(NULL, "needles");

@@ -1,6 +1,8 @@
 #include "vctrs.h"
 #include "type-data-frame.h"
 
+#include "decl/group-decl.h"
+
 // [[ register() ]]
 SEXP vctrs_group_id(SEXP x) {
   int nprot = 0;
@@ -16,20 +18,7 @@ SEXP vctrs_group_id(SEXP x) {
   SEXP out = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_out = INTEGER(out);
 
-  R_len_t g = 1;
-
-  for (int i = 0; i < n; ++i) {
-    uint32_t hash = dict_hash_scalar(d, i);
-    R_len_t key = d->key[hash];
-
-    if (key == DICT_EMPTY) {
-      dict_put(d, hash, i);
-      p_out[i] = g;
-      ++g;
-    } else {
-      p_out[i] = p_out[key];
-    }
-  }
+  vctrs_group_id_loop(d, n, p_out);
 
   SEXP n_groups = PROTECT_N(Rf_ScalarInteger(d->used), &nprot);
   Rf_setAttrib(out, syms_n, n_groups);
@@ -38,9 +27,44 @@ SEXP vctrs_group_id(SEXP x) {
   return out;
 }
 
-// -----------------------------------------------------------------------------
+#define VCTRS_GROUP_ID_LOOP(DICT_HASH_SCALAR)      \
+do {                                               \
+  int g = 1;                                       \
+                                                   \
+  for (int i = 0; i < n; ++i) {                    \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);        \
+    R_len_t key = d->key[hash];                    \
+                                                   \
+    if (key == DICT_EMPTY) {                       \
+      dict_put(d, hash, i);                        \
+      p_out[i] = g;                                \
+      ++g;                                         \
+    } else {                                       \
+      p_out[i] = p_out[key];                       \
+    }                                              \
+  }                                                \
+}                                                  \
+while (0)
 
-static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n);
+static inline
+void vctrs_group_id_loop(struct dictionary* d, R_len_t n, int* p_out) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_GROUP_ID_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: VCTRS_GROUP_ID_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: VCTRS_GROUP_ID_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: VCTRS_GROUP_ID_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: VCTRS_GROUP_ID_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: VCTRS_GROUP_ID_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: VCTRS_GROUP_ID_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: VCTRS_GROUP_ID_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: VCTRS_GROUP_ID_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vctrs_group_id_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_GROUP_ID_LOOP
+
+// -----------------------------------------------------------------------------
 
 // [[ register() ]]
 SEXP vctrs_group_rle(SEXP x) {
@@ -54,8 +78,6 @@ SEXP vctrs_group_rle(SEXP x) {
   struct dictionary* d = new_dictionary(x);
   PROTECT_DICT(d, &nprot);
 
-  const void* p_vec = d->p_poly_vec->p_vec;
-
   SEXP g = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_g = INTEGER(g);
 
@@ -68,44 +90,10 @@ SEXP vctrs_group_rle(SEXP x) {
     return out;
   }
 
-  // Integer vector that maps `hash` values to locations in `g`
-  SEXP map = PROTECT_N(Rf_allocVector(INTSXP, d->size), &nprot);
-  int* p_map = INTEGER(map);
+  const R_len_t size = vctrs_group_rle_loop(d, n, p_g, p_l);
 
-  // Initialize first value
-  uint32_t hash = dict_hash_scalar(d, 0);
-  dict_put(d, hash, 0);
-  p_map[hash] = 0;
-  *p_g = 1;
-  *p_l = 1;
-
-  int loc = 1;
-
-  for (int i = 1; i < n; ++i) {
-    if (d->p_equal_na_equal(p_vec, i - 1, p_vec, i)) {
-      ++(*p_l);
-      continue;
-    }
-
-    ++p_l;
-    *p_l = 1;
-
-    // Check if we have seen this value before
-    uint32_t hash = dict_hash_scalar(d, i);
-
-    if (d->key[hash] == DICT_EMPTY) {
-      dict_put(d, hash, i);
-      p_map[hash] = loc;
-      p_g[loc] = d->used;
-    } else {
-      p_g[loc] = p_g[p_map[hash]];
-    }
-
-    ++loc;
-  }
-
-  g = PROTECT_N(Rf_lengthgets(g, loc), &nprot);
-  l = PROTECT_N(Rf_lengthgets(l, loc), &nprot);
+  g = PROTECT_N(Rf_lengthgets(g, size), &nprot);
+  l = PROTECT_N(Rf_lengthgets(l, size), &nprot);
 
   SEXP out = new_group_rle(g, l, d->used);
 
@@ -113,7 +101,71 @@ SEXP vctrs_group_rle(SEXP x) {
   return out;
 }
 
-static SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
+#define VCTRS_GROUP_RLE_LOOP(DICT_HASH_SCALAR, P_EQUAL_NA_EQUAL)      \
+do {                                                                  \
+  R_len_t loc = 0;                                                    \
+  const void* p_vec = d->p_poly_vec->p_vec;                           \
+                                                                      \
+  /* Integer vector that maps `hash` values to locations in `g` */    \
+  SEXP map = PROTECT(Rf_allocVector(INTSXP, d->size));                \
+  int* p_map = INTEGER(map);                                          \
+                                                                      \
+  /* Initialize first value */                                        \
+  uint32_t hash = DICT_HASH_SCALAR(d, 0);                             \
+  dict_put(d, hash, 0);                                               \
+  p_map[hash] = 0;                                                    \
+  *p_g = 1;                                                           \
+  *p_l = 1;                                                           \
+  ++loc;                                                              \
+                                                                      \
+  for (R_len_t i = 1; i < n; ++i) {                                   \
+    if (P_EQUAL_NA_EQUAL(p_vec, i - 1, p_vec, i)) {                   \
+      ++(*p_l);                                                       \
+      continue;                                                       \
+    }                                                                 \
+                                                                      \
+    ++p_l;                                                            \
+    *p_l = 1;                                                         \
+                                                                      \
+    /* Check if we have seen this value before */                     \
+    uint32_t hash = DICT_HASH_SCALAR(d, i);                           \
+                                                                      \
+    if (d->key[hash] == DICT_EMPTY) {                                 \
+      dict_put(d, hash, i);                                           \
+      p_map[hash] = loc;                                              \
+      p_g[loc] = d->used;                                             \
+    } else {                                                          \
+      p_g[loc] = p_g[p_map[hash]];                                    \
+    }                                                                 \
+                                                                      \
+    ++loc;                                                            \
+  }                                                                   \
+                                                                      \
+  UNPROTECT(1);                                                       \
+  return loc;                                                         \
+}                                                                     \
+while (0)
+
+static inline
+R_len_t vctrs_group_rle_loop(struct dictionary* d, R_len_t n, int* p_g, int* p_l) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VCTRS_GROUP_RLE_LOOP(nil_dict_hash_scalar, p_nil_equal_na_equal); break;
+  case VCTRS_TYPE_logical: VCTRS_GROUP_RLE_LOOP(lgl_dict_hash_scalar, p_lgl_equal_na_equal); break;
+  case VCTRS_TYPE_integer: VCTRS_GROUP_RLE_LOOP(int_dict_hash_scalar, p_int_equal_na_equal); break;
+  case VCTRS_TYPE_double: VCTRS_GROUP_RLE_LOOP(dbl_dict_hash_scalar, p_dbl_equal_na_equal); break;
+  case VCTRS_TYPE_complex: VCTRS_GROUP_RLE_LOOP(cpl_dict_hash_scalar, p_cpl_equal_na_equal); break;
+  case VCTRS_TYPE_character: VCTRS_GROUP_RLE_LOOP(chr_dict_hash_scalar, p_chr_equal_na_equal); break;
+  case VCTRS_TYPE_raw: VCTRS_GROUP_RLE_LOOP(raw_dict_hash_scalar, p_raw_equal_na_equal); break;
+  case VCTRS_TYPE_list: VCTRS_GROUP_RLE_LOOP(list_dict_hash_scalar, p_list_equal_na_equal); break;
+  case VCTRS_TYPE_dataframe: VCTRS_GROUP_RLE_LOOP(df_dict_hash_scalar, p_df_equal_na_equal); break;
+  default: stop_unimplemented_vctrs_type("vctrs_group_rle_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VCTRS_GROUP_RLE_LOOP
+
+static inline
+SEXP new_group_rle(SEXP g, SEXP l, R_len_t n) {
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
   SET_VECTOR_ELT(out, 0, g);
@@ -150,21 +202,8 @@ SEXP vec_group_loc(SEXP x) {
   SEXP groups = PROTECT_N(Rf_allocVector(INTSXP, n), &nprot);
   int* p_groups = INTEGER(groups);
 
-  R_len_t g = 0;
-
-  // Identify groups, this is essentially `vec_group_id()`
-  for (int i = 0; i < n; ++i) {
-    const uint32_t hash = dict_hash_scalar(d, i);
-    const R_len_t key = d->key[hash];
-
-    if (key == DICT_EMPTY) {
-      dict_put(d, hash, i);
-      p_groups[i] = g;
-      ++g;
-    } else {
-      p_groups[i] = p_groups[key];
-    }
-  }
+  // Identify groups
+  vec_group_loc_loop(d, n, p_groups);
 
   const int n_groups = d->used;
 
@@ -233,3 +272,41 @@ SEXP vec_group_loc(SEXP x) {
   UNPROTECT(nprot);
   return out;
 }
+
+// This is essentially `vec_group_id()`
+#define VEC_GROUP_LOC_LOOP(DICT_HASH_SCALAR)      \
+do {                                              \
+  int g = 0;                                      \
+                                                  \
+  for (int i = 0; i < n; ++i) {                   \
+    const uint32_t hash = DICT_HASH_SCALAR(d, i); \
+    const R_len_t key = d->key[hash];             \
+                                                  \
+    if (key == DICT_EMPTY) {                      \
+      dict_put(d, hash, i);                       \
+      p_groups[i] = g;                            \
+      ++g;                                        \
+    } else {                                      \
+      p_groups[i] = p_groups[key];                \
+    }                                             \
+  }                                               \
+}                                                 \
+while (0)
+
+static inline
+void vec_group_loc_loop(struct dictionary* d, R_len_t n, int* p_groups) {
+  switch (d->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_GROUP_LOC_LOOP(nil_dict_hash_scalar); break;
+  case VCTRS_TYPE_logical: VEC_GROUP_LOC_LOOP(lgl_dict_hash_scalar); break;
+  case VCTRS_TYPE_integer: VEC_GROUP_LOC_LOOP(int_dict_hash_scalar); break;
+  case VCTRS_TYPE_double: VEC_GROUP_LOC_LOOP(dbl_dict_hash_scalar); break;
+  case VCTRS_TYPE_complex: VEC_GROUP_LOC_LOOP(cpl_dict_hash_scalar); break;
+  case VCTRS_TYPE_character: VEC_GROUP_LOC_LOOP(chr_dict_hash_scalar); break;
+  case VCTRS_TYPE_raw: VEC_GROUP_LOC_LOOP(raw_dict_hash_scalar); break;
+  case VCTRS_TYPE_list: VEC_GROUP_LOC_LOOP(list_dict_hash_scalar); break;
+  case VCTRS_TYPE_dataframe: VEC_GROUP_LOC_LOOP(df_dict_hash_scalar); break;
+  default: stop_unimplemented_vctrs_type("vec_group_loc_loop", d->p_poly_vec->type);
+  }
+}
+
+#undef VEC_GROUP_LOC_LOOP

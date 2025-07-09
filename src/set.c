@@ -1,6 +1,13 @@
 #include "vctrs.h"
 
+struct r_ssize_pair {
+  r_ssize x;
+  r_ssize y;
+};
+
 #include "decl/set-decl.h"
+
+// -----------------------------------------------------------------------------
 
 r_obj* ffi_vec_set_intersect(r_obj* x,
                              r_obj* y,
@@ -74,16 +81,6 @@ r_obj* vec_set_intersect(r_obj* x,
   struct dictionary* x_dict = new_dictionary(x_proxy);
   PROTECT_DICT(x_dict, &n_prot);
 
-  // Load dictionary with `x`.
-  // Key values point to first time we saw that `x` value.
-  for (r_ssize i = 0; i < x_size; ++i) {
-    const uint32_t hash = dict_hash_scalar(x_dict, i);
-
-    if (x_dict->key[hash] == DICT_EMPTY) {
-      dict_put(x_dict, hash, i);
-    }
-  }
-
   struct dictionary* y_dict = new_dictionary_partial(y_proxy);
   PROTECT_DICT(y_dict, &n_prot);
 
@@ -91,15 +88,7 @@ r_obj* vec_set_intersect(r_obj* x,
   bool* v_marked = (bool*) r_raw_begin(marked_shelter);
   memset(v_marked, 0, x_size * sizeof(bool));
 
-  // Mark unique elements of `x` that are also in `y`
-  for (r_ssize i = 0; i < y_size; ++i) {
-    const uint32_t hash = dict_hash_with(x_dict, y_dict, i);
-    const r_ssize loc = x_dict->key[hash];
-
-    if (loc != DICT_EMPTY) {
-      v_marked[loc] = true;
-    }
-  }
+  vec_set_intersect_loop(x_dict, y_dict, x_size, y_size, v_marked);
 
   r_ssize n_marked = 0;
   for (r_ssize i = 0; i < x_size; ++i) {
@@ -122,6 +111,54 @@ r_obj* vec_set_intersect(r_obj* x,
   FREE(n_prot);
   return out;
 }
+
+#define VEC_SET_INTERSECT_LOOP(DICT_HASH_SCALAR, DICT_HASH_WITH)      \
+do {                                                                  \
+  /* Load dictionary with `x`. */                                     \
+  /* Key values point to first time we saw that `x` value. */         \
+  for (r_ssize i = 0; i < x_size; ++i) {                              \
+    const uint32_t hash = DICT_HASH_SCALAR(x_dict, i);                \
+                                                                      \
+    if (x_dict->key[hash] == DICT_EMPTY) {                            \
+      dict_put(x_dict, hash, i);                                      \
+    }                                                                 \
+  }                                                                   \
+                                                                      \
+  /* Mark unique elements of `x` that are also in `y` */              \
+  for (r_ssize i = 0; i < y_size; ++i) {                              \
+    const uint32_t hash = DICT_HASH_WITH(x_dict, y_dict, i);          \
+    const r_ssize loc = x_dict->key[hash];                            \
+                                                                      \
+    if (loc != DICT_EMPTY) {                                          \
+      v_marked[loc] = true;                                           \
+    }                                                                 \
+  }                                                                   \
+}                                                                     \
+while (0)
+
+static inline
+void vec_set_intersect_loop(
+  struct dictionary* x_dict,
+  struct dictionary* y_dict,
+  r_ssize x_size,
+  r_ssize y_size,
+  bool* v_marked
+) {
+  switch (x_dict->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_SET_INTERSECT_LOOP(nil_dict_hash_scalar, nil_dict_hash_with); break;
+  case VCTRS_TYPE_logical: VEC_SET_INTERSECT_LOOP(lgl_dict_hash_scalar, lgl_dict_hash_with); break;
+  case VCTRS_TYPE_integer: VEC_SET_INTERSECT_LOOP(int_dict_hash_scalar, int_dict_hash_with); break;
+  case VCTRS_TYPE_double: VEC_SET_INTERSECT_LOOP(dbl_dict_hash_scalar, dbl_dict_hash_with); break;
+  case VCTRS_TYPE_complex: VEC_SET_INTERSECT_LOOP(cpl_dict_hash_scalar, cpl_dict_hash_with); break;
+  case VCTRS_TYPE_character: VEC_SET_INTERSECT_LOOP(chr_dict_hash_scalar, chr_dict_hash_with); break;
+  case VCTRS_TYPE_raw: VEC_SET_INTERSECT_LOOP(raw_dict_hash_scalar, raw_dict_hash_with); break;
+  case VCTRS_TYPE_list: VEC_SET_INTERSECT_LOOP(list_dict_hash_scalar, list_dict_hash_with); break;
+  case VCTRS_TYPE_dataframe: VEC_SET_INTERSECT_LOOP(df_dict_hash_scalar, df_dict_hash_with); break;
+  default: stop_unimplemented_vctrs_type("vec_set_intersect_loop", x_dict->p_poly_vec->type);
+  }
+}
+
+#undef VEC_SET_INTERSECT_LOOP
 
 // -----------------------------------------------------------------------------
 
@@ -197,35 +234,13 @@ r_obj* vec_set_difference(r_obj* x,
   struct dictionary* x_dict = new_dictionary(x_proxy);
   PROTECT_DICT(x_dict, &n_prot);
 
-  r_obj* marked_shelter = KEEP_N(r_alloc_raw(x_size * sizeof(bool)), &n_prot);
-  bool* v_marked = (bool*) r_raw_begin(marked_shelter);
-
-  // Load dictionary with `x`.
-  // Key values point to first time we saw that `x` value.
-  // Mark those first seen locations as potential results.
-  for (r_ssize i = 0; i < x_size; ++i) {
-    const uint32_t hash = dict_hash_scalar(x_dict, i);
-    const bool first_time = x_dict->key[hash] == DICT_EMPTY;
-
-    if (first_time) {
-      dict_put(x_dict, hash, i);
-    }
-
-    v_marked[i] = first_time;
-  }
-
   struct dictionary* y_dict = new_dictionary_partial(y_proxy);
   PROTECT_DICT(y_dict, &n_prot);
 
-  // If we've seen the `y` element in `x`, unmark it
-  for (r_ssize i = 0; i < y_size; ++i) {
-    const uint32_t hash = dict_hash_with(x_dict, y_dict, i);
-    const r_ssize loc = x_dict->key[hash];
+  r_obj* marked_shelter = KEEP_N(r_alloc_raw(x_size * sizeof(bool)), &n_prot);
+  bool* v_marked = (bool*) r_raw_begin(marked_shelter);
 
-    if (loc != DICT_EMPTY) {
-      v_marked[loc] = false;
-    }
-  }
+  vec_set_difference_loop(x_dict, y_dict, x_size, y_size, v_marked);
 
   r_ssize n_marked = 0;
   for (r_ssize i = 0; i < x_size; ++i) {
@@ -248,6 +263,58 @@ r_obj* vec_set_difference(r_obj* x,
   FREE(n_prot);
   return out;
 }
+
+#define VEC_SET_DIFFERENCE_LOOP(DICT_HASH_SCALAR, DICT_HASH_WITH)     \
+do {                                                                  \
+  /* Load dictionary with `x`. */                                     \
+  /* Key values point to first time we saw that `x` value. */         \
+  /* Mark those first seen locations as potential results. */         \
+  for (r_ssize i = 0; i < x_size; ++i) {                              \
+    const uint32_t hash = DICT_HASH_SCALAR(x_dict, i);                \
+    const bool first_time = x_dict->key[hash] == DICT_EMPTY;          \
+                                                                      \
+    if (first_time) {                                                 \
+      dict_put(x_dict, hash, i);                                      \
+    }                                                                 \
+                                                                      \
+    v_marked[i] = first_time;                                         \
+  }                                                                   \
+                                                                      \
+  /* If we've seen the `y` element in `x`, unmark it */               \
+  for (r_ssize i = 0; i < y_size; ++i) {                              \
+    const uint32_t hash = DICT_HASH_WITH(x_dict, y_dict, i);          \
+    const r_ssize loc = x_dict->key[hash];                            \
+                                                                      \
+    if (loc != DICT_EMPTY) {                                          \
+      v_marked[loc] = false;                                          \
+    }                                                                 \
+  }                                                                   \
+}                                                                     \
+while (0)
+
+static inline
+void vec_set_difference_loop(
+  struct dictionary* x_dict,
+  struct dictionary* y_dict,
+  r_ssize x_size,
+  r_ssize y_size,
+  bool* v_marked
+) {
+  switch (x_dict->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_SET_DIFFERENCE_LOOP(nil_dict_hash_scalar, nil_dict_hash_with); break;
+  case VCTRS_TYPE_logical: VEC_SET_DIFFERENCE_LOOP(lgl_dict_hash_scalar, lgl_dict_hash_with); break;
+  case VCTRS_TYPE_integer: VEC_SET_DIFFERENCE_LOOP(int_dict_hash_scalar, int_dict_hash_with); break;
+  case VCTRS_TYPE_double: VEC_SET_DIFFERENCE_LOOP(dbl_dict_hash_scalar, dbl_dict_hash_with); break;
+  case VCTRS_TYPE_complex: VEC_SET_DIFFERENCE_LOOP(cpl_dict_hash_scalar, cpl_dict_hash_with); break;
+  case VCTRS_TYPE_character: VEC_SET_DIFFERENCE_LOOP(chr_dict_hash_scalar, chr_dict_hash_with); break;
+  case VCTRS_TYPE_raw: VEC_SET_DIFFERENCE_LOOP(raw_dict_hash_scalar, raw_dict_hash_with); break;
+  case VCTRS_TYPE_list: VEC_SET_DIFFERENCE_LOOP(list_dict_hash_scalar, list_dict_hash_with); break;
+  case VCTRS_TYPE_dataframe: VEC_SET_DIFFERENCE_LOOP(df_dict_hash_scalar, df_dict_hash_with); break;
+  default: stop_unimplemented_vctrs_type("vec_set_difference_loop", x_dict->p_poly_vec->type);
+  }
+}
+
+#undef VEC_SET_DIFFERENCE_LOOP
 
 // -----------------------------------------------------------------------------
 
@@ -323,24 +390,19 @@ r_obj* vec_set_union(r_obj* x,
   struct dictionary* x_dict = new_dictionary(x_proxy);
   PROTECT_DICT(x_dict, &n_prot);
 
+  struct dictionary* y_dict = new_dictionary(y_proxy);
+  PROTECT_DICT(y_dict, &n_prot);
+
   r_obj* marked_shelter = KEEP_N(r_alloc_raw(x_size * sizeof(bool)), &n_prot);
   bool* v_marked = (bool*) r_raw_begin(marked_shelter);
 
-  // Load dictionary with `x`.
-  // Key values point to first time we saw that `x` value.
-  // Mark those first seen locations as definite results.
-  for (r_ssize i = 0; i < x_size; ++i) {
-    const uint32_t hash = dict_hash_scalar(x_dict, i);
-    const bool first_time = x_dict->key[hash] == DICT_EMPTY;
+  const r_ssize n_x_marked = vec_set_union_x_loop(
+    x_dict,
+    x_size,
+    v_marked
+  );
 
-    if (first_time) {
-      dict_put(x_dict, hash, i);
-    }
-
-    v_marked[i] = first_time;
-  }
-
-  r_obj* loc = KEEP_N(r_alloc_integer(x_dict->used), &n_prot);
+  r_obj* loc = KEEP_N(r_alloc_integer(n_x_marked), &n_prot);
   int* v_loc = r_int_begin(loc);
   r_ssize j = 0;
 
@@ -358,39 +420,15 @@ r_obj* vec_set_union(r_obj* x,
   marked_shelter = KEEP_N(r_raw_resize(marked_shelter, y_size * sizeof(bool)), &n_prot);
   v_marked = (bool*) r_raw_begin(marked_shelter);
 
-  struct dictionary* y_dict = new_dictionary(y_proxy);
-  PROTECT_DICT(y_dict, &n_prot);
+  const r_ssize n_y_marked = vec_set_union_y_loop(
+    x_dict,
+    y_dict,
+    x_size,
+    y_size,
+    v_marked
+  );
 
-  // Load dictionary with `y`.
-  // Key values point to first time we saw that `y` value.
-  // Mark those first seen locations as possible results.
-  for (r_ssize i = 0; i < y_size; ++i) {
-    const uint32_t hash = dict_hash_scalar(y_dict, i);
-    const bool first_time = y_dict->key[hash] == DICT_EMPTY;
-
-    if (first_time) {
-      dict_put(y_dict, hash, i);
-    }
-
-    v_marked[i] = first_time;
-  }
-
-  r_ssize n_marked = y_dict->used;
-
-  // Check if unique elements of `y` are in `x`. If they are, unmark them.
-  for (r_ssize i = 0; i < y_size; ++i) {
-    if (!v_marked[i]) {
-      continue;
-    }
-
-    const uint32_t hash = dict_hash_with(x_dict, y_dict, i);
-    const bool in_x = x_dict->key[hash] != DICT_EMPTY;
-
-    v_marked[i] = !in_x;
-    n_marked -= in_x;
-  }
-
-  loc = KEEP_N(r_int_resize(loc, n_marked), &n_prot);
+  loc = KEEP_N(r_int_resize(loc, n_y_marked), &n_prot);
   v_loc = r_int_begin(loc);
   j = 0;
 
@@ -424,6 +462,108 @@ r_obj* vec_set_union(r_obj* x,
   FREE(n_prot);
   return out;
 }
+
+#define VEC_SET_UNION_X_LOOP(DICT_HASH_SCALAR)                    \
+do {                                                              \
+  /* Load dictionary with `x`. */                                 \
+  /* Key values point to first time we saw that `x` value. */     \
+  /* Mark those first seen locations as definite results. */      \
+  for (r_ssize i = 0; i < x_size; ++i) {                          \
+    const uint32_t hash = DICT_HASH_SCALAR(x_dict, i);            \
+    const bool first_time = x_dict->key[hash] == DICT_EMPTY;      \
+                                                                  \
+    if (first_time) {                                             \
+      dict_put(x_dict, hash, i);                                  \
+    }                                                             \
+                                                                  \
+    v_marked[i] = first_time;                                     \
+  }                                                               \
+                                                                  \
+  return x_dict->used;                                            \
+}                                                                 \
+while (0)
+
+static inline
+r_ssize vec_set_union_x_loop(
+  struct dictionary* x_dict,
+  r_ssize x_size,
+  bool* v_marked
+) {
+  switch (x_dict->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_SET_UNION_X_LOOP(nil_dict_hash_scalar);
+  case VCTRS_TYPE_logical: VEC_SET_UNION_X_LOOP(lgl_dict_hash_scalar);
+  case VCTRS_TYPE_integer: VEC_SET_UNION_X_LOOP(int_dict_hash_scalar);
+  case VCTRS_TYPE_double: VEC_SET_UNION_X_LOOP(dbl_dict_hash_scalar);
+  case VCTRS_TYPE_complex: VEC_SET_UNION_X_LOOP(cpl_dict_hash_scalar);
+  case VCTRS_TYPE_character: VEC_SET_UNION_X_LOOP(chr_dict_hash_scalar);
+  case VCTRS_TYPE_raw: VEC_SET_UNION_X_LOOP(raw_dict_hash_scalar);
+  case VCTRS_TYPE_list: VEC_SET_UNION_X_LOOP(list_dict_hash_scalar);
+  case VCTRS_TYPE_dataframe: VEC_SET_UNION_X_LOOP(df_dict_hash_scalar);
+  default: stop_unimplemented_vctrs_type("vec_set_union_x_loop", x_dict->p_poly_vec->type);
+  }
+}
+
+#undef VEC_SET_UNION_X_LOOP
+
+#define VEC_SET_UNION_Y_LOOP(DICT_HASH_SCALAR, DICT_HASH_WITH)     \
+do {                                                               \
+  /* Load dictionary with `y`. */                                  \
+  /* Key values point to first time we saw that `y` value. */      \
+  /* Mark those first seen locations as possible results. */       \
+  for (r_ssize i = 0; i < y_size; ++i) {                           \
+    const uint32_t hash = DICT_HASH_SCALAR(y_dict, i);             \
+    const bool first_time = y_dict->key[hash] == DICT_EMPTY;       \
+                                                                   \
+    if (first_time) {                                              \
+      dict_put(y_dict, hash, i);                                   \
+    }                                                              \
+                                                                   \
+    v_marked[i] = first_time;                                      \
+  }                                                                \
+                                                                   \
+  r_ssize n_marked = y_dict->used;                                 \
+                                                                   \
+  /* Check if unique elements of `y` are in `x`. */                \
+  /* If they are, unmark them. */                                  \
+  for (r_ssize i = 0; i < y_size; ++i) {                           \
+    if (!v_marked[i]) {                                            \
+      continue;                                                    \
+    }                                                              \
+                                                                   \
+    const uint32_t hash = DICT_HASH_WITH(x_dict, y_dict, i);       \
+    const bool in_x = x_dict->key[hash] != DICT_EMPTY;             \
+                                                                   \
+    v_marked[i] = !in_x;                                           \
+    n_marked -= in_x;                                              \
+  }                                                                \
+                                                                   \
+  return n_marked;                                                 \
+}                                                                  \
+while (0)
+
+static inline
+r_ssize vec_set_union_y_loop(
+  struct dictionary* x_dict,
+  struct dictionary* y_dict,
+  r_ssize x_size,
+  r_ssize y_size,
+  bool* v_marked
+) {
+  switch (x_dict->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_SET_UNION_Y_LOOP(nil_dict_hash_scalar, nil_dict_hash_with);
+  case VCTRS_TYPE_logical: VEC_SET_UNION_Y_LOOP(lgl_dict_hash_scalar, lgl_dict_hash_with);
+  case VCTRS_TYPE_integer: VEC_SET_UNION_Y_LOOP(int_dict_hash_scalar, int_dict_hash_with);
+  case VCTRS_TYPE_double: VEC_SET_UNION_Y_LOOP(dbl_dict_hash_scalar, dbl_dict_hash_with);
+  case VCTRS_TYPE_complex: VEC_SET_UNION_Y_LOOP(cpl_dict_hash_scalar, cpl_dict_hash_with);
+  case VCTRS_TYPE_character: VEC_SET_UNION_Y_LOOP(chr_dict_hash_scalar, chr_dict_hash_with);
+  case VCTRS_TYPE_raw: VEC_SET_UNION_Y_LOOP(raw_dict_hash_scalar, raw_dict_hash_with);
+  case VCTRS_TYPE_list: VEC_SET_UNION_Y_LOOP(list_dict_hash_scalar, list_dict_hash_with);
+  case VCTRS_TYPE_dataframe: VEC_SET_UNION_Y_LOOP(df_dict_hash_scalar, df_dict_hash_with);
+  default: stop_unimplemented_vctrs_type("vec_set_union_y_loop", x_dict->p_poly_vec->type);
+  }
+}
+
+#undef VEC_SET_UNION_Y_LOOP
 
 // -----------------------------------------------------------------------------
 
@@ -508,55 +648,17 @@ r_obj* vec_set_symmetric_difference(r_obj* x,
   r_obj* y_marked_shelter = KEEP_N(r_alloc_raw(y_size * sizeof(bool)), &n_prot);
   bool* v_y_marked = (bool*) r_raw_begin(y_marked_shelter);
 
-  // Load dictionary with `x`.
-  // Key values point to first time we saw that `x` value.
-  // Mark those first seen locations as possible results.
-  for (r_ssize i = 0; i < x_size; ++i) {
-    const uint32_t hash = dict_hash_scalar(x_dict, i);
-    const bool first_time = x_dict->key[hash] == DICT_EMPTY;
+  const struct r_ssize_pair n_marked = vec_set_symmetric_difference_loop(
+    x_dict,
+    y_dict,
+    x_size,
+    y_size,
+    v_x_marked,
+    v_y_marked
+  );
 
-    if (first_time) {
-      dict_put(x_dict, hash, i);
-    }
-
-    v_x_marked[i] = first_time;
-  }
-
-  // Load dictionary with `y`.
-  // Key values point to first time we saw that `y` value.
-  // Mark those first seen locations as possible results.
-  for (r_ssize i = 0; i < y_size; ++i) {
-    const uint32_t hash = dict_hash_scalar(y_dict, i);
-    const bool first_time = y_dict->key[hash] == DICT_EMPTY;
-
-    if (first_time) {
-      dict_put(y_dict, hash, i);
-    }
-
-    v_y_marked[i] = first_time;
-  }
-
-  r_ssize n_x_marked = x_dict->used;
-  r_ssize n_y_marked = y_dict->used;
-
-  // Check if unique elements of `y` are in `x`.
-  // If they are, unmark them from both `x` and `y`.
-  for (r_ssize i = 0; i < y_size; ++i) {
-    if (!v_y_marked[i]) {
-      continue;
-    }
-
-    const uint32_t hash = dict_hash_with(x_dict, y_dict, i);
-    const r_ssize loc = x_dict->key[hash];
-    const bool in_x = loc != DICT_EMPTY;
-
-    if (in_x) {
-      v_x_marked[loc] = false;
-      v_y_marked[i] = false;
-      --n_x_marked;
-      --n_y_marked;
-    }
-  }
+  const r_ssize n_x_marked = n_marked.x;
+  const r_ssize n_y_marked = n_marked.y;
 
   r_obj* loc = KEEP_N(r_alloc_integer(n_x_marked), &n_prot);
   int* v_loc = r_int_begin(loc);
@@ -606,3 +708,89 @@ r_obj* vec_set_symmetric_difference(r_obj* x,
   FREE(n_prot);
   return out;
 }
+
+#define VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(DICT_HASH_SCALAR, DICT_HASH_WITH)     \
+do {                                                                            \
+  /* Load dictionary with `x`. */                                               \
+  /* Key values point to first time we saw that `x` value. */                   \
+  /* Mark those first seen locations as possible results. */                    \
+  for (r_ssize i = 0; i < x_size; ++i) {                                        \
+    const uint32_t hash = DICT_HASH_SCALAR(x_dict, i);                          \
+    const bool first_time = x_dict->key[hash] == DICT_EMPTY;                    \
+                                                                                \
+    if (first_time) {                                                           \
+      dict_put(x_dict, hash, i);                                                \
+    }                                                                           \
+                                                                                \
+    v_x_marked[i] = first_time;                                                 \
+  }                                                                             \
+                                                                                \
+  /* Load dictionary with `y`. */                                               \
+  /* Key values point to first time we saw that `y` value. */                   \
+  /* Mark those first seen locations as possible results. */                    \
+  for (r_ssize i = 0; i < y_size; ++i) {                                        \
+    const uint32_t hash = DICT_HASH_SCALAR(y_dict, i);                          \
+    const bool first_time = y_dict->key[hash] == DICT_EMPTY;                    \
+                                                                                \
+    if (first_time) {                                                           \
+      dict_put(y_dict, hash, i);                                                \
+    }                                                                           \
+                                                                                \
+    v_y_marked[i] = first_time;                                                 \
+  }                                                                             \
+                                                                                \
+  r_ssize n_x_marked = x_dict->used;                                            \
+  r_ssize n_y_marked = y_dict->used;                                            \
+                                                                                \
+  /* Check if unique elements of `y` are in `x`. */                             \
+  /* If they are, unmark them from both `x` and `y`. */                         \
+  for (r_ssize i = 0; i < y_size; ++i) {                                        \
+    if (!v_y_marked[i]) {                                                       \
+      continue;                                                                 \
+    }                                                                           \
+                                                                                \
+    const uint32_t hash = DICT_HASH_WITH(x_dict, y_dict, i);                    \
+    const r_ssize loc = x_dict->key[hash];                                      \
+    const bool in_x = loc != DICT_EMPTY;                                        \
+                                                                                \
+    if (in_x) {                                                                 \
+      v_x_marked[loc] = false;                                                  \
+      v_y_marked[i] = false;                                                    \
+      --n_x_marked;                                                             \
+      --n_y_marked;                                                             \
+    }                                                                           \
+  }                                                                             \
+                                                                                \
+  struct r_ssize_pair n_marked = {                                              \
+    .x = n_x_marked,                                                            \
+    .y = n_y_marked                                                             \
+  };                                                                            \
+                                                                                \
+  return n_marked;                                                              \
+}                                                                               \
+while (0)
+
+static inline
+struct r_ssize_pair vec_set_symmetric_difference_loop(
+  struct dictionary* x_dict,
+  struct dictionary* y_dict,
+  r_ssize x_size,
+  r_ssize y_size,
+  bool* v_x_marked,
+  bool* v_y_marked
+) {
+  switch (x_dict->p_poly_vec->type) {
+  case VCTRS_TYPE_null: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(nil_dict_hash_scalar, nil_dict_hash_with); break;
+  case VCTRS_TYPE_logical: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(lgl_dict_hash_scalar, lgl_dict_hash_with); break;
+  case VCTRS_TYPE_integer: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(int_dict_hash_scalar, int_dict_hash_with); break;
+  case VCTRS_TYPE_double: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(dbl_dict_hash_scalar, dbl_dict_hash_with); break;
+  case VCTRS_TYPE_complex: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(cpl_dict_hash_scalar, cpl_dict_hash_with); break;
+  case VCTRS_TYPE_character: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(chr_dict_hash_scalar, chr_dict_hash_with); break;
+  case VCTRS_TYPE_raw: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(raw_dict_hash_scalar, raw_dict_hash_with); break;
+  case VCTRS_TYPE_list: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(list_dict_hash_scalar, list_dict_hash_with); break;
+  case VCTRS_TYPE_dataframe: VEC_SET_SYMMETRIC_DIFFERENCE_LOOP(df_dict_hash_scalar, df_dict_hash_with); break;
+  default: stop_unimplemented_vctrs_type("vec_set_symmetric_difference_loop", x_dict->p_poly_vec->type);
+  }
+}
+
+#undef VEC_SET_SYMMETRIC_DIFFERENCE_LOOP
