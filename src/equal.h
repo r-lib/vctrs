@@ -21,12 +21,10 @@ static inline int int_equal_na_equal(int x, int y) {
 }
 static inline int dbl_equal_na_equal(double x, double y) {
   switch (dbl_classify(x)) {
-  case VCTRS_DBL_number: break;
+  case VCTRS_DBL_number: return isnan(y) ? false : x == y;
   case VCTRS_DBL_missing: return dbl_classify(y) == VCTRS_DBL_missing;
   case VCTRS_DBL_nan: return dbl_classify(y) == VCTRS_DBL_nan;
   }
-
-  return isnan(y) ? false : x == y;
 }
 static inline int cpl_equal_na_equal(Rcomplex x, Rcomplex y) {
   return dbl_equal_na_equal(x.r, y.r) && dbl_equal_na_equal(x.i, y.i);
