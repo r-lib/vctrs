@@ -10,9 +10,10 @@
 #'
 #' @details
 #' Record-style objects created with [new_rcrd()] do not do much on their own.
-#' For instance they do not have a default [format()] method, which means printing
-#' the object causes an error. See [Record-style objects](https://vctrs.r-lib.org/articles/s3-vector.html?q=record#record-style-objects
-#' for details on implementing methods for record vectors.
+#' For instance they do not have a default [format()] method, which means
+#' printing the object causes an error. See the *Record-style objects* section
+#' from `vignette("s3-vector")` for details on implementing methods for
+#' record vectors.
 #'
 #' @param fields A list or a data frame. Lists must be rectangular
 #'   (same sizes), and contain uniquely named vectors (at least
