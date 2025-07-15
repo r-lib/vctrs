@@ -6,6 +6,7 @@
 
 struct syms {
   r_obj* arg;
+  r_obj* default_arg;
   r_obj* dot_arg;
   r_obj* dot_call;
   r_obj* dot_error_arg;
@@ -50,6 +51,7 @@ struct vec_args {
   struct vctrs_arg* i;
   struct vctrs_arg* max_fill;
   struct vctrs_arg* n;
+  struct vctrs_arg* ptype;
   struct vctrs_arg* value;
   struct vctrs_arg* x;
   struct vctrs_arg* indices;

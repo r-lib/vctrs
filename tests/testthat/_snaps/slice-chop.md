@@ -314,6 +314,19 @@
       i The author of the class should implement vctrs methods.
       i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
 
+---
+
+    Code
+      x <- structure(foobar(1), attr_foo = "foo")
+      default <- structure(foobar(2), attr_foo = "bar")
+      list_unchop(list(x), indices = list(1), size = 2, default = default)
+    Condition
+      Error in `list_unchop()`:
+      ! Can't combine <vctrs_foobar> and `default` <vctrs_foobar>.
+      x Some attributes are incompatible.
+      i The author of the class should implement vctrs methods.
+      i See <https://vctrs.r-lib.org/reference/faq-error-incompatible-attributes.html>.
+
 # list_unchop() fails with complex foreign S4 classes
 
     Code
@@ -464,4 +477,160 @@
       <error/vctrs_error_ptype2>
       Error in `list_unchop()`:
       ! Can't combine `x$a` <integer> and `x$b` <character>.
+
+# list_unchop() fails if foreign classes are not homogeneous and there is no c() method
+
+    Code
+      list_unchop(list(x), indices = list(c(1, 2)), size = 3, default = default)
+    Condition
+      Error in `list_unchop()`:
+      ! Can't combine <foo> and `default` <vctrs_foobar>.
+
+# list_unchop() `indices` is required when `default` is specified
+
+    Code
+      list_unchop(list(1), default = 0)
+    Condition
+      Error in `list_unchop()`:
+      ! `indices` must be specified when `default` is specified.
+
+# list_unchop() `indices` is required when `size` is specified
+
+    Code
+      list_unchop(list(1), size = 1)
+    Condition
+      Error in `list_unchop()`:
+      ! `indices` must be specified when `size` is specified.
+
+# list_unchop() `size` is required when `default` is specified
+
+    Code
+      list_unchop(list(1), indices = list(1), default = 0)
+    Condition
+      Error in `list_unchop()`:
+      ! `size` must be specified when `default` is specified.
+
+# list_unchop() `size` type is validated
+
+    Code
+      list_unchop(list(1), indices = list(1), size = "x")
+    Condition
+      Error in `list_unchop()`:
+      ! `size` must be a scalar integer or double.
+
+# list_unchop() `indices` are validated against `size`
+
+    Code
+      list_unchop(list(1), indices = list(3), size = 2)
+    Condition
+      Error:
+      ! Can't subset elements past the end.
+      i Location 3 doesn't exist.
+      i There are only 2 elements.
+
+# list_unchop() `default` vector check is done
+
+    Code
+      list_unchop(list(1), indices = list(1), size = 1, default = lm(1 ~ 1),
+      default_arg = "d")
+    Condition
+      Error in `list_unchop()`:
+      ! `d` must be a vector, not a <lm> object.
+
+# list_unchop() `default` size check is done
+
+    Code
+      list_unchop(list(1), indices = list(1), size = 1, default = 1:2, default_arg = "d")
+    Condition
+      Error in `list_unchop()`:
+      ! `d` must have size 1, not size 2.
+
+# list_unchop() `default` is taken into account when computing `ptype`
+
+    Code
+      list_unchop(list(x = 1), indices = list(1), size = 2, default = "a",
+      default_arg = "d")
+    Condition
+      Error in `list_unchop()`:
+      ! Can't combine <double> and `d` <character>.
+
+---
+
+    Code
+      list_unchop(list(x = 1L), indices = list(1), size = 2, default = 1.5,
+      default_arg = "d", ptype = integer())
+    Condition
+      Error in `list_unchop()`:
+      ! Can't convert from `d` <double> to <integer> due to loss of precision.
+      * Locations: 1
+
+# list_unchop() `unmatched = 'error'` errors with implied output length
+
+    Code
+      list_unchop(list(1, 1), indices = list(1, 1), unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Each output location must be matched.
+      x Location 2 is unmatched.
+
+---
+
+    Code
+      list_unchop(list(1, 1), indices = list(1, NA), unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Each output location must be matched.
+      x Location 2 is unmatched.
+
+# list_unchop() `unmatched = 'error'` errors with unmatched `indices` when `size` is used
+
+    Code
+      list_unchop(list(1, 3), indices = list(1, 3), size = 3, unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Each output location must be matched.
+      x Location 2 is unmatched.
+
+# list_unchop() `unmatched = 'error'` errors pluralize correctly
+
+    Code
+      list_unchop(list(1, 3), indices = list(1, 3), size = 3, unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Each output location must be matched.
+      x Location 2 is unmatched.
+
+---
+
+    Code
+      list_unchop(list(1, 3), indices = list(1, 3), size = 4, unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Each output location must be matched.
+      x Locations 2 and 4 are unmatched.
+
+---
+
+    Code
+      list_unchop(list(1, 3), indices = list(1, 3), size = 100, unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Each output location must be matched.
+      x Locations 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ..., 99, and 100 are unmatched.
+
+# list_unchop() `unmatched = 'error'` can't be set when `default` is also set
+
+    Code
+      list_unchop(list(1), indices = list(1), default = 1, size = 1, unmatched = "error")
+    Condition
+      Error in `list_unchop()`:
+      ! Can't set `default` when `unmatched = "error"`.
+
+# list_unchop() `unmatched` is validated
+
+    Code
+      list_unchop(list(1), indices = list(1), unmatched = "e")
+    Condition
+      Error in `list_unchop()`:
+      ! `unmatched` must be either "default" or "error".
 

@@ -1,5 +1,8 @@
 # vctrs (development version)
 
+* `list_unchop()` has gained new `size`, `default`, and `unmatched` arguments
+  (#1982).
+
 * `vec_detect_complete(NULL)` now returns `logical()`, consistent with
   `vec_detect_missing(NULL)` (#1916).
 
