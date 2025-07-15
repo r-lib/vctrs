@@ -24,6 +24,7 @@ static inline int dbl_equal_na_equal(double x, double y) {
   case VCTRS_DBL_number: return isnan(y) ? false : x == y;
   case VCTRS_DBL_missing: return dbl_classify(y) == VCTRS_DBL_missing;
   case VCTRS_DBL_nan: return dbl_classify(y) == VCTRS_DBL_nan;
+  default: r_stop_unreachable();
   }
 }
 static inline int cpl_equal_na_equal(Rcomplex x, Rcomplex y) {
