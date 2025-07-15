@@ -254,7 +254,6 @@ bool vec_implements_base_c(r_obj* x) {
   }
 }
 
-static inline
 bool class_implements_base_c(r_obj* cls) {
   if (s3_class_find_method("c", cls, base_method_table) != r_null) {
     return true;
@@ -274,36 +273,41 @@ r_obj* vec_c_fallback(r_obj* ptype,
                       struct r_lazy error_call) {
   r_obj* cls = KEEP(r_attrib_get(ptype, syms_fallback_class));
   bool implements_c = class_implements_base_c(cls);
-  FREE(1);
 
   if (implements_c) {
+    FREE(1);
     return vec_c_fallback_invoke(xs, name_spec, error_call);
-  } else {
-    struct ptype_common_opts ptype_opts = {
-      .p_arg = p_error_arg,
-      .call = error_call,
-      .fallback = {
-        .s3 = S3_FALLBACK_false
-      }
-    };
-
-    // Should cause a common type error, unless another fallback
-    // kicks in (for instance, homogeneous class with homogeneous
-    // attributes)
-    vec_ptype_common_opts(xs, r_null, &ptype_opts);
-
-    // Suboptimal: Call `vec_c()` again to combine vector with
-    // homogeneous class fallback
-    return vec_c_opts(
-      xs,
-      r_null,
-      name_spec,
-      name_repair,
-      &ptype_opts.fallback,
-      p_error_arg,
-      error_call
-    );
   }
+
+  struct fallback_opts fallback_opts = {
+    .s3 = S3_FALLBACK_false
+  };
+
+  struct ptype_common_opts ptype_opts = {
+    .p_arg = p_error_arg,
+    .call = error_call,
+    .fallback = fallback_opts
+  };
+
+  // Should cause a common type error, unless another fallback
+  // kicks in (for instance, homogeneous class with homogeneous
+  // attributes)
+  vec_ptype_common_opts(xs, r_null, &ptype_opts);
+
+  // Suboptimal: Call `vec_c()` again to combine vector with
+  // homogeneous class fallback
+  r_obj* out = vec_c_opts(
+    xs,
+    r_null,
+    name_spec,
+    name_repair,
+    &ptype_opts.fallback,
+    p_error_arg,
+    error_call
+  );
+
+  FREE(1);
+  return out;
 }
 
 r_obj* vec_c_fallback_invoke(r_obj* xs,

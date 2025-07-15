@@ -51,7 +51,7 @@ extern r_obj* ffi_as_location(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_
 extern r_obj* ffi_slice(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_init(r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_chop(r_obj*, r_obj*, r_obj*);
-extern r_obj* ffi_list_unchop(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_list_unchop(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_chop_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_seq(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_slice_rep(r_obj*, r_obj*, r_obj*);
@@ -235,7 +235,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_slice",                                 (DL_FUNC) &ffi_slice, 3},
   {"ffi_init",                                  (DL_FUNC) &ffi_init, 3},
   {"ffi_vec_chop",                              (DL_FUNC) &ffi_vec_chop, 3},
-  {"ffi_list_unchop",                           (DL_FUNC) &ffi_list_unchop, 6},
+  {"ffi_list_unchop",                           (DL_FUNC) &ffi_list_unchop, 9},
   {"ffi_vec_chop_seq",                          (DL_FUNC) &ffi_vec_chop_seq, 4},
   {"ffi_slice_seq",                             (DL_FUNC) &ffi_slice_seq, 4},
   {"ffi_slice_rep",                             (DL_FUNC) &ffi_slice_rep, 3},
@@ -419,6 +419,7 @@ void vctrs_init_dictionary(SEXP ns);
 void vctrs_init_interval(r_obj* ns);
 void vctrs_init_match(r_obj* ns);
 void vctrs_init_names(SEXP ns);
+void vctrs_init_optional(r_obj* ns);
 void vctrs_init_proxy_restore(SEXP ns);
 void vctrs_init_slice(SEXP ns);
 void vctrs_init_slice_assign(SEXP ns);
@@ -445,6 +446,7 @@ r_obj* vctrs_init_library(r_obj* ns) {
   vctrs_init_interval(ns);
   vctrs_init_match(ns);
   vctrs_init_names(ns);
+  vctrs_init_optional(ns);
   vctrs_init_proxy_restore(ns);
   vctrs_init_slice(ns);
   vctrs_init_slice_assign(ns);

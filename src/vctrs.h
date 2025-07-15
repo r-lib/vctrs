@@ -16,6 +16,7 @@ bool vec_is_unspecified(SEXP x);
 #include "arg.h"
 #include "assert.h"
 #include "c.h"
+#include "c-unchop.h"
 #include "cast-bare.h"
 #include "cast-dispatch.h"
 #include "cast.h"

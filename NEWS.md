@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_unchop()` has gained new `size`, `default`, and `unmatched` arguments (#1982).
+
 * `vec_locate_sorted_groups()` and `vec_order_radix()` no longer crash on columns of type complex (tidyverse/dplyr#7708).
 
 * Functions backed by a dictionary based implementation are often significantly faster, depending on the exact inputs used. This includes: `vec_match()`, `vec_in()`, `vec_group_loc()`, `vec_count()`, `vec_unique()`, and more (#1976).
