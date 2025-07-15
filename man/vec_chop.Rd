@@ -11,16 +11,22 @@ list_unchop(
   x,
   ...,
   indices = NULL,
+  default = NULL,
   ptype = NULL,
+  size = NULL,
+  unmatched = "default",
   name_spec = NULL,
   name_repair = c("minimal", "unique", "check_unique", "universal", "unique_quiet",
     "universal_quiet"),
   error_arg = "x",
+  default_arg = "default",
   error_call = current_env()
 )
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{For \code{vec_chop()}, a vector.
+
+For \code{list_unchop()}, a list of vectors.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -33,7 +39,8 @@ For \code{list_unchop()}, a list of positive integer vectors specifying the
 locations to place elements of \code{x} in. Each element of \code{x} is recycled to
 the size of the corresponding index vector. The size of \code{indices} must
 match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
-provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
+provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}. If either \code{default}
+or \code{size} are provided, \code{indices} must be provided as well.}
 
 \item{sizes}{An integer vector of non-negative sizes representing sequential
 indices to slice \code{x} with, or \code{NULL}. Can't be used if \code{indices} is already
@@ -45,9 +52,29 @@ but is typically faster.
 \code{sum(sizes)} must be equal to \code{vec_size(x)}, i.e. \code{sizes} must completely
 partition \code{x}, but an individual size is allowed to be \code{0}.}
 
-\item{ptype}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all elements of \code{x}. Alternatively, you
-can supply \code{ptype} to give the output a known type.}
+\item{default}{If \code{NULL}, a missing value is used for locations unmatched by
+\code{indices}, otherwise the provided \code{default} is used.
+
+If provided, \code{size} must also be provided, and \code{default} must be size 1 or
+size \code{size}.
+
+Can only be set when \code{unmatched = "default"}.}
+
+\item{ptype}{If \code{NULL}, the output type is determined by computing the common
+type across all elements of \code{x} and \code{default}. Alternatively, you can
+supply \code{ptype} to give the output a known type.}
+
+\item{size}{If \code{NULL}, the output size is determined as \code{sum(list_sizes(x))}
+or \code{sum(list_sizes(indices))} depending on whether or not \code{indices} has
+been supplied. Alternatively, you can supply \code{size} to give the output a
+known size.}
+
+\item{unmatched}{Handling of locations in the output unmatched by \code{indices}.
+One of:
+\itemize{
+\item \code{"default"} to use \code{default} in unmatched locations.
+\item \code{"error"} to error when there are unmatched locations.
+}}
 
 \item{name_spec}{A name specification for combining
 inner and outer names. This is relevant for inputs passed with a
@@ -74,6 +101,10 @@ See the \link[=name_spec]{name specification topic}.}
 will be mentioned in error messages as the input that is at the
 origin of a problem.}
 
+\item{default_arg}{An argument name as a string. This argument will be
+mentioned in error messages as the input that is at the origin of a
+problem.}
+
 \item{error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
@@ -84,9 +115,10 @@ mentioned in error messages as the source of the error. See the
 \item \code{vec_chop()}: A list where each element has the same type as \code{x}. The size
 of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or
 \code{vec_size(x)} depending on whether or not \code{indices} or \code{sizes} is provided.
-\item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
-specified. The size is computed as \code{vec_size_common(!!!indices)} unless
-the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!x)}.
+\item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x, default)}, or
+\code{ptype}, if specified. The size is computed as either \code{sum(list_sizes(x))}
+or \code{sum(list_sizes(indices))} depending on whether or not \code{indices} have
+been supplied, or \code{size}, if specified.
 }
 }
 \description{
@@ -142,6 +174,30 @@ list_unchop(vec_chop(x, indices = indices), indices = indices)
 # When unchopping, size 1 elements of `x` are recycled
 # to the size of the corresponding index
 list_unchop(list(1, 2:3), indices = list(c(1, 3, 5), c(2, 4)))
+
+# Specifying a `size` allows you to partially fill an output while unchopping
+list_unchop(list(1:2, 4:5), indices = list(1:2, 4:5), size = 8)
+
+# Additionally specifying `default` allows you to control the value used in
+# unfilled locations
+list_unchop(list(1:2, 4:5), indices = list(1:2, 4:5), size = 8, default = 0L)
+
+# Alternatively, if you'd like to assert that you've covered all output
+# locations through `indices`, set `unmatched = "error"`.
+# Here, we've set the size to 5 but missed location 3:
+try(list_unchop(
+  list(1:2, 4:5),
+  indices = list(1:2, 4:5),
+  size = 5,
+  unmatched = "error"
+))
+# Here, we've computed an implied size of 4 from `indices` lengths, but
+# used location 1 twice and forgot location 3:
+try(list_unchop(
+  list(1:2, 3:4),
+  indices = list(c(1, 2), c(1, 4)),
+  unmatched = "error"
+))
 
 # Names are retained, and outer names can be combined with inner
 # names through the use of a `name_spec`

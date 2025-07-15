@@ -31,6 +31,8 @@ r_obj* vec_c_fallback(r_obj* ptype,
                       struct vctrs_arg* p_error_arg,
                       struct r_lazy error_call);
 
+bool class_implements_base_c(r_obj* cls);
+
 bool needs_vec_c_fallback(r_obj* ptype);
 bool needs_vec_c_homogeneous_fallback(r_obj* xs, r_obj* ptype);
 
