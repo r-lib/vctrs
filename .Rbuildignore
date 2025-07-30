@@ -27,3 +27,4 @@
 ^launch\.json$
 ^\.vscode$
 ^CRAN-SUBMISSION$
+^pkgdown$
