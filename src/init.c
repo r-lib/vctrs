@@ -160,6 +160,10 @@ extern r_obj* ffi_vec_set_difference(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_union(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_set_symmetric_difference(r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_expand_grid(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_recode_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_replace_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_case_when(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_replace_when(r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -350,6 +354,10 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_set_union",                         (DL_FUNC) &ffi_vec_set_union, 4},
   {"ffi_vec_set_symmetric_difference",          (DL_FUNC) &ffi_vec_set_symmetric_difference, 4},
   {"ffi_vec_expand_grid",                       (DL_FUNC) &ffi_vec_expand_grid, 4},
+  {"ffi_vec_recode_values",                     (DL_FUNC) &ffi_vec_recode_values, 9},
+  {"ffi_vec_replace_values",                    (DL_FUNC) &ffi_vec_replace_values, 6},
+  {"ffi_vec_case_when",                         (DL_FUNC) &ffi_vec_case_when, 7},
+  {"ffi_vec_replace_when",                      (DL_FUNC) &ffi_vec_replace_when, 4},
   {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };
