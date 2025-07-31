@@ -1345,6 +1345,26 @@ test_that("list_unchop() fails if foreign classes are not homogeneous and there 
   })
 })
 
+test_that("Size 1 unspecified `NA` that isn't used doesn't error", {
+  # Requires that casting happen before recycling, because the `NA` recycles
+  # to size zero since it isn't used, resulting in a logical rather than an
+  # unspecified (#1989).
+  expect_identical(
+    list_unchop(
+      list("x", NA),
+      indices = list(1L, integer())
+    ),
+    "x"
+  )
+  expect_identical(
+    list_unchop(
+      list("x", NA),
+      indices = list(integer(), 1L)
+    ),
+    NA_character_
+  )
+})
+
 test_that("list_unchop() `default` is inserted correctly", {
   xs <- list("a", "b")
   indices <- list(1, 3)
