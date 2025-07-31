@@ -219,6 +219,9 @@ r_obj* list_unchop(r_obj* xs,
   r_keep_loc out_names_pi;
   KEEP_HERE(out_names, &out_names_pi);
 
+  r_keep_loc x_pi;
+  KEEP_HERE(r_null, &x_pi);
+
   r_ssize i = 0;
 
   struct vctrs_arg* p_x_arg = new_subscript_arg(
@@ -243,17 +246,36 @@ r_obj* list_unchop(r_obj* xs,
   };
 
   for (; i < xs_size; ++i) {
-    r_obj* x = r_list_get(xs, i);
+    r_obj* elt = r_list_get(xs, i);
 
-    if (x == r_null) {
+    if (elt == r_null) {
       continue;
     }
 
     r_obj* index = r_list_get(indices, i);
     const r_ssize index_size = r_length(index);
 
+    // Cast before recycling for maximal efficiency
+    // (i.e. cast `1L` to `1` before recycling to size `N`)
+    unchop_cast_opts.x = elt;
+    r_obj* x = vec_cast_opts(&unchop_cast_opts);
+    KEEP_AT(x, x_pi);
+
+    // FIXME: `vec_cast()` can currently drop names, so we carefully add them back
+    // if it looks like casting dropped them. This should be removed eventually.
+    // https://github.com/r-lib/vctrs/issues/623
+    if (x != elt) {
+      r_obj* names = KEEP(vec_names(elt));
+      if (names != r_null && vec_names(x) == r_null) {
+        x = vec_set_names(x, names);
+        KEEP_AT(x, x_pi);
+      }
+      FREE(1);
+    }
+
     // Each element of `xs` is recycled to its corresponding index's size
-    x = KEEP(vec_check_recycle(x, index_size, p_x_arg, error_call));
+    x = vec_check_recycle(x, index_size, p_x_arg, error_call);
+    KEEP_AT(x, x_pi);
 
     if (assign_names) {
       r_obj* outer = xs_is_named ? r_chr_get(xs_names, i) : r_null;
@@ -274,14 +296,9 @@ r_obj* list_unchop(r_obj* xs,
       FREE(2);
     }
 
-    unchop_cast_opts.x = x;
-    x = KEEP(vec_cast_opts(&unchop_cast_opts));
-
     // Total ownership of `proxy` because it was freshly created with `vec_init()`
     proxy = vec_proxy_assign_opts(proxy, index, x, VCTRS_OWNED_true, &unchop_assign_opts);
     KEEP_AT(proxy, proxy_pi);
-
-    FREE(2);
   }
 
   if (is_data_frame(proxy)) {
@@ -300,7 +317,7 @@ r_obj* list_unchop(r_obj* xs,
     out = vec_set_names(out, r_null);
   }
 
-  FREE(10);
+  FREE(11);
   return out;
 }
 
