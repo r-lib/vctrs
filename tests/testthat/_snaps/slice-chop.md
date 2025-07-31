@@ -379,13 +379,13 @@
       Error in `list_unchop()`:
       ! Can't combine `x[[1]]` <vctrs_Counts> and `x[[2]]` <double>.
 
-# list_unchop() fallback doesn't support `name_spec` or `ptype`
+# list_unchop() fallback doesn't support (most) `name_spec` or `ptype`
 
     Code
       foo <- structure(foobar(1), foo = "foo")
       bar <- structure(foobar(2), bar = "bar")
-      (expect_error(with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
-      "name specification"))
+      (expect_error(with_c_foobar(list_unchop(list(foo, bar), indices = list(1, 2),
+      name_spec = "{outer}_{inner}")), "name specification"))
     Output
       <error/rlang_error>
       Error in `list_unchop()`:
@@ -393,8 +393,9 @@
       vctrs methods must be implemented for class `vctrs_foobar`.
       See <https://vctrs.r-lib.org/articles/s3-vector.html>.
     Code
-      (expect_error(with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}",
-      error_call = call("foo"))), "name specification"))
+      (expect_error(with_c_foobar(list_unchop(list(foo, bar), indices = list(1, 2),
+      name_spec = "{outer}_{inner}", error_call = call("foo"))), "name specification")
+      )
     Output
       <error/rlang_error>
       Error in `foo()`:
@@ -403,8 +404,8 @@
       See <https://vctrs.r-lib.org/articles/s3-vector.html>.
     Code
       x <- list(foobar(1))
-      (expect_error(with_c_foobar(list_unchop(x, ptype = "")), class = "vctrs_error_incompatible_type")
-      )
+      (expect_error(with_c_foobar(list_unchop(x, indices = list(1), ptype = "")),
+      class = "vctrs_error_incompatible_type"))
     Output
       <error/vctrs_error_cast>
       Error in `list_unchop()`:
@@ -464,4 +465,13 @@
       <error/vctrs_error_ptype2>
       Error in `list_unchop()`:
       ! Can't combine `x$a` <integer> and `x$b` <character>.
+
+# can ignore outer names in `list_unchop()` by providing a 'inner' name-spec (#1988)
+
+    Code
+      list_unchop(list(x = c(a = 1), y = c(b = "2")), indices = list(1, 2),
+      name_spec = "inner")
+    Condition
+      Error in `list_unchop()`:
+      ! Can't combine `x$x` <double> and `x$y` <character>.
 

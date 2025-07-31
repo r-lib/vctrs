@@ -552,6 +552,9 @@ r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n) 
   if (r_inherits(name_spec, "rlang_zap")) {
     return r_null;
   }
+  if (name_spec_is_inner(name_spec)) {
+    return inner;
+  }
 
   if (outer == r_null) {
     return inner;
@@ -631,6 +634,16 @@ r_obj* glue_as_name_spec(r_obj* spec) {
   }
   return vctrs_dispatch1(syms_glue_as_name_spec, fns_glue_as_name_spec,
                          syms_internal_spec, spec);
+}
+
+bool name_spec_is_inner(r_obj* name_spec) {
+  if (!r_is_string(name_spec)) {
+    return false;
+  }
+
+  const char* name_spec_c_string = r_chr_get_c_string(name_spec, 0);
+
+  return !strcmp(name_spec_c_string, "inner");
 }
 
 #define VCTRS_PASTE_BUFFER_MAX_SIZE 4096

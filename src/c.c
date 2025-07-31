@@ -316,6 +316,21 @@ r_obj* vec_c_fallback_invoke(r_obj* xs,
              r_chr_get_c_string(r_class(x), 0));
   }
 
+  if (name_spec_is_inner(name_spec)) {
+    // We don't support most `name_spec` options in the fallback,
+    // but we do allow this one because it is extremely useful
+    // and easy to implement
+    name_spec = r_null;
+
+    if (r_names(xs) != r_null) {
+      // Remove outer names, but remember we likely don't own `xs`!
+      xs = KEEP(r_clone_referenced(xs));
+      r_attrib_poke_names(xs, r_null);
+      FREE(1);
+    }
+  }
+  KEEP(xs);
+
   int err_type = vec_c_fallback_validate_args(x, name_spec);
   if (err_type) {
     stop_vec_c_fallback(xs, err_type, error_call);
@@ -324,7 +339,7 @@ r_obj* vec_c_fallback_invoke(r_obj* xs,
   r_obj* ffi_call = KEEP(r_call2(r_sym("base_c_invoke"), xs));
   r_obj* out = r_eval(ffi_call, vctrs_ns_env);
 
-  FREE(1);
+  FREE(2);
   return out;
 }
 

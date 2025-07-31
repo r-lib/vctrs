@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `.name_spec = "inner"` option for `vec_c()`, `list_unchop()`, and
+  `vec_rbind()`. This efficiently ignores all outer names, while retaining
+  any inner names (#1988).
+
 * `vec_detect_complete(NULL)` now returns `logical()`, consistent with
   `vec_detect_missing(NULL)` (#1916).
 

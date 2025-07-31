@@ -661,6 +661,9 @@ test_that("preserves names when inputs are cast to a common type (#1689)", {
   expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = name_spec), "foo_a")
   expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = name_spec, indices = list(1)), "foo_a")
 
+  expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = "inner"), "a")
+  expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = "inner", indices = list(1)), "a")
+
   # When `x` elements are recycled, names are also recycled
   x <- list(c(a = 1), c(b = 2))
   indices <- list(1:2, 3:4)
@@ -947,26 +950,67 @@ test_that("list_unchop() falls back for S4 classes with a registered c() method"
   )
 })
 
-test_that("list_unchop() fallback doesn't support `name_spec` or `ptype`", {
+test_that("list_unchop() fallback doesn't support (most) `name_spec` or `ptype`", {
   expect_snapshot({
     foo <- structure(foobar(1), foo = "foo")
     bar <- structure(foobar(2), bar = "bar")
     (expect_error(
-      with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}")),
+      with_c_foobar(list_unchop(
+        list(foo, bar),
+        indices = list(1, 2),
+        name_spec = "{outer}_{inner}"
+      )),
       "name specification"
     ))
     # With error call
     (expect_error(
-      with_c_foobar(list_unchop(list(foo, bar), name_spec = "{outer}_{inner}", error_call = call("foo"))),
+      with_c_foobar(list_unchop(
+        list(foo, bar),
+        indices = list(1, 2),
+        name_spec = "{outer}_{inner}",
+        error_call = call("foo")
+      )),
       "name specification"
     ))
     # Used to be an error about `ptype`
     x <- list(foobar(1))
     (expect_error(
-      with_c_foobar(list_unchop(x, ptype = "")),
+      with_c_foobar(list_unchop(x, indices = list(1), ptype = "")),
       class = "vctrs_error_incompatible_type"
     ))
   })
+})
+
+test_that("list_unchop() fallback does support `name_spec = 'inner'`", {
+  # Because of how useful it is, and how easy it is to implement!
+  expect_identical(
+    with_c_foobar(list_unchop(
+      list(foobar(1), foobar(2)),
+      indices = list(1, 2),
+      name_spec = "inner"
+    )),
+    foobar(c(1, 2))
+  )
+  expect_identical(
+    with_c_foobar(list_unchop(
+      list(x = foobar(1), y = foobar(2)),
+      indices = list(1, 2),
+      name_spec = "inner"
+    )),
+    foobar(c(1, 2))
+  )
+  expect_identical(
+    with_c_foobar(list_unchop(
+      list(
+        x = foobar(c(a = 1)),
+        y = foobar(c(b = 2)),
+        z = foobar(3)
+      ),
+      indices = list(1, 2, 3),
+      name_spec = "inner"
+    )),
+    foobar(c(a = 1, b = 2, 3))
+  )
 })
 
 test_that("list_unchop() supports numeric S3 indices", {
@@ -1027,6 +1071,26 @@ test_that("can ignore names in `list_unchop()` by providing a `zap()` name-spec 
       ),
       class = "vctrs_error_incompatible_type"
     ))
+  })
+})
+
+test_that("can ignore outer names in `list_unchop()` by providing a 'inner' name-spec (#1988)", {
+  expect_identical(
+    list_unchop(
+      list(x = c(a = 1, 2), y = c(3, b = 4)),
+      indices = list(c(3, 1), c(2, 4)),
+      name_spec = "inner"
+    ),
+    c(2, 3, a = 1, b = 4)
+  )
+
+  # Importantly, outer names are still used in error messages!
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(x = c(a = 1), y = c(b = "2")),
+      indices = list(1, 2),
+      name_spec = "inner"
+    )
   })
 })
 
