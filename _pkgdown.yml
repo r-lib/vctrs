@@ -83,6 +83,7 @@ reference:
   - vec_duplicate
   - vec_unique
   - vec_in
+  - vec_recode_values
   - vec_locate_matches
   - vec_set_intersect
   - vec_split

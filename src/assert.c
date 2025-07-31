@@ -73,27 +73,35 @@ void obj_check_list(r_obj* x,
 }
 
 
-r_obj* ffi_list_check_all_vectors(r_obj* x, r_obj* frame) {
+r_obj* ffi_list_check_all_vectors(r_obj* xs, r_obj* frame) {
   // This is an internal error
-  obj_check_list(x, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
+  obj_check_list(xs, vec_args.x, (struct r_lazy) {.x = frame, .env = r_null });
 
   struct r_lazy call = { .x = r_syms.call, .env = frame };
-  struct r_lazy arg_caller_data = { .x = syms.arg, .env = frame };
-  struct vctrs_arg arg_caller = new_lazy_arg(&arg_caller_data);
+  struct r_lazy arg_lazy = { .x = syms.arg, .env = frame };
+  struct vctrs_arg arg = new_lazy_arg(&arg_lazy);
 
+  list_check_all_vectors(xs, &arg, call);
+
+  return r_null;
+}
+
+void list_check_all_vectors(r_obj* xs,
+                            struct vctrs_arg* p_arg,
+                            struct r_lazy call) {
   r_ssize i = 0;
-  struct vctrs_arg* arg = new_subscript_arg_vec(&arg_caller, x, &i);
-  KEEP(arg->shelter);
+  struct vctrs_arg* x_arg = new_subscript_arg_vec(p_arg, xs, &i);
+  KEEP(x_arg->shelter);
 
-  r_ssize n = r_length(x);
-  r_obj* const * v_x = r_list_cbegin(x);
+  r_ssize n = r_length(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
 
   for (; i < n; ++i) {
-    obj_check_vector(v_x[i], arg, call);
+    r_obj* x = v_xs[i];
+    obj_check_vector(x, x_arg, call);
   }
 
   FREE(1);
-  return r_null;
 }
 
 r_obj* ffi_list_check_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
@@ -112,7 +120,6 @@ r_obj* ffi_list_check_all_size(r_obj* xs, r_obj* ffi_size, r_obj* frame) {
   return r_null;
 }
 
-static
 void list_check_all_size(r_obj* xs,
                          r_ssize size,
                          struct vctrs_arg* p_arg,
@@ -132,6 +139,30 @@ void list_check_all_size(r_obj* xs,
 
   for (; i < xs_size; ++i) {
     vec_check_size(v_xs[i], size, p_x_arg, call);
+  }
+
+  FREE(1);
+}
+
+void list_check_all_recyclable(r_obj* xs,
+                               r_ssize size,
+                               struct vctrs_arg* p_arg,
+                               struct r_lazy call) {
+  if (r_typeof(xs) != R_TYPE_list) {
+   r_stop_unexpected_type(r_typeof(xs));
+  }
+
+  r_ssize i = 0;
+
+  r_ssize xs_size = r_length(xs);
+  r_obj* xs_names = r_names(xs);
+  r_obj* const* v_xs = r_list_cbegin(xs);
+
+  struct vctrs_arg* p_x_arg = new_subscript_arg(p_arg, xs_names, xs_size, &i);
+  KEEP(p_x_arg->shelter);
+
+  for (; i < xs_size; ++i) {
+    vec_check_recyclable(v_xs[i], size, p_x_arg, call);
   }
 
   FREE(1);

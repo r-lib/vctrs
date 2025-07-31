@@ -6,11 +6,13 @@
 
 struct syms {
   r_obj* arg;
+  r_obj* cases_arg;
   r_obj* default_arg;
   r_obj* dot_arg;
   r_obj* dot_call;
   r_obj* dot_error_arg;
   r_obj* dot_error_call;
+  r_obj* from_arg;
   r_obj* haystack_arg;
   r_obj* needles_arg;
   r_obj* recurse;
@@ -18,6 +20,7 @@ struct syms {
   r_obj* times_arg;
   r_obj* to_arg;
   r_obj* value_arg;
+  r_obj* values_arg;
   r_obj* vec_default_cast;
   r_obj* vec_slice_dispatch_integer64;
   r_obj* vec_slice_fallback;
