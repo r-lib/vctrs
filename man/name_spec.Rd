@@ -16,6 +16,9 @@ string to the first argument, and the inner names or positions
 are passed as second argument.
 \item An anonymous function as a purrr-style formula.
 \item A glue specification of the form \code{"{outer}_{inner}"}.
+\item \code{"inner"}, in which case outer names are ignored, and inner
+names are used if they exist. Note that outer names may still
+be used to provide informative error messages.
 \item An \code{\link[rlang:zap]{rlang::zap()}} object, in which case both outer and inner
 names are ignored and the result is unnamed.
 }
@@ -68,4 +71,14 @@ vec_c(name = 1:3, other = 4:5, .name_spec = my_spec)
 
 # Or purrr-style formulas for anonymous functions:
 vec_c(name = 1:3, other = 4:5, .name_spec = ~ paste0(.x, .y))
+
+# Or the string `"inner"` to only use inner names
+vec_c(name = 1:3, outer = 4:5, .name_spec = "inner")
+vec_c(name = c(a = 1, b = 2, c = 3), outer = 4:5, .name_spec = "inner")
+# This can be useful when you want outer names mentioned in error messages,
+# but you don't want them interfering with the result
+try(vec_c(x = c(a = 1), y = c(b = "2"), .name_spec = "inner"))
+
+# Or `rlang::zap()` to ignore both outer and inner names entirely
+vec_c(name = c(a = 1, b = 2), outer = c(c = 3), .name_spec = rlang::zap())
 }

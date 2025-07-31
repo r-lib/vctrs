@@ -14,6 +14,7 @@ r_obj* vec_unique_colnames(r_obj* x, bool quiet);
 
 r_obj* outer_names(r_obj* names, r_obj* outer, r_ssize n);
 r_obj* apply_name_spec(r_obj* name_spec, r_obj* outer, r_obj* inner, r_ssize n);
+bool name_spec_is_inner(r_obj* name_spec);
 
 enum name_repair_type {
   NAME_REPAIR_none = 0,
