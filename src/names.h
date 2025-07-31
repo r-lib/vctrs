@@ -42,6 +42,8 @@ struct name_repair_opts new_name_repair_opts(r_obj* name_repair,
 r_obj* vec_as_universal_names(r_obj* names, bool quiet);
 r_obj* vec_as_custom_names(r_obj* names, const struct name_repair_opts* opts);
 
+extern r_obj* name_spec_inner;
+
 extern struct name_repair_opts unique_repair_default_opts;
 extern struct name_repair_opts unique_repair_silent_opts;
 extern struct name_repair_opts no_repair_opts;

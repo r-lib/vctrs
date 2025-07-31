@@ -1,5 +1,9 @@
 # vctrs (development version)
 
+* New `vec_case_when()` and `vec_replace_when()` for recoding and replacing using logical conditions.
+
+* New `vec_recode_values()` and `vec_replace_values()` for recoding and replacing values. In particular, this makes it easy to recode a vector using a lookup table.
+
 * New `.name_spec = "inner"` option for `vec_c()`, `list_unchop()`, and `vec_rbind()`. This efficiently ignores all outer names, while retaining any inner names (#1988).
 
 * `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).

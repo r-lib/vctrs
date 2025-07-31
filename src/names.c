@@ -845,6 +845,8 @@ r_obj* vec_set_names_impl(r_obj* x, r_obj* names, bool proxy, const enum vctrs_o
   return x;
 }
 // [[ register() ]]
+// TODO: Expose `owned`, as most of the C level usage can set `VCTRS_OWNED_true`
+// even if we aren't taking the proxy
 r_obj* vec_set_names(r_obj* x, r_obj* names) {
   return vec_set_names_impl(x, names, false, VCTRS_OWNED_false);
 }
@@ -990,6 +992,7 @@ r_obj* vctrs_validate_minimal_names(r_obj* names, r_obj* n_) {
   return names;
 }
 
+r_obj* name_spec_inner = NULL;
 
 struct name_repair_opts unique_repair_default_opts;
 struct name_repair_opts unique_repair_silent_opts;
@@ -1009,6 +1012,10 @@ void vctrs_init_names(r_obj* ns) {
   syms_glue_as_name_spec = r_sym("glue_as_name_spec");
   fns_glue_as_name_spec = r_env_get(ns, syms_glue_as_name_spec);
   syms_internal_spec = r_sym("_spec");
+
+  name_spec_inner = r_alloc_character(1);
+  r_preserve(name_spec_inner);
+  r_chr_poke(name_spec_inner, 0, r_str("inner"));
 
   unique_repair_default_opts.type = NAME_REPAIR_unique;
   unique_repair_default_opts.fn = r_null;
