@@ -256,13 +256,13 @@
       })
       with_memory_prof(list_unchop(make_list_of(1000)))
     Output
-      [1] 103KB
+      [1] 55.9KB
     Code
       with_memory_prof(list_unchop(make_list_of(2000)))
     Output
-      [1] 205KB
+      [1] 111KB
     Code
       with_memory_prof(list_unchop(make_list_of(4000)))
     Output
-      [1] 408KB
+      [1] 220KB
 
