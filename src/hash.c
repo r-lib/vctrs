@@ -107,6 +107,7 @@ static inline uint32_t list_hash_scalar_na_propagate(SEXP x, R_len_t i) {
 static uint32_t lgl_hash(SEXP x);
 static uint32_t int_hash(SEXP x);
 static uint32_t dbl_hash(SEXP x);
+static uint32_t cpl_hash(SEXP x);
 static uint32_t chr_hash(SEXP x);
 static uint32_t list_hash(SEXP x);
 static uint32_t node_hash(SEXP x);
@@ -141,6 +142,7 @@ static uint32_t sexp_hash(SEXP x) {
   case LGLSXP: return lgl_hash(x);
   case INTSXP: return int_hash(x);
   case REALSXP: return dbl_hash(x);
+  case CPLXSXP: return cpl_hash(x);
   case STRSXP: return chr_hash(x);
   case EXPRSXP:
   case VECSXP: return list_hash(x);
@@ -177,6 +179,9 @@ static uint32_t int_hash(SEXP x) {
 }
 static uint32_t dbl_hash(SEXP x) {
   HASH(double, REAL_RO, dbl_hash_scalar);
+}
+static uint32_t cpl_hash(SEXP x) {
+  HASH(Rcomplex, COMPLEX_RO, cpl_hash_scalar);
 }
 static uint32_t chr_hash(SEXP x) {
   HASH(SEXP, STRING_PTR_RO, chr_hash_scalar);

@@ -30,13 +30,17 @@ test_that("same string hashes to same value", {
 })
 
 test_that("list hashes to values of individual values", {
-  x <- vec_hash(list(1:3, letters))
+  cpl <- complex(real = c(1, 2), imaginary = c(3, 4))
+
+  x <- vec_hash(list(1:3, letters, cpl))
   expect_identical(x[1:4], obj_hash(1:3))
   expect_identical(x[5:8], obj_hash(letters))
+  expect_identical(x[9:12], obj_hash(cpl))
 
-  x <- map(list(list(1:3), list(letters)), vec_hash)
+  x <- map(list(list(1:3), list(letters), list(cpl)), vec_hash)
   expect_identical(x[[1]], obj_hash(1:3))
   expect_identical(x[[2]], obj_hash(letters))
+  expect_identical(x[[3]], obj_hash(cpl))
 })
 
 test_that("hash of data frame works down rows", {
@@ -131,6 +135,10 @@ test_that("can hash complex vectors", {
   expect_identical(
     vec_hash(c(1, 2) + 0i),
     c(obj_hash(c(1, 0)), obj_hash(c(2, 0)))
+  )
+  expect_identical(
+    vec_hash(list(c(1, 2) + 0i)),
+    obj_hash(c(1, 2) + 0i)
   )
 })
 
