@@ -192,8 +192,6 @@ corresponding match in the haystack for the current needle.
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 \code{vec_locate_matches()} is a more flexible version of \code{\link[=vec_match]{vec_match()}} used to
 identify locations where each value of \code{needles} matches one or multiple
 values in \code{haystack}. Unlike \code{vec_match()}, \code{vec_locate_matches()} returns

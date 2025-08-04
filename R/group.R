@@ -1,9 +1,6 @@
 #' Identify groups
 #'
 #' @description
-#'
-#' `r lifecycle::badge("experimental")`
-#'
 #' * `vec_group_id()` returns an identifier for the group that each element of
 #'   `x` falls in, constructed in the order that they appear. The number of
 #'   groups is also returned as an attribute, `n`.
