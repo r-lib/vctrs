@@ -1,5 +1,12 @@
 # vctrs (development version)
 
+* The following functions are no longer experimental:
+  * `vec_fill_missing()`
+  * `vec_group_id()`
+  * `vec_group_loc()`
+  * `vec_group_rle()`
+  * `vec_locate_matches()`
+
 * Hashing is now supported for lists containing complex vectors, enabling functions like `vec_unique_loc()` to work on these objects (#1992).
 
 * `vec_detect_complete(NULL)` now returns `logical()`, consistent with

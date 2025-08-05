@@ -1,8 +1,6 @@
 #' Locate observations matching specified conditions
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
-#'
 #' `vec_locate_matches()` is a more flexible version of [vec_match()] used to
 #' identify locations where each value of `needles` matches one or multiple
 #' values in `haystack`. Unlike `vec_match()`, `vec_locate_matches()` returns
