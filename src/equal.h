@@ -3,7 +3,7 @@
 
 #include "vctrs-core.h"
 #include "missing.h"
-#include "utils.h"
+#include "poly-op.h"
 
 // equal_object() never propagates missingness, so
 // it can return a `bool`
@@ -21,12 +21,11 @@ static inline int int_equal_na_equal(int x, int y) {
 }
 static inline int dbl_equal_na_equal(double x, double y) {
   switch (dbl_classify(x)) {
-  case VCTRS_DBL_number: break;
+  case VCTRS_DBL_number: return isnan(y) ? false : x == y;
   case VCTRS_DBL_missing: return dbl_classify(y) == VCTRS_DBL_missing;
   case VCTRS_DBL_nan: return dbl_classify(y) == VCTRS_DBL_nan;
+  default: r_stop_unreachable();
   }
-
-  return isnan(y) ? false : x == y;
 }
 static inline int cpl_equal_na_equal(Rcomplex x, Rcomplex y) {
   return dbl_equal_na_equal(x.r, y.r) && dbl_equal_na_equal(x.i, y.i);
@@ -75,11 +74,15 @@ static inline int p_list_equal_na_equal(const void* p_x, r_ssize i, const void* 
 
 #undef P_EQUAL_NA_EQUAL
 
-static inline bool p_equal_na_equal(const void* p_x,
-                                    r_ssize i,
-                                    const void* p_y,
-                                    r_ssize j,
-                                    const enum vctrs_type type) {
+// No support for df-cols, as they should be flattened
+static inline
+bool p_col_equal_na_equal(
+  const void* p_x,
+  r_ssize i,
+  const void* p_y,
+  r_ssize j,
+  const enum vctrs_type type
+) {
   switch (type) {
   case VCTRS_TYPE_logical: return p_lgl_equal_na_equal(p_x, i, p_y, j);
   case VCTRS_TYPE_integer: return p_int_equal_na_equal(p_x, i, p_y, j);
@@ -88,8 +91,32 @@ static inline bool p_equal_na_equal(const void* p_x,
   case VCTRS_TYPE_character: return p_chr_equal_na_equal(p_x, i, p_y, j);
   case VCTRS_TYPE_raw: return p_raw_equal_na_equal(p_x, i, p_y, j);
   case VCTRS_TYPE_list: return p_list_equal_na_equal(p_x, i, p_y, j);
-  default: stop_unimplemented_vctrs_type("p_equal_na_equal", type);
+  default: stop_unimplemented_vctrs_type("p_col_equal_na_equal", type);
   }
+}
+
+static inline
+int p_df_equal_na_equal(const void* p_x, r_ssize i, const void* p_y, r_ssize j) {
+  struct poly_df_data* p_x_data = (struct poly_df_data*) p_x;
+  struct poly_df_data* p_y_data = (struct poly_df_data*) p_y;
+
+  r_ssize n_col = p_x_data->n_col;
+  if (n_col != p_y_data->n_col) {
+    r_stop_internal("`x` and `y` must have the same number of columns.");
+  }
+
+  enum vctrs_type* v_col_type = p_x_data->v_col_type;
+  const void** v_x_col_ptr = p_x_data->v_col_ptr;
+  const void** v_y_col_ptr = p_y_data->v_col_ptr;
+
+  // df-cols should already be flattened
+  for (r_ssize col = 0; col < n_col; ++col) {
+    if (!p_col_equal_na_equal(v_x_col_ptr[col], i, v_y_col_ptr[col], j, v_col_type[col])) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 // -----------------------------------------------------------------------------

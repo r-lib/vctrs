@@ -368,8 +368,6 @@ r_ssize df_first_missing(r_obj* x) {
 
   int n_prot = 0;
 
-  poly_unary_bool_fn* const fn_is_missing = poly_p_is_missing(VCTRS_TYPE_dataframe);
-
   struct poly_vec* p_poly_x = new_poly_vec(x, VCTRS_TYPE_dataframe);
   KEEP_N(p_poly_x->shelter, &n_prot);
   const void* v_x = p_poly_x->p_vec;
@@ -377,7 +375,7 @@ r_ssize df_first_missing(r_obj* x) {
   r_ssize out = size;
 
   for (; i < size; ++i) {
-    if (fn_is_missing(v_x, i)) {
+    if (p_df_is_missing(v_x, i)) {
       out = i;
       break;
     }

@@ -91,7 +91,23 @@ enum vctrs_dbl {
   VCTRS_DBL_nan
 };
 
-enum vctrs_dbl dbl_classify(double x);
+// Inlining `dbl_classify()` greatly improves `vec_match()` performance
+// with doubles!
+static inline
+enum vctrs_dbl dbl_classify(double x) {
+  if (!isnan(x)) {
+    return VCTRS_DBL_number;
+  }
+
+  union vctrs_dbl_indicator indicator;
+  indicator.value = x;
+
+  if (indicator.key[vctrs_indicator_pos] == 1954) {
+    return VCTRS_DBL_missing;
+  } else {
+    return VCTRS_DBL_nan;
+  }
+}
 
 
 // Compatibility ------------------------------------------------
