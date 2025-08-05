@@ -15,22 +15,22 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
 There are three main goals to the vctrs package, each described in a
 vignette:
 
--   To propose `vec_size()` and `vec_ptype()` as alternatives to
-    `length()` and `class()`; `vignette("type-size")`. These definitions
-    are paired with a framework for size-recycling and type-coercion.
-    `ptype` should evoke the notion of a prototype, i.e. the original or
-    typical form of something.
+- To propose `vec_size()` and `vec_ptype()` as alternatives to
+  `length()` and `class()`; `vignette("type-size")`. These definitions
+  are paired with a framework for size-recycling and type-coercion.
+  `ptype` should evoke the notion of a prototype, i.e. the original or
+  typical form of something.
 
--   To define size- and type-stability as desirable function properties,
-    use them to analyse existing base functions, and to propose better
-    alternatives; `vignette("stability")`. This work has been
-    particularly motivated by thinking about the ideal properties of
-    `c()`, `ifelse()`, and `rbind()`.
+- To define size- and type-stability as desirable function properties,
+  use them to analyse existing base functions, and to propose better
+  alternatives; `vignette("stability")`. This work has been particularly
+  motivated by thinking about the ideal properties of `c()`, `ifelse()`,
+  and `rbind()`.
 
--   To provide a new `vctr` base class that makes it easy to create new
-    S3 vectors; `vignette("s3-vector")`. vctrs provides methods for many
-    base generics in terms of a few new vctrs generics, making
-    implementation considerably simpler and more robust.
+- To provide a new `vctr` base class that makes it easy to create new S3
+  vectors; `vignette("s3-vector")`. vctrs provides methods for many base
+  generics in terms of a few new vctrs generics, making implementation
+  considerably simpler and more robust.
 
 vctrs is a developer-focussed package. Understanding and extending vctrs
 requires some effort from developers, but should be invisible to most
@@ -88,16 +88,17 @@ behaviour when you mix different S3 vectors:
 ``` r
 # combining factors makes integers
 c(factor("a"), factor("b"))
-#> [1] 1 1
+#> [1] a b
+#> Levels: a b
 
 # combining dates and date-times gives incorrect values; also, order matters
 dt <- as.Date("2020-01-01")
 dttm <- as.POSIXct(dt)
 
 c(dt, dttm)
-#> [1] "2020-01-01"    "4321940-06-07"
+#> [1] "2020-01-01" "2020-01-01"
 c(dttm, dt)
-#> [1] "2019-12-31 19:00:00 EST" "1970-01-01 00:04:22 EST"
+#> [1] "2020-01-01 UTC" "2020-01-01 UTC"
 ```
 
 This behaviour arises because `c()` has dual purposes: as well as its

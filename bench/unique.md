@@ -2,7 +2,7 @@ Unique performance
 ================
 
 Exploration of the performance of unique as a proxy for the performance
-of the underyling dictionary + hash code.
+of the underlying dictionary + hash code.
 
 ``` r
 library(tidyverse)

@@ -98,7 +98,7 @@ r_obj* ffi_new_data_frame(r_obj* args) {
   if (!has_rownames) {
     // Data frame size is determined in the following order:
     // - By `row.names`, if provided, which will already be in `attrib`
-    // - By `n`, if provided (this is fully overriden by `row.names`)
+    // - By `n`, if provided (this is fully overridden by `row.names`)
     // - By `x`, if neither `n` nor `row.names` is provided, where `x` could be
     //   a data frame with its own row names attribute or a bare list
     const r_ssize size = n != r_null ? df_size_from_n(n) : df_raw_size(x);
