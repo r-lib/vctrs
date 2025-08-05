@@ -94,12 +94,6 @@ r_obj* vec_rbind(r_obj* xs,
   r_ssize names_to_loc = 0;
 
   if (has_names_to) {
-    if (!assign_names) {
-      r_abort_lazy_call(error_call,
-                        "Can't zap outer names when %s is supplied.",
-                        r_c_str_format_error_arg(".names_to"));
-    }
-
     r_obj* ptype_nms = KEEP(r_names(ptype));
     names_to_loc = r_chr_find(ptype_nms, names_to);
     FREE(1);

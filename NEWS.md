@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* New `.name_spec = "inner"` option for `vec_c()`, `list_unchop()`, and `vec_rbind()`. This efficiently ignores all outer names, while retaining any inner names (#1988).
+
 * `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).
 
 * `list_unchop()` has gained new `size`, `default`, and `unmatched` arguments (#1982).
