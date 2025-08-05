@@ -463,7 +463,10 @@ test_that("can unchop empty vectors", {
 
 test_that("can unchop a list of NULL", {
   expect_null(list_unchop(list(NULL), indices = list(integer())))
+  expect_identical(list_unchop(list(NULL), indices = list(integer()), size = 0), unspecified(0))
+  expect_identical(list_unchop(list(NULL), indices = list(integer()), size = 1), unspecified(1))
   expect_identical(list_unchop(list(NULL), indices = list(integer()), ptype = numeric()), numeric())
+  expect_identical(list_unchop(list(NULL), indices = list(integer()), ptype = numeric(), size = 1), vec_init(numeric(), n = 1))
   expect_identical(list_unchop(list(NULL, NULL), indices = list(integer(), integer()), ptype = numeric()), numeric())
 })
 
@@ -474,9 +477,10 @@ test_that("NULLs are ignored when unchopped with other vectors", {
 
 test_that("can use a `NULL` element with a corresponding index", {
   # FIXME: Probably not quite right, but not entirely clear what it should be:
-  # - Maybe `unspecified(2)`?
+  # - Maybe `unspecified(2)` like when `size` is specified?
   # - Or should `NULL`s even be allowed in `list_unchop()`?
   expect_null(list_unchop(list(NULL), indices = list(1:2)))
+  expect_identical(list_unchop(list(NULL), indices = list(1:2), size = 2L), unspecified(2))
 
   expect_identical(
     list_unchop(list(NULL), indices = list(1:2), ptype = integer()),
@@ -521,8 +525,15 @@ test_that("can unchop factors", {
 
   # levels are in the order they are seen!
   expect <- factor(c("y", "z", "x"), levels = c("z", "x", "y"))
-
   expect_identical(list_unchop(x, indices = indices), expect)
+
+  # With `default`, the `default` is added in as the last item
+  default <- factor("w")
+  expect <- factor(c("y", "z", "x"), levels = c("z", "x", "y", "w"))
+  expect_identical(
+    list_unchop(x, indices = indices, size = 3, default = default),
+    expect
+  )
 })
 
 test_that("can fallback when unchopping matrices", {
@@ -536,6 +547,32 @@ test_that("can fallback when unchopping matrices", {
 
   expect_identical(list_unchop(x, indices = indices), expect)
   expect_identical(list_unchop(x), vec_c(mat1, mat2))
+})
+
+test_that("can fallback when unchopping matrices and using `default`", {
+  mat1 <- matrix(1:4, nrow = 2, ncol = 2)
+  mat2 <- matrix(5:10, nrow = 3, ncol = 2)
+
+  x <- list(mat1, mat2)
+  indices <- list(c(5, 1), c(2, 3, 7))
+
+  default <- matrix(11:24, nrow = 7, ncol = 2)
+  size <- 7
+
+  expect <- vec_c(
+    vec_slice(mat1, 2),
+    vec_slice(mat2, 1),
+    vec_slice(mat2, 2),
+    vec_slice(default, 4),
+    vec_slice(mat1, 1),
+    vec_slice(default, 6),
+    vec_slice(mat2, 3)
+  )
+
+  expect_identical(
+    list_unchop(x, indices = indices, size = size, default = default),
+    expect
+  )
 })
 
 test_that("can fallback when unchopping arrays of >2D", {
@@ -653,25 +690,91 @@ test_that("outer names can be merged with inner names", {
 })
 
 test_that("preserves names when inputs are cast to a common type (#1689)", {
-  expect_named(list_unchop(list(c(a = 1)), ptype = integer()), "a")
-  expect_named(list_unchop(list(c(a = 1)), ptype = integer(), indices = list(1)), "a")
+  expect_named(
+    list_unchop(list(c(a = 1)), ptype = integer()),
+    "a"
+  )
+  expect_named(
+    list_unchop(list(c(a = 1)), ptype = integer(), indices = list(1)),
+    "a"
+  )
+
+  # With `default`
+  expect_named(
+    list_unchop(
+      list(c(a = 1)),
+      indices = list(1),
+      default = c(b = 0),
+      ptype = integer(),
+      size = 2
+    ),
+    c("a", "b")
+  )
 
   # With name spec
   name_spec <- "{outer}_{inner}"
-  expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = name_spec), "foo_a")
-  expect_named(list_unchop(list(foo = c(a = 1)), ptype = integer(), name_spec = name_spec, indices = list(1)), "foo_a")
+  expect_named(
+    list_unchop(
+      list(foo = c(a = 1)),
+      ptype = integer(),
+      name_spec = name_spec
+    ),
+    "foo_a"
+  )
+  expect_named(
+    list_unchop(
+      list(foo = c(a = 1)),
+      ptype = integer(),
+      name_spec = name_spec,
+      indices = list(1)
+    ),
+    "foo_a"
+  )
+  expect_named(
+    list_unchop(
+      list(foo = c(a = 1)),
+      indices = list(1),
+      default = c(b = 0),
+      ptype = integer(),
+      name_spec = name_spec,
+      size = 2
+    ),
+    c("foo_a", "b")
+  )
 
   # When `x` elements are recycled, names are also recycled
   x <- list(c(a = 1), c(b = 2))
   indices <- list(1:2, 3:4)
-  expect_named(list_unchop(x, indices = indices, ptype = integer()), c("a", "a", "b", "b"))
+  expect_named(
+    list_unchop(x, indices = indices, ptype = integer()),
+    c("a", "a", "b", "b")
+  )
+
+  # When `default` elements are recycled, names are also recycled
+  expect_named(
+    list_unchop(
+      list(c(a = 1), c(b = 2)),
+      indices = list(1, 3),
+      default = c(c = 0),
+      ptype = integer(),
+      size = 4
+    ),
+    c("a", "c", "b", "c")
+  )
 })
 
 test_that("not all inputs have to be named", {
   x <- list(c(a = 1), 2, c(c = 3))
   indices <- list(2, 1, 3)
 
-  expect_named(list_unchop(x, indices = indices), c("", "a", "c"))
+  expect_named(
+    list_unchop(x, indices = indices),
+    c("", "a", "c")
+  )
+  expect_named(
+    list_unchop(x, indices = indices, size = 4, default = 0),
+    c("", "a", "c", "")
+  )
 })
 
 test_that("list_unchop() keeps data frame row names", {
@@ -683,8 +786,26 @@ test_that("list_unchop() keeps data frame row names", {
 
   result <- list_unchop(x, indices = indices)
   expect <- c("r2", "r3", "r1", "r4")
-
   expect_identical(vec_names(result), expect)
+
+  default <- data.frame(x = 0L, row.names = "d")
+  result <- list_unchop(x, indices = indices, size = 5, default = default)
+  expect <- c("r2", "r3", "r1", "r4", "d")
+  expect_identical(vec_names(result), expect)
+
+  # With casting
+  ptype <- data.frame(x = double())
+  default <- data.frame(x = 0L, row.names = "d")
+  result <- list_unchop(
+    x = x,
+    indices = indices,
+    size = 5,
+    default = default,
+    ptype = ptype
+  )
+  expect <- c("r2", "r3", "r1", "r4", "d")
+  expect_identical(vec_names(result), expect)
+  expect_type(result$x, "double")
 })
 
 test_that("individual data frame columns retain vector names", {
@@ -712,8 +833,13 @@ test_that("df-col row names are repaired silently", {
   expect_silent({
     result <- list_unchop(x, indices = indices)
   })
-
   expect_identical(vec_names(result$x), c("inner...1", "inner...2"))
+
+  default <- data_frame(x = new_data_frame(list(a = 0), row.names = "inner"))
+  expect_silent({
+    result <- list_unchop(x, indices = indices, size = 3, default = default)
+  })
+  expect_identical(vec_names(result$x), c("inner...1", "inner...2", "inner...3"))
 })
 
 test_that("monitoring - can technically assign to the same location twice", {
@@ -739,10 +865,31 @@ test_that("name repair is respected and happens after ordering according to `ind
   local_name_repair_quiet()
 
   x <- list(c(a = 1), c(a = 2))
-  indices <- list(2, 1)
 
+  indices <- list(2, 1)
   expect_named(list_unchop(x, indices = indices), c("a", "a"))
-  expect_named(list_unchop(x, indices = indices, name_repair = "unique"), c("a...1", "a...2"))
+  expect_named(
+    list_unchop(x, indices = indices, name_repair = "unique"),
+    c("a...1", "a...2")
+  )
+
+  # With `default`
+  indices <- list(3, 1)
+  default <- c(a = 0)
+  expect_named(
+    list_unchop(x, indices = indices, size = 3, default = default),
+    c("a", "a", "a")
+  )
+  expect_named(
+    list_unchop(
+      x,
+      indices = indices,
+      size = 3,
+      default = default,
+      name_repair = "unique"
+    ),
+    c("a...1", "a...2", "a...3")
+  )
 })
 
 test_that("list_unchop() can repair names quietly", {
@@ -783,8 +930,46 @@ test_that("missing values propagate", {
   )
 })
 
+test_that("list_unchop() and vec_c() are consistent-ish regarding `size` and empty inputs (#1980)", {
+  x <- list()
+  indices <- list()
+
+  # These should be consistent and return `NULL` when no inputs are provided.
+  # We treat this roughly equivalent to `unspecified(0)`.
+  expect_identical(vec_c(), NULL)
+  expect_identical(vec_c(), list_unchop(x, indices = indices))
+
+  # These should be consistent and return size 0 `ptype`
+  expect_identical(vec_c(.ptype = integer()), integer())
+  expect_identical(vec_c(.ptype = integer()), list_unchop(x, indices = indices, ptype = integer()))
+
+  # `list_unchop()` allows you to require an output `size`. When `size` is
+  # specified and the `ptype` isn't known, you get `unspecified(size)`. Again,
+  # this is roughly equivalent to `NULL` but retains the `size` information.
+  expect_identical(list_unchop(x, indices = indices, size = 0), unspecified())
+  expect_identical(list_unchop(x, indices = indices, size = 5), unspecified(5))
+
+  # If the `ptype` is known, you of course get a typed output
+  expect_identical(list_unchop(x, indices = indices, size = 0, ptype = integer()), integer())
+  expect_identical(list_unchop(x, indices = indices, size = 5, ptype = integer()), rep(NA_integer_, 5))
+})
+
 test_that("list_unchop() works with simple homogeneous foreign S3 classes", {
-  expect_identical(list_unchop(list(foobar(1), foobar(2))), vec_c(foobar(c(1, 2))))
+  expect_identical(
+    list_unchop(list(foobar(1), foobar(2))),
+    vec_c(foobar(c(1, 2)))
+  )
+
+  # With `default`
+  expect_identical(
+    list_unchop(
+      list(foobar(1), foobar(2)),
+      indices = list(3, 1),
+      size = 4,
+      default = foobar(0)
+    ),
+    vec_c(foobar(c(2, 0, 1, 0)))
+  )
 })
 
 test_that("list_unchop() fails with complex foreign S3 classes", {
@@ -793,6 +978,12 @@ test_that("list_unchop() fails with complex foreign S3 classes", {
     y <- structure(foobar(2), attr_bar = "bar")
     (expect_error(list_unchop(list(x, y)), class = "vctrs_error_incompatible_type"))
     (expect_error(list_unchop(list(x, y), error_call = call("foo"), error_arg = "arg"), class = "vctrs_error_incompatible_type"))
+  })
+
+  expect_snapshot(error = TRUE, {
+    x <- structure(foobar(1), attr_foo = "foo")
+    default <- structure(foobar(2), attr_foo = "bar")
+    list_unchop(list(x), indices = list(1), size = 2, default = default)
   })
 })
 
@@ -857,10 +1048,42 @@ test_that("list_unchop() falls back to c() if S3 method is available", {
     foobar(c(NA, 1, NA))
   )
 
+  # Respects `default`
+  expect_identical(
+    list_unchop(
+      list(foobar(c(1, 2)), foobar(3)),
+      indices = list(c(1, 3), 1),
+      default = foobar(0),
+      size = 4
+    ),
+    foobar(c(3, 0, 2, 0))
+  )
+  expect_identical(
+    list_unchop(
+      list(foobar(c(1, 2)), foobar(3)),
+      indices = list(c(1, 3), 1),
+      default = foobar(c(4, 5, 6, 7)),
+      size = 4
+    ),
+    foobar(c(3, 5, 2, 7))
+  )
+
   # Names are kept
   expect_identical(
-    list_unchop(list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))), indices = list(c(2, 1), 3)),
+    list_unchop(
+      list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))),
+      indices = list(c(2, 1), 3)
+    ),
     foobar(c(y = 2, x = 1, x = 1))
+  )
+  expect_identical(
+    list_unchop(
+      list(foobar(c(x = 1, y = 2)), foobar(c(x = 1))),
+      indices = list(c(2, 1), 3),
+      size = 5,
+      default = foobar(c(default = 0))
+    ),
+    foobar(c(y = 2, x = 1, x = 1, default = 0, default = 0))
   )
 
   # Recycles to the size of index
@@ -945,6 +1168,18 @@ test_that("list_unchop() falls back for S4 classes with a registered c() method"
     list_unchop(list(joe, jane), indices = list(c(2, NA), NA)),
     .Counts(c(NA, 1L, NA), name = "Dispatched")
   )
+
+  default <- .Counts(0L, name = "Unknown")
+
+  expect_identical(
+    list_unchop(
+      list(joe, jane),
+      indices = list(c(1, 3), 1),
+      default = default,
+      size = 5
+    ),
+    .Counts(c(3L, 0L, 2L, 0L, 0L), name = "Dispatched")
+  )
 })
 
 test_that("list_unchop() fallback doesn't support `name_spec` or `ptype`", {
@@ -1010,6 +1245,16 @@ test_that("can ignore names in `list_unchop()` by providing a `zap()` name-spec 
     ),
     c(2L, 1L, 3L)
   )
+  expect_identical(
+    list_unchop(
+      list(a = c(foo = 1:2), b = c(bar = 3L)),
+      indices = list(2:1, 3),
+      default = c(baz = 0L),
+      size = 4,
+      name_spec = zap()
+    ),
+    c(2L, 1L, 3L, 0L)
+  )
 
   expect_snapshot({
     x <- list(a = c(b = letters), b = 3L)
@@ -1054,6 +1299,10 @@ test_that("list_unchop() falls back to c() methods (#1120)", {
     list_unchop(xs, indices = list(2, 1)),
     c("dispatched2", "dispatched1")
   )
+  expect_identical(
+    list_unchop(xs, indices = list(3, 1), size = 4, default = foobar(0)),
+    c("dispatched2", "dispatched3", "dispatched1", "dispatched4")
+  )
 
   # Different subclasses
   xs <- list(
@@ -1068,6 +1317,10 @@ test_that("list_unchop() falls back to c() methods (#1120)", {
   expect_identical(
     list_unchop(xs, indices = list(c(2, 1), 3)),
     c("dispatched2", "dispatched1", "dispatched3")
+  )
+  expect_identical(
+    list_unchop(xs, indices = list(c(4, 1), 3), size = 5, default = foobar(0)),
+    c("dispatched2", "dispatched4", "dispatched3", "dispatched1", "dispatched5")
   )
 })
 
@@ -1084,4 +1337,319 @@ test_that("list_unchop() fails if foreign classes are not homogeneous and there 
     list_unchop(xs, indices = list(c(2, 1), 3)),
     class = "vctrs_error_incompatible_type"
   )
+
+  x <- foobar(c(x = 1, y = 2), class = "foo")
+  default <- foobar(c(x = 1), foo = 1)
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(x), indices = list(c(1, 2)), size = 3, default = default)
+  })
+})
+
+test_that("list_unchop() `default` is inserted correctly", {
+  xs <- list("a", "b")
+  indices <- list(1, 3)
+
+  expect_identical(
+    list_unchop(xs, indices = indices, size = 4, default = "c"),
+    c("a", "c", "b", "c")
+  )
+})
+
+test_that("list_unchop() `default` is inserted correctly with data frames", {
+  xs <- list(
+    data.frame(a = 1:2, b = 1:2),
+    data.frame(a = 3, b = 3)
+  )
+  indices <- list(1:2, 5)
+
+  expect_identical(
+    list_unchop(xs, indices = indices, size = 6, default = data.frame(a = 0, b = NA)),
+    data.frame(
+      a = c(1, 2, 0, 0, 3, 0),
+      b = c(1, 2, NA, NA, 3, NA)
+    )
+  )
+})
+
+test_that("list_unchop() `default` is inserted correctly when there are duplicate indices", {
+  xs <- list("a", "b", "c")
+  indices <- list(1, 1, 3)
+
+  expect_identical(
+    list_unchop(xs, indices = indices, size = 4, default = "d"),
+    c("b", "d", "c", "d")
+  )
+})
+
+test_that("list_unchop() `default` is inserted correctly when it is the size of `size`", {
+  xs <- list("2", "4")
+  indices <- list(2, 4)
+
+  default <- letters[1:5]
+
+  expect_identical(
+    list_unchop(xs, indices = indices, size = 5, default = default),
+    c("a", "2", "c", "4", "e")
+  )
+})
+
+test_that("list_unchop() `default` is correctly not used when all spots are filled", {
+  xs <- list("a", "b", "c")
+  indices <- list(1, 2, 3)
+
+  expect_identical(
+    list_unchop(xs, indices = indices, size = 3, default = "d"),
+    c("a", "b", "c")
+  )
+})
+
+test_that("list_unchop() `default` names work correctly with `name_spec`", {
+  xs <- list(x = c(a = "a"), y = c(b = "b"), z = c(c = "c"))
+  indices <- list(1, 3, NA)
+
+  expect_identical(
+    list_unchop(
+      xs,
+      indices = indices,
+      size = 5,
+      default = c(d = "d"),
+      name_spec = "{outer}_{inner}"
+    ),
+    c(x_a = "a", d = "d", y_b = "b", d = "d", d = "d")
+  )
+})
+
+test_that("list_unchop() `indices` is required when `default` is specified", {
+  # Otherwise `default` would never be utilized
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), default = 0)
+  })
+})
+
+test_that("list_unchop() `indices` is required when `size` is specified", {
+  # Otherwise we'd lay out `xs` in sequence and would have space left at
+  # the end of the vector, which doesn't make much sense
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), size = 1)
+  })
+})
+
+test_that("list_unchop() `size` is required when `default` is specified", {
+  # Otherwise we don't have a clear indication of what to recycle `default`
+  # against. We could use `sum(lengths(indices))` and place `default` in unused
+  # spots (in the case of overlapping `indices`), but I think this is more of
+  # a weird side effect of this function rather than a feature.
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), indices = list(1), default = 0)
+  })
+})
+
+test_that("list_unchop() `size` type is validated", {
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), indices = list(1), size = "x")
+  })
+})
+
+test_that("list_unchop() `indices` are validated against `size`", {
+  # TODO: Not the best error message here
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), indices = list(3), size = 2)
+  })
+})
+
+test_that("list_unchop() `default` vector check is done", {
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(1),
+      indices = list(1),
+      size = 1,
+      default = lm(1 ~ 1),
+      default_arg = "d"
+    )
+  })
+})
+
+test_that("list_unchop() `default` size check is done", {
+  # Must be size 1, or same size as `size`
+  expect_identical(
+    list_unchop(
+      list(1),
+      indices = list(2),
+      size = 3,
+      default = 0,
+      default_arg = "d"
+    ),
+    c(0, 1, 0)
+  )
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(1),
+      indices = list(1),
+      size = 1,
+      default = 1:2,
+      default_arg = "d"
+    )
+  })
+})
+
+test_that("list_unchop() `default` is taken into account when computing `ptype`", {
+  expect_identical(
+    list_unchop(
+      list(1L),
+      indices = list(1),
+      size = 2,
+      default = 1.5,
+      default_arg = "d"
+    ),
+    c(1, 1.5)
+  )
+
+  # `default` is not in output, but helps determine output type!
+  expect_identical(
+    list_unchop(
+      list(1L),
+      indices = list(1),
+      size = 1,
+      default = 1.5,
+      default_arg = "d"
+    ),
+    1
+  )
+
+  # Empty `xs` and `indices`, but `default` is provided and determines type,
+  # which would otherwise be <unspecified>
+  expect_identical(
+    list_unchop(
+      list(),
+      indices = list(),
+      size = 2,
+      default = 0,
+      default_arg = "d"
+    ),
+    c(0, 0)
+  )
+
+  # Computed `ptype` among `xs` isn't compatible with `default`
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(x = 1),
+      indices = list(1),
+      size = 2,
+      default = "a",
+      default_arg = "d"
+    )
+  })
+
+  # Provided `ptype` isn't compatible with `default`
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(x = 1L),
+      indices = list(1),
+      size = 2,
+      default = 1.5,
+      default_arg = "d",
+      ptype = integer()
+    )
+  })
+})
+
+test_that("list_unchop() `unmatched = 'error'` doesn't error when all locations are covered", {
+  expect_identical(
+    list_unchop(list(1:3), indices = list(1:3), size = 3, unmatched = "error"),
+    1:3
+  )
+})
+
+test_that("list_unchop() `unmatched = 'error'` doesn't error in the empty case", {
+  expect_identical(
+    list_unchop(list(), indices = list(), unmatched = "error"),
+    NULL
+  )
+  expect_identical(
+    list_unchop(list(), indices = list(), size = 0, unmatched = "error"),
+    unspecified()
+  )
+})
+
+test_that("list_unchop() `unmatched = 'error'` errors with implied output length", {
+  expect_snapshot(error = TRUE, {
+    # Implied output length of 2 from `indices`, but duplicates result in unmatched locations
+    list_unchop(list(1, 1), indices = list(1, 1), unmatched = "error")
+  })
+  expect_snapshot(error = TRUE, {
+    # Implied output length of 2 from `indices`, but `NA` results in unmatched locations
+    list_unchop(list(1, 1), indices = list(1, NA), unmatched = "error")
+  })
+})
+
+test_that("list_unchop() `unmatched = 'error'` errors with unmatched `indices` when `size` is used", {
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(1, 3),
+      indices = list(1, 3),
+      size = 3,
+      unmatched = "error"
+    )
+  })
+})
+
+test_that("list_unchop() `unmatched = 'error'` errors pluralize correctly", {
+  expect_snapshot(error = TRUE, {
+    # One location
+    list_unchop(
+      list(1, 3),
+      indices = list(1, 3),
+      size = 3,
+      unmatched = "error"
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    # Two locations
+    list_unchop(
+      list(1, 3),
+      indices = list(1, 3),
+      size = 4,
+      unmatched = "error"
+    )
+  })
+  expect_snapshot(error = TRUE, {
+    # Many locations
+    list_unchop(
+      list(1, 3),
+      indices = list(1, 3),
+      size = 100,
+      unmatched = "error"
+    )
+  })
+})
+
+test_that("list_unchop() `unmatched = 'error'` error classes are as expected", {
+  cnd <- catch_cnd(list_unchop(
+    list(1, 3),
+    indices = list(1, 3),
+    size = 3,
+    unmatched = "error"
+  ))
+  expect_true(inherits_all(
+    cnd,
+    c("vctrs_error_unchop_unmatched", "vctrs_error_unchop")
+  ))
+})
+
+test_that("list_unchop() `unmatched = 'error'` can't be set when `default` is also set", {
+  expect_snapshot(error = TRUE, {
+    list_unchop(
+      list(1),
+      indices = list(1),
+      default = 1,
+      size = 1,
+      unmatched = "error"
+    )
+  })
+})
+
+test_that("list_unchop() `unmatched` is validated", {
+  expect_snapshot(error = TRUE, {
+    list_unchop(list(1), indices = list(1), unmatched = "e")
+  })
 })
