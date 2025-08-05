@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).
+
 * `list_unchop()` has gained new `size`, `default`, and `unmatched` arguments (#1982).
 
 * Functions backed by a dictionary based implementation are often significantly faster, depending on the exact inputs used. This includes: `vec_match()`, `vec_in()`, `vec_group_loc()`, `vec_count()`, `vec_unique()`, and more (#1976).
