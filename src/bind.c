@@ -145,6 +145,22 @@ r_obj* vec_rbind(r_obj* xs,
   KEEP_HERE(out, &out_pi);
   ++n_prot;
 
+  // - We own the `out` container
+  // - We own the `out` columns recursively
+  // - We call `vec_proxy_recurse()` so must restore recursively
+  const struct vec_restore_opts bind_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_deep,
+    .recursively_proxied = true
+  };
+  const struct vec_proxy_assign_opts bind_proxy_assign_opts = {
+    .ownership = VCTRS_OWNERSHIP_deep,
+    .recursively_proxied = true,
+    .assign_names = assign_names,
+    // Unlike in `vec_c()` we don't need to ignore outer names because
+    // `df_assign()` doesn't deal with those
+    .ignore_outer_names = false
+  };
+
   r_obj* loc = KEEP_N(compact_seq(0, 0, true), &n_prot);
   int* p_loc = r_int_begin(loc);
 
@@ -187,14 +203,6 @@ r_obj* vec_rbind(r_obj* xs,
   // Compact sequences use 0-based counters
   r_ssize counter = 0;
 
-  const struct vec_assign_opts bind_assign_opts = {
-    .recursive = true,
-    .assign_names = assign_names,
-    // Unlike in `vec_c()` we don't need to ignore outer names because
-    // `df_assign()` doesn't deal with those
-    .ignore_outer_names = false
-  };
-
   for (r_ssize i = 0; i < n_inputs; ++i) {
     r_ssize size = ns[i];
     if (!size) {
@@ -206,7 +214,7 @@ r_obj* vec_rbind(r_obj* xs,
     init_compact_seq(p_loc, counter, size, true);
 
     // Total ownership of `out` because it was freshly created with `vec_init()`
-    out = df_assign(out, loc, x, VCTRS_OWNED_true, &bind_assign_opts);
+    out = df_assign(out, loc, x, &bind_proxy_assign_opts);
     KEEP_AT(out, out_pi);
 
     if (assign_names) {
@@ -220,7 +228,7 @@ r_obj* vec_rbind(r_obj* xs,
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
         if (inner != chrs_empty) {
-          row_names = chr_assign(row_names, loc, x_nms, VCTRS_OWNED_true);
+          row_names = chr_assign(row_names, loc, x_nms, VCTRS_OWNERSHIP_deep);
           KEEP_AT(row_names, rownames_pi);
         }
       }
@@ -241,7 +249,7 @@ r_obj* vec_rbind(r_obj* xs,
   }
 
   df_c_fallback(out, ptype, xs, n_rows, name_spec, name_repair, error_call);
-  out = vec_restore_recurse(out, ptype, VCTRS_OWNED_true);
+  out = vec_restore_opts(out, ptype, &bind_restore_opts);
   KEEP_AT(out, out_pi);
 
   if (has_names_to) {
@@ -451,6 +459,17 @@ r_obj* vec_cbind(r_obj* xs,
   KEEP_HERE(out, &out_pi);
   init_data_frame(out, nrow);
 
+  // We own the data frame list, but not the columns!
+  const enum vctrs_ownership cbind_out_ownership = VCTRS_OWNERSHIP_shallow;
+
+  // We restore this bare data frame to `type`.
+  // Not restoring recursively, we don't proxy the columns and we
+  // don't own them.
+  const struct vec_restore_opts cbind_restore_opts = {
+    .ownership = cbind_out_ownership,
+    .recursively_proxied = false
+  };
+
   r_keep_loc names_pi;
   r_obj* names = r_alloc_character(ncol);
   KEEP_HERE(names, &names_pi);
@@ -478,13 +497,12 @@ r_obj* vec_cbind(r_obj* xs,
     r_ssize xn = r_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
 
-    // Total ownership of `out` because it was freshly created with `r_alloc_vector()`
-    out = list_assign(out, idx, x, VCTRS_OWNED_true);
+    out = list_assign(out, idx, x, cbind_out_ownership);
     KEEP_AT(out, out_pi);
 
     r_obj* xnms = KEEP(r_names(x));
     if (xnms != r_null) {
-      names = chr_assign(names, idx, xnms, VCTRS_OWNED_true);
+      names = chr_assign(names, idx, xnms, VCTRS_OWNERSHIP_deep);
       KEEP_AT(names, names_pi);
     }
     FREE(1);
@@ -499,7 +517,7 @@ r_obj* vec_cbind(r_obj* xs,
     r_attrib_poke(out, r_syms.row_names, rownames);
   }
 
-  out = vec_restore(out, type, VCTRS_OWNED_true);
+  out = vec_restore_opts(out, type, &cbind_restore_opts);
 
   FREE(9);
   return out;

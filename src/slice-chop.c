@@ -258,6 +258,13 @@ r_obj* chop(r_obj* x,
   const r_ssize out_size = indices_out_size(p_indices, proxy);
   r_obj* out = KEEP(r_alloc_list(out_size));
 
+  // Treat `elt` as owned after slicing (we also poke its names directly).
+  // `vec_proxy_info()` doesn't recursively proxy.
+  const struct vec_restore_opts elt_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_shallow,
+    .recursively_proxied = false
+  };
+
   for (r_ssize i = 0; i < out_size; ++i) {
     r_obj* index = indices_next(p_indices);
 
@@ -278,7 +285,7 @@ r_obj* chop(r_obj* x,
       r_attrib_poke_names(elt, elt_names);
     }
 
-    elt = vec_restore(elt, x, vec_owned(elt));
+    elt = vec_restore_opts(elt, x, &elt_restore_opts);
     r_list_poke(out, i, elt);
 
     FREE(1);
@@ -342,10 +349,19 @@ r_obj* chop_df(r_obj* x,
     FREE(1);
   }
 
+  // Each data frame container is owned by us.
+  // Columns aren't necessarily owned by us, but that
+  // doesn't matter because we don't recursively restore.
+  // `vec_proxy_info()` doesn't recursively proxy.
+  const struct vec_restore_opts elt_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_shallow,
+    .recursively_proxied = false
+  };
+
   // Restore each data frame
   for (r_ssize i = 0; i < out_size; ++i) {
     r_obj* elt = v_out[i];
-    elt = vec_restore(elt, x, vec_owned(elt));
+    elt = vec_restore_opts(elt, x, &elt_restore_opts);
     r_list_poke(out, i, elt);
   }
 
@@ -370,6 +386,13 @@ r_obj* chop_shaped(r_obj* x,
   const r_ssize out_size = indices_out_size(p_indices, proxy);
   r_obj* out = KEEP(r_alloc_list(out_size));
 
+  // Treat each `elt` as owned (we also poke its dim names)
+  // `vec_proxy_info()` doesn't recursively proxy.
+  const struct vec_restore_opts elt_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_shallow,
+    .recursively_proxied = false
+  };
+
   for (r_ssize i = 0; i < out_size; ++i) {
     r_obj* index = indices_next(p_indices);
 
@@ -389,7 +412,7 @@ r_obj* chop_shaped(r_obj* x,
       }
     }
 
-    elt = vec_restore(elt, x, vec_owned(elt));
+    elt = vec_restore_opts(elt, x, &elt_restore_opts);
     r_list_poke(out, i, elt);
 
     FREE(1);
@@ -421,6 +444,14 @@ r_obj* chop_fallback(r_obj* x, struct vctrs_chop_indices* p_indices) {
     r_env_poke(env, syms_bracket, fns_bracket);
   }
 
+  // Sliced `elt` comes from R, so is foreign. Technically not proxied at all,
+  // so "restoring" is a bit of a hack, but we only restore if it looks like the
+  // `[` result is missing attributes.
+  struct vec_restore_opts elt_restore_opts = {
+    .ownership = VCTRS_OWNERSHIP_foreign,
+    .recursively_proxied = false
+  };
+
   const r_ssize out_size = indices_out_size(p_indices, x);
   r_obj* out = KEEP(r_alloc_list(out_size));
 
@@ -438,7 +469,8 @@ r_obj* chop_fallback(r_obj* x, struct vctrs_chop_indices* p_indices) {
     r_obj* elt = KEEP(r_eval(call, env));
 
     if (!vec_is_restored(elt, x)) {
-      elt = vec_restore(elt, x, vec_owned(elt));
+      // No guarantee that we own `elt` here
+      elt = vec_restore_opts(elt, x, &elt_restore_opts);
     }
 
     r_list_poke(out, i, elt);

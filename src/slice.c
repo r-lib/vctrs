@@ -310,7 +310,15 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
     // Take over attribute restoration only if there is no `[` method
     if (!vec_is_restored(out, x)) {
-      out = vec_restore(out, x, vec_owned(out));
+      // Sliced `out` comes from R, so is foreign. Technically not proxied at all,
+      // so "restoring" is a bit of a hack, but we only restore if it looks like the
+      // `[` result is missing attributes.
+      struct vec_restore_opts restore_opts = {
+        .ownership = VCTRS_OWNERSHIP_foreign,
+        .recursively_proxied = false
+      };
+
+      out = vec_restore_opts(out, x, &restore_opts);
     }
 
     FREE(nprot);
@@ -349,7 +357,16 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
       r_attrib_poke_names(out, names);
     }
 
-    out = vec_restore(out, x, vec_owned(out));
+    // Sliced `out` is a fresh object from `vec_slice_base()` or
+    // `vec_slice_shaped()` that we control (and we even modify names directly
+    // above). For atomics, shallow and deep ownership are the same. We mark as
+    // shallow just for consistency with the data frame path.
+    struct vec_restore_opts restore_opts = {
+      .ownership = VCTRS_OWNERSHIP_shallow,
+      .recursively_proxied = false
+    };
+
+    out = vec_restore_opts(out, x, &restore_opts);
 
     FREE(nprot);
     return out;
@@ -357,7 +374,19 @@ r_obj* vec_slice_unsafe(r_obj* x, r_obj* subscript) {
 
   case VCTRS_TYPE_dataframe: {
     r_obj* out = KEEP_N(df_slice(data, subscript), &nprot);
-    out = vec_restore(out, x, vec_owned(out));
+
+    // Sliced `out` is a fresh list container from `df_slice()`, but we don't
+    // necessarily own the sliced columns (an individual column could have gone
+    // through the fallback path) so we set shallow ownership. This is fine, we
+    // don't restore recursively here, so only the list container will need to
+    // be modified during restoration.
+    struct vec_restore_opts restore_opts = {
+      .ownership = VCTRS_OWNERSHIP_shallow,
+      .recursively_proxied = false
+    };
+
+    out = vec_restore_opts(out, x, &restore_opts);
+
     FREE(nprot);
     return out;
   }

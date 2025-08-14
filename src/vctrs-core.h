@@ -21,17 +21,34 @@ extern bool vctrs_debug_verbose;
 #define ERR SEXP
 
 
-// Ownership is recursive
-enum vctrs_owned {
-  VCTRS_OWNED_false = 0,
-  VCTRS_OWNED_true
-};
+/**
+ * Ownership modeling
+ *
+ * Shallow and deep ownership imply that "we" own the object, and is not
+ * dependent on the refcount in any way.
+ *
+ * Foreign ownership implies that R owns the object, and can only be modified in
+ * place if the refcount is 0.
+ */
+enum vctrs_ownership {
+  // No known ownership
+  //
+  // The object is "foreign" to us, typically meaning it came through FFI
+  // (_foreign_ function interface) from the R side.
+  //
+  // If there are any references on this object, it will be cloned before being
+  // modified, otherwise it will still be modified in place without cloning.
+  VCTRS_OWNERSHIP_foreign,
 
-enum vctrs_recurse {
-  VCTRS_RECURSE_false = 0,
-  VCTRS_RECURSE_true
-};
+  // Shallow ownership
+  // - For atomics, we own the vector
+  // - For lists (data frames), we own the list, but not the contents (columns)
+  VCTRS_OWNERSHIP_shallow,
 
+  // Deep ownership
+  // We own the object recursively. Only used when we create it fully at C level.
+  VCTRS_OWNERSHIP_deep
+};
 
 /**
  * Structure for argument tags

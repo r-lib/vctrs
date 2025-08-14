@@ -37,7 +37,7 @@ bool vec_is_unspecified(SEXP x);
 #include "order-sortedness.h"
 #include "order-truelength.h"
 #include "order.h"
-#include "owned.h"
+#include "ownership.h"
 #include "poly-op.h"
 #include "proxy.h"
 #include "proxy-restore.h"
@@ -199,9 +199,9 @@ SEXP posixlt_as_posixct(SEXP x, SEXP to);
 SEXP posixct_as_posixlt(SEXP x, SEXP to);
 SEXP posixlt_as_posixlt(SEXP x, SEXP to);
 
-SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
-SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
-SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_owned owned);
+SEXP vec_date_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
+SEXP vec_posixct_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
+SEXP vec_posixlt_restore(SEXP x, SEXP to, const enum vctrs_ownership ownership);
 
 SEXP date_datetime_ptype2(SEXP x, SEXP y);
 SEXP datetime_datetime_ptype2(SEXP x, SEXP y);

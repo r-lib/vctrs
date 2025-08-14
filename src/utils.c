@@ -353,11 +353,15 @@ SEXP map_with_data(SEXP x, SEXP (*fn)(SEXP, void*), void* data) {
 SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
-  // Total ownership because `map()` generates a fresh list
-  out = vec_bare_df_restore(out,
-                            df,
-                            VCTRS_OWNED_true,
-                            VCTRS_RECURSE_false);
+  // Shallow ownership over `out` because `map()` generates a fresh
+  // list. We only care about "restoring" that bare list to the type of `df`,
+  // not the columns, so not recursive.
+  struct vec_restore_opts opts = {
+    .ownership = VCTRS_OWNERSHIP_shallow,
+    .recursively_proxied = false
+  };
+
+  out = vec_bare_df_restore(out, df, &opts);
 
   UNPROTECT(1);
   return out;
@@ -367,11 +371,15 @@ SEXP bare_df_map(SEXP df, SEXP (*fn)(SEXP)) {
 SEXP df_map(SEXP df, SEXP (*fn)(SEXP)) {
   SEXP out = PROTECT(map(df, fn));
 
-  // Total ownership because `map()` generates a fresh list
-  out = vec_df_restore(out,
-                       df,
-                       VCTRS_OWNED_true,
-                       VCTRS_RECURSE_false);
+  // Shallow ownership over `out` because `map()` generates a fresh
+  // list. We only care about "restoring" that bare list to the type of `df`,
+  // not the contents, so not recursive.
+  struct vec_restore_opts opts = {
+    .ownership = VCTRS_OWNERSHIP_shallow,
+    .recursively_proxied = false
+  };
+
+  out = vec_df_restore(out, df, &opts);
 
   UNPROTECT(1);
   return out;
