@@ -94,6 +94,13 @@
     }
   })
 
+  on_package_load("data.table", {
+    if (!env_has(ns_env("data.table"), "vec_proxy.IDate")) {
+      s3_register("vctrs::vec_proxy", "IDate", vec_proxy_IDate)
+      s3_register("vctrs::vec_restore", "IDate", vec_restore_IDate)
+    }
+  })
+
   utils::globalVariables("vec_set_attributes")
 
   # Prevent two copies from being made by `attributes(x) <- attrib` on R < 3.6.0
