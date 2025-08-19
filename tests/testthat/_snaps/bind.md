@@ -402,22 +402,6 @@
       Error in `vec_rbind()`:
       ! Can't combine `..1` <vctrs_Counts> and `..2` <vctrs:::common_class_fallback>.
 
-# can't zap names when `.names_to` is supplied
-
-    Code
-      (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap())))
-    Output
-      <error/rlang_error>
-      Error in `vec_rbind()`:
-      ! Can't zap outer names when `.names_to` is supplied.
-    Code
-      (expect_error(vec_rbind(foo = c(x = 1), .names_to = "id", .name_spec = zap(),
-      .error_call = call("foo"))))
-    Output
-      <error/rlang_error>
-      Error in `foo()`:
-      ! Can't zap outer names when `.names_to` is supplied.
-
 # row-binding performs expected allocations
 
     Code

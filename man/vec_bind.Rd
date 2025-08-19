@@ -47,14 +47,16 @@ Alternatively, you can supply \code{.ptype} to give the output known type.
 If \code{getOption("vctrs.no_guessing")} is \code{TRUE} you must supply this value:
 this is a convenient way to make production code demand fixed types.}
 
-\item{.names_to}{This controls what to do with input names supplied in \code{...}.
+\item{.names_to}{This controls what to do with names on \code{...}:
 \itemize{
-\item By default, input names are \link[rlang:zap]{zapped}.
-\item If a string, specifies a column where the input names will be
+\item By default, names on \code{...} are \link[rlang:zap]{zapped} and do not appear
+anywhere in the output.
+\item If a string, specifies a column where the names on \code{...} will be
 copied. These names are often useful to identify rows with
 their original input. If a column name is supplied and \code{...} is
 not named, an integer column is used instead.
-\item If \code{NULL}, the input names are used as row names.
+\item If \code{NULL}, the outer names on \code{...} are instead merged with inner
+row names on each element of \code{...} and are subject to \code{.name_spec}.
 }}
 
 \item{.name_repair}{One of \code{"unique"}, \code{"universal"}, \code{"check_unique"},
@@ -69,11 +71,13 @@ repair function after all inputs have been concatenated together
 in a final data frame. Hence \code{vec_cbind()} allows the more
 permissive minimal names repair.}
 
-\item{.name_spec}{A name specification (as documented in \code{\link[=vec_c]{vec_c()}})
-for combining the outer inputs names in \code{...} and the inner row
-names of the inputs. This only has an effect when \code{.names_to} is
-set to \code{NULL}, which causes the input names to be assigned as row
-names.}
+\item{.name_spec}{A name specification (as documented in \code{\link[=vec_c]{vec_c()}}) for
+combining the outer names on \code{...} with the inner row names of each element
+of \code{...}. An outer name will only ever be provided when \code{.names_to} is set
+to \code{NULL}, which causes the outer name to be used as part of the row names
+rather than as a new column, but it can still be useful to fix this to
+either \code{\link[rlang:zap]{rlang::zap()}} to always ignore all names, or \code{"inner"} to always
+ignore outer names, regardless of \code{.names_to}.}
 
 \item{.error_call}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
