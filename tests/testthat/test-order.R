@@ -513,6 +513,47 @@ test_that("can be used in a data frame", {
   expect_identical(vec_order_radix(df3), c(5L, 3L, 1L, 2L, 4L))
 })
 
+test_that("can be used in a data frame when all group sizes are >1", {
+  # https://github.com/tidyverse/dplyr/issues/7708
+
+  # Group sizes of 3 (1L) and 2 (2L)
+  x <- c(1L, 2L, 1L, 2L, 1L)
+
+  y <- complex(
+    # Group sizes of 3 (1L, 1L) and 2 (2L, 2L)
+    real = c(1L, 2L, 1L, 2L, 1L),
+    # This breaks ties within each group
+    imaginary = c(3L, 2L, 2L, 4L, 1L)
+  )
+
+  df <- data.frame(x = x, y = y)
+
+  expect_identical(vec_order_radix(df), c(5L, 3L, 1L, 2L, 4L))
+})
+
+test_that("can be used in a data frame as the third column", {
+  # Testing that `complex_first_pass` is reset between columns
+
+  x <- c(1L, 1L, 1L, 2L, 2L)
+
+  y <- complex(
+    real = x,
+    # This breaks one tie
+    imaginary = c(1L, 2L, 1L, 2L, 2L)
+  )
+
+  z <- complex(
+    # This breaks one tie
+    real = c(3L, 2L, 1L, 2L, 2L),
+    # This breaks one tie
+    imaginary = c(3L, 2L, 1L, 2L, 1L)
+  )
+
+  df <- data.frame(x = x, y = y, z = z)
+
+  expect_identical(vec_order_radix(df), c(3L, 1L, 2L, 5L, 4L))
+})
+
 test_that("all combinations of `direction` and `na_value` work", {
   x <- complex(real = c(3, NA, 1.5, 2, NA), imaginary = c(1, 1, 1, 1, 2))
 
