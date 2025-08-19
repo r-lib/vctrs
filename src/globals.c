@@ -49,6 +49,7 @@ void vctrs_init_globals(r_obj* ns) {
 
   // Symbols -----------------------------------------------------------
   syms.arg = r_sym("arg");
+  syms.default_arg = r_sym("default_arg");
   syms.dot_arg = r_sym(".arg");
   syms.dot_call = r_sym(".call");
   syms.dot_error_arg = r_sym(".error_arg");
@@ -75,6 +76,7 @@ void vctrs_init_globals(r_obj* ns) {
   INIT_ARG(i);
   INIT_ARG(max_fill);
   INIT_ARG(n);
+  INIT_ARG2(ptype, "ptype");
   INIT_ARG(value);
   INIT_ARG(x);
   INIT_ARG(indices);

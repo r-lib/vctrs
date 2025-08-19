@@ -46,4 +46,60 @@ r_ssize r_vector_bool_length(struct r_vector_bool* p_vec) {
   return p_vec->n;
 }
 
+static inline
+void r_vector_bool_fill(struct r_vector_bool* p_vec, bool value) {
+  bool* v_data = r_vector_bool_begin(p_vec);
+  const r_ssize size = r_vector_bool_length(p_vec);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    v_data[i] = value;
+  }
+}
+
+static inline
+bool r_vector_bool_any(struct r_vector_bool* p_vec) {
+  const bool* v_data = r_vector_bool_cbegin(p_vec);
+  const r_ssize size = r_vector_bool_length(p_vec);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    if (v_data[i]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static inline
+r_ssize r_vector_bool_sum(struct r_vector_bool* p_vec) {
+  const bool* v_data = r_vector_bool_cbegin(p_vec);
+  const r_ssize size = r_vector_bool_length(p_vec);
+
+  r_ssize out = 0;
+
+  for (r_ssize i = 0; i < size; ++i) {
+    out += (r_ssize) v_data[i];
+  }
+
+  return out;
+}
+
+static inline
+r_obj* r_vector_bool_which(struct r_vector_bool* p_vec) {
+  const bool* v_data = r_vector_bool_cbegin(p_vec);
+  const r_ssize vec_size = r_vector_bool_length(p_vec);
+
+  const r_ssize out_size = r_vector_bool_sum(p_vec);
+  r_obj* out = KEEP(r_alloc_integer(out_size));
+  int* v_out = r_int_begin(out);
+
+  for (r_ssize i = 0, j = 0; i < vec_size && j < out_size; ++i) {
+    v_out[j] = i + 1;
+    j += (r_ssize) v_data[i];
+  }
+
+  FREE(1);
+  return out;
+}
+
 #endif

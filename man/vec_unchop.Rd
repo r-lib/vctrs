@@ -13,7 +13,9 @@ vec_unchop(
 )
 }
 \arguments{
-\item{x}{A vector}
+\item{x}{For \code{vec_chop()}, a vector.
+
+For \code{list_unchop()}, a list of vectors.}
 
 \item{indices}{For \code{vec_chop()}, a list of positive integer vectors to
 slice \code{x} with, or \code{NULL}. Can't be used if \code{sizes} is already specified.
@@ -24,11 +26,12 @@ For \code{list_unchop()}, a list of positive integer vectors specifying the
 locations to place elements of \code{x} in. Each element of \code{x} is recycled to
 the size of the corresponding index vector. The size of \code{indices} must
 match the size of \code{x}. If \code{NULL}, \code{x} is combined in the order it is
-provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}.}
+provided in, which is equivalent to using \code{\link[=vec_c]{vec_c()}}. If either \code{default}
+or \code{size} are provided, \code{indices} must be provided as well.}
 
-\item{ptype}{If \code{NULL}, the default, the output type is determined by
-computing the common type across all elements of \code{x}. Alternatively, you
-can supply \code{ptype} to give the output a known type.}
+\item{ptype}{If \code{NULL}, the output type is determined by computing the common
+type across all elements of \code{x} and \code{default}. Alternatively, you can
+supply \code{ptype} to give the output a known type.}
 
 \item{name_spec}{A name specification for combining
 inner and outer names. This is relevant for inputs passed with a
@@ -56,9 +59,10 @@ See the \link[=name_spec]{name specification topic}.}
 \item \code{vec_chop()}: A list where each element has the same type as \code{x}. The size
 of the list is equal to \code{vec_size(indices)}, \code{vec_size(sizes)}, or
 \code{vec_size(x)} depending on whether or not \code{indices} or \code{sizes} is provided.
-\item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x)}, or \code{ptype}, if
-specified. The size is computed as \code{vec_size_common(!!!indices)} unless
-the indices are \code{NULL}, in which case the size is \code{vec_size_common(!!!x)}.
+\item \code{list_unchop()}: A vector of type \code{vec_ptype_common(!!!x, default)}, or
+\code{ptype}, if specified. The size is computed as either \code{sum(list_sizes(x))}
+or \code{sum(list_sizes(indices))} depending on whether or not \code{indices} have
+been supplied, or \code{size}, if specified.
 }
 }
 \description{
