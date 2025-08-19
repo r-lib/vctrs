@@ -1,5 +1,7 @@
 # vctrs (development version)
 
+* `list_unchop()` now works in an edge case with a single `NA` recycled to size 0 (#1989).
+
 * `list_unchop()` has gained new `size`, `default`, and `unmatched` arguments (#1982).
 
 * `vec_locate_sorted_groups()` and `vec_order_radix()` no longer crash on columns of type complex (tidyverse/dplyr#7708).
