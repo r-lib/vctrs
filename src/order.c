@@ -3899,15 +3899,12 @@ static void vec_order_chunk_switch(bool decreasing,
   const Rcomplex* p_col = COMPLEX_RO(col);                     \
   double* p_x_chunk_col = (double*) p_x_chunk;                 \
                                                                \
-  if (rerun_complex) {                                         \
+  if (complex_first_pass) {                                    \
     /* First pass - real */                                    \
     for (r_ssize j = 0; j < group_size; ++j) {                 \
       const int loc = p_o_col[j] - 1;                          \
       p_x_chunk_col[j] = cpl_normalise_missing(p_col[loc]).r;  \
     }                                                          \
-                                                               \
-    /* Decrement `i` to rerun column */                        \
-    --i;                                                       \
   } else {                                                     \
     /* Second pass - imaginary */                              \
     for (r_ssize j = 0; j < group_size; ++j) {                 \
@@ -4005,7 +4002,7 @@ void df_order_internal(SEXP x,
   // For complex, we have to rerun the column a second time on the
   // imaginary part. This is done by decrementing `i` after processing
   // the real part so the column is rerun.
-  bool rerun_complex = false;
+  bool complex_first_pass = true;
 
   // Iterate over remaining columns by group chunk
   for (r_ssize i = 1; i < n_cols; ++i) {
@@ -4034,12 +4031,6 @@ void df_order_internal(SEXP x,
     col = VECTOR_ELT(x, i);
     type = vec_proxy_typeof(col);
 
-    // If we are on the rerun pass, flip this back off so the
-    // imaginary part is extracted below.
-    if (type == VCTRS_TYPE_complex) {
-      rerun_complex = rerun_complex ? false : true;
-    }
-
     // Pre-sort unique characters once for the whole column.
     // Don't sort uniques if computing appearance ordering.
     if (chr_ordered && type == VCTRS_TYPE_character) {
@@ -4058,7 +4049,7 @@ void df_order_internal(SEXP x,
     // - We are on the last column
     // - The user didn't request group information
     // - That column isn't the first pass of a complex column
-    if (i == n_cols - 1 && !p_group_infos->force_groups && !rerun_complex) {
+    if (i == n_cols - 1 && !p_group_infos->force_groups && !complex_first_pass) {
       p_group_infos->ignore_groups = true;
     }
 
@@ -4107,6 +4098,18 @@ void df_order_internal(SEXP x,
       );
 
       p_o_col += group_size;
+    }
+
+    if (type == VCTRS_TYPE_complex) {
+      if (complex_first_pass) {
+        // Transition from first pass to second pass
+        complex_first_pass = false;
+        // Decrement `i` so we reuse this column
+        --i;
+      } else {
+        // Reset flag for future complex columns
+        complex_first_pass = true;
+      }
     }
 
     // Reset TRUELENGTHs between columns if ordering character vectors.
