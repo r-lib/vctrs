@@ -1,10 +1,8 @@
 #include "vctrs.h"
 #include "vec-bool.h"
-#include "optional.h"
 
 #include "decl/case-when-decl.h"
 
-static
 r_obj* vec_case_when(
   r_obj* cases,
   r_obj* values,

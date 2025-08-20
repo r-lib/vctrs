@@ -164,6 +164,7 @@ extern r_obj* ffi_vec_recode_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_ob
 extern r_obj* ffi_vec_replace_values(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_case_when(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 extern r_obj* ffi_vec_replace_when(r_obj*, r_obj*, r_obj*, r_obj*);
+extern r_obj* ffi_vec_if_else(r_obj*, r_obj*, r_obj*, r_obj*, r_obj*, r_obj*);
 
 
 // Maturing
@@ -358,6 +359,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"ffi_vec_replace_values",                    (DL_FUNC) &ffi_vec_replace_values, 6},
   {"ffi_vec_case_when",                         (DL_FUNC) &ffi_vec_case_when, 7},
   {"ffi_vec_replace_when",                      (DL_FUNC) &ffi_vec_replace_when, 4},
+  {"ffi_vec_if_else",                           (DL_FUNC) &ffi_vec_if_else, 6},
   {"ffi_exp_vec_cast",                          (DL_FUNC) &exp_vec_cast, 2},
   {NULL, NULL, 0}
 };
@@ -424,6 +426,7 @@ void vctrs_init_bind(SEXP ns);
 void vctrs_init_cast(SEXP ns);
 void vctrs_init_data(SEXP ns);
 void vctrs_init_dictionary(SEXP ns);
+void vctrs_init_if_else(r_obj* ns);
 void vctrs_init_interval(r_obj* ns);
 void vctrs_init_match(r_obj* ns);
 void vctrs_init_names(SEXP ns);
@@ -451,6 +454,7 @@ r_obj* vctrs_init_library(r_obj* ns) {
   vctrs_init_cast(ns);
   vctrs_init_data(ns);
   vctrs_init_dictionary(ns);
+  vctrs_init_if_else(ns);
   vctrs_init_interval(ns);
   vctrs_init_match(ns);
   vctrs_init_names(ns);

@@ -221,6 +221,8 @@ void r_int_fill_seq(SEXP x, int start, R_len_t n);
 SEXP r_seq(R_len_t from, R_len_t to);
 bool r_int_any_na(SEXP x);
 
+r_obj* r_lgl_invert(r_obj* x);
+
 R_len_t r_chr_find(SEXP x, SEXP value);
 
 #define r_resize Rf_xlengthgets
