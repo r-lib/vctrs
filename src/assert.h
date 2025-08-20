@@ -16,4 +16,18 @@ void obj_check_list(r_obj* x,
                     struct vctrs_arg* arg,
                     struct r_lazy call);
 
+void list_check_all_vectors(r_obj* xs,
+                            struct vctrs_arg* p_arg,
+                            struct r_lazy call);
+
+void list_check_all_size(r_obj* xs,
+                         r_ssize size,
+                         struct vctrs_arg* p_arg,
+                         struct r_lazy call);
+
+void list_check_all_recyclable(r_obj* xs,
+                               r_ssize size,
+                               struct vctrs_arg* p_arg,
+                               struct r_lazy call);
+
 #endif

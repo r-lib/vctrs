@@ -1125,6 +1125,22 @@ bool r_int_any_na(SEXP x) {
   return false;
 }
 
+// Like `!x` at the R level
+r_obj* r_lgl_invert(r_obj* x) {
+  const r_ssize size = r_length(x);
+  const int* v_x = r_lgl_cbegin(x);
+
+  r_obj* out = KEEP(r_alloc_logical(size));
+  int* v_out = r_lgl_begin(out);
+
+  for (r_ssize i = 0; i < size; ++i) {
+    const int elt = v_x[i];
+    v_out[i] = (elt == r_globals.na_lgl) ? r_globals.na_lgl : !elt;
+  }
+
+  FREE(1);
+  return out;
+}
 
 int r_chr_max_len(SEXP x) {
   R_len_t n = Rf_length(x);

@@ -227,6 +227,23 @@ r_obj* vec_check_recycle(r_obj* x,
   stop_recycle_incompatible_size(n_x, size, x_arg, call);
 }
 
+void vec_check_recyclable(r_obj* x,
+                          r_ssize size,
+                          struct vctrs_arg* x_arg,
+                          struct r_lazy call) {
+  if (x == r_null) {
+    return;
+  }
+
+  r_ssize n_x = vec_size(x);
+
+  if (n_x == size || n_x == 1) {
+    return;
+  }
+
+  stop_recycle_incompatible_size(n_x, size, x_arg, call);
+}
+
 // [[ register() ]]
 r_obj* ffi_recycle(r_obj* x,
                    r_obj* size_obj,
