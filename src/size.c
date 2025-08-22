@@ -227,6 +227,23 @@ r_obj* vec_check_recycle(r_obj* x,
   stop_recycle_incompatible_size(n_x, size, x_arg, call);
 }
 
+// Doesn't allow `NULL`, you likely want the returned size to have a guarantee
+// of being either `1` or `size`, and `NULL` would be size `0`.
+r_ssize vec_check_recyclable(
+  r_obj* x,
+  r_ssize size,
+  struct vctrs_arg* x_arg,
+  struct r_lazy call
+) {
+  r_ssize x_size = vec_size(x);
+
+  if (x_size == size || x_size == 1) {
+    return x_size;
+  }
+
+  stop_recycle_incompatible_size(x_size, size, x_arg, call);
+}
+
 // [[ register() ]]
 r_obj* ffi_recycle(r_obj* x,
                    r_obj* size_obj,

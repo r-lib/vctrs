@@ -29,7 +29,8 @@ mentioned in error messages as the source of the error. See the
 
 \item{value}{Replacement values. \code{value} is cast to the type of
 \code{x}, but only if they have a common type. See below for examples
-of this rule.}
+of this rule. \code{value} must be recyclable to the size of \code{i} after \code{i}
+has been converted to a valid integer location vector.}
 
 \item{x_arg, value_arg}{Argument names for \code{x} and \code{value}. These are used
 in error messages to inform the user about the locations of
@@ -50,10 +51,23 @@ that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 Support for S3 objects depends on whether the object implements a
 \code{\link[=vec_proxy]{vec_proxy()}} method.
 \itemize{
-\item When a \code{vec_proxy()} method exists, the proxy is sliced and
+\item When a \code{vec_proxy()} method exists, the proxy is sliced or assigned to and
 \code{vec_restore()} is called on the result.
-\item Otherwise \code{vec_slice()} falls back to the base generic \code{[}.
+\item Otherwise, \code{vec_slice()} falls back to the base generic \code{[} and
+\verb{vec_slice<-()} falls back to the base generic \verb{[<-}.
 }
+
+When \verb{vec_slice<-()} falls back to \verb{[<-}, it is expected that the subclass's
+\verb{[<-} method can handle the following subset of cases that base R's \verb{[<-}
+can also handle:
+\itemize{
+\item An \code{i} vector of positive integer positions (notably excluding \code{NA}).
+\item A \code{value} vector of length 1 or length \code{length(i)}. If length 1, it
+should be recycled by the \verb{[<-} method to the length of \code{i}.
+}
+
+If your \verb{[<-} method eventually calls base R's native \verb{[<-} code, then these
+cases will be handled for you.
 
 Note that S3 lists are treated as scalars by default, and will
 cause an error if they don't implement a \code{\link[=vec_proxy]{vec_proxy()}} method.
@@ -82,10 +96,8 @@ as the LHS.
 \subsection{base dependencies}{
 \itemize{
 \item \code{base::`[`}
+\item \code{base::`[<-`}
 }
-
-If a non-data-frame vector class doesn't have a \code{\link[=vec_proxy]{vec_proxy()}}
-method, the vector is sliced with \code{[} instead.
 }
 }
 

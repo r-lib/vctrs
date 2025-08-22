@@ -51,6 +51,11 @@ r_obj* df_assign(
   const struct vec_proxy_assign_opts* p_opts
 );
 
-r_obj* vec_assign_shaped(r_obj* proxy, r_obj* index, r_obj* value, const enum vctrs_ownership ownership);
+r_obj* vec_assign_shaped(
+  r_obj* proxy,
+  r_obj* index,
+  r_obj* value,
+  enum vctrs_ownership ownership
+);
 
 #endif
