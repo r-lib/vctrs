@@ -25,10 +25,7 @@ vec_as_subscript2(
 )
 }
 \arguments{
-\item{i}{An integer, character or logical vector specifying the
-locations or names of the observations to get/set. Specify
-\code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
-\code{integer()} to index none (as in \code{x[NULL]}).}
+\item{i}{An index vector to convert.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 

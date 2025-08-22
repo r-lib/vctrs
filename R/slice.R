@@ -1,21 +1,47 @@
 #' Get or set observations in a vector
 #'
 #' This provides a common interface to extracting and modifying observations
-#' for all vector types, regardless of dimensionality. It is an analog to `[`
-#' that matches [vec_size()] instead of `length()`.
+#' for all vector types, regardless of dimensionality. They are analogs to `[`
+#' and `[<-` that match [vec_size()] instead of `length()`.
 #'
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams rlang::args_error_context
 #'
 #' @param x A vector
-#' @param i An integer, character or logical vector specifying the
-#'   locations or names of the observations to get/set. Specify
-#'   `TRUE` to index all elements (as in `x[]`), or `NULL`, `FALSE` or
-#'   `integer()` to index none (as in `x[NULL]`).
-#' @param value Replacement values. `value` is cast to the type of
-#'   `x`, but only if they have a common type. See below for examples
-#'   of this rule. `value` must be recyclable to the size of `i` after `i`
-#'   has been converted to a valid integer location vector.
+#'
+#' @param i An index vector
+#'
+#'   For `vec_slice()` and `vec_assign(style = "location")`, an integer,
+#'   character or logical vector specifying the locations or names of the
+#'   observations to get/set. Specify `TRUE` to index all elements (as in
+#'   `x[]`), or `NULL`, `FALSE` or `integer()` to index none (as in `x[NULL]`).
+#'
+#'   For `vec_assign(style = "condition")`, a logical vector the same length as
+#'   `x` specifying the observations to set.
+#'
+#' @param value A vector of replacement values
+#'
+#'   `value` is cast to the type of `x`, but only if they have a common type.
+#'   See below for examples of this rule.
+#'
+#'   For `style = "location"`, `value` must be size 1 or the same size as `i`
+#'   after `i` has been converted to a positive integer location vector (which
+#'   may not be the same size as `i` originally).
+#'
+#'   For `style = "condition"`, `value` must be size 1 or the same size as
+#'   `i`.
+#'
+#' @param style The assignment style, which influences how both `i` and `value`
+#'   are interpreted (see their documentation for exact details). One of:
+#'
+#'   - `"location"`: Most closely resembles \code{base::`[<-`}, where an
+#'     index vector is converted to a positive integer _location_ vector before
+#'     assignment occurs.
+#'
+#'   - `"condition"`: Most closely resembles [base::ifelse()], where the index
+#'     is provided as a logical _condition_ vector, and elements are copied from
+#'     `value` where the condition vector is `TRUE`.
+#'
 #' @param x_arg,value_arg Argument names for `x` and `value`. These are used
 #'   in error messages to inform the user about the locations of
 #'   incompatible types and sizes (see [stop_incompatible_type()] and
@@ -119,6 +145,31 @@
 #' # vector:
 #' x <- 1:3
 #' try(vec_slice(x, 2) <- 1.5)
+#'
+#' # Assignment style ------------------------------------------------
+#'
+#' # The `style` argument influences how `i` and `value` are interpreted,
+#' # particularly with logical `i` vectors.
+#'
+#' # `"location"` forces `i` to be converted to a positive integer location
+#' # vector with `which(i)` before assignment occurs, and `value`'s size
+#' # must match `i`'s AFTER that conversion is done. This matches base R's
+#' # `[<-`, but is not always intuitive.
+#' x <- 1:4
+#' i <- c(TRUE, FALSE, TRUE, FALSE)
+#'
+#' # This works because `which(i)` results in `c(1, 3)`
+#' vec_assign(x, i, c(-1, -2))
+#'
+#' # But this fails, even though you might intuitively think it works because
+#' # `vec_size(i) == vec_size(value)`
+#' value <- c(-1, -2, -3, -4)
+#' try(vec_assign(x, i, value))
+#'
+#' # `"condition"` assigns using that logical `i` directly, and requires that
+#' # `value` be size 1 or the same size as the logical `i` vector. It pulls
+#' # elements from `value` where `i` is `TRUE`, so this works:
+#' vec_assign(x, i, value, style = "condition")
 vec_slice <- function(x, i, ..., error_call = current_env()) {
   check_dots_empty0(...)
   .Call(ffi_slice, x, i, environment())
@@ -188,14 +239,21 @@ vec_slice_dispatch_integer64 <- function(x, i) {
 `vec_slice<-` <- function(x, i, value) {
   x_arg <- "" # Substitution is `*tmp*`
   delayedAssign("value_arg", as_label(substitute(value)))
-
-  .Call(ffi_assign, x, i, value, environment())
+  .Call(ffi_assign, x, i, value, "location", environment())
 }
 #' @rdname vec_slice
 #' @export
-vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "") {
+vec_assign <- function(
+  x,
+  i,
+  value,
+  ...,
+  style = "location",
+  x_arg = "",
+  value_arg = ""
+) {
   check_dots_empty0(...)
-  .Call(ffi_assign, x, i, value, environment())
+  .Call(ffi_assign, x, i, value, style, environment())
 }
 
 # Invariants for `[<-` methods:
@@ -209,13 +267,25 @@ vec_assign <- function(x, i, value, ..., x_arg = "", value_arg = "") {
 # `[<-` with these inputs. In other words, we don't expect subclasses to have
 # vctrs subassign behavior, but we do expect them to match a subset of base R
 # subassign behavior.
-vec_assign_fallback <- function(x, i, value) {
-  # Work around bug in base `[<-`
-  existing <- !is.na(i)
-  i <- vec_slice(i, existing)
-  if (vec_size(value) != 1L) {
-    # Only slice `value` if we aren't recycling it
-    value <- vec_slice(value, existing)
+vec_assign_fallback <- function(x, i, value, location) {
+  value_size <- vec_size(value)
+
+  if (location) {
+    # Work around bug in base `[<-`
+    existing <- !is.na(i)
+    i <- vec_slice(i, existing)
+    if (value_size != 1L) {
+      # Only slice `value` if we aren't recycling it
+      value <- vec_slice(value, existing)
+    }
+  } else {
+    # Convert logical condition `i` to integer location `i`,
+    # and slice `value` to match. Treats `NA` as `FALSE`.
+    i <- which(i)
+    if (value_size != 1L) {
+      # Only slice `value` if we aren't recycling it
+      value <- vec_slice(value, i)
+    }
   }
 
   d <- vec_dim_n(x)

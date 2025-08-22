@@ -10,15 +10,20 @@ vec_slice(x, i, ..., error_call = current_env())
 
 vec_slice(x, i) <- value
 
-vec_assign(x, i, value, ..., x_arg = "", value_arg = "")
+vec_assign(x, i, value, ..., style = "location", x_arg = "", value_arg = "")
 }
 \arguments{
 \item{x}{A vector}
 
-\item{i}{An integer, character or logical vector specifying the
-locations or names of the observations to get/set. Specify
-\code{TRUE} to index all elements (as in \code{x[]}), or \code{NULL}, \code{FALSE} or
-\code{integer()} to index none (as in \code{x[NULL]}).}
+\item{i}{An index vector
+
+For \code{vec_slice()} and \code{vec_assign(style = "location")}, an integer,
+character or logical vector specifying the locations or names of the
+observations to get/set. Specify \code{TRUE} to index all elements (as in
+\code{x[]}), or \code{NULL}, \code{FALSE} or \code{integer()} to index none (as in \code{x[NULL]}).
+
+For \code{vec_assign(style = "condition")}, a logical vector the same length as
+\code{x} specifying the observations to set.}
 
 \item{...}{These dots are for future extensions and must be empty.}
 
@@ -27,10 +32,28 @@ running function, e.g. \code{caller_env()}. The function will be
 mentioned in error messages as the source of the error. See the
 \code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
 
-\item{value}{Replacement values. \code{value} is cast to the type of
-\code{x}, but only if they have a common type. See below for examples
-of this rule. \code{value} must be recyclable to the size of \code{i} after \code{i}
-has been converted to a valid integer location vector.}
+\item{value}{A vector of replacement values
+
+\code{value} is cast to the type of \code{x}, but only if they have a common type.
+See below for examples of this rule.
+
+For \code{style = "location"}, \code{value} must be size 1 or the same size as \code{i}
+after \code{i} has been converted to a positive integer location vector (which
+may not be the same size as \code{i} originally).
+
+For \code{style = "condition"}, \code{value} must be size 1 or the same size as
+\code{i}.}
+
+\item{style}{The assignment style, which influences how both \code{i} and \code{value}
+are interpreted (see their documentation for exact details). One of:
+\itemize{
+\item \code{"location"}: Most closely resembles \code{base::`[<-`}, where an
+index vector is converted to a positive integer \emph{location} vector before
+assignment occurs.
+\item \code{"condition"}: Most closely resembles \code{\link[base:ifelse]{base::ifelse()}}, where the index
+is provided as a logical \emph{condition} vector, and elements are copied from
+\code{value} where the condition vector is \code{TRUE}.
+}}
 
 \item{x_arg, value_arg}{Argument names for \code{x} and \code{value}. These are used
 in error messages to inform the user about the locations of
@@ -42,8 +65,8 @@ A vector of the same type as \code{x}.
 }
 \description{
 This provides a common interface to extracting and modifying observations
-for all vector types, regardless of dimensionality. It is an analog to \code{[}
-that matches \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
+for all vector types, regardless of dimensionality. They are analogs to \code{[}
+and \verb{[<-} that match \code{\link[=vec_size]{vec_size()}} instead of \code{length()}.
 }
 \section{Genericity}{
 
@@ -147,5 +170,30 @@ try(vec_cast(1.5, integer()))
 # vector:
 x <- 1:3
 try(vec_slice(x, 2) <- 1.5)
+
+# Assignment style ------------------------------------------------
+
+# The `style` argument influences how `i` and `value` are interpreted,
+# particularly with logical `i` vectors.
+
+# `"location"` forces `i` to be converted to a positive integer location
+# vector with `which(i)` before assignment occurs, and `value`'s size
+# must match `i`'s AFTER that conversion is done. This matches base R's
+# `[<-`, but is not always intuitive.
+x <- 1:4
+i <- c(TRUE, FALSE, TRUE, FALSE)
+
+# This works because `which(i)` results in `c(1, 3)`
+vec_assign(x, i, c(-1, -2))
+
+# But this fails, even though you might intuitively think it works because
+# `vec_size(i) == vec_size(value)`
+value <- c(-1, -2, -3, -4)
+try(vec_assign(x, i, value))
+
+# `"condition"` assigns using that logical `i` directly, and requires that
+# `value` be size 1 or the same size as the logical `i` vector. It pulls
+# elements from `value` where `i` is `TRUE`, so this works:
+vec_assign(x, i, value, style = "condition")
 }
 \keyword{internal}

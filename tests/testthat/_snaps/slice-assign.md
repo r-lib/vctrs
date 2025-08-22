@@ -102,3 +102,67 @@
       Error in `vec_assign()`:
       ! Can't recycle `bar` (size 2) to size 1.
 
+# assign-condition throws error with non-vector inputs
+
+    Code
+      vec_assign(x, TRUE, 1, style = "condition")
+    Condition
+      Error in `vec_assign()`:
+      ! Input must be a vector, not an environment.
+
+---
+
+    Code
+      vec_assign(x, TRUE, 1, style = "condition", x_arg = "arg")
+    Condition
+      Error in `vec_assign()`:
+      ! `arg` must be a vector, not an environment.
+
+# assign-condition throws error with non-vector `value`
+
+    Code
+      vec_assign(x, 1L, NULL, style = "condition")
+    Condition
+      Error in `vec_assign()`:
+      ! Input must be a vector, not `NULL`.
+
+---
+
+    Code
+      vec_assign(x, 1L, NULL, style = "condition", value_arg = "foo")
+    Condition
+      Error in `vec_assign()`:
+      ! `foo` must be a vector, not `NULL`.
+
+---
+
+    Code
+      vec_assign(x, 1L, environment(), style = "condition", value_arg = "foo")
+    Condition
+      Error in `vec_assign()`:
+      ! `foo` must be a vector, not an environment.
+
+# assign-condition `i` is validated
+
+    Code
+      vec_assign(1, 1, 1, style = "condition")
+    Condition
+      Error in `vec_assign()`:
+      ! `i` must be a logical vector, not the number 1.
+
+---
+
+    Code
+      vec_assign(1, array(TRUE), 1, style = "condition")
+    Condition
+      Error in `vec_assign()`:
+      ! `i` can't be an array.
+
+---
+
+    Code
+      vec_assign(1:2, TRUE, 1:2, style = "condition")
+    Condition
+      Error in `vec_assign()`:
+      ! `i` must have size 2, not size 1.
+

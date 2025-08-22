@@ -841,3 +841,226 @@ test_that("can assign object of any dimensionality with compact seqs", {
   expect_identical(vec_assign_seq(x3, 2, start, size, increasing), array(rep(c(2, 2, 1), 20), dim = c(3, 4, 5)))
   expect_identical(vec_assign_seq(x4, 2, start, size, increasing), array(rep(c(2, 2, 1), 120), dim = c(3, 4, 5, 6)))
 })
+
+# vec_assign(style = "condition") --------------------------------------
+
+test_that("assign-condition throws error with non-vector inputs", {
+  x <- environment()
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, TRUE, 1, style = "condition")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, TRUE, 1, style = "condition", x_arg = "arg")
+  })
+})
+
+test_that("assign-condition throws error with non-vector `value`", {
+  x <- 1L
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, NULL, style = "condition")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, NULL, style = "condition", value_arg = "foo")
+  })
+  expect_snapshot(error = TRUE, {
+    vec_assign(x, 1L, environment(), style = "condition", value_arg = "foo")
+  })
+})
+
+test_that("can assign-condition NULL `x`", {
+  x <- NULL
+  expect_identical(vec_assign(x, TRUE, 1, style = "condition"), NULL)
+})
+
+test_that("assign-condition `i` is validated", {
+  expect_snapshot(error = TRUE, {
+    # Must be logical
+    vec_assign(1, 1, 1, style = "condition")
+  })
+  expect_snapshot(error = TRUE, {
+    # Not an array
+    vec_assign(1, array(TRUE), 1, style = "condition")
+  })
+  expect_snapshot(error = TRUE, {
+    # Not recycled!
+    vec_assign(1:2, TRUE, 1:2, style = "condition")
+  })
+})
+
+test_that("can assign-condition base vectors", {
+  condition <- c(TRUE, FALSE, TRUE)
+
+  x <- rep(FALSE, 3)
+  x <- vec_assign(x, condition, c(NA, TRUE, TRUE), style = "condition")
+  expect_identical(x, lgl(NA, FALSE, TRUE))
+
+  x <- rep(0L, 3)
+  x <- vec_assign(x, condition, c(NA, 1L, 2L), style = "condition")
+  expect_identical(x, int(NA, 0L, 2L))
+
+  x <- rep(0, 3)
+  x <- vec_assign(x, condition, c(NA, 1, 2), style = "condition")
+  expect_identical(x, dbl(NA, 0, 2))
+
+  x <- rep(0i, 3)
+  x <- vec_assign(x, condition, c(1i, 2i, 3i), style = "condition")
+  expect_identical(x, cpl(1i, 0i, 3i))
+
+  x <- rep("", 3)
+  x <- vec_assign(x, condition, c(NA, "foo", "bar"), style = "condition")
+  expect_identical(x, chr(NA, "", "bar"))
+
+  x <- as.raw(rep(0, 3))
+  x <- vec_assign(x, condition, as.raw(c(1, 2, 3)), style = "condition")
+  expect_identical(x, as.raw(c(1, 0, 3)))
+
+  x <- rep(list(1), 3)
+  x <- vec_assign(x, condition, list(NA, 2, 3), style = "condition")
+  expect_identical(x, list(NA, 1, 3))
+})
+
+test_that("can assign-condition base vectors with recycled `value`", {
+  condition <- c(TRUE, FALSE, TRUE)
+
+  x <- rep(FALSE, 3)
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, lgl(NA, FALSE, NA))
+
+  x <- rep(0L, 3)
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, int(NA, 0L, NA))
+
+  x <- rep(0, 3)
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, dbl(NA, 0, NA))
+
+  x <- rep(0i, 3)
+  x <- vec_assign(x, condition, 1i, style = "condition")
+  expect_identical(x, cpl(1i, 0i, 1i))
+
+  x <- rep("", 3)
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, chr(NA, "", NA))
+
+  x <- as.raw(rep(0, 3))
+  x <- vec_assign(x, condition, as.raw(1), style = "condition")
+  expect_identical(x, as.raw(c(1, 0, 1)))
+
+  x <- rep(list(1), 3)
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, list(NULL, 1, NULL))
+})
+
+test_that("can assign-condition shaped base vectors", {
+  mat <- as.matrix
+
+  condition <- c(TRUE, FALSE, TRUE)
+
+  x <- mat(rep(FALSE, 3))
+  x <- vec_assign(x, condition, mat(c(NA, TRUE, TRUE)), style = "condition")
+  expect_identical(x, mat(c(NA, FALSE, TRUE)))
+
+  x <- mat(rep(0L, 3))
+  x <- vec_assign(x, condition, mat(c(NA, 1L, 2L)), style = "condition")
+  expect_identical(x, mat(c(NA, 0L, 2L)))
+
+  x <- mat(rep(0, 3))
+  x <- vec_assign(x, condition, mat(c(NA, 1, 2)), style = "condition")
+  expect_identical(x, mat(c(NA, 0, 2)))
+
+  x <- mat(rep(0i, 3))
+  x <- vec_assign(x, condition, mat(c(1i, 2i, 3i)), style = "condition")
+  expect_identical(x, mat(c(1i, 0i, 3i)))
+
+  x <- mat(rep("", 3))
+  x <- vec_assign(x, condition, mat(c(NA, "foo", "bar")), style = "condition")
+  expect_identical(x, mat(c(NA, "", "bar")))
+
+  x <- mat(as.raw(rep(0, 3)))
+  x <- vec_assign(x, condition, mat(as.raw(c(1, 2, 3))), style = "condition")
+  expect_identical(x, mat(as.raw(c(1, 0, 3))))
+
+  x <- mat(rep(list(1), 3))
+  x <- vec_assign(x, condition, mat(list(NA, 2, 3)), style = "condition")
+  expect_identical(x, mat(list(NA, 1, 3)))
+})
+
+test_that("can assign-condition shaped base vectors with recycling of `value`", {
+  mat <- as.matrix
+
+  condition <- c(TRUE, FALSE, TRUE)
+
+  x <- mat(rep(FALSE, 3))
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, mat(c(NA, FALSE, NA)))
+
+  x <- mat(rep(0L, 3))
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, mat(c(NA, 0L, NA)))
+
+  x <- mat(rep(0, 3))
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, mat(c(NA, 0, NA)))
+
+  x <- mat(rep(0i, 3))
+  x <- vec_assign(x, condition, 1i, style = "condition")
+  expect_identical(x, mat(c(1i, 0i, 1i)))
+
+  x <- mat(rep("", 3))
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, mat(c(NA, "", NA)))
+
+  x <- mat(as.raw(rep(0, 3)))
+  x <- vec_assign(x, condition, as.raw(1), style = "condition")
+  expect_identical(x, mat(as.raw(c(1, 0, 1))))
+
+  x <- mat(rep(list(1), 3))
+  x <- vec_assign(x, condition, NA, style = "condition")
+  expect_identical(x, mat(list(NULL, 1, NULL)))
+})
+
+test_that("can assign-condition object of any dimensionality - non-barrier (integer, double, etc)", {
+  x1 <- ones(3)
+  x2 <- ones(3, 4)
+  x3 <- ones(3, 4, 5)
+  x4 <- ones(3, 4, 5, 6)
+
+  condition <- c(TRUE, FALSE, TRUE)
+
+  # No recycling
+  value <- c(2, 3, 4)
+  expect_identical(vec_assign(x1, condition, value, style = "condition"), array(rep(c(2, 1, 4), 1),  dim = 3))
+  expect_identical(vec_assign(x2, condition, value, style = "condition"), array(rep(c(2, 1, 4), 3),  dim = c(3, 4)))
+  expect_identical(vec_assign(x3, condition, value, style = "condition"), array(rep(c(2, 1, 4), 12), dim = c(3, 4, 5)))
+  expect_identical(vec_assign(x4, condition, value, style = "condition"), array(rep(c(2, 1, 4), 60), dim = c(3, 4, 5, 6)))
+
+  # `value` recycling
+  value <- 2
+  expect_identical(vec_assign(x1, condition, value, style = "condition"), array(rep(c(2, 1, 2), 1),  dim = 3))
+  expect_identical(vec_assign(x2, condition, value, style = "condition"), array(rep(c(2, 1, 2), 3),  dim = c(3, 4)))
+  expect_identical(vec_assign(x3, condition, value, style = "condition"), array(rep(c(2, 1, 2), 12), dim = c(3, 4, 5)))
+  expect_identical(vec_assign(x4, condition, value, style = "condition"), array(rep(c(2, 1, 2), 60), dim = c(3, 4, 5, 6)))
+})
+
+test_that("can assign-condition object of any dimensionality - barrier (character, list)", {
+  x1 <- ones_list(3)
+  x2 <- ones_list(3, 4)
+  x3 <- ones_list(3, 4, 5)
+  x4 <- ones_list(3, 4, 5, 6)
+
+  condition <- c(TRUE, FALSE, TRUE)
+
+  # No recycling
+  value <- list(2, 3, 4)
+  expect_identical(vec_assign(x1, condition, value, style = "condition"), array(rep(list(2, 1, 4), 1),  dim = 3))
+  expect_identical(vec_assign(x2, condition, value, style = "condition"), array(rep(list(2, 1, 4), 3),  dim = c(3, 4)))
+  expect_identical(vec_assign(x3, condition, value, style = "condition"), array(rep(list(2, 1, 4), 12), dim = c(3, 4, 5)))
+  expect_identical(vec_assign(x4, condition, value, style = "condition"), array(rep(list(2, 1, 4), 60), dim = c(3, 4, 5, 6)))
+
+  # `value` recycling
+  value <- list(2)
+  expect_identical(vec_assign(x1, condition, value, style = "condition"), array(rep(list(2, 1, 2), 1),  dim = 3))
+  expect_identical(vec_assign(x2, condition, value, style = "condition"), array(rep(list(2, 1, 2), 3),  dim = c(3, 4)))
+  expect_identical(vec_assign(x3, condition, value, style = "condition"), array(rep(list(2, 1, 2), 12), dim = c(3, 4, 5)))
+  expect_identical(vec_assign(x4, condition, value, style = "condition"), array(rep(list(2, 1, 2), 60), dim = c(3, 4, 5, 6)))
+})
