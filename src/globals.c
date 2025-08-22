@@ -66,6 +66,8 @@ void vctrs_init_globals(r_obj* ns) {
   // Strings and characters --------------------------------------------
   INIT_STRING(AsIs);
   INIT_STRING(repair);
+  INIT_STRING(location);
+  INIT_STRING(condition);
 
   // Args --------------------------------------------------------------
   INIT_ARG2(dot_name_repair, ".name_repair");
@@ -85,7 +87,6 @@ void vctrs_init_globals(r_obj* ns) {
 
   // Calls -------------------------------------------------------------
   INIT_CALL(vec_assign);
-  INIT_CALL(vec_assign_params);
   INIT_CALL(vec_assign_seq);
   INIT_CALL(vec_init);
   INIT_CALL(vec_ptype_finalise);

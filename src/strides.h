@@ -148,6 +148,21 @@ static inline void vec_shape_index_increment(struct strides_info* p_info) {
   }
 }
 
+// Given array dimensions like:
+// [i, j, k, l]
+// this gives you a count of:
+// j * k * l
+// which tells you the number of times an outer loop would
+// need to iterate to walk over the array if some inner loop
+// handled iteration over `i`, i.e. size.
+static inline R_len_t vec_shape_elem_n(const int* p_dim, const R_len_t dim_n) {
+  R_len_t shape_elem_n = 1;
+  for (int i = 1; i < dim_n; ++i) {
+    shape_elem_n *= p_dim[i];
+  }
+  return shape_elem_n;
+}
+
 static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
   SEXP dim = PROTECT(vec_dim(x));
   const int* p_dim = INTEGER_RO(dim);
@@ -179,10 +194,7 @@ static inline struct strides_info new_strides_info(SEXP x, SEXP index) {
     p_shape_index[i] = 0;
   }
 
-  R_len_t shape_elem_n = 1;
-  for (int i = 1; i < dim_n; ++i) {
-    shape_elem_n *= p_dim[i];
-  }
+  R_len_t shape_elem_n = vec_shape_elem_n(p_dim, dim_n);
 
   struct strides_info info = {
     .dim = dim,

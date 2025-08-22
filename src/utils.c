@@ -1613,6 +1613,8 @@ SEXP syms_required = NULL;
 SEXP syms_call = NULL;
 SEXP syms_dot_call = NULL;
 SEXP syms_which = NULL;
+SEXP syms_slice_value = NULL;
+SEXP syms_index_style = NULL;
 
 SEXP fns_bracket = NULL;
 SEXP fns_quote = NULL;
@@ -1895,6 +1897,8 @@ void vctrs_init_utils(SEXP ns) {
   syms_call = Rf_install("call");
   syms_dot_call = Rf_install(".call");
   syms_which = Rf_install("which");
+  syms_slice_value = Rf_install("slice_value");
+  syms_index_style = Rf_install("index_style");
 
   fns_bracket = Rf_findVar(syms_bracket, R_BaseEnv);
   fns_quote = Rf_findVar(Rf_install("quote"), R_BaseEnv);

@@ -155,6 +155,8 @@ r_obj* vec_rbind(r_obj* xs,
   const struct vec_proxy_assign_opts bind_proxy_assign_opts = {
     .ownership = VCTRS_OWNERSHIP_deep,
     .recursively_proxied = true,
+    .slice_value = ASSIGNMENT_SLICE_VALUE_no,
+    .index_style = VCTRS_INDEX_STYLE_location,
     .assign_names = assign_names,
     // Unlike in `vec_c()` we don't need to ignore outer names because
     // `df_assign()` doesn't deal with those
@@ -228,7 +230,14 @@ r_obj* vec_rbind(r_obj* xs,
         // If there is no name to assign, skip the assignment since
         // `out_names` already contains empty strings
         if (inner != chrs_empty) {
-          row_names = chr_assign(row_names, loc, x_nms, VCTRS_OWNERSHIP_deep);
+          row_names = chr_assign(
+            row_names,
+            loc,
+            x_nms,
+            VCTRS_OWNERSHIP_deep,
+            ASSIGNMENT_SLICE_VALUE_no,
+            VCTRS_INDEX_STYLE_location
+          );
           KEEP_AT(row_names, rownames_pi);
         }
       }
@@ -497,12 +506,26 @@ r_obj* vec_cbind(r_obj* xs,
     r_ssize xn = r_length(x);
     init_compact_seq(idx_ptr, counter, xn, true);
 
-    out = list_assign(out, idx, x, cbind_out_ownership);
+    out = list_assign(
+      out,
+      idx,
+      x,
+      cbind_out_ownership,
+      ASSIGNMENT_SLICE_VALUE_no,
+      VCTRS_INDEX_STYLE_location
+    );
     KEEP_AT(out, out_pi);
 
     r_obj* xnms = KEEP(r_names(x));
     if (xnms != r_null) {
-      names = chr_assign(names, idx, xnms, VCTRS_OWNERSHIP_deep);
+      names = chr_assign(
+        names,
+        idx,
+        xnms,
+        VCTRS_OWNERSHIP_deep,
+        ASSIGNMENT_SLICE_VALUE_no,
+        VCTRS_INDEX_STYLE_location
+      );
       KEEP_AT(names, names_pi);
     }
     FREE(1);

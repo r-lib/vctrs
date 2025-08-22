@@ -30,10 +30,14 @@ struct syms {
 struct strings {
   r_obj* AsIs;
   r_obj* repair;
+  r_obj* location;
+  r_obj* condition;
 };
 struct chrs {
   r_obj* AsIs;
   r_obj* repair;
+  r_obj* location;
+  r_obj* condition;
 };
 
 struct fns {
@@ -62,7 +66,6 @@ struct lazy_args {
 
 struct lazy_calls {
   struct r_lazy vec_assign;
-  struct r_lazy vec_assign_params;
   struct r_lazy vec_assign_seq;
   struct r_lazy vec_init;
   struct r_lazy vec_ptype_finalise;
